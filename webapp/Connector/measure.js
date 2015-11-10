@@ -11,8 +11,9 @@ Ext.define('Connector.measure.Configuration', {
             // The key for this map is schemaName|queryName, which is the key used in the Query service SOURCE_STORE.
             // See Connector.model.Source for the set of properties and default values.
             sources: {
-                'study|SubjectVisit': {
-                    queryLabel: 'Time points'
+                'cds|GridBase': {
+                    queryLabel: 'Time points',
+                    subjectCountQueryName: 'SubjectVisit'
                 },
                 'study|Ad5': {
                     category: 'Assays'
@@ -93,6 +94,7 @@ Ext.define('Connector.measure.Configuration', {
                     subjectCountQueryName: 'Demographics',
                     variableType: 'DEFINED_MEASURES',
                     measures: [
+                        'study_Demographics_SubjectId',
                         'study_Demographics_species',
                         'study_Demographics_subspecies',
                         'study_Demographics_sexatbirth',
@@ -140,11 +142,13 @@ Ext.define('Connector.measure.Configuration', {
                     defaultSelection: {all: false, value: 'CD4+'}
                 },
                 'study_ICS_functional_marker_name': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false}
                 },
                 'study_ICS_summary_level': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Protein Panel'}
@@ -171,11 +175,13 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 // study|NAb
                 'study_NAb_target_cell': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'TZM-bl'}
                 },
                 'study_NAb_summary_level': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Virus'}
@@ -200,6 +206,7 @@ Ext.define('Connector.measure.Configuration', {
                     defaultSelection: {all: false}
                 },
                 'study_BAMA_summary_level': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Antigen'}
@@ -215,11 +222,13 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 // study|ELISPOT
                 'study_ELISPOT_functional_marker_name': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false}
                 },
                 'study_ELISPOT_summary_level': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Peptide Pool'}
@@ -243,7 +252,16 @@ Ext.define('Connector.measure.Configuration', {
                     hierarchicalSelectionParent: null,
                     distinctValueFilterColumnAlias: 'study_ELISPOT_summary_level',
                     distinctValueFilterColumnValue: 'Protein Panel'
+                },
+                'CDS_GridBase_Study': {
+                    sourceMeasureAlias: 'study_Demographics_study_label'
+                },
+                'CDS_GridBase_SubjectId': {
+                    sourceMeasureAlias: 'study_Demographics_SubjectId'
                 }
+                //'CDS_GridBase_TreatmentSummary': {
+                //    sourceMeasureAlias: 'study_Demographics_study_arm_summary'
+                //}
             },
 
             // Override information about measures (i.e. query columns) defined by the server OR declare a measure.
@@ -251,11 +269,10 @@ Ext.define('Connector.measure.Configuration', {
             // The key for this map is the column alias, which is the key used for the Query service MEASURE_STORE.
             // See Connector.model.Measure for the set of properties and default values.
             measures: {
-                'Days': {
-                    sortOrder: -4,
-                    schemaName: Connector.studyContext.schemaName,
-                    queryName: Connector.studyContext.subjectVisit,
-                    inNotNullSet: false,
+                'cds_GridBase_Days': {
+                    sortOrder: 0,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
                     isRecommendedVariable: true,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
@@ -263,22 +280,20 @@ Ext.define('Connector.measure.Configuration', {
                     type: 'INTEGER',
                     variableType: 'TIME'
                 },
-                'Weeks': {
-                    sortOrder: -3,
-                    schemaName: Connector.studyContext.schemaName,
-                    queryName: Connector.studyContext.subjectVisit,
-                    inNotNullSet: false,
+                'cds_GridBase_Weeks': {
+                    sortOrder: 1,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study weeks',
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
-                'Months': {
-                    sortOrder: -2,
-                    schemaName: Connector.studyContext.schemaName,
-                    queryName: Connector.studyContext.subjectVisit,
-                    inNotNullSet: false,
+                'cds_GridBase_Months': {
+                    sortOrder: 2,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study months',
@@ -315,10 +330,12 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_Demographics_sexatbirth': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                    hidden: true
                 },
                 'study_Demographics_age_enrollment': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                    hidden: true
                 },
                 'study_Demographics_study_label': {
                     isRecommendedVariable: true
@@ -328,16 +345,46 @@ Ext.define('Connector.measure.Configuration', {
                 },
 
                 // hidden variables
+                'study_ICS_assay_identifier': {
+                    hidden: true
+                },
+                'study_ICS_ics_lab_source_key': {
+                    hidden: true
+                },
+                'study_ICS_exp_assayid': {
+                    hidden: true
+                },
+                'study_ICS_functional_marker_type': {
+                    hidden: true
+                },
                 'study_ICS_protein_panel_protein_peptide_pool': {
                     hidden: true
                 },
                 'study_ICS_protein_panel_protein': {
                     hidden: true
                 },
+                'study_ICS_SubjectId': {
+                    hidden: true
+                },
                 'study_ICS_SubjectVisit_Visit': {
                     hidden: true
                 },
+                'study_ICS_visit_day': {
+                    hidden: true
+                },
+                'study_NAb_assay_identifier': {
+                    hidden: true
+                },
+                'study_NAb_exp_assayid': {
+                    hidden: true
+                },
+                'study_NAb_nab_lab_source_key': {
+                    hidden: true
+                },
                 'study_NAb_tier_clade_virus': {
+                    hidden: true
+                },
+                'study_NAb_SubjectId': {
                     hidden: true
                 },
                 'study_NAb_SubjectVisit_Visit': {
@@ -346,10 +393,25 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_visit_day': {
                     hidden: true
                 },
+                'study_BAMA_assay_identifier': {
+                    hidden: true
+                },
+                'study_BAMA_bama_lab_source_key': {
+                    hidden: true
+                },
+                'study_BAMA_exp_assayid': {
+                    hidden: true
+                },
+                'study_BAMA_SubjectId': {
+                    hidden: true
+                },
                 'study_BAMA_SubjectVisit_Visit': {
                     hidden: true
                 },
                 'study_BAMA_visit_day': {
+                    hidden: true
+                },
+                'study_ELISPOT_assay_identifier': {
                     hidden: true
                 },
                 'study_ELISPOT_protein_panel_protein_peptide_pool': {
@@ -358,10 +420,61 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_protein_panel_protein': {
                     hidden: true
                 },
+                'study_ELISPOT_els_ifng_lab_source_key': {
+                    hidden: true
+                },
+                'study_ELISPOT_exp_assayid': {
+                    hidden: true
+                },
+                'study_ELISPOT_functional_marker_type': {
+                    hidden: true
+                },
+                'study_ELISPOT_SubjectId': {
+                    hidden: true
+                },
                 'study_ELISPOT_SubjectVisit_Visit': {
                     hidden: true
                 },
                 'study_ELISPOT_visit_day': {
+                    hidden: true
+                },
+                'study_Demographics_agegroup_range': {
+                    hidden: true
+                },
+                'study_Demographics_bmi_enrollment': {
+                    hidden: true
+                },
+                'study_Demographics_circumcised_enrollment': {
+                    hidden: true
+                },
+                'study_Demographics_country_enrollment': {
+                    hidden: true
+                },
+                'study_Demographics_ethnicity': {
+                    hidden: true
+                },
+                'study_Demographics_race': {
+                    hidden: true
+                },
+                'study_Demographics_study_arm': {
+                    hidden: true
+                },
+                'study_Demographics_study_first_enr_date': {
+                    hidden: true
+                },
+                'study_Demographics_study_fu_complete_date': {
+                    hidden: true
+                },
+                'study_Demographics_study_public_date': {
+                    hidden: true
+                },
+                'study_Demographics_study_start_date': {
+                    hidden: true
+                },
+                'study_Demographics_subspecies': {
+                    hidden: true
+                },
+                'study_Demographics_SubjectId': {
                     hidden: true
                 },
                 'study_Demographics_SubjectVisit_Visit': {

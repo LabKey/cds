@@ -13,22 +13,20 @@ Ext.define('Connector.store.StudyVisitTag', {
 
     loading: true,
 
-    loadStudyVisitTags : function(data) {
-        if (data && data.rows) {
-            var rows = [];
-            for (var i = 0; i < data.rows.length; i++) {
-                rows.push(Ext.create('Connector.model.StudyVisitTag', data.rows[i]));
-            }
-
+    loadStudyVisitTags : function(data)
+    {
+        if (data && data.rows)
+        {
             this.removeAll();
-            this.add(rows);
+            this.add(data.rows);
 
             this.loading = false;
             this.fireEvent('load', this);
         }
     },
 
-    load : function() {
+    load : function()
+    {
         this.loading = true;
         LABKEY.Query.selectRows({
             schemaName: 'cds',

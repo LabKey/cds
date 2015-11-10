@@ -24,9 +24,6 @@
         <script path="../../../internal/explodedModule/web/dataregion/filter/Model.js"/>
         <script path="../../../internal/explodedModule/web/dataregion/filter/Faceted.js"/>
 
-        <!-- Study Dependencies -->
-        <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
-
         <!-- App API Dependencies -->
         <script path="../../../internal/explodedModule/web/app/Application.js"/>
         <script path="../../../internal/explodedModule/web/app/State.js"/>
@@ -131,7 +128,6 @@
         <script path="Connector/src/store/StudyVisitTag.js"/>
 
         <!-- Application Views -->
-        <script path="Connector/src/view/About.js"/>
         <script path="Connector/src/view/DetailStatus.js"/>
         <script path="Connector/src/view/Selection.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
@@ -166,6 +162,7 @@
         <script path="Connector/src/controller/Chart.js"/>
         <script path="Connector/src/controller/Connector.js"/>
         <script path="Connector/src/controller/Query.js"/>
+        <script path="Connector/src/controller/Filter.js"/>
         <script path="Connector/src/controller/Analytics.js"/>
         <script path="Connector/src/controller/Explorer.js"/>
         <script path="Connector/src/controller/FilterStatus.js"/>
@@ -184,6 +181,7 @@
         <script path="Connector/src/utility/StoreCache.js"/>
         <script path="Connector/src/utility/Chart.js"/>
         <script path="Connector/src/utility/HelpRouter.js"/>
+        <script path="Connector/src/utility/Query.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
         <script path="Connector/src/app/model/Dataset.js"/>

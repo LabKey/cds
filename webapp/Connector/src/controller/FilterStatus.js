@@ -137,7 +137,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
             if (filterOrDetail.$className === 'Connector.model.Filter') {
 
-                if (filterOrDetail.isGrid()) {
+                if (filterOrDetail.isGrid() || filterOrDetail.isAggregated()) {
                     clazz = 'Connector.view.GridPane';
                 }
                 else if (filterOrDetail.isPlot()) {

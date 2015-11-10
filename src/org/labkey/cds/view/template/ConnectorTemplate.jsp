@@ -64,11 +64,10 @@
         var Connector = {
             studyContext: {
                 schemaName: 'study',
-                gridBaseSchema: 'study',
-                gridBase: 'GridBase',
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
-                subjectVisit: LABKEY.moduleContext.study.subject.tableName + 'Visit',
-                protocolDayColumn: 'Visit/ProtocolDay'
+                gridBaseSchema: 'cds',
+                gridBase: 'GridBase',
+                protocolDayColumn: 'ProtocolDay'
             },
             resourceContext: {
                 path: <%=PageFlowUtil.jsString(resourcePath)%>,
@@ -98,7 +97,6 @@
         }
     %>
 
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/internal/jQuery/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/hopscotch/js/hopscotch.min.js"></script>
 
@@ -127,9 +125,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Base.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Model.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Faceted.js"></script>
-
-    <!-- Study Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
 
     <!-- App API Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Application.js"></script>
@@ -232,7 +227,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/store/StudyVisitTag.js"></script>
 
     <!-- Application Views -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/About.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
@@ -268,6 +262,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Analytics.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>
@@ -286,6 +281,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Dataset.js"></script>

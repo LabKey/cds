@@ -258,14 +258,13 @@ Ext.define('Connector.view.GroupSummaryBody', {
     },
 
     initComponent: function() {
-        var desc = '', isLive = false;
+        var desc = '';
 
         if (this.group) {
             desc = this.group.get('description');
             if (desc.length == 0) {
                 desc = 'No description given.';
             }
-            isLive = JSON.parse(this.group.get('filters')).isLive;
         }
 
         this.descDisplay = Ext.create('Ext.form.field.Display', {
@@ -277,43 +276,9 @@ Ext.define('Connector.view.GroupSummaryBody', {
             value: desc
         });
 
-        this.radioGroup = Ext.create('Ext.form.RadioGroup', {
-            bodyPadding: 10,
-            margin: '10 0 0 0',
-            vertical: true,
-            columns: 1,
-            listeners: {
-                scope: this,
-                change: function(rg, newValue, oldValue) {
-                    var isLive = newValue.updates;
-                    var grp = Ext.clone(this.group.data);
-                    var fil = Ext.decode(grp.filters).filters;
-                    var models = [];
-                    Ext.each(fil, function(f) {
-                        models.push(Ext.create('Connector.model.Filter', f));
-                    });
-                    grp.filters = LABKEY.app.model.Filter.toJSON(models, isLive);
-                    this.fireEvent('requestgroupupdate', grp);
-                }
-            },
-            items: [{
-                boxLabel: 'Live: Update group with new data',
-                name: 'updates',
-                inputValue: true,
-                checked: isLive
-            }, {
-                boxLabel: 'Snapshot: Keep this group static',
-                name: 'updates',
-                inputValue: false,
-                checked: !isLive
-            }]
-        });
-
         this.items = [
             {xtype: 'box', cls: 'headline', autoEl: { tag: 'h3', html: 'Description' }},
-            this.descDisplay,
-            {xtype: 'box', cls: 'headline', autoEl: { tag: 'h3', html: 'Updates' }},
-            this.radioGroup
+            this.descDisplay
         ];
         this.callParent();
     },
@@ -325,10 +290,6 @@ Ext.define('Connector.view.GroupSummaryBody', {
             desc = 'No description given.';
         }
         this.descDisplay.setValue(desc);
-        // Temporarily suspend events because we don't want to trigger a group save when we're loading a group.
-        this.radioGroup.suspendEvents(false);
-        this.radioGroup.setValue({updates: JSON.parse(group.get('filters')).isLive});
-        this.radioGroup.resumeEvents();
         this.doLayout();
     }
 });

@@ -3,6 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
+
 Ext.define('Connector.controller.Query', {
 
     extend: 'Ext.app.Controller',
@@ -12,8 +13,6 @@ Ext.define('Connector.controller.Query', {
     _ready: false,
 
     init : function() {
-
-        LABKEY.app.model.Filter.registerDataFilterProvider(this.getDataFilter, this);
 
         if (LABKEY.devMode) {
             QUERY = this;
@@ -38,52 +37,74 @@ Ext.define('Connector.controller.Query', {
             this.MEASURE_DISTINCT_VALUES = {};
         }
 
-        var cacheReady = false;
-        var gridMeasuresReady = false;
+        if (!this.GRID_MEASURES)
+        {
+            this.GRID_MEASURES = [];
+        }
 
-        var doReady = function() {
-            if (cacheReady && gridMeasuresReady) {
-                this._ready = true;
-                this.application.fireEvent('queryready', this);
-            }
-        };
+        // Issue 24670: allow a measure to specify what other measure it was sourced from and return
+        // that measure if request made with altLookupType='parent' or altLookupType='child'
+        if (!this.SOURCE_MEASURE_ALIAS_MAP)
+        {
+            this.SOURCE_MEASURE_ALIAS_MAP = {
+                parent: {},
+                child: {}
+            };
+        }
 
-        // Get all the study columns (including non-measures, weird, I know. Right?)
+        // include only GridBase and study datasets
+        var filters = [
+            LABKEY.Query.Visualization.Filter.create({
+                schemaName: Connector.studyContext.gridBaseSchema,
+                queryName: Connector.studyContext.gridBase
+            }),
+            LABKEY.Query.Visualization.Filter.create({
+                schemaName: 'study',
+                queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
+            })
+        ];
+
         LABKEY.Query.Visualization.getMeasures({
             allColumns: true,
             showHidden: true,
-            filters: [LABKEY.Query.Visualization.Filter.create({
-                schemaName: Connector.studyContext.schemaName,
-                queryType: LABKEY.Query.Visualization.Filter.QueryType.ALL
-            })],
-            success: function(measures) {
+            filters: filters,
+            success: function(measures)
+            {
+                var defaultGridAliases = this.getDefaultGridAliases(false, true);
+
                 // add all of the response measures to the cached store
-                Ext.each(measures, function(measure) {
+                Ext.each(measures, function(measure)
+                {
                     this.addMeasure(measure);
+
+                    // separate the set of default grid measures
+                    if (defaultGridAliases[measure.alias.toLowerCase()])
+                    {
+                        this.GRID_MEASURES.push(Ext.clone(measure));
+                    }
                 }, this);
 
                 // bootstrap client-defined measures
-                var measureContext = Connector.measure.Configuration.context.measures;
-                Ext.iterate(measureContext, function(alias, measure) {
+                Ext.iterate(Connector.measure.Configuration.context.measures, function(alias, measure)
+                {
                     measure.alias = alias;
-                    this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
+                    var visMeasure = new LABKEY.Query.Visualization.Measure(measure);
+                    this.addMeasure(visMeasure);
+
+                    // separate the set of default grid measures
+                    if (defaultGridAliases[measure.alias.toLowerCase()])
+                    {
+                        this.GRID_MEASURES.push(Ext.clone(visMeasure));
+                    }
                 }, this);
 
-                cacheReady = true;
-                doReady.call(this);
+                this._ready = true;
+                this.application.fireEvent('queryready', this);
             },
-            endpoint : LABKEY.ActionURL.buildURL("visualization", "getMeasuresStatic"),
+            endpoint : LABKEY.ActionURL.buildURL('visualization', 'getMeasuresStatic'),
             scope: this
         });
-
-        // Get the default set of grid columns ready
-        this.getDefaultGridMeasures(function() {
-            gridMeasuresReady = true;
-            doReady.call(this);
-        }, this);
     },
-
-    _gridMeasures : undefined,
 
     onQueryReady : function(callback, scope) {
         if (Ext.isFunction(callback)) {
@@ -99,7 +120,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     getSubjectColumnAlias : function() {
-        return this.getGridBaseColumnAlias('SubjectId');
+        return this.getGridBaseColumnAlias(Connector.studyContext.subjectColumn);
     },
 
     getGridBaseColumnAlias : function(colName) {
@@ -107,120 +128,92 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     *
      * @param {boolean} [asArray=false]
+     * @param {boolean} [lowerCase=false]
      */
-    getDefaultGridAliases : function(asArray) {
+    getDefaultGridAliases : function(asArray, lowerCase)
+    {
+        var _getAlias = function(alias)
+        {
+            return lowerCase === true ? alias.toLowerCase() : alias;
+        };
 
         var keys = [
-            this.getSubjectColumnAlias(),
-            this.getGridBaseColumnAlias('Study'),
-            this.getGridBaseColumnAlias('TreatmentSummary'),
-            this.getGridBaseColumnAlias('SubjectVisit')
+            _getAlias(this.getSubjectColumnAlias()),
+            _getAlias(this.getGridBaseColumnAlias('Study')),
+            _getAlias(this.getGridBaseColumnAlias('TreatmentSummary')),
+            _getAlias(QueryUtils.STUDY_ALIAS_PREFIX + 'Days')
         ];
 
         var result;
-        if (asArray === true) {
+        if (asArray === true)
+        {
             result = keys;
         }
-        else {
+        else
+        {
             result = {};
-            for (var i=0; i < keys.length; i++) {
-                result[keys[i]] = i+1; // position 1-based for truthy
+            for (var i=0; i < keys.length; i++)
+            {
+                result[keys[i]] = i + 1; // position 1-based for truthy
             }
         }
 
         return result;
     },
 
-    // This supplies the set of default columns available in the grid
-    // to the provided callback as an array of Measure descriptors
-    getDefaultGridMeasures : function(callback, scope) {
-        if (!Ext.isDefined(this._gridMeasures)) {
-
-            this._gridMeasures = [];
-
-            var schema = Connector.studyContext.gridBaseSchema,
-                query = Connector.studyContext.gridBase,
-                defaultAliases = this.getDefaultGridAliases();
-
-            //
-            // request the appropriate query details
-            //
-            LABKEY.Query.getQueryDetails({
-                schemaName: schema,
-                queryName: query,
-                success : function(queryDetails) {
-                    var columns = queryDetails.defaultView.columns,
-                        me = this;
-
-                    function mockUpMeasure(measure) {
-                        Ext.apply(measure, {
-                            schemaName: schema,
-                            queryName: query
-                        });
-
-                        // Add these into the MEASURE_STORE
-                        measure.alias = LABKEY.Utils.getMeasureAlias(measure);
-                        measure.variableType = 'GRID_DEFAULT';
-
-                        if (measure.alias in defaultAliases) {
-                            var m = new LABKEY.Query.Visualization.Measure(measure);
-                            me.addMeasure(m);
-                            return m;
-                        }
-                    }
-
-                    Ext.each(columns, function(col) {
-                        var visMeasure = mockUpMeasure.call(this, col);
-
-                        if (visMeasure && visMeasure.hidden !== true) {
-                            this._gridMeasures.push(col);
-                        }
-
-                    }, this);
-
-                    if (Ext.isFunction(callback)) {
-                        callback.call(scope, me._gridMeasures);
-                    }
-                },
-                scope: this
-            });
-        }
-        else {
-            if (Ext.isFunction(callback)) {
-                callback.call(scope, this._gridMeasures);
-            }
-        }
+    getDefaultGridMeasures : function()
+    {
+        return this.GRID_MEASURES;
     },
 
-    getTimeAliases : function() {
-        if (!this.timeAliases) {
-            this.timeAliases = {'Days': 1, 'Weeks': 1, 'Months': 1}
+    getTimeAliases : function()
+    {
+        if (!this.timeAliases)
+        {
+            this.timeAliases = {};
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Days'] = 1;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks'] = 1;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Months'] = 1;
         }
+
         return this.timeAliases;
     },
 
-    addMeasure : function(measure) {
-        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias.toLowerCase()))) {
-            var sourceKey = measure.schemaName + '|' + measure.queryName;
-            var datas = this.getModelClone(measure, Connector.model.Measure.getFields());
+    addMeasure : function(measure)
+    {
+        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias.toLowerCase())))
+        {
+            var sourceKey = measure.schemaName + '|' + measure.queryName,
+                datas = this.getModelClone(measure, Connector.model.Measure.getFields()),
+                context = Connector.measure.Configuration.context;
 
             // overlay any source metadata
-            datas = Ext.apply(datas, Connector.measure.Configuration.context.sources[sourceKey]);
+            datas = Ext.apply(datas, context.sources[sourceKey]);
             // overlay any measure metadata
-            datas = Ext.apply(datas, Connector.measure.Configuration.context.measures[measure.alias]);
+            datas = Ext.apply(datas, context.measures[measure.alias]);
             // overlay any dimension metadata (used for Advanced Options panel of Variable Selector)
-            datas = Ext.apply(datas, Connector.measure.Configuration.context.dimensions[measure.alias]);
+            datas = Ext.apply(datas, context.dimensions[measure.alias]);
 
             this.MEASURE_STORE.add(datas);
             this.addSource(datas);
+            this.addMeasureAliasMap(datas);
+        }
+    },
+
+    addMeasureAliasMap : function(measure)
+    {
+        if (Ext.isString(measure.sourceMeasureAlias))
+        {
+            this.SOURCE_MEASURE_ALIAS_MAP.parent[measure.alias] = measure.sourceMeasureAlias;
+            this.SOURCE_MEASURE_ALIAS_MAP.child[measure.sourceMeasureAlias] = measure.alias;
         }
     },
 
     addSource : function(measure) {
         var key = measure.schemaName + '|' + measure.queryName;
-        if (!Ext.isObject(this.SOURCE_STORE.getById(key))) {
+        if (!Ext.isObject(this.SOURCE_STORE.getById(key)))
+        {
             // overlay any source metadata
             var datas = this.getModelClone(measure, Connector.model.Source.getFields());
             datas = Ext.apply(datas, Connector.measure.Configuration.context.sources[key]);
@@ -235,14 +228,41 @@ Ext.define('Connector.controller.Query', {
 
     getModelClone : function(record, fields) {
         // TODO: Consider using model.copy() instead
-        return Ext.copyTo({}, record, Ext.Array.pluck(fields, 'name'))
+        return Ext.copyTo({}, record, Ext.Array.pluck(fields, 'name'));
     },
 
-    getMeasureRecordByAlias : function(alias) {
+    getMeasureRecordByAlias : function(alias, altLookupType) {
         if (!this._ready) {
             console.warn('Requested measure before measure caching prepared.');
         }
-        return this.MEASURE_STORE.getById(alias.toLowerCase());
+
+        var record = this.MEASURE_STORE.getById(alias.toLowerCase());
+
+        if (this.getMeasureSourceAlias(alias, altLookupType) != null)
+        {
+            record = this.MEASURE_STORE.getById(this.getMeasureSourceAlias(alias, altLookupType).toLowerCase());
+        }
+
+        return record;
+    },
+
+    getMeasureSourceAlias : function(alias, altLookupType)
+    {
+        if (altLookupType === 'parent' && Ext.isDefined(this.SOURCE_MEASURE_ALIAS_MAP.parent[alias]))
+        {
+            return this.SOURCE_MEASURE_ALIAS_MAP.parent[alias];
+        }
+        else if (altLookupType === 'child' && Ext.isDefined(this.SOURCE_MEASURE_ALIAS_MAP.child[alias]))
+        {
+            return this.SOURCE_MEASURE_ALIAS_MAP.child[alias];
+        }
+
+        return null;
+    },
+
+    getMeasureNameFromAlias : function(alias) {
+        var record = this.getMeasureRecordByAlias(alias);
+        return record ? record.get('name') : null;
     },
 
     /**
@@ -250,7 +270,7 @@ Ext.define('Connector.controller.Query', {
      * @param measureAlias
      * @returns {*}
      */
-    getMeasure : function(measureAlias) {
+    getMeasure : function(measureAlias, altLookupType) {
         if (!this._ready) {
             console.warn('Requested measure before measure caching prepared.');
         }
@@ -258,8 +278,8 @@ Ext.define('Connector.controller.Query', {
         // for lookups, just resolve the base column (e.g. study_Nab_Lab/PI becomes study_Nab_Lab)
         var cleanAlias = Ext.clone(measureAlias).split('/')[0];
 
-        if (Ext.isString(cleanAlias) && Ext.isObject(this.getMeasureRecordByAlias(cleanAlias))) {
-            return Ext.clone(this.getMeasureRecordByAlias(cleanAlias).getData());
+        if (Ext.isString(cleanAlias) && Ext.isObject(this.getMeasureRecordByAlias(cleanAlias, altLookupType))) {
+            return Ext.clone(this.getMeasureRecordByAlias(cleanAlias, altLookupType).getData());
         }
 
         console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
@@ -311,6 +331,16 @@ Ext.define('Connector.controller.Query', {
         return dimensionArray;
     },
 
+    /** Query the SOURCE_STORE for a given set of records
+     * @param property
+     * @param value
+     * @returns collection of matched records
+     */
+    getSources : function(property, value)
+    {
+        return this.SOURCE_STORE.query(property, value, false, true, true).items;
+    },
+
     /**
      * Returns the array of distinct rows for the measure set combination. The results are cached for the measure set using a key derived from the measure's aliases.
      * @param {Array} measureSet Array of measures to use in the SELECT DISTINCT query. It is expected that they are all from the same schema/query.
@@ -360,7 +390,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     * Use the cdsGetData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
+     * Use the cds getData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
      *      for showing which values are relevant in the variable selector Advanced Options panels.
      * @param {Object} dimension
      * @param {Array} measureSet
@@ -369,32 +399,43 @@ Ext.define('Connector.controller.Query', {
      * @param {Object} [scope]
      * @returns {Object}
      */
-    getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, callback, scope) {
-        var subjectMeasure, wrappedMeasureSet = [], aliases = [],
-            measureData, filterMeasures, index, filterMeasureRecord, alias,
-            dimQueryKey = dimension.get('schemaName') + '|' + dimension.get('queryName');
+    getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, plotAxis, callback, scope) {
+        var subjectMeasure,
+            state = Connector.getState(),
+            wrappedMeasureSet = [],
+            aliases = [],
+            measureData,
+            alias;
 
         if (Ext.isDefined(measureSet))
         {
-            if (!Ext.isArray(measureSet)) {
+            if (!Ext.isArray(measureSet))
+            {
                 measureSet = [measureSet];
             }
 
-            // get the cube subjectList so that we can filter the advanced option values accordingly
-            ChartUtils.getSubjectsIn(function(subjectList) {
+            // get the cube subjectList, excluding the "In the plot" filter...see last param to configureOlapFilters,
+            // so that we can filter the advanced option values accordingly (i.e. for antigen selection in variable
+            // selector, get subject count for all filters except the antigen selection itself)
+            this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(hasFilters, subjects) {
                 subjectMeasure = new LABKEY.Query.Visualization.Measure({
                     schemaName: dimension.get('schemaName'),
                     queryName: dimension.get('queryName'),
                     name: Connector.studyContext.subjectColumn,
-                    values: subjectList
+                    type: 'VARCHAR'
                 });
+
+                subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
+                subjectMeasure.values = subjects;
 
                 aliases.push(Connector.studyContext.subjectColumn);
                 wrappedMeasureSet.push({measure: subjectMeasure});
 
-                Ext.each(measureSet, function(measure) {
+                Ext.each(measureSet, function(measure)
+                {
                     measureData = Ext.clone(measure.data);
-                    if (Ext.isArray(filterValuesMap[measure.get('alias')])) {
+                    if (Ext.isArray(filterValuesMap[measure.get('alias')]))
+                    {
                         measureData.values = filterValuesMap[measure.get('alias')];
                     }
 
@@ -402,35 +443,14 @@ Ext.define('Connector.controller.Query', {
                     wrappedMeasureSet.push({measure: measureData});
                 });
 
-                // get the relevant application filters to add to the measure set
-                // (i.e. if it is from the same query or is from a demographic dataset)
-                filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters(), true, [dimQueryKey]);
-                Ext.each(filterMeasures, function(filterMeasure) {
-                    alias = LABKEY.Utils.getMeasureAlias(filterMeasure.measure);
-                    index = aliases.indexOf(alias);
-
-                    // if we already have this measure in our set, then just tack on the filterArray
-                    if (index > -1) {
-                        wrappedMeasureSet[index].filterArray = filterMeasure.filterArray;
-                    }
-                    else {
-                        filterMeasureRecord = this.getMeasureRecordByAlias(alias);
-                        if (Ext.isDefined(filterMeasureRecord)) {
-                            wrappedMeasureSet.push({
-                                filterArray: filterMeasure.filterArray,
-                                measure: Ext.clone(filterMeasureRecord.data)
-                            });
-                        }
-                    }
-                }, this);
-
-                LABKEY.Query.Visualization.getData({
+                QueryUtils.getData({
                     measures: wrappedMeasureSet,
                     metaDataOnly: true,
-                    endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
                     scope: this,
-                    success: function(response) {
-                        if (Ext.isFunction(callback)) {
+                    success: function(response)
+                    {
+                        if (Ext.isFunction(callback))
+                        {
                             callback.call(scope || this, response);
                         }
                     }
@@ -440,7 +460,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     * Use the cdsGetData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
+     * Use the cds getData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
      *      for showing which values are relevant in the variable selector Advanced Options panels by returning the subject
      *      count for each distinct value of a specific column in the temp query.
      * @param {Object} dimension
@@ -450,14 +470,14 @@ Ext.define('Connector.controller.Query', {
      * @param {Object} [scope]
      * @returns {Object}
      */
-    getMeasureValueSubjectCount : function(dimension, measureSet, filterValuesMap, callback, scope) {
+    getMeasureValueSubjectCount : function(dimension, measureSet, filterValuesMap, plotAxis, callback, scope) {
 
-        // get the temp query information from the cdsGetData API call for the measureSet with the application filters added in
-        this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, function(response) {
+        // get the temp query information from the cds getData API call for the measureSet with the application filters added in
+        this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, plotAxis, function(response) {
             var alias = dimension.getFilterMeasure().get('alias'), sql;
 
             // SQL to get the subject count for each value of the filter measure
-            sql = 'SELECT COUNT(DISTINCT ' + dimension.get('schemaName') + '_' + dimension.get('queryName') + '_SubjectId) AS SubjectCount, '
+            sql = 'SELECT COUNT(DISTINCT "' + QueryUtils.SUBJECT_ALIAS + '") AS SubjectCount, '
                     + alias + ' FROM ' + response.queryName
                     + dimension.getDistinctValueWhereClause()
                     + ' GROUP BY ' + alias;
@@ -497,21 +517,22 @@ Ext.define('Connector.controller.Query', {
 
         var sources = {}, sourceArray = [], measures = {}, measureArray = [],
             queryTypeMatch, measureOnlyMatch, timepointMatch,
-            hiddenMatch, notSubjectColMatch, userFilterMatch,
+            hiddenMatch, demogSubjectColMatch, userFilterMatch, requiredVarMatch,
             key, source, sourceContextMap = Connector.measure.Configuration.context.sources;
 
         Ext.each(this.MEASURE_STORE.getRange(), function(record) {
             queryTypeMatch = !config.queryType || record.get('queryType') == config.queryType;
             measureOnlyMatch = !config.measuresOnly || record.get('isMeasure');
             timepointMatch = config.includeTimpointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
-            hiddenMatch = config.includeHidden || !record.get('hidden');
-            notSubjectColMatch = record.get('name') != Connector.studyContext.subjectColumn;
+            requiredVarMatch = config.includeAssayRequired && record.get('recommendedVariableGrouper') == '1_AssayRequired';
+            demogSubjectColMatch = config.includeAssayRequired && record.get('isDemographic') && record.get('name') == Connector.studyContext.subjectColumn;
+            hiddenMatch = config.includeHidden || !record.get('hidden') || requiredVarMatch || demogSubjectColMatch;
 
             // The userFilter is a function used to further filter down the available measures.
             // Needed so the color picker only displays categorical measures.
             userFilterMatch = !Ext.isFunction(config.userFilter) || config.userFilter(record.data);
 
-            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch && userFilterMatch)
+            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && userFilterMatch)
             {
                 measures[record.get('alias')] = true;
                 measureArray.push(Ext.clone(record.raw));
@@ -581,407 +602,168 @@ Ext.define('Connector.controller.Query', {
         return this.DEFINED_MEASURE_SOURCE_MAP;
     },
 
-    getDataSorts : function() {
-        if (!this._dataSorts) {
-            // TODO: Source these differently? This is requiring us to split these out
-            this._dataSorts = [{
-                schemaName: Connector.studyContext.gridBaseSchema,
-                queryName: Connector.studyContext.gridBase,
-                name: 'Container'
-            },{
-                schemaName: Connector.studyContext.gridBaseSchema,
-                queryName: Connector.studyContext.gridBase,
-                name: 'SubjectId'
-            },{
-                schemaName: Connector.studyContext.gridBaseSchema,
-                queryName: Connector.studyContext.gridBase,
-                name: 'SubjectVisit'
-            }];
-        }
-
-        return this._dataSorts;
-    },
-
-    getDefaultMeasure : function(callback, scope) {
-        if (Ext.isFunction(callback)) {
-            this.onQueryReady(function() {
-                this.getDefaultGridMeasures(function(measures) {
-                    callback.call(scope || this, measures[0]);
-                }, this);
-            }, this);
-        }
-        else {
-            console.error('ERROR: ' + this.$className + '.getDefaultMeasure() requires a callback be provided.');
-        }
-    },
-
-    getData : function(measures, success, failure, scope) {
-
-        LABKEY.Query.Visualization.getData({
-            endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+    getData : function(measures, success, failure, scope, extraFilters)
+    {
+        var config = {
             measures: measures,
-            sorts: this.getDataSorts(),
             metaDataOnly: true,
-            joinToFirst: true,
             success: success,
             failure: failure,
             scope: scope
-        });
+        };
 
+        if (Ext.isArray(extraFilters))
+        {
+            config.extraFilters = extraFilters;
+        }
+
+        QueryUtils.getData(config);
     },
 
-    getMeasureStore : function(measures, success, failure, scope) {
+    getMeasureStore : function(measures, success, failure, scope)
+    {
         LABKEY.Query.experimental.MeasureStore.getData({
             measures: measures,
-            endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
             success: success,
             failure: failure,
             scope: scope
-        });
+        }, QueryUtils.getData, QueryUtils);
     },
 
     /**
      * Get a LABKEY.Query.Visualization.getData configuration back based on the LABKEY.app.model.Filter given.
-     * @param filterConfig The object which will be added as a COUNT/WHERE filter.
-     * @param appFilter {LABKEY.app.model.Filter} or an appFilterData
-     * @returns LABKEY.Query.Visualization.getData configuration
+     * @param {LABKEY.query.olap.MDX} mdx - The object which will be added as a COUNT/WHERE filter.
+     * @param {Connector.model.Filter} filters - or an appFilterData
+     * @param {String} subjectName - or an appFilterData
+     * @param {String} [excludeInThePlotAxis=undefined] - exclude the "in the plot" filter for the query from a specific axis
+     * @returns {Array}
      */
-    getDataFilter : function(filterConfig, appFilter) {
+    configureOlapFilters : function(mdx, filters, subjectName, excludeInThePlotAxis)
+    {
+        var olapFilters = [],
+            measures = [];
 
-        if (!Ext.isDefined(this._gridMeasures)) {
-            console.error('called getDataFilter() too early. Unable to determine base measure');
-        }
+        Ext.each(filters, function(filter)
+        {
+            // we want to INTERSECT application filters, this is accomplished
+            // by specifying a different axisName property per filter
+            var axisId = Ext.id(undefined, 'axis-');
+            if (filter.get('filterSource') === 'GETDATA')
+            {
+                if (filter.isPlot())
+                {
+                    // plot selection or "in the plot"
 
-        var getDataConfig = {
-            joinToFirst: true,
-            measures: [{
-                measure: this.cleanMeasure(this._gridMeasures[0]),
-                time: 'date'
-            }],
-            sorts: this.getDataSorts()
-        };
+                    if (excludeInThePlotAxis !== 'x')
+                    {
+                        Ext.each(filter.getMeasureSet('x'), function(filter)
+                        {
+                            filter.measure.axisName = axisId;
+                            measures.push(filter);
+                        });
+                    }
 
-        // for each gridFilter, match it to a measure that will be used in the getData configuration
-        var dataConfig = Ext.isDefined(appFilter.data) ? appFilter.data : appFilter;
-        var measures = this._getMeasures(dataConfig, false /* measure.filterArray is an array of query strings */);
-
-        Ext.each(measures, function(measure) {
-            getDataConfig.measures.push(measure);
+                    if (excludeInThePlotAxis !== 'y')
+                    {
+                        axisId = Ext.id(undefined, 'axis-');
+                        Ext.each(filter.getMeasureSet('y'), function(filter)
+                        {
+                            filter.measure.axisName = axisId;
+                            measures.push(filter);
+                        });
+                    }
+                }
+                else if (filter.isGrid() || filter.isAggregated())
+                {
+                    // grid / aggregated
+                    Ext.each(filter.getMeasureSet(), function(filter)
+                    {
+                        filter.measure.axisName = axisId;
+                        measures.push(filter);
+                    });
+                }
+            }
+            else
+            {
+                olapFilters.push(filter.getOlapFilter(mdx, subjectName));
+            }
         });
 
-        filterConfig.getDataCDS = getDataConfig;
-        filterConfig.level = '[Subject].[Subject]'; // TODO: Retrieve from application metadata (cube.js)
-
-        return filterConfig;
-    },
-
-    /**
-     * Given a set of LABKEY.app.model.Filter filters this method will return the set of measures that are used
-     * in all whereFilters with the appropriate configuration.
-     * @param filters
-     * @param includeDemographic true to include all fitlers from demographic queries
-     * @param relevantQueryKeys array of relevant query keys (schema|query) for which filters to be included from
-     */
-    getWhereFilterMeasures : function(filters, includeDemographic, relevantQueryKeys) {
-        var measures = [], queryKey, include;
-
-        Ext.each(filters, function(filter) {
-            if (filter.get('isWhereFilter') === true) {
-                var ms = this._getMeasures(filter.data, true /* measure.filterArray is array of LABKEY.Filter */);
-                Ext.each(ms, function(m) {
-                    queryKey = m.measure.schemaName + '|' + m.measure.queryName;
-
-                    include = !Ext.isArray(relevantQueryKeys) || relevantQueryKeys.indexOf(queryKey) > -1;
-                    if (m.measure.isDemographic) {
-                        include = !Ext.isBoolean(includeDemographic) || includeDemographic;
-                    }
-
-                    if (include) {
-                        measures.push(m);
-                    }
-                });
-            }
-        }, this);
-
-        return measures;
-    },
-
-    /**
-     * Given a set of LABKEY.app.model.Filter filters this method will return the set of measures that are used
-     * in plot brushing filters.
-     * @param includeAxisFilters
-     */
-    getPlotBrushFilterMeasures : function(includeAxisFilters) {
-        var measures = [], filters = Connector.getState().getFilters();
-
-        Ext.each(filters, function(filter) {
-            if (filter.get('isPlot') === true && filter.get('isWhereFilter') === true) {
-                var ms = this._getMeasures(filter.data, true /* measure.filterArray is array of LABKEY.Filter */);
-                Ext.each(ms, function(m) {
-                    if (includeAxisFilters || Ext.isArray(m.filterArray)) {
-                        measures.push(m);
-                    }
-                });
-            }
-        }, this);
-
-        return measures;
-    },
-
-    /**
-     * Returns a set of measures based on an array of gridFilters (a.k.a. LABKEY.Filter objects)
-     * @param filterConfig
-     * @param filtersAreInstances
-     * @returns {Array}
-     * @private
-     */
-    _getMeasures : function(filterConfig, filtersAreInstances) {
-        var measures = [], measureMap = {}, alias;
-
-        if (filterConfig.isPlot === true) {
-            // use the plotMeasures to determine the measure set
-            Ext.each(filterConfig.plotMeasures, function(plotMeasure) {
-                if (plotMeasure) {
-                    var measure = this.getMeasure(plotMeasure.measure.alias);
-                    if (measure) {
-
-                        // we still respect the value if it is set explicitly on the measure
-                        if (!Ext.isDefined(measure.inNotNullSet)) {
-                            measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
-                        }
-
-                        measureMap[measure.alias] = {
-                            measure: measure,
-                            filterArray: []
-                        };
-
-                        if (Ext.isArray(plotMeasure.filterArray)) {
-                            Ext.each(plotMeasure.filterArray, function(filter) {
-                                if (filter.getURLParameterName) {
-                                    measureMap[measure.alias].filterArray.push(this.encodeURLFilter(filter));
-                                }
-                            }, this);
-                        }
-
-                        if (plotMeasure.time) {
-                            measureMap[measure.alias].time = plotMeasure.time;
-                        }
-                        if (plotMeasure.dimension) {
-                            measureMap[measure.alias].dimension = plotMeasure.dimension;
-                        }
-                        if (plotMeasure.dateOptions) {
-                            measureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
-                        }
-
-                        // plotMeasures can have 'Advanced Options' (i.e. axis filters) which need to be added to the measure set
-                        Ext.each(Connector.model.Measure.getPlotAxisFilterMeasureRecords(plotMeasure.measure), function(axisFilterRecord) {
-                            alias = LABKEY.Utils.getMeasureAlias(axisFilterRecord);
-
-                            // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
-                            if (Ext.isDefined(measureMap[alias]) && Ext.isArray(measureMap[alias].measure.values)) {
-                                measureMap[alias].measure.values = Ext.Array.unique(measureMap[alias].measure.values.concat(axisFilterRecord.values));
-                            }
-                            else {
-                                measureMap[alias] = {
-                                    measure: axisFilterRecord,
-                                    filterArray: []
-                                };
-                            }
-                        }, this);
-                    }
-                }
-            }, this);
+        if (measures.length > 0)
+        {
+            olapFilters.push({
+                level: '[Subject].[Subject]', // TODO: Retrieve from application metadata (cube.js)
+                sql: QueryUtils.getSubjectIntersectSQL({
+                    measures: measures
+                })
+            });
         }
 
-        // look at the grid filters to determine measure set
-        if (!Ext.isEmpty(filterConfig.gridFilter)) {
-            var gridFilters = filterConfig.gridFilter, columnName, measure, encodedFilter;
+        return olapFilters;
+    },
 
-            for (var g=0; g < gridFilters.length; g++) {
-                var gf = gridFilters[g];
-                // At times the filter can be null/undefined (e.g. when the plot specifies x-axis filters only)
-                if (gf && gf !== "_null") {
+    getSourceCounts : function(sourceModels, plotAxis, callback, scope) {
 
-                    if (Ext.isString(gf)) {
-                        gf = LABKEY.Filter.getFiltersFromUrl(gf, 'query')[0];
-                    }
+        var json = {
+            schema: 'study',
+            sources: []
+        };
 
-                    columnName = gf.getColumnName();
-                    measure = this.getMeasure(columnName);
-                    if (measure) {
-
-                        var filterOnLookup = columnName.indexOf('/') > -1;
-
-                        // process the filter itself, if it is a lookup then we just include it directly
-                        if (filterOnLookup) {
-                            // here we fake up a measure. The getData API accepts filters of the form
-                            // "study_Nab_Lab/PI" as "Lab.PI"
-                            var schema = measure.schemaName,
-                                query = measure.queryName,
-                                alias = columnName.replace(/\//g, '_');
-
-                            // This avoids schemas/queries that have '_' in them
-                            var columnNamePortion = columnName.replace([schema, query].join('_'), '');
-                            if (columnNamePortion.indexOf('_') === 0) {
-                                columnNamePortion = columnNamePortion.substring(1);
-                            }
-
-                            var parts = columnNamePortion.replace(/\//g, '.').split('_'),
-                                safeColName;
-
-                            // ["study", "SubjectVisit", "SubjectId", "Study/Label"] --> "SubjectId/Study/Label"
-                            if (parts.length > 1) {
-                                safeColName = parts.join('/');
-                            }
-                            else {
-                                safeColName = parts[parts.length-1];
-                            }
-
-                            var nf = LABKEY.Filter.create(safeColName.replace(/\./g, '/'), gf.getValue(), gf.getFilterType());
-
-                            if (!measureMap[alias]) {
-                                measureMap[alias] = {
-                                    measure: {
-                                        alias: alias,
-                                        schemaName: schema,
-                                        queryName: query,
-                                        name: safeColName,
-                                        inNotNullSet: true // unfortunately, we don't know much about the lookup type
-                                    },
-                                    filterArray: []
-                                };
-                            }
-
-                            if (nf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
-                                measureMap[alias].measure.inNotNullSet = false;
-                            }
-
-                            encodedFilter = this.encodeURLFilter(nf);
-                            measureMap[alias].filterArray.push(filtersAreInstances ? nf : encodedFilter);
-                        }
-                        else {
-
-                            var isTimeBased = measure.alias in this.getTimeAliases();
-
-                            if (!measureMap[measure.alias]) {
-
-                                // we still respect the value if it is set explicitly on the measure
-                                if (!Ext.isDefined(measure.inNotNullSet)) {
-                                    measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
-                                }
-
-                                measureMap[measure.alias] = {
-                                    measure: measure,
-                                    filterArray: []
-                                };
-
-                                if (isTimeBased) {
-                                    measureMap[measure.alias].dateOptions = {
-                                        interval: measure.alias,
-                                        zeroDayVisitTag: null
-                                    };
-                                }
-                            }
-
-                            if (gf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
-                                measureMap[measure.alias].measure.inNotNullSet = false;
-                            }
-
-                            if (columnName === measure.name || isTimeBased) {
-                                encodedFilter = this.encodeURLFilter(gf);
-                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : encodedFilter);
-                            }
-                            else {
-                                // create a filter with the measure 'name' rather than the 'alias' as the column
-                                var _gf = LABKEY.Filter.create(measure.name, gf.getValue(), gf.getFilterType());
-                                encodedFilter = this.encodeURLFilter(_gf);
-                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? _gf : encodedFilter);
-                            }
-                        }
-                    }
-                    else {
-                        console.warn('Unable to find measure for query parameter:', gf.getURLParameterName() + '=' + gf.getURLParameterValue());
-                    }
-                }
+        Ext.each(sourceModels, function(source) {
+            var queryName = source.get('subjectCountQueryName') || source.get('queryName');
+            if (json.sources.indexOf(queryName) == -1) {
+                json.sources.push(queryName);
             }
-        }
+        });
 
-        Ext.iterate(measureMap, function(alias, config) {
-            var mc = {
-                measure: this.cleanMeasure(config.measure)
-            };
-            if (config.dimension) {
-                mc.dimension = config.dimension;
-            }
-            if (config.dateOptions) {
-                mc.dateOptions = config.dateOptions;
-            }
-            if (config.filterArray.length > 0) {
-                mc.filterArray = config.filterArray;
-            }
+        this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(hasFilters, subjects) {
+            json.members = hasFilters ? subjects : undefined;
 
-            measures.push(mc);
+            Ext.Ajax.request({
+                url: LABKEY.ActionURL.buildURL('visualization', 'getSourceCounts.api'),
+                method: 'POST',
+                jsonData: json,
+                success: function(response) {
+                    var counts = Ext.decode(response.responseText).counts;
+                    callback.call(scope || this, sourceModels, counts);
+                },
+                scope: this
+            });
         }, this);
-
-        return measures;
     },
 
     /**
-     * The exclusive set of measure properties that will be sent across the wire
+     * Get the array of subjects that match all application filters, with the option to exclude plot filters from a given axis.
+     * @param {String} excludeInThePlotAxis - exclude the "in the plot" filter for the subject count from a specific axis (x/y)
+     * @param {Function} callback
+     * @param {Object} scope
+     * @returns {boolean} indicates if the subject count request has filters or not
+     * @returns {Array} subjects returned by the MDX query
      */
-    MEASURE_PROPERTIES: 'aggregate,alias,allowNullResults,defaultScale,inNotNullSet,isDemographic,name,queryName,requireLeftJoin,schemaName,values',
+    getSubjectsExcludingPlotAxisFilters : function(excludeInThePlotAxis, callback, scope)
+    {
+        var state = Connector.getState(),
+            queryService = Connector.getQueryService(),
+            countFilters,
+            subjects;
 
-    cleanMeasure : function(measure) {
-        return Ext.copyTo({}, measure, this.MEASURE_PROPERTIES)
-    },
+        state.onMDXReady(function(mdx)
+        {
+            countFilters = queryService.configureOlapFilters(mdx, state.getFilters(), state.subjectName, excludeInThePlotAxis);
 
-    clearSourceCountsCache : function() {
-        this.SOURCE_COUNTS = undefined;
-    },
-
-    getSourceCounts : function(sourceModels, callback, scope, membersFn, membersFnScope) {
-
-        if (Ext.isFunction(callback)) {
-
-            var makeRequest = function(members) {
-                // we cache the source count results so they can share between variable sectors
-                if (Ext.isDefined(this.SOURCE_COUNTS)) {
-                    callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
-                    return;
+            mdx.query({
+                onRows: {
+                    level: '[Subject].[Subject]',
+                    members: 'members'
+                },
+                countFilter: countFilters,
+                success: function (cellset)
+                {
+                    subjects = Ext.Array.pluck(Ext.Array.flatten(cellset.axes[1].positions), 'name');
+                    callback.call(scope || this, countFilters.length > 0, subjects);
                 }
-
-                var json = {
-                    schema: Connector.studyContext.schemaName,
-                    members: Ext.isArray(members) ? members : undefined,
-                    sources: []
-                };
-
-                Ext.each(sourceModels, function(source) {
-                    var queryName = source.get('subjectCountQueryName') || source.get('queryName');
-                    if (json.sources.indexOf(queryName) == -1) {
-                        json.sources.push(queryName);
-                    }
-                });
-
-                Ext.Ajax.request({
-                    url: LABKEY.ActionURL.buildURL('visualization', 'getSourceCounts.api'),
-                    method: 'POST',
-                    jsonData: json,
-                    success: function(response) {
-                        this.SOURCE_COUNTS = Ext.decode(response.responseText).counts;
-                        callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
-                    },
-                    scope: this
-                });
-            };
-
-            if (Ext.isFunction(membersFn)) {
-                membersFn.call(membersFnScope, makeRequest, this);
-            }
-            else {
-                makeRequest();
-            }
-        }
+            });
+        });
     },
 
     /**

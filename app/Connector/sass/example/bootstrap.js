@@ -7,6 +7,7 @@
 Ext.Loader.addClassPathMappings({
   "Animation": "../../../../webapp/Connector/src/utility/Animation.js",
   "Connector.Application": "../../../../webapp/Connector/src/Application.js",
+  "Connector.Filter": "../../../../webapp/Connector/src/model/Filter.js",
   "Connector.app.model.Assay": "../../../../webapp/Connector/src/app/model/Assay.js",
   "Connector.app.model.Dataset": "../../../../webapp/Connector/src/app/model/Dataset.js",
   "Connector.app.model.DatasetData": "../../../../webapp/Connector/src/app/model/DatasetData.js",
@@ -45,6 +46,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Connector": "../../../../webapp/Connector/src/controller/Connector.js",
   "Connector.controller.Data": "../../../../webapp/Connector/src/controller/Data.js",
   "Connector.controller.Explorer": "../../../../webapp/Connector/src/controller/Explorer.js",
+  "Connector.controller.Filter": "../../../../webapp/Connector/src/controller/Filter.js",
   "Connector.controller.FilterStatus": "../../../../webapp/Connector/src/controller/FilterStatus.js",
   "Connector.controller.Group": "../../../../webapp/Connector/src/controller/Group.js",
   "Connector.controller.Home": "../../../../webapp/Connector/src/controller/Home.js",
@@ -107,6 +109,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.VisitTagSingleUse": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
   "Connector.utility.Chart": "../../../../webapp/Connector/src/utility/Chart.js",
+  "Connector.utility.Query": "../../../../webapp/Connector/src/utility/Query.js",
   "Connector.view.About": "../../../../webapp/Connector/src/view/About.js",
   "Connector.view.Chart": "../../../../webapp/Connector/src/view/Chart.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
@@ -193,6 +196,7 @@ Ext.Loader.addClassPathMappings({
 Ext.ClassManager.addNameAlternateMappings({
   "Animation": [],
   "Connector.Application": [],
+  "Connector.Filter": [],
   "Connector.app.model.Assay": [],
   "Connector.app.model.Dataset": [],
   "Connector.app.model.DatasetData": [],
@@ -231,6 +235,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Connector": [],
   "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
+  "Connector.controller.Filter": [],
   "Connector.controller.FilterStatus": [],
   "Connector.controller.Group": [],
   "Connector.controller.Home": [],
@@ -294,6 +299,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.types.Filter": [],
   "Connector.utility.Chart": [
     "ChartUtils"
+  ],
+  "Connector.utility.Query": [
+    "QueryUtils"
   ],
   "Connector.view.About": [],
   "Connector.view.Chart": [],
@@ -1196,6 +1204,7 @@ Ext.ClassManager.addNameAlternateMappings({
 Ext.ClassManager.addNameAliasMappings({
   "Animation": [],
   "Connector.Application": [],
+  "Connector.Filter": [],
   "Connector.app.model.Assay": [],
   "Connector.app.model.Dataset": [],
   "Connector.app.model.DatasetData": [],
@@ -1250,6 +1259,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Connector": [],
   "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
+  "Connector.controller.Filter": [],
   "Connector.controller.FilterStatus": [],
   "Connector.controller.Group": [],
   "Connector.controller.Home": [],
@@ -1342,6 +1352,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.types.Filter": [],
   "Connector.utility.Chart": [],
+  "Connector.utility.Query": [],
   "Connector.view.About": [
     "widget.about"
   ],
