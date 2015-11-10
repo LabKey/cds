@@ -601,7 +601,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             assertElementPresent(plotBox, 1);
-            assertElementPresent(plotPoint, 3627); // TODO Test data dependent.
+            assertElementPresent(plotPoint, 3627);
         }
 
         // Choose a categorical axis to verify that multiple box plots will appear.
@@ -617,7 +617,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             assertElementPresent(plotBox, 2);
-            assertElementPresent(plotPoint, 3627); // TODO Test data dependent.
+            assertElementPresent(plotPoint, 3627);
         }
 
         // Choose a continuous axis and verify that the chart goes back to being a scatter plot.
@@ -638,23 +638,23 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         waitForElement(Locators.plotBox);
-        waitForElement(Locators.plotTick.withText("Asian"), 20000); // TODO Test data dependent.
+        waitForElement(Locators.plotTick.withText("Asian"), 20000);
 
         if (CDSHelper.validateCounts)
         {
-            assertElementPresent(plotBox, 10); // TODO Test data dependent.
-            assertElementPresent(plotPoint, 3627); // TODO Test data dependent.
+            assertElementPresent(plotBox, 10);
+            assertElementPresent(plotPoint, 3627);
         }
 
         //Verify x axis categories are selectable as filters
-        mouseOver(Locators.plotTick.withText("Asian")); // TODO Test data dependent.
+        mouseOver(Locators.plotTick.withText("Asian"));
 
         if (CDSHelper.validateCounts)
         {
-            assertEquals("Incorrect number of points highlighted after mousing over x axis category", 316, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
+            assertEquals("Incorrect number of points highlighted after mousing over x axis category", 316, getPointCountByColor(MOUSEOVER_FILL));
         }
 
-        click(Locators.plotTick.withText("Asian")); // TODO Test data dependent.
+        click(Locators.plotTick.withText("Asian"));
         //ensure filter buttons are present
         waitForElement(Locators.filterDataButton);
         assertElementPresent(Locators.removeButton);
@@ -662,9 +662,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             //ensure correct number of points are highlighted
-            assertEquals("incorrect number of points highlighted after clicking x axis category", 316, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
+            assertEquals("Incorrect number of points highlighted after clicking x axis category", 316, getPointCountByColor(MOUSEOVER_FILL));
             //ensure correct total number of points
-            assertEquals("incorrect total number of points after clicking x axis category", 3627, getPointCount()); // TODO Test data dependent.
+            assertEquals("Incorrect total number of points after clicking x axis category", 3627, getPointCount());
             //apply category selection as a filter
         }
 
@@ -673,7 +673,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            waitForPointCount(316, 20000); // TODO Test data dependent.
+            waitForPointCount(316, 20000);
         }
 
         //clear filter
@@ -694,21 +694,21 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            waitForPointCount(3627, 20000); // TODO Test data dependent.
+            waitForPointCount(3627, 20000);
         }
 
         //verify multi-select of categories
-        selectXAxes(false, "White", "Multiracial", "Native Hawaiian/Paci", "Native American/Alas. Other"); // TODO Test data dependent.
+        selectXAxes(false, "White", "Multiracial", "Native Hawaiian/Paci", "Native American/Alas. Other");
         sleep(3000); // Let the animation end.
 
         if (CDSHelper.validateCounts)
         {
             //ensure correct number of points are highlighted
-            assertEquals("Incorrect number of points highlighted after clicking x axis categories",1443, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
-            assertEquals("Incorrect total number of points after clicking x axis categories",3627, getPointCount()); // TODO Test data dependent.
+            assertEquals("Incorrect number of points highlighted after clicking x axis categories",1443, getPointCountByColor(MOUSEOVER_FILL));
+            assertEquals("Incorrect total number of points after clicking x axis categories",3627, getPointCount());
             //apply selection as exlusive filter
             waitAndClick(CDSHelper.Locators.cdsButtonLocator("Remove"));
-            waitForPointCount(3627 - 1443, 10000); // TODO Test data dependent.
+            waitForPointCount(3627 - 1443, 10000);
         }
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
@@ -1581,6 +1581,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
+        // Modify expected number of icons to be visible (we should not have overlapping vacc. and follow-up icons).
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 17, 0, 0));
+
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyWeeksScales);
 
@@ -1593,6 +1596,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected 7 studies in the Time Axis, found " + studies.size() + ".", studies.size() == 5);
         log("Study count was as expected.");
+
+        // Again account for behavior of not having overlapping icons.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 2, 5, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 3, 7, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 10, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 3, 5, 0, 0));
 
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyMonthsScales);
@@ -1607,6 +1616,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // When changing the alignment to anything other than Day 0 study HVTN 205 will not appear because it has no visit information.
         expectedCounts.remove("ZAP_135");
 
+        // Icon counts should go back to what they were before.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
+
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
@@ -1615,10 +1630,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertSVG(studyDaysScales);
 
         log("Change x-axis alignment to Last Vaccination, verify visit counts are as expected.");
-        expectedCounts.put("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 1));
-        expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 1));
-        expectedCounts.put("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
-        expectedCounts.put("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 1));
+        // pre-enrollment has been removed temporarily. Previously QED, YOYO and ZAP 133 had pre-enrollment.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.setAlignedBy("Last Vaccination");
@@ -1632,10 +1648,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertSVG(studyDaysScaleAligedVaccination);
 
         log("Change x-axis to Study weeks, and go back to aligned by Enrollment, verify visit are as expected.");
-        expectedCounts.put("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
-        expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
-        expectedCounts.put("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
-        expectedCounts.put("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 17, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
@@ -1651,10 +1667,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertSVG(studyWeeksScales);
 
         log("Change x-axis Aligned by Last Vaccination, verify visit are as expected.");
-        expectedCounts.put("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 1));
-        expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 1));
-        expectedCounts.put("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
-        expectedCounts.put("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 1));
+        // pre-enrollment has been removed temporarily. Previously QED, YOYO and ZAP 133 had pre-enrollment.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 17, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
@@ -1670,10 +1687,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertSVG(studyWeeksScalesAlignedVaccination);
 
         log("Change x-axis to Study months, and go back to aligned by Enrollment, verify visit are as expected.");
-        expectedCounts.put("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
-        expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
-        expectedCounts.put("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
-        expectedCounts.put("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 2, 5, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 3, 7, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 10, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 3, 5, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
@@ -1689,10 +1706,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertSVG(studyMonthsScales);
 
         log("Change x-axis Aligned by Last Vaccination, verify visit are as expected.");
-        expectedCounts.put("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 1));
-        expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 1));
-        expectedCounts.put("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
-        expectedCounts.put("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 1));
+        // pre-enrollment has been removed temporarily. Previously QED, YOYO and ZAP 133 had pre-enrollment.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 3, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 4, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 11, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 3, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
@@ -1726,10 +1744,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         List<String> expectedToolTipText;
 
         Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
-        expectedCounts.put("RED4", new CDSHelper.TimeAxisData("RED 4", 5, 7, 0, 0));
-        expectedCounts.put("ZAP110", new CDSHelper.TimeAxisData("ZAP 110", 5, 8, 0, 0));
-        expectedCounts.put("ZAP111", new CDSHelper.TimeAxisData("ZAP 111", 4, 7, 0, 0));
-        expectedCounts.put("ZAP134", new CDSHelper.TimeAxisData("ZAP 134", 4, 12, 0, 0));
+        expectedCounts.put("RED_4", new CDSHelper.TimeAxisData("RED 4", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_110", new CDSHelper.TimeAxisData("ZAP 110", 5, 7, 0, 0));
+        expectedCounts.put("ZAP_111", new CDSHelper.TimeAxisData("ZAP 111", 5, 8, 0, 0));
+        expectedCounts.put("ZAP_134", new CDSHelper.TimeAxisData("ZAP 134", 4, 12, 0, 0));
 
         final String yaxisScale = "\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
         final String studyDaysScales = "0\n200\n400\n600\n800\n1000" + yaxisScale; // TODO Test data dependent.
@@ -1762,27 +1780,27 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Alternative to hard coding the values would be to write a generator that would build the expected tool-tips,
         // but that is more effort that I have time for now.
         expectedToolTipText = new ArrayList<>();
-        expectedToolTipText.add("RED 4 - Day 28");
-        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Vaccination");
-        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Vaccination");
-        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Vaccination");
+        expectedToolTipText.add("RED 4");
+        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment, Vaccination");
         cssPath = "#study-axis > svg > g:nth-child(2)  > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("ZAP 111 - Day 28");
-        expectedToolTipText.add("Group 1 Arm Ca Placebo: Vaccination");
-        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Vaccination");
-        expectedToolTipText.add("Group 2 Arm Ca Placebo: Vaccination");
-        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Vaccination");
-        expectedToolTipText.add("Group 3 Arm Ca Placebo: Vaccination");
-        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Vaccination");
-        expectedToolTipText.add("Group 4 Arm Ca Placebo: Vaccination");
-        expectedToolTipText.add("Group 4 Arm T4 Vaccine: Vaccination");
-        expectedToolTipText.add("Group 5 Arm Cb Placebo: Vaccination");
-        expectedToolTipText.add("Group 5 Arm T5 Vaccine: Vaccination");
-        expectedToolTipText.add("Group 7 Arm Cb Placebo: Vaccination");
-        expectedToolTipText.add("Group 7 Arm T7 Vaccine: Vaccination");
+        expectedToolTipText.add("ZAP 111");
+        expectedToolTipText.add("Group 1 Arm Ca Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 2 Arm Ca Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 3 Arm Ca Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 4 Arm Ca Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 4 Arm T4 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 5 Arm Cb Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 5 Arm T5 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 7 Arm Cb Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 7 Arm T7 Vaccine: Enrollment, Vaccination");
         cssPath = "#study-axis > svg > g:nth-child(4)  > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
@@ -1791,19 +1809,19 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         expectedCounts.clear();
-        expectedCounts.put("RED4", new CDSHelper.TimeAxisData("RED 4", 0, 0, 0, 0));
-        expectedCounts.put("RED4_Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine: Vaccination", 5, 7, 0, 0));
-        expectedCounts.put("ZAP110", new CDSHelper.TimeAxisData("ZAP 110", 0, 0, 0, 0));
-        expectedCounts.put("ZAP110_Group_1_Arm_Ca_Placebo", new CDSHelper.TimeAxisData("Group 1 Arm Ca Placebo", 5, 8, 0, 0));
-        expectedCounts.put("ZAP110_Group_2_Arm_Ca_Placebo", new CDSHelper.TimeAxisData("Group 2 Arm Ca Placebo", 5, 8, 0, 0));
-        expectedCounts.put("ZAP110_Group_7_Arm_T7_Vaccine", new CDSHelper.TimeAxisData("Group 7 Arm T7 Vaccine", 5, 8, 0, 0));
-        expectedCounts.put("ZAP111", new CDSHelper.TimeAxisData("ZAP 111", 0, 0, 0, 0));
-        expectedCounts.put("ZAP111_Group_1_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 7, 0, 0));
-        expectedCounts.put("ZAP111_Group_3_Ca_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm Ca Placebo", 4, 7, 0, 0));
-        expectedCounts.put("ZAP111_Group_4_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 4 Arm T4 Vaccine", 4, 7, 0, 0));
-        expectedCounts.put("ZAP134", new CDSHelper.TimeAxisData("ZAP 134", 0, 0, 0, 0));
-        expectedCounts.put("ZAP134_Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 0));
-        expectedCounts.put("ZAP134_Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 0));
+        expectedCounts.put("RED_4", new CDSHelper.TimeAxisData("RED 4", 0, 0, 0, 0));
+        expectedCounts.put("RED_4_Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine: Vaccination", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_110", new CDSHelper.TimeAxisData("ZAP 110", 0, 0, 0, 0));
+        expectedCounts.put("ZAP_110_Group_1_Arm_Ca_Placebo", new CDSHelper.TimeAxisData("Group 1 Arm Ca Placebo", 5, 7, 0, 0));
+        expectedCounts.put("ZAP_110_Group_2_Arm_Ca_Placebo", new CDSHelper.TimeAxisData("Group 2 Arm Ca Placebo", 5, 7, 0, 0));
+        expectedCounts.put("ZAP_110_Group_7_Arm_T7_Vaccine", new CDSHelper.TimeAxisData("Group 7 Arm T7 Vaccine", 5, 7, 0, 0));
+        expectedCounts.put("ZAP_111", new CDSHelper.TimeAxisData("ZAP 111", 0, 0, 0, 0));
+        expectedCounts.put("ZAP_111_Group_1_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 5, 8, 0, 0));
+        expectedCounts.put("ZAP_111_Group_3_Ca_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm Ca Placebo", 5, 8, 0, 0));
+        expectedCounts.put("ZAP_111_Group_4_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 4 Arm T4 Vaccine", 5, 8, 0, 0));
+        expectedCounts.put("ZAP_134", new CDSHelper.TimeAxisData("ZAP 134", 0, 0, 0, 0));
+        expectedCounts.put("ZAP_134_Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 0));
+        expectedCounts.put("ZAP_134_Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 0));
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
@@ -1813,13 +1831,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("ZAP 110 - Day 287");
+        expectedToolTipText.add("ZAP 110 - Day 455");
         expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(18) > image:nth-of-type(10)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("ZAP 111 - Day 455");
+        expectedToolTipText.add("ZAP 111 - Day 364");
         expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(31) > image:nth-of-type(8)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
@@ -1830,11 +1848,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
         xaxis.confirmSelection();
 
-        expectedCounts.put("ZAP111_Group_1_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 7, 0, 0));
-        expectedCounts.put("ZAP111_Group_3_Ca_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm Ca Placebo", 4, 7, 0, 0));
-        expectedCounts.put("ZAP111_Group_4_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 4 Arm T4 Vaccine", 4, 7, 0, 0));
-        expectedCounts.put("ZAP134_Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 0));
-        expectedCounts.put("ZAP134_Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 0));
+        expectedCounts.put("ZAP_111_Group_1_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_111_Group_3_Ca_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm Ca Placebo", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_111_Group_4_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 4 Arm T4 Vaccine", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_134_Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 0));
+        expectedCounts.put("ZAP_134_Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 0));
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
@@ -1844,9 +1862,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("ZAP 111 - Day 273");
-        expectedToolTipText.add("Group 1 Arm Ca Placebo: tempus");
-        expectedToolTipText.add("Last Vaccination, Vaccination");
+        expectedToolTipText.add("ZAP 111 - Day 182");
+        expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
         cssPath = "#study-axis > svg > g.study:nth-child(22) > image.visit-tag[x^='3']";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
