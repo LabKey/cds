@@ -85,7 +85,7 @@ Ext.define('Connector.model.StudyAxisData', {
             studyMap = {},
             range = {min: null, max: null},
             interval, studyLabel, data = [],
-            study, studyContainer, studyKeys, visit, studyVisits, visitId, visitKeys, visitKey, visitLabel, seqMin,
+            study, studyContainer, studyKeys, visit, visitId, visitKeys, visitKey, visitLabel, seqMin,
             seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination, isChallenge,
             shiftVal, i, j, k, alignmentVisitTag, visitTagName,
             groupKeys, groupVisit, groupVisits, group, groups, groupLabel, groupDesc;
@@ -126,17 +126,27 @@ Ext.define('Connector.model.StudyAxisData', {
             // check group mapping
             if (!study.groups[groupLabel])
             {
-                study.groups[groupLabel] = {
-                    study: study.name,
-                    name: groupLabel,
-                    alignShiftValue: 0,
-                    timepointType: study.timepointType,
-                    visits: {}
+                if (groupLabel)
+                {
+                    study.groups[groupLabel] = {
+                        study: study.name,
+                        name: groupLabel,
+                        hasAlignment: !Ext.isDefined(alignmentVisitTag),
+                        alignShiftValue: 0,
+                        timepointType: study.timepointType,
+                        visits: {}
+                    }
+                }
+                else
+                {
+                    console.warn('StudyVisitTagInfo contains undefined group for study:', record.get('study_label'));
+                    return;
                 }
             }
 
             if (alignmentVisitTag && visitTagName === alignmentVisitTag)
             {
+                study.groups[groupLabel].hasAlignment = true;
                 study.groups[groupLabel].alignShiftValue = protocolDay;
 
                 // sets the maximum left-alignment for this study based on the highest protocolDay
@@ -158,6 +168,7 @@ Ext.define('Connector.model.StudyAxisData', {
             groupLabel = record.get('group_label');
             group = study.groups[groupLabel];
 
+            shiftVal = study.alignShiftValue;
             visitId = record.get('visit_row_id');
             visitLabel = record.get('visit_label');
             seqMin = record.get('sequence_num_min');
@@ -170,7 +181,11 @@ Ext.define('Connector.model.StudyAxisData', {
             isVaccination = record.get('is_vaccination');
             isChallenge = record.get('is_challenge');
 
-            shiftVal = study.alignShiftValue - (study.alignShiftValue - group.alignShiftValue);
+            if (group)
+            {
+                shiftVal -= (study.alignShiftValue - group.alignShiftValue);
+            }
+
             alignedDay = this.convertInterval(protocolDay - shiftVal, interval);
 
             if (timepointType !== 'VISIT')
@@ -184,7 +199,6 @@ Ext.define('Connector.model.StudyAxisData', {
             {
                 visit = this._genVisit({
                     studyLabel: studyLabel,
-                    //label: visitLabel,
                     sequenceNumMin: seqMin,
                     sequenceNumMax: seqMax,
                     alignedDay: alignedDay,
@@ -274,6 +288,12 @@ Ext.define('Connector.model.StudyAxisData', {
             for (j = 0; j < groupKeys.length; j++)
             {
                 group = study.groups[groupKeys[j]];
+
+                if (!group.hasAlignment)
+                {
+                    console.warn('"' + group.study + ': ' + group.name + '" does not have a tag for the current alignment.');
+                }
+
                 visitKeys = Object.keys(group.visits).sort();
                 groupVisits = [];
                 for (k = 0; k < visitKeys.length; k++)
