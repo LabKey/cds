@@ -56,11 +56,6 @@ Ext.define('Connector.utility.Query', {
         });
     },
 
-    getDataSQL : function(config)
-    {
-        return this._generateVisGetDataSql(config.measures, config.extraFilters, {}).sql;
-    },
-
     getSubjectIntersectSQL : function(config)
     {
         return this._generateVisGetDataSql(config.measures, config.extraFilters, {subjectOnly: true, intersect: true}).sql;
