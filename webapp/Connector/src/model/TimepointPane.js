@@ -26,13 +26,14 @@ Ext.define('Connector.model.TimepointPane', {
 
         this.populateFilterMembers(intervalAlias);
 
+        this.fireEvent('change', this);
         this.setReady();
     },
 
     populateFilterMembers : function(intervalAlias)
     {
         var modelDatas = [],
-            intervalName = intervalAlias.replace(QueryUtils.STUDY_ALIAS_PREFIX, ''),
+            intervalName = intervalAlias.replace(QueryUtils.STUDY_ALIAS_PREFIX, '').replace('s', ''),
             intervalVisitRowIdMap = {},
             store = this.get('memberStore');
 
