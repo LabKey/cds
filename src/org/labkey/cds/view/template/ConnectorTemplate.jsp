@@ -177,6 +177,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Source.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/InfoPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/InfoPaneMember.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/TimepointPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>

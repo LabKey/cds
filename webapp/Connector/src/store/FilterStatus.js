@@ -23,7 +23,8 @@ Ext.define('Connector.store.FilterStatus', {
         subcount: -1,
         plotBasedCount: true,
         activeCountLink: true,
-        infoPaneViewClass: 'Connector.view.TimepointPane'
+        viewClass: 'Connector.view.TimepointPane',
+        modelClass: 'Connector.model.TimepointPane'
     }],
 
     constructor : function(config) {

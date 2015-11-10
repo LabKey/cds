@@ -439,9 +439,10 @@ Ext.define('Connector.utility.Query', {
         if (options.timepointOnly)
         {
             SELECT.push(sep + rootTable.tableAlias + '.SubjectVisit.Visit.RowId,');
-            SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.SubjectVisit.Visit.ProtocolDay', this.STUDY_ALIAS_PREFIX + 'Days', false) + ' AS Days,');
-            SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.SubjectVisit.Visit.ProtocolDay', this.STUDY_ALIAS_PREFIX + 'Weeks', false) + ' AS Weeks,');
-            SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.SubjectVisit.Visit.ProtocolDay', this.STUDY_ALIAS_PREFIX + 'Months', false) + ' AS Months');
+            Ext.iterate(Connector.getQueryService().getTimeAliases(), function(timeAlias)
+            {
+                SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.SubjectVisit.Visit.ProtocolDay', timeAlias, false) + ' AS ' + timeAlias + ',');
+            }, this);
 
             // still need to see if there is a study axis measure with a visit tag alignment value
             Ext.each(allMeasures, function (m)

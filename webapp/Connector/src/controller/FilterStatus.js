@@ -118,7 +118,8 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     onDetailSelect : function(view, detail) {
-        if (detail.get('activeCountLink') === true) {
+        if (detail.get('activeCountLink') === true && detail.get('count') != -1)
+        {
             this.showFilterEditor(detail);
         }
     },
@@ -136,31 +137,41 @@ Ext.define('Connector.controller.FilterStatus', {
             // configure info pane view
             //
 
-            var clazz = 'Connector.view.InfoPane',
+            var viewClazz = 'Connector.view.InfoPane',
+                modelClazz = 'Connector.model.InfoPane',
                 config = {
                     dimension: filterOrDetail.get('dimension'),
                     hierarchy: filterOrDetail.get('hierarchy'),
                     level: filterOrDetail.get('level')
-                },
-                params = {
-                    data: filterOrDetail.get('dataRows')
                 };
 
             if (filterOrDetail.$className === 'Connector.model.Filter')
             {
 
                 if (filterOrDetail.isGrid() || filterOrDetail.isAggregated()) {
-                    clazz = 'Connector.view.GridPane';
+                    viewClazz = 'Connector.view.GridPane';
                 }
                 else if (filterOrDetail.isPlot()) {
-                    clazz = 'Connector.view.PlotPane';
+                    viewClazz = 'Connector.view.PlotPane';
                 }
 
                 config.filter = filterOrDetail;
             }
-            else if (filterOrDetail.get('infoPaneViewClass'))
+            else if (Ext.isString(filterOrDetail.get('viewClass')))
             {
-                clazz = filterOrDetail.get('infoPaneViewClass');
+                viewClazz = filterOrDetail.get('viewClass');
+            }
+
+            // allow the detail model object to define an alternate model class
+            if (Ext.isString(filterOrDetail.get('modelClass')))
+            {
+                modelClazz = filterOrDetail.get('modelClass');
+            }
+
+            // if the detail model object has data rows defined, pass them along to the config
+            if (Ext.isDefined(filterOrDetail.get('dataRows')))
+            {
+                config.dataRows = filterOrDetail.get('dataRows');
             }
 
             //
@@ -171,9 +182,8 @@ Ext.define('Connector.controller.FilterStatus', {
                 statusContainer.hide();
             }
 
-            var infoPane = Ext.create(clazz, {
-                model: Ext.create('Connector.model.InfoPane', config),
-                params: params,
+            var infoPane = Ext.create(viewClazz, {
+                model: Ext.create(modelClazz, config),
                 listeners: {
                     hide: {
                         fn: this.resetInfoPane,

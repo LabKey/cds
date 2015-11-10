@@ -9,46 +9,11 @@ Ext.define('Connector.view.TimepointPane', {
 
     padding: '10',
 
-    showSort: false, // TODO
+    showSort: true,
 
     isShowOperator: false,
 
     displayTitle: 'Timepoints in the plot',
-
-    constructor : function(config)
-    {
-        var modelDatas = [],
-            interval = 'Days',
-            intervalVisitRowIdMap = {};
-            store = config.model.get('memberStore');
-
-        // populate the member store based on the data rows from the distinct timepoint query results
-        Ext.each(config.params.data, function(row)
-        {
-            if (!Ext.isDefined(intervalVisitRowIdMap[row[interval]]))
-            {
-                intervalVisitRowIdMap[row[interval]] = [];
-            }
-
-            intervalVisitRowIdMap[row[interval]].push(row['RowId']);
-        });
-
-        // convert and load the interval visitRowId data into the memberStore
-        Ext.iterate(intervalVisitRowIdMap, function(key, value)
-        {
-            modelDatas.push({
-                name: interval + ' ' + key + ' (' + value.length + ' stud' + (value.length == 1 ? 'y' : 'ies') + ')',
-                uniqueName: value,
-                count: value.length
-            });
-        });
-        store.loadRawData(modelDatas);
-
-        // tell the view/model that the member store is ready
-        config.model.setReady();
-
-        this.callParent([config]);
-    },
 
     updateSelections : function()
     {

@@ -158,10 +158,7 @@ Ext.define('Connector.model.InfoPane', {
             level: undefined
         });
 
-        if (dimName || hierName || lvlName)
-        {
-            this.setDimensionHierarchy(dimName, hierName, lvlName);
-        }
+        this.setDimensionHierarchy(dimName, hierName, lvlName);
     },
 
     _configureFilter : function(hierName) {
