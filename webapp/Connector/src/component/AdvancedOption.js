@@ -159,7 +159,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
             if (storeCount == 0) {
                 this.hide();
             }
-            else if (this.fieldName == 'summary_level' && storeCount == 1) {
+            else if (this.fieldName.indexOf('_summary_level') > 0 && storeCount == 1) {
                 this.getDisplayField().addCls('display-option-only');
             }
             else {
@@ -177,14 +177,21 @@ Ext.define('Connector.component.AdvancedOptionBase', {
         this.fireEvent('click', this, this.isHierarchical);
     },
 
-    showDropdownPanel : function(filterOptionValues) {
+    showDropdownPanel : function(filterOptionValues, plotAxis) {
         var dropdownPanel = this.getDropdownPanel(),
             displayEl = this.getDisplayField().getEl(),
             displayLabelEl, displayValueEl, pos;
 
         if (dropdownPanel != null) {
             if (Ext.isDefined(filterOptionValues)) {
-                Connector.getService('Query').getMeasureValueSubjectCount(this.dimension, this.store.measureSet, filterOptionValues, this.loadValueSubjectCounts, this);
+                Connector.getService('Query').getMeasureValueSubjectCount(
+                    this.dimension,
+                    this.store.measureSet,
+                    filterOptionValues,
+                    plotAxis,
+                    this.loadValueSubjectCounts,
+                    this
+                );
             }
 
             displayLabelEl = displayEl.down('.field-label');
@@ -251,7 +258,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
     },
 
     initComponent : function() {
-        this.fieldName = this.dimension.get('name');
+        this.fieldName = this.dimension.get('alias');
         this.fieldLabel = this.dimension.get('label');
         this.allowMultiSelect = this.dimension.get('allowMultiSelect');
         this.isHierarchical = Ext.isDefined(this.dimension.get('hierarchicalSelectionParent'));
@@ -275,7 +282,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         if (!this.hiddenField) {
             this.hiddenField = Ext.create('Ext.form.field.Hidden', {
                 // hierarchical dimensions can have use an alternate column for filtering
-                name: this.dimension.getFilterMeasure().get('name'),
+                name: this.dimension.getFilterMeasure().get('alias'),
                 getValue: function() {
                     return this.value;
                 }

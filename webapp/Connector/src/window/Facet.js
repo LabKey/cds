@@ -15,32 +15,77 @@ Ext.define('Connector.window.Facet', {
 
     height: 375,
 
-    getItems : function() {
-        var model = this.dataView.getModel();
+    getItems : function()
+    {
+        var model = this.dataView.getModel(),
+            wrappedMeasures = model.getWrappedMeasures(),
+            fieldAlias = this.columnMetadata.filterField.toLowerCase(),
+            matchFilters = [],
+            newMeasures = [];
 
-        // the set of filters that match this column
-        var matchingFilters = [];
-        Ext.each(this.dataView.getModel().getFilterArray(), function(filter) {
-            if (filter.getColumnName().toLowerCase() === this.columnMetadata.filterField.toLowerCase())
-                matchingFilters.push(filter);
-        }, this);
-        this.hasFilters = matchingFilters.length > 0;
+        var loader = Ext.create('Ext.Component', {
+            html: 'Loading...'
+        });
 
-        var faceted = Ext.create('LABKEY.dataregion.filter.Faceted', {
-            itemId: 'faceted',
-            border: false,
-            useGrouping: true,
-            useStoreCache: false,
-            filters: matchingFilters,
-            groupFilters: model.getFilterArray(true),
-            model: {
-                column: this.columnMetadata,
-                schemaName: model.get('metadata').schemaName,
-                queryName: model.get('metadata').queryName
+        // Include all measures in the request removing the matching filters
+        Ext.each(wrappedMeasures, function(wrapped)
+        {
+            var wrappedAlias = wrapped.measure.alias.toLowerCase();
+
+            // base measures should not show up in filtering (e.g. subject filter)
+            if (!wrapped.isBaseMeasure)
+            {
+                if (wrappedAlias === fieldAlias)
+                {
+                    var newMeasure = {
+                        measure: Ext.clone(wrapped.measure)
+                    };
+
+                    if (wrapped.dateOptions)
+                    {
+                        newMeasure.dateOptions = Ext.clone(wrapped.dateOptions);
+                    }
+
+                    Ext.each(wrapped.filterArray, function(f)
+                    {
+                        matchFilters.push(f);
+                    });
+
+                    newMeasures.push(newMeasure);
+                }
+                else
+                {
+                    newMeasures.push(wrapped);
+                }
             }
         });
 
-        return [faceted];
+        Connector.getQueryService().getData(newMeasures, function(metadata)
+        {
+            this.remove(loader);
+
+            var faceted = Ext.create('LABKEY.dataregion.filter.Faceted', {
+                itemId: 'faceted',
+                border: false,
+                useGrouping: true,
+                useStoreCache: false,
+                filters: matchFilters,
+                groupFilters: model.getFilterArray(true),
+                model: {
+                    column: this.columnMetadata,
+                    schemaName: metadata.schemaName,
+                    queryName: metadata.queryName
+                }
+            });
+
+            this.add(faceted);
+        },
+        function()
+        {
+            console.log('Failed to load...');
+        }, this, model.get('extraFilters'));
+
+        return [loader];
     },
 
     onAfterRender : function() {
@@ -50,10 +95,12 @@ Ext.define('Connector.window.Facet', {
         }
     },
 
-    applyFiltersAndColumns : function() {
+    applyFiltersAndColumns : function()
+    {
         var view = this.getComponent('faceted');
-        if (view.checkValid()) {
-            this.fireEvent('filter', this, view.getModel().get('column'), view.getFilters());
+        if (view.checkValid())
+        {
+            this.fireEvent('filter', this, view.getModel().get('column'), view.getOriginalFilters(), view.getFilters());
             this.close();
         }
     },

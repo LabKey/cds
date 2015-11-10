@@ -21,6 +21,7 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerManager;
 import org.labkey.api.module.DefaultModule;
 import org.labkey.api.module.ModuleContext;
+import org.labkey.api.module.ModuleProperty;
 import org.labkey.api.security.AuthenticationManager;
 import org.labkey.api.view.BaseWebPartFactory;
 import org.labkey.api.view.JspView;
@@ -38,6 +39,14 @@ public class CDSModule extends DefaultModule
 {
     public static String NAME = "CDS";
 
+    public CDSModule()
+    {
+        ModuleProperty mp = new ModuleProperty(this, "ShowHiddenVariables");
+        mp.setDescription("If 'true', show all variables (including hidden) in the variable selector in devMode.");
+        mp.setCanSetPerContainer(true);
+        addModuleProperty(mp);
+    }
+
     public String getName()
     {
         return NAME;
@@ -45,7 +54,7 @@ public class CDSModule extends DefaultModule
 
     public double getVersion()
     {
-        return 15.30;
+        return 15.301;
     }
 
     public boolean hasScripts()

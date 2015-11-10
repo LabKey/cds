@@ -39,6 +39,8 @@ Ext.define('Connector.view.Chart', {
 
     initiatedBrushing: '',
 
+    filtersActivated: false,
+
     statics: {
         // Template used for contents of VisitTag tooltips
         studyAxisTipTpl: new Ext.XTemplate(
@@ -78,13 +80,17 @@ Ext.define('Connector.view.Chart', {
         }
 
         Ext.apply(config, {
+            activeMeasures: {
+                x: null,
+                y: null,
+                color: null
+            },
             isActiveView: true,
             refreshRequired: true,
             initialized: false
         });
 
         Ext.applyIf(config, {
-            measures: [],
             hasStudyAxisData: false
         });
 
@@ -99,15 +105,9 @@ Ext.define('Connector.view.Chart', {
             this.disableAutoMsg = true;
         }
 
-        this._ready = false;
-        Connector.getState().onReady(function() {
-            this._ready = true;
-            this.fireEvent('onready', this);
-        }, this);
-
         this.callParent([config]);
 
-        this.addEvents('onready', 'userplotchange');
+        this.addEvents('userplotchange');
 
         this.labelTextColor = ChartUtils.colors.HEATSCALE1;
         this.labelTextHltColor = ChartUtils.colors.WHITE;
@@ -214,15 +214,6 @@ Ext.define('Connector.view.Chart', {
         }
 
         return this.emptyplotmsg;
-    },
-
-    onReady : function(callback, scope) {
-        if (this._ready === true) {
-            callback.call(scope);
-        }
-        else {
-            this.on('onready', function() { callback.call(scope); }, this, {single: true});
-        }
     },
 
     getNorth : function() {
@@ -388,25 +379,38 @@ Ext.define('Connector.view.Chart', {
                     align: 'stretch',
                     pack: 'start'
                 },
-                items: [{
-                    xtype: 'panel',
-                    border: false,
-                    flex: 10,
-                    cls: 'plot',
-                    style: {'background-color': '#FFFFFF'},
-                    listeners: {
-                        afterrender: {
-                            fn: function(box) {
-                                this.plotEl = box.getEl();
-                            },
-                            single: true,
-                            scope: this
-                        }
-                    }
-                },this.getStudyAxisPanel()]
+                items: [
+                    this.getPlotPanel(),
+                    this.getStudyAxisPanel()
+                ]
             });
         }
         return this.centerContainer;
+    },
+
+    getPlotPanel : function() {
+        if (!this.plotPanel)
+        {
+            this.plotPanel = Ext.create('Ext.panel.Panel', {
+                border: false,
+                flex: 10,
+                cls: 'plot',
+                style: {
+                    'background-color': '#FFFFFF'
+                },
+                listeners: {
+                    afterrender: {
+                        fn: function(box) {
+                            this.plotEl = box.getEl();
+                        },
+                        single: true,
+                        scope: this
+                    }
+                }
+            });
+        }
+
+        return this.plotPanel;
     },
 
     getStudyAxisPanel : function() {
@@ -461,11 +465,10 @@ Ext.define('Connector.view.Chart', {
 
     attachInternalListeners : function() {
 
-        this.showTask = new Ext.util.DelayedTask(function() {
-            this.onReady(this.onShowGraph, this);
-        }, this);
+        // TODO: This resize task can still cause double-rendering
+        // TODO: Repro: Load a chart, drag a selection. Switch to the grid. Reload. Go back to the chart (double render)
         this.resizeTask = new Ext.util.DelayedTask(function() {
-            this.onReady(this.handleResize, this);
+            Connector.getState().onReady(this.handleResize, this);
         }, this);
 
         this.hideHeatmapModeTask = new Ext.util.DelayedTask(function() {
@@ -498,23 +501,41 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getPlotSize : function(box) {
-        var size = {};
+    getPlotSize : function(box, properties)
+    {
+        var size = {},
+            discretePlotWidth;
 
-        if (this.requireStudyAxis && this.hasStudyAxisData) {
+        if (this.requireStudyAxis && this.hasStudyAxisData)
+        {
             size.width = box.width - this.studyAxisWidthOffset;
         }
-        else if (this.requireYGutter) {
+        else if (this.requireYGutter)
+        {
             size.width = box.width - this.yGutterWidth;
         }
-        else {
+        else
+        {
             size.width = box.width;
         }
 
-        if (this.requireXGutter) {
+        // for discrete x-axis, expand width for large number of discrete values
+        if (Ext.isDefined(properties) && Ext.isObject(properties.xaxis) && !properties.xaxis.isContinuous && !this.requireYGutter)
+        {
+            discretePlotWidth = properties.xaxis.discreteValueCount * 50;
+            if (discretePlotWidth > size.width)
+            {
+                size.width = discretePlotWidth;
+                size.extended = true;
+            }
+        }
+
+        if (this.requireXGutter)
+        {
             size.height = box.height - this.xGutterHeight;
         }
-        else {
+        else
+        {
             size.height = box.height;
         }
 
@@ -550,7 +571,7 @@ Ext.define('Connector.view.Chart', {
     redrawPlot : function() {
         if (Ext.isDefined(this.lastInitPlotParams)) {
             if (this.lastInitPlotParams.noplot) {
-                this.noPlot(this.lastInitPlotParams.emptyPlot);
+                this.noPlot(this.lastInitPlotParams.emptyPlot, this.lastInitPlotParams.chartData);
             }
             else {
                 this.initPlot(this.lastInitPlotParams.chartData, this.lastInitPlotParams.studyAxisInfo);
@@ -745,15 +766,24 @@ Ext.define('Connector.view.Chart', {
         };
     },
 
-    getMainPlotConfig : function(data, aes, scales, yAxisMargin) {
-        var size = this.getPlotSize(this.plotEl.getSize());
+    getMainPlotConfig : function(data, aes, scales, yAxisMargin, properties) {
+        var size = this.getPlotSize(this.plotEl.getSize(), properties);
+
+        if (size.extended === true)
+        {
+            this.getPlotPanel().addCls('plot-scroll');
+        }
+        else
+        {
+            this.getPlotPanel().removeCls('plot-scroll');
+        }
 
         return Ext.apply(this.getBasePlotConfig(), {
             margins : {
                 top: 25,
                 left: yAxisMargin + (this.requireYGutter ? 0 : 24),
                 right: 50,
-                bottom: 53
+                bottom: size.extended === true ? 73 : 53
             },
             width : size.width,
             height : size.height,
@@ -765,9 +795,10 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    getGutterPlotConfig : function(aes, scales) {
-
-        if (this.measures[2]) {
+    getGutterPlotConfig : function(aes, scales)
+    {
+        if (this.activeMeasures.color)
+        {
             aes.color = function(row) {return row.color};
             aes.shape = function(row) {return row.color};
 
@@ -792,9 +823,10 @@ Ext.define('Connector.view.Chart', {
     },
 
     getScaleConfigs : function(noplot, properties, chartData, studyAxisInfo, layerScope) {
-        var scales = {}, domain, xDomain;
+        var scales = {}, domain;
 
-        if (noplot) {
+        if (noplot)
+        {
             scales.x = {
                 scaleType: 'continuous',
                 domain: [0, 0],
@@ -807,54 +839,75 @@ Ext.define('Connector.view.Chart', {
                 tickFormat: ChartUtils.tickFormat.empty
             };
         }
-        else {
-            if (Ext.isDefined(properties.xaxis) && !properties.xaxis.isDimension && properties.xaxis.isContinuous) {
-                // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
-                domain = chartData.getXDomain(studyAxisInfo);
-                if(this.requireYGutter && domain[0] == null && domain[1] == null) {
-                    domain = [0,1];
-                }
+        else
+        {
+            if (Ext.isDefined(properties.xaxis) && properties.xaxis.name != null)
+            {
+                if (!properties.xaxis.isDimension && properties.xaxis.isContinuous)
+                {
+                    // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
+                    domain = chartData.getXDomain(studyAxisInfo);
+                    if (this.requireYGutter && domain[0] == null && domain[1] == null)
+                    {
+                        domain = [0,1];
+                    }
 
-                scales.x = {
-                    scaleType: 'continuous',
-                    domain: domain
-                };
+                    scales.x = {
+                        scaleType: 'continuous',
+                        domain: domain
+                    };
 
-                if (properties.xaxis.isNumeric) {
-                    scales.x.tickFormat = ChartUtils.tickFormat.numeric;
+                    if (properties.xaxis.isNumeric)
+                    {
+                        scales.x.tickFormat = ChartUtils.tickFormat.numeric;
+                    }
+                    else if (properties.xaxis.type === 'TIMESTAMP')
+                    {
+                        scales.x.tickFormat = ChartUtils.tickFormat.date;
+                    }
                 }
-                else if (properties.xaxis.type === 'TIMESTAMP') {
-                    scales.x.tickFormat = ChartUtils.tickFormat.date;
+                else
+                {
+                    scales.x = {
+                        scaleType: 'discrete',
+                        tickCls: 'xaxis-tick-text',
+                        tickRectCls: 'xaxis-tick-rect',
+                        tickClick: Ext.bind(this.xAxisClick, this, [layerScope], true),
+                        tickMouseOver: Ext.bind(this.xAxisMouseOver, this, [layerScope], true),
+                        tickMouseOut: Ext.bind(this.xAxisMouseOut, this, [layerScope], true),
+                        tickRectWidthOffset: 30,
+                        tickRectHeightOffset: 30,
+                        tickHoverText: function(value) { return value; },
+                        fontSize: 9,
+                        sortFn: function(a, b)
+                        {
+                            // sort empty category to the right side
+                            if (a == ChartUtils.emptyTxt)
+                            {
+                                return 1;
+                            }
+                            else if (b == ChartUtils.emptyTxt)
+                            {
+                                return -1;
+                            }
+                            return LABKEY.app.model.Filter.sorters.natural(a, b);
+                        }
+                    };
                 }
             }
-            else {
+            else
+            {
+                // simple x scale config if no x-axis variable selected (i.e. display as a single box plot)
                 scales.x = {
                     scaleType: 'discrete',
-                    sortFn: function(a, b) {
-                        // sort empty category to the right side
-                        if (a == ChartUtils.emptyTxt) {
-                            return 1;
-                        }
-                        else if (b == ChartUtils.emptyTxt) {
-                            return -1;
-                        }
-                        return LABKEY.app.model.Filter.sorters.natural(a, b);
-                    },
-                    tickCls: 'xaxis-tick-text',
-                    tickRectCls: 'xaxis-tick-rect',
-                    tickClick: Ext.bind(this.xAxisClick, this, [layerScope], true),
-                    tickMouseOver: Ext.bind(this.xAxisMouseOver, this, [layerScope], true),
-                    tickMouseOut: Ext.bind(this.xAxisMouseOut, this, [layerScope], true),
-                    tickRectWidthOffset: 30,
-                    tickRectHeightOffset: 30,
-                    tickHoverText: function(value) { return value; },
-                    fontSize: 9
+                    tickFormat: ChartUtils.tickFormat.empty
                 };
             }
 
             // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
             domain = chartData.getYDomain();
-            if(this.requireXGutter && domain[0] == null && domain[1] == null) {
+            if (this.requireXGutter && domain[0] == null && domain[1] == null)
+            {
                 domain = [0,1];
             }
 
@@ -865,7 +918,8 @@ Ext.define('Connector.view.Chart', {
                 domain: domain
             };
 
-            if (this.measures[2]) {
+            if (this.activeMeasures.color)
+            {
                 scales.color = {
                     scaleType: 'discrete',
                     range: LABKEY.vis.Scale.DataspaceColor()
@@ -880,13 +934,15 @@ Ext.define('Connector.view.Chart', {
         return scales;
     },
 
-    getAesConfigs : function() {
+    getAesConfigs : function()
+    {
         var aes = {
             x: function(row) {return row.x;},
             yLeft: function(row) {return row.y}
         };
 
-        if (this.measures[2]) {
+        if (this.activeMeasures.color)
+        {
             aes.color = function(row) {return row.color};
             aes.shape = function(row) {return row.color};
         }
@@ -915,9 +971,10 @@ Ext.define('Connector.view.Chart', {
      * @param {boolean} [noplot=false]
      * @param {boolean} [emptyPlot=false]
      */
-    initPlot : function(chartData, studyAxisInfo, noplot, emptyPlot) {
-
-        if (this.isHidden()) {
+    initPlot : function(chartData, studyAxisInfo, noplot, emptyPlot)
+    {
+        if (this.isHidden())
+        {
             // welp, that was a huge waste..
             // Consider: This could wrapped up in something like this.continue()
             // where if we do not continue, we will set refresh
@@ -947,8 +1004,9 @@ Ext.define('Connector.view.Chart', {
         }
         else {
             allDataRows = {
-                main: chartData,
-                totalCount: chartData.length
+                main: chartData.rows,
+                totalCount: chartData.rows.length,
+                invalidLogPlotRowCount: chartData.invalidLogPlotRowCount
             };
         }
 
@@ -966,13 +1024,13 @@ Ext.define('Connector.view.Chart', {
         this.logRowCount(allDataRows);
 
         this.showPointsAsBin = allDataRows ? allDataRows.totalCount > this.binRowLimit : false;
-        ChartUtils.BRUSH_DELAY = this.showPointsAsBin ? 0 : (allDataRows.totalCount > 2500 ? 20 : 0);
+        ChartUtils.BRUSH_DELAY = this.showPointsAsBin ? 0 : ChartUtils.calculateDelay(allDataRows.totalCount);
         this.toggleHeatmapMode();
 
         this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
         this.toggleMedianMode();
 
-        this.isLogScale = this.isAxisLogScale();
+        this.invalidLogPlotRowCount = Ext.isDefined(allDataRows) ? allDataRows.invalidLogPlotRowCount : 0;
         this.toggleLogScaleMode();
 
         var me = this;
@@ -988,12 +1046,12 @@ Ext.define('Connector.view.Chart', {
 
         scaleConfig = this.getScaleConfigs(noplot, properties, chartData, studyAxisInfo, layerScope);
         aesConfig = this.getAesConfigs();
-        plotConfig = this.getMainPlotConfig(allDataRows.main, aesConfig, scaleConfig, yAxisMargin);
+        plotConfig = this.getMainPlotConfig(allDataRows.main, aesConfig, scaleConfig, yAxisMargin, properties);
 
         if (!noplot) {
-            // set the scale type to linear or log, validating that we don't allow log with negative values
-            var xScaleType = this.setScaleType(plotConfig.scales.x, 'x', properties);
-            var yScaleType = this.setScaleType(plotConfig.scales.yLeft, 'y', properties);
+            // set the scale type to linear or log
+            var xScaleType = this.setScaleType(plotConfig.scales.x, 'x');
+            var yScaleType = this.setScaleType(plotConfig.scales.yLeft, 'y');
 
             this.clickTask = new Ext.util.DelayedTask(function(node, view, name, target, multi) {
                 if (layerScope.isBrushed) {
@@ -1027,7 +1085,8 @@ Ext.define('Connector.view.Chart', {
             }
 
             // If using color variables sync color and shape with yGutter plot if it exists
-            if (this.measures[2]) {
+            if (this.activeMeasures.color)
+            {
                 var plotLayer = this.yGutterPlot.layers[0];
                 if (Ext.isDefined(plotLayer.geom.colorScale)) {
                     plotConfig.scales.color = plotLayer.geom.colorScale;
@@ -1048,7 +1107,8 @@ Ext.define('Connector.view.Chart', {
                 this.hidePlotMsg();
                 this.plot.render();
 
-                if (!noplot && this.measures[2]) {
+                if (!noplot && this.activeMeasures.color)
+                {
                     this.getColorSelector().setLegend(this.plot.getLegendData());
                 }
             }
@@ -1067,7 +1127,8 @@ Ext.define('Connector.view.Chart', {
         if (!noplot && this.requireXGutter) {
 
             // If using color variables sync color and shape with yGutter plot if it exists
-            if (this.measures[2] && this.plot) {
+            if (this.activeMeasures.color && this.plot)
+            {
                 var plotLayer = this.plot.layers[0];
                 if (Ext.isDefined(plotLayer.geom.colorScale)) {
                     gutterXPlotConfig.scales.color = plotLayer.geom.colorScale;
@@ -1210,7 +1271,7 @@ Ext.define('Connector.view.Chart', {
             dimension: _dimension,
             brushstart: Ext.bind(ChartUtils.brushStart, this, [layerScope, dimension]),
             brush: Ext.bind(brushFn, this),
-            brushend: Ext.bind(ChartUtils.brushEnd, this, [this.measures, properties, dimension], true),
+            brushend: Ext.bind(ChartUtils.brushEnd, this, [this.activeMeasures, properties, dimension], true),
             brushclear: Ext.bind(ChartUtils.brushClear, this, [layerScope, dimension])
         };
     },
@@ -1262,7 +1323,7 @@ Ext.define('Connector.view.Chart', {
         var me = this;
         var gutterXLabels = {
             y: {
-                value: 'Undefined y value',
+                value: 'Undefined Y value',
                 fontSize: 11,
                 position: 8,
                 rotate: 0,
@@ -1298,13 +1359,14 @@ Ext.define('Connector.view.Chart', {
             }
         };
 
-        return Ext.apply(this.getGutterPlotConfig(gutterXAes, gutterXScales),
-                {gridLinesVisible: 'y',
-                    margins : gutterXMargins,
-                    width : gutterXWidth,
-                    height : this.xGutterHeight,
-                    data : allDataRows.undefinedY,
-                    labels : gutterXLabels});
+        return Ext.apply(this.getGutterPlotConfig(gutterXAes, gutterXScales), {
+            gridLinesVisible: 'y',
+            margins : gutterXMargins,
+            width : gutterXWidth,
+            height : this.xGutterHeight,
+            data : allDataRows.undefinedY,
+            labels : gutterXLabels
+        });
     },
 
     generateYGutter : function(plotConfig, chartData, allDataRows) {
@@ -1318,7 +1380,7 @@ Ext.define('Connector.view.Chart', {
         var me = this;
         var gutterYLabels = {
             x: {
-                value: 'Undefined x value',
+                value: 'Undefined X value',
                 fontSize: 11,
                 position: 45,
                 cls: 'yGutter-label',
@@ -1355,24 +1417,33 @@ Ext.define('Connector.view.Chart', {
             }
         };
 
-        return Ext.apply(this.getGutterPlotConfig(gutterYAes, gutterYScales),
-                {gridLinesVisible: 'x',
-                margins : gutterYMargins,
-                width : this.yGutterWidth,
-                height : plotConfig.height,
-                data : allDataRows.undefinedX,
-                labels : gutterYLabels});
+        return Ext.apply(this.getGutterPlotConfig(gutterYAes, gutterYScales), {
+            gridLinesVisible: 'x',
+            margins : gutterYMargins,
+            width : this.yGutterWidth,
+            height : plotConfig.height,
+            data : allDataRows.undefinedX,
+            labels : gutterYLabels
+        });
 
     },
 
-    logRowCount : function(allDataRows) {
-        if (LABKEY.devMode) {
+    logRowCount : function(allDataRows)
+    {
+        if (LABKEY.devMode)
+        {
             console.log('total plotted rows:', allDataRows.totalCount);
-            if (allDataRows && allDataRows.undefinedX) {
+            if (allDataRows && allDataRows.undefinedX)
+            {
                 console.log('plotted x gutter rows:', allDataRows.undefinedX.length);
             }
-            if (allDataRows && allDataRows.undefinedY) {
+            if (allDataRows && allDataRows.undefinedY)
+            {
                 console.log('plotted x gutter rows:', allDataRows.undefinedY.length);
+            }
+            if (allDataRows && allDataRows.invalidLogPlotRowCount > 0)
+            {
+                console.log('not plotted log rows:', allDataRows.invalidLogPlotRowCount);
             }
         }
     },
@@ -1381,8 +1452,16 @@ Ext.define('Connector.view.Chart', {
         var multi = e.ctrlKey||e.shiftKey||e.metaKey, nodes, node = null;
 
         // If a selection in progress have to wait until done
-        if(this.selectionInProgress != null)
+        if (this.selectionInProgress != null)
+        {
             return;
+        }
+
+        // Skip adding a selection for the 'undefined' box plot click for non-demographic variables.
+        if (target == ChartUtils.emptyTxt && this.activeMeasures.x && !this.activeMeasures.x.isDemographic)
+        {
+            return;
+        }
 
         this.selectionInProgress = target;
 
@@ -1395,11 +1474,13 @@ Ext.define('Connector.view.Chart', {
                 }
             });
 
-            if (node) {
-                this.clickTask.delay(150, null, null, [node, this, this.measures[0].alias, target, multi]);
+            if (this.activeMeasures.x)
+            {
+                this.clickTask.delay(150, null, null, [(node ? node : e.target), this, this.activeMeasures.x.alias, target, multi]);
             }
-            else {
-                this.clickTask.delay(150, null, null, [e.target, this, this.measures[0].alias, target, multi]);
+            else
+            {
+                console.warn('xAxisClick() occurred without a valid activeMeasures.x');
             }
 
             this.showMessage('Hold Shift, CTRL, or CMD to select multiple');
@@ -1813,25 +1894,92 @@ Ext.define('Connector.view.Chart', {
 
     /**
      * @param {Array} sqlFilters
+     * @param {Boolean} [fromBrush=false]
      * @param {Boolean} [allowInverseFilter=false]
      */
-    createSelectionFilter : function(sqlFilters, allowInverseFilter) {
-        var xMeasure = this.measures[0], yMeasure = this.measures[1];
-        var wrapped = [ this._getAxisWrappedMeasure(xMeasure), this._getAxisWrappedMeasure(yMeasure) ];
+    createSelectionFilter : function(sqlFilters, fromBrush, allowInverseFilter)
+    {
+        // construct an 'aggregated' filter
+        if (fromBrush && this.showAsMedian)
+        {
+            Connector.getState().addSelection({
+                gridFilter: sqlFilters,
+                members: Ext.Object.getKeys(this.brushedSubjects),
+                operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                filterSource: 'GETDATA',
+                isAggregated: true
+            }, true, false, true);
+        }
+        else
+        {
+            // examine the sqlFilters to determine which measures to include
+            var selection = {
+                gridFilter: sqlFilters,
+                plotMeasures: [null, null],
+                isPlot: true,
+                isGrid: true,
+                operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                filterSource: 'GETDATA',
+                isWhereFilter: true,
+                showInverseFilter: allowInverseFilter === true
+            };
 
-        // TODO: Categorical filters need to only include their measures. This means modify wrapped
-        var filter = Ext.create('Connector.model.Filter', {
-            gridFilter: sqlFilters,
-            plotMeasures: wrapped,
-            isPlot: true,
-            isGrid: true,
-            operator: LABKEY.app.model.Filter.OperatorTypes.OR,
-            filterSource: 'GETDATA',
-            isWhereFilter: true,
-            showInverseFilter: allowInverseFilter === true
-        });
+            this.buildSelection('x', selection, function(sel)
+            {
+                this.buildSelection('y', sel, function(s)
+                {
+                    Connector.getState().addSelection(s, true, false, true);
+                }, this);
+            }, this);
+        }
+    },
 
-        Connector.getState().addSelection(filter, true, false, true);
+    buildSelection : function(axis, selection, callback, scope)
+    {
+        if (axis === 'x')
+        {
+            if (selection.gridFilter[0] || selection.gridFilter[1])
+            {
+                selection.plotMeasures[0] = this._getAxisWrappedMeasure(this.activeMeasures.x);
+                var timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
+
+                // Create a 'time filter'
+                if (this.activeMeasures.x.variableType === 'TIME')
+                {
+                    Connector.getFilterService().getTimeFilter(selection.plotMeasures[0], timeFilters, function(_filter)
+                    {
+                        selection.isTime = true;
+                        selection.timeMeasure = Ext.clone(selection.plotMeasures[0]);
+                        selection.timeFilters = timeFilters;
+                        selection.gridFilter[0] = _filter;
+                        selection.gridFilter[1] = null;
+
+                        callback.call(scope, selection);
+                    }, this);
+                }
+                else
+                {
+                    callback.call(scope, selection);
+                }
+            }
+            else
+            {
+                callback.call(scope, selection);
+            }
+        }
+        else if (axis === 'y')
+        {
+            if (selection.gridFilter[2] || selection.gridFilter[3])
+            {
+                selection.plotMeasures[1] = this._getAxisWrappedMeasure(this.activeMeasures.y);
+            }
+
+            callback.call(scope, selection);
+        }
+        else
+        {
+            throw 'Unsupported axis "' + axis + '" requested to buildSelection()';
+        }
     },
 
     afterSelectionAnimation : function(node, view, name, target, multi) {
@@ -1850,23 +1998,24 @@ Ext.define('Connector.view.Chart', {
         }
 
         // issue 24244: filtering for emptyTxt category needs to apply a different filter
-        values = values.concat(target == ChartUtils.emptyTxt ? '' : target);
+        values = values.concat(target == ChartUtils.emptyTxt || target == 'null' ? '' : target);
 
         if (multi && selections.length > 0) {
             type = LABKEY.Filter.Types.EQUALS_ONE_OF;
         }
-        else if (target == ChartUtils.emptyTxt) {
+        else if (target == ChartUtils.emptyTxt || target == 'null') {
             type = LABKEY.Filter.Types.ISBLANK;
             allowInverseFilter = false;
         }
 
         sqlFilters[0] = LABKEY.Filter.create(name, values, type);
 
-        this.createSelectionFilter(sqlFilters, allowInverseFilter);
+        this.createSelectionFilter(sqlFilters, false /* fromBrush */, allowInverseFilter);
         this.selectionInProgress = null;
         this.highlightLabels(this.plot, this.getCategoricalSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
 
-        if(this.mouseOverInProgress != null) {
+        if (this.mouseOverInProgress != null)
+        {
             this.highlightLabels(this.plot, [this.mouseOverInProgress], this.labelTextColor, this.labelBkgdHltColor, false);
             this.highlightPlotData(this.mouseOverInProgress);
             this.mouseOverInProgress = null;
@@ -1877,11 +2026,13 @@ Ext.define('Connector.view.Chart', {
     getScale : function(axis) {
         var scale = 'linear';
 
-        if (axis == 'y' && this.activeYSelection) {
-            scale = this.getSelectedOptionScale(this.activeYSelection);
+        if (axis == 'y' && this.activeMeasures.y)
+        {
+            scale = this.getSelectedOptionScale(this.activeMeasures.y);
         }
-        else if (axis == 'x' && this.activeXSelection) {
-            scale = this.getSelectedOptionScale(this.activeXSelection);
+        else if (axis == 'x' && this.activeMeasures.x)
+        {
+            scale = this.getSelectedOptionScale(this.activeMeasures.x);
         }
 
         return scale.toLowerCase();
@@ -1891,93 +2042,75 @@ Ext.define('Connector.view.Chart', {
         return (selected.options && selected.options.scale) ? selected.options.scale : selected.defaultScale;
     },
 
-    setScaleType : function(scale, axis, properties) {
-        var scaleType = this.getScale(axis), allowLog;
+    setScaleType : function(scale, axis) {
+        var scaleType = this.getScale(axis);
 
-        if (scale.scaleType !== 'discrete') {
-            allowLog = (axis == 'y') ? !properties.setYLinear : !properties.setXLinear;
-            if (!allowLog && scaleType == 'log') {
-                this.showMessage('Displaying the ' + axis.toLowerCase() + '-axis on a linear scale due to the presence of invalid log values.', true);
-                scaleType = 'linear';
-            }
-
+        if (scale.scaleType !== 'discrete')
+        {
             Ext.apply(scale, {trans : scaleType});
         }
 
         return scaleType;
     },
 
-    setActiveMeasureSelectionFromFilter : function(filter, activeMeasures) {
+    /**
+     * This allows the active measures to be set from the 'In the plot' filter
+     * @param filter
+     * @returns {boolean} hasMeasures
+     */
+    setActiveMeasureSelectionFromFilter : function(filter)
+    {
         var plotMeasures = filter.get('plotMeasures'),
-            x = plotMeasures[0], y = plotMeasures[1], color = plotMeasures[2];
+            x = plotMeasures[0],
+            y = plotMeasures[1],
+            color = plotMeasures[2],
+            axisSelector,
+            hasMeasures = false;
 
-        if (x) {
-            activeMeasures.x = x.measure;
+        if (x)
+        {
+            hasMeasures = true;
 
-            this.activeXSelection = activeMeasures.x;
-            if (this.initialized) {
-                this.getXAxisSelector().setActiveMeasure(this.activeXSelection);
+            this.activeMeasures.x = x.measure;
+            this.getXSelector().getModel().updateVariable([this.activeMeasures.x]);
+
+            axisSelector = this.getAxisSelectorIfInitialized('x');
+            if (axisSelector)
+            {
+                axisSelector.setActiveMeasure(this.activeMeasures.x);
             }
         }
 
-        if (y) {
-            activeMeasures.y = y.measure;
+        if (y)
+        {
+            hasMeasures = true;
 
-            this.activeYSelection = activeMeasures.y;
-            if (this.initialized) {
-                this.getYAxisSelector().setActiveMeasure(this.activeYSelection);
+            this.activeMeasures.y = y.measure;
+            this.getYSelector().getModel().updateVariable([this.activeMeasures.y]);
+
+            axisSelector = this.getAxisSelectorIfInitialized('y');
+            if (axisSelector)
+            {
+                axisSelector.setActiveMeasure(this.activeMeasures.y);
             }
         }
 
-        if (color) {
-            activeMeasures.color = color.measure;
+        if (color)
+        {
+            hasMeasures = true;
 
-            this.activeColorSelection = activeMeasures.color;
-            if (this.initialized) {
-                this.getColorAxisSelector().setActiveMeasure(this.activeColorSelection);
-            }
-        }
-    },
+            console.log('setting color from filter');
+            this.activeMeasures.color = color.measure;
+            this.getColorSelector().getModel().updateVariable([this.activeMeasures.color]);
 
-    getActiveMeasures : function() {
-        this.fromFilter = false;
-        var measures = {
-            x: null,
-            y: null,
-            color: null
-        };
-
-        // set the measures based on the active filter (i.e. "In the plot" filter)
-        if (!Ext.isDefined(this.activeXSelection) && !Ext.isDefined(this.activeYSelection) && !Ext.isDefined(this.activeColorSelection)) {
-            Ext.each(Connector.getState().getFilters(), function(filter) {
-                if (filter.isPlot() && !filter.isGrid()) {
-                    this.setActiveMeasureSelectionFromFilter(filter, measures);
-                    this.fromFilter = true;
-
-                    // return false to break from this Ext.each
-                    return false;
-                }
-            }, this);
-        }
-        // otherwise use the active measure selections
-        else {
-            if (this.activeXSelection) {
-                measures.x = this.activeXSelection;
-
-                // special case to look for userGroups as a variable option to use as filter values for the x measure
-                if (Ext.isObject(measures.x.options) && measures.x.options.userGroups) {
-                    measures.x.values = measures.x.options.userGroups;
-                }
-            }
-            if (this.activeYSelection) {
-                measures.y = this.activeYSelection;
-            }
-            if (this.activeColorSelection) {
-                measures.color = this.activeColorSelection;
+            axisSelector = this.getAxisSelectorIfInitialized('color');
+            if (axisSelector)
+            {
+                axisSelector.setActiveMeasure(this.activeMeasures.color);
             }
         }
 
-        return measures;
+        return hasMeasures;
     },
 
     clearPlotSelections : function() {
@@ -1986,221 +2119,312 @@ Ext.define('Connector.view.Chart', {
         this.clearAxisSelection('color');
     },
 
-    clearAxisSelection : function(axis) {
-        if (axis == 'y') {
-            this.getYAxisSelector().clearSelection();
-            this.activeYSelection = undefined;
+    clearAxisSelection : function(axis)
+    {
+        if (axis == 'y')
+        {
+            this.activeMeasures.y = null;
             this.getYSelector().clearModel();
         }
-        else if (axis == 'x') {
-            this.getXAxisSelector().clearSelection();
-            this.activeXSelection = undefined;
+        else if (axis == 'x')
+        {
+            this.activeMeasures.x = null;
             this.getXSelector().clearModel();
         }
-        else if (axis == 'color') {
-            this.getColorAxisSelector().clearSelection();
-            this.activeColorSelection = undefined;
+        else if (axis == 'color')
+        {
+            this.activeMeasures.color = null;
             this.getColorSelector().clearModel();
+        }
+
+        // Issue 24580: only update the variable selector if it has already been initialized
+        var axisSelector = this.getAxisSelectorIfInitialized(axis);
+        if (axisSelector)
+        {
+            axisSelector.clearSelection();
         }
     },
 
-    onShowGraph : function() {
-
-        if (this.isHidden()) {
+    onShowGraph : function()
+    {
+        if (this.isHidden())
+        {
             this.refreshRequired = true;
         }
-        else {
+        else
+        {
             this.refreshRequired = false;
             this.requireStudyAxis = false;
 
-            if (this.filterClear) {
+            if (this.filterClear)
+            {
                 this.clearPlotSelections();
             }
 
-            var activeMeasures = this.getActiveMeasures();
+            if (this.activeMeasures.y)
+            {
+                this.fireEvent('showload', this);
 
-            // update variable selectors
-            // TODO: Stop doing this every time, only do it when the measure has changed (complex?)
-            this.getYSelector().getModel().updateVariable([activeMeasures.y]);
-            this.getXSelector().getModel().updateVariable([activeMeasures.x]);
-            this.getColorSelector().getModel().updateVariable([activeMeasures.color]);
+                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME';
 
-            if (activeMeasures.y == null) {
+                this.requestChartData();
+            }
+            else
+            {
                 this.hideMessage();
                 this.getStudyAxisPanel().setVisible(false);
                 Connector.getState().clearSelections(true);
                 this.filterClear = false;
                 this.noPlot(false);
             }
-            else {
-                this.measures = [activeMeasures.x, activeMeasures.y, activeMeasures.color];
-
-                this.fireEvent('showload', this);
-
-                this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === "TIME";
-
-                // TODO: Refactor this
-                // TODO: We only want to update the 'In the plot' filter when any of the (x, y, color) measure configurations change
-                // TODO: This is what is causing our filter undo to fail because it causes the state to update twice
-                if (!this.fromFilter && activeMeasures.y !== null) {
-                    this.updatePlotBasedFilter(activeMeasures);
-                }
-                else {
-                    this.initialized = true;
-                }
-
-                this.requestChartData(activeMeasures);
-            }
         }
     },
 
-    getWrappedMeasures : function(activeMeasures) {
-
-        var wrappedMeasures = [
-            this._getAxisWrappedMeasure(activeMeasures.x),
-            this._getAxisWrappedMeasure(activeMeasures.y)
-        ];
-        wrappedMeasures.push(activeMeasures.color ? {measure : activeMeasures.color, time: 'date'} : null);
-
-        return wrappedMeasures;
+    getAxisNameProperty : function(axis, xAxisNameProp, yAxisNameProp) {
+        return (axis === 'x' ? xAxisNameProp : (axis === 'y' ? yAxisNameProp : ChartUtils.axisNameProp));
     },
 
-    _getAxisWrappedMeasure : function(measure) {
-        if (!measure) {
+    getAxisNameMeasureProperty : function(axis, x, y)
+    {
+        var useBaseAxisNameProp = ChartUtils.isSameSource(x, y)
+                && ChartUtils.getAssayDimensionsWithDifferentValues(x, y).length == 0;
+
+        if (useBaseAxisNameProp || (axis != 'x' && axis != 'y'))
+        {
+            return ChartUtils.axisNameProp;
+        }
+        else
+        {
+            return axis == 'x' ? ChartUtils.xAxisNameProp : ChartUtils.yAxisNameProp;
+        }
+    },
+
+    setAxisNameMeasureProperty : function(measure, x, y)
+    {
+        var xAxisNameProp = this.getAxisNameMeasureProperty('x', x, y),
+            yAxisNameProp = this.getAxisNameMeasureProperty('y', x, y);
+
+        // if measure source matches x or y, set the wrapped measure axisName to match as well
+        if (x && ChartUtils.isSameSource(measure, x))
+        {
+            measure.axisName = xAxisNameProp;
+        }
+        else if (y && ChartUtils.isSameSource(measure, y))
+        {
+            measure.axisName = yAxisNameProp;
+        }
+    },
+
+    getWrappedMeasures : function()
+    {
+        var activeMeasures = this.activeMeasures,
+            xAxisNameProp = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
+            yAxisNameProp = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y);
+
+        return [
+            this._getAxisWrappedMeasure(activeMeasures.x, xAxisNameProp),
+            this._getAxisWrappedMeasure(activeMeasures.y, yAxisNameProp),
+            this._getColorWrappedMeasure(activeMeasures)
+        ];
+    },
+
+    _getColorWrappedMeasure : function(activeMeasures)
+    {
+        var wrapped = null;
+
+        if (activeMeasures.color && ChartUtils.hasValidColorMeasure(activeMeasures))
+        {
+            wrapped = {
+                measure: Ext.clone(activeMeasures.color)
+            };
+
+            this.setAxisNameMeasureProperty(wrapped.measure, activeMeasures.x, activeMeasures.y);
+        }
+
+        return wrapped;
+    },
+
+    _getAxisWrappedMeasure : function(measure, axis)
+    {
+        if (!measure)
+        {
             return null;
         }
 
-        var wrappedMeasure = {measure : measure},
+        var wrappedMeasure = {
+                measure : Ext.clone(measure)
+            },
             options = measure.options;
 
-        if (measure.variableType == 'TIME') {
+        if (Ext.isDefined(axis))
+        {
+            wrappedMeasure.measure.axisName = axis;
+        }
+
+        if (measure.variableType == 'TIME')
+        {
             var interval = measure.alias;
             measure.interval = interval;
             wrappedMeasure.dateOptions = {
-                interval: interval,
-                altQueryName: 'cds.VisitTagAlignment'
+                interval: interval
             };
 
             // handle visit tag alignment for study axis
-            if (options && options.alignmentVisitTag !== undefined) {
+            if (options && options.alignmentVisitTag !== undefined)
+            {
                 wrappedMeasure.dateOptions.zeroDayVisitTag = options.alignmentVisitTag;
             }
         }
-        else if (this.requireStudyAxis) {
+        else if (this.requireStudyAxis || (measure.isDemographic && Connector.model.ChartData.isContinuousMeasure(measure)))
+        {
             // Issue 24002: Gutter plot for null y-values and study axis are appearing at the same time
-            wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.name, null, LABKEY.Filter.Types.NOT_MISSING)];
-        }
-
-        // we still respect the value if it is set explicitly on the measure
-        if (!Ext.isDefined(wrappedMeasure.measure.inNotNullSet)) {
-            wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
-        }
-
-        if (options && options.scale === 'LOG') {
-            var logFilter = this.getLogTransformFilter(measure);
-            if (logFilter) {
-                if (Ext.isArray(wrappedMeasure.filterArray)) {
-                    wrappedMeasure.filterArray.push(logFilter);
-                }
-                else {
-                    wrappedMeasure.filterArray = [logFilter];
-                }
-            }
+            wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.alias, null, LABKEY.Filter.Types.NOT_MISSING)];
         }
 
         return wrappedMeasure;
     },
 
-    getLogTransformFilter : function(measure, ignoreLogTransform) {
-        if (ignoreLogTransform || !measure || !measure.options || !measure.options.scale || measure.options.scale !== 'LOG')
-            return null;
-
-        return LABKEY.Filter.create(measure.alias, 0, LABKEY.Filter.Types.GREATER_THAN);
-    },
-
     /**
-     *
-     * @param activeMeasures Set of active measures (x, y, color)
-     * @param {boolean} [includeFilterMeasures=false] Include all measures declared in all state filters
-     * @returns {{measures: (*|Array), wrapped: *}}
+     * Returns a metadata object containing the measures, wrappedMeasures, and a hasPlotSelectionFilter object.
+     * The measures/wrappedMeasures are established from the current 'activeMeasures'. The hasPlotSelectionFilter
+     * object has a property for each axis (x/y) stating if that axis is being affected directly by a "plot selection"
+     * filter in the app.
+     * @param {boolean} [includeFilterMeasures=false] - Include all measures declared in all state filters
+     * @returns {{measures: (*|Array), wrapped: (*|Array)}}
      */
-    getMeasureSet : function(activeMeasures, includeFilterMeasures) {
+    getMeasureSet : function(includeFilterMeasures)
+    {
+        var activeMeasures = this.activeMeasures,
+            measures = this.getAdditionalMeasures(activeMeasures),
+            wrappedMeasures = this.getWrappedMeasures(),
+            hasPlotSelectionFilter = {x: false, y: false};
 
-        var additionalMeasures = this.getAdditionalMeasures(activeMeasures),
-            wrappedMeasures = this.getWrappedMeasures(activeMeasures),
-            queryService = Connector.getService('Query'),
-            nonNullMeasures = [],
-            filterMeasures,
-            measures, i;
-
-        for (i=0; i < wrappedMeasures.length; i++) {
-            if (wrappedMeasures[i]) {
-                nonNullMeasures.push(wrappedMeasures[i]);
-            }
-        }
-
-        measures = additionalMeasures.concat(nonNullMeasures);
-
-        // set of measures from data filters
-        if (includeFilterMeasures === true) {
-            filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters(), true, this.getQueryKeys(measures));
-            if (!Ext.isEmpty(filterMeasures)) {
-                measures = measures.concat(filterMeasures);
-            }
-        }
-
-        return {
-            measures: queryService.mergeMeasures(measures),
-            wrapped: wrappedMeasures
-        };
-    },
-
-    getQueryKeys : function(measures) {
-        var queryKeys = [], key;
-
-        Ext.each(measures, function(m){
-            key = m.measure.schemaName + '|' + m.measure.queryName;
-            if (queryKeys.indexOf(key) == -1) {
-                queryKeys.push(key);
+        Ext.each(wrappedMeasures, function(wrapped)
+        {
+            if (wrapped)
+            {
+                measures.push(wrapped);
             }
         });
 
-        return queryKeys;
+        // set of measures from data filters
+        if (includeFilterMeasures === true)
+        {
+            var xAxisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
+                yAxisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y),
+                hasX = activeMeasures.x !== null,
+                hasY = activeMeasures.y !== null;
+
+            /**
+             * A comparator to determine if a filter from measureB qualifies against measureA. Determine by the following:
+             *    1) the measureB filter is from a demographic dataset or from GridBase (which can always be applied)
+             *    2) the measureB filter is a grid filter (i.e. no assay dimensions) from the same source as measureA
+             *    3) the measureB filter is an exact match based on sourceKey and assay dimension filters to measureA
+             * @param measureA
+             * @param measureB
+             * @returns {boolean}
+             */
+            var comparator = function(measureA, measureB)
+            {
+                var gridBaseKey = Connector.studyContext.gridBaseSchema + '|' + Connector.studyContext.gridBase,
+                    measureAKey = measureA.schemaName + '|' + measureA.queryName,
+                    measureBKey = measureB.schemaName + '|' + measureB.queryName;
+
+                // case #1 from comment above
+                if (measureB.isDemographic === true || gridBaseKey.toLowerCase() == measureBKey.toLowerCase())
+                {
+                    return true;
+                }
+                else if (measureA.isDemographic === true || !ChartUtils.hasMeasureAssayDimensions(measureA))
+                {
+                    return false;
+                }
+
+                // case #2 from comment above
+                if (!ChartUtils.hasMeasureAssayDimensions(measureB))
+                {
+                    return measureAKey == measureBKey;
+                }
+                // case #3 from comment above
+                else
+                {
+                    return measureAKey == measureBKey && ChartUtils.getAssayDimensionsWithDifferentValues(measureA, measureB).length == 0;
+                }
+            };
+
+            Ext.each(Connector.getState().getFilters(), function(filter)
+            {
+                if (filter.isGrid())
+                {
+                    if (hasX && (filter.isPlot() || activeMeasures.x.variableType !== 'TIME'))
+                    {
+                        var xMeasures = filter.getPlotAxisMeasures(xAxisName, activeMeasures.x, comparator);
+                        if (xMeasures.length > 0)
+                        {
+                            measures = measures.concat(xMeasures);
+
+                            if (filter.isPlot())
+                            {
+                                hasPlotSelectionFilter.x = true;
+                            }
+                        }
+                    }
+
+                    if (hasY)
+                    {
+                        var yMeasures = filter.getPlotAxisMeasures(yAxisName, activeMeasures.y, comparator);
+                        if (yMeasures.length > 0)
+                        {
+                            measures = measures.concat(yMeasures);
+
+                            if (filter.isPlot())
+                            {
+                                hasPlotSelectionFilter.y = true;
+                            }
+                        }
+                    }
+                }
+            }, this);
+        }
+
+        return {
+            measures: measures,
+            wrapped: wrappedMeasures,
+            hasPlotSelectionFilter: hasPlotSelectionFilter
+        };
     },
 
     /**
-     * This creates a temp query via cdsGetData which is then used to query for unique participants, and is also what
+     * This creates a temp query via cds getData which is then used to query for unique participants, and is also what
      * we use to back the chart data (via an AxisMeasureStore).
-     * @param activeMeasures
      */
-    requestChartData : function(activeMeasures) {
-        ChartUtils.getSubjectsIn(function(subjectList) {
-            // issue 23885: Do not include the color measure in request if it's noe from the x, y, or demographic datasets
-            if (activeMeasures.color) {
-                var demographicSource = activeMeasures.color.isDemographic,
-                    matchXSource = activeMeasures.x && activeMeasures.x.queryName == activeMeasures.color.queryName,
-                    matchYSource = activeMeasures.y && activeMeasures.y.queryName == activeMeasures.color.queryName;
+    requestChartData : function()
+    {
+        Connector.getFilterService().getSubjects(function(subjectFilter)
+        {
+            var measureSet = this.getMeasureSet(true /* includeFilterMeasures */);
 
-                if (!demographicSource && !matchXSource && !matchYSource) {
-                    activeMeasures.color = null;
-                }
-            }
-
-            var measures = this.getMeasureSet(activeMeasures, true /* includeFilterMeasures */).measures;
-
-            this.applyFiltersToMeasure(measures, subjectList);
+            this.applyFiltersToMeasure(measureSet.measures, subjectFilter);
 
             // Request Chart MeasureStore Data
-            Connector.getService('Query').getMeasureStore(measures, this.onChartDataSuccess, this.onFailure, this);
+            Connector.getQueryService().getMeasureStore(measureSet.measures, function(measureStore)
+            {
+                this.onChartDataSuccess(measureStore, measureSet);
+            }, this.onFailure, this);
         }, this);
     },
 
-    onChartDataSuccess : function(measureStore, measureSet) {
+    onChartDataSuccess : function(measureStore, measureSet)
+    {
         var chartData = Ext.create('Connector.model.ChartData', {
-            measureSet: measureSet,
-            plotMeasures: this.measures,
+            measureSet: measureSet.measures,
+            hasPlotSelectionFilter: measureSet.hasPlotSelectionFilter,
+            plotMeasures: this.getWrappedMeasures(),
             measureStore: measureStore,
-            plotScales: {x: this.getScale('x'), y: this.getScale('y')}
+            plotScales: {
+                x: this.getScale('x'),
+                y: this.getScale('y')
+            }
         });
 
         this.dataQWP = {
@@ -2210,63 +2434,59 @@ Ext.define('Connector.view.Chart', {
 
         this.hasStudyAxisData = false;
 
-        if (this.requireStudyAxis) {
+        if (this.requireStudyAxis)
+        {
             this.getStudyAxisData(chartData);
         }
-        else if (chartData.getDataRows().totalCount == 0) {
+        else if (chartData.getDataRows().totalCount == 0)
+        {
             // show empty plot message if we have no data in main plot or gutter plots
-            this.noPlot(true);
+            this.noPlot(true, chartData);
         }
-        else {
+        else
+        {
             this.initPlot(chartData);
         }
     },
 
-    _showWhyXGutter : function(data) {
-        var percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2),
-            config = {
-                bubbleWidth: 325,
-                target: document.querySelector("svg g text.xGutter-label"),
-                placement: 'top',
-                title: 'Percent with undefined y value: ' + percent + '%',
-                content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
-                xOffset: -20
-            };
+    _showWhyXGutter : function(data)
+    {
+        var percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2);
 
-        ChartUtils.showCallout(config, 'hideguttermsg', this);
+        ChartUtils.showCallout({
+            bubbleWidth: 325,
+            target: document.querySelector("svg g text.xGutter-label"),
+            placement: 'top',
+            title: 'Percent with undefined Y value: ' + percent + '%',
+            content: 'Data points may have no matching Y value due to differing visits, antigens, or assay dimensions. See Help for more details.',
+            xOffset: -20
+        }, 'hideguttermsg', this);
     },
 
-    _showWhyYGutter : function(data) {
-        var percent = Ext.util.Format.round((data.undefinedX.length / data.totalCount) * 100, 2),
-            config = {
-                bubbleWidth: 325,
-                target: document.querySelector("svg g text.yGutter-label"),
-                placement: 'right',
-                title: 'Percent with undefined x value: ' + percent + '%',
-                content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
-                yOffset: -40,
-                arrowOffset: 30
-            };
+    _showWhyYGutter : function(data)
+    {
+        var percent = Ext.util.Format.round((data.undefinedX.length / data.totalCount) * 100, 2);
 
-        ChartUtils.showCallout(config, 'hideguttermsg', this);
+        ChartUtils.showCallout({
+            bubbleWidth: 325,
+            target: document.querySelector("svg g text.yGutter-label"),
+            placement: 'right',
+            title: 'Percent with undefined X value: ' + percent + '%',
+            content: 'Data points may have no matching X value due to differing visits, antigens, or assay dimensions. See Help for more details.',
+            yOffset: -40,
+            arrowOffset: 30
+        }, 'hideguttermsg', this);
     },
 
     _closeWhyGutter : function() {
         this.fireEvent('hideguttermsg', this);
     },
 
-    isAxisLogScale : function() {
-        var measures = this.getActiveMeasures();
-        var xLog = measures && measures.x && measures.x.options && measures.x.options.scale === 'LOG';
-        var yLog = measures && measures.y && measures.y.options && measures.y.options.scale === 'LOG';
-        return xLog || yLog;
-    },
-
     toggleLogScaleMode : function() {
-        this.getLogScaleModeIndicator().setVisible(this.isLogScale);
+        this.getLogScaleModeIndicator().setVisible(this.invalidLogPlotRowCount > 0);
 
         var msgKey = 'LOG_MODE';
-        if (!this.disableAutoMsg && this.isLogScale && Connector.getService('Messaging').isAllowed(msgKey)) {
+        if (!this.disableAutoMsg && this.invalidLogPlotRowCount > 0 && Connector.getService('Messaging').isAllowed(msgKey)) {
             this.showWhyLogScale();
             this.hideLogScaleModeTask.delay(5000);
             Connector.getService('Messaging').block(msgKey);
@@ -2274,14 +2494,16 @@ Ext.define('Connector.view.Chart', {
     },
 
     showWhyLogScale : function() {
-        if (this.isLogScale) {
+        if (this.invalidLogPlotRowCount > 0) {
             var config = {
                 target: this.getLogScaleModeIndicator().getEl().dom,
                 placement: 'bottom',
                 title: 'Log filter on',
                 xOffset: -115,
                 arrowOffset: 145,
-                content: 'Values ≤ 0 have no log and were filtered out. Use a linear scale to see all values.'
+                content: 'Values ≤ 0 have no log. ' + Ext.util.Format.number(this.invalidLogPlotRowCount, '0,000')
+                    + ' points are not plotted but are still included in the grid and subject count.'
+                    + ' Use a linear scale to see all values.'
             };
 
             ChartUtils.showCallout(config, 'hidelogscalemsg', this);
@@ -2345,92 +2567,135 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getAdditionalMeasures : function(activeMeasures) {
+    getAdditionalMeasures : function(activeMeasures)
+    {
         // map key to schema, query, name, and values
-        var measuresMap = {}, additionalMeasuresArr = [];
+        var measuresMap = {},
+            additionalMeasuresArr = [],
+            useBaseAxisNameProp = ChartUtils.isSameSource(activeMeasures.x, activeMeasures.y)
+                    && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, activeMeasures.y).length == 0,
+            xAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.xAxisNameProp,
+            yAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.yAxisNameProp;
 
-        Ext.each(['x', 'y'], function(axis) {
-            var schema, query;
+
+        Ext.each(['x', 'y'], function(axis)
+        {
+            var schema, query, measureRecord,
+                axisName = this.getAxisNameProperty(axis, xAxisNameProp, yAxisNameProp);
+
             if (activeMeasures[axis])
             {
                 schema = activeMeasures[axis].schemaName;
                 query = activeMeasures[axis].queryName;
 
                 // always add in the Container and SubjectId columns for a selected measure on the X or Y axis
-                this.addValuesToMeasureMap(measuresMap, schema, query, 'Container', []);
-                this.addValuesToMeasureMap(measuresMap, schema, query, Connector.studyContext.subjectColumn, []);
+                this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'Container', 'VARCHAR');
+                this.addValuesToMeasureMap(measuresMap, axisName, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
 
                 // only add the SequenceNum column for selected measures that are not demographic and no time point
-                if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') {
-                    this.addValuesToMeasureMap(measuresMap, schema, query, 'SequenceNum', []);
+                if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') 
+                {
+                    this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'SequenceNum', 'DOUBLE');
+                }
+
+                // if time is a selected axis, include the 'ParticipantSequenceNum' to allow for resolving
+                // time-based filters (a.k.a. Subject-Visit filters)
+                if (activeMeasures[axis].variableType === 'TIME')
+                {
+                    this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'ParticipantSequenceNum',
+                        'VARCHAR'
+                    );
                 }
 
                 // add selection information from the advanced options panel of the variable selector
-                if (activeMeasures[axis].options && activeMeasures[axis].options.dimensions)
+                if (activeMeasures[axis].options && activeMeasures[axis].options.dimensions) 
                 {
-                    Ext.iterate(activeMeasures[axis].options.dimensions, function(key, values) {
+                    Ext.iterate(activeMeasures[axis].options.dimensions, function(alias, values)
+                    {
                         // null or undefined mean "select all" so don't apply a filter
-                        if (!Ext.isDefined(values) || values == null) {
+                        if (!Ext.isDefined(values) || values == null)
+                        {
                             values = [];
                         }
 
-                        this.addValuesToMeasureMap(measuresMap, schema, query, key, values);
+                        measureRecord = Connector.getQueryService().getMeasureRecordByAlias(alias);
+                        this.addValuesToMeasureMap(measuresMap, axisName, schema, query, measureRecord.get('name'), measureRecord.get('type'), values);
                     }, this);
                 }
             }
         }, this);
 
-        Ext.iterate(measuresMap, function(k, m) {
-            var measureRecord = Connector.model.Measure.createMeasureRecord(m);
-            additionalMeasuresArr.push({ measure: measureRecord });
+        Ext.iterate(measuresMap, function(k, m)
+        {
+            additionalMeasuresArr.push({
+                measure: Connector.model.Measure.createMeasureRecord(m)
+            });
         });
 
         return additionalMeasuresArr;
     },
 
-    addValuesToMeasureMap : function(measureMap, schema, query, name, values) {
-        var key = schema + "|" + query + "|" + name;
+    addValuesToMeasureMap : function(measureMap, axis, schema, query, name, type, values)
+    {
+        var key = schema + '|' + query + '|' + name + '|' + axis;
 
-        if (!measureMap[key]) {
-            measureMap[key] = { schemaName: schema, queryName: query, name: name, values: [] };
+        if (!measureMap[key]) 
+        {
+            measureMap[key] = {
+                axis: axis,
+                schemaName: schema,
+                queryName: query,
+                name: name,
+                type: type,
+                values: [] 
+            };
         }
 
-        measureMap[key].values = measureMap[key].values.concat(values);
+        if (!Ext.isEmpty(values))
+        {
+            measureMap[key].values = Ext.Array.unique(measureMap[key].values.concat(values));
+        }
     },
 
     /**
      * Update the values within the 'In the plot' filter
-     * @param activeMeasures
      */
-    updatePlotBasedFilter : function(activeMeasures) {
-
-        var wrapped = this.getMeasureSet(activeMeasures).wrapped;
-
+    updatePlotBasedFilter : function()
+    {
         this.plotLock = true;
 
-        var state = Connector.getState();
-        var filters = state.getFilters();
-        var inPlotFilter;
-
-        var sqlFilters = [null, null, null, null];
+        var state = Connector.getState(),
+            wrapped = this.getMeasureSet().wrapped,
+            sqlFilters = [null, null, null, null],
+            inPlotFilter;
 
         // see if filter already exists
-        Ext.each(filters, function(filter) {
-            if (filter.get('isPlot') === true && filter.get('isGrid') === false) {
+        Ext.each(state.getFilters(), function(filter)
+        {
+            if (filter.isPlot() && !filter.isGrid())
+            {
                 inPlotFilter = filter;
                 return false;
             }
         });
 
-        if (inPlotFilter) {
+        if (inPlotFilter)
+        {
             // update
-            inPlotFilter.set('gridFilter', sqlFilters);
-            inPlotFilter.set('plotMeasures', wrapped);
-            state.updateFilterMembersComplete(false);
+            state.modifyFilter(inPlotFilter, {
+                gridFilter: sqlFilters,
+                plotMeasures: wrapped
+            });
         }
-        else {
+        else
+        {
             // create
-            inPlotFilter = Ext.create('Connector.model.Filter', {
+            state.prependFilter({
                 gridFilter: sqlFilters,
                 isPlot: true,
                 isGrid: false,
@@ -2439,16 +2704,13 @@ Ext.define('Connector.view.Chart', {
                 filterSource: 'GETDATA',
                 isWhereFilter: false
             });
-            state.prependFilter(inPlotFilter);
         }
-
-        this.plotLock = false;
 
         state.getApplication().fireEvent('plotmeasures');
     },
 
-    noPlot : function(showEmptyMsg) {
-
+    noPlot : function(showEmptyMsg, chartData)
+    {
         var map = [{
             x : null,
             xname : 'X-Axis',
@@ -2457,7 +2719,20 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        this.initPlot(map, undefined, true, showEmptyMsg);
+        var invalidLogPlotRowCount = 0;
+
+        if (Ext.isDefined(chartData))
+        {
+            if (Ext.isFunction(chartData.getDataRows))
+            {
+                invalidLogPlotRowCount = chartData.getDataRows().invalidLogPlotRowCount;
+            }
+        }
+
+        this.initPlot({
+            rows: map,
+            invalidLogPlotRowCount: invalidLogPlotRowCount
+        }, undefined, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
         this.resizePlotMsg(this.getNoPlotMsg(), this.plotEl.getBox());
@@ -2477,13 +2752,15 @@ Ext.define('Connector.view.Chart', {
         this.showMessage('Failed to Load', true);
     },
 
-    updateSelectorWindow : function(win) {
-        if (win) {
-            var box = this.getBox();
-            win.setHeight(box.height-100);
+    updateSelectorWindow : function(win)
+    {
+        if (win)
+        {
+            win.setHeight(this.getBox().height-100);
             win.center();
         }
-        else {
+        else
+        {
             console.warn('Failed to updated measure selection');
         }
     },
@@ -2508,33 +2785,63 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
+    getAxisSelectorIfInitialized : function(axis)
+    {
+        var axisSelector;
+
+        if (axis == 'y')
+        {
+            if (Ext.isDefined(this.yAxisSelector))
+            {
+                axisSelector = this.getYAxisSelector();
+            }
+        }
+        else if (axis == 'x')
+        {
+            if (Ext.isDefined(this.xAxisSelector))
+            {
+                axisSelector = this.getXAxisSelector();
+            }
+        }
+        else if (axis == 'color')
+        {
+            if (Ext.isDefined(this.colorAxisSelector))
+            {
+                axisSelector = this.getColorAxisSelector();
+            }
+        }
+
+        return axisSelector;
+    },
+
     getYAxisSelector : function() {
         if (!this.yAxisSelector) {
             this.yAxisSelector = Ext.create('Connector.panel.Selector', {
+                plotAxis: 'y',
                 headerTitle: 'y-axis',
                 testCls: 'y-axis-selector',
-                activeMeasure: this.activeYSelection,
+                activeMeasure: this.activeMeasures.y,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
                     measuresOnly: true
                 },
-                memberCountsFn: ChartUtils.getSubjectsIn,
-                memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
 
-                        this.activeYSelection = selected;
+                        this.activeMeasures.y = selected;
+                        this.getYSelector().getModel().updateVariable([selected]);
+
                         this.variableSelectionMade(this.ywin, this.getYSelector().getEl());
                     },
                     cancel: function() {
                         this.clearVisibleWindow();
 
                         this.ywin.hide(this.getYSelector().getEl());
-                        // reset the selection back to this.activeYSelection
-                        this.yAxisSelector.setActiveMeasure(this.activeYSelection);
+                        // reset the selection back to previous active selection
+                        this.yAxisSelector.setActiveMeasure(this.activeMeasures.y);
                     },
                     scope: this
                 }
@@ -2557,29 +2864,28 @@ Ext.define('Connector.view.Chart', {
     getXAxisSelector : function() {
         if (!this.xAxisSelector) {
             this.xAxisSelector = Ext.create('Connector.panel.Selector', {
+                plotAxis: 'x',
                 headerTitle: 'x-axis',
                 testCls: 'x-axis-selector',
-                activeMeasure: this.activeXSelection,
+                activeMeasure: this.activeMeasures.x,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
                     includeTimpointMeasures: true
                 },
-                memberCountsFn: ChartUtils.getSubjectsIn,
-                memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
 
-                        this.activeXSelection = selected;
+                        this.activeMeasures.x = selected;
+                        this.getXSelector().getModel().updateVariable([selected]);
+
                         this.variableSelectionMade(this.xwin, this.getXSelector().getEl());
                     },
                     remove: function() {
                         this.clearVisibleWindow();
 
-                        // Need to remove the x measure (index 0) from the plot filter or we'll pull it down again.
-                        this.removeVariableFromFilter(0);
                         this.clearAxisSelection('x');
                         this.variableSelectionMade(this.xwin, this.getXSelector().getEl());
                     },
@@ -2587,8 +2893,8 @@ Ext.define('Connector.view.Chart', {
                         this.clearVisibleWindow();
 
                         this.xwin.hide(this.getXSelector().getEl());
-                        // reset the selection back to this.activeYSelection
-                        this.xAxisSelector.setActiveMeasure(this.activeXSelection);
+                        // reset the selection back to previous active selection
+                        this.xAxisSelector.setActiveMeasure(this.activeMeasures.x);
                     },
                     scope: this
                 }
@@ -2598,14 +2904,17 @@ Ext.define('Connector.view.Chart', {
         return this.xAxisSelector;
     },
 
-    showXMeasureSelection : function() {
+    showXMeasureSelection : function()
+    {
+        var xAxisSelector = this.getXAxisSelector();
 
-        if (!this.xwin) {
-            this.xwin = this.createSelectorWindow(this.getXAxisSelector());
+        if (!this.xwin)
+        {
+            this.xwin = this.createSelectorWindow(xAxisSelector);
         }
 
-        this.getXAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeXSelection) && this.activeXSelection != null);
-        this.getXAxisSelector().loadSourceCounts();
+        xAxisSelector.toggleRemoveVariableButton(this.activeMeasures.x !== null);
+        xAxisSelector.loadSourceCounts();
         this.xwin.show(this.getXSelector().getEl());
     },
 
@@ -2615,7 +2924,7 @@ Ext.define('Connector.view.Chart', {
                 headerTitle: 'color',
                 testCls: 'color-axis-selector',
                 disableAdvancedOptions: true,
-                activeMeasure: this.activeColorSelection,
+                activeMeasure: this.activeMeasures.color,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
@@ -2624,20 +2933,19 @@ Ext.define('Connector.view.Chart', {
                         return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
                     }
                 },
-                memberCountsFn: ChartUtils.getSubjectsIn,
-                memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
 
-                        this.activeColorSelection = selected;
+                        console.log('setting color...');
+                        this.activeMeasures.color = selected;
+                        this.getColorSelector().getModel().updateVariable([selected]);
+
                         this.variableSelectionMade(this.colorwin, this.getColorSelector().getEl());
                     },
                     remove: function() {
                         this.clearVisibleWindow();
 
-                        // Need to remove the color measure (index 2) from the plot filter or we'll pull it down again.
-                        this.removeVariableFromFilter(2);
                         this.clearAxisSelection('color');
                         this.variableSelectionMade(this.colorwin, this.getColorSelector().getEl());
                     },
@@ -2645,8 +2953,8 @@ Ext.define('Connector.view.Chart', {
                         this.clearVisibleWindow();
 
                         this.colorwin.hide(this.getColorSelector().getEl());
-                        // reset the selection back to this.activeYSelection
-                        this.colorAxisSelector.setActiveMeasure(this.activeColorSelection);
+                        // reset the selection back to previous active selection
+                        this.colorAxisSelector.setActiveMeasure(this.activeMeasures.color);
                     },
                     scope: this
                 }
@@ -2656,35 +2964,47 @@ Ext.define('Connector.view.Chart', {
         return this.colorAxisSelector;
     },
 
-    showColorSelection : function() {
-        if (!this.colorwin) {
-            this.colorwin = this.createSelectorWindow(this.getColorAxisSelector());
+    showColorSelection : function()
+    {
+        var colorAxisSelector = this.getColorAxisSelector();
+
+        if (!this.colorwin)
+        {
+            this.colorwin = this.createSelectorWindow(colorAxisSelector);
         }
 
-        this.getColorAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeColorSelection) && this.activeColorSelection != null);
-        this.getColorAxisSelector().loadSourceCounts();
+        colorAxisSelector.toggleRemoveVariableButton(this.activeMeasures.color !== null);
+        colorAxisSelector.loadSourceCounts();
         this.colorwin.show(this.getColorSelector().getEl());
     },
 
-    variableSelectionMade : function(win, targetEl) {
-        if (Ext.isDefined(this.activeYSelection)) {
-            this.initialized = true;
+    /**
+     * This is called when a user explicitly sets a variable via a variable selector
+     * @param win - The variable selector window that is current active
+     * @param targetEl - The target element for the variable selector's animation
+     */
+    variableSelectionMade : function(win, targetEl)
+    {
+        if (this.activeMeasures.y)
+        {
             Connector.getState().clearSelections(true);
-            this.showTask.delay(10);
+
+            this.updatePlotBasedFilter();
+            this.onShowGraph();
+
             win.hide(targetEl);
 
             this.fireEvent('userplotchange', this, {
                 targetId : targetEl.id,
-                x: this.activeXSelection,
-                y: this.activeYSelection,
-                color: this.activeColorSelection
+                x: this.activeMeasures.x,
+                y: this.activeMeasures.y,
+                color: this.activeMeasures.color
             });
         }
-        else {
+        else
+        {
             // if we don't yet have a y-axis selection, show that variable selector
-            win.hide(targetEl, function() {
-                this.showYMeasureSelection();
-            }, this);
+            win.hide(targetEl, this.showYMeasureSelection, this);
         }
     },
 
@@ -2715,65 +3035,101 @@ Ext.define('Connector.view.Chart', {
         return win;
     },
 
-    removeVariableFromFilter : function(measureIdx) {
-        var filter = this.getPlotsFilter();
-        if (filter) {
-            var m = filter.get('plotMeasures');
-            m[measureIdx] = null;
-            Connector.getState().updateFilter(filter.get('id'), {plotMeasures: m});
-        }
-    },
-
-    getPlotsFilter : function() {
-        var filters = Connector.getState().getFilters(),
-            _filter;
-
-        for (var f=0; f < filters.length; f++) {
-            if (filters[f].isPlot() && !filters[f].isGrid()) {
-                _filter = filters[f]; break;
-            }
-        }
-
-        return _filter;
-    },
-
-    onFilterChange : function(filters) {
+    onFilterChange : function(filters)
+    {
         // plot lock prevents from listening to plots own changes to state filters
-        if (this.plotLock) {
+        if (this.plotLock)
+        {
             this.plotLock = false;
             return;
         }
 
         // mark as clear when there are no plot filters
         this.filterClear = true;
-        for (var f=0; f < filters.length; f++) {
-            if (filters[f].isPlot() && !filters[f].isGrid()) {
+        for (var f=0; f < filters.length; f++)
+        {
+            if (filters[f].isPlot() && !filters[f].isGrid())
+            {
                 this.filterClear = false;
                 break;
             }
         }
 
-        if (this.isActiveView) {
-            this.onReady(function() {
-                this.showTask.delay(100);
-            }, this);
+        if (this.isActiveView)
+        {
+            if (!this.filterClear)
+            {
+                // if a user adds a "In the plot" filter back via undo, the only time the chart get
+                // notified is when the filters change
+
+                if (!this.activeMeasures.x && !this.activeMeasures.y && !this.activeMeasures.color)
+                {
+                    // determine if there is an "in the plot" filter present, if so set the active measures
+                    Ext.each(filters, function(filter)
+                    {
+                        if (filter.isPlot() && !filter.isGrid())
+                        {
+                            this.setActiveMeasureSelectionFromFilter(filter);
+                            return false;
+                        }
+                    }, this);
+                }
+            }
+
+            this.onShowGraph();
         }
-        else {
+        else
+        {
             this.refreshRequired = true;
         }
-
-        Connector.getService('Query').clearSourceCountsCache();
     },
 
-    onActivate: function() {
+    onActivate : function()
+    {
         this.isActiveView = true;
-        if (this.refreshRequired) {
-            this.onReady(function() {
-                this.showTask.delay(100);
-            }, this);
+        if (this.refreshRequired)
+        {
+            if (this.initialized)
+            {
+                this.onShowGraph();
+            }
+            else
+            {
+                Connector.getState().onReady(function()
+                {
+                    this.initialized = true;
+                    var state = Connector.getState();
+
+                    // determine if there is an "in the plot" filter present, if so set the active measures
+                    Ext.each(state.getFilters(), function(filter)
+                    {
+                        if (filter.isPlot() && !filter.isGrid())
+                        {
+                            if (this.setActiveMeasureSelectionFromFilter(filter))
+                            {
+                                // lock the plot, to ignore filter change
+                                if (!this.filtersActivated)
+                                {
+                                    this.plotLock = true;
+                                }
+                            }
+
+                            return false;
+                        }
+                    }, this);
+
+                    this.onShowGraph();
+
+                    // bind state events
+                    state.on('filterchange', this.onFilterChange, this);
+                    state.on('plotselectionremoved', this.onPlotSelectionRemoved, this);
+                    state.on('selectionchange', this.onSelectionChange, this);
+                }, this);
+            }
         }
 
-        if (Ext.isObject(this.visibleWindow)) {
+        if (Ext.isObject(this.visibleWindow))
+        {
             this.visibleWindow.show();
         }
     },
@@ -2785,16 +3141,16 @@ Ext.define('Connector.view.Chart', {
         this.hideVisibleWindow();
     },
 
-    applyFiltersToMeasure : function(measureSet, ptids) {
+    applyFiltersToMeasure : function(measureSet, subjectFilter) {
         // find the subject column(s) in the measure set to apply the values filter (issue 24123)
-        if (Ext.isArray(ptids)) {
+        if (subjectFilter.hasFilters) {
             Ext.each(measureSet, function(m) {
                 if (m.measure && m.measure.name == Connector.studyContext.subjectColumn) {
                     if (Ext.isArray(m.measure.values)) {
                         console.error('There is a potentially unknown values array on the applied subject measure.');
                     }
 
-                    m.measure.values = ptids;
+                    m.measure.values = subjectFilter.subjects;
                 }
             }, this);
         }
@@ -2846,28 +3202,30 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getStudyVisitTagRecords : function(store, chartData) {
-        var alignMap = chartData.getContainerAlignmentDayMap(),
-            studyContainers = Object.keys(alignMap);
+    getStudyVisitTagRecords : function(store, chartData)
+    {
+        var studyContainers = chartData.getStudyContainers();
 
         // filter the StudyVisitTag store based on the study container id array
-        var containerFilteredRecords = store.queryBy(function(record) {
-            return studyContainers.indexOf(record.get('container_id')) > -1;
-        }).items;
+        var filteredVisitTags = store.queryBy(function(record)
+        {
+            return studyContainers[record.get('container_id')] === true;
+        });
 
         var studyAxisData = Ext.create('Connector.model.StudyAxisData', {
-            records: containerFilteredRecords,
-            measure: this.measures[0],
-            containerAlignmentDayMap: alignMap
+            records: filteredVisitTags.getRange(),
+            measure: this.activeMeasures.x
         });
 
         this.hasStudyAxisData = studyAxisData.getData().length > 0;
 
-        if (chartData.getDataRows().totalCount == 0) {
+        if (chartData.getDataRows().totalCount == 0)
+        {
             // show empty plot message if we have no data in main plot or gutter plots
-            this.noPlot(true);
+            this.noPlot(true, chartData);
         }
-        else {
+        else
+        {
             this.initPlot(chartData, studyAxisData);
         }
     },
@@ -2938,13 +3296,19 @@ Ext.define('Connector.view.Chart', {
 
         bubbleWidth = Math.min(maxWidth * 8, 400);
 
+        var title = data.studyLabel;
+        if (data.label)
+        {
+            title += ' - ' + data.label;
+        }
+
         config = {
             bubbleWidth: bubbleWidth,
             xOffset: -(bubbleWidth / 2),          // the non-vaccination icon is slightly smaller
             arrowOffset: (bubbleWidth / 2) - 10 - ((data.isVaccination || data.isChallenge) ? 4 : 0),
             target: visitTagEl,
             placement: 'top',
-            title: data.studyLabel + ' - ' + data.label,
+            title: title,
             content: Connector.view.Chart.studyAxisTipTpl.apply({
                 groups: tplGroups,
                 isAggregate: isAggregate

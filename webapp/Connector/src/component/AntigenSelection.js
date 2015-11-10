@@ -11,8 +11,8 @@ Ext.define('Connector.panel.AntigenSelection', {
 
     border: false,
 
-    totalColumnWidth: 340,
-    subjectColumnWidth: 83,
+    totalColumnWidth: 400,
+    subjectColumnWidth: 60,
 
     constructor : function(config) {
         this.callParent([config]);
@@ -20,11 +20,13 @@ Ext.define('Connector.panel.AntigenSelection', {
         this.addEvents('selectionchange');
 
         this.hierarchyMeasures = this.dimension.getHierarchicalMeasures();
+        this.measureColumnWidth = Math.floor(this.totalColumnWidth / this.hierarchyMeasures.length);
 
-        Connector.getService('Query').getMeasureValueSubjectCount(
+        Connector.getQueryService().getMeasureValueSubjectCount(
             this.hierarchyMeasures[this.hierarchyMeasures.length - 1],
             this.measureSetStore.measureSet,
             this.filterOptionValues,
+            this.plotAxis,
             this.loadDistinctValuesStore,
             this
         );
@@ -36,9 +38,9 @@ Ext.define('Connector.panel.AntigenSelection', {
 
         // add a column header for each hierarchical measure and the subject counts
         Ext.each(this.hierarchyMeasures, function(measure) {
-            checkboxItems.push(this.createColumnHeaderCmp(measure, null, Math.floor(this.totalColumnWidth / this.hierarchyMeasures.length)));
+            checkboxItems.push(this.createColumnHeaderCmp(measure, null, this.measureColumnWidth));
         }, this);
-        checkboxItems.push(this.createColumnHeaderCmp('Subject count', 'col-count-title', this.subjectColumnWidth));
+        checkboxItems.push(this.createColumnHeaderCmp('Subject count', 'col-count-title'));
 
         // add 'All' checkbox for each hierarchical measure
         Ext.each(this.hierarchyMeasures, function(measure) {
@@ -197,17 +199,21 @@ Ext.define('Connector.panel.AntigenSelection', {
     },
 
     createCheckboxCmp : function(record, fields, index, value, addCls) {
+        var alias = fields[index],
+            label = record.get(alias) || '[Blank]',
+            dataValue = alias + '-' + value.replace(/\|/g, '-').replace(/ /g, '_');
+
         var checkbox = Ext.create('Ext.form.field.Checkbox', {
-            name: fields[index] + '-check',
-            boxLabel: record.get(fields[index]) || '[Blank]',
+            name: alias + '-check',
+            boxLabel: label,
             cls: 'checkbox2 col-check ' + addCls,
-            boxLabelAttrTpl: 'test-data-value=' + fields[index] + '-' + value.replace(/\|/g, '-').replace(/ /g, '_'),
+            boxLabelAttrTpl: 'test-data-value="' + dataValue + '" title="' + label + '"',
             parentFieldAlias: index > 0 ? fields[index - 1] : null,
-            fieldAlias: fields[index],
-            fieldValue: record.get(fields[index]) || 'null',
+            fieldAlias: alias,
+            fieldValue: record.get(alias) || 'null',
             inputValue: value,
             checked: this.initSelection && this.initSelection.indexOf(value) > -1, // this will set only the leaf checkboxes as checked
-            width: Math.floor(this.totalColumnWidth / this.hierarchyMeasures.length),
+            width: this.measureColumnWidth,
             listeners: {
                 scope: this,
                 change: function(cb, newValue) {

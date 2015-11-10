@@ -14,6 +14,8 @@ Ext.define('Connector.model.Source', {
         {name: 'schemaName', defaultValue: undefined},
         {name: 'queryName', defaultValue: undefined},
         {name: 'queryLabel', defaultValue: undefined},
+        {name: 'queryType', defaultValue: null},
+        {name: 'isDemographic', defaultValue: false},
         {name: 'longLabel', defaultValue: undefined},
         {name: 'description', defaultValue: undefined},
 

@@ -647,6 +647,7 @@
             <column columnName="SubjectVisit"/>
             <column columnName="ParticipantSequenceNum"/>
             <column columnName="SequenceNum"/>
+            <column columnName="ProtocolDay"/>
             <column columnName="Container"/>
         </columns>
     </table>

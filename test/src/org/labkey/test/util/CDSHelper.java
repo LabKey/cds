@@ -33,31 +33,44 @@ import java.util.List;
 
 public class CDSHelper
 {
-    public static final String[] STUDIES = {"CAVD 256", "CAVD 264", "CAVD 317", "AVEG 007C", "HVTN 039", "HVTN 040",
-            "HVTN 041", "HVTN 042", "HVTN 044", "HVTN 045", "HVTN 048", "HVTN 049", "HVTN 049x", "HVTN 052",
-            "HVTN 054", "HVTN 055", "HVTN 056", "HVTN 057", "HVTN 059", "HVTN 060", "HVTN 063", "HVTN 064",
-            "HVTN 065", "HVTN 067", "HVTN 068", "HVTN 069", "HVTN 070", "HVTN 071", "HVTN 072", "HVTN 073",
-            "HVTN 076", "HVTN 077", "HVTN 078", "HVTN 080", "HVTN 082", "HVTN 083", "HVTN 084", "HVTN 085", "HVTN 086",
-            "HVTN 087", "HVTN 088", "HVTN 090", "HVTN 091", "HVTN 092", "HVTN 094", "HVTN 096", "HVTN 097",
-            "HVTN 100", "HVTN 104", "HVTN 106", "HVTN 203", "HVTN 204", "HVTN 205", "HVTN 503", "HVTN 504", "HVTN 505", "HVTN 908"}; // TODO Test data dependent.
+    public static final String[] STUDIES = {"QED 1", "QED 2", "QED 3", "QED 4",
+            "RED 1", "RED 2", "RED 3", "RED 4", "RED 5", "RED 6", "RED 7", "RED 8", "RED 9",
+            "YOYO 55",
+            "ZAP 100", "ZAP 101", "ZAP 102", "ZAP 103", "ZAP 104", "ZAP 105", "ZAP 106", "ZAP 107", "ZAP 108", "ZAP 109", "ZAP 110",
+            "ZAP 111", "ZAP 112", "ZAP 113", "ZAP 114", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118", "ZAP 119", "ZAP 120",
+            "ZAP 121", "ZAP 122", "ZAP 123", "ZAP 124", "ZAP 125", "ZAP 126", "ZAP 127", "ZAP 128", "ZAP 129", "ZAP 130",
+            "ZAP 131", "ZAP 132", "ZAP 133", "ZAP 134", "ZAP 135", "ZAP 136", "ZAP 137", "ZAP 138", "ZAP 139", "ZAP 140"};
 
-    public static final String[] PROT_NAMES = {"HVTN 078", "HVTN 044", "HVTN 503", "HVTN 060", "HVTN 204", "HVTN 041", "HVTN 205", "HVTN 049", "HVTN 049", "HVTN 505"}; //incomplete list, only first and last under each assay in find subjects view.
+    public static final String[] PROT_NAMES = {"ZAP 117", "ZAP 102", "ZAP 136", "ZAP 110", "ZAP 134", "QED 2", "ZAP 135", "ZAP 139"}; //incomplete list, only first and last under each assay in find subjects view.
 
-    public static final String[] PRODUCTS = {"3BNC117", "acyclovir", "AIDSVAX B/B", "AIDSVAX B/E", "ALVAC-HIV (vCP1452)",
-            "ALVAC-HIV (vCP1521)", "ALVAC-HIV (vCP2438)", "AS01B", "AS02A", "AVX101", "AVX201", "BufferGel", "Buprenorphine/naloxone",
-            "C1 peptide", "DEC-205-p24", "DNA-C", "DNA-HIV-PT123", "Engerix B", "EP HIV-1090", "EP-1043", "EP-1233",
-            "gag B DNA/PLG/env B DNA/PLG", "GM-CSF", "gp120w61d", "gp140 CN54", "gp140 Sub C", "gp160", "HIV CTL MEP",
-            "HIV MAG pDNA", "HIV-1 gag DNA", "IL-12 DNA", "IL-12 DNA-4532", "IL-15-1696", "LIPO-5", "MF59", "MRK Ad5 HIV-1 gag",
-            "MRKAd5 HIV-1 gag/pol/nef", "MVA-mBN32", "MVA/HIV62", "NefTat", "Nevirapine", "Nick101", "Nick202", "Nick303",
-            "Nick404", "Nick505", "Nick606", "Nick707", "Nick808", "NYVAC-HIV-B", "NYVAC-HIV-C", "NYVAC-HIV-PT1 and NYVAC-HIV-PT4",
-            "NYVAC-KC", "Oral Tenofovir", "PCMVR", "PennVax-GP", "PennVaxB", "pGA2/JS7 DNA", "pIL15EAMN", "Poly ICLC",
-            "polyvinylpyrrolidone (PVP).", "PRO2000/5", "RC529-SE", "rFPV-HIV", "rMVAHIV", "SAAVI DNA-C2", "SAAVI MVA-C",
-            "SPL7013 (VivaGel)", "Subtype C gp120", "Subtype C gp120/MF59", "Tenofovir Gel", "Tetavax", "tgAXH68",
-            "tgAXH95", "TLR7", "TLR9", "Truvada", "VRC-ADJDNA004-IL2-VP", "VRC-HIVADV014-00-VP", "VRC-HIVADV027-00-VP",
-            "VRC-HIVADV038-00-VP", "VRC-HIVADV052-00-VP", "VRC-HIVADV053-00-VP", "VRC-HIVADV054-00-VP", "VRC-HIVDNA-016-00-VP",
-            "VRC-HIVDNA009-00-VP", "VRC-HIVDNA044-00-VP", "VRC01", "VSV HIV envC^2", "VSV HIV gag"};  // TODO Test data dependent.
+    public static final String[] PRODUCTS = {"Acetaminophen, Dextromethorphan Hydrobromide, Doxylamine Succinate",
+            "ACETAMINOPHEN, DEXTROMETHORPHAN HYDROBROMIDE, PHENYLEPHRINE HYDROCHLORIDE",
+            "Acetaminophen, Diphenhydramine Hydrochloride, and Phenylephrine Hydrochloride",
+            "Acetaminophen, Doxylamine Succinate, Phenylephrine HCl", "Adenosinum cyclophosphoricum", "ALCOHOL",
+            "alendronate sodium and cholecalciferol", "Allium sativum", "Alnus rubra", "Amantadine Hydrochloride",
+            "amoxicillin and clavulanate potassium", "Arnica Aurum 20/30", "Aspirin",
+            "AVOBENZONE, HOMOSALATE, OCTINOXATE, OCTISALATE, OXYBENZONE",
+            "Avobenzone, Homosalate, Octisalate, Oxybenzone", "Benzalkonium Chloride", "Benzalkonium Di-Chloride",
+            "Benzoyl Peroxide", "benztropine mesylate", "Brevibacterium stationis", "Calcium carbonate", "CARBAMAZEPINE",
+            "Carbamazepine", "celtis occidentalis pollen", "Chloroxylenol",
+            "Chlorpheniramine/Dextromethorphan/Phenylephrine", "Citric Acid and Sodium Citrate",
+            "Colocynthis Lycopodium Clavatum Natrum Sulphuricum", "Corn Removers", "Diclofenac Sodium", "Digoxin",
+            "doxycycline hyclate", "Dronabinol", "ENALAPRILAT", "Escitalopram", "Famotidine", "Fluconazole",
+            "Fosinopril Sodium and Hydrochlorothiazide", "Gabapentin", "GENTAMICIN", "Honeysuckle,",
+            "HYDROCODONE BITARTRATE AND ACETAMINOPHEN", "HYDROMORPHONE HYDROCHLORIDE", "HYDROXYZINE PAMOATE",
+            "Ibuprofen", "Ibuprofen crbonate", "Ibuprofen dinitrate", "isosorbide dinitrate", "Ketorolac Tromethamine",
+            "Loratadine", "Loratadine, Pseudoephedrine Sulfate", "Lovastatin", "Magesium Citrate", "Meclizine", "MENTHOL",
+            "METFORMIN HYDROCHLORIDE", "METHYL SALICYLATE", "Miconazole", "Mirtazapine", "Naproxen Sodium",
+            "Nicotine Polacrilex", "Oak,", "OCTINOXATE TITANIUM", "OCTINOXATE, TITANIUM DIOXIDE",
+            "OCTINOXATE, ZINC OXIDE, ENZACAMENE, TITANIUM DIOXIDE, AMILOXATE, AVOBENZONE",
+            "Octinoxate, Zinc Oxide, Octisalate, Oxybenzone", "Olanzapine", "Oxygen", "OXYGEN, NITROGEN, CARBON DIOXIDE",
+            "Oxymorphone hydrochloride", "pantoprazole sodium", "Peach", "Penicillin V Potassium", "Petasites Veronica",
+            "Pseudoephedrine Hydrochloride", "quetiapine fumarate", "risperidone", "Risperidone",
+            "Sagebrush, Mugwort Artemisia vulgaris", "Salicylic Acid", "Sennosides", "Standardized Timothy Grass Pollen",
+            "Titanium Dioxide", "TITANIUM DIOXIDE, ZINC OXIDE", "TITANIUM OXIDE", "tramadol hydrochloride",
+            "TRICLOSAN", "TRICLOSAN CARBONATE", "trifluoperazine hydrochloride", "verapamil hydrochloride"};
 
-    public static final String[] LABS = {"GT", "FH", "DM"};
+    public static final String[] LABS = {"DL", "WA", "PC", "JN"};
     public static final String[] I_TYPES = {"Cellular", "Humoral"};
     public static final String[] H_TYPES = {"HIV Immunogenicity"};
     public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
@@ -65,7 +78,7 @@ public class CDSHelper
             "ICS (Intracellular Cytokine Staining)",
             "IFNg ELISpot (IFNg ELISpot)", "NAB (HIV Neutralizing Antibody)"};
     public static final String[] LEARN_ABOUT_BAMA_ANALYTE_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
-    public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Subject Id", "Subject identifier"};
+    public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Protein Panel", "The name of the panel of proteins"};
     public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"A1.con.env03 140 CF", "p24"};
     public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"Any v503 Vaccine Matched Antigen", "POL: POL 1", "NEF: NEF 1", "GAG: GAG 1", "Combined: NA"};
 //    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
@@ -356,7 +369,7 @@ public class CDSHelper
     public static final String GRID_COL_STUDY = "Study";
     public static final String GRID_COL_VISIT = "Visit";
     public static final String GRID_COL_TREATMENT_SUMMARY = "Treatment Summary";
-    public static final String GRID_COL_STUDY_DAY = "Study Day";
+    public static final String GRID_COL_STUDY_DAY = "Study days";
     public static final String GRID_COL_CUR_COL = "Current columns";
     public static final String GRID_COL_ALL_VARS = "All variables from this session";
 
@@ -373,7 +386,7 @@ public class CDSHelper
         String finalId;
 
         // Need to special case the "all" checkbox case.
-        if(elements[0].toLowerCase().contains("all"))
+        if (elements[0].toLowerCase().contains("all"))
         {
             finalId = firstId.replaceAll(" " , "_") + "-";
         }
@@ -383,7 +396,7 @@ public class CDSHelper
             finalId = PANEL_PREFIX + "_" + firstId + "_";
         }
 
-        for(String temp : elements)
+        for (String temp : elements)
         {
             temp = temp.replaceAll(" " , "_");
             finalId += temp + "-";
@@ -400,7 +413,7 @@ public class CDSHelper
     {
         String finalId = "";
 
-        for(String temp : elements)
+        for (String temp : elements)
         {
             temp = temp.replaceAll(" " , "_");
             finalId += temp + "-";
@@ -463,29 +476,13 @@ public class CDSHelper
         _test.waitForElement(Locators.activeDimensionHeaderLocator(dimension));
     }
 
-    public void saveLiveGroup(String name, @Nullable String description)
-    {
-        saveGroup(name, description, "live");
-    }
-
-    public void saveSnapshotGroup(String name, @Nullable String description)
-    {
-        saveGroup(name, description, "snapshot");
-    }
-
-    private void saveGroup(String name, @Nullable String description, String type)
+    public void saveGroup(String name, @Nullable String description)
     {
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
-        _test.waitForText("Live: Update group with new data");
         _test.waitForText("replace an existing group");
         _test.setFormElement(Locator.name("groupname"), name);
         if (null != description)
             _test.setFormElement(Locator.name("groupdescription"), description);
-
-        if ("snapshot".equals(type))
-        {
-            _test.click(Ext4Helper.Locators.radiobutton(_test, "Snapshot: Keep this group static"));
-        }
 
         applyAndMaybeWaitForBars(aVoid -> {
             _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
@@ -496,7 +493,6 @@ public class CDSHelper
     public void saveOverGroup(String name)
     {
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
-        _test.waitForText("Live: Update group with new data");
         _test.click(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
         _test.waitAndClick(Locator.tagWithClass("div", "save-label").withText(name));
         _test.click(Locators.cdsButtonLocator("save", "groupupdatesave"));
@@ -623,18 +619,6 @@ public class CDSHelper
         {
             clearFilters();
         }
-    }
-
-    public void undoClearFilter()
-    {
-        _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
-
-        applyAndMaybeWaitForBars(aVoid -> {
-            _test.click(Locator.linkWithText("Undo"));
-            return null;
-        });
-
-        _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
     }
 
     public void useSelectionAsSubjectFilter()
@@ -844,13 +828,54 @@ public class CDSHelper
 
         String classAttribute = tableParent.getAttribute("class");
 
-        if(classAttribute.contains("x-form-cb-checked"))
+        if (classAttribute.contains("x-form-cb-checked"))
         {
             return true;
         }
         else
         {
             return false;
+        }
+
+    }
+
+    public void showHiddenVariables(boolean turnOn)
+    {
+        String xpathValueTxtBox = "//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input";
+        String curValue;
+        Boolean changed = false;
+
+        _test._ext4Helper.resetCssPrefix();
+        _test.goToProjectHome();
+        _test.goToFolderManagement();
+        _test.waitForText(1000, "Module Properties");
+        _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
+        _test.waitForText(1000, "CDSTest Project");
+
+        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
+
+        if (turnOn)
+        {
+            if (!curValue.trim().toLowerCase().equals("true"))
+            {
+                _test.setFormElement(Locator.xpath(xpathValueTxtBox), "true");
+                changed = true;
+            }
+        }
+        else
+        {
+            if ((curValue.trim().length() == 0) || (!curValue.trim().toLowerCase().equals("false")))
+            {
+                _test.setFormElement(Locator.xpath(xpathValueTxtBox), "false");
+                changed = true;
+            }
+        }
+
+        if (changed)
+        {
+            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
+            _test.waitForText(1000, "Success");
+            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
         }
 
     }

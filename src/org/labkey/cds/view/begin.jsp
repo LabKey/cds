@@ -36,7 +36,7 @@
     newsFeedURL.addParameter("query.queryName", "RSSFeeds");
 
     // 15438
-    if (StudyService.get().getStudy(c) != null)
+    if (c.isProject() && StudyService.get().getStudy(c) != null)
     {
 %>
 <style type="text/css">
@@ -58,10 +58,16 @@
 </div>
 <%
     }
-    else
+    else if (c.isProject())
     {
 %>
 Please upload a study to begin using the collaborative dataspace.
+<%
+    }
+    else
+    {
+%>
+Go to <a href="<%=new ActionURL(CDSController.BeginAction.class, c.getProject())%>">project</a>.
 <%
     }
 %>
