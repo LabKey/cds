@@ -48,10 +48,14 @@ SELECT
   it.study_part,
   it.study_group,
   it.study_arm,
-  CASE WHEN (it.study_part IS NULL OR it.study_part = 'NA')
-    THEN (it.study_group || ', ' || it.study_arm || ', ' || it.study_randomization)
-    ELSE (it.study_part || ', ' || it.study_group || ', ' || it.study_arm || ', ' || it.study_randomization)
-    END AS study_arm_summary,
+  -- NOTE: this is duplicated from ds_treatmentarm.sql with the exception of including the study label prefix (issue 24492)
+  CASE WHEN (it.study_group = it.study_arm) THEN (istudy.study_label || ' Group ' || it.study_group || ' ' || it.study_randomization) -- e.g. Group 1 Vaccine
+  ELSE
+        CASE WHEN (it.study_group LIKE 'Group%' OR it.study_group LIKE 'group%')
+        THEN (istudy.study_label || ' ' || it.study_group || ' Arm ' || it.study_arm || ' ' || it.study_randomization) -- e.g. Group 1 Arm 2 Vaccine
+        ELSE (istudy.study_label || ' Group ' || it.study_group || ' Arm ' || it.study_arm || ' ' || it.study_randomization) -- e.g. Group 1 Arm 2 Vaccine
+        END
+  END AS study_arm_summary,
   it.study_arm_description_coded_label AS study_arm_coded_label,
   it.study_randomization,
   it.product_class_combination_label AS study_product_class_combination,

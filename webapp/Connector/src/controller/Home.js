@@ -7,9 +7,7 @@ Ext.define('Connector.controller.Home', {
 
     extend : 'Connector.controller.AbstractViewController',
 
-    stores : [],
-
-    views : ['Home', 'About'],
+    views : ['Home'],
 
     models : ['RSSItem'],
 
@@ -33,22 +31,6 @@ Ext.define('Connector.controller.Home', {
 
         if (xtype == 'home') {
             v = Ext.create('Connector.view.Home', {});
-        }
-        else if (xtype == 'about') {
-            var header = Ext.create('Connector.view.PageHeader', {
-                title: "About the CAVD DataSpace",
-                upText: 'Home',
-                upLink: {
-                    controller: 'home'
-                },
-                scope : this
-            });
-
-            v = Ext.create('Connector.view.Page', {
-                header: header,
-                contentViews: [ Ext.create('Connector.view.About', {}) ],
-                pageID: 'homeAbout'
-            });
         }
 
         return v;

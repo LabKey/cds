@@ -8,13 +8,14 @@ Ext.define('Connector.model.ChartData', {
     extend: 'Ext.data.Model',
 
     fields: [
-        {name: 'measureSet', defaultValue: []}, // Full set of measures passed to the cdsGetData API call
+        {name: 'measureSet', defaultValue: []}, // Full set of measures passed to the cds getData API call
         {name: 'plotMeasures', defaultValue: [null, null, null]}, // Array [x, y, color]
         {name: 'measureStore', defaultValue: null}, // LABKEY.Query.experimental.MeasureStore
         {name: 'plotScales', defaultValue: {}}, // {x: log/linear, y: log/linear}
+        {name: 'hasPlotSelectionFilter', defaultValue: {}},
 
         /* generated properties based on the processing of the MeasureStore */
-        {name: 'containerAlignmentDayMap', defaultValue: {}},
+        {name: 'studyContainers', defaultValue: {}},
         {name: 'rows', defaultValue: []}, // results of AxisMeasureStore.select()
         {name: 'xDomain', defaultValue: [0,0]},
         {name: 'yDomain', defaultValue: [0,0]},
@@ -31,6 +32,9 @@ Ext.define('Connector.model.ChartData', {
 
     constructor : function(config) {
         this.callParent([config]);
+
+        // URL option to show gutter plots that are hidden because of 1D or 2D plot selection filter
+        this.SHOW_GUTTER_PLOTS = Ext.isDefined(LABKEY.ActionURL.getParameters()['showGutters']);
 
         this.processMeasureStore();
     },
@@ -51,8 +55,12 @@ Ext.define('Connector.model.ChartData', {
         return this.get('plotScales');
     },
 
-    getColumnAliases : function() {
-        return this.get('measureStore').getResponseMetadata().columnAliases;
+    hasPlotSelectionFilter : function() {
+        return this.get('hasPlotSelectionFilter');
+    },
+
+    getColumnAliasMap : function() {
+        return this.get('measureStore').getResponseMetadata().columnAliasMap;
     },
 
     getSchemaName : function() {
@@ -71,8 +79,9 @@ Ext.define('Connector.model.ChartData', {
         return this.get('properties');
     },
 
-    getContainerAlignmentDayMap : function() {
-        return this.get('containerAlignmentDayMap');
+    getStudyContainers : function()
+    {
+        return this.get('studyContainers');
     },
 
     getXDomain : function(studyAxisInfo) {
@@ -115,56 +124,88 @@ Ext.define('Connector.model.ChartData', {
         return this.get('usesMedian');
     },
 
-    getAliasFromMeasure : function(measure) {
-        var columnAliases = this.getColumnAliases();
+    isLogScale : function(axis)
+    {
+        return this.getPlotScales()[axis] == 'log';
+    },
 
+    getAliasFromMeasure : function(measure) {
         // if the param comes in as a string, make it an object for consistency
         if (Ext.isString(measure)) {
             measure = {alias: null, name: measure};
         }
 
         if (!Ext.isDefined(measure.alias) || measure.alias == null) {
-            for (var i = 0; i < columnAliases.length; i++) {
-                if ((measure.alias && measure.alias == columnAliases[i].columnName)
-                        || (measure.name && measure.name == columnAliases[i].measureName))
+            Ext.iterate(this.getColumnAliasMap(), function(alias, obj) {
+                var schemaQueryNameMatch = measure.name == obj.name && measure.queryName == obj.queryName && measure.schemaName == obj.schemaName,
+                    keyColumnMatch = (measure.name == 'Container' && alias == QueryUtils.CONTAINER_ALIAS)
+                            || (measure.name == 'SubjectId' && alias == QueryUtils.SUBJECT_ALIAS)
+                            || (measure.name == 'SequenceNum' && alias == QueryUtils.SEQUENCENUM_ALIAS)
+                            || (measure.name == 'ParticipantSequenceNum' && alias == QueryUtils.SUBJECT_SEQNUM_ALIAS);
+
+                if ((measure.alias && measure.alias == alias) || (measure.name && schemaQueryNameMatch) || keyColumnMatch)
                 {
                     // stash the alias in the measure object to make it faster to find next time
-                    measure.alias = columnAliases[i].columnName;
-                    break;
+                    measure.alias = alias;
+                    return false;
                 }
-            }
+            });
         }
 
         return measure.alias;
     },
 
-    getDimensionKeys : function(x, y, excludeAliases) {
+    getDimensionKeys : function(x, y, color, excludeAliases, nonAggregated)
+    {
         var measureSet = this.getMeasureSet(),
-            dimensionKeys = [], sharedKeys = [];
+            dimensionKeys = [],
+            sharedKeys = [],
+            useSharedKeys;
 
         // Note: we don't exclude the color measure from the dimension keys
         // and we only exclude the x measure if it is continuous
         excludeAliases.push(y.alias);
-        if (x.isContinuous) {
+        if (x.isContinuous)
+        {
             excludeAliases.push(x.alias);
         }
 
-        // return a list of column aliases for all measureSet objects which are dimensions and not in the exclude list (i.e. plot measures)
-        Ext.each(measureSet, function(m) {
-            if (m.measure.isDimension) {
+        // return a list of column aliases for all measureSet objects which are dimensions
+        // and not in the exclude list (i.e. plot measures)
+        Ext.each(measureSet, function(m)
+        {
+            if (m.measure.isDimension)
+            {
                 var alias = this.getAliasFromMeasure(m.measure);
-                if (alias && excludeAliases.indexOf(alias) == -1) {
+                if (alias && excludeAliases.indexOf(alias) == -1 && dimensionKeys.indexOf(alias) == -1)
+                {
                     dimensionKeys.push(alias);
                 }
 
-                // TODO: remove sharedKeys hack
-                if (alias.indexOf('http://cpas.labkey.com/Study#') == 0) {
+                if (alias && alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 && sharedKeys.indexOf(alias) == -1)
+                {
                     sharedKeys.push(alias);
                 }
             }
         }, this);
 
-        return sharedKeys.length > 0 ? sharedKeys : dimensionKeys;
+        // the measure store will add a '_rowIndex' property for uniqueness to return all rows in the select() call
+        if (nonAggregated)
+        {
+            dimensionKeys.push('_rowIndex');
+        }
+
+        // If we use shared keys, we want to tack on the demographic color alias so that it is applied as expected to the gutter plots
+        if (color.alias != null && color.isDemographic)
+        {
+            sharedKeys.push(color.alias);
+        }
+
+        // use sharedKeys when we have the possibility of aggregation (see rules from nonAggregated)
+        // or the x-axis and y-axis measures are not from the same source
+        useSharedKeys = !nonAggregated && !this.isSameSource(x, y) && sharedKeys.length > 0;
+
+        return useSharedKeys ? sharedKeys : dimensionKeys;
     },
 
     getBaseMeasureConfig : function() {
@@ -181,25 +222,30 @@ Ext.define('Connector.model.ChartData', {
     },
 
     processMeasureStore : function() {
-        var x = this.getPlotMeasure(0),
-            y = this.getPlotMeasure(1),
-            color = this.getPlotMeasure(2),
+        var wrappedX = this.getPlotMeasure(0),
+            x = (wrappedX ? wrappedX.measure : undefined),
+            wrappedY = this.getPlotMeasure(1),
+            y = (wrappedY ? wrappedY.measure : undefined),
+            wrappedColor = this.getPlotMeasure(2),
+            color = (wrappedColor ? wrappedColor.measure : undefined),
             xa, ya, ca, _xid, _yid, _cid,
-            containerColName = this.getAliasFromMeasure('Container'),
-            containerAlignmentDayMap = {},
-            subjectNoun = Connector.studyContext.subjectColumn,
-            subjectCol = this.getAliasFromMeasure(subjectNoun),
+            studyContainers = {},
             axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
+            invalidLogPlotRowCount = 0,
             xDomain = [null,null], yDomain = [null,null],
             xVal, yVal, colorVal = null,
-            negX = false, negY = false,
-            yMeasureFilter, xMeasureFilter, excludeAliases = [],
-            brushFilterAliases = [], mainCount = 0,
+            distinctXVals = {},
+            hasNegOrZeroX = false, hasNegOrZeroY = false,
+            yMeasureFilter = {}, xMeasureFilter = {}, zMeasureFilter = {},
+            excludeAliases = [],
+            mainCount = 0,
+            nonAggregated,
             _row;
 
         ca = this.getBaseMeasureConfig();
-        if (color) {
+        if (color)
+        {
             _cid = this.getAliasFromMeasure(color);
             ca = {
                 schema : color.schemaName,
@@ -208,13 +254,15 @@ Ext.define('Connector.model.ChartData', {
                 alias  : color.alias,
                 colName: _cid, // Stash colName so we can query the getData temp table in the brushend handler.
                 label  : color.label,
-                type   : color.type
+                type   : color.type,
+                isDemographic: color.isDemographic
             };
         }
 
         xa = this.getBaseMeasureConfig();
-        if (x) {
-            _xid = x.interval || this.getAliasFromMeasure(x);
+        if (x)
+        {
+            _xid = QueryUtils.ensureAlignmentAlias(wrappedX, x.interval || this.getAliasFromMeasure(x));
             xa = {
                 schema : x.schemaName,
                 query  : x.queryName,
@@ -242,32 +290,30 @@ Ext.define('Connector.model.ChartData', {
             isContinuous: Connector.model.ChartData.isContinuousMeasure(y)
         };
 
-        // if we are plotting the same continuous variable on both the x and y axis,
-        // we need to filter the AxisMeasureStore for each axis based on the dimension filters (if they differ)
-        if (xa.schema == ya.schema && xa.query == ya.query) {
-            yMeasureFilter = {};
-            xMeasureFilter = {};
+        // we need to keep track of which dimensions have different filter values between the x and y axis
+        if (this.isSameSource(xa, ya))
+        {
+            excludeAliases = ChartUtils.getAssayDimensionsWithDifferentValues(y, x, true);
+        }
 
-            // keep track of which dimensions have different filter values between the x and y axis
-            Ext.each(Object.keys(y.options.dimensions), function(key) {
-                var yDimValue = y.options.dimensions[key];
-                var xDimValue = x.options.dimensions[key];
+        // if there is a DATASET_ALIAS column from the axisName property, use it to filter
+        if (this.hasDatasetAliasColumn())
+        {
+            xMeasureFilter[QueryUtils.DATASET_ALIAS] = ChartUtils.xAxisNameProp;
+            yMeasureFilter[QueryUtils.DATASET_ALIAS] = ChartUtils.yAxisNameProp;
 
-                if (!this.arraysEqual(xDimValue, yDimValue)) {
-                    var alias = this.getAliasFromMeasure(key);
-                    if (yDimValue) {
-                        yMeasureFilter[alias] = yDimValue;
-                    }
-                    if (xDimValue) {
-                        xMeasureFilter[alias] = xDimValue;
-                    }
-
-                    // issue 24008: only exclude the alias if the filters are for a single value on each side
-                    if (xDimValue != null && xDimValue.length == 1 && yDimValue != null && yDimValue.length == 1) {
-                        excludeAliases.push(alias);
-                    }
+            // if the color variable is from the same source as either x or y, but not both, use that for the zMeasure filter
+            if (!this.isSameSource(ca, xa) || !this.isSameSource(ca, ya))
+            {
+                if (this.isSameSource(ca, xa))
+                {
+                    zMeasureFilter[QueryUtils.DATASET_ALIAS] = ChartUtils.xAxisNameProp;
                 }
-            }, this);
+                else if (this.isSameSource(ca, ya))
+                {
+                    zMeasureFilter[QueryUtils.DATASET_ALIAS] = ChartUtils.yAxisNameProp;
+                }
+            }
         }
 
         // configure AxisMeasureStore based on the x, y, and color measures selections
@@ -276,40 +322,60 @@ Ext.define('Connector.model.ChartData', {
             axisMeasureStore.setXMeasure(this.getMeasureStore(), _xid, xMeasureFilter);
         }
         if (_cid) {
-            axisMeasureStore.setZMeasure(this.getMeasureStore(), _cid);
+            axisMeasureStore.setZMeasure(this.getMeasureStore(), _cid, zMeasureFilter);
         }
 
         // select the data out of AxisMeasureStore based on the dimensions
-        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases));
+        // we use an AxisMeasureStore but do not attempt to group (aggregate) the data when:
+        //  1) the plot does not have an x-axis measure (i.e. only y-axis, or y-axis plus color)
+        //  2) the x-axis or y-axis measure is from a demographic dataset
+        //  3) the x-axis is a time point
+        //  4) the x-axis and y-axis measures are from the same source and have the exact same assay dimension filter values
+        nonAggregated = !Ext.isDefined(x) // #1
+            || x.isDemographic === true || y.isDemographic === true // #2
+            || x.variableType === 'TIME' // #3
+            || (this.isSameSource(xa, ya) && ChartUtils.getAssayDimensionsWithDifferentValues(y, x).length == 0); //#4
 
-        // issue 24021: get the array of plot related brush filter measures so we can exclude gutter plots appropriately
-        Ext.each(Connector.getService('Query').getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
-            brushFilterAliases.push(LABKEY.Utils.getMeasureAlias(brushFilterMeasure.measure));
-        });
+        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated));
 
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
-        for (var r = 0; r < dataRows.length; r++) {
+        for (var r = 0; r < dataRows.length; r++)
+        {
             _row = dataRows[r];
 
             // build study container alignment day map
-            if (containerColName && _row[containerColName]) {
-                containerAlignmentDayMap[_row[containerColName]] = 0;
+            if (_row[QueryUtils.CONTAINER_ALIAS])
+            {
+                studyContainers[_row[QueryUtils.CONTAINER_ALIAS]] = true;
             }
 
-            if (color) {
-                colorVal = this._getColorValue(color, _cid, _row);
+            yVal = this._getYValue(y, _yid, _row);
+            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
+            colorVal = color ? this._getColorValue(color, _cid, _row) : undefined;
+
+            if (!xa.isContinuous)
+            {
+                distinctXVals[xVal] = true;
             }
 
-            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous) : '';
-            if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
+            // check that the plot value are valid on a log scale
+            if (!this.isValidPlotValue('y', ya, yVal) || !this.isValidPlotValue('x', xa, xVal))
+            {
+                invalidLogPlotRowCount++;
+                continue;
+            }
+
+            // update x-axis and y-axis domain min and max values
+            if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date")
+            {
                 if (xDomain[0] == null || xVal < xDomain[0])
                     xDomain[0] = xVal;
                 if (xDomain[1] == null || xVal > xDomain[1])
                     xDomain[1] = xVal;
             }
 
-            yVal = this._getYValue(y, _yid, _row);
-            if (Ext.typeOf(yVal) === "number" || Ext.typeOf(yVal) === "date") {
+            if (Ext.typeOf(yVal) === "number" || Ext.typeOf(yVal) === "date")
+            {
                 if (yDomain[0] == null || yVal < yDomain[0])
                     yDomain[0] = yVal;
                 if (yDomain[1] == null || yVal > yDomain[1])
@@ -317,39 +383,47 @@ Ext.define('Connector.model.ChartData', {
             }
 
             // allow any pair that does not contain a negative value. NaN, null, and undefined are non-negative values.
-            if (xa && xa.isNumeric && Ext.isNumber(xVal) && xVal <= 0) {
-                negX = true;
+            if (xa && xa.isNumeric && Ext.isNumber(xVal) && xVal <= 0)
+            {
+                hasNegOrZeroX = true;
             }
-            if (ya.isNumeric && Ext.isNumber(yVal) && yVal <= 0) {
-                negY = true;
+            if (ya.isNumeric && Ext.isNumber(yVal) && yVal <= 0)
+            {
+                hasNegOrZeroY = true;
             }
 
             var entry = {
                 x: xVal,
                 y: yVal,
                 color: colorVal,
-                subjectId: _row[subjectCol],
+                subjectId: _row[QueryUtils.SUBJECT_ALIAS],
                 xname: xa.label,
                 yname: ya.label,
                 colorname: ca.label
             };
 
             // split the data entry based on undefined x and y values for gutter plotting
-            if (xVal == null && yVal == null) {
+            if (xVal == null && yVal == null)
+            {
                 // note: we don't currently do anything with these null/null points
                 undefinedBothRows.push(entry);
             }
-            else if (xVal == null) {
-                if (brushFilterAliases.indexOf(_xid) == -1) { // issue 24021
+            else if (xVal == null && xa.isContinuous && !xa.isDimension)
+            {
+                if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().x !== true)
+                {
                     undefinedXRows.push(entry);
                 }
             }
-            else if (xa.isContinuous && yVal == null) {
-                if (brushFilterAliases.indexOf(_yid) == -1) { // issue 24021
+            else if (yVal == null && xa.isContinuous && !xa.isDimension)
+            {
+                if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().y !== true)
+                {
                     undefinedYRows.push(entry);
                 }
             }
-            else {
+            else
+            {
                 mainCount++;
             }
 
@@ -358,35 +432,48 @@ Ext.define('Connector.model.ChartData', {
             mainPlotRows.push(entry);
         }
 
+        if (Object.keys(distinctXVals).length > 0)
+        {
+            xa.discreteValueCount = Object.keys(distinctXVals).length;
+        }
+
         // for continuous axis with data, always start the plot at the origin (could be negative as well)
-        this.setAxisDomain(yDomain, 'y', negY, y.type);
-        if (x) {
-            this.setAxisDomain(xDomain, 'x', negX, x.type);
+        this.setAxisDomain(yDomain, 'y', hasNegOrZeroY, y.type);
+        if (x)
+        {
+            this.setAxisDomain(xDomain, 'x', hasNegOrZeroX, x.type);
         }
 
         this.set({
-            containerAlignmentDayMap: containerAlignmentDayMap,
+            studyContainers: studyContainers,
             xDomain: xDomain,
             yDomain: yDomain,
             rows: {
                 main: mainPlotRows,
                 undefinedX: undefinedXRows.length > 0 ? undefinedXRows : undefined,
                 undefinedY: undefinedYRows.length > 0 ? undefinedYRows : undefined,
-                totalCount: mainCount + undefinedXRows.length + undefinedYRows.length
+                totalCount: mainCount + undefinedXRows.length + undefinedYRows.length,
+                invalidLogPlotRowCount: invalidLogPlotRowCount
             },
             properties: {
                 xaxis: xa,
                 yaxis: ya,
-                color: ca,
-                setXLinear: negX,
-                setYLinear: negY
+                color: ca
             }
         });
     },
 
+    isSameSource : function(x, y) {
+        return x.query == y.query && x.schema == y.schema;
+    },
+
+    hasDatasetAliasColumn : function() {
+        return Ext.isDefined(this.getColumnAliasMap()[QueryUtils.DATASET_ALIAS]);
+    },
+
     setAxisDomain : function(axisDomain, axis, hasNegVal, type) {
         // issue 24074: set the min to 1 instead of 0 if log scale
-        var min  = this.get('plotScales')[axis] == 'log' && !hasNegVal ? 1 : 0;
+        var min = this.isLogScale(axis) && !hasNegVal ? 1 : 0;
 
         if (type == 'TIMESTAMP') {
             // if the min and max dates are the same, +/- 3
@@ -398,34 +485,6 @@ Ext.define('Connector.model.ChartData', {
         else if (axisDomain[0] != null) {
             axisDomain[0] = Math.min(axisDomain[0], min);
         }
-    },
-
-    arraysEqual : function(arrA, arrB) {
-
-        // first check for nulls
-        if (arrA == null && arrB == null) {
-            return true;
-        }
-        else if (arrA == null || arrB == null) {
-            return false;
-        }
-
-        // check if lengths are different
-        if (arrA.length !== arrB.length) {
-            return false;
-        }
-
-        // slice so we do not effect the original, sort makes sure they are in order
-        var cA = arrA.slice().sort();
-        var cB = arrB.slice().sort();
-
-        for (var i=0; i < cA.length; i++) {
-            if (cA[i] !== cB[i]) {
-                return false;
-            }
-        }
-
-        return true;
     },
 
     _getYValue : function(measure, alias, row) {
@@ -440,12 +499,12 @@ Ext.define('Connector.model.ChartData', {
         return null;
     },
 
-    _getXValue : function(measure, alias, row, xIsContinuous) {
+    _getXValue : function(measure, alias, row, xIsContinuous, xIsDimension) {
         if (row.x.hasOwnProperty('isUnique')) {
             if (Ext.isDefined(row.x.value) && row.x.value != null) {
                 return this._getValue(row.x.value, measure.type);
             }
-            return xIsContinuous ? null : ChartUtils.emptyTxt;
+            return xIsContinuous ? (xIsDimension ? 'null' : null) : ChartUtils.emptyTxt;
         }
 
         if (!this.usesMedian() && row.x.values.length > 1) {
@@ -498,5 +557,10 @@ Ext.define('Connector.model.ChartData', {
         }
 
         return !(value === undefined || value === null);
+    },
+
+    isValidPlotValue : function(axis, props, value)
+    {
+        return value == null || !props.isContinuous || props.isDimension || !this.isLogScale(axis) || value > 0;
     }
 });

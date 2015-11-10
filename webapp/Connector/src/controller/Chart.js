@@ -14,10 +14,13 @@ Ext.define('Connector.controller.Chart', {
         var queryService = Connector.getService('Query');
 
         this.control('#yvarselector', {
-            requestvariable: function(view, model) {
+            requestvariable: function(view)
+            {
                 var plot = view.up('plot');
-                if (plot) {
-                    queryService.onQueryReady(function(query) {
+                if (plot)
+                {
+                    queryService.onQueryReady(function()
+                    {
                         plot.showYMeasureSelection();
                     });
                 }
@@ -25,10 +28,12 @@ Ext.define('Connector.controller.Chart', {
         });
 
         this.control('#xvarselector', {
-            requestvariable: function(view, model) {
+            requestvariable: function(view)
+            {
                 var plot = view.up('plot');
                 if (plot) {
-                    queryService.onQueryReady(function(query) {
+                    queryService.onQueryReady(function()
+                    {
                         plot.showXMeasureSelection();
                     });
                 }
@@ -36,10 +41,13 @@ Ext.define('Connector.controller.Chart', {
         });
 
         this.control('#colorvarselector', {
-            requestvariable: function(view, model) {
+            requestvariable: function(view)
+            {
                 var plot = view.up('plot');
-                if (plot) {
-                    queryService.onQueryReady(function(query) {
+                if (plot)
+                {
+                    queryService.onQueryReady(function()
+                    {
                         plot.showColorSelection();
                     });
                 }
@@ -55,41 +63,49 @@ Ext.define('Connector.controller.Chart', {
             }
         });
 
+        this._filtersChanged = false;
+        Connector.getState().on('filterchange', this._filterChangeHook, this);
+
         this.callParent();
     },
 
-    createView : function(xtype, config, context) {
-
-        var state = Connector.getState();
+    createView : function(xtype /*, config, context */)
+    {
         var v, plotType = 'plot';
 
         if (xtype == plotType)
         {
             v = Ext.create('Connector.view.Chart', {
-                visitTagStore : this.getStore('VisitTagSingleUse')
+                visitTagStore: this.getStore('VisitTagSingleUse'),
+                filtersActivated: this._filtersChanged === true
             });
 
-            state.clearSelections();
-            state.on('filterchange', v.onFilterChange, v);
-            state.on('plotselectionremoved', v.onPlotSelectionRemoved, v);
-            state.on('selectionchange', v.onSelectionChange, v);
+            Connector.getState().un('filterchange', this._filterChangeHook, this);
+
+            Connector.getState().clearSelections();
 
             var vm = this.getViewManager();
 
-            vm.on('beforechangeview', function(controller, view, currentContext) {
+            vm.on('beforechangeview', function(controller, view, currentContext)
+            {
                 // If a chart view is being activated, ensure it is not
                 // a view of plotType so to not deactivate the view unintentionally
-                if (controller == 'chart') {
-                    if (Ext.isDefined(view) && view != plotType) {
+                if (controller == 'chart')
+                {
+                    if (Ext.isDefined(view) && view != plotType)
+                    {
                         v.onDeactivate.call(v);
                     }
                 }
-                if (currentContext.view == plotType) {
+                if (currentContext.view == plotType)
+                {
                     v.onDeactivate.call(v);
                 }
             });
-            vm.on('afterchangeview', function(c, view) {
-                if (view == plotType) {
+            vm.on('afterchangeview', function(c, view)
+            {
+                if (view == plotType)
+                {
                     v.onActivate.call(v);
                 }
             });
@@ -112,5 +128,10 @@ Ext.define('Connector.controller.Chart', {
 
     getDefaultView : function() {
         return 'plot';
+    },
+
+    _filterChangeHook : function()
+    {
+        this._filtersChanged = true;
     }
 });

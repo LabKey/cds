@@ -1054,7 +1054,7 @@ div.video-header {
       -moz-border-radius: 50%;
       border-radius: 50%; }
       .section.intro-section .video-container .play:after {
-        content: "\e001";
+        content: "\25B6";
         font-family: VideoJS;
         line-height: 4em;
         text-shadow: .05em .05em .1em #000;

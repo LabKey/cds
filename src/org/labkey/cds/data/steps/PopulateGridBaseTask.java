@@ -35,7 +35,7 @@ import java.util.Map;
 public class PopulateGridBaseTask extends AbstractPopulateTask
 {
     String SOURCE_SCHEMA = "study";
-    String SOURCE_QUERY = "qGridBase";
+    String SOURCE_QUERY = "ds_gridbase";
     String TARGET_SCHEMA = "cds";
     String TARGET_QUERY = "GridBase";
 

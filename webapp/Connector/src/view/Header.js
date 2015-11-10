@@ -43,16 +43,6 @@ Ext.define("Connector.view.Header", {
                 }
             },{
                 xtype: 'box',
-                itemId: 'about',
-                margin: '2 40 0 0',
-                autoEl: {
-                    tag: 'a',
-                    cls: 'logout',
-                    html: 'About',
-                    href: '#home/about'
-                }
-            },{
-                xtype: 'box',
                 itemId: 'logout',
                 margin: '2 40 0 0',
                 autoEl: {

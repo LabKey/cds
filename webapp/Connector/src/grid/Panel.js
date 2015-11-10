@@ -38,7 +38,8 @@ Ext.define('Connector.grid.Panel', {
     colPadding: 10,
     maxColWidth: 400,
 
-    constructor : function(config) {
+    constructor : function(config)
+    {
         this.callParent([config]);
 
         /**
@@ -47,8 +48,10 @@ Ext.define('Connector.grid.Panel', {
         this.addEvents('columnmodelcustomize');
     },
 
-    initComponent : function() {
-        if (!this.store) {
+    initComponent : function()
+    {
+        if (!this.store)
+        {
             throw 'Must provide a store or store config when creating a ' + this.$className;
         }
 
@@ -58,12 +61,15 @@ Ext.define('Connector.grid.Panel', {
 
         this.callParent();
 
-        if (LABKEY.ext4.Util.hasStoreLoaded(this.store)) {
+        if (LABKEY.ext4.Util.hasStoreLoaded(this.store))
+        {
             this.setupColumnModel();
         }
-        else {
+        else
+        {
             this.mon(this.store, 'load', this.setupColumnModel, this, {single: true});
-            if (!this.store.isLoading()) {
+            if (!this.store.isLoading())
+            {
                 this.store.load({
                     params: {
                         start: 0,
@@ -74,10 +80,10 @@ Ext.define('Connector.grid.Panel', {
         }
     },
 
-    setupColumnModel : function() {
+    setupColumnModel : function()
+    {
         var columns = this.getColumnsConfig();
 
-        //TODO: make a map of columnNames -> positions like Ext3?
         this.fireEvent('columnmodelcustomize', this, columns);
 
         this.columns = columns;
@@ -86,30 +92,25 @@ Ext.define('Connector.grid.Panel', {
         this.reconfigure(this.store, columns);
     },
 
-    _getColumnsConfig : function(config) {
-        var columns = LABKEY.ext4.Util.getColumnsConfig(this.store, this, config);
+    _getColumnsConfig : function(config)
+    {
+        var columns = LABKEY.ext4.Util.getColumnsConfig(this.store, this, config),
+            measureNameToQueryMap = {};
 
-        if (Ext.isDefined(this.model)) {
-            var measureNameToQueryMap = {};
-            Ext.each(this.model.get('measures'), function(measure) {
-                if (measure.queryLabel) {
+        if (Ext.isDefined(this.model))
+        {
+            Ext.each(this.model.get('measures'), function(measure)
+            {
+                if (measure.queryLabel)
+                {
                     measureNameToQueryMap[measure.alias] = measure.queryLabel;
                 }
             });
 
-            var plotMeasures = this.model.getMeasures('plotMeasures');
-            Ext.each(columns, function(column) {
-
-                var lowerIndex = column.dataIndex.toLowerCase();
-
-                column.plotted = false;
-                for (var a=0; a < plotMeasures.length; a++) {
-                    if (LABKEY.Utils.getMeasureAlias(plotMeasures[a], true).toLowerCase() === lowerIndex) {
-                        column.plotted = true;
-                    }
-                }
-
-                if (measureNameToQueryMap[column.dataIndex]) {
+            Ext.each(columns, function(column)
+            {
+                if (measureNameToQueryMap[column.dataIndex])
+                {
                     column.queryLabel = measureNameToQueryMap[column.dataIndex];
                 }
 
@@ -118,31 +119,37 @@ Ext.define('Connector.grid.Panel', {
             }, this);
         }
 
-        Ext.each(columns, function(column) {
-
-            var meta, lookupStore;
-
-            meta = LABKEY.ext4.Util.findFieldMetadata(this.store, column.dataIndex);
-            if (!meta) {
-                return true; // continue
-            }
-
-            // listen for changes to the underlying data in lookup store
-            if (this.allowLookups === true && Ext.isObject(meta.lookup) && meta.lookups !== false && meta.lookup.isPublic === true) {
-                lookupStore = LABKEY.ext4.Util.getLookupStore(meta);
-
-                // this causes the whole grid to rerender, which is very expensive.  better solution?
-                if (lookupStore) {
-                    this.mon(lookupStore, 'load', this.onLookupStoreLoad, this, {delay: 100});
-                }
-            }
-
-        }, this);
+        // This is removed in an effort to speed-up grid rendering. If the usage of lookup
+        // columns becomes something that is needed again, comment this code back in to get
+        // column displays to resolve properly.
+        //Ext.each(columns, function(column)
+        //{
+        //    var meta = LABKEY.ext4.Util.findFieldMetadata(this.store, column.dataIndex),
+        //        lookupStore;
+        //
+        //    if (meta)
+        //    {
+        //        // listen for changes to the underlying data in lookup store
+        //        if (this.allowLookups === true && Ext.isObject(meta.lookup) &&
+        //            meta.lookups !== false && meta.lookup.isPublic === true)
+        //        {
+        //            lookupStore = LABKEY.ext4.Util.getLookupStore(meta);
+        //
+        //            // this causes the whole grid to rerender, which is very expensive.  better solution?
+        //            if (lookupStore)
+        //            {
+        //                this.mon(lookupStore, 'load', this.onLookupStoreLoad, this, {delay: 100});
+        //            }
+        //        }
+        //    }
+        //
+        //}, this);
 
         return columns;
     },
 
-    getColumnsConfig : function() {
+    getColumnsConfig : function()
+    {
         var config = {
             editable: this.editable,
             defaults: {
@@ -150,7 +157,8 @@ Ext.define('Connector.grid.Panel', {
             }
         };
 
-        if (this.metadataDefaults) {
+        if (this.metadataDefaults)
+        {
             Ext.Object.merge(config, this.metadataDefaults);
         }
 
@@ -159,61 +167,62 @@ Ext.define('Connector.grid.Panel', {
         return this.groupColumns(columns);
     },
 
-    groupColumns : function(columns) {
-        var queryService = Connector.getService('Query'),
-            defaultColumns = queryService.getDefaultGridAliases(),
+    groupColumns : function(columns)
+    {
+        var defaultGroup = 'Study and time',
+            queryService = Connector.getQueryService(),
+            defaultColumns = queryService.getDefaultGridAliases(false, true),
             definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
             groups = [],
             groupMap = {},
             studyTime = [],
-            remainder = [],
-            plotted = [];
+            remainder = [];
 
         // Split columns into groups
-        Ext.each(columns, function(col) {
-            if (defaultColumns[col.dataIndex]) {
+        Ext.each(columns, function(col)
+        {
+            if (defaultColumns[col.dataIndex.toLowerCase()] ||
+                col.dataIndex.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0)
+            {
                 studyTime.push(col);
             }
-            else if (col.plotted === true) {
-                plotted.push(col);
-            }
-            else {
+            else
+            {
                 remainder.push(col);
             }
-
         }, this);
 
         groups.push({
-            text: 'Study and time',
+            text: defaultGroup,
             columns: studyTime
         });
 
-        if (plotted.length > 0) {
-            groups.push({
-                text: 'Plot Data Results',
-                columns: plotted
-            });
-        }
-
         // All other groups based on query label
-        Ext.each(remainder, function(col) {
-            var measure = queryService.getMeasure(col.dataIndex),
+        Ext.each(remainder, function(col)
+        {
+            var measure = !QueryUtils.isGeneratedColumnAlias(col.dataIndex) ? queryService.getMeasure(col.dataIndex) : undefined,
                 queryName;
 
-            if (measure) {
-                if (Ext.isDefined(definedMeasureSourceMap[measure.alias])) {
+            if (Ext.isObject(measure))
+            {
+                if (Ext.isDefined(definedMeasureSourceMap[measure.alias]))
+                {
                     queryName = definedMeasureSourceMap[measure.alias];
                 }
-                else {
+                else
+                {
                     queryName = measure.queryName;
                 }
             }
-            else {
+            else
+            {
                 queryName = col.dataIndex.split('_')[1];
             }
 
-            if (Ext.isDefined(queryName)) {
-                if (!groupMap[queryName]) {
+            if (Ext.isDefined(queryName))
+            {
+                if (!groupMap[queryName])
+                {
                     groupMap[queryName] = [];
                 }
 
@@ -222,21 +231,40 @@ Ext.define('Connector.grid.Panel', {
         }, this);
 
         var columnCharacterWidth = 14;
-        Ext.iterate(groupMap, function(key, value) {
+        Ext.iterate(groupMap, function(key, value)
+        {
             groups.push({
                 text: value.length > 2 ? key : Ext.String.ellipsis(key, columnCharacterWidth * value.length, true),
-                columns: value
+                columns: value.sort(function(a, b)
+                {
+                    var ah = a.header.toLowerCase(),
+                        bh = b.header.toLowerCase();
+
+                    // sort columns alphabetically by header
+                    return ah == bh ? 0 : (ah > bh ? 1 : -1);
+                })
             });
-        }, this);
+        });
+
+        groups.sort(function(a, b)
+        {
+            if (a.text === defaultGroup)
+                return -1;
+            else if (b.text === defaultGroup)
+                return 1;
+            return a.text == b.text ? 0 : (a.text > b.text ? 1 : -1);
+        });
 
         return groups;
     },
 
-    onLookupStoreLoad : function() {
+    onLookupStoreLoad : function()
+    {
         this.getView().refresh();
     },
 
-    getColumnById : function(colName) {
+    getColumnById : function(colName)
+    {
         return this.getColumnModel().getColumnById(colName);
     }
 });
