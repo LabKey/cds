@@ -33,7 +33,6 @@ Ext.define('Connector.model.Measure', {
         {name: 'isUserDefined', type: 'boolean', defaultValue: undefined},
         {name: 'isMeasure', type: 'boolean', defaultValue: false},
         {name: 'isDimension', type: 'boolean', defaultValue: false},
-        {name: 'inNotNullSet', defaultValue: undefined},
 
         // Misc properties about the measure display in the application
         {name: 'sourceTitle', convert: function(val, rec) {
@@ -53,12 +52,12 @@ Ext.define('Connector.model.Measure', {
         {name: 'recommendedVariableGrouper', convert: function(val, rec) {
             // see Selector.js measuresGridGrouping for mapping to display value
             if (rec.get('isRecommendedVariable')) {
-                return '0'; // Recommended
+                return '0_Recommended'; // Recommended
             }
             else if (rec.get('dimensions') && rec.get('dimensions').indexOf(rec.get('alias')) > -1) {
-                return '1'; // Assay required columns
+                return '1_AssayRequired'; // Assay required columns
             }
-            return '2'; // Additional
+            return '2_Additional'; // Additional
         }},
         {name: 'defaultScale', defaultValue: 'LINEAR'},
         {name: 'sortOrder', type: 'int', defaultValue: 0},
@@ -67,6 +66,7 @@ Ext.define('Connector.model.Measure', {
         {name: 'sourceCount', type: 'int', defaultValue: undefined},
         {name: 'uniqueKeys', defaultValue: undefined},
         {name: 'selectedSourceKey', defaultValue: undefined}, // when used with variable selected, track what source it was selected from
+        {name: 'sourceMeasureAlias', defaultValue: undefined}, // mapping from one measure alias to another for filtering in the grid
 
         // Array of configs for what options to display in the Advanced options panel of the Variable Selector.
         // If undefined, fallback to the dimensions defined on the source query.
@@ -99,14 +99,14 @@ Ext.define('Connector.model.Measure', {
 
     statics : {
         getPlotAxisFilterMeasureRecords : function(measure) {
-            var records = [];
+            var records = [], record;
 
             if (Ext.isObject(measure.options) && Ext.isObject(measure.options.dimensions)) {
-                Ext.iterate(measure.options.dimensions, function(key, values) {
-                    var record = Connector.model.Measure.createMeasureRecord({
+                Ext.iterate(measure.options.dimensions, function(alias, values) {
+                    record = Connector.model.Measure.createMeasureRecord({
                         schemaName: measure.schemaName,
                         queryName: measure.queryName,
-                        name: key,
+                        name: Connector.getQueryService().getMeasureNameFromAlias(alias),
                         values: values
                     });
 
@@ -121,9 +121,11 @@ Ext.define('Connector.model.Measure', {
 
         createMeasureRecord : function(obj) {
             return new LABKEY.Query.Visualization.Measure({
+                axisName: obj.axis,
                 schemaName: obj.schemaName,
                 queryName: obj.queryName,
                 name: obj.name,
+                type: obj.type,
                 isMeasure: false,
                 isDimension: true,
                 values: Ext.isArray(obj.values) && obj.values.length > 0 ? obj.values : undefined

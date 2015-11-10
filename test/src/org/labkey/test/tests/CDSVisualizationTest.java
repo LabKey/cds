@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.SortDirection;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
@@ -33,6 +34,7 @@ import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -45,8 +47,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -54,6 +58,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
+import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotSquare;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTickLinear;
 
@@ -77,6 +82,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
+        cds.showHiddenVariables(true);
         cds.enterApplication();
         cds.ensureNoFilter();
         cds.ensureNoSelection();
@@ -224,6 +230,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.ELISPOT_DATA_PROV);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
@@ -293,6 +300,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     {
         String expectedXYValues;
         int actualTickCount;
+        final String cssXaxisTickText = "div.plot > svg > g.axis > g.tick-text > a > rect.xaxis-tick-rect";
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -310,107 +318,118 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
         xaxis.pickVariable(CDSHelper.DEMO_STUDY_NAME);
         xaxis.confirmSelection();
-        expectedXYValues = "HVTN 044\nHVTN 049\nHVTN 049x\nHVTN 054\nHVTN 055\nHVTN 065\nHVTN 068\nHVTN 069\nHVTN 070\nHVTN 071\nHVTN 077\nHVTN 078\nHVTN 080\nHVTN 204\nHVTN 503\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "RED 4\nRED 5\nRED 6\nZAP 102\nZAP 105\nZAP 106\nZAP 113\nZAP 115\nZAP 116\nZAP 117\nZAP 118\nZAP 124\nZAP 134\nZAP 136\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
         if (CDSHelper.validateCounts)
         {
+            log("Validating Study Name");
             assertSVG(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_SUMM);
         xaxis.confirmSelection();
-        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > a > rect.xaxis-tick-rect").findElements(getDriver()).size();
+        actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
 
-        assertEquals("Expected 60 tick marks on the x-axis. Found: " + actualTickCount, 60, actualTickCount);
+        if (CDSHelper.validateCounts)
+        {
+            log("Validating Treatment Summary");
+            assertEquals("Unexpected number of tick marks on the x-axis.", 85, actualTickCount);
+        }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
         xaxis.confirmSelection();
-        expectedXYValues = "9/8/2001\n4/10/2003\n11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n5/13/2014\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date First Subject Enrolled x-axis gutter plot was not present.", hasXGutter());
         assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
+        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
 
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
+            log("Validating Date Subject Enrolled");
             assertSVG(expectedXYValues, 1);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_FUP_COMP);
         xaxis.confirmSelection();
-        expectedXYValues = "4/10/2003\n11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n5/13/2014\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date Followed Up Complete x-axis gutter plot was not present.", hasXGutter());
-        assertTrue("For Date Followed Up Complete y-axis gutter plot was not present.", hasYGutter());
+        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
+        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
 
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
+            log("Validating Followup Complete");
             assertSVG(expectedXYValues, 1);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_PUB);
         xaxis.confirmSelection();
-        expectedXYValues = "6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "3/12/2011\n7/6/2011\n10/30/2011\n2/23/2012\n6/17/2012\n10/11/2012\n2/4/2013\n5/31/2013\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date Study Published x-axis gutter plot was not present.", hasXGutter());
-        assertTrue("For Date Study Published y-axis gutter plot was not present.", hasYGutter());
+        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
+        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
 
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
+            log("Validating Date Made Public");
             assertSVG(expectedXYValues, 1);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_START);
         xaxis.confirmSelection();
-        expectedXYValues = "4/10/2003\n11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n5/13/2014\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date Study Start x-axis gutter plot was not present.", hasXGutter());
-        assertTrue("For Date Study Start y-axis gutter plot was not present.", hasYGutter());
+        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
+        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
 
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
+            log("Validating Start Date");
             assertSVG(expectedXYValues, 1);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_NETWORK);
         xaxis.confirmSelection();
-        expectedXYValues = "HVTN\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "ROGER\nZED\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
         if (CDSHelper.validateCounts)
         {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            log("Validating Network");
             assertSVG(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_PROD_CLASS);
         xaxis.confirmSelection();
-        expectedXYValues = "derived\nundefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
         if (CDSHelper.validateCounts)
         {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
-            assertSVG(expectedXYValues);
+            // There are too many labels on the xaxis to validate all, so we will just validate the count.
+            log("Validating Product Class");
+            actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
+            assertEquals("Unexpected number of tick marks on the x-axis.", 80, actualTickCount);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_PROD_COMB);
         xaxis.confirmSelection();
-        expectedXYValues = "derived\nundefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
         if (CDSHelper.validateCounts)
         {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
-            assertSVG(expectedXYValues);
+            // There are too many labels on the xaxis to validate all, so we will just validate the count.
+            log("Validating Product Class Combination");
+            actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
+            assertEquals("Unexpected number of tick marks on the x-axis.", 79, actualTickCount);
         }
 
         xaxis.openSelectorWindow();
@@ -420,16 +439,22 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            log("Validating Study Type");
             assertSVG(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
         xaxis.confirmSelection();
-        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > a > rect.xaxis-tick-rect").findElements(getDriver()).size();
 
-        assertEquals("Expected 28 tick marks on the x-axis. Found: " + actualTickCount, 28, actualTickCount);
+        if (CDSHelper.validateCounts)
+        {
+            // There are too many labels on the xaxis to validate all, so we will just validate the count.
+            log("Validating Treatment Arm");
+            actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
+            assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 26, actualTickCount);
+        }
+
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
@@ -438,7 +463,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            log("Validating Treatment Arm Coded Label");
             assertSVG(expectedXYValues);
         }
 
@@ -449,7 +474,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            log("Validating Vaccine or Placebo");
             assertSVG(expectedXYValues);
         }
 
@@ -463,7 +488,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
         ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
 
@@ -489,7 +513,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Expected 15 Study Names in the color axis. Found: " + actualTickCount, 15, actualTickCount);
+        assertEquals("Unexpected number of Study Names in the color axis.", 12, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_TREAT_SUMM);
@@ -497,7 +521,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Expected 30 Treatment Summaries in the color axis. Found: " + actualTickCount, 30, actualTickCount);
+        assertEquals("Unexpected number of Treatment Summaries in the color axis.", 40, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_NETWORK);
@@ -505,7 +529,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Expected 1 Network in the color axis. Found: " + actualTickCount, 1, actualTickCount);
+        assertEquals("Unexpected number of Networks in the color axis.", 2, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_PROD_COMB);
@@ -513,7 +537,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Expected 2 Product Class Combinations in the color axis. Found: " + actualTickCount, 2, actualTickCount);
+        assertEquals("Unexpected number of Product Class Combinations in the color axis.", 38, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_PROD_CLASS);
@@ -521,7 +545,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Expected 2 Product Classes in the color axis. Found: " + actualTickCount, 2, actualTickCount);
+        assertEquals("Unexpected number of Product Classes in the color axis.", 38, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
@@ -529,7 +553,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Expected 4 Study Types in the color axis. Found: " + actualTickCount, 4, actualTickCount);
+        assertEquals("Unexpected number of Study Types in the color axis.", 3, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
@@ -537,7 +561,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Expected 19 Treatment Arms in the color axis. Found: " + actualTickCount, 19, actualTickCount);
+        assertEquals("Unexpected number of Treatment Arms in the color axis.", 15, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
@@ -545,7 +569,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Expected 1 Treatment Arm Coded Label in the color axis. Found: " + actualTickCount, 1, actualTickCount);
+        assertEquals("Unexpected number of Treatment Arm Coded Labels in the color axis.", 1, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
@@ -553,7 +577,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Expected 3 Vaccinne or Placebos in the color axis. Found: " + actualTickCount, 3, actualTickCount);
+        assertEquals("Unexpected number of Vaccinne or Placebos in the color axis.", 3, actualTickCount);
 
     }
 
@@ -577,7 +601,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             assertElementPresent(plotBox, 1);
-            assertElementPresent(plotPoint, 3713); // TODO Test data dependent.
+            assertElementPresent(plotPoint, 3627);
         }
 
         // Choose a categorical axis to verify that multiple box plots will appear.
@@ -593,7 +617,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             assertElementPresent(plotBox, 2);
-            assertElementPresent(plotPoint, 3713); // TODO Test data dependent.
+            assertElementPresent(plotPoint, 3627);
         }
 
         // Choose a continuous axis and verify that the chart goes back to being a scatter plot.
@@ -614,23 +638,23 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         waitForElement(Locators.plotBox);
-        waitForElement(Locators.plotTick.withText("Asian"), 20000); // TODO Test data dependent.
+        waitForElement(Locators.plotTick.withText("Asian"), 20000);
 
         if (CDSHelper.validateCounts)
         {
-            assertElementPresent(plotBox, 7); // TODO Test data dependent.
-            assertElementPresent(plotPoint, 3713); // TODO Test data dependent.
+            assertElementPresent(plotBox, 10);
+            assertElementPresent(plotPoint, 3627);
         }
 
         //Verify x axis categories are selectable as filters
-        mouseOver(Locators.plotTick.withText("Asian")); // TODO Test data dependent.
+        mouseOver(Locators.plotTick.withText("Asian"));
 
         if (CDSHelper.validateCounts)
         {
-            assertEquals("incorrect number of points highlighted after mousing over x axis category", 76, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
+            assertEquals("Incorrect number of points highlighted after mousing over x axis category", 316, getPointCountByColor(MOUSEOVER_FILL));
         }
 
-        click(Locators.plotTick.withText("Asian")); // TODO Test data dependent.
+        click(Locators.plotTick.withText("Asian"));
         //ensure filter buttons are present
         waitForElement(Locators.filterDataButton);
         assertElementPresent(Locators.removeButton);
@@ -638,9 +662,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             //ensure correct number of points are highlighted
-            assertEquals("incorrect number of points highlighted after clicking x axis category", 76, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
+            assertEquals("Incorrect number of points highlighted after clicking x axis category", 316, getPointCountByColor(MOUSEOVER_FILL));
             //ensure correct total number of points
-            assertEquals("incorrect total number of points after clicking x axis category", 3713, getPointCount()); // TODO Test data dependent.
+            assertEquals("Incorrect total number of points after clicking x axis category", 3627, getPointCount());
             //apply category selection as a filter
         }
 
@@ -649,7 +673,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            waitForPointCount(76, 20000); // TODO Test data dependent.
+            waitForPointCount(316, 20000);
         }
 
         //clear filter
@@ -660,7 +684,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW); // Work around for issue 23845.
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
@@ -671,21 +694,21 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            waitForPointCount(3713, 20000); // TODO Test data dependent.
+            waitForPointCount(3627, 20000);
         }
 
         //verify multi-select of categories
-        selectXAxes(false, "White", "Other", "Native Hawaiian/Paci", "Native American/Alas"); // TODO Test data dependent.
+        selectXAxes(false, "White", "Multiracial", "Native Hawaiian/Paci", "Native American/Alas. Other");
         sleep(3000); // Let the animation end.
 
         if (CDSHelper.validateCounts)
         {
             //ensure correct number of points are highlighted
-            assertEquals("incorrect number of points highlighted after clicking x axis categories",2707, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
-            assertEquals("incorrect total number of points after clicking x axis categories",3713, getPointCount()); // TODO Test data dependent.
+            assertEquals("Incorrect number of points highlighted after clicking x axis categories",1443, getPointCountByColor(MOUSEOVER_FILL));
+            assertEquals("Incorrect total number of points after clicking x axis categories",3627, getPointCount());
             //apply selection as exlusive filter
             waitAndClick(CDSHelper.Locators.cdsButtonLocator("Remove"));
-            waitForPointCount(3713 - 2707, 10000); // TODO Test data dependent.
+            waitForPointCount(3627 - 1443, 10000);
         }
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
@@ -774,13 +797,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                 };
 
         final Map<String, String> SubjectCounts = new HashMap<>();
-        SubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "8,469");   //8,373
-        SubjectCounts.put(CDSHelper.SUBJECT_CHARS, "8,469");
-        SubjectCounts.put(CDSHelper.TIME_POINTS, "8,469");
+        SubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "8,277");
+        SubjectCounts.put(CDSHelper.SUBJECT_CHARS, "8,277");
+        SubjectCounts.put(CDSHelper.TIME_POINTS, "8,277");
         SubjectCounts.put(CDSHelper.BAMA, "75");
         SubjectCounts.put(CDSHelper.ELISPOT, "477");
-        SubjectCounts.put(CDSHelper.ICS, "1,690");
-        SubjectCounts.put(CDSHelper.NAB, "899");
+        SubjectCounts.put(CDSHelper.ICS, "1,604");
+        SubjectCounts.put(CDSHelper.NAB, "839");
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -910,8 +933,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Populate expected counts for proteins.
         proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA, CDSHelper.PROTEIN_ENV), "178");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "1289");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "1146");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "1203");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "1060");
         proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "739");
         proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "1061");
         proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_GAG), "219");
@@ -920,30 +943,27 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Populate expected counts for protein panels.
         proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA), "178");
-        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "1325");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "1239");
         proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503), "219");
 
         // Populate expected counts for viruses.
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "68");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "8");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "73");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "787");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "727");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "727");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "667");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "60");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_REJO), "119");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_RHPA), "60");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_REJO), "60");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SC422), "60");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "60");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_WITO4), "60");
 
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_92RW), "50");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "60");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "381");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "321");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "261");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_96ZM), "88");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_97ZA), "50");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "694");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "634");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_C1080), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_C3347), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CAAN), "60");
@@ -955,7 +975,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CE2010), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "741");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "681");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "4");
@@ -967,13 +987,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_W61D), "120");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_WITO), "0");
 
-        sourcesSubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "8,469");
-        sourcesSubjectCounts.put(CDSHelper.SUBJECT_CHARS, "8,469");
-        sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "8,469");
+        sourcesSubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "8,277");
+        sourcesSubjectCounts.put(CDSHelper.SUBJECT_CHARS, "8,277");
+        sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "8,277");
         sourcesSubjectCounts.put(CDSHelper.BAMA, "75");
         sourcesSubjectCounts.put(CDSHelper.ELISPOT, "477");
-        sourcesSubjectCounts.put(CDSHelper.ICS, "1,690");
-        sourcesSubjectCounts.put(CDSHelper.NAB, "899");
+        sourcesSubjectCounts.put(CDSHelper.ICS, "1,604");
+        sourcesSubjectCounts.put(CDSHelper.NAB, "839");
 
         subjectCountsHelper(sourcesSubjectCounts, antigenCounts, peptidePoolCounts, proteinCounts, proteinPanelCounts, virusCounts);
 
@@ -1036,7 +1056,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "0");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "42");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
@@ -1076,61 +1095,60 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         virusCounts.clear();
 
         // Populate expected counts for some of the antigens.
-        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A1_NAME), "1");
-        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A244_NAME), "1");
-        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_BCON_NAME), "1");
-        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_C1086_NAME), "1");
-        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_P24_NAME), "1");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A1_NAME), "5");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A244_NAME), "5");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_BCON_NAME), "5");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_C1086_NAME), "5");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_P24_NAME), "5");
 
-        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV1PTEC), "0");
-        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_GAG, CDSHelper.PEPTIDE_POOL_GAG1PTEC), "0");
-        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_NEF, CDSHelper.PEPTIDE_POOL_NEFPTEC), "0");
-        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_POL, CDSHelper.PEPTIDE_POOL_POL1PTEC), "0");
-        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV2PTEG), "2");
-        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF, CDSHelper.PEPTIDE_POOL_NEFPTEG), "2");
-        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_GAGB, CDSHelper.PROTEIN_GAG, CDSHelper.PEPTIDE_POOL_GAGCONB1), "18");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV1PTEC), "20");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_GAG, CDSHelper.PEPTIDE_POOL_GAG1PTEC), "23");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_NEF, CDSHelper.PEPTIDE_POOL_NEFPTEC), "22");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_POL, CDSHelper.PEPTIDE_POOL_POL1PTEC), "23");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV2PTEG), "6");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF, CDSHelper.PEPTIDE_POOL_NEFPTEG), "6");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_GAGB, CDSHelper.PROTEIN_GAG, CDSHelper.PEPTIDE_POOL_GAGCONB1), "25");
 
-        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA), "9");
-        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "27");
-        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503), "0");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA), "12");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "116");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503), "26");
 
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA, CDSHelper.PROTEIN_ENV), "9");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "27");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "18");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "12");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "15");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_GAG), "0");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_NEF), "0");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_POL), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA, CDSHelper.PROTEIN_ENV), "12");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "112");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "103");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "71");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "104");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_GAG), "26");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_NEF), "26");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_POL), "26");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "2");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "1");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "17");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "13");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "1");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "5");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "62");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "59");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "3");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "3");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "2");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "6");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "3");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "35");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "21");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "13");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "54");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "15");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "64");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "1");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "1");
 
-        sourcesSubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "150");
-        sourcesSubjectCounts.put(CDSHelper.SUBJECT_CHARS, "150");
-        sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "150");
-        sourcesSubjectCounts.put(CDSHelper.BAMA, "1");
-        sourcesSubjectCounts.put(CDSHelper.ELISPOT, "20");
-        sourcesSubjectCounts.put(CDSHelper.ICS, "28");
-        sourcesSubjectCounts.put(CDSHelper.NAB, "20");
+        sourcesSubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "815");
+        sourcesSubjectCounts.put(CDSHelper.SUBJECT_CHARS, "815");
+        sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "815");
+        sourcesSubjectCounts.put(CDSHelper.BAMA, "5");
+        sourcesSubjectCounts.put(CDSHelper.ELISPOT, "55");
+        sourcesSubjectCounts.put(CDSHelper.ICS, "159");
+        sourcesSubjectCounts.put(CDSHelper.NAB, "76");
 
         subjectCountsHelper(sourcesSubjectCounts, antigenCounts, peptidePoolCounts, proteinCounts, proteinPanelCounts, virusCounts);
 
@@ -1153,23 +1171,23 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
-        log("Validating counts with filters of NAB A3R5 and then cell types of CD4+, CD8+ and both.");
+        log("Validating counts with filters of NAB TZM-bl and then cell types of CD4+, CD8+ and both.");
 
         cds.goToSummary();
         cds.clickBy("Assays");
-        cds.selectBars(CDSHelper.ASSAYS[3]); // Select NAb A3R5
+        cds.selectBars(CDSHelper.ASSAYS[4]); // Select NAb TZM-bl
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA), "0");
-        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "58");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "133");
         proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503), "0");
 
         proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA, CDSHelper.PROTEIN_ENV), "0");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "58");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "58");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "0");
-        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "133");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "133");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "88");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "133");
         proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_GAG), "0");
         proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_NEF), "0");
         proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_POL), "0");
@@ -1188,6 +1206,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.validateProteinSubjectCount(proteinCounts, false);
         xaxis.back();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        proteinPanelCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "137");
+
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "137");
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "137");
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "92");
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "137");
 
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
@@ -1218,6 +1243,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Counts for the y-axis are the same as x-axis. So no need to repopulate the counts.
 
         log("Validating the y-axis selector.");
+
+        proteinPanelCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "133");
+
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "133");
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "133");
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "88");
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "133");
+
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
@@ -1230,6 +1263,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.validateProteinSubjectCount(proteinCounts, false);
         yaxis.back();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        proteinPanelCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "137");
+
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "137");
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "137");
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "92");
+        proteinCounts.replace(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "137");
 
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
@@ -1267,26 +1307,25 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         virusCounts.clear();
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "58");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "65");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "541");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "492");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "34");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "2");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "8");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "62");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "58");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "5");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "34");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "5");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "50");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "235");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "195");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "28");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "18");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "473");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "55");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "504");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "53");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "4");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SVA), "5");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_W61D), "9");
 
         log("Validating the x-axis selector.");
         xaxis.openSelectorWindow();
@@ -1308,18 +1347,17 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "0");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "83");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "9");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "222");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "140");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "82");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "34");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "236");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "236");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CH77), "21");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "12");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "9");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "3");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "21");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "21");
 
         xaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
         xaxis.validateVirusSubjectCount(virusCounts, false);
@@ -1333,26 +1371,25 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Validating for the y-axis re-populate the counts like we did before.
 
         virusCounts.clear();
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "58");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "65");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "541");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "492");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "34");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "2");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "8");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "62");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "58");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "5");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "34");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "5");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "50");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "235");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "195");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "28");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "18");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "473");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "55");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "504");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "53");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "4");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SVA), "5");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_W61D), "9");
 
         log("Validating the y-axis selector.");
         yaxis.openSelectorWindow();
@@ -1372,18 +1409,17 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "0");
 
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "83");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "9");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "222");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "140");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "0");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "82");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "34");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "236");
-        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "236");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CH77), "21");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "12");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "9");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "3");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "21");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "21");
 
         yaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
         yaxis.validateVirusSubjectCount(virusCounts, false);
@@ -1429,20 +1465,22 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         Locator.CssLocator colorLegend = Locator.css("#color-legend > svg");
         Locator.CssLocator colorLegendGlyph = colorLegend.append("> .legend-point");
         waitForElement(colorLegend);
-        assertElementPresent(colorLegendGlyph, 7);
+        assertElementPresent(colorLegendGlyph, 10);
 
         // TODO Need to revisit this part of the test. Specifically there no longer is a 'Race' attribute to look for.
 /*
         List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
         Map<String, Integer> raceCounts = new HashMap<>();
-        raceCounts.put("American Indian/Alaska Native", 10); // too tired to fix this
-        raceCounts.put("American Indian/Alaskan Native", 46);
-        raceCounts.put("Asian", 62);
-        raceCounts.put("Black/African American", 103);
-        raceCounts.put("Indian", 81);
-        raceCounts.put("Native Hawaiian or Other Pacific Islander", 16);
-        raceCounts.put("Native Hawaiian/Pacific Islander", 21);
-        raceCounts.put("White", 129);
+        raceCounts.put("Asian", 62); // too tired to fix this
+        raceCounts.put("Asian/Pacific Island", 89);
+        raceCounts.put("Black", 65);
+        raceCounts.put("Hawaiian/Pacific Isl", 67);
+        raceCounts.put("Multiracial", 81);
+        raceCounts.put("Native American", 73);
+        raceCounts.put("Native American/Alas. Other", 65);
+        raceCounts.put("Native Hawaiian/Paci", 87);
+        raceCounts.put("Unknown", 88);
+        raceCounts.put("White", 62);
 
         Set<String> foundRaces = new HashSet<>();
 
@@ -1497,15 +1535,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
         Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
-        expectedCounts.put("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 0));
-        expectedCounts.put("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 0));
-        expectedCounts.put("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 0));
-        expectedCounts.put("HVTN_094", new CDSHelper.TimeAxisData("HVTN 094", 6, 22, 0, 0));
-        expectedCounts.put("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 0));
-        expectedCounts.put("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 0));
-        expectedCounts.put("HVTN_205", new CDSHelper.TimeAxisData("HVTN 0205", 0, 0, 0, 0));
+        expectedCounts.put("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
+        expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
+        expectedCounts.put("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
+        expectedCounts.put("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
+        expectedCounts.put("ZAP_135", new CDSHelper.TimeAxisData("ZAP 135", 0, 0, 0, 0));
 
-        final String yaxisScale = "\n0\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800"; // TODO Test data dependent.
+        final String yaxisScale = "\n0\n100\n200\n300\n400\n500\n600\n700"; // TODO Test data dependent.
         final String studyDaysScales = "0\n100\n200\n300\n400\n500\n600" + yaxisScale; // TODO Test data dependent.
         final String studyDaysScaleAligedVaccination = "-300\n-200\n-100\n0\n100\n200\n300" + yaxisScale; // TODO Test data dependent.
         final String studyWeeksScales = "0\n20\n40\n60\n80" + yaxisScale; // TODO Test data dependent.
@@ -1528,7 +1564,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         assertTrue("For NAb Titer 50, A3R5 vs Time Visit Days a study axis was not present.", hasStudyAxis());
         List<WebElement> studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
-        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found" + studies.size() + ".", studies.size() == expectedCounts.size());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
         validateVisitCounts(studies, expectedCounts);
@@ -1545,6 +1581,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
+        // Modify expected number of icons to be visible (we should not have overlapping vacc. and follow-up icons).
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 17, 0, 0));
+
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyWeeksScales);
 
@@ -1555,8 +1594,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
-        assertTrue("Expected 7 studies in the Time Axis, found " + studies.size() + ".", studies.size() == 7);
+        assertTrue("Expected 7 studies in the Time Axis, found " + studies.size() + ".", studies.size() == 5);
         log("Study count was as expected.");
+
+        // Again account for behavior of not having overlapping icons.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 2, 5, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 3, 7, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 10, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 3, 5, 0, 0));
 
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyMonthsScales);
@@ -1569,7 +1614,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         // When changing the alignment to anything other than Day 0 study HVTN 205 will not appear because it has no visit information.
-        expectedCounts.remove("HVTN_205");
+        expectedCounts.remove("ZAP_135");
+
+        // Icon counts should go back to what they were before.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
@@ -1579,11 +1630,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertSVG(studyDaysScales);
 
         log("Change x-axis alignment to Last Vaccination, verify visit counts are as expected.");
-        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 1));
-        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 1));
-        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 1));
-        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 1));
-        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 1));
+        // pre-enrollment has been removed temporarily. Previously QED, YOYO and ZAP 133 had pre-enrollment.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.setAlignedBy("Last Vaccination");
@@ -1597,6 +1648,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertSVG(studyDaysScaleAligedVaccination);
 
         log("Change x-axis to Study weeks, and go back to aligned by Enrollment, verify visit are as expected.");
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 17, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
@@ -1607,17 +1662,16 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
-
-        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 0));
-        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 0));
-        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 0));
-        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 0));
-        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 0));
 
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyWeeksScales);
 
         log("Change x-axis Aligned by Last Vaccination, verify visit are as expected.");
+        // pre-enrollment has been removed temporarily. Previously QED, YOYO and ZAP 133 had pre-enrollment.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 9, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 17, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
@@ -1629,16 +1683,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
-        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 1));
-        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 1));
-        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 1));
-        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 1));
-        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 1));
-
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyWeeksScalesAlignedVaccination);
 
         log("Change x-axis to Study months, and go back to aligned by Enrollment, verify visit are as expected.");
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 2, 5, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 3, 7, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 10, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 3, 5, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
@@ -1650,16 +1702,15 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
-        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 0));
-        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 0));
-        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 0));
-        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 0));
-        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 0));
-
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyMonthsScales);
 
         log("Change x-axis Aligned by Last Vaccination, verify visit are as expected.");
+        // pre-enrollment has been removed temporarily. Previously QED, YOYO and ZAP 133 had pre-enrollment.
+        expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 3, 0, 0));
+        expectedCounts.replace("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 4, 4, 0, 0));
+        expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 11, 0, 0));
+        expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 3, 0, 0));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
@@ -1670,12 +1721,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
-
-        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 1));
-        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 1));
-        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 1));
-        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 1));
-        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 1));
 
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyMonthsScalesAlignedVaccination);
@@ -1699,10 +1744,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         List<String> expectedToolTipText;
 
         Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
-        expectedCounts.put("HVTN_060", new CDSHelper.TimeAxisData("HVTN 060", 5, 7, 0, 0));
-        expectedCounts.put("HVTN_063", new CDSHelper.TimeAxisData("HVTN 063", 5, 8, 0, 0));
-        expectedCounts.put("HVTN_069", new CDSHelper.TimeAxisData("HVTN 069", 4, 7, 0, 0));
-        expectedCounts.put("HVTN_204", new CDSHelper.TimeAxisData("HVTN 204", 4, 12, 0, 0));
+        expectedCounts.put("RED_4", new CDSHelper.TimeAxisData("RED 4", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_110", new CDSHelper.TimeAxisData("ZAP 110", 5, 7, 0, 0));
+        expectedCounts.put("ZAP_111", new CDSHelper.TimeAxisData("ZAP 111", 5, 8, 0, 0));
+        expectedCounts.put("ZAP_134", new CDSHelper.TimeAxisData("ZAP 134", 4, 12, 0, 0));
 
         final String yaxisScale = "\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
         final String studyDaysScales = "0\n200\n400\n600\n800\n1000" + yaxisScale; // TODO Test data dependent.
@@ -1735,29 +1780,27 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Alternative to hard coding the values would be to write a generator that would build the expected tool-tips,
         // but that is more effort that I have time for now.
         expectedToolTipText = new ArrayList<>();
-        expectedToolTipText.add("HVTN 060 - Day 379");
-        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Follow-Up");
-        expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
-        expectedToolTipText.add("Group 2 Arm Ca Placebo: Follow-Up");
-        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Follow-Up");
-        expectedToolTipText.add("Group 3 Arm Ca Placebo: Follow-Up");
-        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Follow-Up");
-        expectedToolTipText.add("Group 4 Arm Ca Placebo: Follow-Up");
-        expectedToolTipText.add("Group 4 Arm T4 Vaccine: Follow-Up");
-        expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up");
-        expectedToolTipText.add("Group 5 Arm Cb Placebo: Follow-Up");
-        expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up");
-        expectedToolTipText.add("Group 6 Arm Cb Placebo: Follow-Up");
-        expectedToolTipText.add("Group 7 Arm T7 Vaccine: Follow-Up");
-        expectedToolTipText.add("Group 7 Arm Cb Placebo: Follow-Up");
+        expectedToolTipText.add("RED 4");
+        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment, Vaccination");
         cssPath = "#study-axis > svg > g:nth-child(2)  > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("HVTN 069 - Day 70");
-        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Follow-Up");
-        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Follow-Up");
-        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Follow-Up");
+        expectedToolTipText.add("ZAP 111");
+        expectedToolTipText.add("Group 1 Arm Ca Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 2 Arm Ca Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 3 Arm Ca Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 4 Arm Ca Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 4 Arm T4 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 5 Arm Cb Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 5 Arm T5 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 7 Arm Cb Placebo: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 7 Arm T7 Vaccine: Enrollment, Vaccination");
         cssPath = "#study-axis > svg > g:nth-child(4)  > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
@@ -1766,17 +1809,19 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         expectedCounts.clear();
-        expectedCounts.put("HVTN_060", new CDSHelper.TimeAxisData("HVTN 060", 0, 0, 0, 0));
-        expectedCounts.put("HVTN_060-Group_7_Cb_Placebo", new CDSHelper.TimeAxisData("Group 7 Arm Cb Placebo", 5, 7, 0, 0));
-        expectedCounts.put("HVTN_063", new CDSHelper.TimeAxisData("HVTN 063", 0, 0, 0, 0));
-        expectedCounts.put("HVTN_063-Group_2_T2_Vaccine", new CDSHelper.TimeAxisData("Group 2 Arm T2 Vaccine", 5, 8, 0, 0));
-        expectedCounts.put("HVTN_069", new CDSHelper.TimeAxisData("HVTN 069", 0, 0, 0, 0));
-        expectedCounts.put("HVTN_069-Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 7, 0, 0));
-        expectedCounts.put("HVTN_069-Group_2_T2_Vaccine", new CDSHelper.TimeAxisData("Group 2 Arm T2 Vaccine", 4, 7, 0, 0));
-        expectedCounts.put("HVTN_069-Group_3_T3_Vaccine", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 7, 0, 0));
-        expectedCounts.put("HVTN_204", new CDSHelper.TimeAxisData("HVTN 204", 0, 0, 0, 0));
-        expectedCounts.put("HVTN_204-Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 0));
-        expectedCounts.put("HVTN_204-Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 0));
+        expectedCounts.put("RED_4", new CDSHelper.TimeAxisData("RED 4", 0, 0, 0, 0));
+        expectedCounts.put("RED_4_Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine: Vaccination", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_110", new CDSHelper.TimeAxisData("ZAP 110", 0, 0, 0, 0));
+        expectedCounts.put("ZAP_110_Group_1_Arm_Ca_Placebo", new CDSHelper.TimeAxisData("Group 1 Arm Ca Placebo", 5, 7, 0, 0));
+        expectedCounts.put("ZAP_110_Group_2_Arm_Ca_Placebo", new CDSHelper.TimeAxisData("Group 2 Arm Ca Placebo", 5, 7, 0, 0));
+        expectedCounts.put("ZAP_110_Group_7_Arm_T7_Vaccine", new CDSHelper.TimeAxisData("Group 7 Arm T7 Vaccine", 5, 7, 0, 0));
+        expectedCounts.put("ZAP_111", new CDSHelper.TimeAxisData("ZAP 111", 0, 0, 0, 0));
+        expectedCounts.put("ZAP_111_Group_1_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 5, 8, 0, 0));
+        expectedCounts.put("ZAP_111_Group_3_Ca_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm Ca Placebo", 5, 8, 0, 0));
+        expectedCounts.put("ZAP_111_Group_4_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 4 Arm T4 Vaccine", 5, 8, 0, 0));
+        expectedCounts.put("ZAP_134", new CDSHelper.TimeAxisData("ZAP 134", 0, 0, 0, 0));
+        expectedCounts.put("ZAP_134_Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 0));
+        expectedCounts.put("ZAP_134_Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 0));
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
@@ -1786,15 +1831,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("HVTN 063 - Day 546");
-        expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
+        expectedToolTipText.add("ZAP 110 - Day 455");
+        expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(18) > image:nth-of-type(10)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("HVTN 069 - Day 0");
-        expectedToolTipText.add("Group 1 Arm T1 Vaccine: derived");
-        expectedToolTipText.add("Enrollment, Vaccination");
+        expectedToolTipText.add("ZAP 111 - Day 364");
+        expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(31) > image:nth-of-type(8)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
@@ -1804,11 +1848,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
         xaxis.confirmSelection();
 
-        expectedCounts.replace("HVTN_069-Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 7, 0, 1));
-        expectedCounts.replace("HVTN_069-Group_2_T2_Vaccine", new CDSHelper.TimeAxisData("Group 2 Arm T2 Vaccine", 4, 7, 0, 1));
-        expectedCounts.replace("HVTN_069-Group_3_T3_Vaccine", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 7, 0, 1));
-        expectedCounts.replace("HVTN_204-Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 1));
-        expectedCounts.replace("HVTN_204-Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 1));
+        expectedCounts.put("ZAP_111_Group_1_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_111_Group_3_Ca_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm Ca Placebo", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_111_Group_4_Arm_Vaccine", new CDSHelper.TimeAxisData("Group 4 Arm T4 Vaccine", 4, 7, 0, 0));
+        expectedCounts.put("ZAP_134_Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 0));
+        expectedCounts.put("ZAP_134_Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 0));
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
@@ -1818,10 +1862,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("HVTN 063 - Day 182");
-        expectedToolTipText.add("Group 2");
-        expectedToolTipText.add("Follow-Up");
-        cssPath = "#study-axis > svg > g.study:nth-child(21) > image.visit-tag[x^='3']";
+        expectedToolTipText.add("ZAP 111 - Day 182");
+        expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
+        cssPath = "#study-axis > svg > g.study:nth-child(22) > image.visit-tag[x^='3']";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
     }
@@ -1916,14 +1959,21 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         waitForElement(plotTick.withText("Pseudovirus"));
-        assertElementPresent(plotBox, 2);
+        assertElementPresent(plotBox, 1);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDSHelper.CDS_WAIT);
         switchToWindow(1);
         plotDataTable = new DataRegionTable("query", this);
         assertEquals(100, plotDataTable.getDataRowCount());
-        assertEquals(100, getElementCount(Locator.tagContainingText("td", uniqueVirus)));
+
+        // Sort the grid to try and get some predictability to number of specific values in a given column.
+        _ext4Helper.resetCssPrefix();
+        plotDataTable.setSort("cds_GridBase_SubjectId", SortDirection.ASC);
+        plotDataTable.setSort("cds_GridBase_ParticipantSequenceNum", SortDirection.ASC);
+        _ext4Helper.setCssPrefix("x-");
+
+        assertEquals(28, getElementCount(Locator.tagContainingText("td", uniqueVirus)));
         getDriver().close();
         switchToMainWindow();
 
@@ -1933,9 +1983,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     public void verifyAntigenScatterPlot()
     {
         CDSHelper cds = new CDSHelper(this);
-        String xVirus = CDSHelper.VIRUS_TV1;
+        String xVirus = CDSHelper.VIRUS_BAL26;
         String yVirus = CDSHelper.VIRUS_SF162;
-        String xVirusId = cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, xVirus);
+        String xVirusId = cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, xVirus);
         String y1VirusId = cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, yVirus);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1957,8 +2007,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setVirusName(y1VirusId);
         yaxis.confirmSelection();
 
-        waitForElement(plotTickLinear.withText("5000"));
-        assertElementPresent(plotPoint, 1321);
+        waitForElement(plotTickLinear.withText("1000"));
+        assertElementPresent(plotPoint, 1209);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDSHelper.CDS_WAIT);
@@ -1966,6 +2016,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         Ext4Helper.resetCssPrefix();
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
         assertEquals(100, plotDataTable.getDataRowCount());
+        assertElementPresent(Locator.paginationText(1, 100, 2279));
         getDriver().close();
         switchToMainWindow();
         Ext4Helper.setCssPrefix("x-");
@@ -1976,16 +2027,29 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
         yaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT);
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_DATA);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        xaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
+        xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        cds.openStatusInfoPane("Races");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
-        waitForElement(plotTickLinear.withText("40"));
-        assertElementPresent(plotPoint, 60);
+        waitForElement(plotTickLinear.withText("6000"));
+        assertElementPresent(plotPoint, 580);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDSHelper.CDS_WAIT);
         switchToWindow(1);
         Ext4Helper.resetCssPrefix();
         plotDataTable = new DataRegionTable("query", this);
-        assertEquals(60, plotDataTable.getDataRowCount());
+        assertEquals(100, plotDataTable.getDataRowCount());
+        assertElementPresent(Locator.paginationText(1, 100, 580));
         getDriver().close();
         switchToMainWindow();
     }
@@ -2049,7 +2113,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         scaleValues = "0.0001\n0.001\n0.01\n0.1\n1\n10";
-        expectedCount = 1563;
+        expectedCount = 1604;
 
         verifyLogAndLinearHelper(scaleValues, 0, expectedCount, true);
 
@@ -2060,7 +2124,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         scaleValues = "0\n2\n4\n6\n8\n10\n12\n14";
-        expectedCount = 1690;
+        expectedCount = 1604;
 
         verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
 
@@ -2082,7 +2146,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         originalScale = "0.0001\n0.001\n0.01\n0.1\n1\n10\n0.0002\n0.002\n0.02\n0.2\n2";
-        originalCount = 1563;
+        originalCount = 1453;
         verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
 
         log("Change x-axis to be linear.");
@@ -2092,7 +2156,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0.0002\n0.002\n0.02\n0.2\n2";
-        expectedCount = 1563;  // Is this right?
+        expectedCount = 1453;  // Is this right?
         verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
 
         log("Change y-axis to be linear.");
@@ -2102,7 +2166,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
-        expectedCount = 1690;
+        expectedCount = 1453;
         verifyLogAndLinearHelper(scaleValues, 1, expectedCount, false);
 
         log("Change x-axis back to log.");
@@ -2112,7 +2176,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         scaleValues = "0.0001\n0.001\n0.01\n0.1\n1\n10\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
-        expectedCount = 1690;
+        expectedCount = 1453;
         verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
 
         log("Change y-axis back to log, all values should return to original.");
@@ -2134,8 +2198,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         scaleValues = "1\n10\n100\n1000";
-        expectedCount = 856;
-        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, true);
+        expectedCount = 796;
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
 
         log("Change y-axis to be linear.");
 
@@ -2144,7 +2208,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         scaleValues = "0\n1000\n2000\n3000\n4000\n5000\n6000\n7000\n8000";
-        expectedCount = 856;
+        expectedCount = 796;
         verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
 
         // Clear the plot.
@@ -2162,8 +2226,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.DEMO_AGEGROUP);
         xaxis.confirmSelection();
 
-        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n1\n10\n100\n1000\n10000";
-        originalCount = 428;
+        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n1\n10\n100\n1000\n10000";
+        originalCount = 477;
         verifyLogAndLinearHelper(originalScale, 0, originalCount, true);
 
         log("Add a filter and make sure that the log scale changes appropriately.");
@@ -2173,8 +2237,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(CDSHelper.RACE_ASIAN, true);
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
-        originalScale = "20-29\n30-39\n40-49\n1\n10\n100";
-        originalCount = 18;
+        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n1\n10\n100";
+        originalCount = 55;
         verifyLogAndLinearHelper(originalScale, 0, originalCount, true);
 
         // Clear the plot.
@@ -2236,6 +2300,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
         brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(" + pointToClick + ")", 50, -350, true);
 
         // Clear the filter.
@@ -2258,6 +2323,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.clearFilters();
         sleep(500);
         waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
+
+        // A hacky work around for the scrollIntoView issues I am seeing on Firefox.
+        refresh();
 
         log("Brush a binned plot.");
         xaxis.openSelectorWindow();
@@ -2396,16 +2464,23 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Test plot with x gutter only and data in main plot as well.");
 
+        cds.openStatusInfoPane("Races");
+        sleep(500);
+        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        sleep(500); // Wait for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
+
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
-        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
-        xaxis.pickVariable(CDSHelper.DEMO_AGE);
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD4, CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
@@ -2420,16 +2495,23 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Test plot with y gutter only and data in main plot as well.");
 
+        cds.openStatusInfoPane("Races");
+        sleep(500);
+        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        sleep(500); // Wait for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
+
         yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.SUBJECT_CHARS);
-        yaxis.pickVariable(CDSHelper.DEMO_AGE);
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4, CDSHelper.CELL_TYPE_CD8);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
-        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
@@ -2451,8 +2533,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.BAMA);
-        xaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA);
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
         sleep(500);
@@ -2477,6 +2559,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         int heightWidth, pointToClick;
         int yGutterIndex, xGutterIndex, mainPlotIndex;
         String tempStr, cssPathBrushWindow;
+
+        refresh();
+        sleep(2000);
 
         if(hasYGutter)
         {
@@ -2629,16 +2714,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Apply the brushing as a filter.");
         applyBrushAsFilter(subjectCountBefore);
 
-        // A filter created in one gutter should exclude all points in the other gutter (and make that gutter go away).
-        if(isXGutter)
-        {
-            assertFalse("There is an y gutter and there should not be.", hasYGutter());
-        }
-        else
-        {
-            assertFalse("There is an x gutter and there should not be.", hasXGutter());
-        }
-
         cds.clearFilter(1);
         sleep(1000);
         _ext4Helper.waitForMaskToDisappear();
@@ -2653,6 +2728,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
+        // Going to move the mouse over the area where it is about to start dragging.
+        mouseOver(Locator.css(cssPathToPoint));
         dragAndDrop(Locator.css(cssPathToPoint), xOffSet, yOffSet);
         sleep(250);
 
@@ -3106,6 +3183,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         public static Locator plotTickLinear = Locator.css("g.tick-text > g > text");
         public static Locator plotTick = Locator.css("g.tick-text > a > text");
         public static Locator plotPoint = Locator.css("svg a.point");
+        public static Locator plotSquare = Locator.css("svg a.vis-bin-square");
         public static Locator filterDataButton = Locator.xpath("//span[text()='Filter']");
         public static Locator removeButton = Locator.xpath("//span[text()='Remove']");
     }

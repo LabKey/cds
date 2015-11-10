@@ -61,6 +61,10 @@ Ext.define('Connector.utility.Chart', {
         }
     },
 
+    axisNameProp : 'plot-axis',
+    xAxisNameProp : 'plot-axis-x',
+    yAxisNameProp : 'plot-axis-y',
+
     constructor : function(config) {
         this.callParent([config]);
         this.brushDelayTask = new Ext.util.DelayedTask(this._onBrush, this);
@@ -76,6 +80,35 @@ Ext.define('Connector.utility.Chart', {
             var callArgs = slice.call(arguments, 0).concat(args);
             return method.apply(this, callArgs);
         };
+    },
+
+    /**
+     * Uses linear equation to determine delay based on the totalPoints
+     * @param totalPoints
+     * @returns {number}
+     */
+    calculateDelay : function(totalPoints)
+    {
+        var minPoints = 1000,
+            maxPoints = 5000,
+            minDelay = 30,
+            maxDelay = 80,
+            brushDelay = 0;
+
+        if (totalPoints >= minPoints)
+        {
+            var m = (maxDelay - minDelay) / (maxPoints - minPoints),
+                b = maxDelay - (m * maxPoints);
+
+            brushDelay = Math.ceil((m * totalPoints) + b);
+        }
+
+        if (LABKEY.devMode)
+        {
+            console.log('brush delay:', brushDelay, 'ms');
+        }
+
+        return brushDelay;
     },
 
     brushBins : function(event, layerData, extent, plot) {
@@ -116,6 +149,8 @@ Ext.define('Connector.utility.Chart', {
         if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
             ChartUtils._brushBinsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
         }
+
+        this.brushedSubjects = subjects;
     },
 
     _brushBinsByCanvas : function(canvas, extent, subjects) {
@@ -159,7 +194,6 @@ Ext.define('Connector.utility.Chart', {
         //move brush layer to front
         canvas.select('svg g.brush').each(function() {
             this.parentNode.appendChild(this);
-
         });
     },
 
@@ -191,78 +225,93 @@ Ext.define('Connector.utility.Chart', {
         }
     },
 
-    brushEnd : function(event, layerData, extent, plot, layerSelections, measures, properties, dimension) {
-
+    brushEnd : function(event, layerData, extent, plot, layerSelections, measures, properties, dimension)
+    {
         // this brushing method can be used across different dimensions (main vs. xTop vs. yRight)
         // only the plot that originated the brushing can end the brushing
-        if (this.initiatedBrushing !== dimension) {
+        if (this.initiatedBrushing !== dimension)
+        {
             return;
         }
         this.initiatedBrushing = '';
 
-        var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]],
-            xMeasure, yMeasure,
+        var xExtent = [extent[0][0], extent[1][0]],
+            yExtent = [extent[0][1], extent[1][1]],
+            xMeasure = measures.x,
+            yMeasure = measures.y,
             sqlFilters = [null, null, null, null],
             yMin, yMax, xMin, xMax;
 
-        xMeasure = measures[0];
-        yMeasure = measures[1];
-        yMeasure.colName = properties.yaxis.colName;
-
-        if (xMeasure) {
-            xMeasure.colName = properties.xaxis.colName;
-        }
-
-        if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
+        if (xMeasure && xExtent[0] !== null && xExtent[1] !== null)
+        {
             xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true);
             xMax = ChartUtils.transformVal(xExtent[1], xMeasure.type, false);
 
             // Issue 24124: With time points, brushing can create a filter that is not a whole number
-            if (xMeasure.variableType == 'TIME') {
+            if (xMeasure.variableType === 'TIME')
+            {
                 xMin = Math.floor(xMin);
                 xMax = Math.ceil(xMax);
             }
 
-            if (xMeasure.type === 'TIMESTAMP') {
-                sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin.toISOString(), LABKEY.Filter.Types.DATE_GREATER_THAN_OR_EQUAL);
-                sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax.toISOString(), LABKEY.Filter.Types.DATE_LESS_THAN_OR_EQUAL);
+            if (xMeasure.type === 'TIMESTAMP')
+            {
+                sqlFilters[0] = LABKEY.Filter.create(properties.xaxis.colName, xMin.toISOString(), LABKEY.Filter.Types.DATE_GREATER_THAN_OR_EQUAL);
+                sqlFilters[1] = LABKEY.Filter.create(properties.xaxis.colName, xMax.toISOString(), LABKEY.Filter.Types.DATE_LESS_THAN_OR_EQUAL);
             }
-            else {
-                sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
-                sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
+            else
+            {
+                sqlFilters[0] = LABKEY.Filter.create(properties.xaxis.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+                sqlFilters[1] = LABKEY.Filter.create(properties.xaxis.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
             }
         }
 
-        if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
+        if (yMeasure && yExtent[0] !== null && yExtent[1] !== null)
+        {
             yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true);
             yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false);
 
-            sqlFilters[2] = LABKEY.Filter.create(yMeasure.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
-            sqlFilters[3] = LABKEY.Filter.create(yMeasure.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
+            sqlFilters[2] = LABKEY.Filter.create(properties.yaxis.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+            sqlFilters[3] = LABKEY.Filter.create(properties.yaxis.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
         }
 
-        this.createSelectionFilter(sqlFilters);
+        this.createSelectionFilter(sqlFilters, true /* fromBrush */);
     },
 
-    _onBrush : function(extent) {
-        var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
+    _onBrush : function(extent)
+    {
+        // Stash all of the selected subjects so we can highlight associated points.
+        var subjects = {};
 
-        ChartUtils._brushPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
-
+        // first we go through and get the selected points/subjects for the main plot and both gutters
+        ChartUtils._brushSelectedPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
         if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
-            ChartUtils._brushPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
+            ChartUtils._brushSelectedPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
+        }
+        if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
+            ChartUtils._brushSelectedPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
         }
 
-        if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
-            ChartUtils._brushPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
+        // second we go back through and highlight the subject associated points in the main plot and both gutters
+        ChartUtils._brushAssociatedPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
+        if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
+            ChartUtils._brushAssociatedPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
         }
+        if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
+            ChartUtils._brushAssociatedPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
+        }
+
+        this.brushedSubjects = subjects;
     },
 
-    brushPoints : function(event, layerData, extent) {
-        if (ChartUtils.BRUSH_DELAY) {
+    brushPoints : function(event, layerData, extent)
+    {
+        if (ChartUtils.BRUSH_DELAY)
+        {
             ChartUtils.brushDelayTask.delay(ChartUtils.BRUSH_DELAY, undefined /* newFn */, this, [extent]);
         }
-        else {
+        else
+        {
             ChartUtils._onBrush.call(this, extent);
         }
     },
@@ -275,37 +324,49 @@ Ext.define('Connector.utility.Chart', {
         }
     },
 
-    _brushPointsByCanvas : function(canvas, extent, subjects) {
+    _brushSelectedPointsByCanvas : function(canvas, extent, subjects)
+    {
         canvas.selectAll('.point path')
                 .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects]))
+                .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPreStroke));
+
+        // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function()
+        {
+            var node = this.parentNode;
+            node.parentNode.appendChild(node);
+        });
+    },
+
+    _brushAssociatedPointsByCanvas : function(canvas, extent, subjects)
+    {
+        canvas.selectAll('.point path')
                 .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPostFill, [extent, subjects]))
-                .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPreStroke))
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects]))
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
 
-
-        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function() {
-            var node = this.parentNode;
-            node.parentNode.appendChild(node);
-        });
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
-        canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function()
+        {
             var node = this.parentNode;
             node.parentNode.appendChild(node);
         });
 
         //move brush layer to front
-        canvas.select('svg g.brush').each(function() {
+        canvas.select('svg g.brush').each(function()
+        {
             this.parentNode.appendChild(this);
         });
     },
 
-    _brushPointPreFill : function(d, i, unknown, extent, subjects) {
+    _brushPointPreFill : function(d, i, unknown, extent, subjects)
+    {
         d.isSelected = ChartUtils.isSelectedWithBrush(extent, d.x, d.y);
         d.origFill = d.origFill || this.getAttribute('fill');
 
-        if (d.isSelected) {
+        if (d.isSelected)
+        {
             subjects[d.subjectId] = true;
             return ChartUtils.colors.SELECTED;
         }
@@ -404,45 +465,117 @@ Ext.define('Connector.utility.Chart', {
         }, scope);
     },
 
-    getSubjectsIn : function(callback, scope) {
-        var state = Connector.getState();
+    isSameSource : function(x, y)
+    {
+        return Ext.isObject(x) && Ext.isObject(y) && x.queryName == y.queryName && x.schemaName == y.schemaName;
+    },
 
-        state.onMDXReady(function(mdx) {
+    arraysEqual : function(arrA, arrB)
+    {
+        // first check for nulls
+        if (arrA == null && arrB == null)
+        {
+            return true;
+        }
+        else if (arrA == null || arrB == null)
+        {
+            return false;
+        }
 
-            var filters = state.getFilters();
+        // check if lengths are different
+        if (arrA.length !== arrB.length)
+        {
+            return false;
+        }
 
-            var validFilters = [];
+        // slice so we do not effect the original, sort makes sure they are in order
+        var cA = arrA.slice().sort(),
+            cB = arrB.slice().sort();
 
-            Ext.each(filters, function(filter) {
-                if (!filter.isPlot() && !filter.isGrid()) {
-                    validFilters.push(filter);
+        for (var i=0; i < cA.length; i++)
+        {
+            if (cA[i] !== cB[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    },
+
+    hasMeasureAssayDimensions : function(measure)
+    {
+        return measure != null && Ext.isObject(measure.options) && Ext.isObject(measure.options.dimensions);
+    },
+
+    /*
+     * Return the array of which assay dimension properties have different values arrays between the two measures.
+     * Used for plot to determine which dimension keys to use for the grouping / aggregation.
+     */
+    getAssayDimensionsWithDifferentValues : function(measure1, measure2, singleValueOnly)
+    {
+        var dimAliases = [],
+            intersectAliases;
+
+        if (measure1 == null || measure2 == null
+                || !Ext.isObject(measure1.options) || !Ext.isObject(measure1.options.dimensions)
+                || !Ext.isObject(measure2.options) || !Ext.isObject(measure2.options.dimensions))
+        {
+            return [];
+        }
+
+        intersectAliases = Ext.Array.intersect(
+            Object.keys(measure1.options.dimensions),
+            Object.keys(measure2.options.dimensions)
+        );
+
+        Ext.each(intersectAliases, function(alias)
+        {
+            var dimValue1 = measure1.options.dimensions[alias];
+            var dimValue2 = measure2.options.dimensions[alias];
+
+            if (!this.arraysEqual(dimValue1, dimValue2))
+            {
+                if (singleValueOnly === true)
+                {
+                    // issue 24008: only exclude the alias if the filters are for a single value on each side
+                    if (dimValue1 != null && dimValue1.length == 1 && dimValue2 != null && dimValue2.length == 1)
+                    {
+                        dimAliases.push(alias);
+                    }
                 }
-            });
-
-            if (validFilters.length > 0) {
-
-                var SUBJECT_IN = 'subjectinfilter';
-                state.addPrivateSelection(validFilters, SUBJECT_IN, function() {
-                    mdx.queryParticipantList({
-                        useNamedFilters: [SUBJECT_IN],
-                        success : function(cellset) {
-                            state.removePrivateSelection(SUBJECT_IN);
-                            var ids = [], pos = cellset.axes[1].positions, a=0;
-                            for (; a < pos.length; a++) { ids.push(pos[a][0].name); }
-                            callback.call(scope || this, ids);
-                        },
-                        failure : function() {
-                            state.removePrivateSelection(SUBJECT_IN);
-                        },
-                        scope: this
-                    });
-                }, this);
+                else
+                {
+                    dimAliases.push(alias);
+                }
             }
-            else {
-                // no filters to apply
-                callback.call(scope || this, null);
-            }
-
         }, this);
+
+        return dimAliases;
+    },
+
+    // Issue 23885: Do not include the color measure in request if it's not from the x, y, or demographic datasets
+    hasValidColorMeasure : function(activeMeasures)
+    {
+        var plotMeasures = activeMeasures;
+        if (Ext.isArray(activeMeasures) && activeMeasures.length == 3)
+        {
+            plotMeasures = {
+                x: activeMeasures[0] != null ? activeMeasures[0].measure : null,
+                y: activeMeasures[1] != null ? activeMeasures[1].measure : null,
+                color: activeMeasures[2] != null ? activeMeasures[2].measure : null
+            };
+        }
+
+        if (Ext.isObject(plotMeasures.color))
+        {
+            var demographicSource = plotMeasures.color.isDemographic,
+                matchXSource = Ext.isObject(plotMeasures.x) && plotMeasures.x.queryName == plotMeasures.color.queryName,
+                matchYSource = Ext.isObject(plotMeasures.y) && plotMeasures.y.queryName == plotMeasures.color.queryName;
+
+            return demographicSource || matchXSource || matchYSource;
+        }
+
+        return false;
     }
 });

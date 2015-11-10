@@ -15,14 +15,11 @@
  */
 package org.labkey.test.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.StudyDetailsPage;
-import org.openqa.selenium.SearchContext;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -44,10 +41,9 @@ public class CDSAsserts
 
     public void assertAllSubjectsPortalPage()
     {
-        assertCDSPortalRow("Subject characteristics", "11 subject characteristics", "1 species", "6 decades by age", "3 ethnicity", "10 countries", "2 sexes", "11 races");
-        assertCDSPortalRow("Study products", "2 study products", "4 class", "3 developer", "2 type");
-        assertCDSPortalRow("Assays", "4 assays");
-        assertCDSPortalRow("Studies", "6 studies", "2 network", "5 study types", "6 treatment assignment summaries");
+        assertCDSPortalRow("Subject characteristics", "10 subject characteristics", "2 species", "6 decades by age", "3 ethnicity", "60 countries", "2 sexes", "10 races");
+        assertCDSPortalRow("Study products", "3 study products", "4 class", "4 developer", "3 type");
+        assertCDSPortalRow("Studies", "51 studies", "4 network", "6 study types", "51 treatment assignment summaries");
     }
 
     private void assertCDSPortalRow(String byNoun, String expectedTotal, String... expectedDetails)
@@ -199,7 +195,7 @@ public class CDSAsserts
 
     public void assertDefaultFilterStatusCounts()
     {
-        assertFilterStatusCounts(8469, 53, -1); // TODO Test data dependent.
+        assertFilterStatusCounts(8277, 51, -1); // TODO Test data dependent.
     }
 
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount)

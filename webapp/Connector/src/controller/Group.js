@@ -170,10 +170,8 @@ Ext.define('Connector.controller.Group', {
         var view = this.getViewManager().getViewInstance('groupsave');
 
         if (view.isValid()) {
-            var values = view.getValues();
-            var state = Connector.getState();
-
-            var isLiveFilter = values['groupselect'] == 'live';
+            var values = view.getValues(),
+                state = Connector.getState();
 
             state.moveSelectionToFilter();
 
@@ -212,29 +210,30 @@ Ext.define('Connector.controller.Group', {
                         label: values['groupname'],
                         description: values['groupdescription'],
                         filters: state.getFilters(),
-                        isLive: isLiveFilter
+                        isLive: true // all groups are live
                     }
                 });
             }, this);
         }
     },
 
-    doGroupUpdateFromSavePanel : function() {
+    doGroupUpdateFromSavePanel : function()
+    {
         var view = this.getViewManager().getViewInstance('groupsave');
 
-        if (view.isValid()) {
-            var values = view.getValues();
-            var targetGroup = view.getSelectedGroup();
+        if (view.isValid())
+        {
+            var values = view.getValues(),
+                targetGroup = view.getSelectedGroup();
 
-            if (targetGroup) {
-
+            if (targetGroup)
+            {
                 // Ensure that the filter set is up to date
                 var state = Connector.getState();
                 state.moveSelectionToFilter();
 
                 // Update the target group
                 targetGroup.set('description', values['groupdescription']);
-                targetGroup.set('isLive', values['groupselect'] == 'live');
 
                 state.onMDXReady(function(mdx) {
 
@@ -257,15 +256,11 @@ Ext.define('Connector.controller.Group', {
                                 alert('Failed to update Group');
                             };
 
-                            var ids = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name');
-                            var description = targetGroup.get('description');
-                            var isLive = targetGroup.get('isLive');
-
                             me.doGroupUpdate({
                                 id: targetGroup.get('id'),
-                                ids: ids,
-                                description: description,
-                                filters: LABKEY.app.model.Filter.toJSON(state.getFilters(), isLive),
+                                ids: Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name'),
+                                description: targetGroup.get('description'),
+                                filters: LABKEY.app.model.Filter.toJSON(state.getFilters(), true),
                                 success: updateSuccess,
                                 failure: updateFailure
                             });

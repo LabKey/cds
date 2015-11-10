@@ -425,16 +425,14 @@
                     <h1>About</h1>
                 </div>
                 <div class="copy">
-                    <p>The CDS is a collaboration between
+                    <p>The DataSpace is a collaboration between
                         <a href="http://www.scharp.org" target="_blank">SCHARP</a>,
-                        <a href="http://www.labkey.org" target="_blank">LabKey</a>,
-                        <a href="http://www.ibm.com/" target="_blank">IBM</a>, and
-                        <a href="http://www.artefactgroup.com" target="_blank">Artefact.
-                            <br></a>
-                        <a href="http://www.gatesfoundation.org/" target="_blank">The Bill & Melinda Gates Foundation</a> ,
+                        <a href="http://www.labkey.org" target="_blank">LabKey</a>, and
+                        <a href="http://www.artefactgroup.com" target="_blank">Artefact.<br></a>
+                        <a href="http://www.gatesfoundation.org/" target="_blank">The Bill & Melinda Gates Foundation</a>,
                         has funded the program to date.
                         <br>
-                        The CDS is currently available to CAVD members.
+                        The DataSpace is currently available to CAVD members.
                     </p>
                 </div>
                 <div class="links">

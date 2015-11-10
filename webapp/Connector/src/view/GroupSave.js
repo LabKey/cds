@@ -124,15 +124,6 @@ Ext.define('Connector.view.GroupSave', {
                         name: 'groupdescription',
                         emptyText: 'Group description',
                         maxLength: 200
-                    },{
-                        xtype: 'radiogroup',
-                        columns: 1,
-                        allowBlank: false,
-                        validateOnBlur: false,
-                        items: [
-                            { boxLabel: 'Live: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
-                            { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
-                        ]
                     }]
                 },{
                     xtype: 'box',
@@ -253,15 +244,6 @@ Ext.define('Connector.view.GroupSave', {
                         name: 'groupdescription',
                         emptyText: 'no description provided',
                         maxLength: 200
-                    },{
-                        xtype: 'radiogroup',
-                        itemId: 'groupselect',
-                        columns: 1,
-                        allowBlank: false,
-                        items: [
-                            { boxLabel: 'Live: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
-                            { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
-                        ]
                     }]
                 },{
                     xtype: 'box',
@@ -343,10 +325,6 @@ Ext.define('Connector.view.GroupSave', {
             // set description
             var field = form.getComponent('groupdescription');
             field.setValue(filterGroupModel.get('description'));
-
-            // set filter state
-            field = form.getComponent('groupselect');
-            field.setValue({groupselect: filterGroupModel.get('isLive') ? 'live' : 'static'});
         }
     },
 

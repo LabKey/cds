@@ -127,7 +127,7 @@ Ext.define('Connector.view.SummaryDataView', {
 
                     // TODO: EncodeURI
                     var nav = (values.nav ? ' class="nav" href="#' + values.nav + '"' : '');
-                    return parent.sep + values.counter + ' <a' + nav + '>' + values.text + '</a>';
+                    return parent.sep + values.counter + '&nbsp;<a' + nav + '>' + values.text + '</a>';
                 },
                 clearSep: function(p) {
                     p.sep = undefined;
@@ -141,7 +141,7 @@ Ext.define('Connector.view.SummaryDataView', {
                 '<div class="line"></div>',
                 '<div class="column bycolumn"><span class="pp">by</span><span class="label"> {label}</span></div>',
                 '<div class="column detailcolumn">{[ Connector.view.SummaryDataView.linksTpl.apply(values) ]}</div>',
-                '<div class="column endcolumn totalcolumn">{total} {subject}</div>',
+                '<div class="column endcolumn totalcolumn">{total}&nbsp;{subject}</div>',
             '</div>',
         '</tpl>'
     )

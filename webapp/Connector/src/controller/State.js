@@ -76,6 +76,34 @@ Ext.define('Connector.controller.State', {
         return 'Connector.model.Filter';
     },
 
+    /**
+     * Override requestSelectionUpdate to allow for selections + filters to be calculated together
+     * in CDS. This is due to the fact that we coalesce non-OLAP filters and thus generating filters and selections
+     * as distinct sets does not result in the same query.
+     * @param skipState
+     * @param opChange
+     */
+    requestSelectionUpdate : function(skipState, opChange) {
+
+        this.onMDXReady(function(mdx) {
+
+            var sels = this.generateFilterSet(mdx, this.filters.concat(this.selections), this.subjectName);
+
+            if (sels.length == 0) {
+                mdx.clearNamedFilter(LABKEY.app.constant.SELECTION_FILTER);
+            }
+            else {
+                mdx.setNamedFilter(LABKEY.app.constant.SELECTION_FILTER, sels);
+            }
+
+            if (!skipState)
+                this.updateState();
+
+            this.fireEvent('selectionchange', this.selections, opChange);
+
+        }, this);
+    },
+
     inverseSelection : function() {
         var selections = this.getSelections(),
             data;
@@ -121,5 +149,17 @@ Ext.define('Connector.controller.State', {
         var selections = this.selections;
         this.callParent();
         this.fireEvent('selectionToFilter', selections);
+    },
+
+    onFilterChangeReady : function(mdx, filters, callback, scope) {
+        Connector.getFilterService().updateSubjects(mdx, filters, callback, scope);
+    },
+
+    onAfterFilterChange : function(mdx, filters) {
+        Connector.getFilterService().onFilterChange();
+    },
+
+    generateFilterSet : function(mdx, filters, subjectName) {
+        return Connector.getQueryService().configureOlapFilters(mdx, filters, subjectName);
     }
 });

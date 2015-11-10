@@ -40,9 +40,6 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
-import org.labkey.api.module.Module;
-import org.labkey.api.module.ModuleHtmlView;
-import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.rss.RSSFeed;
@@ -50,11 +47,11 @@ import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.*;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.ReadPermission;
-import org.labkey.api.util.Path;
-import org.labkey.api.view.HtmlView;
+import org.labkey.api.study.StudyService;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
+import org.labkey.api.view.NotFoundException;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.labkey.cds.view.template.FrontPageTemplate;
@@ -100,6 +97,8 @@ public class CDSController extends SpringActionController
     {
         public ModelAndView getView(Object o, BindException errors) throws Exception
         {
+            if (getContainer().isRoot())
+                throw new NotFoundException();
             return new JspView("/org/labkey/cds/view/begin.jsp");
         }
 
@@ -154,6 +153,14 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(Object o, BindException errors) throws Exception
         {
+            Container c = getContainer();
+            StudyService.Service sss = StudyService.get();
+            boolean hasStudy = null != sss && null != sss.getStudy(c);
+            if (!c.isProject() || !hasStudy)
+            {
+                throw new NotFoundException();
+            }
+
             HttpView template;
             if (getUser().isGuest())
             {

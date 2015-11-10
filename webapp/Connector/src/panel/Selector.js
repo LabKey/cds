@@ -26,9 +26,6 @@ Ext.define('Connector.panel.Selector', {
 
     sourceMeasureFilter: undefined,
 
-    memberCountsFn: undefined,
-    memberCountsFnScope: undefined,
-
     multiSelect: false,
     lockedMeasures: undefined,
     selectedMeasures: undefined,
@@ -36,7 +33,7 @@ Ext.define('Connector.panel.Selector', {
     testCls: undefined,
 
     disableAdvancedOptions: false,
-    boundDimensionNames: undefined,
+    boundDimensionAliases: undefined,
     measureSetStore: null,
 
     // track the first time that the selector is initialized so we can use initOptions properly
@@ -56,6 +53,12 @@ Ext.define('Connector.panel.Selector', {
             }
         }
 
+        // Issue 24648: with more hidden variables allow for a module property to be used to view them in devMode
+        if (LABKEY.devMode && LABKEY.getModuleContext('cds')['ShowHiddenVariables'] === 'true')
+        {
+            config.sourceMeasureFilter.includeHidden = true;
+        }
+
         this.callParent([config]);
 
         this.addEvents('remove', 'cancel', 'selectionmade', 'beforeSourceCountsLoad', 'afterSourceCountsLoad');
@@ -63,7 +66,7 @@ Ext.define('Connector.panel.Selector', {
 
     initComponent : function() {
         this.queryService = Connector.getService('Query');
-        this.boundDimensionNames = [];
+        this.boundDimensionAliases = [];
         this.selectedMeasures = [];
         this.lockedMeasures = [];
 
@@ -216,7 +219,7 @@ Ext.define('Connector.panel.Selector', {
             return Ext.isString(record.get('queryName')) || Ext.isString(record.get('subjectCountQueryName'));
         }).items;
 
-        this.queryService.getSourceCounts(sources, function(s, counts) {
+        this.queryService.getSourceCounts(sources, this.plotAxis, function(s, counts) {
             Ext.each(sources, function(source) {
                 var count = counts[source.get('subjectCountQueryName') || source.get('queryName')];
                 if (Ext.isDefined(count)) {
@@ -225,7 +228,7 @@ Ext.define('Connector.panel.Selector', {
             });
 
             this.fireEvent('afterSourceCountsLoad', this);
-        }, this, this.memberCountsFn, this.memberCountsFnScope);
+        }, this);
     },
 
     getSourcePane : function() {
@@ -400,13 +403,13 @@ Ext.define('Connector.panel.Selector', {
                     {
                         renderHeader : function(value) {
                             var hdr = value;
-                            if (value === '0') {
+                            if (value === '0_Recommended') {
                                 hdr = 'Recommended';
                             }
-                            else if (value === '1') {
+                            else if (value === '1_AssayRequired') {
                                 hdr = 'Assay required columns';
                             }
-                            else if (value === '2') {
+                            else if (value === '2_Additional') {
                                 hdr = 'Additional';
                             }
                             return hdr;
@@ -487,8 +490,7 @@ Ext.define('Connector.panel.Selector', {
             variableType = source.get('variableType'),
             filter, aliases = {}, toInclude, index, alias,
             selModel = this.getMeasurePane().getSelectionModel(),
-            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap(),
-            me = this;
+            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap();
 
         // collect the aliases for all locked measures
         Ext.each(this.getLockedRecords(), function(measure) {
@@ -562,11 +564,12 @@ Ext.define('Connector.panel.Selector', {
             navText: 'Sources',
             sectionTitle: source.get('title'),
             action: function() {
-                if (me.advancedPane) {
-                    me.advancedPane.hide();
+                if (this.advancedPane) {
+                    this.advancedPane.hide();
                 }
 
-                me.measurePane.getEl().slideOut('r', {
+                var me = this;
+                this.measurePane.getEl().slideOut('r', {
                     duration: 250,
                     callback: function() {
                         // clear the initOptions and deselect (issue 23845) any measure for the source we are leaving
@@ -583,7 +586,21 @@ Ext.define('Connector.panel.Selector', {
             showCount: false
         });
 
-        if (!this.multiSelect) {
+        if (this.multiSelect) {
+            // for the multiSelect case, we want to clear all selections and reselect each time so that
+            // the 'select all columns' checkbox works as expected (issue 24077)
+            // Issue 24116: re-selecting records needs to wait until the store filter is done and re-rendering complete (HACK...defer)
+            selModel.deselectAll(true /* suppressEvents */);
+            Ext.defer(function() {
+                Ext.iterate(aliases, function(alias){
+                    index = this.measureStore.findExact('alias', alias);
+                    if (index > -1) {
+                        selModel.select(index, true /* keepExisting */, true /* suppressEvents */);
+                    }
+                }, this);
+            }, 100, this);
+        }
+        else {
             if (activeMeasure) {
                 if (selModel.hasSelection() && selModel.getLastSelected().getId() === activeMeasure.getId()) {
                     // already have selected measure, just need to show the advanced options pane
@@ -599,20 +616,6 @@ Ext.define('Connector.panel.Selector', {
                 Ext.defer(function() { selModel.select(0); }, 100, this);
             }
         }
-        else {
-            // for the multiSelect case, we want to clear all selections and reselect each time so that
-            // the 'select all columns' checkbox works as expected (issue 24077)
-            // Issue 24116: re-selecting records needs to wait until the store filter is done and re-rendering complete (HACK...defer)
-            selModel.deselectAll(true);
-            Ext.defer(function() {
-                Ext.iterate(aliases, function(alias){
-                    index = this.measureStore.findExact('alias', alias);
-                    if (index > -1) {
-                        selModel.select(index, true/* keepExisting */, true/* surpressEvents */);
-                    }
-                }, this);
-            }, 100, this);
-        }
 
         // for the 'Current Columns' source, we group the measures by the query source
         // otherwise, we group measures into the Recommended or Additional groupings
@@ -624,11 +627,15 @@ Ext.define('Connector.panel.Selector', {
                 this.measureStore.sort('sourceTitle', 'ASC');
             }
             else {
-                // enable or disable the measure grid grouping feature based on the presence of a 'recommended' or 'assay required columns' variable
-                if (this.measureStore.findExact('recommendedVariableGrouper', '0') > -1 || this.measureStore.findExact('recommendedVariableGrouper', '1') > -1) {
+                // enable or disable the measure grid grouping feature based on the
+                // presence of a 'recommended' or 'assay required columns' variable
+                if (this.measureStore.findExact('recommendedVariableGrouper', '0_Recommended') > -1 ||
+                    this.measureStore.findExact('recommendedVariableGrouper', '1_AssayRequired') > -1)
+                {
                     this.groupingFeature.enable();
                 }
-                else {
+                else
+                {
                     this.groupingFeature.disable();
                 }
 
@@ -660,6 +667,7 @@ Ext.define('Connector.panel.Selector', {
         this.getHierarchySelectionPane().removeAll();
 
         var antigenSelectionPanel = Ext.create('Connector.panel.AntigenSelection', {
+            plotAxis: this.plotAxis,
             dimension: advancedOptionCmp.dimension,
             initSelection: advancedOptionCmp.value,
             measureSetStore: this.measureSetStore,
@@ -675,23 +683,22 @@ Ext.define('Connector.panel.Selector', {
 
         this.toggleDisplay('hierarchy');
 
-        var me = this;
         this.setHeaderData({
             title: this.headerTitle,
             navText: source.get('queryName'),
             sectionTitle: this.activeMeasure.get('label'),
-            action: function() { me.hierarchicalSelectionDone(); },
+            action: this.hierarchicalSelectionDone,
             showCount: false
         });
     },
 
     hierarchicalSelectionDone : function() {
-        var me = this;
         this.getHierarchySelectionPane().getEl().slideOut('r', {
             duration: 250,
             callback: function() {
-                me.updateSelectorPane();
-            }
+                this.updateSelectorPane();
+            },
+            scope: this
         });
     },
 
@@ -741,21 +748,33 @@ Ext.define('Connector.panel.Selector', {
     },
 
     getAdvancedOptionValues : function() {
+        var dimensionFieldHidden = {},
+            values;
+
         if (this.disableAdvancedOptions) {
             return null;
         }
 
-        var values = this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);
+        // track wich of the assay dimension advanced option fields are hidden so we don't return them as part of the values object
+        Ext.each(this.advancedOptionCmps, function(advancedOptionItem)
+        {
+            dimensionFieldHidden[advancedOptionItem.getHiddenField().name] = advancedOptionItem.hidden;
+        });
+
+        values = this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);
 
         // move the dimension selections into a separate map to keep them separate
         values.dimensions = {};
-        Ext.iterate(values, function(key, val) {
-            if (this.boundDimensionNames.indexOf(key) != -1) {
-                values.dimensions[key] = val;
+        Ext.iterate(values, function(alias, val) {
+            if (this.boundDimensionAliases.indexOf(alias) != -1) {
+                if (!dimensionFieldHidden[alias])
+                {
+                    values.dimensions[alias] = val;
+                }
 
-                // remove the dimension key/value from the parent object so we just leave
+                // remove the dimension alias/value from the parent object so we just leave
                 // the non-dimension properties (i.e. visit tag alignment and scale info)
-                delete values[key];
+                delete values[alias];
             }
         }, this);
 
@@ -766,8 +785,7 @@ Ext.define('Connector.panel.Selector', {
         var optionMap = {}, alias, filterOptionValues = this.getAdvancedOptionValues();
 
         if (Ext.isObject(filterOptionValues) && Ext.isObject(filterOptionValues.dimensions)) {
-            Ext.iterate(filterOptionValues.dimensions, function(key, val) {
-                alias = selectedDimension.get('schemaName') + '_' + selectedDimension.get('queryName') + '_' + key;
+            Ext.iterate(filterOptionValues.dimensions, function(alias, val) {
                 if (alias != selectedDimension.getFilterMeasure().get('alias') && val != null) {
                     optionMap[alias] = val;
                 }
@@ -778,15 +796,18 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindDimensions : function() {
-        var advancedOptionCmps = [], measureSetAliases = [], measureSet = [];
+        var measureSetAliases = [], measureSet = [],
+                alias, advancedOptionCmp;
+
+        this.advancedOptionCmps = [];
 
         Ext.each(this.getDimensionsForMeasure(this.activeMeasure), function(dimension) {
 
-            var dimensionName = dimension.getFilterMeasure().get('name');
-            this.boundDimensionNames.push(dimensionName);
+            alias = dimension.getFilterMeasure().get('alias');
+            this.boundDimensionAliases.push(alias);
 
-            var advancedOptionCmp = this.createAdvancedOptionCmp(dimensionName, dimension);
-            advancedOptionCmps.push(advancedOptionCmp);
+            advancedOptionCmp = this.createAdvancedOptionCmp(alias, dimension);
+            this.advancedOptionCmps.push(advancedOptionCmp);
 
             // keep track of the distinct set of measures used for all advanced options in this source
             Ext.each(advancedOptionCmp.getMeasureSet(), function(measure) {
@@ -808,23 +829,23 @@ Ext.define('Connector.panel.Selector', {
         if (measureSet.length > 0) {
             // query for the distinct set of values across all of the measures involved in the dimension set
             this.queryService.getMeasureSetDistinctValues(measureSet, function(data) {
-                this.processMeasureSetDistinctValues(advancedOptionCmps, measureSet, data);
+                this.processMeasureSetDistinctValues(measureSet, data);
             }, this);
         }
         else {
-            this.processMeasureSetDistinctValues(advancedOptionCmps, measureSet, []);
+            this.processMeasureSetDistinctValues(measureSet, []);
         }
     },
 
-    processMeasureSetDistinctValues : function(advancedOptionCmps, measureSet, data) {
+    processMeasureSetDistinctValues : function(measureSet, data) {
         var store = this.createMeasureSetStore(measureSet, data);
 
         this.insertDimensionHeader();
 
         // populate the store for each dimension option and add it to the panel
         // issue 23861: add them in the reverse order so that parent components can update children appropriately
-        for (var i = advancedOptionCmps.length - 1; i >= 0; i--) {
-            var advancedOption = advancedOptionCmps[i],
+        for (var i = this.advancedOptionCmps.length - 1; i >= 0; i--) {
+            var advancedOption = this.advancedOptionCmps[i],
                 dimension = advancedOption.dimension,
                 alias = dimension.getFilterMeasure().get('alias'),
                 storeFilter = dimension.getDistinctValueStoreFilter();
@@ -847,7 +868,7 @@ Ext.define('Connector.panel.Selector', {
         this.getAdvancedPane().insert(0, {
             xtype: 'box',
             cls: 'dimension-header',
-            html: this.boundDimensionNames.length > 0 ? 'Assay Dimensions' : 'Advanced Options'
+            html: this.boundDimensionAliases.length > 0 ? 'Assay Dimensions' : 'Advanced Options'
         });
     },
 
@@ -878,11 +899,11 @@ Ext.define('Connector.panel.Selector', {
         this.slideAdvancedOptionsPane();
     },
 
-    createAdvancedOptionCmp : function(dimensionName, dimension) {
+    createAdvancedOptionCmp : function(alias, dimension) {
         return Ext.create('Connector.component.AdvancedOptionDimension', {
             testCls: this.testCls + '-option-' + dimension.get('name'),
             dimension: dimension,
-            value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[dimensionName] : undefined,
+            value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[alias] : undefined,
             listeners: {
                 scope: this,
                 click: function(cmp, isHierarchical) {
@@ -900,7 +921,7 @@ Ext.define('Connector.panel.Selector', {
                         });
                     }
                     else {
-                        cmp.showDropdownPanel(this.getFilterValuesMap(dimension));
+                        cmp.showDropdownPanel(this.getFilterValuesMap(dimension), this.plotAxis);
                     }
                 },
                 change: function(cmp) {
@@ -934,17 +955,7 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindTimeOptions : function() {
-        if (this.activeMeasure.get('variableType') == 'TIME')
-        {
-            //this.getAdvancedPane().add(
-            //    Ext.create('Connector.component.AdvancedOptionTime', {
-            //        measure: this.activeMeasure,
-            //        fieldName: 'visitType',
-            //        fieldLabel: 'Visit type',
-            //        singleUseOnly: false
-            //    })
-            //);
-
+        if (this.activeMeasure.get('variableType') == 'TIME') {
             this.getAdvancedPane().add(
                 Ext.create('Connector.component.AdvancedOptionTime', {
                     measure: this.activeMeasure,
@@ -1080,7 +1091,7 @@ Ext.define('Connector.panel.Selector', {
             if (Ext.isFunction(data.action)) {
                 var backActionEl = Ext.DomQuery.select('.back-action', header.getEl().id);
                 if (backActionEl.length > 0) {
-                    Ext.get(backActionEl[0]).on('click', data.action);
+                    Ext.get(backActionEl[0]).on('click', data.action, this);
                 }
             }
         }
@@ -1133,9 +1144,7 @@ Ext.define('Connector.panel.Selector', {
                     itemId: 'done-button',
                     xtype: 'button',
                     text: 'Done',
-                    handler: function() {
-                        this.hierarchicalSelectionDone();
-                    },
+                    handler: this.hierarchicalSelectionDone,
                     scope: this
                 },{
                     itemId: 'select-button',
@@ -1176,8 +1185,60 @@ Ext.define('Connector.panel.Selector', {
         }
     },
 
-    onMeasureSelect : function(selectionCmp, measure) {
-        if (!this.multiSelect) {
+    /**
+     * This is used onSelect/Deselect to determine what measures are required to be
+     * selected based on the currently selected measures.
+     * @param selModel
+     * @param measure
+     * @returns {Array}
+     */
+    manageRequiredMeasures : function(selModel, measure) {
+
+        if (measure.get('isDimension')) {
+            return [];
+        }
+
+        var selectedNonRequired = false,
+            selections = selModel.getSelection();
+
+        for (var i=0; i < selections.length; i++) {
+            if (selections[i].get('recommendedVariableGrouper') !== '1_AssayRequired') {
+                selectedNonRequired = true;
+                break;
+            }
+        }
+
+        // sadly, store.query() does not respect filters
+        var requiredMeasures = [];
+        Ext.each(this.measureStore.getRange(), function(record) {
+            if (record.get('recommendedVariableGrouper') === '1_AssayRequired') {
+                requiredMeasures.push(record);
+            }
+        });
+
+        if (selectedNonRequired) {
+            selModel.select(requiredMeasures, true /* keepExisting */, true /* suppressEvents */);
+        }
+        else {
+            selModel.deselect(requiredMeasures, true /* suppressEvents */);
+        }
+
+        return requiredMeasures;
+    },
+
+    onMeasureSelect : function(selModel, measure) {
+
+        if (this.multiSelect) {
+
+            var requiredRecords = this.manageRequiredMeasures(selModel, measure);
+
+            Ext.each([measure].concat(requiredRecords), function(record) {
+                if (this.getRecordIndex(this.getSelectedRecords(), record) == -1) {
+                    this.selectedMeasures.push(record);
+                }
+            }, this);
+        }
+        else {
             // issue 23866: Persisted advanced option selections when changing variables within the same source
             if (this.initialized) {
                 this.initOptions = this.getAdvancedOptionValues();
@@ -1187,19 +1248,18 @@ Ext.define('Connector.panel.Selector', {
             this.configureAdvancedOptions();
             this.getButton('select-button').enable();
         }
-        else {
-            if (this.getRecordIndex(this.getSelectedRecords(), measure) == -1) {
-                this.selectedMeasures.push(measure);
-            }
-        }
     },
 
-    deselectMeasure : function(selectionCmp, measure) {
+    deselectMeasure : function(selModel, measure) {
         if (this.multiSelect) {
-            var index = this.getRecordIndex(this.getSelectedRecords(), measure);
-            if (index > -1) {
-                this.selectedMeasures.splice(index, 1);
-            }
+            var requiredRecords = this.manageRequiredMeasures(selModel, measure);
+
+            Ext.each([measure].concat(requiredRecords), function(record) {
+                var index = this.getRecordIndex(this.getSelectedRecords(), record);
+                if (index > -1) {
+                    this.selectedMeasures.splice(index, 1);
+                }
+            }, this);
         }
     },
 
@@ -1221,7 +1281,7 @@ Ext.define('Connector.panel.Selector', {
         // Issue 24112: reset selected measures each time selector window is opened so 'cancel' works
         this.selectedMeasures = [];
         Ext.each(aliases, function(alias) {
-            var record = this.queryService.getMeasureRecordByAlias(alias);
+            var record = this.queryService.getMeasureRecordByAlias(alias, 'parent');
             this.selectedMeasures.push(record);
         }, this);
     },
@@ -1234,7 +1294,7 @@ Ext.define('Connector.panel.Selector', {
         // track the lockedMeasures array so they show up in Current/Session columns for the grid column chooser
         this.lockedMeasures = [];
         Ext.each(aliases, function(alias) {
-            var record = this.queryService.getMeasureRecordByAlias(alias);
+            var record = this.queryService.getMeasureRecordByAlias(alias, 'parent');
             this.lockedMeasures.push(record);
         }, this);
     }

@@ -40,6 +40,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
+        cds.showHiddenVariables(true);
         Ext4Helper.setCssPrefix("x-");
         deletePermissionGroups();
         beginAt("project/" + getProjectName() + "/begin.view?");
@@ -78,7 +79,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         }
 
         goToProjectHome();
-        clickFolder("v082"); // TODO Test data dependent.
+        clickFolder("z119");
         _permissionsHelper.enterPermissionsUI();
         sleep(1000);
         _permissionsHelper.uncheckInheritedPermissions();
@@ -112,10 +113,10 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         impersonateGroup(PERM_GROUPS[0], false);
 
         cds.enterApplication();
-        _asserts.assertFilterStatusCounts(8, 1, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(8, 1, -1);
 
         cds.viewLearnAboutPage("Studies");
-        List<String> studies = Arrays.asList("HVTN 082"); // TODO Test data dependent.
+        List<String> studies = Arrays.asList("ZAP 119");
         _asserts.verifyLearnAboutPage(studies);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
@@ -126,7 +127,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         impersonateGroup(PERM_GROUPS[1], false);
 
         cds.enterApplication();
-        _asserts.assertFilterStatusCounts(0, 0, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(0, 0, -1);
         cds.viewLearnAboutPage("Studies");
         _asserts.verifyEmptyLearnAboutStudyPage();
 

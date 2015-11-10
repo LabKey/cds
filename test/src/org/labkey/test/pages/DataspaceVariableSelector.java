@@ -197,8 +197,9 @@ public abstract class DataspaceVariableSelector
         xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
         locDimField = Locator.xpath(xpathDimField);
         _test.click(locDimField);
-        _test.waitForElement(Locator.xpath(xpathPanelSelector));
+        _test.waitForElement(Locator.xpath(xpathPanelSelector), CDSHelper.CDS_WAIT * 3);
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION); // Yuck!
+        _test.waitForElement(Locator.xpath(xpathPanelSelector + "//div[contains(@class, 'col-title')][contains(text(), 'Antigen')]"), CDSHelper.CDS_WAIT * 3);
 
         return Locator.xpath(xpathPanelSelector);
 
@@ -213,13 +214,13 @@ public abstract class DataspaceVariableSelector
         locDimField = Locator.xpath(xpathDimField);
         _test.click(locDimField);
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        _test.waitForElement(Locator.xpath(xpathPanelSelector), CDSHelper.CDS_WAIT_ANIMATION);
+        _test.waitForElement(Locator.xpath(xpathPanelSelector), CDSHelper.CDS_WAIT * 3);
         LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathPanelSelector));
 
         for(Map.Entry<String, String> entry : counts.entrySet()){
 
             xpathToElement = xpath.replaceAll("[*]", entry.getKey().toLowerCase());
-            _test.waitForElement(Locator.xpath(xpathPanelSelector + xpathToElement), 10000);
+            _test.waitForElement(Locator.xpath(xpathPanelSelector + xpathToElement), CDSHelper.CDS_WAIT * 3);
 
             actualCount = _test.getText(Locator.xpath(xpathPanelSelector + xpathToElement));
 
@@ -432,7 +433,7 @@ public abstract class DataspaceVariableSelector
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                 _test.click(locDimField);
                 _test.sleep(CDSHelper.CDS_WAIT);
-                _test.waitForElement(Locator.xpath(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']"), CDSHelper.CDS_WAIT_ANIMATION);
+                _test.waitForElement(Locator.xpath(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']"), CDSHelper.CDS_WAIT * 3);
 
                 // Since a protein has multiple columns the allTag will point to the all tag in the far left column.
                 allTag = Locator.xpath(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']");
@@ -493,9 +494,10 @@ public abstract class DataspaceVariableSelector
 
                 _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
+                _test.scrollIntoView(allTag);
                 _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
 
-                _test.waitForElement(allTag, 10000);
+                _test.waitForElement(allTag, CDSHelper.CDS_WAIT * 3);
 
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[@test-data-value='neutralization_tier-all']"))

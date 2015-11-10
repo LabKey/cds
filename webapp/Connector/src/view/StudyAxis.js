@@ -57,10 +57,11 @@ Connector.view.StudyAxis = function() {
     };
 
     var renderVisitTags = function(selection) {
-        var visitTags, defaultImgSize = 8;
 
-        visitTags = selection.selectAll('image.visit-tag').data(function(d) {
-            if (collapsed || (!collapsed && d.study)) {
+        var visitTags = selection.selectAll('image.visit-tag').data(function(d)
+        {
+            if (collapsed || (!collapsed && d.study))
+            {
                 return d.visits;
             }
             return [];
@@ -68,7 +69,8 @@ Connector.view.StudyAxis = function() {
         visitTags.exit().remove();
         visitTags.enter().append("image")
                 .attr('class', 'visit-tag')
-                .attr('xlink:href', function(d) {
+                .attr('xlink:href', function(d)
+                {
                     var imgPath = Connector.resourceContext.imgPath + '/';
 
                     if (d.isVaccination) {
@@ -83,18 +85,26 @@ Connector.view.StudyAxis = function() {
 
                     return imgPath;
                 })
-                .attr("x", function(d) {return xScale(d.alignedDay) - (d.imgSize || defaultImgSize)/2; })
-                .attr("y", function(d) {
-                    var scale = yScale(d.studyLabel);
-                    if (!collapsed) {
-                        if (d.groupLabel) {
-                            scale = yScale(d.studyLabel + "-" + d.groupLabel);
-                        }
+                .attr('x', function(d)
+                {
+                    return xScale(d.alignedDay) - (d.imgSize / 2);
+                })
+                .attr('y', function(d)
+                {
+                    var scale;
+                    if (!collapsed && d.groupLabel)
+                    {
+                        scale = yScale(d.studyLabel + '-' + d.groupLabel);
+                    }
+                    else
+                    {
+                        scale = yScale(d.studyLabel);
                     }
 
-                    return scale + perStudyHeight/2 - (d.imgSize || defaultImgSize)/2; })
-                .attr("width", function(d) { return d.imgSize || defaultImgSize; })
-                .attr("height", function(d) { return d.imgSize || defaultImgSize; });
+                    return scale + (perStudyHeight / 2) - (d.imgSize / 2);
+                })
+                .attr('width', function(d) { return d.imgSize; })
+                .attr('height', function(d) { return d.imgSize; });
 
         // add visit tag mouseover/mouseout functions.
         visitTags.on('mouseover', function(d) {

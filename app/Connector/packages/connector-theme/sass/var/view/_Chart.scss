@@ -131,3 +131,7 @@ div.plotmodeon {
   background-color: $heat-scale-6;
   color: $secondary-text-color;
 }
+
+div.plot-scroll {
+  overflow-x: scroll;
+}
