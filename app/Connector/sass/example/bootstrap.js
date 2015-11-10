@@ -110,7 +110,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
   "Connector.utility.Chart": "../../../../webapp/Connector/src/utility/Chart.js",
   "Connector.utility.Query": "../../../../webapp/Connector/src/utility/Query.js",
-  "Connector.view.About": "../../../../webapp/Connector/src/view/About.js",
   "Connector.view.Chart": "../../../../webapp/Connector/src/view/Chart.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.ExplorerHeaderDataView": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -303,7 +302,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.utility.Query": [
     "QueryUtils"
   ],
-  "Connector.view.About": [],
   "Connector.view.Chart": [],
   "Connector.view.DetailStatus": [],
   "Connector.view.ExplorerHeaderDataView": [],
@@ -1353,9 +1351,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.types.Filter": [],
   "Connector.utility.Chart": [],
   "Connector.utility.Query": [],
-  "Connector.view.About": [
-    "widget.about"
-  ],
   "Connector.view.Chart": [
     "widget.plot"
   ],
