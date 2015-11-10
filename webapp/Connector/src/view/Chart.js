@@ -2275,7 +2275,7 @@ Ext.define('Connector.view.Chart', {
                 wrappedMeasure.dateOptions.zeroDayVisitTag = options.alignmentVisitTag;
             }
         }
-        else if (this.requireStudyAxis)
+        else if (this.requireStudyAxis || (measure.isDemographic && Connector.model.ChartData.isContinuousMeasure(measure)))
         {
             // Issue 24002: Gutter plot for null y-values and study axis are appearing at the same time
             wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.alias, null, LABKEY.Filter.Types.NOT_MISSING)];
