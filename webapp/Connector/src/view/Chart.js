@@ -107,7 +107,7 @@ Ext.define('Connector.view.Chart', {
 
         this.callParent([config]);
 
-        this.addEvents('userplotchange', 'plotdatarequest');
+        this.addEvents('userplotchange', 'updateplotrecord');
 
         this.labelTextColor = ChartUtils.colors.HEATSCALE1;
         this.labelTextHltColor = ChartUtils.colors.WHITE;
@@ -2168,6 +2168,8 @@ Ext.define('Connector.view.Chart', {
                 this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME';
 
                 this.requestChartData();
+
+                this.updateTimepointCount();
             }
             else
             {
@@ -2177,7 +2179,7 @@ Ext.define('Connector.view.Chart', {
                 this.filterClear = false;
                 this.noPlot(false);
 
-                this.fireEvent('plotdatarequest', this, undefined, false);
+                this.fireEvent('updateplotrecord', this, 'Timepoints');
             }
         }
     },
@@ -2291,16 +2293,21 @@ Ext.define('Connector.view.Chart', {
      * The measures/wrappedMeasures are established from the current 'activeMeasures'. The hasPlotSelectionFilter
      * object has a property for each axis (x/y) stating if that axis is being affected directly by a "plot selection"
      * filter in the app.
-     * @param {boolean} [includeFilterMeasures=false] - Include all measures declared in all state filters
-     * @param {boolean} [includeSelectionMeasures=false] - Include all measures declared in all state selections
-     * @returns {{measures: (*|Array), wrapped: (*|Array)}}
+     * @param {Array} [stateFilterSet=undefined] - Array of filters (and/or selections) from the application to include in the measureSet.
+     * @returns {{measures: (*|Array), wrapped: (*|Array), hasPlotSelectionFilter: (*|Object)}}
      */
-    getMeasureSet : function(includeFilterMeasures, includeSelectionMeasures)
+    getMeasureSet : function(stateFilterSet)
     {
         var activeMeasures = this.activeMeasures,
             measures = this.getAdditionalMeasures(activeMeasures),
             wrappedMeasures = this.getWrappedMeasures(),
             hasPlotSelectionFilter = {x: false, y: false};
+
+        // if no set of filters was supplied, default to using the application state filters
+        if (!Ext.isArray(stateFilterSet))
+        {
+            stateFilterSet = Connector.getState().getFilters();
+        }
 
         Ext.each(wrappedMeasures, function(wrapped)
         {
@@ -2311,13 +2318,12 @@ Ext.define('Connector.view.Chart', {
         });
 
         // set of measures from data filters
-        if (includeFilterMeasures === true || includeSelectionMeasures === true)
+        if (Ext.isArray(stateFilterSet))
         {
             var xAxisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
                 yAxisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y),
                 hasX = activeMeasures.x !== null,
-                hasY = activeMeasures.y !== null,
-                stateFilters = [];
+                hasY = activeMeasures.y !== null;
 
             /**
              * A comparator to determine if a filter from measureB qualifies against measureA. Determine by the following:
@@ -2356,16 +2362,7 @@ Ext.define('Connector.view.Chart', {
                 }
             };
 
-            if (includeFilterMeasures)
-            {
-                stateFilters = stateFilters.concat(Connector.getState().getFilters());
-            }
-            if (includeSelectionMeasures)
-            {
-                stateFilters = stateFilters.concat(Connector.getState().getSelections());
-            }
-
-            Ext.each(stateFilters, function(filter)
+            Ext.each(stateFilterSet, function(filter)
             {
                 if (filter.isGrid())
                 {
@@ -2415,17 +2412,14 @@ Ext.define('Connector.view.Chart', {
     {
         Connector.getFilterService().getSubjects(function(subjectFilter)
         {
-            var measureSet = this.getMeasureSet(true /* includeFilterMeasures */, false /* includeSelectionMeasures */);
-
-            this.applyFiltersToMeasure(measureSet.measures, subjectFilter);
+            var measureSet = this.getMeasureSet();
+            this.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
 
             // Request Chart MeasureStore Data
             Connector.getQueryService().getMeasureStore(measureSet.measures, function(measureStore)
             {
                 this.onChartDataSuccess(measureStore, measureSet);
             }, this.onFailure, this);
-
-            this.fireEvent('plotdatarequest', this, measureSet.measures, false);
         }, this);
     },
 
@@ -3155,7 +3149,7 @@ Ext.define('Connector.view.Chart', {
         this.hideVisibleWindow();
     },
 
-    applyFiltersToMeasure : function(measureSet, subjectFilter) {
+    applySubjectValuesToMeasures : function(measureSet, subjectFilter) {
         // find the subject column(s) in the measure set to apply the values filter (issue 24123)
         if (subjectFilter.hasFilters) {
             Ext.each(measureSet, function(m) {
@@ -3203,19 +3197,100 @@ Ext.define('Connector.view.Chart', {
             this.highlightSelectedFn();
         }
 
-        // update the timepoint info pane subcount based on adding/removing selections
-        if (selections.length > 0)
+        this.updateTimepointCount(selections);
+    },
+
+    updateTimepointCount : function(selections)
+    {
+        var includeSelections = Ext.isArray(selections),
+            fullFilterSet = [], nonTimeFilterSet = [];
+
+        if (includeSelections && selections.length == 0)
         {
-            Connector.getFilterService().getSubjects(function(subjectFilter)
-            {
-                var measureSet = this.getMeasureSet(true /* includeFilterMeasures */, true /* includeSelectionMeasures */);
-                this.applyFiltersToMeasure(measureSet.measures, subjectFilter);
-                this.fireEvent('plotdatarequest', this, measureSet.measures, true);
-            }, this);
+            // in the 'selection remove' case, we just reset the subcount value
+            this.fireEvent('updateplotrecord', this, 'Timepoints', true);
         }
         else
         {
-            this.fireEvent('plotdatarequest', this, undefined, true);
+            // get the full set of filters and selections from the state and keep track of the non-time filters as well
+            Ext.each(Connector.getState().getFilters(), function(filter)
+            {
+                fullFilterSet.push(filter);
+                if (!filter.isTime())
+                {
+                    nonTimeFilterSet.push(filter);
+                }
+            });
+            if (includeSelections)
+            {
+                Ext.each(Connector.getState().getSelections(), function(filter)
+                {
+                    fullFilterSet.push(filter);
+                    if (!filter.isTime())
+                    {
+                        nonTimeFilterSet.push(filter);
+                    }
+                });
+            }
+
+            // We have two separate requests to make, the first one is to get the distinct timepoint count or subcount
+            // based on all of the application filters. Then in the non-selection case, we need to make another
+            // request to get the full set of distinct timepoint members for the filter pane excluding the time
+            // filters themselves (so we can show which timepoints have and do not have data in the active filters).
+            Connector.getFilterService().getSubjects(function(subjectFilter)
+            {
+                var measureSet = this.getMeasureSet(fullFilterSet);
+                this.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
+
+                this.getDistinctTimepointsForMeasureSet(measureSet.measures, function(filteredTimepointRows)
+                {
+                    if (includeSelections)
+                    {
+                        this.fireEvent('updateplotrecord', this, 'Timepoints', true, filteredTimepointRows);
+                    }
+                    else
+                    {
+                        this.getTimepointFilterPaneMembers(nonTimeFilterSet, filteredTimepointRows);
+                    }
+                }, this);
+
+
+            }, this);
+        }
+    },
+
+    getTimepointFilterPaneMembers : function(nonTimeFilterSet, filteredTimepointRows)
+    {
+        Connector.getQueryService().getSubjectsExcludingTimeFilters(function(subjectFilter)
+        {
+            var measureSet = this.getMeasureSet(nonTimeFilterSet);
+            this.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
+
+            this.getDistinctTimepointsForMeasureSet(measureSet.measures, function(allTimepointRows)
+            {
+                this.fireEvent('updateplotrecord', this, 'Timepoints', false, filteredTimepointRows, allTimepointRows);
+            }, this);
+        }, this);
+    },
+
+    getDistinctTimepointsForMeasureSet : function(measures, callback, scope)
+    {
+        if (Ext.isArray(measures))
+        {
+            // Request distinct timepoint information for info pane plot counts, subcounts, and filter pane members
+            LABKEY.Query.executeSql({
+                schemaName: 'study',
+                sql: QueryUtils.getDistinctTimepointSQL({measures: measures}),
+                scope: this,
+                success: function(data)
+                {
+                    callback.call(scope, data.rows);
+                }
+            });
+        }
+        else
+        {
+            callback.call(scope, undefined);
         }
     },
 

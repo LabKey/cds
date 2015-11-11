@@ -18,7 +18,7 @@ Ext.define('Connector.view.TimepointPane', {
     updateSelections : function()
     {
         var grid = this.getGrid();
-        grid.getSelectionModel().selectAll();
+        grid.getSelectionModel().select(grid.getStore().query('hasData', true).items);
         grid.fireEvent('selectioncomplete', this);
     },
 

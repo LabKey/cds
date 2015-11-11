@@ -4,7 +4,8 @@ Ext.define('Connector.model.TimepointPane', {
     extend: 'Connector.model.InfoPane',
 
     fields: [
-        {name: 'dataRows', defaultValue: []}
+        {name: 'selectedRows', defaultValue: []}, // array of selected visitRowIds for all application filters
+        {name: 'dataRows', defaultValue: []} // array of visitRowIds for all application filters except time filters
     ],
 
     /* Override */
@@ -25,39 +26,57 @@ Ext.define('Connector.model.TimepointPane', {
         intervalAlias = this.setSortByLabel(hierName);
 
         this.populateFilterMembers(intervalAlias);
-
-        this.fireEvent('change', this);
-        this.setReady();
     },
 
     populateFilterMembers : function(intervalAlias)
     {
-        var modelDatas = [],
-            intervalName = intervalAlias.replace(QueryUtils.STUDY_ALIAS_PREFIX, '').replace('s', ''),
-            intervalVisitRowIdMap = {},
-            store = this.get('memberStore');
+        var store = this.get('memberStore'),
+            selectedVisitRowIds,
+            intervalName,
+            intervalVisitRowIdMap = {selected: {}, unselected: {}},
+            rowSelType,
+            modelDatas;
+
+        // trim interval name based on the alias (TODO need a better way to get this)
+        intervalName = intervalAlias.replace(QueryUtils.STUDY_ALIAS_PREFIX, '').replace('s', '')
+
+        selectedVisitRowIds = Ext.Array.pluck(this.get('selectedRows'), 'RowId');
 
         // populate the member store based on the data rows from the distinct timepoint query results
+        // keep track of which visitRowIds are selected (have data) and which do not (no data because of time filter)
         Ext.each(this.get('dataRows'), function(row)
         {
-            if (!Ext.isDefined(intervalVisitRowIdMap[row[intervalAlias]]))
-            {
-                intervalVisitRowIdMap[row[intervalAlias]] = [];
-            }
+            rowSelType = selectedVisitRowIds.indexOf(row['RowId']) != -1 ? 'selected' : 'unselected';
 
-            intervalVisitRowIdMap[row[intervalAlias]].push(row['RowId']);
+            if (!Ext.isDefined(intervalVisitRowIdMap[rowSelType][row[intervalAlias]]))
+            {
+                intervalVisitRowIdMap[rowSelType][row[intervalAlias]] = [];
+            }
+            intervalVisitRowIdMap[rowSelType][row[intervalAlias]].push(row['RowId']);
         });
 
         // convert and load the interval visitRowId data into the memberStore
-        Ext.iterate(intervalVisitRowIdMap, function(key, value)
+        modelDatas = this.getMemberDataModels(intervalName, intervalVisitRowIdMap, 'selected');
+        modelDatas = modelDatas.concat(this.getMemberDataModels(intervalName, intervalVisitRowIdMap, 'unselected'));
+        store.loadRawData(modelDatas);
+        store.group(store.groupField, 'DESC');
+
+        this.setReady();
+    },
+
+    getMemberDataModels : function(intervalName, intervalVisitRowIdMap, type)
+    {
+        var datas = [];
+        Ext.iterate(intervalVisitRowIdMap[type], function(key, value)
         {
-            modelDatas.push({
+            datas.push({
                 name: intervalName + ' ' + key + ' (' + value.length + ' stud' + (value.length == 1 ? 'y' : 'ies') + ')',
                 uniqueName: value,
-                count: value.length
+                count: type == 'selected' ? 1 : 0
             });
-        });
-        store.loadRawData(modelDatas);
+        }, this);
+
+        return datas;
     },
 
     populateSortBy : function()
@@ -93,6 +112,8 @@ Ext.define('Connector.model.TimepointPane', {
         });
 
         this.set('hierarchyLabel', selectedLabel);
+        this.fireEvent('change', this);
+
         return selectedAlias;
     }
 });
