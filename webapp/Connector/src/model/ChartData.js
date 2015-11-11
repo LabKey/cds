@@ -15,7 +15,7 @@ Ext.define('Connector.model.ChartData', {
         {name: 'hasPlotSelectionFilter', defaultValue: {}},
 
         /* generated properties based on the processing of the MeasureStore */
-        {name: 'containerAlignmentDayMap', defaultValue: {}},
+        {name: 'studyContainers', defaultValue: {}},
         {name: 'rows', defaultValue: []}, // results of AxisMeasureStore.select()
         {name: 'xDomain', defaultValue: [0,0]},
         {name: 'yDomain', defaultValue: [0,0]},
@@ -79,8 +79,9 @@ Ext.define('Connector.model.ChartData', {
         return this.get('properties');
     },
 
-    getContainerAlignmentDayMap : function() {
-        return this.get('containerAlignmentDayMap');
+    getStudyContainers : function()
+    {
+        return this.get('studyContainers');
     },
 
     getXDomain : function(studyAxisInfo) {
@@ -228,7 +229,7 @@ Ext.define('Connector.model.ChartData', {
             wrappedColor = this.getPlotMeasure(2),
             color = (wrappedColor ? wrappedColor.measure : undefined),
             xa, ya, ca, _xid, _yid, _cid,
-            containerAlignmentDayMap = {},
+            studyContainers = {},
             axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
             invalidLogPlotRowCount = 0,
@@ -243,7 +244,8 @@ Ext.define('Connector.model.ChartData', {
             _row;
 
         ca = this.getBaseMeasureConfig();
-        if (color) {
+        if (color)
+        {
             _cid = this.getAliasFromMeasure(color);
             ca = {
                 schema : color.schemaName,
@@ -344,7 +346,7 @@ Ext.define('Connector.model.ChartData', {
             // build study container alignment day map
             if (_row[QueryUtils.CONTAINER_ALIAS])
             {
-                containerAlignmentDayMap[_row[QueryUtils.CONTAINER_ALIAS]] = 0;
+                studyContainers[_row[QueryUtils.CONTAINER_ALIAS]] = true;
             }
 
             yVal = this._getYValue(y, _yid, _row);
@@ -443,7 +445,7 @@ Ext.define('Connector.model.ChartData', {
         }
 
         this.set({
-            containerAlignmentDayMap: containerAlignmentDayMap,
+            studyContainers: studyContainers,
             xDomain: xDomain,
             yDomain: yDomain,
             rows: {

@@ -2279,7 +2279,7 @@ Ext.define('Connector.view.Chart', {
                 wrappedMeasure.dateOptions.zeroDayVisitTag = options.alignmentVisitTag;
             }
         }
-        else if (this.requireStudyAxis)
+        else if (this.requireStudyAxis || (measure.isDemographic && Connector.model.ChartData.isContinuousMeasure(measure)))
         {
             // Issue 24002: Gutter plot for null y-values and study axis are appearing at the same time
             wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.alias, null, LABKEY.Filter.Types.NOT_MISSING)];
@@ -3306,28 +3306,30 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getStudyVisitTagRecords : function(store, chartData) {
-        var alignMap = chartData.getContainerAlignmentDayMap(),
-            studyContainers = Object.keys(alignMap);
+    getStudyVisitTagRecords : function(store, chartData)
+    {
+        var studyContainers = chartData.getStudyContainers();
 
         // filter the StudyVisitTag store based on the study container id array
-        var containerFilteredRecords = store.queryBy(function(record) {
-            return studyContainers.indexOf(record.get('container_id')) > -1;
-        }).items;
+        var filteredVisitTags = store.queryBy(function(record)
+        {
+            return studyContainers[record.get('container_id')] === true;
+        });
 
         var studyAxisData = Ext.create('Connector.model.StudyAxisData', {
-            records: containerFilteredRecords,
-            measure: this.activeMeasures.x,
-            containerAlignmentDayMap: alignMap
+            records: filteredVisitTags.getRange(),
+            measure: this.activeMeasures.x
         });
 
         this.hasStudyAxisData = studyAxisData.getData().length > 0;
 
-        if (chartData.getDataRows().totalCount == 0) {
+        if (chartData.getDataRows().totalCount == 0)
+        {
             // show empty plot message if we have no data in main plot or gutter plots
             this.noPlot(true, chartData);
         }
-        else {
+        else
+        {
             this.initPlot(chartData, studyAxisData);
         }
     },
@@ -3398,13 +3400,19 @@ Ext.define('Connector.view.Chart', {
 
         bubbleWidth = Math.min(maxWidth * 8, 400);
 
+        var title = data.studyLabel;
+        if (data.label)
+        {
+            title += ' - ' + data.label;
+        }
+
         config = {
             bubbleWidth: bubbleWidth,
             xOffset: -(bubbleWidth / 2),          // the non-vaccination icon is slightly smaller
             arrowOffset: (bubbleWidth / 2) - 10 - ((data.isVaccination || data.isChallenge) ? 4 : 0),
             target: visitTagEl,
             placement: 'top',
-            title: data.studyLabel + ' - ' + data.label,
+            title: title,
             content: Connector.view.Chart.studyAxisTipTpl.apply({
                 groups: tplGroups,
                 isAggregate: isAggregate
