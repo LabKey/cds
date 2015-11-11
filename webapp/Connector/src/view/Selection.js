@@ -214,6 +214,7 @@ Ext.define('Connector.view.Selection', {
                 {
                     var measures = values.plotMeasures,
                         filters = values.gridFilter,
+                        altFilterDisplayString = values.filterDisplayString,
                         filter,
                         xMeasure = measures[0],
                         yMeasure = measures[1],
@@ -253,8 +254,15 @@ Ext.define('Connector.view.Selection', {
                         }
                     }
 
-                    domString = this.renderSelectionMeasure(xMeasure, xFilters, xIsTime);
-                    domString += this.renderSelectionMeasure(yMeasure, yFilters);
+                    if (Ext.isString(altFilterDisplayString))
+                    {
+                        domString = altFilterDisplayString;
+                    }
+                    else
+                    {
+                        domString = this.renderSelectionMeasure(xMeasure, xFilters, xIsTime);
+                        domString += this.renderSelectionMeasure(yMeasure, yFilters);
+                    }
 
                     return domString;
                 }

@@ -50,7 +50,9 @@ Ext.define('Connector.model.Filter', {
                 filters.push(raw);
             }
             return filters;
-        }}
+        }},
+
+        {name : 'filterDisplayString', defaultValue: undefined}
     ],
 
     statics: {

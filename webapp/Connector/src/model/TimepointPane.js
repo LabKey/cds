@@ -8,6 +8,24 @@ Ext.define('Connector.model.TimepointPane', {
         {name: 'dataRows', defaultValue: []} // array of visitRowIds for all application filters except time filters
     ],
 
+    constructor : function(config) {
+        // if the user clicked the 'Time Points' info pane record, check if there is an existing filter to attach
+        if (!Ext.isDefined(config.filter))
+        {
+            Ext.each(Connector.getState().getFilters(), function(filter)
+            {
+                // we want the time filter, but not the study axis plot time range filter
+                if (filter.isTime() && !filter.isPlot())
+                {
+                    config.filter = filter;
+                    return false;
+                }
+            });
+        }
+
+        this.callParent([config]);
+    },
+
     /* Override */
     configure : function(dimName, hierName, lvlName, deferToFilters) {
         var emptyInterval = !Ext.isDefined(hierName) || hierName == '',
@@ -146,5 +164,80 @@ Ext.define('Connector.model.TimepointPane', {
         });
 
         return alias;
+    },
+
+    createTimeFilterConfig : function(members, callback, scope) {
+        var interval = this.getIntervalAlias(),
+            wrappedTimeMeasure,
+            visitRowIds = [],
+            visitRowIdFilter,
+            filterDisplayStrs = [];
+
+        // wrapped time interval (i.e. Days, Weeks, etc.) for the getTimeFilter request
+        wrappedTimeMeasure = {
+            dateOptions: {
+                interval: interval,
+                zeroDayVisitTag: null
+            },
+            measure: Connector.getQueryService().getMeasure(interval)
+        };
+
+        // get the selected visit rowIds from the grid selection model
+        Ext.each(members, function(selected)
+        {
+            visitRowIds = visitRowIds.concat(selected.get('uniqueName'));
+            filterDisplayStrs.push(selected.get('name'));
+        });
+
+        // build up the VisitRowId filter for the gridFilter array
+        visitRowIdFilter = LABKEY.Filter.create(QueryUtils.VISITROWID_ALIAS, visitRowIds.join(';'), LABKEY.Filter.Types.EQUALS_ONE_OF);
+
+        // get the array of ParticipantSequenceNum values for the selected VisitRowIds and apply as an app time filter
+        Connector.getFilterService().getTimeFilter(wrappedTimeMeasure, [visitRowIdFilter], function(timeFilter)
+        {
+            callback.call(scope, {
+                filterSource: 'GETDATA',
+                isGrid: true,
+                isTime: true,
+                timeFilters: [visitRowIdFilter],
+                timeMeasure: wrappedTimeMeasure,
+                gridFilter: [timeFilter, null, null, null],
+                filterDisplayString: 'Time points: ' + filterDisplayStrs.join(', ')
+            });
+        }, this);
+    },
+
+    /* Override */
+    onCompleteFilter : function(members, totalCount)
+    {
+        this.createTimeFilterConfig(members, function(timeFilterConfig)
+        {
+            var noopFilter = members.length === totalCount,
+                state = Connector.getState();
+
+            if (this.isFilterBased())
+            {
+                var staleFilter = this.get('filter');
+                if (staleFilter)
+                {
+                    if (members.length > 0 && !noopFilter)
+                    {
+                        state.updateFilter(staleFilter.id, timeFilterConfig);
+                    }
+                    else
+                    {
+                        this.clearFilter(true);
+                    }
+                }
+                else
+                {
+                    console.warn('Invalid filter state. Filter not available');
+                }
+            }
+            else if (!noopFilter)
+            {
+                state.addFilter(timeFilterConfig);
+            }
+        }, this);
     }
 });

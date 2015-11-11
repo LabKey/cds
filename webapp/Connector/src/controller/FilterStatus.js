@@ -150,8 +150,10 @@ Ext.define('Connector.controller.FilterStatus', {
 
             if (filterOrDetail.$className === 'Connector.model.Filter')
             {
-                if (filterOrDetail.isTime())
+                if (filterOrDetail.isTime() && !filterOrDetail.isPlot())
                 {
+                    // Time point filter, not study axis plot time range filter
+
                     viewClazz = 'Connector.view.TimepointPane';
                     modelClazz = 'Connector.model.TimepointPane';
 
