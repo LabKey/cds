@@ -13,45 +13,49 @@ Ext.define('Connector.view.GroupSummary', {
 
     plugins : [{
         ptype: 'messaging',
-        calculateY : function(cmp, box, msg) {
+        calculateY : function(cmp, box) {
             return box.y + 145;
         }
     }],
 
+    group: undefined,
+
+    groupId: undefined,
+
     constructor : function(config) {
         this.callParent([config]);
 
-        this.addEvents('requestfilterundo', 'loadgroupfilters', 'requestgroupupdate', 'requestgroupdelete', 'requestback');
+        this.addEvents('requestfilterundo', 'loadgroupfilters', 'requestgroupdelete', 'requestback');
     },
 
     initComponent : function() {
-        this.group = null;
-
         if (!this.groupId) {
-            console.log("No id, throw not found error.");
+            throw 'groupId must be specified';
         }
+
+        this.items = [];
+
+        this.callParent();
 
         if (this.store.getCount() > 0) {
             var recIdx = this.store.find('id', this.groupId, false, true, true);
             if (recIdx > -1) {
                 this.group = this.store.getAt(recIdx);
-                this.requestFilterChange();
+                this.onStoreLoad();
             }
         }
         else {
             this.store.on('load', this.onStoreLoad, this, {single: true});
         }
-
-        this.items = [
-            this.getHeader(),
-            this.getBody()
-        ];
-
-        this.callParent();
     },
 
-    onStoreLoad: function() {
-        this.updateView();
+    onStoreLoad: function()
+    {
+        this.removeAll();
+        this.add([this.generateHeader(this.group), this.generateBody(this.group)]);
+        this.doLayout();
+
+        this.requestFilterChange();
     },
 
     showFiltersMessage: function() {
@@ -83,26 +87,14 @@ Ext.define('Connector.view.GroupSummary', {
         }
     },
 
-    getHeader : function() {
-        if (!this.summaryHeader) {
-            this.summaryHeader = Ext.create('Connector.view.GroupSummaryHeader', {
-                group: this.group,
-                listeners: {
-                    scope: this,
-                    deletegroup: this.onDelete,
-                    requestgroupdelete: function(id) {
-                        this.fireEvent('requestgroupdelete', id);
-                    },
-                    loadgroupfilters: function() {
-                        this.requestFilterChange();
-                    },
-                    requestback: function() {
-                        this.fireEvent('requestback');
-                    }
-                }
-            });
-        }
-        return this.summaryHeader;
+    generateHeader : function(group) {
+        return Ext.create('Connector.view.PageHeader', {
+            title: group.get('label'),
+            upText: 'Group',
+            upLink: {
+                controller: 'home'
+            }
+        });
     },
 
     onDelete : function(group) {
@@ -122,19 +114,10 @@ Ext.define('Connector.view.GroupSummary', {
         }
     },
 
-    getBody : function() {
-        if (!this.summaryBody) {
-            this.summaryBody = Ext.create('Connector.view.GroupSummaryBody', {
-                group: this.group,
-                listeners: {
-                    scope: this,
-                    requestgroupupdate : function(group) {
-                        this.fireEvent('requestgroupupdate', group);
-                    }
-                }
-            });
-        }
-        return this.summaryBody;
+    generateBody : function(group) {
+        return Ext.create('Connector.view.GroupSummaryBody', {
+            group: group
+        });
     },
 
     updateView : function(id) {
@@ -148,9 +131,7 @@ Ext.define('Connector.view.GroupSummary', {
 
         if (idx > -1) {
             this.group = this.store.getAt(idx);
-            this.requestFilterChange();
-            this.summaryHeader.updateView(this.group);
-            this.summaryBody.updateView(this.group);
+            this.onStoreLoad();
         }
         else {
             console.log('group not found, throw not found.');
@@ -247,49 +228,45 @@ Ext.define('Connector.view.GroupSummaryHeader', {
 Ext.define('Connector.view.GroupSummaryBody', {
     extend : 'Ext.container.Container',
 
-    alias : 'widget.groupsummarybody',
-
     margin: '25 0 0 25',
 
-    constructor : function(config) {
-        this.callParent([config]);
-
-        this.addEvents('requestgroupupdate');
-    },
-
-    initComponent: function() {
-        var desc = '';
-
-        if (this.group) {
-            desc = this.group.get('description');
-            if (desc.length == 0) {
-                desc = 'No description given.';
-            }
-        }
-
-        this.descDisplay = Ext.create('Ext.form.field.Display', {
+    initComponent: function()
+    {
+        this.items = [{
+            xtype: 'box',
+            tpl: '<div class="module"><h3>Description</h3></div>',
+            data: {}
+        },{
             xtype: 'displayfield',
+            itemId: 'descDisplay',
             margin: '10 0 20 0',
             bodyPadding: 10,
             width: '50%',
             htmlEncode: true,
-            value: desc
-        });
+            value: this._getDescription(this.group)
+        }];
 
-        this.items = [
-            {xtype: 'box', cls: 'headline', autoEl: { tag: 'h3', html: 'Description' }},
-            this.descDisplay
-        ];
         this.callParent();
     },
 
-    updateView: function(group) {
+    updateView: function(group)
+    {
         this.group = group;
-        var desc = this.group.get('description');
-        if (desc.length == 0) {
-            desc = 'No description given.';
-        }
-        this.descDisplay.setValue(desc);
+        this.getComponent('descDisplay').setValue(this._getDescription(this.group));
         this.doLayout();
+    },
+
+    _getDescription : function(group)
+    {
+        var desc = '';
+
+        if (group) {
+            desc = group.get('description');
+            if (Ext.isEmpty(desc)) {
+                desc = 'No description given.';
+            }
+        }
+
+        return desc;
     }
 });

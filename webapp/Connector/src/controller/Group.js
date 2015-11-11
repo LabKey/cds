@@ -45,7 +45,6 @@ Ext.define('Connector.controller.Group', {
         this.control('groupsummary', {
             loadgroupfilters: this.loadGroupFilters,
             requestfilterundo: this.undoFilter,
-            requestgroupupdate: this.doGroupUpdateFromSummary,
             requestgroupdelete: this.doGroupDeleteFromSummary,
             requestback: this.doBack
         });
@@ -256,9 +255,9 @@ Ext.define('Connector.controller.Group', {
                                 alert('Failed to update Group');
                             };
 
-                            me.doGroupUpdate({
-                                id: targetGroup.get('id'),
-                                ids: Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name'),
+                            LABKEY.ParticipantGroup.updateParticipantGroup({
+                                rowId: targetGroup.get('id'),
+                                participantIds: Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name'),
                                 description: targetGroup.get('description'),
                                 filters: LABKEY.app.model.Filter.toJSON(state.getFilters(), true),
                                 success: updateSuccess,
@@ -269,53 +268,6 @@ Ext.define('Connector.controller.Group', {
                 }, this);
             }
         }
-    },
-
-    doGroupUpdateFromSummary : function(group) {
-        var state = Connector.getState();
-        var me = this;
-        state.onMDXReady(function(mdx) {
-            //
-            // Retrieve the listing of participants matching group filters
-            //
-            var filterModels = LABKEY.app.model.Filter.fromJSON(group.filters);
-            var olapFilters = LABKEY.app.model.Filter.getOlapFilters(mdx, filterModels, state.subjectName);
-            mdx.setNamedFilter('groupfilter', olapFilters);
-            mdx.queryParticipantList({
-                useNamedFilters: ['groupfilter'],
-                success: function(cs) {
-                    var updateSuccess = function(group) {
-                        mdx.clearNamedFilter('groupfilter');
-                        Connector.model.Group.getGroupStore().load();
-                    };
-
-                    var updateFailure = function() {
-                        alert('Failed to update Group');
-                    };
-
-                    var ids = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name');
-                    me.doGroupUpdate({
-                        id: group.id,
-                        ids: ids,
-                        description: group.description,
-                        filters: group.filters,
-                        success: updateSuccess,
-                        failure: updateFailure
-                    });
-                }
-            });
-        });
-    },
-
-    doGroupUpdate : function(config) {
-        LABKEY.ParticipantGroup.updateParticipantGroup({
-            rowId: config.id,
-            participantIds: config.ids,
-            description: config.description,
-            filters: config.filters,
-            success: config.success,
-            failure: config.failure
-        });
     },
 
     onGroupCancel : function() {
@@ -344,7 +296,7 @@ Ext.define('Connector.controller.Group', {
 
     doGroupDelete : function(config) {
         Ext.Ajax.request({
-            url : LABKEY.ActionURL.buildURL("participant-group", "deleteParticipantGroup", config.containerPath),
+            url : LABKEY.ActionURL.buildURL('participant-group', 'deleteParticipantGroup.api', config.containerPath),
             method: 'POST',
             jsonData: {rowId: config.id},
             success: config.success,

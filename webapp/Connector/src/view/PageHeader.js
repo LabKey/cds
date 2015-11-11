@@ -49,6 +49,21 @@ Ext.define('Connector.view.PageHeader', {
 
     flex: 1,
 
+    renderTpl: new Ext.XTemplate(
+        '<div>',
+            '<div class="learn-up titlepanel interactive inline">',
+                '<span class="iarrow">&nbsp;</span>',
+                '<span class="breadcrumb">{upText:htmlEncode} / </span>',
+                '<span class="studyname">{title:htmlEncode}</span>',
+            '</div>',
+            '<div class="dim-selector learnabouttab">',
+                '<tpl for="tabs">',
+                    '<h1 class="lhdv">{label:htmlEncode}</h1>',
+                '</tpl>',
+            '</div>',
+        '</div>'
+    ),
+
     constructor : function(config) {
         this.callParent([config]);
 
@@ -74,19 +89,6 @@ Ext.define('Connector.view.PageHeader', {
         }
 
         this.setTabHeader();
-
-        this.renderTpl = new Ext.XTemplate(
-            '<div>',
-                '<div class="learn-up titlepanel interactive inline">',
-                    '<span class="iarrow">&nbsp;</span><span class="breadcrumb">{upText:htmlEncode} / </span><span class="studyname">{title:htmlEncode}</span>',
-                '</div>',
-                '<div class="dim-selector learnabouttab">',
-                    '<tpl for="tabs">',
-                        '<h1 class="lhdv">{label:htmlEncode}</h1>',
-                    '</tpl>',
-                '</div>',
-            '</div>'
-        );
 
         this.renderData = {
             title: this.title,
@@ -120,13 +122,13 @@ Ext.define('Connector.view.PageHeader', {
 
             cmp.tabEls = tabEls;
 
-        }, this);
+        }, this, {single: true});
 
         this.on('afterrender', function(cmp) {
             cmp.upEl.on('click', function() {
                 this.fireEvent('upclick', this.upLink);
             }, this);
-        }, this);
+        }, this, {single: true});
     },
 
     setTabHeader : function() {

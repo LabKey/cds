@@ -146,11 +146,11 @@ Ext.define('Connector.view.GroupSave', {
                     ui: 'footer',
                     style: 'padding-top: 60px',
                     items: ['->',{
-                        text: 'save',
+                        text: 'Save',
                         itemId: 'groupcreatesave',
                         cls: 'groupcreatesave' // tests
                     },{
-                        text: 'cancel',
+                        text: 'Cancel',
                         itemId: 'cancelgroupsave',
                         cls: 'cancelgroupsave' // tests
                     }]
@@ -266,11 +266,11 @@ Ext.define('Connector.view.GroupSave', {
                     ui: 'footer',
                     style: 'padding-top: 60px',
                     items: ['->',{
-                        text: 'save',
+                        text: 'Save',
                         itemId: 'groupupdatesave',
                         cls: 'groupupdatesave' // tests
                     },{
-                        text: 'cancel',
+                        text: 'Cancel',
                         itemId: 'groupupdatecancel',
                         cls: 'groupupdatecancel' // tests
                     }]
@@ -323,8 +323,7 @@ Ext.define('Connector.view.GroupSave', {
             var filterGroupModel = Connector.model.FilterGroup.fromCohortGroup(groupModel);
 
             // set description
-            var field = form.getComponent('groupdescription');
-            field.setValue(filterGroupModel.get('description'));
+            form.getComponent('groupdescription').setValue(filterGroupModel.get('description'));
         }
     },
 
