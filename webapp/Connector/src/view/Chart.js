@@ -3234,10 +3234,10 @@ Ext.define('Connector.view.Chart', {
             }
 
             // We have two separate requests to make, the first one is to get the distinct timepoint count or subcount
-            // based on all of the application filters. Then in the non-selection case, we need to make another
-            // request to get the full set of distinct timepoint members for the filter pane excluding the time
-            // filters themselves (so we can show which timepoints have and do not have data in the active filters).
-            Connector.getFilterService().getSubjects(function(subjectFilter)
+            // based on all of the application filters (fullFilterSet). Then in the non-selection case, we need to
+            // make another request to get the full set of distinct timepoint members for the filter pane excluding the
+            // time filters themselves (nonTimeFilterSet).
+            Connector.getQueryService().getSubjectsForSpecificFilters(fullFilterSet, null, function(subjectFilter)
             {
                 var measureSet = this.getMeasureSet(fullFilterSet);
                 this.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
@@ -3261,7 +3261,7 @@ Ext.define('Connector.view.Chart', {
 
     getTimepointFilterPaneMembers : function(nonTimeFilterSet, filteredTimepointRows)
     {
-        Connector.getQueryService().getSubjectsExcludingTimeFilters(function(subjectFilter)
+        Connector.getQueryService().getSubjectsForSpecificFilters(nonTimeFilterSet, null, function(subjectFilter)
         {
             var measureSet = this.getMeasureSet(nonTimeFilterSet);
             this.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);

@@ -418,7 +418,7 @@ Ext.define('Connector.controller.Query', {
             // get the cube subjectList, excluding the "In the plot" filter...see last param to configureOlapFilters,
             // so that we can filter the advanced option values accordingly (i.e. for antigen selection in variable
             // selector, get subject count for all filters except the antigen selection itself)
-            this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(subjectFilter) {
+            this.getSubjectsForSpecificFilters(Connector.getState().getFilters(), plotAxis, function(subjectFilter) {
                 subjectMeasure = new LABKEY.Query.Visualization.Measure({
                     schemaName: dimension.get('schemaName'),
                     queryName: dimension.get('queryName'),
@@ -637,10 +637,9 @@ Ext.define('Connector.controller.Query', {
      * @param {Connector.model.Filter} filters - or an appFilterData
      * @param {String} subjectName - or an appFilterData
      * @param {String} [excludeInThePlotAxis=undefined] - exclude the "in the plot" filter for the query from a specific axis
-     * @param {String} [excludeTimeFilter=undefined] - true to exclude any time filters for the query
      * @returns {Array}
      */
-    configureOlapFilters : function(mdx, filters, subjectName, excludeInThePlotAxis, excludeTimeFilter)
+    configureOlapFilters : function(mdx, filters, subjectName, excludeInThePlotAxis)
     {
         var olapFilters = [],
             measures = [];
@@ -652,11 +651,6 @@ Ext.define('Connector.controller.Query', {
             var axisId = Ext.id(undefined, 'axis-');
             if (filter.get('filterSource') === 'GETDATA')
             {
-                if (excludeTimeFilter === true && filter.isTime())
-                {
-                    return;
-                }
-
                 if (filter.isPlot())
                 {
                     // plot selection or "in the plot"
@@ -723,7 +717,7 @@ Ext.define('Connector.controller.Query', {
             }
         });
 
-        this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(subjectFilter) {
+        this.getSubjectsForSpecificFilters(Connector.getState().getFilters(), plotAxis, function(subjectFilter) {
             json.members = subjectFilter.hasFilters ? subjectFilter.subjects : undefined;
 
             Ext.Ajax.request({
@@ -740,31 +734,16 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     * Get the array of subjects that match all application filters, with the option to exclude plot filters from a given axis.
+     * Get the array of subjects that match the specified application filters/selections, with the option to exclude
+     * plot filters from a given axis.
+     * @param {Array} filters - array of application filters and/or selections
      * @param {String} excludeInThePlotAxis - exclude the "in the plot" filter for the subject count from a specific axis (x/y)
      * @param {Function} callback
      * @param {Object} scope
      * @returns {boolean} indicates if the subject count request has filters or not
      * @returns {Array} subjects returned by the MDX query
      */
-    getSubjectsExcludingPlotAxisFilters : function(excludeInThePlotAxis, callback, scope)
-    {
-        this._getSubjectsExcludeFilters(excludeInThePlotAxis, false, callback, scope);
-    },
-
-    /**
-     * Get the array of subjects that match all application filters excluding any time filters.
-     * @param {Function} callback
-     * @param {Object} scope
-     * @returns {boolean} indicates if the subject count request has filters or not
-     * @returns {Array} subjects returned by the MDX query
-     */
-    getSubjectsExcludingTimeFilters : function(callback, scope)
-    {
-        this._getSubjectsExcludeFilters(undefined, true, callback, scope);
-    },
-
-    _getSubjectsExcludeFilters : function(excludeInThePlotAxis, excludeTimeFilters, callback, scope)
+    getSubjectsForSpecificFilters : function(filters, excludeInThePlotAxis, callback, scope)
     {
         var state = Connector.getState(),
             queryService = Connector.getQueryService(),
@@ -773,7 +752,7 @@ Ext.define('Connector.controller.Query', {
 
         state.onMDXReady(function(mdx)
         {
-            countFilters = queryService.configureOlapFilters(mdx, state.getFilters(), state.subjectName, excludeInThePlotAxis, excludeTimeFilters);
+            countFilters = queryService.configureOlapFilters(mdx, filters, state.subjectName, excludeInThePlotAxis);
 
             mdx.query({
                 onRows: {
