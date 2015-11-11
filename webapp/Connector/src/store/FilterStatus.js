@@ -18,7 +18,7 @@ Ext.define('Connector.store.FilterStatus', {
     }],
 
     plotCountRecordsCache: [{
-        label: 'Timepoints',
+        label: 'Time points',
         count: -1,
         subcount: -1,
         plotBasedCount: true,
@@ -290,7 +290,7 @@ Ext.define('Connector.store.FilterStatus', {
                     record.set('dataRows', dataRows);
                 }
 
-                this.updatePlotRecordCount('Timepoints', true);
+                this.updatePlotRecordCount('Time points', true);
             }
         }
         else

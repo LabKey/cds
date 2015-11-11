@@ -34,15 +34,17 @@ Ext.define('Connector.model.InfoPane', {
         //
         // Determine if filter or detail based
         //
-        if (this.isFilterBased()) {
+        if (this.isFilterBased())
+        {
             // Connector.model.Filter
             var filter = this.get('filter');
-
-            if (!filter.isGrid() && !filter.isPlot() && !filter.isAggregated()) {
+            if (filter.isTime() || (!filter.isGrid() && !filter.isPlot() && !filter.isAggregated()))
+            {
                 this.configure(null, filter.get('hierarchy'), filter.get('level'), false);
             }
         }
-        else {
+        else
+        {
             this.configure(this.get('dimension'), this.get('hierarchy'), this.get('level'));
         }
     },

@@ -10,7 +10,9 @@ Ext.define('Connector.model.TimepointPane', {
 
     /* Override */
     configure : function(dimName, hierName, lvlName, deferToFilters) {
-        var intervalAlias;
+        var emptyInterval = !Ext.isDefined(hierName) || hierName == '',
+            intervalAlias,
+            timeMeasure;
 
         // clear out for initialization
         this.set({
@@ -18,6 +20,16 @@ Ext.define('Connector.model.TimepointPane', {
             hierarchy: undefined,
             level: undefined
         });
+
+        // if we are displaying from a filter, get the intervalAlias from the timeMeasure
+        if (Ext.isDefined(this.get('filter')) && emptyInterval)
+        {
+            timeMeasure = this.get('filter').get('timeMeasure');
+            if (Ext.isDefined(timeMeasure) && Ext.isObject(timeMeasure.dateOptions))
+            {
+                hierName = timeMeasure.dateOptions.interval;
+            }
+        }
 
         if (this.get('hierarchyItems').length == 0)
         {
@@ -70,7 +82,7 @@ Ext.define('Connector.model.TimepointPane', {
         Ext.iterate(intervalVisitRowIdMap[type], function(key, value)
         {
             datas.push({
-                name: intervalName + ' ' + key + ' (' + value.length + ' stud' + (value.length == 1 ? 'y' : 'ies') + ')',
+                name: intervalName + ' ' + key + ' - (' + value.length + ' stud' + (value.length == 1 ? 'y' : 'ies') + ')',
                 uniqueName: value,
                 count: type == 'selected' ? 1 : 0
             });
@@ -100,11 +112,13 @@ Ext.define('Connector.model.TimepointPane', {
 
     setSortByLabel : function(intervalAlias)
     {
-        var selectedLabel, selectedAlias;
+        var emptyInterval = !Ext.isDefined(intervalAlias) || intervalAlias == '',
+            selectedLabel,
+            selectedAlias;
 
         Ext.each(this.get('hierarchyItems'), function(item)
         {
-            if (intervalAlias == item.uniqueName || (!Ext.isDefined(intervalAlias) && !Ext.isDefined(selectedLabel)))
+            if (intervalAlias == item.uniqueName || (emptyInterval && !Ext.isDefined(selectedLabel)))
             {
                 selectedLabel = item.text;
                 selectedAlias = item.uniqueName;
@@ -115,5 +129,22 @@ Ext.define('Connector.model.TimepointPane', {
         this.fireEvent('change', this);
 
         return selectedAlias;
+    },
+
+    getIntervalAlias : function()
+    {
+        var alias = QueryUtils.STUDY_ALIAS_PREFIX + 'Days',
+            selectedLabel = this.get('hierarchyLabel');
+
+        Ext.each(this.get('hierarchyItems'), function(item)
+        {
+            if (selectedLabel == item.text)
+            {
+                alias = item.uniqueName;
+                return false;
+            }
+        });
+
+        return alias;
     }
 });

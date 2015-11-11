@@ -145,15 +145,30 @@ Ext.define('Connector.controller.FilterStatus', {
                     level: filterOrDetail.get('level'),
                     dataRows: filterOrDetail.get('dataRows'),
                     selectedRows: filterOrDetail.get('selectedRows')
-                };
+                },
+                storeRecord;
 
             if (filterOrDetail.$className === 'Connector.model.Filter')
             {
+                if (filterOrDetail.isTime())
+                {
+                    viewClazz = 'Connector.view.TimepointPane';
+                    modelClazz = 'Connector.model.TimepointPane';
 
-                if (filterOrDetail.isGrid() || filterOrDetail.isAggregated()) {
+                    // we will want to get the Time point info pane members from the store record, so attach them here
+                    storeRecord = this.getStore('FilterStatus').getById('Time points');
+                    if (storeRecord != null)
+                    {
+                        config.dataRows = storeRecord.get('dataRows');
+                        config.selectedRows = storeRecord.get('selectedRows');
+                    }
+                }
+                else if (filterOrDetail.isGrid() || filterOrDetail.isAggregated())
+                {
                     viewClazz = 'Connector.view.GridPane';
                 }
-                else if (filterOrDetail.isPlot()) {
+                else if (filterOrDetail.isPlot())
+                {
                     viewClazz = 'Connector.view.PlotPane';
                 }
 

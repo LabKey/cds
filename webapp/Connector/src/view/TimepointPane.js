@@ -13,7 +13,7 @@ Ext.define('Connector.view.TimepointPane', {
 
     isShowOperator: false,
 
-    displayTitle: 'Timepoints in the plot',
+    displayTitle: 'Time points in the plot',
 
     updateSelections : function()
     {
@@ -23,7 +23,7 @@ Ext.define('Connector.view.TimepointPane', {
     },
 
     onUpdate : function() {
-        var interval = QueryUtils.STUDY_ALIAS_PREFIX + 'Days',
+        var interval = this.getModel().getIntervalAlias(),
             gridSelection = this.getGrid().getSelectionModel().getSelection(),
             wrappedTimeMeasure,
             visitRowIds = [],
