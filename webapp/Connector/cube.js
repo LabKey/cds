@@ -117,7 +117,7 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'Studies',
                 priority: 40,
                 defaultOperator: 'OR',
-                summaryTargetLevel: '[Study.Treatment].[Treatment]',
+                summaryTargetLevel: '[Study.Treatment].[Arm]',
 
                 hierarchies: [{
                     uniqueName: '[Study]',
@@ -133,12 +133,17 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 },{
                     uniqueName: '[Study.Treatment]',
-                    label: 'Treatment Assignment Summary',
+                    label: 'Treatment Summary',
                     levels: [{
-                        uniqueName: '[Study.Treatment].[Treatment]',
-                        countSingular: 'Treatment Assignment Summary',
-                        countPlural: 'Treatment Assignment Summaries',
-                        supportsLearn: true
+                        uniqueName: '[Study.Treatment].[Arm]',
+                        countTarget: '',
+                        activeCount: true,
+                        countPriority: 40,
+                        countSingular: 'Treatment',
+                        countPlural: 'Treatments',
+                        supportsLearn: true,
+                        displayParent: true,
+                        infoPaneDefaultLevel: true
                     }]
                 },{
                     uniqueName: '[Study.Type]',
@@ -464,7 +469,8 @@ Ext4.define('Connector.cube.Configuration', {
                 filterType: 'parent::filterType',
                 supportsLearn: false,
                 lookupDimension: undefined,
-                displayParent: false
+                displayParent: false,
+                infoPaneDefaultLevel: false
             }
         }
     }
