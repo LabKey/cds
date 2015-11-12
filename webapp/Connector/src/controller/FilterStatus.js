@@ -89,7 +89,7 @@ Ext.define('Connector.controller.FilterStatus', {
         });
 
         this.control('plot', {
-            plotdatarequest: this.onPlotDataRequest
+            updateplotrecord: this.onUpdatePlotRecord
     });
 
         this.callParent();
@@ -142,16 +142,35 @@ Ext.define('Connector.controller.FilterStatus', {
                 config = {
                     dimension: filterOrDetail.get('dimension'),
                     hierarchy: filterOrDetail.get('hierarchy'),
-                    level: filterOrDetail.get('level')
-                };
+                    level: filterOrDetail.get('level'),
+                    dataRows: filterOrDetail.get('dataRows'),
+                    selectedRows: filterOrDetail.get('selectedRows')
+                },
+                storeRecord;
 
             if (filterOrDetail.$className === 'Connector.model.Filter')
             {
+                if (filterOrDetail.isTime() && !filterOrDetail.isPlot())
+                {
+                    // Time point filter, not study axis plot time range filter
 
-                if (filterOrDetail.isGrid() || filterOrDetail.isAggregated()) {
+                    viewClazz = 'Connector.view.TimepointPane';
+                    modelClazz = 'Connector.model.TimepointPane';
+
+                    // we will want to get the Time point info pane members from the store record, so attach them here
+                    storeRecord = this.getStore('FilterStatus').getById('Time points');
+                    if (storeRecord != null)
+                    {
+                        config.dataRows = storeRecord.get('dataRows');
+                        config.selectedRows = storeRecord.get('selectedRows');
+                    }
+                }
+                else if (filterOrDetail.isGrid() || filterOrDetail.isAggregated())
+                {
                     viewClazz = 'Connector.view.GridPane';
                 }
-                else if (filterOrDetail.isPlot()) {
+                else if (filterOrDetail.isPlot())
+                {
                     viewClazz = 'Connector.view.PlotPane';
                 }
 
@@ -166,12 +185,6 @@ Ext.define('Connector.controller.FilterStatus', {
             if (Ext.isString(filterOrDetail.get('modelClass')))
             {
                 modelClazz = filterOrDetail.get('modelClass');
-            }
-
-            // if the detail model object has data rows defined, pass them along to the config
-            if (Ext.isDefined(filterOrDetail.get('dataRows')))
-            {
-                config.dataRows = filterOrDetail.get('dataRows');
             }
 
             //
@@ -276,26 +289,8 @@ Ext.define('Connector.controller.FilterStatus', {
         }
     },
 
-    onPlotDataRequest : function(view, measures, includesSelections)
+    onUpdatePlotRecord : function(view, label, forSubcount, selectedRows, dataRows)
     {
-        var store = this.getStore('FilterStatus');
-
-        if (Ext.isArray(measures))
-        {
-            // Request distinct timepoint information for info pane plot counts or subcounts
-            LABKEY.Query.executeSql({
-                schemaName: 'study',
-                sql: QueryUtils.getDistinctTimepointSQL({measures: measures}),
-                scope: this,
-                success: function(data)
-                {
-                    store.updatePlotRecordCount('Timepoints', data.rows, includesSelections);
-                }
-            });
-        }
-        else
-        {
-            store.updatePlotRecordCount('Timepoints',  undefined, includesSelections);
-        }
+        this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, selectedRows, dataRows);
     }
 });

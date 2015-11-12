@@ -418,7 +418,7 @@ Ext.define('Connector.controller.Query', {
             // get the cube subjectList, excluding the "In the plot" filter...see last param to configureOlapFilters,
             // so that we can filter the advanced option values accordingly (i.e. for antigen selection in variable
             // selector, get subject count for all filters except the antigen selection itself)
-            this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(hasFilters, subjects) {
+            this.getSubjectsForSpecificFilters(Connector.getState().getFilters(), plotAxis, function(subjectFilter) {
                 subjectMeasure = new LABKEY.Query.Visualization.Measure({
                     schemaName: dimension.get('schemaName'),
                     queryName: dimension.get('queryName'),
@@ -427,7 +427,7 @@ Ext.define('Connector.controller.Query', {
                 });
 
                 subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
-                subjectMeasure.values = subjects;
+                subjectMeasure.values = subjectFilter.subjects;
 
                 aliases.push(Connector.studyContext.subjectColumn);
                 wrappedMeasureSet.push({measure: subjectMeasure});
@@ -717,8 +717,8 @@ Ext.define('Connector.controller.Query', {
             }
         });
 
-        this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(hasFilters, subjects) {
-            json.members = hasFilters ? subjects : undefined;
+        this.getSubjectsForSpecificFilters(Connector.getState().getFilters(), plotAxis, function(subjectFilter) {
+            json.members = subjectFilter.hasFilters ? subjectFilter.subjects : undefined;
 
             Ext.Ajax.request({
                 url: LABKEY.ActionURL.buildURL('visualization', 'getSourceCounts.api'),
@@ -734,14 +734,16 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     * Get the array of subjects that match all application filters, with the option to exclude plot filters from a given axis.
+     * Get the array of subjects that match the specified application filters/selections, with the option to exclude
+     * plot filters from a given axis.
+     * @param {Array} filters - array of application filters and/or selections
      * @param {String} excludeInThePlotAxis - exclude the "in the plot" filter for the subject count from a specific axis (x/y)
      * @param {Function} callback
      * @param {Object} scope
      * @returns {boolean} indicates if the subject count request has filters or not
      * @returns {Array} subjects returned by the MDX query
      */
-    getSubjectsExcludingPlotAxisFilters : function(excludeInThePlotAxis, callback, scope)
+    getSubjectsForSpecificFilters : function(filters, excludeInThePlotAxis, callback, scope)
     {
         var state = Connector.getState(),
             queryService = Connector.getQueryService(),
@@ -750,7 +752,7 @@ Ext.define('Connector.controller.Query', {
 
         state.onMDXReady(function(mdx)
         {
-            countFilters = queryService.configureOlapFilters(mdx, state.getFilters(), state.subjectName, excludeInThePlotAxis);
+            countFilters = queryService.configureOlapFilters(mdx, filters, state.subjectName, excludeInThePlotAxis);
 
             mdx.query({
                 onRows: {
@@ -761,7 +763,11 @@ Ext.define('Connector.controller.Query', {
                 success: function (cellset)
                 {
                     subjects = Ext.Array.pluck(Ext.Array.flatten(cellset.axes[1].positions), 'name');
-                    callback.call(scope || this, countFilters.length > 0, subjects);
+
+                    callback.call(scope || this, {
+                        hasFilters: countFilters.length > 0,
+                        subjects: subjects
+                    });
                 }
             });
         });
