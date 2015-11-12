@@ -321,13 +321,13 @@ Ext.define('Connector.panel.HelpCenter', {
     },
 
     buildIndividualCategory: function (category) {
-        var template = '<h3>' + category.text.replace(category.name, '').replace('()', '') + '</h3>';
+        var template = '<h3>' + category.text.replace('(' + category.name + ')', '') + '</h3>';
         if (!category.children) {
             return template;
         }
         for (var i = 0; i < category.children.length && i < 4; i++) {
             var child = category.children[i];
-            template += '<p><a href="' + child.href + '">' + child.text.replace(child.name, '').replace('()', '') + '</a></p>';
+            template += '<p><a href="' + child.href + '">' + child.text.replace('(' + child.name + ')', '') + '</a></p>';
         }
         if (category.children.length > 4) {
             template += '<p><a class="see-all" href="' + category.href + '">' + 'See all' + '</a></p>';
@@ -348,7 +348,7 @@ Ext.define('Connector.panel.HelpCenter', {
             template = '<div>';
             for (var i = 0; i < targetWiki.children.length; i++) {
                 var child = targetWiki.children[i];
-                template += '<p><a href="' + child.href + '">' + child.text.replace(child.name, '').replace('()', '') + '</a></p>';
+                template += '<p><a href="' + child.href + '">' + child.text.replace('(' + child.name + ')', '') + '</a></p>';
             }
             template += '</div>';
         }
