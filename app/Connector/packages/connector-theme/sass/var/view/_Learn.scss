@@ -1,3 +1,41 @@
+.learnheader {
+
+  .titlepanel {
+    font: $title-font;
+    background: $gray-7;
+    height: 56px;
+    line-height: 56px;
+    padding-left: 16px;
+  }
+
+  .breadcrumb {
+    font-weight: 400;
+    color: $gray-25;
+    text-transform: uppercase;
+    float: left;
+    padding-right:4px;
+  }
+
+  .studyname {
+    font-weight: 100;
+    font-size: 22px;
+    font-family: $data-font;
+    color: $black;
+    float: left;
+  }
+
+  .iarrow {
+    background-image: url(images/navigatebackward.svg);
+    background-repeat: no-repeat;
+    background-color: $gray-8;
+    width: 56px;
+    height: 56px;
+    margin: 0 16px 0 -16px;
+    vertical-align: bottom;
+    float: left;
+  }
+}
+
 div.learnview {
   .module {
     padding-bottom: 28px;

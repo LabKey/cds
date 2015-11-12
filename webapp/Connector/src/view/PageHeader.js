@@ -25,7 +25,7 @@
 // Study, a single Assay or a single Lab etc.
 Ext.define('Connector.view.PageHeader', {
 
-    extend: 'Ext.Component',
+    extend: 'Ext.container.Container',
 
     alias: 'widget.learnpageheader',
 
@@ -47,22 +47,24 @@ Ext.define('Connector.view.PageHeader', {
 
     activeTabCls: 'active',
 
+    layout: 'hbox',
+
     flex: 1,
 
     renderTpl: new Ext.XTemplate(
-        '<div>',
-            '<div class="learn-up titlepanel interactive inline">',
-                '<span class="iarrow">&nbsp;</span>',
-                '<span class="breadcrumb">{upText:htmlEncode} / </span>',
-                '<span class="studyname">{title:htmlEncode}</span>',
-            '</div>',
-            '<div class="dim-selector learnabouttab">',
-                '<tpl for="tabs">',
-                    '<h1 class="lhdv">{label:htmlEncode}</h1>',
-                '</tpl>',
-            '</div>',
+        '<div style="background-color: #ebebeb;">',
+            '{%this.renderContainer(out,values);%}',
+        '</div>',
+        '<div class="dim-selector learnabouttab">',
+            '<tpl for="tabs">',
+                '<h1 class="lhdv">{label:htmlEncode}</h1>',
+            '</tpl>',
         '</div>'
     ),
+
+    renderSelectors: {
+        tabParentEl: 'div.dim-selector'
+    },
 
     constructor : function(config) {
         this.callParent([config]);
@@ -91,31 +93,77 @@ Ext.define('Connector.view.PageHeader', {
         this.setTabHeader();
 
         this.renderData = {
-            title: this.title,
-            upText: this.upText ? this.upText : (this.dimension ? this.dimension.pluralName : undefined),
             tabs: this.tabs
         };
 
-        this.renderSelectors = {
-            upEl: 'div.learn-up',
-            tabParentEl: 'div.dim-selector'
+        var backAndTitle = {
+            xtype: 'box',
+            cls: 'titlepanel inline',
+            flex: 1,
+            renderTpl: new Ext.XTemplate(
+                '<div class="learn-up">',
+                    '<span class="iarrow">&nbsp;</span>',
+                    '<span class="breadcrumb">{upText:htmlEncode} / </span>',
+                    '<span class="studyname">{title:htmlEncode}</span>',
+                '</div>'
+            ),
+            renderData: {
+                title: this.title,
+                upText: this.upText ? this.upText : (this.dimension ? this.dimension.pluralName : undefined)
+            },
+            renderSelectors: {
+                upEl: 'div.learn-up'
+            },
+            listeners: {
+                afterrender: {
+                    fn: function(cmp)
+                    {
+                        cmp.upEl.on('click', this._onUpClick, this);
+                    },
+                    single: true,
+                    scope: this
+                }
+            }
         };
+
+        this.items = [backAndTitle];
+
+        if (this.buttons)
+        {
+            this.items = this.items.concat({
+                xtype: 'container',
+                height: 56,
+                style: 'margin-right: 8px',
+                layout: {
+                    type: 'hbox',
+                    align: 'middle',
+                    defaultMargins: {
+                        right: 3,
+                        left: 3
+                    }
+                },
+                items: this.buttons
+            });
+        }
 
         this.callParent();
 
-        this.on('render', function(cmp) {
-
+        this.on('render', function(cmp)
+        {
             var headers = cmp.tabParentEl.query('.lhdv'),
                 tabEls = [], el;
 
-            Ext.each(headers, function(h, i) {
+            Ext.each(headers, function(h, i)
+            {
                 el = Ext.get(h);
                 tabEls.push(el);
-                el.on('click', function(evt, el) {
+                el.on('click', function()
+                {
                     this.fireEvent('tabselect', this.dimension, this.model, this.tabs[i]);
                 }, this);
 
-                if (i === this.activeTab) {
+                if (i === this.activeTab)
+                {
                     el.addCls(this.activeTabCls);
                 }
             }, this);
@@ -123,12 +171,11 @@ Ext.define('Connector.view.PageHeader', {
             cmp.tabEls = tabEls;
 
         }, this, {single: true});
+    },
 
-        this.on('afterrender', function(cmp) {
-            cmp.upEl.on('click', function() {
-                this.fireEvent('upclick', this.upLink);
-            }, this);
-        }, this, {single: true});
+    _onUpClick : function()
+    {
+        this.fireEvent('upclick', this.upLink);
     },
 
     setTabHeader : function() {

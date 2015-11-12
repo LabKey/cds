@@ -22,14 +22,17 @@ Ext.define('Connector.view.GroupSummary', {
 
     groupId: undefined,
 
-    constructor : function(config) {
+    constructor : function(config)
+    {
         this.callParent([config]);
 
         this.addEvents('requestfilterundo', 'loadgroupfilters', 'requestgroupdelete', 'requestback');
     },
 
-    initComponent : function() {
-        if (!this.groupId) {
+    initComponent : function()
+    {
+        if (!this.groupId)
+        {
             throw 'groupId must be specified';
         }
 
@@ -37,20 +40,30 @@ Ext.define('Connector.view.GroupSummary', {
 
         this.callParent();
 
-        if (this.store.getCount() > 0) {
-            var recIdx = this.store.find('id', this.groupId, false, true, true);
-            if (recIdx > -1) {
-                this.group = this.store.getAt(recIdx);
-                this.onStoreLoad();
-            }
+        if (this.store.getCount() > 0)
+        {
+            this.loadGroup();
         }
-        else {
-            this.store.on('load', this.onStoreLoad, this, {single: true});
+        else
+        {
+            this.store.on('load', this.loadGroup, this, {single: true});
         }
     },
 
-    onStoreLoad: function()
+    _getActiveGroup : function()
     {
+        var group;
+        var idx = this.store.find('id', this.groupId, false, true, true);
+        if (idx > -1)
+        {
+            group = this.store.getAt(idx);
+        }
+        return group;
+    },
+
+    loadGroup : function()
+    {
+        this.group = this._getActiveGroup();
         this.removeAll();
         this.add([this.generateHeader(this.group), this.generateBody(this.group)]);
         this.doLayout();
@@ -58,7 +71,8 @@ Ext.define('Connector.view.GroupSummary', {
         this.requestFilterChange();
     },
 
-    showFiltersMessage: function() {
+    showFiltersMessage: function()
+    {
         var id = Ext.id();
 
         this.showMessage('Your filters have been replaced by this saved group. <a id="' + id + '">Undo</a>', true);
@@ -73,54 +87,74 @@ Ext.define('Connector.view.GroupSummary', {
         }
     },
 
-    filterChange: function() {
+    filterChange: function()
+    {
         this.fireEvent('loadgroupfilters');
         this.showFiltersMessage();
     },
 
-    requestFilterChange: function() {
-        if (this.showMessage) {
+    requestFilterChange: function()
+    {
+        if (this.showMessage)
+        {
             this.filterChange();
         }
-        else {
+        else
+        {
             this.on('boxready', this.filterChange, this, {single: true});
         }
     },
 
-    generateHeader : function(group) {
+    generateHeader : function(group)
+    {
         return Ext.create('Connector.view.PageHeader', {
             title: group.get('label'),
             upText: 'Group',
             upLink: {
                 controller: 'home'
-            }
+            },
+            buttons: [{
+                xtype: 'button',
+                text: 'Delete',
+                ui: 'linked',
+                handler: this.onDelete,
+                scope: this
+            }]
         });
     },
 
-    onDelete : function(group) {
-        if (this.showMessage) {
+    onDelete : function()
+    {
+        var group = this.group;
+
+        if (group && this.showMessage)
+        {
             this.hideMessage(true);
             var id = Ext.id();
             var cancelId = Ext.id();
             this.showMessage('Are you sure you want to delete "' + Ext.String.ellipsis(Ext.htmlEncode(group.get('label')), 35, true) + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
             var deleteLink = Ext.get(id);
-            if (deleteLink) {
+            if (deleteLink)
+            {
                 deleteLink.on('click', function() { this.fireEvent('requestgroupdelete', group.get('id')); }, this, {single: true});
             }
             var cancelLink = Ext.get(cancelId);
-            if (cancelLink) {
+            if (cancelLink)
+            {
                 cancelLink.on('click', function() { this.hideMessage(true); }, this, {single: true});
             }
         }
     },
 
-    generateBody : function(group) {
+    generateBody : function(group)
+    {
         return Ext.create('Connector.view.GroupSummaryBody', {
             group: group
         });
     },
 
-    updateView : function(id) {
+    updateView : function(id)
+    {
         var idx;
 
         if (id !== undefined && id !== null) {
@@ -131,15 +165,17 @@ Ext.define('Connector.view.GroupSummary', {
 
         if (idx > -1) {
             this.group = this.store.getAt(idx);
-            this.onStoreLoad();
+            this.loadGroup();
         }
         else {
             console.log('group not found, throw not found.');
         }
     },
 
-    getGroup : function() {
-        if (this.group) {
+    getGroup : function()
+    {
+        if (this.group)
+        {
             return Ext.clone(this.group.data);
         }
     }

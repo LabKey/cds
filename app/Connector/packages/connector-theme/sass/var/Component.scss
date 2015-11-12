@@ -341,54 +341,6 @@ svg {
   display: inline-block;
 }
 
-.learnheader {
-
-  .titlepanel {
-    font: $title-font;
-    background: $gray-7;
-    display: block;
-    width:100%;
-    height: 56px;
-    line-height: 56px;
-    padding-left: 16px;
-    clear: all;
-  }
-
-  .breadcrumb {
-    font-weight: 400;
-    color: $gray-25;
-    text-transform: uppercase;
-    display: block;
-    float: left;
-    padding-right:4px;
-  }
-
-  .studyname {
-    font-weight: 100;
-    font-size: 22px;
-    font-family: $data-font;
-    color: $black;
-    display: block;
-    float: left;
-  }
-
-  .iarrow {
-    background-image: url(images/navigatebackward.svg);
-    background-repeat: no-repeat;
-    background-color: $gray-8;
-    width: 56px;
-    height: 56px;
-    margin: 0 16px 0 -16px;
-    vertical-align: bottom;
-    display: block;
-    float: left;
-  }
-
-}
-
-
-
-
 .header-container {
 
   .titlepanel {

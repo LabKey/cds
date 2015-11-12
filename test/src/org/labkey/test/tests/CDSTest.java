@@ -372,7 +372,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitAndClick(listGroup.withText(STUDY_GROUP));
 
         setFormElement(Locator.id("updategroupdescription-inputEl"), studyGroupDescModified);
-        click(CDSHelper.Locators.cdsButtonLocator("save", "groupupdatesave"));
+        click(CDSHelper.Locators.cdsButtonLocator("Save", "groupupdatesave"));
 
         // verify group save messaging
         waitForText("Group \"Study Group...\" saved.");
@@ -388,7 +388,7 @@ public class CDSTest extends CDSReadOnlyTest
         // verify 'whoops' case
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("create a new group");
-        click(CDSHelper.Locators.cdsButtonLocator("cancel", "groupupdatecancel"));
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "groupupdatecancel"));
         cds.clearFilters();
 
         // add a filter, which should be blown away when a group filter is selected
@@ -409,14 +409,14 @@ public class CDSTest extends CDSReadOnlyTest
         assertTextPresent("Study Group Verify", "Description", studyGroupDescModified);
 
         // Verify that you can cancel delete
-        click(CDSHelper.Locators.cdsButtonLocator("delete"));
+        click(CDSHelper.Locators.cdsButtonLocator("Delete"));
         waitForText("Are you sure you want to delete");
-        click(Locator.linkContainingText("Cancel"));
+        click(Locator.css(".x-window-body-swmsg a").withText("Cancel"));
         waitForTextToDisappear("Are you sure you want to delete");
         assertTextPresent(studyGroupDescModified);
 
         // Verify back button works
-        click(CDSHelper.Locators.cdsButtonLocatorContainingText("back"));
+        click(CDSHelper.Locators.pageHeaderBack());
         waitForText(CDSHelper.HOME_PAGE_HEADER);
         waitForText(STUDY_GROUP);
 
