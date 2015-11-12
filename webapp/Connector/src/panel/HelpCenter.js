@@ -361,8 +361,12 @@ Ext.define('Connector.panel.HelpCenter', {
         var children = node.children;
         if (!children)
             return null;
+        var targetWiki = null;
         for (var i = 0; i < children.length; i++) {
-            return this.findWikiName(children[i], name);
+            targetWiki = this.findWikiName(children[i], name);
+            if (targetWiki != null) {
+                return targetWiki;
+            }
         }
         return null;
     }
