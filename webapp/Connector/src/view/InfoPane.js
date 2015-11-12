@@ -224,7 +224,7 @@ Ext.define('Connector.view.InfoPane', {
                 sortable: false,
                 menuDisabled: true,
                 tpl: new Ext.XTemplate(
-                    '{name:htmlEncode}',
+                    '<div title="{name:htmlEncode}">{name:htmlEncode}<div>',
                     '<tpl if="hasDetails === true">',
                         '<a class="expando" href="{detailLink}">',
                             '<span class="icontext">learn about</span>',
