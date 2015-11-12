@@ -18,7 +18,16 @@ Ext.define('Connector.view.TimepointPane', {
     updateSelections : function()
     {
         var grid = this.getGrid();
-        grid.getSelectionModel().select(grid.getStore().query('hasData', true).items);
+
+        if (Ext.isDefined(this.getModel().getFilterVisitRowIds()))
+        {
+            grid.getSelectionModel().select(grid.getStore().query('hasData', true).items);
+        }
+        else
+        {
+            grid.getSelectionModel().selectAll();
+        }
+
         grid.fireEvent('selectioncomplete', this);
     }
 });

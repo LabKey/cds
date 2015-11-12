@@ -225,7 +225,7 @@ Ext.define('Connector.model.Filter', {
             dTimeMeasure = data.timeMeasure,
             fTimeMeasure = fdata.timeMeasure;
 
-        if (dTimeMeasure.measure.alias === fTimeMeasure.measure.alias)
+        if (data.isPlot === fdata.isPlot && dTimeMeasure.measure.alias === fTimeMeasure.measure.alias)
         {
             if (dTimeMeasure.dateOptions.interval === fTimeMeasure.dateOptions.interval)
             {

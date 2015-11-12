@@ -73,7 +73,7 @@ Ext.define('Connector.model.TimepointPane', {
         // keep track of which visitRowIds are selected (have data) and which do not (no data because of time filter)
         Ext.each(this.get('dataRows'), function(row)
         {
-            rowSelType = selectedVisitRowIds.indexOf(row['RowId']) != -1 ? 'selected' : 'unselected';
+            rowSelType = !Ext.isDefined(selectedVisitRowIds) || selectedVisitRowIds.indexOf(row['RowId']) != -1 ? 'selected' : 'unselected';
 
             if (!Ext.isDefined(intervalVisitRowIdMap[rowSelType][row[intervalAlias]]))
             {
@@ -240,11 +240,10 @@ Ext.define('Connector.model.TimepointPane', {
 
     getFilterVisitRowIds : function()
     {
-        var visitRowsIds = [],
-            value;
-
         if (this.isFilterBased())
         {
+            var visitRowsIds = [], value;
+
             Ext.each(this.get('filter').getTimeFilters(), function(filter)
             {
                 value = Ext.isArray(filter.getValue()) ? filter.getValue()[0] : filter.getValue();
@@ -254,8 +253,10 @@ Ext.define('Connector.model.TimepointPane', {
                     visitRowsIds.push(parseInt(idStr));
                 });
             });
+
+            return visitRowsIds;
         }
 
-        return visitRowsIds;
+        return undefined;
     }
 });

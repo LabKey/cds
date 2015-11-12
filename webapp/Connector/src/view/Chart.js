@@ -3212,11 +3212,11 @@ Ext.define('Connector.view.Chart', {
         }
         else
         {
-            // get the full set of filters and selections from the state and keep track of the non-time filters as well
+            // get the full set of filters and selections from the state and keep track of the non-timepoint filter as well
             Ext.each(Connector.getState().getFilters(), function(filter)
             {
                 fullFilterSet.push(filter);
-                if (!filter.isTime())
+                if (!filter.isTime() || filter.isPlot())
                 {
                     nonTimeFilterSet.push(filter);
                 }
@@ -3226,7 +3226,7 @@ Ext.define('Connector.view.Chart', {
                 Ext.each(Connector.getState().getSelections(), function(filter)
                 {
                     fullFilterSet.push(filter);
-                    if (!filter.isTime())
+                    if (!filter.isTime() || filter.isPlot())
                     {
                         nonTimeFilterSet.push(filter);
                     }
