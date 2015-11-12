@@ -72,8 +72,6 @@ Ext4.define('Connector.cube.Configuration', {
                     label: 'Sex at birth',
                     levels: [{
                         uniqueName: '[Subject.Sex].[Sex]',
-                        activeCount: true,
-                        countPriority: 10,
                         countSingular: 'Sex',
                         countPlural: 'Sexes'
                     }]
@@ -83,8 +81,6 @@ Ext4.define('Connector.cube.Configuration', {
                     label: 'Race',
                     levels: [{
                         uniqueName: '[Subject.Race].[Race]',
-                        activeCount: true,
-                        countPriority: 20,
                         countSingular: 'Race',
                         countPlural: 'Races'
                     }]
@@ -252,7 +248,20 @@ Ext4.define('Connector.cube.Configuration', {
                 friendlyName: 'Subjects given study products',
                 singularName: 'Study product',
                 pluralName: 'Study products',
+                summaryTargetLevel: '[Study Product.Product Type].[Name]',
+                defaultOperator: 'OR',
                 hierarchies: [{
+                    uniqueName: '[Study Product.Product Name]',
+                    label: 'Name',
+                    hidden: false,
+                    levels: [{
+                        uniqueName: '[Study Product.Product Name].[Name]',
+                        activeCount: true,
+                        countPriority: 30,
+                        countSingular: 'Product',
+                        countPlural: 'Products'
+                    }]
+                },{
                     uniqueName: '[Study Product.Product Type]',
                     levels: [{
                         uniqueName: '[Study Product.Product Type].[Name]',
@@ -454,7 +463,8 @@ Ext4.define('Connector.cube.Configuration', {
                 defaultOperator: 'parent::defaultOperator',
                 filterType: 'parent::filterType',
                 supportsLearn: false,
-                lookupDimension: undefined
+                lookupDimension: undefined,
+                displayParent: false
             }
         }
     }

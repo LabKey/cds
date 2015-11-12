@@ -350,6 +350,23 @@ Ext.define('Connector.model.InfoPane', {
         }
     },
 
+    getFullName : function(levelUniqueName, mdx, selfUniqueName, selfName) {
+        var level = mdx.getLevel(levelUniqueName);
+
+        if (level && level.displayParent) {
+            var splits = selfUniqueName.split('].[');
+            if (splits.length <  2) {
+                return selfName;
+            }
+            var parentSplit = splits[splits.length - 2];
+            if (parentSplit.indexOf('[') == 0) {
+                parentSplit.replace('[', '');
+            }
+            return parentSplit + ' - ' + selfName;
+        }
+        return selfName;
+    },
+
     processMembers : function(cellset, mdx) {
 
         // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
@@ -369,6 +386,8 @@ Ext.define('Connector.model.InfoPane', {
                     _prop = '',
                     _hasDetails;
 
+            var _fullName = this.getFullName(def.level.uniqueName, mdx, def.uniqueName, _name);
+
             dim = dim ? dim : this.getDimension(def.level.uniqueName, mdx);
             model = model ? model : this.getModel(dim);
 
@@ -383,7 +402,7 @@ Ext.define('Connector.model.InfoPane', {
 
             modelDatas.push({
                 uniqueName: def.uniqueName,
-                name: _name,
+                name: _fullName,
                 count: _count,
                 hasDetails: _hasDetails,
                 detailLink: _hasDetails ? Connector.getService('Learn').getURL(dim.name, _name, _prop) : ''
