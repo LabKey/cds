@@ -2179,7 +2179,7 @@ Ext.define('Connector.view.Chart', {
                 this.filterClear = false;
                 this.noPlot(false);
 
-                this.fireEvent('updateplotrecord', this, 'Time points');
+                this.fireEvent('updateplotrecord', this, 'Time points', false, -1);
             }
         }
     },
@@ -3208,7 +3208,7 @@ Ext.define('Connector.view.Chart', {
         if (includeSelections && selections.length == 0)
         {
             // in the 'selection remove' case, we just reset the subcount value
-            this.fireEvent('updateplotrecord', this, 'Time points', true);
+            this.fireEvent('updateplotrecord', this, 'Time points', true, -1);
         }
         else
         {
@@ -3246,7 +3246,7 @@ Ext.define('Connector.view.Chart', {
                 {
                     if (includeSelections)
                     {
-                        this.fireEvent('updateplotrecord', this, 'Time points', true, filteredTimepointRows);
+                        this.fireEvent('updateplotrecord', this, 'Time points', true, filteredTimepointRows.length);
                     }
                     else
                     {
@@ -3268,7 +3268,7 @@ Ext.define('Connector.view.Chart', {
 
             this.getDistinctTimepointsForMeasureSet(measureSet.measures, function(allTimepointRows)
             {
-                this.fireEvent('updateplotrecord', this, 'Time points', false, filteredTimepointRows, allTimepointRows);
+                this.fireEvent('updateplotrecord', this, 'Time points', false, filteredTimepointRows.length, allTimepointRows);
             }, this);
         }, this);
     },

@@ -143,8 +143,7 @@ Ext.define('Connector.controller.FilterStatus', {
                     dimension: filterOrDetail.get('dimension'),
                     hierarchy: filterOrDetail.get('hierarchy'),
                     level: filterOrDetail.get('level'),
-                    dataRows: filterOrDetail.get('dataRows'),
-                    selectedRows: filterOrDetail.get('selectedRows')
+                    dataRows: filterOrDetail.get('dataRows')
                 },
                 storeRecord;
 
@@ -162,7 +161,6 @@ Ext.define('Connector.controller.FilterStatus', {
                     if (storeRecord != null)
                     {
                         config.dataRows = storeRecord.get('dataRows');
-                        config.selectedRows = storeRecord.get('selectedRows');
                     }
                 }
                 else if (filterOrDetail.isGrid() || filterOrDetail.isAggregated())
@@ -289,8 +287,8 @@ Ext.define('Connector.controller.FilterStatus', {
         }
     },
 
-    onUpdatePlotRecord : function(view, label, forSubcount, selectedRows, dataRows)
+    onUpdatePlotRecord : function(view, label, forSubcount, countValue, dataRows)
     {
-        this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, selectedRows, dataRows);
+        this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, countValue, dataRows);
     }
 });

@@ -23,7 +23,6 @@ Ext.define('Connector.model.Detail', {
         {name: 'level', defaultValue: undefined},
         {name: 'viewClass', defaultValue: undefined}, // alternate class name for the info pane to display on click (must extend Connector.view.InfoPane)
         {name: 'modelClass', defaultValue: undefined}, // alternate class name for the info pane model (must extend Connector.model.InfoPane)
-        {name: 'selectedRows', defaultValue: undefined}, // array of data rows to use for the info pane selected grid members
         {name: 'dataRows', defaultValue: undefined} // array of data rows to use for the info pane grid members
     ]
 });

@@ -261,36 +261,33 @@ Ext.define('Connector.store.FilterStatus', {
         this.fireEvent('load', this);
     },
 
-    updatePlotRecordCount : function(label, forSubcount, selectedRows, dataRows)
+    updatePlotRecordCount : function(label, forSubcount, countValue, dataRows)
     {
         var recIndex = this.findPlotCountRecordCache(label),
             fieldName = forSubcount ? 'subcount' : 'count',
-            count = Ext.isArray(selectedRows) ? selectedRows.length : -1,
             record;
 
         if (recIndex > -1)
         {
-            this.plotCountRecordsCache[recIndex][fieldName] = count;
+            this.plotCountRecordsCache[recIndex][fieldName] = countValue;
 
             // if the store has already been loaded, update that count as well
             record = this.getById(label);
             if (record != null)
             {
-                record.set(fieldName, count);
+                record.set(fieldName, countValue);
             }
 
             // anytime the count is updated, hold on to the data rows and reset the subcount
             if (!forSubcount)
             {
-                this.plotCountRecordsCache[recIndex].selectedRows = selectedRows;
                 this.plotCountRecordsCache[recIndex].dataRows = dataRows;
                 if (record != null)
                 {
-                    record.set('selectedRows', selectedRows);
                     record.set('dataRows', dataRows);
                 }
 
-                this.updatePlotRecordCount('Time points', true);
+                this.updatePlotRecordCount('Time points', true, -1);
             }
         }
         else

@@ -4,7 +4,6 @@ Ext.define('Connector.model.TimepointPane', {
     extend: 'Connector.model.InfoPane',
 
     fields: [
-        {name: 'selectedRows', defaultValue: []}, // array of selected visitRowIds for all application filters
         {name: 'dataRows', defaultValue: []} // array of visitRowIds for all application filters except time filters
     ],
 
@@ -61,7 +60,7 @@ Ext.define('Connector.model.TimepointPane', {
     populateFilterMembers : function(intervalAlias)
     {
         var store = this.get('memberStore'),
-            selectedVisitRowIds,
+            selectedVisitRowIds = this.getFilterVisitRowIds(),
             intervalName,
             intervalVisitRowIdMap = {selected: {}, unselected: {}},
             rowSelType,
@@ -69,8 +68,6 @@ Ext.define('Connector.model.TimepointPane', {
 
         // trim interval name based on the alias (TODO need a better way to get this)
         intervalName = intervalAlias.replace(QueryUtils.STUDY_ALIAS_PREFIX, '').replace('s', '')
-
-        selectedVisitRowIds = Ext.Array.pluck(this.get('selectedRows'), 'RowId');
 
         // populate the member store based on the data rows from the distinct timepoint query results
         // keep track of which visitRowIds are selected (have data) and which do not (no data because of time filter)
@@ -239,5 +236,26 @@ Ext.define('Connector.model.TimepointPane', {
                 state.addFilter(timeFilterConfig);
             }
         }, this);
+    },
+
+    getFilterVisitRowIds : function()
+    {
+        var visitRowsIds = [],
+            value;
+
+        if (this.isFilterBased())
+        {
+            Ext.each(this.get('filter').getTimeFilters(), function(filter)
+            {
+                value = Ext.isArray(filter.getValue()) ? filter.getValue()[0] : filter.getValue();
+
+                Ext.each(value.split(';'), function(idStr)
+                {
+                    visitRowsIds.push(parseInt(idStr));
+                });
+            });
+        }
+
+        return visitRowsIds;
     }
 });
