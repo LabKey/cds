@@ -1,0 +1,185 @@
+@import '../variables';
+@import '../mixins';
+
+.signin-modal,
+.create-new-password-modal,
+.create-account-modal {
+  position: relative;
+  overflow: hidden;
+  background: $background-color;
+  width: auto;
+  margin: 1.5em auto;
+  max-width: 620px;
+  min-height: 100%;
+  padding: 2.66em 2em 2em 2em;
+
+  .border {
+    position: absolute;
+    top:0;
+    left:0;
+    height: 4px;
+    width: 100%;
+    background-color: $navigation-pink;
+  }
+
+  .title {
+    h1 {
+      margin: 0;
+      font-size: 2.34em;
+      @include light-georgia;
+    }
+    margin: 0em 0em 2.66em 0em;
+  }
+
+  .notifications {
+    display: block;
+    overflow: hidden;
+    margin: 0em 0em 2.66em 0em;
+    p {
+      margin: 0;
+      color: $navigation-pink;
+    }
+    span {
+      margin: 0;
+      color:$dark-text;
+    }
+  }
+
+  button.mfp-close {
+    @include modal-close;
+  }
+
+  .form {
+    .credentials {
+      margin-bottom: 2.66em;
+      .checkbox {
+        margin-top: 1em;
+      }
+    }
+    .checkbox {
+      display: block;
+      padding-bottom: 0.5em;
+      position: relative;
+
+      input {
+        margin-right: 0.75em;
+      }
+      label {
+        position: relative;
+        left: 2em;
+        padding-right: 2em;
+        margin: 0;
+        @include light-arial;
+        line-height: 1.5em;
+      }
+    }
+    a.expand-tos {
+      display: block;
+      text-decoration: none;
+      margin-left: 2em;
+      margin-bottom: 1.5em;
+      @include light-arial;
+
+      .highlight {
+        color: $navigation-pink;
+        padding-left: 0.3em;
+      }
+    }
+    div.terms-of-service {
+      height: 0em;
+      overflow: hidden;
+      display: block;
+      -moz-transition: 0.5s;
+      -ms-transition: 0.5s;
+      -o-transition: 0.5s;
+      -webkit-transition: 0.5s;
+      transition: 0.5s;
+      &.open {
+        height: 20em;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        margin-bottom: 2em;
+        padding: 2em;
+      }
+    }
+    span.agree {
+      margin-left: 2em;
+    }
+
+    input {
+      width: 49%;
+      padding: 0.5em;
+      font-size: 1em;
+      margin-right: 4px;
+      @include light-arial;
+      @include phone {
+        width: 100%;
+        &:first-child {
+          margin-bottom: 0.5em;
+        }
+      }
+    }
+    input[type=checkbox] {
+      width: auto;
+      position: absolute;
+    }
+  }
+  .links {
+    margin: 2.66em 0em 0em 0em;
+    padding-right: 0em;
+
+    a {
+      border: 1px solid #dcdcdc;
+    }
+    a.help, a.dismiss {
+      color: $dark-text;
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.15);
+      }
+    }
+    input.confirm, a.confirm {
+      color: white;
+      border: 1px solid $navigation-pink;
+      background-color: $navigation-pink;
+      -webkit-appearance: none;
+      cursor:pointer;
+      &:hover {
+        background-color: $navigation-pink-hover;
+      }
+    }
+    @include phone {
+      padding: 0;
+      a, input[type=submit] {
+        width: 48%;
+        margin: auto 1%;
+      }
+    }
+  }
+  .password-requirements {
+    padding-bottom: 1em;
+    display: block
+  }
+  .sign-in-help {
+    .reset {
+      padding-bottom: 1em;
+      display: block;
+    }
+  }
+}
+
+.create-account-modal {
+  .form .credentials {
+    margin-bottom: 0em;
+  }
+}
+
+div.video-header {
+  background-color: $navigation-pink;
+  height: 4px;
+  text-align: right;
+  color:white;
+  button.video-close {
+    @include modal-close;
+    right: 10%;
+  }
+}

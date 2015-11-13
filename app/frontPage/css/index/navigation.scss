@@ -1,0 +1,96 @@
+@import '../variables';
+@import '../mixins';
+
+#navigation {
+
+  top: 0;
+  max-width: $max-width;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+  height: 4.635em;
+  background-color: $navigation-grey;
+  position: fixed;
+  overflow: hidden;
+  z-index: 15;
+  padding: 0em;
+
+  .title {
+    display: table;
+    height: 100%;
+    position: absolute;
+    left: 5.833em;
+    margin-left: 0;
+    top: 0;
+    strong, p {
+      color: white;
+      display: table-cell;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    p {
+      padding-left: 0.4em;
+    }
+  }
+
+  .icon {
+    width: 4.7em;
+    height: 4.7em;
+    background-color: $navigation-pink;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: table;
+    .img {
+      display: table-cell;
+      position: relative;
+      height: 100%;
+      width: 100%;
+      vertical-align: middle;
+      img {
+        display: block;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .links {
+    float: right;
+    height: 100%;
+    overflow: hidden;
+    display: table;
+    white-space: nowrap;
+    margin: 0;
+    outline: none;
+    border: none;
+    text-align: right;
+    text-overflow: ellipsis;
+  }
+  .link {
+    @include tablet {
+      display: none;
+    }
+    display: table-cell;
+    vertical-align: middle;
+    &.hide {
+      opacity: 0;
+    }
+
+    @include phone {
+      display: table-cell;
+
+      &.hide {
+        opacity: 1 !important;
+      }
+      span {
+        display: none;
+      }
+    }
+
+  }
+  span {
+    width: auto;
+  }
+}

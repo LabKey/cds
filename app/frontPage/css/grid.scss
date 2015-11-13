@@ -1,0 +1,10 @@
+@import 'bourbon/bourbon';
+@import "neat/neat";
+@import 'variables';
+@import 'mixins';
+
+$grid-columns: 12 !global;
+
+.section {
+  @include outer-container;
+}

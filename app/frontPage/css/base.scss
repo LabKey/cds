@@ -1,0 +1,126 @@
+@import 'bourbon/bourbon';
+@import "neat/neat";
+@import 'variables';
+@import 'mixins';
+
+body {
+  background-color: $background-color;
+  font-size: 12px;
+  margin: 0 auto !important;
+  position: relative;
+
+  * {
+    font-family: "Arial", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a {
+    outline: none;
+  }
+
+  @include phone {
+    font-size: 10px;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+
+div.links {
+  position: relative;
+  width: 100%;
+  display: block;
+  white-space: nowrap;
+  outline: none;
+  border: none;
+  text-align: right;
+  text-overflow: ellipsis;
+  padding: 0em 2em;
+  margin: 2em 0em 2.67em 0em;
+
+  a, input[type="submit"], span {
+    display: inline-block;
+    width: 10.67em;
+    padding: 0.42em;
+    margin: 0 0.2em;
+    border-radius: 0.25em;
+    text-align: center;
+    text-decoration: none;
+    @include light-arial;
+    color: white;
+
+    &.member-modal-trigger {
+      background-color: transparent;
+      color:$light-grey-text;
+    }
+
+    &.signin-modal-trigger {
+      margin-right: 0;
+      background-color: $navigation-pink;
+      &:hover {
+        background-color: $navigation-pink-hover;
+      }
+    }
+  }
+}
+
+
+img.gif {
+  margin: 0 auto;
+  display: block;
+}
+
+.gif-container {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 540px;
+
+  img {
+    width: 100%;
+    @include tablet {
+      padding: 1em;
+    }
+    &.placeholder {
+      position: relative;
+      z-index: 0;
+    }
+    &.gif {
+      position: absolute;
+      top:0;
+      left: 0;
+    }
+  }
+}
+
+.circle {
+  display: block;
+  position: relative;
+  width: 4em;
+  height: 4em;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  margin: 1.34em auto 2.66em auto;
+  background-color: $navigation-pink;
+  color: white;
+  &:hover {
+    background-color: $navigation-pink-hover;
+  }
+  .arrow {
+    width: 0;
+    height: 0;
+    border-left: 0.45em solid transparent;
+    border-right: .45em solid transparent;
+    border-top: .7em solid white;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: -.3em auto 0 auto;
+    line-height: 4em;
+    top: 50%;
+  }
+}
