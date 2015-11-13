@@ -117,7 +117,10 @@ div.links {
   text-overflow: ellipsis;
   padding: 0em 2em;
   margin: 2em 0em 2.67em 0em; }
-  div.links a, div.links input[type="submit"], div.links span {
+  div.links a,
+  div.links input[type="submit"],
+  div.links input[type="button"],
+  div.links span {
     display: inline-block;
     width: 10.67em;
     padding: 0.42em;
@@ -129,13 +132,22 @@ div.links {
     font-weight: 100;
     color: #2d2d2d;
     color: white; }
-    div.links a.member-modal-trigger, div.links input[type="submit"].member-modal-trigger, div.links span.member-modal-trigger {
+    div.links a.member-modal-trigger,
+    div.links input[type="submit"].member-modal-trigger,
+    div.links input[type="button"].member-modal-trigger,
+    div.links span.member-modal-trigger {
       background-color: transparent;
       color: #6e6e6e; }
-    div.links a.signin-modal-trigger, div.links input[type="submit"].signin-modal-trigger, div.links span.signin-modal-trigger {
+    div.links a.signin-modal-trigger,
+    div.links input[type="submit"].signin-modal-trigger,
+    div.links input[type="button"].signin-modal-trigger,
+    div.links span.signin-modal-trigger {
       margin-right: 0;
       background-color: #ed365e; }
-      div.links a.signin-modal-trigger:hover, div.links input[type="submit"].signin-modal-trigger:hover, div.links span.signin-modal-trigger:hover {
+      div.links a.signin-modal-trigger:hover,
+      div.links input[type="submit"].signin-modal-trigger:hover,
+      div.links input[type="button"].signin-modal-trigger:hover,
+      div.links span.signin-modal-trigger:hover {
         background-color: #dd133f; }
 
 img.gif {

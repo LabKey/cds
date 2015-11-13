@@ -40,7 +40,10 @@ div.links {
   padding: 0em 2em;
   margin: 2em 0em 2.67em 0em;
 
-  a, input[type="submit"], span {
+  a, 
+  input[type="submit"],
+  input[type="button"],
+  span {
     display: inline-block;
     width: 10.67em;
     padding: 0.42em;
