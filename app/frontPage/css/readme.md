@@ -30,7 +30,7 @@ First, in a CLI, `cd` into this directory (`cds/app/frontPage/css`)
 
 To compile the SCSS, run the following command:
 
-	sass application.scss ../../../webapp/frontPage/css/application.css
+	sass --sourcemap=none --style=compact application.scss ../../../webapp/frontPage/css/application.css
 
 This will generate a new `application.css` and `application.css.map` file in 
 `webapp/frontPage/css/`.
@@ -39,5 +39,5 @@ This will generate a new `application.css` and `application.css.map` file in
 If you're making a lot of changes, you may want sass to watch the files
 and compile immediately when you've saved a change:
 
-	sass --watch application.scss:../../../webapp/frontPage/css/application.css
+	sass --sourcemap=none --style=compact --watch application.scss:../../../webapp/frontPage/css/application.css
 
