@@ -1,4 +1,4 @@
-prot	study_part	study_group	study_arm	study_randomization	study_arm_description	study_arm_description_coded_labe	product_class_combination_label	product_combination_label	study_arm_last_exp_vacc_day
+prot	study_part	study_group	study_arm	study_randomization	study_arm_description	study_arm_description_coded_label	product_class_combination_label	product_combination_label	study_arm_last_exp_vacc_day
 r1	NA	Group A	T1	Vaccine	sociis natoque penatibus et magnis	vestibulum	ut	tristique in tempus	168
 r1	NA	Group B	T2	Vaccine	sem duis aliquam convallis	leo rhoncus sed	in tempus sit	vel dapibus	168
 r1	NA	Group C	C	Placebo	purus phasellus in felis	eu interdum	augue a suscipit	diam in	168
