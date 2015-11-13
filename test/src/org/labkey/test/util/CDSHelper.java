@@ -742,7 +742,7 @@ public class CDSHelper
         _test.waitForElement(Locators.cdsButtonLocator("Delete"));
         _test.click(Locators.cdsButtonLocator("Delete"));
         _test.waitForText("Are you sure you want to delete");
-        _test.click(Locator.css(".x-window-body-swmsg a").withText("Delete"));
+        _test.click(Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
         _test.waitForText(HOME_PAGE_HEADER);
         _test.waitForElementToDisappear(groupListing);
         _test.sleep(500);
