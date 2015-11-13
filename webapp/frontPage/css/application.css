@@ -115,10 +115,10 @@ html { box-sizing: border-box; }
 .fadeout { -webkit-animation-delay: 0s; -ms-animation-delay: 0s; -moz-animation-delay: 0s; -o-animation-delay: 0s; animation-delay: 0s; -webkit-animation-duration: 0.4s; -ms-animation-duration: 0.4s; -moz-animation-duration: 0.4s; -o-animation-duration: 0.4s; animation-duration: 0.4s; -webkit-animation-name: fadeout; -ms-animation-name: fadeout; -moz-animation-name: fadeout; -o-animation-name: fadeout; animation-name: fadeout; -webkit-animation-fill-mode: forwards; -ms-animation-fill-mode: forwards; -moz-animation-fill-mode: forwards; -o-animation-fill-mode: forwards; animation-fill-mode: forwards; }
 
 #navigation { top: 0; max-width: 1280px; left: 0; right: 0; margin: 0 auto; display: block; width: 100%; height: 4.635em; background-color: #212121; position: fixed; overflow: hidden; z-index: 15; padding: 0em; }
-#navigation .title { display: table; height: 100%; position: absolute; left: 5.833em; margin-left: 0; top: 0; }
+#navigation .title { cursor: pointer; display: table; height: 100%; position: absolute; left: 5.833em; margin-left: 0; top: 0; }
 #navigation .title strong, #navigation .title p { color: white; display: table-cell; vertical-align: middle; white-space: nowrap; }
 #navigation .title p { padding-left: 0.4em; }
-#navigation .icon { width: 4.7em; height: 4.7em; background-color: #ed365e; position: absolute; top: 0; left: 0; display: table; }
+#navigation .icon { cursor: pointer; width: 4.7em; height: 4.7em; background-color: #ed365e; position: absolute; top: 0; left: 0; display: table; }
 #navigation .icon .img { display: table-cell; position: relative; height: 100%; width: 100%; vertical-align: middle; }
 #navigation .icon .img img { display: block; margin: 0 auto; }
 #navigation .links { float: right; height: 100%; width: auto; overflow: hidden; display: table; white-space: nowrap; margin: 0; outline: none; border: none; text-align: right; text-overflow: ellipsis; }

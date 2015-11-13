@@ -35,12 +35,12 @@
 </head>
 <body>
     <div id="navigation">
-        <div class="icon">
+        <div class="icon" data-js-id="frontPageHomeIcon">
             <div class="img">
                 <img src="<%=text(frontPagePath)%>/img/icon.png">
             </div>
         </div>
-        <div class="title">
+        <div class="title" data-js-id="frontPageNavTitle">
             <strong>CAVD</strong>
             <p>DataSpace</p>
         </div>
