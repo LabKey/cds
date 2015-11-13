@@ -30,7 +30,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.app.view.module.StudySites": "../../webapp/Connector/src/app/view/module/StudySites.js",
   "Connector.button.Image": "../../webapp/Connector/src/button/Image.js",
   "Connector.button.InfoButton": "../../webapp/Connector/src/button/RoundedButton.js",
-  "Connector.button.RoundedButton": "../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.component.ActionTitle": "../../webapp/Connector/src/component/ActionTitle.js",
   "Connector.component.AdvancedOptionBase": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionDimension": "../../webapp/Connector/src/component/AdvancedOption.js",
@@ -215,7 +214,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.app.view.module.StudySites": [],
   "Connector.button.Image": [],
   "Connector.button.InfoButton": [],
-  "Connector.button.RoundedButton": [],
   "Connector.component.ActionTitle": [],
   "Connector.component.AdvancedOptionBase": [],
   "Connector.component.AdvancedOptionDimension": [],
@@ -1224,9 +1222,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.button.InfoButton": [
     "widget.infobutton"
-  ],
-  "Connector.button.RoundedButton": [
-    "widget.roundedbutton"
   ],
   "Connector.component.ActionTitle": [
     "widget.actiontitle"

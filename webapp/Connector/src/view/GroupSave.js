@@ -156,7 +156,7 @@ Ext.define('Connector.view.GroupSave', {
                 },{
                     xtype: 'toolbar',
                     dock: 'bottom',
-                    ui: 'footer',
+                    ui: 'lightfooter',
                     style: 'padding-top: 60px',
                     items: ['->',{
                         text: 'Save',
@@ -240,7 +240,7 @@ Ext.define('Connector.view.GroupSave', {
                 },{
                     xtype: 'toolbar',
                     dock: 'bottom',
-                    ui: 'footer',
+                    ui: 'lightfooter',
                     style: 'padding-top: 60px',
                     items: ['->',{
                         text: 'Save',
@@ -368,7 +368,7 @@ Ext.define('Connector.view.GroupSave', {
                 },{
                     xtype: 'toolbar',
                     dock: 'bottom',
-                    ui: 'footer',
+                    ui: 'lightfooter',
                     style: 'padding-top: 60px',
                     items: ['->',{
                         text: 'Save',

@@ -41,7 +41,7 @@ Ext.define('Connector.panel.FilterPanel', {
             this.dockedItems = [{
                 xtype: 'toolbar',
                 dock: 'bottom',
-                ui: 'footer',
+                ui: 'lightfooter',
                 items: this.tbarButtons
             }];
         }

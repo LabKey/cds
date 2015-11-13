@@ -282,7 +282,7 @@ Ext.define('Connector.view.InfoPane', {
         return {
             xtype: 'toolbar',
             dock: 'bottom',
-            ui: 'footer',
+            ui: 'lightfooter',
             items: ['->',
                 {
                     id: 'filtertaskbtn',
