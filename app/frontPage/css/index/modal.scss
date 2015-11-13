@@ -177,9 +177,10 @@ div.video-header {
   background-color: $navigation-pink;
   height: 4px;
   text-align: right;
-  color:white;
+  width: 500px;
+  margin: auto;
+  color: white;
   button.video-close {
     @include modal-close;
-    right: 10%;
   }
 }

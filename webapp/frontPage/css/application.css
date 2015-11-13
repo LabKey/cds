@@ -844,6 +844,8 @@ div.video-header {
   background-color: #ed365e;
   height: 4px;
   text-align: right;
+  width: 500px;
+  margin: auto;
   color: white; }
   div.video-header button.video-close {
     background-color: #ed365e;
@@ -852,8 +854,7 @@ div.video-header {
     height: 1.33em;
     font-size: 1em;
     line-height: 1.33em;
-    color: white;
-    right: 10%; }
+    color: white; }
     div.video-header button.video-close:hover {
       background-color: #dd133f; }
 
@@ -1498,9 +1499,14 @@ div#fp-nav {
 .slimScrollBar {
   opacity: 0 !important; }
 
-#intro-video.video-js, .video-header {
-  width: 80%;
-  margin-left: 10%;
+#intro-video.video-js,
+.video-header {
+  width: 500px;
+  margin: auto;
   height: auto; }
+
+.video-header .mfp-close {
+  position: relative;
+  left: 485px; }
 
 /*# sourceMappingURL=application.css.map */
