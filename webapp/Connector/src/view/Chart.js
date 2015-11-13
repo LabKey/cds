@@ -1482,8 +1482,6 @@ Ext.define('Connector.view.Chart', {
             {
                 console.warn('xAxisClick() occurred without a valid activeMeasures.x');
             }
-
-            this.showMessage('Hold Shift, CTRL, or CMD to select multiple');
         }
     },
 

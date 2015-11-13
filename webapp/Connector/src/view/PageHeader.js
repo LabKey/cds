@@ -27,7 +27,7 @@ Ext.define('Connector.view.PageHeader', {
 
     extend: 'Ext.container.Container',
 
-    alias: 'widget.learnpageheader',
+    alias: 'widget.pageheader',
 
     cls: 'pageheader learnheader header-container-slim',
 
@@ -83,11 +83,16 @@ Ext.define('Connector.view.PageHeader', {
             }
         }
 
-        if (Ext.isDefined(this.dimension) && Ext.isArray(this.dimension.itemDetailTabs)) {
-            this.tabs = this.dimension.itemDetailTabs;
-        }
-        else {
-            this.tabs = undefined;
+        if (!this.tabs)
+        {
+            if (Ext.isDefined(this.dimension) && Ext.isArray(this.dimension.itemDetailTabs))
+            {
+                this.tabs = this.dimension.itemDetailTabs;
+            }
+            else
+            {
+                this.tabs = undefined;
+            }
         }
 
         this.setTabHeader();
@@ -133,13 +138,11 @@ Ext.define('Connector.view.PageHeader', {
             this.items = this.items.concat({
                 xtype: 'container',
                 height: 56,
-                style: 'margin-right: 8px',
                 layout: {
                     type: 'hbox',
                     align: 'middle',
                     defaultMargins: {
-                        right: 3,
-                        left: 3
+                        right: 18
                     }
                 },
                 items: this.buttons

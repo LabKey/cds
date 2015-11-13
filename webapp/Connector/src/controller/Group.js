@@ -26,7 +26,7 @@ Ext.define('Connector.controller.Group', {
             }
         });
 
-        this.control('filterstatus > container > #savegroup', {
+        this.control('filterstatus > container > #savegroup, #editgroupdetails', {
             click : this.onGroupSave
         });
 
@@ -34,11 +34,15 @@ Ext.define('Connector.controller.Group', {
             click : this.doGroupSave
         });
 
+        this.control('#groupeditsave', {
+            click : this.doGroupEdit
+        });
+
         this.control('#groupupdatesave', {
             click : this.doGroupUpdateFromSavePanel
         });
 
-        this.control('#cancelgroupsave, #groupupdatecancel', {
+        this.control('#groupcancel', {
             click : this.onGroupCancel
         });
 
@@ -80,6 +84,7 @@ Ext.define('Connector.controller.Group', {
             state.on('selectionchange', v.onSelectionChange, v);
 
             this.application.on('groupsaved', this.onGroupSaved, this);
+            this.application.on('groupedit', this.onGroupEdit, this);
         }
         else if (xtype == 'groupsummary') {
 
@@ -165,10 +170,12 @@ Ext.define('Connector.controller.Group', {
         this.getApplication().fireEvent('grouploaded', Ext.clone(rec.data), filters);
     },
 
-    doGroupSave : function() {
+    doGroupSave : function()
+    {
         var view = this.getViewManager().getViewInstance('groupsave');
 
-        if (view.isValid()) {
+        if (view.isValid())
+        {
             var values = view.getValues(),
                 state = Connector.getState();
 
@@ -216,6 +223,45 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
+    doGroupEdit : function()
+    {
+        var view = this.getViewManager().getViewInstance('groupsave');
+
+        if (view.isValid())
+        {
+            var values = view.getValues();
+
+            if (!Ext.isDefined(values['groupid']))
+            {
+                Ext.Msg.alert('A group id must be provided!');
+            }
+            else
+            {
+                var me = this;
+
+                var editSuccess = function(group)
+                {
+                    me.application.fireEvent('groupedit', group);
+                    view.reset();
+                    Connector.model.Group.getGroupStore().load();
+                };
+
+                var editFailure = function()
+                {
+                    Ext.Msg.alert('Failed to edit Group');
+                };
+
+                LABKEY.ParticipantGroup.updateParticipantGroup({
+                    rowId: parseInt(values['groupid']),
+                    label: values['groupname'],
+                    description: values['groupdescription'],
+                    success: editSuccess,
+                    failure: editFailure
+                });
+            }
+        }
+    },
+
     doGroupUpdateFromSavePanel : function()
     {
         var view = this.getViewManager().getViewInstance('groupsave');
@@ -252,7 +298,7 @@ Ext.define('Connector.controller.Group', {
                             };
 
                             var updateFailure = function() {
-                                alert('Failed to update Group');
+                                Ext.Msg.alert('Failed to update Group');
                             };
 
                             LABKEY.ParticipantGroup.updateParticipantGroup({
@@ -274,24 +320,46 @@ Ext.define('Connector.controller.Group', {
         this.getViewManager().hideView('groupsave');
     },
 
-    onGroupSave : function() {
+    onGroupSave : function(cmp)
+    {
         this.getViewManager().showView('groupsave');
+        var groupSaveView = this.getViewManager().getViewInstance('groupsave');
+
+        if (cmp && cmp.group)
+        {
+            groupSaveView.editGroup(cmp.group);
+        }
+        else if (groupSaveView.getMode() === Connector.view.GroupSave.modes.EDIT)
+        {
+            groupSaveView.changeMode(Connector.view.GroupSave.modes.CREATE);
+        }
     },
 
-    onGroupSaved : function(grp, filters) {
-
+    _groupEditSave : function(grp, filters, applyFilters)
+    {
         var name = grp.label ? grp.label : grp.category.label;
 
-        Connector.getState().setFilters(filters);
+        if (applyFilters === true)
+        {
+            Connector.getState().setFilters(filters);
+        }
         this.getViewManager().hideView('groupsave');
 
         var fsview = this.getViewManager().getViewInstance('filterstatus');
-        if (fsview) {
+        if (fsview)
+        {
             fsview.showMessage('Group \"' + Ext.String.ellipsis(name, 15, true) + '\" saved.', true);
         }
-        else {
-            console.warn('no filterstatus view available');
-        }
+    },
+
+    onGroupSaved : function(grp, filters)
+    {
+        this._groupEditSave(grp, filters, true);
+    },
+
+    onGroupEdit : function(grp)
+    {
+        this._groupEditSave(grp);
     },
 
     doGroupDelete : function(config) {

@@ -76,8 +76,8 @@ Ext.define('Connector.controller.Learn', {
             scope: this
         });
 
-        this.control('learnpageheader', {
-            // NOTE: This is a generic back handler for learnpageheader. Other views use this class so this
+        this.control('pageheader', {
+            // NOTE: This is a generic back handler for pageheader. Other views use this class so this
             // just assists in sending the link to changeView().
             upclick : function(link) {
                 // TODO: It would nice if we could go 'back' when we know the previous page was 'learn/learn/[dim.name]'

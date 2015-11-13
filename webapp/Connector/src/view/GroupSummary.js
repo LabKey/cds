@@ -46,7 +46,7 @@ Ext.define('Connector.view.GroupSummary', {
         }
         else
         {
-            this.store.on('load', this.loadGroup, this, {single: true});
+            this.store.on('load', this.loadGroup, this);
         }
     },
 
@@ -64,11 +64,18 @@ Ext.define('Connector.view.GroupSummary', {
     loadGroup : function()
     {
         this.group = this._getActiveGroup();
-        this.removeAll();
-        this.add([this.generateHeader(this.group), this.generateBody(this.group)]);
-        this.doLayout();
+        if (this.group)
+        {
+            this.removeAll();
+            this.add([this.generateHeader(this.group), this.generateBody(this.group)]);
+            this.doLayout();
 
-        this.requestFilterChange();
+            this.requestFilterChange();
+        }
+        else
+        {
+            Connector.getApplication().getController('Connector').showNotFound();
+        }
     },
 
     showFiltersMessage: function()
@@ -113,7 +120,16 @@ Ext.define('Connector.view.GroupSummary', {
             upLink: {
                 controller: 'home'
             },
+            tabs: [{
+                label: 'Details'
+            }],
             buttons: [{
+                xtype: 'button',
+                text: 'Edit details',
+                ui: 'linked',
+                itemId: 'editgroupdetails',
+                group: group
+            },{
                 xtype: 'button',
                 text: 'Delete',
                 ui: 'linked',
@@ -161,15 +177,7 @@ Ext.define('Connector.view.GroupSummary', {
             this.groupId = id;
         }
 
-        idx = this.store.find('id', this.groupId, false, true, true);
-
-        if (idx > -1) {
-            this.group = this.store.getAt(idx);
-            this.loadGroup();
-        }
-        else {
-            console.log('group not found, throw not found.');
-        }
+        this.loadGroup();
     },
 
     getGroup : function()
@@ -276,7 +284,6 @@ Ext.define('Connector.view.GroupSummaryBody', {
             xtype: 'displayfield',
             itemId: 'descDisplay',
             margin: '10 0 20 0',
-            bodyPadding: 10,
             width: '50%',
             htmlEncode: true,
             value: this._getDescription(this.group)

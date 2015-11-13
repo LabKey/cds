@@ -354,10 +354,6 @@ Ext.define('Connector.controller.Explorer', {
             //
             state.removePrivateSelection(Connector.controller.Explorer.HOVER_FILTER);
             state.setSelections([selection]);
-            var v = this.getViewManager().getViewInstance('singleaxis');
-            if (v) {
-                v.saview.showMessage('Hold Shift, CTRL, or CMD to select multiple');
-            }
 
         }, this);
     }
