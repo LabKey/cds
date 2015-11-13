@@ -16,19 +16,24 @@
 
 package org.labkey.cds;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerManager;
+import org.labkey.api.data.PropertyManager;
 import org.labkey.api.module.DefaultModule;
 import org.labkey.api.module.ModuleContext;
 import org.labkey.api.module.ModuleProperty;
 import org.labkey.api.security.AuthenticationManager;
+import org.labkey.api.util.Path;
 import org.labkey.api.view.BaseWebPartFactory;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.Portal;
 import org.labkey.api.view.ViewContext;
 import org.labkey.api.view.WebPartFactory;
 import org.labkey.api.view.WebPartView;
+import org.labkey.api.webdav.WebdavService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,12 +44,28 @@ public class CDSModule extends DefaultModule
 {
     public static String NAME = "CDS";
 
+    final ModuleProperty _showHiddenVariables;
+    final ModuleProperty _blogPath;
+    final ModuleProperty _staticPath;
+
     public CDSModule()
     {
-        ModuleProperty mp = new ModuleProperty(this, "ShowHiddenVariables");
-        mp.setDescription("If 'true', show all variables (including hidden) in the variable selector in devMode.");
-        mp.setCanSetPerContainer(true);
-        addModuleProperty(mp);
+        _showHiddenVariables = new ModuleProperty(this, "ShowHiddenVariables");
+        _showHiddenVariables.setDescription("If 'true', show all variables (including hidden) in the variable selector in devMode.");
+        _showHiddenVariables.setCanSetPerContainer(true);
+        addModuleProperty(_showHiddenVariables);
+
+        _blogPath = new ModuleProperty(this, "BlogPath");
+        _blogPath.setDescription("Full webdav path to which the short-cut '/blog/' will point");
+        _blogPath.setCanSetPerContainer(false);
+        addModuleProperty(_blogPath);
+
+        _staticPath = new ModuleProperty(this, "StaticPath");
+        _staticPath.setDescription("Full webdav path to which the short-cut '/static/' will point");
+        _staticPath.setCanSetPerContainer(false);
+        addModuleProperty(_staticPath);
+
+        // TODO would be nice to have a addPropertyChangeListener()
     }
 
     public String getName()
@@ -91,6 +112,55 @@ public class CDSModule extends DefaultModule
     {
         // add a container listener so we'll know when our container is deleted:
         ContainerManager.addContainerListener(new CDSContainerListener());
+        ensureShortcuts();
+    }
+
+    // this is a silly hack, but since I don't have addPropertyChangeLister()...
+    // keep previous value so I can see if I need to change the setting
+    String lastStaticPath = "";
+    String lastBlogPath = "";
+
+    public synchronized void ensureShortcuts()
+    {
+        String staticPath = getSitePropertyValue(_staticPath);
+        if (!StringUtils.equals(lastStaticPath,staticPath))
+        {
+            updateShortcut("/static/", staticPath);
+            lastStaticPath = staticPath;
+        }
+
+        String blogPath = getSitePropertyValue(_blogPath);
+        if (!StringUtils.equals(lastBlogPath,blogPath))
+        {
+            updateShortcut("/blog/", blogPath);
+            lastBlogPath = blogPath;
+        }
+    }
+
+    private void updateShortcut(String from, String to)
+    {
+        try
+        {
+            WebdavService.get().removeLink(Path.parse(from));
+        }
+        catch (IllegalArgumentException x)
+        {
+        }
+        try
+        {
+            if (StringUtils.isNotEmpty(to) && 0 < Path.parse(to).size())
+                WebdavService.get().addLink(Path.parse(from), Path.parse(to), "index.html");
+        }
+        catch (IllegalArgumentException x)
+        {
+            Logger.getLogger(CDSModule.class).warn("Could not create shortcut from '" + from + "' to '" + to + "'.");
+        }
+    }
+
+
+    String getSitePropertyValue(ModuleProperty mp)
+    {
+        return PropertyManager.getProperty(PropertyManager.SHARED_USER,ContainerManager.getRoot(),mp.getCategory(),mp.getName());
     }
 
 

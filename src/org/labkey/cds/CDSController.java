@@ -40,6 +40,8 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
+import org.labkey.api.module.Module;
+import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.rss.RSSFeed;
@@ -60,6 +62,7 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -90,6 +93,13 @@ public class CDSController extends SpringActionController
     public CDSController()
     {
         setActionResolver(_actionResolver);
+    }
+
+    @Override
+    protected void beforeAction(Controller action)
+    {
+        Module cds = ModuleLoader.getInstance().getModule("cds");
+        ((CDSModule)cds).ensureShortcuts();
     }
 
     @RequiresPermission(ReadPermission.class)
