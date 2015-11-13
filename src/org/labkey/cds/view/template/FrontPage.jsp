@@ -4,7 +4,7 @@
 <%
     String contextPath = request.getContextPath();
     String appPath = contextPath + "/Connector";
-    String frontPagePath = appPath + "/frontPage";
+    String frontPagePath = contextPath + "/frontPage";
 %>
 <!DOCTYPE html>
 <html lang="en">

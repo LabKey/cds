@@ -304,7 +304,8 @@ img.gif {
   animation-fill-mode: forwards; }
 
 html {
-  box-sizing: border-box; }
+  box-sizing: border-box; 
+}
 
 *, *::after, *::before {
   box-sizing: inherit; }
@@ -564,6 +565,7 @@ html {
         display: block;
         margin: 0 auto; }
   #navigation .links {
+    width: auto;
     float: right;
     height: 100%;
     overflow: hidden;
@@ -1408,4 +1410,3 @@ div#fp-nav {
   position: relative;
   left: 485px;
 }
-

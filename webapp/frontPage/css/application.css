@@ -4,62 +4,46 @@ html {
 *, *::after, *::before {
   box-sizing: inherit; }
 
-@-webkit-keyframes fadeout {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-moz-keyframes fadeout {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-o-keyframes fadeout {
+@-o-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@keyframes fadeout {
+@keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-webkit-keyframes fadein {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-moz-keyframes fadein {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-o-keyframes fadein {
+@-o-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@keyframes fadein {
+@keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
 .fadein {
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
@@ -133,7 +117,7 @@ div.links {
   text-overflow: ellipsis;
   padding: 0em 2em;
   margin: 2em 0em 2.67em 0em; }
-  div.links a, div.links input[type="submit"], div.links input[type="button"], div.links span {
+  div.links a, div.links input[type="submit"], div.links span {
     display: inline-block;
     width: 10.67em;
     padding: 0.42em;
@@ -203,62 +187,46 @@ img.gif {
     line-height: 4em;
     top: 50%; }
 
-@-webkit-keyframes fadeout {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-moz-keyframes fadeout {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-o-keyframes fadeout {
+@-o-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@keyframes fadeout {
+@keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-webkit-keyframes fadein {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-moz-keyframes fadein {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-o-keyframes fadein {
+@-o-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@keyframes fadein {
+@keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
 .fadein {
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
@@ -309,62 +277,46 @@ html {
 *, *::after, *::before {
   box-sizing: inherit; }
 
-@-webkit-keyframes fadeout {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-moz-keyframes fadeout {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-o-keyframes fadeout {
+@-o-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@keyframes fadeout {
+@keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-webkit-keyframes fadein {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-moz-keyframes fadein {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-o-keyframes fadein {
+@-o-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@keyframes fadein {
+@keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
 .fadein {
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
@@ -418,62 +370,46 @@ html {
     content: "";
     display: table; }
 
-@-webkit-keyframes fadeout {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-moz-keyframes fadeout {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-o-keyframes fadeout {
+@-o-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@keyframes fadeout {
+@keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-webkit-keyframes fadein {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-moz-keyframes fadein {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-o-keyframes fadein {
+@-o-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@keyframes fadein {
+@keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
 .fadein {
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
@@ -592,62 +528,46 @@ html {
   #navigation span {
     width: auto; }
 
-@-webkit-keyframes fadeout {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-moz-keyframes fadeout {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-o-keyframes fadeout {
+@-o-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@keyframes fadeout {
+@keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-webkit-keyframes fadein {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-moz-keyframes fadein {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-o-keyframes fadein {
+@-o-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@keyframes fadein {
+@keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
 .fadein {
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
@@ -692,7 +612,9 @@ html {
   -o-animation-fill-mode: forwards;
   animation-fill-mode: forwards; }
 
-.signin-modal, .create-new-password-modal, .create-account-modal {
+.signin-modal,
+.create-new-password-modal,
+.create-account-modal {
   position: relative;
   overflow: hidden;
   background: #f5f5f5;
@@ -701,32 +623,46 @@ html {
   max-width: 620px;
   min-height: 100%;
   padding: 2.66em 2em 2em 2em; }
-  .signin-modal .border, .create-new-password-modal .border, .create-account-modal .border {
+  .signin-modal .border,
+  .create-new-password-modal .border,
+  .create-account-modal .border {
     position: absolute;
     top: 0;
     left: 0;
     height: 4px;
     width: 100%;
     background-color: #ed365e; }
-  .signin-modal .title, .create-new-password-modal .title, .create-account-modal .title {
+  .signin-modal .title,
+  .create-new-password-modal .title,
+  .create-account-modal .title {
     margin: 0em 0em 2.66em 0em; }
-    .signin-modal .title h1, .create-new-password-modal .title h1, .create-account-modal .title h1 {
+    .signin-modal .title h1,
+    .create-new-password-modal .title h1,
+    .create-account-modal .title h1 {
       margin: 0;
       font-size: 2.34em;
       font-family: "Georgia";
       font-weight: 100;
       color: #2d2d2d; }
-  .signin-modal .notifications, .create-new-password-modal .notifications, .create-account-modal .notifications {
+  .signin-modal .notifications,
+  .create-new-password-modal .notifications,
+  .create-account-modal .notifications {
     display: block;
     overflow: hidden;
     margin: 0em 0em 2.66em 0em; }
-    .signin-modal .notifications p, .create-new-password-modal .notifications p, .create-account-modal .notifications p {
+    .signin-modal .notifications p,
+    .create-new-password-modal .notifications p,
+    .create-account-modal .notifications p {
       margin: 0;
       color: #ed365e; }
-    .signin-modal .notifications span, .create-new-password-modal .notifications span, .create-account-modal .notifications span {
+    .signin-modal .notifications span,
+    .create-new-password-modal .notifications span,
+    .create-account-modal .notifications span {
       margin: 0;
       color: #2d2d2d; }
-  .signin-modal button.mfp-close, .create-new-password-modal button.mfp-close, .create-account-modal button.mfp-close {
+  .signin-modal button.mfp-close,
+  .create-new-password-modal button.mfp-close,
+  .create-account-modal button.mfp-close {
     background-color: #ed365e;
     width: 1.33em;
     opacity: 1;
@@ -734,19 +670,31 @@ html {
     font-size: 1em;
     line-height: 1.33em;
     color: white; }
-    .signin-modal button.mfp-close:hover, .create-new-password-modal button.mfp-close:hover, .create-account-modal button.mfp-close:hover {
+    .signin-modal button.mfp-close:hover,
+    .create-new-password-modal button.mfp-close:hover,
+    .create-account-modal button.mfp-close:hover {
       background-color: #dd133f; }
-  .signin-modal .form .credentials, .create-new-password-modal .form .credentials, .create-account-modal .form .credentials {
+  .signin-modal .form .credentials,
+  .create-new-password-modal .form .credentials,
+  .create-account-modal .form .credentials {
     margin-bottom: 2.66em; }
-    .signin-modal .form .credentials .checkbox, .create-new-password-modal .form .credentials .checkbox, .create-account-modal .form .credentials .checkbox {
+    .signin-modal .form .credentials .checkbox,
+    .create-new-password-modal .form .credentials .checkbox,
+    .create-account-modal .form .credentials .checkbox {
       margin-top: 1em; }
-  .signin-modal .form .checkbox, .create-new-password-modal .form .checkbox, .create-account-modal .form .checkbox {
+  .signin-modal .form .checkbox,
+  .create-new-password-modal .form .checkbox,
+  .create-account-modal .form .checkbox {
     display: block;
     padding-bottom: 0.5em;
     position: relative; }
-    .signin-modal .form .checkbox input, .create-new-password-modal .form .checkbox input, .create-account-modal .form .checkbox input {
+    .signin-modal .form .checkbox input,
+    .create-new-password-modal .form .checkbox input,
+    .create-account-modal .form .checkbox input {
       margin-right: 0.75em; }
-    .signin-modal .form .checkbox label, .create-new-password-modal .form .checkbox label, .create-account-modal .form .checkbox label {
+    .signin-modal .form .checkbox label,
+    .create-new-password-modal .form .checkbox label,
+    .create-account-modal .form .checkbox label {
       position: relative;
       left: 2em;
       padding-right: 2em;
@@ -755,7 +703,9 @@ html {
       font-weight: 100;
       color: #2d2d2d;
       line-height: 1.5em; }
-  .signin-modal .form a.expand-tos, .create-new-password-modal .form a.expand-tos, .create-account-modal .form a.expand-tos {
+  .signin-modal .form a.expand-tos,
+  .create-new-password-modal .form a.expand-tos,
+  .create-account-modal .form a.expand-tos {
     display: block;
     text-decoration: none;
     margin-left: 2em;
@@ -763,10 +713,14 @@ html {
     font-family: "Arial";
     font-weight: 100;
     color: #2d2d2d; }
-    .signin-modal .form a.expand-tos .highlight, .create-new-password-modal .form a.expand-tos .highlight, .create-account-modal .form a.expand-tos .highlight {
+    .signin-modal .form a.expand-tos .highlight,
+    .create-new-password-modal .form a.expand-tos .highlight,
+    .create-account-modal .form a.expand-tos .highlight {
       color: #ed365e;
       padding-left: 0.3em; }
-  .signin-modal .form div.terms-of-service, .create-new-password-modal .form div.terms-of-service, .create-account-modal .form div.terms-of-service {
+  .signin-modal .form div.terms-of-service,
+  .create-new-password-modal .form div.terms-of-service,
+  .create-account-modal .form div.terms-of-service {
     height: 0em;
     overflow: hidden;
     display: block;
@@ -775,15 +729,21 @@ html {
     -o-transition: 0.5s;
     -webkit-transition: 0.5s;
     transition: 0.5s; }
-    .signin-modal .form div.terms-of-service.open, .create-new-password-modal .form div.terms-of-service.open, .create-account-modal .form div.terms-of-service.open {
+    .signin-modal .form div.terms-of-service.open,
+    .create-new-password-modal .form div.terms-of-service.open,
+    .create-account-modal .form div.terms-of-service.open {
       height: 20em;
       overflow-y: scroll;
       overflow-x: hidden;
       margin-bottom: 2em;
       padding: 2em; }
-  .signin-modal .form span.agree, .create-new-password-modal .form span.agree, .create-account-modal .form span.agree {
+  .signin-modal .form span.agree,
+  .create-new-password-modal .form span.agree,
+  .create-account-modal .form span.agree {
     margin-left: 2em; }
-  .signin-modal .form input, .create-new-password-modal .form input, .create-account-modal .form input {
+  .signin-modal .form input,
+  .create-new-password-modal .form input,
+  .create-account-modal .form input {
     width: 49%;
     padding: 0.5em;
     font-size: 1em;
@@ -792,40 +752,76 @@ html {
     font-weight: 100;
     color: #2d2d2d; }
     @media only screen and (max-width: 480px) {
-      .signin-modal .form input, .create-new-password-modal .form input, .create-account-modal .form input {
+      .signin-modal .form input,
+      .create-new-password-modal .form input,
+      .create-account-modal .form input {
         width: 100%; }
-        .signin-modal .form input:first-child, .create-new-password-modal .form input:first-child, .create-account-modal .form input:first-child {
+        .signin-modal .form input:first-child,
+        .create-new-password-modal .form input:first-child,
+        .create-account-modal .form input:first-child {
           margin-bottom: 0.5em; } }
-  .signin-modal .form input[type=checkbox], .create-new-password-modal .form input[type=checkbox], .create-account-modal .form input[type=checkbox] {
+  .signin-modal .form input[type=checkbox],
+  .create-new-password-modal .form input[type=checkbox],
+  .create-account-modal .form input[type=checkbox] {
     width: auto;
     position: absolute; }
-  .signin-modal .links, .create-new-password-modal .links, .create-account-modal .links {
+  .signin-modal .links,
+  .create-new-password-modal .links,
+  .create-account-modal .links {
     margin: 2.66em 0em 0em 0em;
     padding-right: 0em; }
-    .signin-modal .links a, .create-new-password-modal .links a, .create-account-modal .links a {
+    .signin-modal .links a,
+    .create-new-password-modal .links a,
+    .create-account-modal .links a {
       border: 1px solid #dcdcdc; }
-    .signin-modal .links a.help, .signin-modal .links a.dismiss, .create-new-password-modal .links a.help, .create-new-password-modal .links a.dismiss, .create-account-modal .links a.help, .create-account-modal .links a.dismiss {
+    .signin-modal .links a.help, .signin-modal .links a.dismiss,
+    .create-new-password-modal .links a.help,
+    .create-new-password-modal .links a.dismiss,
+    .create-account-modal .links a.help,
+    .create-account-modal .links a.dismiss {
       color: #2d2d2d; }
-      .signin-modal .links a.help:hover, .signin-modal .links a.dismiss:hover, .create-new-password-modal .links a.help:hover, .create-new-password-modal .links a.dismiss:hover, .create-account-modal .links a.help:hover, .create-account-modal .links a.dismiss:hover {
+      .signin-modal .links a.help:hover, .signin-modal .links a.dismiss:hover,
+      .create-new-password-modal .links a.help:hover,
+      .create-new-password-modal .links a.dismiss:hover,
+      .create-account-modal .links a.help:hover,
+      .create-account-modal .links a.dismiss:hover {
         background-color: rgba(0, 0, 0, 0.15); }
-    .signin-modal .links input.confirm, .signin-modal .links a.confirm, .create-new-password-modal .links input.confirm, .create-new-password-modal .links a.confirm, .create-account-modal .links input.confirm, .create-account-modal .links a.confirm {
+    .signin-modal .links input.confirm, .signin-modal .links a.confirm,
+    .create-new-password-modal .links input.confirm,
+    .create-new-password-modal .links a.confirm,
+    .create-account-modal .links input.confirm,
+    .create-account-modal .links a.confirm {
       color: white;
       border: 1px solid #ed365e;
       background-color: #ed365e;
       -webkit-appearance: none;
       cursor: pointer; }
-      .signin-modal .links input.confirm:hover, .signin-modal .links a.confirm:hover, .create-new-password-modal .links input.confirm:hover, .create-new-password-modal .links a.confirm:hover, .create-account-modal .links input.confirm:hover, .create-account-modal .links a.confirm:hover {
+      .signin-modal .links input.confirm:hover, .signin-modal .links a.confirm:hover,
+      .create-new-password-modal .links input.confirm:hover,
+      .create-new-password-modal .links a.confirm:hover,
+      .create-account-modal .links input.confirm:hover,
+      .create-account-modal .links a.confirm:hover {
         background-color: #dd133f; }
     @media only screen and (max-width: 480px) {
-      .signin-modal .links, .create-new-password-modal .links, .create-account-modal .links {
+      .signin-modal .links,
+      .create-new-password-modal .links,
+      .create-account-modal .links {
         padding: 0; }
-        .signin-modal .links a, .signin-modal .links input[type=submit], .create-new-password-modal .links a, .create-new-password-modal .links input[type=submit], .create-account-modal .links a, .create-account-modal .links input[type=submit] {
+        .signin-modal .links a, .signin-modal .links input[type=submit],
+        .create-new-password-modal .links a,
+        .create-new-password-modal .links input[type=submit],
+        .create-account-modal .links a,
+        .create-account-modal .links input[type=submit] {
           width: 48%;
           margin: auto 1%; } }
-  .signin-modal .password-requirements, .create-new-password-modal .password-requirements, .create-account-modal .password-requirements {
+  .signin-modal .password-requirements,
+  .create-new-password-modal .password-requirements,
+  .create-account-modal .password-requirements {
     padding-bottom: 1em;
     display: block; }
-  .signin-modal .sign-in-help .reset, .create-new-password-modal .sign-in-help .reset, .create-account-modal .sign-in-help .reset {
+  .signin-modal .sign-in-help .reset,
+  .create-new-password-modal .sign-in-help .reset,
+  .create-account-modal .sign-in-help .reset {
     padding-bottom: 1em;
     display: block; }
 
@@ -836,8 +832,6 @@ div.video-header {
   background-color: #ed365e;
   height: 4px;
   text-align: right;
-  width: 500px;
-  margin: auto;
   color: white; }
   div.video-header button.video-close {
     background-color: #ed365e;
@@ -846,66 +840,51 @@ div.video-header {
     height: 1.33em;
     font-size: 1em;
     line-height: 1.33em;
-    color: white; }
+    color: white;
+    right: 10%; }
     div.video-header button.video-close:hover {
       background-color: #dd133f; }
 
-@-webkit-keyframes fadeout {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-moz-keyframes fadeout {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-o-keyframes fadeout {
+@-o-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@keyframes fadeout {
+@keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-webkit-keyframes fadein {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-moz-keyframes fadein {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-o-keyframes fadein {
+@-o-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@keyframes fadein {
+@keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
 .fadein {
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
@@ -1033,7 +1012,7 @@ div.video-header {
       margin: -1.33em auto;
       border: 1.33em solid white;
       background-color: #F2F2F2;
-      /*background-image: url("/img/intro.png");*/
+      background-image: url("/img/intro.png");
       background-size: contain;
       outline: none; }
       @media only screen and (max-width: 480px) {
@@ -1054,7 +1033,7 @@ div.video-header {
       -moz-border-radius: 50%;
       border-radius: 50%; }
       .section.intro-section .video-container .play:after {
-        content: "\25B6";
+        content: "\e001";
         font-family: VideoJS;
         line-height: 4em;
         text-shadow: .05em .05em .1em #000;
@@ -1170,154 +1149,262 @@ div.video-header {
         font-weight: 100;
         color: #2d2d2d; }
 
-.section.collab-section .gif-container img, .section.explore-section .gif-container img, .section.learn-section .gif-container img {
+.section.collab-section .gif-container img,
+.section.explore-section .gif-container img,
+.section.learn-section .gif-container img {
   padding: 0; }
-.section.collab-section .gif-container img.mobile-img, .section.explore-section .gif-container img.mobile-img, .section.learn-section .gif-container img.mobile-img {
+.section.collab-section .gif-container img.mobile-img,
+.section.explore-section .gif-container img.mobile-img,
+.section.learn-section .gif-container img.mobile-img {
   opacity: 0;
   position: absolute;
   top: 0;
   left: 0; }
 
-.section.goal-section, .section.about-section, .section.explore-section, .section.collab-section, .section.learn-section {
+.section.goal-section,
+.section.about-section,
+.section.explore-section,
+.section.collab-section,
+.section.learn-section {
   text-align: center; }
-  .section.goal-section .goal-container, .section.goal-section .about-container, .section.about-section .goal-container, .section.about-section .about-container, .section.explore-section .goal-container, .section.explore-section .about-container, .section.collab-section .goal-container, .section.collab-section .about-container, .section.learn-section .goal-container, .section.learn-section .about-container {
+  .section.goal-section .goal-container, .section.goal-section .about-container,
+  .section.about-section .goal-container,
+  .section.about-section .about-container,
+  .section.explore-section .goal-container,
+  .section.explore-section .about-container,
+  .section.collab-section .goal-container,
+  .section.collab-section .about-container,
+  .section.learn-section .goal-container,
+  .section.learn-section .about-container {
     margin: 1.83em 0em 1.833em 0em; }
-    .section.goal-section .goal-container .title, .section.goal-section .about-container .title, .section.about-section .goal-container .title, .section.about-section .about-container .title, .section.explore-section .goal-container .title, .section.explore-section .about-container .title, .section.collab-section .goal-container .title, .section.collab-section .about-container .title, .section.learn-section .goal-container .title, .section.learn-section .about-container .title {
+    .section.goal-section .goal-container .title, .section.goal-section .about-container .title,
+    .section.about-section .goal-container .title,
+    .section.about-section .about-container .title,
+    .section.explore-section .goal-container .title,
+    .section.explore-section .about-container .title,
+    .section.collab-section .goal-container .title,
+    .section.collab-section .about-container .title,
+    .section.learn-section .goal-container .title,
+    .section.learn-section .about-container .title {
       padding: 0em 0em 6.5em 0em; }
-      .section.goal-section .goal-container .title h1, .section.goal-section .about-container .title h1, .section.about-section .goal-container .title h1, .section.about-section .about-container .title h1, .section.explore-section .goal-container .title h1, .section.explore-section .about-container .title h1, .section.collab-section .goal-container .title h1, .section.collab-section .about-container .title h1, .section.learn-section .goal-container .title h1, .section.learn-section .about-container .title h1 {
+      .section.goal-section .goal-container .title h1, .section.goal-section .about-container .title h1,
+      .section.about-section .goal-container .title h1,
+      .section.about-section .about-container .title h1,
+      .section.explore-section .goal-container .title h1,
+      .section.explore-section .about-container .title h1,
+      .section.collab-section .goal-container .title h1,
+      .section.collab-section .about-container .title h1,
+      .section.learn-section .goal-container .title h1,
+      .section.learn-section .about-container .title h1 {
         margin: 0;
         font-family: "Georgia";
         font-weight: 100;
         color: #2d2d2d;
         font-size: 3.011em; }
-    .section.goal-section .goal-container .copy p, .section.goal-section .about-container .copy p, .section.about-section .goal-container .copy p, .section.about-section .about-container .copy p, .section.explore-section .goal-container .copy p, .section.explore-section .about-container .copy p, .section.collab-section .goal-container .copy p, .section.collab-section .about-container .copy p, .section.learn-section .goal-container .copy p, .section.learn-section .about-container .copy p {
+    .section.goal-section .goal-container .copy p, .section.goal-section .about-container .copy p,
+    .section.about-section .goal-container .copy p,
+    .section.about-section .about-container .copy p,
+    .section.explore-section .goal-container .copy p,
+    .section.explore-section .about-container .copy p,
+    .section.collab-section .goal-container .copy p,
+    .section.collab-section .about-container .copy p,
+    .section.learn-section .goal-container .copy p,
+    .section.learn-section .about-container .copy p {
       margin: 0;
       font-size: 1.5em;
       font-family: "Georgia";
       font-weight: 100;
       color: #2d2d2d; }
-    .section.goal-section .goal-container .copy a, .section.goal-section .about-container .copy a, .section.about-section .goal-container .copy a, .section.about-section .about-container .copy a, .section.explore-section .goal-container .copy a, .section.explore-section .about-container .copy a, .section.collab-section .goal-container .copy a, .section.collab-section .about-container .copy a, .section.learn-section .goal-container .copy a, .section.learn-section .about-container .copy a {
+    .section.goal-section .goal-container .copy a, .section.goal-section .about-container .copy a,
+    .section.about-section .goal-container .copy a,
+    .section.about-section .about-container .copy a,
+    .section.explore-section .goal-container .copy a,
+    .section.explore-section .about-container .copy a,
+    .section.collab-section .goal-container .copy a,
+    .section.collab-section .about-container .copy a,
+    .section.learn-section .goal-container .copy a,
+    .section.learn-section .about-container .copy a {
       text-decoration: none;
       font-family: "Georgia";
       font-weight: 100;
       color: #2d2d2d;
       color: #ed365e; }
     @media only screen and (max-width: 700px) {
-      .section.goal-section .goal-container .copy br, .section.goal-section .about-container .copy br, .section.about-section .goal-container .copy br, .section.about-section .about-container .copy br, .section.explore-section .goal-container .copy br, .section.explore-section .about-container .copy br, .section.collab-section .goal-container .copy br, .section.collab-section .about-container .copy br, .section.learn-section .goal-container .copy br, .section.learn-section .about-container .copy br {
+      .section.goal-section .goal-container .copy br, .section.goal-section .about-container .copy br,
+      .section.about-section .goal-container .copy br,
+      .section.about-section .about-container .copy br,
+      .section.explore-section .goal-container .copy br,
+      .section.explore-section .about-container .copy br,
+      .section.collab-section .goal-container .copy br,
+      .section.collab-section .about-container .copy br,
+      .section.learn-section .goal-container .copy br,
+      .section.learn-section .about-container .copy br {
         display: none; } }
   @media only screen and (max-width: 480px) {
-    .section.goal-section .circle, .section.about-section .circle, .section.explore-section .circle, .section.collab-section .circle, .section.learn-section .circle {
+    .section.goal-section .circle,
+    .section.about-section .circle,
+    .section.explore-section .circle,
+    .section.collab-section .circle,
+    .section.learn-section .circle {
       height: 0px;
       width: 0px;
       opacity: 0;
       margin: 2em 0em 0em 0em;
       display: none; } }
   @media only screen and (max-width: 700px) {
-    .section.goal-section .goal-container .copy p, .section.about-section .goal-container .copy p, .section.explore-section .goal-container .copy p, .section.collab-section .goal-container .copy p, .section.learn-section .goal-container .copy p {
+    .section.goal-section .goal-container .copy p,
+    .section.about-section .goal-container .copy p,
+    .section.explore-section .goal-container .copy p,
+    .section.collab-section .goal-container .copy p,
+    .section.learn-section .goal-container .copy p {
       padding-bottom: 2em; } }
-  .section.goal-section .about-container, .section.about-section .about-container, .section.explore-section .about-container, .section.collab-section .about-container, .section.learn-section .about-container {
+  .section.goal-section .about-container,
+  .section.about-section .about-container,
+  .section.explore-section .about-container,
+  .section.collab-section .about-container,
+  .section.learn-section .about-container {
     margin-bottom: 3em; }
-    .section.goal-section .about-container .title, .section.about-section .about-container .title, .section.explore-section .about-container .title, .section.collab-section .about-container .title, .section.learn-section .about-container .title {
+    .section.goal-section .about-container .title,
+    .section.about-section .about-container .title,
+    .section.explore-section .about-container .title,
+    .section.collab-section .about-container .title,
+    .section.learn-section .about-container .title {
       padding-bottom: 5.33em; }
-    .section.goal-section .about-container .copy, .section.about-section .about-container .copy, .section.explore-section .about-container .copy, .section.collab-section .about-container .copy, .section.learn-section .about-container .copy {
+    .section.goal-section .about-container .copy,
+    .section.about-section .about-container .copy,
+    .section.explore-section .about-container .copy,
+    .section.collab-section .about-container .copy,
+    .section.learn-section .about-container .copy {
       padding-bottom: 5.33em; }
-      .section.goal-section .about-container .copy a:hover, .section.about-section .about-container .copy a:hover, .section.explore-section .about-container .copy a:hover, .section.collab-section .about-container .copy a:hover, .section.learn-section .about-container .copy a:hover {
+      .section.goal-section .about-container .copy a:hover,
+      .section.about-section .about-container .copy a:hover,
+      .section.explore-section .about-container .copy a:hover,
+      .section.collab-section .about-container .copy a:hover,
+      .section.learn-section .about-container .copy a:hover {
         color: #dd133f; }
-    .section.goal-section .about-container .links, .section.about-section .about-container .links, .section.explore-section .about-container .links, .section.collab-section .about-container .links, .section.learn-section .about-container .links {
+    .section.goal-section .about-container .links,
+    .section.about-section .about-container .links,
+    .section.explore-section .about-container .links,
+    .section.collab-section .about-container .links,
+    .section.learn-section .about-container .links {
       margin: 0;
       text-align: center; }
-      .section.goal-section .about-container .links a.contact, .section.about-section .about-container .links a.contact, .section.explore-section .about-container .links a.contact, .section.collab-section .about-container .links a.contact, .section.learn-section .about-container .links a.contact {
+      .section.goal-section .about-container .links a.contact,
+      .section.about-section .about-container .links a.contact,
+      .section.explore-section .about-container .links a.contact,
+      .section.collab-section .about-container .links a.contact,
+      .section.learn-section .about-container .links a.contact {
         background-color: #2d2d2d; }
-      .section.goal-section .about-container .links.sign-in, .section.about-section .about-container .links.sign-in, .section.explore-section .about-container .links.sign-in, .section.collab-section .about-container .links.sign-in, .section.learn-section .about-container .links.sign-in {
+      .section.goal-section .about-container .links.sign-in,
+      .section.about-section .about-container .links.sign-in,
+      .section.explore-section .about-container .links.sign-in,
+      .section.collab-section .about-container .links.sign-in,
+      .section.learn-section .about-container .links.sign-in {
         margin-top: 3.011em; }
-        .section.goal-section .about-container .links.sign-in span, .section.about-section .about-container .links.sign-in span, .section.explore-section .about-container .links.sign-in span, .section.collab-section .about-container .links.sign-in span, .section.learn-section .about-container .links.sign-in span {
+        .section.goal-section .about-container .links.sign-in span,
+        .section.about-section .about-container .links.sign-in span,
+        .section.explore-section .about-container .links.sign-in span,
+        .section.collab-section .about-container .links.sign-in span,
+        .section.learn-section .about-container .links.sign-in span {
           display: block;
           background-color: transparent;
           color: #6e6e6e;
           width: auto;
           margin-bottom: 0.5em; }
-  .section.goal-section .gif-title, .section.about-section .gif-title, .section.explore-section .gif-title, .section.collab-section .gif-title, .section.learn-section .gif-title {
+  .section.goal-section .gif-title,
+  .section.about-section .gif-title,
+  .section.explore-section .gif-title,
+  .section.collab-section .gif-title,
+  .section.learn-section .gif-title {
     margin: 1.833em auto 5.33em auto; }
-    .section.goal-section .gif-title h1, .section.about-section .gif-title h1, .section.explore-section .gif-title h1, .section.collab-section .gif-title h1, .section.learn-section .gif-title h1 {
+    .section.goal-section .gif-title h1,
+    .section.about-section .gif-title h1,
+    .section.explore-section .gif-title h1,
+    .section.collab-section .gif-title h1,
+    .section.learn-section .gif-title h1 {
       margin: 0;
       font-family: "Georgia";
       font-weight: 100;
       color: #2d2d2d;
       font-size: 3.011em; }
-  .section.goal-section .gif-container, .section.about-section .gif-container, .section.explore-section .gif-container, .section.collab-section .gif-container, .section.learn-section .gif-container {
+  .section.goal-section .gif-container,
+  .section.about-section .gif-container,
+  .section.explore-section .gif-container,
+  .section.collab-section .gif-container,
+  .section.learn-section .gif-container {
     margin: 5.33em auto 2.66em auto; }
-  .section.goal-section .gif-description, .section.about-section .gif-description, .section.explore-section .gif-description, .section.collab-section .gif-description, .section.learn-section .gif-description {
+  .section.goal-section .gif-description,
+  .section.about-section .gif-description,
+  .section.explore-section .gif-description,
+  .section.collab-section .gif-description,
+  .section.learn-section .gif-description {
     margin: 2.66em 0em 0em 0em;
     padding: 1em 4em; }
     @media only screen and (max-width: 700px) {
-      .section.goal-section .gif-description, .section.about-section .gif-description, .section.explore-section .gif-description, .section.collab-section .gif-description, .section.learn-section .gif-description {
+      .section.goal-section .gif-description,
+      .section.about-section .gif-description,
+      .section.explore-section .gif-description,
+      .section.collab-section .gif-description,
+      .section.learn-section .gif-description {
         padding: 1em; } }
-    .section.goal-section .gif-description p, .section.about-section .gif-description p, .section.explore-section .gif-description p, .section.collab-section .gif-description p, .section.learn-section .gif-description p {
+    .section.goal-section .gif-description p,
+    .section.about-section .gif-description p,
+    .section.explore-section .gif-description p,
+    .section.collab-section .gif-description p,
+    .section.learn-section .gif-description p {
       margin: 0;
       font-size: 1.17em;
       font-family: "Arial";
       font-weight: 100;
       color: #2d2d2d;
       line-height: 1.3em; }
-  .section.goal-section a.circle, .section.about-section a.circle, .section.explore-section a.circle, .section.collab-section a.circle, .section.learn-section a.circle {
+  .section.goal-section a.circle,
+  .section.about-section a.circle,
+  .section.explore-section a.circle,
+  .section.collab-section a.circle,
+  .section.learn-section a.circle {
     margin: 6.5em auto 1.833em auto; }
 
-@-webkit-keyframes fadeout {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-moz-keyframes fadeout {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-o-keyframes fadeout {
+@-o-keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@keyframes fadeout {
+@keyframes $animation_name {
   0% {
     opacity: 1; }
-
   100% {
     opacity: 0; } }
-
-@-webkit-keyframes fadein {
+@-webkit-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-moz-keyframes fadein {
+@-moz-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@-o-keyframes fadein {
+@-o-keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
-@keyframes fadein {
+@keyframes $animation_name {
   0% {
     opacity: 0; }
-
   100% {
     opacity: 1; } }
-
 .fadein {
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
@@ -1400,11 +1487,8 @@ div#fp-nav {
   opacity: 0 !important; }
 
 #intro-video.video-js, .video-header {
-  width: 500px;
-  margin: auto;
+  width: 80%;
+  margin-left: 10%;
   height: auto; }
 
-.video-header .mfp-close {
-  position: relative;
-  left: 485px;
-}
+/*# sourceMappingURL=application.css.map */
