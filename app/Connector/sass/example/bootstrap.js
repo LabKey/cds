@@ -92,6 +92,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.Feedback": "../../../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../../../webapp/Connector/src/panel/GroupList.js",
+  "Connector.panel.HelpCenter": "../../../../webapp/Connector/src/panel/HelpCenter.js",
+  "Connector.panel.HelpCenterHeader": "../../../../webapp/Connector/src/panel/HelpCenter.js",
   "Connector.panel.Selection": "../../../../webapp/Connector/src/panel/Selection.js",
   "Connector.panel.Selector": "../../../../webapp/Connector/src/panel/Selector.js",
   "Connector.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Page.js",
@@ -169,6 +171,7 @@ Ext.Loader.addClassPathMappings({
   "Ext": "../../ext/src",
   "Ext.Msg": "../../ext/src/window/MessageBox.js",
   "Ext.rtl.EventObjectImpl": "../../ext/src/rtl/EventObject.js",
+  "HelpRouter": "../../../../webapp/Connector/src/utility/HelpRouter.js",
   "LABKEY": "../../../../../../internal/webapp",
   "LABKEY.app.constant": "../../../../../../internal/webapp/app/State.js",
   "LABKEY.app.controller.AbstractViewController": "../../../../../../internal/webapp/app/AbstractViewController.js",
@@ -277,6 +280,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
+  "Connector.panel.HelpCenter": [],
+  "Connector.panel.HelpCenterHeader": [],
   "Connector.panel.Selection": [],
   "Connector.panel.Selector": [],
   "Connector.plugin.HeaderLock": [],
@@ -1171,6 +1176,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.window.Window": [
     "Ext.Window"
   ],
+  "HelpRouter": [],
   "LABKEY.app.Application": [],
   "LABKEY.app.constant": [],
   "LABKEY.app.controller.AbstractViewController": [],
@@ -1307,6 +1313,10 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.GroupList": [
     "widget.grouplist"
   ],
+  "Connector.panel.HelpCenter": [
+    "widget.helpcenter"
+  ],
+  "Connector.panel.HelpCenterHeader": [],
   "Connector.panel.Selection": [
     "widget.selectionpanel"
   ],
@@ -2479,6 +2489,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.window.Window": [
     "widget.window"
   ],
+  "HelpRouter": [],
   "LABKEY.app.Application": [],
   "LABKEY.app.constant": [],
   "LABKEY.app.controller.AbstractViewController": [],
