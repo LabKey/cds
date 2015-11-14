@@ -798,6 +798,121 @@ div.hopscotch-bubble {
   }
 }
 
+.helpcenter-panel {
+  .header {
+    padding: 14px 18px 14px 9px;
+    height: 60px !important;
+    .x-panel-body {
+      height: 32px !important;
+    }
+    .x-box-inner {
+      height: 32px !important;
+    }
+
+    .main-title {
+      font: 26px Georgia,serif;
+      color: $heat-scale-2;
+    }
+
+    .sub-title {
+      margin-top: 3px;
+
+      .nav-text {
+        color: $black;
+        font: $title-font;
+      }
+    }
+
+    .helpcenter-title {
+      font: 17px Georgia,serif;
+      position: absolute !important;
+      top: 4px !important;
+    }
+
+    .helpcenter-back {
+      font: 16px Georgia,serif;
+      color: $action-red;
+      cursor: pointer;
+      position: absolute !important;
+      top: 4px !important;
+    }
+
+    .helpcenter-search-input {
+      clear: both;
+      position: absolute !important;
+      top: 0 !important;
+      width: 66%;
+      tbody,
+      tr,
+      td.x-form-item-body {
+        width: 100%!important;
+      }
+
+      input {
+        width: 100%;
+        font-size: 12px;
+        border-radius: 2px;
+        border-color: $gray-7!important;
+        height: 30px;
+
+      }
+      input.x-form-focus {
+        border-color: $gray-6!important;
+        color: $black;
+      }
+    }
+
+  }
+
+  p {
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+
+  h3 {
+    margin-bottom: 10px;
+    margin-top: 20px;
+    font: 16px Georgia,serif;
+  }
+
+  a {
+    color: $gray-4;
+  }
+
+  .#{$connector-prefix}panel-body {
+    background-color: $heat-scale-6;
+  }
+
+  .#{$connector-prefix}form-textarea {
+    height: 390px;
+  }
+
+  .footer {
+    padding-right: 20px;
+  }
+
+  .helpcenter-body {
+    padding: 10px 20px 10px 10px;
+    height: 532px !important;
+    .x-scroll-bar-y {
+      width: 0; /*CHANGE: replace width: 6px;*/
+    }
+    overflow-y: auto;
+    background-color: $heat-scale-6;
+    .x-form-focus {
+      border-color: $gray-4!important;
+      color: $black;
+    }
+    p.searchresult {
+      border-bottom: thin solid #D1D2D4; padding-bottom: 15px;
+    }
+    a.see-all {
+      color: $action-red;
+    }
+  }
+
+}
+
 @import 'windows';
 
 @import 'grid/Panel';

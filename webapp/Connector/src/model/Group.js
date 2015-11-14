@@ -52,10 +52,13 @@ Ext.define('Connector.model.Group', {
                     },
                     listeners : {
                         load : function(s, recs) {
-                            for (var i=0; i < recs.length; i++)
+                            if (recs)
                             {
-                                if (recs[i].data.id < 0)
-                                    s.remove(recs[i]);
+                                for (var i=0; i < recs.length; i++)
+                                {
+                                    if (recs[i].data.id < 0)
+                                        s.remove(recs[i]);
+                                }
                             }
                         }
                     }
