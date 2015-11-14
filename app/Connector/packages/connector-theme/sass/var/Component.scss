@@ -831,7 +831,7 @@ div.hopscotch-bubble {
 
     .helpcenter-back {
       font: 16px Georgia,serif;
-      color: mediumorchid;
+      color: $action-red;
       cursor: pointer;
       position: absolute !important;
       top: 4px !important;
@@ -907,7 +907,7 @@ div.hopscotch-bubble {
       border-bottom: thin solid #D1D2D4; padding-bottom: 15px;
     }
     a.see-all {
-      color: mediumorchid;
+      color: $action-red;
     }
   }
 
