@@ -18,7 +18,6 @@ Ext.define('Connector.panel.HelpCenter', {
             var resizer = function() {
                 this.center();
             };
-            var me = this;
             var win = Ext.create('Ext.window.Window', {
                 ui: 'axiswindow',
                 id: 'helppopup',
@@ -33,9 +32,9 @@ Ext.define('Connector.panel.HelpCenter', {
                 items: [{
                     xtype: 'helpcenter',
                     listeners: {
-                        afterrender: function() {
+                        afterrender: function(me) {
                             HelpRouter.clearHistory();
-                            me.prototype.loadHelpFile();
+                            me.loadHelpFile();
                         },
                         scope: this
                     }
