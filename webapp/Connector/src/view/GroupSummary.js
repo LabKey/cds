@@ -178,11 +178,38 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 htmlEncode: true,
                 value: this._getDescription(this.group)
             }]
-        },{
-            xtype: 'container',
-            html: '&nbsp;',
-            flex: 1
         }];
+
+        var rightColumn = Ext.create('Ext.container.Container', {
+            flex: 1,
+            items: []
+        });
+
+        if (this.group && this.group.get('containsPlot') === true)
+        {
+            var filters = this.getGroupFilters(this.group),
+                plotFilter;
+
+            Ext.each(filters, function(filter)
+            {
+                if (filter.isPlot() && !filter.isGrid())
+                {
+                    plotFilter = filter;
+                    return false;
+                }
+            });
+
+            if (plotFilter)
+            {
+                rightColumn.add({
+                    xtype: 'box',
+                    html: '<div class="module"><h3>In the plot</h3></div>'
+                });
+                rightColumn.add(Connector.view.PlotPane.plotFilterContent(plotFilter));
+            }
+        }
+
+        this.items.push(rightColumn);
 
         this.callParent();
 
@@ -295,27 +322,34 @@ Ext.define('Connector.view.GroupSummaryBody', {
     {
         if (this.group)
         {
-            var filters = this.group.get('filters'),
-                appFilters = [];
+            var filters = this.getGroupFilters(this.group);
 
-            if (Ext.isString(filters))
+            if (filters.length > 0)
             {
-                Ext.each(LABKEY.app.model.Filter.fromJSON(filters), function(filter)
-                {
-                    appFilters.push(Ext.create('Connector.model.Filter', filter));
-                });
-            }
-            else
-            {
-                appFilters = filters;
-            }
+                Connector.getState().setFilters(filters);
 
-            if (appFilters.length > 0)
-            {
-                Connector.getState().setFilters(appFilters);
-
-                Connector.getApplication().fireEvent('grouploaded', Ext.clone(this.group.data), appFilters);
+                Connector.getApplication().fireEvent('grouploaded', Ext.clone(this.group.data), filters);
             }
         }
+    },
+
+    getGroupFilters : function(group)
+    {
+        var groupFilters = group.get('filters'),
+            filters = [];
+
+        if (Ext.isString(groupFilters))
+        {
+            Ext.each(LABKEY.app.model.Filter.fromJSON(groupFilters), function(filter)
+            {
+                filters.push(Ext.create('Connector.model.Filter', filter));
+            });
+        }
+        else
+        {
+            filters = groupFilters;
+        }
+
+        return filters;
     }
 });
