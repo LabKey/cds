@@ -206,6 +206,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selector.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/panel/HelpCenter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/grid/Panel.js"></script>
 
     <!-- Application plugins -->
@@ -282,6 +283,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Statistics.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Chart.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
