@@ -120,7 +120,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSaveList": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSummary": "../../../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.GroupSummaryBody": "../../../../webapp/Connector/src/view/GroupSummary.js",
-  "Connector.view.GroupSummaryHeader": "../../../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeHeader": "../../../../webapp/Connector/src/view/HomeHeader.js",
@@ -311,7 +310,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSaveList": [],
   "Connector.view.GroupSummary": [],
   "Connector.view.GroupSummaryBody": [],
-  "Connector.view.GroupSummaryHeader": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
   "Connector.view.HomeHeader": [],
@@ -1375,9 +1373,6 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.groupsummary"
   ],
   "Connector.view.GroupSummaryBody": [],
-  "Connector.view.GroupSummaryHeader": [
-    "widget.groupsummaryheader"
-  ],
   "Connector.view.Header": [
     "widget.connectorheader"
   ],
