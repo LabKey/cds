@@ -10,7 +10,7 @@ $gray-7-hover: #ffffff;      //  Light Text Hover
 $dark-color: #333333;              // Dark Gray
 $middle-gray: #6D6E70;             // Middle Gray
 $interactive-color: #fb2e5c;       // Interactive
-$info-color: #F5A73A;              // Info
+$info-color: #fb2e5c;              // Info
 $secondary-color: #F0F0F0;         // Light Gray
 
 $border-color: #BABABA;
@@ -749,6 +749,8 @@ div.hopscotch-bubble {
     display: none !important;
   }
 }
+
+
 
 @import 'windows';
 
