@@ -451,7 +451,12 @@ Ext.define('Connector.view.InfoPane', {
 
     onSortSelect : function(menu, item) {
         var _item = Ext.clone(item);
-        this.getModel().configure(null, _item.uniqueName);
+        if (_item.isLevel) {
+            this.getModel().configure(null, null, _item.uniqueName);
+        }
+        else {
+            this.getModel().configure(null, _item.uniqueName);
+        }
     },
 
     getGrid : function() {

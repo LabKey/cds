@@ -122,19 +122,19 @@ Ext4.define('Connector.cube.Configuration', {
                 hierarchies: [{
                     uniqueName: '[Study]',
                     label: 'Name',
-                    hidden: true,
+                    hidden: true
+                },{
+                    uniqueName: '[Study.Treatment]',
+                    label: 'Treatment Summary',
+                    displayLevels: true,
                     levels: [{
-                        uniqueName: '[Study].[Name]',
+                        uniqueName: '[Study.Treatment].[Treatment]',
                         activeCount: 'highlight',
                         countPriority: 30,
                         countSingular: 'Study',
                         supportsLearn: true,
                         countPlural: 'Studies'
-                    }]
-                },{
-                    uniqueName: '[Study.Treatment]',
-                    label: 'Treatment Summary',
-                    levels: [{
+                    },{
                         uniqueName: '[Study.Treatment].[Arm]',
                         countTarget: '',
                         activeCount: true,
@@ -454,6 +454,7 @@ Ext4.define('Connector.cube.Configuration', {
                 hidden: false,
                 supportsSummary: true,
                 defaultOperator: 'parent::defaultOperator',
+                displayLevels: false,
                 label: 'label::',
                 filterType: 'parent::filterType'
             },

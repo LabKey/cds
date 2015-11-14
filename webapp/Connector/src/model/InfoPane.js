@@ -133,56 +133,80 @@ Ext.define('Connector.model.InfoPane', {
      * @param {boolean} [deferToFilters=true]
      */
     configure : function(dimName, hierName, lvlName, deferToFilters) {
-        this.filterMemberMap = {};
+        Connector.getState().onMDXReady(function(mdx){
+            this.filterMemberMap = {};
 
-        var _deferToFilters = Ext.isBoolean(deferToFilters) ? deferToFilters : true;
+            var _deferToFilters = Ext.isBoolean(deferToFilters) ? deferToFilters : true;
 
-        if (_deferToFilters) {
-            this._configureFilter(hierName);
-        }
+            if (_deferToFilters){
+                if (lvlName){
+                    var lvl = mdx.getLevel(lvlName);
+                    if (lvl && lvl.hierarchy && lvl.hierarchy.displayLevels){
+                        this._configureFilter(null, lvlName);
+                    }
+                    else{
+                        this._configureFilter(hierName);
+                    }
+                }
+                else{
+                    this._configureFilter(hierName);
+                }
+            }
 
-        if (this.isFilterBased()) {
+            if (this.isFilterBased()){
+                var filter = this.get('filter'),
+                    members = filter.get('members');
 
-            var filter = this.get('filter'),
-                members = filter.get('members');
+                dimName = null;
+                hierName = filter.get('hierarchy');
+                lvlName = filter.get('level');
 
-            dimName = null;
-            hierName = filter.get('hierarchy');
-            lvlName = filter.get('level');
+                Ext.each(members, function (member){
+                    this.filterMemberMap[member.uniqueName] = true;
+                }, this);
+            }
 
-            Ext.each(members, function(member) {
-                this.filterMemberMap[member.uniqueName] = true;
-            }, this);
-        }
+            // clear out for initialization
+            this.set({
+                dimension: undefined,
+                hierarchy: undefined,
+                level: undefined
+            });
 
-        // clear out for initialization
-        this.set({
-            dimension: undefined,
-            hierarchy: undefined,
-            level: undefined
-        });
-
-        this.setDimensionHierarchy(dimName, hierName, lvlName);
+            this.setDimensionHierarchy(dimName, hierName, lvlName);
+        }, this);
     },
 
-    _configureFilter : function(hierName) {
+    _configureFilter : function(hierName, lvlName) {
 
         this._ready = false;
 
         var filters = Connector.getState().getFilters(),
             hierarchy = hierName,
+            level = lvlName,
             activeFilter;
 
-        Ext.each(filters, function(f) {
-            if (f && !f.isPlot() && !f.isGrid() && !f.isAggregated() && f.get('hierarchy') === hierarchy) {
-                activeFilter = f;
-                return false;
-            }
-        });
+        if (level) {
+            Ext.each(filters, function(f) {
+                if (f && !f.isPlot() && !f.isGrid() && !f.isAggregated()) {
+                    if ((level && f.get('level') === level)) {
+                        activeFilter = f;
+                        return false;
+                    }
+                }
+            });
+        }
+        else {
+            Ext.each(filters, function(f) {
+                if (f && !f.isPlot() && !f.isGrid() && !f.isAggregated() && f.get('hierarchy') === hierarchy) {
+                    activeFilter = f;
+                    return false;
+                }
+            });
+        }
 
         this.set('filter', activeFilter); // undefined is OK
     },
-
     setDimensionHierarchy : function(dimName, hierName, lvlName) {
 
         var state = Connector.getState();
@@ -195,12 +219,27 @@ Ext.define('Connector.model.InfoPane', {
                 lvl = dimHier.lvl,
                 hierarchyItems = [];
 
+            var isDisplayLevel = hier ? hier.displayLevels : false;
+
             Ext.each(dim.hierarchies, function(h) {
                 if (!h.hidden) {
-                    hierarchyItems.push({
-                        text: h.label,
-                        uniqueName: h.uniqueName
-                    });
+                    if (!h.displayLevels) {
+                        hierarchyItems.push({
+                            text: h.label,
+                            uniqueName: h.uniqueName
+                        });
+                    }
+                    else {
+                        Ext.each(h.levels, function(level, i) {
+                            if (i > 0) {
+                                hierarchyItems.push({
+                                    text: level.countPlural,
+                                    uniqueName: level.uniqueName,
+                                    isLevel: true
+                                });
+                            }
+                        });
+                    }
                 }
             }, this);
 
@@ -210,7 +249,7 @@ Ext.define('Connector.model.InfoPane', {
                 dimension: dim,
                 hierarchy: hier,
                 level: lvl,
-                hierarchyLabel: hier.label,
+                hierarchyLabel: hier.displayLevels? lvl.countPlural : hier.label,
                 hierarchyItems: hierarchyItems,
                 operatorType: hier.defaultOperator,
                 title: dim.pluralName
@@ -235,15 +274,28 @@ Ext.define('Connector.model.InfoPane', {
 
 
             Ext.each(filters, function(f) {
-                if (!f.isPlot() && !f.isGrid() && !f.isAggregated() && f.get('hierarchy') === hier.getUniqueName()) {
+                var isOutFilter = true;
+                if (!f.isPlot() && !f.isGrid() && !f.isAggregated()) {
+                    if (isDisplayLevel) {
+                        if (f.get('level') === lvl.uniqueName) {
+                            isOutFilter = false;
+                        }
+                    }
+                    else if (f.get('hierarchy') === hier.getUniqueName()) {
+                        isOutFilter = false;
+                    }
                     innerFilters.push(f);
                 }
-                else {
+
+                if (isOutFilter) {
                     outerFilters.push(f);
+                }
+                else {
+                    innerFilters.push(f);
                 }
             });
 
-            // There are not any filters on this hierarchy, just use the standard filters
+            // There are not any filters on this hierarchy (or level), just use the standard filters
             if (Ext.isEmpty(innerFilters)) {
                 mdx.query({
                     onRows: [{
