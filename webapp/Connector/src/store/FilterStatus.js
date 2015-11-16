@@ -12,7 +12,7 @@ Ext.define('Connector.store.FilterStatus', {
     // initial data record to show loading spinner on page load
     data: [{
         label: "Subjects",
-        count: -1,
+        count: 0,
         subcount: -1,
         highlight: true
     }],
@@ -287,8 +287,13 @@ Ext.define('Connector.store.FilterStatus', {
                     record.set('dataRows', dataRows);
                 }
 
-                this.updatePlotRecordCount('Time points', true, -1);
+                if (!Connector.getState().hasSelections())
+                {
+                    this.updatePlotRecordCount('Time points', true, -1);
+                }
             }
+
+            this.fireEvent('hideplotmask');
         }
         else
         {

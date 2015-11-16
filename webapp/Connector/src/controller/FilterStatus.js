@@ -89,6 +89,7 @@ Ext.define('Connector.controller.FilterStatus', {
         });
 
         this.control('plot', {
+            maskplotrecord: this.onMaskPlotRecord,
             updateplotrecord: this.onUpdatePlotRecord
     });
 
@@ -285,6 +286,11 @@ Ext.define('Connector.controller.FilterStatus', {
                 view.showUndoMessage();
             }
         }
+    },
+
+    onMaskPlotRecord : function(view)
+    {
+        this.getStore('FilterStatus').fireEvent('showplotmask');
     },
 
     onUpdatePlotRecord : function(view, label, forSubcount, countValue, dataRows)

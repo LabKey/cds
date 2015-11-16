@@ -29,20 +29,36 @@ Ext.define('Connector.view.DetailStatus', {
                 '<tpl for=".">',
                     '<div class="status-row {highlight:this.isHighlight} {[this.isLink(values)]}">',
                         '<tpl if="highlight != undefined && highlight == true">',
-                                '<li>',
-                                      '<span class="statme hl-status-label">{label:htmlEncode}</span>',
-                                      '<span class="statme hl-status-count status-subcount maskit {subcount:this.shouldHide}">{subcount:this.commaFormat}</span>',
-                                      '<span class="statme hl-status-count status-of {subcount:this.shouldHide}">/</span>',
-                                      '<span class="statme hl-status-count maskit {count:this.shouldHide}">{count:this.commaFormat}</span>',
-                                '</li>',
+                            '<li>',
+                                '<span class="statme hl-status-label {count:this.shouldHide}">',
+                                    '{label:htmlEncode}',
+                                '</span>',
+                                '<span class="statme hl-status-count status-subcount {plotBasedCount:this.shouldMask} {subcount:this.shouldHide}">',
+                                    '{subcount:this.commaFormat}',
+                                '</span>',
+                                '<span class="statme hl-status-count status-of {subcount:this.shouldHide}">',
+                                    '/',
+                                '</span>',
+                                '<span class="statme hl-status-count {plotBasedCount:this.shouldMask} {count:this.shouldHide}">',
+                                    '{count:this.commaFormat}',
+                                '</span>',
+                            '</li>',
                             '</div>',
                         '</tpl>',
                         '<tpl if="highlight == undefined || !highlight">',
                             '<li>',
-                                '<span class="statme status-label">{label:htmlEncode}</span>',
-                                '<span class="statme status-count status-subcount maskit {subcount:this.shouldHide}">{subcount:this.commaFormat}</span>',
-                                '<span class="statme status-count status-of {subcount:this.shouldHide}">/</span>',
-                                '<span class="statme status-count maskit {count:this.shouldHide}">{count:this.commaFormat}</span>',
+                                '<span class="statme status-label {count:this.shouldHide}">',
+                                    '{label:htmlEncode}',
+                                '</span>',
+                                '<span class="statme status-count status-subcount {plotBasedCount:this.shouldMask} {subcount:this.shouldHide}">',
+                                    '{subcount:this.commaFormat}',
+                                '</span>',
+                                '<span class="statme status-count status-of {subcount:this.shouldHide}">',
+                                    '/',
+                                '</span>',
+                                '<span class="statme status-count {plotBasedCount:this.shouldMask} {count:this.shouldHide}">',
+                                    '{count:this.commaFormat}',
+                                '</span>',
                             '</li>',
                         '</tpl>',
                     '</div>',
@@ -60,6 +76,9 @@ Ext.define('Connector.view.DetailStatus', {
                 },
                 shouldHide : function(value) {
                     return value === -1 ? 'hideit' : '';
+                },
+                shouldMask : function(value) {
+                    return value ? 'plotmaskit' : 'maskit';
                 }
             }
     ),
@@ -78,16 +97,24 @@ Ext.define('Connector.view.DetailStatus', {
         this.addPlugin({
             ptype: 'loadingmask',
             blockingMask: false,
-            itemsMaskCls: 'item-spinner-mask',
-            beginConfig: {
+            beginConfig: [{
                 component: this.store,
+                itemsMaskCls: 'item-spinner-mask',
                 events: ['beforeload']
-
-            },
-            endConfig: {
+            },{
                 component: this.store,
+                itemsMaskCls: 'item-spinner-plotmask',
+                events: ['showplotmask']
+            }],
+            endConfig: [{
+                component: this.store,
+                itemsMaskCls: 'item-spinner-mask',
                 events: ['load']
-            }
+            },{
+                component: this.store,
+                itemsMaskCls: 'item-spinner-plotmask',
+                events: ['hideplotmask']
+            }]
         });
     },
 

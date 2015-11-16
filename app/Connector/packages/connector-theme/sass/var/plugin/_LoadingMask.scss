@@ -18,7 +18,8 @@
   }
 }
 
-.item-spinner-mask .maskit {
+.item-spinner-mask .maskit,
+.item-spinner-plotmask .plotmaskit {
   background-image: url('images/mask/small-gray.gif');
   background-repeat: no-repeat;
   width: 16px;

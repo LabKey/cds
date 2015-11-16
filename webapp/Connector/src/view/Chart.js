@@ -3085,6 +3085,8 @@ Ext.define('Connector.view.Chart', {
             }
 
             this.onShowGraph();
+
+            Connector.getState().clearSelections(true);
         }
         else
         {
@@ -3204,6 +3206,8 @@ Ext.define('Connector.view.Chart', {
     {
         var includeSelections = Ext.isArray(selections),
             fullFilterSet = [], nonTimeFilterSet = [];
+
+        this.fireEvent('maskplotrecord', this);
 
         if (includeSelections && selections.length == 0)
         {
