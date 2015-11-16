@@ -72,7 +72,7 @@ a.x-btn {
 
   $border-radius : 2px,
 
-  $background-color: $secondary-color,
+  $background-color: $gray-9,
   $background-color-focus: darken($secondary-color, 8),
   $background-color-over: darken($secondary-color, 8),
 
@@ -85,7 +85,7 @@ a.x-btn {
 
   $text-padding: 5px,
 
-  $color: $dark-color,
+  $color: $base-color,
   $color-disabled: $dark-color,
 
   $font-size : 12px,
