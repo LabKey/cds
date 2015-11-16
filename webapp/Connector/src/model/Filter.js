@@ -1347,6 +1347,26 @@ Ext.define('Connector.model.Filter', {
         }, this);
 
         return remove;
+    },
+
+    hasMultiLevelMembers: function() {
+        var level = 0;
+        var hasMultiLevel = false;
+        var members = this.get('members');
+        if (members) {
+            Ext.each(members, function(member) {
+                if (member) {
+                    var levelCount = (member.uniqueName.match(/\[/g) || []).length;
+                    if (levelCount > 0 && level === 0) {
+                        level = levelCount;
+                    }
+                    if (levelCount !== level) {
+                        hasMultiLevel = true;
+                    }
+                }
+            });
+        }
+        return hasMultiLevel;
     }
 });
 

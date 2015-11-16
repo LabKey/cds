@@ -188,7 +188,7 @@ Ext.define('Connector.model.InfoPane', {
 
         if (level) {
             Ext.each(filters, function(f) {
-                if (f && !f.isPlot() && !f.isGrid() && !f.isAggregated()) {
+                if (f && !f.isPlot() && !f.isGrid() && !f.isAggregated() && !f.hasMultiLevelMembers()) {
                     if ((level && f.get('level') === level)) {
                         activeFilter = f;
                         return false;
@@ -198,7 +198,7 @@ Ext.define('Connector.model.InfoPane', {
         }
         else {
             Ext.each(filters, function(f) {
-                if (f && !f.isPlot() && !f.isGrid() && !f.isAggregated() && f.get('hierarchy') === hierarchy) {
+                if (f && !f.isPlot() && !f.isGrid() && !f.isAggregated() && f.get('hierarchy') === hierarchy && !f.hasMultiLevelMembers()) {
                     activeFilter = f;
                     return false;
                 }
@@ -275,7 +275,7 @@ Ext.define('Connector.model.InfoPane', {
 
             Ext.each(filters, function(f) {
                 var isOutFilter = true;
-                if (!f.isPlot() && !f.isGrid() && !f.isAggregated()) {
+                if (!f.isPlot() && !f.isGrid() && !f.isAggregated() && !f.hasMultiLevelMembers()) {
                     if (isDisplayLevel) {
                         if (f.get('level') === lvl.uniqueName) {
                             isOutFilter = false;
