@@ -200,6 +200,7 @@ Ext.define('Connector.view.InfoPane', {
     },
 
     getMiddleContent : function(model) {
+        var isSelectionMode = Connector.getState().getSelections().length > 0;
         var memberGrid = Ext.create('Ext.grid.Panel', {
             xtype: 'grid',
             itemId: 'membergrid',
@@ -243,7 +244,12 @@ Ext.define('Connector.view.InfoPane', {
                         '{name:this.renderHeader}', // 'name' is actually the value of the groupField
                         {
                             renderHeader: function(v) {
-                                return v ? 'Has data in active filters' : 'No data in active filters';
+                                if (isSelectionMode){
+                                    return v ? 'Has data in current selection' : 'No data in current selection';
+                                }
+                                else {
+                                    return v ? 'Has data in active filters' : 'No data in active filters';
+                                }
                             }
                         }
                 )

@@ -120,7 +120,16 @@ Ext.define('Connector.model.InfoPane', {
 
 
     isFilterBased : function() {
-        return Ext.isDefined(this.get('filter'));
+        return !this.isSelectionBased() && Ext.isDefined(this.get('filter'));
+    },
+
+    isSelectionBased : function() {
+        return this.get('selection');
+    },
+
+    _configureSelection: function () {
+        var selectionValue = Connector.getState().getSelections().length > 0;
+        this.set('selection', selectionValue);
     },
 
     /**
@@ -134,11 +143,12 @@ Ext.define('Connector.model.InfoPane', {
      */
     configure : function(dimName, hierName, lvlName, deferToFilters) {
         Connector.getState().onMDXReady(function(mdx){
+            this._configureSelection();
             this.filterMemberMap = {};
 
             var _deferToFilters = Ext.isBoolean(deferToFilters) ? deferToFilters : true;
 
-            if (_deferToFilters){
+            if (!this.isSelectionBased() && _deferToFilters){
                 if (lvlName){
                     var lvl = mdx.getLevel(lvlName);
                     if (lvl && lvl.hierarchy && lvl.hierarchy.displayLevels){
@@ -295,8 +305,22 @@ Ext.define('Connector.model.InfoPane', {
                 }
             });
 
+            if (this.isSelectionBased()) {
+                mdx.query({
+                    onRows: [{
+                        level: lvl.getUniqueName(),
+                        member: 'members'
+                    }],
+                    useNamedFilters: [LABKEY.app.constant.SELECTION_FILTER],
+                    showEmpty: true,
+                    success: function(cellset) {
+                        this.processMembers(cellset, mdx);
+                    },
+                    scope: this
+                });
+            }
             // There are not any filters on this hierarchy (or level), just use the standard filters
-            if (Ext.isEmpty(innerFilters)) {
+            else if (Ext.isEmpty(innerFilters)) {
                 mdx.query({
                     onRows: [{
                         level: lvl.getUniqueName(),
