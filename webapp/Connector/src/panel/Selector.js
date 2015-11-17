@@ -662,6 +662,23 @@ Ext.define('Connector.panel.Selector', {
     },
 
     showHierarchicalSelection : function(advancedOptionCmp) {
+        // if the advancedOptionCmp param isn't provided, look for the first visible component that is hierarchical
+        if (!Ext.isDefined(advancedOptionCmp))
+        {
+            for (var i = 0; i < this.advancedOptionCmps.length; i++)
+            {
+                if (!this.advancedOptionCmps[i].hidden && this.advancedOptionCmps[i].isHierarchical)
+                {
+                    advancedOptionCmp = this.advancedOptionCmps[i];
+                    break;
+                }
+            }
+        }
+        if (!Ext.isDefined(advancedOptionCmp))
+        {
+            return;
+        }
+
         var source = this.getSourceForMeasure(this.activeMeasure);
 
         this.getHierarchySelectionPane().removeAll();
@@ -897,6 +914,7 @@ Ext.define('Connector.panel.Selector', {
         this.bindScale();
 
         this.slideAdvancedOptionsPane();
+        //this.showHierarchicalSelection();
     },
 
     createAdvancedOptionCmp : function(alias, dimension) {

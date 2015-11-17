@@ -25,6 +25,20 @@ Ext.define('Connector.store.FilterStatus', {
         activeCountLink: true,
         viewClass: 'Connector.view.TimepointPane',
         modelClass: 'Connector.model.TimepointPane'
+    },{
+        label: 'Antigens in X',
+        count: -1,
+        subcount: -1,
+        plotBasedCount: true,
+        activeCountLink: true,
+        activeCountEvent: 'showplotantigensx'
+    },{
+        label: 'Antigens in Y',
+        count: -1,
+        subcount: -1,
+        plotBasedCount: true,
+        activeCountLink: true,
+        activeCountEvent: 'showplotantigensy'
     }],
 
     constructor : function(config) {

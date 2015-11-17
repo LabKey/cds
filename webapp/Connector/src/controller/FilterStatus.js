@@ -121,7 +121,14 @@ Ext.define('Connector.controller.FilterStatus', {
     onDetailSelect : function(view, detail) {
         if (detail.get('activeCountLink') === true && detail.get('count') != -1)
         {
-            this.showFilterEditor(detail);
+            if (Ext.isString(detail.get('activeCountEvent')))
+            {
+                this.application.fireEvent(detail.get('activeCountEvent'), detail);
+            }
+            else
+            {
+                this.showFilterEditor(detail);
+            }
         }
     },
 

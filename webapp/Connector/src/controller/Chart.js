@@ -9,49 +9,18 @@ Ext.define('Connector.controller.Chart', {
 
     views  : ['Chart'],
 
-    init : function() {
-
-        var queryService = Connector.getService('Query');
-
+    init : function()
+    {
         this.control('#yvarselector', {
-            requestvariable: function(view)
-            {
-                var plot = view.up('plot');
-                if (plot)
-                {
-                    queryService.onQueryReady(function()
-                    {
-                        plot.showYMeasureSelection();
-                    });
-                }
-            }
+            requestvariable: this.showYVariableSelector
         });
 
         this.control('#xvarselector', {
-            requestvariable: function(view)
-            {
-                var plot = view.up('plot');
-                if (plot) {
-                    queryService.onQueryReady(function()
-                    {
-                        plot.showXMeasureSelection();
-                    });
-                }
-            }
+            requestvariable: this.showXVariableSelector
         });
 
         this.control('#colorvarselector', {
-            requestvariable: function(view)
-            {
-                var plot = view.up('plot');
-                if (plot)
-                {
-                    queryService.onQueryReady(function()
-                    {
-                        plot.showColorSelection();
-                    });
-                }
-            }
+            requestvariable: this.showColorVariableSelector
         });
 
         this.control('#plotshowdata', {
@@ -62,6 +31,24 @@ Ext.define('Connector.controller.Chart', {
                 }
             }
         });
+
+        this.application.on('showplotantigensx', function()
+        {
+            var plot = Ext.ComponentQuery.query('plot');
+            if (Ext.isArray(plot) && plot.length == 1)
+            {
+                this.showXVariableSelector(null, null, plot[0]);
+            }
+        }, this);
+
+        this.application.on('showplotantigensy', function()
+        {
+            var plot = Ext.ComponentQuery.query('plot');
+            if (Ext.isArray(plot) && plot.length == 1)
+            {
+                this.showYVariableSelector(null, null, plot[0]);
+            }
+        }, this);
 
         this._filtersChanged = false;
         Connector.getState().on('filterchange', this._filterChangeHook, this);
@@ -133,5 +120,41 @@ Ext.define('Connector.controller.Chart', {
     _filterChangeHook : function()
     {
         this._filtersChanged = true;
+    },
+
+    showYVariableSelector : function(view, model, plot)
+    {
+        plot = plot || view.up('plot');
+        if (plot)
+        {
+            Connector.getService('Query').onQueryReady(function()
+            {
+                plot.showYMeasureSelection();
+            });
+        }
+    },
+
+    showXVariableSelector : function(view, model, plot)
+    {
+        plot = plot || view.up('plot');
+        if (plot)
+        {
+            Connector.getService('Query').onQueryReady(function()
+            {
+                plot.showXMeasureSelection();
+            });
+        }
+    },
+
+    showColorVariableSelector : function(view, model, plot)
+    {
+        plot = plot || view.up('plot');
+        if (plot)
+        {
+            Connector.getService('Query').onQueryReady(function()
+            {
+                plot.showColorSelection();
+            });
+        }
     }
 });

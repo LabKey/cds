@@ -18,6 +18,7 @@ Ext.define('Connector.model.Detail', {
         {name: 'valueLabel'},
         {name: 'highlight', type: 'boolean'},
         {name: 'activeCountLink', type: 'boolean'},
+        {name: 'activeCountEvent', defaultValue: undefined}, // an application even to fire on count click instead of opening the InfoPane view
         {name: 'dimension', defaultValue: undefined},
         {name: 'hierarchy', defaultValue: undefined},
         {name: 'level', defaultValue: undefined},
