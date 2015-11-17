@@ -32,7 +32,7 @@ To compile the SCSS, run the following command:
 
 	sass --sourcemap=none --style=compact application.scss ../../../webapp/frontPage/css/application.css
 
-This will generate a new `application.css` and `application.css.map` file in 
+This will generate a new `application.css` file in 
 `webapp/frontPage/css/`.
 
 
