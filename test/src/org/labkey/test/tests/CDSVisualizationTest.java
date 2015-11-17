@@ -333,7 +333,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             log("Validating Treatment Summary");
-            assertEquals("Unexpected number of tick marks on the x-axis.", 85, actualTickCount);
+            assertEquals("Unexpected number of tick marks on the x-axis.", 89, actualTickCount);
         }
 
         xaxis.openSelectorWindow();
@@ -341,14 +341,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
         expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
-        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
-
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
             log("Validating Date Subject Enrolled");
-            assertSVG(expectedXYValues, 1);
+            assertSVG(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
@@ -356,14 +353,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
         expectedXYValues = "1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
-        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
-
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
             log("Validating Followup Complete");
-            assertSVG(expectedXYValues, 1);
+            assertSVG(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
@@ -371,14 +365,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
         expectedXYValues = "3/12/2011\n7/6/2011\n10/30/2011\n2/23/2012\n6/17/2012\n10/11/2012\n2/4/2013\n5/31/2013\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
-        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
-
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
             log("Validating Date Made Public");
-            assertSVG(expectedXYValues, 1);
+            assertSVG(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
@@ -386,14 +377,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
         expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
-        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
-
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
             log("Validating Start Date");
-            assertSVG(expectedXYValues, 1);
+            assertSVG(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
@@ -416,7 +404,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
             // There are too many labels on the xaxis to validate all, so we will just validate the count.
             log("Validating Product Class");
             actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-            assertEquals("Unexpected number of tick marks on the x-axis.", 80, actualTickCount);
+            assertEquals("Unexpected number of tick marks on the x-axis.", 83, actualTickCount);
         }
 
         xaxis.openSelectorWindow();
@@ -428,7 +416,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
             // There are too many labels on the xaxis to validate all, so we will just validate the count.
             log("Validating Product Class Combination");
             actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-            assertEquals("Unexpected number of tick marks on the x-axis.", 79, actualTickCount);
+            assertEquals("Unexpected number of tick marks on the x-axis.", 81, actualTickCount);
         }
 
         xaxis.openSelectorWindow();
@@ -451,19 +439,19 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
             // There are too many labels on the xaxis to validate all, so we will just validate the count.
             log("Validating Treatment Arm");
             actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-            assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 26, actualTickCount);
+            assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 28, actualTickCount);
         }
 
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
         xaxis.confirmSelection();
-        expectedXYValues = "undefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
         if (CDSHelper.validateCounts)
         {
             log("Validating Treatment Arm Coded Label");
-            assertSVG(expectedXYValues);
+            actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
+            assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 87, actualTickCount);
         }
 
         xaxis.openSelectorWindow();
@@ -520,7 +508,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Treatment Summaries in the color axis.", 40, actualTickCount);
+        assertEquals("Unexpected number of Treatment Summaries in the color axis.", 43, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_NETWORK);
@@ -536,7 +524,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Product Class Combinations in the color axis.", 38, actualTickCount);
+        assertEquals("Unexpected number of Product Class Combinations in the color axis.", 40, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_PROD_CLASS);
@@ -544,7 +532,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Product Classes in the color axis.", 38, actualTickCount);
+        assertEquals("Unexpected number of Product Classes in the color axis.", 41, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
@@ -560,7 +548,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Treatment Arms in the color axis.", 15, actualTickCount);
+        assertEquals("Unexpected number of Treatment Arms in the color axis.", 17, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
@@ -568,7 +556,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Treatment Arm Coded Labels in the color axis.", 1, actualTickCount);
+        assertEquals("Unexpected number of Treatment Arm Coded Labels in the color axis.", 43, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
@@ -580,7 +568,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
     }
 
-        @Test
+    @Test
     public void verifyBoxPlots()
     {
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
@@ -588,7 +576,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        // Choose the y-axis and verify that only 1 box plot shows if there is no x-axis chosen.
+        log("Choose the y-axis and verify that only 1 box plot shows if there is no x-axis chosen.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
@@ -597,13 +585,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         waitForElement(plotBox);
 
-        if (CDSHelper.validateCounts)
-        {
-            assertElementPresent(plotBox, 1);
-            assertElementPresent(plotPoint, 3627);
-        }
+        assertElementPresent(plotBox, 1);
+        assertElementPresent(plotPoint, 3627);
 
-        // Choose a categorical axis to verify that multiple box plots will appear.
+        log("Choose a categorical axis to verify that multiple box plots will appear.");
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
         xaxis.pickVariable(CDSHelper.DEMO_SEX);
@@ -613,13 +598,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         waitForElement(Locators.plotBox);
 
-        if (CDSHelper.validateCounts)
-        {
-            assertElementPresent(plotBox, 2);
-            assertElementPresent(plotPoint, 3627);
-        }
+        assertElementPresent(plotBox, 2);
+        assertElementPresent(plotPoint, 3627);
 
-        // Choose a continuous axis and verify that the chart goes back to being a scatter plot.
+        log("Choose a continuous axis and verify that the chart goes back to being a scatter plot.");
         xaxis.openSelectorWindow();
         xaxis.backToSource();
         xaxis.pickSource(CDSHelper.ICS);
@@ -629,7 +611,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         waitForElementToDisappear(plotBox);
 
-        // Verify that we can go back to boxes after being in scatter mode.
+        log("Verify that we can go back to boxes after being in scatter mode.");
         xaxis.openSelectorWindow();
         xaxis.backToSource();
         xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
@@ -639,43 +621,32 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         waitForElement(Locators.plotBox);
         waitForElement(Locators.plotTick.withText("Asian"), 20000);
 
-        if (CDSHelper.validateCounts)
-        {
-            assertElementPresent(plotBox, 10);
-            assertElementPresent(plotPoint, 3627);
-        }
+        assertElementPresent(plotBox, 10);
+        assertElementPresent(plotPoint, 3627);
 
-        //Verify x axis categories are selectable as filters
+        log("Verify x axis categories are selectable as filters");
         mouseOver(Locators.plotTick.withText("Asian"));
-
-        if (CDSHelper.validateCounts)
-        {
-            assertEquals("Incorrect number of points highlighted after mousing over x axis category", 316, getPointCountByColor(MOUSEOVER_FILL));
-        }
+        waitForElement(Locator.css("svg g.axis g.tick-text a rect.highlight[fill='" + MOUSEOVER_FILL + "']"));
+        assertEquals("Incorrect number of points highlighted after mousing over x axis category", 316, getPointCountByColor(MOUSEOVER_FILL));
 
         click(Locators.plotTick.withText("Asian"));
-        //ensure filter buttons are present
         waitForElement(Locators.filterDataButton);
         assertElementPresent(Locators.removeButton);
 
-        if (CDSHelper.validateCounts)
-        {
-            //ensure correct number of points are highlighted
-            assertEquals("Incorrect number of points highlighted after clicking x axis category", 316, getPointCountByColor(MOUSEOVER_FILL));
-            //ensure correct total number of points
-            assertEquals("Incorrect total number of points after clicking x axis category", 3627, getPointCount());
-            //apply category selection as a filter
-        }
+        log("Ensure correct number of points are highlighted");
+        assertEquals("Incorrect number of points highlighted after clicking x axis category", 316, getPointCountByColor(MOUSEOVER_FILL));
+        log("Ensure correct total number of points.");
+        assertEquals("Incorrect total number of points after clicking x axis category", 3627, getPointCount());
+        log("Apply category selection as a filter.");
 
         // Need to do this because there is more than one "Filter" buton in the OM, but only want the visible one.
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
+        sleep(3000); // Let the plot redraw.
+        _ext4Helper.waitForMaskToDisappear();
 
-        if (CDSHelper.validateCounts)
-        {
-            waitForPointCount(316, 20000);
-        }
+        assertEquals("Point counts not as expected.", 316, getPointCount());
 
-        //clear filter
+        log("Clear filter.");
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
         // Makes the test a little more reliable.
@@ -691,24 +662,39 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.DEMO_RACE);
         xaxis.confirmSelection();
 
-        if (CDSHelper.validateCounts)
-        {
-            waitForPointCount(3627, 20000);
-        }
+        assertEquals("Point counts not as expected", 3627, getPointCount());
 
-        //verify multi-select of categories
+        log("Verify multi-select of categories.");
         selectXAxes(false, "White", "Multiracial", "Native Hawaiian/Paci", "Native American/Alas. Other");
         sleep(3000); // Let the animation end.
 
-        if (CDSHelper.validateCounts)
-        {
-            //ensure correct number of points are highlighted
-            assertEquals("Incorrect number of points highlighted after clicking x axis categories",1443, getPointCountByColor(MOUSEOVER_FILL));
-            assertEquals("Incorrect total number of points after clicking x axis categories",3627, getPointCount());
-            //apply selection as exlusive filter
-            waitAndClick(CDSHelper.Locators.cdsButtonLocator("Remove"));
-            waitForPointCount(3627 - 1443, 10000);
-        }
+        log("Ensure correct number of points are highlighted.");
+        assertEquals("Incorrect number of points highlighted after clicking x axis categories",1443, getPointCountByColor(MOUSEOVER_FILL));
+        assertEquals("Incorrect total number of points after clicking x axis categories",3627, getPointCount());
+        log("Apply selection as exlusive filter.");
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Remove"));
+        sleep(3000); // Let the plot redraw.
+        _ext4Helper.waitForMaskToDisappear();
+        assertEquals("Point counts not as expected", (3627 - 1443), getPointCount());
+
+        click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        log("Validate bug 24806, that null values in a box plot should not generate a gutter plot.");
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Log);
+        yaxis.confirmSelection();
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_INIT_DILUTION);
+        xaxis.confirmSelection();
+
+        String expectedXYValues = "10\nnull\n1\n10\n100\n1000";
+        assertSVG(expectedXYValues);
+        assertFalse("Therer is an x-gutter, and there should not be.", hasXGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
@@ -2808,16 +2794,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
     private int getPointCountByColor(String colorCode)
     {
-        List<WebElement> points = Locator.css("svg g a.point path").findElements(getDriver());
-        int ret = 0;
-        for (WebElement point : points)
-        {
-            if (point.getAttribute("fill").equals(colorCode))
-            {
-                ret++;
-            }
-        }
-        return ret;
+        return getElementCount(Locator.css("svg g a.point path[fill='" + colorCode + "']"));
     }
 
     private int getPointCount()
