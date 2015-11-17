@@ -377,14 +377,6 @@ Ext.define('Connector.model.InfoPane', {
             if (hier && hier.dimension) {
                 // hidden hierarchy?
                 lvl = hier.levels[1];
-                for (var i = 0; i < hier.levels.length; i++) {
-                    var hierLvl = hier.levels[i];
-                    if (hierLvl.infoPaneDefaultLevel) {
-                        lvl = hierLvl;
-                        break;
-                    }
-                }
-
                 dim = hier.dimension;
             }
             else {

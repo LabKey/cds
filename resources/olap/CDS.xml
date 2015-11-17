@@ -76,7 +76,7 @@
                     <Table name="Demographics" schema="study"/>
                     <Table name="study" schema="cds"/>
                 </Join>
-                <Level name="Coded Label" visible="true" column="study_arm_coded_label" type="String" uniqueMembers="true" />
+                <Level name="Treatment Arm Coded Label" visible="true" column="study_arm_coded_label" type="String" uniqueMembers="true" />
                 <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
             </Hierarchy>
 
@@ -104,7 +104,7 @@
 
             <Hierarchy name="Product Name" visible="true" hasAll="false" primaryKey="product_group">
                 <Table name="subjectproduct_bridge" schema="cds"/>
-                <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
+                <Level name="Product Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
             </Hierarchy>
 
             <Hierarchy name="Product Type" visible="true" hasAll="false" primaryKey="product_group">
@@ -121,7 +121,7 @@
 
             <Hierarchy name="Product Class" visible="true" hasAll="false" primaryKey="product_group">
                 <Table name="subjectproduct_bridge" schema="cds"/>
-                <Level name="Class" visible="true" column="product_class_label" type="String" uniqueMembers="true" />
+                <Level name="Product Class" visible="true" column="product_class_label" type="String" uniqueMembers="true" />
                 <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
             </Hierarchy>
 
@@ -134,7 +134,7 @@
                     <Table name="ds_subjectassay" schema="cds"/>
                     <Table name="assay" schema="cds"/>
                 </Join>
-                <Level name="Type" visible="true" column="assay_category" type="String" uniqueMembers="true" />
+                <Level name="Assay Type" visible="true" column="assay_category" type="String" uniqueMembers="true" />
                 <Level name="Assay" visible="true" table="ds_subjectassay" column="assay_identifier" type="String" uniqueMembers="true" />
             </Hierarchy>
 
