@@ -4,7 +4,7 @@ Ext.define('Connector.model.TimepointPane', {
     extend: 'Connector.model.InfoPane',
 
     fields: [
-        {name: 'dataRows', defaultValue: []} // array of visitRowIds for all application filters except time filters
+        {name: 'measureSet', defaultValue: []} // array of measures to use for the member query
     ],
 
     constructor : function(config) {
@@ -71,24 +71,27 @@ Ext.define('Connector.model.TimepointPane', {
 
         // populate the member store based on the data rows from the distinct timepoint query results
         // keep track of which visitRowIds are selected (have data) and which do not (no data because of time filter)
-        Ext.each(this.get('dataRows'), function(row)
+        ChartUtils.getTimepointFilterPaneMembers(this.get('measureSet'), function(dataRows)
         {
-            rowSelType = !Ext.isDefined(selectedVisitRowIds) || selectedVisitRowIds.indexOf(row['RowId']) != -1 ? 'selected' : 'unselected';
-
-            if (!Ext.isDefined(intervalVisitRowIdMap[rowSelType][row[intervalAlias]]))
+            Ext.each(dataRows, function(row)
             {
-                intervalVisitRowIdMap[rowSelType][row[intervalAlias]] = [];
-            }
-            intervalVisitRowIdMap[rowSelType][row[intervalAlias]].push(row['RowId']);
-        });
+                rowSelType = !Ext.isDefined(selectedVisitRowIds) || selectedVisitRowIds.indexOf(row['RowId']) != -1 ? 'selected' : 'unselected';
 
-        // convert and load the interval visitRowId data into the memberStore
-        modelDatas = this.getMemberDataModels(intervalName, intervalVisitRowIdMap, 'selected');
-        modelDatas = modelDatas.concat(this.getMemberDataModels(intervalName, intervalVisitRowIdMap, 'unselected'));
-        store.loadRawData(modelDatas);
-        store.group(store.groupField, 'DESC');
+                if (!Ext.isDefined(intervalVisitRowIdMap[rowSelType][row[intervalAlias]]))
+                {
+                    intervalVisitRowIdMap[rowSelType][row[intervalAlias]] = [];
+                }
+                intervalVisitRowIdMap[rowSelType][row[intervalAlias]].push(row['RowId']);
+            });
 
-        this.setReady();
+            // convert and load the interval visitRowId data into the memberStore
+            modelDatas = this.getMemberDataModels(intervalName, intervalVisitRowIdMap, 'selected');
+            modelDatas = modelDatas.concat(this.getMemberDataModels(intervalName, intervalVisitRowIdMap, 'unselected'));
+            store.loadRawData(modelDatas);
+            store.group(store.groupField, 'DESC');
+
+            this.setReady();
+        }, this);
     },
 
     getMemberDataModels : function(intervalName, intervalVisitRowIdMap, type)

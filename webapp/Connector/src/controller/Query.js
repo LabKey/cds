@@ -402,7 +402,6 @@ Ext.define('Connector.controller.Query', {
      */
     getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, plotAxis, callback, scope) {
         var subjectMeasure,
-            state = Connector.getState(),
             wrappedMeasureSet = [],
             aliases = [],
             measureData,

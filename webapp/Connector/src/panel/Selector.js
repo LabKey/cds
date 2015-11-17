@@ -661,19 +661,26 @@ Ext.define('Connector.panel.Selector', {
         return this.hierarchyPane;
     },
 
+    getHierarchicalOptionCmp : function()
+    {
+        var hierOptionCmp;
+
+        // find and return the first visible hierarchical component
+        Ext.each(this.advancedOptionCmps, function(optionCmp)
+        {
+            if (!optionCmp.hidden && optionCmp.isHierarchical)
+            {
+                hierOptionCmp = optionCmp;
+                return false;
+            }
+        });
+
+        return hierOptionCmp;
+    },
+
     showHierarchicalSelection : function(advancedOptionCmp) {
         // if the advancedOptionCmp param isn't provided, look for the first visible component that is hierarchical
-        if (!Ext.isDefined(advancedOptionCmp))
-        {
-            for (var i = 0; i < this.advancedOptionCmps.length; i++)
-            {
-                if (!this.advancedOptionCmps[i].hidden && this.advancedOptionCmps[i].isHierarchical)
-                {
-                    advancedOptionCmp = this.advancedOptionCmps[i];
-                    break;
-                }
-            }
-        }
+        advancedOptionCmp = advancedOptionCmp || this.getHierarchicalOptionCmp();
         if (!Ext.isDefined(advancedOptionCmp))
         {
             return;

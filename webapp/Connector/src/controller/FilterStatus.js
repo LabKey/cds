@@ -89,7 +89,8 @@ Ext.define('Connector.controller.FilterStatus', {
         });
 
         this.control('plot', {
-            maskplotrecord: this.onMaskPlotRecord,
+            maskplotrecords: this.onMaskPlotRecords,
+            unmaskplotrecords: this.onUnmaskPlotRecords,
             updateplotrecord: this.onUpdatePlotRecord
     });
 
@@ -151,7 +152,7 @@ Ext.define('Connector.controller.FilterStatus', {
                     dimension: filterOrDetail.get('dimension'),
                     hierarchy: filterOrDetail.get('hierarchy'),
                     level: filterOrDetail.get('level'),
-                    dataRows: filterOrDetail.get('dataRows')
+                    measureSet: filterOrDetail.get('measureSet')
                 },
                 storeRecord;
 
@@ -164,11 +165,19 @@ Ext.define('Connector.controller.FilterStatus', {
                     viewClazz = 'Connector.view.TimepointPane';
                     modelClazz = 'Connector.model.TimepointPane';
 
-                    // we will want to get the Time point info pane members from the store record, so attach them here
+                    // we will want to get the Time point info pane members from the store record,
+                    // so we will need to include the measureSet
                     storeRecord = this.getStore('FilterStatus').getById('Time points');
                     if (storeRecord != null)
                     {
-                        config.dataRows = storeRecord.get('dataRows');
+                        config.measureSet = storeRecord.get('measureSet');
+                    }
+
+                    // if we don't have the defined measuresSet, we don't want to show the TimepointPane
+                    // since we won't know how to get the distinct timepoint members
+                    if (!Ext.isArray(config.measureSet))
+                    {
+                        return;
                     }
                 }
                 else if (filterOrDetail.isGrid() || filterOrDetail.isAggregated())
@@ -295,13 +304,18 @@ Ext.define('Connector.controller.FilterStatus', {
         }
     },
 
-    onMaskPlotRecord : function(view)
+    onMaskPlotRecords : function()
     {
         this.getStore('FilterStatus').fireEvent('showplotmask');
     },
 
-    onUpdatePlotRecord : function(view, label, forSubcount, countValue, dataRows)
+    onUnmaskPlotRecords : function()
     {
-        this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, countValue, dataRows);
+        this.getStore('FilterStatus').fireEvent('hideplotmask');
+    },
+
+    onUpdatePlotRecord : function(view, label, forSubcount, countValue, measureSet)
+    {
+        this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, countValue, measureSet);
     }
 });

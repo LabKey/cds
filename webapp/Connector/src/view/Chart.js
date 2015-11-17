@@ -2168,8 +2168,6 @@ Ext.define('Connector.view.Chart', {
                 this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME';
 
                 this.requestChartData();
-
-                this.updateTimepointCount();
             }
             else
             {
@@ -2180,6 +2178,8 @@ Ext.define('Connector.view.Chart', {
                 this.noPlot(false);
 
                 this.fireEvent('updateplotrecord', this, 'Time points', false, -1);
+                this.fireEvent('updateplotrecord', this, 'Antigens in X', false, -1);
+                this.fireEvent('updateplotrecord', this, 'Antigens in Y', false, -1);
             }
         }
     },
@@ -2410,10 +2410,12 @@ Ext.define('Connector.view.Chart', {
      */
     requestChartData : function()
     {
+        this.fireEvent('maskplotrecords');
+
         Connector.getFilterService().getSubjects(function(subjectFilter)
         {
             var measureSet = this.getMeasureSet();
-            this.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
+            ChartUtils.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
 
             // Request Chart MeasureStore Data
             Connector.getQueryService().getMeasureStore(measureSet.measures, function(measureStore)
@@ -2456,6 +2458,102 @@ Ext.define('Connector.view.Chart', {
         {
             this.initPlot(chartData);
         }
+
+        this.updatePlotInfoPaneCounts(chartData);
+    },
+
+    getSelectedHierarchicalOptionAlias : function(activeMeasure)
+    {
+        var hierOptionAlias,
+            measure,
+            isHierarchical,
+            valueFilterAlias,
+            selectedFilterValue;
+
+        if (Ext.isObject(activeMeasure))
+        {
+            Ext.each(activeMeasure.dimensions, function(dimAlias)
+            {
+                measure = Connector.getQueryService().getMeasureRecordByAlias(dimAlias);
+                isHierarchical = Ext.isDefined(measure.get('hierarchicalSelectionParent'));
+                valueFilterAlias = measure.get('distinctValueFilterColumnAlias');
+
+                // if the measure is hierarchical, then check if it is the selected data summary level (i.e. distinctValueFilterColumnValue)
+                if (isHierarchical && Ext.isObject(activeMeasure.options) && Ext.isObject(activeMeasure.options.dimensions)
+                        && Ext.isArray(activeMeasure.options.dimensions[valueFilterAlias]))
+                {
+                    selectedFilterValue = activeMeasure.options.dimensions[valueFilterAlias].join(',');
+                    if (selectedFilterValue == measure.get('distinctValueFilterColumnValue'))
+                    {
+                        hierOptionAlias = measure.getFilterMeasure().get('alias');
+                        return false;
+                    }
+                }
+            }, this);
+        }
+
+        return hierOptionAlias;
+    },
+
+    updatePlotInfoPaneCounts : function(chartData)
+    {
+        var yAntigenAlias = this.getSelectedHierarchicalOptionAlias(this.activeMeasures.y),
+            xAntigenAlias = this.getSelectedHierarchicalOptionAlias(this.activeMeasures.x),
+            nonTimeFilterSet = [],
+            measureSet,
+            sql;
+
+        // get the full set of non-timepoint filters from the state and the related measureSet for those fitlers
+        Ext.each(Connector.getState().getFilters(), function(filter)
+        {
+            if (!filter.isTime() || filter.isPlot())
+            {
+                nonTimeFilterSet.push(filter);
+            }
+        });
+        measureSet = this.getMeasureSet(nonTimeFilterSet).measures;
+
+        // generate the SQL to get the distinct value counts for the timepoints and selected x and y axis antigen column
+        sql = 'SELECT COUNT(DISTINCT ' + QueryUtils.VISITROWID_ALIAS + ') AS ' + QueryUtils.VISITROWID_ALIAS;
+        if (Ext.isString(yAntigenAlias))
+        {
+            sql += ', COUNT(DISTINCT ' + yAntigenAlias + ') AS ' + yAntigenAlias;
+        }
+        if (Ext.isString(xAntigenAlias) && xAntigenAlias !== yAntigenAlias)
+        {
+            sql += ', COUNT(DISTINCT ' + xAntigenAlias + ') AS ' + xAntigenAlias;
+        }
+        sql += ' FROM ' + chartData.getQueryName();
+
+        LABKEY.Query.executeSql({
+            schemaName: chartData.getSchemaName(),
+            sql: sql,
+            scope: this,
+            success: function(data) {
+                var hasDataRow = Ext.isArray(data.rows) && data.rows.length == 1,
+                    timepointCount = -1, xCount = -1, yCount = -1;
+
+                if (hasDataRow)
+                {
+                    timepointCount = data.rows[0][QueryUtils.VISITROWID_ALIAS];
+                }
+                this.fireEvent('updateplotrecord', this, 'Time points', false, timepointCount, measureSet);
+
+                if (Ext.isString(xAntigenAlias) && hasDataRow)
+                {
+                    xCount = data.rows[0][xAntigenAlias];
+                }
+                this.fireEvent('updateplotrecord', this, 'Antigens in X', false, xCount);
+
+                if (Ext.isString(yAntigenAlias) && hasDataRow)
+                {
+                    yCount = data.rows[0][yAntigenAlias];
+                }
+                this.fireEvent('updateplotrecord', this, 'Antigens in Y', false, yCount);
+
+                this.fireEvent('unmaskplotrecords');
+            }
+        });
     },
 
     _showWhyXGutter : function(data)
@@ -3151,21 +3249,6 @@ Ext.define('Connector.view.Chart', {
         this.hideVisibleWindow();
     },
 
-    applySubjectValuesToMeasures : function(measureSet, subjectFilter) {
-        // find the subject column(s) in the measure set to apply the values filter (issue 24123)
-        if (subjectFilter.hasFilters) {
-            Ext.each(measureSet, function(m) {
-                if (m.measure && m.measure.name == Connector.studyContext.subjectColumn) {
-                    if (Ext.isArray(m.measure.values)) {
-                        console.error('There is a potentially unknown values array on the applied subject measure.');
-                    }
-
-                    m.measure.values = subjectFilter.subjects;
-                }
-            }, this);
-        }
-    },
-
     onPlotSelectionRemoved : function(filterId, measureIdx) {
         var curExtent = this.plot.getBrushExtent();
         if (curExtent) {
@@ -3199,103 +3282,7 @@ Ext.define('Connector.view.Chart', {
             this.highlightSelectedFn();
         }
 
-        this.updateTimepointCount(selections);
-    },
-
-    updateTimepointCount : function(selections)
-    {
-        var includeSelections = Ext.isArray(selections),
-            fullFilterSet = [], nonTimeFilterSet = [];
-
-        this.fireEvent('maskplotrecord', this);
-
-        if (includeSelections && selections.length == 0)
-        {
-            // in the 'selection remove' case, we just reset the subcount value
-            this.fireEvent('updateplotrecord', this, 'Time points', true, -1);
-        }
-        else
-        {
-            // get the full set of filters and selections from the state and keep track of the non-timepoint filter as well
-            Ext.each(Connector.getState().getFilters(), function(filter)
-            {
-                fullFilterSet.push(filter);
-                if (!filter.isTime() || filter.isPlot())
-                {
-                    nonTimeFilterSet.push(filter);
-                }
-            });
-            if (includeSelections)
-            {
-                Ext.each(Connector.getState().getSelections(), function(filter)
-                {
-                    fullFilterSet.push(filter);
-                    if (!filter.isTime() || filter.isPlot())
-                    {
-                        nonTimeFilterSet.push(filter);
-                    }
-                });
-            }
-
-            // We have two separate requests to make, the first one is to get the distinct timepoint count or subcount
-            // based on all of the application filters (fullFilterSet). Then in the non-selection case, we need to
-            // make another request to get the full set of distinct timepoint members for the filter pane excluding the
-            // time filters themselves (nonTimeFilterSet).
-            Connector.getQueryService().getSubjectsForSpecificFilters(fullFilterSet, null, function(subjectFilter)
-            {
-                var measureSet = this.getMeasureSet(fullFilterSet);
-                this.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
-
-                this.getDistinctTimepointsForMeasureSet(measureSet.measures, function(filteredTimepointRows)
-                {
-                    if (includeSelections)
-                    {
-                        this.fireEvent('updateplotrecord', this, 'Time points', true, filteredTimepointRows.length);
-                    }
-                    else
-                    {
-                        this.getTimepointFilterPaneMembers(nonTimeFilterSet, filteredTimepointRows);
-                    }
-                }, this);
-
-
-            }, this);
-        }
-    },
-
-    getTimepointFilterPaneMembers : function(nonTimeFilterSet, filteredTimepointRows)
-    {
-        Connector.getQueryService().getSubjectsForSpecificFilters(nonTimeFilterSet, null, function(subjectFilter)
-        {
-            var measureSet = this.getMeasureSet(nonTimeFilterSet);
-            this.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
-
-            this.getDistinctTimepointsForMeasureSet(measureSet.measures, function(allTimepointRows)
-            {
-                this.fireEvent('updateplotrecord', this, 'Time points', false, filteredTimepointRows.length, allTimepointRows);
-            }, this);
-        }, this);
-    },
-
-    getDistinctTimepointsForMeasureSet : function(measures, callback, scope)
-    {
-        if (Ext.isArray(measures))
-        {
-            // Request distinct timepoint information for info pane plot counts, subcounts, and filter pane members
-            LABKEY.Query.executeSql({
-                schemaName: 'study',
-                sql: QueryUtils.getDistinctTimepointSQL({measures: measures}),
-                scope: this,
-                success: function(data)
-                {
-                    callback.call(scope, data.rows);
-                }
-            });
-        }
-        else
-        {
-            callback.call(scope, undefined);
-        }
+        // TODO: update plot based info pane subcounts
     },
 
     getStudyAxisData : function(chartData) {

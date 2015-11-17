@@ -24,7 +24,8 @@ Ext.define('Connector.store.FilterStatus', {
         plotBasedCount: true,
         activeCountLink: true,
         viewClass: 'Connector.view.TimepointPane',
-        modelClass: 'Connector.model.TimepointPane'
+        modelClass: 'Connector.model.TimepointPane',
+        highlight: true
     },{
         label: 'Antigens in X',
         count: -1,
@@ -275,7 +276,7 @@ Ext.define('Connector.store.FilterStatus', {
         this.fireEvent('load', this);
     },
 
-    updatePlotRecordCount : function(label, forSubcount, countValue, dataRows)
+    updatePlotRecordCount : function(label, forSubcount, countValue, measureSet)
     {
         var recIndex = this.findPlotCountRecordCache(label),
             fieldName = forSubcount ? 'subcount' : 'count',
@@ -292,22 +293,21 @@ Ext.define('Connector.store.FilterStatus', {
                 record.set(fieldName, countValue);
             }
 
-            // anytime the count is updated, hold on to the data rows and reset the subcount
+            // anytime the count is updated, reset the subcount if we don't have any selections and hold onto the measureSet
             if (!forSubcount)
             {
-                this.plotCountRecordsCache[recIndex].dataRows = dataRows;
+                this.plotCountRecordsCache[recIndex].measureSet = measureSet;
                 if (record != null)
                 {
-                    record.set('dataRows', dataRows);
+                    record.set('measureSet', measureSet);
                 }
 
                 if (!Connector.getState().hasSelections())
                 {
                     this.updatePlotRecordCount('Time points', true, -1);
                 }
-            }
 
-            this.fireEvent('hideplotmask');
+            }
         }
         else
         {

@@ -577,5 +577,55 @@ Ext.define('Connector.utility.Chart', {
         }
 
         return false;
+    },
+
+    applySubjectValuesToMeasures : function(measureSet, subjectFilter) {
+        // find the subject column(s) in the measure set to apply the values filter (issue 24123)
+        if (subjectFilter.hasFilters)
+        {
+            Ext.each(measureSet, function(m)
+            {
+                if (m.measure && m.measure.name == Connector.studyContext.subjectColumn)
+                {
+                    m.measure.values = subjectFilter.subjects;
+                }
+            }, this);
+        }
+    },
+
+    getTimepointFilterPaneMembers : function(measureSet, callback, scope)
+    {
+        if (Ext.isArray(measureSet) && measureSet.length > 0)
+        {
+            // get the full set of non-timepoint filters from the state
+            var nonTimeFilterSet = []
+            Ext.each(Connector.getState().getFilters(), function(filter)
+            {
+                if (!filter.isTime() || filter.isPlot())
+                {
+                    nonTimeFilterSet.push(filter);
+                }
+            });
+
+            Connector.getQueryService().getSubjectsForSpecificFilters(nonTimeFilterSet, null, function(subjectFilter)
+            {
+                ChartUtils.applySubjectValuesToMeasures(measureSet, subjectFilter);
+
+                // Request distinct timepoint information for info pane plot counts, subcounts, and filter pane members
+                LABKEY.Query.executeSql({
+                    schemaName: 'study',
+                    sql: QueryUtils.getDistinctTimepointSQL({measures: measureSet}),
+                    scope: this,
+                    success: function(data)
+                    {
+                        callback.call(scope, data.rows);
+                    }
+                });
+            }, this);
+        }
+        else
+        {
+            callback.call(scope, undefined);
+        }
     }
 });

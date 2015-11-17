@@ -489,6 +489,17 @@ Ext.define('Connector.utility.Query', {
                 schemaName: rootTable.schemaName
             };
 
+            // include for info pane timepoint count and subcount if the query is from an assay dataset
+            if (rootTable.isAssayDataset)
+            {
+                SELECT.push(sep + rootTable.tableAlias + '.SubjectVisit.Visit.RowId AS "' + this.VISITROWID_ALIAS + '" @title=\'Visit Row Id\'');
+                columnAliasMap[this.VISITROWID_ALIAS] = {
+                    name: 'VisitRowId',
+                    queryName: rootTable.displayName,
+                    schemaName: rootTable.schemaName
+                };
+            }
+
             Ext.each(allMeasures, function (m)
             {
                 var isKeyCol = m.measure.name.toLowerCase() == 'subjectid'
