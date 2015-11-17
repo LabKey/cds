@@ -49,8 +49,21 @@
     border: 0;
     text-align: left;
 
+    & > .x-column-header-inner {
+      position: relative;
+
+      &:before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: $interactive-color;
+        bottom: 0;
+        left: 4px; // same as header-inner padding.
+      }
+    }
+
     .x-column-header-inner {
-      border-bottom: 2px solid $interactive-color;
       height: 50px;
     }
 
