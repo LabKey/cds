@@ -132,6 +132,7 @@ Ext4.define('Connector.cube.Configuration', {
                         activeCount: 'highlight',
                         countPriority: 30,
                         countSingular: 'Study',
+                        levelLabel: 'Name',
                         supportsLearn: true,
                         countPlural: 'Studies'
                     },{
@@ -141,6 +142,7 @@ Ext4.define('Connector.cube.Configuration', {
                         countPriority: 40,
                         countSingular: 'Treatment',
                         countPlural: 'Treatments',
+                        levelLabel: 'Treatment Summary',
                         supportsLearn: true,
                         displayParent: true,
                         infoPaneDefaultLevel: true
@@ -471,7 +473,8 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsLearn: false,
                 lookupDimension: undefined,
                 displayParent: false,
-                infoPaneDefaultLevel: false
+                infoPaneDefaultLevel: false,
+                levelLabel: 'label::'
             }
         }
     }

@@ -243,7 +243,7 @@ Ext.define('Connector.model.InfoPane', {
                         Ext.each(h.levels, function(level, i) {
                             if (i > 0) {
                                 hierarchyItems.push({
-                                    text: level.countPlural,
+                                    text: level.levelLabel,
                                     uniqueName: level.uniqueName,
                                     isLevel: true
                                 });
@@ -259,7 +259,7 @@ Ext.define('Connector.model.InfoPane', {
                 dimension: dim,
                 hierarchy: hier,
                 level: lvl,
-                hierarchyLabel: hier.displayLevels? lvl.countPlural : hier.label,
+                hierarchyLabel: hier.displayLevels? lvl.levelLabel : hier.label,
                 hierarchyItems: hierarchyItems,
                 operatorType: hier.defaultOperator,
                 title: dim.pluralName
