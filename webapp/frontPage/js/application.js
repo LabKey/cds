@@ -49,6 +49,11 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
         name: 'create-account-modal',
         query_param_regex: /create_account=true/i
       });
+
+      modal.initialize({
+        name: 'email-modal',
+        query_param_regex: /email_signup=true/i
+      });
     },
 
     /**

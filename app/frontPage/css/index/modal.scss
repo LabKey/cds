@@ -3,7 +3,8 @@
 
 .signin-modal,
 .create-new-password-modal,
-.create-account-modal {
+.create-account-modal,
+.email-modal {
   position: relative;
   overflow: hidden;
   background: $background-color;
@@ -183,4 +184,65 @@ div.video-header {
   button.video-close {
     @include modal-close;
   }
+}
+
+
+// Custom styles for the embedded mailChimp signup form.
+.email-modal {
+  background-color: #fff;
+  font-family: "Helvetica Neue",Arial,Helvetica,Verdana,sans-serif;
+
+  .title {
+    font-size: 16px;
+    color: #595959;
+    margin-bottom: 16px;
+  }
+
+  label {
+    color: #595959;
+    font-weight: bold;
+    display: block;
+    margin: 0 0 8px 0;
+  }
+
+  input[type="email"] {
+    color: #595959;
+    border: 2px solid #c9c9c9;
+    border-radius: 3px;
+    display: block;
+    margin: 0 0 24px;
+    max-width: 550px;
+    min-height: 36px;
+    min-width: 50px;
+    padding: 0 0.4em;
+    vertical-align: middle;
+    width: 100%;
+  }
+
+  input[type="submit"] {
+    color: #fff;
+    background-color: #fa2d5a;
+    border: 0 none;
+    border-radius: 3px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+    height: 36px;
+    letter-spacing: 0.01em;
+    line-height: 36px;
+    margin-right: 0;
+    overflow: hidden;
+    padding: 0 18px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: #fa2d5a;
+    }
+  }
+  
 }

@@ -348,12 +348,17 @@
         }
       }
     }
+    
     .links {
       margin: 0;
       text-align: center;
-      a.contact {
+      
+      a.contact,
+      a.email-modal-trigger {
         background-color: $dark-text;
+        width: auto;
       }
+
 
       &.sign-in {
         margin-top: 3.011em;
