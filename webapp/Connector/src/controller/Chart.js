@@ -37,7 +37,7 @@ Ext.define('Connector.controller.Chart', {
             var plot = Ext.ComponentQuery.query('plot');
             if (Ext.isArray(plot) && plot.length == 1)
             {
-                this.showXVariableSelector(null, null, plot[0]);
+                this.showXVariableSelector(null, null, plot[0], true);
             }
         }, this);
 
@@ -46,7 +46,7 @@ Ext.define('Connector.controller.Chart', {
             var plot = Ext.ComponentQuery.query('plot');
             if (Ext.isArray(plot) && plot.length == 1)
             {
-                this.showYVariableSelector(null, null, plot[0]);
+                this.showYVariableSelector(null, null, plot[0], true);
             }
         }, this);
 
@@ -122,26 +122,26 @@ Ext.define('Connector.controller.Chart', {
         this._filtersChanged = true;
     },
 
-    showYVariableSelector : function(view, model, plot)
+    showYVariableSelector : function(view, model, plot, showAntigenSelection)
     {
         plot = plot || view.up('plot');
         if (plot)
         {
             Connector.getService('Query').onQueryReady(function()
             {
-                plot.showYMeasureSelection();
+                plot.showYMeasureSelection(showAntigenSelection);
             });
         }
     },
 
-    showXVariableSelector : function(view, model, plot)
+    showXVariableSelector : function(view, model, plot, showAntigenSelection)
     {
         plot = plot || view.up('plot');
         if (plot)
         {
             Connector.getService('Query').onQueryReady(function()
             {
-                plot.showXMeasureSelection();
+                plot.showXMeasureSelection(showAntigenSelection);
             });
         }
     },

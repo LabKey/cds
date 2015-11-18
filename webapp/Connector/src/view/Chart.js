@@ -2963,13 +2963,21 @@ Ext.define('Connector.view.Chart', {
         return this.yAxisSelector;
     },
 
-    showYMeasureSelection : function() {
+    showYMeasureSelection : function(showAntigenSelection)
+    {
+        var yAxisSelector = this.getYAxisSelector();
 
-        if (!this.ywin) {
-            this.ywin = this.createSelectorWindow(this.getYAxisSelector());
+        if (!this.ywin)
+        {
+            this.ywin = this.createSelectorWindow(yAxisSelector);
         }
 
-        this.getYAxisSelector().loadSourceCounts();
+        yAxisSelector.loadSourceCounts();
+        if (showAntigenSelection)
+        {
+            yAxisSelector.goToAntigenSelection();
+        }
+
         this.ywin.show(this.getYSelector().getEl());
     },
 
@@ -3016,7 +3024,7 @@ Ext.define('Connector.view.Chart', {
         return this.xAxisSelector;
     },
 
-    showXMeasureSelection : function()
+    showXMeasureSelection : function(showAntigenSelection)
     {
         var xAxisSelector = this.getXAxisSelector();
 
@@ -3027,6 +3035,11 @@ Ext.define('Connector.view.Chart', {
 
         xAxisSelector.toggleRemoveVariableButton(this.activeMeasures.x !== null);
         xAxisSelector.loadSourceCounts();
+        if (showAntigenSelection)
+        {
+            xAxisSelector.goToAntigenSelection();
+        }
+
         this.xwin.show(this.getXSelector().getEl());
     },
 
@@ -3086,6 +3099,7 @@ Ext.define('Connector.view.Chart', {
 
         colorAxisSelector.toggleRemoveVariableButton(this.activeMeasures.color !== null);
         colorAxisSelector.loadSourceCounts();
+
         this.colorwin.show(this.getColorSelector().getEl());
     },
 

@@ -33,6 +33,7 @@ Ext.define('Connector.panel.Selector', {
     testCls: undefined,
 
     disableAdvancedOptions: false,
+    gotoAntigenSelection: false,
     boundDimensionAliases: undefined,
     measureSetStore: null,
 
@@ -666,16 +667,39 @@ Ext.define('Connector.panel.Selector', {
         var hierOptionCmp;
 
         // find and return the first visible hierarchical component
-        Ext.each(this.advancedOptionCmps, function(optionCmp)
+        if (Ext.isArray(this.advancedOptionCmps))
         {
-            if (!optionCmp.hidden && optionCmp.isHierarchical)
+            Ext.each(this.advancedOptionCmps, function(optionCmp)
             {
-                hierOptionCmp = optionCmp;
-                return false;
-            }
-        });
+                if (!optionCmp.hidden && optionCmp.isHierarchical)
+                {
+                    hierOptionCmp = optionCmp;
+                    return false;
+                }
+            });
+        }
 
         return hierOptionCmp;
+    },
+
+    goToAntigenSelection : function()
+    {
+        // if the antigen hierarchy pane is already defined, go there
+        // otherwise set the flag so that it goes there next time the selector is shown
+        this.gotoAntigenSelection = true;
+        if (Ext.isDefined(this.getHierarchicalOptionCmp()))
+        {
+            this.shouldGoToAntigenSelection();
+        }
+    },
+
+    shouldGoToAntigenSelection : function()
+    {
+        if (this.gotoAntigenSelection)
+        {
+            this.showHierarchicalSelection();
+            this.gotoAntigenSelection = false;
+        }
     },
 
     showHierarchicalSelection : function(advancedOptionCmp) {
@@ -921,7 +945,6 @@ Ext.define('Connector.panel.Selector', {
         this.bindScale();
 
         this.slideAdvancedOptionsPane();
-        //this.showHierarchicalSelection();
     },
 
     createAdvancedOptionCmp : function(alias, dimension) {
@@ -1014,7 +1037,9 @@ Ext.define('Connector.panel.Selector', {
             {
                 pane.show();
                 pane.getEl().slideIn('b', {
-                    duration: 250
+                    duration: 250,
+                    scope: this,
+                    callback: this.shouldGoToAntigenSelection
                 });
             }
         }
