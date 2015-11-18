@@ -49,7 +49,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
-        cds.showHiddenVariables(true);
         Ext4Helper.setCssPrefix("x-");
 
         log("Deleting groups that may be left over from a previous run.");

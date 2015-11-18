@@ -1696,7 +1696,7 @@ r4	NA	Group 2	T2	14	301	2	1	Follow-Up	\N	sollicitudin	FALSE	FALSE
 r4	NA	Group 2	T2	28	401	4	1	Vaccination	\N	sit	TRUE	FALSE
 r4	NA	Group 2	T2	42	501	6	2	Follow-Up	\N	eu	FALSE	FALSE
 r4	NA	Group 2	T2	56	601	8	2	Vaccination	\N	interdum	TRUE	FALSE
-r4	NA	Group 2	T2	70	701	10	3	Follow-Up	\N	amet	FALSE	FALSE
+r4	NA	Group 2	T2	70	701	10	3	Challenge	\N	amet	FALSE	TRUE
 r4	NA	Group 2	T2	168	801	24	6	Vaccination	Last Vaccination	pharetra	TRUE	FALSE
 r4	NA	Group 2	T2	175	901	25	7	Follow-Up	\N	ac	FALSE	FALSE
 r4	NA	Group 2	T2	196	1001	28	7	Follow-Up	\N	duis	FALSE	FALSE
@@ -3067,8 +3067,8 @@ y55	NA	Group 2	T2	168	801	24	6	Vaccination	Last Vaccination	libero	TRUE	FALSE
 y55	NA	Group 2	T2	182	901	26	7	Follow-Up	\N	convallis	FALSE	FALSE
 y55	NA	Group 2	T2	196	1001	28	7	Follow-Up	\N	cras	FALSE	FALSE
 y55	NA	Group 2	T2	273	1101	39	10	Follow-Up	\N	id	FALSE	FALSE
-y55	NA	Group 2	T2	364	1201	52	13	Follow-Up	\N	platea	FALSE	FALSE
-y55	NA	Group 2	T2	455	1301	65	17	Follow-Up	\N	metus	FALSE	FALSE
+y55	NA	Group 2	T2	364	1201	52	13	Challenge	\N	platea	FALSE	TRUE
+y55	NA	Group 2	T2	455	1301	65	17	Challenge	\N	metus	FALSE	TRUE
 y55	NA	Group 2	T2	545	1401	78	20	Follow-Up	\N	blandit	FALSE	FALSE
 y55	NA	Group 2	C2	0	201	0	0	Vaccination	Enrollment	odio	TRUE	FALSE
 y55	NA	Group 2	C2	14	301	2	1	Follow-Up	\N	lobortis	FALSE	FALSE
@@ -3086,7 +3086,7 @@ y55	NA	Group 2	C2	545	1401	78	20	Follow-Up	\N	pellentesque	FALSE	FALSE
 y55	NA	Group 3	T3	0	201	0	0	Vaccination	Enrollment	turpis	TRUE	FALSE
 y55	NA	Group 3	T3	14	301	2	1	Follow-Up	\N	suspendisse	FALSE	FALSE
 y55	NA	Group 3	T3	28	401	4	1	Vaccination	\N	lorem	TRUE	FALSE
-y55	NA	Group 3	T3	42	501	6	2	Follow-Up	\N	etiam	FALSE	FALSE
+y55	NA	Group 3	T3	42	501	6	2	Challenge	\N	etiam	FALSE	TRUE
 y55	NA	Group 3	T3	84	601	12	3	Vaccination	\N	cum	TRUE	FALSE
 y55	NA	Group 3	T3	98	701	14	4	Follow-Up	\N	nunc	FALSE	FALSE
 y55	NA	Group 3	T3	168	801	24	6	Vaccination	Last Vaccination	volutpat	TRUE	FALSE
