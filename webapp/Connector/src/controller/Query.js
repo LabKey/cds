@@ -396,6 +396,7 @@ Ext.define('Connector.controller.Query', {
      * @param {Object} dimension
      * @param {Array} measureSet
      * @param {Array} filterValuesMap
+     * @param {String} plotAxis
      * @param {Function} callback
      * @param {Object} [scope]
      * @returns {Object}

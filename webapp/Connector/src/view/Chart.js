@@ -2498,6 +2498,14 @@ Ext.define('Connector.view.Chart', {
         return hierOptionAlias;
     },
 
+    getDistinctAntigenCaseSql : function(antigenAlias, otherAntigenAlias, datasetKey)
+    {
+        return 'CASE WHEN IFDEFINED(' + QueryUtils.DATASET_ALIAS + ') IS NOT NULL'
+             + '  THEN (CASE WHEN IFDEFINED(' + QueryUtils.DATASET_ALIAS + ') = \'' + datasetKey + '\' THEN ' + antigenAlias + ' ELSE NULL END)'
+             + '  ELSE ' + antigenAlias
+             + ' END';
+},
+
     updatePlotInfoPaneCounts : function(config)
     {
         var yAntigenAlias = this.getSelectedHierarchicalOptionAlias(this.activeMeasures.y),
@@ -2517,18 +2525,18 @@ Ext.define('Connector.view.Chart', {
         measureSet = this.getMeasureSet(nonTimeFilterSet).measures;
 
         // generate the SQL to get the distinct value counts for the timepoints and selected x and y axis antigen column
-        sql = 'SELECT COUNT(DISTINCT ' + QueryUtils.VISITROWID_ALIAS + ') AS ' + QueryUtils.VISITROWID_ALIAS;
+        sql = 'SELECT COUNT(DISTINCT ' + QueryUtils.VISITROWID_ALIAS + ') AS TimepointCount';
         if (Ext.isString(yAntigenAlias))
         {
-            sql += ', COUNT(DISTINCT ' + yAntigenAlias + ') AS ' + yAntigenAlias;
+            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(yAntigenAlias, xAntigenAlias, 'plot-axis-y') + ') AS YAntigenCount';
         }
-        if (Ext.isString(xAntigenAlias) && xAntigenAlias !== yAntigenAlias)
+        if (Ext.isString(xAntigenAlias))
         {
-            sql += ', COUNT(DISTINCT ' + xAntigenAlias + ') AS ' + xAntigenAlias;
+            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(xAntigenAlias, yAntigenAlias, 'plot-axis-x') + ') AS XAntigenCount';
         }
 
         // we either select from the temp query name provided by the requestChartData request or use the generated sql
-        sql += ' FROM (' + (config.queryName || config.sql)  + ')';
+        sql += '\nFROM (' + (config.queryName || config.sql)  + ')';
 
         LABKEY.Query.executeSql({
             schemaName: Connector.studyContext.schemaName,
@@ -2540,19 +2548,19 @@ Ext.define('Connector.view.Chart', {
 
                 if (hasDataRow)
                 {
-                    timepointCount = data.rows[0][QueryUtils.VISITROWID_ALIAS];
+                    timepointCount = data.rows[0]['TimepointCount'];
                 }
                 this.fireEvent('updateplotrecord', this, 'Time points', config.forSubcounts, timepointCount, measureSet);
 
                 if (Ext.isString(xAntigenAlias) && hasDataRow)
                 {
-                    xCount = data.rows[0][xAntigenAlias];
+                    xCount = data.rows[0]['XAntigenCount'];
                 }
                 this.fireEvent('updateplotrecord', this, 'Antigens in X', config.forSubcounts, xCount);
 
                 if (Ext.isString(yAntigenAlias) && hasDataRow)
                 {
-                    yCount = data.rows[0][yAntigenAlias];
+                    yCount = data.rows[0]['YAntigenCount'];
                 }
                 this.fireEvent('updateplotrecord', this, 'Antigens in Y', config.forSubcounts, yCount);
 

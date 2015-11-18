@@ -113,16 +113,11 @@ Ext.define('Connector.controller.Filter', {
 
     getTimeFilter : function(wrappedTimeMeasure, timeFilters, callback, scope)
     {
-        Connector.getQueryService().onQueryReady(function(queryService)
-        {
-            var wrappedMeasures = [
-                wrappedTimeMeasure,
-                {
-                    measure: Connector.getQueryService().getMeasure(QueryUtils.VISITROWID_ALIAS)
-                }
-            ];
+        var queryService = Connector.getQueryService();
 
-            queryService.getData(wrappedMeasures, function(metadata)
+        queryService.onQueryReady(function()
+        {
+            queryService.getData([wrappedTimeMeasure], function(metadata)
             {
                 var filters = [
                     LABKEY.Filter.create(QueryUtils.SEQUENCENUM_ALIAS, 0, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL)

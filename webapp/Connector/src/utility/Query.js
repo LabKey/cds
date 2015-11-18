@@ -35,7 +35,7 @@ Ext.define('Connector.utility.Query', {
         var result = this._generateVisGetDataSql(config.measures, config.extraFilters, {});
 
         LABKEY.Query.executeSql({
-            schemaName: 'study',
+            schemaName: Connector.studyContext.schemaName,
             sql: result.sql,
             requiredVersion: '9.1',
             saveInSession: true,
@@ -434,14 +434,22 @@ Ext.define('Connector.utility.Query', {
         // SELECT
         //
         var SELECT = ["SELECT "],
-            sep = "\n\t";
+            sep = "\n\t",
+            visitRowIdAlias = 'VisitRowId',
+            protDayAlias = 'ProtocolDay';
 
         if (options.timepointOnly)
         {
-            SELECT.push(sep + rootTable.tableAlias + '.SubjectVisit.Visit.RowId,');
+            if (rootTable.fullQueryName !== this.SUBJECTVISIT_TABLE)
+            {
+                visitRowIdAlias = 'SubjectVisit.Visit.RowId';
+                protDayAlias = 'SubjectVisit.Visit.ProtocolDay';
+            }
+
+            SELECT.push(sep + rootTable.tableAlias + '.' + visitRowIdAlias + ' AS RowId,');
             Ext.iterate(Connector.getQueryService().getTimeAliases(), function(timeAlias)
             {
-                SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.SubjectVisit.Visit.ProtocolDay', timeAlias, false) + ' AS ' + timeAlias + ',');
+                SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.' + protDayAlias, timeAlias, false) + ' AS ' + timeAlias + ',');
             }, this);
 
             // still need to see if there is a study axis measure with a visit tag alignment value
