@@ -677,11 +677,7 @@ Ext.define('Connector.view.Grid', {
                         },
                         clearfilter: function(win, fieldKeyPath)
                         {
-                            this.fireEvent('removefilter', this, fieldKeyPath, false);
-                        },
-                        clearall: function()
-                        {
-                            this.fireEvent('removefilter', this, null, true);
+                            this.fireEvent('removefilter', this, fieldKeyPath);
                         },
                         scope: this
                     },
