@@ -2459,7 +2459,10 @@ Ext.define('Connector.view.Chart', {
             this.initPlot(chartData);
         }
 
-        this.updatePlotInfoPaneCounts(chartData);
+        this.updatePlotInfoPaneCounts({
+            forSubcounts: false,
+            queryName: chartData.getQueryName()
+        });
     },
 
     getSelectedHierarchicalOptionAlias : function(activeMeasure)
@@ -2495,7 +2498,7 @@ Ext.define('Connector.view.Chart', {
         return hierOptionAlias;
     },
 
-    updatePlotInfoPaneCounts : function(chartData)
+    updatePlotInfoPaneCounts : function(config)
     {
         var yAntigenAlias = this.getSelectedHierarchicalOptionAlias(this.activeMeasures.y),
             xAntigenAlias = this.getSelectedHierarchicalOptionAlias(this.activeMeasures.x),
@@ -2523,10 +2526,12 @@ Ext.define('Connector.view.Chart', {
         {
             sql += ', COUNT(DISTINCT ' + xAntigenAlias + ') AS ' + xAntigenAlias;
         }
-        sql += ' FROM ' + chartData.getQueryName();
+
+        // we either select from the temp query name provided by the requestChartData request or use the generated sql
+        sql += ' FROM (' + (config.queryName || config.sql)  + ')';
 
         LABKEY.Query.executeSql({
-            schemaName: chartData.getSchemaName(),
+            schemaName: Connector.studyContext.schemaName,
             sql: sql,
             scope: this,
             success: function(data) {
@@ -2537,19 +2542,19 @@ Ext.define('Connector.view.Chart', {
                 {
                     timepointCount = data.rows[0][QueryUtils.VISITROWID_ALIAS];
                 }
-                this.fireEvent('updateplotrecord', this, 'Time points', false, timepointCount, measureSet);
+                this.fireEvent('updateplotrecord', this, 'Time points', config.forSubcounts, timepointCount, measureSet);
 
                 if (Ext.isString(xAntigenAlias) && hasDataRow)
                 {
                     xCount = data.rows[0][xAntigenAlias];
                 }
-                this.fireEvent('updateplotrecord', this, 'Antigens in X', false, xCount);
+                this.fireEvent('updateplotrecord', this, 'Antigens in X', config.forSubcounts, xCount);
 
                 if (Ext.isString(yAntigenAlias) && hasDataRow)
                 {
                     yCount = data.rows[0][yAntigenAlias];
                 }
-                this.fireEvent('updateplotrecord', this, 'Antigens in Y', false, yCount);
+                this.fireEvent('updateplotrecord', this, 'Antigens in Y', config.forSubcounts, yCount);
 
                 this.fireEvent('unmaskplotrecords');
             }
@@ -3271,18 +3276,37 @@ Ext.define('Connector.view.Chart', {
     },
 
     onSelectionChange : function(selections) {
-        if (selections.length === 0) {
+        if (selections.length === 0)
+        {
             var ex = this.plot.getBrushExtent();
             if (ex !== null) {
                 this.clearAllBrushing();
             }
+
+            this.fireEvent('updateplotrecord', this, 'Time points', true, -1);
+            this.fireEvent('updateplotrecord', this, 'Antigens in X', true, -1);
+            this.fireEvent('updateplotrecord', this, 'Antigens in Y', true, -1);
+        }
+        else
+        {
+            var filterSet = Connector.getState().getFilters().concat(selections),
+                measureSet = this.getMeasureSet(filterSet);
+
+            Connector.getQueryService().getSubjectsForSpecificFilters(filterSet, null, function(subjectFilter)
+            {
+                ChartUtils.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
+
+                this.updatePlotInfoPaneCounts({
+                    forSubcounts: true,
+                    sql: QueryUtils.getDataSql({measures: measureSet.measures})
+                });
+            }, this);
         }
 
-        if (Ext.isFunction(this.highlightSelectedFn)) {
+        if (Ext.isFunction(this.highlightSelectedFn))
+        {
             this.highlightSelectedFn();
         }
-
-        // TODO: update plot based info pane subcounts
     },
 
     getStudyAxisData : function(chartData) {
