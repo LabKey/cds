@@ -96,7 +96,9 @@ Ext.define('Connector.view.Grid', {
 
         this.footer = Ext.create('Connector.component.GridPager', {
             listeners: {
-                updatepage: this.showAlignFooter,
+                updatepage: function() {
+                    this.showAlignFooter();
+                },
                 scope: this
             }
         });
@@ -218,29 +220,25 @@ Ext.define('Connector.view.Grid', {
                 if (this.grid) {
                     var size = this.getWidthHeight();
                     this.getGrid().setSize(size.width, size.height);
-                    this.showAlignFooter(null, null, true);
+                    this.showAlignFooter(true);
                     this.resizeMessage();
                 }
             }
         }, 50, this);
     },
 
-    /**
-     * Called when the application changes views. This will fire even when the bound view
-     * might not be active.
-     * @param controller
-     * @param view
-     */
-    onViewChange : function(controller, view) {
-        var isActive = view === this.xtype;
-        this.getModel().setActive(isActive);
+    onActivate : function()
+    {
+        this.getModel().setActive(true);
 
-        if (!isActive) {
-            this.footer.hide();
-        }
-        else if (this.grid) {
-            this.showAlignFooter();
-        }
+        this.showAlignFooter();
+    },
+
+    onDeactivate : function()
+    {
+        this.getModel().setActive(false);
+
+        this.footer.hide();
     },
 
     onColumnUpdate : function() {
@@ -778,8 +776,10 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
-    showAlignFooter : function(comp, caller, resize) {
-        if (this.footer && this.grid) {
+    showAlignFooter : function(resize)
+    {
+        if (this.getModel().isActive() && this.footer && this.grid)
+        {
             var footer = this.footer,
                 size = this.getWidthHeight(),
                 up = this.up(),
