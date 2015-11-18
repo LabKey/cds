@@ -50,16 +50,9 @@ div#fp-nav {
   opacity: 0 !important;
 }
 
-#intro-video.video-js, 
-.video-header {
-  width: 500px;
-  margin: auto;
-  height: auto;
-}
-
 .video-header {
   .mfp-close {
     position: relative;
-    left: 485px;
+    right: 0;
   }
 }

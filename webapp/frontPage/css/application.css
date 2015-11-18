@@ -186,7 +186,9 @@ html { box-sizing: border-box; }
 
 .create-account-modal .form .credentials { margin-bottom: 0em; }
 
-div.video-header { background-color: #ed365e; height: 4px; text-align: right; width: 500px; margin: auto; color: white; }
+div[data-js-id="video-modal"] { width: 500px; margin-left: auto; margin-right: auto; }
+
+div.video-header { background-color: #ed365e; height: 4px; width: 100%; text-align: right; margin: auto; color: white; }
 div.video-header button.video-close { background-color: #ed365e; width: 1.33em; opacity: 1; height: 1.33em; font-size: 1em; line-height: 1.33em; color: white; }
 div.video-header button.video-close:hover { background-color: #dd133f; }
 
@@ -332,6 +334,4 @@ div#fp-nav ul li a.active span { background-color: #ed365e; }
 
 .slimScrollBar { opacity: 0 !important; }
 
-#intro-video.video-js, .video-header { width: 500px; margin: auto; height: auto; }
-
-.video-header .mfp-close { position: relative; left: 485px; }
+.video-header .mfp-close { position: relative; right: 0; }

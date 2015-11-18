@@ -53,6 +53,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
               $.fn.fullpage.setKeyboardScrolling(false);
               self.$modal = $(this.currItem.inlineElement);
               self.registerActions();
+              window.frontPage.updateVideoSize();
             },
             close: function() {
               $.fn.fullpage.setMouseWheelScrolling(true);

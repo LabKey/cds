@@ -19,7 +19,7 @@
     <style type="text/css">
         /* Context-sensitive url */
         .section.intro-section .video-container .video-placeholder {
-            background-image: url(<%=text(frontPagePath)%>/img/intro.png);
+            background-image: url(<%=text(frontPagePath)%>/img/intro.jpg);
         }
     </style>
 
@@ -191,13 +191,15 @@
                     <div class="play"></div>
                 </a>
                 <div class="video-modal-popup hidden">
-                    <div class="video-header">
-                        <button title="Close (Esc)" type="button" class="video-close mfp-close">x</button>
-                    </div>
+                    <div data-js-id="video-modal">
+                        <div class="video-header">
+                            <button title="Close (Esc)" type="button" class="video-close mfp-close">x</button>
+                        </div>
 
-                    <div id="intro-video" poster="<%=text(frontPagePath)%>/img/intro.png" class="video-js">
-                        <iframe src="https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                        <div id="intro-video" poster="<%=text(frontPagePath)%>/img/intro.jpg" class="video-js">
+                            <iframe src="https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
+                        </div>
                     </div>
                 </div>
             </div>

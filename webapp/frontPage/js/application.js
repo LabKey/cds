@@ -10,7 +10,7 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
      * and initialize each section.
      */
     initialize: function() {
-
+      window.frontPage = window.frontPage || {};
       scroll.initialize({
         section_selector: '.section',
         fullpage_selector: '#fullpage'
@@ -58,6 +58,7 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
 
     /**
      * Binds global events related to the home page.
+     * 
      * @return {undefined}
      */
     bindEvents: function () {
@@ -65,6 +66,47 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
         .on('click', function (e) {
           $.fn.fullpage.moveTo(1);
         });
+
+
+      // resize the video modal to match the screen size more closely.
+      (function () {
+        var ratio = 500 / 281; // updated later if iframe is available.
+        
+        window.frontPage.updateVideoSize = function () {
+          var windowWidth = $(window).width(),
+            windowHeight = $(window).height(),
+            videoWidth = windowWidth * 0.8,
+            videoHeight = videoWidth / ratio;
+
+          // readjust if necessary
+          if (videoHeight > windowHeight) {
+            videoHeight = windowHeight * 0.8;
+            videoWidth = videoHeight * ratio;
+          }
+
+          if ($('[data-js-id="video-modal"').is(':visible')) {
+            $('[data-js-id="video-modal"')
+              .css('width', videoWidth)
+              .find('iframe')
+              .attr('width', videoWidth)
+              .attr('height', videoHeight);
+          }
+        };
+
+        $(document).ready(function () {
+          var $introVideoModal = $('[data-js-id="video-modal"]'),
+            defaultWidth = parseInt($introVideoModal.find('iframe').attr('width')),
+            defaultHeight = parseInt($introVideoModal.find('iframe').attr('height'));
+          
+          ratio = defaultWidth / defaultHeight; // update parent-scoped ratio with iframe data.
+
+          $(window).on('resize', function () {
+            window.frontPage.updateVideoSize();
+          });  
+        });
+      
+      }());
+      
     }
   };
 
