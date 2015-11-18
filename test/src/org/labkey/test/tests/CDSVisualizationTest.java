@@ -174,6 +174,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
         yaxis.confirmSelection();
 
+        // Put this in here to work around issue with FireFox scrollIntoView behaving differently than Chrome.
+        refresh();
+        _ext4Helper.waitForMaskToDisappear();
+
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
@@ -1966,7 +1970,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         plotDataTable.setSort("cds_GridBase_ParticipantSequenceNum", SortDirection.ASC);
         _ext4Helper.setCssPrefix("x-");
 
-        assertEquals(28, getElementCount(Locator.tagContainingText("td", uniqueVirus)));
+        int actualCount = getElementCount(Locator.tagContainingText("td", uniqueVirus));
+        assertTrue("Expected count is not within expected range. Expected 28 (+-5) found " + actualCount, Math.abs(actualCount - 28) <= 5);
         getDriver().close();
         switchToMainWindow();
 
