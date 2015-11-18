@@ -548,15 +548,15 @@ Ext.define('Connector.view.Chart', {
             return;
         }
 
-        if (this.ywin && this.ywin.isVisible()) {
+        if (this.ywin) {
             this.updateSelectorWindow(this.ywin);
         }
 
-        if (this.xwin && this.xwin.isVisible()) {
+        if (this.xwin) {
             this.updateSelectorWindow(this.xwin);
         }
 
-        if (this.colorwin && this.colorwin.isVisible()) {
+        if (this.colorwin) {
             this.updateSelectorWindow(this.colorwin);
         }
 

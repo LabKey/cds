@@ -216,11 +216,18 @@ Ext.define('Connector.view.Grid', {
 
     onViewResize : function() {
         Ext.defer(function() {
-            if (this.getModel().isActive()) {
-                if (this.grid) {
+            if (this.getModel().isActive())
+            {
+                if (this.grid)
+                {
                     var size = this.getWidthHeight();
                     this.getGrid().setSize(size.width, size.height);
                     this.showAlignFooter(true);
+                }
+
+                if (this.measureWindow)
+                {
+                    this.measureWindow.center();
                 }
             }
         }, 50, this);
