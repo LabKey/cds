@@ -29,10 +29,21 @@
   .x-column-header-trigger {
     display: inline-block;
     border-left: 1px solid transparent;
-    background-image: url(images/filter.svg);
+  }
 
-    &:hover {
-      background-image: url(images/filter_selected.svg);
+  .x-column-header {
+    .x-column-header-trigger {
+      display: none;
+    }
+  }
+
+  .x-column-header-over {
+    .x-column-header-trigger {
+      background-image: url(images/filter.svg);
+
+      &:hover {
+        background-image: url(images/filter_hover.svg);
+      }
     }
   }
 
@@ -40,6 +51,10 @@
     .x-column-header-trigger {
       background-color: transparent;
       background-image: url(images/filter_selected.svg);
+      
+      &:hover {
+        background-image: url(images/filter_selected_hover.svg);
+      }
     }
   }
 
