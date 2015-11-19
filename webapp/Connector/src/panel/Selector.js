@@ -448,18 +448,21 @@ Ext.define('Connector.panel.Selector', {
     showLearnMessage : function(item, title, description, name) {
         if (description) {
             //truncate description to roughly 4 rows and ensures that a word isn't being cut off.
-            var charLimit = 95;
+            var charLimit = 150;
+            
             if (description.length > charLimit) {
                description = description.substring(0, charLimit + 1);
                description = description.substring(0, description.lastIndexOf(' ')) + '...';
             }
+
+
 
             var calloutMgr = hopscotch.getCalloutManager(),
                 _id = Ext.id(),
                 displayTooltip = setTimeout(function() {
                     calloutMgr.createCallout({
                         id: _id,
-                        bubbleWidth: 160,
+                        // bubbleWidth: 160, // use CSS instead of JS for this.
                         yOffset: item.scrollHeight - 37, //Issue 24196 - tooltips for rows immediately following a grouping heading were out of alignment.
                         xOffset: 50,
                         showCloseButton: false,
