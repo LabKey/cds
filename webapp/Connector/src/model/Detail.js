@@ -24,6 +24,7 @@ Ext.define('Connector.model.Detail', {
         {name: 'level', defaultValue: undefined},
         {name: 'viewClass', defaultValue: undefined}, // alternate class name for the info pane to display on click (must extend Connector.view.InfoPane)
         {name: 'modelClass', defaultValue: undefined}, // alternate class name for the info pane model (must extend Connector.model.InfoPane)
-        {name: 'measureSet', defaultValue: undefined} // array of measures to use for the info pane members query
+        {name: 'measureSet', defaultValue: undefined}, // array of measures to use for the info pane members query
+        {name: 'membersWithData', defaultValue: undefined} // array of filter members which have data in the current filters or selection
     ]
 });

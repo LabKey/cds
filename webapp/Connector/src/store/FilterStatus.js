@@ -276,7 +276,7 @@ Ext.define('Connector.store.FilterStatus', {
         this.fireEvent('load', this);
     },
 
-    updatePlotRecordCount : function(label, forSubcount, countValue, measureSet)
+    updatePlotRecordCount : function(label, forSubcount, countValue, measureSet, membersWithData)
     {
         var recIndex = this.findPlotCountRecordCache(label),
             fieldName = forSubcount ? 'subcount' : 'count',
@@ -293,6 +293,16 @@ Ext.define('Connector.store.FilterStatus', {
                 record.set(fieldName, countValue);
             }
 
+            // update the record's membersWithData property in the cache and store
+            if (Ext.isDefined(membersWithData))
+            {
+                this.plotCountRecordsCache[recIndex].membersWithData = membersWithData;
+                if (record != null)
+                {
+                    record.set('membersWithData', membersWithData);
+                }
+            }
+
             // anytime the count is updated, reset the subcount if we don't have any selections and hold onto the measureSet
             if (!forSubcount)
             {
@@ -304,9 +314,8 @@ Ext.define('Connector.store.FilterStatus', {
 
                 if (!Connector.getState().hasSelections())
                 {
-                    this.updatePlotRecordCount('Time points', true, -1);
+                    this.updatePlotRecordCount(label, true, -1);
                 }
-
             }
         }
         else

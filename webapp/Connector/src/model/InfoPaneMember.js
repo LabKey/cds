@@ -7,6 +7,7 @@ Ext.define('Connector.model.InfoPaneMember', {
         {name: 'count', type: 'int'},
         {name: 'hasData', type: 'boolean', convert: function(val, rec) { return rec.data.count > 0; }},
         {name: 'hasDetails', type: 'boolean', defaultValue: false},
-        {name: 'detailLink'}
+        {name: 'detailLink'},
+        {name: 'selected', type: 'boolean', defaultValue: false}
     ]
 });

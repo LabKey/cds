@@ -21,7 +21,7 @@ Ext.define('Connector.view.TimepointPane', {
 
         if (Ext.isDefined(this.getModel().getFilterVisitRowIds()))
         {
-            grid.getSelectionModel().select(grid.getStore().query('hasData', true).items);
+            grid.getSelectionModel().select(grid.getStore().query('selected', true).items);
         }
         else
         {

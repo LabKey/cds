@@ -2459,10 +2459,7 @@ Ext.define('Connector.view.Chart', {
             this.initPlot(chartData);
         }
 
-        this.updatePlotInfoPaneCounts({
-            forSubcounts: false,
-            queryName: chartData.getQueryName()
-        });
+        this.updatePlotInfoPaneCounts({forSubcounts: false, queryName: this.dataQWP.query});
     },
 
     getSelectedHierarchicalOptionAlias : function(activeMeasure)
@@ -2525,7 +2522,7 @@ Ext.define('Connector.view.Chart', {
         measureSet = this.getMeasureSet(nonTimeFilterSet).measures;
 
         // generate the SQL to get the distinct value counts for the timepoints and selected x and y axis antigen column
-        sql = 'SELECT COUNT(DISTINCT ' + QueryUtils.VISITROWID_ALIAS + ') AS TimepointCount';
+        sql = 'SELECT GROUP_CONCAT(DISTINCT ' + QueryUtils.VISITROWID_ALIAS + ') AS VisitRowIds';
         if (Ext.isString(yAntigenAlias))
         {
             sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(yAntigenAlias, xAntigenAlias, 'plot-axis-y') + ') AS YAntigenCount';
@@ -2544,13 +2541,18 @@ Ext.define('Connector.view.Chart', {
             scope: this,
             success: function(data) {
                 var hasDataRow = Ext.isArray(data.rows) && data.rows.length == 1,
-                    timepointCount = -1, xCount = -1, yCount = -1;
+                    timepointCount, xCount = -1, yCount = -1,
+                    visitRowIds = [];
 
-                if (hasDataRow)
+                if (hasDataRow && Ext.isDefined(data.rows[0]['VisitRowIds'][0]))
                 {
-                    timepointCount = data.rows[0]['TimepointCount'];
+                    Ext.each(data.rows[0]['VisitRowIds'][0].split(','), function(id)
+                    {
+                        visitRowIds.push(parseInt(id));
+                    });
                 }
-                this.fireEvent('updateplotrecord', this, 'Time points', config.forSubcounts, timepointCount, measureSet);
+                timepointCount = visitRowIds.length;
+                this.fireEvent('updateplotrecord', this, 'Time points', config.forSubcounts, timepointCount, measureSet, visitRowIds);
 
                 if (Ext.isString(xAntigenAlias) && hasDataRow)
                 {
@@ -3305,9 +3307,7 @@ Ext.define('Connector.view.Chart', {
                 this.clearAllBrushing();
             }
 
-            this.fireEvent('updateplotrecord', this, 'Time points', true, -1);
-            this.fireEvent('updateplotrecord', this, 'Antigens in X', true, -1);
-            this.fireEvent('updateplotrecord', this, 'Antigens in Y', true, -1);
+            this.updatePlotInfoPaneCounts({forSubcounts: false, queryName: this.dataQWP.query});
         }
         else
         {
@@ -3318,10 +3318,7 @@ Ext.define('Connector.view.Chart', {
             {
                 ChartUtils.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
 
-                this.updatePlotInfoPaneCounts({
-                    forSubcounts: true,
-                    sql: QueryUtils.getDataSql({measures: measureSet.measures})
-                });
+                this.updatePlotInfoPaneCounts({forSubcounts: true, sql: QueryUtils.getDataSql({measures: measureSet.measures})});
             }, this);
         }
 

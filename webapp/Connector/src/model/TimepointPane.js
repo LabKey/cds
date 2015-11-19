@@ -4,7 +4,8 @@ Ext.define('Connector.model.TimepointPane', {
     extend: 'Connector.model.InfoPane',
 
     fields: [
-        {name: 'measureSet', defaultValue: []} // array of measures to use for the member query
+        {name: 'measureSet', defaultValue: []}, // array of measures to use for the member query
+        {name: 'membersWithData', defaultValue: []} // array of filter members with data in current filter set or selection
     ],
 
     constructor : function(config) {
@@ -61,52 +62,64 @@ Ext.define('Connector.model.TimepointPane', {
     {
         var store = this.get('memberStore'),
             selectedVisitRowIds = this.getFilterVisitRowIds(),
+            membersWithData = this.get('membersWithData'),
             intervalName,
-            intervalVisitRowIdMap = {selected: {}, unselected: {}},
-            rowSelType,
-            modelDatas;
+            intervalMap = {},
+            rowHasData, rowIsSelected, key,
+            modelDatas = [];
 
         // trim interval name based on the alias (TODO need a better way to get this)
-        intervalName = intervalAlias.replace(QueryUtils.STUDY_ALIAS_PREFIX, '').replace('s', '')
+        intervalName = intervalAlias.replace(QueryUtils.STUDY_ALIAS_PREFIX, '').replace('s', '');
 
         // populate the member store based on the data rows from the distinct timepoint query results
-        // keep track of which visitRowIds are selected (have data) and which do not (no data because of time filter)
+        // keep track of which visitRowIds have data in the current filter set or current selection
         ChartUtils.getTimepointFilterPaneMembers(this.get('measureSet'), function(dataRows)
         {
             Ext.each(dataRows, function(row)
             {
-                rowSelType = !Ext.isDefined(selectedVisitRowIds) || selectedVisitRowIds.indexOf(row['RowId']) != -1 ? 'selected' : 'unselected';
+                rowHasData = membersWithData.indexOf(row['RowId']) > -1;
+                rowIsSelected = !Ext.isDefined(selectedVisitRowIds) || selectedVisitRowIds.indexOf(row['RowId']) > -1;
 
-                if (!Ext.isDefined(intervalVisitRowIdMap[rowSelType][row[intervalAlias]]))
+                if (rowHasData && rowIsSelected) key = 'hasDataSelected';
+                else if (rowHasData && !rowIsSelected) key = 'hasDataUnselected';
+                else if (!rowHasData && rowIsSelected) key = 'noDataSelected';
+                else key = 'noDataUnselected';
+
+                if (!Ext.isDefined(intervalMap[row[intervalAlias]]))
                 {
-                    intervalVisitRowIdMap[rowSelType][row[intervalAlias]] = [];
+                    intervalMap[row[intervalAlias]] = {
+                        hasDataSelected: [],
+                        hasDataUnselected: [],
+                        noDataSelected: [],
+                        noDataUnselected: []
+                    };
                 }
-                intervalVisitRowIdMap[rowSelType][row[intervalAlias]].push(row['RowId']);
+
+                intervalMap[row[intervalAlias]][key].push(row['RowId']);
             });
 
             // convert and load the interval visitRowId data into the memberStore
-            modelDatas = this.getMemberDataModels(intervalName, intervalVisitRowIdMap, 'selected');
-            modelDatas = modelDatas.concat(this.getMemberDataModels(intervalName, intervalVisitRowIdMap, 'unselected'));
+            Ext.iterate(intervalMap, function(interval, types)
+            {
+                Ext.each(Object.keys(types), function(key)
+                {
+                    if (types[key].length > 0)
+                    {
+                        modelDatas.push({
+                            name: intervalName + ' ' + interval + ' - (' + types[key].length + ' stud' + (types[key].length == 1 ? 'y' : 'ies') + ')',
+                            uniqueName: types[key],
+                            count: key == 'hasDataSelected' || key == 'hasDataUnselected' ? 1 : 0,
+                            selected: key == 'hasDataSelected' || key == 'noDataSelected'
+                        });
+                    }
+                });
+            });
+
             store.loadRawData(modelDatas);
             store.group(store.groupField, 'DESC');
 
             this.setReady();
         }, this);
-    },
-
-    getMemberDataModels : function(intervalName, intervalVisitRowIdMap, type)
-    {
-        var datas = [];
-        Ext.iterate(intervalVisitRowIdMap[type], function(key, value)
-        {
-            datas.push({
-                name: intervalName + ' ' + key + ' - (' + value.length + ' stud' + (value.length == 1 ? 'y' : 'ies') + ')',
-                uniqueName: value,
-                count: type == 'selected' ? 1 : 0
-            });
-        }, this);
-
-        return datas;
     },
 
     populateSortBy : function()

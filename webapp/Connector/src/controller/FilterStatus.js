@@ -152,7 +152,8 @@ Ext.define('Connector.controller.FilterStatus', {
                     dimension: filterOrDetail.get('dimension'),
                     hierarchy: filterOrDetail.get('hierarchy'),
                     level: filterOrDetail.get('level'),
-                    measureSet: filterOrDetail.get('measureSet')
+                    measureSet: filterOrDetail.get('measureSet'),
+                    membersWithData: filterOrDetail.get('membersWithData')
                 },
                 storeRecord;
 
@@ -166,11 +167,12 @@ Ext.define('Connector.controller.FilterStatus', {
                     modelClazz = 'Connector.model.TimepointPane';
 
                     // we will want to get the Time point info pane members from the store record,
-                    // so we will need to include the measureSet
+                    // so we will need to include the measureSet and membersWithData
                     storeRecord = this.getStore('FilterStatus').getById('Time points');
                     if (storeRecord != null)
                     {
                         config.measureSet = storeRecord.get('measureSet');
+                        config.membersWithData = storeRecord.get('membersWithData');
                     }
 
                     // if we don't have the defined measuresSet, we don't want to show the TimepointPane
@@ -314,8 +316,8 @@ Ext.define('Connector.controller.FilterStatus', {
         this.getStore('FilterStatus').fireEvent('hideplotmask');
     },
 
-    onUpdatePlotRecord : function(view, label, forSubcount, countValue, measureSet)
+    onUpdatePlotRecord : function(view, label, forSubcount, countValue, measureSet, membersWithData)
     {
-        this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, countValue, measureSet);
+        this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, countValue, measureSet, membersWithData);
     }
 });
