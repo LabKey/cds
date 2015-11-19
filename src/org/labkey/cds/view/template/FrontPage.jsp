@@ -23,7 +23,7 @@
         }
     </style>
 
-    <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/icon.png">
+    <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/headerlogo.png">
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>())%>
