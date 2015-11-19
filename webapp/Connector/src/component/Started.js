@@ -14,7 +14,7 @@ Ext.define('Connector.component.Started', {
         '</div>'
     ),
 
-    renderData: {},
+    width: 560,
 
     renderSelectors: {
         dismissLink: 'a.started-dismiss',
@@ -26,13 +26,23 @@ Ext.define('Connector.component.Started', {
             fn: function(start)
             {
                 start.dismissLink.on('click', start.dismiss, start);
+
+                Ext.EventManager.onWindowResize(function()
+                {
+                    this.resizeTask.delay(200);
+                }, this);
+
+                this.resizeTask.delay(0);
             },
             single: true
-        },
-        resize: function(start)
-        {
-            console.log(start.getWidth());
         }
+    },
+
+    initComponent : function()
+    {
+        this.callParent();
+
+        this.resizeTask = new Ext.util.DelayedTask(this._onResize, this);
     },
 
     dismiss : function()
@@ -51,5 +61,23 @@ Ext.define('Connector.component.Started', {
             },
             scope: this
         });
+    },
+
+    // Do not call directly. Use 'resizeTask' instead
+    _onResize : function()
+    {
+        var baseVideoWidth = 1280,
+            baseVideoHeight = 720,
+            width = Ext.getBody().getBox().width < 1100 ? 460 : 560;
+
+        if (this.lastWidth != width)
+        {
+            this.lastWidth = width;
+            var calcVideoWidth = Math.ceil(width * 0.95),
+                calcVideoHeight = Math.ceil((calcVideoWidth / baseVideoWidth) * baseVideoHeight);
+
+            this.introVideo.setSize(calcVideoWidth, calcVideoHeight);
+            this.setWidth(width);
+        }
     }
 });
