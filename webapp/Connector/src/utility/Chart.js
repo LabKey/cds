@@ -19,6 +19,7 @@ Ext.define('Connector.utility.Chart', {
 
     colors: {
         WHITE: '#FFFFFF',
+        GRAYBACKGROUND: '#f5f5f5',
         BLACK: '#000000',
         SECONDARY: '#F0F0F0',
         GRIDBKGD: '#F8F8F8',

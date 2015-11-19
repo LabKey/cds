@@ -180,11 +180,11 @@ div.filterpanel .x-panel-body-default {
 
 .x-panel-body-primary-view {
   .chartview {
-    .x-box-item{
-      background-color : $white;
+    .x-box-item {
+      background-color : $gray-8; // affects all box items in the gutter on the chart page.
+    }
     .x-btn {
       background: $action-red!important;
-    }
     }
   }
   .x-border-layout-ct {

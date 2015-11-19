@@ -759,8 +759,8 @@ Ext.define('Connector.view.Chart', {
             gridLineWidth: 1.25,
             gridLinesVisible: 'both',
             borderWidth: 2,
-            gridColor : ChartUtils.colors.WHITE,
-            bgColor: ChartUtils.colors.WHITE,
+            gridColor : ChartUtils.colors.GRAYBACKGROUND,
+            bgColor: ChartUtils.colors.GRAYBACKGROUND,
             tickColor: ChartUtils.colors.WHITE,
             tickTextColor: this.labelTextColor // $heat-scale-1
         };
@@ -816,9 +816,9 @@ Ext.define('Connector.view.Chart', {
             aes : aes,
             scales : scales,
             tickLength : 0,
-            gridColor : ChartUtils.colors.GRIDBKGD,
+            gridColor : ChartUtils.colors.WHITE,
             gridLineColor : ChartUtils.colors.GRIDLINE,
-            borderColor : ChartUtils.colors.WHITE
+            borderColor : ChartUtils.colors.GRIDLINE
         });
     },
 
