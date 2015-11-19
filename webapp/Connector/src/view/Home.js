@@ -31,6 +31,18 @@ Ext.define('Connector.view.Home', {
                 c.setHeight(this.getHeight() - this.homeHeaderHeight);
             }, this);
 
+            var items = [{
+                xtype: 'cds-news'
+            }];
+
+            if (Connector.getProperty('showIntro') === true)
+            {
+                items.unshift({
+                    xtype: 'cds-started',
+                    cls: 'bottom-spacer-xlg'
+                });
+            }
+
             this.content = Ext.create('Ext.container.Container', {
                 plugins: ['messaging'],
                 cls: 'left-spacer',
@@ -47,12 +59,7 @@ Ext.define('Connector.view.Home', {
                     flex: 1,
                     overflowY: 'auto',
                     overflowX: 'hidden',
-                    items: [{
-                        xtype: 'cds-started',
-                        cls: 'bottom-spacer-xlg'
-                    },{
-                        xtype: 'cds-news'
-                    }],
+                    items: items,
                     listeners: {
                         resize: function(c)
                         {

@@ -61,6 +61,8 @@ Ext.define('Connector.component.Started', {
             },
             scope: this
         });
+
+        Connector.setProperty('showIntro', false);
     },
 
     // Do not call directly. Use 'resizeTask' instead
