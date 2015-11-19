@@ -74,7 +74,8 @@
                 imgPath: <%=PageFlowUtil.jsString(imageResourcePath)%>
             },
             user: {
-                isAnalyticsUser: <%=model.isAnalyticsUser()%>
+                isAnalyticsUser: <%=model.isAnalyticsUser()%>,
+                properties: <%=model.getUserProperties()%>
             }
         };
 

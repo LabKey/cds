@@ -19,6 +19,7 @@ package org.labkey.cds;
 import org.apache.commons.lang3.StringUtils;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.DbSchema;
+import org.labkey.api.data.PropertyManager;
 import org.labkey.api.data.RuntimeSQLException;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SimpleFilter;
@@ -26,18 +27,19 @@ import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.data.TableSelector;
-import org.labkey.api.exp.list.ListDefinition;
-import org.labkey.api.exp.list.ListService;
 import org.labkey.api.security.User;
 import org.labkey.api.util.ContainerUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CDSManager
 {
     private static final CDSManager _instance = new CDSManager();
+
+    private static final String CDS_ACTIVE_USER = "cdsActiveUser";
 
     private CDSManager()
     {
@@ -54,21 +56,6 @@ public class CDSManager
     public void deleteFacts(Container c)
     {
         new SqlExecutor(CDSSchema.getInstance().getSchema()).execute("DELETE FROM cds.Facts WHERE Container = ?", c);
-    }
-
-
-    public boolean isTutorialAvailable(Container c, User user)
-    {
-        ListDefinition resource = ListService.get().getList(c, "Resource");
-        if (null != resource)
-        {
-            TableInfo info = resource.getTable(user);
-            if (null != info)
-            {
-                return new TableSelector(info).exists();
-            }
-        }
-        return false;
     }
 
 
@@ -145,5 +132,28 @@ public class CDSManager
     {
         SQLFragment sql = new SQLFragment("SELECT * FROM cds.Properties WHERE Container = ?", container);
         return new SqlSelector(CDSSchema.getInstance().getSchema(), sql).getObject(CDSController.PropertiesForm.class);
+    }
+
+
+    public void resetActiveUserProperties(User user, Container container)
+    {
+        PropertyManager.getNormalStore().deletePropertySet(user, container, CDS_ACTIVE_USER);
+    }
+
+
+    public Map<String, String> getActiveUserProperties(User user, Container container)
+    {
+        return PropertyManager.getNormalStore().getProperties(user, container, CDS_ACTIVE_USER);
+    }
+
+
+    public void setActiveUserProperties(User user, Container container, Map<String, String> properties)
+    {
+        PropertyManager.PropertyMap activeUserProperties = PropertyManager.getWritableProperties(user, container, CDS_ACTIVE_USER, true);
+        for (Map.Entry<String, String> property : properties.entrySet())
+        {
+            activeUserProperties.put(property.getKey(), property.getValue());
+        }
+        activeUserProperties.save();
     }
 }
