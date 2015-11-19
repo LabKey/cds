@@ -36,10 +36,18 @@ import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.ColumnHeaderType;
+import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.DataColumn;
+import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
+import org.labkey.api.data.JdbcType;
 import org.labkey.api.data.PropertyManager;
+import org.labkey.api.data.Results;
+import org.labkey.api.data.ResultsImpl;
+import org.labkey.api.data.SqlSelector;
+import org.labkey.api.data.TSVMapWriter;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.QueryForm;
@@ -50,6 +58,8 @@ import org.labkey.api.security.*;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.study.StudyService;
+import org.labkey.api.util.CSRFUtil;
+import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
@@ -64,7 +74,10 @@ import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -574,6 +587,44 @@ public class CDSController extends SpringActionController
         public Map<String, String> getColumnAliases()
         {
             return _columnAliases;
+        }
+    }
+
+    @RequiresSiteAdmin @CSRF
+    public static class MailMergeAction extends SimpleViewAction<Object>
+    {
+        @Override
+        public ModelAndView getView(Object o, BindException errors) throws Exception
+        {
+            if ("GET".equals(getViewContext().getRequest().getMethod()))
+            {
+                String csrf = "<input type=\"hidden\" name=\"" + CSRFUtil.csrfName + "\" value=\"" + CSRFUtil.getExpectedToken(getViewContext()) + "\">";
+                return new HtmlView("<form method=POST><input type=submit value=submit>" + csrf + "</form>");
+            }
+            else if ("POST".equals(getViewContext().getRequest().getMethod()))
+            {
+                String sql = "SELECT L.email, U.lastlogin, L.verification, U.displayname, U.firstname, U.lastname FROM core.logins L INNER JOIN core.principals P ON L.email = P.name INNER JOIN core.usersdata U ON P.userid = U.userid";
+                try (ResultSet rs = new SqlSelector(DbSchema.get("core").getScope(), sql).getResultSet())
+                {
+                    List<DisplayColumn> list = new ArrayList<>();
+                    for (String s : Arrays.asList("email", "displayname", "firstname", "lastname", "lastlogin", "verification"))
+                        list.add(new DataColumn(new ColumnInfo(s, JdbcType.valueOf(rs.getMetaData().getColumnType(rs.findColumn(s))))));
+                    try (Results r = new ResultsImpl(rs))
+                    {
+                        ExcelWriter xl = new ExcelWriter(r, list);
+                        xl.setFilenamePrefix("mailmerge");
+                        xl.setAutoSize(true);
+                        xl.write(getViewContext().getResponse());
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
         }
     }
 }
