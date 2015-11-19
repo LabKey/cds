@@ -1,0 +1,1416 @@
+html {
+  box-sizing: border-box; }
+
+*, *::after, *::before {
+  box-sizing: inherit; }
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-moz-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-o-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+.fadein {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadein;
+  -ms-animation-name: fadein;
+  -moz-animation-name: fadein;
+  -o-animation-name: fadein;
+  animation-name: fadein;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+.fadeout {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadeout;
+  -ms-animation-name: fadeout;
+  -moz-animation-name: fadeout;
+  -o-animation-name: fadeout;
+  animation-name: fadeout;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+body {
+  background-color: #f5f5f5;
+  font-size: 12px;
+  margin: 0 auto !important;
+  position: relative; }
+  body * {
+    font-family: "Arial", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale; }
+  body a {
+    outline: none; }
+  @media only screen and (max-width: 480px) {
+    body {
+      font-size: 10px; } }
+
+.hidden {
+  display: none; }
+
+div.links {
+  position: relative;
+  width: 100%;
+  display: block;
+  white-space: nowrap;
+  outline: none;
+  border: none;
+  text-align: right;
+  text-overflow: ellipsis;
+  padding: 0em 2em;
+  margin: 2em 0em 2.67em 0em; }
+  div.links a, div.links input[type="submit"], div.links input[type="button"], div.links span {
+    display: inline-block;
+    width: 10.67em;
+    padding: 0.42em;
+    margin: 0 0.2em;
+    border-radius: 0.25em;
+    text-align: center;
+    text-decoration: none;
+    font-family: "Arial";
+    font-weight: 100;
+    color: #2d2d2d;
+    color: white; }
+    div.links a.member-modal-trigger, div.links input[type="submit"].member-modal-trigger, div.links span.member-modal-trigger {
+      background-color: transparent;
+      color: #6e6e6e; }
+    div.links a.signin-modal-trigger, div.links input[type="submit"].signin-modal-trigger, div.links span.signin-modal-trigger {
+      margin-right: 0;
+      background-color: #ed365e; }
+      div.links a.signin-modal-trigger:hover, div.links input[type="submit"].signin-modal-trigger:hover, div.links span.signin-modal-trigger:hover {
+        background-color: #dd133f; }
+
+    div.links a.create-account-modal-trigger, div.links input[type="submit"].create-account-modal-trigger, div.links span.create-account-modal-trigger a.create-account-modal-trigger{
+      margin-right: 0;
+      background-color: #ed365e; }
+    div.links a.create-account-modal-trigger:hover, div.links input[type="submit"].create-account-modal-trigger:hover, div.links span.create-account-modal-trigger:hover a.create-account-modal-trigger:hover{
+      background-color: #dd133f; }
+
+img.gif {
+  margin: 0 auto;
+  display: block; }
+
+.gif-container {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 540px; }
+  .gif-container img {
+    width: 100%; }
+    @media only screen and (max-width: 700px) {
+      .gif-container img {
+        padding: 1em; } }
+    .gif-container img.placeholder {
+      position: relative;
+      z-index: 0; }
+    .gif-container img.gif {
+      position: absolute;
+      top: 0;
+      left: 0; }
+
+.circle {
+  display: block;
+  position: relative;
+  width: 4em;
+  height: 4em;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  margin: 1.34em auto 2.66em auto;
+  background-color: #ed365e;
+  color: white; }
+  .circle:hover {
+    background-color: #dd133f; }
+  .circle .arrow {
+    width: 0;
+    height: 0;
+    border-left: 0.45em solid transparent;
+    border-right: .45em solid transparent;
+    border-top: .7em solid white;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: -.3em auto 0 auto;
+    line-height: 4em;
+    top: 50%; }
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-moz-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-o-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+.fadein {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadein;
+  -ms-animation-name: fadein;
+  -moz-animation-name: fadein;
+  -o-animation-name: fadein;
+  animation-name: fadein;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+.fadeout {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadeout;
+  -ms-animation-name: fadeout;
+  -moz-animation-name: fadeout;
+  -o-animation-name: fadeout;
+  animation-name: fadeout;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+html {
+  box-sizing: border-box; }
+
+*, *::after, *::before {
+  box-sizing: inherit; }
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-moz-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-o-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+.fadein {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadein;
+  -ms-animation-name: fadein;
+  -moz-animation-name: fadein;
+  -o-animation-name: fadein;
+  animation-name: fadein;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+.fadeout {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadeout;
+  -ms-animation-name: fadeout;
+  -moz-animation-name: fadeout;
+  -o-animation-name: fadeout;
+  animation-name: fadeout;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+.section {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto; }
+  .section::after {
+    clear: both;
+    content: "";
+    display: table; }
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-moz-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-o-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+.fadein {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadein;
+  -ms-animation-name: fadein;
+  -moz-animation-name: fadein;
+  -o-animation-name: fadein;
+  animation-name: fadein;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+.fadeout {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadeout;
+  -ms-animation-name: fadeout;
+  -moz-animation-name: fadeout;
+  -o-animation-name: fadeout;
+  animation-name: fadeout;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+#navigation {
+  top: 0;
+  max-width: 1280px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+  height: 4.635em;
+  background-color: #212121;
+  position: fixed;
+  overflow: hidden;
+  z-index: 15;
+  padding: 0em; }
+  #navigation .title {
+    display: table;
+    height: 100%;
+    position: absolute;
+    left: 5.833em;
+    margin-left: 0;
+    top: 0; }
+    #navigation .title strong, #navigation .title p {
+      color: white;
+      display: table-cell;
+      vertical-align: middle;
+      white-space: nowrap; }
+    #navigation .title p {
+      padding-left: 0.4em; }
+  #navigation .icon {
+    width: 4.7em;
+    height: 4.7em;
+    background-color: #ed365e;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: table; }
+    #navigation .icon .img {
+      display: table-cell;
+      position: relative;
+      height: 100%;
+      width: 100%;
+      vertical-align: middle; }
+      #navigation .icon .img img {
+        display: block;
+        margin: 0 auto; }
+  #navigation .links {
+    float: right;
+    height: 100%;
+    overflow: hidden;
+    display: table;
+    white-space: nowrap;
+    margin: 0;
+    outline: none;
+    border: none;
+    text-align: right;
+    text-overflow: ellipsis; }
+  #navigation .link {
+    display: table-cell;
+    vertical-align: middle; }
+    @media only screen and (max-width: 700px) {
+      #navigation .link {
+        display: none; } }
+    #navigation .link.hide {
+      opacity: 0; }
+    @media only screen and (max-width: 480px) {
+      #navigation .link {
+        display: table-cell; }
+        #navigation .link.hide {
+          opacity: 1 !important; }
+        #navigation .link span {
+          display: none; } }
+  #navigation span {
+    width: auto; }
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-moz-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-o-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+.fadein {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadein;
+  -ms-animation-name: fadein;
+  -moz-animation-name: fadein;
+  -o-animation-name: fadein;
+  animation-name: fadein;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+.fadeout {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadeout;
+  -ms-animation-name: fadeout;
+  -moz-animation-name: fadeout;
+  -o-animation-name: fadeout;
+  animation-name: fadeout;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+.signin-modal, .create-new-password-modal, .create-account-modal {
+  position: relative;
+  overflow: hidden;
+  background: #f5f5f5;
+  width: auto;
+  margin: 1.5em auto;
+  max-width: 620px;
+  min-height: 100%;
+  padding: 2.66em 2em 2em 2em; }
+  .signin-modal .border, .create-new-password-modal .border, .create-account-modal .border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background-color: #ed365e; }
+  .signin-modal .title, .create-new-password-modal .title, .create-account-modal .title {
+    margin: 0em 0em 2.66em 0em; }
+    .signin-modal .title h1, .create-new-password-modal .title h1, .create-account-modal .title h1 {
+      margin: 0;
+      font-size: 2.34em;
+      font-family: "Georgia";
+      font-weight: 100;
+      color: #2d2d2d; }
+  .signin-modal .notifications, .create-new-password-modal .notifications, .create-account-modal .notifications {
+    display: block;
+    overflow: hidden;
+    margin: 0em 0em 2.66em 0em; }
+    .signin-modal .notifications p, .create-new-password-modal .notifications p, .create-account-modal .notifications p {
+      margin: 0;
+      color: #ed365e; }
+    .signin-modal .notifications span, .create-new-password-modal .notifications span, .create-account-modal .notifications span {
+      margin: 0;
+      color: #2d2d2d; }
+  .signin-modal button.mfp-close, .create-new-password-modal button.mfp-close, .create-account-modal button.mfp-close {
+    background-color: #ed365e;
+    width: 1.33em;
+    opacity: 1;
+    height: 1.33em;
+    font-size: 1em;
+    line-height: 1.33em;
+    color: white; }
+    .signin-modal button.mfp-close:hover, .create-new-password-modal button.mfp-close:hover, .create-account-modal button.mfp-close:hover {
+      background-color: #dd133f; }
+  .signin-modal .form .credentials, .create-new-password-modal .form .credentials, .create-account-modal .form .credentials {
+    margin-bottom: 2.66em; }
+    .signin-modal .form .credentials .checkbox, .create-new-password-modal .form .credentials .checkbox, .create-account-modal .form .credentials .checkbox {
+      margin-top: 1em; }
+  .signin-modal .form .checkbox, .create-new-password-modal .form .checkbox, .create-account-modal .form .checkbox {
+    display: block;
+    padding-bottom: 0.5em;
+    position: relative; }
+    .signin-modal .form .checkbox input, .create-new-password-modal .form .checkbox input, .create-account-modal .form .checkbox input {
+      margin-right: 0.75em; }
+    .signin-modal .form .checkbox label, .create-new-password-modal .form .checkbox label, .create-account-modal .form .checkbox label {
+      position: relative;
+      left: 2em;
+      padding-right: 2em;
+      margin: 0;
+      font-family: "Arial";
+      font-weight: 100;
+      color: #2d2d2d;
+      line-height: 1.5em; }
+  .signin-modal .form a.expand-tos, .create-new-password-modal .form a.expand-tos, .create-account-modal .form a.expand-tos {
+    display: block;
+    text-decoration: none;
+    margin-left: 2em;
+    margin-bottom: 1.5em;
+    font-family: "Arial";
+    font-weight: 100;
+    color: #2d2d2d; }
+    .signin-modal .form a.expand-tos .highlight, .create-new-password-modal .form a.expand-tos .highlight, .create-account-modal .form a.expand-tos .highlight {
+      color: #ed365e;
+      padding-left: 0.3em; }
+  .signin-modal .form div.terms-of-service, .create-new-password-modal .form div.terms-of-service, .create-account-modal .form div.terms-of-service {
+    height: 0em;
+    overflow: hidden;
+    display: block;
+    -moz-transition: 0.5s;
+    -ms-transition: 0.5s;
+    -o-transition: 0.5s;
+    -webkit-transition: 0.5s;
+    transition: 0.5s; }
+    .signin-modal .form div.terms-of-service.open, .create-new-password-modal .form div.terms-of-service.open, .create-account-modal .form div.terms-of-service.open {
+      height: 20em;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      margin-bottom: 2em;
+      padding: 2em; }
+  .signin-modal .form span.agree, .create-new-password-modal .form span.agree, .create-account-modal .form span.agree {
+    margin-left: 2em; }
+  .signin-modal .form input, .create-new-password-modal .form input, .create-account-modal .form input {
+    width: 49%;
+    padding: 0.5em;
+    font-size: 1em;
+    margin-right: 4px;
+    font-family: "Arial";
+    font-weight: 100;
+    color: #2d2d2d; }
+    @media only screen and (max-width: 480px) {
+      .signin-modal .form input, .create-new-password-modal .form input, .create-account-modal .form input {
+        width: 100%; }
+        .signin-modal .form input:first-child, .create-new-password-modal .form input:first-child, .create-account-modal .form input:first-child {
+          margin-bottom: 0.5em; } }
+  .signin-modal .form input[type=checkbox], .create-new-password-modal .form input[type=checkbox], .create-account-modal .form input[type=checkbox] {
+    width: auto;
+    position: absolute; }
+  .signin-modal .links, .create-new-password-modal .links, .create-account-modal .links {
+    margin: 2.66em 0em 0em 0em;
+    padding-right: 0em; }
+    .signin-modal .links a, .create-new-password-modal .links a, .create-account-modal .links a {
+      border: 1px solid #dcdcdc; }
+    .signin-modal .links a.help, .signin-modal .links a.dismiss, .create-new-password-modal .links a.help, .create-new-password-modal .links a.dismiss, .create-account-modal .links a.help, .create-account-modal .links a.dismiss {
+      color: #2d2d2d; }
+      .signin-modal .links a.help:hover, .signin-modal .links a.dismiss:hover, .create-new-password-modal .links a.help:hover, .create-new-password-modal .links a.dismiss:hover, .create-account-modal .links a.help:hover, .create-account-modal .links a.dismiss:hover {
+        background-color: rgba(0, 0, 0, 0.15); }
+    .signin-modal .links input.confirm, .signin-modal .links a.confirm, .create-new-password-modal .links input.confirm, .create-new-password-modal .links a.confirm, .create-account-modal .links input.confirm, .create-account-modal .links a.confirm {
+      color: white;
+      border: 1px solid #ed365e;
+      background-color: #ed365e;
+      -webkit-appearance: none;
+      cursor: pointer; }
+      .signin-modal .links input.confirm:hover, .signin-modal .links a.confirm:hover, .create-new-password-modal .links input.confirm:hover, .create-new-password-modal .links a.confirm:hover, .create-account-modal .links input.confirm:hover, .create-account-modal .links a.confirm:hover {
+        background-color: #dd133f; }
+    @media only screen and (max-width: 480px) {
+      .signin-modal .links, .create-new-password-modal .links, .create-account-modal .links {
+        padding: 0; }
+        .signin-modal .links a, .signin-modal .links input[type=submit], .create-new-password-modal .links a, .create-new-password-modal .links input[type=submit], .create-account-modal .links a, .create-account-modal .links input[type=submit] {
+          width: 48%;
+          margin: auto 1%; } }
+  .signin-modal .password-requirements, .create-new-password-modal .password-requirements, .create-account-modal .password-requirements {
+    padding-bottom: 1em;
+    display: block; }
+  .signin-modal .sign-in-help .reset, .create-new-password-modal .sign-in-help .reset, .create-account-modal .sign-in-help .reset {
+    padding-bottom: 1em;
+    display: block; }
+
+.create-account-modal .form .credentials {
+  margin-bottom: 0em; }
+
+div.video-header {
+  background-color: #ed365e;
+  height: 4px;
+  text-align: right;
+  width: 500px;
+  margin: auto;
+  color: white; }
+  div.video-header button.video-close {
+    background-color: #ed365e;
+    width: 1.33em;
+    opacity: 1;
+    height: 1.33em;
+    font-size: 1em;
+    line-height: 1.33em;
+    color: white; }
+    div.video-header button.video-close:hover {
+      background-color: #dd133f; }
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-moz-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-o-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+.fadein {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadein;
+  -ms-animation-name: fadein;
+  -moz-animation-name: fadein;
+  -o-animation-name: fadein;
+  animation-name: fadein;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+.fadeout {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadeout;
+  -ms-animation-name: fadeout;
+  -moz-animation-name: fadeout;
+  -o-animation-name: fadeout;
+  animation-name: fadeout;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+#fullpage {
+  opacity: 0; }
+
+.section {
+  background-color: #f5f5f5;
+  max-width: 100%; }
+  @media only screen and (max-width: 700px) {
+    .section {
+      padding-left: 2em;
+      padding-right: 2em; } }
+
+.section.intro-section {
+  padding-top: 2em;
+  background-color: #E0E1E2;
+  max-height: 62em; }
+  .section.intro-section .fp-scrollable {
+    padding-top: 6em !important; }
+    @media only screen and (max-width: 480px) {
+      .section.intro-section .fp-scrollable {
+        padding-top: 0em !important; } }
+  .section.intro-section .links {
+    position: absolute;
+    top: 0em;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    max-width: 1280px;
+    background-color: #E0E1E2;
+    z-index: 10;
+    padding: 0; }
+    .section.intro-section .links a, .section.intro-section .links span {
+      margin-top: 2em;
+      margin-bottom: 2.67em; }
+      .section.intro-section .links a.signin-modal-trigger, .section.intro-section .links span.signin-modal-trigger {
+        margin-right: 2em; }
+        @media only screen and (max-width: 700px) {
+          .section.intro-section .links a.signin-modal-trigger, .section.intro-section .links span.signin-modal-trigger {
+            margin-right: 0em; } }
+    .section.intro-section .links span {
+      background-color: transparent;
+      color: #6e6e6e;
+      width: auto; }
+    @media only screen and (max-width: 480px) {
+      .section.intro-section .links {
+        opacity: 0; } }
+  .section.intro-section .welcome {
+    text-align: center;
+    display: block;
+    overflow: hidden;
+    margin: 2.67em 0; }
+    @media only screen and (max-width: 700px) {
+      .section.intro-section .welcome {
+        margin: 3em 0em 2.67em 0; } }
+    .section.intro-section .welcome .title {
+      margin-bottom: 2.67em; }
+      .section.intro-section .welcome .title h1 {
+        font-size: 3.011em;
+        margin: 0;
+        font-family: "Georgia";
+        font-weight: 100;
+        color: #2d2d2d; }
+      .section.intro-section .welcome .title h1:last-child {
+        color: #ed365e; }
+    .section.intro-section .welcome .subtitle {
+      margin-top: 2.67em; }
+      .section.intro-section .welcome .subtitle p {
+        margin: 0;
+        line-height: 1.5em;
+        font-family: "Georgia";
+        font-weight: 100;
+        color: #2d2d2d; }
+  .section.intro-section .video-container {
+    margin: 4em 0em 4em 0em;
+    position: relative; }
+    .section.intro-section .video-container .video-placeholder {
+      display: block;
+      position: relative;
+      max-width: 25.35em;
+      width: 100%;
+      height: 13.35em;
+      margin: -1.33em auto;
+      border: 1.33em solid white;
+      background-color: #F2F2F2;
+      /*background-image: url("/img/intro.png");*/
+      background-size: contain;
+      outline: none; }
+      @media only screen and (max-width: 480px) {
+        .section.intro-section .video-container .video-placeholder {
+          width: 100%; } }
+    .section.intro-section .video-container .play {
+      background-color: white;
+      color: black;
+      left: 0;
+      right: 0;
+      margin: -2em auto 0 auto;
+      top: 50%;
+      position: absolute;
+      width: 4em;
+      height: 4em;
+      border: none;
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      border-radius: 50%; }
+      .section.intro-section .video-container .play:after {
+        content: "\25B6";
+        font-family: VideoJS;
+        line-height: 4em;
+        text-shadow: .05em .05em .1em #000;
+        text-align: center;
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 100%; }
+  .section.intro-section .learn-more {
+    text-align: center;
+    max-width: 25.35em;
+    margin: 2.67em auto 1.33em auto;
+    overflow: hidden; }
+    .section.intro-section .learn-more p {
+      margin: 0;
+      line-height: 1.5em;
+      font-family: "Arial";
+      font-weight: 100;
+      color: #2d2d2d; }
+    .section.intro-section .learn-more .container {
+      margin: 5.33em 0em 0em 0em; }
+      .section.intro-section .learn-more .container h3 {
+        font-size: 1.5em;
+        font-family: "Georgia";
+        font-weight: 100;
+        color: #2d2d2d;
+        color: #6e6e6e;
+        margin: 0; }
+
+.section.learn-section {
+  text-align: center;
+  max-height: 54em; }
+  .section.learn-section .container {
+    text-align: center;
+    padding: 1.83em 0 5.33em 0; }
+    .section.learn-section .container h1 {
+      margin: 0;
+      font-family: "Georgia";
+      font-weight: 100;
+      color: #2d2d2d;
+      font-size: 3.011em; }
+  .section.learn-section .statistics {
+    overflow: hidden; }
+    .section.learn-section .statistics .timestamp {
+      margin-bottom: 5.33em; }
+      @media only screen and (max-width: 480px) {
+        .section.learn-section .statistics .timestamp {
+          margin-bottom: 2.66em; } }
+      .section.learn-section .statistics .timestamp p {
+        display: inline-block;
+        margin: 0;
+        font-size: 1.5em;
+        font-family: "Georgia";
+        font-weight: 100;
+        color: #2d2d2d;
+        color: #969696; }
+      .section.learn-section .statistics .timestamp .days {
+        padding: 0em 0.25em; }
+    .section.learn-section .statistics .datapoint {
+      display: inline-block;
+      border-right: 1px solid #E0E1E2;
+      padding: 0em 2.5em; }
+      .section.learn-section .statistics .datapoint:last-child {
+        border-right: none; }
+      .section.learn-section .statistics .datapoint p, .section.learn-section .statistics .datapoint h1 {
+        margin: 0;
+        color: #2d2d2d; }
+      .section.learn-section .statistics .datapoint h1 {
+        font-size: 5.018em;
+        font-family: "Georgia";
+        font-weight: 100;
+        color: #2d2d2d; }
+      .section.learn-section .statistics .datapoint .title {
+        margin: 1em 0em 0em 0em; }
+      .section.learn-section .statistics .datapoint p {
+        font-size: 1.5em;
+        font-family: "Georgia";
+        font-weight: 100;
+        color: #2d2d2d; }
+      @media only screen and (max-width: 700px) {
+        .section.learn-section .statistics .datapoint {
+          font-size: 0.8em;
+          display: inline-block;
+          overflow: hidden; }
+          .section.learn-section .statistics .datapoint p, .section.learn-section .statistics .datapoint h1 {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden; } }
+      @media only screen and (max-width: 480px) {
+        .section.learn-section .statistics .datapoint {
+          font-size: 1em;
+          display: inline-block;
+          width: 50%;
+          margin-bottom: 2em;
+          border-right: none;
+          overflow: hidden; }
+          .section.learn-section .statistics .datapoint:nth-child(1), .section.learn-section .statistics .datapoint:nth-child(3) {
+            border-right: 1px solid #E0E1E2; }
+          .section.learn-section .statistics .datapoint p, .section.learn-section .statistics .datapoint h1 {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden; } }
+    .section.learn-section .statistics .reminder {
+      margin: 5.33em 0em 0em 0em; }
+      @media only screen and (max-width: 480px) {
+        .section.learn-section .statistics .reminder {
+          margin-bottom: 2.66em; } }
+      .section.learn-section .statistics .reminder p {
+        margin: 0;
+        line-height: 1em;
+        font-size: 1.5em;
+        font-family: "Georgia";
+        font-weight: 100;
+        color: #2d2d2d; }
+
+.section.collab-section .gif-container img, .section.explore-section .gif-container img, .section.learn-section .gif-container img {
+  padding: 0; }
+.section.collab-section .gif-container img.mobile-img, .section.explore-section .gif-container img.mobile-img, .section.learn-section .gif-container img.mobile-img {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0; }
+
+.section.goal-section, .section.about-section, .section.explore-section, .section.collab-section, .section.learn-section {
+  text-align: center; }
+  .section.goal-section .goal-container, .section.goal-section .about-container, .section.about-section .goal-container, .section.about-section .about-container, .section.explore-section .goal-container, .section.explore-section .about-container, .section.collab-section .goal-container, .section.collab-section .about-container, .section.learn-section .goal-container, .section.learn-section .about-container {
+    margin: 1.83em 0em 1.833em 0em; }
+    .section.goal-section .goal-container .title, .section.goal-section .about-container .title, .section.about-section .goal-container .title, .section.about-section .about-container .title, .section.explore-section .goal-container .title, .section.explore-section .about-container .title, .section.collab-section .goal-container .title, .section.collab-section .about-container .title, .section.learn-section .goal-container .title, .section.learn-section .about-container .title {
+      padding: 0em 0em 6.5em 0em; }
+      .section.goal-section .goal-container .title h1, .section.goal-section .about-container .title h1, .section.about-section .goal-container .title h1, .section.about-section .about-container .title h1, .section.explore-section .goal-container .title h1, .section.explore-section .about-container .title h1, .section.collab-section .goal-container .title h1, .section.collab-section .about-container .title h1, .section.learn-section .goal-container .title h1, .section.learn-section .about-container .title h1 {
+        margin: 0;
+        font-family: "Georgia";
+        font-weight: 100;
+        color: #2d2d2d;
+        font-size: 3.011em; }
+    .section.goal-section .goal-container .copy p, .section.goal-section .about-container .copy p, .section.about-section .goal-container .copy p, .section.about-section .about-container .copy p, .section.explore-section .goal-container .copy p, .section.explore-section .about-container .copy p, .section.collab-section .goal-container .copy p, .section.collab-section .about-container .copy p, .section.learn-section .goal-container .copy p, .section.learn-section .about-container .copy p {
+      margin: 0;
+      font-size: 1.5em;
+      font-family: "Georgia";
+      font-weight: 100;
+      color: #2d2d2d; }
+    .section.goal-section .goal-container .copy a, .section.goal-section .about-container .copy a, .section.about-section .goal-container .copy a, .section.about-section .about-container .copy a, .section.explore-section .goal-container .copy a, .section.explore-section .about-container .copy a, .section.collab-section .goal-container .copy a, .section.collab-section .about-container .copy a, .section.learn-section .goal-container .copy a, .section.learn-section .about-container .copy a {
+      text-decoration: none;
+      font-family: "Georgia";
+      font-weight: 100;
+      color: #2d2d2d;
+      color: #ed365e; }
+    @media only screen and (max-width: 700px) {
+      .section.goal-section .goal-container .copy br, .section.goal-section .about-container .copy br, .section.about-section .goal-container .copy br, .section.about-section .about-container .copy br, .section.explore-section .goal-container .copy br, .section.explore-section .about-container .copy br, .section.collab-section .goal-container .copy br, .section.collab-section .about-container .copy br, .section.learn-section .goal-container .copy br, .section.learn-section .about-container .copy br {
+        display: none; } }
+  @media only screen and (max-width: 480px) {
+    .section.goal-section .circle, .section.about-section .circle, .section.explore-section .circle, .section.collab-section .circle, .section.learn-section .circle {
+      height: 0px;
+      width: 0px;
+      opacity: 0;
+      margin: 2em 0em 0em 0em;
+      display: none; } }
+  @media only screen and (max-width: 700px) {
+    .section.goal-section .goal-container .copy p, .section.about-section .goal-container .copy p, .section.explore-section .goal-container .copy p, .section.collab-section .goal-container .copy p, .section.learn-section .goal-container .copy p {
+      padding-bottom: 2em; } }
+  .section.goal-section .about-container, .section.about-section .about-container, .section.explore-section .about-container, .section.collab-section .about-container, .section.learn-section .about-container {
+    margin-bottom: 3em; }
+    .section.goal-section .about-container .title, .section.about-section .about-container .title, .section.explore-section .about-container .title, .section.collab-section .about-container .title, .section.learn-section .about-container .title {
+      padding-bottom: 5.33em; }
+    .section.goal-section .about-container .copy, .section.about-section .about-container .copy, .section.explore-section .about-container .copy, .section.collab-section .about-container .copy, .section.learn-section .about-container .copy {
+      padding-bottom: 5.33em; }
+      .section.goal-section .about-container .copy a:hover, .section.about-section .about-container .copy a:hover, .section.explore-section .about-container .copy a:hover, .section.collab-section .about-container .copy a:hover, .section.learn-section .about-container .copy a:hover {
+        color: #dd133f; }
+    .section.goal-section .about-container .links, .section.about-section .about-container .links, .section.explore-section .about-container .links, .section.collab-section .about-container .links, .section.learn-section .about-container .links {
+      margin: 0;
+      text-align: center; }
+      .section.goal-section .about-container .links a.contact, .section.about-section .about-container .links a.contact, .section.explore-section .about-container .links a.contact, .section.collab-section .about-container .links a.contact, .section.learn-section .about-container .links a.contact {
+        background-color: #2d2d2d; }
+      .section.goal-section .about-container .links.sign-in, .section.about-section .about-container .links.sign-in, .section.explore-section .about-container .links.sign-in, .section.collab-section .about-container .links.sign-in, .section.learn-section .about-container .links.sign-in {
+        margin-top: 3.011em; }
+        .section.goal-section .about-container .links.sign-in span, .section.about-section .about-container .links.sign-in span, .section.explore-section .about-container .links.sign-in span, .section.collab-section .about-container .links.sign-in span, .section.learn-section .about-container .links.sign-in span {
+          display: block;
+          background-color: transparent;
+          color: #6e6e6e;
+          width: auto;
+          margin-bottom: 0.5em; }
+  .section.goal-section .gif-title, .section.about-section .gif-title, .section.explore-section .gif-title, .section.collab-section .gif-title, .section.learn-section .gif-title {
+    margin: 1.833em auto 5.33em auto; }
+    .section.goal-section .gif-title h1, .section.about-section .gif-title h1, .section.explore-section .gif-title h1, .section.collab-section .gif-title h1, .section.learn-section .gif-title h1 {
+      margin: 0;
+      font-family: "Georgia";
+      font-weight: 100;
+      color: #2d2d2d;
+      font-size: 3.011em; }
+  .section.goal-section .gif-container, .section.about-section .gif-container, .section.explore-section .gif-container, .section.collab-section .gif-container, .section.learn-section .gif-container {
+    margin: 5.33em auto 2.66em auto; }
+  .section.goal-section .gif-description, .section.about-section .gif-description, .section.explore-section .gif-description, .section.collab-section .gif-description, .section.learn-section .gif-description {
+    margin: 2.66em 0em 0em 0em;
+    padding: 1em 4em; }
+    @media only screen and (max-width: 700px) {
+      .section.goal-section .gif-description, .section.about-section .gif-description, .section.explore-section .gif-description, .section.collab-section .gif-description, .section.learn-section .gif-description {
+        padding: 1em; } }
+    .section.goal-section .gif-description p, .section.about-section .gif-description p, .section.explore-section .gif-description p, .section.collab-section .gif-description p, .section.learn-section .gif-description p {
+      margin: 0;
+      font-size: 1.17em;
+      font-family: "Arial";
+      font-weight: 100;
+      color: #2d2d2d;
+      line-height: 1.3em; }
+  .section.goal-section a.circle, .section.about-section a.circle, .section.explore-section a.circle, .section.collab-section a.circle, .section.learn-section a.circle {
+    margin: 6.5em auto 1.833em auto; }
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-moz-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-o-keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@keyframes fadeout {
+  0% {
+    opacity: 1; }
+
+  100% {
+    opacity: 0; } }
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+@keyframes fadein {
+  0% {
+    opacity: 0; }
+
+  100% {
+    opacity: 1; } }
+
+.fadein {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadein;
+  -ms-animation-name: fadein;
+  -moz-animation-name: fadein;
+  -o-animation-name: fadein;
+  animation-name: fadein;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+.fadeout {
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  -o-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -o-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-name: fadeout;
+  -ms-animation-name: fadeout;
+  -moz-animation-name: fadeout;
+  -o-animation-name: fadeout;
+  animation-name: fadeout;
+  -webkit-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards; }
+
+body .fp-tableCell {
+  position: relative; }
+
+div#fp-nav {
+  width: auto;
+  left: auto;
+  right: 0;
+  margin: 0 auto;
+  max-width: 1280px;
+  position: absolute; }
+  div#fp-nav.right {
+    top: 33%;
+    right: 24px;
+    margin-top: 4em !important; }
+  @media only screen and (max-width: 800px) {
+    div#fp-nav {
+      display: none; } }
+  div#fp-nav ul {
+    float: right; }
+    div#fp-nav ul li {
+      margin: 4px; }
+      div#fp-nav ul li div.fp-tooltip {
+        color: #ed365e; }
+      div#fp-nav ul li a span, div#fp-nav ul li a.active span {
+        font-family: "Arial";
+        font-weight: 100;
+        color: #2d2d2d;
+        background-color: #d2d2d2;
+        height: 8px;
+        width: 8px;
+        margin: -4px 0 0 -4px; }
+      div#fp-nav ul li a.active span {
+        background-color: #ed365e; }
+
+.slimScrollBar {
+  opacity: 0 !important; }
+
+#intro-video.video-js, .video-header {
+  width: 500px;
+  margin: auto;
+  height: auto; }
+
+.video-header .mfp-close {
+  position: relative;
+  left: 485px;
+}

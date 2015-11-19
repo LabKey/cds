@@ -56,13 +56,6 @@ Ext.define('Connector.view.Grid', {
                     this.getSelectColumnsButton()
                 ]
             }]
-        },{
-            // This provides a row count on the screen for testing purposes
-            id: 'gridrowcountcmp',
-            xtype: 'box',
-            style: 'position: absolute; top: 50px; left: 27px; color: transparent;',
-            tpl: '<span id="gridrowcount">Row Count: {count}</span>',
-            data: {count: -1}
         }];
 
         this.callParent();
@@ -75,7 +68,7 @@ Ext.define('Connector.view.Grid', {
         this.on('boxready', model.onViewReady, model, {single: true});
 
         // bind view to model
-        model.on('filterchange', this.onFilterChange, this, {buffer: 500});
+        model.on('filterchange', this.onFilterChange, this);
         model.on('updatecolumns', this.onColumnUpdate, this, {buffer: 200});
 
         // propagate event from model
@@ -101,14 +94,11 @@ Ext.define('Connector.view.Grid', {
             }
         });
 
-        this.showmsg = true;
-        this.addPlugin({
-            ptype: 'messaging'
-        });
-
         this.footer = Ext.create('Connector.component.GridPager', {
             listeners: {
-                updatepage: this.showAlignFooter,
+                updatepage: function() {
+                    this.showAlignFooter();
+                },
                 scope: this
             }
         });
@@ -185,7 +175,7 @@ Ext.define('Connector.view.Grid', {
         if (!this.NO_SHOW)
         {
             // Ensure we're in a proper state to show the overlay message
-            if (this.getModel().get('columnSet').length <= 7)
+            if (this.getModel().get('columnSet').length <= 8)
             {
                 Ext.create('Ext.Component', {
                     renderTo: this.getEl(),
@@ -226,34 +216,35 @@ Ext.define('Connector.view.Grid', {
 
     onViewResize : function() {
         Ext.defer(function() {
-            if (this.getModel().isActive()) {
-                if (this.grid) {
+            if (this.getModel().isActive())
+            {
+                if (this.grid)
+                {
                     var size = this.getWidthHeight();
                     this.getGrid().setSize(size.width, size.height);
-                    this.showAlignFooter(null, null, true);
-                    this.resizeMessage();
+                    this.showAlignFooter(true);
+                }
+
+                if (this.measureWindow)
+                {
+                    this.measureWindow.center();
                 }
             }
         }, 50, this);
     },
 
-    /**
-     * Called when the application changes views. This will fire even when the bound view
-     * might not be active.
-     * @param controller
-     * @param view
-     */
-    onViewChange : function(controller, view) {
-        var isActive = view === this.xtype;
-        this.getModel().setActive(isActive);
+    onActivate : function()
+    {
+        this.getModel().setActive(true);
 
-        if (!isActive) {
-            this.hideMessage();
-            this.footer.hide();
-        }
-        else if (this.grid) {
-            this.showAlignFooter();
-        }
+        this.showAlignFooter();
+    },
+
+    onDeactivate : function()
+    {
+        this.getModel().setActive(false);
+
+        this.footer.hide();
     },
 
     onColumnUpdate : function() {
@@ -291,12 +282,9 @@ Ext.define('Connector.view.Grid', {
         }, this, {single: true});
     },
 
-    onFilterChange : function(model) {
-        var grid = this.getGrid(),
-            store = grid.getStore();
-
-        //store.filterArray = model.getFilterArray();
-        store.loadPage(1);
+    onFilterChange : function()
+    {
+        this.getGrid().getStore().loadPage(1);
     },
 
     getColumnSelector : function() {
@@ -384,12 +372,11 @@ Ext.define('Connector.view.Grid', {
                 },
                 listeners: {
                     columnmodelcustomize: this.onColumnModelCustomize,
-                    columnmove: this.updateColumnMap,
                     beforerender: function(grid) {
                         var header = grid.down('headercontainer');
                         header.on('headertriggerclick', this.onTriggerClick, this);
                     },
-                    boxready : function(grid) {
+                    boxready : function() {
                         this._showOverlay();
                         this.showAlignFooter();
                     },
@@ -429,12 +416,13 @@ Ext.define('Connector.view.Grid', {
                     scope: this,
                     show: function(cmp) {
                         this.setVisibleWindow(cmp);
+                    },
+                    hide: function() {
+                        // whenever the window is closed/hidden, go back to the sources panel
+                        this.getColumnSelector().showSources();
                     }
                 }
             });
-
-            // whenever the window is closed/hidden, go back to the sources panel
-            this.measureWindow.on('hide', function() { this.getColumnSelector().showSources(); }, this);
         }
 
         return this.measureWindow;
@@ -453,11 +441,25 @@ Ext.define('Connector.view.Grid', {
             schemaName: model.get('schemaName'),
             queryName: model.get('queryName'),
             columns: model.get('columnSet'),
-            //filterArray: model.getFilterArray(),
             maxRows: maxRows,
             pageSize: maxRows,
             remoteSort: true,
-            supressErrorAlert: true
+            supressErrorAlert: true,
+            listeners: {
+                beforeload: function()
+                {
+                    this.fireEvent('showload', this);
+                },
+                load: function()
+                {
+                    // show/hide for a filter change need to place nicely with the show/hide for a column change
+                    // (i.e. new grid creation) so we only hide the mask on store load if the grid is already rendered
+                    if (this.getGrid().rendered) {
+                        this.fireEvent('hideload', this);
+                    }
+                },
+                scope: this
+            }
         };
 
         if (Ext.isDefined(this.sorters)) {
@@ -467,31 +469,7 @@ Ext.define('Connector.view.Grid', {
 
         var store = Ext.create('LABKEY.ext4.data.Store', config);
 
-        store.on('beforeload', function() {
-            this.fireEvent('showload', this);
-        }, this);
-
         this.footer.registerStore(store);
-
-        store.on('load', function(store) {
-
-            var rowCount = store.getCount();
-
-            var cmp = Ext.getCmp('gridrowcountcmp');
-            if (cmp) {
-                cmp.update({count: rowCount});
-            }
-
-            // show/hide for a filter change need to place nicely with the show/hide for a column change
-            // (i.e. new grid creation) so we only hide the mask on store load if the grid is already rendered
-            if (this.getGrid().rendered) {
-                this.fireEvent('hideload', this);
-            }
-
-            if (rowCount >= maxRows && !this.paging) {
-                this.showLimitMessage(maxRows);
-            }
-        }, this);
 
         return store;
     },
@@ -513,11 +491,10 @@ Ext.define('Connector.view.Grid', {
      */
     applyFilterColumnState : function(grid)
     {
-        var columns = grid.headerCt.getGridColumns(),
-            filterFieldMap = {}, colMeta;
+        var filterFieldMap = {}, colMeta;
 
         // remove all filter classes
-        Ext.each(columns, function(column)
+        Ext.each(grid.headerCt.getGridColumns(), function(column)
         {
             if (Ext.isDefined(column.getEl()))
             {
@@ -577,9 +554,15 @@ Ext.define('Connector.view.Grid', {
      */
     updateColumnMap : function(gridHeader)
     {
-        Ext.each(gridHeader.getGridColumns(), function(gridColumn, idx)
+        var i = 0;
+        Ext.each(gridHeader.getGridColumns(), function(gridColumn)
         {
-            this.columnMap[gridColumn.dataIndex] = idx;
+            if (!gridColumn.hidden)
+            {
+                // only index for non-hidden columns
+                this.columnMap[gridColumn.dataIndex] = i;
+                i++;
+            }
         }, this);
     },
 
@@ -677,11 +660,7 @@ Ext.define('Connector.view.Grid', {
                         },
                         clearfilter: function(win, fieldKeyPath)
                         {
-                            this.fireEvent('removefilter', this, fieldKeyPath, false);
-                        },
-                        clearall: function()
-                        {
-                            this.fireEvent('removefilter', this, null, true);
+                            this.fireEvent('removefilter', this, fieldKeyPath);
                         },
                         scope: this
                     },
@@ -803,31 +782,10 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
-    showLimitMessage : function(max) {
-
-        var msg = 'The app only shows up ' + max + ' rows. Export to see all data.';
-        var msgKey = 'GRID_LIMIT';
-
-        var exportId = Ext.id();
-        var exportText = '<a id="' + exportId + '">Export</a>';
-        msg += ' ' + exportText;
-
-        var dismissId = Ext.id();
-        var dismissText = '<a id="' + dismissId + '">Dismiss</a>';
-        msg += ' ' + dismissText;
-
-        var shown = this.sessionMessage(msgKey, msg);
-        if (shown) {
-            Ext.get(exportId).on('click', this.requestExport, this);
-            Ext.get(dismissId).on('click', function() {
-                this.showmsg = true; this.hideMessage();
-                Connector.getService('Messaging').block(msgKey);
-            }, this);
-        }
-    },
-
-    showAlignFooter : function(comp, caller, resize) {
-        if (this.footer && this.grid) {
+    showAlignFooter : function(resize)
+    {
+        if (this.getModel().isActive() && this.footer && this.grid)
+        {
             var footer = this.footer,
                 size = this.getWidthHeight(),
                 up = this.up(),

@@ -150,6 +150,16 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           }
         });
       }
+
+      var $createaccountcontainer = self.$modal.find('[id=createaccountform]');
+      if ($createaccountcontainer.length > 0) {
+        $("#createaccountform input").keypress(function (e) {
+          if (e.keyCode == 13) {
+            e.preventDefault();
+            $('#createaccountsubmit').click();
+          }
+        });
+      }
     };
 
     /**
@@ -302,6 +312,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             verification: verificationVal
           }
         }).success(function() {
+          $('.create-new-password-modal .links input').prop("disabled",true);
           $('.create-new-password-modal .notifications p').html('Reset password successful.');
 
           setTimeout(function(){
@@ -312,6 +323,39 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           $('.create-new-password-modal .notifications p').html('Change password failed.');
         });
 
+      });
+
+      self.action('confirmcreateaccount', function($click) {
+        var pw1 = document.getElementById('password3');
+        var pw2 = document.getElementById('password4');
+        var tos = document.getElementById('tos-create-account');
+
+        if (!pw1.checkValidity() || !pw2.checkValidity() || !tos.checkValidity()) {
+          $('#submit_hidden_account').click(); //click a hidden submit to do form validation
+          return false;
+        }
+
+        var emailVal = LABKEY.ActionURL.getParameter('email');
+        var verificationVal = LABKEY.ActionURL.getParameter('verification');
+        $.ajax({
+          url: LABKEY.ActionURL.buildURL("login", "setPasswordAPI.api"),
+          method: 'POST',
+          data: {
+            password: pw1.value,
+            password2: pw2.value,
+            email: emailVal,
+            verification: verificationVal
+          }
+        }).success(function() {
+          $('.create-account-modal .links input').prop("disabled",true);
+          $('.create-account-modal .notifications p').html('Create account successful.');
+          setTimeout(function(){
+            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?login=true");
+          },3000);
+
+        }).error(function() {
+          $('.create-account-modal .notifications p').html('Create account failed.');
+        });
 
       });
 
@@ -325,6 +369,9 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
      */
     self.expandTOS = function() {
       self.action('terms-of-service', function($click, $terms_of_service) {
+        $terms_of_service.toggleClass('open');
+      });
+      self.action('tos-create-account', function($click, $terms_of_service) {
         $terms_of_service.toggleClass('open');
       });
     };
@@ -352,6 +399,15 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
     self.queryParamTriggerModal = function() {
       var queryParamRegex = self.options.query_param_regex;
       var showPopup = location.search.match(queryParamRegex);
+
+      var loginRegex = /login=true|returnUrl=/i;
+      if (queryParamRegex.source.toString() !== loginRegex.source.toString()) {
+        // if login popup is already open, skip opening other matches
+        var isLogin = location.search.match(loginRegex);
+        if (isLogin) {
+          return;
+        }
+      }
 
       if( showPopup && showPopup.length > 0 ) {
         $.magnificPopup.open(self.magnific_options);

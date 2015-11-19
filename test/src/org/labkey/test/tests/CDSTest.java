@@ -66,7 +66,6 @@ public class CDSTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
-        cds.showHiddenVariables(true);
 
         cds.enterApplication();
 
@@ -402,17 +401,31 @@ public class CDSTest extends CDSReadOnlyTest
         waitForText(STUDY_GROUP);
         click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
-        // Verify that filters get replaced when viewing group.
+        // Verify the group does not replace already active filters
+        sleep(500); // give it a chance to apply
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+        cds.clearFilters();
+        click(Locator.css("a.applygroup"));
+
+        // Verify the filters get applied when directly acting
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
         _asserts.assertFilterStatusCounts(89, 2, -1); // TODO Test data dependent.
         assertTextPresent("Study Group Verify", "Description", studyGroupDescModified);
+        cds.clearFilters();
+
+        // Verify filters get applied by viewing when no filters exist
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForText(STUDY_GROUP);
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
+        _asserts.assertFilterStatusCounts(89, 2, -1); // TODO Test data dependent.
 
         // Verify that you can cancel delete
         click(CDSHelper.Locators.cdsButtonLocator("Delete"));
         waitForText("Are you sure you want to delete");
-        click(Locator.css(".x-window-body-swmsg a").withText("Cancel"));
-        waitForTextToDisappear("Are you sure you want to delete");
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "x-toolbar-item").notHidden());
+        _ext4Helper.waitForMaskToDisappear();
         assertTextPresent(studyGroupDescModified);
 
         // Verify back button works

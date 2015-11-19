@@ -47,10 +47,7 @@ Ext.define('Connector.controller.Group', {
         });
 
         this.control('groupsummary', {
-            loadgroupfilters: this.loadGroupFilters,
-            requestfilterundo: this.undoFilter,
-            requestgroupdelete: this.doGroupDeleteFromSummary,
-            requestback: this.doBack
+            requestgroupdelete: this.doGroupDeleteFromSummary
         });
 
         this.control('home', {
@@ -92,12 +89,6 @@ Ext.define('Connector.controller.Group', {
                 store: Connector.model.Group.getGroupStore(),
                 groupId: context.groupId
             });
-
-            this.getViewManager().on('afterchangeview', function(controller, view) {
-                if (view != 'groupsummary') {
-                    v.hideMessage();
-                }
-            }, v);
         }
 
         return v;
@@ -141,33 +132,6 @@ Ext.define('Connector.controller.Group', {
                 model.resumeEvents();
             }
         });
-    },
-
-    undoFilter : function() {
-        Connector.getState().requestFilterUndo();
-    },
-
-    loadGroupFilters : function() {
-        var v = this.getViewManager().getViewInstance('groupsummary'),
-            store = Connector.model.Group.getGroupStore(),
-            recIdx = store.find('id', v.groupId, false, true, true),
-            rec = store.getAt(recIdx),
-            filters = rec.get('filters');
-
-        if (Ext.isString(filters)) {
-            var strFilterArray = LABKEY.app.model.Filter.fromJSON(filters);
-            filters = [];
-            for (var f=0; f < strFilterArray.length; f++) {
-                filters.push(Ext.create('Connector.model.Filter', strFilterArray[f]));
-            }
-        }
-        else {
-            filters = filters.filters;
-        }
-
-        Connector.getState().setFilters(filters);
-
-        this.getApplication().fireEvent('grouploaded', Ext.clone(rec.data), filters);
     },
 
     doGroupSave : function()
@@ -386,9 +350,5 @@ Ext.define('Connector.controller.Group', {
                 Ext.Msg.alert('ERROR', json.exception ? json.exception : 'Delete group failed.');
             }
         });
-    },
-
-    doBack : function() {
-        window.history.back();
     }
 });

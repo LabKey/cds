@@ -68,7 +68,7 @@ Ext.define('Connector.model.Grid', {
         Connector.getState().onReady(function()
         {
             this.stateReady = true;
-            this.applyFilters(this.getDataFilters(), this._init, this);
+            this.applyFilters(this._init, this);
         }, this);
 
         this.addEvents('filterchange', 'updatecolumns');
@@ -520,13 +520,12 @@ Ext.define('Connector.model.Grid', {
     },
 
     /**
-     *
-     * @param filterArray
      * @param callback
      * @param scope
      * @param [silent=false]
+     * @param [useCurrentFilters=false]
      */
-    applyFilters : function(filterArray, callback, scope, silent)
+    applyFilters : function(callback, scope, silent, useCurrentFilters)
     {
         //
         // calculate the subject filter
@@ -534,18 +533,23 @@ Ext.define('Connector.model.Grid', {
         Connector.getFilterService().getSubjects(function(filterState)
         {
             var subjectFilter = this._createSubjectFilter(filterState),
-                baseFilterArray = [];
+                baseFilterArray = [],
+                setters = {};
 
             if (subjectFilter)
             {
                 baseFilterArray.push(subjectFilter);
             }
 
-            this.set({
-                subjectFilter: subjectFilter,
-                baseFilterArray: baseFilterArray,
-                filterArray: filterArray
-            });
+            setters.subjectFilter = subjectFilter;
+            setters.baseFilterArray = baseFilterArray;
+
+            if (!useCurrentFilters)
+            {
+                setters.filterArray = this._applyFilterSet();
+            }
+
+            this.set(setters);
 
             // update the default measure if available
             this._updateDefaultSubjectMeasure(subjectFilter);
@@ -596,7 +600,7 @@ Ext.define('Connector.model.Grid', {
     {
         if (this._ready === true)
         {
-            this.applyFilters(this.getDataFilters(), function()
+            this.applyFilters(function()
             {
                 this.bindApplicationMeasures();
 
@@ -608,9 +612,10 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    getDataFilters : function()
+    _applyFilterSet : function()
     {
-        var filterArray = [];
+        var filterArray = [],
+            filterMap = {};
 
         Ext.each(Connector.getState().getFilters(), function(appFilter)
         {
@@ -619,7 +624,7 @@ Ext.define('Connector.model.Grid', {
                 Ext.each(appFilter.getTimeFilters(), function(filter)
                 {
                     filterArray.push(filter);
-                    this.addToFilters(filter, appFilter.id);
+                    filterMap[this.getFilterId(filter)] = appFilter.id;
                 }, this)
             }
             else
@@ -631,13 +636,14 @@ Ext.define('Connector.model.Grid', {
                         for (var i=0; i < filters.length; i++)
                         {
                             filterArray.push(filters[i]);
-                            this.addToFilters(filters[i], appFilter.id);
+                            filterMap[this.getFilterId(filters[i])] = appFilter.id;
                         }
                     }
                 }, this);
             }
         }, this);
 
+        this.filterMap = filterMap;
         return filterArray;
     },
 
@@ -717,8 +723,6 @@ Ext.define('Connector.model.Grid', {
                             else
                             {
                                 Connector.getState().updateMDXFilter(false);
-
-                                this.filterMap = {};
 
                                 // filters are tracked
                                 // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
@@ -824,36 +828,27 @@ Ext.define('Connector.model.Grid', {
         this.filterMap[key] = id;
     },
 
-    clearFilter : function(urlParam)
-    {
-        if (urlParam in this.filterMap)
-        {
-            delete this.filterMap[urlParam];
-        }
-    },
-
     /**
      * Called when a user clears a filter or all the filters via the grid filtering interface.
      * @param view
      * @param fieldKey
-     * @param all
      */
-    onGridFilterRemove : function(view, fieldKey, all)
+    onGridFilterRemove : function(view, fieldKey)
     {
-        var state = Connector.getState();
+        var keysToDelete = [];
         Ext.iterate(this.filterMap, function(urlParam, id)
         {
-            state.removeFilter(id, 'Subject');
-            if (!all && urlParam.indexOf(fieldKey) > -1)
+            if (urlParam.indexOf(fieldKey) > -1)
             {
-                this.clearFilter(urlParam);
+                keysToDelete.push(urlParam);
+                Connector.getState().removeFilter(id);
             }
         }, this);
 
-        if (all)
+        Ext.each(keysToDelete, function(key)
         {
-            this.filterMap = {};
-        }
+            delete this.filterMap[key];
+        }, this);
     },
 
     /**
@@ -912,7 +907,7 @@ Ext.define('Connector.model.Grid', {
     {
         /**
          * Explicitly ask for just the columns in the model columnSet plus some
-         * hardcoded ones (i.e. the dataset (checkboard) column the generated cds getData subject column,
+         * hardcoded ones (i.e. the dataset (checkerboard) column the generated cds getData subject column,
          * and the 'Folder' column that will only exist for multi table join queries)
          */
         var columns = [QueryUtils.SUBJECT_ALIAS, QueryUtils.DATASET_ALIAS];
@@ -943,7 +938,7 @@ Ext.define('Connector.model.Grid', {
             columnSet: this.generateColumnSet()
         });
 
-        this.applyFilters(this.get('filterArray'), function()
+        this.applyFilters(function()
         {
             this.initialized = true;
 
@@ -958,7 +953,7 @@ Ext.define('Connector.model.Grid', {
             {
                 this.activeColumn = true;
             }
-        }, this, true);
+        }, this, true /* silent */, true /* useCurrentFilters */);
     },
 
     setActive : function(active)
