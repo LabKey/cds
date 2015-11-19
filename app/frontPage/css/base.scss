@@ -59,13 +59,17 @@ div.links {
       color:$light-grey-text;
     }
 
-    &.signin-modal-trigger {
+    &.signin-modal-trigger,
+    &.create-account-modal-trigger {
       margin-right: 0;
       background-color: $navigation-pink;
+      
       &:hover {
         background-color: $navigation-pink-hover;
       }
     }
+
+
   }
 }
 
