@@ -104,7 +104,6 @@ Ext.define('Connector.component.Started', {
 
     _hide : function()
     {
-        console.log('hide me');
         this.getEl().slideOut('t', {
             duration: 200,
             callback: function()
