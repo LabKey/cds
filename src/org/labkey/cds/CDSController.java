@@ -693,8 +693,13 @@ public class CDSController extends SpringActionController
 
             StringWriter sw = new StringWriter();
             // get pipeline root
+            String wget = "wget";
+            if (new File("/usr/bin/wget").exists())
+                wget = "/usr/bin/wget";
+            else if (new File("/opt/local/bin/wget").exists())
+                wget = "/opt/local/bin/wget";
             ProcessBuilder pb = new ProcessBuilder(
-                    "/opt/local/bin/wget",
+                    wget,
                     "--directory-prefix=" + fullPath.getPath(),
                     "--mirror",
                     "--page-requisites",
