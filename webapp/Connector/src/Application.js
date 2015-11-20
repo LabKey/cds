@@ -54,6 +54,7 @@ Ext.define('Connector.Application', {
     stores: [],
 
     defaultUserProperties: {
+        // Used by Connector.component.Started.DISMISS_PROPERTY
         showIntro: true
     },
 

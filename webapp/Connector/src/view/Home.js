@@ -35,7 +35,7 @@ Ext.define('Connector.view.Home', {
                 xtype: 'cds-news'
             }];
 
-            if (Connector.getProperty('showIntro') === true)
+            if (Connector.getProperty(Connector.component.Started.DISMISS_PROPERTY) === true)
             {
                 items.unshift({
                     xtype: 'cds-started',

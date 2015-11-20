@@ -4,35 +4,74 @@ Ext.define('Connector.component.Started', {
 
     alias: 'widget.cds-started',
 
+    statics: {
+        DISMISS_PROPERTY: 'showIntro'
+    },
+
     renderTpl: new Ext.XTemplate(
         '<h2 class="section-title bottom-spacer" style="display: inline-block;">Getting Started</h2>',
         '<a href="#" onclick="return false;" style="float: right; padding-right: 28px;" class="started-dismiss">Dismiss</a>',
         '<div>',
             '<div class="intro-video">',
-                '<iframe width="533" height="300" src="https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0" frameborder="0" allowfullscreen></iframe>',
+                '<tpl if="videoURL">',
+                    '<iframe width="533" height="300" src="{videoURL}" frameborder="0" allowfullscreen></iframe>',
+                '<tpl elif="isAdmin">',
+                    '<div>',
+                        'Hey! You look like an admin. The Getting Video URL needs to be setup.&nbsp;',
+                        '<a href="{adminURL}" target="_blank">Configure</a>',
+                    '</div>',
+                '</tpl>',
             '</div>',
         '</div>'
     ),
 
     width: 560,
 
+    /**
+     * As the video is the only content of 'Getting Started' at the moment, this flag is used
+     * to determine if a video is configured properly for this user. Without the video, this component
+     * will act differently depending on this flag
+     */
+    hasIntro: true,
+
     renderSelectors: {
         dismissLink: 'a.started-dismiss',
         introVideo: 'div.intro-video iframe'
+    },
+
+    renderData: {
+        isAdmin: LABKEY.user.isAdmin === true,
+        adminURL: LABKEY.ActionURL.buildURL('admin', 'folderManagement.view', null, {tabId: 'props'}),
+        videoURL: LABKEY.moduleContext.cds.GettingStartedVideoURL
     },
 
     listeners: {
         afterrender: {
             fn: function(start)
             {
+                // bind dismiss
                 start.dismissLink.on('click', start.dismiss, start);
 
-                Ext.EventManager.onWindowResize(function()
+                // check to see if a valid videoURL is available
+                if (!this.renderData.videoURL)
                 {
-                    this.resizeTask.delay(200);
-                }, this);
+                    this.hasIntro = false;
+                }
 
-                this.resizeTask.delay(0);
+                if (this.hasIntro)
+                {
+                    Ext.EventManager.onWindowResize(function()
+                    {
+                        this.resizeTask.delay(200);
+                    }, this);
+
+                    this.resizeTask.delay(0);
+                }
+                else if (!this.renderData.isAdmin)
+                {
+                    // not an admin and a video is not available
+                    this.hide();
+                }
             },
             single: true
         }
@@ -47,22 +86,33 @@ Ext.define('Connector.component.Started', {
 
     dismiss : function()
     {
-        this.introVideo.fadeOut({
-            duration: 300,
+        if (this.hasIntro)
+        {
+            this.introVideo.fadeOut({
+                duration: 300,
+                callback: this._hide,
+                scope: this
+            });
+        }
+        else
+        {
+            this._hide();
+        }
+
+        Connector.setProperty(Connector.component.Started.DISMISS_PROPERTY, false);
+    },
+
+    _hide : function()
+    {
+        console.log('hide me');
+        this.getEl().slideOut('t', {
+            duration: 200,
             callback: function()
             {
-                this.getEl().slideOut('t', {
-                    duration: 200,
-                    callback: function()
-                    {
-                        this.hide();
-                    }
-                });
+                this.hide();
             },
             scope: this
         });
-
-        Connector.setProperty('showIntro', false);
     },
 
     // Do not call directly. Use 'resizeTask' instead
@@ -78,7 +128,10 @@ Ext.define('Connector.component.Started', {
             var calcVideoWidth = Math.ceil(width * 0.95),
                 calcVideoHeight = Math.ceil((calcVideoWidth / baseVideoWidth) * baseVideoHeight);
 
-            this.introVideo.setSize(calcVideoWidth, calcVideoHeight);
+            if (this.hasIntro)
+            {
+                this.introVideo.setSize(calcVideoWidth, calcVideoHeight);
+            }
             this.setWidth(width);
         }
     }
