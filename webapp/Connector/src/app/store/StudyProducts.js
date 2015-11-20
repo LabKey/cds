@@ -114,8 +114,8 @@ Ext.define('Connector.app.store.StudyProducts', {
                     }
                 }
                 product.studies = studies;
+                otherProducts = [];
                 if (this.productProduct && this.productProduct[product.product_id]) {
-                    otherProducts = [];
                     var otherProductIds = Array.from(this.productProduct[product.product_id]);
                     Ext.each(otherProductIds, function(id) {
                         otherProducts.push({
