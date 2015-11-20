@@ -135,8 +135,17 @@ div.plot-scroll {
 
 #xvarselector,
 #yvarselector {
-  background-color: #fff;  
-  
+  &.active {
+    background-color: #fff;  
+    border: 1px solid $gray-9;
+
+    .x-box-item {
+      background-color: transparent;
+    }
+  }
+
+  background-color: transparent;
+  border: none;
   .x-box-item {
     background-color: transparent;
   }
