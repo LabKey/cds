@@ -18,6 +18,7 @@ package org.labkey.cds;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -27,6 +28,7 @@ import org.labkey.api.action.ApiAction;
 import org.labkey.api.action.ApiResponse;
 import org.labkey.api.action.ApiSimpleResponse;
 import org.labkey.api.action.BaseViewAction;
+import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.HasBindParameters;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
@@ -47,7 +49,7 @@ import org.labkey.api.data.PropertyManager;
 import org.labkey.api.data.Results;
 import org.labkey.api.data.ResultsImpl;
 import org.labkey.api.data.SqlSelector;
-import org.labkey.api.data.TSVMapWriter;
+import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.QueryForm;
@@ -57,13 +59,17 @@ import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.*;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.ReadPermission;
+import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.util.CSRFUtil;
+import org.labkey.api.util.PageFlowUtil;
+import org.labkey.api.util.URLHelper;
 import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
+import org.labkey.api.view.VBox;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.labkey.cds.view.template.FrontPageTemplate;
@@ -74,10 +80,12 @@ import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -619,6 +627,98 @@ public class CDSController extends SpringActionController
                 }
             }
             return null;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+    }
+
+    public static class CmsPage
+    {
+        public String url;
+        public String target;
+    }
+
+    @RequiresSiteAdmin @CSRF
+    public static class CmsCopyAction extends FormViewAction<Object>
+    {
+        HttpView _success = null;
+
+        @Override
+        public void validateCommand(Object target, Errors errors)
+        {
+            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
+            String url = cds.getPropertyValue(cds._cmsURL, getContainer());
+
+            if (StringUtils.isEmpty(url))
+                errors.reject(ERROR_MSG, "cms url is not configured");
+
+            Container blogContainer = getContainer().getChild("files");
+            if (null == blogContainer)
+                errors.reject(ERROR_MSG, "Create subfolder named 'files'");
+        }
+
+        @Override
+        public URLHelper getSuccessURL(Object o)
+        {
+            return null;
+        }
+
+        @Override
+        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
+        {
+            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
+            CmsPage cms = new CmsPage();
+            cms.url =  cds.getPropertyValue(cds._cmsURL, getContainer());
+            Container target = getContainer().getChild("files");
+            if (null != target)
+                cms.target = "/_webdav" + target.getPath() + "/@files/blog/";
+            return new JspView<>(CDSController.class, "view/cms.jsp", cms);
+        }
+
+        @Override
+        public boolean handlePost(Object o, BindException errors) throws Exception
+        {
+            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
+            String url = cds.getPropertyValue(cds._cmsURL, getContainer());
+
+            Container blogContainer = getContainer().getChild("files");
+            FileContentService svc = ServiceRegistry.get().getService(FileContentService.class);
+            File root = svc.getFileRoot(blogContainer);
+            File fullPath = new File(root,"@files/blog");
+            fullPath.mkdirs();
+
+            StringWriter sw = new StringWriter();
+            // get pipeline root
+            ProcessBuilder pb = new ProcessBuilder(
+                    "/opt/local/bin/wget",
+                    "--directory-prefix=" + fullPath.getPath(),
+                    "--mirror",
+                    "--page-requisites",
+                    "--convert-links",
+                    "--adjust-extension",
+                    "--no-host-directories",
+                    url ,
+                    url + "/rss/feed.rss");
+            pb.redirectErrorStream(true);
+            Process p = pb.start();
+            IOUtils.copy(new InputStreamReader(p.getInputStream(),"UTF-8"), sw);
+            p.waitFor();
+            sw.flush();
+
+            ModelAndView form = getView(null, false, errors);
+            HtmlView output = new HtmlView("<pre>"+PageFlowUtil.filter(sw.toString())+"</pre>");
+            _success = new VBox(form,output);
+            return true;
+        }
+
+        @Override
+        public ModelAndView getSuccessView(Object o) throws Exception
+        {
+            return _success;
         }
 
         @Override
