@@ -26,9 +26,7 @@ import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiAction;
 import org.labkey.api.action.ApiSimpleResponse;
-import org.labkey.api.action.BaseViewAction;
 import org.labkey.api.action.FormViewAction;
-import org.labkey.api.action.HasBindParameters;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
 import org.labkey.api.action.SimpleApiJsonForm;
@@ -42,7 +40,6 @@ import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.JdbcType;
-import org.labkey.api.data.PropertyManager;
 import org.labkey.api.data.Results;
 import org.labkey.api.data.ResultsImpl;
 import org.labkey.api.data.SqlSelector;
@@ -53,10 +50,12 @@ import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
+import org.labkey.api.security.CSRF;
 import org.labkey.api.security.Group;
 import org.labkey.api.security.IgnoresTermsOfUse;
 import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermission;
+import org.labkey.api.security.RequiresSiteAdmin;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
@@ -531,7 +530,8 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresSiteAdmin @CSRF
+    @RequiresSiteAdmin
+    @CSRF
     public static class MailMergeAction extends SimpleViewAction<Object>
     {
         @Override
