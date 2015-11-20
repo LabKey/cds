@@ -1006,6 +1006,10 @@ Ext.define('Connector.panel.Selector', {
 
     getDimensionsForMeasure : function(measure) {
         // check if a white-list of dimensions was declared for the measure or its source
+        if (!measure.get('isMeasure')) {
+            return [];
+        }
+
         var dimensions = measure.get('dimensions'),
             source = this.getSourceForMeasure(measure),
             measureIsDimension = false;

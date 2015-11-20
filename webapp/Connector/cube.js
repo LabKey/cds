@@ -300,6 +300,11 @@ Ext4.define('Connector.cube.Configuration', {
                         staticData: {
                             title: 'Studies using this product'
                         }
+                    },{
+                        type: 'productotherproducts',
+                        staticData: {
+                            title: 'Used with other products'
+                        }
                     }]]
                 }]
             },{

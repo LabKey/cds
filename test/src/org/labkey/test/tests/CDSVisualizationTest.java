@@ -211,7 +211,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertFalse("For ELISPOT Background vs Time Visit Days y-axis gutter plot was present, it should not be.", hasYGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
-
     }
 
     @Test
@@ -219,9 +218,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     {
         //getText(Locator.css("svg")) on Chrome
 
-        final String ELISPOT_DATA_PROV = "0\n500\n1000\n1500\n2000\n2500\n3000\n3500\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
-        final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5"; // TODO Test data dependent.
-        final String NAB_IC50 = "1\n10\n1\n10\n100\n1000"; // TODO Test data dependent.
+        final String ELISPOT_DATA_PROV = "0\n500\n1000\n1500\n2000\n2500\n3000\n3500\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000";
+        final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
+        final String NAB_IC50 = "1\n10\n1\n10\n100\n1000";
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -241,7 +240,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            assertSVG(ELISPOT_DATA_PROV);
+            cds.assertPlotTickText(ELISPOT_DATA_PROV);
         }
 
         yaxis.openSelectorWindow();
@@ -268,7 +267,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            assertSVG(ICS_MAGNITUDE);
+            cds.assertPlotTickText(ICS_MAGNITUDE);
         }
 
         // Test log scales
@@ -294,7 +293,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 //
 //        if (CDSHelper.validateCounts)
 //        {
-//            assertSVG(NAB_IC50);
+//            cds.assertPlotTickText(NAB_IC50);
 //        }
     }
 
@@ -321,12 +320,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
         xaxis.pickVariable(CDSHelper.DEMO_STUDY_NAME);
         xaxis.confirmSelection();
-        expectedXYValues = "RED 4\nRED 5\nRED 6\nZAP 102\nZAP 105\nZAP 106\nZAP 113\nZAP 115\nZAP 116\nZAP 117\nZAP 118\nZAP 124\nZAP 134\nZAP 136\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "RED 4\nRED 5\nRED 6\nZAP 102\nZAP 105\nZAP 106\nZAP 113\nZAP 115\nZAP 116\nZAP 117\nZAP 118\nZAP 124\nZAP 134\nZAP 136\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
             log("Validating Study Name");
-            assertSVG(expectedXYValues);
+            cds.assertPlotTickText(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
@@ -343,60 +342,60 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
         xaxis.confirmSelection();
-        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
             log("Validating Date Subject Enrolled");
-            assertSVG(expectedXYValues);
+            cds.assertPlotTickText(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_FUP_COMP);
         xaxis.confirmSelection();
-        expectedXYValues = "1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
             log("Validating Followup Complete");
-            assertSVG(expectedXYValues);
+            cds.assertPlotTickText(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_PUB);
         xaxis.confirmSelection();
-        expectedXYValues = "3/12/2011\n7/6/2011\n10/30/2011\n2/23/2012\n6/17/2012\n10/11/2012\n2/4/2013\n5/31/2013\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "3/12/2011\n7/6/2011\n10/30/2011\n2/23/2012\n6/17/2012\n10/11/2012\n2/4/2013\n5/31/2013\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
             log("Validating Date Made Public");
-            assertSVG(expectedXYValues);
+            cds.assertPlotTickText(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_START);
         xaxis.confirmSelection();
-        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
             // Because there will be gutter plots the text we are interested in will be at svg 1.
             log("Validating Start Date");
-            assertSVG(expectedXYValues);
+            cds.assertPlotTickText(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_NETWORK);
         xaxis.confirmSelection();
-        expectedXYValues = "ROGER\nZED\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "ROGER\nZED\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
             log("Validating Network");
-            assertSVG(expectedXYValues);
+            cds.assertPlotTickText(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
@@ -426,12 +425,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
         xaxis.confirmSelection();
-        expectedXYValues = "Phase I\nPhase II\nPhase IIB\nundefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "Phase I\nPhase II\nPhase IIB\nundefined\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
             log("Validating Study Type");
-            assertSVG(expectedXYValues);
+            cds.assertPlotTickText(expectedXYValues);
         }
 
         xaxis.openSelectorWindow();
@@ -461,12 +460,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
         xaxis.confirmSelection();
-        expectedXYValues = "Placebo\nVaccine\nundefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "Placebo\nVaccine\nundefined\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
             log("Validating Vaccine or Placebo");
-            assertSVG(expectedXYValues);
+            cds.assertPlotTickText(expectedXYValues);
         }
 
     }
@@ -675,7 +674,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Ensure correct number of points are highlighted.");
         assertEquals("Incorrect number of points highlighted after clicking x axis categories",1443, getPointCountByColor(MOUSEOVER_FILL));
         assertEquals("Incorrect total number of points after clicking x axis categories",3627, getPointCount());
-        log("Apply selection as exlusive filter.");
+        log("Apply selection as exclusive filter.");
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("Remove"));
         sleep(3000); // Let the plot redraw.
         _ext4Helper.waitForMaskToDisappear();
@@ -697,7 +696,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         String expectedXYValues = "10\nnull\n1\n10\n100\n1000";
-        assertSVG(expectedXYValues);
+        cds.assertPlotTickText(expectedXYValues);
         assertFalse("Therer is an x-gutter, and there should not be.", hasXGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
@@ -886,8 +885,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     public void verifySubjectCounts()
     {
 
-        // TODO all the counts here are very test data dependent.
-
         Map<String, String> sourcesSubjectCounts = new HashMap<>();
         CDSHelper cds = new CDSHelper(this);
         Map<String, String> antigenCounts = new HashMap<>();
@@ -992,8 +989,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     public void verifySubjectCountsWithFilters()
     {
 
-        // TODO all the counts here are very test data dependent.
-
         Map<String, String> sourcesSubjectCounts = new HashMap<>();
         Map<String, String> antigenCounts = new HashMap<>();
         Map<String, String> peptidePoolCounts = new HashMap<>();
@@ -1009,7 +1004,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         cds.goToSummary();
         cds.clickBy("Assays");
-        refresh(); // TODO working around an issue where reference is loss to element.
         cds.selectBars(CDSHelper.ASSAYS[0]); // Select BAMA
 
         // Populate expected counts for some of the antigens.
@@ -1148,8 +1142,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     @Test
     public void verifySubjectCountsWithFiltersAdvancedOptions()
     {
-
-        // TODO all the counts here are very test data dependent.
 
         Map<String, String> proteinCounts = new HashMap<>();
         Map<String, String> proteinPanelCounts = new HashMap<>();
@@ -1320,6 +1312,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         xaxis.setTargetCell(CDSHelper.TARGET_CELL_TZM);
         xaxis.validateVirusSubjectCount(virusCounts, false);
         xaxis.back();
@@ -1424,98 +1417,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     }
 
     @Test
-    public void verifyScatterPlotColorAxis()
-    {
-        CDSHelper cds = new CDSHelper(this);
-
-        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-
-        ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
-        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-
-        xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.NAB);
-        xaxis.pickVariable(CDSHelper.NAB_DATA);
-        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
-        xaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
-        xaxis.confirmSelection();
-        // yaxis window opens automatically
-        yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
-        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
-        yaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
-        yaxis.confirmSelection();
-        color.openSelectorWindow();
-        color.pickSource(CDSHelper.SUBJECT_CHARS);
-        color.pickVariable(CDSHelper.DEMO_RACE);
-        color.confirmSelection();
-
-        Locator.CssLocator colorLegend = Locator.css("#color-legend > svg");
-        Locator.CssLocator colorLegendGlyph = colorLegend.append("> .legend-point");
-        waitForElement(colorLegend);
-        assertElementPresent(colorLegendGlyph, 10);
-
-        // TODO Need to revisit this part of the test. Specifically there no longer is a 'Race' attribute to look for.
-/*
-        List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
-        Map<String, Integer> raceCounts = new HashMap<>();
-        raceCounts.put("Asian", 62); // too tired to fix this
-        raceCounts.put("Asian/Pacific Island", 89);
-        raceCounts.put("Black", 65);
-        raceCounts.put("Hawaiian/Pacific Isl", 67);
-        raceCounts.put("Multiracial", 81);
-        raceCounts.put("Native American", 73);
-        raceCounts.put("Native American/Alas. Other", 65);
-        raceCounts.put("Native Hawaiian/Paci", 87);
-        raceCounts.put("Unknown", 88);
-        raceCounts.put("White", 62);
-
-        Set<String> foundRaces = new HashSet<>();
-
-        // uncomment if you want help determining these counts
-        for (WebElement el : legendGlyphs)
-        {
-            String fill = el.getAttribute("fill");
-            String path = el.getAttribute("d");
-            List<WebElement> points = Locator.css(String.format("a.point > path[fill='%s'][d='%s']", fill, path)).findElements(getDriver());
-
-            String race = getPointProperty("Race", points.get(0).findElement(By.xpath("..")));
-            log(race + ": (" + points.size() + ")");
-        }
-
-        for (WebElement el : legendGlyphs)
-        {
-            String fill = el.getAttribute("fill");
-            String path = el.getAttribute("d");
-            List<WebElement> points = Locator.css(String.format("a.point > path[fill='%s'][d='%s']", fill, path)).findElements(getDriver());
-
-            String race = getPointProperty("Race", points.get(0).findElement(By.xpath("..")));
-            assertEquals("Wrong number of points for race: " + race, raceCounts.get(race), (Integer)points.size());
-
-            foundRaces.add(race);
-        }
-
-        assertEquals("Found incorrect Races", raceCounts.keySet(), foundRaces);
-
-        int expectedPointCount = 0;
-        for (Map.Entry<String, Integer> raceCount : raceCounts.entrySet())
-        {
-            expectedPointCount += raceCount.getValue();
-        }
-        assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
-
-        // issue 20446
-        color.openSelectorWindow();
-        color.pickMeasure("Demographics", "Race");
-        color.confirmSelection();
-        assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
-        waitForElement(colorLegendGlyph);
-        assertElementPresent(colorLegendGlyph, 8);
-        */
-    }
-
-    @Test
     public void verifyTimeAxisBasic()
     {
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1557,7 +1458,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Study count was as expected.");
 
         validateVisitCounts(studies, expectedCounts);
-        assertSVG(studyDaysScales);
+        cds.assertPlotTickText(studyDaysScales);
 
         log("Change x-axis to Study weeks, verify visit counts change as expected.");
         xaxis.openSelectorWindow();
@@ -1574,7 +1475,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 17, 0, 0));
 
         validateVisitCounts(studies, expectedCounts);
-        assertSVG(studyWeeksScales);
+        cds.assertPlotTickText(studyWeeksScales);
 
         log("Change x-axis to Study months, verify visit counts change as expected.");
         xaxis.openSelectorWindow();
@@ -1593,7 +1494,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 3, 5, 0, 0));
 
         validateVisitCounts(studies, expectedCounts);
-        assertSVG(studyMonthsScales);
+        cds.assertPlotTickText(studyMonthsScales);
 
         log("Change x-axis to Study days, change alignment to Enrollment, verify visit counts are as expected.");
         xaxis.openSelectorWindow();
@@ -1616,7 +1517,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Study count was as expected.");
 
         validateVisitCounts(studies, expectedCounts);
-        assertSVG(studyDaysScales);
+        cds.assertPlotTickText(studyDaysScales);
 
         log("Change x-axis alignment to Last Vaccination, verify visit counts are as expected.");
         // pre-enrollment has been removed temporarily. Previously QED, YOYO and ZAP 133 had pre-enrollment.
@@ -1634,7 +1535,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Study count was as expected.");
 
         validateVisitCounts(studies, expectedCounts);
-        assertSVG(studyDaysScaleAligedVaccination);
+        cds.assertPlotTickText(studyDaysScaleAligedVaccination);
 
         log("Change x-axis to Study weeks, and go back to aligned by Enrollment, verify visit are as expected.");
         expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 3, 6, 0, 0));
@@ -1653,7 +1554,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Study count was as expected.");
 
         validateVisitCounts(studies, expectedCounts);
-        assertSVG(studyWeeksScales);
+        cds.assertPlotTickText(studyWeeksScales);
 
         log("Change x-axis Aligned by Last Vaccination, verify visit are as expected.");
         // pre-enrollment has been removed temporarily. Previously QED, YOYO and ZAP 133 had pre-enrollment.
@@ -1673,7 +1574,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Study count was as expected.");
 
         validateVisitCounts(studies, expectedCounts);
-        assertSVG(studyWeeksScalesAlignedVaccination);
+        cds.assertPlotTickText(studyWeeksScalesAlignedVaccination);
 
         log("Change x-axis to Study months, and go back to aligned by Enrollment, verify visit are as expected.");
         expectedCounts.replace("QED_2", new CDSHelper.TimeAxisData("QED 2", 2, 5, 0, 0));
@@ -1692,7 +1593,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Study count was as expected.");
 
         validateVisitCounts(studies, expectedCounts);
-        assertSVG(studyMonthsScales);
+        cds.assertPlotTickText(studyMonthsScales);
 
         log("Change x-axis Aligned by Last Vaccination, verify visit are as expected.");
         // pre-enrollment has been removed temporarily. Previously QED, YOYO and ZAP 133 had pre-enrollment.
@@ -1712,7 +1613,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Study count was as expected.");
 
         validateVisitCounts(studies, expectedCounts);
-        assertSVG(studyMonthsScalesAlignedVaccination);
+        cds.assertPlotTickText(studyMonthsScalesAlignedVaccination);
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
@@ -1971,7 +1872,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         _ext4Helper.setCssPrefix("x-");
 
         int actualCount = getElementCount(Locator.tagContainingText("td", uniqueVirus));
-        assertTrue("Expected count is not within expected range. Expected 28 (+-5) found " + actualCount, Math.abs(actualCount - 28) <= 5);
+        assertEquals(100, actualCount);
         getDriver().close();
         switchToMainWindow();
 
@@ -2020,26 +1921,19 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         Ext4Helper.setCssPrefix("x-");
 
         yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
-        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
-        yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT);
         xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.NAB);
-        xaxis.pickVariable(CDSHelper.NAB_DATA);
-        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
-        xaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType("All");
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        cds.openStatusInfoPane("Races");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
-        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
-        waitForElement(plotTickLinear.withText("6000"));
-        assertElementPresent(plotPoint, 580);
+        waitForElement(plotTickLinear.withText("100"));
+        assertElementPresent(plotPoint, 160);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDSHelper.CDS_WAIT);
@@ -2047,7 +1941,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         Ext4Helper.resetCssPrefix();
         plotDataTable = new DataRegionTable("query", this);
         assertEquals(100, plotDataTable.getDataRowCount());
-        assertElementPresent(Locator.paginationText(1, 100, 580));
+        assertElementPresent(Locator.paginationText(1, 100, 2929));
         getDriver().close();
         switchToMainWindow();
     }
@@ -2066,18 +1960,16 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // set the x-axis
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_DATA);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         xaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
-        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.setCellType("All");
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
-        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.setCellType("All");
         yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
@@ -2086,6 +1978,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Verify the binning message
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         waitForText("Heatmap on");
+
+        log("Validate that there are bin squares in the plot.");
+        int squareCount = getElementCount(Locator.css("svg g.layer a.vis-bin-square"));
+        assertTrue("Expected over 2000 bin squares found: " + squareCount, squareCount > 2000);
 
         cds.ensureNoFilter();
     }
@@ -2110,10 +2006,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType("All");
         yaxis.confirmSelection();
 
-        scaleValues = "0.0001\n0.001\n0.01\n0.1\n1\n10";
+        scaleValues = "0\n0.0009\n0.009\n0.09\n0.9\n9";
         expectedCount = 1604;
 
-        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, true);
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
 
         log("Change scale to Linear and validate that values change.");
 
@@ -2124,7 +2020,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         scaleValues = "0\n2\n4\n6\n8\n10\n12\n14";
         expectedCount = 1604;
 
-        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, false);
 
         // Clear the plot.
         cds.clearFilters();
@@ -2143,9 +2039,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
-        originalScale = "0.0001\n0.001\n0.01\n0.1\n1\n10\n0.0002\n0.002\n0.02\n0.2\n2";
+        originalScale = "0\n0.0009\n0.009\n0.09\n0.9\n9\n0.0002\n0.002\n0.02\n0.2\n2";
         originalCount = 1453;
-        verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
+        verifyLogAndLinearHelper(originalScale, 2, originalCount, true);
 
         log("Change x-axis to be linear.");
 
@@ -2155,7 +2051,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0.0002\n0.002\n0.02\n0.2\n2";
         expectedCount = 1453;  // Is this right?
-        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
+        verifyLogAndLinearHelper(scaleValues, 2, expectedCount, true);
 
         log("Change y-axis to be linear.");
 
@@ -2165,7 +2061,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
         expectedCount = 1453;
-        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, false);
+        verifyLogAndLinearHelper(scaleValues, 2, expectedCount, false);
 
         log("Change x-axis back to log.");
 
@@ -2173,9 +2069,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setScale(DataspaceVariableSelector.Scale.Log);
         xaxis.confirmSelection();
 
-        scaleValues = "0.0001\n0.001\n0.01\n0.1\n1\n10\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
+        scaleValues = "0\n0.0009\n0.009\n0.09\n0.9\n9\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
         expectedCount = 1453;
-        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
+        verifyLogAndLinearHelper(scaleValues, 2, expectedCount, true);
 
         log("Change y-axis back to log, all values should return to original.");
 
@@ -2183,7 +2079,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setScale(DataspaceVariableSelector.Scale.Log);
         yaxis.confirmSelection();
 
-        verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
+        verifyLogAndLinearHelper(originalScale, 2, originalCount, true);
 
         // Clear the plot.
         cds.clearFilters();
@@ -2197,7 +2093,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         scaleValues = "1\n10\n100\n1000";
         expectedCount = 796;
-        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, false);
 
         log("Change y-axis to be linear.");
 
@@ -2207,7 +2103,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         scaleValues = "0\n1000\n2000\n3000\n4000\n5000\n6000\n7000\n8000";
         expectedCount = 796;
-        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, false);
 
         // Clear the plot.
         cds.clearFilters();
@@ -2226,7 +2122,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n1\n10\n100\n1000\n10000";
         originalCount = 477;
-        verifyLogAndLinearHelper(originalScale, 0, originalCount, true);
+        verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
 
         log("Add a filter and make sure that the log scale changes appropriately.");
 
@@ -2237,7 +2133,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n1\n10\n100";
         originalCount = 55;
-        verifyLogAndLinearHelper(originalScale, 0, originalCount, true);
+        verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
 
         // Clear the plot.
         cds.clearFilters();
@@ -2251,7 +2147,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         String tempStr, styleValue;
         int subjectCount;
 
-        assertSVG(scaleValues, svgIndex);
+        cds.assertPlotTickText(svgIndex, scaleValues);
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCount = Integer.parseInt(tempStr.replaceAll(",", ""));
@@ -2328,7 +2224,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Brush a binned plot.");
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_DATA);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         xaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
         xaxis.setCellType("All");
@@ -3046,6 +2942,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the x-axis NAB - Virus.");
             xaxis.pickSource(CDSHelper.NAB);
+            xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
             xaxis.validateVirusSubjectCount(virusCounts, true);
         }
         else
@@ -3147,10 +3044,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     {
         Ext4Helper.resetCssPrefix();
         beginAt("project/" + getProjectName() + "/begin.view?");
-        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP1, "Subject", "039-016", "039-014");  // TODO Test data dependent.
-        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP2, "Subject", "039-044", "039-042");  // TODO Test data dependent.
-        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3, "Subject", "039-059", "039-060");  // TODO Test data dependent.
-        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3_COPY, "Subject", "039-059", "039-060");  // TODO Test data dependent.
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP1, "Subject", "039-016", "039-014");
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP2, "Subject", "039-044", "039-042");
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3, "Subject", "039-059", "039-060");
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3_COPY, "Subject", "039-059", "039-060");
     }
 
     @LogMethod

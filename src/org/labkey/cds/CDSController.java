@@ -18,21 +18,35 @@ package org.labkey.cds;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiAction;
 import org.labkey.api.action.ApiSimpleResponse;
+import org.labkey.api.action.BaseViewAction;
+import org.labkey.api.action.FormViewAction;
+import org.labkey.api.action.HasBindParameters;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
 import org.labkey.api.action.SimpleApiJsonForm;
 import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
 import org.labkey.api.data.ColumnHeaderType;
+import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.DataColumn;
+import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
+import org.labkey.api.data.JdbcType;
+import org.labkey.api.data.PropertyManager;
+import org.labkey.api.data.Results;
+import org.labkey.api.data.ResultsImpl;
+import org.labkey.api.data.SqlSelector;
+import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.QueryForm;
@@ -45,11 +59,17 @@ import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.ReadPermission;
+import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
+import org.labkey.api.util.CSRFUtil;
+import org.labkey.api.util.PageFlowUtil;
+import org.labkey.api.util.URLHelper;
+import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
+import org.labkey.api.view.VBox;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.labkey.cds.view.template.FrontPageTemplate;
@@ -59,7 +79,12 @@ import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -503,6 +528,141 @@ public class CDSController extends SpringActionController
         public Map<String, String> getColumnAliases()
         {
             return _columnAliases;
+        }
+    }
+
+    @RequiresSiteAdmin @CSRF
+    public static class MailMergeAction extends SimpleViewAction<Object>
+    {
+        @Override
+        public ModelAndView getView(Object o, BindException errors) throws Exception
+        {
+            if ("GET".equals(getViewContext().getRequest().getMethod()))
+            {
+                String csrf = "<input type=\"hidden\" name=\"" + CSRFUtil.csrfName + "\" value=\"" + CSRFUtil.getExpectedToken(getViewContext()) + "\">";
+                return new HtmlView("<form method=POST><input type=submit value=submit>" + csrf + "</form>");
+            }
+            else if ("POST".equals(getViewContext().getRequest().getMethod()))
+            {
+                String sql = "SELECT L.email, U.lastlogin, L.verification, U.displayname, U.firstname, U.lastname FROM core.logins L INNER JOIN core.principals P ON L.email = P.name INNER JOIN core.usersdata U ON P.userid = U.userid";
+                try (ResultSet rs = new SqlSelector(DbSchema.get("core").getScope(), sql).getResultSet())
+                {
+                    List<DisplayColumn> list = new ArrayList<>();
+                    for (String s : Arrays.asList("email", "displayname", "firstname", "lastname", "lastlogin", "verification"))
+                        list.add(new DataColumn(new ColumnInfo(s, JdbcType.valueOf(rs.getMetaData().getColumnType(rs.findColumn(s))))));
+                    try (Results r = new ResultsImpl(rs))
+                    {
+                        ExcelWriter xl = new ExcelWriter(r, list);
+                        xl.setFilenamePrefix("mailmerge");
+                        xl.setAutoSize(true);
+                        xl.write(getViewContext().getResponse());
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+    }
+
+    public static class CmsPage
+    {
+        public String url;
+        public String target;
+    }
+
+    @RequiresSiteAdmin @CSRF
+    public static class CmsCopyAction extends FormViewAction<Object>
+    {
+        HttpView _success = null;
+
+        @Override
+        public void validateCommand(Object target, Errors errors)
+        {
+            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
+            String url = cds.getPropertyValue(cds._cmsURL, getContainer());
+
+            if (StringUtils.isEmpty(url))
+                errors.reject(ERROR_MSG, "cms url is not configured");
+
+            Container blogContainer = getContainer().getChild("files");
+            if (null == blogContainer)
+                errors.reject(ERROR_MSG, "Create subfolder named 'files'");
+        }
+
+        @Override
+        public URLHelper getSuccessURL(Object o)
+        {
+            return null;
+        }
+
+        @Override
+        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
+        {
+            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
+            CmsPage cms = new CmsPage();
+            cms.url =  cds.getPropertyValue(cds._cmsURL, getContainer());
+            Container target = getContainer().getChild("files");
+            if (null != target)
+                cms.target = "/_webdav" + target.getPath() + "/@files/blog/";
+            return new JspView<>(CDSController.class, "view/cms.jsp", cms);
+        }
+
+        @Override
+        public boolean handlePost(Object o, BindException errors) throws Exception
+        {
+            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
+            String url = cds.getPropertyValue(cds._cmsURL, getContainer());
+
+            Container blogContainer = getContainer().getChild("files");
+            FileContentService svc = ServiceRegistry.get().getService(FileContentService.class);
+            File root = svc.getFileRoot(blogContainer);
+            File fullPath = new File(root,"@files/blog");
+            fullPath.mkdirs();
+
+            StringWriter sw = new StringWriter();
+            // get pipeline root
+            String wget = "wget";
+            if (new File("/usr/bin/wget").exists())
+                wget = "/usr/bin/wget";
+            else if (new File("/opt/local/bin/wget").exists())
+                wget = "/opt/local/bin/wget";
+            ProcessBuilder pb = new ProcessBuilder(
+                    wget,
+                    "--directory-prefix=" + fullPath.getPath(),
+                    "--mirror",
+                    "--page-requisites",
+                    "--convert-links",
+                    "--adjust-extension",
+                    "--no-host-directories",
+                    url ,
+                    url + "/rss/feed.rss");
+            pb.redirectErrorStream(true);
+            Process p = pb.start();
+            IOUtils.copy(new InputStreamReader(p.getInputStream(),"UTF-8"), sw);
+            p.waitFor();
+            sw.flush();
+
+            ModelAndView form = getView(null, false, errors);
+            HtmlView output = new HtmlView("<pre>"+PageFlowUtil.filter(sw.toString())+"</pre>");
+            _success = new VBox(form,output);
+            return true;
+        }
+
+        @Override
+        public ModelAndView getSuccessView(Object o) throws Exception
+        {
+            return _success;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
         }
     }
 
