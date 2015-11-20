@@ -1330,7 +1330,7 @@ Ext.define('Connector.view.Chart', {
                 maxCharPerLine: 9,
                 lineWrapAlign: 'end',
                 cls: 'xGutter-label',
-                bkgdColor: ChartUtils.colors.GRIDBKGD,
+                bkgdColor: ChartUtils.colors.GRAYBACKGROUND,
                 bkgdWidth: 70,
                 listeners: {
                     mouseover: function() {
@@ -1386,7 +1386,7 @@ Ext.define('Connector.view.Chart', {
                 cls: 'yGutter-label',
                 maxCharPerLine: 10,
                 lineWrapAlign: 'start',
-                bkgdColor: ChartUtils.colors.GRIDBKGD,
+                bkgdColor: ChartUtils.colors.GRAYBACKGROUND,
                 bkgdHeight: 100,
                 bkgdWidth: this.yGutterWidth - 15,
                 listeners: {
