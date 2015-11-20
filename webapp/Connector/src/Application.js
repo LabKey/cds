@@ -53,6 +53,39 @@ Ext.define('Connector.Application', {
 
     stores: [],
 
+    defaultUserProperties: {
+        // Used by Connector.component.Started.DISMISS_PROPERTY
+        showIntro: true
+    },
+
+    userProperties: {},
+
+    init : function()
+    {
+        this.callParent();
+
+        if (Ext.isObject(Connector.user.properties))
+        {
+            this.userProperties = Connector.user.properties;
+        }
+
+        this._initUserProperties(this.userProperties);
+    },
+
+    _initUserProperties : function(properties)
+    {
+        var userProps = {};
+        Ext.iterate(properties, function(k, v)
+        {
+            userProps[k] = Ext.decode(v).value;
+        });
+        this.userProperties = userProps;
+
+        Ext.applyIf(this.userProperties, this.defaultUserProperties);
+
+        return Ext.clone(this.userProperties);
+    },
+
     initNamespace : function() {
         this.callParent(arguments);
 
@@ -60,18 +93,16 @@ Ext.define('Connector.Application', {
         var ns = Ext.namespace(me.name);
 
         if (ns) {
-            ns.getService = function() {
-                return this.getService.apply(me, arguments);
-            };
-            ns.getState = function() {
-                return this.getState.apply(me, arguments);
-            };
-            ns.getFilterService = function() {
-                return this.getFilterService.apply(me, arguments);
-            };
-            ns.getQueryService = function() {
-                return this.getQueryService.apply(me, arguments);
-            };
+            // public methods
+            ns.getService = Ext.bind(this.getService, this);
+            ns.getState = Ext.bind(this.getState, this);
+            ns.getFilterService = Ext.bind(this.getFilterService, this);
+            ns.getQueryService = Ext.bind(this.getQueryService, this);
+
+            // property interface
+            ns.getProperty = Ext.bind(this.getProperty, this);
+            ns.setProperty = Ext.bind(this.setProperty, this);
+            ns.clearProperties = Ext.bind(this.clearProperties, this);
         }
     },
 
@@ -89,5 +120,85 @@ Ext.define('Connector.Application', {
 
     setDataSource : function(datasource) {
         this.getState().setDataSource(datasource);
+    },
+
+    getProperty : function(property)
+    {
+        return this.userProperties[property];
+    },
+
+    setProperty : function(property, value, callback, scope)
+    {
+        var knownProps = Ext.Object.getKeys(this.defaultUserProperties),
+            props = {};
+
+        if (Ext.isString(property))
+        {
+            if (Ext.Array.contains(knownProps, property))
+            {
+                props[property] = {
+                    value: value
+                };
+
+                Ext.Ajax.request({
+                    url: LABKEY.ActionURL.buildURL('cds', 'userProperty.api'),
+                    method: 'POST',
+                    jsonData: {
+                        properties: props
+                    },
+                    success: function(response)
+                    {
+                        var json = Ext.decode(response.responseText),
+                            props = this._initUserProperties(json.properties);
+
+                        if (Ext.isFunction(callback))
+                        {
+                            callback.call(scope || this, true, props);
+                        }
+                    },
+                    failure: function()
+                    {
+                        if (Ext.isFunction(callback))
+                        {
+                            callback.call(scope || this, false, Ext.clone(this.userProperties));
+                        }
+                    },
+                    scope: this
+                });
+            }
+            else
+            {
+                throw '"' + property + '" is not a known user property. Unable to set.';
+            }
+        }
+        else
+        {
+            throw this.$className + '.setProperty() "property" must be of type string.';
+        }
+    },
+
+    clearProperties : function(callback, scope)
+    {
+        Ext.Ajax.request({
+            url: LABKEY.ActionURL.buildURL('cds', 'userProperty.api'),
+            method: 'DELETE',
+            success: function()
+            {
+                var props = this._initUserProperties({});
+
+                if (Ext.isFunction(callback))
+                {
+                    callback.call(scope || this, true, props);
+                }
+            },
+            failure: function()
+            {
+                if (Ext.isFunction(callback))
+                {
+                    callback.call(scope || this, false, Ext.clone(this.userProperties));
+                }
+            },
+            scope: this
+        });
     }
 });

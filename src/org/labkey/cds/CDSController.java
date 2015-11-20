@@ -25,18 +25,13 @@ import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiAction;
-import org.labkey.api.action.ApiResponse;
 import org.labkey.api.action.ApiSimpleResponse;
-import org.labkey.api.action.BaseViewAction;
 import org.labkey.api.action.FormViewAction;
-import org.labkey.api.action.HasBindParameters;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
-import org.labkey.api.action.MutatingApiAction;
-import org.labkey.api.action.NullSafeBindException;
+import org.labkey.api.action.SimpleApiJsonForm;
 import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
-import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.ColumnHeaderType;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
@@ -45,7 +40,6 @@ import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.JdbcType;
-import org.labkey.api.data.PropertyManager;
 import org.labkey.api.data.Results;
 import org.labkey.api.data.ResultsImpl;
 import org.labkey.api.data.SqlSelector;
@@ -56,7 +50,12 @@ import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
-import org.labkey.api.security.*;
+import org.labkey.api.security.CSRF;
+import org.labkey.api.security.Group;
+import org.labkey.api.security.IgnoresTermsOfUse;
+import org.labkey.api.security.RequiresNoPermission;
+import org.labkey.api.security.RequiresPermission;
+import org.labkey.api.security.RequiresSiteAdmin;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
@@ -73,7 +72,6 @@ import org.labkey.api.view.VBox;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.labkey.cds.view.template.FrontPageTemplate;
-import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
@@ -163,6 +161,7 @@ public class CDSController extends SpringActionController
     public class AppModel
     {
         private boolean isAnalyticsUser = false;
+        private JSONObject userProperties;
 
         public boolean isAnalyticsUser()
         {
@@ -172,6 +171,16 @@ public class CDSController extends SpringActionController
         public void setIsAnalyticsUser(boolean isAnalyticsUser)
         {
             this.isAnalyticsUser = isAnalyticsUser;
+        }
+
+        public JSONObject getUserProperties()
+        {
+            return userProperties;
+        }
+
+        public void setUserProperties(JSONObject userProperties)
+        {
+            this.userProperties = userProperties;
         }
     }
 
@@ -211,6 +220,8 @@ public class CDSController extends SpringActionController
                         break;
                     }
                 }
+
+                model.setUserProperties(new JSONObject(CDSManager.get().getActiveUserProperties(getUser(), getContainer())));
 
                 template = new ConnectorTemplate(new JspView("/org/labkey/cds/view/app.jsp"), defaultPageConfig(), model);
             }
@@ -409,85 +420,6 @@ public class CDSController extends SpringActionController
         }
     }
 
-    public static class StateForm implements HasBindParameters
-    {
-        String category = "CDS.state";
-        Map<String,String> properties = new CaseInsensitiveHashMap<>();
-        public String getCategory()
-        {
-            return category;
-        }
-
-        public void setCategory(String category)
-        {
-            if (!StringUtils.startsWith(category, "CDS."))
-                category = "CDS." + category;
-            this.category = category;
-        }
-
-        public Map<String, String> getProperties()
-        {
-            return properties;
-        }
-
-        public void setProperties(Map<String, String> properties)
-        {
-            this.properties = properties;
-        }
-
-        @Override
-        public BindException bindParameters(PropertyValues m)
-        {
-            BindException errors = new NullSafeBindException(new BaseViewAction.BeanUtilsPropertyBindingResult(this, "form"));
-            for (PropertyValue pv : m.getPropertyValues())
-            {
-                if (StringUtils.equals("category", pv.getName()) && null != pv.getValue())
-                    this.setCategory(String.valueOf(pv.getValue()));
-                if (StringUtils.startsWith(pv.getName(), "properties.") && null != pv.getValue())
-                    this.getProperties().put(pv.getName().substring("properties.".length()), String.valueOf(pv.getValue()));
-            }
-            return errors;
-        }
-    }
-
-
-    @RequiresLogin
-    @RequiresPermission(ReadPermission.class)
-    public class GetStateAction extends ApiAction<StateForm>
-    {
-        @Override
-        public ApiResponse execute(StateForm form, BindException errors) throws Exception
-        {
-            Map<String,String> properties = PropertyManager.getProperties(getUser(), getContainer(), form.getCategory());
-            JSONObject ret = new JSONObject();
-            ret.put("success", true);
-            JSONObject props = new JSONObject();
-            props.putAll(properties);
-            ret.put("properties", props);
-            return new ApiSimpleResponse(ret);
-        }
-    }
-
-
-    @RequiresLogin
-    @RequiresPermission(ReadPermission.class)
-    public class SaveStateAction extends MutatingApiAction<StateForm>
-    {
-        @Override
-        public ApiResponse execute(StateForm form, BindException errors) throws Exception
-        {
-            PropertyManager.PropertyMap properties = PropertyManager.getWritableProperties(getUser(), getContainer(), form.getCategory(), true);
-            properties.clear();
-            properties.putAll(form.getProperties());
-            properties.save();
-
-            JSONObject ret = new JSONObject();
-            ret.put("success", true);
-            ret.put("count", properties.size());
-            return new ApiSimpleResponse(ret);
-        }
-    }
-
 
     /***** experimenting with derby/mondrian ******/
 
@@ -598,7 +530,8 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresSiteAdmin @CSRF
+    @RequiresSiteAdmin
+    @CSRF
     public static class MailMergeAction extends SimpleViewAction<Object>
     {
         @Override
@@ -730,6 +663,48 @@ public class CDSController extends SpringActionController
         public NavTree appendNavTrail(NavTree root)
         {
             return null;
+        }
+    }
+
+
+    @RequiresPermission(ReadPermission.class)
+    public class UserPropertyAction extends ApiAction<SimpleApiJsonForm>
+    {
+        @Override
+        public Object execute(SimpleApiJsonForm form, BindException errors) throws Exception
+        {
+            ApiSimpleResponse response = new ApiSimpleResponse();
+
+            if (isDelete())
+            {
+                CDSManager.get().resetActiveUserProperties(getUser(), getContainer());
+            }
+            else if (isPost())
+            {
+                Object properties = form.getJsonObject().get("properties");
+
+                if (properties instanceof JSONObject)
+                {
+                    Map<String, String> mapProps = new HashMap<>();
+
+                    ((JSONObject) properties).entrySet()
+                            .stream()
+                            .forEach(jsonProperty -> mapProps.put(jsonProperty.getKey(), jsonProperty.getValue().toString()));
+
+                    if (!mapProps.isEmpty())
+                    {
+                        CDSManager.get().setActiveUserProperties(getUser(), getContainer(), mapProps);
+                    }
+                }
+                else
+                {
+                    errors.reject(ERROR_REQUIRED, "'properties' must be provided when setting a user property.");
+                }
+            }
+
+            response.put("properties", CDSManager.get().getActiveUserProperties(getUser(), getContainer()));
+            response.put("success", !errors.hasErrors());
+            return response;
         }
     }
 }

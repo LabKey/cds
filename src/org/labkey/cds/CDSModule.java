@@ -49,6 +49,7 @@ public class CDSModule extends DefaultModule
     final ModuleProperty _blogPath;
     final ModuleProperty _staticPath;
     final ModuleProperty _cmsURL;
+    final ModuleProperty _startedVideoURL;
 
 
     public CDSModule()
@@ -74,6 +75,11 @@ public class CDSModule extends DefaultModule
         addModuleProperty(_cmsURL);
 
         // TODO would be nice to have a addPropertyChangeListener()
+
+        _startedVideoURL = new ModuleProperty(this, "GettingStartedVideoURL");
+        _startedVideoURL.setDescription("The full URL of the intro video. This can include whatever parameters are needed for embedding.");
+        _startedVideoURL.setCanSetPerContainer(false);
+        addModuleProperty(_startedVideoURL);
     }
 
     public String getName()
