@@ -105,7 +105,7 @@ Ext.define('Connector.view.InfoPane', {
                         autoShow: true,
                         itemId: 'infosortedmenu',
                         showSeparator: false,
-                        width: 208,
+                        width: 200,
                         ui: 'custom',
                         cls: 'infosortmenu',
                         btn: btnId,
