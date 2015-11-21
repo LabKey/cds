@@ -3010,7 +3010,7 @@ Ext.define('Connector.view.Chart', {
         var win = Ext.create('Ext.window.Window', {
             ui: 'axiswindow',
             minHeight: 580,
-            maxHeight: 800,
+            maxHeight: Connector.panel.Selector.maximumHeight,
             modal: true,
             draggable: false,
             header: false,

@@ -19,6 +19,7 @@ package org.labkey.cds;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerManager;
 import org.labkey.api.data.PropertyManager;
@@ -47,6 +48,9 @@ public class CDSModule extends DefaultModule
     final ModuleProperty _showHiddenVariables;
     final ModuleProperty _blogPath;
     final ModuleProperty _staticPath;
+    final ModuleProperty _cmsURL;
+    final ModuleProperty _startedVideoURL;
+
 
     public CDSModule()
     {
@@ -65,7 +69,17 @@ public class CDSModule extends DefaultModule
         _staticPath.setCanSetPerContainer(false);
         addModuleProperty(_staticPath);
 
+        _cmsURL = new ModuleProperty(this, "CMS");
+        _cmsURL.setDescription("Full URL to CMS web server");
+        _cmsURL.setCanSetPerContainer(true);
+        addModuleProperty(_cmsURL);
+
         // TODO would be nice to have a addPropertyChangeListener()
+
+        _startedVideoURL = new ModuleProperty(this, "GettingStartedVideoURL");
+        _startedVideoURL.setDescription("The full URL of the intro video. This can include whatever parameters are needed for embedding.");
+        _startedVideoURL.setCanSetPerContainer(false);
+        addModuleProperty(_startedVideoURL);
     }
 
     public String getName()
@@ -122,14 +136,14 @@ public class CDSModule extends DefaultModule
 
     public synchronized void ensureShortcuts()
     {
-        String staticPath = getSitePropertyValue(_staticPath);
+        String staticPath = getPropertyValue(_staticPath,null);
         if (!StringUtils.equals(lastStaticPath,staticPath))
         {
             updateShortcut("/static/", staticPath);
             lastStaticPath = staticPath;
         }
 
-        String blogPath = getSitePropertyValue(_blogPath);
+        String blogPath = getPropertyValue(_blogPath,null);
         if (!StringUtils.equals(lastBlogPath,blogPath))
         {
             updateShortcut("/blog/", blogPath);
@@ -158,9 +172,11 @@ public class CDSModule extends DefaultModule
     }
 
 
-    String getSitePropertyValue(ModuleProperty mp)
+    String getPropertyValue(ModuleProperty mp, @Nullable Container c)
     {
-        return PropertyManager.getProperty(PropertyManager.SHARED_USER,ContainerManager.getRoot(),mp.getCategory(),mp.getName());
+        if (!mp.isCanSetPerContainer() || null==c)
+            c = ContainerManager.getRoot();
+        return PropertyManager.getProperty(PropertyManager.SHARED_USER,c,mp.getCategory(),mp.getName());
     }
 
 

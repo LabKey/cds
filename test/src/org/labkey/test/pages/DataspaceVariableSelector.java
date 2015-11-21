@@ -486,7 +486,7 @@ public abstract class DataspaceVariableSelector
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-virus')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
                 xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
                 locDimField = Locator.xpath(xpathDimField);
-                _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
+//                _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                 _test.click(locDimField);
 
                 // Since a virus has multiple columns the allTag will point to the all tag in the far left column.

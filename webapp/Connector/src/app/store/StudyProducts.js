@@ -19,6 +19,8 @@ Ext.define('Connector.app.store.StudyProducts', {
     loadSlice : function(slice) {
         this.productData = undefined;
         this.studyData = undefined;
+        this.productProduct = undefined;
+        this.idProductNameMap = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -33,10 +35,57 @@ Ext.define('Connector.app.store.StudyProducts', {
             requiredVersion: 13.2,
             scope: this
         });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'subjectproductmap',
+            success: this.onLoadSubjectProduct,
+            scope: this
+        });
+    },
+
+    onLoadSubjectProduct: function (subjectProductsData) {
+        var all = subjectProductsData.rows;
+        var subjectProductsMap = {};
+        Ext.each(all, function (row) {
+            if (!subjectProductsMap[row.participantid]) {
+                subjectProductsMap[row.participantid] = new Set();
+            }
+            subjectProductsMap[row.participantid].add(row.product_id);
+        });
+        var allOtherProducts = {};
+        Ext.iterate(subjectProductsMap, function(subject, products) {
+            Ext.each(products, function(product) {
+                if (!allOtherProducts[product]) {
+                    allOtherProducts[product] = new Set();
+                }
+            });
+        });
+
+        Ext.iterate(subjectProductsMap, function(subject, productsSet) {
+            var products = Array.from(productsSet);
+            for (var i = 0; i < products.length; i++) {
+                var currentProduct = products[i];
+                if (!allOtherProducts[currentProduct]) {
+                    allOtherProducts[currentProduct] = new Set();
+                }
+                Ext.each(products, function(prod) {
+                    if (prod !== currentProduct) {
+                        allOtherProducts[currentProduct].add(prod);
+                    }
+                });
+            }
+        });
+
+        this.productProduct = allOtherProducts;
+        this._onLoadComplete();
     },
 
     onLoadProducts : function(productData) {
-        this.productData = productData.rows;
+        this.productData = productData.rows;var productNameMap = {};
+        Ext.each(productData.rows, function(row){
+            productNameMap[row.product_id] = row.product_name;
+        });
+        this.idProductNameMap = productNameMap;
         this._onLoadComplete();
     },
 
@@ -46,10 +95,12 @@ Ext.define('Connector.app.store.StudyProducts', {
     },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData)) {
+        if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData) && Ext.isDefined(this.productProduct)) {
             var products = [],
                 studies,
-                s;
+                s,
+                otherProducts,
+                me = this;
 
             // join studies to product
             Ext.each(this.productData, function(product) {
@@ -63,6 +114,17 @@ Ext.define('Connector.app.store.StudyProducts', {
                     }
                 }
                 product.studies = studies;
+                otherProducts = [];
+                if (this.productProduct && this.productProduct[product.product_id]) {
+                    var otherProductIds = Array.from(this.productProduct[product.product_id]);
+                    Ext.each(otherProductIds, function(id) {
+                        otherProducts.push({
+                            product_id: id,
+                            product_name: me.idProductNameMap[id]
+                        });
+                    });
+                }
+                product.other_products = otherProducts;
                 products.push(product);
             }, this);
 
