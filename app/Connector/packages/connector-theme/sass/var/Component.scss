@@ -1,3 +1,5 @@
+$base-color: #ffffff;
+
 /* Site wide coloring scheme */
 $select-color: #fb2e5c;            // Bright Blue
 $select-hover-color: #ffffff;      // Light Blue
@@ -341,54 +343,6 @@ svg {
   display: inline-block;
 }
 
-.learnheader {
-
-  .titlepanel {
-    font: $title-font;
-    background: $gray-7;
-    display: block;
-    width:100%;
-    height: 56px;
-    line-height: 56px;
-    padding-left: 16px;
-    clear: all;
-  }
-
-  .breadcrumb {
-    font-weight: 400;
-    color: $gray-25;
-    text-transform: uppercase;
-    display: block;
-    float: left;
-    padding-right:4px;
-  }
-
-  .studyname {
-    font-weight: 100;
-    font-size: 22px;
-    font-family: $data-font;
-    color: $black;
-    display: block;
-    float: left;
-  }
-
-  .iarrow {
-    background-image: url(images/navigatebackward.svg);
-    background-repeat: no-repeat;
-    background-color: $gray-8;
-    width: 56px;
-    height: 56px;
-    margin: 0 16px 0 -16px;
-    vertical-align: bottom;
-    display: block;
-    float: left;
-  }
-
-}
-
-
-
-
 .header-container {
 
   .titlepanel {
@@ -601,6 +555,10 @@ div.emptytext {
   &-lg {
     margin-bottom: 20px;
   }
+
+  &-xlg {
+    margin-bottom: 40px;
+  }
 }
 
 .x-css-shadow {
@@ -703,9 +661,7 @@ div.emptytext {
     height: 390px;
   }
 
-  .footer {
-    padding-right: 20px;
-  }
+  /* TODO: Fix the feedback + save group footer */
 
   .feedback-input {
     input, textarea {

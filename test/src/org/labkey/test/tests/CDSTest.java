@@ -371,7 +371,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitAndClick(listGroup.withText(STUDY_GROUP));
 
         setFormElement(Locator.id("updategroupdescription-inputEl"), studyGroupDescModified);
-        click(CDSHelper.Locators.cdsButtonLocator("save", "groupupdatesave"));
+        click(CDSHelper.Locators.cdsButtonLocator("Save", "groupupdatesave"));
 
         // verify group save messaging
         waitForText("Group \"Study Group...\" saved.");
@@ -387,7 +387,7 @@ public class CDSTest extends CDSReadOnlyTest
         // verify 'whoops' case
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("create a new group");
-        click(CDSHelper.Locators.cdsButtonLocator("cancel", "groupupdatecancel"));
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "groupcancelreplace"));
         cds.clearFilters();
 
         // add a filter, which should be blown away when a group filter is selected
@@ -401,21 +401,35 @@ public class CDSTest extends CDSReadOnlyTest
         waitForText(STUDY_GROUP);
         click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
-        // Verify that filters get replaced when viewing group.
+        // Verify the group does not replace already active filters
+        sleep(500); // give it a chance to apply
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+        cds.clearFilters();
+        click(Locator.css("a.applygroup"));
+
+        // Verify the filters get applied when directly acting
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
         _asserts.assertFilterStatusCounts(89, 2, -1); // TODO Test data dependent.
         assertTextPresent("Study Group Verify", "Description", studyGroupDescModified);
+        cds.clearFilters();
+
+        // Verify filters get applied by viewing when no filters exist
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForText(STUDY_GROUP);
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
+        _asserts.assertFilterStatusCounts(89, 2, -1); // TODO Test data dependent.
 
         // Verify that you can cancel delete
-        click(CDSHelper.Locators.cdsButtonLocator("delete"));
+        click(CDSHelper.Locators.cdsButtonLocator("Delete"));
         waitForText("Are you sure you want to delete");
-        click(Locator.linkContainingText("Cancel"));
-        waitForTextToDisappear("Are you sure you want to delete");
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "x-toolbar-item").notHidden());
+        _ext4Helper.waitForMaskToDisappear();
         assertTextPresent(studyGroupDescModified);
 
         // Verify back button works
-        click(CDSHelper.Locators.cdsButtonLocatorContainingText("back"));
+        click(CDSHelper.Locators.pageHeaderBack());
         waitForText(CDSHelper.HOME_PAGE_HEADER);
         waitForText(STUDY_GROUP);
 
@@ -1133,7 +1147,7 @@ public class CDSTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("replace an existing group");
         setFormElement(Locator.name("groupname"), GROUP_NULL);
-        click(CDSHelper.Locators.cdsButtonLocator("cancel", "cancelgroupsave"));
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "groupcancelcreate"));
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
 
         // save the group and request save
@@ -1176,10 +1190,8 @@ public class CDSTest extends CDSReadOnlyTest
         log("Validating Study Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
 
-        // TODO could add more code here to validate other fields, but in the interest of time leaving it at this for now.
-
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')]/span[contains(@class, 'breadcrumb')][text()='Studies / ']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Studies / ']"));
 
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
     }
@@ -1283,7 +1295,7 @@ public class CDSTest extends CDSReadOnlyTest
         // TODO could add more code here to validate other fields, but in the interest of time leaving it at this for now.
 
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')]/span[contains(@class, 'breadcrumb')][text()='Study products / ']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Study products / ']"));
 
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
     }
@@ -1369,7 +1381,7 @@ public class CDSTest extends CDSReadOnlyTest
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
         waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(0)));
-        waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
+        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
 
         //testing variables page
@@ -1390,9 +1402,9 @@ public class CDSTest extends CDSReadOnlyTest
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
 
         //testing ICS antigens page
-        waitAndClick(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
+        waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(1)));
-        waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
+        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
 
         refresh();
 

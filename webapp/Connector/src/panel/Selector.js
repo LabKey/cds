@@ -40,6 +40,10 @@ Ext.define('Connector.panel.Selector', {
     initialized: false,
     initOptions: undefined,
 
+    statics: {
+        maximumHeight: 800
+    },
+
     constructor : function(config) {
 
         if (!Ext.isObject(config.sourceMeasureFilter)) {
@@ -125,6 +129,33 @@ Ext.define('Connector.panel.Selector', {
                 events: ['afterSourceCountsLoad']
             }
         });
+
+        this.on('resize', function(){
+            var pane = this.getAdvancedPane();
+            if (pane.items.items.length > 1) {
+                if (!pane.isHidden()) {
+                    pane.setHeight(this.getAdvancedPaneHeight(pane.items));
+                }
+            }
+
+        }, this);
+    },
+
+    getAdvancedPaneHeight : function(items) {
+        // Maximum of 50%
+        // Minimum of 117px (if it has anything to show)
+        //  Calculate height dynamically based on the number of visible items in the advanced options pane
+
+        var visibleItems = 0;
+        Ext.each(items.items, function(item){
+            if (!item.hidden){
+                visibleItems++;
+            }
+        });
+
+        var max = (this.getHeight() - 40) / 2,
+            calcMax = Math.max(visibleItems * 45, 117);
+        return Math.min(max, calcMax);
     },
 
     getLoaderPane : function() {
@@ -736,6 +767,7 @@ Ext.define('Connector.panel.Selector', {
                 border: false,
                 frame: false,
                 height: 220,
+                maxHeight: Connector.panel.Selector.maximumHeight / 2,
                 autoScroll: true,
                 hidden: true,
                 cls: 'advanced'
@@ -985,6 +1017,7 @@ Ext.define('Connector.panel.Selector', {
         var pane = this.getAdvancedPane();
         if (pane.items.items.length > 1)
         {
+            pane.setHeight(this.getAdvancedPaneHeight(pane.items));
             if (pane.isHidden())
             {
                 pane.show();
@@ -1006,6 +1039,10 @@ Ext.define('Connector.panel.Selector', {
 
     getDimensionsForMeasure : function(measure) {
         // check if a white-list of dimensions was declared for the measure or its source
+        if (!measure.get('isMeasure')) {
+            return [];
+        }
+
         var dimensions = measure.get('dimensions'),
             source = this.getSourceForMeasure(measure),
             measureIsDimension = false;

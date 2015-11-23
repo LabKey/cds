@@ -26,7 +26,7 @@ Ext.define('Connector.controller.Group', {
             }
         });
 
-        this.control('filterstatus > container > #savegroup', {
+        this.control('filterstatus > container > #savegroup, #editgroupdetails', {
             click : this.onGroupSave
         });
 
@@ -34,20 +34,20 @@ Ext.define('Connector.controller.Group', {
             click : this.doGroupSave
         });
 
+        this.control('#groupeditsave', {
+            click : this.doGroupEdit
+        });
+
         this.control('#groupupdatesave', {
             click : this.doGroupUpdateFromSavePanel
         });
 
-        this.control('#cancelgroupsave, #groupupdatecancel', {
+        this.control('#groupcancel', {
             click : this.onGroupCancel
         });
 
         this.control('groupsummary', {
-            loadgroupfilters: this.loadGroupFilters,
-            requestfilterundo: this.undoFilter,
-            requestgroupupdate: this.doGroupUpdateFromSummary,
-            requestgroupdelete: this.doGroupDeleteFromSummary,
-            requestback: this.doBack
+            requestgroupdelete: this.doGroupDeleteFromSummary
         });
 
         this.control('home', {
@@ -81,6 +81,7 @@ Ext.define('Connector.controller.Group', {
             state.on('selectionchange', v.onSelectionChange, v);
 
             this.application.on('groupsaved', this.onGroupSaved, this);
+            this.application.on('groupedit', this.onGroupEdit, this);
         }
         else if (xtype == 'groupsummary') {
 
@@ -88,12 +89,6 @@ Ext.define('Connector.controller.Group', {
                 store: Connector.model.Group.getGroupStore(),
                 groupId: context.groupId
             });
-
-            this.getViewManager().on('afterchangeview', function(controller, view) {
-                if (view != 'groupsummary') {
-                    v.hideMessage();
-                }
-            }, v);
         }
 
         return v;
@@ -139,37 +134,12 @@ Ext.define('Connector.controller.Group', {
         });
     },
 
-    undoFilter : function() {
-        Connector.getState().requestFilterUndo();
-    },
-
-    loadGroupFilters : function() {
-        var v = this.getViewManager().getViewInstance('groupsummary'),
-            store = Connector.model.Group.getGroupStore(),
-            recIdx = store.find('id', v.groupId, false, true, true),
-            rec = store.getAt(recIdx),
-            filters = rec.get('filters');
-
-        if (Ext.isString(filters)) {
-            var strFilterArray = LABKEY.app.model.Filter.fromJSON(filters);
-            filters = [];
-            for (var f=0; f < strFilterArray.length; f++) {
-                filters.push(Ext.create('Connector.model.Filter', strFilterArray[f]));
-            }
-        }
-        else {
-            filters = filters.filters;
-        }
-
-        Connector.getState().setFilters(filters);
-
-        this.getApplication().fireEvent('grouploaded', Ext.clone(rec.data), filters);
-    },
-
-    doGroupSave : function() {
+    doGroupSave : function()
+    {
         var view = this.getViewManager().getViewInstance('groupsave');
 
-        if (view.isValid()) {
+        if (view.isValid())
+        {
             var values = view.getValues(),
                 state = Connector.getState();
 
@@ -217,6 +187,45 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
+    doGroupEdit : function()
+    {
+        var view = this.getViewManager().getViewInstance('groupsave');
+
+        if (view.isValid())
+        {
+            var values = view.getValues();
+
+            if (!Ext.isDefined(values['groupid']))
+            {
+                Ext.Msg.alert('A group id must be provided!');
+            }
+            else
+            {
+                var me = this;
+
+                var editSuccess = function(group)
+                {
+                    me.application.fireEvent('groupedit', group);
+                    view.reset();
+                    Connector.model.Group.getGroupStore().load();
+                };
+
+                var editFailure = function()
+                {
+                    Ext.Msg.alert('Failed to edit Group');
+                };
+
+                LABKEY.ParticipantGroup.updateParticipantGroup({
+                    rowId: parseInt(values['groupid']),
+                    label: values['groupname'],
+                    description: values['groupdescription'],
+                    success: editSuccess,
+                    failure: editFailure
+                });
+            }
+        }
+    },
+
     doGroupUpdateFromSavePanel : function()
     {
         var view = this.getViewManager().getViewInstance('groupsave');
@@ -253,12 +262,12 @@ Ext.define('Connector.controller.Group', {
                             };
 
                             var updateFailure = function() {
-                                alert('Failed to update Group');
+                                Ext.Msg.alert('Failed to update Group');
                             };
 
-                            me.doGroupUpdate({
-                                id: targetGroup.get('id'),
-                                ids: Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name'),
+                            LABKEY.ParticipantGroup.updateParticipantGroup({
+                                rowId: targetGroup.get('id'),
+                                participantIds: Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name'),
                                 description: targetGroup.get('description'),
                                 filters: LABKEY.app.model.Filter.toJSON(state.getFilters(), true),
                                 success: updateSuccess,
@@ -271,80 +280,55 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
-    doGroupUpdateFromSummary : function(group) {
-        var state = Connector.getState();
-        var me = this;
-        state.onMDXReady(function(mdx) {
-            //
-            // Retrieve the listing of participants matching group filters
-            //
-            var filterModels = LABKEY.app.model.Filter.fromJSON(group.filters);
-            var olapFilters = LABKEY.app.model.Filter.getOlapFilters(mdx, filterModels, state.subjectName);
-            mdx.setNamedFilter('groupfilter', olapFilters);
-            mdx.queryParticipantList({
-                useNamedFilters: ['groupfilter'],
-                success: function(cs) {
-                    var updateSuccess = function(group) {
-                        mdx.clearNamedFilter('groupfilter');
-                        Connector.model.Group.getGroupStore().load();
-                    };
-
-                    var updateFailure = function() {
-                        alert('Failed to update Group');
-                    };
-
-                    var ids = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name');
-                    me.doGroupUpdate({
-                        id: group.id,
-                        ids: ids,
-                        description: group.description,
-                        filters: group.filters,
-                        success: updateSuccess,
-                        failure: updateFailure
-                    });
-                }
-            });
-        });
-    },
-
-    doGroupUpdate : function(config) {
-        LABKEY.ParticipantGroup.updateParticipantGroup({
-            rowId: config.id,
-            participantIds: config.ids,
-            description: config.description,
-            filters: config.filters,
-            success: config.success,
-            failure: config.failure
-        });
-    },
-
     onGroupCancel : function() {
         this.getViewManager().hideView('groupsave');
     },
 
-    onGroupSave : function() {
+    onGroupSave : function(cmp)
+    {
         this.getViewManager().showView('groupsave');
+        var groupSaveView = this.getViewManager().getViewInstance('groupsave');
+
+        if (cmp && cmp.group)
+        {
+            groupSaveView.editGroup(cmp.group);
+        }
+        else if (groupSaveView.getMode() === Connector.view.GroupSave.modes.EDIT)
+        {
+            groupSaveView.changeMode(Connector.view.GroupSave.modes.CREATE);
+        }
     },
 
-    onGroupSaved : function(grp, filters) {
-
+    _groupEditSave : function(grp, filters, applyFilters)
+    {
         var name = grp.label ? grp.label : grp.category.label;
 
-        Connector.getState().setFilters(filters);
+        if (applyFilters === true)
+        {
+            Connector.getState().setFilters(filters);
+        }
         this.getViewManager().hideView('groupsave');
 
         var fsview = this.getViewManager().getViewInstance('filterstatus');
-        if (fsview) {
+        if (fsview)
+        {
             fsview.showMessage('Group \"' + Ext.String.ellipsis(name, 15, true) + '\" saved.', true);
         }
-        else {
-            console.warn('no filterstatus view available');
-        }
+    },
+
+    onGroupSaved : function(grp, filters)
+    {
+        this._groupEditSave(grp, filters, true);
+    },
+
+    onGroupEdit : function(grp)
+    {
+        this._groupEditSave(grp);
     },
 
     doGroupDelete : function(config) {
         Ext.Ajax.request({
-            url : LABKEY.ActionURL.buildURL("participant-group", "deleteParticipantGroup", config.containerPath),
+            url : LABKEY.ActionURL.buildURL('participant-group', 'deleteParticipantGroup.api', config.containerPath),
             method: 'POST',
             jsonData: {rowId: config.id},
             success: config.success,
@@ -366,9 +350,5 @@ Ext.define('Connector.controller.Group', {
                 Ext.Msg.alert('ERROR', json.exception ? json.exception : 'Delete group failed.');
             }
         });
-    },
-
-    doBack : function() {
-        window.history.back();
     }
 });

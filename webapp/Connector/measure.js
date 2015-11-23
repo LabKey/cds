@@ -55,8 +55,7 @@ Ext.define('Connector.measure.Configuration', {
                         'study_BAMA_instrument_code',
                         'study_BAMA_specimen_type',
                         'study_BAMA_lab_code'
-                    ],
-                    defaultScale: 'LOG'
+                    ]
                 },
                 'study|ELISPOT': {
                     category: 'Assays',
@@ -203,7 +202,7 @@ Ext.define('Connector.measure.Configuration', {
                 'study_BAMA_antibody_isotype': {
                     requiresSelection: true,
                     allowMultiSelect: false,
-                    defaultSelection: {all: false}
+                    defaultSelection: {all: false, value: 'IgG'}
                 },
                 'study_BAMA_summary_level': {
                     hidden: true,

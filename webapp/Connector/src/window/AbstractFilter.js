@@ -81,7 +81,7 @@ Ext.define('Connector.window.AbstractFilter', {
         return {
             xtype: 'toolbar',
             dock: 'top',
-            ui: 'footer',
+            ui: 'actionheader',
             cls: 'filter-top-toolbar',
             items: [
                 {
@@ -107,8 +107,6 @@ Ext.define('Connector.window.AbstractFilter', {
             xtype: 'toolbar',
             dock: 'bottom',
             ui: 'footer',
-            cls: 'dark-toolbar',
-            height: 30,
             items: ['->',{
                 itemId: 'dofilter',
                 text: 'Filter',

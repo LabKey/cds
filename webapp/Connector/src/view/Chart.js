@@ -548,15 +548,15 @@ Ext.define('Connector.view.Chart', {
             return;
         }
 
-        if (this.ywin && this.ywin.isVisible()) {
+        if (this.ywin) {
             this.updateSelectorWindow(this.ywin);
         }
 
-        if (this.xwin && this.xwin.isVisible()) {
+        if (this.xwin) {
             this.updateSelectorWindow(this.xwin);
         }
 
-        if (this.colorwin && this.colorwin.isVisible()) {
+        if (this.colorwin) {
             this.updateSelectorWindow(this.colorwin);
         }
 
@@ -1482,8 +1482,6 @@ Ext.define('Connector.view.Chart', {
             {
                 console.warn('xAxisClick() occurred without a valid activeMeasures.x');
             }
-
-            this.showMessage('Hold Shift, CTRL, or CMD to select multiple');
         }
     },
 
@@ -3012,6 +3010,7 @@ Ext.define('Connector.view.Chart', {
         var win = Ext.create('Ext.window.Window', {
             ui: 'axiswindow',
             minHeight: 580,
+            maxHeight: Connector.panel.Selector.maximumHeight,
             modal: true,
             draggable: false,
             header: false,
