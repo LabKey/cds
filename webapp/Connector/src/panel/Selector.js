@@ -115,16 +115,13 @@ Ext.define('Connector.panel.Selector', {
         //plugin to handle loading mask for the variable selector source counts
         this.addPlugin({
             ptype: 'loadingmask',
-            blockingMask: false,
-            itemsMaskCls: 'item-spinner-mask-orange',
-            beginConfig: {
-                component: this,
-                events: ['beforeSourceCountsLoad']
-            },
-            endConfig: {
-                component: this,
-                events: ['afterSourceCountsLoad']
-            }
+            configs: [{
+                element: this,
+                blockingMask: false,
+                itemsMaskCls: 'item-spinner-mask-orange',
+                beginEvent: 'beforeSourceCountsLoad',
+                endEvent: 'afterSourceCountsLoad'
+            }]
         });
     },
 

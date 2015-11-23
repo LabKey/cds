@@ -130,14 +130,11 @@ Ext.define('Connector.view.Chart', {
         // plugin to handle loading mask for the plot region
         this.addPlugin({
             ptype: 'loadingmask',
-            beginConfig: {
-                component: this,
-                events: ['showload']
-            },
-            endConfig: {
-                component: this,
-                events: ['hideload']
-            }
+            configs: [{
+                element: this,
+                beginEvent: 'showload',
+                endEvent: 'hideload'
+            }]
         });
 
         this.addPlugin({

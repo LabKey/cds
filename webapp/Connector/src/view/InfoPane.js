@@ -271,14 +271,11 @@ Ext.define('Connector.view.InfoPane', {
         // plugin to handle loading mask for this grid
         memberGrid.addPlugin({
             ptype: 'loadingmask',
-            beginConfig: {
-                component: memberGrid,
-                events: ['render']
-            },
-            endConfig: {
-                component: memberGrid,
-                events: ['selectioncomplete']
-            }
+            configs: [{
+                element: memberGrid,
+                beginEvent: 'render',
+                endEvent: 'selectioncomplete'
+            }]
         });
 
         return [memberGrid];

@@ -370,14 +370,11 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         // plugin to handle loading mask for the explorer
         this.addPlugin({
             ptype: 'loadingmask',
-            beginConfig: {
-                component: this,
-                events: ['showLoad']
-            },
-            endConfig: {
-                component: this,
-                events: ['hideload']
-            }
+            configs: [{
+                element: this,
+                beginEvent: 'showload',
+                endEvent: 'hideload'
+            }]
         });
 
         this.addPlugin({

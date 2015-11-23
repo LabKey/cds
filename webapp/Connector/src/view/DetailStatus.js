@@ -93,27 +93,20 @@ Ext.define('Connector.view.DetailStatus', {
         state.on('filterchange', this.onFilterChange, this);
         state.on('selectionchange', this.onFilterChange, this);
 
-        // plugin to handle loading mask for the info pane
         this.addPlugin({
             ptype: 'loadingmask',
-            blockingMask: false,
-            beginConfig: [{
-                component: this.store,
+            configs: [{
+                element: this.store,
+                blockingMask: false,
                 itemsMaskCls: 'item-spinner-mask',
-                events: ['beforeload']
+                beginEvent: 'beforeload',
+                endEvent: 'load'
             },{
-                component: this.store,
+                element: this.store,
+                blockingMask: false,
                 itemsMaskCls: 'item-spinner-plotmask',
-                events: ['showplotmask']
-            }],
-            endConfig: [{
-                component: this.store,
-                itemsMaskCls: 'item-spinner-mask',
-                events: ['load']
-            },{
-                component: this.store,
-                itemsMaskCls: 'item-spinner-plotmask',
-                events: ['hideplotmask']
+                beginEvent: 'showplotmask',
+                endEvent: 'hideplotmask'
             }]
         });
     },
