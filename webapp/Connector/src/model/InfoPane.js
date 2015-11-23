@@ -132,6 +132,13 @@ Ext.define('Connector.model.InfoPane', {
         this.set('selection', selectionValue);
     },
 
+    isShowOperator : function() {
+        if (!Ext.isDefined(this.get('showOperator'))) {
+            return false;
+        }
+        return this.get('showOperator');
+    },
+
     /**
      * Configures the model based on a dimension/hierarchy/level configuration.
      * Only one of these needs to be supplied in order to resolve. If a filter is supplied
@@ -230,6 +237,9 @@ Ext.define('Connector.model.InfoPane', {
                 hierarchyItems = [];
 
             var isDisplayLevel = hier ? hier.displayLevels : false;
+            if (lvl) {
+                this.set('showOperator', lvl.showOperator);
+            }
 
             Ext.each(dim.hierarchies, function(h) {
                 if (!h.hidden) {

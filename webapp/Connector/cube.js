@@ -22,6 +22,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      supportsSummary - summary views are supported for this dimension. defaults to true but respects hidden.
         //      summaryTargetLevel - summary views will respect this levels count when querying. Defaults to first hierarchy, second level.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to AND.
+        //      showOperator    - hide operator in info pane if false. Default is true.
         //      filterType      - The default way of filtering for this dimension. Options are COUNT/WHERE. Defaults to COUNT.
         //      findSubjectSummaryLevel    - Specify the level to count for this dimension for Find subjects. Defaults to first hierarchy, second level.
         //
@@ -29,6 +30,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      hidden          - declare whether a hierarchy is hidden. Defaults to false.
         //      supportsSummary - summary views are supported for this hierarchy. defaults to true but respects hidden.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to dimensions value.
+        //      showOperator    - hide operator in info pane if false. Default to dimensions value.
         //      label           - Default is parsed name.
         //      filterType      - The default way of filtering for this hierarchy. Options are COUNT/WHERE. Defaults to dimensions value.
         //      findSubjectSubSummaryLevel    - Specify the level to count for this hierarchy for Find subjects, will use second level if undefined. Default is undefined.
@@ -41,6 +43,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      countSingular   - The count label displayed when there is one match. Default is undefined.
         //      countPlural     - The count label displayed when there are zero/multiple matches. Default is undefined.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to hierarchies value.
+        //      showOperator    - hide operator in info pane if false. Default to hierarchies value.
         //      filterType      - The default way of filtering for this level. Options are COUNT/WHERE. Defaults to hierarchy's value.
         //      supportsLearn   - Whether or not the elements in the level are backed by learn about pages. Defaults to false.
         //      lookupDimension - Specify a dimension to look up learn about pages if the level's elements belong to different dimension than the parent. For example a study level in the assay dimension. Default is undefined.
@@ -57,6 +60,7 @@ Ext4.define('Connector.cube.Configuration', {
                 summaryTargetLevel: '[Subject.Race].[Race]',
                 priority: 0,
                 defaultOperator: 'OR',
+                showOperator: false,
                 hierarchies: [{
                     uniqueName: '[Subject]',
                     hidden: true,
@@ -122,6 +126,7 @@ Ext4.define('Connector.cube.Configuration', {
                 defaultOperator: 'OR',
                 summaryTargetLevel: '[Study.Treatment].[Arm]',
                 findSubjectSummaryLevel: '[Study.Treatment].[Treatment]',
+                showOperator: false,
 
                 hierarchies: [{
                     uniqueName: '[Study]',
@@ -469,7 +474,8 @@ Ext4.define('Connector.cube.Configuration', {
                 itemDetailTabs: undefined,
                 defaultOperator: 'AND',
                 filterType: 'COUNT',
-                findSubjectSummaryLevel: 'path::0|1'
+                findSubjectSummaryLevel: 'path::0|1',
+                showOperator: true
             },
             hierarchy: {
                 hidden: false,
@@ -478,7 +484,8 @@ Ext4.define('Connector.cube.Configuration', {
                 displayLevels: false,
                 label: 'label::',
                 filterType: 'parent::filterType',
-                findSubjectSubSummaryLevel: undefined
+                findSubjectSubSummaryLevel: undefined,
+                showOperator: 'parent::showOperator'
             },
             level: {
                 activeCount: false,
@@ -493,7 +500,8 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsLearn: false,
                 lookupDimension: undefined,
                 displayParent: false,
-                levelLabel: 'label::'
+                levelLabel: 'label::',
+                showOperator: 'parent::showOperator'
             }
         }
     }

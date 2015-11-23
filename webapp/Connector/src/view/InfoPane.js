@@ -142,7 +142,7 @@ Ext.define('Connector.view.InfoPane', {
             items: []
         };
 
-        if (this.isShowOperator) {
+        if (this.isShowOperator && model.isShowOperator()) {
             middleContent.items.push({
                 itemId: 'operatorlabel',
                 xtype: 'box',
@@ -374,22 +374,11 @@ Ext.define('Connector.view.InfoPane', {
 
         if (members.length > 0) {
 
-            // prevent scrolling to bottom of selection
-            sm.on('selectionchange', function() {
-                var middle = this.getComponent('middle');
-                if (middle) {
-                    var oplabel = middle.getComponent('operatorlabel');
-                    if (oplabel) {
-                        oplabel.getEl().scrollIntoView(middle.getEl());
-                    }
-                }
-            }, this, {single: true});
-
             if (members.length == storeCount) {
-                sm.selectAll();
+                sm.selectAll(true);
             }
             else {
-                sm.select(members);
+                sm.select(members, false, true);
             }
 
             var anodes = Ext.DomQuery.select('a.expando');
@@ -408,11 +397,13 @@ Ext.define('Connector.view.InfoPane', {
         var model = this.getModel();
         var hierarchy = model.get('hierarchy');
 
-        if (model.isREQ()) {
-            this.hideOperator();
-        }
-        else {
-            this.showOperator();
+        if (model.isShowOperator()) {
+            if (model.isREQ()) {
+                this.hideOperator();
+            }
+            else {
+                this.showOperator();
+            }
         }
 
         grid.fireEvent('selectioncomplete', this);
