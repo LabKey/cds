@@ -835,20 +835,29 @@ Ext.define('Connector.model.Grid', {
      */
     onGridFilterRemove : function(view, fieldKey)
     {
-        var keysToDelete = [];
+        var keysToDelete = [],
+            idsToDelete = {},
+            hasFilter = false;
+
         Ext.iterate(this.filterMap, function(urlParam, id)
         {
             if (urlParam.indexOf(fieldKey) > -1)
             {
                 keysToDelete.push(urlParam);
-                Connector.getState().removeFilter(id);
+                idsToDelete[id] = true;
+                hasFilter = true;
             }
         }, this);
 
-        Ext.each(keysToDelete, function(key)
+        if (hasFilter)
         {
-            delete this.filterMap[key];
-        }, this);
+            Ext.each(keysToDelete, function(key)
+            {
+                delete this.filterMap[key];
+            }, this);
+
+            Connector.getState().removeFilters(Ext.Object.getKeys(idsToDelete));
+        }
     },
 
     /**
