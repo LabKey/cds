@@ -195,10 +195,16 @@ public class CDSAsserts
 
     public void assertDefaultFilterStatusCounts()
     {
-        assertFilterStatusCounts(8277, 51, -1); // TODO Test data dependent.
+        assertFilterStatusCounts(8277, 51, 2, 4, 277); // TODO Test data dependent.
     }
 
-    public void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount)
+    @Deprecated // use version that has all 5 counts below
+    public void assertSelectionStatusCounts(int subjectCount, int studyCount, int speciesCount)
+    {
+        assertSelectionStatusCounts(subjectCount, studyCount, speciesCount, -1, -1);
+    }
+
+    public void assertSelectionStatusCounts(int subjectCount, int studyCount, int speciesCount, int productCount, int treatmentCount)
     {
         if(subjectCount > -1)
         {
@@ -210,14 +216,29 @@ public class CDSAsserts
             _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(studyCount, "Stud"));
         }
 
-        if(assayCount > -1)
+        if(speciesCount > -1)
         {
-            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(assayCount, "Assays"));
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(speciesCount, "Species"));
         }
 
+        if(productCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(productCount, "Product"));
+        }
+
+        if(treatmentCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(treatmentCount, "Treatment"));
+        }
     }
 
-    public void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount)
+    @Deprecated // use version that has all 5 counts below
+    public void assertFilterStatusCounts(int subjectCount, int studyCount, int speciesCount)
+    {
+        assertFilterStatusCounts(subjectCount, studyCount, speciesCount, -1, -1);
+    }
+
+    public void assertFilterStatusCounts(int subjectCount, int studyCount, int speciesCount, int productCount, int treatmentCount)
     {
         if (subjectCount > -1)
         {
@@ -229,11 +250,20 @@ public class CDSAsserts
             _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Study", "Studies", true));
         }
 
-        if (assayCount > -1)
+        if (speciesCount > -1)
         {
-            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(assayCount, "Assay", "Assays", true));
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(speciesCount, "Species", "Species", false));
         }
 
+        if (productCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(productCount, "Product", "Products", false));
+        }
+
+        if (treatmentCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(treatmentCount, "Treatment", "Treatments", false));
+        }
     }
 
     @LogMethod
