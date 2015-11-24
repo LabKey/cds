@@ -395,9 +395,6 @@ Ext.define('Connector.view.Chart', {
                 border: false,
                 flex: 10,
                 cls: 'plot',
-                style: {
-                    'background-color': '#FFFFFF'
-                },
                 listeners: {
                     afterrender: {
                         fn: function(box) {
@@ -759,8 +756,8 @@ Ext.define('Connector.view.Chart', {
             gridLineWidth: 1.25,
             gridLinesVisible: 'both',
             borderWidth: 2,
-            gridColor : ChartUtils.colors.WHITE,
-            bgColor: ChartUtils.colors.WHITE,
+            gridColor : ChartUtils.colors.GRAYBACKGROUND,
+            bgColor: ChartUtils.colors.GRAYBACKGROUND,
             tickColor: ChartUtils.colors.WHITE,
             tickTextColor: this.labelTextColor // $heat-scale-1
         };
@@ -816,9 +813,9 @@ Ext.define('Connector.view.Chart', {
             aes : aes,
             scales : scales,
             tickLength : 0,
-            gridColor : ChartUtils.colors.GRIDBKGD,
+            gridColor : ChartUtils.colors.WHITE,
             gridLineColor : ChartUtils.colors.GRIDLINE,
-            borderColor : ChartUtils.colors.WHITE
+            borderColor : ChartUtils.colors.GRIDLINE
         });
     },
 
@@ -1330,7 +1327,7 @@ Ext.define('Connector.view.Chart', {
                 maxCharPerLine: 9,
                 lineWrapAlign: 'end',
                 cls: 'xGutter-label',
-                bkgdColor: ChartUtils.colors.GRIDBKGD,
+                bkgdColor: ChartUtils.colors.GRAYBACKGROUND,
                 bkgdWidth: 70,
                 listeners: {
                     mouseover: function() {
@@ -1386,7 +1383,7 @@ Ext.define('Connector.view.Chart', {
                 cls: 'yGutter-label',
                 maxCharPerLine: 10,
                 lineWrapAlign: 'start',
-                bkgdColor: ChartUtils.colors.GRIDBKGD,
+                bkgdColor: ChartUtils.colors.GRAYBACKGROUND,
                 bkgdHeight: 100,
                 bkgdWidth: this.yGutterWidth - 15,
                 listeners: {

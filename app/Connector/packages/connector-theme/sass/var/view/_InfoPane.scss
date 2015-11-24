@@ -140,34 +140,34 @@ a.expando {
   }
 }
 
-.infosortmenu.x-menu {
-  @include prefixer(border-radius, 2px);
-  border: 1px solid $gray-6;
-  width:200px;
-  right: 32px;
 
-  .x-menu-body {
-    background: $white;
+.infosortmenu {
+  &.x-menu {
+    @include prefixer(border-radius, 2px);
+    border: 1px solid $gray-6;
+    
+    .x-menu-body {
+      background: $white;
 
-    .x-menu-item {
-      color: $gray-3  ;
-      height:32px;
-      padding: 4px 0;
-      line-height: 24px;
-    }
+      .x-menu-item {
+        color: $gray-3  ;
+        height:32px;
+        padding: 4px 0;
+        line-height: 24px;
+      }
 
-    .x-menu-item-active {
-      @include prefixer(border-radius, 2px);
-      outline: none;
-      background: $gray-7;
-      color: $black;
-      opacity: 1.0!important;
-      border: 0 solid transparent;
-
-      .x-menu-item-text {
+      .x-menu-item-active {
+        @include prefixer(border-radius, 2px);
+        outline: none;
+        background: $gray-7;
         color: $black;
+        opacity: 1.0!important;
+        border: 0 solid transparent;
+
+        .x-menu-item-text {
+          color: $black;
+        }
       }
     }
   }
-
 }

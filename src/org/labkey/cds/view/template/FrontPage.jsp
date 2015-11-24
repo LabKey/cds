@@ -4,7 +4,7 @@
 <%
     String contextPath = request.getContextPath();
     String appPath = contextPath + "/Connector";
-    String frontPagePath = appPath + "/frontPage";
+    String frontPagePath = contextPath + "/frontPage";
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,11 +19,11 @@
     <style type="text/css">
         /* Context-sensitive url */
         .section.intro-section .video-container .video-placeholder {
-            background-image: url(<%=text(frontPagePath)%>/img/intro.png);
+            background-image: url(<%=text(frontPagePath)%>/img/intro.jpg);
         }
     </style>
 
-    <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/icon.png">
+    <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/headerlogo.png">
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>())%>
@@ -35,12 +35,12 @@
 </head>
 <body>
     <div id="navigation">
-        <div class="icon">
+        <div class="icon" data-js-id="frontPageHomeIcon">
             <div class="img">
                 <img src="<%=text(frontPagePath)%>/img/icon.png">
             </div>
         </div>
-        <div class="title">
+        <div class="title" data-js-id="frontPageNavTitle">
             <strong>CAVD</strong>
             <p>DataSpace</p>
         </div>
@@ -265,13 +265,15 @@
                     <div class="play"></div>
                 </a>
                 <div class="video-modal-popup hidden">
-                    <div class="video-header">
-                        <button title="Close (Esc)" type="button" class="video-close mfp-close">x</button>
-                    </div>
+                    <div data-js-id="video-modal">
+                        <div class="video-header">
+                            <button title="Close (Esc)" type="button" class="video-close mfp-close">x</button>
+                        </div>
 
-                    <div id="intro-video" poster="<%=text(frontPagePath)%>/img/intro.png" class="video-js">
-                        <iframe src="https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                        <div id="intro-video" poster="<%=text(frontPagePath)%>/img/intro.jpg" class="video-js">
+                            <iframe src="https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -437,6 +439,40 @@
                 </div>
                 <div class="links">
                     <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" class="contact">Contact Us</a>
+
+                    <a href="#" class="email-modal-trigger">
+                        Sign up for our mailing list
+                    </a>
+                    <div class="email-modal-popup hidden">
+                        <div class="email-modal">
+                            <div class="border"></div>
+                            <!-- Begin MailChimp Signup Form -->
+                            <!-- <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">-->
+                            <style type="text/css">
+                                #mc_embed_signup {
+                                    background:#fff;
+                                    clear:left;
+                                    font: 14px Helvetica,Arial,sans-serif;
+                                }
+                                /* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
+                                   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+                            </style>
+                            <div id="mc_embed_signup">
+                                <form action="//cavd.us12.list-manage.com/subscribe/post?u=94b15dde08aa6cdccdf310066&amp;id=647228cd30" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                                    <div id="mc_embed_signup_scroll">
+                                    <p class="title">No more than once a month, we may share updates about our future plans, the impact we're seeing, or opportunities to engage with our team at conferences. It's easy to unsubscribe at any time.</p>
+                                    <label for="mce-EMAIL">Email Address</label>
+                                    <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+                                    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                                    <div style="position: absolute; left: -5000px;"><input type="text" name="b_94b15dde08aa6cdccdf310066_647228cd30" tabindex="-1" value=""></div>
+                                    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!--End mc_embed_signup-->
+                        </div>
+                    </div>
                 </div>
                 <div class="links sign-in">
                     <span>CAVD DataSpace Members:</span>
