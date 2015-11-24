@@ -161,5 +161,39 @@ Ext.define('Connector.controller.State', {
 
     generateFilterSet : function(mdx, filters, subjectName) {
         return Connector.getQueryService().configureOlapFilters(mdx, filters, subjectName);
+    },
+
+    /**
+     * Atomically remove a set of filters.
+     * @param {string[]} filterIds
+     */
+    removeFilters : function(filterIds)
+    {
+        var idMap = Ext.Array.toMap(filterIds),
+            filterSet = [];
+
+        Ext.each(this.getFilters(), function(filter)
+        {
+            if (!idMap[filter.id])
+            {
+                filterSet.push(filter);
+            }
+        });
+
+        // fire filterremove, but only after filterchange fires.
+        // Ensures consistent order of events.
+        this.on('filterchange', function()
+        {
+            this.fireEvent('filterremove', this.getFilters());
+        }, this, {single: true});
+
+        if (Ext.isEmpty(filterSet))
+        {
+            this.clearFilters();
+        }
+        else
+        {
+            this.setFilters(filterSet);
+        }
     }
 });

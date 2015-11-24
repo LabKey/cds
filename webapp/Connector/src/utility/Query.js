@@ -14,6 +14,7 @@ Ext.define('Connector.utility.Query', {
         this.callParent([config]);
 
         this.SUBJECTVISIT_TABLE = (Connector.studyContext.gridBaseSchema + '.' + Connector.studyContext.gridBase).toLowerCase();
+        this.SUBJECTVISIT_ALIAS = [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase].join('_').toLowerCase();
         this.DATASET_ALIAS = this.STUDY_ALIAS_PREFIX + 'Dataset';
         this.SUBJECT_ALIAS = this.STUDY_ALIAS_PREFIX + Connector.studyContext.subjectColumn;
         this.SUBJECT_SEQNUM_ALIAS = [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, 'ParticipantSequenceNum'].join('_');
@@ -63,22 +64,24 @@ Ext.define('Connector.utility.Query', {
 
     _createTableObj : function(schema, query, joinKeys, isAssayDataset)
     {
-        var obj = {};
-        obj.displayName = query;
-        obj.queryName = query.toLowerCase();
-        obj.fullQueryName = schema + '.' + obj.queryName;
-        obj.tableAlias = schema + '_' + obj.queryName;
-        obj.schemaName = schema;
-        obj.isAssayDataset = isAssayDataset === true;
-        obj.joinKeys = joinKeys;
-        return obj;
+        var queryName = query.toLowerCase();
+        return {
+            displayName: query,
+            schemaName: schema,
+            queryName: queryName,
+            fullQueryName: schema + '.' + queryName,
+            tableAlias: schema + '_' + queryName,
+            isAssayDataset: isAssayDataset === true,
+            joinKeys: joinKeys
+        };
     },
 
     _getTables : function()
     {
         // get the datasets from the query service and track properties for the joinKeys, isDemographic, etc.
         var datasetSources = Connector.getQueryService().getSources('queryType', 'datasets'),
-                schema, query, key, joinKeys, tables = {};
+            schema, query, key, joinKeys, tables = {};
+
         Ext.each(datasetSources, function(dataset)
         {
             schema = dataset.get('schemaName');
@@ -201,7 +204,6 @@ Ext.define('Connector.utility.Query', {
 
             _m.fullQueryName = axisQueryName;
             _m.table = table;
-            _m.columnName = table.tableAlias + '.' + m.measure.name;
             _m.queryName = queryName;
             _m.literalFn = me._sqlLiteralFn(m.measure.type);
 
@@ -356,6 +358,7 @@ Ext.define('Connector.utility.Query', {
             hasMultiple = Object.keys(datasets).length > 1,
             setOperator = options.intersect ? "\nINTERSECT\n" : "\nUNION ALL\n",
             orderSQL,
+            psnFilter,
             sql;
 
         Ext.iterate(datasets, function(name)
@@ -369,6 +372,8 @@ Ext.define('Connector.utility.Query', {
                 debugUnionSQL += union + term.sql;
             }
 
+            psnFilter = psnFilter || term.participantsequencenum;
+
             union = setOperator;
 
             Ext.applyIf(columnAliasMap, term.columnAliasMap);
@@ -376,9 +381,31 @@ Ext.define('Connector.utility.Query', {
 
         // sort by the study, subject, and visit
         if (options.subjectOnly)
+        {
             orderSQL = "\nORDER BY 1 ASC";
+
+            if (psnFilter)
+            {
+                var psnSelect = [union, 'SELECT '],
+                    sep = '\n\t';
+
+                psnSelect.push(sep + this.SUBJECTVISIT_ALIAS + '.container AS "' + this.CONTAINER_ALIAS + '" @title=\'Container\',');
+                psnSelect.push(sep + this.SUBJECTVISIT_ALIAS + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
+                psnSelect.push(sep + 'FROM ' + this.SUBJECTVISIT_TABLE + ' AS ' + this.SUBJECTVISIT_ALIAS);
+                psnSelect.push(sep + 'WHERE ' + this.SUBJECTVISIT_ALIAS + '.participantsequencenum IN ');
+
+                unionSQL += psnSelect.join('') + this._toSqlValuesList(psnFilter, LABKEY.Query.sqlStringLiteral, false);
+
+                if (this.logging)
+                {
+                    debugUnionSQL += psnSelect.join('') + this._toSqlValuesList(psnFilter, LABKEY.Query.sqlStringLiteral, true);
+                }
+            }
+        }
         else
+        {
             orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
+        }
 
         sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL;
 
@@ -402,6 +429,8 @@ Ext.define('Connector.utility.Query', {
         var rootTable = tables[datasetName],
             acceptMeasureForSelect = this._acceptMeasureFn(rootTable.fullQueryName, tables, 'queryName'),
             filterQueryMeasures = allMeasures.filter(this._acceptMeasureFn(datasetName, tables, 'fullQueryName')),
+            optimizedFilterValues,
+            optimizerResult,
             columnAliasMap = {},
             visitAlignmentTag = null;
 
@@ -411,13 +440,9 @@ Ext.define('Connector.utility.Query', {
         // now optimize subjectid and participantsequencenum filters over rootTable
         // The only tricky part is is that I don't really want to hack on my measures
         // SO return new copies optimized guys
-        var optimizedFilterValues = {};
-        if (true)
-        {
-            var optimizerResult = this._optimizeFilters(filterQueryMeasures,rootTable);
-            filterQueryMeasures = optimizerResult.measures;
-            optimizedFilterValues = optimizerResult.filters;
-        }
+        optimizerResult = this._optimizeFilters(filterQueryMeasures, rootTable);
+        filterQueryMeasures = optimizerResult.measures;
+        optimizedFilterValues = optimizerResult.filters;
 
         //
         // SELECT
@@ -588,24 +613,28 @@ Ext.define('Connector.utility.Query', {
         }
 
         // and optimized filters
-        for (var name in optimizedFilterValues)
+        Ext.iterate(optimizedFilterValues, function(name, values)
         {
-            if (!optimizedFilterValues.hasOwnProperty(name)) continue;
-            var values = optimizedFilterValues[name];
-            if (null === values)
-                continue;
-            if (0 == values.length)
-                WHERE.push("1=0");
-            else
-                WHERE.push(rootTable.tableAlias + "." + name + " IN " + this._toSqlValuesList(values,LABKEY.Query.sqlStringLiteral,forDebugging));
-        }
+            if (null !== values)
+            {
+                if (options.subjectOnly && name === 'participantsequencenum')
+                {
+                    return;
+                }
+                if (0 == values.length)
+                    WHERE.push('1=0');
+                else
+                    WHERE.push(rootTable.tableAlias + '.' + name + ' IN ' + this._toSqlValuesList(values, LABKEY.Query.sqlStringLiteral, forDebugging));
+            }
+        }, this);
 
         // to be defensive, clear sourceTable before we return
-        Ext.each(allMeasures, function(m){m.sourceTable=null;});
+        Ext.each(allMeasures, function(m) { delete m.sourceTable; });
 
         return {
             sql: SELECT.join('') + "\n" + FROM + (WHERE.length == 0 ? "" : "\nWHERE ") + WHERE.join("\n\tAND "),
-            columnAliasMap: columnAliasMap
+            columnAliasMap: columnAliasMap,
+            participantsequencenum: optimizedFilterValues.participantsequencenum
         };
     },
 
@@ -621,16 +650,20 @@ Ext.define('Connector.utility.Query', {
             subjectid: true,
             participantsequencenum:true
         };
-        var mapoflistofFilters = {subjectid:[], participantsequencenum:[]};
+        var mapoflistofFilters = {
+            subjectid: [],
+            participantsequencenum: []
+        };
 
-        var me = this;
         var optimizedMeasures = [];
-        Ext.each(measures, function (m)
+        Ext.each(measures, function(m)
         {
             // look for aliases we can rewrite e.g. cds.gridbase.subjectid -> cds.{dataset}.subjectid
-            // we reset sourceTable everytime so we can overwrite without cloning the measure
-            if (m.table.fullQueryName === me.SUBJECTVISIT_TABLE && gridBaseAliasableColumns[m.measure.name.toLowerCase()])
+            // we reset sourceTable every time so we can overwrite without cloning the measure
+            if (m.table.fullQueryName === this.SUBJECTVISIT_TABLE && gridBaseAliasableColumns[m.measure.name.toLowerCase()])
+            {
                 m.sourceTable = rootTable;
+            }
 
             // collect subject id and participantsequencenum filters
             if (m.sourceTable == rootTable && optimizableColumns[m.measure.name.toLowerCase()] && (m.measure.value || m.filterArray))
@@ -646,6 +679,7 @@ Ext.define('Connector.utility.Query', {
                     listofFilters.push(m.measure.values);
                     m.measure.values = null;
                 }
+
                 if (m.filterArray)
                 {
                     var filters = m.filterArray;
@@ -665,28 +699,41 @@ Ext.define('Connector.utility.Query', {
             }
 
             optimizedMeasures.push(m);
-        });
+        }, this);
 
         // and optimize the values lists
 
-        var subjectids = this._intersect(mapoflistofFilters.subjectid);
-        var psnums = this._intersect(mapoflistofFilters.participantsequencenum);
+        var subjectids = this._intersect(mapoflistofFilters.subjectid),
+            psnums = this._intersect(mapoflistofFilters.participantsequencenum);
 
         if (null !== subjectids && null !== psnums)
         {
-            var set={};
-            var intersectArray = [];
-            Ext.each(subjectids,function(s){ set[s] = 1; });
-            Ext.each(psnums,function(psnum){
-                var ptid = psnum.substring(0,psnum.indexOf('|'));
-                if (set[ptid])
+            var _set = {},
+                intersectArray = [];
+
+            Ext.each(subjectids, function(s)
+            {
+                _set[s] = 1;
+            });
+            Ext.each(psnums, function(psnum)
+            {
+                var ptid = psnum.substring(0, psnum.indexOf('|'));
+                if (_set[ptid])
+                {
                     intersectArray.push(psnum);
+                }
             });
             psnums = intersectArray;
             subjectids = null;
         }
 
-        return {measures:optimizedMeasures, filters:{subjectid:subjectids, participantsequencenum:psnums}};
+        return {
+            measures: optimizedMeasures,
+            filters: {
+                subjectid: subjectids,
+                participantsequencenum: psnums
+            }
+        };
     },
 
 
@@ -696,25 +743,26 @@ Ext.define('Connector.utility.Query', {
             return null;
         if (lists.length == 1)
             return lists[0];
+
         // I'm going to be pessimistic and not assume that each individual list is guaranteed to be unique
-        var set={};
-        Ext.each(lists[0],function(s){
-            set[s] = 1;
+        var _set = {};
+
+        Ext.each(lists[0], function(s)
+        {
+            _set[s] = 1;
         });
-        for (var i=1 ; i<lists.length ; i++)
+
+        for (var i=1; i < lists.length; i++)
         {
             var intersectSet = {};
             Ext.each(lists[i],function(s)
             {
-                if (set[s])
+                if (_set[s])
                     intersectSet[s] = 1;
             });
-            set = intersectSet;
+            _set = intersectSet;
         }
-        var arr = [];
-        for (var p in set)
-            arr.push(p);
-        return arr;
+        return Ext.Object.getKeys(_set);
     },
 
 
@@ -778,11 +826,10 @@ Ext.define('Connector.utility.Query', {
                 throw 'Unable to map measure for "' + f.getColumnName() + '"';
         }
 
-        columnName = _measure.columnName;
+        columnName = _measure.sourceTable.tableAlias + '.' + _measure.measure.name;
         literalFn = _measure.literalFn;
 
-
-        var v, arr, sep = '', clause = '',
+        var v, arr, clause = '',
             operator = f.getFilterType().getURLSuffix(),
             operatorMap = {eq:"=",lt:"<",lte:"<=",gt:">",gte:">=",neq:"<>"};
 
@@ -851,14 +898,14 @@ Ext.define('Connector.utility.Query', {
     _toSqlValuesList : function(values, literalFn, forDebugging)
     {
         var parts = [];
-        parts.push("(");
+        parts.push('(');
         if (forDebugging === true && values.length > 10)
         {
             parts.push('{' + values.length + ' ITEMS}');
         }
         else
         {
-            var sep = "";
+            var sep = '';
             values.forEach(function(v)
             {
                 parts.push(sep + (literalFn||this._toSqlLiteral)(v));
@@ -868,7 +915,6 @@ Ext.define('Connector.utility.Query', {
         parts.push(')');
         return parts.join('');
     },
-
 
     isGeneratedColumnAlias : function(alias)
     {
@@ -885,10 +931,5 @@ Ext.define('Connector.utility.Query', {
         }
 
         return alias;
-    },
-
-    __testOptimizeFilters : function()
-    {
-
     }
 });

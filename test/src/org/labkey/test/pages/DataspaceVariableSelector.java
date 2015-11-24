@@ -541,7 +541,7 @@ public abstract class DataspaceVariableSelector
 
     public static enum Scale
     {
-        Log("Log (values ≤ 0 will be dropped)"),
+        Log("Log"),
         Linear("Linear");
 
         private final String scaleLabel;

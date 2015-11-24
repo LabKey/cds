@@ -17,7 +17,7 @@ Ext.define('Connector.component.Started', {
                     '<iframe width="533" height="300" src="{videoURL}" frameborder="0" allowfullscreen></iframe>',
                 '<tpl elif="isAdmin">',
                     '<div>',
-                        'Hey! You look like an admin. The Getting Video URL needs to be setup.&nbsp;',
+                        'Hey! You look like an admin. The Getting Started Video URL needs to be setup.&nbsp;',
                         '<a href="{adminURL}" target="_blank">Configure</a>',
                     '</div>',
                 '</tpl>',

@@ -102,8 +102,8 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     public void setScale(Scale scale)
     {
         _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']/following-sibling::div"));
-        _test.waitForElement(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[.='" + scale.getScaleLabel() + "']"), CDSHelper.CDS_WAIT * 2);
-        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[.='" + scale.getScaleLabel() + "']"));
+        _test.waitForElement(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[contains(text(), '" + scale.getScaleLabel() + "')]"), CDSHelper.CDS_WAIT * 2);
+        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[contains(text(), '" + scale.getScaleLabel() + "')]"));
         // Do the next click to close the drop down.
         _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']"));
 
