@@ -225,13 +225,14 @@ Ext.define('Connector.view.InfoPane', {
                 sortable: false,
                 menuDisabled: true,
                 tpl: new Ext.XTemplate(
-                    '<div title="{name:htmlEncode}">{name:htmlEncode}<div>',
+                    '<div title="{name:htmlEncode}">{name:htmlEncode}',
                     '<tpl if="hasDetails === true">',
                         '<a class="expando" href="{detailLink}">',
                             '<span class="icontext">learn about</span>',
                             '<img src="' + Connector.resourceContext.path + '/images/cleardot.gif" class="iconone">',
                         '</a>',
-                    '</tpl>'
+                    '</tpl>',
+                    '</div>'
                 )
             }],
 
