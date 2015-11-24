@@ -116,6 +116,22 @@ Ext.define('Connector.grid.Panel', {
 
                 column.width = this.defaultColumnWidth;
 
+                var meta = LABKEY.ext4.Util.findFieldMetadata(this.store, column.dataIndex);
+                if (meta) {
+                    var type  = meta.displayFieldJsonType || meta.jsonType;
+                    if  (type === 'float') {
+                        column.renderer = function(value) {
+                            if (Math.abs(value) < 0.0001) {
+                                // show the 1st significant digit, we don't want to show 0
+                                return value.toPrecision(1);
+                            }
+                            else {
+                                return parseFloat(value.toFixed(4));
+
+                            };
+                        };
+                    }
+                }
             }, this);
         }
 

@@ -41,6 +41,10 @@ Ext.define('Connector.panel.Selector', {
     initialized: false,
     initOptions: undefined,
 
+    statics: {
+        maximumHeight: 800
+    },
+
     constructor : function(config) {
 
         if (!Ext.isObject(config.sourceMeasureFilter)) {
@@ -123,6 +127,33 @@ Ext.define('Connector.panel.Selector', {
                 endEvent: 'afterSourceCountsLoad'
             }]
         });
+
+        this.on('resize', function(){
+            var pane = this.getAdvancedPane();
+            if (pane.items.items.length > 1) {
+                if (!pane.isHidden()) {
+                    pane.setHeight(this.getAdvancedPaneHeight(pane.items));
+                }
+            }
+
+        }, this);
+    },
+
+    getAdvancedPaneHeight : function(items) {
+        // Maximum of 50%
+        // Minimum of 117px (if it has anything to show)
+        //  Calculate height dynamically based on the number of visible items in the advanced options pane
+
+        var visibleItems = 0;
+        Ext.each(items.items, function(item){
+            if (!item.hidden){
+                visibleItems++;
+            }
+        });
+
+        var max = (this.getHeight() - 40) / 2,
+            calcMax = Math.max(visibleItems * 45, 117);
+        return Math.min(max, calcMax);
     },
 
     getLoaderPane : function() {
@@ -446,18 +477,21 @@ Ext.define('Connector.panel.Selector', {
     showLearnMessage : function(item, title, description, name) {
         if (description) {
             //truncate description to roughly 4 rows and ensures that a word isn't being cut off.
-            var charLimit = 95;
+            var charLimit = 150;
+            
             if (description.length > charLimit) {
                description = description.substring(0, charLimit + 1);
                description = description.substring(0, description.lastIndexOf(' ')) + '...';
             }
+
+
 
             var calloutMgr = hopscotch.getCalloutManager(),
                 _id = Ext.id(),
                 displayTooltip = setTimeout(function() {
                     calloutMgr.createCallout({
                         id: _id,
-                        bubbleWidth: 160,
+                        // bubbleWidth: 160, // use CSS instead of JS for this.
                         yOffset: item.scrollHeight - 37, //Issue 24196 - tooltips for rows immediately following a grouping heading were out of alignment.
                         xOffset: 50,
                         showCloseButton: false,
@@ -781,6 +815,7 @@ Ext.define('Connector.panel.Selector', {
                 border: false,
                 frame: false,
                 height: 220,
+                maxHeight: Connector.panel.Selector.maximumHeight / 2,
                 autoScroll: true,
                 hidden: true,
                 cls: 'advanced'
@@ -1030,6 +1065,7 @@ Ext.define('Connector.panel.Selector', {
         var pane = this.getAdvancedPane();
         if (pane.items.items.length > 1)
         {
+            pane.setHeight(this.getAdvancedPaneHeight(pane.items));
             if (pane.isHidden())
             {
                 pane.show();
@@ -1053,6 +1089,10 @@ Ext.define('Connector.panel.Selector', {
 
     getDimensionsForMeasure : function(measure) {
         // check if a white-list of dimensions was declared for the measure or its source
+        if (!measure.get('isMeasure')) {
+            return [];
+        }
+
         var dimensions = measure.get('dimensions'),
             source = this.getSourceForMeasure(measure),
             measureIsDimension = false;

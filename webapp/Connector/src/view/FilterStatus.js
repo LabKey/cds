@@ -64,9 +64,18 @@ Ext.define('Connector.view.FilterStatus', {
                 xtype: 'container',
                 flex: 1
             },{
-                xtype: 'button', text: 'clear', ui: 'linked', cls: 'filter-hdr-btn filterclear' /* for tests */, itemId: 'clear', hidden: hidden
+                xtype: 'button', 
+                text: 'clear',
+                ui: 'rounded-small',
+                cls: 'filter-hdr-btn filterclear' /* for tests */,
+                itemId: 'clear',
+                hidden: hidden
             },{
-                xtype: 'button', text: 'save', ui: 'linked', cls: 'filter-hdr-btn filtersave' /* for tests */, itemId: 'savegroup', hidden: hidden
+                xtype: 'button', 
+                text: 'save', 
+                ui: 'rounded-inverted-accent-small', 
+                cls: 'filter-hdr-btn filtersave' /* for tests */, 
+                itemId: 'savegroup', hidden: hidden
             }]
         };
     },

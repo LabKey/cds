@@ -29,7 +29,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.app.view.module.StudySites": "../../../../webapp/Connector/src/app/view/module/StudySites.js",
   "Connector.button.Image": "../../../../webapp/Connector/src/button/Image.js",
   "Connector.button.InfoButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
-  "Connector.button.RoundedButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.component.ActionTitle": "../../../../webapp/Connector/src/component/ActionTitle.js",
   "Connector.component.AdvancedOptionBase": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionDimension": "../../../../webapp/Connector/src/component/AdvancedOption.js",
@@ -121,7 +120,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSaveList": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSummary": "../../../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.GroupSummaryBody": "../../../../webapp/Connector/src/view/GroupSummary.js",
-  "Connector.view.GroupSummaryHeader": "../../../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeHeader": "../../../../webapp/Connector/src/view/HomeHeader.js",
@@ -219,7 +217,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.app.view.module.StudySites": [],
   "Connector.button.Image": [],
   "Connector.button.InfoButton": [],
-  "Connector.button.RoundedButton": [],
   "Connector.component.ActionTitle": [],
   "Connector.component.AdvancedOptionBase": [],
   "Connector.component.AdvancedOptionDimension": [],
@@ -315,7 +312,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSaveList": [],
   "Connector.view.GroupSummary": [],
   "Connector.view.GroupSummaryBody": [],
-  "Connector.view.GroupSummaryHeader": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
   "Connector.view.HomeHeader": [],
@@ -1234,9 +1230,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.button.InfoButton": [
     "widget.infobutton"
   ],
-  "Connector.button.RoundedButton": [
-    "widget.roundedbutton"
-  ],
   "Connector.component.ActionTitle": [
     "widget.actiontitle"
   ],
@@ -1383,12 +1376,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.GroupSummary": [
     "widget.groupsummary"
   ],
-  "Connector.view.GroupSummaryBody": [
-    "widget.groupsummarybody"
-  ],
-  "Connector.view.GroupSummaryHeader": [
-    "widget.groupsummaryheader"
-  ],
+  "Connector.view.GroupSummaryBody": [],
   "Connector.view.Header": [
     "widget.connectorheader"
   ],
@@ -1426,7 +1414,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Page": [],
   "Connector.view.PageHeader": [
-    "widget.learnpageheader"
+    "widget.pageheader"
   ],
   "Connector.view.PlotPane": [],
   "Connector.view.Selection": [

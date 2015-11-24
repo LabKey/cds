@@ -3,15 +3,6 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.button.RoundedButton', {
-
-    extend: 'Ext.button.Button',
-
-    alias: 'widget.roundedbutton',
-
-    ui: 'rounded'
-});
-
 Ext.define('Connector.button.InfoButton', {
 
     extend: 'Ext.button.Button',

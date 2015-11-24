@@ -1,0 +1,96 @@
+@import 'variables';
+
+@mixin light-georgia {
+	font-family: "Georgia";
+	font-weight: 100;
+	color: $dark-text;
+};
+
+@mixin light-arial {
+	font-family: "Arial";
+	font-weight: 100;
+	color: $dark-text;
+};
+
+@mixin modal-close {
+	background-color: $navigation-pink;
+	width: 1.33em;
+	opacity: 1;
+	height: 1.33em;
+	font-size: 1em;
+	line-height: 1.33em;
+	color: white;
+	&:hover {
+		background-color: $navigation-pink-hover;
+	}
+}
+
+@mixin tablet {
+	@media only screen and (max-width : $tablet-width) {
+		@content;
+	}
+}
+
+@mixin phone {
+	@media only screen and (max-width : $phone-width) {
+		@content;
+	}
+}
+
+@mixin media($size) {
+	@media only screen and (max-width : $size) {
+		@content;
+	}
+}
+@mixin keyframe ($animation_name) {
+    @-webkit-keyframes $animation_name {
+        @content;
+    }
+
+    @-moz-keyframes $animation_name {
+        @content;
+    }
+
+    @-o-keyframes $animation_name {
+        @content;
+    }
+
+    @keyframes $animation_name {
+        @content;
+    }
+}
+
+@include keyframe(fadeout) {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@include keyframe(fadein) {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@mixin animation ($delay, $duration, $animation) {
+		@include prefixer(animation-delay, $delay, webkit ms moz o spec);
+		@include prefixer(animation-duration, $duration, webkit ms moz o spec);
+		@include prefixer(animation-name, $animation, webkit ms moz o spec);
+		@include prefixer(animation-fill-mode, forwards, webkit ms moz o spec);
+}
+
+.fadein {
+	@include animation(0s, 0.4s, fadein);
+}
+
+.fadeout {
+	@include animation(0s, 0.4s, fadeout);
+}

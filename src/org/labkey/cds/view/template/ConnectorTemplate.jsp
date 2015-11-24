@@ -74,7 +74,8 @@
                 imgPath: <%=PageFlowUtil.jsString(imageResourcePath)%>
             },
             user: {
-                isAnalyticsUser: <%=model.isAnalyticsUser()%>
+                isAnalyticsUser: <%=model.isAnalyticsUser()%>,
+                properties: <%=model.getUserProperties()%>
             }
         };
 
@@ -197,6 +198,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/component/AntigenSelection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/DropDown.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/GridPager.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/component/News.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/component/Started.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractFilter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>

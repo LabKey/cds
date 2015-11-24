@@ -392,9 +392,6 @@ Ext.define('Connector.view.Chart', {
                 border: false,
                 flex: 10,
                 cls: 'plot',
-                style: {
-                    'background-color': '#FFFFFF'
-                },
                 listeners: {
                     afterrender: {
                         fn: function(box) {
@@ -545,15 +542,15 @@ Ext.define('Connector.view.Chart', {
             return;
         }
 
-        if (this.ywin && this.ywin.isVisible()) {
+        if (this.ywin) {
             this.updateSelectorWindow(this.ywin);
         }
 
-        if (this.xwin && this.xwin.isVisible()) {
+        if (this.xwin) {
             this.updateSelectorWindow(this.xwin);
         }
 
-        if (this.colorwin && this.colorwin.isVisible()) {
+        if (this.colorwin) {
             this.updateSelectorWindow(this.colorwin);
         }
 
@@ -756,8 +753,8 @@ Ext.define('Connector.view.Chart', {
             gridLineWidth: 1.25,
             gridLinesVisible: 'both',
             borderWidth: 2,
-            gridColor : ChartUtils.colors.WHITE,
-            bgColor: ChartUtils.colors.WHITE,
+            gridColor : ChartUtils.colors.GRAYBACKGROUND,
+            bgColor: ChartUtils.colors.GRAYBACKGROUND,
             tickColor: ChartUtils.colors.WHITE,
             tickTextColor: this.labelTextColor // $heat-scale-1
         };
@@ -813,9 +810,9 @@ Ext.define('Connector.view.Chart', {
             aes : aes,
             scales : scales,
             tickLength : 0,
-            gridColor : ChartUtils.colors.GRIDBKGD,
+            gridColor : ChartUtils.colors.WHITE,
             gridLineColor : ChartUtils.colors.GRIDLINE,
-            borderColor : ChartUtils.colors.WHITE
+            borderColor : ChartUtils.colors.GRIDLINE
         });
     },
 
@@ -1327,7 +1324,7 @@ Ext.define('Connector.view.Chart', {
                 maxCharPerLine: 9,
                 lineWrapAlign: 'end',
                 cls: 'xGutter-label',
-                bkgdColor: ChartUtils.colors.GRIDBKGD,
+                bkgdColor: ChartUtils.colors.GRAYBACKGROUND,
                 bkgdWidth: 70,
                 listeners: {
                     mouseover: function() {
@@ -1383,7 +1380,7 @@ Ext.define('Connector.view.Chart', {
                 cls: 'yGutter-label',
                 maxCharPerLine: 10,
                 lineWrapAlign: 'start',
-                bkgdColor: ChartUtils.colors.GRIDBKGD,
+                bkgdColor: ChartUtils.colors.GRAYBACKGROUND,
                 bkgdHeight: 100,
                 bkgdWidth: this.yGutterWidth - 15,
                 listeners: {
@@ -1479,8 +1476,6 @@ Ext.define('Connector.view.Chart', {
             {
                 console.warn('xAxisClick() occurred without a valid activeMeasures.x');
             }
-
-            this.showMessage('Hold Shift, CTRL, or CMD to select multiple');
         }
     },
 
@@ -3144,6 +3139,7 @@ Ext.define('Connector.view.Chart', {
         var win = Ext.create('Ext.window.Window', {
             ui: 'axiswindow',
             minHeight: 580,
+            maxHeight: Connector.panel.Selector.maximumHeight,
             modal: true,
             draggable: false,
             header: false,

@@ -98,6 +98,8 @@
         <script path="Connector/src/component/AntigenSelection.js"/>
         <script path="Connector/src/component/DropDown.js"/>
         <script path="Connector/src/component/GridPager.js"/>
+        <script path="Connector/src/component/News.js"/>
+        <script path="Connector/src/component/Started.js"/>
         <script path="Connector/src/window/AbstractFilter.js"/>
         <script path="Connector/src/window/Filter.js"/>
         <script path="Connector/src/window/Facet.js"/>
@@ -115,11 +117,11 @@
         <script path="Connector/src/plugin/LoadingMask.js"/>
 
         <!-- Constant singletons -->
-        <script path="Connector/src/constant/Templates.js"></script>
-        <script path="Connector/src/constant/ModuleViewsLookup.js"></script>
+        <script path="Connector/src/constant/Templates.js"/>
+        <script path="Connector/src/constant/ModuleViewsLookup.js"/>
 
         <!-- Factories -->
-        <script path="Connector/src/factory/Module.js"></script>
+        <script path="Connector/src/factory/Module.js"/>
 
         <!-- Application Stores -->
         <script path="Connector/src/store/AssayDistinctValue.js"/>

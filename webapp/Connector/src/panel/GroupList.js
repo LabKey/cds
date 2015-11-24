@@ -48,7 +48,7 @@ Ext.define('Connector.view.GroupListView', {
 
     loadMask: false,
 
-    cls: 'grouplist-view top-spacer-xlg',
+    cls: 'grouplist-view',
 
     overItemCls: 'grouplist-over',
 

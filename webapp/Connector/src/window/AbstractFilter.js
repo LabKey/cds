@@ -81,7 +81,7 @@ Ext.define('Connector.window.AbstractFilter', {
         return {
             xtype: 'toolbar',
             dock: 'top',
-            ui: 'footer',
+            ui: 'actionheader',
             cls: 'filter-top-toolbar',
             items: [
                 {
@@ -107,27 +107,29 @@ Ext.define('Connector.window.AbstractFilter', {
             xtype: 'toolbar',
             dock: 'bottom',
             ui: 'footer',
-            cls: 'dark-toolbar',
-            height: 30,
-            items: ['->',{
-                itemId: 'dofilter',
-                text: 'Filter',
-                cls: 'filter-btn',
-                handler: this.applyFiltersAndColumns,
-                scope: this
-            },{
-                itemId: 'docancel',
-                text : 'Cancel',
-                cls: 'filter-btn',
-                handler : this.close,
-                scope : this
-            },{
+            items: ['->',
+             {
                 itemId: 'doclear',
                 text : 'Clear',
                 cls: 'filter-btn',
                 handler : this.onClear,
                 scope: this
-            }]
+            },
+            {
+                itemId: 'docancel',
+                text : 'Cancel',
+                cls: 'filter-btn',
+                handler : this.close,
+                scope : this
+            },
+            {
+                itemId: 'dofilter',
+                text: 'Filter',
+                cls: 'filter-btn',
+                handler: this.applyFiltersAndColumns,
+                scope: this
+            }
+            ]
         };
     },
 

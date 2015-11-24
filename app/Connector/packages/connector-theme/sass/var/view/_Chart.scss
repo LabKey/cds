@@ -28,10 +28,6 @@
   display: block;
 }
 
-.x-window-default, .x-window-header-default-top {
-  background: transparent!important;
-}
-
 .xaxisbutton {
   margin-top: 1%;
   margin-left: 49.5%;
@@ -134,4 +130,23 @@ div.plotmodeon {
 
 div.plot-scroll {
   overflow-x: scroll;
+}
+
+
+#xvarselector,
+#yvarselector {
+  &.active {
+    background-color: #fff;  
+    border: 1px solid $gray-9;
+
+    .x-box-item {
+      background-color: transparent;
+    }
+  }
+
+  background-color: transparent;
+  border: none;
+  .x-box-item {
+    background-color: transparent;
+  }
 }

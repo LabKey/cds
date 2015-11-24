@@ -18,6 +18,7 @@ package org.labkey.test.util;
 import com.google.common.base.Function;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.Nullable;
+import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
@@ -30,6 +31,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.text.NumberFormat;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class CDSHelper
 {
@@ -485,7 +488,7 @@ public class CDSHelper
             _test.setFormElement(Locator.name("groupdescription"), description);
 
         applyAndMaybeWaitForBars(aVoid -> {
-            _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
+            _test.click(Locators.cdsButtonLocator("Save", "groupcreatesave"));
             return null;
         });
     }
@@ -495,7 +498,7 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
         _test.click(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
         _test.waitAndClick(Locator.tagWithClass("div", "save-label").withText(name));
-        _test.click(Locators.cdsButtonLocator("save", "groupupdatesave"));
+        _test.click(Locators.cdsButtonLocator("Save", "groupupdatesave"));
     }
 
     public void selectBars(String... bars)
@@ -739,10 +742,10 @@ public class CDSHelper
         Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing.toBy()));
         _test.click(groupListing);
-        _test.waitForElement(Locators.cdsButtonLocator("delete"));
-        _test.click(Locators.cdsButtonLocator("delete"));
+        _test.waitForElement(Locators.cdsButtonLocator("Delete"));
+        _test.click(Locators.cdsButtonLocator("Delete"));
         _test.waitForText("Are you sure you want to delete");
-        _test.click(Locator.linkContainingText("Delete"));
+        _test.click(Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
         _test.waitForText(HOME_PAGE_HEADER);
         _test.waitForElementToDisappear(groupListing);
         _test.sleep(500);
@@ -878,6 +881,22 @@ public class CDSHelper
             _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
         }
 
+    }
+
+    public void assertPlotTickText(String expectedTickText)
+    {
+        assertPlotTickText(1, expectedTickText);
+    }
+
+    @LogMethod(quiet = true)
+    public void assertPlotTickText(int svgIndex, String expectedTickText)
+    {
+        // Firefox removes the \n when returning the text, so going to go to lowest common denominator (Firefox).
+        String modifiedExpected = expectedTickText.replace("\n", "").toLowerCase();
+        String shownText = _test.getText(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text").index(0));
+        shownText = shownText + _test.getText(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text").index(1));
+        shownText = shownText.replace("\n", "").toLowerCase();
+        Assert.assertTrue("SVG did not look as expected. Expected: " + modifiedExpected + " Actual: " + shownText, shownText.equals(modifiedExpected));
     }
 
     private void applyAndMaybeWaitForBars(Function<Void, Void> function)
@@ -1032,6 +1051,11 @@ public class CDSHelper
         public static Locator.XPathLocator activeDimensionHeaderLocator(String dimension)
         {
             return Locator.tagWithClass("div", "dim-selector").append(Locator.tagWithClass("h1", "active").withText(dimension));
+        }
+
+        public static Locator.XPathLocator pageHeaderBack()
+        {
+            return Locator.tagWithClass("span", "iarrow");
         }
 
         public static Locator.XPathLocator selectionPane()
