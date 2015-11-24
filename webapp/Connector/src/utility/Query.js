@@ -397,7 +397,7 @@ Ext.define('Connector.utility.Query', {
         {
             orderSQL = "\nORDER BY 1 ASC";
 
-            if (psnFilter)
+            if (psnFilter && options.subjectOnly)
             {
                 var psnSelect = [union, 'SELECT '],
                     sep = '\n\t';
