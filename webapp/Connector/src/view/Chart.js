@@ -395,9 +395,6 @@ Ext.define('Connector.view.Chart', {
                 border: false,
                 flex: 10,
                 cls: 'plot',
-                style: {
-                    'background-color': '#FFFFFF'
-                },
                 listeners: {
                     afterrender: {
                         fn: function(box) {
