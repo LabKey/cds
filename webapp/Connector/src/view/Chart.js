@@ -2568,12 +2568,12 @@ Ext.define('Connector.view.Chart', {
         var percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2);
 
         ChartUtils.showCallout({
-            bubbleWidth: 325,
+            bubbleWidth: 230,
             target: document.querySelector("svg g text.xGutter-label"),
             placement: 'top',
             title: 'Percent with undefined Y value: ' + percent + '%',
             content: 'Data points may have no matching Y value due to differing visits, antigens, or assay dimensions. See Help for more details.',
-            xOffset: -20
+            xOffset: 0
         }, 'hideguttermsg', this);
     },
 
@@ -2582,13 +2582,13 @@ Ext.define('Connector.view.Chart', {
         var percent = Ext.util.Format.round((data.undefinedX.length / data.totalCount) * 100, 2);
 
         ChartUtils.showCallout({
-            bubbleWidth: 325,
+            bubbleWidth: 230,
             target: document.querySelector("svg g text.yGutter-label"),
             placement: 'right',
             title: 'Percent with undefined X value: ' + percent + '%',
             content: 'Data points may have no matching X value due to differing visits, antigens, or assay dimensions. See Help for more details.',
-            yOffset: -40,
-            arrowOffset: 30
+            yOffset: -100,
+            arrowOffset: 100
         }, 'hideguttermsg', this);
     },
 
@@ -2613,8 +2613,8 @@ Ext.define('Connector.view.Chart', {
                 target: this.getLogScaleModeIndicator().getEl().dom,
                 placement: 'bottom',
                 title: 'Log filter on',
-                xOffset: -115,
-                arrowOffset: 145,
+                xOffset: -65,
+                arrowOffset: 100,
                 content: 'Values ≤ 0 have no log. ' + Ext.util.Format.number(this.invalidLogPlotRowCount, '0,000')
                     + ' points are not plotted but are still included in the grid and subject count.'
                     + ' Use a linear scale to see all values.'
@@ -2643,8 +2643,8 @@ Ext.define('Connector.view.Chart', {
                 target: this.getHeatmapModeIndicator().getEl().dom,
                 placement: 'bottom',
                 title: 'Heatmap on',
-                xOffset: -115,
-                arrowOffset: 145,
+                xOffset: -65,
+                arrowOffset: 100,
                 content: 'There are too many dots to show interactively. Higher data density is represented by darker'
                 + ' tones. Color variables are disabled. Reduce the amount of data plotted to see dots again.'
             };
@@ -2671,8 +2671,8 @@ Ext.define('Connector.view.Chart', {
                 target: this.getMedianModeIndicator().getEl().dom,
                 placement: 'bottom',
                 title: 'Median values',
-                xOffset: -105,
-                arrowOffset: 145,
+                xOffset: -65,
+                arrowOffset: 100,
                 content: 'To enable an x-y plot, each subject now has one dot for its median response value at each visit.'
                 + ' To see individual responses, narrow the choices in the X and Y controls.'
             };

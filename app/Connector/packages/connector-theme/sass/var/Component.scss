@@ -687,7 +687,10 @@ div.emptytext {
 div.hopscotch-bubble {
   border: 1px solid $border-color;
   @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
-  max-width: 200px;
+
+  .hopscotch-bubble-container {
+    max-width: 200px;
+  }
 
   .hopscotch-title {
     font-size: 13px;
@@ -695,7 +698,6 @@ div.hopscotch-bubble {
   }
 
   .hopscotch-content {
-    width: 180px;
     margin: 0;
     padding: 0;
     font-family: $info-font;
