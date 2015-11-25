@@ -2328,7 +2328,7 @@ Ext.define('Connector.view.Chart', {
                         {
                             measures = measures.concat(xMeasures);
 
-                            if (filter.isPlot())
+                            if (filter.isPlot() && filter.get('gridFilter')[0])
                             {
                                 hasPlotSelectionFilter.x = true;
                             }
@@ -2342,7 +2342,7 @@ Ext.define('Connector.view.Chart', {
                         {
                             measures = measures.concat(yMeasures);
 
-                            if (filter.isPlot())
+                            if (filter.isPlot() && filter.get('gridFilter')[2])
                             {
                                 hasPlotSelectionFilter.y = true;
                             }
