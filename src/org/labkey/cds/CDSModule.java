@@ -176,7 +176,7 @@ public class CDSModule extends DefaultModule
     {
         if (!mp.isCanSetPerContainer() || null==c)
             c = ContainerManager.getRoot();
-        return PropertyManager.getProperty(PropertyManager.SHARED_USER,c,mp.getCategory(),mp.getName());
+        return mp.getEffectiveValue(c);
     }
 
 
