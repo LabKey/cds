@@ -741,13 +741,18 @@ Ext.define('Connector.panel.Selector', {
             return;
         }
 
-        var source = this.getSourceForMeasure(this.activeMeasure);
+        var source = this.getSourceForMeasure(this.activeMeasure),
+            selectorMeasure;
 
         this.getHierarchySelectionPane().removeAll();
+
+        selectorMeasure = Ext.clone(this.activeMeasure.data);
+        selectorMeasure.options = this.getAdvancedOptionValues();
 
         var antigenSelectionPanel = Ext.create('Connector.panel.AntigenSelection', {
             plotAxis: this.plotAxis,
             dimension: advancedOptionCmp.dimension,
+            selectorMeasure: selectorMeasure,
             initSelection: advancedOptionCmp.value,
             measureSetStore: this.measureSetStore,
             filterOptionValues: this.getFilterValuesMap(advancedOptionCmp.dimension)
@@ -1000,8 +1005,12 @@ Ext.define('Connector.panel.Selector', {
                             }
                         });
                     }
-                    else {
-                        cmp.showDropdownPanel(this.getFilterValuesMap(dimension), this.plotAxis);
+                    else
+                    {
+                        var selectedMeasure = Ext.clone(this.activeMeasure.data);
+                        selectedMeasure.options = this.getAdvancedOptionValues();
+
+                        cmp.showDropdownPanel(this.getFilterValuesMap(dimension), selectedMeasure, this.plotAxis);
                     }
                 },
                 change: function(cmp) {

@@ -628,5 +628,42 @@ Ext.define('Connector.utility.Chart', {
         {
             callback.call(scope, undefined);
         }
+    },
+
+    /**
+     * A comparator to determine if a filter from measureB qualifies against measureA. Determine by the following:
+     *    1) the measureB filter is from a demographic dataset or from GridBase (which can always be applied)
+     *    2) the measureB filter is a grid filter (i.e. no assay dimensions) from the same source as measureA
+     *    3) the measureB filter is an exact match based on sourceKey and assay dimension filters to measureA
+     * @param measureA
+     * @param measureB
+     * @returns {boolean}
+     */
+    filterMeasureComparitor : function(measureA, measureB)
+    {
+        var gridBaseKey = Connector.studyContext.gridBaseSchema + '|' + Connector.studyContext.gridBase,
+                measureAKey = measureA.schemaName + '|' + measureA.queryName,
+                measureBKey = measureB.schemaName + '|' + measureB.queryName;
+
+        // case #1 from comment above
+        if (measureB.isDemographic === true || gridBaseKey.toLowerCase() == measureBKey.toLowerCase())
+        {
+            return true;
+        }
+        else if (measureA.isDemographic === true || !ChartUtils.hasMeasureAssayDimensions(measureA))
+        {
+            return false;
+        }
+
+        // case #2 from comment above
+        if (!ChartUtils.hasMeasureAssayDimensions(measureB))
+        {
+            return measureAKey == measureBKey;
+        }
+        // case #3 from comment above
+        else
+        {
+            return measureAKey == measureBKey && ChartUtils.getAssayDimensionsWithDifferentValues(measureA, measureB).length == 0;
+        }
     }
 });

@@ -659,7 +659,7 @@ public class CDSTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 148); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 151); // TODO Test data dependent.
         }
     }
 

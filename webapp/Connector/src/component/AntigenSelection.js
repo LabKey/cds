@@ -24,6 +24,7 @@ Ext.define('Connector.panel.AntigenSelection', {
 
         Connector.getQueryService().getMeasureValueSubjectCount(
             this.hierarchyMeasures[this.hierarchyMeasures.length - 1],
+            this.selectorMeasure,
             this.measureSetStore.measureSet,
             this.filterOptionValues,
             this.plotAxis,

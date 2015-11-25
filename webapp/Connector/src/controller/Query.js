@@ -394,6 +394,7 @@ Ext.define('Connector.controller.Query', {
      * Use the cds getData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
      *      for showing which values are relevant in the variable selector Advanced Options panels.
      * @param {Object} dimension
+     * @param {Object} selectorMeasure
      * @param {Array} measureSet
      * @param {Array} filterValuesMap
      * @param {String} plotAxis
@@ -401,10 +402,10 @@ Ext.define('Connector.controller.Query', {
      * @param {Object} [scope]
      * @returns {Object}
      */
-    getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, plotAxis, callback, scope) {
+    getMeasureSetGetDataResponse : function(dimension, selectorMeasure, measureSet, filterValuesMap, plotAxis, callback, scope) {
         var subjectMeasure,
             wrappedMeasureSet = [],
-            aliases = [],
+            applicableMeasures,
             measureData,
             alias;
 
@@ -428,8 +429,6 @@ Ext.define('Connector.controller.Query', {
 
                 subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
                 subjectMeasure.values = subjectFilter.subjects;
-
-                aliases.push(Connector.studyContext.subjectColumn);
                 wrappedMeasureSet.push({measure: subjectMeasure});
 
                 Ext.each(measureSet, function(measure)
@@ -440,9 +439,21 @@ Ext.define('Connector.controller.Query', {
                         measureData.values = filterValuesMap[measure.get('alias')];
                     }
 
-                    aliases.push(measure.get('alias'));
                     wrappedMeasureSet.push({measure: measureData});
                 });
+
+                // Issue 24894: Brush filter doesn't get applied to variable selector antigen subject count
+                Ext.each(Connector.getState().getFilters(), function(filter)
+                {
+                    if (filter.isGrid())
+                    {
+                        applicableMeasures = filter.getPlotAxisMeasures(null, selectorMeasure, ChartUtils.filterMeasureComparitor);
+                        if (applicableMeasures.length > 0)
+                        {
+                            wrappedMeasureSet = wrappedMeasureSet.concat(applicableMeasures);
+                        }
+                    }
+                }, this);
 
                 QueryUtils.getData({
                     measures: wrappedMeasureSet,
@@ -471,10 +482,10 @@ Ext.define('Connector.controller.Query', {
      * @param {Object} [scope]
      * @returns {Object}
      */
-    getMeasureValueSubjectCount : function(dimension, measureSet, filterValuesMap, plotAxis, callback, scope) {
-
+    getMeasureValueSubjectCount : function(dimension, selectorMeasure, measureSet, filterValuesMap, plotAxis, callback, scope)
+    {
         // get the temp query information from the cds getData API call for the measureSet with the application filters added in
-        this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, plotAxis, function(response) {
+        this.getMeasureSetGetDataResponse(dimension, selectorMeasure, measureSet, filterValuesMap, plotAxis, function(response) {
             var alias = dimension.getFilterMeasure().get('alias'), sql;
 
             // SQL to get the subject count for each value of the filter measure
