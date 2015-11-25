@@ -68,18 +68,18 @@ public class CDSAsserts
         assertEquals("Wrong total for search by " + byNoun + ".", expectedTotal, actualTotal);
     }
 
-    private void assertSelectionStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount, int maxCount)
+    private void assertSelectionStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int speciesCount, int contributorCount, int antigenCount, int maxCount)
     {
         cds.selectBars(barLabel);
-        assertFilterStatusCounts(subjectCount, studyCount, assayCount);
+        assertFilterStatusCounts(subjectCount, studyCount, speciesCount, -1, -1);
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(filteredLabel), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
     }
 
     // Sequential calls to this should have different subject counts.
-    private void assertFilterStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount, int maxCount)
+    private void assertFilterStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int speciesCount, int contributorCount, int antigenCount, int maxCount)
     {
         cds.selectBars(barLabel);
-        assertFilterStatusCounts(subjectCount, studyCount, assayCount);
+        assertFilterStatusCounts(subjectCount, studyCount, speciesCount, -1, -1);
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(filteredLabel), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
     }
 
@@ -198,12 +198,6 @@ public class CDSAsserts
         assertFilterStatusCounts(8277, 51, 2, 4, 277); // TODO Test data dependent.
     }
 
-    @Deprecated // use version that has all 5 counts below
-    public void assertSelectionStatusCounts(int subjectCount, int studyCount, int speciesCount)
-    {
-        assertSelectionStatusCounts(subjectCount, studyCount, speciesCount, -1, -1);
-    }
-
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int speciesCount, int productCount, int treatmentCount)
     {
         if(subjectCount > -1)
@@ -230,12 +224,6 @@ public class CDSAsserts
         {
             _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(treatmentCount, "Treatment"));
         }
-    }
-
-    @Deprecated // use version that has all 5 counts below
-    public void assertFilterStatusCounts(int subjectCount, int studyCount, int speciesCount)
-    {
-        assertFilterStatusCounts(subjectCount, studyCount, speciesCount, -1, -1);
     }
 
     public void assertFilterStatusCounts(int subjectCount, int studyCount, int speciesCount, int productCount, int treatmentCount)
