@@ -444,7 +444,7 @@ public class CDSHelper
     {
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
-        _test.addUrlParameter("_showPlotData=true&_disableAutoMsg=true");
+        _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
         _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));

@@ -1017,17 +1017,17 @@ public class CDSTest extends CDSReadOnlyTest
         // 14902
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[0]);
-        _asserts.assertSelectionStatusCounts(5, 1, -1);
+        _asserts.assertSelectionStatusCounts(5, 1, 1, 2, 2);
 
         cds.useSelectionAsSubjectFilter();
         cds.hideEmpty();
         waitForElementToDisappear(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[1]), CDSHelper.CDS_WAIT);
-        _asserts.assertFilterStatusCounts(5, 1, -1);
+        _asserts.assertFilterStatusCounts(5, 1, 1, 2, 2);
         cds.goToSummary();
 
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[0]);
-        _asserts.assertSelectionStatusCounts(5, 1, -1);
+        _asserts.assertSelectionStatusCounts(5, 1, 1, 2, 2);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         cds.clearFilters();
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[2]), CDSHelper.CDS_WAIT);
@@ -1036,31 +1036,31 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[1]);
-        _asserts.assertSelectionStatusCounts(84, 1, -1);
+        _asserts.assertSelectionStatusCounts(84, 1, 1, 1, 5);
         cds.applySelection(CDSHelper.STUDIES[2]);
-        _asserts.assertSelectionStatusCounts(30, 1, -1);
+        _asserts.assertSelectionStatusCounts(30, 1, 1, 1, 4);
         cds.clearSelection();
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.applySelection(CDSHelper.ASSAYS[0]);
-        _asserts.assertSelectionStatusCounts(75, 1, -1);
+        _asserts.assertSelectionStatusCounts(75, 1, 1, 1, 8);
         cds.applySelection(CDSHelper.ASSAYS[1]);
-        _asserts.assertSelectionStatusCounts(1604, 14, -1);
+        _asserts.assertSelectionStatusCounts(1604, 14, 2, 1, 86);
         cds.applySelection(CDSHelper.ASSAYS[2]);
-        _asserts.assertSelectionStatusCounts(477, 4, -1);
+        _asserts.assertSelectionStatusCounts(477, 4, 1, 1, 31);
         cds.applySelection(CDSHelper.ASSAYS[3]);
-        _asserts.assertSelectionStatusCounts(337, 5, -1);
+        _asserts.assertSelectionStatusCounts(337, 5, 1, 1, 20);
         cds.clearSelection();
         cds.goToSummary();
         cds.clickBy("Subject characteristics");
         _asserts.assertDefaultFilterStatusCounts();
         cds.pickSort("Country at enrollment");
         cds.applySelection("South Africa");
-        _asserts.assertSelectionStatusCounts(43, 21, -1);
+        _asserts.assertSelectionStatusCounts(43, 21, 1, 1, 27);
         cds.applySelection("United States");
-        _asserts.assertSelectionStatusCounts(2797, 49, -1);
+        _asserts.assertSelectionStatusCounts(2797, 49, 1, 3, 223);
         cds.applySelection("Thailand");
-        _asserts.assertSelectionStatusCounts(98, 32, -1);
+        _asserts.assertSelectionStatusCounts(98, 32, 1, 3, 45);
     }
 
     @Test
@@ -1072,11 +1072,11 @@ public class CDSTest extends CDSReadOnlyTest
         // 14910
         cds.goToSummary();
         cds.clickBy("Study products");
-        waitForFormElementToEqual(hierarchySelector, "Product Type");
+        cds.pickSort("Product Type");
         cds.shiftSelectBars("Adjuvant", "Risperidone");
         waitForElement(CDSHelper.Locators.filterMemberLocator("benztropine mesylate"), WAIT_FOR_JAVASCRIPT);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("Adjuvant, benztropine mesylate, Risperidone"));
-        _asserts.assertSelectionStatusCounts(5, 1, -1);
+        _asserts.assertSelectionStatusCounts(5, 1, 1, 2, 2);
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts();
         // end 14910
@@ -1088,7 +1088,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(CDSHelper.STUDIES[4], false);
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
         cds.saveGroup(GROUP_NAME, GROUP_DESC);
-        _asserts.assertFilterStatusCounts(194, 2, -1);
+        _asserts.assertFilterStatusCounts(194, 2, 1, 1, 8);
         cds.clearFilters();
         _asserts.assertDefaultFilterStatusCounts();
 
@@ -1096,18 +1096,18 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[4]);
-        _asserts.assertSelectionStatusCounts(115, 2, -1);  // or
+        _asserts.assertSelectionStatusCounts(115, 2, 1, 3, 5);  // or
         assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
         mouseOver(Locator.css("option").withText("Subjects related to any (OR)"));
 
         WebElement selector = Locator.css("select").findElement(getDriver());
         assertEquals("Wrong initial combo selection", "UNION", selector.getAttribute("value"));
         selectOptionByValue(selector, "INTERSECT");
-        _asserts.assertSelectionStatusCounts(0, 0, -1); // and
+        _asserts.assertSelectionStatusCounts(0, 0, 0, 0, 0); // and
         cds.useSelectionAsSubjectFilter();
         cds.hideEmpty();
         waitForText("None of the selected");
-        _asserts.assertFilterStatusCounts(0, 0, -1); // and
+        _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0); // and
 
         selector = Locator.css("select").findElement(getDriver());
         waitForElement(Locator.css("option").withText("Subjects related to all (AND)"));
@@ -1115,13 +1115,13 @@ public class CDSTest extends CDSReadOnlyTest
 
         assertEquals("Combo box selection changed unexpectedly", "INTERSECT", selector.getAttribute("value"));
         selectOptionByValue(selector, "UNION");
-        _asserts.assertFilterStatusCounts(115, 2, -1);  // or
+        _asserts.assertFilterStatusCounts(115, 2, 1, 3, 5);  // or
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
         cds.goToSummary();
         cds.clickBy("Assays");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
-        _asserts.assertFilterStatusCounts(115, 2, -1);  // or
+        _asserts.assertFilterStatusCounts(115, 2, 1, 3, 5);  // or
         cds.clearFilters();
         _asserts.assertDefaultFilterStatusCounts();
 
@@ -1129,10 +1129,10 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
-        _asserts.assertSelectionStatusCounts(75, 1, -1);
+        _asserts.assertSelectionStatusCounts(75, 1, 1, 1, 8);
         cds.pickDimension("Studies");
         waitForText("Selection applied as filter.");
-        _asserts.assertFilterStatusCounts(75, 1, -1);
+        _asserts.assertFilterStatusCounts(75, 1, 1, 1, 8);
         cds.clearFilters();
         waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[32]);
         cds.selectBars(CDSHelper.STUDIES[32]);

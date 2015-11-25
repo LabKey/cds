@@ -3293,6 +3293,11 @@ Ext.define('Connector.view.Chart', {
     },
 
     onSelectionChange : function(selections) {
+        // only proceed if the chart is the active view and we have at least a y-axis measure
+        if (!this.isActiveView || !this.activeMeasures.y) {
+            return;
+        }
+
         if (selections.length === 0)
         {
             var ex = this.plot.getBrushExtent();
