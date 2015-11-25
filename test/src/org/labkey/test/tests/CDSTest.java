@@ -152,7 +152,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
-        _asserts.assertFilterStatusCounts(139, 12, 1, 1, 39);
+        _asserts.assertFilterStatusCounts(139, 12, 1, 1, 41);
 
         final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
         final String saveLabel = "Group \"A Plotted...\" saved.";
@@ -170,14 +170,14 @@ public class CDSTest extends CDSReadOnlyTest
         waitAndClick(clippedLabel);
         waitForText("Your filters have been");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
-        _asserts.assertFilterStatusCounts(139, 12, 1, 1, 39); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(139, 12, 1, 1, 41); // TODO Test data dependent.
 
         // remove just the plot filter
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         cds.clearFilter(0);
         cds.saveOverGroup(HOME_PAGE_GROUP);
         waitForText(saveLabel);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 152); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154); // TODO Test data dependent.
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForElementToDisappear(Locator.css("div.groupicon img"));
     }
@@ -260,7 +260,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(productMember, true);
         cds.selectInfoPaneItem(productMember2, false);
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
-        _asserts.assertFilterStatusCounts(8272, 50, 2, 2, 275); // default is 'OR'
+        _asserts.assertFilterStatusCounts(8272, 50, 2, 2, 278); // default is 'OR'
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(productMember2));
         cds.selectInfoPaneOperator(true);
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
@@ -396,7 +396,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
-        _asserts.assertFilterStatusCounts(1604, 14, 2, 1, 86); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(1604, 14, 2, 1, 89); // TODO Test data dependent.
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
@@ -616,7 +616,7 @@ public class CDSTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 148); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 151); // TODO Test data dependent.
         }
 
         //
@@ -697,7 +697,7 @@ public class CDSTest extends CDSReadOnlyTest
         grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
         log("Validating grid counts");
-        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 41);
+        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 44);
         grid.assertPageTotal(27);
         grid.assertRowCount(658);
 

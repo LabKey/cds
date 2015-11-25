@@ -195,7 +195,7 @@ public class CDSAsserts
 
     public void assertDefaultFilterStatusCounts()
     {
-        assertFilterStatusCounts(8277, 51, 2, 4, 277); // TODO Test data dependent.
+        assertFilterStatusCounts(8277, 51, 2, 4, 280); // TODO Test data dependent.
     }
 
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int speciesCount, int productCount, int treatmentCount)

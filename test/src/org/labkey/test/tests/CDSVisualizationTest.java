@@ -342,7 +342,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
         xaxis.confirmSelection();
-        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14";
+        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/13/2011\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
@@ -354,7 +354,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_FUP_COMP);
         xaxis.confirmSelection();
-        expectedXYValues = "1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14";
+        expectedXYValues = "1/10/2008\n8/11/2009\n3/13/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
@@ -366,7 +366,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_PUB);
         xaxis.confirmSelection();
-        expectedXYValues = "3/12/2011\n7/6/2011\n10/30/2011\n2/23/2012\n6/17/2012\n10/11/2012\n2/4/2013\n5/31/2013\n0\n2\n4\n6\n8\n10\n12\n14";
+        expectedXYValues = "3/13/2011\n7/6/2011\n10/30/2011\n2/23/2012\n6/18/2012\n10/11/2012\n2/4/2013\n5/31/2013\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
@@ -378,7 +378,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_START);
         xaxis.confirmSelection();
-        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14";
+        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/13/2011\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
@@ -476,11 +476,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         int actualTickCount;
         String cssColorLegend = "#colorvarselector-innerCt  svg > path.legend-point";
 
+        addRaceFilter(CDSHelper.RACE_BLACK);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
+
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
-
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
@@ -488,14 +488,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType("All");
         yaxis.confirmSelection();
 
-        cds.openStatusInfoPane("Races");
-        sleep(500);
-        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
-        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
-
-        sleep(500); // Wait for the mask to show up.
-        _ext4Helper.waitForMaskToDisappear();
-
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
         coloraxis.openSelectorWindow();
         coloraxis.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
         coloraxis.pickVariable(CDSHelper.DEMO_STUDY_NAME);
@@ -695,9 +688,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.NAB_INIT_DILUTION);
         xaxis.confirmSelection();
 
-        String expectedXYValues = "10\nnull\n1\n10\n100\n1000";
+        String expectedXYValues = "10\n1\n10\n100\n1000";
         cds.assertPlotTickText(expectedXYValues);
-        assertFalse("Therer is an x-gutter, and there should not be.", hasXGutter());
+        assertFalse("There is an x-gutter, and there should not be.", hasXGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
@@ -1064,13 +1057,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.clearFilters();
 
         log("Validating subject count with a filter of race-asian.");
-
-        cds.openStatusInfoPane("Races");
-        cds.selectInfoPaneItem(CDSHelper.RACE_ASIAN, true);
-        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        addRaceFilter(CDSHelper.RACE_ASIAN);
+        _asserts.assertFilterStatusCounts(815, 49, 1, 3, 161);
 
         sourcesSubjectCounts.clear();
-
         antigenCounts.clear();
         peptidePoolCounts.clear();
         proteinCounts.clear();
@@ -1137,6 +1127,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         cds.clearFilters();
 
+    }
+
+    private void addRaceFilter(String barLabel)
+    {
+        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.clickBy("Subject characteristics");
+        cds.applySelection(barLabel);
+        cds.useSelectionAsSubjectFilter();
     }
 
     @Test
@@ -1280,10 +1278,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
 
         log("Validating counts with filters of Race=white and target cell of A3R5 and TZM-bl.");
-
-        cds.openStatusInfoPane("Races");
-        cds.selectInfoPaneItem(CDSHelper.RACE_WHITE, true);
-        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        addRaceFilter(CDSHelper.RACE_WHITE);
+        _asserts.assertFilterStatusCounts(777, 48, 1, 1, 148);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -2125,12 +2121,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
 
         log("Add a filter and make sure that the log scale changes appropriately.");
+        addRaceFilter(CDSHelper.RACE_ASIAN);
+        _asserts.assertFilterStatusCounts(55, 4, 1, 1, 18);
 
-        cds.openStatusInfoPane("Races");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        cds.selectInfoPaneItem(CDSHelper.RACE_ASIAN, true);
-        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
-
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n1\n10\n100";
         originalCount = 55;
         verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
@@ -2358,13 +2352,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Test plot with x gutter only and data in main plot as well.");
 
-        cds.openStatusInfoPane("Races");
-        sleep(500);
-        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
-        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
-        sleep(500); // Wait for the mask to show up.
-        _ext4Helper.waitForMaskToDisappear();
-
+        addRaceFilter(CDSHelper.RACE_BLACK);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
@@ -2389,13 +2379,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Test plot with y gutter only and data in main plot as well.");
 
-        cds.openStatusInfoPane("Races");
-        sleep(500);
-        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
-        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
-        sleep(500); // Wait for the mask to show up.
-        _ext4Helper.waitForMaskToDisappear();
-
+        addRaceFilter(CDSHelper.RACE_BLACK);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
