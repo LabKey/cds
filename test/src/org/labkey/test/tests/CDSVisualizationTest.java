@@ -688,7 +688,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.NAB_INIT_DILUTION);
         xaxis.confirmSelection();
 
-        String expectedXYValues = "10\n1\n10\n100\n1000";
+        String expectedXYValues = "10\nnull\n1\n10\n100\n1000";
         cds.assertPlotTickText(expectedXYValues);
         assertFalse("There is an x-gutter, and there should not be.", hasXGutter());
 
@@ -1058,7 +1058,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Validating subject count with a filter of race-asian.");
         addRaceFilter(CDSHelper.RACE_ASIAN);
-        _asserts.assertFilterStatusCounts(815, 49, 1, 3, 161);
+        _asserts.assertFilterStatusCounts(815, 49, 1, 3, 164);
 
         sourcesSubjectCounts.clear();
         antigenCounts.clear();
@@ -1279,7 +1279,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Validating counts with filters of Race=white and target cell of A3R5 and TZM-bl.");
         addRaceFilter(CDSHelper.RACE_WHITE);
-        _asserts.assertFilterStatusCounts(777, 48, 1, 1, 148);
+        _asserts.assertFilterStatusCounts(777, 48, 1, 1, 151);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
