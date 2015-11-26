@@ -342,7 +342,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
         xaxis.confirmSelection();
-        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/13/2011\n0\n2\n4\n6\n8\n10\n12\n14";
+        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14";
 
         if (CDSHelper.validateCounts)
         {
@@ -2840,10 +2840,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         String actualToolTipText, condensedActual, condensedExpected;
 
         scrollIntoView(Locator.css(cssVisit));
-        mouseOver(Locator.css(cssVisit));
-        sleep(CDSHelper.CDS_WAIT_TOOLTIP);
+        click(Locator.css(cssVisit));
 
-        assertTrue("Tool-tip was not present.", isElementVisible(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]")));
+        assertTrue("Tool-tip was not present.", waitForElement(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"), CDSHelper.CDS_WAIT_TOOLTIP, true));
+
         actualToolTipText = getText(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"));
 
         // Modify the strings to make the comparisons less susceptible to spaces, tabs, /n, etc... and capitalization.
