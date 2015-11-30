@@ -509,9 +509,14 @@ Ext.define('Connector.utility.Chart', {
         return measure != null && Ext.isObject(measure.options) && Ext.isObject(measure.options.dimensions);
     },
 
-    /*
+    /**
      * Return the array of which assay dimension properties have different values arrays between the two measures.
      * Used for plot to determine which dimension keys to use for the grouping / aggregation.
+     * @alias ChartUtils.getAssayDimensionsWithDifferentValues
+     * @param {Connector.model.Measure} measure1
+     * @param {Connector.model.Measure} measure2
+     * @param {boolean} [singleValueOnly=false]
+     * @returns {Array}
      */
     getAssayDimensionsWithDifferentValues : function(measure1, measure2, singleValueOnly)
     {
@@ -599,7 +604,7 @@ Ext.define('Connector.utility.Chart', {
         if (Ext.isArray(measureSet) && measureSet.length > 0)
         {
             // get the full set of non-timepoint filters from the state
-            var nonTimeFilterSet = []
+            var nonTimeFilterSet = [];
             Ext.each(Connector.getState().getFilters(), function(filter)
             {
                 if (!filter.isTime() || filter.isPlot())
@@ -635,11 +640,12 @@ Ext.define('Connector.utility.Chart', {
      *    1) the measureB filter is from a demographic dataset or from GridBase (which can always be applied)
      *    2) the measureB filter is a grid filter (i.e. no assay dimensions) from the same source as measureA
      *    3) the measureB filter is an exact match based on sourceKey and assay dimension filters to measureA
+     * @alias ChartUtils.filterMeasureComparator
      * @param measureA
      * @param measureB
      * @returns {boolean}
      */
-    filterMeasureComparitor : function(measureA, measureB)
+    filterMeasureComparator : function(measureA, measureB)
     {
         var gridBaseKey = Connector.studyContext.gridBaseSchema + '|' + Connector.studyContext.gridBase,
                 measureAKey = measureA.schemaName + '|' + measureA.queryName,

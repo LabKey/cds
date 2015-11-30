@@ -2323,7 +2323,7 @@ Ext.define('Connector.view.Chart', {
                 {
                     if (hasX && (filter.isPlot() || activeMeasures.x.variableType !== 'TIME'))
                     {
-                        var xMeasures = filter.getPlotAxisMeasures(xAxisName, activeMeasures.x, ChartUtils.filterMeasureComparitor);
+                        var xMeasures = filter.getPlotAxisMeasures(xAxisName, activeMeasures.x, ChartUtils.filterMeasureComparator);
                         if (xMeasures.length > 0)
                         {
                             measures = measures.concat(xMeasures);
@@ -2337,7 +2337,7 @@ Ext.define('Connector.view.Chart', {
 
                     if (hasY)
                     {
-                        var yMeasures = filter.getPlotAxisMeasures(yAxisName, activeMeasures.y, ChartUtils.filterMeasureComparitor);
+                        var yMeasures = filter.getPlotAxisMeasures(yAxisName, activeMeasures.y, ChartUtils.filterMeasureComparator);
                         if (yMeasures.length > 0)
                         {
                             measures = measures.concat(yMeasures);

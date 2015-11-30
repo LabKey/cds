@@ -447,7 +447,7 @@ Ext.define('Connector.controller.Query', {
                 {
                     if (filter.isGrid())
                     {
-                        applicableMeasures = filter.getPlotAxisMeasures(null, selectorMeasure, ChartUtils.filterMeasureComparitor);
+                        applicableMeasures = filter.getPlotAxisMeasures(null, selectorMeasure, ChartUtils.filterMeasureComparator);
                         if (applicableMeasures.length > 0)
                         {
                             wrappedMeasureSet = wrappedMeasureSet.concat(applicableMeasures);
