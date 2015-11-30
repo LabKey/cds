@@ -177,7 +177,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
         this.fireEvent('click', this, this.isHierarchical);
     },
 
-    showDropdownPanel : function(filterOptionValues, plotAxis) {
+    showDropdownPanel : function(filterOptionValues, selectorMeasure, plotAxis) {
         var dropdownPanel = this.getDropdownPanel(),
             displayEl = this.getDisplayField().getEl(),
             displayLabelEl, displayValueEl, pos;
@@ -186,6 +186,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
             if (Ext.isDefined(filterOptionValues)) {
                 Connector.getService('Query').getMeasureValueSubjectCount(
                     this.dimension,
+                    selectorMeasure,
                     this.store.measureSet,
                     filterOptionValues,
                     plotAxis,

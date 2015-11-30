@@ -83,15 +83,12 @@ Ext.define('Connector.view.Grid', {
         // plugin to handle loading mask for the grid
         this.addPlugin({
             ptype: 'loadingmask',
-            loadingDelay: 250, // show this loading mask quickly since the grid render itself takes most of the time
-            beginConfig: {
-                component: this,
-                events: ['showload']
-            },
-            endConfig: {
-                component: this,
-                events: ['hideload']
-            }
+            configs: [{
+                element: this,
+                loadingDelay: 250, // show this loading mask quickly since the grid render itself takes most of the time
+                beginEvent: 'showload',
+                endEvent: 'hideload'
+            }]
         });
 
         this.footer = Ext.create('Connector.component.GridPager', {

@@ -77,6 +77,8 @@
         <script path="Connector/src/model/Measure.js"/>
         <script path="Connector/src/model/Source.js"/>
         <script path="Connector/src/model/InfoPane.js"/>
+        <script path="Connector/src/model/InfoPaneMember.js"/>
+        <script path="Connector/src/model/TimepointPane.js"/>
         <script path="Connector/src/model/Summary.js"/>
         <script path="Connector/src/model/Group.js"/>
         <script path="Connector/src/model/Grid.js"/>
@@ -136,6 +138,7 @@
         <script path="Connector/src/view/InfoPane.js"/>
         <script path="Connector/src/view/GridPane.js"/>
         <script path="Connector/src/view/PlotPane.js"/>
+        <script path="Connector/src/view/TimepointPane.js"/>
         <script path="Connector/src/view/GroupSave.js"/>
         <script path="Connector/src/view/GroupSummary.js"/>
         <script path="Connector/src/view/Header.js"/>

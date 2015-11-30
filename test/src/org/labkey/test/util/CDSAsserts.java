@@ -68,18 +68,18 @@ public class CDSAsserts
         assertEquals("Wrong total for search by " + byNoun + ".", expectedTotal, actualTotal);
     }
 
-    private void assertSelectionStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount, int maxCount)
+    private void assertSelectionStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int speciesCount, int contributorCount, int antigenCount, int maxCount)
     {
         cds.selectBars(barLabel);
-        assertFilterStatusCounts(subjectCount, studyCount, assayCount);
+        assertFilterStatusCounts(subjectCount, studyCount, speciesCount, -1, -1);
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(filteredLabel), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
     }
 
     // Sequential calls to this should have different subject counts.
-    private void assertFilterStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount, int maxCount)
+    private void assertFilterStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int speciesCount, int contributorCount, int antigenCount, int maxCount)
     {
         cds.selectBars(barLabel);
-        assertFilterStatusCounts(subjectCount, studyCount, assayCount);
+        assertFilterStatusCounts(subjectCount, studyCount, speciesCount, -1, -1);
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(filteredLabel), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
     }
 
@@ -195,10 +195,10 @@ public class CDSAsserts
 
     public void assertDefaultFilterStatusCounts()
     {
-        assertFilterStatusCounts(8277, 51, -1); // TODO Test data dependent.
+        assertFilterStatusCounts(8277, 51, 2, 4, 280); // TODO Test data dependent.
     }
 
-    public void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount)
+    public void assertSelectionStatusCounts(int subjectCount, int studyCount, int speciesCount, int productCount, int treatmentCount)
     {
         if(subjectCount > -1)
         {
@@ -210,14 +210,23 @@ public class CDSAsserts
             _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(studyCount, "Stud"));
         }
 
-        if(assayCount > -1)
+        if(speciesCount > -1)
         {
-            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(assayCount, "Assays"));
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(speciesCount, "Species"));
         }
 
+        if(productCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(productCount, "Product"));
+        }
+
+        if(treatmentCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(treatmentCount, "Treatment"));
+        }
     }
 
-    public void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount)
+    public void assertFilterStatusCounts(int subjectCount, int studyCount, int speciesCount, int productCount, int treatmentCount)
     {
         if (subjectCount > -1)
         {
@@ -229,11 +238,20 @@ public class CDSAsserts
             _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Study", "Studies", true));
         }
 
-        if (assayCount > -1)
+        if (speciesCount > -1)
         {
-            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(assayCount, "Assay", "Assays", true));
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(speciesCount, "Species", "Species", false));
         }
 
+        if (productCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(productCount, "Product", "Products", false));
+        }
+
+        if (treatmentCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(treatmentCount, "Treatment", "Treatments", false));
+        }
     }
 
     @LogMethod

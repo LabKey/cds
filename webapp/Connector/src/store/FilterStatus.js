@@ -12,8 +12,34 @@ Ext.define('Connector.store.FilterStatus', {
     // initial data record to show loading spinner on page load
     data: [{
         label: "Subjects",
+        count: 0,
         subcount: -1,
         highlight: true
+    }],
+
+    plotCountRecordsCache: [{
+        label: 'Time points',
+        count: -1,
+        subcount: -1,
+        plotBasedCount: true,
+        activeCountLink: true,
+        viewClass: 'Connector.view.TimepointPane',
+        modelClass: 'Connector.model.TimepointPane',
+        highlight: true
+    },{
+        label: 'Antigens in X',
+        count: -1,
+        subcount: -1,
+        plotBasedCount: true,
+        activeCountLink: true,
+        activeCountEvent: 'showplotantigensx'
+    },{
+        label: 'Antigens in Y',
+        count: -1,
+        subcount: -1,
+        plotBasedCount: true,
+        activeCountLink: true,
+        activeCountEvent: 'showplotantigensy'
     }],
 
     constructor : function(config) {
@@ -67,7 +93,7 @@ Ext.define('Connector.store.FilterStatus', {
                             },
                             highlight: lvl.activeCount === 'highlight',
                             activeCountLink: lvl.activeCountLink === true,
-                            dataBasedCount: lvl.dataBasedCount,
+                            plotBasedCount: lvl.plotBasedCount,
                             cellbased: lvl.cellbased,
                             priority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : 1000
                         });
@@ -221,7 +247,7 @@ Ext.define('Connector.store.FilterStatus', {
                 level: ca.level,
                 highlight: ca.highlight,
                 activeCountLink: ca.activeCountLink,
-                dataBasedCount: ca.dataBasedCount
+                plotBasedCount: ca.plotBasedCount
             };
 
             if (_counts) {
@@ -244,7 +270,71 @@ Ext.define('Connector.store.FilterStatus', {
             recs.push(rec);
         });
 
+        recs = recs.concat(this.plotCountRecordsCache);
+
         this.loadData(recs);
         this.fireEvent('load', this);
+    },
+
+    updatePlotRecordCount : function(label, forSubcount, countValue, measureSet, membersWithData)
+    {
+        var recIndex = this.findPlotCountRecordCache(label),
+            fieldName = forSubcount ? 'subcount' : 'count',
+            record;
+
+        if (recIndex > -1)
+        {
+            this.plotCountRecordsCache[recIndex][fieldName] = countValue;
+
+            // if the store has already been loaded, update that count as well
+            record = this.getById(label);
+            if (record != null)
+            {
+                record.set(fieldName, countValue);
+            }
+
+            // update the record's membersWithData property in the cache and store
+            if (Ext.isDefined(membersWithData))
+            {
+                this.plotCountRecordsCache[recIndex].membersWithData = membersWithData;
+                if (record != null)
+                {
+                    record.set('membersWithData', membersWithData);
+                }
+            }
+
+            // anytime the count is updated, reset the subcount if we don't have any selections and hold onto the measureSet
+            if (!forSubcount)
+            {
+                this.plotCountRecordsCache[recIndex].measureSet = measureSet;
+                if (record != null)
+                {
+                    record.set('measureSet', measureSet);
+                }
+
+                if (!Connector.getState().hasSelections())
+                {
+                    this.updatePlotRecordCount(label, true, -1);
+                }
+            }
+        }
+        else
+        {
+            console.warn('Requested update for plot record that is not defined: ' + label);
+        }
+    },
+
+    findPlotCountRecordCache : function(label)
+    {
+        for (var i = 0; i < this.plotCountRecordsCache.length; i++)
+        {
+            var recData = this.plotCountRecordsCache[i];
+            if (Ext.isObject(recData) && recData.label == label)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 });

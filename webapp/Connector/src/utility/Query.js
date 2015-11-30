@@ -20,6 +20,7 @@ Ext.define('Connector.utility.Query', {
         this.SUBJECT_SEQNUM_ALIAS = [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, 'ParticipantSequenceNum'].join('_');
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
         this.CONTAINER_ALIAS = this.STUDY_ALIAS_PREFIX + 'Container';
+        this.VISITROWID_ALIAS = this.STUDY_ALIAS_PREFIX + 'VisitRowId';
 
         if (Ext.isDefined(LABKEY.ActionURL.getParameters()['logQuery']))
         {
@@ -35,7 +36,7 @@ Ext.define('Connector.utility.Query', {
         var result = this._generateVisGetDataSql(config.measures, config.extraFilters, {});
 
         LABKEY.Query.executeSql({
-            schemaName: 'study',
+            schemaName: Connector.studyContext.schemaName,
             sql: result.sql,
             requiredVersion: '9.1',
             saveInSession: true,
@@ -57,9 +58,19 @@ Ext.define('Connector.utility.Query', {
         });
     },
 
+    getDataSql : function(config)
+    {
+        return this._generateVisGetDataSql(config.measures, config.extraFilters, {}).sql;
+    },
+
     getSubjectIntersectSQL : function(config)
     {
         return this._generateVisGetDataSql(config.measures, config.extraFilters, {subjectOnly: true, intersect: true}).sql;
+    },
+
+    getDistinctTimepointSQL : function(config)
+    {
+        return this._generateVisGetDataSql(config.measures, config.extraFilters, {timepointOnly: true}).sql;
     },
 
     _createTableObj : function(schema, query, joinKeys, isAssayDataset)
@@ -358,6 +369,8 @@ Ext.define('Connector.utility.Query', {
             hasMultiple = Object.keys(datasets).length > 1,
             setOperator = options.intersect ? "\nINTERSECT\n" : "\nUNION ALL\n",
             orderSQL,
+            wildcardSQL,
+            debugSql,
             psnFilter,
             sql;
 
@@ -380,11 +393,11 @@ Ext.define('Connector.utility.Query', {
         }, this);
 
         // sort by the study, subject, and visit
-        if (options.subjectOnly)
+        if (options.subjectOnly || options.timepointOnly)
         {
             orderSQL = "\nORDER BY 1 ASC";
 
-            if (psnFilter)
+            if (psnFilter && options.subjectOnly)
             {
                 var psnSelect = [union, 'SELECT '],
                     sep = '\n\t';
@@ -407,13 +420,16 @@ Ext.define('Connector.utility.Query', {
             orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
         }
 
-        sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL;
+        wildcardSQL = options.timepointOnly ? 'DISTINCT *' : '*';
+
+        sql = 'SELECT ' + wildcardSQL + ' FROM (' + unionSQL + ') AS _0' + orderSQL;
 
         if (this.logging)
         {
-            var debugSql = 'SELECT * FROM (' + debugUnionSQL + ') AS _0' + orderSQL;
-            var SHOW_TRUNCATED_IN_CLAUSES = true;
-            console.log(SHOW_TRUNCATED_IN_CLAUSES ? debugSql : sql);
+            debugSql = 'SELECT ' + wildcardSQL + ' FROM (' + debugUnionSQL + ') AS _0' + orderSQL;
+
+            console.log(debugSql); //show truncated in clauses
+            //console.log(sql); //show full sql without truncated in clauses
         }
 
         return {
@@ -448,24 +464,52 @@ Ext.define('Connector.utility.Query', {
         // SELECT
         //
         var SELECT = ["SELECT "],
-            sep = "\n\t";
+            sep = "\n\t",
+            visitRowIdAlias = 'VisitRowId',
+            protDayAlias = 'ProtocolDay';
 
-        SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS + '" @title=\'Container\'');
-        columnAliasMap[this.CONTAINER_ALIAS] = {
-            name: 'Container',
-            queryName: rootTable.displayName,
-            schemaName: rootTable.schemaName
-        };
+        if (options.timepointOnly)
+        {
+            if (rootTable.fullQueryName !== this.SUBJECTVISIT_TABLE)
+            {
+                visitRowIdAlias = 'SubjectVisit.Visit.RowId';
+                protDayAlias = 'SubjectVisit.Visit.ProtocolDay';
+            }
 
-        sep = ",\n\t";
-        SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
-        columnAliasMap[this.SUBJECT_ALIAS] = {
-            name: 'SubjectId',
-            queryName: rootTable.displayName,
-            schemaName: rootTable.schemaName
-        };
+            SELECT.push(sep + rootTable.tableAlias + '.' + visitRowIdAlias + ' AS RowId,');
+            Ext.iterate(Connector.getQueryService().getTimeAliases(), function(timeAlias)
+            {
+                SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.' + protDayAlias, timeAlias, false) + ' AS ' + timeAlias + ',');
+            }, this);
 
-        if (!options.subjectOnly)
+            // still need to see if there is a study axis measure with a visit tag alignment value
+            Ext.each(allMeasures, function (m)
+            {
+                if (acceptMeasureForSelect(m) && Ext.isObject(m.dateOptions) && m.dateOptions.zeroDayVisitTag != null)
+                {
+                    visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
+                }
+            });
+        }
+        else
+        {
+            SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS + '" @title=\'Container\'');
+            columnAliasMap[this.CONTAINER_ALIAS] = {
+                name: 'Container',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
+            };
+
+            sep = ",\n\t";
+            SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
+            columnAliasMap[this.SUBJECT_ALIAS] = {
+                name: 'SubjectId',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
+            };
+        }
+
+        if (!options.subjectOnly && !options.timepointOnly)
         {
             if (hasMultiple)
             {
@@ -488,6 +532,14 @@ Ext.define('Connector.utility.Query', {
                 schemaName: rootTable.schemaName
             };
 
+            // include for info pane timepoint count and subcount
+            SELECT.push(sep + rootTable.tableAlias + '.VisitRowId AS "' + this.VISITROWID_ALIAS + '" @title=\'Visit Row Id\'');
+            columnAliasMap[this.VISITROWID_ALIAS] = {
+                name: 'VisitRowId',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
+            };
+
             Ext.each(allMeasures, function (m)
             {
                 var isKeyCol = m.measure.name.toLowerCase() == 'subjectid'
@@ -496,7 +548,8 @@ Ext.define('Connector.utility.Query', {
                                 || m.measure.name.toLowerCase() == 'participantsequencenum',
                         alias = m.measure.alias || LABKEY.Utils.getMeasureAlias(m.measure),
                         colLabel = m.measure.shortCaption || m.measure.label,
-                        title = Ext.isDefined(colLabel) ? " @title='" + colLabel + "'" : "";
+                        title = Ext.isDefined(colLabel) ? " @title='" + colLabel + "'" : "",
+                        intervalSelectClause;
 
                 if (acceptMeasureForSelect(m))
                 {
@@ -524,7 +577,8 @@ Ext.define('Connector.utility.Query', {
                             title = Ext.isDefined(colLabel) ? " @title='" + colLabel + " (" + visitAlignmentTag + ")'" : "";
                         }
 
-                        SELECT.push(",\n\t" + this._getIntervalSelectClause(m, m.dateOptions.zeroDayVisitTag != null) + " AS " + alias + title);
+                        intervalSelectClause = this._getIntervalSelectClause(m.sourceTable.tableAlias + "." + m.measure.name, m.dateOptions.interval, m.dateOptions.zeroDayVisitTag != null);
+                        SELECT.push(",\n\t" + intervalSelectClause + " AS " + alias + title);
                     }
                     else
                     {
@@ -637,7 +691,6 @@ Ext.define('Connector.utility.Query', {
             participantsequencenum: optimizedFilterValues.participantsequencenum
         };
     },
-
 
     _optimizeFilters : function(measures, rootTable)
     {
@@ -766,12 +819,10 @@ Ext.define('Connector.utility.Query', {
     },
 
 
-    _getIntervalSelectClause : function(m, hasAlignment)
+    _getIntervalSelectClause : function(protDayCol, interval, hasAlignment)
     {
-        var protDayCol = m.sourceTable.tableAlias + "." + m.measure.name,
-            startDayCol = hasAlignment ? 'visittagalignment.ProtocolDay' : '0',
-            denom = this.getIntervalDenominator(m.dateOptions.interval),
-            clause = '(' + protDayCol + ' - ' + startDayCol + ')';
+        var denom = this.getIntervalDenominator(interval),
+            clause = hasAlignment ? '(' + protDayCol + ' - visittagalignment.ProtocolDay)' : protDayCol;
 
         if (denom > 1)
         {
@@ -780,7 +831,6 @@ Ext.define('Connector.utility.Query', {
 
         return clause;
     },
-
 
     getIntervalDenominator : function(interval)
     {

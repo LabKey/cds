@@ -41,14 +41,11 @@ Ext.define('Connector.view.Summary', {
         // plugin to handle loading mask for the summary view
         this.addPlugin({
             ptype: 'loadingmask',
-            beginConfig: {
-                component: this.store,
-                events: ['beforeload']
-            },
-            endConfig: {
-                component: this.store,
-                events: ['load']
-            }
+            configs: [{
+                element: this.store,
+                beginEvent: 'beforeload',
+                endEvent: 'load'
+            }]
         });
     },
 

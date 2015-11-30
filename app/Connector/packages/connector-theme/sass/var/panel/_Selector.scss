@@ -55,7 +55,8 @@
         color: $gray-3;
         font-size: 12px;
         text-transform: uppercase;
-        padding: 0 0 0 24px;
+        min-width: 84px;
+        padding-left: 24px;
 
         .arrow {
           background-image: url(images/navigatebackward.svg);

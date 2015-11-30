@@ -33,6 +33,7 @@ Ext.define('Connector.panel.Selector', {
     testCls: undefined,
 
     disableAdvancedOptions: false,
+    gotoAntigenSelection: false,
     boundDimensionAliases: undefined,
     measureSetStore: null,
 
@@ -118,16 +119,13 @@ Ext.define('Connector.panel.Selector', {
         //plugin to handle loading mask for the variable selector source counts
         this.addPlugin({
             ptype: 'loadingmask',
-            blockingMask: false,
-            itemsMaskCls: 'item-spinner-mask-orange',
-            beginConfig: {
-                component: this,
-                events: ['beforeSourceCountsLoad']
-            },
-            endConfig: {
-                component: this,
-                events: ['afterSourceCountsLoad']
-            }
+            configs: [{
+                element: this,
+                blockingMask: false,
+                itemsMaskCls: 'item-spinner-mask-orange',
+                beginEvent: 'beforeSourceCountsLoad',
+                endEvent: 'afterSourceCountsLoad'
+            }]
         });
 
         this.on('resize', function(){
@@ -695,14 +693,66 @@ Ext.define('Connector.panel.Selector', {
         return this.hierarchyPane;
     },
 
+    getHierarchicalOptionCmp : function()
+    {
+        var hierOptionCmp;
+
+        // find and return the first visible hierarchical component
+        if (Ext.isArray(this.advancedOptionCmps))
+        {
+            Ext.each(this.advancedOptionCmps, function(optionCmp)
+            {
+                if (!optionCmp.hidden && optionCmp.isHierarchical)
+                {
+                    hierOptionCmp = optionCmp;
+                    return false;
+                }
+            });
+        }
+
+        return hierOptionCmp;
+    },
+
+    goToAntigenSelection : function()
+    {
+        // if the antigen hierarchy pane is already defined, go there
+        // otherwise set the flag so that it goes there next time the selector is shown
+        this.gotoAntigenSelection = true;
+        if (Ext.isDefined(this.getHierarchicalOptionCmp()))
+        {
+            this.shouldGoToAntigenSelection();
+        }
+    },
+
+    shouldGoToAntigenSelection : function()
+    {
+        if (this.gotoAntigenSelection)
+        {
+            this.showHierarchicalSelection();
+            this.gotoAntigenSelection = false;
+        }
+    },
+
     showHierarchicalSelection : function(advancedOptionCmp) {
-        var source = this.getSourceForMeasure(this.activeMeasure);
+        // if the advancedOptionCmp param isn't provided, look for the first visible component that is hierarchical
+        advancedOptionCmp = advancedOptionCmp || this.getHierarchicalOptionCmp();
+        if (!Ext.isDefined(advancedOptionCmp))
+        {
+            return;
+        }
+
+        var source = this.getSourceForMeasure(this.activeMeasure),
+            selectorMeasure;
 
         this.getHierarchySelectionPane().removeAll();
+
+        selectorMeasure = Ext.clone(this.activeMeasure.data);
+        selectorMeasure.options = this.getAdvancedOptionValues();
 
         var antigenSelectionPanel = Ext.create('Connector.panel.AntigenSelection', {
             plotAxis: this.plotAxis,
             dimension: advancedOptionCmp.dimension,
+            selectorMeasure: selectorMeasure,
             initSelection: advancedOptionCmp.value,
             measureSetStore: this.measureSetStore,
             filterOptionValues: this.getFilterValuesMap(advancedOptionCmp.dimension)
@@ -955,8 +1005,12 @@ Ext.define('Connector.panel.Selector', {
                             }
                         });
                     }
-                    else {
-                        cmp.showDropdownPanel(this.getFilterValuesMap(dimension), this.plotAxis);
+                    else
+                    {
+                        var selectedMeasure = Ext.clone(this.activeMeasure.data);
+                        selectedMeasure.options = this.getAdvancedOptionValues();
+
+                        cmp.showDropdownPanel(this.getFilterValuesMap(dimension), selectedMeasure, this.plotAxis);
                     }
                 },
                 change: function(cmp) {
@@ -1025,7 +1079,9 @@ Ext.define('Connector.panel.Selector', {
             {
                 pane.show();
                 pane.getEl().slideIn('b', {
-                    duration: 250
+                    duration: 250,
+                    scope: this,
+                    callback: this.shouldGoToAntigenSelection
                 });
             }
         }

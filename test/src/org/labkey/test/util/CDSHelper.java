@@ -89,7 +89,7 @@ public class CDSHelper
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
     public final static int CDS_WAIT_ANIMATION = 500;
-    public final static int CDS_WAIT_TOOLTIP = 1500;
+    public final static int CDS_WAIT_TOOLTIP = 5000;
 
     public final static String RACE_ASIAN = "Asian";
     public final static String RACE_BLACK = "Black";
@@ -444,7 +444,7 @@ public class CDSHelper
     {
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
-        _test.addUrlParameter("_showPlotData=true&_disableAutoMsg=true");
+        _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
         _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
@@ -939,7 +939,7 @@ public class CDSHelper
         HOME("Home", Locator.tagContainingText("h1", HOME_PAGE_HEADER)),
         LEARN("Learn about", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
         SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest.")),
-        PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
+        PLOT("Plot data", Locator.tagWithClass("a", "colorbtn")),
         GRID("View data grid", DataGridVariableSelector.titleLocator);
 
         private String _linkText;

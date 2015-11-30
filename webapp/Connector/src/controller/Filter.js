@@ -113,7 +113,9 @@ Ext.define('Connector.controller.Filter', {
 
     getTimeFilter : function(wrappedTimeMeasure, timeFilters, callback, scope)
     {
-        Connector.getQueryService().onQueryReady(function(queryService)
+        var queryService = Connector.getQueryService();
+
+        queryService.onQueryReady(function()
         {
             queryService.getData([wrappedTimeMeasure], function(metadata)
             {

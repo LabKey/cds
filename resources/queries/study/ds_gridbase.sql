@@ -18,7 +18,7 @@ SELECT
 SV.participantId.participantId AS SubjectId,
 STUDY.label AS Study,
 TS.coded_label AS TreatmentSummary,
-SV.Visit.Label AS SubjectVisit,
+SV.Visit.RowId AS VisitRowId,
 
 -- Join columns
 SV.participantsequencenum,
