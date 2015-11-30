@@ -26,8 +26,8 @@ Ext.define('Connector.store.Summary', {
         var dims = mdx.getDimensions(),
             rows = [],
             configs = [], dim,
-            targetLevel,
-            targetHierLevel, d;
+            summaryLevelName,
+            subSummaryLevel, d;
 
         for (d=0; d < dims.length; d++) {
 
@@ -35,14 +35,14 @@ Ext.define('Connector.store.Summary', {
 
             if (!dim.hidden && dim.supportsSummary === true) {
 
-                targetLevel = dim.summaryTargetLevel;
-                if (targetLevel) {
+                summaryLevelName = dim.findSubjectSummaryLevel;
+                if (summaryLevelName) {
 
                     //
                     // Dimension requests
                     //
                     configs.push({
-                        level: targetLevel,
+                        level: summaryLevelName,
                         dimName: dim.name,
                         priority: dim.priority
                     });
@@ -52,14 +52,22 @@ Ext.define('Connector.store.Summary', {
                     //
                     Ext.each(dim.getHierarchies(), function(hier, i) {
                         if (!hier.hidden && hier.supportsSummary) {
-                            targetHierLevel = hier.levels[1];
+                            subSummaryLevel = hier.levels[1];
+                            if (Ext.isDefined(hier.findSubjectSubSummaryLevel)) {
+                                Ext.each(hier.levels, function(level) {
+                                    if (level.uniqueName === hier.findSubjectSubSummaryLevel) {
+                                        subSummaryLevel = level;
+                                        return;
+                                    }
+                                });
+                            }
 
                             configs.push({
-                                level: targetHierLevel.uniqueName,
+                                level: subSummaryLevel.uniqueName,
                                 dimName: dim.name,
                                 hierarchyIndex: i,
-                                targetLevel: targetHierLevel.uniqueName,
-                                label: targetHierLevel.countPlural || targetHierLevel.name,
+                                targetLevel: subSummaryLevel.uniqueName,
+                                label: subSummaryLevel.countPlural || subSummaryLevel.name,
                                 priority: dim.priority
                             });
                         }
@@ -148,26 +156,26 @@ Ext.define('Connector.store.Summary', {
                     // dimension
                     var label = Ext.isDefined(dim.pluralName) ? dim.pluralName : dim.name,
                             hierarchies = dim.getHierarchies(),
-                            targetHierarchy, hier, h, l;
+                            summaryLevel, hier, h, l;
 
                     for (h=0; h < hierarchies.length; h++) {
                         hier = hierarchies[h];
 
                         for (l=0; l < hier.levels.length; l++) {
-                            if (hier.levels[l].uniqueName === dim.summaryTargetLevel) {
-                                targetHierarchy = hier;
+                            if (hier.levels[l].uniqueName === dim.findSubjectSummaryLevel) {
+                                summaryLevel = hier;
                                 break;
                             }
                         }
                     }
 
-                    if (Ext.isDefined(targetHierarchy)) {
+                    if (Ext.isDefined(summaryLevel)) {
                         recs.push({
                             dimName: ca.dimName,
                             total: lvlCounts[ca.level] || 0,
                             label: label,
                             subject: label.toLowerCase(),
-                            hierarchy: targetHierarchy.name,
+                            hierarchy: summaryLevel.name,
                             details: [],
                             sort: i
                         });

@@ -74,7 +74,8 @@
                 imgPath: <%=PageFlowUtil.jsString(imageResourcePath)%>
             },
             user: {
-                isAnalyticsUser: <%=model.isAnalyticsUser()%>
+                isAnalyticsUser: <%=model.isAnalyticsUser()%>,
+                properties: <%=model.getUserProperties()%>
             }
         };
 
@@ -176,6 +177,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Measure.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Source.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/InfoPane.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/InfoPaneMember.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/TimepointPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>
@@ -195,6 +198,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/component/AntigenSelection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/DropDown.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/GridPager.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/component/News.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/component/Started.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractFilter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>
@@ -233,6 +238,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/InfoPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GridPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PlotPane.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/TimepointPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Header.js"></script>

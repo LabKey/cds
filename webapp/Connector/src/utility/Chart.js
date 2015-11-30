@@ -19,6 +19,7 @@ Ext.define('Connector.utility.Chart', {
 
     colors: {
         WHITE: '#FFFFFF',
+        GRAYBACKGROUND: '#f5f5f5',
         BLACK: '#000000',
         SECONDARY: '#F0F0F0',
         GRIDBKGD: '#F8F8F8',
@@ -508,9 +509,14 @@ Ext.define('Connector.utility.Chart', {
         return measure != null && Ext.isObject(measure.options) && Ext.isObject(measure.options.dimensions);
     },
 
-    /*
+    /**
      * Return the array of which assay dimension properties have different values arrays between the two measures.
      * Used for plot to determine which dimension keys to use for the grouping / aggregation.
+     * @alias ChartUtils.getAssayDimensionsWithDifferentValues
+     * @param {Connector.model.Measure} measure1
+     * @param {Connector.model.Measure} measure2
+     * @param {boolean} [singleValueOnly=false]
+     * @returns {Array}
      */
     getAssayDimensionsWithDifferentValues : function(measure1, measure2, singleValueOnly)
     {
@@ -577,5 +583,93 @@ Ext.define('Connector.utility.Chart', {
         }
 
         return false;
+    },
+
+    applySubjectValuesToMeasures : function(measureSet, subjectFilter) {
+        // find the subject column(s) in the measure set to apply the values filter (issue 24123)
+        if (subjectFilter.hasFilters)
+        {
+            Ext.each(measureSet, function(m)
+            {
+                if (m.measure && m.measure.name == Connector.studyContext.subjectColumn)
+                {
+                    m.measure.values = subjectFilter.subjects;
+                }
+            }, this);
+        }
+    },
+
+    getTimepointFilterPaneMembers : function(measureSet, callback, scope)
+    {
+        if (Ext.isArray(measureSet) && measureSet.length > 0)
+        {
+            // get the full set of non-timepoint filters from the state
+            var nonTimeFilterSet = [];
+            Ext.each(Connector.getState().getFilters(), function(filter)
+            {
+                if (!filter.isTime() || filter.isPlot())
+                {
+                    nonTimeFilterSet.push(filter);
+                }
+            });
+
+            Connector.getQueryService().getSubjectsForSpecificFilters(nonTimeFilterSet, null, function(subjectFilter)
+            {
+                ChartUtils.applySubjectValuesToMeasures(measureSet, subjectFilter);
+
+                // Request distinct timepoint information for info pane plot counts, subcounts, and filter pane members
+                LABKEY.Query.executeSql({
+                    schemaName: 'study',
+                    sql: QueryUtils.getDistinctTimepointSQL({measures: measureSet}),
+                    scope: this,
+                    success: function(data)
+                    {
+                        callback.call(scope, data.rows);
+                    }
+                });
+            }, this);
+        }
+        else
+        {
+            callback.call(scope, undefined);
+        }
+    },
+
+    /**
+     * A comparator to determine if a filter from measureB qualifies against measureA. Determine by the following:
+     *    1) the measureB filter is from a demographic dataset or from GridBase (which can always be applied)
+     *    2) the measureB filter is a grid filter (i.e. no assay dimensions) from the same source as measureA
+     *    3) the measureB filter is an exact match based on sourceKey and assay dimension filters to measureA
+     * @alias ChartUtils.filterMeasureComparator
+     * @param measureA
+     * @param measureB
+     * @returns {boolean}
+     */
+    filterMeasureComparator : function(measureA, measureB)
+    {
+        var gridBaseKey = Connector.studyContext.gridBaseSchema + '|' + Connector.studyContext.gridBase,
+                measureAKey = measureA.schemaName + '|' + measureA.queryName,
+                measureBKey = measureB.schemaName + '|' + measureB.queryName;
+
+        // case #1 from comment above
+        if (measureB.isDemographic === true || gridBaseKey.toLowerCase() == measureBKey.toLowerCase())
+        {
+            return true;
+        }
+        else if (measureA.isDemographic === true || !ChartUtils.hasMeasureAssayDimensions(measureA))
+        {
+            return false;
+        }
+
+        // case #2 from comment above
+        if (!ChartUtils.hasMeasureAssayDimensions(measureB))
+        {
+            return measureAKey == measureBKey;
+        }
+        // case #3 from comment above
+        else
+        {
+            return measureAKey == measureBKey && ChartUtils.getAssayDimensionsWithDifferentValues(measureA, measureB).length == 0;
+        }
     }
 });

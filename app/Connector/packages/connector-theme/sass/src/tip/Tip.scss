@@ -1,0 +1,15 @@
+.x-tip-default {
+  border: 1px solid $border-color;
+  background-color: #fff;
+  border-radius: 0;
+  @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
+}
+
+.x-tip-body-default {
+  padding: 15px;
+  font-family: $info-font;
+  color: $secondary-text-color;
+  font-size: 13px;
+  line-height: 17px;
+  max-width: 300px;
+}

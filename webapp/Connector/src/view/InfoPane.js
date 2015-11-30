@@ -105,7 +105,7 @@ Ext.define('Connector.view.InfoPane', {
                         autoShow: true,
                         itemId: 'infosortedmenu',
                         showSeparator: false,
-                        width: 208,
+                        width: 200,
                         ui: 'custom',
                         cls: 'infosortmenu',
                         btn: btnId,
@@ -142,7 +142,7 @@ Ext.define('Connector.view.InfoPane', {
             items: []
         };
 
-        if (this.isShowOperator) {
+        if (this.isShowOperator && model.isShowOperator()) {
             middleContent.items.push({
                 itemId: 'operatorlabel',
                 xtype: 'box',
@@ -200,6 +200,7 @@ Ext.define('Connector.view.InfoPane', {
     },
 
     getMiddleContent : function(model) {
+        var isSelectionMode = Connector.getState().getSelections().length > 0;
         var memberGrid = Ext.create('Ext.grid.Panel', {
             xtype: 'grid',
             itemId: 'membergrid',
@@ -224,13 +225,14 @@ Ext.define('Connector.view.InfoPane', {
                 sortable: false,
                 menuDisabled: true,
                 tpl: new Ext.XTemplate(
-                    '{name:htmlEncode}',
+                    '<div title="{name:htmlEncode}">{name:htmlEncode}',
                     '<tpl if="hasDetails === true">',
                         '<a class="expando" href="{detailLink}">',
                             '<span class="icontext">learn about</span>',
                             '<img src="' + Connector.resourceContext.path + '/images/cleardot.gif" class="iconone">',
                         '</a>',
-                    '</tpl>'
+                    '</tpl>',
+                    '</div>'
                 )
             }],
 
@@ -243,7 +245,12 @@ Ext.define('Connector.view.InfoPane', {
                         '{name:this.renderHeader}', // 'name' is actually the value of the groupField
                         {
                             renderHeader: function(v) {
-                                return v ? 'Has data in active filters' : 'No data in active filters';
+                                if (isSelectionMode){
+                                    return v ? 'Has data in current selection' : 'No data in current selection';
+                                }
+                                else {
+                                    return v ? 'Has data in active filters' : 'No data in active filters';
+                                }
                             }
                         }
                 )
@@ -265,14 +272,11 @@ Ext.define('Connector.view.InfoPane', {
         // plugin to handle loading mask for this grid
         memberGrid.addPlugin({
             ptype: 'loadingmask',
-            beginConfig: {
-                component: memberGrid,
-                events: ['render']
-            },
-            endConfig: {
-                component: memberGrid,
-                events: ['selectioncomplete']
-            }
+            configs: [{
+                element: memberGrid,
+                beginEvent: 'render',
+                endEvent: 'selectioncomplete'
+            }]
         });
 
         return [memberGrid];
@@ -282,7 +286,7 @@ Ext.define('Connector.view.InfoPane', {
         return {
             xtype: 'toolbar',
             dock: 'bottom',
-            ui: 'footer',
+            ui: 'lightfooter',
             items: ['->',
                 {
                     id: 'filtertaskbtn',
@@ -371,22 +375,11 @@ Ext.define('Connector.view.InfoPane', {
 
         if (members.length > 0) {
 
-            // prevent scrolling to bottom of selection
-            sm.on('selectionchange', function() {
-                var middle = this.getComponent('middle');
-                if (middle) {
-                    var oplabel = middle.getComponent('operatorlabel');
-                    if (oplabel) {
-                        oplabel.getEl().scrollIntoView(middle.getEl());
-                    }
-                }
-            }, this, {single: true});
-
             if (members.length == storeCount) {
-                sm.selectAll();
+                sm.selectAll(true);
             }
             else {
-                sm.select(members);
+                sm.select(members, false, true);
             }
 
             var anodes = Ext.DomQuery.select('a.expando');
@@ -405,11 +398,13 @@ Ext.define('Connector.view.InfoPane', {
         var model = this.getModel();
         var hierarchy = model.get('hierarchy');
 
-        if (model.isREQ()) {
-            this.hideOperator();
-        }
-        else {
-            this.showOperator();
+        if (model.isShowOperator()) {
+            if (model.isREQ()) {
+                this.hideOperator();
+            }
+            else {
+                this.showOperator();
+            }
         }
 
         grid.fireEvent('selectioncomplete', this);
@@ -451,7 +446,12 @@ Ext.define('Connector.view.InfoPane', {
 
     onSortSelect : function(menu, item) {
         var _item = Ext.clone(item);
-        this.getModel().configure(null, _item.uniqueName);
+        if (_item.isLevel) {
+            this.getModel().configure(null, null, _item.uniqueName);
+        }
+        else {
+            this.getModel().configure(null, _item.uniqueName);
+        }
     },
 
     getGrid : function() {

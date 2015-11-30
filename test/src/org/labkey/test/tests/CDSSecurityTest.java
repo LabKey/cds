@@ -49,7 +49,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
-        cds.showHiddenVariables(true);
         Ext4Helper.setCssPrefix("x-");
 
         log("Deleting groups that may be left over from a previous run.");
@@ -134,7 +133,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         impersonateGroup(PERM_GROUPS[0], false);
 
         cds.enterApplication();
-        _asserts.assertFilterStatusCounts(8, 1, -1);
+        _asserts.assertFilterStatusCounts(8, 1, 1, 1, 2);
 
         cds.viewLearnAboutPage("Studies");
         List<String> studies = Arrays.asList("ZAP 119");
@@ -148,7 +147,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         impersonateGroup(PERM_GROUPS[1], false);
 
         cds.enterApplication();
-        _asserts.assertFilterStatusCounts(0, 0, -1);
+        _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0);
         cds.viewLearnAboutPage("Studies");
         _asserts.verifyEmptyLearnAboutStudyPage();
 

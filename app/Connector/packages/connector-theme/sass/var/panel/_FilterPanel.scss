@@ -1,5 +1,5 @@
 .filterstatus  {
-  padding: 24px 6px 24px 6px;
+  padding: 34px 6px 24px 6px;
   background: $white;
   margin: 0 auto;
 
@@ -53,6 +53,7 @@ div.filterpanel {
 
   .filterpanel-header {
     margin-left: 0;
+    margin-top: 5px;
   }
 
   .x-container {
@@ -149,7 +150,7 @@ div.selectionpanel {
 
   }
 
-  .x-toolbar-footer {
+  .x-toolbar {
     padding: 0;
     margin: 0 3px 3px 0;
   }
@@ -202,6 +203,17 @@ ul.indent li {
 }
 
 .filter-hdr-btn {
-  margin-top: 6px;
-  width: 40px;
+  width: auto;
+
+  margin-right: 4px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+
+  &+.filter-hdr-btn {
+    margin-right: 0;
+  }
+}
+
+.filterheader-text {
+  margin-top: 5px;
 }

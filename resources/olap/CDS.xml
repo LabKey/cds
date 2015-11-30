@@ -71,6 +71,15 @@
                 <Level name="Arm" visible="true" column="treatment_arm" type="String" uniqueMembers="false" />
             </Hierarchy>
 
+            <Hierarchy name="Treatment Arm Coded Label" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
+                <Join leftKey="container" rightKey="container">
+                    <Table name="Demographics" schema="study"/>
+                    <Table name="study" schema="cds"/>
+                </Join>
+                <Level name="Treatment Arm Coded Label" visible="true" column="study_arm_coded_label" type="String" uniqueMembers="true" />
+                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
             <Hierarchy name="Type" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
                 <Join leftKey="container" rightKey="container">
                     <Table name="Demographics" schema="study"/>
@@ -93,6 +102,11 @@
 
         <Dimension  name="Study Product" visible="true" highCardinality="false" foreignKey="product_group">
 
+            <Hierarchy name="Product Name" visible="true" hasAll="false" primaryKey="product_group">
+                <Table name="subjectproduct_bridge" schema="cds"/>
+                <Level name="Product Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
             <Hierarchy name="Product Type" visible="true" hasAll="false" primaryKey="product_group">
                 <Table name="subjectproduct_bridge" schema="cds"/>
                 <Level name="Type" visible="true" column="product_type" type="String" uniqueMembers="true" />
@@ -107,7 +121,7 @@
 
             <Hierarchy name="Product Class" visible="true" hasAll="false" primaryKey="product_group">
                 <Table name="subjectproduct_bridge" schema="cds"/>
-                <Level name="Class" visible="true" column="product_class_label" type="String" uniqueMembers="true" />
+                <Level name="Product Class" visible="true" column="product_class_label" type="String" uniqueMembers="true" />
                 <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
             </Hierarchy>
 
@@ -120,7 +134,7 @@
                     <Table name="ds_subjectassay" schema="cds"/>
                     <Table name="assay" schema="cds"/>
                 </Join>
-                <Level name="Type" visible="true" column="assay_category" type="String" uniqueMembers="true" />
+                <Level name="Assay Type" visible="true" column="assay_category" type="String" uniqueMembers="true" />
                 <Level name="Assay" visible="true" table="ds_subjectassay" column="assay_identifier" type="String" uniqueMembers="true" />
             </Hierarchy>
 

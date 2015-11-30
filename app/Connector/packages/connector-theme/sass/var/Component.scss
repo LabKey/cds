@@ -1,3 +1,5 @@
+$base-color: #ffffff;
+
 /* Site wide coloring scheme */
 $select-color: #fb2e5c;            // Bright Blue
 $select-hover-color: #ffffff;      // Light Blue
@@ -8,7 +10,7 @@ $gray-7-hover: #ffffff;      //  Light Text Hover
 $dark-color: #333333;              // Dark Gray
 $middle-gray: #6D6E70;             // Middle Gray
 $interactive-color: #fb2e5c;       // Interactive
-$info-color: #F5A73A;              // Info
+$info-color: #fb2e5c;              // Info
 $secondary-color: #F0F0F0;         // Light Gray
 
 $border-color: #BABABA;
@@ -34,6 +36,12 @@ $gray-5: #bebebe;           // Main Gray
 $gray-6: #e1e1e1;           // Main Gray
 $gray-7: #ebebeb;           // Main Gray
 $gray-8: #f5f5f5;           // Main Gray
+
+
+/* Other Grays (not darkest to lightest) */
+
+$gray-9: #d1d1d1;
+
 
 /* WHITES */
 
@@ -198,6 +206,7 @@ $tip-body-color: $info-color;
   @include background-image(linear-gradient(left,  $secondary-color 85%,$gray-7 95%));
 }
 
+
 // --- END DEFINE MIXINS ----
 
 html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {
@@ -340,54 +349,6 @@ svg {
 .inline {
   display: inline-block;
 }
-
-.learnheader {
-
-  .titlepanel {
-    font: $title-font;
-    background: $gray-7;
-    display: block;
-    width:100%;
-    height: 56px;
-    line-height: 56px;
-    padding-left: 16px;
-    clear: all;
-  }
-
-  .breadcrumb {
-    font-weight: 400;
-    color: $gray-25;
-    text-transform: uppercase;
-    display: block;
-    float: left;
-    padding-right:4px;
-  }
-
-  .studyname {
-    font-weight: 100;
-    font-size: 22px;
-    font-family: $data-font;
-    color: $black;
-    display: block;
-    float: left;
-  }
-
-  .iarrow {
-    background-image: url(images/navigatebackward.svg);
-    background-repeat: no-repeat;
-    background-color: $gray-8;
-    width: 56px;
-    height: 56px;
-    margin: 0 16px 0 -16px;
-    vertical-align: bottom;
-    display: block;
-    float: left;
-  }
-
-}
-
-
-
 
 .header-container {
 
@@ -601,6 +562,10 @@ div.emptytext {
   &-lg {
     margin-bottom: 20px;
   }
+
+  &-xlg {
+    margin-bottom: 40px;
+  }
 }
 
 .x-css-shadow {
@@ -703,9 +668,7 @@ div.emptytext {
     height: 390px;
   }
 
-  .footer {
-    padding-right: 20px;
-  }
+  /* TODO: Fix the feedback + save group footer */
 
   .feedback-input {
     input, textarea {
@@ -724,6 +687,10 @@ div.emptytext {
 div.hopscotch-bubble {
   border: 1px solid $border-color;
   @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
+
+  .hopscotch-bubble-container {
+    max-width: 200px;
+  }
 
   .hopscotch-title {
     font-size: 13px;
@@ -797,6 +764,21 @@ div.hopscotch-bubble {
     display: none !important;
   }
 }
+
+
+.animated {
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -ms-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-duration: 0.3s;
+  -moz-animation-duration: 0.3s;
+  -ms-animation-duration: 0.3s;
+  -o-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+}
+
 
 .helpcenter-panel {
   .header {
@@ -912,6 +894,7 @@ div.hopscotch-bubble {
   }
 
 }
+
 
 @import 'windows';
 

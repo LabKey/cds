@@ -14,6 +14,7 @@ Ext.define('Connector.view.GroupSave', {
     statics: {
         modes: {
             CREATE: 'CREATE',
+            EDIT: 'EDIT',
             REPLACE: 'REPLACE'
         }
     },
@@ -21,6 +22,8 @@ Ext.define('Connector.view.GroupSave', {
     layout: {
         type: 'anchor'
     },
+
+    defaultTitle: 'Save',
 
     hideSelectionWarning: true,
 
@@ -42,21 +45,15 @@ Ext.define('Connector.view.GroupSave', {
         this.callParent([config]);
     },
 
-    initComponent : function() {
-
+    initComponent : function()
+    {
         this.items = [{
             xtype: 'container',
             itemId: 'content',
             style: 'margin: 10px; background-color: #fff; border: 1px solid lightgrey; padding: 10px',
             anchor: '100%',
             items: [
-                {
-                    xtype: 'box',
-                    autoEl: {
-                        tag: 'h2',
-                        html: 'Save group'
-                    }
-                },
+                this.getTitle(),
                 {
                     xtype: 'box',
                     hidden: this.hideSelectionWarning,
@@ -86,6 +83,7 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },
                 this.getCreateGroup(),
+                this.getEditGroup(),
                 this.getReplaceGroup()
             ]
         }];
@@ -93,6 +91,21 @@ Ext.define('Connector.view.GroupSave', {
         this.callParent();
 
         Ext.EventManager.onWindowResize(this.onWindowResize, this);
+    },
+
+    getTitle : function()
+    {
+        if (!this.title)
+        {
+            this.title = Ext.create('Ext.Component', {
+                tpl: '<h2>{title:htmlEncode} group</h2>',
+                data: {
+                    title: this.defaultTitle
+                }
+            });
+        }
+
+        return this.title;
     },
 
     getCreateGroup : function() {
@@ -143,16 +156,16 @@ Ext.define('Connector.view.GroupSave', {
                 },{
                     xtype: 'toolbar',
                     dock: 'bottom',
-                    ui: 'footer',
+                    ui: 'lightfooter',
                     style: 'padding-top: 60px',
                     items: ['->',{
-                        text: 'save',
+                        text: 'Save',
                         itemId: 'groupcreatesave',
                         cls: 'groupcreatesave' // tests
                     },{
-                        text: 'cancel',
-                        itemId: 'cancelgroupsave',
-                        cls: 'cancelgroupsave' // tests
+                        text: 'Cancel',
+                        itemId: 'groupcancel',
+                        cls: 'groupcancelcreate' // tests
                     }]
                 }],
                 listeners : {
@@ -177,10 +190,98 @@ Ext.define('Connector.view.GroupSave', {
         return this.createGroup;
     },
 
+    getEditGroup : function()
+    {
+        if (!this._editGroup)
+        {
+            var editForm = Ext.create('Ext.Container', {
+                hidden: this.mode !== Connector.view.GroupSave.modes.EDIT,
+                activeMode: Connector.view.GroupSave.modes.EDIT,
+                title: 'Edit',
+                style: 'padding-top: 10px;',
+                items: [{
+                    itemId: 'creategroupform',
+                    xtype: 'form',
+                    ui: 'custom',
+                    width: '100%',
+                    style: 'padding-top: 10px;',
+                    defaults: {
+                        width: '100%'
+                    },
+                    flex: 1,
+                    items: [{
+                        xtype: 'textfield',
+                        itemId: 'groupname',
+                        name: 'groupname',
+                        emptyText: 'Enter a group name',
+                        height: 30,
+                        allowBlank: false,
+                        validateOnBlur: false,
+                        maxLength: 100
+                    },{
+                        xtype: 'box',
+                        autoEl: {
+                            tag: 'div',
+                            style: 'padding: 5px 0; font-family: Verdana, sans-serif; font-size: 10pt;',
+                            html: 'Description:'
+                        }
+                    },{
+                        xtype: 'textareafield',
+                        id: 'editgroupdescription',
+                        itemId: 'groupdescription',
+                        name: 'groupdescription',
+                        emptyText: 'no description provided',
+                        maxLength: 200
+                    },{
+                        xtype: 'hiddenfield',
+                        itemId: 'groupid',
+                        name: 'groupid'
+                    }]
+                },{
+                    xtype: 'toolbar',
+                    dock: 'bottom',
+                    ui: 'lightfooter',
+                    style: 'padding-top: 60px',
+                    items: ['->',{
+                        text: 'Save',
+                        itemId: 'groupeditsave',
+                        cls: 'groupeditsave' // tests
+                    },{
+                        text: 'Cancel',
+                        itemId: 'groupcancel',
+                        cls: 'groupcanceledit' // tests
+                    }]
+                }],
+                getForm : function()
+                {
+                    return editForm.getComponent('creategroupform');
+                },
+                listeners : {
+                    afterrender : {
+                        fn: function(c) {
+                            c.getComponent('creategroupform').getComponent('groupdescription').focus(false, true);
+                        },
+                        scope: this
+                    },
+                    show : {
+                        fn: function(c) {
+                            c.getComponent('creategroupform').getComponent('groupdescription').focus(false, true);
+                        },
+                        scope: this
+                    }
+                }
+            });
+
+            this._editGroup = editForm;
+        }
+
+        return this._editGroup;
+    },
+
     getReplaceGroup : function() {
 
         if (!this.replaceGroup) {
-            this.replaceGroup = Ext.create('Ext.Container', {
+            var replaceForm = Ext.create('Ext.Container', {
                 hidden: this.mode !== Connector.view.GroupSave.modes.REPLACE,
                 activeMode: Connector.view.GroupSave.modes.REPLACE,
                 style: 'padding-top: 10px;',
@@ -201,17 +302,21 @@ Ext.define('Connector.view.GroupSave', {
                     items: [{
                         xtype: 'groupsavelistview',
                         listeners: {
-                            render: function(v) {
+                            render: function(v)
+                            {
                                 this.grouplist = v;
                             },
-                            select: function(sm, group) {
-                                this.setActive(group);
+                            select: function(sm, group)
+                            {
+                                this.setActive(group, replaceForm.getForm());
                             },
-                            viewready: function(v) {
+                            viewready: function(v)
+                            {
                                 var group = v.getStore().getAt(0);
-                                if (group) {
+                                if (group)
+                                {
                                     v.getSelectionModel().select(0);
-                                    this.setActive(group);
+                                    this.setActive(group, replaceForm.getForm());
                                 }
                                 var bodyBox = Ext.getBody().getBox();
                                 this.onWindowResize(bodyBox.width, bodyBox.height);
@@ -263,40 +368,60 @@ Ext.define('Connector.view.GroupSave', {
                 },{
                     xtype: 'toolbar',
                     dock: 'bottom',
-                    ui: 'footer',
+                    ui: 'lightfooter',
                     style: 'padding-top: 60px',
                     items: ['->',{
-                        text: 'save',
+                        text: 'Save',
                         itemId: 'groupupdatesave',
                         cls: 'groupupdatesave' // tests
                     },{
-                        text: 'cancel',
-                        itemId: 'groupupdatecancel',
-                        cls: 'groupupdatecancel' // tests
+                        text: 'Cancel',
+                        itemId: 'groupcancel',
+                        cls: 'groupcancelreplace' // tests
                     }]
                 }],
+                getForm : function()
+                {
+                    return replaceForm.getComponent('creategroupform');
+                },
                 listeners : {
                     show: this.refresh,
                     scope: this
                 },
                 scope: this
             });
+
+            this.replaceGroup = replaceForm;
         }
 
         return this.replaceGroup;
     },
 
-    changeMode : function(mode) {
+    changeMode : function(mode)
+    {
         this.mode = mode;
         var content = this.getComponent('content');
-        if (content) {
+        if (content)
+        {
             var cc = content.items.items;
-            for (var i=0; i < cc.length; i++) {
-                if (Ext.isDefined(cc[i].activeMode)) {
-                    if (cc[i].activeMode === mode) {
+            for (var i=0; i < cc.length; i++)
+            {
+                if (Ext.isDefined(cc[i].activeMode))
+                {
+                    if (cc[i].activeMode === mode)
+                    {
+                        // update the title
+                        this.getTitle().update({
+                            title: cc[i].title || this.defaultTitle
+                        });
+
+                        // show/hide selection message
+                        this.getComponent('content').getComponent('selectionwarning').hide();
+
                         cc[i].show();
                     }
-                    else {
+                    else
+                    {
                         cc[i].hide();
                     }
                 }
@@ -309,6 +434,15 @@ Ext.define('Connector.view.GroupSave', {
         return this.mode;
     },
 
+    editGroup : function(group)
+    {
+        if (group)
+        {
+            this.changeMode(Connector.view.GroupSave.modes.EDIT);
+            this.setActive(group, this.getEditGroup().getForm());
+        }
+    },
+
     onSelectionChange : function(selections) {
         // update warning
         var sw = this.getComponent('content').getComponent('selectionwarning');
@@ -317,40 +451,71 @@ Ext.define('Connector.view.GroupSave', {
         }
     },
 
-    setActive : function(groupModel) {
-        var form = this.replaceGroup.getComponent('creategroupform');
-        if (form) {
-            var filterGroupModel = Connector.model.FilterGroup.fromCohortGroup(groupModel);
+    setActive : function(groupModel, form)
+    {
+        if (form)
+        {
+            var group = Connector.model.FilterGroup.fromCohortGroup(groupModel),
+                _id = form.getComponent('groupid'),
+                name = form.getComponent('groupname'),
+                description = form.getComponent('groupdescription');
 
-            // set description
-            var field = form.getComponent('groupdescription');
-            field.setValue(filterGroupModel.get('description'));
+            if (_id)
+            {
+                _id.setValue(group.get('id'));
+            }
+
+            if (name)
+            {
+                name.setValue(group.get('label'));
+            }
+
+            if (description)
+            {
+                description.setValue(group.get('description'));
+            }
         }
     },
 
-    getActiveForm : function() {
-        var active;
-        if (this.getMode() === Connector.view.GroupSave.modes.CREATE) {
+    getActiveForm : function()
+    {
+        var active,
+            modes = Connector.view.GroupSave.modes,
+            mode = this.getMode();
+
+        if (mode === modes.CREATE)
+        {
             active = this.getCreateGroup();
         }
-        else {
+        else if (mode === modes.EDIT)
+        {
+            active = this.getEditGroup();
+        }
+        else
+        {
             active = this.getReplaceGroup();
         }
+
         return active.getComponent('creategroupform');
     },
 
-    refresh : function() {
-        if (this.grouplist) {
+    refresh : function()
+    {
+        if (this.grouplist)
+        {
             this.grouplist.getSelectionModel().deselectAll();
             this.grouplist.getStore().load();
         }
     },
 
-    getSelectedGroup : function() {
+    getSelectedGroup : function()
+    {
         var grp;
-        if (this.grouplist) {
+        if (this.grouplist)
+        {
             var selections = this.grouplist.getSelectionModel().getSelection();
-            if (Ext.isArray(selections) && selections.length > 0) {
+            if (!Ext.isEmpty(selections))
+            {
                 grp = Connector.model.FilterGroup.fromCohortGroup(selections[0]);
             }
         }
@@ -402,24 +567,28 @@ Ext.define('Connector.view.GroupSave', {
         }
     },
 
-    onWindowResize : function(width, height) {
-        if (this.getMode() == Connector.view.GroupSave.modes.REPLACE) {
+    onWindowResize : function(width, height)
+    {
+        if (this.getMode() == Connector.view.GroupSave.modes.REPLACE)
+        {
+            var hdrHeight = 53,
+                paddingOffset = 20, // [10, 0, 10, 0]
+                trueHeight = height - hdrHeight - paddingOffset,
+                contentHeight = this.getComponent('content').getBox().height,
+                listHeight = this.grouplist.getBox().height,
+                h = listHeight;
 
-            var hdrHeight = 53;
-            var paddingOffset = 20; // [10, 0, 10, 0]
-            var trueHeight = height - hdrHeight - paddingOffset;
-            var contentHeight = this.getComponent('content').getBox().height;
-            var listHeight = this.grouplist.getBox().height;
-            var h = listHeight;
-
-            if (trueHeight < contentHeight) {
+            if (trueHeight < contentHeight)
+            {
                 h = listHeight - (contentHeight - trueHeight);
             }
-            else {
+            else
+            {
                 // window height allow for more space, see if group list can expand
-                var lh = this.grouplist.getStore().getCount() * this.listRecordHeight;
-                var maxHeight = Math.min(this.listMaxHeight, lh);
-                var diff = trueHeight - contentHeight;
+                var lh = this.grouplist.getStore().getCount() * this.listRecordHeight,
+                    maxHeight = Math.min(this.listMaxHeight, lh),
+                    diff = trueHeight - contentHeight;
+
                 h = Math.min(maxHeight, listHeight + diff);
             }
 

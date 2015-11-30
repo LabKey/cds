@@ -56,6 +56,8 @@ public class CDSInitializer
         _test.setPipelineRoot(TestFileUtils.getSampleData("MasterDataspace/folder.xml").getParentFile().getParent());
         _test.importFolderFromPipeline("/MasterDataspace/folder.xml");
 
+        _cds.showHiddenVariables(true);
+
         _test.goToProjectHome();
     }
 

@@ -27,30 +27,46 @@ Ext.define('Connector.view.DetailStatus', {
     tpl: new Ext.XTemplate(
             '<ul class="detailstatus">',
                 '<tpl for=".">',
-                    '<div class="status-row {highlight:this.isHighlight} {activeCountLink:this.isLink}">',
+                    '<div class="status-row {highlight:this.isHighlight} {[this.isLink(values)]} {count:this.shouldHide}">',
                         '<tpl if="highlight != undefined && highlight == true">',
-                                '<li>',
-                                      '<span class="statme hl-status-label">{label:htmlEncode}</span>',
-                                      '<span class="statme hl-status-count status-subcount maskit {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
-                                      '<span class="statme hl-status-count status-of {subcount:this.subFormat}">/</span>',
-                                      '<span class="statme hl-status-count maskit">{count:this.commaFormat}</span>',
-                                '</li>',
+                            '<li>',
+                                '<span class="statme hl-status-label">',
+                                    '{label:htmlEncode}',
+                                '</span>',
+                                '<span class="statme hl-status-count status-subcount {plotBasedCount:this.shouldMask} {subcount:this.shouldHide}">',
+                                    '{subcount:this.commaFormat}',
+                                '</span>',
+                                '<span class="statme hl-status-count status-of {subcount:this.shouldHide}">',
+                                    '/',
+                                '</span>',
+                                '<span class="statme hl-status-count {plotBasedCount:this.shouldMask}">',
+                                    '{count:this.commaFormat}',
+                                '</span>',
+                            '</li>',
                             '</div>',
                         '</tpl>',
                         '<tpl if="highlight == undefined || !highlight">',
                             '<li>',
-                                '<span class="statme status-label">{label:htmlEncode}</span>',
-                                '<span class="statme status-count status-subcount maskit {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
-                                '<span class="statme status-count status-of {subcount:this.subFormat}">/</span>',
-                                '<span class="statme status-count maskit">{count:this.commaFormat}</span>',
+                                '<span class="statme status-label">',
+                                    '{label:htmlEncode}',
+                                '</span>',
+                                '<span class="statme status-count status-subcount {plotBasedCount:this.shouldMask} {subcount:this.shouldHide}">',
+                                    '{subcount:this.commaFormat}',
+                                '</span>',
+                                '<span class="statme status-count status-of {subcount:this.shouldHide}">',
+                                    '/',
+                                '</span>',
+                                '<span class="statme status-count {plotBasedCount:this.shouldMask}">',
+                                    '{count:this.commaFormat}',
+                                '</span>',
                             '</li>',
                         '</tpl>',
                     '</div>',
                 '</tpl>',
             '<ul>',
             {
-                isLink : function(activeCountLink) {
-                    return (activeCountLink === true ? '' : 'nolink');
+                isLink : function(values) {
+                    return (values.activeCountLink === true && values.count != -1 ? '' : 'nolink');
                 },
                 isHighlight : function(highlight) {
                     return (highlight === true ? 'hl-status-row' : '');
@@ -58,8 +74,11 @@ Ext.define('Connector.view.DetailStatus', {
                 commaFormat : function(v) {
                     return Ext.util.Format.number(v, '0,000');
                 },
-                subFormat : function(subcount) {
-                    return subcount === -1 ? 'hideit' : '';
+                shouldHide : function(value) {
+                    return value === -1 ? 'hideit' : '';
+                },
+                shouldMask : function(value) {
+                    return value ? 'plotmaskit' : 'maskit';
                 }
             }
     ),
@@ -74,20 +93,21 @@ Ext.define('Connector.view.DetailStatus', {
         state.on('filterchange', this.onFilterChange, this);
         state.on('selectionchange', this.onFilterChange, this);
 
-        // plugin to handle loading mask for the info pane
         this.addPlugin({
             ptype: 'loadingmask',
-            blockingMask: false,
-            itemsMaskCls: 'item-spinner-mask',
-            beginConfig: {
-                component: this.store,
-                events: ['beforeload']
-
-            },
-            endConfig: {
-                component: this.store,
-                events: ['load']
-            }
+            configs: [{
+                element: this.store,
+                blockingMask: false,
+                itemsMaskCls: 'item-spinner-mask',
+                beginEvent: 'beforeload',
+                endEvent: 'load'
+            },{
+                element: this.store,
+                blockingMask: false,
+                itemsMaskCls: 'item-spinner-plotmask',
+                beginEvent: 'showplotmask',
+                endEvent: 'hideplotmask'
+            }]
         });
     },
 

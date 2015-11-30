@@ -59,7 +59,7 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
     {
         _test.click(CDSHelper.Locators.cdsButtonLocator("Set color"));
         _test.sleep(1500);
-        _test._ext4Helper.waitForMaskToDisappear();
+        _test._ext4Helper.waitForMaskToDisappear(60000);
         // There is a bug where the mouse can end up over a time axis data point which will generate a hopscotch bubble.
         // However that is not the bubble indicating median values. So moving mouse out of the way.
         _test.mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));

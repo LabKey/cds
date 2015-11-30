@@ -11,285 +11,345 @@ Ext.define('Connector.view.GroupSummary', {
 
     requires: ['Connector.model.Group'],
 
-    plugins : [{
-        ptype: 'messaging',
-        calculateY : function(cmp, box, msg) {
-            return box.y + 145;
-        }
-    }],
+    group: undefined,
 
-    constructor : function(config) {
+    groupId: undefined,
+
+    constructor : function(config)
+    {
         this.callParent([config]);
 
-        this.addEvents('requestfilterundo', 'loadgroupfilters', 'requestgroupupdate', 'requestgroupdelete', 'requestback');
+        this.addEvents('requestgroupdelete');
     },
 
-    initComponent : function() {
-        this.group = null;
-
-        if (!this.groupId) {
-            console.log("No id, throw not found error.");
+    initComponent : function()
+    {
+        if (!this.groupId)
+        {
+            throw 'groupId must be specified';
         }
 
-        if (this.store.getCount() > 0) {
-            var recIdx = this.store.find('id', this.groupId, false, true, true);
-            if (recIdx > -1) {
-                this.group = this.store.getAt(recIdx);
-                this.requestFilterChange();
-            }
-        }
-        else {
-            this.store.on('load', this.onStoreLoad, this, {single: true});
-        }
-
-        this.items = [
-            this.getHeader(),
-            this.getBody()
-        ];
+        this.items = [];
 
         this.callParent();
-    },
 
-    onStoreLoad: function() {
-        this.updateView();
-    },
-
-    showFiltersMessage: function() {
-        var id = Ext.id();
-
-        this.showMessage('Your filters have been replaced by this saved group. <a id="' + id + '">Undo</a>', true);
-
-        var undo = Ext.get(id);
-
-        if (undo) {
-            undo.on('click', function() {
-                this.fireEvent('requestfilterundo');
-                this.hideMessage(true);
-            }, this, {single: true});
+        if (this.store.getCount() > 0)
+        {
+            this.loadGroup();
+        }
+        else
+        {
+            this.store.on('load', this.loadGroup, this);
         }
     },
 
-    filterChange: function() {
-        this.fireEvent('loadgroupfilters');
-        this.showFiltersMessage();
+    _getActiveGroup : function()
+    {
+        var group;
+        var idx = this.store.find('id', this.groupId, false, true, true);
+        if (idx > -1)
+        {
+            group = this.store.getAt(idx);
+        }
+        return group;
     },
 
-    requestFilterChange: function() {
-        if (this.showMessage) {
-            this.filterChange();
+    loadGroup : function()
+    {
+        this.group = this._getActiveGroup();
+        if (this.group)
+        {
+            this.removeAll();
+            this.add([this.generateHeader(this.group), this.generateBody(this.group)]);
+            this.doLayout();
         }
-        else {
-            this.on('boxready', this.filterChange, this, {single: true});
+        else
+        {
+            Connector.getApplication().getController('Connector').showNotFound();
         }
     },
 
-    getHeader : function() {
-        if (!this.summaryHeader) {
-            this.summaryHeader = Ext.create('Connector.view.GroupSummaryHeader', {
-                group: this.group,
-                listeners: {
-                    scope: this,
-                    deletegroup: this.onDelete,
-                    requestgroupdelete: function(id) {
-                        this.fireEvent('requestgroupdelete', id);
-                    },
-                    loadgroupfilters: function() {
-                        this.requestFilterChange();
-                    },
-                    requestback: function() {
-                        this.fireEvent('requestback');
+    generateHeader : function(group)
+    {
+        return Ext.create('Connector.view.PageHeader', {
+            title: group.get('label'),
+            upText: 'Group',
+            upLink: {
+                controller: 'home'
+            },
+            tabs: [{
+                label: 'Details'
+            }],
+            buttons: [{
+                xtype: 'button',
+                text: 'Edit details',
+                ui: 'linked',
+                itemId: 'editgroupdetails',
+                group: group
+            },{
+                xtype: 'button',
+                text: 'Delete',
+                ui: 'linked',
+                handler: this.onDelete,
+                scope: this
+            }]
+        });
+    },
+
+    onDelete : function()
+    {
+        if (this.group)
+        {
+            Ext.Msg.show({
+                title: 'Delete Group',
+                msg: 'Are you sure you want to delete "' + Ext.htmlEncode(this.group.get('label')) + '"?',
+                buttons: Ext.Msg.OKCANCEL,
+                buttonText: {
+                    ok: 'Delete'
+                },
+                fn: function(id) {
+                    if (id === 'ok') {
+                        this.fireEvent('requestgroupdelete', this.group.get('id'));
                     }
-                }
+                },
+                scope: this
             });
         }
-        return this.summaryHeader;
     },
 
-    onDelete : function(group) {
-        if (this.showMessage) {
-            this.hideMessage(true);
-            var id = Ext.id();
-            var cancelId = Ext.id();
-            this.showMessage('Are you sure you want to delete "' + Ext.String.ellipsis(Ext.htmlEncode(group.get('label')), 35, true) + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
-            var deleteLink = Ext.get(id);
-            if (deleteLink) {
-                deleteLink.on('click', function() { this.fireEvent('requestgroupdelete', group.get('id')); }, this, {single: true});
-            }
-            var cancelLink = Ext.get(cancelId);
-            if (cancelLink) {
-                cancelLink.on('click', function() { this.hideMessage(true); }, this, {single: true});
-            }
-        }
+    generateBody : function(group)
+    {
+        return Ext.create('Connector.view.GroupSummaryBody', {
+            group: group
+        });
     },
 
-    getBody : function() {
-        if (!this.summaryBody) {
-            this.summaryBody = Ext.create('Connector.view.GroupSummaryBody', {
-                group: this.group,
-                listeners: {
-                    scope: this,
-                    requestgroupupdate : function(group) {
-                        this.fireEvent('requestgroupupdate', group);
-                    }
-                }
-            });
-        }
-        return this.summaryBody;
-    },
-
-    updateView : function(id) {
-        var idx;
-
+    updateView : function(id)
+    {
         if (id !== undefined && id !== null) {
             this.groupId = id;
         }
 
-        idx = this.store.find('id', this.groupId, false, true, true);
-
-        if (idx > -1) {
-            this.group = this.store.getAt(idx);
-            this.requestFilterChange();
-            this.summaryHeader.updateView(this.group);
-            this.summaryBody.updateView(this.group);
-        }
-        else {
-            console.log('group not found, throw not found.');
-        }
+        this.loadGroup();
     },
 
-    getGroup : function() {
-        if (this.group) {
+    getGroup : function()
+    {
+        if (this.group)
+        {
             return Ext.clone(this.group.data);
         }
-    }
-});
-
-Ext.define('Connector.view.GroupSummaryHeader', {
-    extend : 'Ext.container.Container',
-
-    alias : 'widget.groupsummaryheader',
-
-    margin: '25 0 0 25',
-
-    layout: {
-        type : 'vbox',
-        align: 'stretch'
-    },
-
-    cls: 'header-container',
-
-    height: 180,
-
-    defaults: {
-        ui: 'custom'
-    },
-
-    constructor : function(config) {
-        this.callParent([config]);
-
-        this.addEvents('loadgroupfilters', 'requestgroupdelete', 'requestback');
-    },
-
-    initComponent : function() {
-        if (this.group) {
-            this.groupLabel = this.group.get('label');
-        }
-        else {
-            this.groupLabel = '';
-        }
-
-        this.items = [{
-            itemId: 'grouplabel',
-            xtype: 'box',
-            margin: '0 0 20 0',
-            tpl: new Ext.XTemplate('<h2 class="lhdv active">{groupLabel:htmlEncode}</h2>'),
-            data: {groupLabel: this.groupLabel}
-        },{
-            xtype: 'container',
-            cls: 'dimgroup',
-            items: [{
-                xtype: 'button',
-                text: '&#9668;&nbsp;back',
-                handler: this.back,
-                scope: this
-            }, {
-                xtype: 'button',
-                text: 'delete',
-                margin: '0 0 0 10',
-                handler: this.deleteGroup,
-                scope: this
-            }]
-        }];
-
-        this.callParent();
-    },
-
-    back : function() {
-        this.fireEvent('requestback');
-    },
-
-    applyFilters : function() {
-        this.fireEvent('loadgroupfilters');
-    },
-
-    deleteGroup : function() {
-        this.fireEvent('deletegroup', this.group);
-    },
-
-    updateView : function(group) {
-        this.group = group;
-        this.groupLabel = group.get('label');
-        this.getComponent('grouplabel').update({groupLabel: this.groupLabel});
-        this.doLayout();
     }
 });
 
 Ext.define('Connector.view.GroupSummaryBody', {
     extend : 'Ext.container.Container',
 
-    alias : 'widget.groupsummarybody',
+    margin: '25 25 0 25',
 
-    margin: '25 0 0 25',
-
-    constructor : function(config) {
-        this.callParent([config]);
-
-        this.addEvents('requestgroupupdate');
+    layout: {
+        type: 'hbox'
     },
 
-    initComponent: function() {
+    group: undefined,
+
+    constructor : function(config)
+    {
+        this.callParent([config]);
+
+        this.addEvents('loadgroupfilters', 'requestfilterundo');
+    },
+
+    initComponent: function()
+    {
+        this.items = [{
+            xtype: 'container',
+            flex: 1,
+            items: [
+                this.getUndoMsg(),
+                this.getApplyMsg(),
+            {
+                xtype: 'box',
+                html: '<div class="module"><h3>Description</h3></div>'
+            },{
+                xtype: 'displayfield',
+                itemId: 'descDisplay',
+                margin: '0 0 20 0',
+                htmlEncode: true,
+                value: this._getDescription(this.group)
+            }]
+        }];
+
+        var rightColumn = Ext.create('Ext.container.Container', {
+            flex: 1,
+            items: []
+        });
+
+        if (this.group && this.group.get('containsPlot') === true)
+        {
+            var filters = this.getGroupFilters(this.group),
+                plotFilter;
+
+            Ext.each(filters, function(filter)
+            {
+                if (filter.isPlot() && !filter.isGrid())
+                {
+                    plotFilter = filter;
+                    return false;
+                }
+            });
+
+            if (plotFilter)
+            {
+                rightColumn.add({
+                    xtype: 'box',
+                    html: '<div class="module"><h3>In the plot</h3></div>'
+                });
+                rightColumn.add(Connector.view.PlotPane.plotFilterContent(plotFilter));
+            }
+        }
+
+        this.items.push(rightColumn);
+
+        this.callParent();
+
+        Connector.getState().onReady(function()
+        {
+            if (Ext.isEmpty(Connector.getState().getFilters()))
+            {
+                this.applyFilters();
+            }
+            else
+            {
+                this.getUndoMsg().hide();
+                this.getApplyMsg().show();
+            }
+        }, this);
+    },
+
+    getUndoMsg : function()
+    {
+        if (!this._undo)
+        {
+            this._undo = Ext.create('Ext.Component', {
+                margin: '0 0 20 0',
+                renderTpl: new Ext.XTemplate(
+                    'Group loaded. Your filters have been replaced. <a href="#" onclick="return false;" class="undogroup nav">Undo</a>'
+                ),
+                renderData: {},
+                renderSelectors: {
+                    undoLink: 'a.undogroup'
+                },
+                listeners: {
+                    afterrender: {
+                        fn: function(cmp)
+                        {
+                            cmp.undoLink.on('click', function()
+                            {
+                                Connector.getState().requestFilterUndo();
+                                this.getUndoMsg().hide();
+                                this.getApplyMsg().show();
+                                return false;
+                            }, this);
+                        },
+                        scope: this,
+                        single: true
+                    }
+                }
+            });
+        }
+
+        return this._undo;
+    },
+
+    getApplyMsg : function()
+    {
+        if (!this._apply)
+        {
+            this._apply = Ext.create('Ext.Component', {
+                hidden: true,
+                margin: '0 0 20 0',
+                renderTpl: new Ext.XTemplate(
+                    'This group has filters which can be applied as active filters. <a href="#" onclick="return false;" class="applygroup nav">Apply</a>'
+                ),
+                renderData: {},
+                renderSelectors: {
+                    applyLink: 'a.applygroup'
+                },
+                listeners: {
+                    afterrender: {
+                        fn: function(cmp)
+                        {
+                            cmp.applyLink.on('click', function()
+                            {
+                                this.applyFilters();
+                                this.getApplyMsg().hide();
+                                this.getUndoMsg().show();
+                            }, this);
+                        },
+                        scope: this,
+                        single: true
+                    }
+                }
+            });
+        }
+
+        return this._apply;
+    },
+
+    updateView: function(group)
+    {
+        this.group = group;
+        this.getComponent('descDisplay').setValue(this._getDescription(this.group));
+        this.doLayout();
+    },
+
+    _getDescription : function(group)
+    {
         var desc = '';
 
-        if (this.group) {
-            desc = this.group.get('description');
-            if (desc.length == 0) {
+        if (group) {
+            desc = group.get('description');
+            if (Ext.isEmpty(desc)) {
                 desc = 'No description given.';
             }
         }
 
-        this.descDisplay = Ext.create('Ext.form.field.Display', {
-            xtype: 'displayfield',
-            margin: '10 0 20 0',
-            bodyPadding: 10,
-            width: '50%',
-            htmlEncode: true,
-            value: desc
-        });
-
-        this.items = [
-            {xtype: 'box', cls: 'headline', autoEl: { tag: 'h3', html: 'Description' }},
-            this.descDisplay
-        ];
-        this.callParent();
+        return desc;
     },
 
-    updateView: function(group) {
-        this.group = group;
-        var desc = this.group.get('description');
-        if (desc.length == 0) {
-            desc = 'No description given.';
+    applyFilters : function()
+    {
+        if (this.group)
+        {
+            var filters = this.getGroupFilters(this.group);
+
+            if (filters.length > 0)
+            {
+                Connector.getState().setFilters(filters);
+
+                Connector.getApplication().fireEvent('grouploaded', Ext.clone(this.group.data), filters);
+            }
         }
-        this.descDisplay.setValue(desc);
-        this.doLayout();
+    },
+
+    getGroupFilters : function(group)
+    {
+        var groupFilters = group.get('filters'),
+            filters = [];
+
+        if (Ext.isString(groupFilters))
+        {
+            Ext.each(LABKEY.app.model.Filter.fromJSON(groupFilters), function(filter)
+            {
+                filters.push(Ext.create('Connector.model.Filter', filter));
+            });
+        }
+        else
+        {
+            filters = groupFilters;
+        }
+
+        return filters;
     }
 });

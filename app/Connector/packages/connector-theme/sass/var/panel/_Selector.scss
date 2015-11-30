@@ -55,7 +55,8 @@
         color: $gray-3;
         font-size: 12px;
         text-transform: uppercase;
-        padding: 0 0 0 24px;
+        min-width: 84px;
+        padding-left: 24px;
 
         .arrow {
           background-image: url(images/navigatebackward.svg);
@@ -235,6 +236,7 @@
         width: 65%;
         padding: 8px 8px 7px 8px;
         border: 1px solid $gray-5;
+        border-radius: 2px;
         cursor: pointer;
 
         .main-label {
@@ -257,16 +259,29 @@
         }
 
         .icon {
-          width: 12px;
+          width: 16px;
+          height: 16px;
           float: right;
-          background-image: url(images/dropdown_expand.svg);
-          background-size: 12px;
+          background-image: url(images/dropdown_normal.svg);
+          background-size: 16px;
           background-repeat: no-repeat;
+
+          &:hover {
+            background-image: url(images/dropdown_hover.svg);
+          }
         }
       }
 
-      .expanded .field-display .icon {
-        background-image: url(images/dropdown_collapse.svg);
+      .expanded {
+        .field-display {
+          border-radius: 2px;
+
+          .icon {
+            background-image: url(images/dropdown_hover.svg);
+          }
+        }
+
+
       }
 
       .hierarchical .field-display .icon {
@@ -370,7 +385,8 @@
     }
 
     .body-panel {
-      background-color: $heat-scale-6;
+      border-top: 1px solid $gray-7;
+      background-color: $white;
       padding: 8px 0 8px 16px;
 
       .cb-all-panel, .cb-panel, .radio-panel {

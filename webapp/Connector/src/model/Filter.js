@@ -50,7 +50,9 @@ Ext.define('Connector.model.Filter', {
                 filters.push(raw);
             }
             return filters;
-        }}
+        }},
+
+        {name : 'filterDisplayString', defaultValue: undefined}
     ],
 
     statics: {
@@ -223,7 +225,7 @@ Ext.define('Connector.model.Filter', {
             dTimeMeasure = data.timeMeasure,
             fTimeMeasure = fdata.timeMeasure;
 
-        if (dTimeMeasure.measure.alias === fTimeMeasure.measure.alias)
+        if (data.isPlot === fdata.isPlot && dTimeMeasure.measure.alias === fTimeMeasure.measure.alias)
         {
             if (dTimeMeasure.dateOptions.interval === fTimeMeasure.dateOptions.interval)
             {
@@ -1345,6 +1347,26 @@ Ext.define('Connector.model.Filter', {
         }, this);
 
         return remove;
+    },
+
+    hasMultiLevelMembers: function() {
+        var level = 0;
+        var hasMultiLevel = false;
+        var members = this.get('members');
+        if (members) {
+            Ext.each(members, function(member) {
+                if (member) {
+                    var levelCount = (member.uniqueName.match(/\[/g) || []).length;
+                    if (levelCount > 0 && level === 0) {
+                        level = levelCount;
+                    }
+                    if (levelCount !== level) {
+                        hasMultiLevel = true;
+                    }
+                }
+            });
+        }
+        return hasMultiLevel;
     }
 });
 

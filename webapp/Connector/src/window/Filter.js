@@ -59,9 +59,7 @@ Ext.define('Connector.window.Filter', {
 
 Ext.define('Connector.field.BooleanCombo', {
     extend: 'Ext.form.field.ComboBox',
-
     alias: 'widget.labkey-booleantextfield',
-
     displayField: 'displayText',
     valueField: 'value',
     triggerAction: 'all',

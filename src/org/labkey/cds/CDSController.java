@@ -18,50 +18,72 @@ package org.labkey.cds;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiAction;
-import org.labkey.api.action.ApiResponse;
 import org.labkey.api.action.ApiSimpleResponse;
-import org.labkey.api.action.BaseViewAction;
-import org.labkey.api.action.HasBindParameters;
+import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
-import org.labkey.api.action.MutatingApiAction;
-import org.labkey.api.action.NullSafeBindException;
+import org.labkey.api.action.SimpleApiJsonForm;
 import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
-import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.ColumnHeaderType;
+import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.DataColumn;
+import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
-import org.labkey.api.data.PropertyManager;
+import org.labkey.api.data.JdbcType;
+import org.labkey.api.data.Results;
+import org.labkey.api.data.ResultsImpl;
+import org.labkey.api.data.SqlSelector;
+import org.labkey.api.files.FileContentService;
+import org.labkey.api.module.Module;
+import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
-import org.labkey.api.security.*;
+import org.labkey.api.security.CSRF;
+import org.labkey.api.security.Group;
+import org.labkey.api.security.IgnoresTermsOfUse;
+import org.labkey.api.security.RequiresNoPermission;
+import org.labkey.api.security.RequiresPermission;
+import org.labkey.api.security.RequiresSiteAdmin;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.ReadPermission;
+import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
+import org.labkey.api.util.CSRFUtil;
+import org.labkey.api.util.PageFlowUtil;
+import org.labkey.api.util.URLHelper;
+import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
+import org.labkey.api.view.VBox;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.labkey.cds.view.template.FrontPageTemplate;
-import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +112,13 @@ public class CDSController extends SpringActionController
     public CDSController()
     {
         setActionResolver(_actionResolver);
+    }
+
+    @Override
+    protected void beforeAction(Controller action)
+    {
+        Module cds = ModuleLoader.getInstance().getModule("cds");
+        ((CDSModule)cds).ensureShortcuts();
     }
 
     @RequiresPermission(ReadPermission.class)
@@ -132,6 +161,7 @@ public class CDSController extends SpringActionController
     public class AppModel
     {
         private boolean isAnalyticsUser = false;
+        private JSONObject userProperties;
 
         public boolean isAnalyticsUser()
         {
@@ -141,6 +171,16 @@ public class CDSController extends SpringActionController
         public void setIsAnalyticsUser(boolean isAnalyticsUser)
         {
             this.isAnalyticsUser = isAnalyticsUser;
+        }
+
+        public JSONObject getUserProperties()
+        {
+            return userProperties;
+        }
+
+        public void setUserProperties(JSONObject userProperties)
+        {
+            this.userProperties = userProperties;
         }
     }
 
@@ -180,6 +220,8 @@ public class CDSController extends SpringActionController
                         break;
                     }
                 }
+
+                model.setUserProperties(new JSONObject(CDSManager.get().getActiveUserProperties(getUser(), getContainer())));
 
                 template = new ConnectorTemplate(new JspView("/org/labkey/cds/view/app.jsp"), defaultPageConfig(), model);
             }
@@ -378,85 +420,6 @@ public class CDSController extends SpringActionController
         }
     }
 
-    public static class StateForm implements HasBindParameters
-    {
-        String category = "CDS.state";
-        Map<String,String> properties = new CaseInsensitiveHashMap<>();
-        public String getCategory()
-        {
-            return category;
-        }
-
-        public void setCategory(String category)
-        {
-            if (!StringUtils.startsWith(category, "CDS."))
-                category = "CDS." + category;
-            this.category = category;
-        }
-
-        public Map<String, String> getProperties()
-        {
-            return properties;
-        }
-
-        public void setProperties(Map<String, String> properties)
-        {
-            this.properties = properties;
-        }
-
-        @Override
-        public BindException bindParameters(PropertyValues m)
-        {
-            BindException errors = new NullSafeBindException(new BaseViewAction.BeanUtilsPropertyBindingResult(this, "form"));
-            for (PropertyValue pv : m.getPropertyValues())
-            {
-                if (StringUtils.equals("category", pv.getName()) && null != pv.getValue())
-                    this.setCategory(String.valueOf(pv.getValue()));
-                if (StringUtils.startsWith(pv.getName(), "properties.") && null != pv.getValue())
-                    this.getProperties().put(pv.getName().substring("properties.".length()), String.valueOf(pv.getValue()));
-            }
-            return errors;
-        }
-    }
-
-
-    @RequiresLogin
-    @RequiresPermission(ReadPermission.class)
-    public class GetStateAction extends ApiAction<StateForm>
-    {
-        @Override
-        public ApiResponse execute(StateForm form, BindException errors) throws Exception
-        {
-            Map<String,String> properties = PropertyManager.getProperties(getUser(), getContainer(), form.getCategory());
-            JSONObject ret = new JSONObject();
-            ret.put("success", true);
-            JSONObject props = new JSONObject();
-            props.putAll(properties);
-            ret.put("properties", props);
-            return new ApiSimpleResponse(ret);
-        }
-    }
-
-
-    @RequiresLogin
-    @RequiresPermission(ReadPermission.class)
-    public class SaveStateAction extends MutatingApiAction<StateForm>
-    {
-        @Override
-        public ApiResponse execute(StateForm form, BindException errors) throws Exception
-        {
-            PropertyManager.PropertyMap properties = PropertyManager.getWritableProperties(getUser(), getContainer(), form.getCategory(), true);
-            properties.clear();
-            properties.putAll(form.getProperties());
-            properties.save();
-
-            JSONObject ret = new JSONObject();
-            ret.put("success", true);
-            ret.put("count", properties.size());
-            return new ApiSimpleResponse(ret);
-        }
-    }
-
 
     /***** experimenting with derby/mondrian ******/
 
@@ -564,6 +527,184 @@ public class CDSController extends SpringActionController
         public Map<String, String> getColumnAliases()
         {
             return _columnAliases;
+        }
+    }
+
+    @RequiresSiteAdmin
+    @CSRF
+    public static class MailMergeAction extends SimpleViewAction<Object>
+    {
+        @Override
+        public ModelAndView getView(Object o, BindException errors) throws Exception
+        {
+            if ("GET".equals(getViewContext().getRequest().getMethod()))
+            {
+                String csrf = "<input type=\"hidden\" name=\"" + CSRFUtil.csrfName + "\" value=\"" + CSRFUtil.getExpectedToken(getViewContext()) + "\">";
+                return new HtmlView("<form method=POST><input type=submit value=submit>" + csrf + "</form>");
+            }
+            else if ("POST".equals(getViewContext().getRequest().getMethod()))
+            {
+                String sql = "SELECT L.email, U.lastlogin, L.verification, U.displayname, U.firstname, U.lastname FROM core.logins L INNER JOIN core.principals P ON L.email = P.name INNER JOIN core.usersdata U ON P.userid = U.userid";
+                try (ResultSet rs = new SqlSelector(DbSchema.get("core").getScope(), sql).getResultSet())
+                {
+                    List<DisplayColumn> list = new ArrayList<>();
+                    for (String s : Arrays.asList("email", "displayname", "firstname", "lastname", "lastlogin", "verification"))
+                        list.add(new DataColumn(new ColumnInfo(s, JdbcType.valueOf(rs.getMetaData().getColumnType(rs.findColumn(s))))));
+                    try (Results r = new ResultsImpl(rs))
+                    {
+                        ExcelWriter xl = new ExcelWriter(r, list);
+                        xl.setFilenamePrefix("mailmerge");
+                        xl.setAutoSize(true);
+                        xl.write(getViewContext().getResponse());
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+    }
+
+    public static class CmsPage
+    {
+        public String url;
+        public String target;
+    }
+
+    @RequiresSiteAdmin @CSRF
+    public static class CmsCopyAction extends FormViewAction<Object>
+    {
+        HttpView _success = null;
+
+        @Override
+        public void validateCommand(Object target, Errors errors)
+        {
+            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
+            String url = cds.getPropertyValue(cds._cmsURL, getContainer());
+
+            if (StringUtils.isEmpty(url))
+                errors.reject(ERROR_MSG, "cms url is not configured");
+
+            Container blogContainer = getContainer().getChild("files");
+            if (null == blogContainer)
+                errors.reject(ERROR_MSG, "Create subfolder named 'files'");
+        }
+
+        @Override
+        public URLHelper getSuccessURL(Object o)
+        {
+            return null;
+        }
+
+        @Override
+        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
+        {
+            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
+            CmsPage cms = new CmsPage();
+            cms.url =  cds.getPropertyValue(cds._cmsURL, getContainer());
+            Container target = getContainer().getChild("files");
+            if (null != target)
+                cms.target = "/_webdav" + target.getPath() + "/@files/blog/";
+            return new JspView<>(CDSController.class, "view/cms.jsp", cms);
+        }
+
+        @Override
+        public boolean handlePost(Object o, BindException errors) throws Exception
+        {
+            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
+            String url = cds.getPropertyValue(cds._cmsURL, getContainer());
+
+            Container blogContainer = getContainer().getChild("files");
+            FileContentService svc = ServiceRegistry.get().getService(FileContentService.class);
+            File root = svc.getFileRoot(blogContainer);
+            File fullPath = new File(root,"@files/blog");
+            fullPath.mkdirs();
+
+            StringWriter sw = new StringWriter();
+            // get pipeline root
+            String wget = "wget";
+            if (new File("/usr/bin/wget").exists())
+                wget = "/usr/bin/wget";
+            else if (new File("/opt/local/bin/wget").exists())
+                wget = "/opt/local/bin/wget";
+            ProcessBuilder pb = new ProcessBuilder(
+                    wget,
+                    "--directory-prefix=" + fullPath.getPath(),
+                    "--mirror",
+                    "--page-requisites",
+                    "--convert-links",
+                    "--adjust-extension",
+                    "--no-host-directories",
+                    url ,
+                    url + "/rss/feed.rss");
+            pb.redirectErrorStream(true);
+            Process p = pb.start();
+            IOUtils.copy(new InputStreamReader(p.getInputStream(),"UTF-8"), sw);
+            p.waitFor();
+            sw.flush();
+
+            ModelAndView form = getView(null, false, errors);
+            HtmlView output = new HtmlView("<pre>"+PageFlowUtil.filter(sw.toString())+"</pre>");
+            _success = new VBox(form,output);
+            return true;
+        }
+
+        @Override
+        public ModelAndView getSuccessView(Object o) throws Exception
+        {
+            return _success;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+    }
+
+
+    @RequiresPermission(ReadPermission.class)
+    public class UserPropertyAction extends ApiAction<SimpleApiJsonForm>
+    {
+        @Override
+        public Object execute(SimpleApiJsonForm form, BindException errors) throws Exception
+        {
+            ApiSimpleResponse response = new ApiSimpleResponse();
+
+            if (isDelete())
+            {
+                CDSManager.get().resetActiveUserProperties(getUser(), getContainer());
+            }
+            else if (isPost())
+            {
+                Object properties = form.getJsonObject().get("properties");
+
+                if (properties instanceof JSONObject)
+                {
+                    Map<String, String> mapProps = new HashMap<>();
+
+                    ((JSONObject) properties).entrySet()
+                            .stream()
+                            .forEach(jsonProperty -> mapProps.put(jsonProperty.getKey(), jsonProperty.getValue().toString()));
+
+                    if (!mapProps.isEmpty())
+                    {
+                        CDSManager.get().setActiveUserProperties(getUser(), getContainer(), mapProps);
+                    }
+                }
+                else
+                {
+                    errors.reject(ERROR_REQUIRED, "'properties' must be provided when setting a user property.");
+                }
+            }
+
+            response.put("properties", CDSManager.get().getActiveUserProperties(getUser(), getContainer()));
+            response.put("success", !errors.hasErrors());
+            return response;
         }
     }
 }

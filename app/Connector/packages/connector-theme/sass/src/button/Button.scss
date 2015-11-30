@@ -72,7 +72,7 @@ a.x-btn {
 
   $border-radius : 2px,
 
-  $background-color: $secondary-color,
+  $background-color: $gray-9,
   $background-color-focus: darken($secondary-color, 8),
   $background-color-over: darken($secondary-color, 8),
 
@@ -85,7 +85,7 @@ a.x-btn {
 
   $text-padding: 5px,
 
-  $color: $dark-color,
+  $color: $base-color,
   $color-disabled: $dark-color,
 
   $font-size : 12px,
@@ -120,49 +120,6 @@ a.x-btn {
   $icon-size : 10px,
   $glyph-color : $white
 );
-
-@include extjs-button-ui (
-  $ui: 'darkrounded-small',
-
-  $border-radius : 2px,
-
-  $background-color: $heat-scale-2,
-  $background-color-pressed: $heat-scale-1,
-  $background-color-over: $heat-scale-1,
-  $background-color-disabled: $heat-scale-4,
-
-  $border-width : 0px,
-  $border-color: $heat-scale-2,
-  $border-color-over: $heat-scale-1,
-  $border-color-pressed: $heat-scale-1,
-  $border-color-disabled: $heat-scale-4,
-
-  $text-padding: 8px,
-
-  $color: $gray-7,
-  $color-over: $gray-7,
-  $color-disabled: $heat-scale-3,
-
-  $font-size : 12px,
-  $font-family: $info-font,
-  $font-family-over: $info-font,
-  $font-family-focus: $info-font,
-  $font-family-pressed: $info-font,
-  $font-family-disabled: $info-font,
-
-  $icon-size : 15px,
-  $glyph-color : $white
-);
-
-.x-btn-darkrounded-small {
-  padding: 5px 5px 4px 5px;
-  background-image: none;
-  height: 24px;
-}
-
-.x-btn-darkrounded-small-disabled {
-  cursor: default;
-}
 
 /* Connector.button.DropDownButton */
 @include extjs-button-ui (
@@ -403,40 +360,72 @@ a.x-btn {
 );
 
 @include extjs-button-ui (
-$ui: 'rounded-inverted-accent-text-2-small',
+  $ui: 'rounded-inverted-accent-text-2-small',
 
-$border-radius : 2px,
+  $border-radius : 2px,
 
-$background-color: transparent,
-$background-color-over: transparent,
-$background-color-disabled: transparent,
+  $background-color: transparent,
+  $background-color-over: transparent,
+  $background-color-disabled: transparent,
 
-$border-width : 0px,
-$border-color: transparent,
-$border-color-over: transparent,
-$border-color-focus: transparent,
-$border-color-pressed: transparent,
-$border-color-disabled: transparent,
+  $border-width : 0px,
+  $border-color: transparent,
+  $border-color-over: transparent,
+  $border-color-focus: transparent,
+  $border-color-pressed: transparent,
+  $border-color-disabled: transparent,
 
-$color: $interactive-color,
-$color-over : $white,
-$color-disabled: $heat-scale-2,
+  $color: $interactive-color,
+  $color-over : $white,
+  $color-disabled: $heat-scale-2,
 
-$font-size : 12px,
-$font-family: $info-font,
-$font-family-over: $info-font,
-$font-family-focus: $info-font,
-$font-family-pressed: $info-font,
-$font-family-disabled: $info-font,
+  $font-size : 12px,
+  $font-family: $info-font,
+  $font-family-over: $info-font,
+  $font-family-focus: $info-font,
+  $font-family-pressed: $info-font,
+  $font-family-disabled: $info-font,
 
-$icon-size : 12px,
-$glyph-color : $white
+  $icon-size : 12px,
+  $glyph-color : $white
+);
+
+@include extjs-button-ui (
+  $ui: 'rounded-inverted-accent-toolbar-small',
+
+  $border-radius : 2px,
+
+  $background-color: $interactive-color,
+  $background-color-over: $interactive-color,
+  $background-color-disabled: $heat-scale-4,
+
+  $border-width : 0px,
+  $border-color: $white,
+  $border-color-over: $gray-7,
+  $border-color-focus: $gray-7,
+  $border-color-pressed: $dark-color,
+  $border-color-disabled: $gray-7,
+
+  $color: $white,
+  $color-over : $white,
+  $color-disabled: $gray-7,
+
+  $font-size : 12px,
+  $font-family: $info-font,
+  $font-family-over: $info-font,
+  $font-family-focus: $info-font,
+  $font-family-pressed: $info-font,
+  $font-family-disabled: $info-font,
+
+  $icon-size : 12px,
+  $glyph-color : $white
 );
 
 .x-btn-rounded-inverted-accent-small,
 .x-btn-rounded-inverted-accent-text-small,
-.x-btn-rounded-inverted-accent-text-2-small {
-  padding: 6px 12px 4px 12px!important;
+.x-btn-rounded-inverted-accent-text-2-small,
+.x-btn-rounded-inverted-accent-toolbar-small {
+  padding: 6px 12px 4px 12px !important;
   background-image: none;
   height: 24px;
 }
@@ -469,8 +458,7 @@ $glyph-color : $white
   $glyph-color : $white
 );
 
-.x-btn-rounded-small,
-.x-btn-rounded-accent-small {
+.x-btn-rounded-small {
   padding: 5px 5px 4px 5px;
   background-image: none;
   border-width: 0;
@@ -499,13 +487,7 @@ $glyph-color : $white
   color: $dark-color;
 }
 
-
-.x-btn-rounded-accent-small-over {
-  opacity: 0.9;
-}
-
-.x-btn-rounded-small-noicon button,
-.x-btn-rounded-accent-small-noicon button {
+.x-btn-rounded-small-noicon button {
   height: 22px;
 }
 
@@ -522,7 +504,8 @@ input:-webkit-autofill {
   background-color: #fff !important;
 }
 
-input.x-btn-rounded-inverted-accent-small {
+input.x-btn-rounded-inverted-accent-small,
+input.x-btn-rounded-inverted-accent-toolbar-small {
   padding: 4px 12px 4px 12px!important;
   color: $white;
   font-weight: normal;
@@ -537,11 +520,13 @@ input.x-btn-rounded-inverted-accent-small {
   }
 }
 
-.x-btn-rounded-inverted-accent-small {
+.x-btn-rounded-inverted-accent-small,
+.x-btn-rounded-inverted-accent-toolbar-small {
   background-image: none;
 }
 
-.x-btn-rounded-inverted-accent-small-over {
+.x-btn-rounded-inverted-accent-small-over,
+.x-btn-rounded-inverted-accent-toolbar-small-over {
   opacity: 0.9;
 
   svg {

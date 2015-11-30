@@ -30,7 +30,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.app.view.module.StudySites": "../../webapp/Connector/src/app/view/module/StudySites.js",
   "Connector.button.Image": "../../webapp/Connector/src/button/Image.js",
   "Connector.button.InfoButton": "../../webapp/Connector/src/button/RoundedButton.js",
-  "Connector.button.RoundedButton": "../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.component.ActionTitle": "../../webapp/Connector/src/component/ActionTitle.js",
   "Connector.component.AdvancedOptionBase": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionDimension": "../../webapp/Connector/src/component/AdvancedOption.js",
@@ -38,6 +37,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.component.AdvancedOptionTime": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.DropDown": "../../webapp/Connector/src/component/DropDown.js",
   "Connector.component.GridPager": "../../webapp/Connector/src/component/GridPager.js",
+  "Connector.component.News": "../../webapp/Connector/src/component/News.js",
+  "Connector.component.Started": "../../webapp/Connector/src/component/Started.js",
   "Connector.constant.ModuleViewsLookup": "../../webapp/Connector/src/constant/ModuleViewsLookup.js",
   "Connector.constant.Templates": "../../webapp/Connector/src/constant/Templates.js",
   "Connector.controller.AbstractViewController": "../../webapp/Connector/src/controller/AbstractViewController.js",
@@ -74,14 +75,15 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Group": "../../webapp/Connector/src/model/Group.js",
   "Connector.model.Hierarchy": "../../webapp/Connector/src/model/Dimension.js",
   "Connector.model.InfoPane": "../../webapp/Connector/src/model/InfoPane.js",
+  "Connector.model.InfoPaneMember": "../../webapp/Connector/src/model/InfoPaneMember.js",
   "Connector.model.Measure": "../../webapp/Connector/src/model/Measure.js",
-  "Connector.model.Members": "../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.RSSItem": "../../webapp/Connector/src/model/RSSItem.js",
   "Connector.model.Source": "../../webapp/Connector/src/model/Source.js",
   "Connector.model.State": "../../webapp/Connector/src/model/State.js",
   "Connector.model.StudyAxisData": "../../webapp/Connector/src/model/StudyAxisData.js",
   "Connector.model.StudyVisitTag": "../../webapp/Connector/src/model/StudyVisitTag.js",
   "Connector.model.Summary": "../../webapp/Connector/src/model/Summary.js",
+  "Connector.model.TimepointPane": "../../webapp/Connector/src/model/TimepointPane.js",
   "Connector.model.Variable": "../../webapp/Connector/src/model/Variable.js",
   "Connector.model.VisitTag": "../../webapp/Connector/src/model/VisitTag.js",
   "Connector.panel.AdvancedOptionBaseDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
@@ -121,7 +123,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSaveList": "../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSummary": "../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.GroupSummaryBody": "../../webapp/Connector/src/view/GroupSummary.js",
-  "Connector.view.GroupSummaryHeader": "../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeHeader": "../../webapp/Connector/src/view/HomeHeader.js",
@@ -143,6 +144,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.SingleAxisExplorerView": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.Summary": "../../webapp/Connector/src/view/Summary.js",
   "Connector.view.SummaryDataView": "../../webapp/Connector/src/view/Summary.js",
+  "Connector.view.TimepointPane": "../../webapp/Connector/src/view/TimepointPane.js",
   "Connector.view.Variable": "../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../webapp/Connector/src/view/Viewport.js",
   "Connector.view.module.AssayAnalyteList": "../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
@@ -218,7 +220,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.app.view.module.StudySites": [],
   "Connector.button.Image": [],
   "Connector.button.InfoButton": [],
-  "Connector.button.RoundedButton": [],
   "Connector.component.ActionTitle": [],
   "Connector.component.AdvancedOptionBase": [],
   "Connector.component.AdvancedOptionDimension": [],
@@ -226,6 +227,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.component.AdvancedOptionTime": [],
   "Connector.component.DropDown": [],
   "Connector.component.GridPager": [],
+  "Connector.component.News": [],
+  "Connector.component.Started": [],
   "Connector.constant.ModuleViewsLookup": [],
   "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
@@ -262,14 +265,15 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Group": [],
   "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
+  "Connector.model.InfoPaneMember": [],
   "Connector.model.Measure": [],
-  "Connector.model.Members": [],
   "Connector.model.RSSItem": [],
   "Connector.model.Source": [],
   "Connector.model.State": [],
   "Connector.model.StudyAxisData": [],
   "Connector.model.StudyVisitTag": [],
   "Connector.model.Summary": [],
+  "Connector.model.TimepointPane": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
   "Connector.panel.AdvancedOptionBaseDropdown": [],
@@ -313,7 +317,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSaveList": [],
   "Connector.view.GroupSummary": [],
   "Connector.view.GroupSummaryBody": [],
-  "Connector.view.GroupSummaryHeader": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
   "Connector.view.HomeHeader": [],
@@ -335,6 +338,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.SingleAxisExplorerView": [],
   "Connector.view.Summary": [],
   "Connector.view.SummaryDataView": [],
+  "Connector.view.TimepointPane": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
   "Connector.view.module.AssayAnalyteList": [],
@@ -1231,9 +1235,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.button.InfoButton": [
     "widget.infobutton"
   ],
-  "Connector.button.RoundedButton": [
-    "widget.roundedbutton"
-  ],
   "Connector.component.ActionTitle": [
     "widget.actiontitle"
   ],
@@ -1248,6 +1249,12 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.component.GridPager": [
     "widget.gridpager"
+  ],
+  "Connector.component.News": [
+    "widget.cds-news"
+  ],
+  "Connector.component.Started": [
+    "widget.cds-started"
   ],
   "Connector.constant.ModuleViewsLookup": [],
   "Connector.constant.Templates": [],
@@ -1289,14 +1296,15 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Group": [],
   "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
+  "Connector.model.InfoPaneMember": [],
   "Connector.model.Measure": [],
-  "Connector.model.Members": [],
   "Connector.model.RSSItem": [],
   "Connector.model.Source": [],
   "Connector.model.State": [],
   "Connector.model.StudyAxisData": [],
   "Connector.model.StudyVisitTag": [],
   "Connector.model.Summary": [],
+  "Connector.model.TimepointPane": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
   "Connector.panel.AdvancedOptionBaseDropdown": [],
@@ -1379,12 +1387,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.GroupSummary": [
     "widget.groupsummary"
   ],
-  "Connector.view.GroupSummaryBody": [
-    "widget.groupsummarybody"
-  ],
-  "Connector.view.GroupSummaryHeader": [
-    "widget.groupsummaryheader"
-  ],
+  "Connector.view.GroupSummaryBody": [],
   "Connector.view.Header": [
     "widget.connectorheader"
   ],
@@ -1422,7 +1425,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Page": [],
   "Connector.view.PageHeader": [
-    "widget.learnpageheader"
+    "widget.pageheader"
   ],
   "Connector.view.PlotPane": [],
   "Connector.view.Selection": [
@@ -1440,6 +1443,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.SummaryDataView": [
     "widget.summarydataview"
   ],
+  "Connector.view.TimepointPane": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
   "Connector.view.module.AssayAnalyteList": [

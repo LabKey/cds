@@ -268,6 +268,7 @@ Ext.define('Connector.controller.Query', {
     /**
      * Returns the raw measure data for the specified measureAlias. If not found, returns undefined.
      * @param measureAlias
+     * @param altLookupType - parent/child or undefined
      * @returns {*}
      */
     getMeasure : function(measureAlias, altLookupType) {
@@ -393,17 +394,18 @@ Ext.define('Connector.controller.Query', {
      * Use the cds getData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
      *      for showing which values are relevant in the variable selector Advanced Options panels.
      * @param {Object} dimension
+     * @param {Object} selectorMeasure
      * @param {Array} measureSet
      * @param {Array} filterValuesMap
+     * @param {String} plotAxis
      * @param {Function} callback
      * @param {Object} [scope]
      * @returns {Object}
      */
-    getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, plotAxis, callback, scope) {
+    getMeasureSetGetDataResponse : function(dimension, selectorMeasure, measureSet, filterValuesMap, plotAxis, callback, scope) {
         var subjectMeasure,
-            state = Connector.getState(),
             wrappedMeasureSet = [],
-            aliases = [],
+            applicableMeasures,
             measureData,
             alias;
 
@@ -417,7 +419,7 @@ Ext.define('Connector.controller.Query', {
             // get the cube subjectList, excluding the "In the plot" filter...see last param to configureOlapFilters,
             // so that we can filter the advanced option values accordingly (i.e. for antigen selection in variable
             // selector, get subject count for all filters except the antigen selection itself)
-            this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(hasFilters, subjects) {
+            this.getSubjectsForSpecificFilters(Connector.getState().getFilters(), plotAxis, function(subjectFilter) {
                 subjectMeasure = new LABKEY.Query.Visualization.Measure({
                     schemaName: dimension.get('schemaName'),
                     queryName: dimension.get('queryName'),
@@ -426,9 +428,7 @@ Ext.define('Connector.controller.Query', {
                 });
 
                 subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
-                subjectMeasure.values = subjects;
-
-                aliases.push(Connector.studyContext.subjectColumn);
+                subjectMeasure.values = subjectFilter.subjects;
                 wrappedMeasureSet.push({measure: subjectMeasure});
 
                 Ext.each(measureSet, function(measure)
@@ -439,9 +439,21 @@ Ext.define('Connector.controller.Query', {
                         measureData.values = filterValuesMap[measure.get('alias')];
                     }
 
-                    aliases.push(measure.get('alias'));
                     wrappedMeasureSet.push({measure: measureData});
                 });
+
+                // Issue 24894: Brush filter doesn't get applied to variable selector antigen subject count
+                Ext.each(Connector.getState().getFilters(), function(filter)
+                {
+                    if (filter.isGrid())
+                    {
+                        applicableMeasures = filter.getPlotAxisMeasures(null, selectorMeasure, ChartUtils.filterMeasureComparator);
+                        if (applicableMeasures.length > 0)
+                        {
+                            wrappedMeasureSet = wrappedMeasureSet.concat(applicableMeasures);
+                        }
+                    }
+                }, this);
 
                 QueryUtils.getData({
                     measures: wrappedMeasureSet,
@@ -470,10 +482,10 @@ Ext.define('Connector.controller.Query', {
      * @param {Object} [scope]
      * @returns {Object}
      */
-    getMeasureValueSubjectCount : function(dimension, measureSet, filterValuesMap, plotAxis, callback, scope) {
-
+    getMeasureValueSubjectCount : function(dimension, selectorMeasure, measureSet, filterValuesMap, plotAxis, callback, scope)
+    {
         // get the temp query information from the cds getData API call for the measureSet with the application filters added in
-        this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, plotAxis, function(response) {
+        this.getMeasureSetGetDataResponse(dimension, selectorMeasure, measureSet, filterValuesMap, plotAxis, function(response) {
             var alias = dimension.getFilterMeasure().get('alias'), sql;
 
             // SQL to get the subject count for each value of the filter measure
@@ -654,7 +666,7 @@ Ext.define('Connector.controller.Query', {
                 {
                     // plot selection or "in the plot"
 
-                    if (excludeInThePlotAxis !== 'x')
+                    if (excludeInThePlotAxis !== 'x' || filter.isGrid())
                     {
                         Ext.each(filter.getMeasureSet('x'), function(filter)
                         {
@@ -663,7 +675,7 @@ Ext.define('Connector.controller.Query', {
                         });
                     }
 
-                    if (excludeInThePlotAxis !== 'y')
+                    if (excludeInThePlotAxis !== 'y' || filter.isGrid())
                     {
                         axisId = Ext.id(undefined, 'axis-');
                         Ext.each(filter.getMeasureSet('y'), function(filter)
@@ -716,8 +728,8 @@ Ext.define('Connector.controller.Query', {
             }
         });
 
-        this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(hasFilters, subjects) {
-            json.members = hasFilters ? subjects : undefined;
+        this.getSubjectsForSpecificFilters(Connector.getState().getFilters(), plotAxis, function(subjectFilter) {
+            json.members = subjectFilter.hasFilters ? subjectFilter.subjects : undefined;
 
             Ext.Ajax.request({
                 url: LABKEY.ActionURL.buildURL('visualization', 'getSourceCounts.api'),
@@ -733,14 +745,16 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     * Get the array of subjects that match all application filters, with the option to exclude plot filters from a given axis.
+     * Get the array of subjects that match the specified application filters/selections, with the option to exclude
+     * plot filters from a given axis.
+     * @param {Array} filters - array of application filters and/or selections
      * @param {String} excludeInThePlotAxis - exclude the "in the plot" filter for the subject count from a specific axis (x/y)
      * @param {Function} callback
      * @param {Object} scope
      * @returns {boolean} indicates if the subject count request has filters or not
      * @returns {Array} subjects returned by the MDX query
      */
-    getSubjectsExcludingPlotAxisFilters : function(excludeInThePlotAxis, callback, scope)
+    getSubjectsForSpecificFilters : function(filters, excludeInThePlotAxis, callback, scope)
     {
         var state = Connector.getState(),
             queryService = Connector.getQueryService(),
@@ -749,7 +763,7 @@ Ext.define('Connector.controller.Query', {
 
         state.onMDXReady(function(mdx)
         {
-            countFilters = queryService.configureOlapFilters(mdx, state.getFilters(), state.subjectName, excludeInThePlotAxis);
+            countFilters = queryService.configureOlapFilters(mdx, filters, state.subjectName, excludeInThePlotAxis);
 
             mdx.query({
                 onRows: {
@@ -760,7 +774,11 @@ Ext.define('Connector.controller.Query', {
                 success: function (cellset)
                 {
                     subjects = Ext.Array.pluck(Ext.Array.flatten(cellset.axes[1].positions), 'name');
-                    callback.call(scope || this, countFilters.length > 0, subjects);
+
+                    callback.call(scope || this, {
+                        hasFilters: countFilters.length > 0,
+                        subjects: subjects
+                    });
                 }
             });
         });

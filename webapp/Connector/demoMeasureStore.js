@@ -8,6 +8,7 @@
     // used by utility/Query.js
     Connector = {
         studyContext: {
+            schemaName: 'study',
             subjectColumn: 'SubjectId',
             gridBaseSchema: 'cds',
             gridBase: 'GridBase',
