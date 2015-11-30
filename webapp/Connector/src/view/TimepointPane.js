@@ -21,11 +21,11 @@ Ext.define('Connector.view.TimepointPane', {
 
         if (Ext.isDefined(this.getModel().getFilterVisitRowIds()))
         {
-            grid.getSelectionModel().select(grid.getStore().query('selected', true).items);
+            grid.getSelectionModel().select(grid.getStore().query('selected', true).items, false /* keepExisting */, true /* suppressEvents */);
         }
         else
         {
-            grid.getSelectionModel().selectAll();
+            grid.getSelectionModel().selectAll(true /* suppressEvents */);
         }
 
         grid.fireEvent('selectioncomplete', this);
