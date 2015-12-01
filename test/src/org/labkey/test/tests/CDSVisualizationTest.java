@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -322,151 +323,112 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
         expectedXYValues = "RED 4\nRED 5\nRED 6\nZAP 102\nZAP 105\nZAP 106\nZAP 113\nZAP 115\nZAP 116\nZAP 117\nZAP 118\nZAP 124\nZAP 134\nZAP 136\n0\n2\n4\n6\n8\n10\n12\n14";
 
-        if (CDSHelper.validateCounts)
-        {
-            log("Validating Study Name");
-            cds.assertPlotTickText(expectedXYValues);
-        }
+        log("Validating Study Name");
+        cds.assertPlotTickText(expectedXYValues);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_SUMM);
         xaxis.confirmSelection();
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
 
-        if (CDSHelper.validateCounts)
-        {
-            log("Validating Treatment Summary");
-            assertEquals("Unexpected number of tick marks on the x-axis.", 89, actualTickCount);
-        }
+        log("Validating Treatment Summary");
+        assertEquals("Unexpected number of tick marks on the x-axis.", 89, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
         xaxis.confirmSelection();
         expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14";
 
-        if (CDSHelper.validateCounts)
-        {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
-            log("Validating Date Subject Enrolled");
-            cds.assertPlotTickText(expectedXYValues);
-        }
+        log("Validating Date Subject Enrolled");
+        cds.assertPlotTickText(expectedXYValues);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_FUP_COMP);
         xaxis.confirmSelection();
-        expectedXYValues = "1/10/2008\n8/11/2009\n3/13/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14";
 
-        if (CDSHelper.validateCounts)
-        {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
-            log("Validating Followup Complete");
-            cds.assertPlotTickText(expectedXYValues);
-        }
+        // Special casing this test. for what ever reason sometimes it will have 3/13/2011 other times it will be 3/12/2011.
+        // Because this value appears to be calculated I will use regular expression to validate.
+        log("Validating Followup Complete");
+        Pattern p = Pattern.compile("1/10/20088/11/20093/\\d\\d/201110/11/201202468101214");
+        cds.assertPlotTickText(p);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_PUB);
         xaxis.confirmSelection();
-        expectedXYValues = "3/13/2011\n7/6/2011\n10/30/2011\n2/23/2012\n6/18/2012\n10/11/2012\n2/4/2013\n5/31/2013\n0\n2\n4\n6\n8\n10\n12\n14";
 
-        if (CDSHelper.validateCounts)
-        {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
-            log("Validating Date Made Public");
-            cds.assertPlotTickText(expectedXYValues);
-        }
+        // Another special case scenario.
+        log("Validating Date Made Public");
+        p = Pattern.compile("3/\\d\\d/20117/6/201110/30/20112/23/20126/\\d\\d/201210/11/20122/4/20135/31/201302468101214");
+        cds.assertPlotTickText(p);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_START);
         xaxis.confirmSelection();
-        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/13/2011\n0\n2\n4\n6\n8\n10\n12\n14";
 
-        if (CDSHelper.validateCounts)
-        {
-            // Because there will be gutter plots the text we are interested in will be at svg 1.
-            log("Validating Start Date");
-            cds.assertPlotTickText(expectedXYValues);
-        }
+        // Another special case scenario.
+        log("Validating Start Date");
+        p = Pattern.compile("11/9/20046/10/20061/10/20088/11/20093/\\d\\d/201102468101214");
+        cds.assertPlotTickText(p);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_NETWORK);
         xaxis.confirmSelection();
         expectedXYValues = "ROGER\nZED\n0\n2\n4\n6\n8\n10\n12\n14";
 
-        if (CDSHelper.validateCounts)
-        {
-            log("Validating Network");
-            cds.assertPlotTickText(expectedXYValues);
-        }
+        log("Validating Network");
+        cds.assertPlotTickText(expectedXYValues);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_PROD_CLASS);
         xaxis.confirmSelection();
 
-        if (CDSHelper.validateCounts)
-        {
-            // There are too many labels on the xaxis to validate all, so we will just validate the count.
-            log("Validating Product Class");
-            actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-            assertEquals("Unexpected number of tick marks on the x-axis.", 83, actualTickCount);
-        }
+        // There are too many labels on the xaxis to validate all, so we will just validate the count.
+        log("Validating Product Class");
+        actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
+        assertEquals("Unexpected number of tick marks on the x-axis.", 83, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_PROD_COMB);
         xaxis.confirmSelection();
 
-        if (CDSHelper.validateCounts)
-        {
-            // There are too many labels on the xaxis to validate all, so we will just validate the count.
-            log("Validating Product Class Combination");
-            actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-            assertEquals("Unexpected number of tick marks on the x-axis.", 81, actualTickCount);
-        }
+        // There are too many labels on the xaxis to validate all, so we will just validate the count.
+        log("Validating Product Class Combination");
+        actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
+        assertEquals("Unexpected number of tick marks on the x-axis.", 81, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
         xaxis.confirmSelection();
         expectedXYValues = "Phase I\nPhase II\nPhase IIB\nundefined\n0\n2\n4\n6\n8\n10\n12\n14";
 
-        if (CDSHelper.validateCounts)
-        {
-            log("Validating Study Type");
-            cds.assertPlotTickText(expectedXYValues);
-        }
+        log("Validating Study Type");
+        cds.assertPlotTickText(expectedXYValues);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
         xaxis.confirmSelection();
 
-        if (CDSHelper.validateCounts)
-        {
-            // There are too many labels on the xaxis to validate all, so we will just validate the count.
-            log("Validating Treatment Arm");
-            actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-            assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 28, actualTickCount);
-        }
+        // There are too many labels on the xaxis to validate all, so we will just validate the count.
+        log("Validating Treatment Arm");
+        actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
+        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 28, actualTickCount);
 
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
         xaxis.confirmSelection();
 
-        if (CDSHelper.validateCounts)
-        {
-            log("Validating Treatment Arm Coded Label");
-            actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-            assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 87, actualTickCount);
-        }
+        log("Validating Treatment Arm Coded Label");
+        actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
+        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 87, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
         xaxis.confirmSelection();
         expectedXYValues = "Placebo\nVaccine\nundefined\n0\n2\n4\n6\n8\n10\n12\n14";
 
-        if (CDSHelper.validateCounts)
-        {
-            log("Validating Vaccine or Placebo");
-            cds.assertPlotTickText(expectedXYValues);
-        }
+        log("Validating Vaccine or Placebo");
+        cds.assertPlotTickText(expectedXYValues);
 
     }
 
@@ -2609,9 +2571,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
         // Going to move the mouse over the area where it is about to start dragging.
-        mouseOver(Locator.css(cssPathToPoint));
+        click(Locator.css(cssPathToPoint));
+        sleep(1000);
         dragAndDrop(Locator.css(cssPathToPoint), xOffSet, yOffSet);
-        sleep(250);
+        sleep(CDSHelper.CDS_WAIT);
 
         assertElementVisible(Locator.linkContainingText("Filter"));
 

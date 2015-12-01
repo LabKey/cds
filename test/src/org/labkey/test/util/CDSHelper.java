@@ -31,6 +31,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 
@@ -883,6 +884,18 @@ public class CDSHelper
 
     }
 
+    public void assertPlotTickText(Pattern p)
+    {
+        assertPlotTickText(1, p);
+    }
+
+    public void assertPlotTickText(int svgIndex, Pattern p)
+    {
+        // Firefox removes the \n when returning the text, so going to go to lowest common denominator (Firefox).
+        String shownText = getPlotTickText(svgIndex);
+        Assert.assertTrue("SVG did not look as expected. Patter expected: " + p.pattern() + " Actual string: " + shownText, p.matcher(shownText).matches());
+    }
+
     public void assertPlotTickText(String expectedTickText)
     {
         assertPlotTickText(1, expectedTickText);
@@ -893,10 +906,16 @@ public class CDSHelper
     {
         // Firefox removes the \n when returning the text, so going to go to lowest common denominator (Firefox).
         String modifiedExpected = expectedTickText.replace("\n", "").toLowerCase();
+        String shownText = getPlotTickText(svgIndex);
+        Assert.assertTrue("SVG did not look as expected. Expected: " + modifiedExpected + " Actual: " + shownText, shownText.equals(modifiedExpected));
+    }
+
+    private String getPlotTickText(int svgIndex)
+    {
         String shownText = _test.getText(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text").index(0));
         shownText = shownText + _test.getText(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text").index(1));
         shownText = shownText.replace("\n", "").toLowerCase();
-        Assert.assertTrue("SVG did not look as expected. Expected: " + modifiedExpected + " Actual: " + shownText, shownText.equals(modifiedExpected));
+        return shownText;
     }
 
     private void applyAndMaybeWaitForBars(Function<Void, Void> function)
