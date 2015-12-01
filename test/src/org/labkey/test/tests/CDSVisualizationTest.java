@@ -438,6 +438,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         int actualTickCount;
         String cssColorLegend = "#colorvarselector-innerCt  svg > path.legend-point";
 
+        sleep(1500);
+        _ext4Helper.waitForMaskToDisappear(60000);
+
         addRaceFilter(CDSHelper.RACE_BLACK);
         _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
 
@@ -1372,6 +1375,17 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         cds.clearFilters();
 
+    }
+
+    @Test
+    public void verifyInfoPaneCounts()
+    {
+        CDSHelper cds = new CDSHelper(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        yaxis.openSelectorWindow();
     }
 
     @Test
