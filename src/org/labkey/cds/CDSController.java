@@ -153,7 +153,7 @@ public class CDSController extends SpringActionController
             List<RSSFeed> feeds = RSSService.get().getFeeds(getContainer(), getUser());
 
             getViewContext().getResponse().setContentType("text/xml");
-            RSSService.get().aggregateFeeds(feeds, getViewContext().getResponse().getWriter());
+            RSSService.get().aggregateFeeds(feeds, getUser(), getViewContext().getResponse().getWriter());
 
             return null;
         }
