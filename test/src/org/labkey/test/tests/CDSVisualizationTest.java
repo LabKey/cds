@@ -27,6 +27,7 @@ import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
+import org.labkey.test.pages.InfoPane;
 import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
@@ -34,23 +35,20 @@ import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.server.handler.FindElements;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
@@ -59,7 +57,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
-import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotSquare;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTickLinear;
 
@@ -1381,11 +1378,89 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     public void verifyInfoPaneCounts()
     {
         CDSHelper cds = new CDSHelper(this);
-
+        InfoPane ip = new InfoPane(this);
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        log("Set the y-axis and validate counts are as expected.");
         yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        ip.waitForSpinners();
+
+        assertEquals("Subjects count not as expected.", 1458, ip.getSubjectCount());
+        assertEquals("Species count not as expected.", 2, ip.getSpeciesCount());
+        assertEquals("Studies count not as expected.", 14, ip.getStudiesCount());
+        assertEquals("Product count not as expected.", 1, ip.getProductCount());
+        assertEquals("Treatments count not as expected.", 89, ip.getTreatmentsCount());
+        assertEquals("Time Points count not as expected.", 55, ip.getTimePointsCount());
+        assertEquals("Antigens In Y count not as expected.", 3, ip.getAntigensInYCount());
+
+        log("Validate a list (species) from the info pane.");
+        ip.clickSpeciesCount();
+        String text = ip.getSpeciesList();
+        assertTrue("Species list does not contain " + CDSHelper.SPECIES_HUMAN, text.contains(CDSHelper.SPECIES_HUMAN));
+        assertTrue("Species list does not contain " + CDSHelper.SPECIES_VULCAN, text.contains(CDSHelper.SPECIES_VULCAN));
+        ip.clickCancel();
+
+        log("Set the x-axis and validate counts change as expected.");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        ip.waitForSpinners();
+
+        assertEquals("Subjects count not as expected.", 1453, ip.getSubjectCount());
+        assertEquals("Species count not as expected.", 2, ip.getSpeciesCount());
+        assertEquals("Studies count not as expected.", 14, ip.getStudiesCount());
+        assertEquals("Product count not as expected.", 1, ip.getProductCount());
+        assertEquals("Treatments count not as expected.", 89, ip.getTreatmentsCount());
+        assertEquals("Time Points count not as expected.", 55, ip.getTimePointsCount());
+        assertEquals("Antigens In X count not as expected.", 3, ip.getAntigensInXCount());
+        assertEquals("Antigens In Y count not as expected.", 3, ip.getAntigensInYCount());
+
+        log("Verify that Antigens in X and Antigens in Y bring up the variable selector.");
+        try{
+            log("Checking for x-axis variable selector.");
+            ip.clickAntigensInXCount();
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            xaxis.cancelSelection();
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            log("Checking for y-axis variable selector.");
+            ip.clickAntigensInYCount();
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            yaxis.cancelSelection();
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        }
+        catch(NoSuchElementException ex)
+        {
+            fail("Variable selector was not shown as expected.");
+        }
+
+        log("Use the info pane to apply a filter to the plot.");
+        ip.clickStudiesCount();
+        ip.setFilter("RED 4");
+
+        assertEquals("Subjects count not as expected.", 79, ip.getSubjectCount());
+        assertEquals("Species count not as expected.", 1, ip.getSpeciesCount());
+        assertEquals("Studies count not as expected.", 1, ip.getStudiesCount());
+        assertEquals("Product count not as expected.", 1, ip.getProductCount());
+        assertEquals("Treatments count not as expected.", 3, ip.getTreatmentsCount());
+        assertEquals("Time Points count not as expected.", 2, ip.getTimePointsCount());
+        assertEquals("Antigens In X count not as expected.", 1, ip.getAntigensInXCount());
+        assertEquals("Antigens In Y count not as expected.", 1, ip.getAntigensInYCount());
+
+        log("Clearing the filter.");
+        cds.clearFilter(1);
+
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
     }
 
     @Test

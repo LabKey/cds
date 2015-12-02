@@ -103,6 +103,11 @@ public class CDSHelper
 
     public static final String[] RACE_VALUES = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
 
+    public final static String SPECIES_HUMAN = "Human";
+    public final static String SPECIES_VULCAN = "Vulcan";
+
+    public static final String[] SPECIES_VALUES = {SPECIES_HUMAN, SPECIES_VULCAN};
+
     // These are used for ids on the panel selectors and on titles in the Grid.
     public static final String TITLE_NAB = "NAb";
     public static final String TITLE_BAMA = "BAMA";
