@@ -464,9 +464,5 @@ Ext.define('Connector.view.InfoPane', {
 
     getMemberStore : function() {
         return this.getModel().get('memberStore');
-    },
-
-    onViewChange : function() {
-        this.hide();
     }
 });
