@@ -223,6 +223,8 @@ Ext.define('Connector.controller.FilterStatus', {
                 }
             });
 
+            this.getViewManager().on('afterchangeview', infoPane.onViewChange, infoPane);
+
             parent.add(infoPane);
         }
     },
