@@ -3179,16 +3179,39 @@ Ext.define('Connector.view.Chart', {
         else
         {
             this.refreshRequired = true;
+
+            // 415: If the "in the plot" filter has been modified (e.g. a group load) then the measures
+            // need to be loaded from the filter next time the plot is activated. This saves the view from
+            // excessive reloading of the measures each time the filters change.
+            this.filterCheck = true;
         }
     },
 
     onActivate : function()
     {
         this.isActiveView = true;
+
+        // ensure filterCheck is cleared
+        var filterCheck = this.filterCheck;
+        this.filterCheck = false;
+
         if (this.refreshRequired)
         {
             if (this.initialized)
             {
+                if (filterCheck)
+                {
+                    // determine if there is an "in the plot" filter present, if so set the active measures
+                    Ext.each(Connector.getState().getFilters(), function(filter)
+                    {
+                        if (filter.isPlot() && !filter.isGrid())
+                        {
+                            this.setActiveMeasureSelectionFromFilter(filter);
+                            return false;
+                        }
+                    }, this);
+                }
+
                 this.onShowGraph();
             }
             else
