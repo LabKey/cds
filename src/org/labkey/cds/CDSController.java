@@ -191,7 +191,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    private static final String ANALYTICS_USER_GROUP = "Beta Users";
+    private static final String ANALYTICS_USER_GROUP = "Active CAVD Member";
 
     @RequiresNoPermission
     @IgnoresTermsOfUse
