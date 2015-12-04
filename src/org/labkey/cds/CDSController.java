@@ -243,25 +243,6 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresNoPermission
-    @IgnoresTermsOfUse
-    public class FrontPageAction extends SimpleViewAction
-    {
-        @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
-        {
-            HttpView template = new FrontPageTemplate(defaultPageConfig());
-            getPageConfig().setTemplate(PageConfig.Template.None);
-            return template;
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            return null;
-        }
-    }
-
 
     public static class PropertiesForm
     {
