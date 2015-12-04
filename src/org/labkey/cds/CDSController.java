@@ -191,7 +191,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    private static final String ANALYTICS_USER_GROUP = "Beta Users";
+    private static final String ANALYTICS_USER_GROUP = "Active CAVD Member";
 
     @RequiresNoPermission
     @IgnoresTermsOfUse
@@ -240,25 +240,6 @@ public class CDSController extends SpringActionController
         public NavTree appendNavTrail(NavTree root)
         {
             return root;
-        }
-    }
-
-    @RequiresNoPermission
-    @IgnoresTermsOfUse
-    public class FrontPageAction extends SimpleViewAction
-    {
-        @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
-        {
-            HttpView template = new FrontPageTemplate(defaultPageConfig());
-            getPageConfig().setTemplate(PageConfig.Template.None);
-            return template;
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            return null;
         }
     }
 
