@@ -35,7 +35,12 @@ Ext.define('Connector.view.InfoPane', {
 
     displayTitle: '',
 
+    mutated: false,
+
     initComponent : function() {
+
+        // This is the set of keys for selected records to determine if the filter has been mutated
+        this.initialKeys = [];
 
         var btnId = Ext.id();
         var model = this.getModel();
@@ -265,6 +270,29 @@ Ext.define('Connector.view.InfoPane', {
                 viewready : function(grid) {
                     this.gridready = true;
                 },
+                selectionchange : function(selModel, selections) {
+
+                    // compare keys to determine mutation
+                    var keys = [];
+                    Ext.each(selections, function(model) {
+                        keys.push(model.internalId);
+                    });
+                    keys.sort();
+                    this.mutated = !Ext.Array.equals(this.initialKeys, keys);
+
+                    this.filterBtn.setDisabled(selections.length == 0);
+                },
+                selectioncomplete: function() {
+
+                    this.mutated = false;
+                    this.initialKeys = [];
+
+                    Ext.each(this.getGrid().getSelectionModel().getSelection(), function(model) {
+                        this.initialKeys.push(model.internalId);
+                    }, this);
+
+                    this.initialKeys.sort();
+                },
                 scope: this
             }
         });
@@ -289,12 +317,12 @@ Ext.define('Connector.view.InfoPane', {
             ui: 'lightfooter',
             items: ['->',
                 {
-                    id: 'filtertaskbtn',
                     text: model.isFilterBased() ? 'Update' : 'Filter',
                     cls: 'filterinfoaction', // tests
                     handler: this.onUpdate,
                     listeners: {
                         afterrender: function(btn) {
+                            this.filterBtn = btn;
                             this.getModel().on('change', function(model) {
                                 btn.setText(model.isFilterBased() ? 'Update' : 'Filter');
                             }, btn);
@@ -348,7 +376,10 @@ Ext.define('Connector.view.InfoPane', {
         var grid = this.getGrid();
 
         if (grid) {
-            this.fireEvent('filtercomplete', grid.getSelectionModel().getSelection(), grid.getStore().getCount());
+            // only create/update filter if the state has been mutated
+            if (this.mutated) {
+                this.fireEvent('filtercomplete', grid.getSelectionModel().getSelection(), grid.getStore().getCount());
+            }
             this.hide();
         }
     },

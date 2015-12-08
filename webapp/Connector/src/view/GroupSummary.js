@@ -215,15 +215,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
 
         Connector.getState().onReady(function()
         {
-            if (Ext.isEmpty(Connector.getState().getFilters()))
-            {
-                this.applyFilters();
-            }
-            else
-            {
-                this.getUndoMsg().hide();
-                this.getApplyMsg().show();
-            }
+            this.applyFilters();
         }, this);
     },
 

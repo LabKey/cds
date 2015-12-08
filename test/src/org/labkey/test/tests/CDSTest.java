@@ -324,7 +324,7 @@ public class CDSTest extends CDSReadOnlyTest
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(protocol));
         }
-        cds.pickSort("Assay Name");
+        cds.pickSort("Assay Type");
         for (String assay : CDSHelper.ASSAYS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));

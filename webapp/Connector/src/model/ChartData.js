@@ -241,6 +241,7 @@ Ext.define('Connector.model.ChartData', {
             excludeAliases = [],
             mainCount = 0,
             nonAggregated,
+            singleAntigenComparison = false,
             _row;
 
         ca = this.getBaseMeasureConfig();
@@ -322,6 +323,7 @@ Ext.define('Connector.model.ChartData', {
             axisMeasureStore.setXMeasure(this.getMeasureStore(), _xid, xMeasureFilter);
         }
         if (_cid) {
+            singleAntigenComparison = excludeAliases.indexOf(_cid) > -1;
             axisMeasureStore.setZMeasure(this.getMeasureStore(), _cid, zMeasureFilter);
         }
 
@@ -351,7 +353,7 @@ Ext.define('Connector.model.ChartData', {
 
             yVal = this._getYValue(y, _yid, _row);
             xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
-            colorVal = color ? this._getColorValue(color, _cid, _row) : undefined;
+            colorVal = color ? this._getColorValue(color, _cid, _row, singleAntigenComparison) : undefined;
 
             if (!xa.isContinuous)
             {
@@ -514,16 +516,21 @@ Ext.define('Connector.model.ChartData', {
         return row.x.getMedian();
     },
 
-    _getColorValue : function(measure, alias, row) {
-        if (Ext.isDefined(row.z) && row.z.value != null) {
+    _getColorValue : function(measure, alias, row, isMultiValue) {
+        if (isMultiValue || (Ext.isDefined(row.z) && !row.z.isUnique))
+        {
+            // issue 23903: if the color value isn't unique because of aggregation, use 'Multiple values' for the legend
+            // issue 24805: if the color variable is an assay dimension with an x vs y filter on distinct single values,
+            //              we know that the points will have multiple values for the color
+            return 'Multiple values';
+        }
+        else if (Ext.isDefined(row.z) && row.z.value != null)
+        {
             return row.z.value;
         }
-        else if (Ext.isDefined(row[alias])) {
+        else if (Ext.isDefined(row[alias]))
+        {
             return row[alias] || ChartUtils.emptyTxt;
-        }
-        else if (Ext.isDefined(row.z) && !row.z.isUnique) {
-            // issue 23903: if the color value isn't unique because of aggregation, use 'Multiple values' for the legend
-            return 'Multiple values';
         }
         return null;
     },

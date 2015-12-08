@@ -27,6 +27,8 @@ Ext.define('Connector.view.Chart', {
 
     yGutterWidth: 125,
 
+    yNoGutterWidth: 24,
+
     xGutterName: 'xGutterPlot',
 
     yGutterName: 'yGutterPlot',
@@ -377,18 +379,18 @@ Ext.define('Connector.view.Chart', {
                     pack: 'start'
                 },
                 items: [
-                    this.getPlotPanel(),
-                    this.getStudyAxisPanel()
+                    this.getMainPlotPanel(),
+                    this.getBottomPlotPanel()
                 ]
             });
         }
         return this.centerContainer;
     },
 
-    getPlotPanel : function() {
-        if (!this.plotPanel)
+    getMainPlotPanel : function() {
+        if (!this.mainPlotPanel)
         {
-            this.plotPanel = Ext.create('Ext.panel.Panel', {
+            this.mainPlotPanel = Ext.create('Ext.panel.Panel', {
                 border: false,
                 flex: 10,
                 cls: 'plot',
@@ -404,25 +406,34 @@ Ext.define('Connector.view.Chart', {
             });
         }
 
-        return this.plotPanel;
+        return this.mainPlotPanel;
     },
 
-    getStudyAxisPanel : function() {
-        if (!this.studyAxisPanel) {
-            this.studyAxisPanel = Ext.create('Ext.panel.Panel', {
+    getBottomPlotPanel : function() {
+        if (!this.bottomPlotPanel) {
+            this.bottomPlotPanel = Ext.create('Ext.panel.Panel', {
                 border: false,
+                frame: false,
                 overflowX: 'hidden',
                 overflowY: 'auto',
-                frame: false,
                 items: [{
-                    xtype: 'box',
-                    tpl: new Ext.XTemplate('<div id="study-axis"></div>'),
-                    data: {}
-                }]
+                    xtype: 'component',
+                    autoEl: 'div',
+                    cls: 'bottomplot'
+                }],
+                listeners: {
+                    afterrender: {
+                        fn: function(box) {
+                            this.bottomPlotEl = box.down().getEl();
+                        },
+                        single: true,
+                        scope: this
+                    }
+                }
             });
         }
 
-        return this.studyAxisPanel;
+        return this.bottomPlotPanel;
     },
 
     getSouth : function() {
@@ -477,7 +488,8 @@ Ext.define('Connector.view.Chart', {
 
         this.on('resize', function() {
             this.plotEl.update('');
-            this.getStudyAxisPanel().setVisible(false);
+            this.bottomPlotEl.update('');
+            this.getBottomPlotPanel().setVisible(false);
             this.getNoPlotMsg().hide();
             this.getEmptyPlotMsg().hide();
 
@@ -497,7 +509,10 @@ Ext.define('Connector.view.Chart', {
 
     getPlotSize : function(box, properties)
     {
-        var size = {},
+        var size = {
+                width: box.width,
+                height: box.height
+            },
             discretePlotWidth;
 
         if (this.requireStudyAxis && this.hasStudyAxisData)
@@ -507,10 +522,6 @@ Ext.define('Connector.view.Chart', {
         else if (this.requireYGutter)
         {
             size.width = box.width - this.yGutterWidth;
-        }
-        else
-        {
-            size.width = box.width;
         }
 
         // for discrete x-axis, expand width for large number of discrete values
@@ -522,15 +533,6 @@ Ext.define('Connector.view.Chart', {
                 size.width = discretePlotWidth;
                 size.extended = true;
             }
-        }
-
-        if (this.requireXGutter)
-        {
-            size.height = box.height - this.xGutterHeight;
-        }
-        else
-        {
-            size.height = box.height;
         }
 
         return size;
@@ -765,17 +767,17 @@ Ext.define('Connector.view.Chart', {
 
         if (size.extended === true)
         {
-            this.getPlotPanel().addCls('plot-scroll');
+            this.getMainPlotPanel().addCls('plot-scroll');
         }
         else
         {
-            this.getPlotPanel().removeCls('plot-scroll');
+            this.getMainPlotPanel().removeCls('plot-scroll');
         }
 
         return Ext.apply(this.getBasePlotConfig(), {
             margins : {
                 top: 25,
-                left: yAxisMargin + (this.requireYGutter ? 0 : 24),
+                left: yAxisMargin + (this.requireYGutter ? 0 : this.yNoGutterWidth),
                 right: 50,
                 bottom: size.extended === true ? 73 : 53
             },
@@ -976,7 +978,7 @@ Ext.define('Connector.view.Chart', {
             return;
         }
 
-        var allDataRows, properties, yAxisMargin = 60,
+        var allDataRows, properties, yAxisMargin = 65,
             layerScope = {plot: null, isBrushed: false},
             scaleConfig, aesConfig,
             plotConfig, gutterXPlotConfig, gutterYPlotConfig;
@@ -1008,6 +1010,7 @@ Ext.define('Connector.view.Chart', {
         this.requireYGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedX) && allDataRows.undefinedX.length > 0;
 
         this.plotEl.update('');
+        this.bottomPlotEl.update('');
         this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
 
         if (this.plot) {
@@ -1111,6 +1114,7 @@ Ext.define('Connector.view.Chart', {
                 this.fireEvent('hideload', this);
                 this.plot = null;
                 this.plotEl.update('');
+                this.bottomPlotEl.update('');
                 this.noPlot(false);
                 console.error(err);
                 console.error(err.stack);
@@ -1133,6 +1137,7 @@ Ext.define('Connector.view.Chart', {
             }
 
             // render the gutter
+            gutterXPlotConfig.renderTo = this.bottomPlotEl.id;
             if (!this.renderGutter(this.xGutterName, gutterXPlotConfig, layerScope)) {
                 return;
             }
@@ -1309,7 +1314,7 @@ Ext.define('Connector.view.Chart', {
     generateXGutter : function(plotConfig, chartData, allDataRows, yAxisMargin) {
         var gutterXMargins = {
             top: 0,
-            left: this.requireYGutter ? this.yGutterWidth + yAxisMargin : yAxisMargin + 24,
+            left: yAxisMargin,
             right: plotConfig.margins.right,
             bottom: 0
         };
@@ -1336,7 +1341,7 @@ Ext.define('Connector.view.Chart', {
                 }
             }
         };
-        var gutterXWidth = plotConfig.width + (this.requireYGutter ? this.yGutterWidth : 0);
+        var gutterXWidth = plotConfig.width - (this.requireYGutter ? 0 : this.yNoGutterWidth);
 
         var gutterXAes = {
             xTop: function(row) {return row.x;},
@@ -1366,7 +1371,7 @@ Ext.define('Connector.view.Chart', {
     generateYGutter : function(plotConfig, chartData, allDataRows) {
         var gutterYMargins = {
             top: plotConfig.margins.top,
-            left: 24,
+            left: this.yNoGutterWidth,
             right: 0,
             bottom: plotConfig.margins.bottom
         };
@@ -2164,7 +2169,7 @@ Ext.define('Connector.view.Chart', {
             else
             {
                 this.hideMessage();
-                this.getStudyAxisPanel().setVisible(false);
+                this.getBottomPlotPanel().setVisible(false);
                 Connector.getState().clearSelections(true);
                 this.filterClear = false;
                 this.noPlot(false);
@@ -3174,16 +3179,39 @@ Ext.define('Connector.view.Chart', {
         else
         {
             this.refreshRequired = true;
+
+            // 415: If the "in the plot" filter has been modified (e.g. a group load) then the measures
+            // need to be loaded from the filter next time the plot is activated. This saves the view from
+            // excessive reloading of the measures each time the filters change.
+            this.filterCheck = true;
         }
     },
 
     onActivate : function()
     {
         this.isActiveView = true;
+
+        // ensure filterCheck is cleared
+        var filterCheck = this.filterCheck;
+        this.filterCheck = false;
+
         if (this.refreshRequired)
         {
             if (this.initialized)
             {
+                if (filterCheck)
+                {
+                    // determine if there is an "in the plot" filter present, if so set the active measures
+                    Ext.each(Connector.getState().getFilters(), function(filter)
+                    {
+                        if (filter.isPlot() && !filter.isGrid())
+                        {
+                            this.setActiveMeasureSelectionFromFilter(filter);
+                            return false;
+                        }
+                    }, this);
+                }
+
                 this.onShowGraph();
             }
             else
@@ -3438,12 +3466,12 @@ Ext.define('Connector.view.Chart', {
 
     initStudyAxis : function(studyAxisInfo) {
         if (!this.studyAxis) {
-            this.studyAxis = Connector.view.StudyAxis().renderTo('study-axis');
+            this.studyAxis = Connector.view.StudyAxis().renderTo(this.bottomPlotEl.id);
         }
 
         this.studyAxis.studyData(studyAxisInfo.getData())
                 .scale(this.plot.scales.x.scale)
-                .width(Math.max(0, this.getStudyAxisPanel().getWidth() - 40))
+                .width(Math.max(0, this.getBottomPlotPanel().getWidth() - 40))
                 .visitTagMouseover(this.showVisitTagHover, this)
                 .visitTagMouseout(this.removeVisitTagHover, this);
 
@@ -3451,15 +3479,23 @@ Ext.define('Connector.view.Chart', {
     },
 
     resizePlotContainers : function(numStudies) {
-        if (this.requireStudyAxis && this.hasStudyAxisData) {
-            this.plotEl.setStyle('padding', '0 0 0 ' + this.studyAxisWidthOffset + 'px');
-            this.getStudyAxisPanel().setVisible(true);
+        if (this.requireStudyAxis && this.hasStudyAxisData)
+        {
+            this.plotEl.setStyle('padding-left', this.studyAxisWidthOffset + 'px');
+            this.bottomPlotEl.setStyle('margin-left', '0');
+
             // set max height to 1/3 of the center region height
-            this.getStudyAxisPanel().setHeight(Math.min(this.getCenter().getHeight() / 3, Math.max(20 * numStudies + 5, this.minStudyAxisHeight)));
+            this.getBottomPlotPanel().setHeight(Math.min(this.getCenter().getHeight() / 3, Math.max(20 * numStudies + 5, this.minStudyAxisHeight)));
+            this.getBottomPlotPanel().setVisible(true);
         }
-        else {
-            this.plotEl.setStyle('padding', '0');
-            this.getStudyAxisPanel().setVisible(false);
+        else
+        {
+            this.plotEl.setStyle('padding-left', '0');
+            this.bottomPlotEl.setStyle('margin-left', this.requireXGutter
+                    ? (this.requireYGutter ? this.yGutterWidth + 'px' : this.yNoGutterWidth + 'px') : '0');
+
+            this.getBottomPlotPanel().setHeight(this.requireXGutter ? this.xGutterHeight : 0);
+            this.getBottomPlotPanel().setVisible(this.requireXGutter);
         }
     },
 

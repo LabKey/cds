@@ -45,10 +45,6 @@ span.hideit, div.hideit {
   display: none !important;
 }
 
-span.status-subcount {
-  color: $data-green !important;
-}
-
 span.status-of {
   color: #ccc;
 }
@@ -75,10 +71,14 @@ div.status-row {
     margin: 2px 6px 2px 10px; /* note if this changes, modify margin on ul.detailstatus li */
     line-height: 24px;
     height: 24px;
-    overflow: auto;
+    overflow: hidden;
 
     span {
       color: $black;
+
+      &.status-subcount {
+        color: $data-green;
+      }
     }
   }
 }

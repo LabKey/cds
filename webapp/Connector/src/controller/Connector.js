@@ -92,5 +92,5 @@ Ext.define('Connector.view.NotFound', {
 
     style: 'padding: 20px; background-color: transparent;',
 
-    html: '<h1 style="font-size: 200%;">404: View Not Found</h1><div style="font-size: 200%;">These aren\'t the subjects you\'re looking for. Move along.</div>'
+    html: '<h1 style="font-size: 200%;">404: View Not Found</h1><div style="font-size: 200%;">These aren\'t the subjects you\'re looking for.</div>'
 });
