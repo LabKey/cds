@@ -22,22 +22,15 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.Git;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.EmailRecordTable;
 import org.labkey.test.util.Ext4Helper;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.remote.server.handler.CloseWindow;
-import org.testng.Assert;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Category({CDS.class, Git.class})
+@Category({CDS.class})
 public class CDSSecurityTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);

@@ -18,13 +18,12 @@ package org.labkey.test.tests;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.Git;
 import org.labkey.test.pages.DemoMeasureStorePage;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-@Category({CDS.class, Git.class})
+@Category({CDS.class})
 public class CDSMeasureStoreTest extends CDSReadOnlyTest
 {
     @Test

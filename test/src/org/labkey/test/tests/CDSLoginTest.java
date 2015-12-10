@@ -21,7 +21,6 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.Git;
 import org.labkey.test.pages.CDSLoginPage;
 import org.labkey.test.util.CDSHelper;
 
@@ -30,14 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.labkey.test.pages.CDSLoginPage.Locators.emailField;
-import static org.labkey.test.pages.CDSLoginPage.Locators.passwordField;
-import static org.labkey.test.pages.CDSLoginPage.Locators.rememberMeCheckbox;
 import static org.labkey.test.pages.CDSLoginPage.Locators.termsCheckbox;
 
-@Category({CDS.class, Git.class})
+@Category({CDS.class})
 public class CDSLoginTest extends CDSReadOnlyTest
 {
     @Before
