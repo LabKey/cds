@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -11,55 +11,9 @@ Ext.define('Connector.controller.Summary', {
 
     views : ['Summary'],
 
+    isService: true,
+
     init : function() {
-
-        this.selected = {};
-
-        this.control('summary', {
-            afterrender: function(v) { v.refresh(); }
-        });
-
-        this.control('summarydataview', {
-            itemclick: this.onSummarySelect
-        });
-
-        this.control('#dimensionmenu', {
-            afterrender : function(m) {
-                var s = this.getSummaryStore();
-                if (s.getCount())
-                {
-                    for (var r=0; r < s.getCount(); r++) {
-                        var rec = s.getAt(r);
-                        m.add({
-                            text : rec.data.label,
-                            rec  : rec
-                        });
-                    }
-                    m.show();
-                }
-                else
-                {
-                    s.on('load', function(s) {
-                        for (var r=0; r < s.getCount(); r++) {
-                            var rec = s.getAt(r);
-                            m.add({
-                                text : rec.data.label,
-                                rec  : rec
-                            });
-                        }
-                        m.show();
-                    }, this, {single: true});
-                    s.load();
-                }
-            }
-        });
-
-        /* Controls for Group Selections */
-        this.control('grouplistview', {
-            render    : function(view) {
-                this.registerSelectGroup(view);
-            }
-        });
 
         this.control('groupsave', {
             groupsaved : function(grp, filter) {
@@ -72,7 +26,7 @@ Ext.define('Connector.controller.Summary', {
             }
         });
 
-        /* Refresh event gets fired often on views so a delay is put in to prevent unncessary link registrations */
+        /* Refresh event gets fired often on views so a delay is put in to prevent unnecessary link registrations */
         this.summaryLinkTask = new Ext.util.DelayedTask(function(view) {
             var links = Ext.DomQuery.select('a', view.getEl().id);
             for (var i=0; i < links.length; i++) {
@@ -89,7 +43,8 @@ Ext.define('Connector.controller.Summary', {
         this.control('summarydataview', {
             refresh: function(view) {
                 this.summaryLinkTask.delay(100, null, null, [view]);
-            }
+            },
+            itemclick: this.onSummarySelect
         });
 
         this.callParent();
@@ -104,93 +59,40 @@ Ext.define('Connector.controller.Summary', {
 
             type = 'Connector.view.Summary';
             Ext.applyIf(c, {
-                store : this.getSummaryStore()
+                store: this.getStore('Summary')
             });
         }
 
         var v = Ext.create(type, c);
 
-        v.store.on('mdxerror', v.showMessage, v);
-        v.store.on('beforeload', function(s) {
-            this.displayLoad();
-        }, v);
-        v.store.on('load', function(s) {
-            this.removeLoad();
-        }, v);
+        Connector.getState().on('filterchange', v.onFilterChange, v);
+        this.getViewManager().on('afterchangeview', v.onViewChange, v);
 
-        this.getStateManager().on('filterchange', v.onFilterChange, v);
         return v;
     },
 
-    updateView : function(xtype, context) {
-        if (xtype == 'summary') {
-            var v = this.getViewManager().getViewInstance('summary');
-            if (v && v.refreshRequired) {
-                v.refresh();
-            }
+    updateView : function(xtype, context) { },
+
+    getViewTitle : function(xtype, context) {
+        if (xtype === 'summary') {
+            return 'Find';
         }
     },
 
-    getSummaryStore : function() {
-        if (!this.summaryStore) {
-            this.summaryStore = this.getStore('Summary');
-            this.summaryStore.state = this.getStateManager();
-        }
-
-        return this.summaryStore;
-    },
-
-    registerSelectGroup : function(v) {
-        if (!this.selected[v.id]) {
-            this.selected[v.id] = v;
-            v.on('selectionchange', this.onSelectGroup, this);
-        }
-    },
-
-    onSelectGroup : function(selModel) {
-        var view = selModel.view, vid; // ugh: documentation states that 'selectionchange' on Ext.view.View hands back View instance. It does not.
-        for (vid in this.selected) {
-            if (vid != view.id && this.selected.hasOwnProperty(vid)) {
-                var model = this.selected[vid].getSelectionModel();
-
-                model.suspendEvents();
-                model.deselectAll();
-                model.resumeEvents();
-            }
-        }
+    getDefaultView : function() {
+        return 'summary';
     },
 
     onSummarySelect : function(view) {
-        var state = this.getStateManager(),
-                hierarchy = view.getSelectionModel().getSelection()[0].data.hierarchy,
-                group;
+        var hierarchy = view.getSelectionModel().getSelection()[0].get('hierarchy');
 
         // Display Explorer
         if (this.linkNavigate) {
             this.linkNavigate = false;
         }
         else {
-            this.getViewManager().changeView('singleaxis', 'singleaxis/' + hierarchy.replace(/\./g, '/'));
-        }
-
-        // Copy the group filter to the state filter
-        if (state.getPrivateSelection('groupselection'))
-        {
-            var filters = state.getPrivateSelection('groupselection');
-
-            if (filters.length > 0 && filters[0].groupLabel != 'Current Active Filters') {
-                var grp = Ext.create('Connector.model.FilterGroup', {
-                    name : filters[0].data.groupLabel,
-                    filters : filters
-                });
-
-                group = [grp];
-                state.removePrivateSelection('groupselection');
-            }
-        }
-
-        if (group) {
-            state.setFilters(group);
+            var context = hierarchy.split('.');
+            this.getViewManager().changeView('explorer', 'singleaxis', context);
         }
     }
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -9,7 +9,7 @@ Ext.define('Connector.view.Main', {
         'Ext.tab.Panel',
         'Ext.layout.container.Border'
     ],
-    
+
     xtype: 'app-main',
 
     layout: {
@@ -34,9 +34,7 @@ Ext.define('Connector.view.Main', {
         itemId: 'eastview',
         region: 'east',
         ui: 'east-view',
-        width : 305,
-        maxWidth : 305,
-        hidden : false,
+        width : 244,
         plain : true,
         hideCollapseTool : true,
         defaults: {
@@ -45,6 +43,11 @@ Ext.define('Connector.view.Main', {
         items: [{
             xtype: 'panel',
             itemId: 'navfilter',
+            layout: {
+                type: 'vbox',
+                align: 'stretch',
+                pack: 'start'
+            },
             items: [{
                 xtype: 'navigation',
                 ui: 'navigation',
@@ -53,22 +56,29 @@ Ext.define('Connector.view.Main', {
                     arrow: 'left',
                     mapping: [{
                         label: 'Home',
-                        value: 'home'
+                        controller: 'home'
                     },{
-                        label: 'Learn about studies, assays',
-                        value: 'learn'
+                        label: 'Learn about',
+                        controller: 'learn'
                     },{
                         label: 'Find subjects',
-                        value: 'summary'
+                        controller: 'summary'
                     },{
                         label: 'Plot data',
-                        value: 'plot'
+                        controller: 'chart'
                     },{
                         label: 'View data grid',
-                        value: 'datagrid'
+                        controller: 'data'
                     }]
                 }
             }]
         }]
-    }]
-});
+    }],
+
+    initComponent : function() {
+
+        this.callParent();
+
+        this.eastPanel = this.getComponent('eastview');
+    }
+});   

@@ -5,74 +5,128 @@
  * metadata-driven class system features 
  */
 Ext.Loader.addClassPathMappings({
+  "Animation": "../../../../webapp/Connector/src/utility/Animation.js",
   "Connector.Application": "../../../../webapp/Connector/src/Application.js",
+  "Connector.Filter": "../../../../webapp/Connector/src/model/Filter.js",
   "Connector.app.model.Assay": "../../../../webapp/Connector/src/app/model/Assay.js",
+  "Connector.app.model.Dataset": "../../../../webapp/Connector/src/app/model/Dataset.js",
+  "Connector.app.model.DatasetData": "../../../../webapp/Connector/src/app/model/DatasetData.js",
   "Connector.app.model.Labs": "../../../../webapp/Connector/src/app/model/Labs.js",
-  "Connector.app.model.Site": "../../../../webapp/Connector/src/app/model/Site.js",
   "Connector.app.model.Study": "../../../../webapp/Connector/src/app/model/Study.js",
   "Connector.app.model.StudyProducts": "../../../../webapp/Connector/src/app/model/StudyProducts.js",
+  "Connector.app.model.VariableList": "../../../../webapp/Connector/src/app/model/VariableList.js",
   "Connector.app.store.Assay": "../../../../webapp/Connector/src/app/store/Assay.js",
+  "Connector.app.store.Dataset": "../../../../webapp/Connector/src/app/store/Dataset.js",
+  "Connector.app.store.DatasetData": "../../../../webapp/Connector/src/app/store/DatasetData.js",
   "Connector.app.store.Labs": "../../../../webapp/Connector/src/app/store/Labs.js",
-  "Connector.app.store.Site": "../../../../webapp/Connector/src/app/store/Site.js",
   "Connector.app.store.Study": "../../../../webapp/Connector/src/app/store/Study.js",
   "Connector.app.store.StudyProducts": "../../../../webapp/Connector/src/app/store/StudyProducts.js",
+  "Connector.app.store.VariableList": "../../../../webapp/Connector/src/app/store/VariableList.js",
   "Connector.app.view.Assay": "../../../../webapp/Connector/src/app/view/Assay.js",
   "Connector.app.view.Labs": "../../../../webapp/Connector/src/app/view/Labs.js",
-  "Connector.app.view.Site": "../../../../webapp/Connector/src/app/view/Site.js",
+  "Connector.app.view.ModuleContainer": "../../../../webapp/Connector/src/app/view/ModuleContainer.js",
   "Connector.app.view.Study": "../../../../webapp/Connector/src/app/view/Study.js",
   "Connector.app.view.StudyProducts": "../../../../webapp/Connector/src/app/view/StudyProducts.js",
-  "Connector.button.DropDownButton": "../../../../webapp/Connector/src/button/DropDownButton.js",
+  "Connector.app.view.module.StudySites": "../../../../webapp/Connector/src/app/view/module/StudySites.js",
+  "Connector.button.Image": "../../../../webapp/Connector/src/button/Image.js",
   "Connector.button.InfoButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
-  "Connector.button.RoundedButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
+  "Connector.component.ActionTitle": "../../../../webapp/Connector/src/component/ActionTitle.js",
+  "Connector.component.AdvancedOptionBase": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionDimension": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionScale": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionTime": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.DropDown": "../../../../webapp/Connector/src/component/DropDown.js",
+  "Connector.component.GridPager": "../../../../webapp/Connector/src/component/GridPager.js",
+  "Connector.component.News": "../../../../webapp/Connector/src/component/News.js",
+  "Connector.component.Started": "../../../../webapp/Connector/src/component/Started.js",
+  "Connector.constant.ModuleViewsLookup": "../../../../webapp/Connector/src/constant/ModuleViewsLookup.js",
+  "Connector.constant.Templates": "../../../../webapp/Connector/src/constant/Templates.js",
   "Connector.controller.AbstractViewController": "../../../../webapp/Connector/src/controller/AbstractViewController.js",
+  "Connector.controller.Analytics": "../../../../webapp/Connector/src/controller/Analytics.js",
   "Connector.controller.Chart": "../../../../webapp/Connector/src/controller/Chart.js",
-  "Connector.controller.Citation": "../../../../webapp/Connector/src/controller/Citation.js",
   "Connector.controller.Connector": "../../../../webapp/Connector/src/controller/Connector.js",
+  "Connector.controller.Data": "../../../../webapp/Connector/src/controller/Data.js",
   "Connector.controller.Explorer": "../../../../webapp/Connector/src/controller/Explorer.js",
+  "Connector.controller.Filter": "../../../../webapp/Connector/src/controller/Filter.js",
   "Connector.controller.FilterStatus": "../../../../webapp/Connector/src/controller/FilterStatus.js",
   "Connector.controller.Group": "../../../../webapp/Connector/src/controller/Group.js",
   "Connector.controller.Home": "../../../../webapp/Connector/src/controller/Home.js",
+  "Connector.controller.HttpInterceptor": "../../../../webapp/Connector/src/controller/Query.js",
   "Connector.controller.Learn": "../../../../webapp/Connector/src/controller/Learn.js",
   "Connector.controller.Main": "../../../../webapp/Connector/src/controller/Main.js",
+  "Connector.controller.Messaging": "../../../../webapp/Connector/src/controller/Query.js",
   "Connector.controller.Navigation": "../../../../webapp/Connector/src/controller/Navigation.js",
-  "Connector.controller.RawData": "../../../../webapp/Connector/src/controller/RawData.js",
+  "Connector.controller.Query": "../../../../webapp/Connector/src/controller/Query.js",
   "Connector.controller.Router": "../../../../webapp/Connector/src/controller/Router.js",
   "Connector.controller.State": "../../../../webapp/Connector/src/controller/State.js",
   "Connector.controller.Summary": "../../../../webapp/Connector/src/controller/Summary.js",
-  "Connector.model.Citation": "../../../../webapp/Connector/src/model/Citation.js",
+  "Connector.factory.Module": "../../../../webapp/Connector/src/factory/Module.js",
+  "Connector.field.BooleanCombo": "../../../../webapp/Connector/src/window/Filter.js",
+  "Connector.grid.Panel": "../../../../webapp/Connector/src/grid/Panel.js",
+  "Connector.model.Antigen": "../../../../webapp/Connector/src/model/Antigen.js",
+  "Connector.model.ChartData": "../../../../webapp/Connector/src/model/ChartData.js",
   "Connector.model.ColumnInfo": "../../../../webapp/Connector/src/model/ColumnInfo.js",
   "Connector.model.Detail": "../../../../webapp/Connector/src/model/Detail.js",
   "Connector.model.Dimension": "../../../../webapp/Connector/src/model/Dimension.js",
   "Connector.model.Explorer": "../../../../webapp/Connector/src/model/Explorer.js",
   "Connector.model.Filter": "../../../../webapp/Connector/src/model/Filter.js",
   "Connector.model.FilterGroup": "../../../../webapp/Connector/src/model/FilterGroup.js",
+  "Connector.model.Grid": "../../../../webapp/Connector/src/model/Grid.js",
+  "Connector.model.Group": "../../../../webapp/Connector/src/model/Group.js",
+  "Connector.model.Hierarchy": "../../../../webapp/Connector/src/model/Dimension.js",
+  "Connector.model.InfoPane": "../../../../webapp/Connector/src/model/InfoPane.js",
+  "Connector.model.InfoPaneMember": "../../../../webapp/Connector/src/model/InfoPaneMember.js",
+  "Connector.model.Measure": "../../../../webapp/Connector/src/model/Measure.js",
+  "Connector.model.RSSItem": "../../../../webapp/Connector/src/model/RSSItem.js",
+  "Connector.model.Source": "../../../../webapp/Connector/src/model/Source.js",
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
+  "Connector.model.StudyAxisData": "../../../../webapp/Connector/src/model/StudyAxisData.js",
+  "Connector.model.StudyVisitTag": "../../../../webapp/Connector/src/model/StudyVisitTag.js",
   "Connector.model.Summary": "../../../../webapp/Connector/src/model/Summary.js",
-  "Connector.panel.AxisSelectDisplay": "../../../../webapp/Connector/src/panel/AxisSelector.js",
-  "Connector.panel.AxisSelector": "../../../../webapp/Connector/src/panel/AxisSelector.js",
+  "Connector.model.TimepointPane": "../../../../webapp/Connector/src/model/TimepointPane.js",
+  "Connector.model.Variable": "../../../../webapp/Connector/src/model/Variable.js",
+  "Connector.model.VisitTag": "../../../../webapp/Connector/src/model/VisitTag.js",
+  "Connector.panel.AdvancedOptionBaseDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.panel.AdvancedOptionCheckboxDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.panel.AdvancedOptionRadioDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.panel.AntigenSelection": "../../../../webapp/Connector/src/component/AntigenSelection.js",
+  "Connector.panel.ColorSelector": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.panel.Feedback": "../../../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../../../webapp/Connector/src/panel/GroupList.js",
+  "Connector.panel.HelpCenter": "../../../../webapp/Connector/src/panel/HelpCenter.js",
+  "Connector.panel.HelpCenterHeader": "../../../../webapp/Connector/src/panel/HelpCenter.js",
   "Connector.panel.Selection": "../../../../webapp/Connector/src/panel/Selection.js",
+  "Connector.panel.Selector": "../../../../webapp/Connector/src/panel/Selector.js",
+  "Connector.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Page.js",
+  "Connector.plugin.LoadingMask": "../../../../webapp/Connector/src/plugin/LoadingMask.js",
   "Connector.plugin.Messaging": "../../../../webapp/Connector/src/plugin/Messaging.js",
+  "Connector.store.AssayDistinctValue": "../../../../webapp/Connector/src/store/AssayDistinctValue.js",
   "Connector.store.Explorer": "../../../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../../../webapp/Connector/src/store/FilterStatus.js",
+  "Connector.store.StudyVisitTag": "../../../../webapp/Connector/src/store/StudyVisitTag.js",
   "Connector.store.Summary": "../../../../webapp/Connector/src/store/Summary.js",
+  "Connector.store.VisitTag": "../../../../webapp/Connector/src/store/VisitTag.js",
+  "Connector.store.VisitTagMultiUse": "../../../../webapp/Connector/src/store/VisitTag.js",
+  "Connector.store.VisitTagSingleUse": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
-  "Connector.view.Citation": "../../../../webapp/Connector/src/view/Citation.js",
-  "Connector.view.Compare": "../../../../webapp/Connector/src/view/Compare.js",
+  "Connector.utility.Chart": "../../../../webapp/Connector/src/utility/Chart.js",
+  "Connector.utility.Query": "../../../../webapp/Connector/src/utility/Query.js",
+  "Connector.view.Chart": "../../../../webapp/Connector/src/view/Chart.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
-  "Connector.view.Dimension": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
-  "Connector.view.DimensionSelector": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
-  "Connector.view.FilterSave": "../../../../webapp/Connector/src/view/FilterSave.js",
+  "Connector.view.ExplorerHeaderDataView": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterStatus": "../../../../webapp/Connector/src/view/FilterStatus.js",
+  "Connector.view.Grid": "../../../../webapp/Connector/src/view/Grid.js",
+  "Connector.view.GridPane": "../../../../webapp/Connector/src/view/GridPane.js",
   "Connector.view.GroupListView": "../../../../webapp/Connector/src/panel/GroupList.js",
   "Connector.view.GroupSave": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSaveList": "../../../../webapp/Connector/src/view/GroupSave.js",
+  "Connector.view.GroupSummary": "../../../../webapp/Connector/src/view/GroupSummary.js",
+  "Connector.view.GroupSummaryBody": "../../../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../../../webapp/Connector/src/view/Home.js",
-  "Connector.view.HomeBody": "../../../../webapp/Connector/src/view/Home.js",
-  "Connector.view.HomeHeader": "../../../../webapp/Connector/src/view/Home.js",
+  "Connector.view.HomeHeader": "../../../../webapp/Connector/src/view/HomeHeader.js",
+  "Connector.view.InfoPane": "../../../../webapp/Connector/src/view/InfoPane.js",
   "Connector.view.Learn": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.Learn.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnColumnHeader": "../../../../webapp/Connector/src/view/Learn.js",
@@ -82,96 +136,191 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Navigation": "../../../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NavigationView": "../../../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NotFound": "../../../../webapp/Connector/src/controller/Connector.js",
-  "Connector.view.RawData": "../../../../webapp/Connector/src/view/RawData.js",
-  "Connector.view.Scatter": "../../../../webapp/Connector/src/view/Scatter.js",
+  "Connector.view.Page": "../../../../webapp/Connector/src/view/Page.js",
+  "Connector.view.PageHeader": "../../../../webapp/Connector/src/view/PageHeader.js",
+  "Connector.view.PlotPane": "../../../../webapp/Connector/src/view/PlotPane.js",
   "Connector.view.Selection": "../../../../webapp/Connector/src/view/Selection.js",
   "Connector.view.SingleAxisExplorer": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.SingleAxisExplorerView": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.Summary": "../../../../webapp/Connector/src/view/Summary.js",
   "Connector.view.SummaryDataView": "../../../../webapp/Connector/src/view/Summary.js",
-  "Connector.view.Time": "../../../../webapp/Connector/src/view/Time.js",
+  "Connector.view.TimepointPane": "../../../../webapp/Connector/src/view/TimepointPane.js",
+  "Connector.view.Variable": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../../../webapp/Connector/src/view/Viewport.js",
-  "Connector.view.search.Container": "../../../../webapp/Connector/src/view/search/Container.js",
+  "Connector.view.module.AssayAnalyteList": "../../../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
+  "Connector.view.module.AssayAntigenList": "../../../../webapp/Connector/src/app/view/module/AssayAntigenList.js",
+  "Connector.view.module.AssayHeader": "../../../../webapp/Connector/src/app/view/module/AssayHeader.js",
+  "Connector.view.module.AssayStudies": "../../../../webapp/Connector/src/app/view/module/AssayStudies.js",
+  "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
+  "Connector.view.module.ContactCDS": "../../../../webapp/Connector/src/view/module/ContactCDS.js",
+  "Connector.view.module.HTML": "../../../../webapp/Connector/src/view/module/Text.js",
+  "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
+  "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
+  "Connector.view.module.ProductManufacturing": "../../../../webapp/Connector/src/app/view/module/ProductManufacturing.js",
+  "Connector.view.module.ProductOtherProducts": "../../../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
+  "Connector.view.module.ProductProvidedBy": "../../../../webapp/Connector/src/app/view/module/ProductProvidedBy.js",
+  "Connector.view.module.ProductStudies": "../../../../webapp/Connector/src/app/view/module/ProductStudies.js",
+  "Connector.view.module.StudyAssays": "../../../../webapp/Connector/src/app/view/module/StudyAssays.js",
+  "Connector.view.module.StudyDatasets": "../../../../webapp/Connector/src/app/view/module/StudyDatasets.js",
+  "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
+  "Connector.view.module.StudyProducts": "../../../../webapp/Connector/src/app/view/module/StudyProducts.js",
+  "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
+  "Connector.view.module.VariableList": "../../../../webapp/Connector/src/app/view/module/VariableList.js",
+  "Connector.window.AbstractFilter": "../../../../webapp/Connector/src/window/AbstractFilter.js",
+  "Connector.window.Facet": "../../../../webapp/Connector/src/window/Facet.js",
   "Connector.window.Filter": "../../../../webapp/Connector/src/window/Filter.js",
   "Connector.window.SystemMessage": "../../../../webapp/Connector/src/window/SystemMessage.js",
   "Ext": "../../ext/src",
   "Ext.Msg": "../../ext/src/window/MessageBox.js",
   "Ext.rtl.EventObjectImpl": "../../ext/src/rtl/EventObject.js",
+  "HelpRouter": "../../../../webapp/Connector/src/utility/HelpRouter.js",
+  "LABKEY": "../../../../../../internal/webapp",
+  "LABKEY.app.constant": "../../../../../../internal/webapp/app/State.js",
+  "LABKEY.app.controller.AbstractViewController": "../../../../../../internal/webapp/app/AbstractViewController.js",
+  "LABKEY.app.controller.HttpInterceptor": "../../../../../../internal/webapp/app/HttpInterceptor.js",
+  "LABKEY.app.controller.Messaging": "../../../../../../internal/webapp/app/Messaging.js",
   "LABKEY.app.controller.Route": "../../../../../../internal/webapp/app/Route.js",
   "LABKEY.app.controller.State": "../../../../../../internal/webapp/app/State.js",
   "LABKEY.app.controller.View": "../../../../../../internal/webapp/app/View.js",
+  "LABKEY.app.model.Filter": "../../../../../../internal/webapp/app/Filter.js",
+  "LABKEY.app.model.Message": "../../../../../../internal/webapp/app/Messaging.js",
+  "LABKEY.app.model.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.model.State": "../../../../../../internal/webapp/app/State.js",
-  "LABKEY.study.GroupCohort": "../../../../webapp/Connector/src/model/FilterGroup.js"
+  "LABKEY.app.panel.MeasurePicker": "../../../../../../internal/webapp/app/MeasurePicker.js",
+  "LABKEY.app.plugin.LoadingMask": "../../../../../../internal/webapp/app/LoadingMask.js",
+  "LABKEY.app.store.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
+  "LABKEY.app.view.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
+  "LABKEY.app.view.Selection": "../../../../../../internal/webapp/app/Selection.js",
+  "Statistics": "../../../../webapp/Connector/src/utility/Statistics.js",
+  "StoreCache": "../../../../webapp/Connector/src/utility/StoreCache.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
+  "Animation": [],
   "Connector.Application": [],
+  "Connector.Filter": [],
   "Connector.app.model.Assay": [],
+  "Connector.app.model.Dataset": [],
+  "Connector.app.model.DatasetData": [],
   "Connector.app.model.Labs": [],
-  "Connector.app.model.Site": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
+  "Connector.app.model.VariableList": [],
   "Connector.app.store.Assay": [],
+  "Connector.app.store.Dataset": [],
+  "Connector.app.store.DatasetData": [],
   "Connector.app.store.Labs": [],
-  "Connector.app.store.Site": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
+  "Connector.app.store.VariableList": [],
   "Connector.app.view.Assay": [],
   "Connector.app.view.Labs": [],
-  "Connector.app.view.Site": [],
+  "Connector.app.view.ModuleContainer": [],
   "Connector.app.view.Study": [],
   "Connector.app.view.StudyProducts": [],
-  "Connector.button.DropDownButton": [],
+  "Connector.app.view.module.StudySites": [],
+  "Connector.button.Image": [],
   "Connector.button.InfoButton": [],
-  "Connector.button.RoundedButton": [],
+  "Connector.component.ActionTitle": [],
+  "Connector.component.AdvancedOptionBase": [],
+  "Connector.component.AdvancedOptionDimension": [],
+  "Connector.component.AdvancedOptionScale": [],
+  "Connector.component.AdvancedOptionTime": [],
+  "Connector.component.DropDown": [],
+  "Connector.component.GridPager": [],
+  "Connector.component.News": [],
+  "Connector.component.Started": [],
+  "Connector.constant.ModuleViewsLookup": [],
+  "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
+  "Connector.controller.Analytics": [],
   "Connector.controller.Chart": [],
-  "Connector.controller.Citation": [],
   "Connector.controller.Connector": [],
+  "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
+  "Connector.controller.Filter": [],
   "Connector.controller.FilterStatus": [],
   "Connector.controller.Group": [],
   "Connector.controller.Home": [],
+  "Connector.controller.HttpInterceptor": [],
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
+  "Connector.controller.Messaging": [],
   "Connector.controller.Navigation": [],
-  "Connector.controller.RawData": [],
+  "Connector.controller.Query": [],
   "Connector.controller.Router": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
-  "Connector.model.Citation": [],
+  "Connector.factory.Module": [],
+  "Connector.field.BooleanCombo": [],
+  "Connector.grid.Panel": [],
+  "Connector.model.Antigen": [],
+  "Connector.model.ChartData": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
   "Connector.model.Dimension": [],
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
+  "Connector.model.Grid": [],
+  "Connector.model.Group": [],
+  "Connector.model.Hierarchy": [],
+  "Connector.model.InfoPane": [],
+  "Connector.model.InfoPaneMember": [],
+  "Connector.model.Measure": [],
+  "Connector.model.RSSItem": [],
+  "Connector.model.Source": [],
   "Connector.model.State": [],
+  "Connector.model.StudyAxisData": [],
+  "Connector.model.StudyVisitTag": [],
   "Connector.model.Summary": [],
-  "Connector.panel.AxisSelectDisplay": [],
-  "Connector.panel.AxisSelector": [],
+  "Connector.model.TimepointPane": [],
+  "Connector.model.Variable": [],
+  "Connector.model.VisitTag": [],
+  "Connector.panel.AdvancedOptionBaseDropdown": [],
+  "Connector.panel.AdvancedOptionCheckboxDropdown": [],
+  "Connector.panel.AdvancedOptionRadioDropdown": [],
+  "Connector.panel.AntigenSelection": [],
+  "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
+  "Connector.panel.HelpCenter": [],
+  "Connector.panel.HelpCenterHeader": [],
   "Connector.panel.Selection": [],
+  "Connector.panel.Selector": [],
+  "Connector.plugin.HeaderLock": [],
+  "Connector.plugin.LoadingMask": [],
   "Connector.plugin.Messaging": [],
+  "Connector.store.AssayDistinctValue": [],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
+  "Connector.store.StudyVisitTag": [],
   "Connector.store.Summary": [],
+  "Connector.store.VisitTag": [],
+  "Connector.store.VisitTagMultiUse": [],
+  "Connector.store.VisitTagSingleUse": [],
   "Connector.types.Filter": [],
-  "Connector.view.Citation": [],
-  "Connector.view.Compare": [],
+  "Connector.utility.Chart": [
+    "ChartUtils"
+  ],
+  "Connector.utility.Query": [
+    "QueryUtils"
+  ],
+  "Connector.view.Chart": [],
   "Connector.view.DetailStatus": [],
-  "Connector.view.Dimension": [],
-  "Connector.view.DimensionSelector": [],
-  "Connector.view.FilterSave": [],
+  "Connector.view.ExplorerHeaderDataView": [],
   "Connector.view.FilterStatus": [],
+  "Connector.view.Grid": [],
+  "Connector.view.GridPane": [],
   "Connector.view.GroupListView": [],
   "Connector.view.GroupSave": [],
   "Connector.view.GroupSaveList": [],
+  "Connector.view.GroupSummary": [],
+  "Connector.view.GroupSummaryBody": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
-  "Connector.view.HomeBody": [],
   "Connector.view.HomeHeader": [],
+  "Connector.view.InfoPane": [],
   "Connector.view.Learn": [],
   "Connector.view.Learn.plugin.HeaderLock": [],
   "Connector.view.LearnColumnHeader": [],
@@ -181,16 +330,38 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Navigation": [],
   "Connector.view.NavigationView": [],
   "Connector.view.NotFound": [],
-  "Connector.view.RawData": [],
-  "Connector.view.Scatter": [],
+  "Connector.view.Page": [],
+  "Connector.view.PageHeader": [],
+  "Connector.view.PlotPane": [],
   "Connector.view.Selection": [],
   "Connector.view.SingleAxisExplorer": [],
   "Connector.view.SingleAxisExplorerView": [],
   "Connector.view.Summary": [],
   "Connector.view.SummaryDataView": [],
-  "Connector.view.Time": [],
+  "Connector.view.TimepointPane": [],
+  "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
-  "Connector.view.search.Container": [],
+  "Connector.view.module.AssayAnalyteList": [],
+  "Connector.view.module.AssayAntigenList": [],
+  "Connector.view.module.AssayHeader": [],
+  "Connector.view.module.AssayStudies": [],
+  "Connector.view.module.BaseModule": [],
+  "Connector.view.module.ContactCDS": [],
+  "Connector.view.module.HTML": [],
+  "Connector.view.module.Person": [],
+  "Connector.view.module.ProductHeader": [],
+  "Connector.view.module.ProductManufacturing": [],
+  "Connector.view.module.ProductOtherProducts": [],
+  "Connector.view.module.ProductProvidedBy": [],
+  "Connector.view.module.ProductStudies": [],
+  "Connector.view.module.StudyAssays": [],
+  "Connector.view.module.StudyDatasets": [],
+  "Connector.view.module.StudyHeader": [],
+  "Connector.view.module.StudyProducts": [],
+  "Connector.view.module.Text": [],
+  "Connector.view.module.VariableList": [],
+  "Connector.window.AbstractFilter": [],
+  "Connector.window.Facet": [],
   "Connector.window.Filter": [],
   "Connector.window.SystemMessage": [],
   "Ext.AbstractComponent": [],
@@ -1009,66 +1180,138 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.window.Window": [
     "Ext.Window"
   ],
+  "HelpRouter": [],
+  "LABKEY.app.Application": [],
+  "LABKEY.app.constant": [],
+  "LABKEY.app.controller.AbstractViewController": [],
+  "LABKEY.app.controller.HttpInterceptor": [],
+  "LABKEY.app.controller.Messaging": [],
   "LABKEY.app.controller.Route": [],
   "LABKEY.app.controller.State": [],
   "LABKEY.app.controller.View": [],
+  "LABKEY.app.model.Filter": [],
+  "LABKEY.app.model.Message": [],
+  "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
-  "LABKEY.study.GroupCohort": []
+  "LABKEY.app.panel.MeasurePicker": [],
+  "LABKEY.app.plugin.LoadingMask": [],
+  "LABKEY.app.store.OlapExplorer": [
+    "LABKEY.olapStore"
+  ],
+  "LABKEY.app.view.OlapExplorer": [],
+  "LABKEY.app.view.Selection": [],
+  "Statistics": [],
+  "StoreCache": []
 });
 Ext.ClassManager.addNameAliasMappings({
+  "Animation": [],
   "Connector.Application": [],
+  "Connector.Filter": [],
   "Connector.app.model.Assay": [],
+  "Connector.app.model.Dataset": [],
+  "Connector.app.model.DatasetData": [],
   "Connector.app.model.Labs": [],
-  "Connector.app.model.Site": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
+  "Connector.app.model.VariableList": [],
   "Connector.app.store.Assay": [],
+  "Connector.app.store.Dataset": [],
+  "Connector.app.store.DatasetData": [],
   "Connector.app.store.Labs": [],
-  "Connector.app.store.Site": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
+  "Connector.app.store.VariableList": [],
   "Connector.app.view.Assay": [],
   "Connector.app.view.Labs": [],
-  "Connector.app.view.Site": [],
+  "Connector.app.view.ModuleContainer": [],
   "Connector.app.view.Study": [],
   "Connector.app.view.StudyProducts": [],
-  "Connector.button.DropDownButton": [
-    "widget.dropdownbutton"
+  "Connector.app.view.module.StudySites": [
+    "widget.app.module.studysites"
+  ],
+  "Connector.button.Image": [
+    "widget.imgbutton"
   ],
   "Connector.button.InfoButton": [
     "widget.infobutton"
   ],
-  "Connector.button.RoundedButton": [
-    "widget.roundedbutton"
+  "Connector.component.ActionTitle": [
+    "widget.actiontitle"
   ],
+  "Connector.component.AdvancedOptionBase": [],
+  "Connector.component.AdvancedOptionDimension": [
+    "widget.advancedoptiondimension"
+  ],
+  "Connector.component.AdvancedOptionScale": [],
+  "Connector.component.AdvancedOptionTime": [],
+  "Connector.component.DropDown": [
+    "widget.dropdown"
+  ],
+  "Connector.component.GridPager": [
+    "widget.gridpager"
+  ],
+  "Connector.component.News": [
+    "widget.cds-news"
+  ],
+  "Connector.component.Started": [
+    "widget.cds-started"
+  ],
+  "Connector.constant.ModuleViewsLookup": [],
+  "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
+  "Connector.controller.Analytics": [],
   "Connector.controller.Chart": [],
-  "Connector.controller.Citation": [],
   "Connector.controller.Connector": [],
+  "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
+  "Connector.controller.Filter": [],
   "Connector.controller.FilterStatus": [],
   "Connector.controller.Group": [],
   "Connector.controller.Home": [],
+  "Connector.controller.HttpInterceptor": [],
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
+  "Connector.controller.Messaging": [],
   "Connector.controller.Navigation": [],
-  "Connector.controller.RawData": [],
+  "Connector.controller.Query": [],
   "Connector.controller.Router": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
-  "Connector.model.Citation": [],
+  "Connector.factory.Module": [],
+  "Connector.field.BooleanCombo": [
+    "widget.labkey-booleantextfield"
+  ],
+  "Connector.grid.Panel": [
+    "widget.connector-gridpanel"
+  ],
+  "Connector.model.Antigen": [],
+  "Connector.model.ChartData": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
   "Connector.model.Dimension": [],
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
+  "Connector.model.Grid": [],
+  "Connector.model.Group": [],
+  "Connector.model.Hierarchy": [],
+  "Connector.model.InfoPane": [],
+  "Connector.model.InfoPaneMember": [],
+  "Connector.model.Measure": [],
+  "Connector.model.RSSItem": [],
+  "Connector.model.Source": [],
   "Connector.model.State": [],
+  "Connector.model.StudyAxisData": [],
+  "Connector.model.StudyVisitTag": [],
   "Connector.model.Summary": [],
-  "Connector.panel.AxisSelectDisplay": [],
-  "Connector.panel.AxisSelector": [
-    "widget.axisselector"
-  ],
+  "Connector.model.TimepointPane": [],
+  "Connector.model.Variable": [],
+  "Connector.model.VisitTag": [],
+  "Connector.panel.AdvancedOptionBaseDropdown": [],
+  "Connector.panel.AdvancedOptionCheckboxDropdown": [],
+  "Connector.panel.AdvancedOptionRadioDropdown": [],
+  "Connector.panel.AntigenSelection": [],
+  "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [
     "widget.feedback"
   ],
@@ -1078,39 +1321,60 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.GroupList": [
     "widget.grouplist"
   ],
+  "Connector.panel.HelpCenter": [
+    "widget.helpcenter"
+  ],
+  "Connector.panel.HelpCenterHeader": [],
   "Connector.panel.Selection": [
     "widget.selectionpanel"
+  ],
+  "Connector.panel.Selector": [
+    "widget.variableselector"
+  ],
+  "Connector.plugin.HeaderLock": [
+    "plugin.headerlock"
+  ],
+  "Connector.plugin.LoadingMask": [
+    "plugin.loadingmask"
   ],
   "Connector.plugin.Messaging": [
     "plugin.messaging"
   ],
+  "Connector.store.AssayDistinctValue": [
+    "store.assaydistinctvalue"
+  ],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
+  "Connector.store.StudyVisitTag": [],
   "Connector.store.Summary": [
     "store.summary"
   ],
-  "Connector.types.Filter": [],
-  "Connector.view.Citation": [
-    "widget.citation"
+  "Connector.store.VisitTag": [],
+  "Connector.store.VisitTagMultiUse": [
+    "store.visittagmulti"
   ],
-  "Connector.view.Compare": [
-    "widget.compareview"
+  "Connector.store.VisitTagSingleUse": [
+    "store.visittagsingle"
+  ],
+  "Connector.types.Filter": [],
+  "Connector.utility.Chart": [],
+  "Connector.utility.Query": [],
+  "Connector.view.Chart": [
+    "widget.plot"
   ],
   "Connector.view.DetailStatus": [
     "widget.detailstatus"
   ],
-  "Connector.view.Dimension": [
-    "widget.dimensionview"
-  ],
-  "Connector.view.DimensionSelector": [
-    "widget.dimselectorview"
-  ],
-  "Connector.view.FilterSave": [
-    "widget.filtersave"
+  "Connector.view.ExplorerHeaderDataView": [
+    "widget.explorerheaderdataview"
   ],
   "Connector.view.FilterStatus": [
     "widget.filterstatus"
   ],
+  "Connector.view.Grid": [
+    "widget.groupdatagrid"
+  ],
+  "Connector.view.GridPane": [],
   "Connector.view.GroupListView": [
     "widget.grouplistview"
   ],
@@ -1120,14 +1384,22 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.GroupSaveList": [
     "widget.groupsavelistview"
   ],
+  "Connector.view.GroupSummary": [
+    "widget.groupsummary"
+  ],
+  "Connector.view.GroupSummaryBody": [],
   "Connector.view.Header": [
     "widget.connectorheader"
   ],
   "Connector.view.Home": [
     "widget.home"
   ],
-  "Connector.view.HomeBody": [],
-  "Connector.view.HomeHeader": [],
+  "Connector.view.HomeHeader": [
+    "widget.homeheader"
+  ],
+  "Connector.view.InfoPane": [
+    "widget.infopane"
+  ],
   "Connector.view.Learn": [
     "widget.learn"
   ],
@@ -1135,7 +1407,9 @@ Ext.ClassManager.addNameAliasMappings({
     "plugin.learnheaderlock"
   ],
   "Connector.view.LearnColumnHeader": [],
-  "Connector.view.LearnHeader": [],
+  "Connector.view.LearnHeader": [
+    "widget.learnheader"
+  ],
   "Connector.view.LearnHeaderDataView": [
     "widget.learnheaderdataview"
   ],
@@ -1149,12 +1423,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.NotFound": [
     "widget.notfound"
   ],
-  "Connector.view.RawData": [
-    "widget.datagrid"
+  "Connector.view.Page": [],
+  "Connector.view.PageHeader": [
+    "widget.pageheader"
   ],
-  "Connector.view.Scatter": [
-    "widget.plot"
-  ],
+  "Connector.view.PlotPane": [],
   "Connector.view.Selection": [
     "widget.selectionview"
   ],
@@ -1170,15 +1443,70 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.SummaryDataView": [
     "widget.summarydataview"
   ],
-  "Connector.view.Time": [
-    "widget.timeview"
-  ],
+  "Connector.view.TimepointPane": [],
+  "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
-  "Connector.view.search.Container": [
-    "widget.searchcontainer"
+  "Connector.view.module.AssayAnalyteList": [
+    "widget.app.module.assayanalytelist"
+  ],
+  "Connector.view.module.AssayAntigenList": [
+    "widget.app.module.assayantigenlist"
+  ],
+  "Connector.view.module.AssayHeader": [
+    "widget.app.module.assayheader"
+  ],
+  "Connector.view.module.AssayStudies": [
+    "widget.app.module.assaystudies"
+  ],
+  "Connector.view.module.BaseModule": [],
+  "Connector.view.module.ContactCDS": [
+    "widget.module.contactcds"
+  ],
+  "Connector.view.module.HTML": [
+    "widget.module.html"
+  ],
+  "Connector.view.module.Person": [
+    "widget.module.person"
+  ],
+  "Connector.view.module.ProductHeader": [
+    "widget.app.module.productheader"
+  ],
+  "Connector.view.module.ProductManufacturing": [
+    "widget.app.module.productmanufacturing"
+  ],
+  "Connector.view.module.ProductOtherProducts": [
+    "widget.app.module.productotherproducts"
+  ],
+  "Connector.view.module.ProductProvidedBy": [
+    "widget.app.module.productprovidedby"
+  ],
+  "Connector.view.module.ProductStudies": [
+    "widget.app.module.productstudies"
+  ],
+  "Connector.view.module.StudyAssays": [
+    "widget.app.module.studyassays"
+  ],
+  "Connector.view.module.StudyDatasets": [
+    "widget.app.module.studydatasets"
+  ],
+  "Connector.view.module.StudyHeader": [
+    "widget.app.module.studyheader"
+  ],
+  "Connector.view.module.StudyProducts": [
+    "widget.app.module.studyproducts"
+  ],
+  "Connector.view.module.Text": [
+    "widget.module.text"
+  ],
+  "Connector.view.module.VariableList": [
+    "widget.app.module.variablelist"
+  ],
+  "Connector.window.AbstractFilter": [],
+  "Connector.window.Facet": [
+    "widget.columnfacetwin"
   ],
   "Connector.window.Filter": [
-    "widget.rawdatafilterwin"
+    "widget.columnfilterwin"
   ],
   "Connector.window.SystemMessage": [],
   "Ext.AbstractComponent": [],
@@ -2165,11 +2493,28 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.window.Window": [
     "widget.window"
   ],
+  "HelpRouter": [],
+  "LABKEY.app.Application": [],
+  "LABKEY.app.constant": [],
+  "LABKEY.app.controller.AbstractViewController": [],
+  "LABKEY.app.controller.HttpInterceptor": [],
+  "LABKEY.app.controller.Messaging": [],
   "LABKEY.app.controller.Route": [],
   "LABKEY.app.controller.State": [],
   "LABKEY.app.controller.View": [],
+  "LABKEY.app.model.Filter": [],
+  "LABKEY.app.model.Message": [],
+  "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
-  "LABKEY.study.GroupCohort": []
+  "LABKEY.app.panel.MeasurePicker": [],
+  "LABKEY.app.plugin.LoadingMask": [],
+  "LABKEY.app.store.OlapExplorer": [],
+  "LABKEY.app.view.OlapExplorer": [
+    "widget.olapexplorerview"
+  ],
+  "LABKEY.app.view.Selection": [],
+  "Statistics": [],
+  "StoreCache": []
 });
 Ext.setVersion("connector-theme", "1.0.0");
 Ext.setVersion("ext-theme-base", "4.2.1");

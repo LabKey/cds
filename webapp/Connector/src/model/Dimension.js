@@ -19,3 +19,18 @@ Ext.define('Connector.model.Dimension', {
         {name: 'detailView'}
     ]
 });
+
+Ext.define('Connector.model.Hierarchy', {
+
+    extend: 'Ext.data.Model',
+
+    fields: [
+        {name: 'defaultOperator'},
+        {name: 'filterType'},
+        {name: 'hidden', type: 'boolean'},
+        {name: 'label'},
+        {name: 'name'},
+        {name: 'supportsSummary', type: 'boolean'},
+        {name: 'uniqueName'}
+    ]
+});

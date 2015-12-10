@@ -22,10 +22,6 @@ import org.labkey.test.util.LogMethod;
 
 import static org.junit.Assert.*;
 
-/**
- * User: tchadick
- * Date: 10/25/13
- */
 public class StudyDetailsPage
 {
     private final CDSTest _test;
@@ -77,7 +73,7 @@ public class StudyDetailsPage
 
     public static StudyDetailsPage demoStudy(CDSTest test)
     {
-        return new StudyDetailsPage(test, "Demo Study", "", "Igra M", "", "Fitzsimmons K", "Trial", "LabKey");
+        return new StudyDetailsPage(test, "DemoSubset", "", "Igra M", "", "Fitzsimmons K", "Trial", "LabKey");
     }
 
     public static StudyDetailsPage notActuallyCHAVI001(CDSTest test)

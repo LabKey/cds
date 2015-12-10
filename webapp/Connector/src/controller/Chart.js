@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -7,68 +7,154 @@ Ext.define('Connector.controller.Chart', {
 
     extend : 'Connector.controller.AbstractViewController',
 
-    views  : ['Compare', 'Scatter', 'Time'],
+    views  : ['Chart'],
 
-    init : function() {
+    init : function()
+    {
+        this.control('#yvarselector', {
+            requestvariable: this.showYVariableSelector
+        });
 
-        this.control('plot > #yaxisbutton', {
-            click: function(b) {
-                var plot = b.up('plot');
+        this.control('#xvarselector', {
+            requestvariable: this.showXVariableSelector
+        });
+
+        this.control('#colorvarselector', {
+            requestvariable: this.showColorVariableSelector
+        });
+
+        this.control('#plotshowdata', {
+            click: function(btn) {
+                var plot = btn.up('plot');
                 if (plot) {
-                    plot.showYMeasureSelection(b.getEl());
+                    plot.showPlotDataGrid();
                 }
             }
         });
 
-        this.control('plot > #xaxisbutton', {
-            click: function(b) {
-                var plot = b.up('plot');
-                if (plot) {
-                    plot.showXMeasureSelection(b.getEl());
-                }
+        this.application.on('showplotantigensx', function()
+        {
+            var plot = Ext.ComponentQuery.query('plot');
+            if (Ext.isArray(plot) && plot.length == 1)
+            {
+                this.showXVariableSelector(null, null, plot[0], true);
             }
-        });
+        }, this);
+
+        this.application.on('showplotantigensy', function()
+        {
+            var plot = Ext.ComponentQuery.query('plot');
+            if (Ext.isArray(plot) && plot.length == 1)
+            {
+                this.showYVariableSelector(null, null, plot[0], true);
+            }
+        }, this);
+
+        this._filtersChanged = false;
+        Connector.getState().on('filterchange', this._filterChangeHook, this);
 
         this.callParent();
     },
 
-    createView : function(xtype, config, context) {
+    createView : function(xtype /*, config, context */)
+    {
+        var v, plotType = 'plot';
 
-        if (xtype == 'plot')
+        if (xtype == plotType)
         {
-            var state = this.getStateManager();
-            var v = Ext.create('Connector.view.Scatter', {
-                control : this.getController('RawData'),
-                ui  : 'custom',
-                state : state
+            v = Ext.create('Connector.view.Chart', {
+                visitTagStore: this.getStore('VisitTagSingleUse'),
+                filtersActivated: this._filtersChanged === true
             });
 
-            state.on('filterchange', v.onFilterChange, v);
-            this.getViewManager().on('afterchangeview', v.onViewChange, v);
+            Connector.getState().un('filterchange', this._filterChangeHook, this);
 
-            return v;
+            Connector.getState().clearSelections();
+
+            var vm = this.getViewManager();
+
+            vm.on('beforechangeview', function(controller, view, currentContext)
+            {
+                // If a chart view is being activated, ensure it is not
+                // a view of plotType so to not deactivate the view unintentionally
+                if (controller == 'chart')
+                {
+                    if (Ext.isDefined(view) && view != plotType)
+                    {
+                        v.onDeactivate.call(v);
+                    }
+                }
+                if (currentContext.view == plotType)
+                {
+                    v.onDeactivate.call(v);
+                }
+            });
+            vm.on('afterchangeview', function(c, view)
+            {
+                if (view == plotType)
+                {
+                    v.onActivate.call(v);
+                }
+            });
         }
-        else if (xtype == 'timeview')
-        {
-            var state = this.getStateManager();
-            var v = Ext.create('Connector.view.Time', {
-                ui  : 'custom',
-                state : state
-            });
 
-            return v;
-        }
-        else if (xtype == 'compareview')
-        {
-            var state = this.getStateManager();
-            var v = Ext.create('Connector.view.Compare', {
-                ui  : 'custom',
-                state : state
-            });
+        return v;
+    },
 
-            return v;
+    updateView : function(xtype, context) {
+        if (xtype === 'plot') {
+            Connector.getState().clearSelections();
         }
     },
 
-    updateView : function(xtype, context) {}
+    getViewTitle : function(xtype, context) {
+        if (xtype === 'plot') {
+            return 'Plot';
+        }
+    },
+
+    getDefaultView : function() {
+        return 'plot';
+    },
+
+    _filterChangeHook : function()
+    {
+        this._filtersChanged = true;
+    },
+
+    showYVariableSelector : function(view, model, plot, showAntigenSelection)
+    {
+        plot = plot || view.up('plot');
+        if (plot)
+        {
+            Connector.getService('Query').onQueryReady(function()
+            {
+                plot.showYMeasureSelection(showAntigenSelection);
+            });
+        }
+    },
+
+    showXVariableSelector : function(view, model, plot, showAntigenSelection)
+    {
+        plot = plot || view.up('plot');
+        if (plot)
+        {
+            Connector.getService('Query').onQueryReady(function()
+            {
+                plot.showXMeasureSelection(showAntigenSelection);
+            });
+        }
+    },
+
+    showColorVariableSelector : function(view, model, plot)
+    {
+        plot = plot || view.up('plot');
+        if (plot)
+        {
+            Connector.getService('Query').onQueryReady(function()
+            {
+                plot.showColorSelection();
+            });
+        }
+    }
 });

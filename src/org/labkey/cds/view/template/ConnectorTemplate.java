@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package org.labkey.cds.view.template;
 
-import org.labkey.api.data.Container;
-import org.labkey.api.view.NavTree;
-import org.labkey.api.view.ViewContext;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.api.view.template.PrintTemplate;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,15 +24,18 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class ConnectorTemplate extends PrintTemplate
 {
-    public ConnectorTemplate(ViewContext context, Container c, ModelAndView body, PageConfig page, NavTree[] navTrail)
-    {
-        this("/org/labkey/cds/view/template/ConnectorTemplate.jsp", context, c, body, page, navTrail);
-    }
+    private Object model;
 
-    protected ConnectorTemplate(String template, ViewContext context, Container c, ModelAndView body, PageConfig page, NavTree[] navTrail)
+    public ConnectorTemplate(ModelAndView body, PageConfig page, Object model)
     {
-        super(template, page);
+        super("/org/labkey/cds/view/template/ConnectorTemplate.jsp", page);
+        this.model = model;
         setFrame(FrameType.NONE);
         setBody(body);
+    }
+
+    public Object getConnectorModel()
+    {
+        return model;
     }
 }

@@ -13,18 +13,19 @@ Ext.define('Connector.model.FilterGroup', {
         {name : 'description'},
         {name : 'shared', type: 'boolean'},
         {name : 'type'},
-        {name : 'filters'},
-        {name : 'isLive', type: 'boolean'}
+        {name : 'filters'}
     ],
 
     statics: {
-        fromCohortGroup : function(cohortGroupModel) {
+        fromCohortGroup : function(cohortGroupModel)
+        {
+            var rawFilters = cohortGroupModel.get('filters'),
+                filters = [];
 
-            var rawFilters = cohortGroupModel.get('filters'), filters = [], isLive = false;
-            if (Ext.isString(rawFilters) && rawFilters.length > 0) {
+            if (Ext.isString(rawFilters) && rawFilters.length > 0)
+            {
                 var json = Ext.decode(rawFilters);
                 filters = Ext.isArray(json.filters) ? json.filters : [];
-                isLive = json.isLive ? true : false;
             }
 
             return Ext.create('Connector.model.FilterGroup', {
@@ -32,36 +33,13 @@ Ext.define('Connector.model.FilterGroup', {
                 label: cohortGroupModel.get('label'),
                 description: cohortGroupModel.get('description'),
                 filters: filters,
-                isLive: isLive,
                 type: cohortGroupModel.get('type')
             });
         }
     },
 
-    addFilter : function(filter) {},
-
-    removeFilter : function(id) {},
-
-    getName : function() {
-        if (this.data.label)
-            return this.data.label;
-        return this.data.name;
-    },
-
-    isGroup : function() {
-        return true;
+    getName : function()
+    {
+        return this.data.label ? this.data.label : this.data.name;
     }
-});
-
-// models Subject Groups and Cohorts mixed
-Ext.define('LABKEY.study.GroupCohort', {
-    extend : 'Ext.data.Model',
-    fields : [
-        {name : 'id'},
-        {name : 'label'},
-        {name : 'description'},
-        {name : 'filters'},
-        {name : 'type'},
-        {name : 'participantIds'} // array
-    ]
 });

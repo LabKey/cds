@@ -1,26 +1,34 @@
 @include extjs-panel-ui(
   $ui-label: 'primary-view',
-  $ui-body-background-color: $light-color,
+  $ui-body-background-color: $gray-8,
   $ui-border-width: 0,
   $ui-body-border-width: 0
 );
 
 @include extjs-panel-ui(
   $ui-label: 'east-view',
-  $ui-body-background-color: $primary-color,
+  $ui-body-background-color: $gray-7,
   $ui-border-width: 0,
   $ui-body-border-width: 0
 );
 
+.x-panel-east-view {
+  z-index: 10000;
+}
+
+.x-grid-body {
+  background: transparent!important;
+}
+
 .x-panel-body-east-view {
-  background: linear-gradient(90deg, #ebebeb, #f0f0f0) !important;
+  border-left: 1px solid $gray-6;
 }
 
 @include extjs-panel-ui(
   $ui-label: 'navigation',
   $ui-body-border-width: 0px,
-  $ui-body-background-color: $select-color,
-  $ui-body-font-size: 13.5pt
+  $ui-body-background-color: $gray-7,
+  $ui-body-font-size: 12px
 );
 
 div.xaxispicker div.x-panel-body,
@@ -31,39 +39,250 @@ div.yaxispicker div.x-panel-body {
 div.sourcegrid .x-grid-row .x-grid-cell,
 div.measuresgrid .x-grid-row .x-grid-cell {
   border-color: transparent !important;
+  background-color: transparent!important;
   font-family: $info-font;
 }
 
 div.sourcegrid .x-grid-view,
 div.measuresgrid .x-grid-view {
-  background-color: $light-color;
+  background-color: $white;
 }
 
-//.x-panel-header-axispanel.x-docked-top {
-//  border-bottom: 1px solid $legend-color !important;
-//}
+div.variableoptionsgrid {
+  .x-grid-view,
+  .x-column-header-over, .x-column-header-sort-ASC, .x-column-header-sort-DESC,
+  .x-column-header, .x-column-header-sort-ASC .x-column-header-text,
+  .x-grid-cell, .x-grid-cell-special,
+  .x-grid-empty {
+    background-color: transparent!important;
+    background-image: none;
+  }
 
-div.curselhdr {
-  font-size: 28pt;
-  font-weight: normal;
-  font-family: $data-font;
+  .x-column-header {
+    border-right-color: transparent;
+  }
 
-  &:hover {
-    cursor: pointer;
+  .x-grid-table, .x-grid-body .x-grid-table-focused-first {
+    border: none!important;
+  }
+
+  .x-grid-empty {
+    color: $dark-color;
+    padding-left: 0;
   }
 }
 
-div.curselauth {
-  font-size: 13pt;
-  font-weight: normal;
-  font-family: $data-font;
-  padding-bottom: 15px;
+.x-grid-cell-special,
+.x-grid-row-selected .x-grid-cell-special {
+  background-color: $white;
+  background-image: none;
 }
 
-div.curseldesc {
-  font-size: 11pt;
+.x-grid-row-over .x-grid-cell-special {
+  background-color: $white;
+  background-image: none;
+}
+
+.highlight .x-grid-cell-last {
+  background-color: $white;
+}
+
+.highlight .x-grid-cell-inner {
+  color: #FFFFFF;
+}
+
+div.definition-overflow {
+  display:inline-block;
+  -ms-filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0,startColor=0,endColoStr=$secondary-color);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to($secondary-color));
+  background-image: -moz-linear-gradient(top center,rgba(255, 255, 255, 0) 20%,$secondary-color 95%);
+  bottom: 0;
+  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0,startColor=0,endColorStr=$secondary-color);
+  height: 40px;
+  position: absolute;
+  width: 100%;
+}
+
+.curseltitle {
+  font-family: $data-font;
+  font-size: 16px;
+  font-color: $black;
+  padding-top: 9px;
+  padding-bottom: 24px;
+}
+
+.curselauth {
+  font-size: 12pt;
+  font-weight: normal;
+  font-family: $data-font;
+  padding-bottom: 5px;
+}
+
+.curseldesc {
+  font-size: 9pt;
   font-weight: normal;
   width: 60%;
   font-family: $info-font;
   color: $heat-scale-1;
+}
+
+/* Ext.Grid*/
+.x-column-header-text {
+  font-size: 12px;
+  text-transform: capitalize;
+  font-weight: 400;
+  color: $black;
+}
+
+.x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
+  height: 13px;
+  width: 13px;
+  background-image: url(images/form/checkbox2.gif);
+}
+
+/* Connector.view.InfoPane */
+.x-grid-body .x-grid-table-focused-first {
+  border: 0px solid transparent;
+}
+
+.x-grid-with-row-lines .x-grid-table-over-first,
+.x-grid-with-row-lines .x-grid-table-selected-first,
+.x-grid-with-row-lines .x-grid-table {
+  border: 0px solid transparent!important;
+
+}
+
+.filterpanegrid {
+
+  .x-grid-body {
+    border-top-color: transparent;
+  }
+
+  .x-column-header {
+    border-color: transparent;
+  }
+
+  .x-column-header-over {
+    background-color: transparent;
+  }
+
+  .x-column-header-over,
+  .x-column-header-sort-ASC, .x-column-header-sort-DESC {
+    background-image: none !important;
+    background-color: $white;
+    border: none;
+    color: $interactive-color!important;
+  }
+
+  .x-column-header-trigger {
+    border-left: 1px solid $gray-7;
+    background-color: $white;
+
+    &:hover {
+      background-color: #F4F4F4 !important;
+    }
+  }
+
+  .x-grid-header-ct {
+    border-color: transparent;
+  }
+
+  .x-grid-group-hd {
+    margin-top: 20px;
+    padding: 0!important;
+    border-width: 0;
+    background-color: transparent;
+  }
+
+  .x-grid-group-title {
+    font-size: 12px;
+    text-transform: none;
+    display: block;
+    color: $gray-25;
+    padding: 0 0 4px 0;
+    font-weight: 400;
+  }
+
+  .x-grid-with-row-lines .x-grid-table-over-first {
+    border-color: transparent;
+  }
+
+  .x-grid-row-over .x-grid-cell-last {
+    background-color: transparent;
+  }
+
+  .x-grid-cell-inner {
+    padding: 3px 6px 2px 6px;
+    font-size: 12px;
+  }
+}
+
+.infopanegrid {
+
+  .x-grid-body {
+    border-top-color: transparent;
+  }
+
+  .x-column-header {
+    border-color: transparent;
+  }
+
+  .x-column-header-over {
+    background-color: transparent;
+  }
+
+  .x-column-header-over,
+  .x-column-header-sort-ASC, .x-column-header-sort-DESC {
+    background-image: none !important;
+    background-color: transparent;
+    border: none;
+  }
+
+  .x-column-header-trigger {
+    border-left: 1px solid $gray-7;
+    background-color: $white;
+
+    &:hover {
+      background-color: #F4F4F4 !important;
+    }
+  }
+
+  .x-grid-header-ct {
+    padding-top: 20px;
+    margin-top: 16px;
+    width: 198px;
+    border-top: 1px solid $gray-7!important;
+  }
+
+  .x-grid-group-hd {
+    border-width: 0;
+    background-color: transparent;
+  }
+
+  .x-grid-group-title {
+    font-size: 12px;
+    text-transform: none;
+    display: block;
+    color: $gray-25;
+    padding: 0 0 4px 0;
+    font-weight: 400;
+  }
+
+  .x-grid-with-row-lines .x-grid-table-over-first {
+    border-color: transparent;
+  }
+
+  .x-grid-row-over .x-grid-cell-last {
+    background-color: transparent;
+  }
+
+  .x-grid-cell-inner {
+    padding: 3px 6px 2px 6px;
+    font-size: 12px;
+  }
+}
+
+/* Group selection panels */
+.x-border-box textarea.x-form-field {
+  padding: 4px 3px;
 }

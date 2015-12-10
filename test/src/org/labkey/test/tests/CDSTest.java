@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,79 +15,79 @@
  */
 package org.labkey.test.tests;
 
-import org.jetbrains.annotations.Nullable;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.BaseWebDriverMultipleTest;
 import org.labkey.test.Locator;
-import org.labkey.test.TestTimeoutException;
-import org.labkey.test.categories.CustomModules;
-import org.labkey.test.pages.AssayDetailsPage;
-import org.labkey.test.pages.StudyDetailsPage;
-import org.labkey.test.util.Ext4HelperWD;
-import org.labkey.test.util.LogMethod;
-import org.labkey.test.util.LoggedParam;
-import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.ext4cmp.Ext4CmpRefWD;
-import org.openqa.selenium.Keys;
+import org.labkey.test.categories.CDS;
+import org.labkey.test.categories.Git;
+import org.labkey.test.pages.ColorAxisVariableSelector;
+import org.labkey.test.pages.DataGrid;
+import org.labkey.test.pages.DataGridVariableSelector;
+import org.labkey.test.pages.DataspaceVariableSelector;
+import org.labkey.test.pages.XAxisVariableSelector;
+import org.labkey.test.pages.YAxisVariableSelector;
+import org.labkey.test.util.CDSAsserts;
+import org.labkey.test.util.CDSHelper;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * User: t.chadick
- * Date: Mar 23, 2012
- */
-@Category(CustomModules.class)
-public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTest
+@Category({CDS.class, Git.class})
+public class CDSTest extends CDSReadOnlyTest
 {
-    private static final String PROJECT_NAME = "CDSTest Project";
-    private static final File FOLDER_ZIP = new File(getSampledataPath(), "CDS/Dataspace.folder.zip");
-    private static final String STUDIES[] = {"Demo Study", "Not Actually CHAVI 001", "NotRV144"};
-    private static final String LABS[] = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
+    private static final String GROUP_NULL = "Group creation cancelled";
+    private static final String GROUP_DESC = "Intersection of " + CDSHelper.STUDIES[1] + " and " + CDSHelper.STUDIES[4];
+
+    // Known Test Groups
     private static final String GROUP_NAME = "CDSTest_AGroup";
     private static final String GROUP_NAME2 = "CDSTest_BGroup";
     private static final String GROUP_NAME3 = "CDSTest_CGroup";
     private static final String GROUP_LIVE_FILTER = "CDSTest_DGroup";
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
-    private static final String GROUP_NULL = "Group creation cancelled";
-    private static final String GROUP_DESC = "Intersection of " +LABS[1]+ " and " + LABS[2];
-    private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
+    private static final String STUDY_GROUP = "Study Group Verify";
 
-    public final static int CDS_WAIT = 5000;
+    private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
 
-    @Override
-    public String getAssociatedModuleDirectory()
+    private final CDSHelper cds = new CDSHelper(this);
+    private final CDSAsserts _asserts = new CDSAsserts(this);
+
+    @Before
+    public void preTest()
     {
-        return "server/customModules/CDS";
-    }
 
-    @Override
-    protected String getProjectName()
-    {
-        return PROJECT_NAME;
-    }
+        cds.enterApplication();
 
-    @Override
-    public void doCleanup(boolean afterTest) throws TestTimeoutException
-    {
-        deleteProject(getProjectName(), afterTest);
+        // clean up groups
+        cds.goToAppHome();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
+
+        List<String> groups = new ArrayList<>();
+        groups.add(GROUP_NAME);
+        groups.add(GROUP_NAME2);
+        groups.add(GROUP_NAME3);
+        groups.add(GROUP_LIVE_FILTER);
+        groups.add(GROUP_STATIC_FILTER);
+        groups.add(STUDY_GROUP);
+        groups.add(HOME_PAGE_GROUP);
+        ensureGroupsDeleted(groups);
+
+        cds.ensureNoFilter();
+        cds.ensureNoSelection();
+
+        // go back to app starting location
+        cds.goToAppHome();
     }
 
     @Override
@@ -96,130 +96,243 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         return BrowserType.CHROME;
     }
 
-    @BeforeClass @LogMethod(category = LogMethod.MethodType.SETUP)
-    public static void doSetup() throws Exception
+    @Override
+    public List<String> getAssociatedModules()
     {
-        CDSTest initTest = new CDSTest();
-        initTest.doCleanup(false);
-
-        initTest.setupProject();
-        initTest.importData();
-        initTest.populateFactTable();
-        initTest.verifyFactTable();
-
-        currentTest = initTest;
+        return Arrays.asList("CDS");
     }
 
-    @Before
-    public void preTest()
+    @Test
+    public void verifyHomePage()
     {
-        Ext4HelperWD.setCssPrefix("x-");
+        log("Verify Home Page");
 
-        windowMaximize(); // Provides more useful screenshots on failure
-        enterApplication();
+        //
+        // Validate splash counts
+        //
+        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "55 studies to learn about.");
+        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "46,644 data points collected from 51 studies.");
+        waitForElement(studyPoints);
+        waitForElement(dataPoints);
 
-        List<WebElement> filterCloseButtons = Locator.css("div.filtermember img[alt=delete]").findElements(getDriver());
-        while (filterCloseButtons.size() > 0)
+        //
+        // Validate News feed
+        //
+        waitForText("LabKey Software looks forward to sponsoring the Association of Independent Research Institutes");
+        assertTextPresentInThisOrder("08 May 2014", "09 Jan 2014", "16 Oct 2013");
+
+        //
+        // Validate Plot data
+        //
+        assertTextPresent("My saved groups and plots");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        YAxisVariableSelector yAxis = new YAxisVariableSelector(this);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // Not sure why I need this but test is more reliable with it.
+        yAxis.openSelectorWindow();
+        yAxis.pickSource(CDSHelper.ICS);
+        yAxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yAxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yAxis.confirmSelection();
+
+        XAxisVariableSelector xAxis = new XAxisVariableSelector(this);
+        xAxis.openSelectorWindow();
+        xAxis.pickSource(CDSHelper.ICS);
+        xAxis.pickVariable(CDSHelper.ICS_ANTIGEN);
+        xAxis.confirmSelection();
+
+        ColorAxisVariableSelector colorAxis = new ColorAxisVariableSelector(this);
+        colorAxis.openSelectorWindow();
+        colorAxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        colorAxis.pickVariable(CDSHelper.DEMO_RACE);
+        colorAxis.confirmSelection();
+
+        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.clickBy(CDSHelper.SUBJECT_CHARS);
+        cds.selectBars(CDSHelper.RACE_VALUES[2]);
+        cds.useSelectionAsSubjectFilter();
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
+        _asserts.assertFilterStatusCounts(139, 12, 1, 1, 41);
+
+        final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
+        final String saveLabel = "Group \"A Plotted...\" saved.";
+        Locator.XPathLocator clippedLabel = Locator.tagWithClass("div", "grouplabel").containing(clippedGroup);
+
+        cds.saveGroup(HOME_PAGE_GROUP, "A Plottable group");
+        waitForText(saveLabel);
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForElement(Locator.css("div.groupicon img"));
+        assertElementPresent(clippedLabel);
+        cds.ensureNoFilter();
+
+        getDriver().navigate().refresh();
+        waitAndClick(clippedLabel);
+        waitForText("Your filters have been");
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
+        _asserts.assertFilterStatusCounts(139, 12, 1, 1, 41); // TODO Test data dependent.
+
+        // remove just the plot filter
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        cds.clearFilter(0);
+        cds.saveOverGroup(HOME_PAGE_GROUP);
+        waitForText(saveLabel);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154); // TODO Test data dependent.
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForElementToDisappear(Locator.css("div.groupicon img"));
+    }
+
+    @Test
+    public void verifyFilterPane()
+    {
+        log("Verify Filter Pane");
+
+        String studyMember = "ZAP 117";
+        String studyMember2 = "RED 4";
+        String studyMember3 = "YOYO 55";
+        String productMember = "Unknown";
+        String productMember2 = "MENTHOL";
+
+        Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in active filters");
+        Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in active filters");
+
+        //
+        // Open an filter pane and close it
+        //
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.openStatusInfoPane("Studies");
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
+        _asserts.assertDefaultFilterStatusCounts();
+
+        //
+        // Open a filter pane and create filter
+        //
+        cds.openStatusInfoPane("Studies");
+        cds.selectInfoPaneItem(studyMember, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(studyMember));
+        _asserts.assertFilterStatusCounts(80, 1, 1, 1, 8); // TODO Test data dependent.
+
+        //
+        // Undo a info pane generated filter
+        //
+        cds.clearFilters();
+        waitForText("Filter removed.");
+        _asserts.assertDefaultFilterStatusCounts();
+
+        // verify undo
+        click(Locator.linkWithText("Undo"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(studyMember));
+        _asserts.assertFilterStatusCounts(80, 1, 1, 1, 8); // TODO Test data dependent.
+
+        //
+        // open the filter pane via a created filter
+        //
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(studyMember));
+        assertElementPresent(hasData);
+        assertElementNotPresent(noData);
+
+        cds.selectInfoPaneItem(studyMember2, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(studyMember2));
+        _asserts.assertFilterStatusCounts(90, 1, 1, 1, 3); // TODO Test data dependent.
+
+        //
+        // update the current filter
+        //
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(studyMember2));
+        cds.selectInfoPaneItem(studyMember3, false);
+        click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(studyMember2));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(studyMember3));
+        // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(186, 2, 1, 1, 11);
+        cds.ensureNoFilter();
+
+        //
+        // change the operator
+        //
+        cds.openStatusInfoPane("Products");
+        cds.selectInfoPaneItem(productMember, true);
+        cds.selectInfoPaneItem(productMember2, false);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        _asserts.assertFilterStatusCounts(8272, 50, 2, 2, 278); // default is 'OR'
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(productMember2));
+        cds.selectInfoPaneOperator(true);
+        click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(productMember));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(productMember2));
+        // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0); // now it's 'AND'
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(productMember2));
+        assertElementPresent(hasData);
+        assertElementNotPresent(noData);
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
+        cds.ensureNoFilter();
+
+        //
+        // Check sort menu
+        //
+        cds.openStatusInfoPane("Studies");
+        cds.changeInfoPaneSort("Name", "Study Type");
+        cds.selectInfoPaneItem("Phase I", true);
+        cds.selectInfoPaneItem("Phase II", true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+
+        Locator.XPathLocator studyTypeFilter = CDSHelper.Locators.filterMemberLocator("Phase II");
+        waitForElement(studyTypeFilter);
+        _asserts.assertFilterStatusCounts(1109, 3, 1, 1, 7); // TODO Test data dependent.
+        cds.openFilterInfoPane(studyTypeFilter);
+        assertElementPresent(CDSHelper.Locators.infoPaneSortButtonLocator().notHidden());
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
+    }
+
+    @Test
+    public void verifyAssaySummary()
+    {
+        log("Verify Assay Summary View");
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.pickSort("Lab");
+        for (String assay : CDSHelper.ASSAYS)
         {
-            int filterCount = filterCloseButtons.size();
-            Actions builder = new Actions(getDriver());
-            builder.moveToElement(filterCloseButtons.get(0)).click().build().perform();
-            shortWait().until(ExpectedConditions.stalenessOf(filterCloseButtons.get(0)));
-            filterCloseButtons = Locator.css("div.filtermember img[alt=delete]").findElements(getDriver());
-            assertEquals("Filter not deleted", filterCount - 1, filterCloseButtons.size());
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
         }
-    }
-
-    @AfterClass
-    public static void postTest()
-    {
-        Ext4HelperWD.resetCssPrefix();
-    }
-
-    @LogMethod(category = LogMethod.MethodType.SETUP)
-    private void setupProject()
-    {
-        _containerHelper.createProject(PROJECT_NAME, "Study");
-        enableModule(PROJECT_NAME, "CDS");
-        importFolderFromZip(FOLDER_ZIP);
-        goToProjectHome();
-    }
-
-    @LogMethod(category = LogMethod.MethodType.SETUP)
-    private void importData()
-    {
-        importCDSData("Antigens",          "antigens.tsv");
-        importCDSData("Sites",             "sites.tsv");
-        importCDSData("Assays",            "assays.tsv");
-        importCDSData("Studies",           "studies.tsv");
-        importCDSData("Labs",              "labs.tsv");
-        importCDSData("People",            "people.tsv");
-        importCDSData("Citable",           "citable.tsv");
-        importCDSData("Citations",         "citations.tsv");
-        importCDSData("AssayPublications", "assay_publications.tsv");
-        importCDSData("Vaccines",          "vaccines.tsv");
-        importCDSData("VaccineComponents", "vaccinecomponents.tsv");
-    }
-
-    @LogMethod(category = LogMethod.MethodType.SETUP)
-    private void importCDSData(String query, String dataFilePath)
-    {
-        clickProject(PROJECT_NAME);
-        waitForTextWithRefresh("Fact Table", defaultWaitForPage*4);  //wait for study to fully load
-        clickAndWait(Locator.linkWithText(query));
-        _listHelper.clickImportData();
-
-        setFormElementJS(Locator.id("tsv3"), getFileContents(new File(getSampledataPath(), "CDS/" + dataFilePath)));
-        clickButton("Submit");
-    }
-
-    @LogMethod(category = LogMethod.MethodType.SETUP)
-    private void populateFactTable()
-    {
-        clickProject(PROJECT_NAME);
-        clickAndWait(Locator.linkWithText("Populate Fact Table"));
-        uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "HIV Test Results"));
-        uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "Physical Exam"));
-        uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "ParticipantVaccines"));
-        submit();
-
-        assertElementPresent(Locator.linkWithText("NAb"));
-        assertElementPresent(Locator.linkWithText("Luminex"));
-        assertElementPresent(Locator.linkWithText("Lab Results"));
-        assertElementPresent(Locator.linkWithText("MRNA"));
-        assertElementPresent(Locator.linkWithText("ADCC"));
-    }
-
-    @LogMethod(quiet = true)
-    private void updateParticipantGroups(String... exclusions)
-    {
-        clickProject(PROJECT_NAME);
-        clickAndWait(Locator.linkWithText("Update Participant Groups"));
-        for (String s : exclusions)
+        for (String lab : CDSHelper.LABS)
         {
-            uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", s));
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(lab));
         }
-        submit();
-        waitForText("Fact Table");
-    }
-
-    @LogMethod(category = LogMethod.MethodType.SETUP)
-    private void verifyFactTable()
-    {
-        clickProject(PROJECT_NAME);
-        clickAndWait(Locator.linkWithText("Verify"));
-        waitForText("No data to show.", CDS_WAIT);
-    }
-
-    @LogMethod(quiet = true)
-    private void enterApplication()
-    {
-        clickProject(PROJECT_NAME);
-        clickAndWait(Locator.linkWithText("Application"));
-        addUrlParameter("transition=false");
-
-        assertElementNotPresent(Locator.linkWithText("Home"));
-        assertElementNotPresent(Locator.linkWithText("Admin"));
+        cds.pickSort("Immunogenicity Type");
+        for (String assay : CDSHelper.ASSAYS)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
+        }
+        for (String i_type : CDSHelper.I_TYPES)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(i_type));
+        }
+        cds.pickSort("Study");
+        for (String assay : CDSHelper.ASSAYS)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
+        }
+        for (String protocol : CDSHelper.PROT_NAMES)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(protocol));
+        }
+        cds.pickSort("Assay Name");
+        for (String assay : CDSHelper.ASSAYS)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
+        }
+        for (String h_type : CDSHelper.H_TYPES)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(h_type));
+        }
     }
 
     @Test
@@ -230,161 +343,169 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         //
         // Define Group Names
         //
-        String studyGroup = "Study Group Verify";
         String studyGroupDesc = "A set of defined studies.";
-        String assayGroup = "Assay Group Verify";
-        String subjectGroup = "Study Characteristics Race Group";
-
-        Set<String> groups = new HashSet<>();
-        groups.add(studyGroup);
-        groups.add(assayGroup);
-        groups.add(subjectGroup);
-
-        //
-        // Ensure that none of the Group names already exist
-        //
-        List<String> deletable = new ArrayList<>();
-        makeNavigationSelection(NavigationLink.HOME);
-        sleep(500); // let the group display load
-        for (String group : groups)
-        {
-            if (isTextPresent(group))
-                deletable.add(group);
-        }
-
-        ensureGroupsDeleted(deletable);
+        String studyGroupDescModified = "A set of defined studies. More info added.";
 
         //
         // Compose Groups
         //
-        goToAppHome();
-        clickBy("Studies");
-        selectBars(STUDIES[0], STUDIES[1]);
-        useSelectionAsFilter();
-        saveGroup(studyGroup, studyGroupDesc);
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
+        cds.useSelectionAsSubjectFilter();
+        cds.saveGroup(STUDY_GROUP, studyGroupDesc);
 
         // verify group save messaging
+        //ISSUE 19997
         waitForText("Group \"Study Group...\" saved.");
 
         // verify filter is still applied
-        assertElementPresent(filterMemberLocator(STUDIES[0]));
-        assertElementPresent(filterMemberLocator(STUDIES[1]));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
 
         // verify group can be updated
-        click(cdsButtonLocator("save", "filtersave"));
+        click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("replace an existing group");
-        click(cdsButtonLocator("replace an existing group"));
+        click(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
 
         Locator.XPathLocator listGroup = Locator.tagWithClass("div", "save-label");
-        waitAndClick(listGroup.withText(studyGroup));
+        waitAndClick(listGroup.withText(STUDY_GROUP));
 
-        //
-        // TODO: Would be best if we could somehow verify that the description is updated,
-        // however, I see no way to tell the current value of a 'textarea'.
-        //
-//        waitForText(studyGroupDesc);
-
-        setFormElement(Locator.id("updategroupdescription-inputEl"), studyGroupDesc + " More info added.");
-        click(cdsButtonLocator("save", "groupupdatesave"));
+        setFormElement(Locator.id("updategroupdescription-inputEl"), studyGroupDescModified);
+        click(CDSHelper.Locators.cdsButtonLocator("Save", "groupupdatesave"));
 
         // verify group save messaging
         waitForText("Group \"Study Group...\" saved.");
-        assertFilterStatusCounts(18, 2, 4, 3, 28);
+        _asserts.assertFilterStatusCounts(89, 2, 1, 3, 7); // TODO Test data dependent.
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForText(STUDY_GROUP);
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
+
+        // Verify that the description has changed.
+        waitForText(studyGroupDescModified);
 
         // verify 'whoops' case
-        click(cdsButtonLocator("save", "filtersave"));
+        click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("create a new group");
-        click(cdsButtonLocator("cancel", "groupupdatecancel"));
-        clearFilter();
-
-        refresh(); // refresh due to home page not updating currently
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "groupcancelreplace"));
+        cds.clearFilters();
 
         // add a filter, which should be blown away when a group filter is selected
-        makeNavigationSelection(NavigationLink.SUMMARY);
-        clickBy("Assays");
-        selectBars("Luminex-Sample-LabKey");
-        useSelectionAsFilter();
-        assertFilterStatusCounts(6, 1, 3, 2, 20);
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.selectBars(CDSHelper.ASSAYS[1]);
+        cds.useSelectionAsSubjectFilter();
+        _asserts.assertFilterStatusCounts(1604, 14, 2, 1, 89); // TODO Test data dependent.
 
-        makeNavigationSelection(NavigationLink.HOME);
-        sleep(500); // let the group display load
-        click(Locator.tagWithClass("div", "nav-label").withText(studyGroup));
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForText(STUDY_GROUP);
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
-        waitForElement(filterMemberLocator(STUDIES[0]));
-        assertElementPresent(filterMemberLocator(STUDIES[1]));
-        assertFilterStatusCounts(18, 2, 4, 3, 28);
+        // Verify the group does not replace already active filters
+        sleep(500); // give it a chance to apply
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+        cds.clearFilters();
+        click(Locator.css("a.applygroup"));
 
-        clearFilter();
-        makeNavigationSelection(NavigationLink.SUMMARY);
+        // Verify the filters get applied when directly acting
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+        _asserts.assertFilterStatusCounts(89, 2, 1, 3, 7); // TODO Test data dependent.
+        assertTextPresent("Study Group Verify", "Description", studyGroupDescModified);
+        cds.clearFilters();
+
+        // Verify filters get applied by viewing when no filters exist
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForText(STUDY_GROUP);
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
+        _asserts.assertFilterStatusCounts(89, 2, 1, 3, 7); // TODO Test data dependent.
+
+        // Verify that you can cancel delete
+        click(CDSHelper.Locators.cdsButtonLocator("Delete"));
+        waitForText("Are you sure you want to delete");
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "x-toolbar-item").notHidden());
+        _ext4Helper.waitForMaskToDisappear();
+        assertTextPresent(studyGroupDescModified);
+
+        // Verify back button works
+        click(CDSHelper.Locators.pageHeaderBack());
+        waitForText(CDSHelper.HOME_PAGE_HEADER);
+        waitForText(STUDY_GROUP);
+
+        // Verify delete works.
+        cds.deleteGroupFromSummaryPage(STUDY_GROUP);
+
+        cds.clearFilters();
     }
 
     @Test
     public void verifyFilterDisplays()
     {
+        //ISSUE 20013
         log("verify filter displays");
 
-        goToAppHome();
-        clickBy("Studies");
-        selectBars(STUDIES[0]);
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.STUDIES[0]);
 
-        // verify "Study: Demo Study" selection
-        waitForElement(filterMemberLocator("Study: " + STUDIES[0]));
+        // verify study selection
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
 
         // verify buttons available
-        assertElementPresent(cdsButtonLocator("use as filter"));
-        assertElementPresent(cdsButtonLocator("label as subgroup"));
-        assertElementPresent(cdsButtonLocator("clear"));
+        assertElementPresent(CDSHelper.Locators.cdsButtonLocator("Filter"));
+        assertElementPresent(CDSHelper.Locators.cdsButtonLocator("clear"));
 
         // verify split display
-        clearSelection();
-        goToAppHome();
-        clickBy("Studies");
-        selectBars(STUDIES[0], STUDIES[1]);
-        waitForElement(filterMemberLocator(STUDIES[0]));
-        assertElementPresent(filterMemberLocator(STUDIES[1]));
-        assertElementPresent(Locator.tagWithClass("div", "selitem").withText("Study"));
-        assertFilterStatusCounts(18, 2, 4, 3, 28);
+        cds.clearSelection();
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.toggleExplorerBar(CDSHelper.STUDIES[1]);
+        cds.selectBars("Group I Arm T1 Vaccine", "Group V Arm C Placebo");
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Group I Arm T1 Vaccine"));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("Group V Arm C Placebo"));
+        assertElementPresent(Locator.tagWithClass("div", "selitem").withText("Study (Treatment)"));
+        _asserts.assertSelectionStatusCounts(24, 1, 1, 1, 2); // TODO Test data dependent.
 
         // clear by selection
-        selectBars(STUDIES[1]);
-        waitForElement(filterMemberLocator("Study: " + STUDIES[1]));
-        assertFilterStatusCounts(12, 1, 3, 2, 8);
+        cds.selectBars("Group V Arm C Placebo");
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Group V Arm C Placebo"));
+        _asserts.assertSelectionStatusCounts(14, 1, 1, 1, 1); // TODO Test data dependent.
+        cds.clearSelection();
 
         // verify multi-level filtering
-        goToAppHome();
-        clickBy("Assays");
-        selectBars("ADCC-Ferrari", "Innate");
-        waitForElement(filterMemberLocator("Assay: ADCC-Ferrari"));
-        assertElementPresent(filterMemberLocator("Assay (Target Area): Innate"));
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.selectBars(CDSHelper.ASSAYS[1], CDSHelper.ASSAYS[4]);
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[4]));
 
-        useSelectionAsFilter();
-        assertElementPresent(filterMemberLocator("Assay: ADCC-Ferrari"), 1);
-        assertElementPresent(filterMemberLocator("Assay (Target Area): Innate"), 1);
-        assertFilterStatusCounts(0, 0, 0, 0, 0);
+        cds.useSelectionAsSubjectFilter();
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]), 1);
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[4]), 1);
+        _asserts.assertFilterStatusCounts(137, 3, 1, 1, 15); // TODO Test data dependent.
 
-        // remove a subfilter
-        click(filterMemberLocator("Assay: ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
+        // remove filter
+        cds.clearFilters();
         waitForText("Filter removed.");
-        assertFilterStatusCounts(5, 1, 3, 1, 3);
-        assertElementNotPresent(filterMemberLocator("Assay: ADCC-Ferrari"));
+        _asserts.assertDefaultFilterStatusCounts();
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
 
         // verify undo
         click(Locator.linkWithText("Undo"));
-        waitForElement(filterMemberLocator("Assay: ADCC-Ferrari"));
-        assertFilterStatusCounts(0, 0, 0, 0, 0);
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+       _asserts.assertFilterStatusCounts(137, 3, 1, 1, 15); // TODO Test data dependent.
 
-        // remove a subfilter
-        click(filterMemberLocator("Assay: ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
+        // remove an undo filter
+        cds.clearFilters();
         waitForText("Filter removed.");
-        assertFilterStatusCounts(5, 1, 3, 1, 3);
-        assertElementNotPresent(filterMemberLocator("Assay: ADCC-Ferrari"));
+        _asserts.assertDefaultFilterStatusCounts();
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
 
-        // verify undo
-        click(Locator.linkWithText("Undo"));
-        waitForElement(filterMemberLocator("Assay: ADCC-Ferrari"));
-        assertFilterStatusCounts(0, 0, 0, 0, 0);
-
-        clearFilter();
+        // ensure undo is removed on view navigation
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        waitForTextToDisappear("Filter removed.", 5000);
     }
 
     @Test
@@ -392,1177 +513,954 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         log("Verify Grid");
 
-        final String GRID_CLEAR_FILTER = "Clear Filters";
+        DataGrid grid = new DataGrid(this);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
-        clickBy("Studies");
-        makeNavigationSelection(NavigationLink.GRID);
-        addGridColumn("NAb", "Point IC50", true, true);
-        addGridColumn("NAb", "Study Name", false, true);
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
-        waitForGridCount(668);
-        assertElementPresent(Locator.tagWithText("span", "Point IC50"));
-        assertElementPresent(Locator.tagWithText("span", "Study Name"));
-        makeNavigationSelection(NavigationLink.SUMMARY);
-        clickBy("Studies");
-        click(cdsButtonLocator("hide empty"));
-        selectBars("Demo Study");
-        useSelectionAsFilter();
+        waitForText("View data grid"); // grid warning
 
-        waitForElementToDisappear(Locator.css("span.barlabel").withText("Not Actually CHAVI 001"), CDS_WAIT);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
 
-        //Check to see if grid is properly filtering based on explorer filter
-        makeNavigationSelection(NavigationLink.GRID);
-        waitForGridCount(437);
-        clearFilter();
-        waitForElement(Locator.tagWithText("span", "NotRV144"));
-        waitForGridCount(668);
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(10783); // TODO Test data dependent.
+            grid.assertPageTotal(432); // TODO Test data dependent.
+        }
 
-        addGridColumn("Demographics", "Gender", true, true);
-        addGridColumn("Demographics", "Ethnicity", false, true);
+        //
+        // Check paging buttons with known dataset. Verify with first and last subject id on page.
+        //
+        log("Verify grid paging");
+        grid.sort(CDSHelper.GRID_COL_SUBJECT_ID);
+        grid.goToLastPage();
 
-        waitForElement(Locator.tagWithText("span", "Gender"));
-        waitForElement(Locator.tagWithText("span", "Ethnicity"));
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertCurrentPage(432); // TODO Test data dependent.
+            grid.assertCellContent("z139-2398"); // TODO Test data dependent.
+            grid.assertCellContent("z139-2500"); // TODO Test data dependent.
+        }
+
+        grid.clickPreviousBtn();
+
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertCurrentPage(431); // TODO Test data dependent.
+            grid.assertCellContent("z139-2157"); // TODO Test data dependent.
+            grid.assertCellContent("z139-2358"); // TODO Test data dependent.
+        }
+
+        grid.goToFirstPage();
+
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertCellContent("q2-003"); // TODO Test data dependent.
+        }
+
+        //
+        // Navigate to Summary to apply a filter
+        //
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.hideEmpty();
+        cds.selectBars(CDSHelper.STUDIES[1]);
+        cds.useSelectionAsSubjectFilter();
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
+
+        //
+        // Check to see if grid is properly filtering based on explorer filter
+        //
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+
+        if (CDSHelper.validateCounts)
+        {
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            grid.assertRowCount(1075); // TODO Test data dependent.
+        }
+
+        cds.clearFilters();
+        _ext4Helper.waitForMaskToDisappear();
+
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(10783); // TODO Test data dependent.
+            assertElementPresent(DataGrid.Locators.cellLocator("q2-003")); // TODO Test data dependent.
+        }
+
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.GRID_TITLE_DEMO, CDSHelper.DEMO_RACE, false, true);
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE);
+
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(10783); // TODO Test data dependent.
+        }
 
         log("Remove a column");
-        removeGridColumn("NAb", "Point IC50", false);
+        gridColumnSelector.removeGridColumn(CDSHelper.NAB, CDSHelper.NAB_ASSAY, false);
+        grid.assertColumnsNotPresent(CDSHelper.NAB_ASSAY);
+        grid.ensureColumnsPresent(CDSHelper.NAB_LAB); // make sure other columns from the same source still exist
 
-        waitForElementToDisappear(Locator.tagWithText("span", "Point IC50"));
-        //But other column from same table is still there
-        waitForElement(Locator.tagContainingText("span", "Study Name"));
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(10783); // TODO Test data dependent.
+        }
 
-        setRawDataFilter("Ethnicity", "White");
-        waitForGridCount(246);
+        grid.setFacet(CDSHelper.DEMO_RACE, "White");
+
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertPageTotal(32); // TODO Test data dependent.
+            grid.assertRowCount(792); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 151); // TODO Test data dependent.
+        }
+
+        //
+        // More page button tests
+        //
+        log("Verify grid paging with filtered dataset");
+        grid.sort(CDSHelper.GRID_COL_SUBJECT_ID);
+        grid.clickNextBtn();
+        grid.assertCurrentPage(2);
+
+
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertCellContent("z139-0599"); // TODO Test data dependent.
+        }
+
+        grid.clickPreviousBtn();
+        grid.goToPreviousPage();
+        grid.assertCurrentPage(3);
+
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertCellContent("z135-197"); // TODO Test data dependent.
+        }
+
+        grid.goToNextPage();
+        grid.assertCurrentPage(5);
+
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertCellContent("z135-030"); // TODO Test data dependent.
+            grid.assertCellContent("z135-005"); // TODO Test data dependent.
+        }
 
         log("Change column set and ensure still filtered");
-        addGridColumn("NAb", "Point IC50", false, true);
-        waitForElement(Locator.tagWithText("span", "Point IC50"));
-        waitForGridCount(246);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
+        grid.ensureColumnsPresent(CDSHelper.NAB_TITERIC50);
 
-        openFilterPanel("Study Name");
-        waitForElement(Locator.tagWithText("div", "PI1"));
-        _ext4Helper.checkGridRowCheckbox("PI1");
-        click(cdsButtonLocator("OK"));
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertPageTotal(32); // TODO Test data dependent.
+            grid.assertRowCount(792); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 151); // TODO Test data dependent.
+        }
+    }
 
-        log("Filter on a looked-up column");
-        waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText("PI1"));
-        waitForElement(Locator.tagWithClass("div", "x-grid-cell-inner").withText("Igra M"));
-        setRawDataFilter("PI1", "Igra");
-        waitForGridCount(152);
+    @Test
+    public void verifyGridCheckerboarding()
+    {
+        log("Verify Grid with filters and checkerboarding.");
 
-        log("Ensure filtering goes away when column does");
-        openFilterPanel("Study Name");
-        _ext4Helper.uncheckGridRowCheckbox("PI1");
-        click(cdsButtonLocator("OK"));
-        waitForGridCount(246);
+        DataGrid grid = new DataGrid(this);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
-        setRawDataFilter("Point IC50", "Is Greater Than", "60");
-        waitForGridCount(2);
-        openFilterPanel("Ethnicity");
-        waitAndClick(cdsButtonLocator(GRID_CLEAR_FILTER));
+        log("Filter on race.");
+        cds.goToSummary();
+        cds.clickBy(CDSHelper.SUBJECT_CHARS);
+        cds.selectBars(false, CDSHelper.RACE_ASIAN);
 
-        // TODO: Workaround for duplicate filters on Firefox
-        List<WebElement> closers = Locator.tag("div").withClass("hierfilter").containing("Ethnicity").append("//img").findElements(getDriver());
-        if (closers.size() > 0)
-            closers.get(0).click();
+        log("Create a plot that will filter.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        waitForGridCount(5);
+        YAxisVariableSelector yAxis = new YAxisVariableSelector(this);
 
-        openFilterPanel("Point IC50");
-        waitAndClick(cdsButtonLocator(GRID_CLEAR_FILTER));
-        waitForGridCount(668);
+        // There was a regression when only the y axis was set the filter counts would go to 0.
+        // That is why this test is here.
+        yAxis.openSelectorWindow();
+        yAxis.pickSource(CDSHelper.ICS);
+        yAxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yAxis.setCellType("All");
+        yAxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yAxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
 
-        log("Verify citation sources");
-        click(cdsButtonLocator("Sources"));
-        waitForText("References", CDS_WAIT);
-        assertTextPresent(
-                "Demo study final NAb data",
-                "NAb Data From Igra Lab",
-                "Data extracted from LabKey lab site on Atlas"
-        );
-        click(Locator.xpath("//a[text()='References']"));
-        waitForText("Recent advances in assay", CDS_WAIT);
-        click(cdsButtonLocator("Close"));
-        waitForGridCount(668);
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
-        log("Verify multiple citation sources");
-        addGridColumn("Physical Exam", "Weight Kg", false, true);
-        waitForElement(Locator.tagWithText("span", "Weight Kg"));
-        waitForGridCount(700);
+        log("Validate expected columns are present.");
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
-        click(cdsButtonLocator("Sources"));
-        waitAndClick(Locator.linkWithText("Sources"));
-        waitForText("Pulled from Atlas", CDS_WAIT);
-        assertTextPresent("Demo study data delivered by spreadsheet");
-        click(cdsButtonLocator("Close"));
-        waitForGridCount(700);
+        log("Validating grid counts");
+        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 44);
+        grid.assertPageTotal(27);
+        grid.assertRowCount(658);
 
-        removeGridColumn("Physical Exam", "Weight Kg", false);
-        waitForGridCount(668);
+        log("Applying a column filter.");
+        grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Greater Than or Equal To", "1");
 
-        // 15267
-        addGridColumn("Physical Exam", "Source", true, true);
-        addGridColumn("NAb", "Source", false, true);
-        waitForGridCount(700);
-        setRawDataFilter("Source", "Demo"); // Hopefully get text on page
-        waitForText("Demo study physical exam", CDS_WAIT);
-        waitForText("Demo study final NAb data", CDS_WAIT);
+        _asserts.assertFilterStatusCounts(4, 3, 1, 1, 3);
+        grid.assertPageTotal(1);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        grid.assertRowCount(4);
 
-        openFilterPanel("Source");
-        click(cdsButtonLocator(GRID_CLEAR_FILTER));
+        log("Go back to the grid and apply a color to it. Validate it appears as a column.");
+        // Can't use CDSHelper.NavigationLink.Grid.makeNavigationSelection. It expects that it will be going to a blank plot.
+        click(CDSHelper.NavigationLink.PLOT.getLinkLocator());
+
+        sleep(500); // There is a brief moment where the grid refreshes because of filters applied in the grid.
+
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        coloraxis.pickVariable(CDSHelper.DEMO_SEX);
+        coloraxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+
+        log("Validate new column added to grid.");
+        grid.ensureColumnsPresent(CDSHelper.DEMO_SEX);
+
+        log("Filter on new column.");
+        grid.setCheckBoxFilter(CDSHelper.DEMO_SEX, true, "Male");
+        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        grid.assertRowCount(2);
+
+        log("Now add a new column to the mix.");
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
+
+        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        grid.assertPageTotal(1);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.assertRowCount(15);
+
+        log("Validate checkerboarding.");
+        List<WebElement> gridRows, gridRowCells;
+        String xpathAllGridRows = "//div[contains(@class, 'connector-grid')]//div[contains(@class, 'x-grid-body')]//div//table//tr[contains(@class, 'x-grid-data-row')]";
+        gridRows = Locator.xpath(xpathAllGridRows).findElements(getDriver());
+        for (WebElement row : gridRows)
+        {
+            gridRowCells = row.findElements(By.xpath("./descendant::td"));
+
+            // If the Magnitude Background subtracted column is "empty"
+            if (gridRowCells.get(8).getText().trim().length() == 0)
+            {
+                // There should be no lab id
+                assertTrue(gridRowCells.get(7).getAttribute("class").toLowerCase().contains("no-value"));
+                // but there should be a value for Titer IC50.
+                assertTrue(!gridRowCells.get(18).getText().trim().isEmpty());
+            }
+            else
+            {
+                // There should be a lab id
+                assertTrue(!gridRowCells.get(7).getText().trim().isEmpty());
+                // but there should not be a value for Titer IC50.
+                assertTrue(gridRowCells.get(18).getAttribute("class").toLowerCase().contains("no-value"));
+            }
+
+        }
+
+        log("Remove the plot and validate that the columns stay the same, but the counts could change.");
+
+        cds.clearFilter(0);
+
+        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        grid.assertPageTotal(1);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.assertRowCount(17);
+
+        cds.goToAppHome();
+        cds.clearFilters();
+    }
+
+    // TODO: Still needs work, mainly blocked by issue https://www.labkey.org/issues/home/Developer/issues/details.view?issueId=24128
+    @Test @Ignore
+    public void verifyGridColumnSelector()
+    {
+        CDSHelper cds = new CDSHelper(this);
+
+        log("Verify Grid column selector.");
+
+        DataGrid grid = new DataGrid(this);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
+
+        log("Create a plot that will filter.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        YAxisVariableSelector yAxis = new YAxisVariableSelector(this);
+        XAxisVariableSelector xAxis = new XAxisVariableSelector(this);
+        ColorAxisVariableSelector colorAxis = new ColorAxisVariableSelector(this);
+
+        yAxis.openSelectorWindow();
+        yAxis.pickSource(CDSHelper.NAB);
+        yAxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yAxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        yAxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        yAxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xAxis.openSelectorWindow();
+        xAxis.pickSource(CDSHelper.ICS);
+        xAxis.pickVariable(CDSHelper.ICS_ANTIGEN);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        xAxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        colorAxis.openSelectorWindow();
+        colorAxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        colorAxis.pickVariable(CDSHelper.DEMO_RACE);
+        colorAxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+
+        waitForText("View data grid"); // grid warning
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Validate expected columns are present.");
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
+                CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
+                CDSHelper.NAB_TITERIC50, CDSHelper.DEMO_RACE);
+
+        gridColumnSelector.openSelectorWindow();
+        Map<String, Boolean> columns = new HashMap<>();
+        columns.put(CDSHelper.ICS_ANTIGEN, false);
+        columns.put(CDSHelper.NAB_TITERIC50, false);
+        columns.put(CDSHelper.DEMO_RACE, false);
+
+        log("Validate that Current columns are as expected and not selectable.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
+        log("Validate that All columns are as expected and not selectable.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
+
+        log("Validate that column selectors are as expected in their specific variable selector.");
+        Map<String, Boolean> oneColumn = new HashMap<>();
+        oneColumn.put(CDSHelper.DEMO_RACE, false);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.SUBJECT_CHARS, oneColumn);
+        oneColumn.clear();
+        oneColumn.put(CDSHelper.ICS_ANTIGEN, false);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.ICS, oneColumn);
+        oneColumn.clear();
+        oneColumn.put(CDSHelper.NAB_TITERIC50, false);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.NAB, oneColumn);
+        oneColumn.clear();
+
+        log("Now add a new column to the mix.");
+        gridColumnSelector.pickSource(CDSHelper.ICS);
+        click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-grid-cell-inner')][text()='" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "']"));
+        // TODO Why doesn't this selector work?
+//        gridColumnSelector.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, false);
+
+        log("Validate that Current columns are as expected and enabled or not as appropriate.");
+        columns.put(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, true);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
+        log("Validate that All columns are as expected and enabled or not as appropriate.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
+
+        gridColumnSelector.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
+                CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
+                CDSHelper.NAB_TITERIC50, CDSHelper.DEMO_RACE, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+
+        log("Filter on added column, check to make sure it is now 'locked' in the selector.");
+        grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Less Than or Equal To", "0.003");
+
+        gridColumnSelector.openSelectorWindow();
+        columns.replace(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, false);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
+        log("Validate that All columns are as expected and enabled or not as appropriate.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
+        gridColumnSelector.cancelSelection();
+
+        log("Remove the filter on the column, and validate that the selector goes back to as before.");
+        grid.clearFilters(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        columns.replace(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, true);
+
+        gridColumnSelector.openSelectorWindow();
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
+        log("Validate that All columns are as expected and enabled or not as appropriate.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
+
+        log("Remove the column and validate the columns are as expected.");
+        gridColumnSelector.pickSource(CDSHelper.ICS);
+        click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-grid-cell-inner')][text()='" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "']"));
+        gridColumnSelector.confirmSelection();
+
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
+                CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
+                CDSHelper.NAB_TITERIC50, CDSHelper.DEMO_RACE);
+
+        log("Validate the column chooser is correct when a column is removed.");
+        String selectorText, selectorTextClean;
+        String expectedText, expectedTextClean;
+
+        gridColumnSelector.openSelectorWindow();
+        gridColumnSelector.pickSource(CDSHelper.GRID_COL_ALL_VARS);
+        assertElementPresent("Could not find unchecked checkbox with text: '" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "'", Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]//tbody//tr[not(contains(@class, 'x-grid-row-selected'))]//div[contains(@class, 'x-grid-cell-inner')][text()='" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "']"), 1);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
+        gridColumnSelector.pickSource(CDSHelper.GRID_COL_CUR_COL);
+
+        selectorText = Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]").findElement(getDriver()).getText();
+        assertFalse("Found '" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "' in current columns and it should not be there.", selectorText.contains(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB));
+        gridColumnSelector.confirmSelection();
+
+        log("Clear the filters and make sure the selector reflects this.");
+        cds.clearFilters();
+        waitForText(5000, "Filter removed.");
+        _ext4Helper.waitForMaskToDisappear();
+
+        gridColumnSelector.openSelectorWindow();
+
+        gridColumnSelector.pickSource(CDSHelper.GRID_COL_ALL_VARS);
+        selectorText = Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]").findElement(getDriver()).getText();
+        selectorTextClean = selectorText.toLowerCase().replaceAll("\\n", "");
+        selectorTextClean = selectorTextClean.replaceAll("\\s+", "");
+
+        expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen\nNAb (Neutralizing antibody)\n  Titer IC50\nSubject characteristics\n  Race";
+        expectedTextClean = expectedText.toLowerCase().replaceAll("\\n", "");
+        expectedTextClean = expectedTextClean.replaceAll("\\s+", "");
+
+        assertTrue("Values not as expected in all variables. Expected: '" + expectedText + "' Actual: '" + selectorText + "'.", expectedTextClean.equals(selectorTextClean));
+
+        gridColumnSelector.pickSource(CDSHelper.GRID_COL_CUR_COL);
+        selectorText = Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]").findElement(getDriver()).getText();
+        selectorText = selectorText.trim();
+
+        assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.length() == 0);
+
+        gridColumnSelector.confirmSelection();
+
+        log("Validating treatment and study variables");
+        gridColumnSelector.openSelectorWindow();
+        gridColumnSelector.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
+        click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-column-header-checkbox')]"));
+        gridColumnSelector.confirmSelection();
+        sleep(500); //Wait for mask to appear.
+        _ext4Helper.waitForMaskToDisappear();
+
+        grid.ensureColumnsPresent(CDSHelper.DEMO_STUDY_NAME, CDSHelper.DEMO_TREAT_SUMM, CDSHelper.DEMO_DATE_SUBJ_ENR,
+                CDSHelper.DEMO_DATE_FUP_COMP, CDSHelper.DEMO_DATE_PUB, CDSHelper.DEMO_DATE_START, CDSHelper.DEMO_NETWORK,
+                CDSHelper.DEMO_PROD_CLASS, CDSHelper.DEMO_PROD_COMB, CDSHelper.DEMO_STUDY_TYPE, CDSHelper.DEMO_TREAT_ARM,
+                CDSHelper.DEMO_TREAT_CODED, CDSHelper.DEMO_VACC_PLAC);
+
+        columns.clear();
+        columns.put(CDSHelper.DEMO_STUDY_NAME, true);
+        columns.put(CDSHelper.DEMO_TREAT_SUMM, true);
+        columns.put(CDSHelper.DEMO_DATE_SUBJ_ENR, true);
+        columns.put(CDSHelper.DEMO_DATE_FUP_COMP, true);
+        columns.put(CDSHelper.DEMO_DATE_PUB, true);
+        columns.put(CDSHelper.DEMO_DATE_START, true);
+        columns.put(CDSHelper.DEMO_NETWORK, true);
+        columns.put(CDSHelper.DEMO_PROD_CLASS, true);
+        columns.put(CDSHelper.DEMO_PROD_COMB, true);
+        columns.put(CDSHelper.DEMO_STUDY_TYPE, true);
+        columns.put(CDSHelper.DEMO_TREAT_ARM, true);
+        columns.put(CDSHelper.DEMO_TREAT_CODED, true);
+        columns.put(CDSHelper.DEMO_VACC_PLAC, true);
+
+        gridColumnSelector.openSelectorWindow();
+        log("Validate that Current columns are as expected and selectable.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
+        gridColumnSelector.cancelSelection();
+
+        cds.goToAppHome();
+    }
+
+    private void gridColumnSelectorValidator(DataGridVariableSelector gridColumnSelector, String source, Map<String, Boolean> columns)
+    {
+        String xpathColumnNameTemplate = "//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]//td[contains(@role, 'gridcell')]//div[contains(@class, 'x-grid-cell-inner')][text()='*']";
+        String xpathSelectorColumnName;
+        String xpathSpecificCheckboxesTemplate = "//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]//tr//td//div[text()='*']/./ancestor::tr//div[contains(@class, 'x-grid-row-checker')]";
+        String xpathSpecificCheckbox;
+        WebElement checkBox;
+
+        gridColumnSelector.pickSource(source);
+
+        for (Map.Entry<String, Boolean> entry : columns.entrySet())
+        {
+            xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", entry.getKey());
+            assertElementVisible(Locator.xpath(xpathSelectorColumnName));
+
+            xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", entry.getKey());
+            checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
+
+            // Should the checkbox be enabled/checkable?
+            if (entry.getValue())
+            {
+                assertFalse("Check-box for " + entry.getKey() + " is disabled and it should not be.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
+            }
+            else
+            {
+                assertTrue("Check-box for " + entry.getKey() + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
+            }
+        }
+
+        gridColumnSelector.backToSource();
     }
 
     @Test
     public void verifyCounts()
     {
-        assertAllSubjectsPortalPage();
+        cds.goToSummary();
+        _asserts.assertAllSubjectsPortalPage();
 
         // 14902
-        clickBy("Studies");
-        assertFilterStatusPanel(STUDIES[0], STUDIES[0], 6, 1, 3, 2, 20, 12);
+        cds.clickBy("Studies");
+        cds.applySelection(CDSHelper.STUDIES[0]);
+        _asserts.assertSelectionStatusCounts(5, 1, 1, 2, 2);
 
-        // Verify multi-select tooltip -- this only shows the first time
-        assertTextPresent(TOOLTIP);
+        cds.useSelectionAsSubjectFilter();
+        cds.hideEmpty();
+        waitForElementToDisappear(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[1]), CDSHelper.CDS_WAIT);
+        _asserts.assertFilterStatusCounts(5, 1, 1, 2, 2);
+        cds.goToSummary();
 
-        useSelectionAsFilter();
-        click(cdsButtonLocator("hide empty"));
-        waitForElementToDisappear(Locator.css("span.barlabel").withText(STUDIES[1]), CDS_WAIT);
-        assertFilterStatusCounts(6, 1, 3, 2, 20);
-        goToAppHome();
-
-        // Verify multi-select tooltip has dissappeared
-        assertTextNotPresent(TOOLTIP);
-
-        clickBy("Studies");
-        assertFilterStatusPanel(STUDIES[0], STUDIES[0], 6, 1, 3, 2, 20, 12);
-        sleep(500);
-        clearFilter();
-        waitForElement(Locator.css("span.barlabel").withText(STUDIES[2]), CDS_WAIT);
-        goToAppHome();
+        cds.clickBy("Studies");
+        cds.applySelection(CDSHelper.STUDIES[0]);
+        _asserts.assertSelectionStatusCounts(5, 1, 1, 2, 2);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        cds.clearFilters();
+        waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[2]), CDSHelper.CDS_WAIT);
         // end 14902
 
-        clickBy("Studies");
-        assertFilterStatusPanel(STUDIES[1], STUDIES[1], 12, 1, 3, 2, 8, 12);
-        assertTextNotPresent(TOOLTIP);
-        assertFilterStatusPanel(STUDIES[2], STUDIES[2], 11, 1, 3, 2, 3, 12);
-        goToAppHome();
-        clearSelection();
-        clickBy("Assay antigens");
-        pickCDSSort("Tier", "1A");
-        toggleExplorerBar("3");
-        assertFilterStatusPanel("H061.14", "H061.14", 12, 1, 3, 2, 8, 12);
-        toggleExplorerBar("1A");
-        assertFilterStatusPanel("SF162.LS", "SF162.LS", 6, 1, 3, 2, 20, 12);
-        toggleExplorerBar("1B");
-        assertFilterStatusPanel("ZM109F.PB4", "ZM109F.PB4", 6, 1, 3, 2, 20, 6);
-        goToAppHome();
-        clickBy("Assays");
-        assertFilterStatusPanel("Lab Results", "Lab Results", 23, 3, 5, 3, 31, 29);
-        assertFilterStatusPanel("ADCC-Ferrari", "ADCC-Ferrari", 12, 1, 3, 2, 8, 29);
-        assertFilterStatusPanel("Luminex-Sample-LabKey", "Luminex-Sample-LabKey", 6, 1, 3, 2, 20, 29);
-        assertFilterStatusPanel("NAb-Sample-LabKey", "NAb-Sample-LabKey", 29, 3, 5, 3, 31, 29);
-        assertFilterStatusPanel("mRNA assay", "mRNA assay", 5, 1, 3, 1, 3, 0);
-        goToAppHome();
-        clickBy("Labs");
-        assertFilterStatusPanel(LABS[0], LABS[0], 6, 1, 3, 2, 20, 23);
-        assertFilterStatusPanel(LABS[1], LABS[1], 23, 3, 5, 3, 31, 23);
-        assertFilterStatusPanel(LABS[2], LABS[2], 18, 2, 3, 2, 11, 23);
-        goToAppHome();
-        clickBy("Subject characteristics");
-        clearSelection();
-        assertDefaultFilterStatusCounts();
-        pickCDSSort("Country");
-        assertFilterStatusPanel("South Africa", "South Africa", 5, 1, 1, 1, 3, 18);
-        assertFilterStatusPanel("USA", "USA", 19, 3, 4, 3, 31, 19);
-        assertFilterStatusPanel("Thailand", "Thailand", 5, 1, 3, 1, 3, 18);
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.applySelection(CDSHelper.STUDIES[1]);
+        _asserts.assertSelectionStatusCounts(84, 1, 1, 1, 5);
+        cds.applySelection(CDSHelper.STUDIES[2]);
+        _asserts.assertSelectionStatusCounts(30, 1, 1, 1, 4);
+        cds.clearSelection();
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.applySelection(CDSHelper.ASSAYS[0]);
+        _asserts.assertSelectionStatusCounts(75, 1, 1, 1, 8);
+        cds.applySelection(CDSHelper.ASSAYS[1]);
+        _asserts.assertSelectionStatusCounts(1604, 14, 2, 1, 86);
+        cds.applySelection(CDSHelper.ASSAYS[2]);
+        _asserts.assertSelectionStatusCounts(477, 4, 1, 1, 31);
+        cds.applySelection(CDSHelper.ASSAYS[3]);
+        _asserts.assertSelectionStatusCounts(337, 5, 1, 1, 20);
+        cds.clearSelection();
+        cds.goToSummary();
+        cds.clickBy("Subject characteristics");
+        _asserts.assertDefaultFilterStatusCounts();
+        cds.pickSort("Country at enrollment");
+        cds.applySelection("South Africa");
+        _asserts.assertSelectionStatusCounts(43, 21, 1, 1, 27);
+        cds.applySelection("United States");
+        _asserts.assertSelectionStatusCounts(2797, 49, 1, 3, 223);
+        cds.applySelection("Thailand");
+        _asserts.assertSelectionStatusCounts(98, 32, 1, 3, 45);
     }
 
-    //@Test
+    @Test
     public void verifyFilters()
     {
         log("Verify multi-select");
+        Locator hierarchySelector = Locator.input("sae-hierarchy");
 
         // 14910
-        clickBy("Assay antigens");
-        waitForBarToAnimate("Unknown");
-        click(cdsButtonLocator("hide empty"));
-        waitForBarToAnimate("Unknown");
-        pickCDSSort("Tier", "1A");
-        toggleExplorerBar("1A");
-        toggleExplorerBar("1B");
-        shiftSelectBars("DJ263.8", "SF162.LS");
-        waitForElement(filterMemberLocator("SF162.LS"), WAIT_FOR_JAVASCRIPT);
-        assertElementPresent(filterMemberLocator(), 6);
-        assertFilterStatusCounts(6, 1, 3, 2, 20);
-        clearSelection();
-        assertDefaultFilterStatusCounts();
-        goToAppHome();
+        cds.goToSummary();
+        cds.clickBy("Study products");
+        cds.pickSort("Product Type");
+        cds.shiftSelectBars("Adjuvant", "Risperidone");
+        waitForElement(CDSHelper.Locators.filterMemberLocator("benztropine mesylate"), WAIT_FOR_JAVASCRIPT);
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("Adjuvant, benztropine mesylate, Risperidone"));
+        _asserts.assertSelectionStatusCounts(5, 1, 1, 2, 2);
+        cds.clearSelection();
+        _asserts.assertDefaultFilterStatusCounts();
         // end 14910
 
-        clickBy("Labs");
-        selectBars(LABS[0], LABS[1]);
-        assertFilterStatusCounts(6, 1, 3, 2, 20);
-        selectBars(LABS[0], LABS[2]);
-        assertFilterStatusCounts(0, 0, 0, 0, 0);
-        selectBars(LABS[1], LABS[2]);
-        assertFilterStatusCounts(12, 1, 3, 2, 8);
-        useSelectionAsFilter();
-        saveGroup(GROUP_NAME, GROUP_DESC);
-        waitForElementToDisappear(Locator.css("span.barlabel").withText(LABS[0]), CDS_WAIT);
-//        waitForElement(filterMemberLocator(GROUP_NAME), WAIT_FOR_JAVASCRIPT);
-        assertFilterStatusCounts(12, 1, 3, 2, 8);
-        clearFilter();
-        waitForElement(Locator.css("span.barlabel").withText(LABS[0]), CDS_WAIT);
-        assertFilterStatusCounts(29,3,5,3,31);
-
-        goToAppHome();
-        assertAllSubjectsPortalPage();
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        cds.openStatusInfoPane("Studies");
+        waitForText(CDSHelper.STUDIES[1]);
+        cds.selectInfoPaneItem(CDSHelper.STUDIES[1], true);
+        cds.selectInfoPaneItem(CDSHelper.STUDIES[4], false);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        cds.saveGroup(GROUP_NAME, GROUP_DESC);
+        _asserts.assertFilterStatusCounts(194, 2, 1, 1, 8);
+        cds.clearFilters();
+        _asserts.assertDefaultFilterStatusCounts();
 
         log("Verify operator filtering");
-        clickBy("Studies");
-        selectBars(STUDIES[0], STUDIES[1]);
-        assertFilterStatusCounts(18, 2, 4, 3, 28);  // or
-        assertElementPresent(Locator.css("option").withText("OR"));
-        mouseOver(Locator.css("option").withText("OR"));
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[4]);
+        _asserts.assertSelectionStatusCounts(115, 2, 1, 3, 5);  // or
+        assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
+        mouseOver(Locator.css("option").withText("Subjects related to any (OR)"));
 
         WebElement selector = Locator.css("select").findElement(getDriver());
         assertEquals("Wrong initial combo selection", "UNION", selector.getAttribute("value"));
         selectOptionByValue(selector, "INTERSECT");
-        assertFilterStatusCounts(0, 0, 0, 0, 0); // and
-        useSelectionAsFilter();
-        waitForElementToDisappear(Locator.css("span.barlabel"), CDS_WAIT);
-        assertFilterStatusCounts(0, 0, 0, 0, 0); // and
+        _asserts.assertSelectionStatusCounts(0, 0, 0, 0, 0); // and
+        cds.useSelectionAsSubjectFilter();
+        cds.hideEmpty();
+        waitForText("None of the selected");
+        _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0); // and
 
         selector = Locator.css("select").findElement(getDriver());
-        waitForElement(Locator.css("option").withText("AND"));
-        mouseOver(Locator.css("option").withText("AND"));
+        waitForElement(Locator.css("option").withText("Subjects related to all (AND)"));
+        mouseOver(Locator.css("option").withText("Subjects related to all (AND)"));
 
         assertEquals("Combo box selection changed unexpectedly", "INTERSECT", selector.getAttribute("value"));
         selectOptionByValue(selector, "UNION");
-        assertFilterStatusCounts(18, 2, 4, 3, 28);  // or
-        assertElementPresent(Locator.css("span.barlabel").withText(STUDIES[0]));
-        goToAppHome();
-        waitForText(STUDIES[1], CDS_WAIT);
-        clickBy("Labs");
-        assertElementPresent(filterMemberLocator(STUDIES[0]));
-        assertElementPresent(Locator.css("option").withText("OR"));
-        assertFilterStatusCounts(18, 2, 4, 3, 28);  // and
-        clearFilter();
-        waitForText("All subjects");
-        assertDefaultFilterStatusCounts();
-        assertTextPresent("All subjects");
-        goToAppHome();
+        _asserts.assertFilterStatusCounts(115, 2, 1, 3, 5);  // or
+        waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
+        assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
+        _asserts.assertFilterStatusCounts(115, 2, 1, 3, 5);  // or
+        cds.clearFilters();
+        _asserts.assertDefaultFilterStatusCounts();
 
         log("Verify selection messaging");
-        clickBy("Assays");
-        selectBars("ADCC-Ferrari", "Luminex-Sample-LabKey");
-        assertFilterStatusCounts(0, 0, 0, 0, 0);
-        pickCDSDimension("Studies");
-        assertFilterStatusCounts(0, 0, 0, 0, 0);
-        clearSelection();
-        waitForText(STUDIES[2], CDS_WAIT);
-        selectBars(STUDIES[0]);
-        pickCDSDimension("Assays");
-        assertFilterStatusCounts(6, 1, 3, 2, 20);
-        useSelectionAsFilter();
-        goToAppHome();
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
+        _asserts.assertSelectionStatusCounts(75, 1, 1, 1, 8);
+        cds.pickDimension("Studies");
+        waitForText("Selection applied as filter.");
+        _asserts.assertFilterStatusCounts(75, 1, 1, 1, 8);
+        cds.clearFilters();
+        waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[32]);
+        cds.selectBars(CDSHelper.STUDIES[32]);
+        cds.pickDimension("Assays");
+        waitForText("Selection applied as filter.");
 
         //test more group saving
-        clickBy("Subject characteristics");
-        pickCDSSort("Sex");
-        selectBars("f");
+        cds.goToSummary();
+        cds.clickBy("Subject characteristics");
+        cds.pickSort("Country at enrollment");
+        cds.selectBars("United States");
 
         // save the group and request cancel
-        click(cdsButtonLocator("save", "filtersave"));
-        waitForText("Live: Update group with new data");
+        click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("replace an existing group");
-//        click(Locator.css(".withSelectionRadio input"));
         setFormElement(Locator.name("groupname"), GROUP_NULL);
-        click(cdsButtonLocator("cancel", "cancelgroupsave"));
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "groupcancelcreate"));
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
 
-        selectBars("f");
-
         // save the group and request save
-        saveGroup(GROUP_NAME2, null);
-//        waitForElement(filterMemberLocator(GROUP_NAME2), WAIT_FOR_JAVASCRIPT);
-
-        selectBars("f");
+        cds.saveGroup(GROUP_NAME2, null);
 
         // save a group with an interior group
-        saveGroup(GROUP_NAME3, null);
-//        waitForElement(filterMemberLocator(GROUP_NAME3), WAIT_FOR_JAVASCRIPT);
+        cds.saveGroup(GROUP_NAME3, null);
 
-        // saved filter without including current selection (should be the same as initial group)
-        goToAppHome();
-
-        clickBy("Labs");
-        assertFilterStatusCounts(4,1,3,2,20);
-
-        // Group creation cancelled
-        clearFilter();
-        goToAppHome();
-//        assertTextNotPresent(GROUP_NULL);
-    }
-
-    @Test
-    @Ignore("Single Noun Pages NYI")
-    public void verifyNounPages()
-    {
-        // placeholder pages
-        clickBy("Assay antigens");
-        waitForBarToAnimate("Unknown");
-        pickCDSSort("Tier", "1A");
-        toggleExplorerBar("1A");
-        assertNounInfoPage("MW965.26", Arrays.asList("Clade", "Tier", "MW965.26", "U08455"));
-        assertNounInfoPage("SF162.LS", Arrays.asList("Clade", "Tier", "SF162.LS", "EU123924"));
-        toggleExplorerBar("1B");
-        assertNounInfoPage("ZM109F.PB4", Arrays.asList("Zambia", "Tier", "AY424138"));
-
-        makeNavigationSelection(NavigationLink.SUMMARY);
-        clickBy("Studies");
-        assertNounInfoPage("Demo Study", Arrays.asList("Igra M", "Fitzsimmons K", "Trial", "LabKey"));
-        assertNounInfoPage("Not Actually CHAVI 001", Arrays.asList("Bellew M", "Arnold N", "Observational", "CHAVI"));
-        assertNounInfoPage("NotRV144", Arrays.asList("Piehler B", "Lum K", "Trial", "USMHRP"));
-
-        // Labs info pages are currently disabled
-//        goToAppHome();
-//        clickBy("Labs");
-//        assertNounInfoPage("Arnold/Bellew Lab", Arrays.asList("Description", "PI", "Nick Arnold"));
-//        assertNounInfoPage("LabKey Lab", Arrays.asList("Description", "PI", "Mark Igra"));
-//        assertNounInfoPage("Piehler/Eckels Lab", Arrays.asList("Description", "PI", "Britt Piehler"));
-
-        makeNavigationSelection(NavigationLink.SUMMARY);
-        clickBy("Assays");
-
-        AssayDetailsPage labResults = AssayDetailsPage.labResults(this);
-        verifyAssayInfo(labResults);
-
-        AssayDetailsPage adccFerrari = AssayDetailsPage.adccFerrari(this);
-        verifyAssayInfo(adccFerrari);
-
-        AssayDetailsPage luminexSampleLabKey = AssayDetailsPage.luminexSampleLabKey(this);
-        verifyAssayInfo(luminexSampleLabKey);
-
-        AssayDetailsPage mrnaAssay = AssayDetailsPage.mrnaAssay(this);
-        verifyAssayInfo(mrnaAssay);
-
-        AssayDetailsPage nabSampleLabKey = AssayDetailsPage.nabSampleLabKey(this);
-        verifyAssayInfo(nabSampleLabKey);
-
-
-        makeNavigationSelection(NavigationLink.SUMMARY);
-        clickBy("Study products");
-
-        assertVaccineTypeInfoPage("VRC-HIVADV014-00-VP", "The recombinant adenoviral vector product VRC-HIVADV014-00-VP (Ad5)");
-        assertVaccineTypeInfoPage("VRC-HIVDNA016-00-VP", "VRC-HIVDNA016-00-VP is manufactured by Vical Incorporated");
+        cds.clearFilters();
     }
 
     @Test
     public void testLearnAboutStudies()
     {
-        viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage("Studies");
 
-        List<String> studies = Arrays.asList("Demo Study", "Not Actually CHAVI 001", "NotRV144");
-        verifyLearnAboutPage(studies);
+        List<String> studies = Arrays.asList(CDSHelper.STUDIES);
+        _asserts.verifyLearnAboutPage(studies);
     }
 
     @Test
-    public void testLearnAboutAssays()
+    public void clickOnLearnAboutStudyItem()
     {
-        viewLearnAboutPage("Assays");
+        List<WebElement> returnedItems;
+        String[] itemParts;
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
-        List<String> assays = Arrays.asList("ADCC-Ferrari", "Lab Results", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey");
-        verifyLearnAboutPage(assays);
+        cds.viewLearnAboutPage("Studies");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+
+        int index = returnedItems.size()/2;
+
+        itemParts = returnedItems.get(index).getText().split("\n");
+        returnedItems.get(index).click();
+
+        log("Validating title is " + itemParts[0]);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
+
+        log("Validating Study Type is: " + itemParts[1]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
+
+        log("Validating return link works.");
+        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Studies / ']"));
+
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
+    }
+
+    @Test
+    public void testLearnAboutStudiesSearch()
+    {
+        String searchString;
+        List<WebElement> returnedItems;
+        String itemText;
+        String[] itemParts;
+        final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
+
+        cds.viewLearnAboutPage("Studies");
+
+        searchString = "HVTN"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        log("Size: " + returnedItems.size());
+        for (WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "(vCP1452)"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for (WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "Phase IIB"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for (WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "If this string ever appears something very odd happened.";
+        log("Searching for '" + searchString + "'.");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        _asserts.verifyEmptyLearnAboutStudyPage();
+
     }
 
     @Test
     public void testLearnAboutStudyProducts()
     {
-        viewLearnAboutPage("Study products");
+        cds.viewLearnAboutPage("Study products");
 
-        List<String> studyProducts = Arrays.asList("VRC-HIVADV014-00-VP", "VRC-HIVDNA016-00-VP");
-        verifyLearnAboutPage(studyProducts);
+        List<String> studyProducts = Arrays.asList(CDSHelper.PRODUCTS);
+        _asserts.verifyLearnAboutPage(studyProducts);
     }
 
     @Test
-    public void testLearnAboutLabs()
+    public void clickOnLearnAboutStudyProductsItem()
     {
-        viewLearnAboutPage("Labs");
+        List<WebElement> returnedItems;
+        String[] itemParts;
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
-        List<String> labs = Arrays.asList("Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab");
-        verifyLearnAboutPage(labs);
+        cds.viewLearnAboutPage("Study products");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+
+        int index = returnedItems.size()/2;
+
+        itemParts = returnedItems.get(index).getText().split("\n");
+        log("Looking for product: " + itemParts[0] + " in a list of " + returnedItems.size());
+        shortWait().until(ExpectedConditions.visibilityOf(returnedItems.get(index)));
+        returnedItems.get(index).click();
+
+        log("Validating title is " + itemParts[0]);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
+
+        log("Validating Product Type is: " + itemParts[1]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
+
+        log("Validating Class is: " + itemParts[2]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[2] + "']").findElement(getDriver()).isDisplayed());
+
+        // TODO could add more code here to validate other fields, but in the interest of time leaving it at this for now.
+
+        log("Validating return link works.");
+        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Study products / ']"));
+
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
     }
 
     @Test
-    public void testLearnAboutSites()
+    public void testLearnAboutStudyProductsSearch()
     {
-        viewLearnAboutPage("Sites");
+        String searchString;
+        List<WebElement> returnedItems;
+        String itemText;
+        String[] itemParts;
+        final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
 
-        List<String> sites = Collections.emptyList();
-        verifyLearnAboutPage(sites);
-    }
+        cds.viewLearnAboutPage("Study products");
 
-    protected static final String MOUSEOVER_FILL = "#01BFC2";
-    protected static final String MOUSEOVER_STROKE = "#00EAFF";
-    protected static final String BRUSHED_FILL = "#14C9CC";
-    protected static final String BRUSHED_STROKE = "#00393A";
-    protected static final String NORMAL_COLOR = "#000000";
-
-    @Test
-    public void verifyScatterPlot()
-    {
-        //getText(Locator.css("svg")) on Chrome
-        final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400\nLab Results: CD4\nLab Results: Lymphocytes";
-        final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300\nLab Results: Hemoglobin\nLab Results: CD4";
-        final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100\nPhysical Exam: Pulse\nPhysical Exam: Weight Kg";
-
-        clickBy("Studies");
-
-        String X_AXIS_BUTTON_TEXT = "\u25b2";
-        String Y_AXIS_BUTTON_TEXT = "\u25ba";
-
-        makeNavigationSelection(NavigationLink.PLOT);
-        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator(X_AXIS_BUTTON_TEXT).toBy()));
-        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator(Y_AXIS_BUTTON_TEXT).toBy()));
-
-        xAxisButton.click();
-        waitForElement(Locator.css(".xaxispicker tr.x-grid-row").withText("Physical Exam (6)"));
-        _extHelper.pickMeasure("xaxispicker", "Lab Results", "CD4");
-        click(cdsButtonLocator("Set X-Axis"));
-        waitForElement(Locator.css(".curselhdr").withText("Choose Y Axis"));
-        _extHelper.pickMeasure("yaxispicker", "Lab Results", "Lymphocytes");
-        click(cdsButtonLocator("Set Y-Axis"));
-        _ext4Helper.waitForMaskToDisappear();
-        assertSVG(CD4_LYMPH);
-
-        yAxisButton.click();
-        _ext4Helper.waitForMask();
-        _extHelper.pickMeasure("yaxispicker", "Lab Results", "CD4");
-        click(cdsButtonLocator("Set Y-Axis"));
-        _ext4Helper.waitForMaskToDisappear();
-        xAxisButton.click();
-        _ext4Helper.waitForMask();
-        _extHelper.pickMeasure("xaxispicker", "Lab Results", "Hemoglobin");
-        click(cdsButtonLocator("Set X-Axis"));
-        _ext4Helper.waitForMaskToDisappear();
-        assertSVG(HEMO_CD4_UNFILTERED);
-
-        // Test log scales
-        yAxisButton.click();
-        _ext4Helper.waitForMask();
-        _extHelper.pickMeasure("yaxispicker", "Physical Exam", "Weight Kg");
-        // set Y to log scale
-        click(Locator.xpath("//div[@id='plotymeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
-        click(cdsButtonLocator("Set Y-Axis"));
-        waitForText("Points outside the plotting area have no match");
-        xAxisButton.click();
-        _ext4Helper.waitForMask();
-        _extHelper.pickMeasure("xaxispicker", "Physical Exam", "Pulse");
-        // set X to log scale
-        click(Locator.xpath("//div[@id='plotxmeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
-        click(cdsButtonLocator("Set X-Axis"));
-        assertSVG(WT_PLSE_LOG);
-
-        Actions builder = new Actions(getDriver());
-        List<WebElement> points;
-        points = Locator.css("svg g a.point path").findElements(getDriver());
-
-        // Test hover events
-        builder.moveToElement(points.get(33)).perform();
-
-        // Check that related points are colored appropriately.
-        for (int i = 33; i < 38; i++)
+        searchString = "AID"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        log("Size: " + returnedItems.size());
+        for (WebElement listItem : returnedItems)
         {
-            assertEquals("Related point had an unexpected fill color", MOUSEOVER_FILL, points.get(i).getAttribute("fill"));
-            assertEquals("Related point had an unexpected stroke color", MOUSEOVER_STROKE, points.get(i).getAttribute("stroke"));
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
         }
 
-        builder.moveToElement(points.get(33)).moveByOffset(10, 10).perform();
-
-        // Check that the points are no longer highlighted.
-        for (int i = 33; i < 38; i++)
+        searchString = "inhibitor"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for (WebElement listItem : returnedItems)
         {
-            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
-            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
         }
 
-        // Test brush events.
-        builder.moveToElement(points.get(10)).moveByOffset(-5, -5).clickAndHold().moveByOffset(20, 25).release().perform();
-
-        for (int i = 10; i < 15; i++)
+        searchString = "GSK"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for (WebElement listItem : returnedItems)
         {
-            assertEquals("Brushed point had an unexpected fill color", BRUSHED_FILL, points.get(i).getAttribute("fill"));
-            assertEquals("Brushed point had an unexpected stroke color", BRUSHED_STROKE, points.get(i).getAttribute("stroke"));
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
         }
 
-        builder.moveToElement(points.get(37)).moveByOffset(-25, 0).clickAndHold().release().perform();
-
-        // Check that the points are no longer brushed.
-        for (int i = 10; i < 15; i++)
+        searchString = "is a"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for (WebElement listItem : returnedItems)
         {
-            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
-            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
         }
+
+        searchString = "If this string ever appears something very odd happened.";
+        log("Searching for '" + searchString + "'.");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        _asserts.verifyEmptyLearnAboutStudyProductsPage();
+
     }
 
     @Test
-    @Ignore("Individual noun detail pages NYI")
-    public void testSummaryPageDetailsLinks()
+    public void testLearnAboutAssays()
     {
-        StudyDetailsPage demoStudy = StudyDetailsPage.demoStudy(this);
-        verifyStudyDetailsFromSummary(demoStudy);
+        cds.viewLearnAboutPage("Assays");
+        List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
+        _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
-        StudyDetailsPage notActuallyCHAVI001 = StudyDetailsPage.notActuallyCHAVI001(this);
-        verifyStudyDetailsFromSummary(notActuallyCHAVI001);
+        waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(0)));
+        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
 
-        StudyDetailsPage notRV144 = StudyDetailsPage.notRV144(this);
-        verifyStudyDetailsFromSummary(notRV144);
+        //testing variables page
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
+        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
-        AssayDetailsPage labResults = AssayDetailsPage.labResults(this);
-        verifyAssayDetailsFromSummary(labResults);
+        refresh();
 
-        AssayDetailsPage adccFerrari = AssayDetailsPage.adccFerrari(this);
-        verifyAssayDetailsFromSummary(adccFerrari);
+        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
-        AssayDetailsPage luminexSampleLabKey = AssayDetailsPage.luminexSampleLabKey(this);
-        verifyAssayDetailsFromSummary(luminexSampleLabKey);
+        //testing BAMA antigens page
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Antigen"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA);
 
-        AssayDetailsPage mrnaAssay = AssayDetailsPage.mrnaAssay(this);
-        verifyAssayDetailsFromSummary(mrnaAssay);
+        refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
 
-        AssayDetailsPage nabSampleLabKey = AssayDetailsPage.nabSampleLabKey(this);
-        verifyAssayDetailsFromSummary(nabSampleLabKey);
+        //testing ICS antigens page
+        waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(1)));
+        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+
+        refresh();
+
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Protein Panel"));
+        waitForText(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA[0]);
+        assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
     }
 
     @Test
     public void testSummaryPageSingleAxisLinks()
     {
-        Locator dimensionGroup = Locator.css("div.dimgroup");
-        Locator dimensionSort = Locator.css("div.dimensionsort");
+        Locator hierarchySelector = Locator.input("sae-hierarchy");
 
+        cds.goToSummary();
         waitAndClick(Locator.linkWithText("races"));
-        waitForElement(dimensionGroup.withText("Subject characteristics"));
-        waitForElement(dimensionSort.withText("SORTED BY: RACE"));
-        goToAppHome();
+        waitForElement(CDSHelper.Locators.activeDimensionHeaderLocator("Subject characteristics"));
+        waitForFormElementToEqual(hierarchySelector, "Race");
+        cds.goToSummary();
         sleep(250);
 
-        waitAndClick(Locator.linkWithText("locations"));
-        waitForElement(dimensionGroup.withText("Subject characteristics"));
-        waitForElement(dimensionSort.withText("SORTED BY: COUNTRY"));
-        goToAppHome();
-        sleep(250);
-
-        waitAndClick(Locator.linkWithText("clades"));
-        waitForElement(dimensionGroup.withText("Assay antigens"));
-        waitForElement(dimensionSort.withText("SORTED BY: CLADE"));
-        goToAppHome();
-        sleep(250);
-
-        waitAndClick(Locator.linkWithText("tiers"));
-        waitForElement(dimensionGroup.withText("Assay antigens"));
-        waitForElement(dimensionSort.withText("SORTED BY: TIER"));
-        goToAppHome();
-        sleep(250);
-
-        waitAndClick(Locator.linkWithText("sample types"));
-        waitForElement(dimensionGroup.withText("Assay antigens"));
-        waitForElement(dimensionSort.withText("SORTED BY: SAMPLE TYPE"));
-        goToAppHome();
-    }
-
-    @Test
-    @Ignore("Multi-noun details for antigens NYI")
-    public void testMultiAntigenInfoPage()
-    {
-        viewLearnAboutPage("Antigens");
-
-        List<String> assays = Arrays.asList("ADCC-Ferrari", "Lab Results", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey");
-        assertElementPresent(Locator.tagWithClass("div", "detail-container"), assays.size());
-
-        for (String assay : assays)
-        {
-            assertElementPresent(Locator.tagWithClass("div", "study-description").append(Locator.tag("h2").withText(assay)));
-        }
-
-        // just do simple checks for the placeholder noun pages for now, layout will change so there is no use
-        // investing too much automation right now.
-        List<String> labels = Arrays.asList("96ZM651.02", "CAP210.2.00.E8", "BaL.01",
-                "Zambia", "S. Africa", "USA",
-                "AF286224", "DQ435683", "AF063223");
-        waitForText(labels.get(0));
-        assertTextPresent(labels);
-
-        closeInfoPage();
-    }
-
-    @Test
-    @Ignore("Needs to be implemented without side-effects")
-    public void verifyLiveFilterGroups()
-    {
-        String[] liveGroupMembersBefore = new String[]{
-                "1",
-                "102", "103", "105",
-                "3006", "3007", "3008", "3009", "3012",
-                "249320489", "249325717"};
-
-        String[] liveGroupMembersAfter = new String[] {
-                "1",
-                "249320489", "249325717"};
-
-        String[] excludedMembers = new String[]{
-                "102", "103", "105",
-                "3006", "3007", "3008", "3009", "3012"};
-
-        int participantCount = liveGroupMembersBefore.length;
-
-        // exit the app and verify no live filter groups exist
-        beginAt("/cds/" + getProjectName() + "/begin.view?");
-        updateParticipantGroups();
-
-        // use this search method to only search body text instead of html source
-        assertTextPresentInThisOrder("No Participant Groups with Live Filters were defined.");
-
-        // create two groups one that is a live filter and one that is not
-        enterApplication();
-        goToAppHome();
-
-        // create live filter group
-        clickBy("Subject characteristics");
-        pickCDSSort("Race");
-        selectBars("White");
-        useSelectionAsFilter();
-        click(cdsButtonLocator("save", "filtersave"));
-        waitForText("Live: Update group with new data");
-        waitForText("replace an existing group");
-        setFormElement(Locator.name("groupname"), GROUP_LIVE_FILTER);
-        click(Locator.radioButtonByNameAndValue("groupselect", "live"));
-        click(cdsButtonLocator("save", "groupcreatesave"));
-        waitForElement(filterMemberLocator(GROUP_LIVE_FILTER), WAIT_FOR_JAVASCRIPT);
-
-        // create static filter group
-        click(cdsButtonLocator("save", "filtersave"));
-        waitForText("Live: Update group with new data");
-        waitForText("replace an existing group");
-        setFormElement(Locator.name("groupname"), GROUP_STATIC_FILTER);
-        click(Locator.radioButtonByNameAndValue("groupselect", "live"));
-        click(cdsButtonLocator("save", "groupcreatesave"));
-        waitForElement(filterMemberLocator(GROUP_STATIC_FILTER), WAIT_FOR_JAVASCRIPT);
-
-        // exit the app and verify
-        beginAt("/cds/" + getProjectName() + "/begin.view?");
-        updateParticipantGroups();
-        waitForText(GROUP_LIVE_FILTER + " now has participants:");
-        verifyParticipantIdsOnPage(liveGroupMembersBefore, null);
-        assertTextNotPresent(GROUP_STATIC_FILTER);
-
-        // now repopulate the cube with a subset of subjects and ensure the live filter is updated while the static filter is not
-        updateParticipantGroups("NAb", "Lab Results", "ADCC");
-        waitForText(GROUP_LIVE_FILTER + " now has participants:");
-        assertTextNotPresent(GROUP_STATIC_FILTER);
-        verifyParticipantIdsOnPage(liveGroupMembersAfter, excludedMembers);
-
-        // verify that our static group still ha the original members in it now
-        clickTab("Manage");
-        clickAndWait(Locator.linkContainingText("Manage Participant Groups"));
-        verifyParticipantIds(GROUP_LIVE_FILTER, liveGroupMembersAfter, excludedMembers);
-        verifyParticipantIds(GROUP_STATIC_FILTER, liveGroupMembersBefore, null);
-    }
-
-    private void verifyAssayInfo(AssayDetailsPage assay)
-    {
-        viewInfo(assay.getAssayName());
-        assay.assertAssayInfoPage();
-        closeInfoPage();
-    }
-
-    private void verifyLearnAboutPage(List<String> axisItems)
-    {
-        for (String item : axisItems)
-        {
-            waitForElement(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
-        }
-        assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
-    }
-
-    @LogMethod(quiet = true)
-    private void pickCDSSort(@LoggedParam String sortBy)
-    {
-        click(Locator.css(".sortDropdown"));
-        waitAndClick(Locator.xpath("//span[text()='" + sortBy + "' and contains(@class, 'x-menu-item-text')]"));
-    }
-
-    private void pickCDSSort(String sort, String waitValue)
-    {
-        pickCDSSort(sort);
-        waitForText(waitValue, CDS_WAIT);
-    }
-
-    private void pickCDSDimension(String dimension)
-    {
-        click(Locator.xpath("//a[contains(@class, 'dropdown')]"));
-        waitAndClick(Locator.xpath("//span[@class='x-menu-item-text' and text()='" + dimension + "']"));
-    }
-
-    private void waitForFilterAnimation()
-    {
-        Locator floatingFilterLoc = Locator.css(".barlabel.selected");
-        waitForElementToDisappear(floatingFilterLoc);
-    }
-
-    private void waitForBarToAnimate(final String barLabel)
-    {
-        waitFor(new Checker()
-        {
-            @Override
-            public boolean check()
-            {
-                Locator barLocator = Locator.tag("div").withClass("bar").withDescendant(Locator.tag("span").withClass("barlabel").withText(barLabel))
-                        .append(Locator.tag("span").withClass("index"));
-                String width1 = barLocator.findElement(getDriver()).getCssValue("width");
-                sleep(50);
-                String width2 = barLocator.findElement(getDriver()).getCssValue("width");
-                return !"0px".equals(width1) && width1.equals(width2);
-            }
-        }, "Bar didn't stop animating: " + barLabel, WAIT_FOR_JAVASCRIPT);
-    }
-
-    private void saveGroup(String name, @Nullable String description)
-    {
-        click(cdsButtonLocator("save", "filtersave"));
-        waitForText("Live: Update group with new data");
-        waitForText("replace an existing group");
-        setFormElement(Locator.name("groupname"), name);
-        if (null != description)
-            setFormElement(Locator.name("groupdescription"), description);
-        click(cdsButtonLocator("save", "groupcreatesave"));
-    }
-
-    private void selectBarsHelper(boolean isShift, String...bars)
-    {
-        waitForBarToAnimate(bars[0]);
-
-        String subselect = bars[0];
-        if (subselect.length() > 10)
-            subselect = subselect.substring(0, 9);
-        WebElement el = shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//span[@class='barlabel' and text() = '" + bars[0] + "']").toBy()));
-        clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
-        waitForElement(filterMemberLocator(subselect), CDS_WAIT);
-        waitForFilterAnimation();
-        if(bars.length > 1)
-        {
-            Actions builder = new Actions(getDriver());
-
-            if (isShift)
-                builder.keyDown(Keys.SHIFT).build().perform();
-            else
-                builder.keyDown(Keys.CONTROL).build().perform();
-
-            for(int i = 1; i < bars.length; i++)
-            {
-                el = shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//span[@class='barlabel' and text() = '" + bars[i] + "']").toBy()));
-                clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
-                subselect = bars[i];
-                if (subselect.length() > 10)
-                    subselect = subselect.substring(0, 9);
-                waitForElement(filterMemberLocator(subselect));
-                waitForFilterAnimation();
-            }
-
-            if (isShift)
-                builder.keyUp(Keys.SHIFT).build().perform();
-            else
-                builder.keyUp(Keys.CONTROL).build().perform();
-        }
-    }
-
-    private void selectBars(String... bars)
-    {
-        selectBarsHelper(false, bars);
-    }
-
-    private void shiftSelectBars(String... bars)
-    {
-        selectBarsHelper(true, bars);
-    }
-
-    private void goToAppHome()
-    {
-        click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
-        waitForElement(getByLocator("Studies"));
-    }
-
-    private void clearFilter()
-    {
-        click(cdsButtonLocator("clear", "filterclear"));
-        waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
-    }
-
-    private void useSelectionAsFilter()
-    {
-        click(cdsButtonLocator("use as filter"));
-        waitForClearSelection(); // wait for animation
-    }
-
-    private void clearSelection()
-    {
-        click(cdsButtonLocator("clear", "selectionclear"));
-        waitForClearSelection();
-    }
-
-    private void waitForClearSelection()
-    {
-        Locator.XPathLocator panel = Locator.tagWithClass("div", "selectionpanel");
-        shortWait().until(ExpectedConditions.invisibilityOfElementLocated(panel.toBy()));
-    }
-
-    private Locator.XPathLocator getByLocator(String byNoun)
-    {
-        return Locator.xpath("//div[contains(@class, 'bycolumn')]//span[contains(@class, 'label') and contains(text(), '" + byNoun + "')]");
-    }
-
-    private Locator.XPathLocator cdsButtonLocator(String text)
-    {
-        return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
-    }
-
-    private Locator.XPathLocator cdsButtonLocator(String text, String cssClass)
-    {
-        return Locator.xpath("//a[contains(@class, '" + cssClass + "')]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
-    }
-
-    private Locator.XPathLocator filterMemberLocator()
-    {
-        return Locator.tagWithClass("div", "memberitem");
-    }
-
-    private Locator.XPathLocator filterMemberLocator(String filterText)
-    {
-        return filterMemberLocator().containing(filterText);
-    }
-
-    private void clickBy(String byNoun)
-    {
-        Locator.XPathLocator loc = getByLocator(byNoun);
-        waitForElement(loc);
-        click(loc);
-        waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
-        waitForElement(Locator.css(".dimgroup").withText(byNoun));
-    }
-
-    private enum NavigationLink
-    {
-        HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
-        LEARN("Learn about studies, assays", Locator.tagWithClass("div", "titlepanel").withText("Learn About...")),
-        SUMMARY("Find subjects", Locator.tagWithClass("div", "titlepanel").withText("find subjects...")),
-        PLOT("Plot data", Locator.tagWithClass("a", "yaxisbutton")),
-        GRID("View data grid", Locator.tagWithClass("div", "dimgroup").withText("Data Grid"));
-
-        private String _linkText;
-        private Locator.XPathLocator _expectedElement;
-
-        private NavigationLink(String linkText, Locator.XPathLocator expectedElement)
-        {
-            _linkText = linkText;
-            _expectedElement = expectedElement.notHidden();
-        }
-
-        public String getLinkText()
-        {
-            return _linkText;
-        }
-
-        public Locator.XPathLocator getLinkLocator()
-        {
-            return Locator.tagWithClass("div", "navigation-view").append(Locator.tagWithClass("div", "nav-label").withText(_linkText));
-        }
-
-        public Locator.XPathLocator getExpectedElement()
-        {
-            return _expectedElement;
-        }
-    }
-
-    private void makeNavigationSelection(NavigationLink navLink)
-    {
-        click(navLink.getLinkLocator());
-        waitForElement(navLink.getExpectedElement());
-    }
-
-    public void viewInfo(String barLabel)
-    {
-        waitForBarToAnimate(barLabel);
-        Locator.XPathLocator barLocator = Locator.tag("div").withClass("small").withDescendant(Locator.tag("span").withClass("barlabel").withText(barLabel));
-        scrollIntoView(barLocator); // screen might be too small
-        mouseOver(barLocator);
-        fireEvent(barLocator.append("//button"), SeleniumEvent.click); // TODO: FirefoxDriver doesn't tigger :hover styles. Click with Javascript.
-        waitForElement(cdsButtonLocator("Close"));
-        waitForElement(Locator.css(".savetitle").withText(barLabel), WAIT_FOR_JAVASCRIPT);
-    }
-
-    private void viewLearnAboutPage(String learnAxis)
-    {
-        makeNavigationSelection(NavigationLink.LEARN);
-
-        WebElement initialLearnAboutPanel = Locator.tag("div").withClass("learncolumnheader").parent().index(0).waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
-        click(Locator.tag("div").withClass("learn-header-container").append(Locator.tag("h1").withClass("lhdv").withText(learnAxis)));
-        shortWait().until(ExpectedConditions.stalenessOf(initialLearnAboutPanel));
-    }
-
-    public void closeInfoPage()
-    {
-        click(cdsButtonLocator("Close"));
-        waitForElementToDisappear(Locator.button("Close"), WAIT_FOR_JAVASCRIPT);
-    }
-
-    private void addGridColumn(String source, String measure, boolean keepOpen, boolean keepSelection)
-    {
-        waitForElement(Locator.css("div.dimgroup").withText("Data Grid")); // make sure we are looking at grid
-
-        // allow for already open measures
-        if (!isElementPresent(Locator.id("gridmeasurewin").notHidden()))
-        {
-            click(cdsButtonLocator("Choose Columns"));
-            waitForElement(Locator.id("gridmeasurewin").notHidden());
-        }
-
-        _extHelper.pickMeasure(source, measure, keepSelection);
-
-        if (!keepOpen)
-        {
-            click(cdsButtonLocator("select"));
-        }
-    }
-
-    private void removeGridColumn(String source, String measure, boolean keepOpen)
-    {
-        waitForElement(Locator.css("div.dimgroup").withText("Data Grid")); // make sure we are looking at grid
-
-        // allow for already open measures
-        if (!isElementPresent(Locator.id("gridmeasurewin").notHidden()))
-        {
-            click(cdsButtonLocator("Choose Columns"));
-            waitForElement(Locator.id("gridmeasurewin").notHidden());
-        }
-
-        _extHelper.pickMeasure(source, measure, true); // Just get the right source selected
-        _ext4Helper.uncheckGridRowCheckbox(measure);
-
-        if (!keepOpen)
-        {
-            click(cdsButtonLocator("select"));
-        }
-    }
-
-    private void setRawDataFilter(String colName, String value)
-    {
-        setRawDataFilter(colName, null, value);
-    }
-
-    private void setRawDataFilter(String colName, String filter, String value)
-    {
-        openFilterPanel(colName);
-        if (null != filter)
-            _ext4Helper.selectComboBoxItem("Value:", filter);
-
-        waitForElement(Locator.id("value_1"));
-        setFormElement(Locator.css("#value_1 input"), value);
-        click(cdsButtonLocator("OK"));
-        String filterText = colName.length() > 9 ? colName.replace(" ", "").substring(0, 9) : colName.replace(" ", "");
-        waitForElement(filterMemberLocator(filterText));
-        waitForFilterAnimation();
-    }
-
-    private void openFilterPanel(String colHeader)
-    {
-        waitForElement(Locator.tag("span").withText(colHeader));
-
-        List<Ext4CmpRefWD> dataViews = _ext4Helper.componentQuery("#raw-data-view", Ext4CmpRefWD.class);
-        Ext4CmpRefWD dataView = dataViews.get(0);
-
-        log("openFilterWindow: " + colHeader);
-        dataView.eval("openFilterWindow(\'" + colHeader + "\');");
-        waitForElement(Locator.css(".filterheader").withText(colHeader));
-    }
-
-    private void waitForGridCount(int count)
-    {
-        String displayText;
-        if (count == 0)
-            displayText = "No data to display";
-        else if (count < 100)
-            displayText = "Displaying 1 - " + count + " of " + count;
-        else
-            displayText = "Displaying 1 - 100 of " + count;
-
-        waitForFilterAnimation();
-        waitForElement(Locator.tagContainingText("div", displayText));
+        waitAndClick(Locator.linkWithText("countries"));
+        waitForElement(CDSHelper.Locators.activeDimensionHeaderLocator("Subject characteristics"));
+        waitForFormElementToEqual(hierarchySelector, "Country at enrollment");
+        cds.goToSummary();
     }
 
     private void ensureGroupsDeleted(List<String> groups)
     {
-        if (groups.size() > 0)
-        {
-            Ext4HelperWD.setCssPrefix("x4-");
+        Boolean isVisible;
 
-            // leave the app
-            beginAt("/cds/" + getProjectName() + "/begin.view?");
-            for (String g : groups)
+        List<String> deletable = new ArrayList<>();
+        for (String group : groups)
+        {
+            String subName = group.substring(0, 10);
+
+            // Adding this test for the scenario of a test failure and this is called after the page has been removed.
+            try
             {
-                _studyHelper.deleteCustomParticipantGroup(g, "Participant");
+                isVisible = isElementVisible(Locator.xpath("//div[contains(@class, 'grouplist-view')]//div[contains(@class, 'grouprow')]//div[contains(@title, '" + subName + "')]"));
+            }
+            catch (org.openqa.selenium.NoSuchElementException nse)
+            {
+                isVisible = false;
             }
 
-            Ext4HelperWD.setCssPrefix("x-");
-            enterApplication();
+            if (isTextPresent(subName) && isVisible)
+                deletable.add(subName);
+        }
+
+        if (deletable.size() > 0)
+        {
+            deletable.forEach(cds::deleteGroupFromSummaryPage);
         }
     }
 
-/// CDS App asserts
-
-    private void assertAllSubjectsPortalPage()
-    {
-        assertCDSPortalRow("Studies", "", "3 studies");
-        assertCDSPortalRow("Assay antigens", "5 clades, 5 tiers, 5 sample types", "31 antigens");
-        assertCDSPortalRow("Assays", "", "5 assays");
-        assertCDSPortalRow("Labs", "", "3 labs");
-        assertCDSPortalRow("Subject characteristics", "6 races, 3 locations, 18 female, 11 male", "29 subjects");
-    }
-
-    private void assertCDSPortalRow(String byNoun, String expectedDetail, String expectedTotal)
-    {
-        waitForElement(getByLocator(byNoun), 120000);
-        assertTrue("'by " + byNoun + "' search option is not present", isElementPresent(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div[" +
-                "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' " + byNoun + "']]")));
-        String actualDetail = getText(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div["+
-                "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' "+byNoun+"']]"+
-                "/div[contains(@class, 'detailcolumn')]"));
-        assertEquals("Wrong details for search by " + byNoun + ".", expectedDetail, actualDetail);
-        String actualTotal = getText(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div["+
-                "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' "+byNoun+"']]"+
-                "/div[contains(@class, 'totalcolumn')]"));
-        assertEquals("Wrong total for search by " + byNoun + ".", expectedTotal, actualTotal);
-    }
-
-    // Sequential calls to this should have different subject counts.
-    private void assertFilterStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount, int maxCount)
-    {
-        selectBars(barLabel);
-        assertFilterStatusCounts(subjectCount, studyCount, assayCount, contributorCount, antigenCount);
-        waitForElement(filterMemberLocator(filteredLabel), WAIT_FOR_JAVASCRIPT);
-    }
-
-    private void assertDefaultFilterStatusCounts()
-    {
-        assertFilterStatusCounts(29, 3, 5, 3, 31);
-    }
-
-    private Locator.XPathLocator getFilterStatusLocator(int count, String singular, String plural)
-    {
-        return Locator.xpath("//li//span[text()='" + (count != 1 ? plural : singular) + "']/../span[contains(@class, 'status-count') and text()='" + count + "']");
-    }
-
-    private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount)
-    {
-        waitForElement(Locator.xpath("//span[contains(@class, 'hl-status-count') and text()='" + subjectCount + "']"), WAIT_FOR_JAVASCRIPT);
-        waitForElement(getFilterStatusLocator(studyCount, "Study", "Studies"));
-        waitForElement(getFilterStatusLocator(assayCount, "Assay", "Assays"));
-        waitForElement(getFilterStatusLocator(contributorCount, "Lab", "Labs"));
-        waitForElement(getFilterStatusLocator(antigenCount, "Antigen", "Antigens"));
-    }
-
-    @LogMethod
-    private void assertVaccineTypeInfoPage(@LoggedParam String vaccineType, String vaccineInfo)
-    {
-        viewInfo(vaccineType);
-
-        Locator.CssLocator loc = Locator.css(".vaccine-single-body");
-        waitForElement(loc);
-        assertElementContains(loc, vaccineInfo);
-        closeInfoPage();
-    }
-
-    @LogMethod
-    private void assertVaccineComponentInfoPage(@LoggedParam String vaccineComponent, String conponentInfo)
-    {
-        viewInfo(vaccineComponent);
-        assertElementContains(Locator.css(".component-single-body"), conponentInfo);
-        closeInfoPage();
-    }
-
-    @LogMethod
-    private void assertNounInfoPage(@LoggedParam String noun, List<String> textToCheck)
-    {
-        viewInfo(noun);
-
-        // just do simple checks for the placeholder noun pages for now, layout will change so there is no use
-        // investing too much automation right now.
-        waitForText(textToCheck.get(0));
-        assertTextPresent(textToCheck);
-        closeInfoPage();
-        waitForBarToAnimate(noun);
-    }
-
-    @LogMethod
-    private void verifyParticipantIdsOnPage(String[] membersIncluded, String[] membersExcluded)
-    {
-        if (membersIncluded != null)
-            for (String member : membersIncluded)
-                assertElementPresent(Locator.linkContainingText(member));
-
-        if (membersExcluded != null)
-            for (String member : membersExcluded)
-                assertElementNotPresent(Locator.linkContainingText(member));
-    }
-
-    @LogMethod
-    private void verifyParticipantIds(String groupName, String[] membersIncluded, String[] membersExcluded)
-    {
-        waitForText(groupName);
-
-        String ids = _studyHelper.getParticipantIds(groupName, "Participant");
-        if (membersIncluded != null)
-            for (String member : membersIncluded)
-                assertTrue(ids.contains(member));
-
-        if (membersExcluded != null)
-            for (String member : membersExcluded)
-                assertFalse(ids.contains(member));
-    }
-
-    @LogMethod(quiet = true)
-    private void verifyStudyDetailsFromSummary(@LoggedParam StudyDetailsPage study)
-    {
-        waitAndClick(Locator.linkWithText(study.getStudyName()));
-        study.assertStudyInfoPage();
-        closeInfoPage();
-    }
-
-    @LogMethod(quiet = true)
-    private void verifyAssayDetailsFromSummary(@LoggedParam AssayDetailsPage study)
-    {
-        waitAndClick(Locator.linkWithText(study.getAssayName()));
-        study.assertAssayInfoPage();
-        closeInfoPage();
-    }
-
-    private void assertPeopleTip(String cls, String name, String portraitFilename, String role)
-    {
-        Locator btnLocator = Locator.xpath("//a[contains(@class, '" + cls + "') and contains(text(), '" + name + "')]");
-        waitForElement(btnLocator);
-        mouseOver(btnLocator);
-
-        Locator.XPathLocator portraitLoc = Locator.xpath("//img[@src='/labkey/cds/images/pictures/" + portraitFilename + "']").notHidden();
-        waitForElement(portraitLoc);
-        Locator.XPathLocator roleLoc = Locator.tag("div").withClass("tip-role").notHidden().withText(role);
-        assertElementPresent(roleLoc);
-        fireEvent(btnLocator, SeleniumEvent.mouseout);
-        waitForElementToDisappear(portraitLoc);
-        assertElementNotPresent(roleLoc);
-    }
-
-    private void toggleExplorerBar(String largeBarText)
-    {
-        sleep(350);
-        click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]"));
-        sleep(350);
-    }
 }

@@ -1,0 +1,365 @@
+.learnheader {
+
+  .titlepanel {
+    font: $title-font;
+    background: $gray-7;
+    height: 56px;
+    line-height: 56px;
+    padding-left: 16px;
+  }
+
+  .breadcrumb {
+    font-weight: 400;
+    color: $gray-25;
+    text-transform: uppercase;
+    float: left;
+    padding-right:4px;
+  }
+
+  .studyname {
+    font-weight: 100;
+    font-size: 22px;
+    font-family: $data-font;
+    color: $black;
+    float: left;
+  }
+
+  .iarrow {
+    background-image: url(images/navigatebackward.svg);
+    background-repeat: no-repeat;
+    background-color: $gray-8;
+    width: 56px;
+    height: 56px;
+    margin: 0 16px 0 -16px;
+    vertical-align: bottom;
+    float: left;
+  }
+}
+
+div.learnview {
+  .module {
+    padding-bottom: 28px;
+  }
+}
+
+.module {
+  .groupheader {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-family: $bodycaps-font;
+    font-weight: bold;
+    padding: 8px 0 !important;
+    opacity: 0.5;
+  }
+
+  h3 {
+    padding-bottom: 8px;
+    clear: both;
+    font-size: 18px;
+    color: $black;
+  }
+
+  p {
+    color: $black;
+    font: $body-two-font;
+    margin-right: 5%;
+
+    &.loading-data {
+      color: $unselect-black;
+    }
+  }
+
+  ul {
+    list-style-position: outside;
+    list-style-type: disc;
+    padding-left: 16px;
+    margin-right: 5%;
+    line-height: 16px;
+  }
+
+  ol {
+    list-style-position: outside;
+    padding-left: 16px;
+    margin-right: 5%;
+    line-height: 16px;
+  }
+
+  .disabled {
+    color: $unselect-black;
+  }
+
+  .checkbox {
+    color: $unselect-black;
+    width: 11px;
+    height: 19px;
+    float: left;
+  }
+
+  .item-row {
+    min-height: 19px;
+    padding: 2px 0;
+
+  }
+
+  &.assaylist {
+    .item-row.interactive {
+
+      padding-left: 3px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $select-color;
+        color: $gray-7;
+      }
+    }
+  }
+}
+
+.modulecontainer {
+  position: relative;
+}
+
+.modulecontainercolumn {
+  padding-left: $pageLeftPadding;
+  padding-top: $sectionTopPadding;
+}
+
+div.learncolumnheader {
+  padding-top: $pageLeftPadding;
+  padding-bottom: 12px;
+  margin-left: $pageLeftPadding;
+  margin-right: $pageLeftPadding;
+  border-bottom: 1px solid $gray-6;
+  overflow: auto;
+  font: 12px;
+  color: $heat-scale-2;
+  text-transform: uppercase;
+}
+
+div.learn-map-container {
+  height: 340px;
+  margin-bottom: 4px;
+}
+
+h1.lhdv {
+  float: left;
+  margin-right: 28px;
+  color: $gray-4;
+  font-size: 18px;
+  height:56px;
+  line-height:56px;
+  border-bottom: 1px solid transparent;
+
+  &:hover {
+    cursor: pointer;
+    border-color: $gray-4;
+    @include prefixer(transition, border-color 0.3s linear);
+    @include prefixer(transition, color 0.3s linear);
+
+  }
+
+  &.active {
+    color: $black;
+    border-color: $action-red;
+    @include prefixer(transition, border-color 0.3s linear);
+    @include prefixer(transition, color 0.3s linear);
+
+    &:hover {
+      cursor: default;
+      border-color: $action-red-hover;
+    }
+  }
+}
+
+.headerlock {
+  position: absolute;
+  top: 0;
+}
+
+.pageheader {
+  height: 112px!important;
+}
+
+.detail-left-column {
+  width: 60%;
+  float: left;
+}
+
+.detail-middle-column {
+  width: 20%;
+  float: left;
+  padding-right: 10px;
+}
+
+.detail-small-column {
+  width: 10%;
+  float: left;
+}
+
+.detail-medium-column {
+  width: 30%;
+  float: left;
+}
+
+.detail-large-column {
+  width: 50%;
+  float: left;
+}
+
+.detail-right-column {
+  width: 20%;
+  float: right;
+}
+
+.detail-container {
+  padding: 0px $pageLeftPadding;
+
+  .detail-wrapper {
+    padding: $sectionTopPadding 0;
+    height: 170px;
+    border-bottom: 1px solid $heat-scale-4;
+    overflow: hidden;
+
+    .detail-description {
+      height: 123px;
+      overflow: hidden;
+
+      h2 {
+        font: $headline-font;
+      }
+
+      .detail-type-text {
+        font: $body-one-font;
+        color: $heat-scale-2;
+      }
+
+      .detail-description-text {
+        padding-top: 12px;
+        font: $body-one-font;
+        color: $heat-scale-1;
+        margin-right: 5%;
+
+        ol {
+          padding-left: 24px;
+        }
+      }
+    }
+
+    .detail-text {
+      font: $body-one-font;
+
+      .detail-gray-text {
+        color: $heat-scale-1;
+      }
+
+      .detail-black-text {
+        color: $black;
+      }
+    }
+
+    &:hover {
+      @include transition(background-color 0.2s ease-out);
+      background-color: $select-hover-color;
+      cursor: pointer;
+      border-color: transparent;
+    }
+  }
+}
+
+//todo: merge with detail container as interactive vs non-interactive list.
+div.list-container {
+  padding-right: $pageLeftPadding + 17px; /* 17px is the width of the scroll bar */
+
+  div.list-title-bar {
+    padding-bottom: 12px;
+    border-bottom: 2px solid $heat-scale-4;
+    overflow: auto;
+    font: $subhead-font;
+    color: $heat-scale-2;
+    text-transform: uppercase;
+  }
+
+  div.list-entry-container {
+    min-height: 123px;
+    border-bottom: 1px solid $heat-scale-4;
+    overflow: hidden;
+
+    div.list-entry-title{
+      width: 60%;
+      h2 {
+        font: $headline-font;
+      }
+    }
+
+    div.list-entry-description {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      color: $heat-scale-1;
+      font: $body-one-font;
+    }
+
+    .list-detail-text {
+      padding-top: 24px;
+      font: $body-one-font;
+
+      .list-detail-gray-text {
+        color: $heat-scale-1;
+      }
+
+      .list-detail-black-text {
+        color: $black;
+      }
+    }
+  }
+
+  div.list-category-container {
+    height: 24px;
+
+    div.list-category-detail {
+      padding-top: 5px;
+      font: $subhead-font;
+      color: $heat-scale-1;
+    }
+  }
+}
+
+.learn-search-input {
+  clear: both;
+  display: block;
+  margin: 32px 0 12px 28px;
+  width: 40%;
+
+  tbody,
+  tr,
+  td.x-form-item-body {
+    display: block;
+    width: 100%!important;
+  }
+
+  input {
+    width: 100%;
+    padding: 16px 12px;
+    font-size: 12px;
+    border-radius: 2px;
+    border-color: $gray-7!important;
+
+  }
+  input.x-form-focus {
+    border-color: $gray-6!important;
+    color: $black;
+  }
+}
+
+.learn-study-info {
+
+  tr > td {
+    padding-bottom: 1em;
+    vertical-align: top;
+
+    &.item-label {
+      color: $secondary-text-color;
+      padding-right: 1em;
+      width: 90px;
+    }
+  }
+}

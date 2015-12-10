@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -11,72 +11,62 @@ Ext.define('Connector.controller.Explorer', {
 
     views : ['SingleAxisExplorer'],
 
+    statics: {
+        HOVER_FILTER: 'hoverSelectionFilter'
+    },
+
     init : function() {
 
         this.control('singleaxisview', {
-            itemmouseenter : this.onExplorerEnter,
-            itemmouseleave : this.onExplorerLeave,
-            itemclick      : this.onExplorerSelect
+            itemmouseenter: this.onExplorerEnter,
+            itemmouseleave: this.onExplorerLeave,
+            itemclick: this.onExplorerSelect
         });
 
         this.control('#dimensionbtn', {
             click: function(btn) { btn.showMenu(); }
         });
 
-        this.control('#dimensionmenu', {
-            afterrender : function(m) {
-                var summaryControl = this.application.getController('Summary');
-                if (summaryControl) {
-                    var s = summaryControl.getSummaryStore();
-                    if (s.getCount() > 0) {
-                        m.show();
-                    }
-                    else {
-                        s.load();
-                    }
-                }
+        this.control('explorerheaderdataview', {
+            afterrender : function(header) {
+                this.on('dimension', function(dim) {
+                    header.changeSelection(dim.name);
+                });
             },
-            click : this.onDimensionSelect
+            select: this.onDimensionSelect
         });
 
-        this.control('#sortdropdown', {
-            click: function(btn) { btn.showMenu(); }
-        });
+        this.control('#sae-hierarchy-dropdown', {
+            afterrender : function(dropdown) {
+                this.on('dimension', function(dim, hIdx) {
+                    dropdown.getStore().removeAll();
 
-        this.control('#sortedmenu', {
-            afterrender: function(menu) {
-                var updateDimension = function(m, dim) {
-                    m.removeAll();
-                    var btn = Ext.getCmp(m.btn);
+                    var hierarchies = [],
+                            selected = undefined;
 
-                    var h = dim.getHierarchies();
-                    if (h.length == 1) {
-                        btn.hide();
-                        return;
-                    }
+                    Ext.each(dim.hierarchies, function(hierarchy, idx) {
+                        var model = Ext.create('Connector.model.Hierarchy', hierarchy);
+                        if (!model.get('hidden')) {
+                            if (idx == hIdx) {
+                                selected = model;
+                            }
+                            hierarchies.push(model);
+                        }
+                    });
 
-                    var name = '';
-                    for (var d=0; d < h.length; d++) {
-                        name = h[d].name.split('.')[1];
-                        if (name) {
-                            m.add({
-                                text : h[d].name.split('.')[1],
-                                hierarchyIndex : d
-                            });
+                    dropdown.getStore().add(hierarchies);
+                    if (!Ext.isEmpty(hierarchies)) {
+                        if (Ext.isDefined(selected)) {
+                            dropdown.select(selected);
+                        }
+                        else {
+                            console.warn('Did not find a hierarchy to select. Selecting first available...');
+                            dropdown.select(hierarchies[0]);
                         }
                     }
-                    btn.show();
-                };
-
-                /* Hook this menu to listen for dimension changes */
-                this.on('dimension', function(dim) { updateDimension(menu, dim); }, this);
-
-                /* For the intial render */
-                if (this.dim) {
-                    updateDimension(menu, this.dim);
-                }
+                });
             },
-            click : this.onHierarchySelect
+            select: this.onHierarchySelect
         });
 
         this.clickTask = new Ext.util.DelayedTask(function(view, rec, node) {
@@ -90,23 +80,13 @@ Ext.define('Connector.controller.Explorer', {
 
         this.hoverTask = new Ext.util.DelayedTask(function(view, rec, add) {
             if (add) {
-
-                var uname = [rec.data.hierarchy];
-
-                if (rec.data.level)
-                    uname.push(rec.data.level);
-                uname.push(rec.data.value);
-
-                if (rec.data.isGroup)
-                    uname = uname.slice(0,uname.length-1);
-
-                this.getStateManager().addPrivateSelection({
-                    hierarchy : rec.data.hierarchy,
-                    members : [{uname:uname}]
-                }, 'hoverSelectionFilter');
+                Connector.getState().addPrivateSelection([{
+                    hierarchy: rec.get('hierarchy'),
+                    members: [{ uniqueName: rec.get('uniqueName') }]
+                }], Connector.controller.Explorer.HOVER_FILTER);
             }
             else {
-                this.getStateManager().removePrivateSelection('hoverSelectionFilter');
+                Connector.getState().removePrivateSelection(Connector.controller.Explorer.HOVER_FILTER);
             }
         }, this);
 
@@ -118,14 +98,13 @@ Ext.define('Connector.controller.Explorer', {
     createView : function(xtype, context) {
 
         if (xtype == 'singleaxis') {
-            var state = this.getStateManager();
+            var state = Connector.getState();
             var s = this.getStore('Explorer');
-            s.state = state;
+            s.olapProvider = state; // required by LABKEY.app.store.OlapExplorer. Blargh
 
-            var v = Ext.create('Connector.view.SingleAxisExplorer',{
+            var v = Ext.create('Connector.view.SingleAxisExplorer', {
                 flex : 3,
                 ui : 'custom',
-                width : '100%',
                 store : s,
                 selections : state.getSelections()
             });
@@ -140,7 +119,7 @@ Ext.define('Connector.controller.Explorer', {
                 filterchange: v.onFilterChange,
                 selectionchange: v.onSelectionChange,
                 privateselectionchange: function(sels, name) {
-                    if (name == 'hoverSelectionFilter') {
+                    if (name === Connector.controller.Explorer.HOVER_FILTER) {
                         v.onSelectionChange.call(v, sels, true);
                     }
                 },
@@ -153,55 +132,53 @@ Ext.define('Connector.controller.Explorer', {
             // this allows whether mouse hover over explorer items will cause a request for selection
             this.allowHover = true;
 
-            Ext.defer(function() { this.loadExplorerView(context, v); }, 100, this);
+            v.on('boxready', function() { this.loadExplorerView(context); }, this, {single: true});
 
             return v;
         }
     },
 
     updateView : function(xtype, context) {
-        this.loadExplorerView(context, null);
+        this.loadExplorerView(context);
+    },
+
+    getViewTitle : function(xtype, context) {
+        if (xtype === 'singleaxis') {
+            return 'Find';
+        }
+    },
+
+    getDefaultView : function() {
+        return 'singleaxis';
     },
 
     parseContext : function(urlContext) {
+        urlContext = this.callParent(arguments);
+
+        // make the default the first hierarchy listed
         var context = {
-            dimension: urlContext.length > 0 ? urlContext[0] : 'Study' // make the default the first hierarchy listed
+            dimension: urlContext.length > 0 ? urlContext[0] : 'Study'
         };
+
         if (urlContext && urlContext.length > 1) {
             context.hierarchy = urlContext[1];
         }
         return context;
     },
 
-    /**
-     * Called whenever this controller would like to update the URL itself.
-     * NOTE: This should only be called from internal cases where external navigation has not been
-     * used. This will avoid history stacking (i.e. browser back doing nothing)
-     */
-    updateURL : function() {
-        var ctx = ['singleaxis'];
-        if (this.dim) {
-            ctx.push(this.dim.name);
-            if (this.hierarchy) {
-                var name = this.hierarchy.name.split('.');
-                ctx.push(name[name.length-1]);
-            }
-            this.getStateManager().updateView('singleaxis', ctx, 'Explorer: ' + ctx[1], true);
-        }
-    },
-
-    loadExplorerView : function(context, view) {
-        var state = this.getStateManager();
-        state.onMDXReady(function(mdx) {
+    loadExplorerView : function(context) {
+        Connector.getState().onMDXReady(function(mdx) {
             var dim = mdx.getDimension(context.dimension);
             if (dim) {
 
-                var idx = 0;
+                var idx = -1;
                 this.dim = dim;
 
-                /* Find the appropriate hierarchy index -- would be nice if this could just be a lookup */
+                // Find the appropriate hierarchy index -- would be nice if this could just be a lookup
                 if (context.hierarchy) {
-                    var _h = dim.getHierarchies(), h = dim.name.toLowerCase() + '.' + context.hierarchy.toLowerCase();
+                    var _h = dim.getHierarchies(),
+                        h = dim.name.toLowerCase() + '.' + context.hierarchy.toLowerCase();
+
                     for (var i=0; i < _h.length; i++) {
                         if (_h[i].name.toLowerCase() == h) {
                             idx = i;
@@ -210,52 +187,63 @@ Ext.define('Connector.controller.Explorer', {
                     }
                 }
 
-                // TODO: Remove this
-                if (idx == 0 && dim.name.toLowerCase() == 'subject') {
-                    idx = 1;
+                if (idx == -1) {
+                    // Use the summaryTargetLevel to determine default hierarchy
+                    var level = mdx.getLevel(dim.summaryTargetLevel);
+                    if (level) {
+                        Ext.each(dim.getHierarchies(), function(hier, i) {
+                            if (hier.uniqueName === level.hierarchy.uniqueName) {
+                                idx = i;
+                                return false;
+                            }
+                        });
+                    }
                 }
 
-                if (view) {
-                    view.onDimensionChange.call(view, dim, idx);
+                if (idx != -1) {
+                    this.fireEvent('dimension', dim, idx);
                 }
-                this.fireEvent('dimension', dim, idx);
+                else {
+                    Ext.Msg.alert('Failed:' + context.dimension);
+                }
             }
             else {
-                alert('Failed:' + context.dimension);
+                Est.Msg.alert('Failed:' + context.dimension);
             }
         }, this);
     },
 
     // fired when the dimension is changed via the menu
-    onDimensionSelect : function(m, item) {
-        var state = this.getStateManager();
-
-        state.onMDXReady(function(mdx) {
-            var context = {
-                dimension: item.rec.data.hierarchy.split('.')[0]
-            };
-            this.loadExplorerView(context, null);
-
-//            if (state.hasSelections()) {
-//                state.moveSelectionToFilter();
-//            }
-        }, this);
-
-        this.updateURL();
+    onDimensionSelect : function(m, summaryModel /* Connector.model.Summary */) {
+        this.goToExplorer(summaryModel.get('dimName'), null);
     },
 
     // fired when the hierarchy is changed via the menu
-    onHierarchySelect : function(m, item) {
-        this.hierarchy = this.dim.hierarchies[item.hierarchyIndex];
-        this.updateURL();
-        this.fireEvent('hierarchy', item.hierarchyIndex);
-//        this.getStateManager().moveSelectionToFilter();
+    onHierarchySelect : function(m, models) {
+        if (!Ext.isEmpty(models)) {
+            var model = models[0], dimName = this.dim.name;
+            Connector.getState().onMDXReady(function(mdx) {
+                var hierarchy = mdx.getHierarchy(model.get('uniqueName'));
+                if (Ext.isObject(hierarchy)) {
+                    this.goToExplorer(dimName, hierarchy.name.split('.')[1]);
+                }
+            }, this);
+        }
     },
 
     onExplorerEnter : function(view, rec) {
         if (!view.loadLock) {
             this._hoverHelper(view, rec, true);
         }
+    },
+
+    goToExplorer : function(dim, hierarchy) {
+
+        var context = [dim];
+        if (hierarchy) {
+            context.push(hierarchy);
+        }
+        this.getViewManager().changeView('explorer', 'singleaxis', context);
     },
 
     onExplorerLeave : function(view, rec) {
@@ -265,7 +253,7 @@ Ext.define('Connector.controller.Explorer', {
     },
 
     _hoverHelper : function(view, rec, add) {
-        if (this.allowHover && this.getStateManager().getSelections().length == 0) {
+        if (this.allowHover && Connector.getState().getSelections().length == 0) {
             this.hoverTask.delay(200, null, null, [view, rec, add]);
         }
     },
@@ -276,109 +264,97 @@ Ext.define('Connector.controller.Explorer', {
         }
     },
 
-    runSelectionAnimation : function(view, rec, node, callback, scope) {
+    runSelectionAnimation : function(view, rec, node) {
 
         this.allowHover = false;
 
-        // Determine which animation end point is best
-        var target = Ext.DomQuery.select('.selectionpanel'), targetTop = false, found = false, box;
-        if (Ext.isArray(target) && target.length > 0) {
-            var el = Ext.get(target[0]);
-            if (el.isVisible()) {
-                // use the selection panel
-                targetTop = true;
-                found = true;
-                box = el.getBox();
-            }
-        }
-
-        if (!found) {
-            target = Ext.DomQuery.select('.filterpanel');
-            if (Ext.isArray(target) && target.length > 0) {
-                var el = Ext.get(target[0]);
-                if (el.isVisible()) {
-                    // use the filter panel
-                    found = true;
-                    box = el.getBox();
-                }
-            }
-        }
-
-        // Visibile doesn't necessarily work...
-        if (found && (box.x == 0 || box.y == 0)) {
-            found = false;
-        }
-
-        if (found) {
-            var child = Ext.get(node).child('span.barlabel'), cbox = child.getBox();
-
-            // Create DOM Element replicate
-            var dom = document.createElement('span');
-            dom.innerHTML = child.dom.innerHTML;
-            dom.setAttribute('class', 'barlabel selected');
-            dom.setAttribute('style', 'width: ' + (child.getTextWidth()+20) + 'px; left: ' + cbox[0] + 'px; top: ' + cbox[1] + 'px;');
-
-            // Append to Body
-            var xdom = Ext.get(dom);
-            xdom.appendTo(Ext.getBody());
-
-            var y = box.y + 30;
-            if (!targetTop) {
-                y += box.height;
-            }
-
-            xdom.animate({
-                to : {
-                    x: box.x,
-                    y: y,
-                    opacity: 0.2
-                },
-                duration: 1000, // Issue: 15220
-                listeners : {
-                    afteranimate : function() {
-                        Ext.removeNode(xdom.dom);
-                        this.allowHover = true;
-                    },
-                    scope: this
-                },
-                scope: this
-            });
-        }
-
-        if (callback) {
-            var task = new Ext.util.DelayedTask(callback, scope, [view, rec, node]);
-            task.delay(found ? 500 : 0);
-        }
+        Animation.floatTo(node, 'span.barlabel', ['.selectionpanel', '.filterpanel'], 'span', 'barlabel selected', function(view, rec, node) {
+            this.allowHover = true;
+            this.afterSelectionAnimation(view, rec, node);
+        }, this, [view, rec, node]);
     },
 
-    afterSelectionAnimation : function(view, rec, node) {
-        var recs = view.getSelectionModel().getSelection();
+    afterSelectionAnimation : function(view, rec) {
+        var records = view.getSelectionModel().getSelection();
+        var state = Connector.getState();
 
-        var selections = [];
-        for (var i=0; i < recs.length; i++) {
+        if (records.length == 0)
+            return;
 
-            var uname = [recs[i].data.hierarchy];
-            if (recs[i].data.level)
-                uname.push(recs[i].data.level);
-            uname.push(recs[i].data.value);
+        state.onMDXReady(function(mdx) {
 
-            if (recs[i].data.isGroup) {
-                uname = uname.slice(0,uname.length-1);
+            var uniqueName = rec.get('hierarchy');
+            var hierarchy = mdx.getHierarchy(uniqueName);
+
+            if (!hierarchy) {
+                var dim = mdx.getDimension(uniqueName);
+                if (!dim) {
+                    throw 'unable to determine sourcing dimension/hierarchy';
+                }
+
+                Ext.each(dim.hierarchies, function(hier) {
+                    if (!hier.hidden) {
+                        hierarchy = hier;
+                        return false;
+                    }
+                });
             }
 
-            selections.push({
-                hierarchy : recs[i].data.hierarchy,
-                members : [{uname:uname}],
-                isGroup : recs[i].data.isGroup
+            //
+            // Build Selections
+            //
+            var members = [],
+                levelUniqueName;
+            Ext.each(records, function(rec) {
+                members.push({
+                    uniqueName: rec.get('uniqueName')
+                });
+
+                // TODO: It'd be better to choose the most specific level
+                levelUniqueName = rec.get('levelUniqueName');
             });
-        }
-        if (selections.length > 0) {
-            this.getStateManager().removePrivateSelection('hoverSelectionFilter');
-            this.getStateManager().addSelection(selections, false, true, true);
-            var v = this.getViewManager().getViewInstance('singleaxis');
-            if (v) {
-                v.saview.showMessage('Hold Shift, CTRL, or CMD to select multiple');
+
+            var data = {
+                hierarchy: hierarchy.uniqueName,
+                members: members,
+                operator: hierarchy.defaultOperator,
+                isWhereFilter: hierarchy.filterType === 'WHERE'
+            };
+
+            if (levelUniqueName) {
+                data.level = levelUniqueName;
             }
-        }
+
+            var selection = Ext.create(state.getFilterModelName(), data);
+
+            // see if we're merging into a previous filter, this way we can respect other
+            // settings like operator, etc. This is related to merge but cannot use merge strictly
+            // since we allow for shift, ctrl select.
+            if (members.length > 1) {
+                var selections = state.getSelections(), _s;
+
+                if (!Ext.isEmpty(selections)) {
+                    for (var s=0; s < selections.length; s++) {
+                        if (selections[s].canMerge(selection)) {
+                            _s = selections[s];
+                            break;
+                        }
+                    }
+                }
+
+                if (Ext.isDefined(_s)) {
+                    selection.set({
+                        operator: _s.get('operator')
+                    })
+                }
+            }
+
+            //
+            // Apply Selections
+            //
+            state.removePrivateSelection(Connector.controller.Explorer.HOVER_FILTER);
+            state.setSelections([selection]);
+
+        }, this);
     }
 });

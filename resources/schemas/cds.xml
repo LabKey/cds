@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
 
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,432 +16,639 @@
  * limitations under the License.
 
  -->
-<ns:tables xmlns:ns="http://labkey.org/data/xml">
-  <ns:table tableName="Labs" tableDbType="TABLE">
-    <ns:columns>
-      <ns:column columnName="Id"/>
-      <ns:column columnName="PI"/>
-      <ns:column columnName="Description"/>
-        <ns:column columnName="Container">
-          <ns:isKeyField>false</ns:isKeyField>
-        </ns:column>
-        <ns:column columnName="Institution"/>
-        <ns:column columnName="Location"/>
-    </ns:columns>
-  </ns:table>
-  <ns:table tableName="DataSources" tableDbType="TABLE">
-      <ns:description>External datasources used to populate datasets in the CDS study.</ns:description>
-    <ns:columns>
-      <ns:column columnName="Container">
-                <ns:isKeyField>false</ns:isKeyField>
-              </ns:column>
-      <ns:column columnName="RowId"/>
-      <ns:column columnName="SourceContainer"/>
-      <ns:column columnName="QueryName"/>
-      <ns:column columnName="SchemaName"/>
-      <ns:column columnName="ViewName"/>
-      <ns:column columnName="TargetDatasetId">
-        <ns:fk>
-          <ns:fkColumnName>DataSetId</ns:fkColumnName>
-          <ns:fkTable>DataSets</ns:fkTable>
-          <ns:fkDbSchema>study</ns:fkDbSchema>
-        </ns:fk>
-      </ns:column>
-      <ns:column columnName="Lab">
-        <ns:fk>
-          <ns:fkColumnName>Id</ns:fkColumnName>
-          <ns:fkTable>Labs</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
-        </ns:fk>
-      </ns:column>
-      <ns:column columnName="Assay">
-        <ns:fk>
-          <ns:fkColumnName>Id</ns:fkColumnName>
-          <ns:fkTable>Assays</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
-        </ns:fk>
-      </ns:column>
-      <ns:column columnName="Contact">
-        <ns:fk>
-          <ns:fkColumnName>Id</ns:fkColumnName>
-          <ns:fkTable>People</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
-        </ns:fk>
-      </ns:column>
-      <ns:column columnName="Batch"/>
-    </ns:columns>
-  </ns:table>
-  <ns:table tableName="Facts" tableDbType="TABLE">
-    <ns:columns>
-      <ns:column columnName="ParticipantId">
-          <ns:fk>
-            <ns:fkColumnName>ParticipantId</ns:fkColumnName>
-            <ns:fkTable>Demographics</ns:fkTable>
-            <ns:fkDbSchema>study</ns:fkDbSchema>
-          </ns:fk>
-      </ns:column>
-        <ns:column columnName="Assay">
-          <ns:fk>
-            <ns:fkColumnName>Id</ns:fkColumnName>
-            <ns:fkTable>Assays</ns:fkTable>
-            <ns:fkDbSchema>cds</ns:fkDbSchema>
-          </ns:fk>
-        </ns:column>
-        <ns:column columnName="Lab">
-          <ns:fk>
-            <ns:fkColumnName>Id</ns:fkColumnName>
-            <ns:fkTable>Labs</ns:fkTable>
-            <ns:fkDbSchema>cds</ns:fkDbSchema>
-          </ns:fk>
-        </ns:column>
-      <ns:column columnName="Antigen">
-        <ns:fk>
-          <ns:fkColumnName>Id</ns:fkColumnName>
-          <ns:fkTable>Antigens</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
-        </ns:fk>
-      </ns:column>
-
-      <ns:column columnName="Study">
-        <ns:fk>
-          <ns:fkColumnName>StudyName</ns:fkColumnName>
-          <ns:fkTable>Studies</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
-        </ns:fk>
-      </ns:column>
-      <ns:column columnName="Container">
-                <ns:isKeyField>false</ns:isKeyField>
-              </ns:column>
-    </ns:columns>
-  </ns:table>
-    <ns:table tableName="Feedback" tableDbType="TABLE">
-        <ns:description>User provided feedback.</ns:description>
-        <ns:columns>
-            <ns:column columnName="RowId"/>
-            <ns:column columnName="Container">
-                <ns:isKeyField>false</ns:isKeyField>
-            </ns:column>
-            <ns:column columnName="Description"/>
-            <ns:column columnName="State"/>
-            <ns:column columnName="CreatedBy"/>
-            <ns:column columnName="Created"/>
-            <ns:column columnName="ModifiedBy"/>
-            <ns:column columnName="Modified"/>
-        </ns:columns>
-    </ns:table>
-  <ns:table tableName="Studies" tableDbType="TABLE">
-      <ns:description>Description of the study for CDS purposes. Doesn't require source study to be in the database.</ns:description>
-    <ns:columns>
-        <ns:column columnName="Container">
-          <ns:isKeyField>false</ns:isKeyField>
-        </ns:column>
-      <ns:column columnName="StudyName"/>
-      <ns:column columnName="AltTitle"/>
-      <ns:column columnName="Description"/>
-      <ns:column columnName="StartDate"/>
-      <ns:column columnName="EndDate"/>
-      <ns:column columnName="Phase"/>
-      <ns:column columnName="Treatments"/>
-      <ns:column columnName="PI1">
-        <ns:fk>
-          <ns:fkColumnName>Id</ns:fkColumnName>
-          <ns:fkTable>People</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
-        </ns:fk>
-      </ns:column>
-      <ns:column columnName="PI2">
-        <ns:fk>
-          <ns:fkColumnName>Id</ns:fkColumnName>
-          <ns:fkTable>People</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
-        </ns:fk>
-      </ns:column>
-      <ns:column columnName="Contact">
-        <ns:fk>
-          <ns:fkColumnName>Id</ns:fkColumnName>
-          <ns:fkTable>People</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
-        </ns:fk>
-      </ns:column>
-      <ns:column columnName="Type">
-          <ns:dimension>true</ns:dimension>
-      </ns:column>
-      <ns:column columnName="Network">
-	  <ns:dimension>true</ns:dimension>
-      </ns:column>
-    </ns:columns>
-  </ns:table>
-  <ns:table tableName="People" tableDbType="TABLE">
-    <ns:columns>
-      <ns:column columnName="Id"/>
-      <ns:column columnName="Email"/>
-      <ns:column columnName="FullName"/>
-      <ns:column columnName="ForeName"/>
-      <ns:column columnName="LastName"/>
-      <ns:column columnName="Initials"/>
-      <ns:column columnName="LabId">
-          <ns:fk>
-            <ns:fkColumnName>Id</ns:fkColumnName>
-            <ns:fkTable>Labs</ns:fkTable>
-            <ns:fkDbSchema>cds</ns:fkDbSchema>
-          </ns:fk>
-        </ns:column>
-
-      <ns:column columnName="Role"/>
-      <ns:column columnName="Description"/>
-        <ns:column columnName="Container">
-          <ns:isKeyField>false</ns:isKeyField>
-        </ns:column>
-      <ns:column columnName="PictureFile"/>
-    </ns:columns>
-  </ns:table>
-  <ns:table tableName="Assays" tableDbType="TABLE">
-      <ns:description>Additional information about an assay. Can point to a dataset id that corresponds to assay data.</ns:description>
-    <ns:columns>
-      <ns:column columnName="Id"/>
-      <ns:column columnName="AltName"/>
-      <ns:column columnName="Caption"/>
-        <ns:column columnName="LabId">
-            <ns:dimension>true</ns:dimension>
-            <ns:fk>
-              <ns:fkColumnName>Id</ns:fkColumnName>
-              <ns:fkTable>Labs</ns:fkTable>
-              <ns:fkDbSchema>cds</ns:fkDbSchema>
-            </ns:fk>
-          </ns:column>
-        <ns:column columnName="DatasetId">
-          <ns:fk>
-            <ns:fkColumnName>DataSetId</ns:fkColumnName>
-            <ns:fkTable>DataSet</ns:fkTable>
-            <ns:fkDbSchema>study</ns:fkDbSchema>
-          </ns:fk>
-        </ns:column>
-        <ns:column columnName="Description"/>
-        <ns:column columnName="Container">
-          <ns:isKeyField>false</ns:isKeyField>
-        </ns:column>
-        <ns:column columnName="LeadContributor">
-	 <ns:fk>
-          <ns:fkColumnName>Id</ns:fkColumnName>
-          <ns:fkTable>People</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>	          </ns:fk>
-        </ns:column>
-        <ns:column columnName="Contact">
-		 <ns:fk>
-	          <ns:fkColumnName>Id</ns:fkColumnName>
-	          <ns:fkTable>People</ns:fkTable>
-	          <ns:fkDbSchema>cds</ns:fkDbSchema>	          </ns:fk>
-        </ns:column>
-	<ns:column columnName="AssayAbstract"/>
-	<ns:column columnName="RelatedPublications"/>
-	<ns:column columnName="TargetArea">
-            <ns:dimension>true</ns:dimension>
-        </ns:column>
-	<ns:column columnName="Methodology">
-            <ns:dimension>true</ns:dimension>
-        </ns:column>
-        <ns:column columnName="DatasetName"/>
-        <ns:column columnName="SystemTarget"/>
-        <ns:column columnName="Type"/>
-        <ns:column columnName="Platform"/>
-        <ns:column columnName="Target"/>
-        <ns:column columnName="TargetFunction"/>
-    </ns:columns>
-  </ns:table>
-  <ns:table tableName="Antigens" tableDbType="TABLE">
-    <ns:columns>
-      <ns:column columnName="Container">
-          <ns:isKeyField>false</ns:isKeyField>
-      </ns:column>
-      <ns:column columnName="Id">
-        <ns:isKeyField>true</ns:isKeyField>
-      </ns:column>
-      <ns:column columnName="OtherNamesused"/>
-      <ns:column columnName="Clade">
-        <ns:dimension>true</ns:dimension>
-      </ns:column>
-      <ns:column columnName="Tier">
-        <ns:dimension>true</ns:dimension>
-      </ns:column>
-      <ns:column columnName="CountryOfOrigin">
-        <ns:dimension>true</ns:dimension>
-      </ns:column>
-      <ns:column columnName="Year"/>
-      <ns:column columnName="StageOfInfection"/>
-      <ns:column columnName="ModeOfTrans"/>
-      <ns:column columnName="SpecimenSource"/>
-      <ns:column columnName="NucleicAcidAmplificationMethod"/>
-      <ns:column columnName="AccessionNumber"/>
-      <ns:column columnName="CatNumber"/>
-      <ns:column columnName="NucleotideSequence"/>
-      <ns:column columnName="AminoacidSequence"/>
-      <ns:column columnName="EnvCloneProvider"/>
-      <ns:column columnName="ContributorsOfSourceSpecimen"/>
-      <ns:column columnName="ContributingInstituteorNetwork"/>
-      <ns:column columnName="Notes"/>
-      <ns:column columnName="ShortDescription"/>
-      <ns:column columnName="AntigenCategory"/>
-      <ns:column columnName="AntigenType"/>
-      <ns:column columnName="DonorID"/>
-      <ns:column columnName="Family"/>
-      <ns:column columnName="Group"/>
-      <ns:column columnName="Region"/>
-      <ns:column columnName="Mutations"/>
-      <ns:column columnName="ConsensusVIsolate"/>
-      <ns:column columnName="Protein"/>
-      <ns:column columnName="Virus"/>
-      <ns:column columnName="Purification"/>
-      <ns:column columnName="Biotin"/>
-      <ns:column columnName="Tag"/>
-      <ns:column columnName="HostCell"/>
-      <ns:column columnName="JournalReference"/>
-      <ns:column columnName="ProviderName"/>
-      <ns:column columnName="viruscategory"/>
-      <ns:column columnName="pseudovirus_backbone"/>
-    </ns:columns>
-  </ns:table>
-    <ns:table tableName="Citable" tableDbType="TABLE">
-      <ns:columns>
-        <ns:column columnName="URI">
-          <ns:isKeyField>true</ns:isKeyField>
-        </ns:column>
-        <ns:column columnName="CitableType"/>
-        <ns:column columnName="Link"/>
-        <ns:column columnName="Title"/>
-        <ns:column columnName="Description"/>
-          <ns:column columnName="Container">
-              <ns:isKeyField>false</ns:isKeyField>
-          </ns:column>
-        <ns:column columnName="EntityId"/>
-      </ns:columns>
-      <ns:titleColumn>Title</ns:titleColumn>
-    </ns:table>
-    <ns:table tableName="Citations" tableDbType="TABLE">
-      <ns:columns>
-        <ns:column columnName="RowId">
-          <ns:isKeyField>true</ns:isKeyField>
-        </ns:column>
-        <ns:column columnName="ObjectURI"/>
-        <ns:column columnName="CitableURI">
-          <ns:fk>
-               <ns:fkColumnName>URI</ns:fkColumnName>
-               <ns:fkTable>Citable</ns:fkTable>
-               <ns:fkDbSchema>cds</ns:fkDbSchema>
-          </ns:fk>
-         </ns:column>
-        <ns:column columnName="CitationType"/>
-        <ns:column columnName="SortIndex"/>
-          <ns:column columnName="Container">
-              <ns:isKeyField>false</ns:isKeyField>
-          </ns:column>
-      </ns:columns>
-    </ns:table>
-    <ns:table tableName="CitableAuthors" tableDbType="TABLE">
-      <ns:columns>
-        <ns:column columnName="RowId">
-            <ns:isKeyField>true</ns:isKeyField>
-          </ns:column>
-          <ns:column columnName="CitableURI">
-            <ns:fk>
-                 <ns:fkColumnName>URI</ns:fkColumnName>
-                 <ns:fkTable>Citable</ns:fkTable>
-                 <ns:fkDbSchema>cds</ns:fkDbSchema>
-            </ns:fk>
-           </ns:column>
-        <ns:column columnName="AuthorId">
-          <ns:fk>
-               <ns:fkColumnName>Id</ns:fkColumnName>
-               <ns:fkTable>People</ns:fkTable>
-               <ns:fkDbSchema>cds</ns:fkDbSchema>
-          </ns:fk>
-        </ns:column>
-        <ns:column columnName="AuthorType"/>
-        <ns:column columnName="Contact"/>
-        <ns:column columnName="SortIndex"/>
-          <ns:column columnName="Container">
-              <ns:isKeyField>false</ns:isKeyField>
-          </ns:column>
-      </ns:columns>
-    </ns:table>
-  <ns:table tableName="AssayPublications" tableDbType="TABLE">
-      <ns:description>Publications relating to a particular assay.</ns:description>
-    <ns:columns>
-        <ns:column columnName="AssayID">
-            <ns:dimension>false</ns:dimension>
-            <ns:fk>
-              <ns:fkColumnName>Id</ns:fkColumnName>
-              <ns:fkTable>Assays</ns:fkTable>
-              <ns:fkDbSchema>cds</ns:fkDbSchema>
-            </ns:fk>
-          </ns:column>
-        <ns:column columnName="PubMedID"/>
-	<ns:column columnName="Link"/>
-	<ns:column columnName="Title"/>
-        <ns:column columnName="Description"/>
-        <ns:column columnName="Container">
-          <ns:isKeyField>false</ns:isKeyField>
-        </ns:column>
-        <ns:column columnName="RowId"/>
-    <ns:column columnName="Type"/>
-    </ns:columns>
-  </ns:table>
-  <ns:table tableName="Vaccines" tableDbType="TABLE">
-        <ns:description>Vaccines used by the studies in the dataspace.</ns:description>
-      <ns:columns>
-        <ns:column columnName="VaccineName">
-              <ns:dimension>true</ns:dimension>
-        </ns:column>
-        <ns:column columnName="Type"/>
-        <ns:column columnName="Container">
-            <ns:isKeyField>false</ns:isKeyField>
-        </ns:column>
-        <ns:column columnName="description"/>
-        <ns:column columnName="class"/>
-        <ns:column columnName="subclass"/>
-        <ns:column columnName="developer"/>
-        <ns:column columnName="production"/>
-        <ns:column columnName="inserts"/>
-        <ns:column columnName="toxicity_studies"/>
-        <ns:column columnName="previous_trials"/>
-      </ns:columns>
-  </ns:table>
-  <ns:table tableName="VaccineComponents" tableDbType="TABLE">
-      <ns:description>Publications relating to a particular assay.</ns:description>
-    <ns:columns>
-        <ns:column columnName="VaccineName">
-            <ns:dimension>false</ns:dimension>
-            <ns:fk>
-              <ns:fkColumnName>VaccineName</ns:fkColumnName>
-              <ns:fkTable>Vaccines</ns:fkTable>
-              <ns:fkDbSchema>cds</ns:fkDbSchema>
-            </ns:fk>
-          </ns:column>
-        <ns:column columnName="VaccineComponent"/>
-	<ns:column columnName="Type"/>
-	<ns:column columnName="Clade"/>
-        <ns:column columnName="Region"/>
-        <ns:column columnName="Container">
-          <ns:isKeyField>false</ns:isKeyField>
-        </ns:column>
-        <ns:column columnName="RowId"/>
-    <ns:column columnName="description"/>
-    <ns:column columnName="isolate"/>
-    <ns:column columnName="GenBankID"/>
-    </ns:columns>
-  </ns:table>
-    <ns:table tableName="Sites" tableDbType="TABLE">
-        <ns:description>Sites used in Study Development.</ns:description>
-        <ns:columns>
-            <ns:column columnName="Id"/>
-            <ns:column columnName="PI"/>
-            <ns:column columnName="Description"/>
-            <ns:column columnName="Container">
-                <ns:isKeyField>false</ns:isKeyField>
-            </ns:column>
-            <ns:column columnName="Status"/>
-            <ns:column columnName="Location"/>
-            <ns:column columnName="AltName"/>
-            <ns:column columnName="Network"/>
-        </ns:columns>
-    </ns:table>
-</ns:tables>
+<tables xmlns="http://labkey.org/data/xml" xsi:schemaLocation="http://labkey.org/data/xml ../../../../../schemas/tableInfo.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <table tableName="import_study" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="network"/>
+            <column columnName="study_label"/>
+            <column columnName="study_short_name"/>
+            <column columnName="study_title"/>
+            <column columnName="study_type"/>
+            <column columnName="study_status"/>
+            <column columnName="study_stage"/>
+            <column columnName="study_population"/>
+            <column columnName="study_species"/>
+            <column columnName="study_first_enr_date"/>
+            <column columnName="study_fu_complete_date"/>
+            <column columnName="study_start_date"/>
+            <column columnName="study_public_date"/>
+            <column columnName="study_description"/>
+            <column columnName="study_rationale"/>
+            <column columnName="study_hypothesis"/>
+            <column columnName="study_objectives"/>
+            <column columnName="study_methods"/>
+            <column columnName="study_findings"/>
+            <column columnName="study_discussion"/>
+            <column columnName="study_context"/>
+        </columns>
+    </table>
+    <table tableName="import_lab" tableDbType="TABLE">
+        <columns>
+            <column columnName="lab_code"/>
+            <column columnName="lab_name"/>
+            <column columnName="lab_pi_name"/>
+        </columns>
+    </table>
+    <table tableName="import_personnel" tableDbType="TABLE">
+        <columns>
+            <column columnName="person_id"/>
+            <column columnName="person_first_name"/>
+            <column columnName="person_last_name"/>
+        </columns>
+    </table>
+    <table tableName="import_studypersonnel" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="person_id"/>
+            <column columnName="study_person_role"/>
+        </columns>
+    </table>
+    <table tableName="import_studyproduct" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="product_id"/>
+        </columns>
+    </table>
+    <table tableName="import_studysubject" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="subject_id"/>
+            <column columnName="subject_species"/>
+            <column columnName="subject_subspecies"/>
+            <column columnName="subject_sex_at_birth"/>
+            <column columnName="subject_age_enrollment_years"/>
+            <column columnName="subject_race_nih"/>
+            <column columnName="subject_hispanic"/>
+            <column columnName="subject_country_enrollment"/>
+            <column columnName="subject_bmi_enrollment"/>
+            <column columnName="subject_circumcised_enrollment"/>
+        </columns>
+    </table>
+    <table tableName="import_site" tableDbType="TABLE">
+        <columns>
+            <column columnName="site_id"/>
+            <column columnName="site_name"/>
+            <column columnName="site_institution"/>
+            <column columnName="site_city"/>
+            <column columnName="site_country"/>
+            <column columnName="continent"/>
+            <column columnName="latitude"/>
+            <column columnName="longitude"/>
+        </columns>
+    </table>
+    <table tableName="import_productinsert" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="product_id"/>
+            <column columnName="insert_id"/>
+            <column columnName="clade_id"/>
+            <column columnName="insert_name"/>
+            <column columnName="clade_name"/>
+        </columns>
+    </table>
+    <table tableName="import_studypartgrouparmproduct" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="study_part"/>
+            <column columnName="study_group"/>
+            <column columnName="study_arm"/>
+            <column columnName="product_id"/>
+        </columns>
+    </table>
+    <table tableName="import_studypartgrouparmsubject" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="subject_id"/>
+            <column columnName="study_part"/>
+            <column columnName="study_group"/>
+            <column columnName="study_arm"/>
+        </columns>
+    </table>
+    <table tableName="import_studysitefunction" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="site_id"/>
+            <column columnName="site_type"/>
+        </columns>
+    </table>
+    <table tableName="import_product" tableDbType="TABLE">
+        <columns>
+            <column columnName="product_id"/>
+            <column columnName="product_name"/>
+            <column columnName="product_type"/>
+            <column columnName="product_class"/>
+            <column columnName="product_subclass"/>
+            <column columnName="product_class_label"/>
+            <column columnName="product_developer"/>
+            <column columnName="product_manufacturer"/>
+            <column columnName="product_immunogen"/>
+            <column columnName="product_description"/>
+        </columns>
+    </table>
+    <table tableName="import_studypartgrouparmvisitproduct" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="study_part"/>
+            <column columnName="study_arm"/>
+            <column columnName="study_group"/>
+            <column columnName="study_day"/>
+            <column columnName="product_id"/>
+        </columns>
+    </table>
+    <table tableName="import_studypartgrouparmvisit" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="study_part"/>
+            <column columnName="study_group"/>
+            <column columnName="study_arm"/>
+            <column columnName="study_day"/>
+            <column columnName="study_visit_code"/>
+            <column columnName="study_week"/>
+            <column columnName="study_month"/>
+            <column columnName="study_arm_visit_type"/>
+            <column columnName="study_arm_visit_label"/>
+            <column columnName="study_arm_visit_detail_label"/>
+            <column columnName="isvaccvis"/>
+            <column columnName="ischallvis"/>
+        </columns>
+    </table>
+    <table tableName="import_studysitepersonnel" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="site_id"/>
+            <column columnName="person_id"/>
+            <column columnName="study_site_person_role"/>
+        </columns>
+    </table>
+    <table tableName="import_assay" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="assay_label"/>
+            <column columnName="assay_short_name"/>
+            <column columnName="assay_category"/>
+            <column columnName="assay_detection_platform"/>
+            <column columnName="assay_body_system_type"/>
+            <column columnName="assay_body_system_target"/>
+            <column columnName="assay_general_specimen_type"/>
+            <column columnName="assay_description"/>
+            <column columnName="assay_method_description"/>
+            <column columnName="assay_endpoint_description"/>
+            <column columnName="assay_endpoint_statistical_analysis"/>
+        </columns>
+    </table>
+    <table tableName="import_nabantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="target_cell"/>
+            <column columnName="antigen_type"/>
+            <column columnName="virus"/>
+            <column columnName="virus_type"/>
+            <column columnName="virus_insert_name"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_icsantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_elispotantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_bamaantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_studypartgrouparm" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="study_part"/>
+            <column columnName="study_group"/>
+            <column columnName="study_arm"/>
+            <column columnName="study_randomization"/>
+            <column columnName="study_arm_description_coded_label"/>
+            <column columnName="product_class_combination_label"/>
+            <column columnName="product_combination_label"/>
+            <column columnName="study_arm_last_exp_vacc_day"/>
+            <column columnName="study_arm_description"/>
+        </columns>
+    </table>
+    <table tableName="import_nab" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="prot"/>
+            <column columnName="subject_id"/>
+            <column columnName="study_day"/>
+            <column columnName="assay_identifier"/>
+            <column columnName="nab_lab_source_key"/>
+            <column columnName="exp_assayid"/>
+            <column columnName="lab_code"/>
+            <column columnName="specimen_type"/>
+            <column columnName="summary_level"/>
+            <column columnName="antigen"/>
+            <column columnName="antigen_type"/>
+            <column columnName="virus"/>
+            <column columnName="virus_insert_name"/>
+            <column columnName="virus_type"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="clade"/>
+            <column columnName="vaccine_matched"/>
+            <column columnName="target_cell"/>
+            <column columnName="initial_dilution"/>
+            <column columnName="nab_response"/>
+            <column columnName="titer_ic50"/>
+            <column columnName="titer_ic80"/>
+        </columns>
+    </table>
+    <table tableName="import_ics" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="prot"/>
+            <column columnName="subject_id"/>
+            <column columnName="study_day"/>
+            <column columnName="assay_identifier"/>
+            <column columnName="ics_lab_source_key"/>
+            <column columnName="exp_assayid"/>
+            <column columnName="lab_code"/>
+            <column columnName="specimen_type"/>
+            <column columnName="summary_level"/>
+            <column columnName="cell_type"/>
+            <column columnName="cell_name"/>
+            <column columnName="antigen"/>
+            <column columnName="antigen_type"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="protein"/>
+            <column columnName="protein_panel"/>
+            <column columnName="clade"/>
+            <column columnName="vaccine_matched"/>
+            <column columnName="functional_marker_name"/>
+            <column columnName="functional_marker_type"/>
+            <column columnName="ics_response"/>
+            <column columnName="pctpos"/>
+            <column columnName="pctpos_adj"/>
+            <column columnName="pctpos_neg"/>
+        </columns>
+    </table>
+    <table tableName="import_els_ifng" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="prot"/>
+            <column columnName="subject_id"/>
+            <column columnName="study_day"/>
+            <column columnName="assay_identifier"/>
+            <column columnName="els_ifng_lab_source_key"/>
+            <column columnName="exp_assayid"/>
+            <column columnName="lab_code"/>
+            <column columnName="summary_level"/>
+            <column columnName="specimen_type"/>
+            <column columnName="antigen"/>
+            <column columnName="antigen_type"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="protein"/>
+            <column columnName="protein_panel"/>
+            <column columnName="clade"/>
+            <column columnName="vaccine_matched"/>
+            <column columnName="cell_name"/>
+            <column columnName="cell_type"/>
+            <column columnName="functional_marker_name"/>
+            <column columnName="functional_marker_type"/>
+            <column columnName="els_ifng_response"/>
+            <column columnName="mean_sfc"/>
+            <column columnName="mean_sfc_neg"/>
+            <column columnName="mean_sfc_raw"/>
+        </columns>
+    </table>
+    <table tableName="import_bama" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="prot"/>
+            <column columnName="subject_id"/>
+            <column columnName="study_day"/>
+            <column columnName="assay_identifier"/>
+            <column columnName="bama_lab_source_key"/>
+            <column columnName="exp_assayid"/>
+            <column columnName="lab_code"/>
+            <column columnName="summary_level"/>
+            <column columnName="specimen_type"/>
+            <column columnName="antigen"/>
+            <column columnName="antigen_type"/>
+            <column columnName="antibody_isotype"/>
+            <column columnName="protein"/>
+            <column columnName="protein_panel"/>
+            <column columnName="clade"/>
+            <column columnName="vaccine_matched"/>
+            <column columnName="detection_ligand"/>
+            <column columnName="instrument_code"/>
+            <column columnName="dilution"/>
+            <column columnName="bama_response"/>
+            <column columnName="mfi_delta"/>
+            <column columnName="mfi_delta_baseline"/>
+            <column columnName="mfi_raw"/>
+            <column columnName="mfi_raw_baseline"/>
+            <column columnName="mfi_blank"/>
+            <column columnName="mfi_blank_baseline"/>
+        </columns>
+    </table>
+    <table tableName="study" tableDbType="TABLE">
+        <columns>
+            <column columnName="study_name"/>
+            <column columnName="container"/>
+            <column columnName="network"/>
+            <column columnName="label"/>
+            <column columnName="short_name"/>
+            <column columnName="title"/>
+            <column columnName="type"/>
+            <column columnName="status"/>
+            <column columnName="stage"/>
+            <column columnName="population"/>
+            <column columnName="species"/>
+            <column columnName="study_cohort"/>
+            <column columnName="first_enr_date"/>
+            <column columnName="followup_complete_date"/>
+            <column columnName="start_date"/>
+            <column columnName="public_date"/>
+            <column columnName="rationale"/>
+            <column columnName="description"/>
+            <column columnName="hypothesis"/>
+            <column columnName="objectives"/>
+            <column columnName="methods"/>
+            <column columnName="findings"/>
+            <column columnName="discussion"/>
+            <column columnName="context"/>
+        </columns>
+    </table>
+    <table tableName="treatmentarmsubjectmap" tableDbType="TABLE">
+        <columns>
+            <column columnName="participantid"/>
+            <column columnName="container"/>
+            <column columnName="arm_id"/>
+        </columns>
+    </table>
+    <table tableName="sites" tableDbType="TABLE">
+        <columns>
+            <column columnName="id"/>
+            <column columnName="pi"/>
+            <column columnName="description"/>
+            <column columnName="location"/>
+            <column columnName="container"/>
+            <column columnName="status"/>
+            <column columnName="altname"/>
+            <column columnName="network"/>
+        </columns>
+    </table>
+    <table tableName="lab" tableDbType="TABLE">
+        <columns>
+            <column columnName="lab_code"/>
+            <column columnName="container"/>
+            <column columnName="lab_name"/>
+            <column columnName="lab_pi_name"/>
+        </columns>
+    </table>
+    <table tableName="facts" tableDbType="TABLE">
+        <columns>
+            <column columnName="participantid"/>
+            <column columnName="container"/>
+            <column columnName="study"/>
+            <column columnName="treatment_arm"/>
+            <column columnName="study_label"/>
+            <column columnName="product_group"/>
+        </columns>
+    </table>
+    <table tableName="visittagalignment" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="container"/>
+            <column columnName="participantid"/>
+            <column columnName="visitid"/>
+            <column columnName="protocolday"/>
+            <column columnName="visittagname"/>
+        </columns>
+    </table>
+    <table tableName="treatmentarm" tableDbType="TABLE">
+        <columns>
+            <column columnName="arm_id"/>
+            <column columnName="container"/>
+            <column columnName="arm_part"/>
+            <column columnName="arm_group"/>
+            <column columnName="arm_name"/>
+            <column columnName="randomization"/>
+            <column columnName="coded_label"/>
+            <column columnName="last_day"/>
+            <column columnName="description"/>
+        </columns>
+    </table>
+    <table tableName="feedback" tableDbType="TABLE">
+        <columns>
+            <column columnName="rowid"/>
+            <column columnName="container"/>
+            <column columnName="created"/>
+            <column columnName="createdby"/>
+            <column columnName="modified"/>
+            <column columnName="modifiedby"/>
+            <column columnName="description"/>
+            <column columnName="state"/>
+        </columns>
+    </table>
+    <table tableName="studygroupvisitmap" tableDbType="TABLE">
+        <columns>
+            <column columnName="group_id"/>
+            <column columnName="visit_row_id">
+                <fk>
+                    <fkDbSchema>study</fkDbSchema>
+                    <fkTable>visit</fkTable>
+                    <fkColumnName>rowid</fkColumnName>
+                </fk>
+            </column>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="product" tableDbType="TABLE">
+        <columns>
+            <column columnName="product_id"/>
+            <column columnName="container"/>
+            <column columnName="product_name"/>
+            <column columnName="product_type"/>
+            <column columnName="product_class"/>
+            <column columnName="product_subclass"/>
+            <column columnName="product_class_label"/>
+            <column columnName="product_developer"/>
+            <column columnName="product_manufacturer"/>
+            <column columnName="product_description"/>
+        </columns>
+    </table>
+    <table tableName="studygroup" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="group_name"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="visittagmap" tableDbType="TABLE">
+        <columns>
+            <column columnName="visit_tag"/>
+            <column columnName="visit_tag_label"/>
+            <column columnName="visit_row_id">
+                <fk>
+                    <fkDbSchema>study</fkDbSchema>
+                    <fkTable>visit</fkTable>
+                    <fkColumnName>rowid</fkColumnName>
+                </fk>
+            </column>
+            <column columnName="container"/>
+            <column columnName="study_group_id"/>
+            <column columnName="single_use"/>
+            <column columnName="is_vaccination"/>
+            <column columnName="is_challenge"/>
+            <column columnName="arm_id"/>
+            <column columnName="detail_label"/>
+        </columns>
+    </table>
+    <table tableName="assay" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+            <column columnName="assay_label"/>
+            <column columnName="assay_short_name"/>
+            <column columnName="assay_category"/>
+            <column columnName="assay_detection_platform"/>
+            <column columnName="assay_body_system_type"/>
+            <column columnName="assay_body_system_target"/>
+            <column columnName="assay_general_specimen_type"/>
+            <column columnName="assay_description"/>
+            <column columnName="assay_method_description"/>
+            <column columnName="assay_endpoint_description"/>
+            <column columnName="assay_endpoint_statistical_analysis"/>
+            <column columnName="assay_type"/>
+        </columns>
+    </table>
+    <table tableName="nabantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+            <column columnName="antigen_name"/>
+            <column columnName="target_cell"/>
+            <column columnName="antigen_type"/>
+            <column columnName="virus"/>
+            <column columnName="virus_type"/>
+            <column columnName="virus_insert_name"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="icsantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="elispotantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="bamaantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="subjectproductmap" tableDbType="TABLE">
+        <columns>
+            <column columnName="participantid"/>
+            <column columnName="container"/>
+            <column columnName="product_id"/>
+            <column columnName="insert_name"/>
+            <column columnName="clade_name"/>
+        </columns>
+    </table>
+    <table tableName="studyproductmap" tableDbType="TABLE">
+        <columns>
+            <column columnName="study_name"/>
+            <column columnName="container"/>
+            <column columnName="product_id"/>
+        </columns>
+    </table>
+    <table tableName="properties" tableDbType="TABLE">
+        <columns>
+            <column columnName="rowid"/>
+            <column columnName="container"/>
+            <column columnName="created"/>
+            <column columnName="modified"/>
+            <column columnName="assays"/>
+            <column columnName="products"/>
+            <column columnName="studies"/>
+            <column columnName="subjects"/>
+            <column columnName="datacount"/>
+            <column columnName="subjectlevelstudies"/>
+        </columns>
+    </table>
+    <table tableName="gridbase" tableDbType="TABLE">
+        <columns>
+            <column columnName="SubjectId"/>
+            <column columnName="Study"/>
+            <column columnName="TreatmentSummary"/>
+            <column columnName="VisitRowId"/>
+            <column columnName="ParticipantSequenceNum"/>
+            <column columnName="SequenceNum"/>
+            <column columnName="ProtocolDay"/>
+            <column columnName="Container"/>
+        </columns>
+    </table>
+</tables>

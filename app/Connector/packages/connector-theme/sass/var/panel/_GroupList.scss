@@ -1,0 +1,63 @@
+/* Connector.view.GroupListView */
+div.grouplist-view {
+  font: $body-two-font;
+}
+
+.grouplist-header {
+  border-bottom: 1px solid $gray-7;
+  padding-bottom: 3px;
+  color: $heat-scale-2;
+  @include smallStandout;
+}
+
+.grouplist-empty {
+  color: #b5b5b5;
+  padding: 2px 0;
+  border-bottom: 1px solid $gray-7;
+  text-align: center;
+}
+
+.grouprow {
+  padding: 5px 0;
+  border-bottom: 1px solid $gray-7;
+
+  .groupicon {
+    display: inline-block;
+    float: right;
+
+    img {
+      padding: 3px 0;
+    }
+  }
+
+  .grouplabel {
+    display: inline;
+  }
+
+  .closeitem {
+    margin-top: -13px;
+  }
+}
+
+.grouplist-over {
+  cursor: pointer;
+}
+
+.save-label {
+  font-family: $info-font;
+  padding: 4px 9px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.save-label-over {
+  background-color: $select-hover-color;
+  cursor: pointer;
+}
+
+.save-label-selected {
+  background-color: $select-color;
+  color: $gray-7;
+}
+
+/* -- END Connector.view.GroupListView */

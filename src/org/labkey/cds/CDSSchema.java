@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,28 +46,8 @@ public class CDSSchema
         return getSchema().getSqlDialect();
     }
 
-    public static TableInfo getTableInfoSourceQuery()
-    {
-        return getInstance().getSchema().getTable("DataSources");
-    }
-
     public static TableInfo getTableInfoPeople()
     {
         return getInstance().getSchema().getTable("People");
-    }
-
-    public static TableInfo getTableInfoCitable()
-    {
-        return getInstance().getSchema().getTable("Citable");
-    }
-
-    public static TableInfo getTableInfoCitableAuthors()
-    {
-        return getInstance().getSchema().getTable("CitableAuthors");
-    }
-
-    public static TableInfo getTableInfoCitations()
-    {
-        return getInstance().getSchema().getTable("Citations");
     }
 }

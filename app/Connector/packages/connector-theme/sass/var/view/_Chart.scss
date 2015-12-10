@@ -1,0 +1,152 @@
+.stdcolor {
+  background-color: $gray-7;
+}
+
+#scatterloader {
+  position: absolute;
+  visibility: hidden;
+  z-index: 10000;
+
+  img {
+    padding-right: 3px;
+  }
+}
+
+.timeview, .compareview, .rawdataview {
+  background-color : $gray-7;
+  padding: 15px 0 0 0;
+}
+
+.chartview {
+  background-color : $secondary-color;
+  padding: 0;
+}
+
+.emptyplot svg {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.xaxisbutton {
+  margin-top: 1%;
+  margin-left: 49.5%;
+}
+
+.yaxisbutton {
+  position: absolute;
+  top: 50%;
+}
+
+#gridsources, #plotsources {
+  float: right;
+  margin-right: 20px;
+}
+
+.scatterplot {
+  background-color: $gray-7;
+
+  svg, .info {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+}
+
+svg g {
+  &.brush .extent{
+    opacity: 0.4 !important;
+  }
+
+  &.layer {
+    cursor: crosshair;
+  }
+
+  &.study .visit-tag {
+    cursor: pointer;
+  }
+
+  .xaxis-tick-text, .highlight, .xaxis-tick-rect {
+    cursor: pointer;
+  }
+
+  text.yGutter-label, text.xGutter-label {
+    fill: $secondary-text-color;
+    cursor: pointer;
+  }
+}
+
+svg a {
+  &:hover, &:active {
+    text-decoration: none;
+  }
+}
+
+
+#plotymeasurewin:after,
+#plotymeasurewin:before {
+  border-right-color: $secondary-color;
+  border-bottom-color: transparent;
+}
+
+#plotxmeasurewin:after,
+#plotxmeasurewin:before {
+  top: 100%;
+  left: 40%;
+  border-top-color: $secondary-color;
+  border-right-color: transparent;
+}
+
+div.noplotmsg {
+  width: 675px;
+}
+
+div.emptyplotmsg {
+  width: 550px;
+}
+
+div.noplotmsg, div.emptyplotmsg {
+  position: relative;
+
+  .line1 {
+    color: $primary-text-color;
+  }
+  .line2 {
+    color: $secondary-text-color;
+  }
+  .line3 {
+    color: $placeholder-text-color;
+  }
+}
+
+div.plotmodeon {
+  cursor: pointer;
+  margin: 2px 1px;
+  padding: 1px 4px;
+  text-align: center;
+  background-color: $heat-scale-6;
+  color: $secondary-text-color;
+}
+
+div.plot-scroll {
+  overflow-x: scroll;
+}
+
+
+#xvarselector,
+#yvarselector {
+  &.active {
+    background-color: #fff;  
+    border: 1px solid $gray-9;
+
+    .x-box-item {
+      background-color: transparent;
+    }
+  }
+
+  background-color: transparent;
+  border: none;
+  .x-box-item {
+    background-color: transparent;
+  }
+}

@@ -15,19 +15,15 @@
  */
 package org.labkey.test.pages;
 
-import org.labkey.test.tests.CDSTest;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.LogMethod;
 
 import static org.junit.Assert.*;
 
-/**
- * User: tchadick
- * Date: 10/25/13
- */
 public class AssayDetailsPage
 {
-    private final CDSTest _test;
+    private final BaseWebDriverTest _test;
 
     private final String _name;
     private final String _contributorImg;
@@ -38,7 +34,7 @@ public class AssayDetailsPage
     private final String _assayAbstract;
     private final String _relatedPubs;
 
-    private AssayDetailsPage(CDSTest test, String name, String contributorImg, String pocImg, String leadContributor, String pointOfContact, String details, String assayAbstract, String relatedPubs)
+    private AssayDetailsPage(BaseWebDriverTest test, String name, String contributorImg, String pocImg, String leadContributor, String pointOfContact, String details, String assayAbstract, String relatedPubs)
     {
         _test = test;
 
@@ -91,12 +87,12 @@ public class AssayDetailsPage
         assertEquals("Incorrect Related Publications", _relatedPubs.replace("\n", ""), _test.getText(Locator.css(".assayInfoRelatedPublications")).replace("\n", ""));
     }
 
-    public static AssayDetailsPage labResults(CDSTest test)
+    public static AssayDetailsPage labResults(BaseWebDriverTest test)
     {
         return new AssayDetailsPage(test, "Lab Results", "default.png", "default.png", "", "", "", "", "");
     }
 
-    public static AssayDetailsPage adccFerrari(CDSTest test)
+    public static AssayDetailsPage adccFerrari(BaseWebDriverTest test)
     {
         return new AssayDetailsPage(test, "ADCC-Ferrari", "team_Mark_Igra.jpg", "team_Alan_Vezina.jpg",
                                 "Mark Igra\n" +
@@ -111,7 +107,7 @@ public class AssayDetailsPage
                                 "Immune escape from HIV-specific antibody-dependent cellular cytotoxicity (ADCC) pressure.");
     }
 
-    public static AssayDetailsPage luminexSampleLabKey(CDSTest test)
+    public static AssayDetailsPage luminexSampleLabKey(BaseWebDriverTest test)
     {
         return new AssayDetailsPage(test, "Luminex-Sample-LabKey", "team_Nick_Arnold.jpg", "team_Nick_Arnold.jpg",
                                 "Nick Arnold\n" +
@@ -126,7 +122,7 @@ public class AssayDetailsPage
                                 "Inhibition of HIV-1 replication in human lymphoid tissues ex vivo by measles virus.");
     }
 
-    public static AssayDetailsPage mrnaAssay(CDSTest test)
+    public static AssayDetailsPage mrnaAssay(BaseWebDriverTest test)
     {
         return new AssayDetailsPage(test, "mRNA assay", "team_Mark_Igra.jpg", "team_Nick_Arnold.jpg",
                                 "Mark Igra\n" +
@@ -141,7 +137,7 @@ public class AssayDetailsPage
                                 "Development of an in vitro mRNA degradation assay utilizing extracts from HIV-1- and SIV-infected cells.");
     }
 
-    public static AssayDetailsPage nabSampleLabKey(CDSTest test)
+    public static AssayDetailsPage nabSampleLabKey(BaseWebDriverTest test)
     {
         return new AssayDetailsPage(test, "NAb-Sample-LabKey", "team_Karl_Lum.jpg", "team_Kristin_Fitzsimmons.jpg",
                                 "Karl Lum\n" +

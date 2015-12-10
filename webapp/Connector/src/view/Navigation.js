@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -53,7 +53,7 @@ Ext.define('Connector.view.NavigationView', {
         this.selectedItemCls = 'nav-label-selected '+ this.arrow;
 
         this.store = Ext.create('Ext.data.Store', {
-            fields : ['label', 'value', 'disabled', 'basecls', 'cls'],
+            fields : ['label', 'controller', 'value', 'disabled', 'basecls', 'cls'],
             data   : {'items' : this.mapping},
             proxy  : {
                 type : 'memory',
@@ -68,10 +68,11 @@ Ext.define('Connector.view.NavigationView', {
         var me = this;
         this.tpl.renderContent = function(val) {
             var ret = '';
-            if (me.arrow == 'left'){
+            if (me.arrow == 'left') {
                 ret += '<span class="' + me.arrow +'-arrow"></span>';
                 ret += '<span class="right-label">' + val + '</span>';
-            } else if (me.arrow == 'right'){
+            }
+            else if (me.arrow == 'right') {
                 ret += '<span class="left-label">' + val + '</span>';
                 ret += '<span class="' + me.arrow +'-arrow"></span>';
             }
@@ -99,8 +100,7 @@ Ext.define('Connector.view.NavigationView', {
         var disabledRecs = Ext.DomQuery.select('.dis-label', v.getEl().id);
         var knownIds = ['chartdemography'];
 
-        for (var i=0; i < disabledRecs.length; i++)
-        {
+        for (var i=0; i < disabledRecs.length; i++) {
             if (knownIds.length <= i)
                 break;
 
@@ -117,11 +117,9 @@ Ext.define('Connector.view.NavigationView', {
         }
     },
 
-    selectByView : function(xtype, defaultSelect) {
-        var rec = this.store.find('value', xtype, null, null, true, true);
+    selectByView : function(xtype) {
+        var rec = this.store.find('controller', xtype, null, null, true, true);
         if (rec > -1)
             this.select(rec);
-        else if (Ext.isNumber(defaultSelect))
-            this.select(defaultSelect);
     }
 });

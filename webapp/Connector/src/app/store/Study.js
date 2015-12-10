@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -9,45 +9,89 @@ Ext.define('Connector.app.store.Study', {
 
     model : 'Connector.app.model.Study',
 
-    cache : [],
-
-    loadSlice : function(slice) {
-
-        var cells = slice.cells, row;
-        var studySet = [], study;
-        for (var c=0; c < cells.length; c++) {
-            row = cells[c][0];
-            study = row.positions[row.positions.length-1][0];
-            if (row.value > 0) {
-                studySet.push(study.name);
-            }
-        }
-        study = studySet.join(';');
-
-        if (studySet.length > 0) {
-            var queryConfig = {
-                schemaName: 'CDS',
-                queryName: 'studies',
-                success: this.onLoadQuery,
-                scope: this
-            };
-
-            if (study.length > 0) {
-                queryConfig.filterArray = [ LABKEY.Filter.create('StudyName', study, LABKEY.Filter.Types.IN) ]
-            }
-
-            LABKEY.Query.selectRows(queryConfig);
-        }
-        else {
-            this.onLoadQuery({rows: []});
-        }
+    constructor: function(config) {
+        Ext.applyIf(config, {
+            cache: []
+        });
+        this.callParent([config]);
     },
 
-    onLoadQuery : function(queryResult) {
-        var rows = queryResult.rows;
-        for (var r=0; r < rows.length; r++) {
-            rows[r].internalId = r;
+    loadSlice : function(slice) {
+        this.studyData = undefined;
+        this.productData = undefined;
+        this.assayData = undefined;
+
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'study',
+            success: this.onLoadStudies,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'studyproductmap',
+            success: this.onLoadProducts,
+            requiredVersion: 13.2,
+            scope: this
+        });
+        LABKEY.Query.executeSql({
+            schemaName: 'cds',
+            sql: 'SELECT DISTINCT assay_identifier, label, study_name FROM ds_subjectassay',
+            success: this.onLoadAssays,
+            scope: this
+        })
+    },
+
+    onLoadStudies : function(studyData) {
+        this.studyData = studyData.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadProducts : function(productData) {
+        this.productData = productData.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadAssays : function(assayData) {
+        this.assayData = assayData.rows;
+        this._onLoadComplete();
+    },
+
+    _onLoadComplete : function() {
+        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)) {
+            var studies = [], products;
+
+            // join products to study
+            Ext.each(this.studyData, function(study) {
+                products = [];
+                for (var p=0; p < this.productData.length; p++) {
+                    if (study.study_name === this.productData[p].study_name.value) {
+                        // Consider: These should probably be of type Connector.app.model.StudyProducts
+                        // but it'd be good to then have a common sourcing mechanism for LA models
+                        products.push({
+                            product_id: this.productData[p].product_id.value,
+                            product_name: this.productData[p].product_id.displayValue
+                        });
+                    }
+                }
+                var assays = [];
+                for (var a=0; a < this.assayData.length; a++) {
+                    if (study.study_name === this.assayData[a].study_name) {
+                        assays.push({
+                            assay_identifier: this.assayData[a].assay_identifier
+                        });
+                    }
+                }
+                study.products = products;
+                study.assays = assays;
+                studies.push(study);
+            }, this);
+
+            studies.sort(function(studyA, studyB) {
+                return LABKEY.app.model.Filter.sorters.natural(studyA.label, studyB.label);
+            });
+
+            this.loadRawData(studies);
         }
-        this.loadRawData(rows);
     }
 });

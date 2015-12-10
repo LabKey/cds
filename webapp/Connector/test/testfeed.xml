@@ -1,0 +1,100 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>LabKey News</title>
+        <description>PRESS CONTACT Contact McContact contact@labkey.com (206) 701-9975, LabKey Software uses an open-source approach to help translational research teams make sense of complex data while collaborating securely.</description>
+        <link>http://www.labkey.com/news-for-rss</link>
+        <lastBuildDate>Fri, 23 May 2014 20:14:59 +0000</lastBuildDate>
+        <generator>Joomla! 1.5 - Open Source Content Management</generator>
+        <language>en-gb</language>
+        <atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="self" type="application/rss+xml" href="http://feeds.feedburner.com/labkey-news" /><feedburner:info xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0" uri="labkey-news" /><atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="hub" href="http://pubsubhubbub.appspot.com/" /><item>
+        <title>Panel: Mark Igra speaks at DAMA Day 2014</title>
+        <link>http://www.labkey.com/news/news-releases/08052014-363</link>
+        <guid>http://www.labkey.com/news/news-releases/08052014-363</guid>
+        <description>Next week, LabKey Software's Mark Igra will address "Challenges in Building Self-Service Portals"</description>
+        <author>author@labkey.com (Author McAuthor)</author>
+        <category>News Releases</category>
+        <pubDate>Thu, 08 May 2014 21:25:24 +0000</pubDate>
+    </item>
+        <item>
+            <title>Event: LabKey sponsoring 2014 AIRI IT Meeting</title>
+            <link>http://www.labkey.com/news/news-releases/07052014-362</link>
+            <guid>http://www.labkey.com/news/news-releases/07052014-362</guid>
+            <description>LabKey Software looks forward to sponsoring the Association of Independent Research Institutes (AIRI) 2014 Information Technology Meeting in Seattle, May 8-9, 2014.  This meeting's theme is "Seeking Balance – Innovation vs. Practical Solutions to IT Challenges" and features presentations by IT innovators at leading research institutes (program). The Fred Hutchinson Cancer Research Center (FHCRC) will host the 2014 AIRI IT meeting</description>
+            <author>author@labkey.com (Author McAuthor)</author>
+            <category>News Releases</category>
+            <pubDate>Fri, 02 May 2014 16:57:19 +0000</pubDate>
+        </item>
+        <item>
+            <title>Panel and Talk: AMIA Joint Summits - April 9 and 10, 2014</title>
+            <link>http://www.labkey.com/news/news-releases/03042014-361</link>
+            <guid>http://www.labkey.com/news/news-releases/03042014-361</guid>
+            <description>Mark Igra will join a panel of experts to address sustainable strategies for open source projects in clinical and translational research. Separately, Elizabeth Nelson will explore how large research consortia are using LabKey Server to overcome data challenges in this domain.</description>
+            <author>author@labkey.com (Author McAuthor)</author>
+            <category>News Releases</category>
+            <pubDate>Thu, 03 Apr 2014 21:05:51 +0000</pubDate>
+        </item>
+        <item>
+            <title>Release: LabKey Server v14.1</title>
+            <link>http://www.labkey.com/news/news-releases/17032014-360</link>
+            <guid>http://www.labkey.com/news/news-releases/17032014-360</guid>
+            <description>The LabKey team is delighted to announce the release of LabKey Server v14.1.</description>
+            <author>author@labkey.com (Author McAuthor)</author>
+            <category>News Releases</category>
+            <pubDate>Mon, 17 Mar 2014 19:49:13 +0000</pubDate>
+        </item>
+        <item>
+            <title>Article: MedCity covers the LabKey story: "Open-sourced in Seattle"</title>
+            <link>http://www.labkey.com/news/news-releases/28012014-356</link>
+            <guid>http://www.labkey.com/news/news-releases/28012014-356</guid>
+            <description>Open-sourced in Seattle: A fated collision of software talent and life science researchers.</description>
+            <author>author@labkey.com (Author McAuthor)</author>
+            <category>News Releases</category>
+            <pubDate>Tue, 28 Jan 2014 22:50:28 +0000</pubDate>
+        </item>
+        <item>
+            <title>Lecture: Josh Eckels presents at SLAS 2014, Jan 21 in San Diego</title>
+            <link>http://www.labkey.com/news/news-releases/10012014-355</link>
+            <guid>http://www.labkey.com/news/news-releases/10012014-355</guid>
+            <description>On Tuesday, January 21, Josh Eckels will present at the Informatics Special Interest Group (SIG).</description>
+            <author>author@labkey.com (Author McAuthor)</author>
+            <category>News Releases</category>
+            <pubDate>Fri, 10 Jan 2014 01:29:48 +0000</pubDate>
+        </item>
+        <item>
+            <title>Interview: Mark Igra talks with the U. Wisconsin Research Data Blog</title>
+            <link>http://www.labkey.com/news/news-releases/06012014-354</link>
+            <guid>http://www.labkey.com/news/news-releases/06012014-354</guid>
+            <description>The University of Wisconsin Research Data Blog just published a nice interview.</description>
+            <author>author@labkey.com (Author McAuthor)</author>
+            <category>News Releases</category>
+            <pubDate>Mon, 06 Jan 2014 23:24:49 +0000</pubDate>
+        </item>
+        <item>
+            <title>Release: LabKey Server v13.3</title>
+            <link>http://www.labkey.com/news/news-releases/19112013-353</link>
+            <guid>http://www.labkey.com/news/news-releases/19112013-353</guid>
+            <description>The LabKey team is delighted to announce the release of LabKey Server v13.3.</description>
+            <author>author@labkey.com (Author McAuthor)</author>
+            <category>News Releases</category>
+            <pubDate>Tue, 19 Nov 2013 21:30:52 +0000</pubDate>
+        </item>
+        <item>
+            <title>LabKey User Conference 2013: Videos now available</title>
+            <link>http://www.labkey.com/news/news-releases/12112013-352</link>
+            <guid>http://www.labkey.com/news/news-releases/12112013-352</guid>
+            <description>In these videos, guest presenters share how  they utilize the LabKey Server platform to perform collaborative and  reproducible research with globally distributed teams.</description>
+            <author>author@labkey.com (Author McAuthor)</author>
+            <category>News Releases</category>
+            <pubDate>Tue, 12 Nov 2013 01:04:32 +0000</pubDate>
+        </item>
+        <item>
+            <title>Panel: Open Science / Open Source - 10/24</title>
+            <link>http://www.labkey.com/news/news-releases/17102013-351</link>
+            <guid>http://www.labkey.com/news/news-releases/17102013-351</guid>
+            <description>Join us for Health 2.0's first panel in Seattle and a discussion of open science and open source tools for the health research.</description>
+            <author>author@labkey.com (Author McAuthor)</author>
+            <category>News Releases</category>
+            <pubDate>Thu, 17 Oct 2013 00:29:08 +0000</pubDate>
+        </item>
+    </channel>
+</rss>

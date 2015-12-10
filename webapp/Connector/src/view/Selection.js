@@ -1,241 +1,271 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Ext.define('Connector.view.Selection', {
-    extend: 'Ext.view.View',
+
+    extend: 'LABKEY.app.view.Selection',
 
     alias: 'widget.selectionview',
 
-    ui: 'custom',
+    itemSelector: 'div.filter-item',
 
-    cls: 'selectionfilter',
+    cls: 'activefilter',
 
-    itemSelector: 'div.selitem',
-
-    statics : {
-        hookButtons : function(v) {
-            //
-            // hook events for and/or selection
-            //
-            var selectEl = v.getEl().select('select');
-            if (selectEl) {
-                selectEl.on('change', function(evt, el) {
-                    var value = selectEl.elements[0].value;
-                    this.onOperatorChange(value, evt, el);
-                }, v);
-            }
-
-            //
-            // hook events for item close
-            //
-            var closes = v.getEl().select('.closeitem');
-            if (closes && Ext.isArray(closes.elements)) {
-                closes = closes.elements;
-                for (var c=0; c < closes.length; c++) {
-
-                    var el = Ext.get(closes[c]);
-                    var recordId = el.getAttribute('data-id');
-
-                    if (recordId) {
-                        var rec = v.getStore().getById(recordId);
-                        el.recid = recordId;
-
-                        var members = rec.get('members');
-                        if (members) {
-                            // listen for each member
-                            var memberIdx = el.getAttribute('member-index');
-                            el.memberIndex = memberIdx;
-                        }
-
-                        el.on('click', function(xevt, xel) { this.onRemoveClick(Ext.get(xel)); }, v);
-                    }
-                }
-            }
-        }
-    },
-
-    onRemoveClick : function(element) {
-        if (element) {
-            var store = this.getStore();
-            var rec = store.getById(element.recid);
-            if (rec) {
-                var memberIdx = parseInt(element.memberIndex);
-                if (Ext.isNumber(memberIdx)) {
-                    var members = rec.get('members');
-                    this.fireEvent('removefilter', rec.id, rec.get('hierarchy'), members[memberIdx].uname);
-                }
-                else {
-                    this.fireEvent('removefilter', rec.id);
-                }
-            }
-            else {
-                console.warn('Unable to find record for removal:', element.recid);
-            }
-        }
-        else {
-            console.warn('Unable to find element for removal');
-        }
-    },
+    loadMask: false,
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<tpl if="this.isGrid(values) == true">',
+                '<tpl if="this.isPlotSelection(values) === true || this.isTime(values) === true">',
+                    // Plot Selection Filter
+                    '<div class="filter-item">',
+                        '<div class="selitem">{[this.renderPlotSelection(values)]}</div>',
+                    '</div>',
+                    '<span class="closeitem" data-id="{id}" member-index="0">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
+                '<tpl elseif="this.isGrid(values) === true || this.isAggregated(values) === true">',
                     // Grid Filter
-                    '<div class="circle"></div>',
-                    '<div class="selitem status-over memberitem">',
-                        '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                        '{[this.renderLabel(values)]}',
+                    '<div class="filter-item">',
+                        '<div class="selitem status-over memberloc">',
+                            '<tpl if="this.isAggregated(values) === true">',
+                                '<span class="sel-label">Aggregated:</span> ',
+                            '</tpl>',
+                            '{[this.renderGridFilterLabel(values)]}',
+                        '</div>',
                     '</div>',
-                '</tpl>',
-                '<tpl if="this.isPlot(values) == true">',
-                    // Plot Filter
-                    '<div class="circle"></div>',
-                    '<div class="selitem status-over memberitem">',
-                        '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                        '{[this.renderMeasures(values)]}',
+                    '<span class="closeitem" data-id="{id}" member-index="0">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
+                '<tpl elseif="this.isPlot(values) === true">',
+                    // "In the plot" Filter
+                    '<div class="filter-item">',
+                        '<div class="selitem status-over memberloc">',
+                            '<span class="sel-label">In the plot:</span> ',
+                            '{[this.renderInThePlot(values)]}',
+                        '</div>',
                     '</div>',
-                '</tpl>',
-                '<tpl if="this.isPlot(values) == false && this.isGrid(values) == false">',
+                    '<span class="closeitem" data-id="{id}"  member-index="0">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
+                '<tpl elseif="this.isPlot(values) === false && this.isGrid(values) === false && this.isPlotSelection(values) === false">',
                     // Normal Filter (and Group Filters)
-                    '<div class="circle"></div>',
-                    '<tpl if="members.length &gt; 1">',
-                        '<div class="closeitem wholeitem" data-id="{id}"></div>',
-                        '<div class="opselect">',
-                            '<select>',
-                                '<option value="' + LABKEY.app.controller.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
-                                '<option value="' + LABKEY.app.controller.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
-                            '</select>',
-                        '</div>',
-                        '<div class="selitem sel-listing">{[this.renderType(values.members[0])]}</div>',
-                        '<tpl for="members">',
-                            '<div class="status-over memberitem collapsed-member">',
-                                '<div class="closeitem" data-id="{parent.id}" member-index="{[xindex-1]}"></div>',
-                                '{uname:this.renderUname}',
-                            '</div>',
+                    '<div class="filter-item">',
+                        '<tpl if="members.length &gt; 0">',
+                            '<div class="selitem">{[this.renderType(values)]}</div>',
+                            '<div class="sel-list-item memberloc">{members:this.renderMembers}</div>',
+                            '<tpl if="members.length &gt; 1">',
+                                '<select>',
+                                    '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>Subjects related to all (AND)</option>',
+                                    '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>Subjects related to any (OR)</option>',
+                                '</select>',
+                            '</tpl>',
                         '</tpl>',
-                    '</tpl>',
-                    '<tpl if="members.length == 1">',
-                        '<div class="selitem status-over memberitem" title="{members:this.renderMember}">',
-                            '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                            '{members:this.renderMember}',
-                        '</div>',
-                    '</tpl>',
+                    '</div>',
+                    '<span class="closeitem" data-id="{id}">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
                 '</tpl>',
             '</tpl>',
             {
-                isGrid : function(values) {
-                    return (values.isGrid ? true : false);
+                _plotGridCheck: function(values) {
+                    var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
+                    var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
+                    return { isGrid: isGrid, isPlot: isPlot };
                 },
-                isGroup : function(values) {
-                    return (Ext.isArray(values.filters) ? true : false);
+                isAggregated : function(values) {
+                    return values.hasOwnProperty('isAggregated') ? values.isAggregated : false;
+                },
+                isGrid : function(values) {
+                    var check = this._plotGridCheck(values);
+                    return check.isGrid && !check.isPlot;
                 },
                 isPlot : function(values) {
-                    return (values.isPlot ? true : false);
+                    var check = this._plotGridCheck(values);
+                    return check.isPlot && !check.isGrid;
+                },
+                isPlotSelection : function(values) {
+                    var check = this._plotGridCheck(values);
+                    return check.isPlot && check.isGrid;
+                },
+                isTime : function(values) {
+                    return values.hasOwnProperty('isTime') ? values.isTime : false;
                 },
                 selectIntersect : function(op) {
-                    return op == LABKEY.app.controller.Filter.Operators.INTERSECT ? 'selected="selected"' : '';
+                    var markup = op.indexOf('AND') > -1 ? 'selected="selected"' : '';
+                    if (op.indexOf('REQ_OR') > -1) { markup += ' disabled'; }
+                    return markup;
                 },
                 selectUnion : function(op) {
-                    return op == LABKEY.app.controller.Filter.Operators.UNION ? 'selected="selected"' : '';
+                    var markup = op.indexOf('OR') > -1 ? 'selected="selected"' : '';
+                    if (op.indexOf('REQ_AND') > -1) { markup += ' disabled'; }
+                    return markup;
                 },
-                renderType : function(member) {
-                    var u = member['uname'];
-                    var area = u[0], type = '';
+                renderType : function(values) {
+                    var lvl = values.level;
+                    var label = '';
+                    Connector.getState().onMDXReady(function(mdx) {
+                        var level = mdx.getLevel(lvl);
+                        if (level) {
+                            label = level.hierarchy.dimension.friendlyName;
 
-                    // Determine if zero level
-                    if (area.indexOf('.') == -1) {
-                        type = area;
-                    }
-                    else {
-                        var areas = area.split('.');
-                        type = areas[0];
-                        if (u.length <= 2) {
-                            type += ' (' + areas[1] + ')';
+                            // friendlyName was not overridden so compose label with lvl info
+                            if (label === level.hierarchy.dimension.singularName) {
+                                if (Ext.isDefined(level.countSingular)) {
+                                    // escape redundant dim/lvl naming (e.g. Study (Study))
+                                    if (level.countSingular.toLowerCase() !== label.toLowerCase()) {
+                                        label += ' (' + level.countSingular + ')';
+                                    }
+                                }
+                                else {
+                                    label += ' (' + level.name + ')';
+                                }
+                            }
                         }
-                    }
+                    });
 
-                    return Ext.htmlEncode(type);
+                    return '<span class="sel-label">' + Ext.htmlEncode(label) + '</span>';
                 },
-                renderUname : function(uname) {
-                    var member = uname[uname.length-1];
+                renderMembers : function(members) {
+                    var content = '',
+                        sep = '';
+                    for (var i=0; i < members.length && i < 10; i++) {
+                        content += sep + this.renderUniqueName(members[i].uniqueName);
+                        sep = ', ';
+                    }
+                    return content;
+                },
+                renderUniqueName : function(uniqueName) {
+                    var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
+                    var member = arrayName[arrayName.length-1];
                     if (member == '#null') {
                         member = 'Unknown';
                     }
                     return Ext.htmlEncode(member);
                 },
-                /**
-                 * Example of zero-level:
-                 * ["Study", "Not Actually CHAVI 001"]
-                 *
-                 * Example of single-level:
-                 * ["Assay.Methodology", "ICS"]
-                 *
-                 * Example of multi-level:
-                 * ["Assay.Methodology", "NAb", "NAb-Sample-LabKey"]
-                 */
-                renderMember : function(members) {
-                    var member = '', area = '';
-                    var levels = members[0]['uname'];
-
-                    // Determine if zero level
-                    if (levels[0].indexOf('.') == -1) {
-                        area = levels[0];
-                        member = levels[1];
-                    }
-                    else {
-                        var areas = levels[0].split('.');
-
-                        // multi-level
-                        if (levels.length > 2) {
-                            area = areas[0];
-                        }
-                        else {
-                            // single level
-                            area = areas[0] + ' (' + areas[1] + ')';
-                        }
-
-                        member = levels[levels.length-1];
-                    }
-
-                    if (member == '#null') {
-                        member = 'Unknown';
-                    }
-
-                    return Ext.htmlEncode(area + ': ' + member);
-                },
-                renderMeasures : function(values) {
-                    var label = 'In the plot: ';
-                    var measures = values.plotMeasures, sep = '';
+                renderInThePlot : function(values) {
+                    var measures = values.plotMeasures, measureLabels = [];
                     for (var i=0; i < measures.length; i++) {
-                        label += sep + measures[i].measure.label;
-                        sep = ', ';
+                        if (measures[i]) {
+                            measureLabels.push(measures[i].measure.label);
+                        }
                     }
-                    return Ext.htmlEncode(label);
+                    return Ext.htmlEncode(measureLabels.join(', '));
                 },
-                renderLabel : function(values) {
-                    var type = Connector.model.Filter.getGridHierarchy(values);
-                    return Ext.htmlEncode(type + ": " + Connector.model.Filter.getGridLabel(values));
+                renderGridFilterLabel : function(values) {
+                    var type = LABKEY.app.model.Filter.emptyLabelText;
+
+                    Ext.each(values.gridFilter, function(gf) {
+                        if (gf && gf != '_null') {
+                            // 21881: since this is presumed to be a grid filter then all
+                            // the applied filters should be the same measure/column
+                            var measure = Connector.getQueryService().getMeasure(gf.getColumnName());
+                            if (measure && Ext.isString(measure.label)) {
+                                type = measure.label;
+                            }
+                            else {
+                                type = LABKEY.app.model.Filter.getGridFilterLabel(gf);
+                            }
+
+                            return false;
+                        }
+                    });
+
+                    return Ext.htmlEncode(type) + ': ' + LABKEY.app.model.Filter.getGridLabel(values);
+                },
+                renderSelectionMeasure : function(measure, filters, isTime)
+                {
+                    var domString = '', filterValString = '', sep = '';
+
+                    if (measure && !Ext.isEmpty(filters))
+                    {
+                        Ext.each(filters, function(filter)
+                        {
+                            var val = filter.getValue(),
+                                type = filter.getFilterType(),
+                                fil = LABKEY.app.model.Filter.getShortFilter(type.getDisplayText());
+
+                            if (type.getURLSuffix() === 'dategte' || type.getURLSuffix() === 'datelte')
+                            {
+                                val = ChartUtils.tickFormat.date(val);
+                            }
+                            else if (filter.getFilterType() == LABKEY.Filter.Types.EQUALS_ONE_OF)
+                            {
+                                val = Connector.model.Filter.getFilterValuesAsArray(filter).join(';');
+                            }
+
+                            filterValString += sep + fil + ' ' + val;
+                            sep = ', ';
+                        });
+
+                        if (isTime && measure.dateOptions && measure.dateOptions.zeroDayVisitTag != null)
+                        {
+                            filterValString += ' (' + measure.dateOptions.zeroDayVisitTag + ')';
+                        }
+
+                        domString = '<div class="status-over">' + Ext.String.ellipsis(measure.measure.label, 17, true);
+                        domString += ': ' + filterValString + '</div>';
+                    }
+
+                    return domString;
+                },
+                renderPlotSelection: function(values)
+                {
+                    var measures = values.plotMeasures,
+                        filters = values.gridFilter,
+                        altFilterDisplayString = values.filterDisplayString,
+                        filter,
+                        xMeasure = measures[0],
+                        yMeasure = measures[1],
+                        xIsTime = false,
+                        xFilters = [],
+                        yFilters = [],
+                        domString, i=0;
+
+                    if (values.isTime)
+                    {
+                        i = 2;
+                        xIsTime = true;
+                        xMeasure = values.timeMeasure;
+                        xFilters = xFilters.concat(values.timeFilters);
+                    }
+
+                    // split measures into x/y based on column name
+                    for (; i < filters.length; i++)
+                    {
+                        filter = filters[i];
+                        if (filter)
+                        {
+                            if (i < 2) // [x1, x2, y1, y2]
+                            {
+                                if (xMeasure && filter.getColumnName() == xMeasure.measure.alias)
+                                {
+                                    xFilters.push(filter);
+                                }
+                            }
+                            else
+                            {
+                                if (yMeasure && filter.getColumnName() == yMeasure.measure.alias)
+                                {
+                                    yFilters.push(filter);
+                                }
+                            }
+                        }
+                    }
+
+                    if (Ext.isString(altFilterDisplayString))
+                    {
+                        domString = altFilterDisplayString;
+                    }
+                    else
+                    {
+                        domString = this.renderSelectionMeasure(xMeasure, xFilters, xIsTime);
+                        domString += this.renderSelectionMeasure(yMeasure, yFilters);
+                    }
+
+                    return domString;
                 }
             }
-    ),
-
-    listeners: {
-        viewready : function(v) {
-            Connector.view.Selection.hookButtons(v);
-        }
-    },
-
-    constructor : function(config) {
-        this.callParent([config]);
-        this.addEvents('clearhierarchy', 'operatorchange', 'removefilter');
-    },
-
-    onOperatorChange : function(value, evt, el) {
-        this.fireEvent('operatorchange', {
-            filterId: this.getStore().getAt(0).id,
-            value: value
-        });
-    }
+    )
 });

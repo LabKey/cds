@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -7,7 +7,7 @@ Ext.define('Connector.app.view.Assay', {
 
     extend : 'Ext.view.View',
 
-    itemSelector: 'div.study-detail',
+    itemSelector: 'div.detail-wrapper',
 
     statics: {
         dateRenderer : Ext.util.Format.dateRenderer("M jS, Y"),
@@ -20,14 +20,13 @@ Ext.define('Connector.app.view.Assay', {
         },
         columnHeaderTpl : new Ext.XTemplate(
             '<div class="learncolumnheader">',
-                '<div class="detail-container">',
-                    '<div class="study-description detail-header">Name</div>',
-                    '<div class="study-date detail-header">Type</div>',
-                    '<div class="study-treatments detail-header">Platform</div>',
-//                    '<div class="study-treatments detail-header">Target / Function</div>',
-                '</div>',
+                '<div class="detail-left-column">Description & Methodology</div>',
+                '<div class="detail-middle-column"># of Studies</div>',
+                '<div class="detail-end-column">Target Area</div>',
             '</div>'
-        )
+        ),
+        searchFields: ['assay_short_name', 'assay_label', 'assay_detection_platform', 'assay_method_description',
+            'assay_body_system_type', 'assay_body_system_target', 'assay_general_specimen_type']
     },
 
     tpl: new Ext.XTemplate(
@@ -35,17 +34,18 @@ Ext.define('Connector.app.view.Assay', {
             '{[ Connector.app.view.Assay.columnHeaderTpl.apply(values) ]}',
         '</tpl>',
         '<tpl for=".">',
-            '<div class="detail-wrapper">',
-                '<div class="detail-container study-detail">',
-                    '<div class="study-description">',
-                        '<h2>{Id}</h2>',
-                        '<div class="description-text">{Description}</div>',
+            '<div class="detail-container">',
+                '<div class="detail-wrapper">',
+                    '<div class="detail-left-column detail-description">',
+                        '<h2>{assay_short_name:htmlEncode} ({assay_label:htmlEncode})</h2>',
+                        '<div class="detail-description-text">{assay_description:htmlEncode}</div>',
                     '</div>',
-                    '<div class="study-date">',
-                        '<span class="startdate-text">{Type}</span>',
-                        '<span class="enddate-text">{SystemTarget}</span>',
+                    '<div class="detail-middle-column detail-text">',
+                        '<div class="detail-gray-text">{study_count}</div>',
                     '</div>',
-                    '<div class="study-treatments"><span style="color: black;">{Platform}</span> focusing on <span style="color: black;">{Target}</span>  for <span style="color: black;">{TargetFunction}</span></div>',
+                   '<div class="detail-right-column detail-text">',
+                        '<div class="detail-gray-text">{assay_body_system_type:htmlEncode}: {assay_body_system_target:htmlEncode} and {assay_general_specimen_type:htmlEncode}</div>',
+                    '</div>',
                 '</div>',
             '</div>',
         '</tpl>',

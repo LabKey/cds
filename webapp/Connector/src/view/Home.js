@@ -1,79 +1,76 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Ext.define('Connector.view.Home', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Ext.container.Container',
 
     alias: 'widget.home',
 
-    homeHeaderHeight: 161,
+    homeHeaderHeight: 180,
 
-    initComponent : function() {
+    ui: 'custom',
 
+    initComponent : function()
+    {
         this.items = [
-            this.getHeader(),
+            { xtype: 'homeheader' },
             this.getBody()
         ];
 
         this.callParent();
     },
 
-    getHeader : function() {
-        return Ext.create('Connector.view.HomeHeader', {
-            height: this.homeHeaderHeight
-        });
-    },
-
-    getBody : function() {
-        return Ext.create('Connector.view.HomeBody', {
-            items: [{
-                xtype: 'grouplist'
-            }]
-        });
-    }
-});
-
-Ext.define('Connector.view.HomeHeader', {
-
-    extend : 'Ext.container.Container',
-
-    layout: {
-        type : 'hbox',
-        align: 'stretch'
-    },
-
-    cls: 'dimensionview',
-
-    defaults: {
-        ui: 'custom',
-        flex: 1
-    },
-
-    initComponent : function() {
-
-        this.items = [
+    getBody : function()
+    {
+        if (!this.content)
+        {
+            this.resizeTask = new Ext.util.DelayedTask(function(c)
             {
-                xtype: 'box',
-                autoEl: {
-                    tag: 'div',
-                    cls: 'titlepanel',
-                    html: '<h1>Welcome to the HIV Vaccine Data Connector.</h1>'
-                }
+                c.setHeight(this.getHeight() - this.homeHeaderHeight);
+            }, this);
+
+            var items = [{
+                xtype: 'cds-news'
+            }];
+
+            if (Connector.getProperty(Connector.component.Started.DISMISS_PROPERTY) === true)
+            {
+                items.unshift({
+                    xtype: 'cds-started',
+                    cls: 'bottom-spacer-xlg'
+                });
             }
-        ];
 
-        this.callParent();
-    }
-});
+            this.content = Ext.create('Ext.container.Container', {
+                plugins: ['messaging'],
+                cls: 'left-spacer',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch',
+                    pack: 'start'
+                },
+                items: [{
+                    xtype: 'grouplist'
+                },{
+                    xtype: 'container',
+                    cls: 'left-spacer-lg',
+                    flex: 1,
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    items: items,
+                    listeners: {
+                        resize: function(c)
+                        {
+                            this.resizeTask.delay(200, undefined, undefined, [c]);
+                        },
+                        scope: this
+                    }
+                }]
+            });
+        }
 
-Ext.define('Connector.view.HomeBody', {
-    extend: 'Ext.container.Container',
-
-    margin: '0 0 0 27',
-
-    layout: {
-        type: 'vbox'
+        return this.content;
     }
 });

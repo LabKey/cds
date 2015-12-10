@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -12,34 +12,106 @@ Ext.define('Connector.view.FilterStatus', {
 
     ui: 'custom',
 
-    padding: '20 20 0 20',
+    cls: 'filterstatus',
 
     initComponent : function() {
         this.items = [
-            this.getFilterPanel(),
-            this.getSelectionPanel()
+            this.getFilterHeader(),
+            this.getEmptyText(),
+            this.getFilterContent()
         ];
 
         this.callParent();
+
+        this.attachInternalListeners();
+    },
+
+    attachInternalListeners : function() {
+
+        this.resizeTask = new Ext.util.DelayedTask(function() {
+            this.resizeMessage();
+        }, this);
+
+        Ext.EventManager.onWindowResize(function() {
+            this.resizeTask.delay(150);
+        }, this);
+    },
+
+    getFilterHeader : function() {
+
+        //
+        // If filters or selections are present then we show the buttons (== !hidden)
+        //
+        var hidden = !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0);
+
+        return {
+            xtype: 'container',
+            itemId: 'filterheader',
+            ui: 'custom',
+            layout: {
+                type: 'hbox'
+            },
+            items: [{
+                xtype: 'box',
+                cls: 'filterpanel-header',
+                tpl: new Ext.XTemplate(
+                    '<h2 class="filterheader-text section-title">{title:htmlEncode}</h2>'
+                ),
+                data: {
+                    title: 'Active filters'
+                }
+            },{
+                xtype: 'container',
+                flex: 1
+            },{
+                xtype: 'button', 
+                text: 'clear',
+                ui: 'rounded-small',
+                cls: 'filter-hdr-btn filterclear' /* for tests */,
+                itemId: 'clear',
+                hidden: hidden
+            },{
+                xtype: 'button', 
+                text: 'save', 
+                ui: 'rounded-inverted-accent-small', 
+                cls: 'filter-hdr-btn filtersave' /* for tests */, 
+                itemId: 'savegroup', hidden: hidden
+            }]
+        };
+    },
+
+    getEmptyText : function() {
+        if (!this.emptyText) {
+            this.emptyText = Ext.create('Ext.Component', {
+                tpl: new Ext.XTemplate('<div class="emptytext">All subjects</div>'),
+                data: {}
+            });
+        }
+        return this.emptyText;
+    },
+
+    getFilterContent : function() {
+        if (!this.filterContent) {
+            this.filterContent = Ext.create('Ext.Container', {
+                cls: 'filterstatus-content',
+                hidden: !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0),
+                items: [
+                    this.getFilterPanel(),
+                    this.getSelectionPanel()
+                ]
+            });
+        }
+
+        return this.filterContent;
     },
 
     getFilterPanel : function() {
-
         if (this.filterpanel) {
             return this.filterpanel;
         }
 
-        //
-        // If filters are present then we show the buttons (== !hidden)
-        //
-        var hidden = !(this.filters && this.filters.length > 0);
-
         this.filterpanel = Ext.create('Connector.panel.FilterPanel', {
-            title: 'Active filters',
-            headerButtons: [
-                { xtype: 'button', text: 'save', cls: 'filtersave',  ui: 'rounded-inverted-accent', itemId: 'savegroup', style: 'margin: 4px 2px 0 35px;', hidden: hidden},
-                { xtype: 'button', text: 'clear', cls: 'filterclear', ui: 'rounded-inverted-accent', itemId: 'clear', style: 'margin: 4px 2px 0 2px;', hidden: hidden}
-            ],
+            id: 'filter-panel',
             filters: this.filters
         });
 
@@ -47,52 +119,43 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     getSelectionPanel : function() {
-        if (this.selectionpanel)
+        if (this.selectionpanel) {
             return this.selectionpanel;
+        }
 
         this.selectionpanel = Ext.create('Connector.panel.Selection', {
-            tbarButtons : [
-                // 8pt font sizes
-//                { text: 'use as filter', itemId: 'overlap', ui : 'rounded-inverted-accent', width: 85 },
-//                { text: 'label as subgroup', itemId: 'subgroup', ui : 'rounded-inverted-accent', width: 123 },
-//                { text: 'clear', itemId: 'sClear', ui : 'rounded-inverted-accent', width: 45 }
-                // 7pt font sizes
-                { text: 'use as filter', itemId: 'overlap', ui : 'rounded-inverted-accent', width: 80 },
-                { text: 'label as subgroup', itemId: 'subgroup', ui : 'rounded-inverted-accent', width: 107 },
-                { text: 'clear', cls: 'selectionclear', itemId: 'sClear', ui : 'rounded-inverted-accent', width: 45 }
-            ],
+            id: 'selection-panel',
             filters: this.selections
         });
 
         return this.selectionpanel;
     },
 
-    onFilterChange : function(filters) {
-        this.hideMessage(true);
+    // This is called when the filter count changes, as well as when the filters change
+    onFilterCount : function(filters) {
         if (this.filterpanel) {
             this.filterpanel.loadFilters(filters);
-
-            var saveBtn = this.filterpanel.query('container > #savegroup')[0];
-            var clrBtn = this.filterpanel.query('container > #clear')[0];
-
-            if (filters.length == 0) {
-                saveBtn.hide();
-                clrBtn.hide();
-            }
-            else {
-                saveBtn.show();
-                clrBtn.show();
-            }
+            this.checkButtons();
         }
     },
 
-    onFilterRemove : function(filters) {
+    //23658 - Don't remove undo message when applying filter removal to plot.
+    onFilterChange : function(filters) {
+        this.hideMessage(true);
+        this.onFilterCount(filters)
+    },
+
+    onFilterRemove : function() {
         this.showUndoMessage();
     },
 
-    showUndoMessage : function() {
+    showUndoMessage : function(msg) {
         var id = Ext.id();
-        this.showMessage('Filter removed. <a id="' + id + '">Undo</a>', true, true);
+        if (msg)
+            this.showMessage(msg + ' <a id="' + id + '">Undo</a>', true, true);
+        else
+            this.showMessage('Filter removed. <a id="' + id + '">Undo</a>', true, true);
+
         var undo = Ext.get(id);
         if (undo) {
             undo.on('click', this.onUndo, this, {single: true});
@@ -100,13 +163,67 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     onSelectionChange : function(selections, opChange) {
+        this.hideMessage(true);
         this.selections = selections;
-        if (!opChange && this.selectionpanel)
+        if (!opChange && this.selectionpanel) {
             this.selectionpanel.loadFilters(selections);
+
+            // update the filter panel here
+            var filterPanel = this.getFilterPanel();
+            if (filterPanel) {
+                filterPanel.onSelectionChange(selections);
+                this.checkButtons();
+            }
+        }
+    },
+
+    checkButtons : function() {
+
+        var filters = Connector.getState().getFilters();
+        var selections = Connector.getState().getSelections();
+
+        var filterHeader = this.getComponent('filterheader');
+        var headerText = Ext.get(Ext.DomQuery.select('.filterheader-text')[0]);
+
+        var saveBtn = filterHeader.query('#savegroup')[0];
+        var clrBtn = filterHeader.query('#clear')[0];
+
+        var filterContent = this.getFilterContent();
+        var emptyText = this.getEmptyText();
+
+        if (filters.length == 0 && selections.length == 0) {
+            headerText.replaceCls('section-title-filtered', 'section-title');
+            emptyText.show();
+            filterContent.hide();
+            saveBtn.hide();
+            clrBtn.hide();
+        }
+        else {
+            headerText.replaceCls('section-title', 'section-title-filtered');
+            emptyText.hide();
+            filterContent.show();
+            saveBtn.show();
+            clrBtn.show();
+        }
     },
 
     onUndo : function() {
         this.fireEvent('requestundo');
         this.hideMessage(true);
+    },
+
+    onBeforeViewChange : function() {
+        if (Connector.getState().hasSelections()) {
+            this.undoMsg = "Selection applied as filter.";
+            Connector.getState().moveSelectionToFilter();
+        }
+    },
+
+    onAfterViewChange : function() {
+        this.hideMessage(true);
+        if (this.undoMsg) {
+            this.showUndoMessage(this.undoMsg);
+            delete this.undoMsg;
+        }
     }
 });

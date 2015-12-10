@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -7,7 +7,9 @@ Ext.define('Connector.app.view.Study', {
 
     extend : 'Ext.view.View',
 
-    itemSelector: 'div.study-detail',
+    itemSelector: 'div.detail-wrapper',
+
+    cls: 'learnstudies',
 
     statics: {
         dateRenderer : Ext.util.Format.dateRenderer("M jS, Y"),
@@ -20,13 +22,15 @@ Ext.define('Connector.app.view.Study', {
         },
         columnHeaderTpl : new Ext.XTemplate(
             '<div class="learncolumnheader">',
-                '<div class="detail-container">',
-                    '<div class="study-description detail-header">Description</div>',
-                    '<div class="study-date detail-header">Start Date</div>',
-                    '<div class="study-treatments detail-header">Treatments</div>',
-                '</div>',
+                '<div class="detail-left-column">Description</div>',
+                '<div class="detail-middle-column">Start Date</div>',
+                '<div class="detail-end-column">Products</div>',
             '</div>'
-        )
+        ),
+        searchFields: [
+            'label', 'type', 'description',
+            {field: 'products', value: 'product_name', emptyText: 'No related products'}
+        ]
     },
 
     tpl: new Ext.XTemplate(
@@ -34,23 +38,49 @@ Ext.define('Connector.app.view.Study', {
             '{[ Connector.app.view.Study.columnHeaderTpl.apply(values) ]}',
         '</tpl>',
         '<tpl for=".">',
-            '<div class="detail-wrapper">',
-                '<div class="detail-container study-detail">',
-                    '<div class="study-description">',
-                        '<h2 class="name-text">{StudyName:htmlEncode}</h2>',
-                        '<tpl if="Phase && Phase.length &gt; 0">',
-                            '<span class="phase-text">Phase {Phase:htmlEncode}</span>',
+            '<div class="detail-container">',
+                '<div class="detail-wrapper">',
+                    '<div class="detail-left-column detail-description">',
+                        '<h2>{label:htmlEncode}</h2>',
+                        '<tpl if="species && species.length &gt; 0">',
+                            '<span class="detail-type-text">{species:htmlEncode}</span>',
                         '</tpl>',
-                        '<div class="description-text">{Description:htmlEncode}</div>',
+                        '<div class="detail-description-text">{description}</div>', // allow html
                     '</div>',
-                    '<div class="study-date">',
-                        '<span class="startdate-text">{StartDate:this.renderDate}</span>',
-                        '<tpl if="EndDate">',
-                            '<span class="enddate-text">to {EndDate:this.renderDate}</span>',
-                            '<span class="date-diff-text">{[this.monthDiff(values.StartDate, values.EndDate)]} months in duration</span>',
+                    '<div class="detail-middle-column detail-text">',
+                        '<tpl if="first_enr_date || followup_complete_date">',
+                            '<tpl if="first_enr_date && followup_complete_date">',
+                                '<div class="detail-black-text">{first_enr_date:this.renderDate}</div>',
+                                '<div class="detail-gray-text">to {followup_complete_date:this.renderDate}</div>',
+                                '<div class="detail-gray-text">{[this.monthDiff(values.first_enr_date, values.followup_complete_date)]} months in duration</div>',
+                            '<tpl elseif="first_enr_date">',
+                                '<div class="detail-black-text">Began {first_enr_date:this.renderDate}</div>',
+                            '<tpl elseif="followup_complete_date">',
+                                '<div class="detail-gray-text">Ended {followup_complete_date:this.renderDate}</div>',
+                            '</tpl>',
+                        '<tpl elseif="start_date || public_date">',
+                            '<tpl if="start_date && public_date">',
+                                '<div class="detail-black-text">{start_date:this.renderDate}</div>',
+                                '<div class="detail-gray-text">to {public_date:this.renderDate}</div>',
+                                '<div class="detail-gray-text">{[this.monthDiff(values.start_date, values.public_date)]} months in duration</div>',
+                            '<tpl elseif="start_date">',
+                                '<div class="detail-black-text">Began {start_date:this.renderDate}</div>',
+                            '<tpl elseif="public_date">',
+                                '<div class="detail-gray-text">Ended {public_date:this.renderDate}</div>',
+                            '</tpl>',
                         '</tpl>',
                     '</div>',
-                    '<div class="study-treatments">{Treatments}</div>',
+                    '<div class="detail-right-column detail-text">',
+                        '<ul>',
+                            '<tpl if="products.length &gt; 0">',
+                                '<tpl for="products">',
+                                    '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
+                                '</tpl>',
+                            '<tpl else>',
+                                '<li class="detail-gray-text">No related products</li>',
+                            '</tpl>',
+                        '</ul>',
+                    '</div>',
                 '</div>',
             '</div>',
         '</tpl>',
@@ -70,8 +100,8 @@ Ext.define('Connector.app.view.Study', {
         // Continue to show the column headers even when no data is present
         //
         this.emptyText = new Ext.XTemplate(
-                Connector.app.view.Study.columnHeaderTpl.apply({}),
-                '<div class="detail-container"><div class="saeempty">None of the selected studies have data for this category.</div></div>'
+            Connector.app.view.Study.columnHeaderTpl.apply({}),
+            '<div class="detail-container"><div class="saeempty">None of the selected studies have data for this category.</div></div>'
         ).apply({});
 
         this.callParent();

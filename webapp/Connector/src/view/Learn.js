@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -11,112 +11,284 @@ Ext.define('Connector.view.Learn', {
 
     requires : ['Connector.model.Dimension'],
 
-    cls: 'learnview',
+    cls: 'learnview auto-scroll-y',
 
-    bubbleEvents: ['selectdimension'],
+    /**
+     * Allows for search to do a depth search on properties that are setup. Example
+     * ['label', 'type', 'description', {field: 'products', value: 'product_name'}]
+     * where 'products' is a depth search that iterates across the 'products' and matches
+     * against 'product_name'.
+     * Since this could be an expensive operation it can be turned off with this flag.
+     */
+    allowNestedSearch: true,
 
     initComponent : function() {
 
-        this.items = [ this.getHeader() ];
+        this.headerViews = {};
+        this.listViews = {};
+
+        // Multiple headers are added here but they are initially set to hidden. When the page
+        // url changes the headers will be updated and made visible based on the type of view -
+        // parent learn view or study/assay detail page etc
+        this.items = [this.getHeader()];
 
         this.callParent();
     },
 
     getHeader : function() {
-        if (!this.headerView) {
-            this.headerView = Ext.create('Connector.view.LearnHeader', {
+        if (!this.headerViews.main) {
+            this.headerViews.main = Ext.create('Connector.view.LearnHeader', {
                 dimensions: this.getDimensions(),
-
-                // TODO: This should be bubblable but the this.control() in the controller
-                // does not seem to respect bubbled events
+                hidden: true,
+                cls: 'learnheader',
                 listeners: {
-                    selectdimension: function(model) {
-                        this.fireEvent('selectdimension', model);
-                    },
+                    searchchanged: this.onSearchFilterChange,
                     scope: this
                 }
             });
         }
-        return this.headerView;
+        return this.headerViews.main;
     },
 
-    onFilterChange : function(filters) {
-        this.loadData(this.dataView);
-    },
-
-    loadData : function(view) {
-
-        if (view && view.dimension) {
-            this.state.onMDXReady(function(mdx) {
-                var hierarchy = view.dimension.getHierarchies()[0];
-                var config = {
-                    onRows: [{hierarchy: hierarchy.getName(), member: 'members'}],
-                    useNamedFilters: ['statefilter'],
-                    success: function(slice) {
-                        if (view && view.getStore())
-                            view.getStore().loadSlice(slice);
-                    },
-                    scope: this
-                };
-                mdx.query(config);
-
-            }, this);
+    onSearchFilterChange : function(filter) {
+        if (Ext.isString(filter)) {
+            this.searchFilter = filter;
+            if (this.activeListing) {
+                var view = this.activeListing;
+                this.loadData(view.dimension, view.getStore());
+            }
         }
     },
 
-    loadDataView : function(dimension, animate) {
+    dimensionDataLoaded : function(dimension, store) {
+        store.clearFilter();
 
-        if (this.dataView) {
-            this.state.un('filterchange', this.onFilterChange, this);
-            var el = this.dataView.getEl();
-            if (animate && el) {
-                el.fadeOut({
-                    callback: function() {
-                        this.remove(this.dataView);
-                        this.dataView = undefined;
-                        this.completeLoad(dimension, animate);
-                    },
-                    scope: this
+        if (!Ext.isEmpty(this.searchFilter)) {
+
+            var fields = this.searchFields || [],
+                regex = new RegExp(LABKEY.Utils.escapeRe(this.searchFilter), 'i'),
+                allowNestedSearch = this.allowNestedSearch === true;
+
+            store.filterBy(function(model) {
+                var match = false,
+                    value;
+                Ext.each(fields, function(field) {
+                    if (Ext.isString(field)) {
+                        value = model.get(field);
+
+                        if (regex.test(value)) {
+                            match = true;
+                        }
+                    }
+                    else if (allowNestedSearch && Ext.isObject(field)) {
+                        value = model.get(field.field);
+                        if (Ext.isArray(value)) {
+                            if (Ext.isEmpty(value) && Ext.isString(field.emptyText)) {
+                                if (regex.test(field.emptyText)) {
+                                    match = true;
+                                }
+                            }
+                            else {
+                                for (var i=0; i < value.length; i++) {
+                                    if (regex.test(value[i][field.value])) {
+                                        match = true;
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 });
+                return match;
+            });
+        }
+    },
+
+    loadData : function(dimension, store) {
+        if (dimension) {
+            var hierarchy = dimension.getHierarchies()[0],
+                dimensionName = hierarchy.getName();
+
+            if (!this.dimensionDataLoaded[dimensionName]) {
+                Connector.getState().onMDXReady(function(mdx) {
+                    mdx.query({
+                        onRows: [{
+                            hierarchy: hierarchy.getName(),
+                            member: 'members'
+                        }],
+                        success: function(slice) {
+                            if (store) {
+                                store.loadSlice(slice);
+                            }
+                            this.dimensionDataLoaded[dimensionName] = true;
+                            this.dimensionDataLoaded(dimension, store);
+                        },
+                        scope: this
+                    });
+                }, this);
             }
             else {
-                this.remove(this.dataView);
-                this.dataView = undefined;
-                this.completeLoad(dimension, animate);
+                this.dimensionDataLoaded(dimensionName, store);
             }
         }
         else {
-            this.completeLoad(dimension, animate);
+            console.warn(this.className + '.loadData() unable to find dimension:', dimension);
         }
     },
 
-    completeLoad : function(dimension, animate) {
+    setHeader : function(dimension, id) {
+        this.getHeader().setVisible(id ? false : true);
+    },
 
-        if (dimension && dimension.detailModel && dimension.detailView) {
+    loadDataView : function(dimension, id, urlTab) {
 
-            this.dataView = Ext.create(dimension.detailView, {
-                dimension: dimension,
-                store: Ext.create(dimension.detailCollection, {
-                    model: dimension.detailModel
-                }),
-                plugins: ['learnheaderlock']
-            });
-            this.add(this.dataView);
-            this.loadData(this.dataView);
+        this.setHeader(dimension, id);
 
-            this.state.on('filterchange', this.onFilterChange, this);
+        // do not hide the header
+        if (this.items.length > 1) {
+            for (var i=1; i < this.items.items.length; i++) {
+                this.items.items[i].hide();
+            }
         }
-        else if (!Ext.isDefined(dimension)) {
+
+        this.completeLoad(dimension, id, urlTab);
+    },
+
+    completeLoad : function(dimension, id, urlTab) {
+
+        if (Ext.isDefined(dimension)) {
+            var store, _id = id;
+
+            // If we have an id we are loading the details for that id
+            if (Ext.isDefined(id) && dimension.itemDetail) {
+                store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
+
+                // coerce the id's type, this 'id' is possibly coming from the URL context
+                if (Ext.isNumber(parseInt(id))) {
+                    _id = parseInt(id);
+                }
+
+                var model = store.getById(_id) || this.resolveModel(store, _id);
+
+                if (model) {
+                    this.loadModel(model, dimension, urlTab);
+                }
+                else {
+                    if (!store.isLoading() && store.getCount() > 0) {
+                        Connector.getApplication().getController('Connector').showNotFound();
+                    }
+                    else {
+                        store.on('load', function(s) {
+                            var _model = s.getById(_id) || this.resolveModel(s, _id);
+                            if (_model) {
+                                this.loadModel(_model, dimension, urlTab);
+                            }
+                            else {
+                                Connector.getApplication().getController('Connector').showNotFound();
+                            }
+                        }, this, {single: true});
+                    }
+                    this.loadData(dimension, store);
+                }
+            }
+            else if (dimension.detailModel && dimension.detailView) {
+                // otherwise, show the listing
+                var listId = 'learn-list-' + dimension.uniqueName;
+
+                // listView -- cache hit
+                if (this.listViews[listId]) {
+                    this.getComponent(listId).show();
+                }
+                else {
+                    // listView -- cache miss, create the view
+                    store = StoreCache.getStore(dimension.detailCollection);
+
+                    this.add(Ext.create(dimension.detailView, {
+                        itemId: listId,
+                        dimension: dimension,
+                        store: store
+                        //plugins: ['learnheaderlock'],
+                    }));
+
+                    this.listViews[listId] = true;
+                    this.loadData(dimension, store);
+                }
+
+                this.activeListing = this.getComponent(listId);
+            }
+            else {
+                console.warn('Dimension \"' + dimension.getUniqueName() + '\" is marked as \'supportsDetails\'. It must provide itemDetail or detailModel and detailView configurations.');
+            }
+        }
+        else {
             //
             // See which one the header is respecting
             //
-            if (this.headerView) {
-                var dimModel = this.getHeader().getHeaderView().getStore().getAt(0);
-                if (dimModel && dimModel.get('detailModel') && dimModel.get('detailView')) {
-                    this.loadDataView(dimModel.data);
-                }
+            var dimModel = this.getHeader().getHeaderView().getStore().getAt(0);
+            if (dimModel && dimModel.get('detailModel') && dimModel.get('detailView')) {
+                this.loadDataView(dimModel.data);
             }
         }
+    },
+
+    resolveModel : function(store, id) {
+        var delimiter = Connector.getService('Learn').URL_DELIMITER;
+        if (Ext.isString(id) && id.indexOf(delimiter) != -1) {
+            var _id = id.split(delimiter),
+                    prop = _id[0],
+                    val = Ext.isNumber(parseInt(_id[1])) ? parseInt(_id[1]) : _id[1],
+                    data = store.data.items,
+                    ret = [];
+
+            for (var i = 0; i < data.length; i++) {
+                if (ret.length < 2 && data[i].get(prop) === val) {
+                    ret.push(data[i]);
+                }
+            }
+
+            if (ret.length === 1) {
+                return ret[0];
+            }
+        }
+    },
+
+    loadModel : function(model, dimension, urlTab) {
+        var tabViews = [];
+        Ext.each(dimension.itemDetail, function(item) {
+            if (item.view) {
+                tabViews.push(Ext.create(item.view, {
+                    model: model,
+                    modules: item.modules
+                }));
+            }
+        });
+
+        var activeTab = 0;
+        if (!Ext.isEmpty(dimension.itemDetailTabs)) {
+            Ext.each(dimension.itemDetailTabs, function(tab, i) {
+                if (tab.url === urlTab) {
+                    activeTab = i;
+                    return false;
+                }
+                else if (tab.isDefault === true) {
+                    activeTab = i;
+                }
+            });
+        }
+
+        var pageView = Ext.create('Connector.view.Page', {
+            pageID: 'learnDetail' + dimension.singularName,
+            contentViews: tabViews,
+            initialSelectedTab: activeTab,
+            header: Ext.create('Connector.view.PageHeader', {
+                title: model.get(model.labelProperty ? model.labelProperty : 'label'),
+                model: model,
+                dimension: dimension,
+                activeTab: activeTab
+            })
+        });
+
+        this.add(pageView);
     },
 
     getDimensions : function() {
@@ -128,28 +300,39 @@ Ext.define('Connector.view.Learn', {
         this.getHeader().setDimensions(dimensions);
     },
 
-    selectDimension : function(dimension, animate) {
+    // TODO: Move this to cube.js or hang the search fields on the model definitions themselves
+    viewByDimension : {
+        'Assay' : 'Assay',
+        'Study' : 'Study',
+        'Lab' : 'Labs',
+        'Study product' : 'StudyProducts'
+    },
+
+    selectDimension : function(dimension, id, urlTab) {
+        this.searchFilter = undefined;
+        this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
 
         if (dimension) {
-            this.loadDataView(dimension, animate);
+            this.loadDataView(dimension, id, urlTab);
         }
         else {
-            if (this.headerView) {
-                this.headerView.on('selectdimension', this.loadDataView, this, {single: true});
-            }
+            this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
-        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined);
+        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension);
     }
 });
 
+
 Ext.define('Connector.view.LearnHeader', {
 
-    extend : 'Ext.container.Container',
+    extend: 'Ext.container.Container',
 
-    height: 136,
+    alias: 'widget.learnheader',
 
-    cls: 'learnheader',
+    height: 180,
+
+    cls: 'header-container learnaboutheader',
 
     defaults: {
         ui: 'custom',
@@ -158,56 +341,75 @@ Ext.define('Connector.view.LearnHeader', {
 
     initComponent : function() {
 
-        this.items = [
-            {
-                xtype: 'box',
-                autoEl: {
-                    tag: 'div',
-                    cls: 'titlepanel',
-                    html: '<span>Learn About...</span>'
-                }
-            },{
-                xtype: 'container',
-                itemId: 'dataviewcontainer',
-                cls: 'learn-header-container',
-                items: [{
-                    xtype: 'learnheaderdataview',
-                    itemId: 'headerdataview',
-                    dimensions: this.dimensions
-                }]
-            }
-        ];
+        this.items = [{
+            xtype: 'actiontitle',
+            text: 'Learn about...'
+        },{
+            xtype: 'container',
+            items: [this.getDataView(), this.getSearchField()]
+        }];
 
         this.callParent();
 
-        this.addEvents('selectdimension');
+        this.addEvents('selectdimension', 'searchchanged');
+    },
 
-        //
-        // Only classes inherited from Ext.container.AbstractContainer can bubble events
-        // For the header view this view should bubble the following events
-        // itemclick
-        //
-        this.getHeaderView().on('itemclick', function(view, model, el, idx) {
-            this.fireEvent('selectdimension', model);
-        }, this);
-        this.getHeaderView().on('fakeitemclick', function(view, model, el, idx) {
-            this.fireEvent('selectdimension', model);
-        }, this);
+    getDataView : function() {
+        if (!this.headerDataView) {
+            this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
+                cls: 'dim-selector',
+                dimensions: this.dimensions,
+                store: Ext.create('Ext.data.Store', {
+                    model: 'Connector.model.Dimension',
+                    proxy: {
+                        type: 'memory',
+                        reader: {
+                            type: 'json',
+                            root: 'dimensions'
+                        }
+                    }
+                })
+            });
+            this.headerDataView.on({
+                itemclick: function(view, model) {
+                    this.fireEvent('selectdimension', model);
+                },
+                requestselect : function(model) {
+                    this.fireEvent('selectdimension', model, true);
+                },
+                scope: this
+            });
+        }
+        return this.headerDataView;
+    },
+
+    getSearchField : function() {
+        if (!this.searchField) {
+            this.searchField = Ext.create('Ext.form.field.Text', {
+                emptyText: 'Search',
+                cls: 'learn-search-input',
+                checkChangeBuffer: 500,
+                validator: Ext.bind(function(value) {
+                    this.fireEvent('searchchanged', value);
+                    return true;
+                }, this)
+            });
+        }
+        return this.searchField;
     },
 
     setDimensions : function(dimensions) {
         this.dimensions = dimensions;
-        this.getHeaderView().setDimensions(dimensions);
+        this.getDataView().setDimensions(dimensions);
     },
 
-    getHeaderView : function() {
-        return this.getComponent('dataviewcontainer').getComponent('headerdataview');
-    },
-
-    selectDimension : function(dimUniqueName) {
-        if (this.dimensions && this.dimensions.length > 0) {
-            this.getHeaderView().selectDimension(dimUniqueName);
+    selectDimension : function(dimUniqueName, id, dimension) {
+        if (!Ext.isEmpty(this.dimensions)) {
+            this.getDataView().selectDimension(dimUniqueName);
         }
+        var search = this.getSearchField();
+        search.emptyText = 'Search ' + dimension.pluralName.toLowerCase();
+        search.setValue('');
     }
 });
 
@@ -229,23 +431,14 @@ Ext.define('Connector.view.LearnHeaderDataView', {
     selectInitialDimension: false,
 
     tpl: new Ext.XTemplate(
-            '<tpl for=".">',
-            '<h1 class="lhdv">{pluralName}</h1>',
-            '</tpl>'
+        '<tpl for=".">',
+            '<h1 class="lhdv">{pluralName:htmlEncode}</h1>',
+        '</tpl>'
     ),
 
     initComponent : function() {
 
-        this.store = Ext.create('Ext.data.Store', {
-            model: 'Connector.model.Dimension',
-            proxy: {
-                type: 'memory',
-                reader: {
-                    type: 'json',
-                    root: 'dimensions'
-                }
-            }
-        });
+        this.addEvents('requestselect');
 
         this.callParent();
 
@@ -309,7 +502,7 @@ Ext.define('Connector.view.LearnHeaderDataView', {
 
     _select : function(model) {
         this.getSelectionModel().select(model);
-        this.fireEvent('fakeitemclick', this, model);
+        this.fireEvent('requestselect', model);
     }
 });
 
@@ -390,12 +583,14 @@ Ext.define('Connector.view.Learn.plugin.HeaderLock', {
         // unregister
         var EM = Ext.EventManager;
         EM.un(window, 'resize', this.onResize, this);
-        EM.un(this.elements.view, 'scroll', this.onScroll, this);
+        if (this.elements) {
+            EM.un(this.elements.view, 'scroll', this.onScroll, this);
 
-        // clear
-        this.elements.lock = null;
-        this.elements.header = null;
-        this.elements.view = null;
+            // clear
+            this.elements.lock = null;
+            this.elements.header = null;
+            this.elements.view = null;
+        }
     },
 
     update : function() {

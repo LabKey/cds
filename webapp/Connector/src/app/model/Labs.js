@@ -8,7 +8,7 @@ Ext.define('Connector.app.model.Labs', {
     extend : 'Ext.data.Model',
 
     fields: [
-        {name: 'Id'},
+        {name: 'Name'},
         {name: 'PI'},
         {name: 'Institution'},
         {name: 'Location'},

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etl xmlns="http://labkey.org/etl/xml">
+    <name>Load CDS Application Tables</name>
+    <description>Populate tables used to drive the Dataspace application</description>
+    <transforms>
+        <transform id="ClearMappingTables" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.ClearMappingTask">
+            </taskref>
+        </transform>
+        <transform id="PopulateStudies" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateStudiesTask">
+            </taskref>
+        </transform>
+        <transform id="PopulateVisits" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateStudyVisitTask">
+            </taskref>
+        </transform>
+        <transform id="PopulateLab" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_lab" />
+            <destination schemaName="cds" queryName="lab" targetOption="truncate"/>
+        </transform>
+        <transform id="PopulateDemographics" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="cds"/>
+                    <setting name="sourceQuery" value="ds_demographics"/>
+                    <setting name="targetDataset" value="Demographics" />
+                </settings>
+            </taskref>
+        </transform>
+        <transform id="PopulateICS" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="cds"/>
+                    <setting name="sourceQuery" value="ds_ics"/>
+                    <setting name="targetDataset" value="ICS" />
+                </settings>
+            </taskref>
+        </transform>
+        <transform id="PopulateNAB" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="cds"/>
+                    <setting name="sourceQuery" value="ds_nab"/>
+                    <setting name="targetDataset" value="NAb" />
+                </settings>
+            </taskref>
+        </transform>
+        <transform id="PopulateELISpot" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="cds"/>
+                    <setting name="sourceQuery" value="ds_elispot"/>
+                    <setting name="targetDataset" value="ELISPOT" />
+                </settings>
+            </taskref>
+        </transform>
+        <transform id="PopulateBAMA" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="cds"/>
+                    <setting name="sourceQuery" value="ds_bama"/>
+                    <setting name="targetDataset" value="BAMA" />
+                </settings>
+            </taskref>
+        </transform>
+        <transform id="PopulateAssay" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateAssayTask">
+            </taskref>
+        </transform>
+        <transform id="PopulateICSAntigen" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_icsantigen" />
+            <destination schemaName="cds" queryName="ICSAntigen" targetOption="truncate" />
+        </transform>
+        <transform id="PopulateNAbAntigen" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_nabantigen" />
+            <destination schemaName="cds" queryName="NAbAntigen" targetOption="truncate" />
+        </transform>
+        <transform id="PopulateELISpotAntigen" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_elispotantigen" />
+            <destination schemaName="cds" queryName="ELISpotantigen" targetOption="truncate" />
+        </transform>
+        <transform id="PopulateBAMAAntigen" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_bamaantigen" />
+            <destination schemaName="cds" queryName="BAMAAntigen" targetOption="truncate" />
+        </transform>
+        <transform id="product" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_product" />
+            <destination schemaName="cds" queryName="product" targetOption="truncate" />
+        </transform>
+        <transform id="PopulateStudyProduct" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateStudyProductTask">
+            </taskref>
+        </transform>
+        <transform id="PopulateTreatmentArms" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateTreatmentArmTask">
+            </taskref>
+        </transform>
+        <transform id="PopulateGridBase" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateGridBaseTask"></taskref>
+        </transform>
+        <transform id="PopulateFacts" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateFactsTask"></taskref>
+        </transform>
+        <transform id="PopulateProperties" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_properties" />
+            <destination schemaName="cds" queryName="properties" targetOption="truncate" />
+        </transform>
+        <transform id="ClearAndWarmCube" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">
+            </taskref>
+        </transform>
+    </transforms>
+</etl>

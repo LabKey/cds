@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -11,95 +11,239 @@ Ext.define('Connector.controller.FilterStatus', {
 
     stores: ['FilterStatus'],
 
-    views: ['DetailStatus', 'FilterSave', 'FilterStatus'],
+    views: ['DetailStatus', 'FilterStatus', 'InfoPane', 'PlotPane'],
 
     init : function() {
 
         this.control('app-main > #eastview > #navfilter', {
             afterrender : function(navfilter) {
-                navfilter.add(this.createFilterStatus(), this.createFilterDetail());
+                var container = Ext.create('Ext.container.Container', {
+                    itemId: 'filterstatuscontainer',
+                    style: 'overflow-y: auto; overflow-x: hidden;',
+                    flex: 1,
+                    items: [
+                        this.createFilterStatus(),
+                        this.createDetail()
+                    ]
+                });
+                navfilter.add(container);
             }
-        });
-
-        this.control('selectionstatus > dataview', {
-            itemclick : this.onSelectionClick
         });
 
         this.control('selectionview', {
             operatorchange : function(config) {
-                this.getStateManager().setFilterOperator(config.filterId, config.value);
+                Connector.getState().setFilterOperator(config.filterId, config.value);
             }
         });
 
-        this.control('selectionpanel > container > selectionview', {
-            removefilter : function(filterId, hName, uname) {
-                this.getStateManager().removeSelection(filterId, hName, uname);
+        this.control('#selection-panel > container > selectionview', {
+            removefilter : function(filterId, hName, uniqueName) {
+                Connector.getState().removeSelection(filterId, hName, uniqueName);
+            },
+
+            removeplotselection : function(filterId, measureIdx) {
+                Connector.getState().fireEvent('plotselectionremoved', filterId, measureIdx);
             }
         });
 
-        this.control('filterpanel > container > selectionview', {
-            removefilter : function(filterId, hName, uname) {
-                this.getStateManager().removeFilter(filterId, hName, uname);
+        this.control('#filter-panel > container > selectionview', {
+            removefilter : function(filterId, hName, uniqueName) {
+                Connector.getState().removeFilter(filterId, hName, uniqueName);
+            },
+
+            removeplotselection : function(filterId, measureIdx) {
+                Connector.getState().removeFilter(filterId);
             }
         });
 
         this.control('filterstatus', {
             requestundo : function() {
-                var state = this.getStateManager();
-                var index = state.getPreviousState();
-                if (index > -1) {
-                    state.loadFilters(index);
-                }
-                else {
-                    console.warn('FAILED TO UNDO. NOT ABLE TO FIND STATE');
-                }
+                Connector.getState().requestFilterUndo();
             }
         });
 
-        this.control('filtersave > form > toolbar > #cancelsave', {
-            click : this.onFilterCancel
-        });
-
-        this.control('filterpanel > container > #clear', {
+        this.control('filterstatus > container > #clear', {
             click : this.onFilterClear
-        });
-
-        this.control('filterpanel > toolbar > #sClear', {
-            click : this.onSelectionClear
         });
 
         this.control('#overlap', {
             click : this.runSelectToFilterAnimation
         });
 
+        this.control('#inverse', {
+            click : this.runInverseSelectToFilterAnimation
+        });
+
+        this.control('detailstatus', {
+            itemclick: this.onDetailSelect
+        });
+
+        this.control('#infosortdropdown', {
+            click: function(btn) { btn.showMenu(); }
+        });
+
+        this.control('selectionview', {
+            itemselect : function(view, filter) {
+                this.showFilterEditor(filter);
+            }
+        });
+
+        this.control('plot', {
+            maskplotrecords: this.onMaskPlotRecords,
+            unmaskplotrecords: this.onUnmaskPlotRecords,
+            updateplotrecord: this.onUpdatePlotRecord
+    });
+
         this.callParent();
     },
 
-    getStateStore : function() {
+    createDetail : function() {
         var store = this.getStore('FilterStatus');
-        store.state = this.getStateManager();
-        return store;
-    },
-
-    createFilterDetail : function() {
-        var store = this.getStateStore();
         store.load();
 
         var view = Ext.create('Connector.view.DetailStatus', {
-            store : store
+            store: store
         });
 
-        var state = this.getStateManager();
-        state.on('filtercount', view.onFilterChange, view);
-        state.on('filterchange', view.onFilterChange, view);
-        state.on('selectionchange', view.onFilterChange, view);
+        this.getViewManager().on('afterchangeview', function(controller, view)
+        {
+            store.clearFilter();
+
+            // if we are not on the plot view, hide the plot based counts from the info pane
+            if (view !== 'plot')
+            {
+                store.filter('plotBasedCount', false);
+            }
+        }, this);
 
         return view;
     },
 
+    onDetailSelect : function(view, detail) {
+        if (detail.get('activeCountLink') === true && detail.get('count') != -1)
+        {
+            if (Ext.isString(detail.get('activeCountEvent')))
+            {
+                this.application.fireEvent(detail.get('activeCountEvent'), detail);
+            }
+            else
+            {
+                this.showFilterEditor(detail);
+            }
+        }
+    },
+
+    showFilterEditor : function(filterOrDetail) {
+
+        var parent = Ext.ComponentQuery.query('app-main > #eastview > #navfilter');
+        if (Ext.isArray(parent)) {
+            parent = parent[0];
+        }
+
+        if (parent) {
+
+            //
+            // configure info pane view
+            //
+
+            var viewClazz = 'Connector.view.InfoPane',
+                modelClazz = 'Connector.model.InfoPane',
+                config = {
+                    dimension: filterOrDetail.get('dimension'),
+                    hierarchy: filterOrDetail.get('hierarchy'),
+                    level: filterOrDetail.get('level'),
+                    measureSet: filterOrDetail.get('measureSet'),
+                    membersWithData: filterOrDetail.get('membersWithData')
+                },
+                storeRecord;
+
+            if (filterOrDetail.$className === 'Connector.model.Filter')
+            {
+                if (filterOrDetail.isTime() && !filterOrDetail.isPlot())
+                {
+                    // Time point filter, not study axis plot time range filter
+
+                    viewClazz = 'Connector.view.TimepointPane';
+                    modelClazz = 'Connector.model.TimepointPane';
+
+                    // we will want to get the Time point info pane members from the store record,
+                    // so we will need to include the measureSet and membersWithData
+                    storeRecord = this.getStore('FilterStatus').getById('Time points');
+                    if (storeRecord != null)
+                    {
+                        config.measureSet = storeRecord.get('measureSet');
+                        config.membersWithData = storeRecord.get('membersWithData');
+                    }
+
+                    // if we don't have the defined measuresSet, we don't want to show the TimepointPane
+                    // since we won't know how to get the distinct timepoint members
+                    if (!Ext.isArray(config.measureSet))
+                    {
+                        return;
+                    }
+                }
+                else if (filterOrDetail.isGrid() || filterOrDetail.isAggregated())
+                {
+                    viewClazz = 'Connector.view.GridPane';
+                }
+                else if (filterOrDetail.isPlot())
+                {
+                    viewClazz = 'Connector.view.PlotPane';
+                }
+
+                config.filter = filterOrDetail;
+            }
+            else if (Ext.isString(filterOrDetail.get('viewClass')))
+            {
+                viewClazz = filterOrDetail.get('viewClass');
+            }
+
+            // allow the detail model object to define an alternate model class
+            if (Ext.isString(filterOrDetail.get('modelClass')))
+            {
+                modelClazz = filterOrDetail.get('modelClass');
+            }
+
+            //
+            // prepare layout
+            //
+            var statusContainer = parent.getComponent('filterstatuscontainer');
+            if (statusContainer) {
+                statusContainer.hide();
+            }
+
+            var infoPane = Ext.create(viewClazz, {
+                model: Ext.create(modelClazz, config),
+                listeners: {
+                    hide: {
+                        fn: this.resetInfoPane,
+                        scope: this,
+                        single: true
+                    }
+                }
+            });
+
+            parent.add(infoPane);
+        }
+    },
+
+    resetInfoPane : function(infoPane) {
+
+        if (infoPane) {
+            infoPane.hide();
+            if (infoPane.up())
+                infoPane.up().remove(infoPane);
+        }
+
+        var parent = Ext.ComponentQuery.query('app-main > #eastview > #navfilter > #filterstatuscontainer');
+        if (parent && parent.length > 0) {
+            parent[0].show();
+        }
+    },
+
     createFilterStatus : function() {
-        var store = this.getStateStore();
-        var state = this.getStateManager();
+        var store = this.getStore('FilterStatus');
+        var state = Connector.getState();
         store.load();
 
         var view = Ext.create('Connector.view.FilterStatus', {
@@ -108,40 +252,26 @@ Ext.define('Connector.controller.FilterStatus', {
             filters: state.getFilters()
         });
 
-        state.on('filtercount', view.onFilterChange, view);
+        state.on('filtercount', view.onFilterCount, view);
         state.on('filterchange', view.onFilterChange, view);
         state.on('filterremove', view.onFilterRemove, view);
         state.on('selectionchange', view.onSelectionChange, view);
 
         this.getViewManager().register(view);
-        this.getViewManager().getEast().on('tabchange', function() { view.hideMessage(false); }, this);
-        this.getViewManager().on('afterchangeview', function() { view.hideMessage(false); }, this);
+        this.getViewManager().getEast().on('tabchange', view.onAfterViewChange, view);
+        this.getViewManager().on('beforechangeview', view.onBeforeViewChange, view);
+        this.getViewManager().on('afterchangeview', view.onAfterViewChange, view);
 
         return view;
     },
 
-    runSelectToFilterAnimation : function(b) {
-        this.getStateManager().moveSelectionToFilter();
-//        var p = b.up('panel');
-//        var me = this;
-//        p.dockedItems.items[0].getEl().fadeOut();
-//        Ext.get(Ext.query('.header', p.getEl().id)[0]).fadeOut({
-//            listeners : {
-//                afteranimate : function(){
-//                    p.getEl().slideOut('t', {
-//                        duration  : 250,
-//                        listeners : {
-//                            afteranimate : function() {
-//                                p.dockedItems.items[0].getEl().fadeIn();
-//                                me.getStateManager().moveSelectionToFilter();
-//                            },
-//                            scope : p
-//                        }
-//                    });
-//                },
-//                scope: p
-//            }
-//        });
+    runSelectToFilterAnimation : function() {
+        Connector.getState().moveSelectionToFilter();
+    },
+
+    runInverseSelectToFilterAnimation : function() {
+        Connector.getState().inverseSelection();
+        Connector.getState().moveSelectionToFilter();
     },
 
     createView : function(xtype, context) {
@@ -152,27 +282,23 @@ Ext.define('Connector.controller.FilterStatus', {
             v = this.createFilterStatus();
         }
 
-        if (xtype == 'filtersave') {
-            v = Ext.create('Connector.view.FilterSave', {
-                flex : 1
-            });
-        }
-
         return v;
     },
 
     updateView : function(xtype, context) { },
 
-    onFilterCancel : function() {
-        this.getViewManager().hideView('filtersave');
-    },
-
     onFilterClear : function() {
-        var state = this.getStateManager();
-        if (state.hasFilters()) {
+        var state = Connector.getState(),
+            hasFilters = state.hasFilters();
+
+        if (state.hasSelections()) {
+            // if we have both selections and filters, roll-up into one state update
+            state.clearSelections(hasFilters /* skipState */);
+        }
+        if (hasFilters) {
             state.clearFilters();
 
-            // want to show the message on the view
+            // only show undo if clear filters
             var view = this.getViewManager().getViewInstance('filterstatus');
             if (view) {
                 view.showUndoMessage();
@@ -180,15 +306,18 @@ Ext.define('Connector.controller.FilterStatus', {
         }
     },
 
-    onFilterSave : function() {
-        this.getViewManager().showView('filtersave');
+    onMaskPlotRecords : function()
+    {
+        this.getStore('FilterStatus').fireEvent('showplotmask');
     },
 
-    onSelectionClick : function() {
-        this.getStateManager().clearSelections();
+    onUnmaskPlotRecords : function()
+    {
+        this.getStore('FilterStatus').fireEvent('hideplotmask');
     },
 
-    onSelectionClear : function() {
-        this.getStateManager().clearSelections();
+    onUpdatePlotRecord : function(view, label, forSubcount, countValue, measureSet, membersWithData)
+    {
+        this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, countValue, measureSet, membersWithData);
     }
 });

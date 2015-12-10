@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -15,34 +15,36 @@ Ext.define('Connector.panel.FilterPanel', {
 
     cls: 'filterpanel',
 
-    selectionMode: false,
-
     hideOnEmpty: false,
 
-    showEmptyText: true,
+    includeHeader: false,
 
-    headerButtons: [],
-
-    filters: [],
+    constructor: function(config) {
+        Ext.applyIf(config, {
+            headerButtons: [],
+            filters: []
+        });
+        this.callParent([config]);
+    },
 
     initComponent : function() {
 
-        this.items = [
-            this.initHeader(),
-            this.initContent()
-        ];
+        this.items = [];
 
-        if (this.showEmptyText) {
-            this.items.push(this.createEmptyPanel());
+        if (this.includeHeader) {
+            this.items.push(this.initHeader());
         }
 
-        this.dockedItems = [{
-            xtype: 'toolbar',
-            dock: 'bottom',
-            ui: 'footer',
-            width: 230,
-            items: this.tbarButtons
-        }];
+        this.items.push(this.initContent());
+
+        if (this.tbarButtons) {
+            this.dockedItems = [{
+                xtype: 'toolbar',
+                dock: 'bottom',
+                ui: 'lightfooter',
+                items: this.tbarButtons
+            }];
+        }
 
         this.callParent();
 
@@ -52,30 +54,7 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     initHeader : function() {
-
-        // title
-        var items = [{
-            xtype: 'box',
-            autoEl: {
-                tag: 'h2',
-                style: 'font-size: 17pt;',
-                html: this.title
-            }
-        }];
-
-        for (var i=0; i < this.headerButtons.length; i++) {
-            items.push(this.headerButtons[i]);
-        }
-
-        return {
-            xtype: 'container',
-            ui: 'custom',
-            style: 'margin-bottom: 10px;',
-            layout: {
-                type: 'hbox'
-            },
-            items: items
-        };
+        throw 'Base class ' + this.$className + ' does not support initHeader()';
     },
 
     initContent : function() {
@@ -86,62 +65,67 @@ Ext.define('Connector.panel.FilterPanel', {
         return this.content;
     },
 
-    createEmptyPanel : function() {
-        return Ext.create('Ext.container.Container', {
-            itemId: 'emptypanel',
-            html : '<div class="emptytext">All subjects</div>'
-        });
-    },
-
     createHierarchyFilter : function(filterset) {
-        var view = Ext.create('Connector.view.Selection', {
-            cls: 'activefilter',
+        return Ext.create('Connector.view.Selection', {
             store: {
                 model: this.getModelClass(filterset),
                 data: [filterset]
             }
         });
-        return view;
     },
 
-    getModelClass : function(filterset) {
+    getModelClass : function() {
         return 'Connector.model.Filter';
     },
 
     // entry point to load raw OLAP Filters
     loadFilters : function(filters) {
+        this.filters = filters;
         this.displayFilters(filters);
     },
 
     displayFilters : function(filters) {
-        this.content.removeAll();
-        var panels = [];
 
-        for (var f=0; f < filters.length; f++) {
-            // add filter ids
-            filters[f].data.id = filters[f].id;
-            panels.push(this.createHierarchyFilter(filters[f]));
-        }
-
-        var isEmpty = (panels.length == 0);
-
-        if (!isEmpty) {
-            this.content.add(panels);
-            if (this.showEmptyText) {
-                this.getComponent('emptypanel').hide();
-            }
+        if (filters.length === 0) {
+            this.clear();
         }
         else {
-            if (this.showEmptyText) {
-                this.getComponent('emptypanel').show();
-            }
-        }
+            var length = this.content.items.items.length;
+            Ext.each(filters, function(filter, idx) {
+                filter.data.id = filter.id;
+                if (idx < length) {
+                    this.content.items.items[idx].getStore().loadData([filter]);
+                }
+                else {
+                    this.content.add(this.createHierarchyFilter(filter));
+                }
+            }, this);
 
-        if (this.hideOnEmpty && isEmpty) {
+            if (filters.length < length) {
+                for (var i=filters.length; i < length; i++) {
+                    this.content.remove(this.content.items.items[i].id);
+                }
+            }
+
+            this.show();
+        }
+    },
+
+    clear : function() {
+
+        if (this.hideOnEmpty) {
             this.hide();
         }
         else {
             this.show();
+        }
+
+        this.content.removeAll();
+    },
+
+    onSelectionChange : function(selections) {
+        if (this.filters.length == 0 && selections.length == 0) {
+            this.clear();
         }
     }
 });

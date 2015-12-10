@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -10,13 +10,9 @@ Ext.define("Connector.view.Header", {
 
     layout: 'hbox',
 
-    height: 87,
+    height: 56,
 
     cls: 'connectorheader',
-
-    expand: true,
-
-    collapseTime : 200,
 
     ui: 'custom',
 
@@ -24,111 +20,94 @@ Ext.define("Connector.view.Header", {
         ui: 'custom'
     },
 
-    constructor : function(config) {
-
-        this.callParent([config]);
-
-        this.addEvents(
-            /**
-             * @event headerclick
-             * Fires when the header logo is clicked.
-             * fired
-             * @param {Ext.Component} panel The Component object
-             */
-            'headerclick'
-        );
-    },
-
     initComponent : function() {
+
+        var toolBarItems = [];
+
+        if (LABKEY.user.isSignedIn) {
+            toolBarItems = [{
+                xtype: 'box',
+                itemId: 'feedback',
+                margin: '2 40 0 0',
+                autoEl: {
+                    tag: 'a',
+                    cls: 'logout',
+                    html: 'Give feedback'
+                },
+                listeners: {
+                    click: function(evt, el) {
+                        Connector.panel.Feedback.displayWindow(el);
+                    },
+                    element: 'el',
+                    scope: this
+                }
+            },{
+                xtype: 'box',
+                itemId: 'help',
+                margin: '2 40 0 0',
+                autoEl: {
+                    tag: 'a',
+                    cls: 'logout',
+                    html: 'Help'
+                },
+                listeners: {
+                    click: function(evt, el) {
+                        Connector.panel.HelpCenter.displayWindow(el);
+                    },
+                    element: 'el',
+                    scope: this
+                }
+            },{
+                xtype: 'box',
+                itemId: 'logout',
+                margin: '2 40 0 0',
+                autoEl: {
+                    tag: 'a',
+                    cls: 'logout',
+                    html: 'Logout'
+                },
+                listeners: {
+                    click : function() {
+                        Ext.Ajax.request({
+                            url : LABKEY.ActionURL.buildURL('login', 'logoutAPI.api'),
+                            method: 'POST',
+                            success: function(response) {
+                                this.fireEvent('userLogout');
+                                if (Ext.decode(response.responseText).success) {
+                                    LABKEY.user.isSignedIn = false;
+                                    window.location.reload();
+                                }
+                            },
+                            failure: Ext.emptyFn,
+                            scope: this
+                        });
+                    },
+                    element: 'el',
+                    scope: this
+                }
+            }];
+        }
 
         this.items = [{
             xtype: 'box',
             itemId: 'logo',
             cls: 'logo',
-            autoEl: {
-                tag: 'div',
-                html  : '<h2 style="padding-top: 200px;">hiv vaccine <br>' +
-                        '<span>collaborative dataspace</span>' +
-                        '</h2>' +
-                        '<img src="' + LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) +'.png">' // TODO: Get rid of hard coded context
-            },
             flex: 4,
-            listeners: {
-                afterrender : function(b) {
-                    b.getEl().on('click', function() {
-                        this.fireEvent('headerclick', this);
-                    }, this);
-                },
-                scope: this
+            tpl: [
+                '<img src="{imgSrc}" width="56" height="56">',
+                '<h2>CAVD <span>DataSpace</span></h2>'
+            ],
+            data: {
+                imgSrc: LABKEY.contextPath + '/Connector/images/logo.png'
             }
         },{
             xtype: 'panel',
             layout: 'hbox',
             itemId: 'search',
-            margin: '25 0 0 0',
-//            width  : 300, with search
-            width: 100,
-            items: [{
-                xtype: 'box',
-                margin: '2 15 0 0',
-                autoEl: {
-                    tag: 'a',
-                    cls: 'logout',
-                    href: LABKEY.ActionURL.buildURL('login', 'logout'),
-                    html: 'Logout'
-                }
-            }]
+            margin: '18 5 0 0',
+            items: toolBarItems
         }];
 
         this.callParent();
-
-//        if (!this.expanded) {
-//        this.on('afterrender', function() { this.collapse(true); }, this, {single: true});
-//        }
-
-        this.on('afterrender', function(p) {
-
-            this.collapse(true);
-
-//            var cmp = Ext.getCmp('search-container');
-//            if (cmp && cmp.getEl()) {
-//                Ext.create('Ext.tip.ToolTip', {
-//                    target : cmp.getEl(),
-//                    anchor : 'left',
-//                    autoHide: true,
-//                    contentEl : 'searchtip',
-//                    maxWidth : 500,
-//                    minWidth : 200,
-//                    bodyPadding: 0,
-//                    padding: 0
-//                });
-//            }
-
-        }, this, {single: true});
-    },
-
-    expand : function() {
-        if(!this.expanded) {
-            var h2logo = Ext.get(this.getComponent('logo').getEl().query('h2')[0]);
-            h2logo.dom.innerHTML = 'hiv vaccine <br><span>collaborative dataspace</span>';
-            h2logo.animate({ to : { fontSize: '13pt', paddingTop: 27 }, duration: this.collapseTime });
-            Ext.get(this.getComponent('logo').getEl().query('img')[0]).animate({ to : { paddingTop: 23, width : 45 }, duration: this.collapseTime });
-            Ext.get(this.getComponent('search').getEl().animate({ to : { marginTop: 0}, duration : this.collapseTime }));
-            this.setHeight(87);
-            this.expanded = true;
-        }
-    },
-
-    collapse : function(force) {
-        if (this.expanded || force === true) {
-            var time = force ? 0 : this.collapseTime;
-            var h2logo = Ext.get(this.getComponent('logo').getEl().query('h2')[0]);
-            h2logo.dom.innerHTML = 'hiv vaccine <span>collaborative dataspace</span>';
-            h2logo.animate({ to : { fontSize: '11pt', paddingTop: 8 }, duration: time });
-            Ext.get(this.getComponent('logo').getEl().query('img')[0]).animate({ to : { paddingTop: 11 , width : 32}, duration: time });
-            Ext.get(this.getComponent('search').getEl().animate({ to : { marginTop: -3}, duration : time }));
-            this.setHeight(53);
-            this.expanded = false;
-        }
     }
 });

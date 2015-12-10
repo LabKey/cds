@@ -1,2 +1,5 @@
 \#vcs.properties#
 vcs.properties
+.DS_Store
+webapp/temp
+CDS.iml

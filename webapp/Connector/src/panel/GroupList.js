@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -14,6 +14,8 @@ Ext.define('Connector.panel.GroupList', {
     plain: true,
 
     ui: 'custom',
+
+    bubbleEvents: ['deletegroup'],
 
     initComponent : function() {
 
@@ -42,56 +44,71 @@ Ext.define('Connector.view.GroupListView', {
 
     trackOver: true,
 
-    emptyText: '<div class="emptytext"><span class="left-label">No groups defined</span>',
+    deferEmptyText: false,
+
+    loadMask: false,
 
     cls: 'grouplist-view',
 
-    overItemCls: 'grouplist-label-over',
+    overItemCls: 'grouplist-over',
 
-    itemSelector: 'div.nav-label',
+    itemSelector: 'div.grouprow',
+
+    bubbleEvents: ['deletegroup'],
 
     tpl: new Ext.XTemplate(
-            '<tpl for=".">',
-                '<div class="nav-label">{label}</div>',
-            '</tpl>'
+        '<h2 class="section-title bottom-spacer">My saved groups and plots</h2>',
+        '<tpl if="this.isEmpty(values)">',
+            '<div class="grouplist-empty">Saved work will appear here</div>',
+        '</tpl>',
+        '<tpl for=".">',
+            '<div class="grouprow">',
+                '<div title="{label:htmlEncode}" class="grouplabel">{label:this.groupLabel}</div>',
+                '<tpl if="this.plotter(containsPlot)">',
+                    '<div class="groupicon"><img src="' + Connector.resourceContext.imgPath + '/plot.png"></div>',
+                '</tpl>',
+            '</div>',
+        '</tpl>',
+        {
+            isEmpty : function(v) {
+                return (!Ext.isArray(v) || v.length === 0);
+            },
+            groupLabel : function(label) {
+                return Ext.String.ellipsis(Ext.htmlEncode(label), 35, true);
+            },
+            plotter : function(containsPlot) {
+                return containsPlot === true;
+            }
+        }
     ),
+
+    constructor: function(config) {
+
+        this.callParent([config]);
+
+        this.addEvents('deletegroup');
+    },
 
     initComponent : function() {
 
         this.selectedItemCls = 'grouplist-label-selected '+ this.arrow;
 
-        var storeConfig = {
-            pageSize : 100,
-            model    : 'LABKEY.study.GroupCohort',
-            autoLoad : true,
-            proxy: {
-                type: 'ajax',
-                url: LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api', null, {
-                    includeParticipantIds: true
-                }),
-                reader: {
-                    type: 'json',
-                    root: 'groups'
-                }
-            },
-            listeners : {
-                load : function(s, recs) {
-                    for (var i=0; i < recs.length; i++)
-                    {
-                        if (recs[i].data.id < 0)
-                            s.remove(recs[i]);
-                    }
-                }
-            }
-        };
-
-        var groupConfig = Ext.clone(storeConfig);
-        Ext.apply(groupConfig.proxy, {
-            extraParams : { type : 'participantGroup'}
-        });
-
-        this.store = Ext.create('Ext.data.Store', groupConfig);
+        this.store = Connector.model.Group.getGroupStore();
 
         this.callParent();
+    },
+
+    onRemoveClick : function(evt, element) {
+
+        if (element) {
+            var el = Ext.get(element);
+            var index = el.getAttribute('group-index');
+            var store = this.getStore();
+            var group = store.getAt(index);
+            if (group) {
+                evt.stopPropagation();
+                this.fireEvent('deletegroup', group);
+            }
+        }
     }
 });

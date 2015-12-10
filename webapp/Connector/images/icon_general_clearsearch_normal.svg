@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="-19 21 128 128" style="enable-background:new -19 21 128 128;" xml:space="preserve">
+<style type="text/css">
+	.st0{clip-path:url(#SVGID_2_);fill:none;}
+	.st1{clip-path:url(#SVGID_4_);fill:none;}
+	.st2{clip-path:url(#SVGID_6_);}
+	.st3{fill:#EEEEEE;}
+	.st4{fill:#FC2E5C;}
+</style>
+<g id="Layer_1_1_">
+	<g id="Checkbox_-_checked">
+		<g id="Deleted_Symbol_2">
+		</g>
+	</g>
+	<g id="radio_button_Selected_2">
+	</g>
+	<g id="small_help">
+	</g>
+	<g id="plot_icon">
+	</g>
+	<g>
+		<g>
+			<defs>
+				<rect id="SVGID_1_" x="-19" y="21" width="128" height="128"/>
+			</defs>
+			<clipPath id="SVGID_2_">
+				<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+			</clipPath>
+			<line class="st0" x1="-19" y1="21" x2="109" y2="149"/>
+		</g>
+		<g>
+			<defs>
+				<rect id="SVGID_3_" x="-19" y="21" width="128" height="128"/>
+			</defs>
+			<clipPath id="SVGID_4_">
+				<use xlink:href="#SVGID_3_"  style="overflow:visible;"/>
+			</clipPath>
+			<line class="st1" x1="-19" y1="149" x2="109" y2="21"/>
+		</g>
+		<g>
+			<defs>
+				<rect id="SVGID_5_" x="-19" y="21" width="128" height="128"/>
+			</defs>
+			<clipPath id="SVGID_6_">
+				<use xlink:href="#SVGID_5_"  style="overflow:visible;"/>
+			</clipPath>
+			<g class="st2">
+				<g>
+					<g>
+						<path class="st3" d="M45,29L45,29c-30.9,0-56,25.1-56,56v0c0,30.9,25.1,56,56,56h0c30.9,0,56-25.1,56-56v0
+							C101,54.1,75.9,29,45,29L45,29z"/>
+					</g>
+				</g>
+				<g>
+					<g>
+						
+							<rect x="19.8" y="81.5" transform="matrix(0.7071 0.7071 -0.7071 0.7071 73.2843 -6.9239)" class="st4" width="50.4" height="7"/>
+					</g>
+					<g>
+						
+							<rect x="41.5" y="59.8" transform="matrix(0.7071 0.7071 -0.7071 0.7071 73.2843 -6.9239)" class="st4" width="7" height="50.4"/>
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="Layer_7">
+</g>
+</svg>

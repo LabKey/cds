@@ -1,0 +1,60 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+--Returns all the subjects that appear in the datasets that do not appear in the demographics table.
+--Expected to return 0 rows.
+SELECT
+datasets.subjects_in_datasets as "prot subject",
+study,
+id
+FROM(
+	SELECT
+	prot||' '||subject_id as subjects_in_datasets,
+	prot as study,
+	subject_id as id
+	FROM (
+		SELECT
+		DISTINCT subject_id,
+		prot
+		FROM import_ics
+
+		UNION
+
+		SELECT
+		DISTINCT subject_id,
+		prot
+		FROM import_nab
+
+		UNION
+
+		SELECT
+		DISTINCT subject_id,
+		prot
+		FROM import_els_ifng
+
+		UNION
+
+		SELECT
+		DISTINCT subject_id,
+		prot
+		FROM import_bama
+	)
+) as datasets
+LEFT JOIN(
+	SELECT
+	prot||' '||subject_id as subjects_in_demographics
+	FROM import_studysubject
+) as demographics on demographics.subjects_in_demographics = datasets.subjects_in_datasets
+WHERE demographics.subjects_in_demographics IS NULL

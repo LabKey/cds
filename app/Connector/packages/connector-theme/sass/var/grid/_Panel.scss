@@ -1,0 +1,193 @@
+.connector-grid {
+
+  .x-grid-data-row {
+    line-height: 28px;
+    height: 28px;
+    background: $gray-8!important;
+
+    td {
+      background: transparent!important;
+    }
+
+    &:hover {
+      background: $select-hover-color!important;
+      border-color: $select-hover-color;
+    }
+  }
+
+  .x-column-header-text {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+
+  .x-grid-view {
+    z-index: 5;
+    padding-bottom: 70px;
+  }
+
+  .x-column-header-trigger {
+    display: inline-block;
+    border-left: 1px solid transparent;
+  }
+
+  .x-column-header {
+    .x-column-header-trigger {
+      display: none;
+    }
+  }
+
+  .x-column-header-over {
+    .x-column-header-trigger {
+      background-image: url(images/filter.svg);
+
+      &:hover {
+        background-image: url(images/filter_hover.svg);
+      }
+    }
+  }
+
+  .filtered-column {
+    .x-column-header-trigger {
+      background-color: transparent;
+      background-image: url(images/filter_selected.svg);
+      
+      &:hover {
+        background-image: url(images/filter_selected_hover.svg);
+      }
+    }
+  }
+
+  /* Group Headers */
+  .x-group-header {
+
+    border: 0;
+    text-align: left;
+
+    & > .x-column-header-inner {
+      position: relative;
+
+      &:before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: $interactive-color;
+        bottom: 0;
+        left: 4px; // same as header-inner padding.
+      }
+    }
+
+    .x-column-header-inner {
+      height: 50px;
+    }
+
+    .x-column-header-text {
+      position: absolute;
+      bottom: 5px;
+      color: $interactive-color;
+    }
+
+    /* Group headers do not show trigger */
+    .x-column-header-trigger {
+      display: none;
+    }
+  }
+
+  /* Column Headers */
+  .x-group-sub-header {
+
+    border: 0;
+
+    .x-column-header-trigger {
+      display: block;
+      position: absolute;
+      bottom: 0;
+      top: inherit;
+      height: 15px;
+    }
+
+    .x-column-header-inner {
+      height: 40px;
+      position: relative;
+      background-color: transparent;
+      border: 0;
+
+      &:hover {
+        background-color: $select-hover-color;
+      }
+    }
+
+    .x-column-header-text {
+      white-space: normal;
+      position: absolute;
+      left: 4px;
+      bottom: 4px;
+      margin: 0;
+      width: 85%;
+      text-align: justify;
+      color: $heat-scale-2;
+    }
+  }
+
+  /* Column Header Hovered */
+  .x-column-header-over {
+    background-image: none;
+    background-color: $select-hover-color;
+
+    .x-column-header-text {
+      color: $black;
+    }
+  }
+
+  .x-column-header-sort-ASC,
+  .x-column-header-sort-DESC {
+    background-image: none;
+    background-color: $secondary-color;
+  }
+
+  .x-grid-row {
+
+    td.no-value {
+      background-color: #dcd8d8;
+      color: #777777;
+
+      .x-grid-cell-inner:before {
+        content: 'no value';
+      }
+    }
+
+    &.x-grid-row-over {
+
+      td.no-value {
+        background-color: #beefef;
+        color: #777777;
+      }
+
+    }
+  }
+}
+
+/* Connector.window.Filter */
+div.filterpanel .x-panel-body-default {
+  background: transparent;
+}
+/* END Connector.window.Filter */
+
+.x-panel-body-default {
+  background: transparent!important;
+}
+
+.x-panel-body-primary-view {
+  .chartview {
+    .x-box-item {
+      background-color : $gray-8; // affects all box items in the gutter on the chart page.
+    }
+    .x-btn {
+      background: $action-red!important;
+    }
+  }
+  .x-border-layout-ct {
+    background: transparent!important;
+  }
+}

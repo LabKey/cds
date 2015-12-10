@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -23,7 +23,9 @@ Ext.define('Connector.plugin.Messaging', {
             deferMessage: this.deferMessage,
             hideMessage: this.hideMessage,
             showMessage: this.showMessage,
-            deferMessageTask: this.deferMessageTask
+            sessionMessage: this.sessionMessage,
+            deferMessageTask: this.deferMessageTask,
+            resizeMessage: this.resizeMessage
         });
     },
 
@@ -74,7 +76,26 @@ Ext.define('Connector.plugin.Messaging', {
         }
     },
 
-    showMessage : function(msg, force, keep) {
+    resizeMessage : function() {
+        if (this.msg && this.msg.isVisible()) {
+            var box = this.getBox();
+            this.msg.setPosition(
+                this.calculateX(this, box, this.msg.msg),
+                this.calculateY(this, box, this.msg.msg)
+            );
+        }
+    },
+
+    /**
+     * Displays a standard system message
+     * @param {string} msg The text to be displayed.
+     * @param {boolean} [force=false] Whether or not to force the message displaying.
+     * @param {boolean} keep [keep=false] False allows the message to fade after 8 seconds.
+     * @param {boolean} modal [modal=false] True if the message is a modal window, it will grey out the rest of the page.
+     * @returns {boolean} Returns true if the message was displayed, false otherwise.
+     */
+    showMessage : function(msg, force, keep, modal) {
+        var shown = false;
         if (this.showmsg || force) {
             this.clearMessage();
 
@@ -98,8 +119,20 @@ Ext.define('Connector.plugin.Messaging', {
                 y: this.calculateY(this, box, msg),
                 listeners: listeners,
                 keep: keep,
+                modal: modal === true,
                 scope: this
             });
+
+            shown = true;
         }
+
+        return shown;
+    },
+
+    sessionMessage : function(key, msg, force) {
+        if (Ext.isString(key) && Connector.getService('Messaging').isAllowed(key)) {
+            return this.showMessage(msg, force);
+        }
+        return false;
     }
 });

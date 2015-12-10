@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -7,15 +7,30 @@ Ext.define('Connector.app.model.Assay', {
 
     extend : 'Ext.data.Model',
 
+    idProperty: 'assay_identifier',
+
+    resolvableField: 'assay_identifier',
+
+    labelProperty: 'assay_label',
+    
     fields: [
-        {name: 'Id'},
-        {name: 'Description'},
-        {name: 'AltName'},
-        {name: 'PI'},
-        {name: 'SystemTarget'},
-        {name: 'Type'},
-        {name: 'Platform'},
-        {name: 'Target'},
-        {name: 'TargetFunction'}
+        {name: 'assay_identifier'},
+        {name: 'Container'},
+        {name: 'assay_type'},
+        {name: 'assay_label'},
+        {name: 'assay_short_name'},
+        {name: 'assay_category'},
+        {name: 'assay_detection_platform'},
+        {name: 'assay_body_system_type'},
+        {name: 'assay_body_system_target'},
+        {name: 'assay_general_specimen_type'},
+        {name: 'assay_description'},
+        {name: 'assay_method_description'},
+        {name: 'assay_endpoint_description'},
+        {name: 'assay_endpoint_statistical_analysis'},
+        {name: 'study_count'}, //generated when the assay store is loaded.
+        {name: 'studies', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }}
     ]
 });
