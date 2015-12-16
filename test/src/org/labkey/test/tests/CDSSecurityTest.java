@@ -135,8 +135,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        clickUserMenuItem("Stop Impersonating");
-        assertSignOutAndMyAccountPresent();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
 
         impersonateGroup(PERM_GROUPS[1], false);
 
@@ -147,9 +147,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        clickUserMenuItem("Stop Impersonating");
-        assertSignOutAndMyAccountPresent();
-
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
     }
 
     @Test
