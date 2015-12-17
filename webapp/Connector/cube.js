@@ -238,7 +238,7 @@ Ext4.define('Connector.cube.Configuration', {
                     },{
                         type: 'html',
                         staticData: {
-                            title: 'CDS editorial'
+                            title: 'DataSpace editorial'
                         },
                         modelData: {
                             text: 'context'

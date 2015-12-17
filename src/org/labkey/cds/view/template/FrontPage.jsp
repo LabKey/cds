@@ -355,7 +355,7 @@
                         <br>
                         access and simple tools, more scientists can answer more questions and
                         <br>
-                        find new hypotheses. The CDS is a test of these ideas and we will
+                        find new hypotheses. The DataSpace is a test of these ideas and we will
                         <br>
                         measure its value.
                     </p>
