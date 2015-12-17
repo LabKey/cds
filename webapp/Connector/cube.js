@@ -107,7 +107,12 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 },{
                     uniqueName: '[Subject.Ethnicity]',
-                    label: 'Hispanic or Latino origin'
+                    label: 'Hispanic or Latino origin',
+                    levels: [{
+                        uniqueName: '[Subject.Ethnicity].[Ethnicity]',
+                        countSingular: 'Ethnicity',
+                        countPlural: 'Ethnicities'
+                    }]
                 },{
                     uniqueName: '[Subject.Species]',
                     levels: [{
@@ -148,9 +153,9 @@ Ext4.define('Connector.cube.Configuration', {
                         activeCount: 'highlight',
                         countPriority: 30,
                         countSingular: 'Study',
+                        countPlural: 'Studies',
                         levelLabel: 'Name',
-                        supportsLearn: true,
-                        countPlural: 'Studies'
+                        supportsLearn: true
                     },{
                         uniqueName: '[Study.Treatment].[Arm]',
                         countTarget: '',
@@ -165,11 +170,14 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Study.Treatment Arm Coded Label]',
                     displayLevels: true,
+                    findSubjectSubSummaryLevel: '[Study.Treatment Arm Coded Label].[Treatment Arm Coded Label]',
                     levels: [{
                         uniqueName: '[Study.Treatment Arm Coded Label].[Name]',
                         hidden: true
                     },{
                         uniqueName: '[Study.Treatment Arm Coded Label].[Treatment Arm Coded Label]',
+                        countSingular: 'Coded Label',
+                        countPlural: 'Coded Labels',
                         prependParent: true
                     }]
                 },{
@@ -186,6 +194,10 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Study.Network]',
                     levels:[{
+                        uniqueName: '[Study.Network].[Network]',
+                        countSingular: 'Network',
+                        countPlural: 'Networks'
+                    },{
                         uniqueName: '[Study.Network].[Name]',
                         supportsLearn: true
                     }]
@@ -296,12 +308,20 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Study Product.Product Type]',
                     levels: [{
+                        uniqueName: '[Study Product.Product Type].[Type]',
+                        countSingular: 'Type',
+                        countPlural: 'Types'
+                    },{
                         uniqueName: '[Study Product.Product Type].[Name]',
                         supportsLearn: true
                     }]
                 },{
                     uniqueName: '[Study Product.Developer]',
                     levels: [{
+                        uniqueName: '[Study Product.Developer].[Developer]',
+                        countSingular: 'Developer',
+                        countPlural: 'Developers'
+                    },{
                         uniqueName: '[Study Product.Developer].[Name]',
                         supportsLearn: true
                     }]
@@ -379,7 +399,9 @@ Ext4.define('Connector.cube.Configuration', {
                     },{
                         uniqueName: '[Assay.Study].[Study]',
                         supportsLearn: true,
-                        lookupDimension: '[Study]'
+                        lookupDimension: '[Study]',
+                        countSingular: 'Study',
+                        countPlural: 'Studies'
                     }]
                 },{
                     uniqueName: '[Assay.Lab]',
@@ -388,11 +410,17 @@ Ext4.define('Connector.cube.Configuration', {
                         uniqueName: '[Assay.Lab].[Assay]',
                         supportsLearn: true
                     },{
-                        uniqueName: '[Assay.Lab].[Lab]'
+                        uniqueName: '[Assay.Lab].[Lab]',
+                        countSingular: 'Lab',
+                        countPlural: 'Labs'
                     }]
                 },{
                     uniqueName: '[Assay.Immunogenicity Type]',
-                    level: [{
+                    levels: [{
+                        uniqueName: '[Assay.Immunogenicity Type].[Immunogenicity Type]',
+                        countSingular: 'Immunogenicity Type',
+                        countPlural: 'Immunogenicity Types'
+                    },{
                         uniqueName: '[Assay.Immunogenicity Type].[Assay]',
                         supportsLearn: true
                     }]
