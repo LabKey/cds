@@ -251,7 +251,7 @@ Ext.define('Connector.model.InfoPane', {
                     }
                     else {
                         Ext.each(h.levels, function(level, i) {
-                            if (i > 0) {
+                            if (i > 0 && !level.hidden) {
                                 hierarchyItems.push({
                                     text: level.levelLabel,
                                     uniqueName: level.uniqueName,
@@ -443,7 +443,7 @@ Ext.define('Connector.model.InfoPane', {
     getFullName : function(levelUniqueName, mdx, selfUniqueName, selfName) {
         var level = mdx.getLevel(levelUniqueName);
 
-        if (level && level.displayParent) {
+        if (level && level.prependParent) {
             var splits = selfUniqueName.split('].[');
             if (splits.length <  2) {
                 return selfName;

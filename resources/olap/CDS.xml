@@ -76,8 +76,8 @@
                     <Table name="Demographics" schema="study"/>
                     <Table name="study" schema="cds"/>
                 </Join>
-                <Level name="Treatment Arm Coded Label" visible="true" column="study_arm_coded_label" type="String" uniqueMembers="true" />
                 <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
+                <Level name="Treatment Arm Coded Label" visible="true" column="study_arm_coded_label" type="String" uniqueMembers="true" />
             </Hierarchy>
 
             <Hierarchy name="Type" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">

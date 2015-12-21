@@ -402,25 +402,20 @@ public class CDSTest extends CDSReadOnlyTest
         waitForText(STUDY_GROUP);
         click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
-        // Verify the group does not replace already active filters
+        // Verify the group does overwrite already active filters
         sleep(500); // give it a chance to apply
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
         cds.clearFilters();
-        click(Locator.css("a.applygroup"));
 
         // Verify the filters get applied when directly acting
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForText(STUDY_GROUP);
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
         _asserts.assertFilterStatusCounts(89, 2, 1, 3, 7); // TODO Test data dependent.
         assertTextPresent("Study Group Verify", "Description", studyGroupDescModified);
         cds.clearFilters();
-
-        // Verify filters get applied by viewing when no filters exist
-        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
-        _asserts.assertFilterStatusCounts(89, 2, 1, 3, 7); // TODO Test data dependent.
 
         // Verify that you can cancel delete
         click(CDSHelper.Locators.cdsButtonLocator("Delete"));
@@ -1045,7 +1040,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.applySelection(CDSHelper.ASSAYS[0]);
         _asserts.assertSelectionStatusCounts(75, 1, 1, 1, 8);
         cds.applySelection(CDSHelper.ASSAYS[1]);
-        _asserts.assertSelectionStatusCounts(1604, 14, 2, 1, 86);
+        _asserts.assertSelectionStatusCounts(1604, 14, 2, 1, 89);
         cds.applySelection(CDSHelper.ASSAYS[2]);
         _asserts.assertSelectionStatusCounts(477, 4, 1, 1, 31);
         cds.applySelection(CDSHelper.ASSAYS[3]);
@@ -1058,7 +1053,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.applySelection("South Africa");
         _asserts.assertSelectionStatusCounts(43, 21, 1, 1, 27);
         cds.applySelection("United States");
-        _asserts.assertSelectionStatusCounts(2797, 49, 1, 3, 223);
+        _asserts.assertSelectionStatusCounts(2797, 49, 1, 3, 226);
         cds.applySelection("Thailand");
         _asserts.assertSelectionStatusCounts(98, 32, 1, 3, 45);
     }
@@ -1066,10 +1061,8 @@ public class CDSTest extends CDSReadOnlyTest
     @Test
     public void verifyFilters()
     {
-        log("Verify multi-select");
-        Locator hierarchySelector = Locator.input("sae-hierarchy");
-
         // 14910
+        log("Verify multi-select");
         cds.goToSummary();
         cds.clickBy("Study products");
         cds.pickSort("Product Type");
