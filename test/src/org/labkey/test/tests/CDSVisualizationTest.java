@@ -1500,7 +1500,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         assertTrue("For NAb Titer 50, A3R5 vs Time Visit Days a study axis was not present.", hasStudyAxis());
-        List<WebElement> studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        List<WebElement> studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
@@ -1514,7 +1514,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         // Need to get studies again, otherwise get a stale element error.
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
@@ -1530,7 +1530,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
         xaxis.confirmSelection();
 
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected 7 studies in the Time Axis, found " + studies.size() + ".", studies.size() == 5);
         log("Study count was as expected.");
 
@@ -1559,7 +1559,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedCounts.replace("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 6, 22, 0, 0));
         expectedCounts.replace("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 4, 6, 0, 0));
 
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
@@ -1577,7 +1577,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setAlignedBy("Last Vaccination");
         xaxis.confirmSelection();
 
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
@@ -1596,7 +1596,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         // Need to get studies again, otherwise get a stale element error.
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
@@ -1616,7 +1616,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         // Need to get studies again, otherwise get a stale element error.
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
@@ -1635,7 +1635,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         // Need to get studies again, otherwise get a stale element error.
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
@@ -1655,7 +1655,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         // Need to get studies again, otherwise get a stale element error.
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
@@ -1695,19 +1695,21 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.TIME_POINTS);
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
         xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For ELISPOT Magnitude - Background subtracted vs Time Visit Days a study axis was not present.", hasStudyAxis());
-        List<WebElement> studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        List<WebElement> studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found" + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
         // Get the element again to avoid the stale-element error.
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         validateVisitCounts(studies, expectedCounts);
 
         log("Validate that the tool-tips are as expected.");
@@ -1720,7 +1722,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment, Vaccination");
         expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment, Vaccination");
         expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment, Vaccination");
-        cssPath = "#study-axis > svg > g:nth-child(2)  > image:nth-of-type(1)";
+        cssPath = "div.bottomplot > svg > g:nth-child(2)  > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
@@ -1728,7 +1730,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 1 Arm T1 Vaccine: Follow-up");
         expectedToolTipText.add("Group 2 Arm T2 Vaccine: Challenge");
         expectedToolTipText.add("Group 3 Arm T3 Vaccine: Follow-up");
-        cssPath = "#study-axis > svg > g:nth-child(2)  > image:nth-of-type(6)";
+        cssPath = "div.bottomplot > svg > g:nth-child(2)  > image:nth-of-type(6)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
@@ -1745,11 +1747,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 5 Arm T5 Vaccine: Enrollment, Vaccination");
         expectedToolTipText.add("Group 7 Arm Cb Placebo: Enrollment, Vaccination");
         expectedToolTipText.add("Group 7 Arm T7 Vaccine: Enrollment, Vaccination");
-        cssPath = "#study-axis > svg > g:nth-child(4)  > image:nth-of-type(1)";
+        cssPath = "div.bottomplot > svg > g:nth-child(4)  > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         log("Expand the time axis and verify the counts.");
-        Locator.css("#study-axis > svg > g > image.img-expand").findElement(getDriver()).click();
+        Locator.css("div.bottomplot > svg > g > image.img-expand").findElement(getDriver()).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         expectedCounts.clear();
@@ -1768,7 +1770,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedCounts.put("ZAP_134-Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 0));
         expectedCounts.put("ZAP_134-Group_2_Arm_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 0));
 
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
         validateVisitCounts(studies, expectedCounts);
         log("The counts are as expected.");
@@ -1778,13 +1780,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 110 - Day 455");
         expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up");
-        cssPath = "#study-axis > svg > g:nth-child(18) > image:nth-of-type(10)";
+        cssPath = "div.bottomplot > svg > g:nth-child(18) > image:nth-of-type(10)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111 - Day 364");
         expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up");
-        cssPath = "#study-axis > svg > g:nth-child(31) > image:nth-of-type(8)";
+        cssPath = "div.bottomplot > svg > g:nth-child(31) > image:nth-of-type(8)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         log("Change time axis alignment and validate things remain the same.");
@@ -1799,7 +1801,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedCounts.put("ZAP_134-Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 12, 0, 0));
         expectedCounts.put("ZAP_134-Group_2_Arm_C1_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm T3 Vaccine", 4, 12, 0, 0));
 
-        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        studies = Locator.css("div.bottomplot > svg > g.study").findElements(getDriver());
         assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
         validateVisitCounts(studies, expectedCounts);
         log("The counts are as expected.");
@@ -1809,7 +1811,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111 - Day 182");
         expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
-        cssPath = "#study-axis > svg > g.study:nth-child(22) > image.visit-tag[x^='3']";
+        cssPath = "div.bottomplot > svg > g.study:nth-child(22) > image.visit-tag[x^='3']";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
     }
@@ -2240,7 +2242,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
         log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(" + pointToClick + ")", 50, -350, true);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(" + pointToClick + ")", 25, -100, true);
 
         // Clear the filter.
         cds.clearFilter(1);
@@ -2360,10 +2362,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // This test will only validate that a "Filter" button shows up, but will not validate that the
         // range of the filter is as expected.
 
-        int pointCount, pointToClick;
         CDSHelper cds = new CDSHelper(this);
         int subjectCountBefore;
-        String tempStr, cssPathBrushWindow;
+        String tempStr;
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -2394,7 +2395,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
-        gutterPlotBrushingTestHelper(true, true, true, subjectCountBefore);
+        gutterPlotBrushingTestHelper(true, true, true, subjectCountBefore, 0);
 
         // Clean up.
         cds.clearFilters();
@@ -2421,7 +2422,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
-        gutterPlotBrushingTestHelper(true, false, true, subjectCountBefore);
+        gutterPlotBrushingTestHelper(true, false, true, subjectCountBefore, 1);
 
         // Clean up.
         cds.clearFilters();
@@ -2448,7 +2449,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
-        gutterPlotBrushingTestHelper(false, true, true, subjectCountBefore);
+        gutterPlotBrushingTestHelper(false, true, true, subjectCountBefore, 1);
 
         // Clean up.
         cds.clearFilters();
@@ -2474,7 +2475,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
-        gutterPlotBrushingTestHelper(true, true, false, subjectCountBefore);
+        gutterPlotBrushingTestHelper(true, true, false, subjectCountBefore, 0);
 
         // Clean up.
         cds.clearFilters();
@@ -2483,12 +2484,17 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
     }
 
-    private void gutterPlotBrushingTestHelper(boolean hasXGutter, boolean hasYGutter, boolean hasMainPlotDataPoints, int subjectCountBefore)
+    // hasXGutter: Does the plot have an x-gutter (i.e. gutter along the bottom).
+    // hasYGutter: Does the plot have a y-gutter (i.e. gutter on the left hand side).
+    // hasMainPlotDataPoints: Should we expect to find data points in the main plot area
+    // subjectCountBefore: What is the subject count before we start brushing.
+    // numOfOtherFilters: Have any other filters been applied.
+    private void gutterPlotBrushingTestHelper(boolean hasXGutter, boolean hasYGutter, boolean hasMainPlotDataPoints, int subjectCountBefore, int numOfOtherFilters)
     {
         WebElement gutterBrushWindow;
         String dataPointType;
         int heightWidth, pointToClick;
-        int yGutterIndex, xGutterIndex, mainPlotIndex;
+        int mainPlotIndex;
         String tempStr, cssPathBrushWindow;
 
         refresh();
@@ -2496,23 +2502,17 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if(hasYGutter)
         {
-            yGutterIndex = 1;
-            xGutterIndex = 3;
             mainPlotIndex = 2;
-
-            manipulateGutterPlotBrushing(yGutterIndex, mainPlotIndex, subjectCountBefore, false);
-
+            manipulateGutterPlotBrushing(false, mainPlotIndex, subjectCountBefore, numOfOtherFilters);
         }
         else
         {
-            yGutterIndex = 0;
-            xGutterIndex = 2;
             mainPlotIndex = 1;
         }
 
         if (hasXGutter)
         {
-            manipulateGutterPlotBrushing(xGutterIndex, mainPlotIndex, subjectCountBefore, true);
+            manipulateGutterPlotBrushing(true, mainPlotIndex, subjectCountBefore, numOfOtherFilters);
         }
 
         log("Brush in main plot area and verify that we don't get a brush window in the gutters.");
@@ -2533,18 +2533,19 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
             // Try to protect from getting an index out of range error. Add one just to make sure that if there is a
             // very small number of points we don't end up with 0 as pointToClick;
             pointToClick = (getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType)) / 4) + 1;
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")", 250, -250, false);
+            log("Brushing in the main plot area. Going to click at point: div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")");
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")", 50, -50, false);
 
         }
         else
         {
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ")", 250, -250, false);
+            brushEmptyPlot("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ")", 100, -100, false);
         }
 
         if (hasYGutter)
         {
             log("Verify no brush in 'undefined x value' gutter.");
-            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + yGutterIndex + ") > g.brush > rect.extent";
+            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > rect.extent";
             gutterBrushWindow = getElement(Locator.css(cssPathBrushWindow));
             tempStr = gutterBrushWindow.getAttribute("height");
             heightWidth = Integer.parseInt(tempStr);
@@ -2554,7 +2555,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if(hasXGutter)
         {
             log("Verify no brush in 'undefined y value' gutter.");
-            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + xGutterIndex + ") > g.brush > rect.extent";
+            cssPathBrushWindow = "div.bottomplot > svg > g.brush > rect.extent";
             gutterBrushWindow = getElement(Locator.css(cssPathBrushWindow));
             tempStr = gutterBrushWindow.getAttribute("width");
             heightWidth = Integer.parseInt(tempStr);
@@ -2563,29 +2564,36 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
     }
 
-    private void manipulateGutterPlotBrushing(int gutterIndex, int mainPlotIndex, int subjectCountBefore, boolean isXGutter)
+    // isXGutter: Need to know this so we can find the appropriate svg. If it is an x-gutter (i.e. along the bottom) then use "div.bottomplot > svg" to find it.
+    //            Otherwise use "div:not(.thumbnail) > svg:nth-of-type" to find the y-gutter.
+    // mainPlotIndex: If there is a y-gutter the main plot will be the second svg in the collection. If there is no y-gutter the main plot will be the first svg.
+    // subjectCountBefore: Used only to validate that when a brushing is done, the subject count should go down.
+    // numOfOtherFilters: Need to know this when we remove the filter applied by the brushing. An example would be if the test
+    //                    filtered on a race before doing the brushing. This will help identify where the brushing filter is in the list.
+    private void manipulateGutterPlotBrushing(boolean isXGutter, int mainPlotIndex, int subjectCountBefore, int numOfOtherFilters)
     {
         CDSHelper cds = new CDSHelper(this);
         String cssPathBrushWindow;
 
         if(isXGutter)
         {
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(4) > g.grid-line > path:nth-of-type(2)", -50, 0, false);
+            brushPlot("div.bottomplot > svg > g:nth-child(4) > g.grid-line > path:nth-of-type(2)", -50, 0, false);
         }
         else
         {
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(5) > g.grid-line > path:nth-of-type(2)", 0, -50, false);
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) > g:nth-child(5) > g.grid-line > path:nth-of-type(2)", 0, -50, false);
         }
 
         log("Move the brush window in the 'undefined y value' gutter.");
 
-        cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g.brush > rect.extent";
         if(isXGutter)
         {
+            cssPathBrushWindow = "div.bottomplot > svg > g.brush > rect.extent";
             dragAndDrop(Locator.css(cssPathBrushWindow), -100, 0);
         }
         else
         {
+            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > rect.extent";
             dragAndDrop(Locator.css(cssPathBrushWindow), 0, -100);
         }
 
@@ -2608,44 +2616,47 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Change the brush window size using the 'handles'.");
 
-        cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g.brush > g:nth-of-type(1)";
         if(isXGutter)
         {
+            cssPathBrushWindow = "div.bottomplot > svg > g.brush > g:nth-of-type(1)";
             dragAndDrop(Locator.css(cssPathBrushWindow), -100, 0);
         }
         else
         {
+            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > g:nth-of-type(1)";
             dragAndDrop(Locator.css(cssPathBrushWindow), 0, -100);
         }
 
         sleep(500);
 
-        cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g.brush > g:nth-of-type(2)";
         if(isXGutter)
         {
+            cssPathBrushWindow = "div.bottomplot > svg > g.brush > g:nth-of-type(2)";
             dragAndDrop(Locator.css(cssPathBrushWindow), -100, 0);
         }
         else
         {
+            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > g:nth-of-type(2)";
             dragAndDrop(Locator.css(cssPathBrushWindow), 0, -100);
         }
 
         log("Move the brush window back to starting point.");
 
-        cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g.brush > rect.extent";
         if(isXGutter)
         {
+            cssPathBrushWindow = "div.bottomplot > svg > g.brush > rect.extent";
             dragAndDrop(Locator.css(cssPathBrushWindow), 100, 0);
         }
         else
         {
+            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > rect.extent";
             dragAndDrop(Locator.css(cssPathBrushWindow), 0, 100);
         }
 
         log("Apply the brushing as a filter.");
         applyBrushAsFilter(subjectCountBefore);
 
-        cds.clearFilter(1);
+        cds.clearFilter(numOfOtherFilters + 1);
         sleep(1000);
         _ext4Helper.waitForMaskToDisappear();
 
@@ -2660,15 +2671,51 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
         // Going to move the mouse over the area where it is about to start dragging.
-        click(Locator.css(cssPathToPoint));
+
+        // This try catch is in for a Chrome issue with selenium. With dense plotting I was getting an error in Chrome
+        // where I could not click on a point because some other point (or other aspect of the plot) was drawn on top of it.
+        // To avoid this error try clicking at a point. This error did not show up in Firefox.
+        try
+        {
+            click(Locator.css(cssPathToPoint));
+        }
+        catch(org.openqa.selenium.WebDriverException wde)
+        {
+            log("Got an error trying to click a point, going to try an alternate way to click.");
+            clickAt(Locator.css(cssPathToPoint), 1, 1, 0);
+        }
+
         sleep(1000);
         dragAndDrop(Locator.css(cssPathToPoint), xOffSet, yOffSet);
         sleep(CDSHelper.CDS_WAIT);
 
-        assertElementVisible(Locator.linkContainingText("Filter"));
+        if(applyFilter)
+        {
+            assertElementVisible(Locator.linkContainingText("Filter"));
+            applyBrushAsFilter(subjectCountBefore);
+        }
+
+    }
+
+    // Need to special case if trying to brush in an empty plot.
+    private void brushEmptyPlot(String cssPathToPlot, int xOffset, int yOffset, boolean applyFilter)
+    {
+        int subjectCountBefore;
+        String tempStr;
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        // Going to move the mouse over the area where it is about to start dragging.
+        clickAt(Locator.css(cssPathToPlot), 1, 1, 0);
+
+        sleep(1000);
+        dragAndDrop(Locator.css(cssPathToPlot), xOffset, yOffset);
+        sleep(CDSHelper.CDS_WAIT);
 
         if(applyFilter)
         {
+            assertElementVisible(Locator.linkContainingText("Filter"));
             applyBrushAsFilter(subjectCountBefore);
         }
 
@@ -2784,7 +2831,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
     private boolean hasStudyAxis()
     {
-        return hasGutter("#study-axis svg");
+        return hasGutter("div.bottomplot svg");
     }
 
     private boolean hasGutter(String cssPath){

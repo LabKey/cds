@@ -267,7 +267,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(productMember));
         waitForElement(CDSHelper.Locators.filterMemberLocator(productMember2));
         // TODO Test data dependent.
-        _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0); // now it's 'AND'
+        _asserts.assertFilterStatusCounts(8272, 50, 2, 2, 278); // now it's 'AND'
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(productMember2));
         assertElementPresent(hasData);
         assertElementNotPresent(noData);

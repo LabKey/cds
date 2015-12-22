@@ -448,6 +448,7 @@ public class CDSHelper
     @LogMethod(quiet = true)
     public void enterApplication()
     {
+        _test.refresh();
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
         _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");

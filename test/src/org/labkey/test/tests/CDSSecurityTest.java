@@ -334,6 +334,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     {
         String ExtDialogTitle;
 
+        log("Refreshing the browser.");
+        refresh();
+        sleep(1000);
         beginAt("project/" + getProjectName() + "/begin.view?");
         ensureAdminMode();
         Ext4Helper.resetCssPrefix();
@@ -347,6 +350,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         for(String group : PERM_GROUPS)
         {
+            log("Looking for text: " + group);
             if (isTextPresent(group))
             {
                 ExtDialogTitle = group + " Information";
@@ -355,7 +359,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
                 _extHelper.waitForExtDialog(ExtDialogTitle);
                 _permissionsHelper.deleteAllUsersFromGroup();
                 clickButton("Delete Empty Group", 0);
+                log("Have deleted the empty group.");
                 waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
+                sleep(500);
                 clickButton("Cancel");
 
                 if (!isElementPresent(Locator.permissionRendered()))
