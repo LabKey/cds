@@ -242,8 +242,7 @@ Ext.define('Connector.view.Chart', {
                 },
                 items: [
                     this.getHeatmapModeIndicator(),
-                    this.getMedianModeIndicator(),
-                    this.getLogScaleModeIndicator()
+                    this.getMedianModeIndicator()
                 ]
             },{
                 xtype: 'container',
@@ -255,26 +254,6 @@ Ext.define('Connector.view.Chart', {
                 items: [this.getColorSelector()]
             }]
         };
-    },
-
-    getLogScaleModeIndicator : function() {
-        if (!this.logScaleIndicator) {
-            this.logScaleIndicator = Ext.create('Ext.Component', {
-                hidden: true,
-                cls: 'plotmodeon',
-                html: 'Log filter on',
-                width: 110,
-                listeners: {
-                    scope: this,
-                    afterrender : function(c) {
-                        c.getEl().on('mouseover', function() { this.showWhyLogScale(); }, this);
-                        c.getEl().on('mouseout', function() { this.fireEvent('hidelogscalemsg', this); }, this);
-                    }
-                }
-            });
-        }
-
-        return this.logScaleIndicator;
     },
 
     getHeatmapModeIndicator : function() {
@@ -481,9 +460,6 @@ Ext.define('Connector.view.Chart', {
         }, this);
         this.hideMedianModeTask = new Ext.util.DelayedTask(function() {
             this.fireEvent('hidemedianmsg', this);
-        }, this);
-        this.hideLogScaleModeTask = new Ext.util.DelayedTask(function() {
-            this.fireEvent('hidelogscalemsg', this);
         }, this);
 
         this.on('resize', function() {
@@ -1010,8 +986,7 @@ Ext.define('Connector.view.Chart', {
         else {
             allDataRows = {
                 main: chartData.rows,
-                totalCount: chartData.rows.length,
-                invalidLogPlotRowCount: chartData.invalidLogPlotRowCount
+                totalCount: chartData.rows.length
             };
         }
 
@@ -1044,9 +1019,6 @@ Ext.define('Connector.view.Chart', {
 
         this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
         this.toggleMedianMode();
-
-        this.invalidLogPlotRowCount = Ext.isDefined(allDataRows) ? allDataRows.invalidLogPlotRowCount : 0;
-        this.toggleLogScaleMode();
 
         var me = this;
         this.highlightSelectedFn = function() {
@@ -1479,10 +1451,6 @@ Ext.define('Connector.view.Chart', {
             if (allDataRows && allDataRows.undefinedY)
             {
                 console.log('plotted x gutter rows:', allDataRows.undefinedY.length);
-            }
-            if (allDataRows && allDataRows.invalidLogPlotRowCount > 0)
-            {
-                console.log('not plotted log rows:', allDataRows.invalidLogPlotRowCount);
             }
         }
     },
@@ -2604,34 +2572,6 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hideguttermsg', this);
     },
 
-    toggleLogScaleMode : function() {
-        this.getLogScaleModeIndicator().setVisible(this.invalidLogPlotRowCount > 0);
-
-        var msgKey = 'LOG_MODE';
-        if (!this.disableAutoMsg && this.invalidLogPlotRowCount > 0 && Connector.getService('Messaging').isAllowed(msgKey)) {
-            this.showWhyLogScale();
-            this.hideLogScaleModeTask.delay(5000);
-            Connector.getService('Messaging').block(msgKey);
-        }
-    },
-
-    showWhyLogScale : function() {
-        if (this.invalidLogPlotRowCount > 0) {
-            var config = {
-                target: this.getLogScaleModeIndicator().getEl().dom,
-                placement: 'bottom',
-                title: 'Log filter on',
-                xOffset: -65,
-                arrowOffset: 100,
-                content: 'Values ≤ 0 have no log. ' + Ext.util.Format.number(this.invalidLogPlotRowCount, '0,000')
-                    + ' points are not plotted but are still included in the grid and subject count.'
-                    + ' Use a linear scale to see all values.'
-            };
-
-            ChartUtils.showCallout(config, 'hidelogscalemsg', this);
-        }
-    },
-
     toggleHeatmapMode : function() {
         this.getColorSelector().setDisabled(this.showPointsAsBin);
         this.getHeatmapModeIndicator().setVisible(this.showPointsAsBin);
@@ -2841,19 +2781,8 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        var invalidLogPlotRowCount = 0;
-
-        if (Ext.isDefined(chartData))
-        {
-            if (Ext.isFunction(chartData.getDataRows))
-            {
-                invalidLogPlotRowCount = chartData.getDataRows().invalidLogPlotRowCount;
-            }
-        }
-
         this.initPlot({
-            rows: map,
-            invalidLogPlotRowCount: invalidLogPlotRowCount
+            rows: map
         }, undefined, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
