@@ -491,8 +491,8 @@ Ext.define('Connector.model.ChartData', {
                 logNonPositiveBoth: logGutterBothCount > 0 ? true : false,
                 totalCount: mainCount + undefinedXRows.length + undefinedYRows.length,
                 invalidLogPlotRowCount: invalidLogPlotRowCount,
-                minPositiveX: minPositiveX,
-                minPositiveY: minPositiveY
+                minPositiveX: minPositiveX === Number.MAX_VALUE ? 0.0001 : minPositiveX,
+                minPositiveY: minPositiveY === Number.MAX_VALUE ? 0.0001 : minPositiveY
             },
             properties: {
                 xaxis: xa,
