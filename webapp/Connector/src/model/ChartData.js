@@ -417,6 +417,10 @@ Ext.define('Connector.model.ChartData', {
                 if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().x !== true)
                 {
                     undefinedXRows.push(entry);
+                    if (yVal > 0 && yVal < minPositiveY)
+                    {
+                        minPositiveY = yVal;
+                    }
                 }
             }
             else if (yVal == null && xa.isContinuous && !xa.isDimension)
@@ -424,6 +428,10 @@ Ext.define('Connector.model.ChartData', {
                 if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().y !== true)
                 {
                     undefinedYRows.push(entry);
+                    if (xVal > 0 && xVal < minPositiveX)
+                    {
+                        minPositiveX = xVal;
+                    }
                 }
             }
             else
