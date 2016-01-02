@@ -21,6 +21,8 @@ Ext.define('Connector.utility.Query', {
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
         this.CONTAINER_ALIAS = this.STUDY_ALIAS_PREFIX + 'Container';
         this.VISITROWID_ALIAS = this.STUDY_ALIAS_PREFIX + 'VisitRowId';
+        this.STUDY_ALIAS = this.STUDY_ALIAS_PREFIX + 'Study';
+        this.TREATMENTSUMMARY_ALIAS = this.STUDY_ALIAS_PREFIX + 'TreatmentSummary';
 
         if (Ext.isDefined(LABKEY.ActionURL.getParameters()['logQuery']))
         {

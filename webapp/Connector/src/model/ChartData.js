@@ -141,7 +141,10 @@ Ext.define('Connector.model.ChartData', {
                     keyColumnMatch = (measure.name == 'Container' && alias == QueryUtils.CONTAINER_ALIAS)
                             || (measure.name == 'SubjectId' && alias == QueryUtils.SUBJECT_ALIAS)
                             || (measure.name == 'SequenceNum' && alias == QueryUtils.SEQUENCENUM_ALIAS)
-                            || (measure.name == 'ParticipantSequenceNum' && alias == QueryUtils.SUBJECT_SEQNUM_ALIAS);
+                            || (measure.name == 'ParticipantSequenceNum' && alias == QueryUtils.SUBJECT_SEQNUM_ALIAS)
+                            || (measure.name == 'VisitRowId' && alias == QueryUtils.VISITROWID_ALIAS)
+                            || (measure.name == 'Study' && alias == QueryUtils.STUDY_ALIAS)
+                            || (measure.name == 'TreatmentSummary' && alias == QueryUtils.TREATMENTSUMMARY_ALIAS);
 
                 if ((measure.alias && measure.alias == alias) || (measure.name && schemaQueryNameMatch) || keyColumnMatch)
                 {
@@ -394,9 +397,20 @@ Ext.define('Connector.model.ChartData', {
                 hasNegOrZeroY = true;
             }
 
+            var key = '';
+            if (_row[QueryUtils.STUDY_ALIAS] && _row[QueryUtils.VISITROWID_ALIAS]) {
+                key = _row[QueryUtils.VISITROWID_ALIAS];
+                key += '---' + _row[QueryUtils.STUDY_ALIAS];
+                if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
+                    key += '---' + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
+                }
+
+            }
+
             var entry = {
                 x: xVal,
                 y: yVal,
+                timeAxisKey : key,
                 color: colorVal,
                 subjectId: _row[QueryUtils.SUBJECT_ALIAS],
                 xname: xa.label,

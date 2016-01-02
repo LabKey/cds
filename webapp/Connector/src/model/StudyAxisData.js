@@ -205,7 +205,8 @@ Ext.define('Connector.model.StudyAxisData', {
                     protocolDay: protocolDay,
                     visitTagCaption: visitTagCaption,
                     isVaccination: isVaccination,
-                    isChallenge: isChallenge
+                    isChallenge: isChallenge,
+                    visitRowId: visitId
                 });
 
                 // check visit mapping
@@ -258,7 +259,8 @@ Ext.define('Connector.model.StudyAxisData', {
                             protocolDay: protocolDay,
                             visitTagCaption: visitTagCaption,
                             isVaccination: isVaccination,
-                            isChallenge: isChallenge
+                            isChallenge: isChallenge,
+                            visitRowId: visitId
                         });
                     }
 

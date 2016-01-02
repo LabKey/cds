@@ -1533,14 +1533,27 @@ Ext.define('Connector.view.Chart', {
                 for (var i = 0; i < d.length; i++)
                 {
                     var data = d[i].data;
+                    var isTimeAxisTarget = false;
+
                     if (data.x.toString() === target) { // use toString for boolean value
                         d[i].isMouseOver = true;
                     }
+                    else {
+                        if (data.timeAxisKey.indexOf(target) > -1) {
+                            d[i].isMouseOver = true;
+                            isTimeAxisTarget = true;
+                        }
+                    }
+
                     if (data.x.toString() === target && subjectIds.indexOf(data.subjectId) === -1)
                     {
                         subjectIds.push(data.subjectId);
                     }
                     else if (selections.indexOf(data.x) != -1 && subjectIds.indexOf(data.subjectId) === -1)
+                    {
+                        subjectIds.push(data.subjectId);
+                    }
+                    else if (isTimeAxisTarget)
                     {
                         subjectIds.push(data.subjectId);
                     }
@@ -1656,8 +1669,15 @@ Ext.define('Connector.view.Chart', {
                 subject;
 
             points.each(function(d) {
+                var isTimeAxisTarget = false;
                 if (d.x.toString() === target) { // use toString for boolean value
                     d.isMouseOver = true;
+                }
+                else {
+                    if (d.timeAxisKey.indexOf(target) > -1) {
+                        d.isMouseOver = true;
+                        isTimeAxisTarget = true;
+                    }
                 }
 
                 subject = d.subjectId;
@@ -1668,6 +1688,9 @@ Ext.define('Connector.view.Chart', {
                         subjectIds.push(subject);
                     }
                     else if (selections.indexOf(d.x) != -1) {
+                        subjectIds.push(subject);
+                    }
+                    else if (isTimeAxisTarget) {
                         subjectIds.push(subject);
                     }
                 }
@@ -2692,6 +2715,30 @@ Ext.define('Connector.view.Chart', {
                         'ParticipantSequenceNum',
                         'VARCHAR'
                     );
+                    this.addValuesToMeasureMap(
+                            measuresMap,
+                            axisName,
+                            Connector.studyContext.gridBaseSchema,
+                            Connector.studyContext.gridBase,
+                            'Study',
+                            'VARCHAR'
+                    );
+                    this.addValuesToMeasureMap(
+                            measuresMap,
+                            axisName,
+                            Connector.studyContext.gridBaseSchema,
+                            Connector.studyContext.gridBase,
+                            'TreatmentSummary',
+                            'VARCHAR'
+                    );
+                    this.addValuesToMeasureMap(
+                            measuresMap,
+                            axisName,
+                            Connector.studyContext.gridBaseSchema,
+                            Connector.studyContext.gridBase,
+                            'VisitRowId',
+                            'INTEGER'
+                    );
                 }
 
                 // add selection information from the advanced options panel of the variable selector
@@ -3473,7 +3520,9 @@ Ext.define('Connector.view.Chart', {
                 .scale(this.plot.scales.x.scale)
                 .width(Math.max(0, this.getBottomPlotPanel().getWidth() - 40))
                 .visitTagMouseover(this.showVisitTagHover, this)
-                .visitTagMouseout(this.removeVisitTagHover, this);
+                .visitTagMouseout(this.removeVisitTagHover, this)
+                .highlightPlot(this.highlightPlotData, this)
+                .clearHighlightedPlot(this.clearHighlightedData, this);;
 
         this.studyAxis();
     },

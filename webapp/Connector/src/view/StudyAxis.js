@@ -6,7 +6,7 @@
 Connector.view.StudyAxis = function() {
     var canvas = null, width, height, perStudyHeight = 20, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
             tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope, leftIndent = 25, collapsed = true, groupLabelOffset = 45,
-            studyLabelOffset = 35;
+            studyLabelOffset = 35, highlightPlot, highlightPlotScope, clearHighlightedPlot, clearHighlightedPlotScope;
 
     // This function returns <study name> for studies and <study name>-<group name> for groups in an attempt to
     // provide a unique name for each value in yScale
@@ -108,10 +108,99 @@ Connector.view.StudyAxis = function() {
 
         // add visit tag mouseover/mouseout functions.
         visitTags.on('mouseover', function(d) {
+            highlightGlyph.call(this, d, true);
             tagMouseover.call(tagMouseoverScope, d, this);
         });
         visitTags.on('mouseout', function(d) {
+            if (!d.selected) {
+                highlightGlyph.call(highlightPlotScope, d, false);
+            }
             tagMouseout.call(tagMouseoutScope, d, this);
+        });
+
+        visitTags.on('mousedown', function(d) {
+        // use mousedown to close callout so that mouseup can be fired reliably
+            tagMouseout.call(tagMouseoutScope, d, this);
+
+        });
+
+        visitTags.on('mouseup', function(d) {
+            d.selected = true;
+            tagMouseover.call(tagMouseoverScope, d, this);
+            highlightGlyph.call(this, d, true);
+        });
+    };
+
+    var highlightGlyph = function(d, isHighlight) {
+        var key = d.visitRowId;
+        key += '---' + d.studyLabel;
+        if (d.groupLabel) {
+            key += '---' + d.groupLabel;
+        }
+        if (isHighlight) {
+            highlightPlot.call(highlightPlotScope, key);
+        }
+        else {
+            clearHighlightedPlot.call(clearHighlightedPlotScope, key)
+        }
+
+        changeGlyphImage.call(this, d, isHighlight);
+    };
+
+    var changeGlyphImage = function(d, isHighlight) {
+        var x = xScale(d.alignedDay) - (d.imgSize / 2);
+        var scale;
+        if (!collapsed && d.groupLabel)
+        {
+            scale = yScale(d.studyLabel + '-' + d.groupLabel);
+        }
+        else
+        {
+            scale = yScale(d.studyLabel);
+        }
+        var y = scale + (perStudyHeight / 2) - (d.imgSize / 2);
+        var size = d.imgSize;
+        d3.selectAll("image.visit-tag").each( function(detail, i){
+
+            if(detail.studyLabel === d.studyLabel && detail.visitRowId == d.visitRowId && detail.groupLabel == d.groupLabel){
+                d3.select(this).attr('xlink:href', function(data) {
+                            var imgPath = Connector.resourceContext.imgPath + '/';
+
+                            if (d.isVaccination) {
+                                if (isHighlight) {
+                                    imgPath += 'vaccination_hover.svg';
+                                }
+                                else {
+                                    imgPath += 'vaccination_normal.svg';
+                                }
+                            }
+                            else if (d.isChallenge) {
+                                if (isHighlight) {
+                                    imgPath += 'challenge_hover.svg';
+                                }
+                                else {
+                                    imgPath += 'challenge_normal.svg';
+                                }
+
+                            }
+                            else {
+                                if (isHighlight) {
+                                    imgPath += 'nonvaccination_hover.svg';
+                                }
+                                else {
+                                    imgPath += 'nonvaccination_normal.svg';
+                                }
+                            }
+
+                            return imgPath;
+                        })
+                        .attr('x', x)
+                        .attr('y', y)
+                        .attr('width', size)
+                        .attr('height', size);
+                this.parentNode.appendChild(this);
+                return false;
+            }
         });
     };
 
@@ -176,6 +265,48 @@ Connector.view.StudyAxis = function() {
                     txt += d.name.replace(/ /g, '_').replace(/,/g, '');
                     return txt;
                 });
+        labels.on('mouseover', function(d) {
+            highlightStudyLabel(d, true);
+        });
+        labels.on('mouseout', function(d) {
+            if (!d.selected) {
+                highlightStudyLabel(d, false);
+            }
+        });
+        labels.on('mousedown', function(d) {
+            d.selected = true;
+            highlightStudyLabel(d, true);
+        });
+    };
+
+    var highlightStudyLabel = function(d, isHighlight) {
+        // TODO highlight label, add rect for highlight
+        // highlight glyphs
+        // highlight points by study
+        // highlight associated points
+        var key = '';
+        if (d.study) {
+            key += '---' + d.study;
+        }
+        key += '---' + d.name;
+
+        d3.selectAll("image.visit-tag").each( function(detail, i){
+            var detailkey = detail.visitRowId;
+            detailkey += '---' + detail.studyLabel;
+            if (detail.groupLabel) {
+                detailkey += '---' + detail.groupLabel;
+            }
+            if (detailkey.indexOf(key) > -1) {
+                changeGlyphImage(detail, isHighlight);
+            }
+        });
+
+        if (isHighlight) {
+            highlightPlot.call(highlightPlotScope, key);
+
+        } else {
+            clearHighlightedPlot.call(clearHighlightedPlotScope, key);
+        }
     };
 
     var renderExpandCollapseButton = function(canvas) {
@@ -272,6 +403,8 @@ Connector.view.StudyAxis = function() {
     studyAxis.studyData = function(d) { studyData = d; return studyAxis; };
     studyAxis.visitTagMouseover = function(m, s) { tagMouseover = m; tagMouseoverScope = s; return studyAxis; };
     studyAxis.visitTagMouseout = function(m, s) { tagMouseout = m; tagMouseoutScope = s; return studyAxis; };
+    studyAxis.highlightPlot = function(m, s) { highlightPlot = m; highlightPlotScope = s; return studyAxis; };
+    studyAxis.clearHighlightedPlot = function(m, s) { clearHighlightedPlot = m; clearHighlightedPlotScope = s; return studyAxis; };
     studyAxis.scale = function(s) {
         var r;
         xScale = s.copy();
