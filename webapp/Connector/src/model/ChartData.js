@@ -245,7 +245,9 @@ Ext.define('Connector.model.ChartData', {
             mainCount = 0,
             nonAggregated,
             singleAntigenComparison = false,
-            _row;
+            _row,
+            logGutterBothCount = 0, logGutterXCount = 0,logGutterYCount = 0,
+            minPositiveX = Number.MAX_VALUE, minPositiveY = Number.MAX_VALUE;
 
         ca = this.getBaseMeasureConfig();
         if (color)
@@ -364,11 +366,11 @@ Ext.define('Connector.model.ChartData', {
             }
 
             // check that the plot value are valid on a log scale
-            if (!this.isValidPlotValue('y', ya, yVal) || !this.isValidPlotValue('x', xa, xVal))
-            {
-                invalidLogPlotRowCount++;
-                continue;
-            }
+            //if (!this.isValidPlotValue('y', ya, yVal) || !this.isValidPlotValue('x', xa, xVal))
+            //{
+            //    //invalidLogPlotRowCount++;
+            //    //continue;
+            //}
 
             // update x-axis and y-axis domain min and max values
             if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date")
@@ -429,6 +431,10 @@ Ext.define('Connector.model.ChartData', {
                 if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().x !== true)
                 {
                     undefinedXRows.push(entry);
+                    if (yVal > 0 && yVal < minPositiveY)
+                    {
+                        minPositiveY = yVal;
+                    }
                 }
             }
             else if (yVal == null && xa.isContinuous && !xa.isDimension)
@@ -436,10 +442,36 @@ Ext.define('Connector.model.ChartData', {
                 if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().y !== true)
                 {
                     undefinedYRows.push(entry);
+                    if (xVal > 0 && xVal < minPositiveX)
+                    {
+                        minPositiveX = xVal;
+                    }
                 }
             }
             else
             {
+                if (!this.isValidPlotValue('y', ya, yVal) && !this.isValidPlotValue('x', xa, xVal))
+                {
+                    logGutterBothCount++;
+                    logGutterXCount++;
+                    logGutterYCount++
+                }
+                else if (!this.isValidPlotValue('x', xa, xVal))
+                {
+                    logGutterXCount++;
+                }
+                else if (!this.isValidPlotValue('y', ya, yVal))
+                {
+                    logGutterYCount++
+                }
+                if (xVal > 0 && xVal < minPositiveX)
+                {
+                    minPositiveX = xVal;
+                }
+                if (yVal > 0 && yVal < minPositiveY)
+                {
+                    minPositiveY = yVal;
+                }
                 mainCount++;
             }
 
@@ -468,8 +500,13 @@ Ext.define('Connector.model.ChartData', {
                 main: mainPlotRows,
                 undefinedX: undefinedXRows.length > 0 ? undefinedXRows : undefined,
                 undefinedY: undefinedYRows.length > 0 ? undefinedYRows : undefined,
+                logNonPositiveX: logGutterXCount > 0 ? true : false,
+                logNonPositiveY: logGutterYCount > 0 ? true : false,
+                logNonPositiveBoth: logGutterBothCount > 0 ? true : false,
                 totalCount: mainCount + undefinedXRows.length + undefinedYRows.length,
-                invalidLogPlotRowCount: invalidLogPlotRowCount
+                invalidLogPlotRowCount: invalidLogPlotRowCount,
+                minPositiveX: minPositiveX === Number.MAX_VALUE ? 0.0001 : minPositiveX,
+                minPositiveY: minPositiveY === Number.MAX_VALUE ? 0.0001 : minPositiveY
             },
             properties: {
                 xaxis: xa,

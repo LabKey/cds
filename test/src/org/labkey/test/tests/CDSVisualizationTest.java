@@ -17,6 +17,7 @@ package org.labkey.test.tests;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -88,16 +89,16 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     @BeforeClass
     public static void initTest() throws Exception
     {
-        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
         //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
+//        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
 //        cvt.createParticipantGroups();
     }
 
     @AfterClass
     public static void afterClassCleanUp()
     {
-        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
         //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
+//        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
 //        cvt.deleteParticipantGroups();
     }
 
@@ -209,6 +210,116 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertFalse("For ELISPOT Background vs Time Visit Days y-axis gutter plot was present, it should not be.", hasYGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
+    }
+
+    @Test
+    public void verifyLogGutterPlot()
+    {
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        CDSHelper cds = new CDSHelper(this);
+        String tempStr, expectedTickText;
+        int subjectCountBefore, subjectCountAfter;
+
+        log("Generate a plot that has all the gutters.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.confirmSelection();
+
+        log("Validate that the Log Gutters are there.");
+        assertTrue("Did not find the Log Gutter on the bottom of the plot.", hasXLogGutter());
+        assertTrue("Did not find the Log Gutter on the left hand side of the plot.", hasYLogGutter());
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        log("Brush only in the log gutter on the x-axis.");
+        dragAndDrop(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) > g:nth-of-type(3) > g:nth-of-type(1)"), 100, 100);
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
+        sleep(1000); // Let the plot redraw.
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Validate that the filter has been applied and there are only x gutters.");
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountAfter = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        assertTrue("After brushing subject count was not less than before. Count before brushing: " + subjectCountBefore + " Count after brush: " + subjectCountAfter, subjectCountBefore > subjectCountAfter);
+        assertTrue("The y-axis gutter plot did not go away, it should have.", !hasYGutter());
+        assertTrue("The y-axis log gutter did not go away, it should have.", !hasYLogGutter());
+        assertTrue("There is no x-axis gutter, there should be.", hasXGutter());
+        assertTrue("There is no x-axis log gutter, there should be.", hasXLogGutter());
+        expectedTickText = "0.02\n0.03\n0.04\n0.05\n0.06\n0.07\n0.08\n0.09\n0.1\n≤0\n0.0005\n0.005\n0.05";
+        cds.assertPlotTickText(1, expectedTickText);
+
+        cds.clearFilter(1);
+        sleep(1000); // Let the plot redraw.
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Now brush only in the log gutter on the y-axis.");
+        dragAndDrop(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) > g:nth-of-type(4) > g:nth-of-type(1)"), -100, 100);
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
+        sleep(1000); // Let the plot redraw.
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Validate that the filter has been applied and there are only y gutters.");
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountAfter = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        assertTrue("After brushing subject count was not less than before. Count before brushing: " + subjectCountBefore + " Count after brush: " + subjectCountAfter, subjectCountBefore > subjectCountAfter);
+        assertTrue("The x-axis gutter plot did not go away, it should have.", !hasXGutter());
+        assertTrue("The x-axis log gutter did not go away, it should have.", !hasXLogGutter());
+        assertTrue("There is no y-axis gutter, there should be.", hasYGutter());
+        assertTrue("There is no y-axis log gutter, there should be.", hasYLogGutter());
+        expectedTickText = "≤0\n0.0005\n0.005\n0.05\n0.003\n0.03";
+        cds.assertPlotTickText(2, expectedTickText);
+
+        cds.clearFilter(1);
+        sleep(1000); // Let the plot redraw.
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Set a color filter and make sure that there are no errors.");
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        coloraxis.pickVariable(CDSHelper.DEMO_COUNTRY);
+        coloraxis.confirmSelection();
+        sleep(1000);
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Brush just the main plot and validate that all of the gutters disappear.");
+        dragAndDrop(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2)"), 100, 100);
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
+        sleep(1000); // Let the plot redraw.
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Validate that the filter has been applied and there are no gutter elements.");
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountAfter = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        assertTrue("After brushing subject count was not less than before. Count before brushing: " + subjectCountBefore + " Count after brush: " + subjectCountAfter, subjectCountBefore > subjectCountAfter);
+        assertTrue("The y-axis gutter plot did not go away, it should have.", !hasYGutter());
+        assertTrue("The y-axis log gutter did not go away, it should have.", !hasYLogGutter());
+        assertTrue("The x-axis gutter plot did not go away, it should have.", !hasXGutter());
+        assertTrue("The x-axis log gutter did not go away, it should have.", !hasXLogGutter());
+        expectedTickText = "0.02\n0.03\n0.04\n0.05\n0.06\n0.07\n0.08\n0.09\n0.1\n0.002\n0.003\n0.004\n0.005\n0.006\n0.007\n0.008\n0.009\n0.01";
+        cds.assertPlotTickText(expectedTickText);
+
+        cds.clearFilter(1);
+        sleep(1000); // Let the plot redraw.
+        _ext4Helper.waitForMaskToDisappear();
+
     }
 
     @Test
@@ -650,7 +761,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.NAB_INIT_DILUTION);
         xaxis.confirmSelection();
 
-        String expectedXYValues = "10\nnull\n1\n10\n100\n1000";
+        String expectedXYValues = "10\nnull\n3\n30\n300\n3000";
         cds.assertPlotTickText(expectedXYValues);
         assertFalse("There is an x-gutter, and there should not be.", hasXGutter());
 
@@ -1981,8 +2092,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
-        waitForElement(plotTickLinear.withText("100"));
-        assertElementPresent(plotPoint, 160);
+        waitForElement(plotTickLinear.withText("200"));
+        assertElementPresent(plotPoint, 352);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDSHelper.CDS_WAIT);
@@ -2055,10 +2166,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType("All");
         yaxis.confirmSelection();
 
-        scaleValues = "0\n0.0009\n0.009\n0.09\n0.9\n9";
+        scaleValues = "≤0\n0.0005\n0.005\n0.05\n0.5\n5";
         expectedCount = 1604;
 
         verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
+        assertTrue("There was no x-axis log gutter there should be.", hasXLogGutter());
+        assertTrue("There was a y-axis log gutter there should not be.", !hasYLogGutter());
 
         log("Change scale to Linear and validate that values change.");
 
@@ -2070,6 +2183,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedCount = 1604;
 
         verifyLogAndLinearHelper(scaleValues, 1, expectedCount, false);
+        assertTrue("There  x-axis log gutter was present, it should not be there.", !hasXLogGutter());
+        assertTrue("There was a y-axis log gutter there should not be.", !hasYLogGutter());
 
         // Clear the plot.
         cds.clearFilters();
@@ -2088,9 +2203,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
-        originalScale = "0\n0.0009\n0.009\n0.09\n0.9\n9\n0.0002\n0.002\n0.02\n0.2\n2";
+        originalScale = "≤0\n0.0005\n0.005\n0.05\n0.5\n5\n≤0\n0.001\n0.01\n0.1\n1";
         originalCount = 1453;
         verifyLogAndLinearHelper(originalScale, 2, originalCount, true);
+        assertTrue("There was no x-axis log gutter there should be.", hasXLogGutter());
+        assertTrue("There was no y-axis log gutter there should be.", hasYLogGutter());
+
 
         log("Change x-axis to be linear.");
 
@@ -2098,9 +2216,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
-        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0.0002\n0.002\n0.02\n0.2\n2";
+        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n≤0\n0.001\n0.01\n0.1\n1";
         expectedCount = 1453;  // Is this right?
         verifyLogAndLinearHelper(scaleValues, 2, expectedCount, true);
+        assertTrue("There was no x-axis log gutter there should be.", hasXLogGutter());
+        assertTrue("There was a y-axis log gutter there should not be.", !hasYLogGutter());
 
         log("Change y-axis to be linear.");
 
@@ -2111,6 +2231,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
         expectedCount = 1453;
         verifyLogAndLinearHelper(scaleValues, 2, expectedCount, false);
+        assertTrue("There  x-axis log gutter was present, it should not be there.", !hasXLogGutter());
+        assertTrue("There was a y-axis log gutter there should not be.", !hasYLogGutter());
 
         log("Change x-axis back to log.");
 
@@ -2118,9 +2240,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setScale(DataspaceVariableSelector.Scale.Log);
         xaxis.confirmSelection();
 
-        scaleValues = "0\n0.0009\n0.009\n0.09\n0.9\n9\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
+        scaleValues = "≤0\n0.0005\n0.005\n0.05\n0.5\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
         expectedCount = 1453;
         verifyLogAndLinearHelper(scaleValues, 2, expectedCount, true);
+        assertTrue("There  x-axis log gutter was present, it should not be there.", !hasXLogGutter());
+        assertTrue("There was no y-axis log gutter there should be.", hasYLogGutter());
 
         log("Change y-axis back to log, all values should return to original.");
 
@@ -2129,6 +2253,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         verifyLogAndLinearHelper(originalScale, 2, originalCount, true);
+        assertTrue("There was no x-axis log gutter there should be.", hasXLogGutter());
+        assertTrue("There was no y-axis log gutter there should be.", hasYLogGutter());
 
         // Clear the plot.
         cds.clearFilters();
@@ -2140,9 +2266,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.confirmSelection();
 
-        scaleValues = "1\n10\n100\n1000";
+        scaleValues = "3\n30\n300\n3000";
         expectedCount = 796;
         verifyLogAndLinearHelper(scaleValues, 1, expectedCount, false);
+        assertTrue("There  x-axis log gutter was present, it should not be there. (there are no negative values with this plot)", !hasXLogGutter());
 
         log("Change y-axis to be linear.");
 
@@ -2169,7 +2296,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.DEMO_AGEGROUP);
         xaxis.confirmSelection();
 
-        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n1\n10\n100\n1000\n10000";
+        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n≤0\n30\n300\n3000\n30000";
         originalCount = 477;
         verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
 
@@ -2178,7 +2305,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         _asserts.assertFilterStatusCounts(55, 4, 1, 1, 18);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n1\n10\n100";
+        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n≤0\n30\n300";
         originalCount = 55;
         verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
 
@@ -2190,7 +2317,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     private void verifyLogAndLinearHelper(String scaleValues, int svgIndex, int expectedCount, boolean msgVisable)
     {
         final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
-        final String XPATH_PLOT_MOD_MSG = "//div[contains(@class, 'plotmodeon')][text()='Log filter on']";
         String tempStr, styleValue;
         int subjectCount;
 
@@ -2199,19 +2325,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCount = Integer.parseInt(tempStr.replaceAll(",", ""));
         assertEquals("Subject count not as expected.", expectedCount, subjectCount);
-
-        assertElementPresent("Could not find 'Log filter on' message control.", Locator.xpath(XPATH_PLOT_MOD_MSG), 1);
-
-        styleValue = getAttribute(Locator.xpath(XPATH_PLOT_MOD_MSG), "style");
-
-        if (msgVisable)
-        {
-            assertFalse("'Log filter on' message not visible at top of page.", styleValue.contains("display: none;"));
-        }
-        else
-        {
-            assertTrue("'Log filter on' message is visible at top of page, and it should not be.", styleValue.contains("display: none;"));
-        }
 
     }
 
@@ -2840,7 +2953,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         try
         {
-            waitForElement(Locator.css(cssPath));
+            waitForElement(Locator.css(cssPath), 3000);
             if (Locator.css(cssPath).findElement(getDriver()).isDisplayed())
             {
                 hasElement = true;
@@ -2856,6 +2969,48 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         return hasElement;
 
+    }
+
+    private boolean hasXLogGutter()
+    {
+        return hasLogGutter(0);
+    }
+
+    private boolean hasYLogGutter()
+    {
+        return hasLogGutter(1);
+    }
+
+    private boolean hasLogGutter(int axisIndex)
+    {
+        int mainPlotIndex;
+        String cssMainPlotWindow;
+        List<WebElement> axisElements;
+        WebElement mainPlot;
+        boolean isPresent;
+
+        if(hasYGutter())
+        {
+            mainPlotIndex = 2;
+        }
+        else {
+            mainPlotIndex = 1;
+        }
+
+        // There will always be two g.axis elements. One horizontal the other vertical.
+        cssMainPlotWindow = "div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") > g.axis";
+        axisElements = Locator.css(cssMainPlotWindow).toBy().findElements(getDriver());
+        try
+        {
+            axisElements.get(axisIndex).findElement(Locator.css("g.log-gutter").toBy());
+            isPresent = true;
+        }
+        catch(org.openqa.selenium.NoSuchElementException ex)
+        {
+            isPresent = false;
+        }
+
+        return isPresent;
     }
 
     private void validateVisitCounts(List<WebElement> studies, Map<String, CDSHelper.TimeAxisData> expectedCounts)
