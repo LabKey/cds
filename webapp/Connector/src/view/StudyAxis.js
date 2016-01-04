@@ -108,12 +108,12 @@ Connector.view.StudyAxis = function() {
 
         // add visit tag mouseover/mouseout functions.
         visitTags.on('mouseover', function(d) {
-            highlightGlyph.call(this, d, true);
+            highlightGlyph.call(this, d, true, selection);
             tagMouseover.call(tagMouseoverScope, d, this);
         });
         visitTags.on('mouseout', function(d) {
             if (!d.selected) {
-                highlightGlyph.call(highlightPlotScope, d, false);
+                highlightGlyph.call(highlightPlotScope, d, false, selection);
             }
             tagMouseout.call(tagMouseoutScope, d, this);
         });
@@ -127,11 +127,11 @@ Connector.view.StudyAxis = function() {
         visitTags.on('mouseup', function(d) {
             d.selected = true;
             tagMouseover.call(tagMouseoverScope, d, this);
-            highlightGlyph.call(this, d, true);
+            highlightGlyph.call(this, d, true, selection);
         });
     };
 
-    var highlightGlyph = function(d, isHighlight) {
+    var highlightGlyph = function(d, isHighlight, selection) {
         var key = d.visitRowId;
         key += '---' + d.studyLabel;
         if (d.groupLabel) {
@@ -144,10 +144,10 @@ Connector.view.StudyAxis = function() {
             clearHighlightedPlot.call(clearHighlightedPlotScope, key)
         }
 
-        changeGlyphImage.call(this, d, isHighlight);
+        changeGlyphImage.call(this, d, isHighlight, selection);
     };
 
-    var changeGlyphImage = function(d, isHighlight) {
+    var changeGlyphImage = function(d, isHighlight, selection) {
         var x = xScale(d.alignedDay) - (d.imgSize / 2);
         var scale;
         if (!collapsed && d.groupLabel)
@@ -160,7 +160,7 @@ Connector.view.StudyAxis = function() {
         }
         var y = scale + (perStudyHeight / 2) - (d.imgSize / 2);
         var size = d.imgSize;
-        d3.selectAll("image.visit-tag").each( function(detail, i){
+        selection.selectAll("image.visit-tag").each( function(detail, i){
 
             if(detail.studyLabel === d.studyLabel && detail.visitRowId == d.visitRowId && detail.groupLabel == d.groupLabel){
                 d3.select(this).attr('xlink:href', function(data) {
@@ -250,8 +250,8 @@ Connector.view.StudyAxis = function() {
             return ret;
         });
         labels.attr('y', function(d) {
-            return yScale(studyGroupName(d)) + perStudyHeight/2 + 4;
-        })
+                    return yScale(studyGroupName(d)) + perStudyHeight/2 + 4;
+                })
                 .attr('x', function(d) {
                     // groups have a parent study defined
                     return (d.study ? groupLabelOffset : studyLabelOffset) + leftIndent;
@@ -265,39 +265,67 @@ Connector.view.StudyAxis = function() {
                     txt += d.name.replace(/ /g, '_').replace(/,/g, '');
                     return txt;
                 });
+
         labels.on('mouseover', function(d) {
-            highlightStudyLabel(d, true);
+            highlightStudyLabel(d, true, selection);
         });
         labels.on('mouseout', function(d) {
             if (!d.selected) {
-                highlightStudyLabel(d, false);
+                highlightStudyLabel(d, false, selection);
             }
         });
         labels.on('mousedown', function(d) {
             d.selected = true;
-            highlightStudyLabel(d, true);
+            highlightStudyLabel(d, true, selection);
         });
+
+        selection.selectAll('rect.highlight').remove();
+        selection.insert("rect", "text")
+                .attr('class', 'highlight')
+                .attr('x', function() {
+                    return this.nextSibling.getBBox().x - 4; })
+                .attr('y', function() {
+                    return this.nextSibling.getBBox().y - 3; })
+                .attr('width', function() {
+                    return this.nextSibling.getBBox().width + 8; })
+                .attr('height', function() {
+                    return this.nextSibling.getBBox().height + 6; })
+                .attr('fill-opacity', 0)
+                .attr('fill', ChartUtils.colors.SELECTED);
+
     };
 
-    var highlightStudyLabel = function(d, isHighlight) {
-        // TODO highlight label, add rect for highlight
-        // highlight glyphs
-        // highlight points by study
-        // highlight associated points
+    var highlightStudyLabel = function(d, isHighlight, selection) {
         var key = '';
         if (d.study) {
             key += '---' + d.study;
         }
         key += '---' + d.name;
 
-        d3.selectAll("image.visit-tag").each( function(detail, i){
+        selection.selectAll("text.study-label").each( function(detail, i){
+            var detailkey = '';
+            if (detail.study) {
+                detailkey += '---' + detail.study;
+            }
+            detailkey += '---' + detail.name;
+            if (detailkey.indexOf(key) > -1) {
+                if (isHighlight) {
+                    d3.select(this.parentNode).select('rect.highlight').attr('fill-opacity', 1);
+                }
+                else {
+                    d3.select(this.parentNode).select('rect.highlight').attr('fill-opacity', 0);
+                }
+            }
+        });
+
+        selection.selectAll("image.visit-tag").each( function(detail, i){
             var detailkey = detail.visitRowId;
             detailkey += '---' + detail.studyLabel;
             if (detail.groupLabel) {
                 detailkey += '---' + detail.groupLabel;
             }
             if (detailkey.indexOf(key) > -1) {
-                changeGlyphImage(detail, isHighlight);
+                changeGlyphImage(detail, isHighlight, selection);
             }
         });
 
