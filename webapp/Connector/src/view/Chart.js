@@ -242,8 +242,7 @@ Ext.define('Connector.view.Chart', {
                 },
                 items: [
                     this.getHeatmapModeIndicator(),
-                    this.getMedianModeIndicator(),
-                    this.getLogScaleModeIndicator()
+                    this.getMedianModeIndicator()
                 ]
             },{
                 xtype: 'container',
@@ -255,26 +254,6 @@ Ext.define('Connector.view.Chart', {
                 items: [this.getColorSelector()]
             }]
         };
-    },
-
-    getLogScaleModeIndicator : function() {
-        if (!this.logScaleIndicator) {
-            this.logScaleIndicator = Ext.create('Ext.Component', {
-                hidden: true,
-                cls: 'plotmodeon',
-                html: 'Log filter on',
-                width: 110,
-                listeners: {
-                    scope: this,
-                    afterrender : function(c) {
-                        c.getEl().on('mouseover', function() { this.showWhyLogScale(); }, this);
-                        c.getEl().on('mouseout', function() { this.fireEvent('hidelogscalemsg', this); }, this);
-                    }
-                }
-            });
-        }
-
-        return this.logScaleIndicator;
     },
 
     getHeatmapModeIndicator : function() {
@@ -481,9 +460,6 @@ Ext.define('Connector.view.Chart', {
         }, this);
         this.hideMedianModeTask = new Ext.util.DelayedTask(function() {
             this.fireEvent('hidemedianmsg', this);
-        }, this);
-        this.hideLogScaleModeTask = new Ext.util.DelayedTask(function() {
-            this.fireEvent('hidelogscalemsg', this);
         }, this);
 
         this.on('resize', function() {
@@ -774,12 +750,20 @@ Ext.define('Connector.view.Chart', {
             this.getMainPlotPanel().removeCls('plot-scroll');
         }
 
+        var extraLeftMargin = 0, extraBottomMargin = 0;
+
+        if (this.requireBothLogGutter || this.requireYLogGutter) {
+            extraLeftMargin = 30;
+        }
+        if (this.requireBothLogGutter || this.requireXLogGutter) {
+            extraBottomMargin = 30;
+        }
         return Ext.apply(this.getBasePlotConfig(), {
             margins : {
                 top: 25,
-                left: yAxisMargin + (this.requireYGutter ? 0 : this.yNoGutterWidth),
+                left: yAxisMargin + (this.requireYGutter ? extraLeftMargin : this.yNoGutterWidth),
                 right: 50,
-                bottom: size.extended === true ? 73 : 53
+                bottom: size.extended === true ? 73 + extraBottomMargin: 53 + extraBottomMargin
             },
             width : size.width,
             height : size.height,
@@ -787,7 +771,8 @@ Ext.define('Connector.view.Chart', {
             aes : aes,
             scales : scales,
             gridLineColor : ChartUtils.colors.SECONDARY,
-            borderColor : ChartUtils.colors.HEATSCALE3
+            borderColor : ChartUtils.colors.HEATSCALE3,
+            isMainPlot: true
         });
     },
 
@@ -1001,13 +986,21 @@ Ext.define('Connector.view.Chart', {
         else {
             allDataRows = {
                 main: chartData.rows,
-                totalCount: chartData.rows.length,
-                invalidLogPlotRowCount: chartData.invalidLogPlotRowCount
+                totalCount: chartData.rows.length
             };
         }
 
         this.requireXGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedY) && allDataRows.undefinedY.length > 0;
         this.requireYGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedX) && allDataRows.undefinedX.length > 0;
+
+        this.requireYLogGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.logNonPositiveX) && allDataRows.logNonPositiveX;
+        this.requireXLogGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.logNonPositiveY) && allDataRows.logNonPositiveY;
+
+        // not used for now. if there is data with both x and y <= 0, then both x and y log gutter will always show
+        this.requireBothLogGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.logNonPositiveBoth) && allDataRows.logNonPositiveBoth;
+
+        this.minXPositiveValue = Ext.isDefined(allDataRows) ? allDataRows.minPositiveX : 0.00001;
+        this.minYPositiveValue = Ext.isDefined(allDataRows) ? allDataRows.minPositiveY : 0.00001;
 
         this.plotEl.update('');
         this.bottomPlotEl.update('');
@@ -1026,9 +1019,6 @@ Ext.define('Connector.view.Chart', {
 
         this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
         this.toggleMedianMode();
-
-        this.invalidLogPlotRowCount = Ext.isDefined(allDataRows) ? allDataRows.invalidLogPlotRowCount : 0;
-        this.toggleLogScaleMode();
 
         var me = this;
         this.highlightSelectedFn = function() {
@@ -1064,12 +1054,22 @@ Ext.define('Connector.view.Chart', {
             // configure gutters
             if (this.requireXGutter) {
                 gutterXPlotConfig = this.generateXGutter(plotConfig, chartData, allDataRows, yAxisMargin, properties, layerScope);
+                gutterXPlotConfig.isShowYAxis = this.requireYLogGutter;
+                gutterXPlotConfig.requireYLogGutter = this.requireYLogGutter;
+                gutterXPlotConfig.requireXLogGutter = this.requireXLogGutter;
+                gutterXPlotConfig.minXPositiveValue = this.minXPositiveValue;
+                gutterXPlotConfig.minYPositiveValue = this.minYPositiveValue;
                 Ext.apply(gutterXPlotConfig.scales.xTop, {trans : xScaleType});
                 Ext.apply(gutterXPlotConfig.scales.xTop, {domain : chartData.getXDomain(studyAxisInfo)});
             }
 
             if (this.requireYGutter) {
                 gutterYPlotConfig = this.generateYGutter(plotConfig, chartData, allDataRows, properties, layerScope);
+                gutterYPlotConfig.isShowXAxis = this.requireXLogGutter;
+                gutterYPlotConfig.requireYLogGutter = this.requireYLogGutter;
+                gutterYPlotConfig.requireXLogGutter = this.requireXLogGutter;
+                gutterYPlotConfig.minXPositiveValue = this.minXPositiveValue;
+                gutterYPlotConfig.minYPositiveValue = this.minYPositiveValue;
                 Ext.apply(gutterYPlotConfig.scales.yRight, {trans : yScaleType});
             }
         }
@@ -1092,6 +1092,14 @@ Ext.define('Connector.view.Chart', {
                     plotConfig.scales.shape = plotLayer.geom.shapeScale;
                 }
             }
+        }
+
+        if (chartData instanceof Connector.model.ChartData) {
+            plotConfig.requireBothLogGutter = this.requireBothLogGutter;
+            plotConfig.requireYLogGutter = this.requireYLogGutter;
+            plotConfig.requireXLogGutter = this.requireXLogGutter;
+            plotConfig.minXPositiveValue = this.minXPositiveValue;
+            plotConfig.minYPositiveValue = this.minYPositiveValue;
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
@@ -1369,11 +1377,15 @@ Ext.define('Connector.view.Chart', {
     },
 
     generateYGutter : function(plotConfig, chartData, allDataRows) {
+        var extraGutterBottom = 0;
+        if (this.requireBothLogGutter || this.requireXLogGutter) {
+            extraGutterBottom = 30;
+        }
         var gutterYMargins = {
             top: plotConfig.margins.top,
             left: this.yNoGutterWidth,
             right: 0,
-            bottom: plotConfig.margins.bottom
+            bottom: plotConfig.margins.bottom - extraGutterBottom
         };
 
         var me = this;
@@ -1439,10 +1451,6 @@ Ext.define('Connector.view.Chart', {
             if (allDataRows && allDataRows.undefinedY)
             {
                 console.log('plotted x gutter rows:', allDataRows.undefinedY.length);
-            }
-            if (allDataRows && allDataRows.invalidLogPlotRowCount > 0)
-            {
-                console.log('not plotted log rows:', allDataRows.invalidLogPlotRowCount);
             }
         }
     },
@@ -1533,10 +1541,10 @@ Ext.define('Connector.view.Chart', {
                 for (var i = 0; i < d.length; i++)
                 {
                     var data = d[i].data;
-                    if (data.x.toString() === target) { // use toString for boolean value
+                    if (data.x !== undefined && data.x !== null && data.x.toString() === target) { // use toString for boolean value
                         d[i].isMouseOver = true;
                     }
-                    if (data.x.toString() === target && subjectIds.indexOf(data.subjectId) === -1)
+                    if (data.x !== undefined && data.x !== null && data.x.toString() === target && subjectIds.indexOf(data.subjectId) === -1)
                     {
                         subjectIds.push(data.subjectId);
                     }
@@ -1656,7 +1664,7 @@ Ext.define('Connector.view.Chart', {
                 subject;
 
             points.each(function(d) {
-                if (d.x.toString() === target) { // use toString for boolean value
+                if (d.x !== undefined && d.x !== null && d.x.toString() === target) { // use toString for boolean value
                     d.isMouseOver = true;
                 }
 
@@ -1664,7 +1672,7 @@ Ext.define('Connector.view.Chart', {
 
                 // Check if value matches target or another selection
                 if (subjectIds.indexOf(subject) === -1) {
-                    if (d.x.toString() === target) {
+                    if (d.x !== undefined && d.x !== null && d.x.toString() === target) {
                         subjectIds.push(subject);
                     }
                     else if (selections.indexOf(d.x) != -1) {
@@ -2564,34 +2572,6 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hideguttermsg', this);
     },
 
-    toggleLogScaleMode : function() {
-        this.getLogScaleModeIndicator().setVisible(this.invalidLogPlotRowCount > 0);
-
-        var msgKey = 'LOG_MODE';
-        if (!this.disableAutoMsg && this.invalidLogPlotRowCount > 0 && Connector.getService('Messaging').isAllowed(msgKey)) {
-            this.showWhyLogScale();
-            this.hideLogScaleModeTask.delay(5000);
-            Connector.getService('Messaging').block(msgKey);
-        }
-    },
-
-    showWhyLogScale : function() {
-        if (this.invalidLogPlotRowCount > 0) {
-            var config = {
-                target: this.getLogScaleModeIndicator().getEl().dom,
-                placement: 'bottom',
-                title: 'Log filter on',
-                xOffset: -65,
-                arrowOffset: 100,
-                content: 'Values ≤ 0 have no log. ' + Ext.util.Format.number(this.invalidLogPlotRowCount, '0,000')
-                    + ' points are not plotted but are still included in the grid and subject count.'
-                    + ' Use a linear scale to see all values.'
-            };
-
-            ChartUtils.showCallout(config, 'hidelogscalemsg', this);
-        }
-    },
-
     toggleHeatmapMode : function() {
         this.getColorSelector().setDisabled(this.showPointsAsBin);
         this.getHeatmapModeIndicator().setVisible(this.showPointsAsBin);
@@ -2801,19 +2781,8 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        var invalidLogPlotRowCount = 0;
-
-        if (Ext.isDefined(chartData))
-        {
-            if (Ext.isFunction(chartData.getDataRows))
-            {
-                invalidLogPlotRowCount = chartData.getDataRows().invalidLogPlotRowCount;
-            }
-        }
-
         this.initPlot({
-            rows: map,
-            invalidLogPlotRowCount: invalidLogPlotRowCount
+            rows: map
         }, undefined, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
