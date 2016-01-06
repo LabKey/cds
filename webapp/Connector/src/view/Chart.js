@@ -3491,9 +3491,23 @@ Ext.define('Connector.view.Chart', {
                 .visitTagMouseover(this.showVisitTagHover, this)
                 .visitTagMouseout(this.removeVisitTagHover, this)
                 .highlightPlot(this.highlightPlotData, this)
-                .clearHighlightedPlot(this.clearHighlightedData, this);;
+                .clearHighlightedPlot(this.clearTimeAxisHighlightedData, this);
 
         this.studyAxis();
+    },
+
+    clearTimeAxisHighlightedData: function() {
+        this.clearHighlightedData();
+
+        // TODO foreach selection
+        this.highlightPlotData();
+
+        //var targets = this.getCategoricalSelectionValues(), me = this;
+        //me.clearHighlightedData();
+        //
+        //targets.forEach(function(t) {
+        //    me.highlightPlotData(t);
+        //})
     },
 
     resizePlotContainers : function(numStudies) {
