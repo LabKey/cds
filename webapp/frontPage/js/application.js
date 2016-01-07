@@ -16,6 +16,12 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
         fullpage_selector: '#fullpage'
       });
 
+      if (LABKEY.ActionURL.getParameter('create_account') != 'true') {
+        $('.create-account-modal-trigger').each(function(){
+          $(this).css('display', 'none');
+        })
+      }
+
       this.initializeModals();
       this.bindEvents();
     },

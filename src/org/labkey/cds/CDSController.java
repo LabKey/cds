@@ -48,6 +48,7 @@ import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
+import org.labkey.api.reader.Readers;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.CSRF;
@@ -62,6 +63,7 @@ import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.util.CSRFUtil;
 import org.labkey.api.util.PageFlowUtil;
+import org.labkey.api.util.Path;
 import org.labkey.api.util.URLHelper;
 import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
@@ -70,6 +72,7 @@ import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
 import org.labkey.api.view.VBox;
 import org.labkey.api.view.template.PageConfig;
+import org.labkey.api.writer.PrintWriters;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.labkey.cds.view.template.FrontPageTemplate;
 import org.springframework.beans.PropertyValues;
@@ -80,7 +83,10 @@ import org.springframework.web.servlet.mvc.Controller;
 
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +94,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class CDSController extends SpringActionController
@@ -146,7 +153,7 @@ public class CDSController extends SpringActionController
             List<RSSFeed> feeds = RSSService.get().getFeeds(getContainer(), getUser());
 
             getViewContext().getResponse().setContentType("text/xml");
-            RSSService.get().aggregateFeeds(feeds, getViewContext().getResponse().getWriter());
+            RSSService.get().aggregateFeeds(feeds, getUser(), getViewContext().getResponse().getWriter());
 
             return null;
         }
@@ -184,7 +191,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    private static final String ANALYTICS_USER_GROUP = "Beta Users";
+    private static final String ANALYTICS_USER_GROUP = "Active CAVD Member";
 
     @RequiresNoPermission
     @IgnoresTermsOfUse
@@ -233,25 +240,6 @@ public class CDSController extends SpringActionController
         public NavTree appendNavTrail(NavTree root)
         {
             return root;
-        }
-    }
-
-    @RequiresNoPermission
-    @IgnoresTermsOfUse
-    public class FrontPageAction extends SimpleViewAction
-    {
-        @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
-        {
-            HttpView template = new FrontPageTemplate(defaultPageConfig());
-            getPageConfig().setTemplate(PageConfig.Template.None);
-            return template;
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            return null;
         }
     }
 
@@ -589,7 +577,7 @@ public class CDSController extends SpringActionController
             if (StringUtils.isEmpty(url))
                 errors.reject(ERROR_MSG, "cms url is not configured");
 
-            Container blogContainer = getContainer().getChild("files");
+            Container blogContainer = getTarget();
             if (null == blogContainer)
                 errors.reject(ERROR_MSG, "Create subfolder named 'files'");
         }
@@ -600,16 +588,21 @@ public class CDSController extends SpringActionController
             return null;
         }
 
+        Container getTarget()
+        {
+            return getContainer();
+        }
+
         @Override
         public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
         {
             CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
             CmsPage cms = new CmsPage();
             cms.url =  cds.getPropertyValue(cds._cmsURL, getContainer());
-            Container target = getContainer().getChild("files");
+            Container target = getTarget();
             if (null != target)
                 cms.target = "/_webdav" + target.getPath() + "/@files/blog/";
-            return new JspView<>(CDSController.class, "view/cms.jsp", cms);
+            return new JspView<>(CDSController.class, "view/cms.jsp", cms, errors);
         }
 
         @Override
@@ -617,38 +610,76 @@ public class CDSController extends SpringActionController
         {
             CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
             String url = cds.getPropertyValue(cds._cmsURL, getContainer());
+            if (!StringUtils.endsWith(url,"/"))
+                url = url + "/";
 
-            Container blogContainer = getContainer().getChild("files");
+            Container blogContainer = getTarget();
             FileContentService svc = ServiceRegistry.get().getService(FileContentService.class);
             File root = svc.getFileRoot(blogContainer);
             File fullPath = new File(root,"@files/blog");
             fullPath.mkdirs();
 
-            StringWriter sw = new StringWriter();
-            // get pipeline root
-            String wget = "wget";
-            if (new File("/usr/bin/wget").exists())
-                wget = "/usr/bin/wget";
-            else if (new File("/opt/local/bin/wget").exists())
-                wget = "/opt/local/bin/wget";
-            ProcessBuilder pb = new ProcessBuilder(
-                    wget,
-                    "--directory-prefix=" + fullPath.getPath(),
-                    "--mirror",
-                    "--page-requisites",
-                    "--convert-links",
-                    "--adjust-extension",
-                    "--no-host-directories",
-                    url ,
-                    url + "/rss/feed.rss");
-            pb.redirectErrorStream(true);
-            Process p = pb.start();
-            IOUtils.copy(new InputStreamReader(p.getInputStream(),"UTF-8"), sw);
-            p.waitFor();
-            sw.flush();
+            StringWriter swOuputLog = new StringWriter();
+
+            if (!StringUtils.equals("0",getViewContext().getRequest().getParameter("wget")))
+            {
+                // get pipeline root
+                String wget = "wget";
+                if (new File("/usr/bin/wget").exists())
+                    wget = "/usr/bin/wget";
+                else if (new File("/opt/local/bin/wget").exists())
+                    wget = "/opt/local/bin/wget";
+                ProcessBuilder pb = new ProcessBuilder(
+                        wget,
+                        "--directory-prefix=" + fullPath.getPath(),
+                        "--mirror",
+                        "--page-requisites",
+                        "--convert-links",
+                        "--adjust-extension",
+                        "--no-host-directories",
+                        url,
+                        url + "rss/feed.rss");
+                pb.redirectErrorStream(true);
+                Process p = pb.start();
+                IOUtils.copy(new InputStreamReader(p.getInputStream(), "UTF-8"), swOuputLog);
+                p.waitFor();
+                swOuputLog.flush();
+            }
+
+            // fix up rss/feed.rss
+            File rssFile = new File(fullPath,"rss/feed.rss");
+            if (rssFile.isFile())
+            {
+                String rss = null;
+                try (Reader r = Readers.getReader(rssFile))
+                {
+                    StringWriter sw = new StringWriter();
+                    IOUtils.copy(r, sw);
+                    String path = Path.parse(getViewContext().getContextPath()).append("blog").toString("/","/");
+                    String href = url + "([^\\s\"<]*)";
+                    Matcher m = Pattern.compile(href).matcher(sw.toString());
+                    // fancy m.replaceAll()
+                    StringBuffer sb = new StringBuffer();
+                    String repl = path + "$1";
+                    while (m.find())
+                    {
+                        m.appendReplacement(sb, repl);
+                        String part = m.group(1);
+                        if (part.lastIndexOf(".") <= part.lastIndexOf("/"))
+                            sb.append(".html");
+                    }
+                    m.appendTail(sb);
+                    rss = sb.toString();
+                    r.close();
+                    try (Writer w = PrintWriters.getPrintWriter(rssFile))
+                    {
+                        IOUtils.copy(new StringReader(rss),w);
+                    }
+                }
+            }
 
             ModelAndView form = getView(null, false, errors);
-            HtmlView output = new HtmlView("<pre>"+PageFlowUtil.filter(sw.toString())+"</pre>");
+            HtmlView output = new HtmlView("<pre>"+PageFlowUtil.filter(swOuputLog.toString())+"</pre>");
             _success = new VBox(form,output);
             return true;
         }

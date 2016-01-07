@@ -20,23 +20,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.Git;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.EmailRecordTable;
 import org.labkey.test.util.Ext4Helper;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.remote.server.handler.CloseWindow;
-import org.testng.Assert;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Category({CDS.class, Git.class})
+@Category({CDS.class})
 public class CDSSecurityTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
@@ -141,8 +135,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        clickUserMenuItem("Stop Impersonating");
-        assertSignOutAndMyAccountPresent();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
 
         impersonateGroup(PERM_GROUPS[1], false);
 
@@ -153,9 +147,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        clickUserMenuItem("Stop Impersonating");
-        assertSignOutAndMyAccountPresent();
-
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
     }
 
     @Test
@@ -277,6 +270,10 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         sleep(5000);
         refresh();
 
+        log("Validate that the 'Sign In' button is visible and the 'Create Account' button is not.");
+        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "app"));
+        assertElementPresent(Locator.css("div.links > a.signin-modal-trigger"));
+        assertElementNotVisible(Locator.css("div.links > a.create-account-modal-trigger"));
         // Log in as admin, like start of test, this will allow test to clean up correctly.
         ensureSignedInAsAdmin();
 

@@ -114,6 +114,7 @@ Ext.define('Connector.utility.Chart', {
 
     brushBins : function(event, layerData, extent, plot) {
         var min, max,
+            isXExtent, isYExtent,
             subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
 
         // convert extent x/y values into aes scale as bins don't really have x/y values
@@ -141,25 +142,35 @@ Ext.define('Connector.utility.Chart', {
             extent[1][1] = max;
         }
 
-        ChartUtils._brushBinsByCanvas(this.plot.renderer.canvas, extent, subjects);
+        isXExtent = extent[0][0] !== null && extent[1][0] !== null;
+        isYExtent = extent[0][1] !== null && extent[1][1] !== null;
 
+        // first we go through and get the selected bins/subjects for the main plot and both gutters
+        ChartUtils._brushSelectedBinsByCanvas(this.plot.renderer.canvas, extent, (isXExtent || isYExtent), subjects);
         if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
-            ChartUtils._brushBinsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
+            ChartUtils._brushSelectedBinsByCanvas(this.xGutterPlot.renderer.canvas, extent, (isXExtent && !isYExtent), subjects);
+        }
+        if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
+            ChartUtils._brushSelectedBinsByCanvas(this.yGutterPlot.renderer.canvas, extent, (!isXExtent && isYExtent), subjects);
         }
 
+        // second we go back through and highlight the subject associated bins in the main plot and both gutters
+        ChartUtils._brushAssociatedBinsByCanvas(this.plot.renderer.canvas, extent, (isXExtent || isYExtent), subjects);
+        if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
+            ChartUtils._brushAssociatedBinsByCanvas(this.xGutterPlot.renderer.canvas, extent, (isXExtent && !isYExtent), subjects);
+        }
         if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
-            ChartUtils._brushBinsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
+            ChartUtils._brushAssociatedBinsByCanvas(this.yGutterPlot.renderer.canvas, extent, (!isXExtent && isYExtent), subjects);
         }
 
         this.brushedSubjects = subjects;
     },
 
-    _brushBinsByCanvas : function(canvas, extent, subjects) {
-        var colorFn, assocColorFn;
-
+    _brushSelectedBinsByCanvas : function(canvas, extent, allowSelected, subjects)
+    {
         // set color, via style attribute, for the selected bins
-        colorFn = function(d) {
-            d.isSelected = ChartUtils.isSelectedWithBrush(extent, d.x, d.y);
+        var colorFn = function(d) {
+            d.isSelected = allowSelected && ChartUtils.isSelectedWithBrush(extent, d.x, d.y);
 
             // track the subjects that are included in the points for the selected bins
             if (d.isSelected && d.length > 0 && d[0].data) {
@@ -174,8 +185,16 @@ Ext.define('Connector.utility.Chart', {
             return 'fill: ' + (d.isSelected ? ChartUtils.colors.SELECTED : ChartUtils.colors.UNSELECTED) + ';';
         };
 
+        canvas.selectAll('.vis-bin path')
+                .attr('style', colorFn)
+                .attr('fill-opacity', 1)
+                .attr('stroke-opacity', 1);
+    },
+
+    _brushAssociatedBinsByCanvas : function(canvas, extent, allowSelected, subjects)
+    {
         // set color, via style attribute, for the unselected bins
-        assocColorFn = function(d) {
+        var assocColorFn = function(d) {
             if (!d.isSelected && d.length > 0 && d[0].data) {
                 for (var i = 0; i < d.length; i++) {
                     if (subjects[d[i].data.subjectId] === true)
@@ -187,10 +206,8 @@ Ext.define('Connector.utility.Chart', {
         };
 
         canvas.selectAll('.vis-bin path')
-                .attr('style', colorFn)
                 .attr('style', assocColorFn)
-                .attr('fill-opacity', 1)
-                .attr('stroke-opacity', 1);
+                .attr('fill-opacity', 1);
 
         //move brush layer to front
         canvas.select('svg g.brush').each(function() {

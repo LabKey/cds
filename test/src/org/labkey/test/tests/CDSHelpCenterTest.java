@@ -1,7 +1,6 @@
 package org.labkey.test.tests;
 
 import org.jetbrains.annotations.Nullable;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -9,7 +8,6 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.Git;
 import org.labkey.test.util.CDSHelpCenterUtil;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
@@ -24,10 +22,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by xingyang on 11/5/15.
- */
-@Category({CDS.class, Git.class})
+@Category({CDS.class})
 public class CDSHelpCenterTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     @Nullable

@@ -175,11 +175,9 @@ Ext.define('Connector.panel.HelpCenter', {
                 else {
                     HelpRouter.addSearchHistory(searchKey);
                 }
-                var template = me.getSearchTemplate(json);
-                var pageTitle = 'Help Center';
 
-                helpTitleView.setText(pageTitle);
-                helpBodyView.setTemplate(template);
+                helpTitleView.setText('Help Center');
+                helpBodyView.setTemplate(me.getSearchTemplate(json));
                 helpBackView.setText('');
                 helpSearchElement.dom.style.display = 'table';
             },
@@ -257,7 +255,7 @@ Ext.define('Connector.panel.HelpCenter', {
                 var template = me.getHelpTemplate(json, pageName);
                 var pageTitle = 'Help Center';
                 if (pageName) {
-                    pageTitle = json.container.wikititle;
+                    pageTitle = Ext.htmlDecode(json.container.wikititle);
                 }
                 helpTitleView.setText(pageTitle);
                 helpBodyView.setTemplate(template);
@@ -320,17 +318,21 @@ Ext.define('Connector.panel.HelpCenter', {
     },
 
     buildIndividualCategory: function (category) {
-        var template = '<h3>' + category.text.replace('(' + category.name + ')', '') + '</h3>';
-        if (!category.children) {
-            return template;
+        var template = '<h3>' + Ext.htmlEncode(category.text.replace('(' + category.name + ')', '')) + '</h3>',
+            child;
+
+        if (category.children) {
+            for (var i=0; i < category.children.length; i++) {
+                if (i > 4) {
+                    template += '<p><a class="see-all" href="' + category.href + '">' + 'See all' + '</a></p>';
+                    break;
+                }
+
+                child = category.children[i];
+                template += '<p><a href="' + child.href + '">' + Ext.htmlEncode(child.text.replace('(' + child.name + ')', '')) + '</a></p>';
+            }
         }
-        for (var i = 0; i < category.children.length && i < 4; i++) {
-            var child = category.children[i];
-            template += '<p><a href="' + child.href + '">' + child.text.replace('(' + child.name + ')', '') + '</a></p>';
-        }
-        if (category.children.length > 4) {
-            template += '<p><a class="see-all" href="' + category.href + '">' + 'See all' + '</a></p>';
-        }
+
         return template;
     },
 
@@ -347,7 +349,7 @@ Ext.define('Connector.panel.HelpCenter', {
             template = '<div>';
             for (var i = 0; i < targetWiki.children.length; i++) {
                 var child = targetWiki.children[i];
-                template += '<p><a href="' + child.href + '">' + child.text.replace('(' + child.name + ')', '') + '</a></p>';
+                template += '<p><a href="' + child.href + '">' + Ext.htmlEncode(child.text.replace('(' + child.name + ')', '')) + '</a></p>';
             }
             template += '</div>';
         }

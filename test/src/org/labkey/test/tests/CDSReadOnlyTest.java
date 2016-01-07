@@ -15,27 +15,20 @@
  */
 package org.labkey.test.tests;
 
-import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
-import org.labkey.test.WebTestHelper;
-import org.labkey.test.categories.InDevelopment;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
-import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.labkey.test.util.ReadOnlyTest;
 import org.openqa.selenium.NoSuchElementException;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-@Category({InDevelopment.class})
 public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, PostgresOnlyTest
 {
     @Nullable
