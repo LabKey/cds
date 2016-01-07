@@ -1176,7 +1176,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (Ext.isDefined(studyAxisInfo)) {
-            this.initStudyAxis(studyAxisInfo);
+            this.initStudyAxis(studyAxisInfo, layerScope);
         }
 
         if (!noplot) {
@@ -3519,7 +3519,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    initStudyAxis : function(studyAxisInfo) {
+    initStudyAxis : function(studyAxisInfo, layerScope) {
         if (!this.studyAxis) {
             this.studyAxis = Connector.view.StudyAxis().renderTo(this.bottomPlotEl.id);
         }
@@ -3530,7 +3530,8 @@ Ext.define('Connector.view.Chart', {
                 .visitTagMouseover(this.showVisitTagHover, this)
                 .visitTagMouseout(this.removeVisitTagHover, this)
                 .highlightPlot(this.highlightTimeAxisPlotData, this)
-                .selectStudyAxis(this.selectStudyAxis, this);
+                .selectStudyAxis(this.selectStudyAxis, this)
+                .mainPlotLayer(layerScope);
 
         this.studyAxis();
     },

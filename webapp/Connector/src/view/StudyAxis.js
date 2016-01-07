@@ -7,7 +7,7 @@ Connector.view.StudyAxis = function() {
     var canvas = null, width, height, perStudyHeight = 20, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
             tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope, leftIndent = 25, collapsed = true, groupLabelOffset = 45,
             studyLabelOffset = 35, highlightPlot, highlightPlotScope,
-            selectStudyAxis, selectStudyAxisScope;
+            selectStudyAxis, selectStudyAxisScope, mainPlotLayer;
 
     // This function returns <study name> for studies and <study name>-<group name> for groups in an attempt to
     // provide a unique name for each value in yScale
@@ -109,10 +109,15 @@ Connector.view.StudyAxis = function() {
 
         // add visit tag mouseover/mouseout functions.
         visitTags.on('mouseover', function(d) {
-            highlightGlyph.call(this, d, true, selection);
-            tagMouseover.call(tagMouseoverScope, d, this);
+            if (!mainPlotLayer.isBrushed) {
+                highlightGlyph.call(this, d, true, selection);
+                tagMouseover.call(tagMouseoverScope, d, this);
+            }
         });
         visitTags.on('mouseout', function(d) {
+            if (mainPlotLayer.isBrushed) {
+                return;
+            }
             if (!d.selected) {
                 highlightGlyph.call(highlightPlotScope, d, false, selection);
             }
@@ -126,6 +131,9 @@ Connector.view.StudyAxis = function() {
         });
 
         visitTags.on('mouseup', function(d) {
+            if (mainPlotLayer.isBrushed) {
+                return;
+            }
             d.selected = true;
             var multi = d3.event.ctrlKey||d3.event.shiftKey||d3.event.metaKey;
             tagMouseover.call(tagMouseoverScope, d, this);
@@ -289,14 +297,23 @@ Connector.view.StudyAxis = function() {
                 });
 
         labels.on('mouseover', function(d) {
+            if (mainPlotLayer.isBrushed) {
+                return;
+            }
             highlightStudyLabel(d, true, selection, false);
         });
         labels.on('mouseout', function(d) {
+            if (mainPlotLayer.isBrushed) {
+                return;
+            }
             if (!d.selected) {
                 highlightStudyLabel(d, false, selection, false);
             }
         });
         labels.on('mousedown', function(d) {
+            if (mainPlotLayer.isBrushed) {
+                return;
+            }
             var multi = d3.event.ctrlKey||d3.event.shiftKey||d3.event.metaKey;
             highlightStudyLabel(d, true, selection, true, multi);
         });
@@ -469,6 +486,7 @@ Connector.view.StudyAxis = function() {
     studyAxis.visitTagMouseout = function(m, s) { tagMouseout = m; tagMouseoutScope = s; return studyAxis; };
     studyAxis.highlightPlot = function(m, s) { highlightPlot = m; highlightPlotScope = s; return studyAxis; };
     studyAxis.selectStudyAxis = function(m, s) { selectStudyAxis = m; selectStudyAxisScope = s; return studyAxis; };
+    studyAxis.mainPlotLayer = function(layer) { mainPlotLayer = layer};
     studyAxis.scale = function(s) {
         var r;
         xScale = s.copy();

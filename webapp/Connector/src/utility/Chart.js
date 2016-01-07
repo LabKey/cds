@@ -340,6 +340,7 @@ Ext.define('Connector.utility.Chart', {
 
     brushStart : function(layerScope, dimension) {
         this.clearHighlightLabels(layerScope.plot);
+        this.clearStudyAxisSelection();
         layerScope.isBrushed = true;
         if (this.initiatedBrushing == '') {
             this.initiatedBrushing = dimension;
