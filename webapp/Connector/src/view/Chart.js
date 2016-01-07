@@ -1534,6 +1534,8 @@ Ext.define('Connector.view.Chart', {
         {
             var bins = plot.renderer.canvas.selectAll('.vis-bin path');
             var selections = this.getCategoricalSelectionValues();
+            var studyAxisSelections = this.getStudyAxisSelectionValues();
+            var hasStudyAxisSelection = this.isStudyAxisSelection();
 
             bins.each(function(d)
             {
@@ -1550,6 +1552,14 @@ Ext.define('Connector.view.Chart', {
                         if (data.timeAxisKey.indexOf(target) > -1) {
                             d[i].isMouseOver = true;
                             isTimeAxisTarget = true;
+                        }
+                        else if (hasStudyAxisSelection){
+                            Ext.each(studyAxisSelections, function(sel){
+                                if (data.timeAxisKey.indexOf(sel) > -1){
+                                    d[i].isMouseOver = true;
+                                    isTimeAxisTarget = true;
+                                }
+                            });
                         }
                     }
 
@@ -1620,7 +1630,6 @@ Ext.define('Connector.view.Chart', {
                 this.highlightBinsByCanvas(this.yGutterPlot.renderer.canvas, colorFn, opacityFn);
             }
         }
-        return subjectIds;
     },
 
     highlightBinsByCanvas : function(canvas, colorFn, opacityFn) {
@@ -1675,6 +1684,8 @@ Ext.define('Connector.view.Chart', {
         if (this.plot.renderer) {
             var points = this.plot.renderer.canvas.selectAll('.point path'),
                 selections = this.getCategoricalSelectionValues(),
+                studyAxisSelections = this.getStudyAxisSelectionValues(),
+                hasStudyAxisSelection = this.isStudyAxisSelection(),
                 subject;
 
             points.each(function(d) {
@@ -1686,6 +1697,15 @@ Ext.define('Connector.view.Chart', {
                     if (d.timeAxisKey.indexOf(target) > -1) {
                         d.isMouseOver = true;
                         isTimeAxisTarget = true;
+                    }
+                    else if (hasStudyAxisSelection){
+                        Ext.each(studyAxisSelections, function(sel){
+                            if (d.timeAxisKey.indexOf(sel) > -1){
+                                d.isMouseOver = true;
+                                isTimeAxisTarget = true;
+                            }
+                        });
+
                     }
                 }
 
@@ -1711,10 +1731,10 @@ Ext.define('Connector.view.Chart', {
 
     highlightPlotData : function(target, subjects) {
         if (this.showPointsAsBin) {
-            return this.highlightBins(target, subjects);
+            this.highlightBins(target, subjects);
         }
         else {
-            return this.highlightPoints(target, subjects);
+            this.highlightPoints(target, subjects);
         }
     },
 
@@ -1742,7 +1762,6 @@ Ext.define('Connector.view.Chart', {
                 this.highlightPointsByCanvas(this.yGutterPlot.renderer.canvas, fillColorFn);
             }
         }
-        return subjectIds;
     },
 
     highlightPointsByCanvas : function(canvas, fillColorFn) {
@@ -1806,12 +1825,30 @@ Ext.define('Connector.view.Chart', {
     },
 
     highlightSelected : function() {
-        var targets = this.getCategoricalSelectionValues(), me = this;
-        me.clearHighlightedData();
+        if (this.isStudyAxisSelection()){
+            this.highlightTimeAxisPlotData();
+        }
+        else {
+            var targets = this.getCategoricalSelectionValues(), me = this;
+            me.clearHighlightedData();
 
-        targets.forEach(function(t) {
-            me.highlightPlotData(t);
-        })
+            targets.forEach(function(t) {
+                me.highlightPlotData(t);
+            })
+        }
+    },
+
+    isStudyAxisSelection: function (){
+        var selections = Connector.getState().getSelections();
+        var isStudyAxis = false;
+        if (Ext.isArray(selections)) {
+            Ext.each(selections, function(s) {
+                if (s.get('isStudyAxis')){
+                    isStudyAxis = true;
+                }
+            });
+        }
+        return isStudyAxis;
     },
 
     getCategoricalSelectionValues : function() {
@@ -3330,21 +3367,10 @@ Ext.define('Connector.view.Chart', {
             }, this);
         }
 
-        if (!this.isStudyAxisSelection(selections) && Ext.isFunction(this.highlightSelectedFn))
+        if (Ext.isFunction(this.highlightSelectedFn))
         {
             this.highlightSelectedFn();
         }
-    },
-    isStudyAxisSelection: function (selections){
-        var isStudyAxis = false;
-        if (Ext.isArray(selections)) {
-            Ext.each(selections, function(s) {
-                if (s.get('isStudyAxis')){
-                    isStudyAxis = true;
-                }
-            });
-        }
-        return isStudyAxis;
     },
     getStudyAxisData : function(chartData) {
         var studyVisitTagStore = Connector.getApplication().getStore('StudyVisitTag');
@@ -3513,17 +3539,12 @@ Ext.define('Connector.view.Chart', {
         var targets = this.getStudyAxisSelectionValues(), me = this;
         me.clearHighlightedData();
 
-        var selectedSubjects = []
         targets.forEach(function(t) {
-            var subjects = me.highlightPlotData(t, selectedSubjects);
-            if (subjects) {
-                subjects.forEach(function(s) {
-                    selectedSubjects.push(s);
-                });
-            }
+            me.highlightPlotData(t);
         });
+
         if (target) {
-            me.highlightPlotData(target, selectedSubjects);
+            me.highlightPlotData(target);
         }
     },
 
