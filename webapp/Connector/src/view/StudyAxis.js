@@ -6,7 +6,8 @@
 Connector.view.StudyAxis = function() {
     var canvas = null, width, height, perStudyHeight = 20, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
             tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope, leftIndent = 25, collapsed = true, groupLabelOffset = 45,
-            studyLabelOffset = 35, highlightPlot, highlightPlotScope, clearHighlightedPlot, clearHighlightedPlotScope;
+            studyLabelOffset = 35, highlightPlot, highlightPlotScope,
+            selectStudyAxis, selectStudyAxisScope;
 
     // This function returns <study name> for studies and <study name>-<group name> for groups in an attempt to
     // provide a unique name for each value in yScale
@@ -133,6 +134,9 @@ Connector.view.StudyAxis = function() {
     };
 
     var clearSelection = function (selector) {
+        if (!selector) {
+            selector = d3;
+        }
         selector.selectAll("text.study-label").each( function(detail, i){
             detail.selected = false;
             d3.select(this.parentNode).select('rect.highlight').attr('fill-opacity', 0);
@@ -141,7 +145,6 @@ Connector.view.StudyAxis = function() {
             detail.selected = false;
             changeGlyphImage(detail, false, selector);
         });
-        //TODO clear state selection
     };
 
     var highlightGlyph = function(d, isHighlight, selector, isSelection, isMulti) {
@@ -150,6 +153,7 @@ Connector.view.StudyAxis = function() {
                 clearSelection.call(this, selector);
             }
             d.selected = true;
+            selectStudyAxis.call(selectStudyAxisScope, d, isMulti);
         }
         var key = d.visitRowId;
         key += '---' + d.studyLabel;
@@ -160,7 +164,7 @@ Connector.view.StudyAxis = function() {
             highlightPlot.call(highlightPlotScope, key);
         }
         else {
-            clearHighlightedPlot.call(clearHighlightedPlotScope, key)
+            highlightPlot.call(highlightPlotScope)
         }
         changeGlyphImage.call(this, d, isHighlight, selector);
     };
@@ -319,6 +323,7 @@ Connector.view.StudyAxis = function() {
                 clearSelection.call(this, selector);
             }
             d.selected = true;
+            selectStudyAxis.call(selectStudyAxisScope, d, isMulti);
         }
         var key = '';
         if (d.study) {
@@ -363,7 +368,7 @@ Connector.view.StudyAxis = function() {
             highlightPlot.call(highlightPlotScope, key);
 
         } else {
-            clearHighlightedPlot.call(clearHighlightedPlotScope, key);
+            highlightPlot.call(highlightPlotScope);
         }
     };
 
@@ -457,12 +462,13 @@ Connector.view.StudyAxis = function() {
     };
 
     studyAxis.renderTo = function(id) { renderTo = id; return studyAxis; };
+    studyAxis.clearSelection = clearSelection;
     studyAxis.width = function(w) { width = w; return studyAxis; };
     studyAxis.studyData = function(d) { studyData = d; return studyAxis; };
     studyAxis.visitTagMouseover = function(m, s) { tagMouseover = m; tagMouseoverScope = s; return studyAxis; };
     studyAxis.visitTagMouseout = function(m, s) { tagMouseout = m; tagMouseoutScope = s; return studyAxis; };
     studyAxis.highlightPlot = function(m, s) { highlightPlot = m; highlightPlotScope = s; return studyAxis; };
-    studyAxis.clearHighlightedPlot = function(m, s) { clearHighlightedPlot = m; clearHighlightedPlotScope = s; return studyAxis; };
+    studyAxis.selectStudyAxis = function(m, s) { selectStudyAxis = m; selectStudyAxisScope = s; return studyAxis; };
     studyAxis.scale = function(s) {
         var r;
         xScale = s.copy();

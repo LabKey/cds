@@ -23,6 +23,8 @@ Ext.define('Connector.model.Filter', {
         {name : 'isAggregated', type: 'boolean', defaultValue: false},
 
         {name : 'isTime', type: 'boolean', defaultValue: false},
+        {name : 'isStudyAxis', type: 'boolean', defaultValue: false},
+        {name : 'studyAxisKey', defaultValue: undefined},
         {name : 'timeMeasure', defaultValue: undefined},
         {name : 'timeFilters', defaultValue: [], convert: function(raw)
         {

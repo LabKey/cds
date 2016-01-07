@@ -1620,6 +1620,7 @@ Ext.define('Connector.view.Chart', {
                 this.highlightBinsByCanvas(this.yGutterPlot.renderer.canvas, colorFn, opacityFn);
             }
         }
+        return subjectIds;
     },
 
     highlightBinsByCanvas : function(canvas, colorFn, opacityFn) {
@@ -1710,10 +1711,10 @@ Ext.define('Connector.view.Chart', {
 
     highlightPlotData : function(target, subjects) {
         if (this.showPointsAsBin) {
-            this.highlightBins(target, subjects);
+            return this.highlightBins(target, subjects);
         }
         else {
-            this.highlightPoints(target, subjects);
+            return this.highlightPoints(target, subjects);
         }
     },
 
@@ -1741,6 +1742,7 @@ Ext.define('Connector.view.Chart', {
                 this.highlightPointsByCanvas(this.yGutterPlot.renderer.canvas, fillColorFn);
             }
         }
+        return subjectIds;
     },
 
     highlightPointsByCanvas : function(canvas, fillColorFn) {
@@ -3312,6 +3314,7 @@ Ext.define('Connector.view.Chart', {
                 this.clearAllBrushing();
             }
 
+            this.clearStudyAxisSelection();
             this.updatePlotInfoPaneCounts({forSubcounts: false, queryName: this.dataQWP.query});
         }
         else
@@ -3327,12 +3330,22 @@ Ext.define('Connector.view.Chart', {
             }, this);
         }
 
-        if (Ext.isFunction(this.highlightSelectedFn))
+        if (!this.isStudyAxisSelection(selections) && Ext.isFunction(this.highlightSelectedFn))
         {
             this.highlightSelectedFn();
         }
     },
-
+    isStudyAxisSelection: function (selections){
+        var isStudyAxis = false;
+        if (Ext.isArray(selections)) {
+            Ext.each(selections, function(s) {
+                if (s.get('isStudyAxis')){
+                    isStudyAxis = true;
+                }
+            });
+        }
+        return isStudyAxis;
+    },
     getStudyAxisData : function(chartData) {
         var studyVisitTagStore = Connector.getApplication().getStore('StudyVisitTag');
         if (studyVisitTagStore.loading) {
@@ -3490,24 +3503,127 @@ Ext.define('Connector.view.Chart', {
                 .width(Math.max(0, this.getBottomPlotPanel().getWidth() - 40))
                 .visitTagMouseover(this.showVisitTagHover, this)
                 .visitTagMouseout(this.removeVisitTagHover, this)
-                .highlightPlot(this.highlightPlotData, this)
-                .clearHighlightedPlot(this.clearTimeAxisHighlightedData, this);
+                .highlightPlot(this.highlightTimeAxisPlotData, this)
+                .selectStudyAxis(this.selectStudyAxis, this);
 
         this.studyAxis();
     },
 
-    clearTimeAxisHighlightedData: function() {
-        this.clearHighlightedData();
+    highlightTimeAxisPlotData: function(target) {
+        var targets = this.getStudyAxisSelectionValues(), me = this;
+        me.clearHighlightedData();
 
-        // TODO foreach selection
-        this.highlightPlotData();
+        var selectedSubjects = []
+        targets.forEach(function(t) {
+            var subjects = me.highlightPlotData(t, selectedSubjects);
+            if (subjects) {
+                subjects.forEach(function(s) {
+                    selectedSubjects.push(s);
+                });
+            }
+        });
+        if (target) {
+            me.highlightPlotData(target, selectedSubjects);
+        }
+    },
 
-        //var targets = this.getCategoricalSelectionValues(), me = this;
-        //me.clearHighlightedData();
-        //
-        //targets.forEach(function(t) {
-        //    me.highlightPlotData(t);
-        //})
+    getStudyAxisSelectionValues : function() {
+        var selections = Connector.getState().getSelections();
+        var values = [];
+        selections.forEach(function(s) {
+            if (s.get('isStudyAxis')){
+                values.push(s.get('studyAxisKey'))
+            }
+
+        });
+
+        return values;
+    },
+
+    clearStudyAxisSelection: function () {
+        if (this.studyAxis) {
+            this.studyAxis.clearSelection();
+        }
+    },
+
+    selectStudyAxis: function(d, multi) {
+        this.getParticipantVisits(d, multi, this.buildStudyAxisSelection, this);
+    },
+
+    buildStudyAxisSelection: function(d, multi, participantVisitSel) {
+        var sqlFilters = [null, null, null, null];
+        var keyStr = '';
+
+        //TODO multi select
+        var displayStr = '';
+        if (participantVisitSel) {
+            if (participantVisitSel.getValue() && participantVisitSel.getValue() !== '') {
+                sqlFilters[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, participantVisitSel.getValue(), LABKEY.Filter.Types.EQUALS_ONE_OF);
+            }
+            else {
+                sqlFilters[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, null, LABKEY.Filter.Types.ISBLANK);
+            }
+            displayStr = 'Participant Sequence Num Equals One Of ' + participantVisitSel.getValue();
+            keyStr = d.visitRowId;
+            keyStr += '---' + d.studyLabel;
+            if (d.groupLabel) {
+                keyStr += '---' + d.groupLabel;
+            }
+        }
+        else if (d.name && !d.study) {
+            sqlFilters[0] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
+            displayStr = 'Study: = ' + d.name;
+            keyStr += '---' + d.name;
+        }
+        else if (d.name && d.study) {
+            sqlFilters[0] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.study, LABKEY.Filter.Types.EQUAL);
+            sqlFilters[1] = LABKEY.Filter.create(QueryUtils.TREATMENTSUMMARY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
+            displayStr = 'Treatment Summary: = ' + d.study + ' ' + d.name;
+            if (d.study) {
+                keyStr += '---' + d.study;
+            }
+            keyStr += '---' + d.name;
+        }
+
+        Connector.getState().addSelection({
+            gridFilter: sqlFilters,
+            plotMeasures: [null, null],
+            isPlot: true,
+            isGrid: true,
+            operator: LABKEY.app.model.Filter.OperatorTypes.AND,
+            filterSource: 'GETDATA',
+            isWhereFilter: true,
+            showInverseFilter: false,
+            filterDisplayString: displayStr,
+            isStudyAxis: true,
+            studyAxisKey: keyStr
+        }, true, false, true);
+
+    },
+
+    getParticipantVisits: function(d, multi, callback, scope) {
+        if (d.visitRowId === undefined || d.visitRowId === null) {
+            callback.call(scope, d, multi);
+            return;
+        }
+        var timeFilters = [];
+        timeFilters.push(LABKEY.Filter.create(this.activeMeasures.x.alias, d.alignedDay, LABKEY.Filter.Types.EQUAL));
+        timeFilters.push(LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.studyLabel, LABKEY.Filter.Types.EQUAL));
+        if (d.groupLabel) {
+            timeFilters.push(LABKEY.Filter.create(QueryUtils.TREATMENTSUMMARY_ALIAS, d.groupLabel, LABKEY.Filter.Types.EQUAL));
+        }
+
+        var queryService = Connector.getQueryService(),
+            studyMeasure = queryService.getMeasure(QueryUtils.STUDY_ALIAS),
+            armMeasure = queryService.getMeasure(QueryUtils.TREATMENTSUMMARY_ALIAS);
+        var wrappedMeasures = [{measure: queryService.getMeasure(this.activeMeasures.x.alias)}];
+        wrappedMeasures.push({measure: studyMeasure});
+        wrappedMeasures.push({measure: armMeasure});
+
+        Connector.getFilterService().getTimeFilter(wrappedMeasures, timeFilters, function(_filter)
+        {
+            callback.call(scope, d, multi, _filter);
+        }, this);
     },
 
     resizePlotContainers : function(numStudies) {
