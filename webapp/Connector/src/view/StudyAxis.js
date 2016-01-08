@@ -348,7 +348,27 @@ Connector.view.StudyAxis = function() {
         }
         key += '---' + d.name;
 
-        selector.selectAll("text.study-label").each( function(detail, i){
+        highlightLabelAndGlyph.call(this, key, isHighlight, selector, isSelection, isMulti);
+
+        if (isHighlight) {
+            highlightPlot.call(highlightPlotScope, key);
+
+        } else {
+            highlightPlot.call(highlightPlotScope);
+        }
+    };
+
+    var highlightAllSelections = function(keys) {
+        Ext.each(keys, function (key) {
+            highlightLabelAndGlyph.call(highlightPlotScope, key, true, null, true, true);
+        });
+    };
+
+    var highlightLabelAndGlyph = function(key, isHighlight, selector, isSelection, isMulti) {
+        if (!selector) {
+            selector = d3;
+        }
+        selector.selectAll("text.study-label").each(function(detail, i){
             var detailkey = '';
             if (detail.study) {
                 detailkey += '---' + detail.study;
@@ -381,12 +401,6 @@ Connector.view.StudyAxis = function() {
             }
         });
 
-        if (isHighlight) {
-            highlightPlot.call(highlightPlotScope, key);
-
-        } else {
-            highlightPlot.call(highlightPlotScope);
-        }
     };
 
     var renderExpandCollapseButton = function(canvas) {
@@ -476,6 +490,12 @@ Connector.view.StudyAxis = function() {
         studies.call(renderAlignment);
         studies.call(renderStudyLabels);
         studies.call(renderVisitTags);
+
+        var studyAxisSelections = selectStudyAxisScope.getStudyAxisSelectionValues();
+        var hasStudyAxisSelection = selectStudyAxisScope.isStudyAxisSelection();
+        if (hasStudyAxisSelection) {
+            highlightAllSelections(studyAxisSelections);
+        }
     };
 
     studyAxis.renderTo = function(id) { renderTo = id; return studyAxis; };
