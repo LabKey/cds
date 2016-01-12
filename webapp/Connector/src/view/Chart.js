@@ -3575,7 +3575,7 @@ Ext.define('Connector.view.Chart', {
         var sqlFilters = [null, null, null, null];
         var keyStr = '';
 
-        var displayStr = '';
+        var subDisplayStr = '';
         if (participantVisitSel) {
             if (participantVisitSel.getValue() && participantVisitSel.getValue() !== '') {
                 sqlFilters[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, participantVisitSel.getValue(), LABKEY.Filter.Types.EQUALS_ONE_OF);
@@ -3583,7 +3583,9 @@ Ext.define('Connector.view.Chart', {
             else {
                 sqlFilters[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, null, LABKEY.Filter.Types.ISBLANK);
             }
-            displayStr = 'Participant Sequence Num Equals One Of ' + participantVisitSel.getValue();
+            subDisplayStr = '<br/>Participant Sequence Num Equals One Of' + ':<br/><ul class="indent"><li>- ';
+            subDisplayStr += Connector.model.Filter.getFilterValuesAsArray(participantVisitSel).join('</li><li>- ');
+            subDisplayStr += '</li></ul>';
             keyStr = d.visitRowId;
             keyStr += '---' + d.studyLabel;
             if (d.groupLabel) {
@@ -3592,13 +3594,13 @@ Ext.define('Connector.view.Chart', {
         }
         else if (d.name && !d.study) {
             sqlFilters[0] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
-            displayStr = 'Study: = ' + d.name;
+            subDisplayStr = '<br/>Study = ' + d.name + '<br/>';
             keyStr += '---' + d.name;
         }
         else if (d.name && d.study) {
             sqlFilters[0] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.study, LABKEY.Filter.Types.EQUAL);
             sqlFilters[1] = LABKEY.Filter.create(QueryUtils.TREATMENTSUMMARY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
-            displayStr = 'Treatment Summary: = ' + d.study + ' ' + d.name;
+            subDisplayStr = '<br/>Treatment Summary = ' + d.study + ' ' + d.name + '<br/>';
             if (d.study) {
                 keyStr += '---' + d.study;
             }
@@ -3608,6 +3610,7 @@ Ext.define('Connector.view.Chart', {
         var keys = [];
         keys.push(keyStr);
 
+        var displayStr = subDisplayStr;
         var addToMulti = multi && this.isStudyAxisSelection();
         var oldSelection = undefined;
         if (addToMulti) {
@@ -3617,6 +3620,8 @@ Ext.define('Connector.view.Chart', {
             for (var i = 0; i < existingKeys.length; i++) {
                 keys.push(existingKeys[i]);
             }
+            displayStr += '<br/>OR<br/>';
+            displayStr += existingSelection.get('filterDisplayString');
         }
 
         Connector.getState().addSelection({
