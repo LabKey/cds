@@ -654,6 +654,7 @@ Ext.define('Connector.controller.Query', {
     {
         var olapFilters = [],
             measures = [];
+        var extraFilters = null;
 
         Ext.each(filters, function(filter)
         {
@@ -666,23 +667,42 @@ Ext.define('Connector.controller.Query', {
                 {
                     // plot selection or "in the plot"
 
-                    if (excludeInThePlotAxis !== 'x' || filter.isGrid())
-                    {
-                        Ext.each(filter.getMeasureSet('x'), function(filter)
-                        {
-                            filter.measure.axisName = axisId;
-                            measures.push(filter);
-                        });
-                    }
+                    if (filter.get('isStudyAxis')) {
+                        if (filter.get('studyAxisFilter') && filter.get('studyAxisFilter')['_COMPOUND']) {
+                            if (!extraFilters) {
+                                extraFilters = [];
+                            }
+                            extraFilters.push(filter.get('studyAxisFilter')['_COMPOUND'][0]);
+                            extraFilters[0].isStudyAxis = true;
+                            var queryService = Connector.getQueryService(),
+                                    studyMeasure = queryService.getMeasure(QueryUtils.STUDY_ALIAS),
+                                    armMeasure = queryService.getMeasure(QueryUtils.TREATMENTSUMMARY_ALIAS),
+                                    subjectVisitMeasure = queryService.getMeasure(QueryUtils.SUBJECT_SEQNUM_ALIAS);
 
-                    if (excludeInThePlotAxis !== 'y' || filter.isGrid())
-                    {
-                        axisId = Ext.id(undefined, 'axis-');
-                        Ext.each(filter.getMeasureSet('y'), function(filter)
+                            measures.push({measure: studyMeasure});
+                            measures.push({measure: armMeasure});
+                            measures.push({measure: subjectVisitMeasure});
+                        }
+                    }
+                    else {
+                        if (excludeInThePlotAxis !== 'x' || filter.isGrid())
                         {
-                            filter.measure.axisName = axisId;
-                            measures.push(filter);
-                        });
+                            Ext.each(filter.getMeasureSet('x'), function(filter)
+                            {
+                                filter.measure.axisName = axisId;
+                                measures.push(filter);
+                            });
+                        }
+
+                        if (excludeInThePlotAxis !== 'y' || filter.isGrid())
+                        {
+                            axisId = Ext.id(undefined, 'axis-');
+                            Ext.each(filter.getMeasureSet('y'), function(filter)
+                            {
+                                filter.measure.axisName = axisId;
+                                measures.push(filter);
+                            });
+                        }
                     }
                 }
                 else if (filter.isGrid() || filter.isAggregated())
@@ -706,7 +726,8 @@ Ext.define('Connector.controller.Query', {
             olapFilters.push({
                 level: '[Subject].[Subject]', // TODO: Retrieve from application metadata (cube.js)
                 sql: QueryUtils.getSubjectIntersectSQL({
-                    measures: measures
+                    measures: measures,
+                    extraFilters: extraFilters
                 })
             });
         }

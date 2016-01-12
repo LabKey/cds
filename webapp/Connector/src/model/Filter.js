@@ -23,8 +23,6 @@ Ext.define('Connector.model.Filter', {
         {name : 'isAggregated', type: 'boolean', defaultValue: false},
 
         {name : 'isTime', type: 'boolean', defaultValue: false},
-        {name : 'isStudyAxis', type: 'boolean', defaultValue: false},
-        {name : 'studyAxisKey', defaultValue: undefined},
         {name : 'timeMeasure', defaultValue: undefined},
         {name : 'timeFilters', defaultValue: [], convert: function(raw)
         {
@@ -53,6 +51,11 @@ Ext.define('Connector.model.Filter', {
             }
             return filters;
         }},
+
+        {name : 'isStudyAxis', type: 'boolean', defaultValue: false},
+        {name : 'studyAxisKeys', defaultValue: []},
+        {name : 'studyAxisFilter', defaultValue: undefined},
+        {name : 'isStudySelectionActive', type: 'boolean', defaultValue: false},
 
         {name : 'filterDisplayString', defaultValue: undefined}
     ],
@@ -831,6 +834,7 @@ Ext.define('Connector.model.Filter', {
     _generateDataFilters : function()
     {
         var dataFilterMap = {},
+            studyAxisFilterMap = {},
             plotAxisMeasures = [];
 
         if (this.isAggregated())
@@ -857,6 +861,13 @@ Ext.define('Connector.model.Filter', {
             {
                 this._generateCompoundFilter(dataFilterMap);
             }
+            else if (this.get('isStudyAxis')) {
+                var oldSelection = null;
+                if (this.get('studyAxisFilter') && this.get('studyAxisFilter')['_COMPOUND']) {
+                    oldSelection = this.get('studyAxisFilter')['_COMPOUND'][0];
+                }
+                this._generateCompoundStudyAxisFilter(studyAxisFilterMap, oldSelection);
+            }
 
             // plot selection filter
             if (this.isGrid())
@@ -874,7 +885,7 @@ Ext.define('Connector.model.Filter', {
                             yFilters.push(gridFilter);
                         }
 
-                        if (!sameSource)
+                        if (!sameSource && !this.get('isStudyAxis'))
                             this._dataFilterHelper(dataFilterMap, gridFilter.getColumnName(), gridFilter);
                     }
                 }, this);
@@ -887,7 +898,7 @@ Ext.define('Connector.model.Filter', {
                 {
                     var measure = plotMeasure.measure;
 
-                    if (!sameSource)
+                    if (!sameSource && !this.get('isStudyAxis'))
                     {
                         // axis filters -> data filters
                         if (measure.options && measure.options.dimensions)
@@ -989,7 +1000,8 @@ Ext.define('Connector.model.Filter', {
 
         this._set({
             dataFilter: dataFilterMap,
-            plotAxisMeasures: plotAxisMeasures
+            plotAxisMeasures: plotAxisMeasures,
+            studyAxisFilter: studyAxisFilterMap
         });
     },
 
@@ -1017,6 +1029,31 @@ Ext.define('Connector.model.Filter', {
         }
 
         return filter;
+    },
+
+    _generateCompoundStudyAxisFilter: function(filterMap, existingCompoundFilter) {
+        var filterSets = this.get('gridFilter'),
+            plotMeasures = this.get('plotMeasures');
+
+        var compounds = [];
+        var newFilter = Connector.Filter.compound(filterSets, 'AND');
+        if (!existingCompoundFilter) {
+            compounds.push(newFilter);
+        }
+        else {
+            var isStudyAxisSelection = this.get('isStudySelectionActive');
+
+            // if a study axis selection has been promoted to filter, then use AND
+            // use OR for multiple active selections
+            var operator = isStudyAxisSelection ? 'OR' : 'AND';
+            compounds.push(Connector.Filter.compound([
+                newFilter,
+                existingCompoundFilter
+            ], operator));
+            this._set('isStudySelectionActive', false);
+        }
+
+        filterMap[Connector.Filter.COMPOUND_ALIAS] = compounds;
     },
 
     /**
@@ -1126,6 +1163,12 @@ Ext.define('Connector.model.Filter', {
             jsonable.gridFilter = this._convertToJsonFilters(this.get('gridFilter'), true);
         }
 
+        if (Ext.isArray(this.get('studyAxisFilter')))
+        {
+            jsonable.studyAxisFilter = this._convertToJsonFilters(this.get('studyAxisFilter'), true);
+        }
+
+        delete jsonable.studyAxisFilter;
         delete jsonable.dataFilter;
         delete jsonable.measureSet;
         delete jsonable.xMeasure;
@@ -1392,8 +1435,20 @@ Ext.define('Connector.Filter', {
             return new Connector.Filter(columnName, value, filterType, operator);
         },
 
+        /**
+         * Create a compound filter from a set of LABKEY.Filter
+         * @param {LABKEY.Filter[]} filters
+         * @param {string} [operator]
+         * @returns {Connector.Filter}
+         */
         compound : function(filters, operator) {
-            return new Connector.Filter(undefined, filters, Connector.Filter.Types.COMPOUND, operator);
+            var filteredFilters = [];
+            Ext.each(filters, function(filter){
+               if (filter) { // get rid of null
+                   filteredFilters.push(filter);
+               }
+            });
+            return new Connector.Filter(undefined, filteredFilters, Connector.Filter.Types.COMPOUND, operator);
         },
 
         _initAliasMap : function(aliasMap, filter) {

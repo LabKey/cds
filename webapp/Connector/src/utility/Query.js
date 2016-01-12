@@ -283,7 +283,8 @@ Ext.define('Connector.utility.Query', {
                     targetQuery,
                     baseQuery,
                     hasBaseFilter = false,
-                    baseMeasures = {};
+                    baseMeasures = {},
+                    isStudyAxis = f.isStudyAxis;
 
                 Ext.iterate(f.getAliases(), function(alias)
                 {
@@ -305,7 +306,9 @@ Ext.define('Connector.utility.Query', {
                             hasBaseFilter = true;
                             baseQuery = measure.queryName;
                             baseMeasures[alias] = measure;
-                            return;
+                            if (!isStudyAxis) {
+                                return;
+                            }
                         }
 
                         if (tables[measure.queryName])
@@ -325,6 +328,9 @@ Ext.define('Connector.utility.Query', {
                             {
                                 included = true;
                                 extraFilterMap[measure.queryName].filterArray.push(f);
+                                if (isStudyAxis) {
+                                    extraFilterMap[measure.queryName].isStudyAxis = isStudyAxis;
+                                }
                             }
                         }
                         else
@@ -666,6 +672,24 @@ Ext.define('Connector.utility.Query', {
                     WHERE.push(this._getWhereClauseFromFilter(filter, filterDef.measures, false /* recursed */, forDebugging));
                 }, this);
             }, this);
+        }
+
+        // process study axis filters
+        for (var property in extraFilterMap)
+        {
+            if (extraFilterMap.hasOwnProperty(property))
+            {
+                if (extraFilterMap[property].isStudyAxis)
+                {
+                    Ext.each(extraFilterMap[property], function (filterDef)
+                    {
+                        Ext.each(filterDef.filterArray, function (filter)
+                        {
+                            WHERE.push(this._getWhereClauseFromFilter(filter, filterDef.measures, false /* recursed */, forDebugging));
+                        }, this);
+                    }, this);
+                }
+            }
         }
 
         // and optimized filters

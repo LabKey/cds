@@ -2555,11 +2555,11 @@ Ext.define('Connector.view.Chart', {
         sql = 'SELECT GROUP_CONCAT(DISTINCT ' + QueryUtils.VISITROWID_ALIAS + ') AS VisitRowIds';
         if (Ext.isString(yAntigenAlias))
         {
-            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(yAntigenAlias, xAntigenAlias, 'plot-axis-y') + ') AS YAntigenCount';
+            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(yAntigenAlias, xAntigenAlias, ChartUtils.yAxisNameProp) + ') AS YAntigenCount';
         }
         if (Ext.isString(xAntigenAlias))
         {
-            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(xAntigenAlias, yAntigenAlias, 'plot-axis-x') + ') AS XAntigenCount';
+            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(xAntigenAlias, yAntigenAlias, ChartUtils.xAxisNameProp) + ') AS XAntigenCount';
         }
 
         // we either select from the temp query name provided by the requestChartData request or use the generated sql
@@ -3554,9 +3554,8 @@ Ext.define('Connector.view.Chart', {
         var values = [];
         selections.forEach(function(s) {
             if (s.get('isStudyAxis')){
-                values.push(s.get('studyAxisKey'))
+                values = s.get('studyAxisKeys');
             }
-
         });
 
         return values;
@@ -3576,7 +3575,6 @@ Ext.define('Connector.view.Chart', {
         var sqlFilters = [null, null, null, null];
         var keyStr = '';
 
-        //TODO multi select
         var displayStr = '';
         if (participantVisitSel) {
             if (participantVisitSel.getValue() && participantVisitSel.getValue() !== '') {
@@ -3607,9 +3605,23 @@ Ext.define('Connector.view.Chart', {
             keyStr += '---' + d.name;
         }
 
+        var keys = [];
+        keys.push(keyStr);
+
+        var addToMulti = multi && this.isStudyAxisSelection();
+        var oldSelection = undefined;
+        if (addToMulti) {
+            var existingSelection = Connector.getState().getSelections()[0];
+            oldSelection = existingSelection.get('studyAxisFilter');
+            var existingKeys = existingSelection.get('studyAxisKeys');
+            for (var i = 0; i < existingKeys.length; i++) {
+                keys.push(existingKeys[i]);
+            }
+        }
+
         Connector.getState().addSelection({
             gridFilter: sqlFilters,
-            plotMeasures: [null, null],
+            plotMeasures: [this._getAxisWrappedMeasure(this.activeMeasures.x), this._getAxisWrappedMeasure(this.activeMeasures.y)],
             isPlot: true,
             isGrid: true,
             operator: LABKEY.app.model.Filter.OperatorTypes.AND,
@@ -3618,7 +3630,9 @@ Ext.define('Connector.view.Chart', {
             showInverseFilter: false,
             filterDisplayString: displayStr,
             isStudyAxis: true,
-            studyAxisKey: keyStr
+            studyAxisKeys: keys,
+            studyAxisFilter: oldSelection,
+            isStudySelectionActive: true
         }, true, false, true);
 
     },
@@ -3638,7 +3652,7 @@ Ext.define('Connector.view.Chart', {
         var queryService = Connector.getQueryService(),
             studyMeasure = queryService.getMeasure(QueryUtils.STUDY_ALIAS),
             armMeasure = queryService.getMeasure(QueryUtils.TREATMENTSUMMARY_ALIAS);
-        var wrappedMeasures = [{measure: queryService.getMeasure(this.activeMeasures.x.alias)}];
+        var wrappedMeasures = [this._getAxisWrappedMeasure(this.activeMeasures.x)];
         wrappedMeasures.push({measure: studyMeasure});
         wrappedMeasures.push({measure: armMeasure});
 
