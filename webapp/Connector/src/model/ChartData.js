@@ -247,7 +247,8 @@ Ext.define('Connector.model.ChartData', {
             singleAntigenComparison = false,
             _row,
             logGutterBothCount = 0, logGutterXCount = 0,logGutterYCount = 0,
-            minPositiveX = Number.MAX_VALUE, minPositiveY = Number.MAX_VALUE;
+            minPositiveX = Number.MAX_VALUE, minPositiveY = Number.MAX_VALUE,
+            studyVisitMap = {}, studyGroupVisitMap = {};
 
         ca = this.getBaseMeasureConfig();
         if (color)
@@ -354,6 +355,10 @@ Ext.define('Connector.model.ChartData', {
             if (_row[QueryUtils.CONTAINER_ALIAS])
             {
                 studyContainers[_row[QueryUtils.CONTAINER_ALIAS]] = true;
+                if (_row[QueryUtils.VISITROWID_ALIAS]) {
+                    studyVisitMap[_row[QueryUtils.VISITROWID_ALIAS] + '---' + _row[QueryUtils.STUDY_ALIAS]] = true;
+                    studyGroupVisitMap[_row[QueryUtils.VISITROWID_ALIAS] + '---' + _row[QueryUtils.STUDY_ALIAS] + '---' + _row[QueryUtils.TREATMENTSUMMARY_ALIAS]] = true;
+                }
             }
 
             yVal = this._getYValue(y, _yid, _row);
@@ -507,6 +512,10 @@ Ext.define('Connector.model.ChartData', {
                 invalidLogPlotRowCount: invalidLogPlotRowCount,
                 minPositiveX: minPositiveX === Number.MAX_VALUE ? 0.0001 : minPositiveX,
                 minPositiveY: minPositiveY === Number.MAX_VALUE ? 0.0001 : minPositiveY
+            },
+            studyAxisData: {
+                studyVisitMap: studyVisitMap,
+                studyGroupVisitMap: studyGroupVisitMap
             },
             properties: {
                 xaxis: xa,

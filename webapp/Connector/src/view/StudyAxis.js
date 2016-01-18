@@ -75,13 +75,28 @@ Connector.view.StudyAxis = function() {
                     var imgPath = Connector.resourceContext.imgPath + '/';
 
                     if (d.isVaccination) {
-                        imgPath += 'vaccination_normal.svg';
+                        if (d.isTagActive) {
+                            imgPath += 'vaccination_normal.svg';
+                        }
+                        else {
+                            imgPath += 'vaccination_disabled.svg';
+                        }
                     }
                     else if (d.isChallenge) {
-                        imgPath += 'challenge_normal.svg';
+                        if (d.isTagActive) {
+                            imgPath += 'challenge_normal.svg';
+                        }
+                        else {
+                            imgPath += 'challenge_disabled.svg';
+                        }
                     }
                     else {
-                        imgPath += 'nonvaccination_normal.svg';
+                        if (d.isTagActive) {
+                            imgPath += 'nonvaccination_normal.svg';
+                        }
+                        else {
+                            imgPath += 'nonvaccination_disabled.svg';
+                        }
                     }
 
                     return imgPath;
@@ -110,7 +125,9 @@ Connector.view.StudyAxis = function() {
         // add visit tag mouseover/mouseout functions.
         visitTags.on('mouseover', function(d) {
             if (!mainPlotLayer.isBrushed) {
-                highlightGlyph.call(this, d, true, selection);
+                if (d.isTagActive) {
+                    highlightGlyph.call(this, d, true, selection);
+                }
                 tagMouseover.call(tagMouseoverScope, d, this);
             }
         });
@@ -118,7 +135,7 @@ Connector.view.StudyAxis = function() {
             if (mainPlotLayer.isBrushed) {
                 return;
             }
-            if (!d.selected) {
+            if (d.isTagActive && !d.selected) {
                 highlightGlyph.call(highlightPlotScope, d, false, selection);
             }
             tagMouseout.call(tagMouseoutScope, d, this);
@@ -131,7 +148,7 @@ Connector.view.StudyAxis = function() {
         });
 
         visitTags.on('mouseup', function(d) {
-            if (mainPlotLayer.isBrushed) {
+            if (!d.isTagActive || mainPlotLayer.isBrushed) {
                 return;
             }
             d.selected = true;
@@ -199,7 +216,10 @@ Connector.view.StudyAxis = function() {
                             var imgPath = Connector.resourceContext.imgPath + '/';
 
                             if (d.isVaccination) {
-                                if (isHighlight) {
+                                if (!d.isTagActive) {
+                                    imgPath += 'vaccination_disabled.svg';
+                                }
+                                else if (isHighlight) {
                                     imgPath += 'vaccination_hover.svg';
                                 }
                                 else {
@@ -207,7 +227,10 @@ Connector.view.StudyAxis = function() {
                                 }
                             }
                             else if (d.isChallenge) {
-                                if (isHighlight) {
+                                if (!d.isTagActive) {
+                                    imgPath += 'challenge_disabled.svg';
+                                }
+                                else if (isHighlight) {
                                     imgPath += 'challenge_hover.svg';
                                 }
                                 else {
@@ -215,7 +238,10 @@ Connector.view.StudyAxis = function() {
                                 }
                             }
                             else {
-                                if (isHighlight) {
+                                if (!d.isTagActive) {
+                                    imgPath += 'nonvaccination_disabled.svg';
+                                }
+                                else if (isHighlight) {
                                     imgPath += 'nonvaccination_hover.svg';
                                 }
                                 else {
@@ -506,7 +532,7 @@ Connector.view.StudyAxis = function() {
     studyAxis.visitTagMouseout = function(m, s) { tagMouseout = m; tagMouseoutScope = s; return studyAxis; };
     studyAxis.highlightPlot = function(m, s) { highlightPlot = m; highlightPlotScope = s; return studyAxis; };
     studyAxis.selectStudyAxis = function(m, s) { selectStudyAxis = m; selectStudyAxisScope = s; return studyAxis; };
-    studyAxis.mainPlotLayer = function(layer) { mainPlotLayer = layer};
+    studyAxis.mainPlotLayer = function(layer) { mainPlotLayer = layer; return studyAxis; };
     studyAxis.scale = function(s) {
         var r;
         xScale = s.copy();

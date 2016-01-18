@@ -11,6 +11,8 @@ Ext.define('Connector.model.StudyAxisData', {
         /* values passed in from Chart.js */
         {name : 'measure', defaultValue: {}}, // x-axis timepoint measure
         {name : 'records', defaultValue: []}, // filtered set of StudyVisitTag model records
+        {name : 'studyVisitMap', defaultValue: {}}, // a set of studyVisits that has data in plot
+        {name : 'studyGroupVisitMap', defaultValue: {}}, // a set of studyGroupVisits that has data in plot
 
         /* generated properties based on the processing of the above records */
         {name : 'data', defaultValue: []},
@@ -197,6 +199,8 @@ Ext.define('Connector.model.StudyAxisData', {
             // track each unique visit in a study by rowId
             if (Ext.isNumber(visitId))
             {
+                var tagKey = visitId + '---' + studyLabel;
+                var hasDataInPlot = this.get('studyVisitMap')[tagKey] === true;
                 visit = this._genVisit({
                     studyLabel: studyLabel,
                     sequenceNumMin: seqMin,
@@ -206,7 +210,8 @@ Ext.define('Connector.model.StudyAxisData', {
                     visitTagCaption: visitTagCaption,
                     isVaccination: isVaccination,
                     isChallenge: isChallenge,
-                    visitRowId: visitId
+                    visitRowId: visitId,
+                    isTagActive: hasDataInPlot
                 });
 
                 // check visit mapping
@@ -248,6 +253,8 @@ Ext.define('Connector.model.StudyAxisData', {
                 {
                     if (!study.groups[groupLabel].visits[alignedDay])
                     {
+                        var tagKey = visitId + '---' + studyLabel + '---' + groupLabel;
+                        var hasDataInPlot = this.get('studyGroupVisitMap')[tagKey] === true;
                         study.groups[groupLabel].visits[alignedDay] = this._genVisit({
                             studyLabel: studyLabel,
                             groupName: groupName,
@@ -260,7 +267,8 @@ Ext.define('Connector.model.StudyAxisData', {
                             visitTagCaption: visitTagCaption,
                             isVaccination: isVaccination,
                             isChallenge: isChallenge,
-                            visitRowId: visitId
+                            visitRowId: visitId,
+                            isTagActive: hasDataInPlot
                         });
                     }
 

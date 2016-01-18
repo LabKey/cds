@@ -3396,6 +3396,8 @@ Ext.define('Connector.view.Chart', {
 
         var studyAxisData = Ext.create('Connector.model.StudyAxisData', {
             records: filteredVisitTags.getRange(),
+            studyVisitMap: chartData.get('studyAxisData').studyVisitMap,
+            studyGroupVisitMap: chartData.get('studyAxisData').studyGroupVisitMap,
             measure: this.activeMeasures.x
         });
 
