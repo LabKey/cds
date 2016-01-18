@@ -1050,8 +1050,10 @@ Ext.define('Connector.model.Filter', {
                 newFilter,
                 existingCompoundFilter
             ], operator));
-            this._set('isStudySelectionActive', false);
         }
+        // the 1st time this is called is when a new selection is added, use OR for filters in a multi selection
+        // the 2nd time this is called is when selection is promoted to filter, use AND for different compound filter.
+        this._set('isStudySelectionActive', false);
 
         filterMap[Connector.Filter.COMPOUND_ALIAS] = compounds;
     },
