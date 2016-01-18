@@ -3598,8 +3598,8 @@ Ext.define('Connector.view.Chart', {
             keyStr += '---' + d.name;
         }
         else if (d.name && d.study) {
-            sqlFilters[0] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.study, LABKEY.Filter.Types.EQUAL);
-            sqlFilters[1] = LABKEY.Filter.create(QueryUtils.TREATMENTSUMMARY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
+            sqlFilters[0] = LABKEY.Filter.create(QueryUtils.TREATMENTSUMMARY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
+            sqlFilters[1] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.study, LABKEY.Filter.Types.EQUAL);
             subDisplayStr = '<br/>Treatment Summary = ' + d.study + ' ' + d.name + '<br/>';
             if (d.study) {
                 keyStr += '---' + d.study;

@@ -1038,7 +1038,9 @@ Ext.define('Connector.model.Filter', {
         var compounds = [];
         var newFilter = Connector.Filter.compound(filterSets, 'AND');
         if (!existingCompoundFilter) {
+            newFilter._compoundDisplayString = this.get('filterDisplayString');
             compounds.push(newFilter);
+            this._set('filterDisplayString', newFilter._compoundDisplayString);
         }
         else {
             var isStudyAxisSelection = this.get('isStudySelectionActive');
@@ -1046,10 +1048,19 @@ Ext.define('Connector.model.Filter', {
             // if a study axis selection has been promoted to filter, then use AND
             // use OR for multiple active selections
             var operator = isStudyAxisSelection ? 'OR' : 'AND';
-            compounds.push(Connector.Filter.compound([
+            var compounded = Connector.Filter.compound([
                 newFilter,
                 existingCompoundFilter
-            ], operator));
+            ], operator);
+
+            if (!isStudyAxisSelection) {
+                compounded._compoundDisplayString =  existingCompoundFilter._compoundDisplayString + '<br/><br/>AND<br/><br/>' + this.get('filterDisplayString');
+            }
+            else {
+                compounded._compoundDisplayString = this.get('filterDisplayString');
+            }
+            this._set('filterDisplayString', compounded._compoundDisplayString);
+            compounds.push(compounded);
         }
         // the 1st time this is called is when a new selection is added, use OR for filters in a multi selection
         // the 2nd time this is called is when selection is promoted to filter, use AND for different compound filter.
@@ -1468,6 +1479,8 @@ Ext.define('Connector.Filter', {
     _filters: undefined,
 
     _isCompound: false,
+
+    _compoundDisplayString: '',
 
     constructor : function(columnName, value, filterType, operator) {
 
