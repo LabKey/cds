@@ -417,7 +417,7 @@ Connector.view.StudyAxis = function() {
         });
 
         selector.selectAll("image.visit-tag").each( function(detail, i){
-            var detailkey = detail.alignedDay;
+            var detailkey = ChartUtils.studyAxisKeyDelimiter + detail.alignedDay;
             detailkey += ChartUtils.studyAxisKeyDelimiter + detail.studyLabel;
             if (detail.groupLabel) {
                 detailkey += ChartUtils.studyAxisKeyDelimiter + detail.groupLabel;
