@@ -3588,7 +3588,7 @@ Ext.define('Connector.view.Chart', {
             subDisplayStr = '<br/>Participant Sequence Num Equals One Of' + ':<br/><ul class="indent"><li>- ';
             subDisplayStr += Connector.model.Filter.getFilterValuesAsArray(participantVisitSel).join('</li><li>- ');
             subDisplayStr += '</li></ul>';
-            keyStr = d.visitRowId;
+            keyStr = d.alignedDay;
             keyStr += '---' + d.studyLabel;
             if (d.groupLabel) {
                 keyStr += '---' + d.groupLabel;

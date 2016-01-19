@@ -180,7 +180,7 @@ Connector.view.StudyAxis = function() {
             d.selected = true;
             selectStudyAxis.call(selectStudyAxisScope, d, isMulti);
         }
-        var key = d.visitRowId;
+        var key = d.alignedDay;
         key += '---' + d.studyLabel;
         if (d.groupLabel) {
             key += '---' + d.groupLabel;
@@ -211,12 +211,15 @@ Connector.view.StudyAxis = function() {
         var size = d.imgSize;
         selector.selectAll("image.visit-tag").each( function(detail, i){
 
-            if(detail.studyLabel === d.studyLabel && detail.visitRowId == d.visitRowId && detail.groupLabel == d.groupLabel){
+            if(detail.studyLabel === d.studyLabel && detail.groupLabel == d.groupLabel){
+                if (detail.isVaccination !== d.isVaccination || detail.isChallenge !== d.isChallenge || detail.alignedDay !== d.alignedDay) {
+                    return;
+                }
                 d3.select(this).attr('xlink:href', function(data) {
                             var imgPath = Connector.resourceContext.imgPath + '/';
 
-                            if (d.isVaccination) {
-                                if (!d.isTagActive) {
+                            if (data.isVaccination) {
+                                if (!data.isTagActive) {
                                     imgPath += 'vaccination_disabled.svg';
                                 }
                                 else if (isHighlight) {
@@ -226,8 +229,8 @@ Connector.view.StudyAxis = function() {
                                     imgPath += 'vaccination_normal.svg';
                                 }
                             }
-                            else if (d.isChallenge) {
-                                if (!d.isTagActive) {
+                            else if (data.isChallenge) {
+                                if (!data.isTagActive) {
                                     imgPath += 'challenge_disabled.svg';
                                 }
                                 else if (isHighlight) {
@@ -238,7 +241,7 @@ Connector.view.StudyAxis = function() {
                                 }
                             }
                             else {
-                                if (!d.isTagActive) {
+                                if (!data.isTagActive) {
                                     imgPath += 'nonvaccination_disabled.svg';
                                 }
                                 else if (isHighlight) {
@@ -414,7 +417,7 @@ Connector.view.StudyAxis = function() {
         });
 
         selector.selectAll("image.visit-tag").each( function(detail, i){
-            var detailkey = detail.visitRowId;
+            var detailkey = detail.alignedDay;
             detailkey += '---' + detail.studyLabel;
             if (detail.groupLabel) {
                 detailkey += '---' + detail.groupLabel;
