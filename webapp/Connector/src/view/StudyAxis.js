@@ -180,10 +180,10 @@ Connector.view.StudyAxis = function() {
             d.selected = true;
             selectStudyAxis.call(selectStudyAxisScope, d, isMulti);
         }
-        var key = d.alignedDay;
-        key += '---' + d.studyLabel;
+        var key = ChartUtils.studyAxisKeyDelimiter + d.alignedDay;
+        key += ChartUtils.studyAxisKeyDelimiter + d.studyLabel;
         if (d.groupLabel) {
-            key += '---' + d.groupLabel;
+            key += ChartUtils.studyAxisKeyDelimiter + d.groupLabel;
         }
         if (isHighlight) {
             highlightPlot.call(highlightPlotScope, key);
@@ -373,9 +373,9 @@ Connector.view.StudyAxis = function() {
         }
         var key = '';
         if (d.study) {
-            key += '---' + d.study;
+            key += ChartUtils.studyAxisKeyDelimiter + d.study;
         }
-        key += '---' + d.name;
+        key += ChartUtils.studyAxisKeyDelimiter + d.name;
 
         highlightLabelAndGlyph.call(this, key, isHighlight, selector, isSelection, isMulti);
 
@@ -400,9 +400,9 @@ Connector.view.StudyAxis = function() {
         selector.selectAll("text.study-label").each(function(detail, i){
             var detailkey = '';
             if (detail.study) {
-                detailkey += '---' + detail.study;
+                detailkey += ChartUtils.studyAxisKeyDelimiter + detail.study;
             }
-            detailkey += '---' + detail.name;
+            detailkey += ChartUtils.studyAxisKeyDelimiter + detail.name;
             if (detailkey.indexOf(key) > -1) {
                 if (isHighlight) {
                     d3.select(this.parentNode).select('rect.highlight').attr('fill-opacity', 1);
@@ -418,9 +418,9 @@ Connector.view.StudyAxis = function() {
 
         selector.selectAll("image.visit-tag").each( function(detail, i){
             var detailkey = detail.alignedDay;
-            detailkey += '---' + detail.studyLabel;
+            detailkey += ChartUtils.studyAxisKeyDelimiter + detail.studyLabel;
             if (detail.groupLabel) {
-                detailkey += '---' + detail.groupLabel;
+                detailkey += ChartUtils.studyAxisKeyDelimiter + detail.groupLabel;
             }
             if (detailkey.indexOf(key) > -1) {
                 changeGlyphImage(detail, isHighlight, selector);

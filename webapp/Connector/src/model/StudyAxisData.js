@@ -199,7 +199,7 @@ Ext.define('Connector.model.StudyAxisData', {
             // track each unique visit in a study by rowId
             if (Ext.isNumber(visitId))
             {
-                var tagKey = alignedDay + '---' + studyLabel;
+                var tagKey = ChartUtils.studyAxisKeyDelimiter + alignedDay + ChartUtils.studyAxisKeyDelimiter + studyLabel;
                 var hasDataInPlot = this.get('studyVisitMap')[tagKey] === true;
                 visit = this._genVisit({
                     studyLabel: studyLabel,
@@ -253,7 +253,8 @@ Ext.define('Connector.model.StudyAxisData', {
                 {
                     if (!study.groups[groupLabel].visits[alignedDay])
                     {
-                        var tagKey = alignedDay + '---' + studyLabel + '---' + groupLabel;
+                        var tagKey = ChartUtils.studyAxisKeyDelimiter + alignedDay;
+                        tagKey +=  ChartUtils.studyAxisKeyDelimiter + studyLabel + ChartUtils.studyAxisKeyDelimiter + groupLabel;
                         var hasDataInPlot = this.get('studyGroupVisitMap')[tagKey] === true;
                         study.groups[groupLabel].visits[alignedDay] = this._genVisit({
                             studyLabel: studyLabel,

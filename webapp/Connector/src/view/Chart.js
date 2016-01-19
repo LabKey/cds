@@ -3588,25 +3588,25 @@ Ext.define('Connector.view.Chart', {
             subDisplayStr = '<br/>Participant Sequence Num Equals One Of' + ':<br/><ul class="indent"><li>- ';
             subDisplayStr += Connector.model.Filter.getFilterValuesAsArray(participantVisitSel).join('</li><li>- ');
             subDisplayStr += '</li></ul>';
-            keyStr = d.alignedDay;
-            keyStr += '---' + d.studyLabel;
+            keyStr += ChartUtils.studyAxisKeyDelimiter + d.alignedDay;
+            keyStr += ChartUtils.studyAxisKeyDelimiter + d.studyLabel;
             if (d.groupLabel) {
-                keyStr += '---' + d.groupLabel;
+                keyStr += ChartUtils.studyAxisKeyDelimiter + d.groupLabel;
             }
         }
         else if (d.name && !d.study) {
             sqlFilters[0] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
             subDisplayStr = '<br/>Study = ' + d.name + '<br/>';
-            keyStr += '---' + d.name;
+            keyStr += ChartUtils.studyAxisKeyDelimiter + d.name;
         }
         else if (d.name && d.study) {
             sqlFilters[0] = LABKEY.Filter.create(QueryUtils.TREATMENTSUMMARY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
             sqlFilters[1] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.study, LABKEY.Filter.Types.EQUAL);
             subDisplayStr = '<br/>Treatment Summary = ' + d.study + ' ' + d.name + '<br/>';
             if (d.study) {
-                keyStr += '---' + d.study;
+                keyStr += ChartUtils.studyAxisKeyDelimiter + d.study;
             }
-            keyStr += '---' + d.name;
+            keyStr += ChartUtils.studyAxisKeyDelimiter + d.name;
         }
 
         var keys = [];

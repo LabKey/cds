@@ -37,6 +37,8 @@ Ext.define('Connector.utility.Chart', {
 
     emptyTxt: 'undefined',
 
+    studyAxisKeyDelimiter: '|||',
+
     tickFormat: {
         date: function(val) {
             // D3 converts dates to integers, so we need to convert it back to a date to get the format.

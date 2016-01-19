@@ -356,8 +356,9 @@ Ext.define('Connector.model.ChartData', {
             {
                 studyContainers[_row[QueryUtils.CONTAINER_ALIAS]] = true;
                 if (_row[QueryUtils.VISITROWID_ALIAS]) {
-                    studyVisitMap[xVal + '---' + _row[QueryUtils.STUDY_ALIAS]] = true;
-                    studyGroupVisitMap[xVal + '---' + _row[QueryUtils.STUDY_ALIAS] + '---' + _row[QueryUtils.TREATMENTSUMMARY_ALIAS]] = true;
+                    var studyVisitKey = ChartUtils.studyAxisKeyDelimiter + xVal + ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
+                    studyVisitMap[studyVisitKey] = true;
+                    studyGroupVisitMap[studyVisitKey + ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS]] = true;
                 }
             }
 
@@ -406,10 +407,10 @@ Ext.define('Connector.model.ChartData', {
 
             var key = '';
             if (_row[QueryUtils.STUDY_ALIAS] && _row[QueryUtils.VISITROWID_ALIAS]) {
-                key = xVal;
-                key += '---' + _row[QueryUtils.STUDY_ALIAS];
+                key = ChartUtils.studyAxisKeyDelimiter + xVal;
+                key += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
                 if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
-                    key += '---' + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
+                    key += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
                 }
 
             }
