@@ -423,7 +423,7 @@
                 <div class="copy">
                     <p>The DataSpace is a collaboration between
                         <a href="http://www.scharp.org" target="_blank">SCHARP</a>,
-                        <a href="http://www.labkey.org" target="_blank">LabKey</a>, and
+                        <a href="http://www.labkey.com" target="_blank">LabKey</a>, and
                         <a href="http://www.artefactgroup.com" target="_blank">Artefact.<br></a>
                         <a href="http://www.gatesfoundation.org/" target="_blank">The Bill & Melinda Gates Foundation</a>,
                         has funded the program to date.
