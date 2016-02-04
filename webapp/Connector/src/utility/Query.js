@@ -662,24 +662,12 @@ Ext.define('Connector.utility.Query', {
             }
         }, this);
 
-        // process any extra filters for this dataset
-        if (extraFilterMap[datasetName])
-        {
-            Ext.each(extraFilterMap[datasetName], function(filterDef)
-            {
-                Ext.each(filterDef.filterArray, function(filter)
-                {
-                    WHERE.push(this._getWhereClauseFromFilter(filter, filterDef.measures, false /* recursed */, forDebugging));
-                }, this);
-            }, this);
-        }
-
-        // process study axis filters
         for (var property in extraFilterMap)
         {
             if (extraFilterMap.hasOwnProperty(property))
             {
-                if (extraFilterMap[property].isStudyAxis)
+                // process study axis filters or any extra filters for this dataset
+                if (extraFilterMap[property].isStudyAxis || property === datasetName)
                 {
                     Ext.each(extraFilterMap[property], function (filterDef)
                     {

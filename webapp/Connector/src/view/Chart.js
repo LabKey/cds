@@ -1563,15 +1563,9 @@ Ext.define('Connector.view.Chart', {
                         }
                     }
 
-                    if (data.x !== undefined && data.x !== null && data.x.toString() === target && subjectIds.indexOf(data.subjectId) === -1)
-                    {
-                        subjectIds.push(data.subjectId);
-                    }
-                    else if (selections.indexOf(data.x) != -1 && subjectIds.indexOf(data.subjectId) === -1)
-                    {
-                        subjectIds.push(data.subjectId);
-                    }
-                    else if (isTimeAxisTarget)
+                    if ((data.x !== undefined && data.x !== null && data.x.toString() === target && subjectIds.indexOf(data.subjectId) === -1)
+                        || (selections.indexOf(data.x) != -1 && subjectIds.indexOf(data.subjectId) === -1)
+                        || (isTimeAxisTarget))
                     {
                         subjectIds.push(data.subjectId);
                     }
