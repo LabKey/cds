@@ -315,6 +315,11 @@ Ext.define('Connector.model.Filter', {
             update.timeFilters = this._mergeGridFilters(this.get('timeFilters'), f.get('timeFilters'));
         }
 
+        if (this.get('isStudyAxis') && f.get('isStudyAxis'))
+        {
+            update.filterDisplayString = this.get('filterDisplayString') + '<br/><br/>AND<br/><br/>' + f.get('filterDisplayString');
+        }
+
         this.set(update);
 
         return this;
@@ -1038,9 +1043,7 @@ Ext.define('Connector.model.Filter', {
         var compounds = [];
         var newFilter = Connector.Filter.compound(filterSets, 'AND');
         if (!existingCompoundFilter) {
-            newFilter._compoundDisplayString = this.get('filterDisplayString');
             compounds.push(newFilter);
-            this._set('filterDisplayString', newFilter._compoundDisplayString);
         }
         else {
             var isStudyAxisSelection = this.get('isStudySelectionActive');
@@ -1053,13 +1056,6 @@ Ext.define('Connector.model.Filter', {
                 existingCompoundFilter
             ], operator);
 
-            if (!isStudyAxisSelection) {
-                compounded._compoundDisplayString =  existingCompoundFilter._compoundDisplayString + '<br/><br/>AND<br/><br/>' + this.get('filterDisplayString');
-            }
-            else {
-                compounded._compoundDisplayString = this.get('filterDisplayString');
-            }
-            this._set('filterDisplayString', compounded._compoundDisplayString);
             compounds.push(compounded);
         }
         // the 1st time this is called is when a new selection is added, use OR for filters in a multi selection
@@ -1479,8 +1475,6 @@ Ext.define('Connector.Filter', {
     _filters: undefined,
 
     _isCompound: false,
-
-    _compoundDisplayString: '',
 
     constructor : function(columnName, value, filterType, operator) {
 
