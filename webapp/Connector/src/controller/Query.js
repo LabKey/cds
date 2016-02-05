@@ -632,10 +632,11 @@ Ext.define('Connector.controller.Query', {
         QueryUtils.getData(config);
     },
 
-    getMeasureStore : function(measures, success, failure, scope)
+    getMeasureStore : function(measures, extraFilters, success, failure, scope)
     {
         LABKEY.Query.experimental.MeasureStore.getData({
             measures: measures,
+            extraFilters: extraFilters,
             success: success,
             failure: failure,
             scope: scope

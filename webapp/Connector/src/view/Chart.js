@@ -1176,7 +1176,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (Ext.isDefined(studyAxisInfo)) {
-            this.initStudyAxis(studyAxisInfo, layerScope);
+            this.initStudyAxis(studyAxisInfo, layerScope, properties);
         }
 
         if (!noplot) {
@@ -2442,7 +2442,25 @@ Ext.define('Connector.view.Chart', {
             ChartUtils.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
 
             // Request Chart MeasureStore Data
-            Connector.getQueryService().getMeasureStore(measureSet.measures, function(measureStore)
+            var extraFilters = null;
+            var filterSet = Connector.getState().getFilters();
+            Ext.each(filterSet, function(filter)
+            {
+                if (filter.get('isStudyAxis')) {
+                    if (filter.get('studyAxisFilter') && filter.get('studyAxisFilter')['_COMPOUND']) {
+                        if (!extraFilters) {
+                            extraFilters = [];
+                        }
+                        extraFilters.push(filter.get('studyAxisFilter')['_COMPOUND'][0]);
+                        extraFilters[0].isStudyAxis = true;
+                        var queryService = Connector.getQueryService(),
+                            subjectVisitMeasure = queryService.getMeasure(QueryUtils.SUBJECT_SEQNUM_ALIAS);
+
+                        measureSet.measures.push({measure: subjectVisitMeasure});
+                    }
+                }
+            });
+            Connector.getQueryService().getMeasureStore(measureSet.measures, extraFilters, function(measureStore)
             {
                 this.onChartDataSuccess(measureStore, measureSet);
             }, this.onFailure, this);
@@ -3353,11 +3371,28 @@ Ext.define('Connector.view.Chart', {
             var filterSet = Connector.getState().getFilters().concat(selections),
                 measureSet = this.getMeasureSet(filterSet);
 
+            var extraFilters = null;
+            Ext.each(filterSet, function(filter){
+               if (filter.get('isStudyAxis')) {
+                   if (filter.get('studyAxisFilter') && filter.get('studyAxisFilter')['_COMPOUND']) {
+                       if (!extraFilters) {
+                           extraFilters = [];
+                       }
+                       extraFilters.push(filter.get('studyAxisFilter')['_COMPOUND'][0]);
+                       extraFilters[0].isStudyAxis = true;
+                       var queryService = Connector.getQueryService(),
+                           subjectVisitMeasure = queryService.getMeasure(QueryUtils.SUBJECT_SEQNUM_ALIAS);
+
+                       measureSet.measures.push({measure: subjectVisitMeasure});
+                   }
+               }
+            });
+
             Connector.getQueryService().getSubjectsForSpecificFilters(filterSet, null, function(subjectFilter)
             {
                 ChartUtils.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
 
-                this.updatePlotInfoPaneCounts({forSubcounts: true, sql: QueryUtils.getDataSql({measures: measureSet.measures})});
+                this.updatePlotInfoPaneCounts({forSubcounts: true, sql: QueryUtils.getDataSql({measures: measureSet.measures, extraFilters: extraFilters})});
             }, this);
         }
 
@@ -3515,11 +3550,12 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    initStudyAxis : function(studyAxisInfo, layerScope) {
+    initStudyAxis : function(studyAxisInfo, layerScope, properties) {
         if (!this.studyAxis) {
             this.studyAxis = Connector.view.StudyAxis().renderTo(this.bottomPlotEl.id);
         }
 
+        this.studyAxisProperties = properties;
         this.studyAxis.studyData(studyAxisInfo.getData())
                 .scale(this.plot.scales.x.scale)
                 .width(Math.max(0, this.getBottomPlotPanel().getWidth() - 40))
@@ -3644,7 +3680,7 @@ Ext.define('Connector.view.Chart', {
             return;
         }
         var timeFilters = [];
-        timeFilters.push(LABKEY.Filter.create(this.activeMeasures.x.alias, d.alignedDay, LABKEY.Filter.Types.EQUAL));
+        timeFilters.push(LABKEY.Filter.create(this.studyAxisProperties.xaxis.colName, d.alignedDay, LABKEY.Filter.Types.EQUAL));
         timeFilters.push(LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.studyLabel, LABKEY.Filter.Types.EQUAL));
         if (d.groupLabel) {
             timeFilters.push(LABKEY.Filter.create(QueryUtils.TREATMENTSUMMARY_ALIAS, d.groupLabel, LABKEY.Filter.Types.EQUAL));
