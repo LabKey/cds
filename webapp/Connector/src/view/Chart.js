@@ -3579,14 +3579,14 @@ Ext.define('Connector.view.Chart', {
             else {
                 sqlFilters[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, null, LABKEY.Filter.Types.ISBLANK);
             }
-            subDisplayStr = '<br/>Participant Sequence Num Equals One Of' + ':<br/><ul class="indent"><li>- ';
-            subDisplayStr += Connector.model.Filter.getFilterValuesAsArray(participantVisitSel).join('</li><li>- ');
-            subDisplayStr += '</li></ul>';
             keyStr += ChartUtils.studyAxisKeyDelimiter + d.alignedDay;
             keyStr += ChartUtils.studyAxisKeyDelimiter + d.studyLabel;
+            subDisplayStr = '<br/>Study = ' + d.studyLabel + "; ";
             if (d.groupLabel) {
                 keyStr += ChartUtils.studyAxisKeyDelimiter + d.groupLabel;
+                subDisplayStr = '<br/>Treatment Summary = ' + d.studyLabel + ' ' + d.groupLabel + "; ";
             }
+            subDisplayStr += ' ' + this.activeMeasures.x.label + ' = ' + d.alignedDay + '<br/>';
         }
         else if (d.name && !d.study) {
             sqlFilters[0] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
