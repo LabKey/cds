@@ -7,7 +7,7 @@ Connector.view.StudyAxis = function() {
     var canvas = null, width, height, perStudyHeight = 20, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
             tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope, leftIndent = 25, collapsed = true, groupLabelOffset = 45,
             studyLabelOffset = 35, highlightPlot, highlightPlotScope,
-            selectStudyAxis, selectStudyAxisScope, mainPlotLayer;
+            selectStudyAxis, selectStudyAxisScope, mainPlotLayer, toggleStudyAxis, toggleStudyAxisScope;
 
     // This function returns <study name> for studies and <study name>-<group name> for groups in an attempt to
     // provide a unique name for each value in yScale
@@ -472,8 +472,7 @@ Connector.view.StudyAxis = function() {
             button.attr('xlink:href', function(d) {
                 return Connector.resourceContext.imgPath + '/' + (collapsed ? collapsedHoverImg : expandedHoverImg);
             });
-            collapsed = !collapsed;
-            studyAxis();
+            toggleStudyAxis.call(toggleStudyAxisScope);
         });
 
     };
@@ -535,6 +534,8 @@ Connector.view.StudyAxis = function() {
     studyAxis.visitTagMouseout = function(m, s) { tagMouseout = m; tagMouseoutScope = s; return studyAxis; };
     studyAxis.highlightPlot = function(m, s) { highlightPlot = m; highlightPlotScope = s; return studyAxis; };
     studyAxis.selectStudyAxis = function(m, s) { selectStudyAxis = m; selectStudyAxisScope = s; return studyAxis; };
+    studyAxis.toggleStudyAxis = function(m, s) { toggleStudyAxis = m; toggleStudyAxisScope = s; return studyAxis; };
+    studyAxis.setCollapsed = function(m) { collapsed = m; return studyAxis; };
     studyAxis.mainPlotLayer = function(layer) { mainPlotLayer = layer; return studyAxis; };
     studyAxis.scale = function(s) {
         var r;

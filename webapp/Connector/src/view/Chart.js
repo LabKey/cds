@@ -43,6 +43,8 @@ Ext.define('Connector.view.Chart', {
 
     filtersActivated: false,
 
+    isStudyAxisExpanded: false,
+
     statics: {
         // Template used for contents of VisitTag tooltips
         studyAxisTipTpl: new Ext.XTemplate(
@@ -1004,7 +1006,16 @@ Ext.define('Connector.view.Chart', {
 
         this.plotEl.update('');
         this.bottomPlotEl.update('');
-        this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
+        var studyAxisSize = 0;
+        if (studyAxisInfo) {
+            studyAxisSize = studyAxisInfo.getData().length;
+            if (this.isStudyAxisExpanded) {
+                Ext.each(studyAxisInfo.getData(), function(data) {
+                    studyAxisSize += data.groups.length;
+                });
+            }
+        }
+        this.resizePlotContainers(studyAxisSize);
 
         if (this.plot) {
             this.plot.clearGrid();
@@ -3563,6 +3574,8 @@ Ext.define('Connector.view.Chart', {
                 .visitTagMouseout(this.removeVisitTagHover, this)
                 .highlightPlot(this.highlightTimeAxisPlotData, this)
                 .selectStudyAxis(this.selectStudyAxis, this)
+                .toggleStudyAxis(this.toggleStudyAxis, this)
+                .setCollapsed(!this.isStudyAxisExpanded)
                 .mainPlotLayer(layerScope);
 
         this.studyAxis();
@@ -3697,6 +3710,11 @@ Ext.define('Connector.view.Chart', {
         {
             callback.call(scope, d, multi, _filter);
         }, this);
+    },
+
+    toggleStudyAxis: function() {
+        this.isStudyAxisExpanded = !this.isStudyAxisExpanded;
+        this.redrawPlot();
     },
 
     resizePlotContainers : function(numStudies) {
