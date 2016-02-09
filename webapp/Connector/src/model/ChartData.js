@@ -141,7 +141,10 @@ Ext.define('Connector.model.ChartData', {
                     keyColumnMatch = (measure.name == 'Container' && alias == QueryUtils.CONTAINER_ALIAS)
                             || (measure.name == 'SubjectId' && alias == QueryUtils.SUBJECT_ALIAS)
                             || (measure.name == 'SequenceNum' && alias == QueryUtils.SEQUENCENUM_ALIAS)
-                            || (measure.name == 'ParticipantSequenceNum' && alias == QueryUtils.SUBJECT_SEQNUM_ALIAS);
+                            || (measure.name == 'ParticipantSequenceNum' && alias == QueryUtils.SUBJECT_SEQNUM_ALIAS)
+                            || (measure.name == 'VisitRowId' && alias == QueryUtils.VISITROWID_ALIAS)
+                            || (measure.name == 'Study' && alias == QueryUtils.STUDY_ALIAS)
+                            || (measure.name == 'TreatmentSummary' && alias == QueryUtils.TREATMENTSUMMARY_ALIAS);
 
                 if ((measure.alias && measure.alias == alias) || (measure.name && schemaQueryNameMatch) || keyColumnMatch)
                 {
@@ -244,7 +247,8 @@ Ext.define('Connector.model.ChartData', {
             singleAntigenComparison = false,
             _row,
             logGutterBothCount = 0, logGutterXCount = 0,logGutterYCount = 0,
-            minPositiveX = Number.MAX_VALUE, minPositiveY = Number.MAX_VALUE;
+            minPositiveX = Number.MAX_VALUE, minPositiveY = Number.MAX_VALUE,
+            studyVisitMap = {}, studyGroupVisitMap = {};
 
         ca = this.getBaseMeasureConfig();
         if (color)
@@ -351,6 +355,11 @@ Ext.define('Connector.model.ChartData', {
             if (_row[QueryUtils.CONTAINER_ALIAS])
             {
                 studyContainers[_row[QueryUtils.CONTAINER_ALIAS]] = true;
+                if (_row[QueryUtils.VISITROWID_ALIAS]) {
+                    var studyVisitKey = ChartUtils.studyAxisKeyDelimiter + xVal + ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
+                    studyVisitMap[studyVisitKey] = true;
+                    studyGroupVisitMap[studyVisitKey + ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS]] = true;
+                }
             }
 
             yVal = this._getYValue(y, _yid, _row);
@@ -396,9 +405,20 @@ Ext.define('Connector.model.ChartData', {
                 hasNegOrZeroY = true;
             }
 
+            var key = '';
+            if (_row[QueryUtils.STUDY_ALIAS] && _row[QueryUtils.VISITROWID_ALIAS]) {
+                key = ChartUtils.studyAxisKeyDelimiter + xVal;
+                key += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
+                if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
+                    key += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
+                }
+
+            }
+
             var entry = {
                 x: xVal,
                 y: yVal,
+                timeAxisKey : key,
                 color: colorVal,
                 subjectId: _row[QueryUtils.SUBJECT_ALIAS],
                 xname: xa.label,
@@ -493,6 +513,10 @@ Ext.define('Connector.model.ChartData', {
                 invalidLogPlotRowCount: invalidLogPlotRowCount,
                 minPositiveX: minPositiveX === Number.MAX_VALUE ? 0.0001 : minPositiveX,
                 minPositiveY: minPositiveY === Number.MAX_VALUE ? 0.0001 : minPositiveY
+            },
+            studyAxisData: {
+                studyVisitMap: studyVisitMap,
+                studyGroupVisitMap: studyGroupVisitMap
             },
             properties: {
                 xaxis: xa,

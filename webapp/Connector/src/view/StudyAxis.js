@@ -6,7 +6,8 @@
 Connector.view.StudyAxis = function() {
     var canvas = null, width, height, perStudyHeight = 20, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
             tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope, leftIndent = 25, collapsed = true, groupLabelOffset = 45,
-            studyLabelOffset = 35;
+            studyLabelOffset = 35, highlightPlot, highlightPlotScope,
+            selectStudyAxis, selectStudyAxisScope, mainPlotLayer, toggleStudyAxis, toggleStudyAxisScope;
 
     // This function returns <study name> for studies and <study name>-<group name> for groups in an attempt to
     // provide a unique name for each value in yScale
@@ -74,13 +75,28 @@ Connector.view.StudyAxis = function() {
                     var imgPath = Connector.resourceContext.imgPath + '/';
 
                     if (d.isVaccination) {
-                        imgPath += 'vaccination_normal.svg';
+                        if (d.isTagActive) {
+                            imgPath += 'vaccination_normal.svg';
+                        }
+                        else {
+                            imgPath += 'vaccination_disabled.svg';
+                        }
                     }
                     else if (d.isChallenge) {
-                        imgPath += 'challenge_normal.svg';
+                        if (d.isTagActive) {
+                            imgPath += 'challenge_normal.svg';
+                        }
+                        else {
+                            imgPath += 'challenge_disabled.svg';
+                        }
                     }
                     else {
-                        imgPath += 'nonvaccination_normal.svg';
+                        if (d.isTagActive) {
+                            imgPath += 'nonvaccination_normal.svg';
+                        }
+                        else {
+                            imgPath += 'nonvaccination_disabled.svg';
+                        }
                     }
 
                     return imgPath;
@@ -108,10 +124,142 @@ Connector.view.StudyAxis = function() {
 
         // add visit tag mouseover/mouseout functions.
         visitTags.on('mouseover', function(d) {
-            tagMouseover.call(tagMouseoverScope, d, this);
+            if (!mainPlotLayer.isBrushed) {
+                if (d.isTagActive) {
+                    highlightGlyph.call(this, d, true, selection);
+                }
+                tagMouseover.call(tagMouseoverScope, d, this);
+            }
         });
         visitTags.on('mouseout', function(d) {
+            if (mainPlotLayer.isBrushed) {
+                return;
+            }
+            if (d.isTagActive && !d.selected) {
+                highlightGlyph.call(highlightPlotScope, d, false, selection);
+            }
             tagMouseout.call(tagMouseoutScope, d, this);
+        });
+
+        visitTags.on('mousedown', function(d) {
+        // use mousedown to close callout so that mouseup can be fired reliably
+            tagMouseout.call(tagMouseoutScope, d, this);
+
+        });
+
+        visitTags.on('mouseup', function(d) {
+            if (!d.isTagActive || mainPlotLayer.isBrushed) {
+                return;
+            }
+            d.selected = true;
+            var multi = d3.event.ctrlKey||d3.event.shiftKey||d3.event.metaKey;
+            tagMouseover.call(tagMouseoverScope, d, this);
+            highlightGlyph.call(this, d, true, selection, true, multi);
+        });
+    };
+
+    var clearSelection = function (selector) {
+        if (!selector) {
+            selector = d3;
+        }
+        selector.selectAll("text.study-label").each( function(detail, i){
+            detail.selected = false;
+            d3.select(this.parentNode).select('rect.highlight').attr('fill-opacity', 0);
+        });
+        selector.selectAll("image.visit-tag").each( function(detail, i){
+            detail.selected = false;
+            changeGlyphImage(detail, false, selector);
+        });
+    };
+
+    var highlightGlyph = function(d, isHighlight, selector, isSelection, isMulti) {
+        if (isSelection && isHighlight) {
+            if (!isMulti) {
+                clearSelection.call(this, selector);
+            }
+            d.selected = true;
+            selectStudyAxis.call(selectStudyAxisScope, d, isMulti);
+        }
+        var key = ChartUtils.studyAxisKeyDelimiter + d.alignedDay;
+        key += ChartUtils.studyAxisKeyDelimiter + d.studyLabel;
+        if (d.groupLabel) {
+            key += ChartUtils.studyAxisKeyDelimiter + d.groupLabel;
+        }
+        if (isHighlight) {
+            highlightPlot.call(highlightPlotScope, key);
+        }
+        else {
+            highlightPlot.call(highlightPlotScope)
+        }
+        changeGlyphImage.call(this, d, isHighlight, selector);
+    };
+
+    var changeGlyphImage = function(d, isHighlight, selector) {
+        if (d.selected && !isHighlight)
+            return;
+        var x = xScale(d.alignedDay) - (d.imgSize / 2);
+        var scale;
+        if (!collapsed && d.groupLabel)
+        {
+            scale = yScale(d.studyLabel + '-' + d.groupLabel);
+        }
+        else
+        {
+            scale = yScale(d.studyLabel);
+        }
+        var y = scale + (perStudyHeight / 2) - (d.imgSize / 2);
+        var size = d.imgSize;
+        selector.selectAll("image.visit-tag").each( function(detail, i){
+
+            if(detail.studyLabel === d.studyLabel && detail.groupLabel == d.groupLabel){
+                if (detail.isVaccination !== d.isVaccination || detail.isChallenge !== d.isChallenge || detail.alignedDay !== d.alignedDay) {
+                    return;
+                }
+                d3.select(this).attr('xlink:href', function(data) {
+                            var imgPath = Connector.resourceContext.imgPath + '/';
+
+                            if (data.isVaccination) {
+                                if (!data.isTagActive) {
+                                    imgPath += 'vaccination_disabled.svg';
+                                }
+                                else if (isHighlight) {
+                                    imgPath += 'vaccination_hover.svg';
+                                }
+                                else {
+                                    imgPath += 'vaccination_normal.svg';
+                                }
+                            }
+                            else if (data.isChallenge) {
+                                if (!data.isTagActive) {
+                                    imgPath += 'challenge_disabled.svg';
+                                }
+                                else if (isHighlight) {
+                                    imgPath += 'challenge_hover.svg';
+                                }
+                                else {
+                                    imgPath += 'challenge_normal.svg';
+                                }
+                            }
+                            else {
+                                if (!data.isTagActive) {
+                                    imgPath += 'nonvaccination_disabled.svg';
+                                }
+                                else if (isHighlight) {
+                                    imgPath += 'nonvaccination_hover.svg';
+                                }
+                                else {
+                                    imgPath += 'nonvaccination_normal.svg';
+                                }
+                            }
+                            return imgPath;
+                        })
+                        .attr('x', x)
+                        .attr('y', y)
+                        .attr('width', size)
+                        .attr('height', size);
+                this.parentNode.appendChild(this);
+                return false;
+            }
         });
     };
 
@@ -161,8 +309,8 @@ Connector.view.StudyAxis = function() {
             return ret;
         });
         labels.attr('y', function(d) {
-            return yScale(studyGroupName(d)) + perStudyHeight/2 + 4;
-        })
+                    return yScale(studyGroupName(d)) + perStudyHeight/2 + 4;
+                })
                 .attr('x', function(d) {
                     // groups have a parent study defined
                     return (d.study ? groupLabelOffset : studyLabelOffset) + leftIndent;
@@ -176,6 +324,112 @@ Connector.view.StudyAxis = function() {
                     txt += d.name.replace(/ /g, '_').replace(/,/g, '');
                     return txt;
                 });
+
+        labels.on('mouseover', function(d) {
+            if (mainPlotLayer.isBrushed) {
+                return;
+            }
+            highlightStudyLabel(d, true, selection, false);
+        });
+        labels.on('mouseout', function(d) {
+            if (mainPlotLayer.isBrushed) {
+                return;
+            }
+            if (!d.selected) {
+                highlightStudyLabel(d, false, selection, false);
+            }
+        });
+        labels.on('mousedown', function(d) {
+            if (mainPlotLayer.isBrushed) {
+                return;
+            }
+            var multi = d3.event.ctrlKey||d3.event.shiftKey||d3.event.metaKey;
+            highlightStudyLabel(d, true, selection, true, multi);
+        });
+
+        selection.selectAll('rect.highlight').remove();
+        selection.insert("rect", "text")
+                .attr('class', 'highlight')
+                .attr('x', function() {
+                    return this.nextSibling.getBBox().x - 4; })
+                .attr('y', function() {
+                    return this.nextSibling.getBBox().y - 3; })
+                .attr('width', function() {
+                    return this.nextSibling.getBBox().width + 8; })
+                .attr('height', function() {
+                    return this.nextSibling.getBBox().height + 6; })
+                .attr('fill-opacity', 0)
+                .attr('fill', ChartUtils.colors.SELECTED);
+
+    };
+
+    var highlightStudyLabel = function(d, isHighlight, selector, isSelection, isMulti) {
+        if (isSelection && isHighlight) {
+            if (!isMulti) {
+                clearSelection.call(this, selector);
+            }
+            d.selected = true;
+            selectStudyAxis.call(selectStudyAxisScope, d, isMulti);
+        }
+        var key = '';
+        if (d.study) {
+            key += ChartUtils.studyAxisKeyDelimiter + d.study;
+        }
+        key += ChartUtils.studyAxisKeyDelimiter + d.name;
+
+        highlightLabelAndGlyph.call(this, key, isHighlight, selector, isSelection, isMulti);
+
+        if (isHighlight) {
+            highlightPlot.call(highlightPlotScope, key);
+
+        } else {
+            highlightPlot.call(highlightPlotScope);
+        }
+    };
+
+    var highlightAllSelections = function(keys) {
+        Ext.each(keys, function (key) {
+            highlightLabelAndGlyph.call(highlightPlotScope, key, true, null, true, true);
+        });
+    };
+
+    var highlightLabelAndGlyph = function(key, isHighlight, selector, isSelection, isMulti) {
+        if (!selector) {
+            selector = d3;
+        }
+        selector.selectAll("text.study-label").each(function(detail, i){
+            var detailkey = '';
+            if (detail.study) {
+                detailkey += ChartUtils.studyAxisKeyDelimiter + detail.study;
+            }
+            detailkey += ChartUtils.studyAxisKeyDelimiter + detail.name;
+            if (detailkey.indexOf(key) > -1) {
+                if (isHighlight) {
+                    d3.select(this.parentNode).select('rect.highlight').attr('fill-opacity', 1);
+                    if (isSelection) {
+                        detail.selected = true;
+                    }
+                }
+                else if (!detail.selected){
+                    d3.select(this.parentNode).select('rect.highlight').attr('fill-opacity', 0);
+                }
+            }
+        });
+
+        selector.selectAll("image.visit-tag").each( function(detail, i){
+            var detailkey = ChartUtils.studyAxisKeyDelimiter + detail.alignedDay;
+            detailkey += ChartUtils.studyAxisKeyDelimiter + detail.studyLabel;
+            if (detail.groupLabel) {
+                detailkey += ChartUtils.studyAxisKeyDelimiter + detail.groupLabel;
+            }
+            if (detailkey.indexOf(key) > -1) {
+                changeGlyphImage(detail, isHighlight, selector);
+                if (isSelection) {
+                    detail.selected = true;
+                }
+            }
+        });
+
     };
 
     var renderExpandCollapseButton = function(canvas) {
@@ -218,8 +472,7 @@ Connector.view.StudyAxis = function() {
             button.attr('xlink:href', function(d) {
                 return Connector.resourceContext.imgPath + '/' + (collapsed ? collapsedHoverImg : expandedHoverImg);
             });
-            collapsed = !collapsed;
-            studyAxis();
+            toggleStudyAxis.call(toggleStudyAxisScope);
         });
 
     };
@@ -265,13 +518,25 @@ Connector.view.StudyAxis = function() {
         studies.call(renderAlignment);
         studies.call(renderStudyLabels);
         studies.call(renderVisitTags);
+
+        var studyAxisSelections = selectStudyAxisScope.getStudyAxisSelectionValues();
+        var hasStudyAxisSelection = selectStudyAxisScope.isStudyAxisSelection();
+        if (hasStudyAxisSelection) {
+            highlightAllSelections(studyAxisSelections);
+        }
     };
 
     studyAxis.renderTo = function(id) { renderTo = id; return studyAxis; };
+    studyAxis.clearSelection = clearSelection;
     studyAxis.width = function(w) { width = w; return studyAxis; };
     studyAxis.studyData = function(d) { studyData = d; return studyAxis; };
     studyAxis.visitTagMouseover = function(m, s) { tagMouseover = m; tagMouseoverScope = s; return studyAxis; };
     studyAxis.visitTagMouseout = function(m, s) { tagMouseout = m; tagMouseoutScope = s; return studyAxis; };
+    studyAxis.highlightPlot = function(m, s) { highlightPlot = m; highlightPlotScope = s; return studyAxis; };
+    studyAxis.selectStudyAxis = function(m, s) { selectStudyAxis = m; selectStudyAxisScope = s; return studyAxis; };
+    studyAxis.toggleStudyAxis = function(m, s) { toggleStudyAxis = m; toggleStudyAxisScope = s; return studyAxis; };
+    studyAxis.setCollapsed = function(m) { collapsed = m; return studyAxis; };
+    studyAxis.mainPlotLayer = function(layer) { mainPlotLayer = layer; return studyAxis; };
     studyAxis.scale = function(s) {
         var r;
         xScale = s.copy();

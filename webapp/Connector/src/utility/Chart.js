@@ -37,6 +37,8 @@ Ext.define('Connector.utility.Chart', {
 
     emptyTxt: 'undefined',
 
+    studyAxisKeyDelimiter: '|||',
+
     tickFormat: {
         date: function(val) {
             // D3 converts dates to integers, so we need to convert it back to a date to get the format.
@@ -340,6 +342,7 @@ Ext.define('Connector.utility.Chart', {
 
     brushStart : function(layerScope, dimension) {
         this.clearHighlightLabels(layerScope.plot);
+        this.clearStudyAxisSelection();
         layerScope.isBrushed = true;
         if (this.initiatedBrushing == '') {
             this.initiatedBrushing = dimension;
