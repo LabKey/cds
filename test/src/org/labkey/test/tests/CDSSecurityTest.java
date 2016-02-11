@@ -26,6 +26,7 @@ import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.EmailRecordTable;
 import org.labkey.test.util.Ext4Helper;
+import org.testng.Assert;
 
 import java.util.Arrays;
 import java.util.List;
