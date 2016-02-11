@@ -21,15 +21,13 @@
 	</g>
 	<g>
 		<defs>
-			<rect id="SVGID_57_" y="0" width="128" height="128"/>
+			<rect id="SVGID_59_" x="0.5" y="0" width="128" height="128"/>
 		</defs>
 		<clipPath id="SVGID_2_">
-			<use xlink:href="#SVGID_57_"  overflow="visible"/>
+			<use xlink:href="#SVGID_59_"  overflow="visible"/>
 		</clipPath>
-		<g id="XMLID_10_" clip-path="url(#SVGID_2_)">
-			<polygon fill="#41C49F" points="90.5,37.5 90.5,37.5 108.2,31.6 114.1,37.5 120,31.6 96.4,8 90.5,13.9 96.4,19.8 			"/>
-			<polygon fill="#41C49F" points="61.8,30.8 67.7,24.9 73.8,31 97.3,54.6 103,60.3 97.2,66.2 91.3,60.3 50,101.6 28.3,105 8,120
-				23,99.7 26.5,77.9 67.8,36.9 			"/>
+		<g id="XMLID_4_" clip-path="url(#SVGID_2_)">
+			<rect x="16.5" y="16" fill="#f3bdbb" width="96" height="96"/>
 		</g>
 	</g>
 	<g id="plot_icon">

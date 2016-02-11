@@ -34,6 +34,7 @@ import org.labkey.api.view.Portal;
 import org.labkey.api.view.ViewContext;
 import org.labkey.api.view.WebPartFactory;
 import org.labkey.api.view.WebPartView;
+import org.labkey.api.webdav.WebdavResource;
 import org.labkey.api.webdav.WebdavService;
 
 import java.util.ArrayList;
@@ -126,49 +127,56 @@ public class CDSModule extends DefaultModule
     {
         // add a container listener so we'll know when our container is deleted:
         ContainerManager.addContainerListener(new CDSContainerListener());
-        ensureShortcuts();
+        ensureShortcuts(true);
     }
+
 
     // this is a silly hack, but since I don't have addPropertyChangeLister()...
     // keep previous value so I can see if I need to change the setting
     String lastStaticPath = "";
     String lastBlogPath = "";
 
-    public synchronized void ensureShortcuts()
+    public synchronized void ensureShortcuts(boolean force)
     {
-        String staticPath = getPropertyValue(_staticPath,null);
-        if (!StringUtils.equals(lastStaticPath,staticPath))
-        {
-            updateShortcut("/static/", staticPath);
-            lastStaticPath = staticPath;
-        }
-
-        String blogPath = getPropertyValue(_blogPath,null);
-        if (!StringUtils.equals(lastBlogPath,blogPath))
-        {
-            updateShortcut("/blog/", blogPath);
-            lastBlogPath = blogPath;
-        }
+        lastStaticPath = ensureShortcut(_staticPath, lastStaticPath, "/static/", force);
+        lastBlogPath = ensureShortcut(_blogPath, lastBlogPath, "/blog/", force);
     }
 
-    private void updateShortcut(String from, String to)
+    private String ensureShortcut(ModuleProperty prop, String prevTarget, String source, boolean force)
     {
-        try
+        String target = getPropertyValue(prop,null);
+        Path targetPath = StringUtils.isEmpty(target) ? null : Path.parse(target);
+        Path sourcePath = Path.parse(source);
+
+        // CLEAR
+        if (null == targetPath || 0==targetPath.size())
         {
-            WebdavService.get().removeLink(Path.parse(from));
+            if (force || !StringUtils.equals(target,prevTarget))
+            {
+                try
+                {
+                    WebdavService.get().removeLink(sourcePath);
+                }
+                catch (IllegalArgumentException x)
+                {
+                }
+            }
         }
-        catch (IllegalArgumentException x)
+        // SET
+        else
         {
+            try
+            {
+                WebdavResource r = WebdavService.get().getRootResolver().lookup(sourcePath);
+                if (force || null == r || !targetPath.equals(r.getPath()))
+                    WebdavService.get().addLink(sourcePath, targetPath, "index.html");
+            }
+            catch (IllegalArgumentException x)
+            {
+                Logger.getLogger(CDSModule.class).warn("Could not create shortcut from '" + source + "' to '" + target + "'.");
+            }
         }
-        try
-        {
-            if (StringUtils.isNotEmpty(to) && 0 < Path.parse(to).size())
-                WebdavService.get().addLink(Path.parse(from), Path.parse(to), "index.html");
-        }
-        catch (IllegalArgumentException x)
-        {
-            Logger.getLogger(CDSModule.class).warn("Could not create shortcut from '" + from + "' to '" + to + "'.");
-        }
+        return target;
     }
 
 

@@ -64,7 +64,7 @@ public class CDSHelpCenterTest extends BaseWebDriverTest implements PostgresOnly
 
         // verify See all link and Back action
         int seeAllCount = Locator.css(CDSHelpCenterUtil.HELP_SEE_ALL_CSS).findElements(getDriver()).size();
-        assertTrue("See all link count is incorrect", seeAllCount > 1);
+        assertTrue("See all link count is incorrect", seeAllCount == 1);
         List<WebElement> seeAlls = Locator.css(CDSHelpCenterUtil.HELP_SEE_ALL_CSS).findElements(getDriver());
         doShortWait();
         fireEvent(seeAlls.get(seeAlls.size() - 1), SeleniumEvent.mouseup);

@@ -89,14 +89,6 @@ Ext.define('Connector.panel.Feedback', {
                     validateOnBlur: false,
                     allowBlank: false
                 },{
-                    //If this box is checked the current page url is printed in the comments
-                    xtype: 'checkbox',
-                    boxLabel: 'Check this box if the issue is on your current screen.',
-                    name: 'url',
-                    cls: 'checkbox2',
-                    checked: false,
-                    inputValue: window.location.href
-                },{
                     xtype: 'numberfield',
                     itemId: 'assignedToField',
                     hidden: true,
@@ -143,7 +135,7 @@ Ext.define('Connector.panel.Feedback', {
         return this.headerPanel;
     },
 
-    postFeedback : function(title, comments, url, assignedUserId, callback, scope) {
+    postFeedback : function(title, comments, assignedUserId, callback, scope) {
 
         var config = {
             url: LABKEY.ActionURL.buildURL('issues', 'insert.view', Connector.panel.Feedback.DEFAULT_ISSUE_PROJECT),
@@ -156,16 +148,12 @@ Ext.define('Connector.panel.Feedback', {
                 action: 'org.labkey.issue.IssuesController$InsertAction',
                 title: title,
                 priority: 3,
-                comment: comments
+                comment: comments + '\n\n' + window.location.href
             }
         };
 
         if (assignedUserId) {
             config.params.assignedTo = parseInt(assignedUserId);
-        }
-
-        if (url) {
-            config.params.comment += '\n\n' + url;
         }
 
         Ext.Ajax.request(config);
@@ -223,7 +211,7 @@ Ext.define('Connector.panel.Feedback', {
                             btn.setText('Submitting...');
 
                             var values = form.getValues();
-                            this.postFeedback(values.title, values.comment, values.url, values.assignedTo, function(response) {
+                            this.postFeedback(values.title, values.comment, values.assignedTo, function(response) {
                                 btn.setText('Done');
 
                                 if (response) {
@@ -247,7 +235,7 @@ Ext.define('Connector.panel.Feedback', {
                                         }
                                     }
                                     else {
-                                        Ext.Msg.alert('Oops! Looks like something went wrong in gathering your feedback.');
+                                        Ext.Msg.alert('Oops!', 'Looks like something went wrong in gathering your feedback.');
                                     }
                                 }
 

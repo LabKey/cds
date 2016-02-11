@@ -448,6 +448,8 @@ public class CDSHelper
     @LogMethod(quiet = true)
     public void enterApplication()
     {
+        _test.refresh();
+        _test.sleep(1000);
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
         _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");
@@ -1098,17 +1100,21 @@ public class CDSHelper
     {
         public String studyName;
         public int vaccinationCount;
+        public int vaccinationCountNoData;
         public int nonvaccinationCount;
+        public int nonvaccinationCountNoData;
         public int challengeCount;
-        public int preenrollmentCount;
+        public int challengeCountNoData;
 
-        public TimeAxisData(String studyName, int vacCount, int nonvacCount, int chalCount, int preCount)
+        public TimeAxisData(String studyName, int vacCount, int vacCountNoData, int nonvacCount, int nonvacCountNoData, int chalCount, int chalCountNoData)
         {
             this.studyName = studyName;
             vaccinationCount = vacCount;
+            vaccinationCountNoData = vacCountNoData;
             nonvaccinationCount = nonvacCount;
+            nonvaccinationCountNoData = nonvacCountNoData;
             challengeCount = chalCount;
-            preenrollmentCount = preCount;
+            challengeCountNoData = chalCountNoData;
         }
     }
 

@@ -37,6 +37,8 @@ Ext.define('Connector.utility.Chart', {
 
     emptyTxt: 'undefined',
 
+    studyAxisKeyDelimiter: '|||',
+
     tickFormat: {
         date: function(val) {
             // D3 converts dates to integers, so we need to convert it back to a date to get the format.
@@ -279,7 +281,9 @@ Ext.define('Connector.utility.Chart', {
             }
             else
             {
-                sqlFilters[0] = LABKEY.Filter.create(properties.xaxis.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+                if (xExtent[0] !== Number.NEGATIVE_INFINITY) {
+                    sqlFilters[0] = LABKEY.Filter.create(properties.xaxis.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+                }
                 sqlFilters[1] = LABKEY.Filter.create(properties.xaxis.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
             }
         }
@@ -289,7 +293,9 @@ Ext.define('Connector.utility.Chart', {
             yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true);
             yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false);
 
-            sqlFilters[2] = LABKEY.Filter.create(properties.yaxis.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+            if (yExtent[0] !== Number.NEGATIVE_INFINITY) {
+                sqlFilters[2] = LABKEY.Filter.create(properties.yaxis.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+            }
             sqlFilters[3] = LABKEY.Filter.create(properties.yaxis.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
         }
 
@@ -336,6 +342,7 @@ Ext.define('Connector.utility.Chart', {
 
     brushStart : function(layerScope, dimension) {
         this.clearHighlightLabels(layerScope.plot);
+        this.clearStudyAxisSelection();
         layerScope.isBrushed = true;
         if (this.initiatedBrushing == '') {
             this.initiatedBrushing = dimension;

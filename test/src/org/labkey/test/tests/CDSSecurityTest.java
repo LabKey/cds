@@ -200,19 +200,21 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log("Validate behavior with the deleted user.");
         getDriver().navigate().to(welcomeUrls[2]);
-        handleCreateAccount("password", true);
+        handleCreateAccount("P@$$w0rd", true);
         waitForText("Create account failed.");
 
         log("Validate behavior with the user who does not have permissions to CDS.");
         getDriver().navigate().to(welcomeUrls[1]);
-        handleCreateAccount("password", true);
-        waitForText("Create account successful.");
+        handleCreateAccount("P@$$w0rd", true);
+        waitForTextToDisappear("Thanks for creating your account.");
+        sleep(5000);
+        Assert.assertTrue(getFormElement(Locator.css("input[name='password']")).trim().length() == 0, "Login dialog should have been shown again with a blank password. I did nopt find an empty password field.");
 
         // This sleep is unfortunate. I thought that the delay in the following waitForElementText would be enough, but it's not.
         sleep(5000);
 
         waitForElementText(Locator.css("h1"), "CAVD DataSpace member sign-in", 15000);
-        handleSimpleLogin(NEW_USER_ACCOUNTS[1], "password");
+        handleSimpleLogin(NEW_USER_ACCOUNTS[1], "P@$$w0rd");
         sleep(5000);
         waitForElementText(Locator.css("td.x-form-display-field-body[role='presentation']"), "Forbidden", 15000);
 
@@ -244,7 +246,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         assertElementVisible(Locator.xpath("//div[@class='mfp-content']//form//div[contains(@class, 'tos')]//div[contains(@class, 'terms-of-service')][contains(@class, 'open')]"));
 
         log("Try to create the account without agreeing to the Terms Of Service.");
-        handleCreateAccount("password", false);
+        handleCreateAccount("P@$$w0rd", false);
 
         // Don't have a good way to capture the dialog shown saying you need to accept the TOS.
         // So simply validating that the success message was not shown.
@@ -253,14 +255,14 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Now accept the Terms Of Use and try to create password again.");
         checkCheckbox(Locator.css("input[id='tos-create-account']"));
         click(Locator.css("input[id='createaccountsubmit']"));
-
-        waitForText("Create account successful.");
+        waitForText("Thanks for creating your account.");
+        waitForTextToDisappear("Thanks for creating your account.");
 
         // Another unfortunate sleep. Again I thought that the delay in the following waitForElementText would be enough, but it's not.
         sleep(5000);
 
         waitForElementText(Locator.css("h1"), "CAVD DataSpace member sign-in", 15000);
-        handleSimpleLogin(NEW_USER_ACCOUNTS[0], "password");
+        handleSimpleLogin(NEW_USER_ACCOUNTS[0], "P@$$w0rd");
         sleep(5000);
         log("Validate we are on the CDS home page.");
         assertTextPresent("studies to learn about");
@@ -324,6 +326,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     {
         String ExtDialogTitle;
 
+        log("Refreshing the browser.");
+        refresh();
+        sleep(1000);
         beginAt("project/" + getProjectName() + "/begin.view?");
         ensureAdminMode();
         Ext4Helper.resetCssPrefix();
@@ -337,6 +342,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         for(String group : PERM_GROUPS)
         {
+            log("Looking for text: " + group);
             if (isTextPresent(group))
             {
                 ExtDialogTitle = group + " Information";
@@ -345,7 +351,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
                 _extHelper.waitForExtDialog(ExtDialogTitle);
                 _permissionsHelper.deleteAllUsersFromGroup();
                 clickButton("Delete Empty Group", 0);
+                log("Have deleted the empty group.");
                 waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
+                sleep(500);
                 clickButton("Cancel");
 
                 if (!isElementPresent(Locator.permissionRendered()))

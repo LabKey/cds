@@ -58,6 +58,7 @@ import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.RequiresSiteAdmin;
 import org.labkey.api.security.SecurityManager;
+import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
@@ -125,7 +126,7 @@ public class CDSController extends SpringActionController
     protected void beforeAction(Controller action)
     {
         Module cds = ModuleLoader.getInstance().getModule("cds");
-        ((CDSModule)cds).ensureShortcuts();
+        ((CDSModule)cds).ensureShortcuts(false);
     }
 
     @RequiresPermission(ReadPermission.class)
@@ -563,7 +564,7 @@ public class CDSController extends SpringActionController
         public String target;
     }
 
-    @RequiresSiteAdmin @CSRF
+    @RequiresPermission(AdminPermission.class) @CSRF
     public static class CmsCopyAction extends FormViewAction<Object>
     {
         HttpView _success = null;

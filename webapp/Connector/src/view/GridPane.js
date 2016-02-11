@@ -71,7 +71,13 @@ Ext.define('Connector.view.GridPane', {
             excludeIndexes[3] = true;
         }
 
-        if (Ext.isArray(gridFilters))
+        if (filter.get('isStudyAxis')) {
+            content.push({
+                xtype: 'box',
+                html: filter.get('filterDisplayString')
+            });
+        }
+        else if (Ext.isArray(gridFilters))
         {
             var shown = {};
             Ext.each(gridFilters, function(gf, i)
