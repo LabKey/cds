@@ -53,10 +53,21 @@ div.learnview {
   }
 
   h3 {
-    padding-bottom: 8px;
+    padding-bottom: 12px;
     clear: both;
     font-size: 18px;
     color: $black;
+  }
+
+  h4 {
+    padding-top: 1em;
+    clear: both;
+    font-size: 13px;
+    color: $black;
+  }
+
+  .schema-link {
+    padding-bottom: 8px;
   }
 
   p {

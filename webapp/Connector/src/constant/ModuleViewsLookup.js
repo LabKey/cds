@@ -21,6 +21,7 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	studyassays: 'app.module.studyassays',
 	studyproducts: 'app.module.studyproducts',
 	studydatasets: 'app.module.studydatasets',
+	studydescription: 'app.module.studydescription',
 	assayheader: 'app.module.assayheader',
 	assayanalytelist: 'app.module.assayanalytelist',
 	assayantigenlist: 'app.module.assayantigenlist',
