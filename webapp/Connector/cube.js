@@ -241,14 +241,6 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'context'
                         }
                     },{
-                        type: 'html',
-                        staticData: {
-                            title: 'Study objectives'
-                        },
-                        modelData: {
-                            text: 'objectives'
-                        }
-                    },{
                         type: 'text',
                         staticData: {
                             title: 'Population'
@@ -275,6 +267,14 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'studyassays',
                         staticData: {
                             title: 'Assays'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Data Availability'
+                        },
+                        modelData: {
+                            text: 'data_availability'
                         }
                     },{
                         type: 'studydatasets',
