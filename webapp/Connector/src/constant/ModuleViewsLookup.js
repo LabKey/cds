@@ -10,7 +10,7 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	text: 'module.text',
 	html: 'module.html',
 	person: 'module.person',
-	contactcds: 'module.contactcds',
+	contactcds: 'app.module.contactcds',
 	productheader: 'app.module.productheader',
 	productprovidedby: 'app.module.productprovidedby',
 	productmanufacturing: 'app.module.productmanufacturing',

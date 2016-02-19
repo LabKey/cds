@@ -258,7 +258,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/ContactCDS.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ContactCDS.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Person.js"></script>
 
