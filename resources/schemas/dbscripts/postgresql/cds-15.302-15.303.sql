@@ -1,0 +1,34 @@
+ALTER TABLE cds.import_Study ADD COLUMN study_primary_poc_name VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_primary_poc_email VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_grant_pi_name VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_grant_pi_email VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_grant_pm_name VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_grant_pm_email VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_investigator_name VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_investigator_email VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN treatment_schema_link VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN assay_schema_link VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN cavd_affiliation VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_groups TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN study_conclusions TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN study_publications TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN study_executive_summary TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN study_data_availability TEXT;
+
+ALTER TABLE cds.Study ADD COLUMN primary_poc_name VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN primary_poc_email VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN grant_pi_name VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN grant_pi_email VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN grant_pm_name VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN grant_pm_email VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN investigator_name VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN investigator_email VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN treatment_schema_link VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN assay_schema_link VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN cavd_affiliation VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN groups TEXT;
+ALTER TABLE cds.Study ADD COLUMN conclusions TEXT;
+ALTER TABLE cds.Study ADD COLUMN publications TEXT;
+ALTER TABLE cds.Study ADD COLUMN executive_summary TEXT;
+ALTER TABLE cds.Study ADD COLUMN data_availability TEXT;
+
