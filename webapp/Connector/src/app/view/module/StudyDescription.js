@@ -11,7 +11,7 @@ Ext.define('Connector.view.module.StudyDescription', {
 
     // there might be html code in each of the description section content, DO NOT htmlEncode
     tpl : new Ext.XTemplate(
-            '<tpl>',
+            '<tpl if="description || objectives || rationale || groups || treatment_schema_link || methods || assay_schema_link || findings || conclusions || publications">',
             '<h3>{title_description:htmlEncode}</h3>',
             '<p>{description}</p>',
 
