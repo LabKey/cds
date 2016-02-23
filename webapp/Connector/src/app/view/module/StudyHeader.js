@@ -10,12 +10,14 @@ Ext.define('Connector.view.module.StudyHeader', {
     extend : 'Connector.view.module.BaseModule',
 
     tpl : new Ext.XTemplate(
-        '<tpl>',
+        '<tpl if="network || cavd_affiliation || type || stage || start_date || public_date || first_enr_date || followup_complete_date">',
             Connector.constant.Templates.module.title,
             '<table class="learn-study-info">',
-                '<tr>',
-                    '<td class="item-label">Network:</td><td class="item-value">{network:htmlEncode}</td>',
-                '</tr>',
+                '<tpl if="network">',
+                    '<tr>',
+                        '<td class="item-label">Network:</td><td class="item-value">{network:htmlEncode}</td>',
+                    '</tr>',
+                '</tpl>',
                 '<tpl if="cavd_affiliation">',
                     '<tr>',
                         '<td class="item-label">Grant Affiliation:</td><td class="item-value">{cavd_affiliation:htmlEncode}</td>',
