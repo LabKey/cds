@@ -1252,6 +1252,56 @@ public class CDSTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyLearnAboutStudyDetails()
+    {
+        // TODO Test data dependent.
+        final String searchString = "QED 2";
+        final String grantAffiliation = "Nulla tellus. In sagittis dui vel nisl.";
+        final String dataAvailability = "iaculis diam erat fermentum justo nec";
+        final String firstContactName = "Juan Owens";
+        final String firstContactEmail = "jowens5@deviantart.com";
+        final String rationale = "Nullam molestie nibh in lectus. Pellentesque at nulla.";
+        final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'detail-wrapper')]";
+
+        cds.viewLearnAboutPage("Studies");
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        log("Verifying data availability on summary page.");
+        assert(Locator.xpath("//div[contains(@class, 'data-availability-text')][text()='" + dataAvailability + "']").findElement(getDriver()).isDisplayed());
+
+        log("Start verifying study detail page.");
+        List<WebElement> returnedItems  = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        returnedItems.get(0).click();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        log("Verifying study information.");
+        List<String> fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_INFO_FIELDS);
+        fields.stream().forEach((field) ->  {
+            assertTextPresent(field);
+        });
+        assertTextPresent(grantAffiliation);
+
+        log("Verifying contact information.");
+        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_CONTACT_FIELDS);
+        fields.stream().forEach((field) ->  {
+            assertTextPresent(field);
+        });
+
+        assertElementPresent(Locator.xpath("//a[contains(@href, 'mailto:" + firstContactEmail + "')][text()='" + firstContactName + "']"));
+
+        log("Verifying description section.");
+        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_DESCRIPTION_FIELDS);
+        fields.stream().forEach((field) ->  {
+            assertTextPresent(field);
+        });
+        assertTextPresent(rationale);
+        assertElementPresent(Locator.xpath("//a[text()='Click for treatment schema']"));
+    }
+
+    @Test
     public void testLearnAboutStudyProducts()
     {
         cds.viewLearnAboutPage("Study products");

@@ -228,12 +228,9 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'title'
                         }
                     },{
-                        type: 'html',
+                        type: 'studydescription',
                         staticData: {
                             title: 'Description'
-                        },
-                        modelData: {
-                            text: 'description'
                         }
                     },{
                         type: 'html',
@@ -242,14 +239,6 @@ Ext4.define('Connector.cube.Configuration', {
                         },
                         modelData: {
                             text: 'context'
-                        }
-                    },{
-                        type: 'html',
-                        staticData: {
-                            title: 'Study objectives'
-                        },
-                        modelData: {
-                            text: 'objectives'
                         }
                     },{
                         type: 'text',
@@ -278,6 +267,14 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'studyassays',
                         staticData: {
                             title: 'Assays'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Data Availability'
+                        },
+                        modelData: {
+                            text: 'data_availability'
                         }
                     },{
                         type: 'studydatasets',

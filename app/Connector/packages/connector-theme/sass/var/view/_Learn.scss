@@ -53,10 +53,21 @@ div.learnview {
   }
 
   h3 {
-    padding-bottom: 8px;
+    padding-bottom: 12px;
     clear: both;
     font-size: 18px;
     color: $black;
+  }
+
+  h4 {
+    padding-top: 1em;
+    clear: both;
+    font-size: 13px;
+    color: $black;
+  }
+
+  .schema-link {
+    padding-bottom: 8px;
   }
 
   p {
@@ -242,6 +253,10 @@ h1.lhdv {
         ol {
           padding-left: 24px;
         }
+
+        .data-availability-text {
+          padding-bottom: 12px;
+        }
       }
     }
 
@@ -359,7 +374,7 @@ div.list-container {
     &.item-label {
       color: $secondary-text-color;
       padding-right: 1em;
-      width: 90px;
+      width: 130px;
     }
   }
 }

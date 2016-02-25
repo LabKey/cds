@@ -27,20 +27,36 @@
             <column columnName="study_type"/>
             <column columnName="study_status"/>
             <column columnName="study_stage"/>
-            <column columnName="study_population"/>
             <column columnName="study_species"/>
-            <column columnName="study_first_enr_date"/>
-            <column columnName="study_fu_complete_date"/>
-            <column columnName="study_start_date"/>
-            <column columnName="study_public_date"/>
+            <column columnName="study_population"/>
+            <column columnName="study_executive_summary"/>
             <column columnName="study_description"/>
+            <column columnName="study_groups"/>
+            <column columnName="treatment_schema_link"/>
             <column columnName="study_rationale"/>
             <column columnName="study_hypothesis"/>
             <column columnName="study_objectives"/>
             <column columnName="study_methods"/>
+            <column columnName="assay_schema_link"/>
             <column columnName="study_findings"/>
+            <column columnName="study_conclusions"/>
+            <column columnName="study_publications"/>
+            <column columnName="study_start_date"/>
+            <column columnName="study_public_date"/>
+            <column columnName="study_data_availability"/>
+            <column columnName="cavd_affiliation"/>
+            <column columnName="study_first_enr_date"/>
+            <column columnName="study_fu_complete_date"/>
             <column columnName="study_discussion"/>
             <column columnName="study_context"/>
+            <column columnName="study_grant_pi_name"/>
+            <column columnName="study_grant_pi_email"/>
+            <column columnName="study_grant_pm_name"/>
+            <column columnName="study_grant_pm_email"/>
+            <column columnName="study_investigator_name"/>
+            <column columnName="study_investigator_email"/>
+            <column columnName="study_primary_poc_name"/>
+            <column columnName="study_primary_poc_email"/>
         </columns>
     </table>
     <table tableName="import_lab" tableDbType="TABLE">
@@ -391,21 +407,37 @@
             <column columnName="type"/>
             <column columnName="status"/>
             <column columnName="stage"/>
-            <column columnName="population"/>
             <column columnName="species"/>
-            <column columnName="study_cohort"/>
-            <column columnName="first_enr_date"/>
-            <column columnName="followup_complete_date"/>
-            <column columnName="start_date"/>
-            <column columnName="public_date"/>
-            <column columnName="rationale"/>
+            <column columnName="population"/>
+            <column columnName="executive_summary"/>
             <column columnName="description"/>
+            <column columnName="groups"/>
+            <column columnName="treatment_schema_link"/>
+            <column columnName="rationale"/>
             <column columnName="hypothesis"/>
             <column columnName="objectives"/>
             <column columnName="methods"/>
+            <column columnName="assay_schema_link"/>
             <column columnName="findings"/>
+            <column columnName="conclusions"/>
+            <column columnName="publications"/>
+            <column columnName="start_date"/>
+            <column columnName="public_date"/>
+            <column columnName="data_availability"/>
+            <column columnName="cavd_affiliation"/>
+            <column columnName="study_cohort"/>
+            <column columnName="first_enr_date"/>
+            <column columnName="followup_complete_date"/>
             <column columnName="discussion"/>
             <column columnName="context"/>
+            <column columnName="grant_pi_name"/>
+            <column columnName="grant_pi_email"/>
+            <column columnName="grant_pm_name"/>
+            <column columnName="grant_pm_email"/>
+            <column columnName="investigator_name"/>
+            <column columnName="investigator_email"/>
+            <column columnName="primary_poc_name"/>
+            <column columnName="primary_poc_email"/>
         </columns>
     </table>
     <table tableName="treatmentarmsubjectmap" tableDbType="TABLE">

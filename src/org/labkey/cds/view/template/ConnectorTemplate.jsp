@@ -258,7 +258,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/ContactCDS.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Person.js"></script>
 
@@ -315,6 +314,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAntigenList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ContactCDS.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductManufacturing.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductProvidedBy.js"></script>
@@ -322,6 +322,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDatasets.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDescription.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
