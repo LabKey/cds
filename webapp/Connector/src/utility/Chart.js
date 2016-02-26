@@ -344,6 +344,7 @@ Ext.define('Connector.utility.Chart', {
         this.clearHighlightLabels(layerScope.plot);
         this.clearStudyAxisSelection();
         layerScope.isBrushed = true;
+        this.fireEvent('hidetooltipmsg');
         if (this.initiatedBrushing == '') {
             this.initiatedBrushing = dimension;
         }
@@ -486,6 +487,21 @@ Ext.define('Connector.utility.Chart', {
 
         scope.on(hideEvent, function() {
             clearTimeout(timeout);
+            calloutMgr.removeCallout(_id);
+        }, scope);
+    },
+
+    showPointTextCallout : function(config, hideEvent, scope) {
+        var calloutMgr = hopscotch.getCalloutManager(), _id = Ext.id();
+
+        Ext.apply(config, {
+            id: _id,
+            showCloseButton: false
+        });
+
+        calloutMgr.createCallout(config);
+
+        scope.on(hideEvent, function() {
             calloutMgr.removeCallout(_id);
         }, scope);
     },

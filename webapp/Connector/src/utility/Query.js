@@ -23,6 +23,8 @@ Ext.define('Connector.utility.Query', {
         this.VISITROWID_ALIAS = this.STUDY_ALIAS_PREFIX + 'VisitRowId';
         this.STUDY_ALIAS = this.STUDY_ALIAS_PREFIX + 'Study';
         this.TREATMENTSUMMARY_ALIAS = this.STUDY_ALIAS_PREFIX + 'TreatmentSummary';
+        this.PROTOCOLDAY_ALIAS = this.STUDY_ALIAS_PREFIX + 'ProtocolDay';
+        this.STUDY_SHORT_NAME_ALIAS = 'study_Demographics_study_short_name';
 
         if (Ext.isDefined(LABKEY.ActionURL.getParameters()['logQuery']))
         {

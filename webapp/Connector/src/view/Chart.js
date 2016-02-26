@@ -77,6 +77,14 @@ Ext.define('Connector.view.Chart', {
         )
     },
 
+    listeners: {
+        'render': function(panel) {
+            panel.body.on('mousedown', function() {
+                panel.fireEvent('hidetooltipmsg');
+            });
+        }
+    },
+
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -577,7 +585,6 @@ Ext.define('Connector.view.Chart', {
         if (!layerScope.isBrushed) {
             data.isMouseOver = true;
             this.highlightPlotData(null, [data.subjectId]);
-            this.pointHoverText(point, data, plotName);
         }
     },
 
@@ -587,8 +594,6 @@ Ext.define('Connector.view.Chart', {
             this.clearHighlightedData();
             this.highlightSelected();
         }
-
-        this.fireEvent('hidepointmsg');
     },
 
     mouseOverBins : function(event, data, layerSel, bin, layerScope, plotName) {
@@ -613,40 +618,90 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    pointHoverText : function(point, data, plotName) {
-        var config, val, content = '', colon = ': ', linebreak = ',<br/>';
+    mouseUpPoints : function(event, data, layerSel, point, layerScope, plotName) {
+        //use setTimeout to wait for brushend to fire to clear brushing state
+        var me = this;
+        setTimeout( function() {
+            if (layerScope.isBrushed)
+                return;
+            me.pointClickText(point, data, plotName);
+        }, 500);
 
-        if (data.xname) {
-            val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
-            content += Ext.htmlEncode(data.xname) + colon + val;
-        }
-        content += (content.length > 0 ? linebreak : '') + Ext.htmlEncode(data.yname) + colon + data.y;
-        if (data.colorname) {
-            content += linebreak + Ext.htmlEncode(data.colorname) + colon + data.color;
-        }
+    },
 
-        config = {
-            bubbleWidth: 250,
+    pointClickText : function(point, data, plotName) {
+        var content = this.buildPointTooltip(data);
+        var config = {
+            bubbleWidth: 350,
             target: point,
             placement: plotName===this.yGutterName?'right':'top',
             xOffset: plotName===this.yGutterName?0:-125,
             yOffset: plotName===this.yGutterName?-25:0,
             arrowOffset: plotName===this.yGutterName?0:110,
-            title: 'Subject: ' + data.subjectId,
             content: content
         };
 
-        ChartUtils.showCallout(config, 'hidepointmsg', this);
+        ChartUtils.showPointTextCallout(config, 'hidetooltipmsg', this);
+    },
+
+    buildPointTooltip: function(data) {
+        var content = '', colon = ': ', linebreak = '<br/>';
+        var record = this.allDataRowsMap[data.rowKey];
+
+        if (record[QueryUtils.STUDY_ALIAS]) {
+            content += '<span class="group-title">' + Ext.htmlEncode(record[QueryUtils.STUDY_ALIAS]) + '</span>';
+            content +=  colon + Ext.htmlEncode(record[QueryUtils.STUDY_SHORT_NAME_ALIAS]);
+            content += '<div class="axis-details">';
+            content += 'Treatment Summary' + colon + record[QueryUtils.TREATMENTSUMMARY_ALIAS] + linebreak;
+            content += 'Subject' + colon + data.subjectId + linebreak;
+            content += 'Study Day' + colon + 'Day ' + record[QueryUtils.PROTOCOLDAY_ALIAS] + linebreak;
+            content += '</div>';
+        }
+
+        if (this.activeMeasures.x && data.xname) {
+            var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
+            content += '<span class="group-title">' + Ext.htmlEncode(data.xname) + '</span>' + colon + val;
+            content += this.buildAxisDetailTooltip(this.activeMeasures.x, record);
+        }
+
+        if (this.activeMeasures.y) {
+            content += '<span class="group-title">' + Ext.htmlEncode(data.yname) + '</span>' + colon + data.y;
+            content += this.buildAxisDetailTooltip(this.activeMeasures.y, record);
+        }
+
+        if (data.colorname) {
+            content += '<span class="group-title">' + Ext.htmlEncode(data.colorname) + '</span>' + colon + data.color;
+        }
+
+        return content;
+    },
+
+    buildAxisDetailTooltip: function(axis, record) {
+        var content = '<div class="axis-details">', colon = ': ', linebreak = '<br/>';
+        if (axis) {
+            var dimensions = axis.options.dimensions;
+            for (var dim in dimensions) {
+                if (dimensions.hasOwnProperty(dim) && record[dim] !== undefined) {
+                    var value = record[dim];
+                    var label = Connector.getQueryService().getMeasure(dim).label;
+                    content += Ext.htmlEncode(label) + colon + value + linebreak;
+                }
+            }
+        }
+        content += '</div>';
+        return content;
     },
 
     getLayerAes : function(layerScope, plotName) {
 
         var mouseOver = this.showPointsAsBin ? this.mouseOverBins : this.mouseOverPoints,
+            mouseUp = this.showPointsAsBin ? this.mouseUpBins : this.mouseUpPoints,
             mouseOut = this.showPointsAsBin ? this.mouseOutBins : this.mouseOutPoints;
 
         return {
             mouseOverFn: Ext.bind(mouseOver, this, [layerScope, plotName], true),
-            mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true)
+            mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true),
+            mouseUpFn: Ext.bind(mouseUp, this, [layerScope, plotName], true)
         };
     },
 
@@ -1003,6 +1058,8 @@ Ext.define('Connector.view.Chart', {
 
         this.minXPositiveValue = Ext.isDefined(allDataRows) ? allDataRows.minPositiveX : 0.00001;
         this.minYPositiveValue = Ext.isDefined(allDataRows) ? allDataRows.minPositiveY : 0.00001;
+
+        this.allDataRowsMap = Ext.isDefined(allDataRows) ? allDataRows.allRowsMap : {};
 
         this.plotEl.update('');
         this.bottomPlotEl.update('');
@@ -2512,6 +2569,7 @@ Ext.define('Connector.view.Chart', {
             this.initPlot(chartData);
         }
 
+        this.fireEvent('hidetooltipmsg');
         this.updatePlotInfoPaneCounts({forSubcounts: false, queryName: this.dataQWP.query});
     },
 
@@ -2739,6 +2797,41 @@ Ext.define('Connector.view.Chart', {
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'Container', 'VARCHAR');
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
 
+                // add measures for tooltip
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        'study',
+                        'Demographics',
+                        'study_short_name',
+                        'VARCHAR'
+                );
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'Study',
+                        'VARCHAR'
+                );
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'TreatmentSummary',
+                        'VARCHAR'
+                );
+
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'ProtocolDay',
+                        'INTEGER'
+                );
+
                 // only add the SequenceNum column for selected measures that are not demographic and no time point
                 if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') 
                 {
@@ -2756,22 +2849,6 @@ Ext.define('Connector.view.Chart', {
                         Connector.studyContext.gridBase,
                         'ParticipantSequenceNum',
                         'VARCHAR'
-                    );
-                    this.addValuesToMeasureMap(
-                            measuresMap,
-                            axisName,
-                            Connector.studyContext.gridBaseSchema,
-                            Connector.studyContext.gridBase,
-                            'Study',
-                            'VARCHAR'
-                    );
-                    this.addValuesToMeasureMap(
-                            measuresMap,
-                            axisName,
-                            Connector.studyContext.gridBaseSchema,
-                            Connector.studyContext.gridBase,
-                            'TreatmentSummary',
-                            'VARCHAR'
                     );
                     this.addValuesToMeasureMap(
                             measuresMap,
