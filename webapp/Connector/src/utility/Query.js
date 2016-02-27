@@ -7,6 +7,8 @@ Ext.define('Connector.utility.Query', {
 
     STUDY_ALIAS_PREFIX: 'cds_GridBase_',
 
+    DEMOGRAPHICS_ALIAS_PREFIX: 'study_Demographics_',
+
     logging: false,
 
     constructor : function(config)
@@ -24,7 +26,10 @@ Ext.define('Connector.utility.Query', {
         this.STUDY_ALIAS = this.STUDY_ALIAS_PREFIX + 'Study';
         this.TREATMENTSUMMARY_ALIAS = this.STUDY_ALIAS_PREFIX + 'TreatmentSummary';
         this.PROTOCOLDAY_ALIAS = this.STUDY_ALIAS_PREFIX + 'ProtocolDay';
-        this.STUDY_SHORT_NAME_ALIAS = 'study_Demographics_study_short_name';
+
+        this.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_short_name';
+        this.DEMOGRAPHICS_STUDY_LABEL_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_label';
+        this.DEMOGRAPHICS_STUDY_ARM_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_arm_summary';
 
         if (Ext.isDefined(LABKEY.ActionURL.getParameters()['logQuery']))
         {

@@ -186,7 +186,7 @@ Ext.define('Connector.model.ChartData', {
                     dimensionKeys.push(alias);
                 }
 
-                if (alias && alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 && sharedKeys.indexOf(alias) == -1)
+                if (alias && (alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 || alias.indexOf(QueryUtils.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS) == 0) && sharedKeys.indexOf(alias) == -1)
                 {
                     sharedKeys.push(alias);
                 }

@@ -635,9 +635,9 @@ Ext.define('Connector.view.Chart', {
             bubbleWidth: 350,
             target: point,
             placement: plotName===this.yGutterName?'right':'top',
-            xOffset: plotName===this.yGutterName?0:-125,
+            xOffset: plotName===this.yGutterName?0:-175,
             yOffset: plotName===this.yGutterName?-25:0,
-            arrowOffset: plotName===this.yGutterName?0:110,
+            arrowOffset: plotName===this.yGutterName?0:160,
             content: content
         };
 
@@ -650,7 +650,7 @@ Ext.define('Connector.view.Chart', {
 
         if (record[QueryUtils.STUDY_ALIAS]) {
             content += '<span class="group-title">' + Ext.htmlEncode(record[QueryUtils.STUDY_ALIAS]) + '</span>';
-            content +=  colon + Ext.htmlEncode(record[QueryUtils.STUDY_SHORT_NAME_ALIAS]);
+            content +=  colon + Ext.htmlEncode(record[QueryUtils.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS]);
             content += '<div class="axis-details">';
             content += 'Treatment Summary' + colon + record[QueryUtils.TREATMENTSUMMARY_ALIAS] + linebreak;
             content += 'Subject' + colon + data.subjectId + linebreak;
@@ -659,9 +659,13 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.activeMeasures.x && data.xname) {
-            var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
-            content += '<span class="group-title">' + Ext.htmlEncode(data.xname) + '</span>' + colon + val;
-            content += this.buildAxisDetailTooltip(this.activeMeasures.x, record);
+            // skip for study, treatment, and time
+            var xAxis = this.activeMeasures.x;
+            if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
+                var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
+                content += '<span class="group-title">' + Ext.htmlEncode(data.xname) + '</span>' + colon + val;
+                content += this.buildAxisDetailTooltip(this.activeMeasures.x, record);
+            }
         }
 
         if (this.activeMeasures.y) {
