@@ -491,21 +491,6 @@ Ext.define('Connector.utility.Chart', {
         }, scope);
     },
 
-    showPointTextCallout : function(config, hideEvent, scope) {
-        var calloutMgr = hopscotch.getCalloutManager(), _id = Ext.id();
-
-        Ext.apply(config, {
-            id: _id,
-            showCloseButton: false
-        });
-
-        calloutMgr.createCallout(config);
-
-        scope.on(hideEvent, function() {
-            calloutMgr.removeCallout(_id);
-        }, scope);
-    },
-
     isSameSource : function(x, y)
     {
         return Ext.isObject(x) && Ext.isObject(y) && x.queryName == y.queryName && x.schemaName == y.schemaName;
@@ -711,5 +696,24 @@ Ext.define('Connector.utility.Chart', {
         {
             return measureAKey == measureBKey && ChartUtils.getAssayDimensionsWithDifferentValues(measureA, measureB).length == 0;
         }
+    },
+
+    showDataTooltipCallout : function(config, hideEvent, scope) {
+        var calloutMgr = hopscotch.getCalloutManager(), _id = Ext.id();
+
+        Ext.apply(config, {
+            id: _id,
+            showCloseButton: false
+        });
+
+        calloutMgr.createCallout(config);
+
+        scope.on(hideEvent, function() {
+            calloutMgr.removeCallout(_id);
+        }, scope);
+
+        scope.mon(Ext.getCmp('app-main').getEl(), 'click', function(el, e){
+            calloutMgr.removeCallout(_id);
+        }, scope);
     }
 });

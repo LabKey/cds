@@ -77,14 +77,6 @@ Ext.define('Connector.view.Chart', {
         )
     },
 
-    listeners: {
-        'render': function(panel) {
-            panel.body.on('mousedown', function() {
-                panel.fireEvent('hidetooltipmsg');
-            });
-        }
-    },
-
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -654,7 +646,7 @@ Ext.define('Connector.view.Chart', {
             content: content
         };
 
-        ChartUtils.showPointTextCallout(config, 'hidetooltipmsg', this);
+        ChartUtils.showDataTooltipCallout(config, 'hidetooltipmsg', this);
     },
 
     binClickText : function(point, datas, plotName) {
@@ -669,23 +661,36 @@ Ext.define('Connector.view.Chart', {
             content: content
         };
 
-        ChartUtils.showPointTextCallout(config, 'hidetooltipmsg', this);
+        ChartUtils.showDataTooltipCallout(config, 'hidetooltipmsg', this);
+    },
+
+    getAxisDimensionsArray: function(axis) {
+        var dimArray = [];
+        if (axis) {
+            var dimensions = axis.options.dimensions;
+            for (var dim in axis.options.dimensions) {
+                if (dimensions.hasOwnProperty(dim)) {
+                    dimArray.push(dim);
+                }
+            }
+        }
+        return dimArray;
     },
 
     buildBinTooltip: function(datas) {
         var xVals = new Set(), yVals = new Set(), subjects = new Set(), studies = new Set();
-        var content = '', xName, yName;
+        var content = '', xName, yName, me = this,colon = ': ', linebreak = '<br/>';
+        var xDimensionVals = {}, yDimensionVals = {};
+        var xDimensions = this.getAxisDimensionsArray(this.activeMeasures.x), yDimensions = this.getAxisDimensionsArray(this.activeMeasures.y);
 
         Ext.each(datas, function(data) {
             var d = data.data;
+
             if (d.x !== undefined && d.x !== null && d.x !== '') {
                 xVals.add(d.x);
             }
             if (d.y !== undefined && d.y !== null && d.y !== '') {
                 yVals.add(d.y);
-            }
-            if (d.study !== undefined && d.study !== null) {
-                studies.add(d.study);
             }
             if (d.subjectId !== undefined && d.subjectId !== null) {
                 subjects.add(d.subjectId);
@@ -698,7 +703,26 @@ Ext.define('Connector.view.Chart', {
                 yName = d.yname;
             }
 
-            // build x y axis detail TODO
+            var record = me.allDataRowsMap[d.rowKey];
+            studies.add(record[QueryUtils.STUDY_ALIAS]);
+
+            Ext.each(xDimensions, function(dim) {
+               if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
+                   if (!xDimensionVals[dim]) {
+                       xDimensionVals[dim] = new Set();
+                   }
+                   xDimensionVals[dim].add(record[dim]);
+               }
+            });
+            Ext.each(yDimensions, function(dim) {
+                if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
+                    if (!yDimensionVals[dim]) {
+                        yDimensionVals[dim] = new Set();
+                    }
+                    yDimensionVals[dim].add(record[dim]);
+                }
+            });
+
         });
 
         var studyName;
@@ -706,19 +730,43 @@ Ext.define('Connector.view.Chart', {
             studyName = Array.from(studies)[0];
         }
 
-        content += '<div><table>';
-
-        content += '<tr><td>Data</td><td>' + datas.length + ' points from ' + subjects.size + 'subjects</td></tr>';
+        content += '<span class="group-title">Data</span>';
+        content += colon + datas.length + ' points from ' + subjects.size + ' subjects' + linebreak;
         if (studyName) {
-            content += '<tr><td>Study</td><td>' + Ext.htmlEncode(studyName) + '</td></tr>';
+            content += '<span class="group-title">Study</span>';
+            content += colon + Ext.htmlEncode(studyName) + linebreak;
         }
         if (xName) {
-            content += '<tr><td>' + Ext.htmlEncode(xName) + '</td><td>' + Ext.htmlEncode(this.getBinRangeTooltip(xVals)) + '</td></tr>';
+            content += '<span class="group-title">' + Ext.htmlEncode(xName) + '</span>';
+            content += colon + Ext.htmlEncode(this.getBinRangeTooltip(xVals));
+            content += this.showAsMedian ? ' (median)' : '';
+            content += '<div class="axis-details">';
+            content += this.buildBinAxisDetailTooltip(xDimensionVals);
+            content += '</div>'
         }
         if (yName) {
-            content += '<tr><td>' + Ext.htmlEncode(yName) + '</td><td>' + Ext.htmlEncode(this.getBinRangeTooltip(yVals)) + '</td></tr>';
+            content += '<span class="group-title">' + Ext.htmlEncode(yName) + '</span>';
+            content += colon + Ext.htmlEncode(this.getBinRangeTooltip(yVals));
+            content += this.showAsMedian ? ' (median)' : '';
+            content += '<div class="axis-details">';
+            content += this.buildBinAxisDetailTooltip(yDimensionVals);
+            content += '</div>'
         }
-        content += '</table></div>';
+
+        return content;
+    },
+
+    buildBinAxisDetailTooltip: function(dimensionVals) {
+        var content = '', colon = ': ', linebreak = '<br/>';
+        if (dimensionVals) {
+            for (var dim in dimensionVals) {
+                if (dimensionVals.hasOwnProperty(dim) && dimensionVals[dim].size != 0) {
+                    var value = dimensionVals[dim].size == 1 ? Array.from(dimensionVals[dim])[0]: dimensionVals[dim].size + ' values' ;
+                    var label = Connector.getQueryService().getMeasure(dim).label;
+                    content += Ext.htmlEncode(label) + colon + value + linebreak;
+                }
+            }
+        }
         return content;
     },
 
@@ -760,13 +808,15 @@ Ext.define('Connector.view.Chart', {
             if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
                 var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
                 content += '<span class="group-title">' + Ext.htmlEncode(data.xname) + '</span>' + colon + val;
-                content += this.buildAxisDetailTooltip(this.activeMeasures.x, record);
+                content += this.showAsMedian ? ' (median)' : '';
+                content += this.buildPointAxisDetailTooltip(this.activeMeasures.x, record);
             }
         }
 
         if (this.activeMeasures.y) {
             content += '<span class="group-title">' + Ext.htmlEncode(data.yname) + '</span>' + colon + data.y;
-            content += this.buildAxisDetailTooltip(this.activeMeasures.y, record);
+            content += this.showAsMedian ? ' (median)' : '';
+            content += this.buildPointAxisDetailTooltip(this.activeMeasures.y, record);
         }
 
         if (data.colorname) {
@@ -776,7 +826,7 @@ Ext.define('Connector.view.Chart', {
         return content;
     },
 
-    buildAxisDetailTooltip: function(axis, record) {
+    buildPointAxisDetailTooltip: function(axis, record) {
         var content = '<div class="axis-details">', colon = ': ', linebreak = '<br/>';
         if (axis) {
             var dimensions = axis.options.dimensions;
