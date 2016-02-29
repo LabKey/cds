@@ -433,6 +433,7 @@ Ext.define('Connector.model.ChartData', {
                 x: xVal,
                 y: yVal,
                 timeAxisKey : timeAxisKey,
+                study: _row[QueryUtils.STUDY_ALIAS],
                 color: colorVal,
                 subjectId: _row[QueryUtils.SUBJECT_ALIAS],
                 xname: xa.label,

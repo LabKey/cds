@@ -619,14 +619,27 @@ Ext.define('Connector.view.Chart', {
     },
 
     mouseUpPoints : function(event, data, layerSel, point, layerScope, plotName) {
-        //use setTimeout to wait for brushend to fire to clear brushing state
-        var me = this;
-        setTimeout( function() {
-            if (layerScope.isBrushed)
-                return;
-            me.pointClickText(point, data, plotName);
-        }, 500);
+        //wait for brushend to fire to clear brushing state, mouseup individual point will clear isBrushed on brushend
+        if (!this.showPointToolTipTask) {
+            this.showPointToolTipTask = new Ext.util.DelayedTask(function(point, data, layerScope, plotName) {
+                if (layerScope.isBrushed)
+                    return;
+                this.pointClickText(point, data, plotName);
+            }, this);
+        }
+        this.showPointToolTipTask.delay(150, undefined, this, [point, data, layerScope, plotName]);
+    },
 
+    mouseUpBins : function(event, datas, layerSel, point, layerScope, plotName) {
+        //wait for brushend to fire to clear brushing state, mouseup individual bin will clear isBrushed on brushend
+        if (!this.showBinToolTipTask) {
+            this.showBinToolTipTask = new Ext.util.DelayedTask(function(point, datas, layerScope, plotName) {
+                if (layerScope.isBrushed)
+                    return;
+                this.binClickText(point, datas, plotName);
+            }, this);
+        }
+        this.showBinToolTipTask.delay(150, undefined, this, [point, datas, layerScope, plotName]);
     },
 
     pointClickText : function(point, data, plotName) {
@@ -642,6 +655,89 @@ Ext.define('Connector.view.Chart', {
         };
 
         ChartUtils.showPointTextCallout(config, 'hidetooltipmsg', this);
+    },
+
+    binClickText : function(point, datas, plotName) {
+        var content = this.buildBinTooltip(datas);
+        var config = {
+            bubbleWidth: 350,
+            target: point,
+            placement: plotName===this.yGutterName?'right':'top',
+            xOffset: plotName===this.yGutterName?0:-175,
+            yOffset: plotName===this.yGutterName?-25:0,
+            arrowOffset: plotName===this.yGutterName?0:160,
+            content: content
+        };
+
+        ChartUtils.showPointTextCallout(config, 'hidetooltipmsg', this);
+    },
+
+    buildBinTooltip: function(datas) {
+        var xVals = new Set(), yVals = new Set(), subjects = new Set(), studies = new Set();
+        var content = '', xName, yName;
+
+        Ext.each(datas, function(data) {
+            var d = data.data;
+            if (d.x !== undefined && d.x !== null && d.x !== '') {
+                xVals.add(d.x);
+            }
+            if (d.y !== undefined && d.y !== null && d.y !== '') {
+                yVals.add(d.y);
+            }
+            if (d.study !== undefined && d.study !== null) {
+                studies.add(d.study);
+            }
+            if (d.subjectId !== undefined && d.subjectId !== null) {
+                subjects.add(d.subjectId);
+            }
+
+            if (d.xname && !xName) {
+                xName = d.xname;
+            }
+            if (d.yname && !yName) {
+                yName = d.yname;
+            }
+
+            // build x y axis detail TODO
+        });
+
+        var studyName;
+        if (studies.size == 1) {
+            studyName = Array.from(studies)[0];
+        }
+
+        content += '<div><table>';
+
+        content += '<tr><td>Data</td><td>' + datas.length + ' points from ' + subjects.size + 'subjects</td></tr>';
+        if (studyName) {
+            content += '<tr><td>Study</td><td>' + Ext.htmlEncode(studyName) + '</td></tr>';
+        }
+        if (xName) {
+            content += '<tr><td>' + Ext.htmlEncode(xName) + '</td><td>' + Ext.htmlEncode(this.getBinRangeTooltip(xVals)) + '</td></tr>';
+        }
+        if (yName) {
+            content += '<tr><td>' + Ext.htmlEncode(yName) + '</td><td>' + Ext.htmlEncode(this.getBinRangeTooltip(yVals)) + '</td></tr>';
+        }
+        content += '</table></div>';
+        return content;
+    },
+
+    getBinRangeTooltip: function(valSet) {
+        if (valSet.size == 0)
+            return null;
+        var vals = Array.from(valSet);
+        if (vals.length == 1)
+            return vals[0];
+        var min = vals[0], max = vals[0];
+        Ext.each(vals, function(val){
+            if (val < min) {
+                min = val;
+            }
+            if (val > max) {
+                max = val;
+            }
+        });
+        return min + ' - ' + max;
     },
 
     buildPointTooltip: function(data) {
