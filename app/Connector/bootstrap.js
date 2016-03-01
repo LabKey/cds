@@ -152,7 +152,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.AssayHeader": "../../webapp/Connector/src/app/view/module/AssayHeader.js",
   "Connector.view.module.AssayStudies": "../../webapp/Connector/src/app/view/module/AssayStudies.js",
   "Connector.view.module.BaseModule": "../../webapp/Connector/src/view/module/BaseModule.js",
-  "Connector.view.module.ContactCDS": "../../webapp/Connector/src/view/module/ContactCDS.js",
+  "Connector.view.module.ContactCDS": "../../webapp/Connector/src/app/view/module/ContactCDS.js",
   "Connector.view.module.HTML": "../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.Person": "../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../webapp/Connector/src/app/view/module/ProductHeader.js",
@@ -162,6 +162,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.ProductStudies": "../../webapp/Connector/src/app/view/module/ProductStudies.js",
   "Connector.view.module.StudyAssays": "../../webapp/Connector/src/app/view/module/StudyAssays.js",
   "Connector.view.module.StudyDatasets": "../../webapp/Connector/src/app/view/module/StudyDatasets.js",
+  "Connector.view.module.StudyDescription": "../../webapp/Connector/src/app/view/module/StudyDescription.js",
   "Connector.view.module.StudyHeader": "../../webapp/Connector/src/app/view/module/StudyHeader.js",
   "Connector.view.module.StudyProducts": "../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.Text": "../../webapp/Connector/src/view/module/Text.js",
@@ -356,6 +357,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.ProductStudies": [],
   "Connector.view.module.StudyAssays": [],
   "Connector.view.module.StudyDatasets": [],
+  "Connector.view.module.StudyDescription": [],
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.StudyProducts": [],
   "Connector.view.module.Text": [],
@@ -1460,7 +1462,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.ContactCDS": [
-    "widget.module.contactcds"
+    "widget.app.module.contactcds"
   ],
   "Connector.view.module.HTML": [
     "widget.module.html"
@@ -1488,6 +1490,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.StudyDatasets": [
     "widget.app.module.studydatasets"
+  ],
+  "Connector.view.module.StudyDescription": [
+    "widget.app.module.studydescription"
   ],
   "Connector.view.module.StudyHeader": [
     "widget.app.module.studyheader"
