@@ -636,32 +636,12 @@ Ext.define('Connector.view.Chart', {
 
     pointClickText : function(point, data, plotName) {
         var content = this.buildPointTooltip(data);
-        var config = {
-            bubbleWidth: 350,
-            target: point,
-            placement: plotName===this.yGutterName?'right':'top',
-            xOffset: plotName===this.yGutterName?0:-175,
-            yOffset: plotName===this.yGutterName?-25:0,
-            arrowOffset: plotName===this.yGutterName?0:160,
-            content: content
-        };
-
-        ChartUtils.showDataTooltipCallout(config, 'hidetooltipmsg', this);
+        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
     },
 
     binClickText : function(point, datas, plotName) {
         var content = this.buildBinTooltip(datas);
-        var config = {
-            bubbleWidth: 350,
-            target: point,
-            placement: plotName===this.yGutterName?'right':'top',
-            xOffset: plotName===this.yGutterName?0:-175,
-            yOffset: plotName===this.yGutterName?-25:0,
-            arrowOffset: plotName===this.yGutterName?0:160,
-            content: content
-        };
-
-        ChartUtils.showDataTooltipCallout(config, 'hidetooltipmsg', this);
+        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
     },
 
     getAxisDimensionsArray: function(axis) {
