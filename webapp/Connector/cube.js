@@ -228,9 +228,68 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'title'
                         }
                     },{
-                        type: 'studydescription',
+                        type: 'html',
                         staticData: {
                             title: 'Description'
+                        },
+                        modelData: {
+                            text: 'description'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Objectives'
+                        },
+                        modelData: {
+                            text: 'objectives'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Rationale'
+                        },
+                        modelData: {
+                            text: 'rationale'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Groups'
+                        },
+                        modelData: {
+                            text: 'groups_treatment_schema'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Methods'
+                        },
+                        modelData: {
+                            text: 'methods_assay_schema'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Findings'
+                        },
+                        modelData: {
+                            text: 'findings'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Conclusions'
+                        },
+                        modelData: {
+                            text: 'conclusions'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Publications'
+                        },
+                        modelData: {
+                            text: 'publications'
                         }
                     },{
                         type: 'html',
