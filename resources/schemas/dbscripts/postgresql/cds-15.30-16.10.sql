@@ -14,5 +14,11 @@
  * limitations under the License.
  */
 
+/* cds-15.30-15.301.sql */
+
+ALTER TABLE cds.GridBase ADD COLUMN ProtocolDay INT;
+
+/* cds-15.301-15.302.sql */
+
 ALTER TABLE cds.GridBase DROP COLUMN SubjectVisit;
 ALTER TABLE cds.GridBase ADD COLUMN VisitRowId INT;

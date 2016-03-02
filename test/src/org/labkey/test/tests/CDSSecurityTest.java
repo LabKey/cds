@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 LabKey Corporation
+ * Copyright (c) 2015-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,22 +22,16 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.Git;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.EmailRecordTable;
 import org.labkey.test.util.Ext4Helper;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.remote.server.handler.CloseWindow;
 import org.testng.Assert;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Category({CDS.class, Git.class})
+@Category({CDS.class})
 public class CDSSecurityTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
@@ -142,8 +136,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        clickUserMenuItem("Stop Impersonating");
-        assertSignOutAndMyAccountPresent();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
 
         impersonateGroup(PERM_GROUPS[1], false);
 
@@ -154,9 +148,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        clickUserMenuItem("Stop Impersonating");
-        assertSignOutAndMyAccountPresent();
-
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
     }
 
     @Test

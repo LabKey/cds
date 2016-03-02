@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.InfoPane;
@@ -60,7 +59,7 @@ import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTickLinear;
 
-@Category({CDS.class, Git.class})
+@Category({CDS.class})
 public class CDSVisualizationTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
