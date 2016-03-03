@@ -762,7 +762,7 @@ Ext.define('Connector.utility.Chart', {
         var config = ChartUtils.callOutPositions.top;
 
         if (isYGutter) {
-            config = right;
+            config = ChartUtils.callOutPositions.right;
         }
         else if (isXGutter) {
             if (bbox.x < 250) {
