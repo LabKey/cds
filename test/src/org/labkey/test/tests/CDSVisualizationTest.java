@@ -2772,7 +2772,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Verify no brush in 'undefined x value' gutter.");
             cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > rect.extent";
-            gutterBrushWindow = getElement(Locator.css(cssPathBrushWindow));
+            gutterBrushWindow = Locator.css(cssPathBrushWindow).findElement(getDriver());
             tempStr = gutterBrushWindow.getAttribute("height");
             heightWidth = Integer.parseInt(tempStr);
             assertTrue("'undefined x value' gutter has a brush window and it should not.", heightWidth == 0);
@@ -2782,7 +2782,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Verify no brush in 'undefined y value' gutter.");
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > rect.extent";
-            gutterBrushWindow = getElement(Locator.css(cssPathBrushWindow));
+            gutterBrushWindow = Locator.css(cssPathBrushWindow).findElement(getDriver());
             tempStr = gutterBrushWindow.getAttribute("width");
             heightWidth = Integer.parseInt(tempStr);
             assertTrue("'undefined y value' gutter has a brush window and it should not.", heightWidth == 0);
