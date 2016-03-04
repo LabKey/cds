@@ -853,11 +853,11 @@ Ext.define('Connector.utility.Query', {
 
     getIntervalDenominator : function(interval)
     {
-        if (interval == this.STUDY_ALIAS_PREFIX + 'Weeks')
+        if (interval.startsWith(this.STUDY_ALIAS_PREFIX + 'Weeks'))
             return 7;
-        else if (interval == this.STUDY_ALIAS_PREFIX + 'Months')
+        else if (interval.startsWith(this.STUDY_ALIAS_PREFIX + 'Months'))
             return 365.25/12;
-        else if (interval == this.STUDY_ALIAS_PREFIX + 'Years')
+        else if (interval.startsWith(interval == this.STUDY_ALIAS_PREFIX + 'Years'))
             return 365.25;
         return 1;
     },
