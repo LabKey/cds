@@ -756,16 +756,7 @@ Ext.define('Connector.view.Chart', {
         var vals = Array.from(valSet);
         if (vals.length == 1)
             return vals[0];
-        var min = vals[0], max = vals[0];
-        Ext.each(vals, function(val){
-            if (val < min) {
-                min = val;
-            }
-            if (val > max) {
-                max = val;
-            }
-        });
-        return min + ' - ' + max;
+        return Ext.Array.min(vals) + ' - ' + Ext.Array.max(vals);
     },
 
     buildPointTooltip: function(data) {
