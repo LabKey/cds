@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.tests;
+package org.labkey.test.tests.cds;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.AfterClass;
@@ -24,13 +24,13 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.pages.ColorAxisVariableSelector;
-import org.labkey.test.pages.DataspaceVariableSelector;
-import org.labkey.test.pages.InfoPane;
-import org.labkey.test.pages.XAxisVariableSelector;
-import org.labkey.test.pages.YAxisVariableSelector;
-import org.labkey.test.util.CDSAsserts;
-import org.labkey.test.util.CDSHelper;
+import org.labkey.test.pages.cds.ColorAxisVariableSelector;
+import org.labkey.test.pages.cds.DataspaceVariableSelector;
+import org.labkey.test.pages.cds.InfoPane;
+import org.labkey.test.pages.cds.XAxisVariableSelector;
+import org.labkey.test.pages.cds.YAxisVariableSelector;
+import org.labkey.test.util.cds.CDSAsserts;
+import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
@@ -54,10 +54,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
-import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
-import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
-import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTickLinear;
+import static org.labkey.test.tests.cds.CDSVisualizationTest.Locators.plotBox;
+import static org.labkey.test.tests.cds.CDSVisualizationTest.Locators.plotPoint;
+import static org.labkey.test.tests.cds.CDSVisualizationTest.Locators.plotTick;
+import static org.labkey.test.tests.cds.CDSVisualizationTest.Locators.plotTickLinear;
 
 @Category({CDS.class})
 public class CDSVisualizationTest extends CDSReadOnlyTest

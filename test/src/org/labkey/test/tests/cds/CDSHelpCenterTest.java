@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.tests;
+package org.labkey.test.tests.cds;
 
 import org.jetbrains.annotations.Nullable;
 import org.junit.BeforeClass;
@@ -23,9 +23,9 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.util.CDSHelpCenterUtil;
-import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.CDSInitializer;
+import org.labkey.test.util.cds.CDSHelpCenterUtil;
+import org.labkey.test.util.cds.CDSHelper;
+import org.labkey.test.util.cds.CDSInitializer;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
