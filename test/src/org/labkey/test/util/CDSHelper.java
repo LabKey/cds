@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
-import org.labkey.test.pages.DataGridVariableSelector;
+import org.labkey.test.pages.cds.DataGridVariableSelector;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
