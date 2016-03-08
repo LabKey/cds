@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.pages;
+package org.labkey.test.pages.cds;
 
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.PasswordUtil;
 
-import static org.labkey.test.pages.CDSLoginPage.Locators.*;
+import static org.labkey.test.pages.cds.CDSLoginPage.Locators.*;
 
 public class CDSLoginPage
 {

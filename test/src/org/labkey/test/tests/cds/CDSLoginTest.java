@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.tests;
+package org.labkey.test.tests.cds;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,15 +21,15 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.pages.CDSLoginPage;
-import org.labkey.test.util.CDSHelper;
+import org.labkey.test.pages.cds.CDSLoginPage;
+import org.labkey.test.util.cds.CDSHelper;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.labkey.test.pages.CDSLoginPage.Locators.termsCheckbox;
+import static org.labkey.test.pages.cds.CDSLoginPage.Locators.termsCheckbox;
 
 @Category({CDS.class})
 public class CDSLoginTest extends CDSReadOnlyTest

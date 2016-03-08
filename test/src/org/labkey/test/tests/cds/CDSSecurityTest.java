@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.tests;
+package org.labkey.test.tests.cds;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -22,8 +22,8 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.util.CDSAsserts;
-import org.labkey.test.util.CDSHelper;
+import org.labkey.test.util.cds.CDSAsserts;
+import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.EmailRecordTable;
 import org.labkey.test.util.Ext4Helper;
 import org.testng.Assert;
