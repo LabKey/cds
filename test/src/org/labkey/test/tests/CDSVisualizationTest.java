@@ -2442,6 +2442,192 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyPlotToolTips()
+    {
+        String cssPathToSvg;
+        int pointToClick;
+        CDSHelper cds = new CDSHelper(this);
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Create a simple data point plot.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.confirmSelection();
+
+        log("Click on a point in the plot and make sure the tool tip is as expected.");
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
+        cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
+
+        cds.clickPointInPlot(cssPathToSvg, pointToClick);
+
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+
+        assertElementVisible(Locator.css("div.hopscotch-bubble-container"));
+
+        log("Click someplace else to make the tool tip go away.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        log("Now filter the plot to make it easier to validate the data in teh tool tip.");
+
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.applySelection("RED 4");
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        log("Click on a point in the plot and make sure the tool tip has the expected text.");
+
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
+        cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
+
+        cds.clickPointInPlot(cssPathToSvg, pointToClick);
+
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+
+        assertElementVisible(Locator.css("div.hopscotch-bubble-container"));
+
+        assertTextPresent("RED 4", "elit ac nulla sed vel enim sit", "Cell type: CD4+");
+
+        log("Click someplace else to make the tool tip go away.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        log("Clear the filter and create a plot that has values in the gutter.");
+        cds.clearFilter(1);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.confirmSelection();
+
+        log("Click on a point in the 'Undefined X value' gutter and make sure the tool tip is as expected.");
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
+        cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
+
+        cds.clickPointInPlot(cssPathToSvg, pointToClick);
+
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+
+        validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
+
+        log("Remove the tool tip.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        log("Click on a point in the 'Undefined Y value' gutter and make sure the tool tip is as expected.");
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
+        cssPathToSvg = "div.bottomplot > svg";
+
+        cds.clickPointInPlot(cssPathToSvg, pointToClick);
+
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+
+        validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
+
+        log("Remove the tool tip.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        log("Click on a point in the main plot and make sure the tool tip is as expected.");
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(2) a.point"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
+        cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(2)";
+
+        cds.clickPointInPlot(cssPathToSvg, pointToClick);
+
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+
+        validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
+
+        log("Change the plot to a heat map on single axis.");
+        xaxis.openSelectorWindow();
+        xaxis.removeVariable();
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.setCellType("All");
+        yaxis.confirmSelection();
+
+        log("Click on one of the heat map bars and make sure the tool tip is as expected.");
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square\".");
+        cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
+
+        cds.clickHeatPointInPlot(cssPathToSvg, pointToClick);
+
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+
+        validateToolTipText("Magnitude (% cells) - Background subtracted", "Functional marker name: IL2", "Data summary level: Protein Panel");
+
+        log("Now change the plot to be a heat map with two dimensions.");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        xaxis.pickVariable(CDSHelper.DEMO_AGE);
+        xaxis.confirmSelection();
+
+        log("Click on one of the heat map points and make sure the tool tip is as expected.");
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square\".");
+        cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
+
+        cds.clickHeatPointInPlot(cssPathToSvg, pointToClick);
+
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+
+        validateToolTipText("Magnitude (% cells) - Background subtracted", "Age at Enrollment", "Functional marker name: IL2", "Data summary level: Protein Panel");
+
+    }
+
+    public void validateToolTipText(String...searchText)
+    {
+        String toolTipText;
+        WebElement weToolTip;
+        boolean pass = true;
+
+        weToolTip = Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]//div[contains(@class, 'hopscotch-content')]").findElement(getDriver());
+        toolTipText = weToolTip.getText();
+        log(toolTipText);
+
+        for(String text: searchText)
+        {
+            if(!toolTipText.contains(text))
+            {
+                pass = false;
+                log("Could not find text: '" + text + "' in the tool tip");
+            }
+        }
+
+        if(!pass)
+        {
+            log("Tool tip text: " + toolTipText);
+            assertTrue("Tool tip not as expected. See log for missing text.", pass);
+        }
+    }
+
+    @Test
     public void verifyDensePlotBrushing()
     {
         // This test will only validate that a "Filter" button shows up, but will not validate that the
@@ -2747,7 +2933,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
 
             // See what kind of data points we have in the main plot.
-            if (getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") a.point")) != 0)
+            if (getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") a.point")) != 0)
             {
                 dataPointType = "a.point";
             }
@@ -2759,8 +2945,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
             // Try to protect from getting an index out of range error. Add one just to make sure that if there is a
             // very small number of points we don't end up with 0 as pointToClick;
             pointToClick = (getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType)) / 4) + 1;
-            log("Brushing in the main plot area. Going to click at point: div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")");
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")", 50, -50, false);
+            log("Brushing in the main plot area. Going to click at point: div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")");
+            brushPlot("div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")", 50, -50, false);
 
         }
         else
@@ -2771,7 +2957,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if (hasYGutter)
         {
             log("Verify no brush in 'undefined x value' gutter.");
-            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > rect.extent";
+            cssPathBrushWindow = "div.plot:not(.thumbnail) > svg:nth-of-type(1) > g.brush > rect.extent";
             gutterBrushWindow = getElement(Locator.css(cssPathBrushWindow));
             tempStr = gutterBrushWindow.getAttribute("height");
             heightWidth = Integer.parseInt(tempStr);
