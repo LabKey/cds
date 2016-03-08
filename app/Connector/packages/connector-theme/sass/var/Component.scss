@@ -899,26 +899,109 @@ text.study-label {
   cursor: pointer;
 }
 
+.expanded-intro {
+  .section-title {
+    margin-left: 28px;
+    display: inline-block;
+  }
+}
 
-@import 'windows';
+.get-started {
+  background-color: #f0f0f0;
 
-@import 'grid/Panel';
+    .tile-group {
+      display: inline-flex;
+      position: relative;
+      width: 500px !important;
+      height: 300px;
+    }
+    .tile {
+      height: 300px;
+      margin: 20px;
+      width: 200px !important;
+      position: absolute;
+    }
+    .tile:hover {
+      color:$info-color;
+    }
+    .tile:hover .tile-title {
+      text-decoration: underline;
+    }
+    .tile:hover .home_text {
+      background-image: url('images/home_text_hover.png');
+    }
+    .tile:hover .home_bar {
+      background-image: url('images/home_bars_hover.png');
+    }
+    .tile:hover .home_plot {
+      background-image: url('images/home_plot_hover.png');
+    }
+    .tile:hover .home_video{
+      background-image: url('images/home_video_hover.png');
+    }
 
-@import 'panel/FilterPanel';
-@import 'panel/GroupList';
-@import 'panel/Selector';
+    .right-tile {
+      left: 250px;
+    }
+    .tile-title {
+      position: absolute;
+      font-weight: bold;
+      text-align: center;
+      width: 200px;
+    }
+    .tile-title:hover {
+      text-decoration: underline;
+    }
+    .tile-detail {
+      position: absolute;
+      bottom: 30px;
+      width: 200px;
+    }
+    .tile-detail:hover {
+      color:$info-color;
+    }
+    .backgroundimage {
+      height: 200px;
+      width: 200px;
+      display: inline-block;
+      background-size: 100%;
+      position: absolute;
+      top: 20px;
+    }
+    .home_text {
+      background-image: url('images/home_text.png');
+    }
+    .home_bar {
+      background-image: url('images/home_bars.png');
+    }
+    .home_plot {
+      background-image: url('images/home_plot.png');
+    }
+    .home_video {
+      background-image: url('images/home_video.png');
+    }
+}
 
-@import 'plugin/LoadingMask';
 
-@import 'view/DetailStatus';
-@import 'view/Header';
-@import 'view/InfoPane';
-@import 'view/Learn';
-@import 'view/Navigation';
-@import 'view/Page';
-@import 'view/Chart';
-@import 'view/Signin';
-@import 'view/SingleAxisExplorer';
-@import 'view/Summary';
-@import 'view/TermsOfUse';
-@import 'view/Variable';
+  @import 'windows';
+
+  @import 'grid/Panel';
+
+  @import 'panel/FilterPanel';
+  @import 'panel/GroupList';
+  @import 'panel/Selector';
+
+  @import 'plugin/LoadingMask';
+
+  @import 'view/DetailStatus';
+  @import 'view/Header';
+  @import 'view/InfoPane';
+  @import 'view/Learn';
+  @import 'view/Navigation';
+  @import 'view/Page';
+  @import 'view/Chart';
+  @import 'view/Signin';
+  @import 'view/SingleAxisExplorer';
+  @import 'view/Summary';
+  @import 'view/TermsOfUse';
+  @import 'view/Variable';
