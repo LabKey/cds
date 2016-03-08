@@ -394,6 +394,8 @@ public class CDSHelper
 
     public static final String HOME_PAGE_HEADER = "Welcome to the CAVD DataSpace.";
 
+    public static final String PLOT_POINT_HIGHLIGHT_COLOR = "#41C49F";
+
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
     {
@@ -561,6 +563,36 @@ public class CDSHelper
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
         _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
         waitForFilterAnimation();
+    }
+
+    public void clickPointInPlot(String cssPathToSvg, int pointIndex)
+    {
+        clickElementInPlot(cssPathToSvg, pointIndex, "a.point", "path[fill='" + PLOT_POINT_HIGHLIGHT_COLOR + "']");
+    }
+
+    public void clickHeatPointInPlot(String cssPathToSvg, int pointIndex)
+    {
+        clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square", "path[style='fill: " + PLOT_POINT_HIGHLIGHT_COLOR + "']");
+    }
+
+    private void clickElementInPlot(String cssPathToSvg, int pointIndex, String elementTag, String fillStyle)
+    {
+        String cssPathToPoint = cssPathToSvg + " " + elementTag + ":nth-of-type(" + pointIndex + ")";
+
+        try
+        {
+            _test.click(Locator.css(cssPathToPoint));
+        }
+        catch(org.openqa.selenium.WebDriverException wde)
+        {
+            _test.log("First attempt at clicking the point failed, going to try an alternate way to click.");
+            // Move the mouse over the point, or where the mouse thinks the point is.
+            _test.mouseOver(Locator.css(cssPathToPoint));
+
+            // Now click the point that is the highlight color.
+            _test.click(Locator.css(cssPathToSvg + " " + elementTag + " " + fillStyle));
+        }
+
     }
 
     private void waitForFilterAnimation()

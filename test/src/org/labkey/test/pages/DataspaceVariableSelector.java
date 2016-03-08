@@ -104,6 +104,12 @@ public abstract class DataspaceVariableSelector
         _test.sleep(1000);
     }
 
+    public void removeVariable()
+    {
+        _test.click(CDSHelper.Locators.cdsButtonLocator("Remove variable"));
+        _test._ext4Helper.waitForMaskToDisappear();
+    }
+
     protected void backToSource(String selector){
         while(!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + selector + "')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")))
         {

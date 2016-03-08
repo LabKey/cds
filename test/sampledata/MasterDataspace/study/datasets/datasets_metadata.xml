@@ -103,6 +103,12 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="study_short_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Study Short Name</columnTitle>
+        <description>Study Short Name.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+      </column>
       <column columnName="study_start_date">
         <datatype>timestamp</datatype>
         <columnTitle>Date of Study Start</columnTitle>
