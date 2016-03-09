@@ -2558,7 +2558,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
 
-        log("Change the plot to a heat map on single axis.");
+        log("Change the plot to a heat map.");
         xaxis.openSelectorWindow();
         xaxis.removeVariable();
 
@@ -2567,20 +2567,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType("All");
         yaxis.confirmSelection();
 
-        log("Click on one of the heat map bars and make sure the tool tip is as expected.");
-        // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/4;
-        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square\".");
-        cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
-
-        cds.clickHeatPointInPlot(cssPathToSvg, pointToClick);
-
-        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
-        sleep(1000);
-
-        validateToolTipText("Magnitude (% cells) - Background subtracted", "Functional marker name: IL2", "Data summary level: Protein Panel");
-
-        log("Now change the plot to be a heat map with two dimensions.");
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
         xaxis.pickVariable(CDSHelper.DEMO_AGE);
