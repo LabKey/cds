@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.labkey.test.util;
+package org.labkey.test.util.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.util.PortalHelper;
+import org.labkey.test.util.WikiHelper;
 
 /**
  * Created by xingyang on 11/5/15.

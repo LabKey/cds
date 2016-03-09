@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.pages;
+package org.labkey.test.pages.cds;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.util.CDSHelper;
+import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.ExcelHelper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
