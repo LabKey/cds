@@ -33,7 +33,7 @@ Ext.define('Connector.component.Started', {
                             '<div class="tile" onclick="location.href=\'#learn\'">',
                                 '<span class="tile-title">Answer questions</span>',
                                 '<span class="home_text backgroundimage"></span>',
-                                '<span class="tile-detail">Learn about of [number of studies with metadata] CAVD studies, [number] products, and [number] assays.</span>',
+                                '<span class="tile-detail">Learn about of {nstudy:htmlEncode} CAVD studies, {nproduct:htmlEncode} products, and {nassay:htmlEncode} assays.</span>',
                             '</div>',
                             '<div class="tile right-tile" onclick="location.href=\'#explorer/singleaxis/Study%20Product/Product%20Class\'">',
                                 '<span class="tile-title">Find a cohort</span>',
@@ -46,7 +46,7 @@ Ext.define('Connector.component.Started', {
                             '<div class="tile" onclick="location.href=\'#chart\'">',
                                 '<span class="tile-title">Explore relationships</span>',
                                 '<span class="home_plot backgroundimage"></span>',
-                                '<span class="tile-detail">Plot assay results across [number of studies with data] studies and years of research.</span>',
+                                '<span class="tile-detail">Plot assay results across {nsubjectstudy:htmlEncode} studies and years of research.</span>',
                             '</div>',
                             '<div id="home-video" class="tile right-tile">',
                                 '<span class="tile-title">Be inspired</span>',
@@ -78,6 +78,8 @@ Ext.define('Connector.component.Started', {
      */
     hasIntro: true,
 
+    isSmallSize: false,
+
     renderSelectors: {
         dismissLink: 'a.started-dismiss',
         showLink: 'a.started-show',
@@ -89,7 +91,12 @@ Ext.define('Connector.component.Started', {
         isAdmin: LABKEY.user.isAdmin === true,
         adminURL: LABKEY.ActionURL.buildURL('admin', 'folderManagement.view', null, {tabId: 'props'}),
         videoURL: LABKEY.moduleContext.cds.GettingStartedVideoURL,
-        multiRow: false
+        multiRow: false,
+        nstudy: 0,
+        ndatapts: 0,
+        nsubjectstudy: 0,
+        nassay: 0,
+        nproduct: 0
     },
 
     listeners: {
@@ -117,14 +124,10 @@ Ext.define('Connector.component.Started', {
                     isMulti = true;
                 }
                 var data = {
-                    showIntro: Connector.getProperty(Connector.component.Started.DISMISS_PROPERTY),
-                    isAdmin: LABKEY.user.isAdmin === true,
-                    adminURL: LABKEY.ActionURL.buildURL('admin', 'folderManagement.view', null, {tabId: 'props'}),
-                    videoURL: LABKEY.moduleContext.cds.GettingStartedVideoURL,
                     multiRow: isMulti
                 };
-                c.update(data);
-                c.doLayout();
+                this.isSmallSize = isMulti;
+                c._updateData(data);
             }
         },
         scope: this
@@ -133,6 +136,32 @@ Ext.define('Connector.component.Started', {
     initComponent : function()
     {
         this.callParent();
+        this._updateData({});
+    },
+
+    _updateData: function (data) {
+        if (!data) {
+            data = {};
+        }
+        var isSmallSize = this.isSmallSize;
+        Statistics.resolve(function(stats)
+        {
+            var newData =  {
+                showIntro: Connector.getProperty(Connector.component.Started.DISMISS_PROPERTY),
+                isAdmin: LABKEY.user.isAdmin === true,
+                adminURL: LABKEY.ActionURL.buildURL('admin', 'folderManagement.view', null, {tabId: 'props'}),
+                videoURL: LABKEY.moduleContext.cds.GettingStartedVideoURL,
+                multiRow: isSmallSize,
+                nstudy: stats.studies,
+                ndatapts: stats.datacount,
+                nsubjectstudy: stats.subjectlevelstudies,
+                nassay: stats.assays,
+                nproduct: stats.products
+            };
+            Ext.applyIf(data, newData);
+            this.update(data);
+            this.doLayout();
+        }, this);
     },
 
     registerTileHandlers: function(){
@@ -186,13 +215,9 @@ Ext.define('Connector.component.Started', {
     {
         Connector.setProperty(Connector.component.Started.DISMISS_PROPERTY, false, function() {
             var data = {
-                showIntro: false,
-                isAdmin: LABKEY.user.isAdmin === true,
-                adminURL: LABKEY.ActionURL.buildURL('admin', 'folderManagement.view', null, {tabId: 'props'}),
-                videoURL: LABKEY.moduleContext.cds.GettingStartedVideoURL
+                showIntro: false
             };
-            this.update(data);
-            this.doLayout();
+            this._updateData(data);
         }, this);
 
     },
@@ -213,12 +238,9 @@ Ext.define('Connector.component.Started', {
     {
         Connector.setProperty(Connector.component.Started.DISMISS_PROPERTY, true, function() {
             var data = {
-                showIntro: true,
-                isAdmin: LABKEY.user.isAdmin === true,
-                adminURL: LABKEY.ActionURL.buildURL('admin', 'folderManagement.view', null, {tabId: 'props'}),
-                videoURL: LABKEY.moduleContext.cds.GettingStartedVideoURL
+                showIntro: true
             };
-            this.update(data);
+            this._updateData(data);
             var start = this;
             this.doLayout();
         }, this);
