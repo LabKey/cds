@@ -14,14 +14,15 @@ Ext.define('Connector.component.Started', {
     },
 
     tpl: new Ext.XTemplate(
-            '<div class="expanded-intro"',
+            '<div class="expanded-intro" id="expanded-intro-div"',
                 '<tpl if="showIntro==false">',
                     ' style="display: none !important;"',
                 '</tpl>',
             '>',
                 '<h1 class="section-title bottom-spacer">Get Started!</h1>',
                 '<a id="hidelink" href="#" onclick="return false;" style="float: right; padding-right: 28px;" class="started-dismiss">Hide</a>',
-                    '<div class="get-started" id="get-started-div"',
+                    '<tpl if="videoURL">',
+                        '<div class="get-started"',
                         '<tpl if="multiRow">',
                             ' style="height: 610px; margin-left: auto; margin-right: auto;"',
                         '<tpl else>',
@@ -47,7 +48,7 @@ Ext.define('Connector.component.Started', {
                                 '<span class="home_plot backgroundimage"></span>',
                                 '<span class="tile-detail">Plot assay results across [number of studies with data] studies and years of research.</span>',
                             '</div>',
-                            '<div class="tile right-tile">',
+                            '<div id="home-video" class="tile right-tile">',
                                 '<span class="tile-title">Be inspired</span>',
                                 '<span class="home_video backgroundimage"></span>',
                                 '<span class="tile-detail">Watch the most powerful ways to explore the DataSpace.</span>',
@@ -55,28 +56,17 @@ Ext.define('Connector.component.Started', {
                         '</div>',
 
                     '</div>',
-                    //'<div>',
-                    //    '<div class="intro-video">',
-                    //        '<tpl if="videoURL">',
-                    //        '<iframe width="533" height="300" src="{videoURL}" frameborder="0" allowfullscreen></iframe>',
-                    //        '<tpl elif="isAdmin">',
-                    //        '<div>',
-                    //        'Hey! You look like an admin. The Get Started Video URL needs to be setup.&nbsp;',
-                    //        '<a href="{adminURL}" target="_blank">Configure</a>',
-                    //        '</div>',
-                    //        '</tpl>',
-                    //    '</div>',
-                    //'</div>',
+                    '<tpl elif="isAdmin">',
+                    '<div style="margin-left: 28px;">Hey! You look like an admin. The Get Started Video URL needs to be setup.&nbsp;',
+                    '<a href="{adminURL}" target="_blank">Configure</a></div>',
+                    '</tpl>',
             '</div>',
-        //'<tpl else>',
             '<a id="showlink" href="#" onclick="return false;" class="started-show"',
                 '<tpl if="showIntro==true">',
                 ' style="display: none;"',
                 '</tpl>',
                 '>Show tips for getting started  &#709;',
             '</a>'
-        //'</tpl>'
-
     ),
 
     width: '100%',
@@ -104,17 +94,21 @@ Ext.define('Connector.component.Started', {
 
     listeners: {
         afterLayout: function(start) {
-
                 Ext.get('hidelink').on('click', function(event, target) {
                     start.dismiss();
                 });
                 Ext.get('showlink').on('click', function(event, target) {
                     start.display();
                 });
-            //start.registerTileHandlers();
+            start.registerTileHandlers();
         },resize: function(c)
         {
-            var divHeight = Ext.get('get-started-div').getHeight();
+            /*
+            Inline-flex doesn't work with extjs component layout so well.
+            Home.js this.getBody().setHeight() cause the tiles to shift but the div below doesn't adjust position, resulting in overlap.
+            Force div height as a workaround.
+             */
+            var divHeight = Ext.get('expanded-intro-div').getHeight();
             var divWidth = c.getEl().dom.offsetWidth;
             var needResize = (divWidth < 1002 && divHeight < 600) || (divWidth > 1002 && divHeight > 600);
             if (needResize) {
@@ -139,12 +133,6 @@ Ext.define('Connector.component.Started', {
     initComponent : function()
     {
         this.callParent();
-
-
-        //this.tpl.dismiss = Ext.bind(this.dismiss, this, this, true);
-        //this.tpl.display = Ext.bind(this.display, this, this, true);
-
-        //this.resizeTask = new Ext.util.DelayedTask(this._onResize, this);
     },
 
     registerTileHandlers: function(){
@@ -153,66 +141,45 @@ Ext.define('Connector.component.Started', {
         el = this.getEl();
         tiles = el.query('.tile');
 
-        if (!this.mouseOverTask) {
-            this.mouseOverTask = new Ext.util.DelayedTask(function(tile)
-            {
-                Ext.each(tile.dom.childNodes, function(node){
-                    //node.fireEvent('mouseover');
-                });
-                console.log('mouse over');
-                //this.getBottom().getEl().setStyle({top: '700px'});
-            }, this);
-        }
-
-        if (!this.mouseOutTask) {
-            this.mouseOutTask = new Ext.util.DelayedTask(function(tile)
-            {
-                console.log('mouse out');
-                //this.getBottom().getEl().setStyle({top: '700px'});
-            }, this);
-        }
-
         if (!this.mouseClickTask) {
             this.mouseClickTask = new Ext.util.DelayedTask(function(tile)
             {
-                console.log('mouse click');
-                //this.getBottom().getEl().setStyle({top: '700px'});
+                var win = Ext.create('Ext.window.Window', {
+                    modal: true,
+                    width : '80%',
+                    height: '80%',
+                    resizable: false,
+                    draggable: false,
+                    closable: false,
+                    layout : 'fit',
+                    items : [{
+                        xtype : "component",
+                        autoEl : {
+                            tag : "iframe",
+                            src : LABKEY.moduleContext.cds.GettingStartedVideoURL + "?color=ff9933&title=0&byline=0&portrait=0?color=ff9933&title=0&byline=0&portrait=0"
+                        }
+                    }]
+                });
+                win.show();
+                win.mon(Ext.getBody(), 'click', function(){
+                    win.close();
+                }, win, { delegate: '.x-mask' });
+
             }, this);
         }
 
         var me = this;
-        for (i = 0; i < tiles.length; i++) {
-            tile = Ext.get(tiles[i]);
-            tile.on('mouseover', function() {
-                return function() {
-                    me.mouseOverTask.delay(200, undefined, undefined, [tile]);
-                };
-                //var container = tile.id;
-                //return function () {
-                //    window.location = LABKEY.ActionURL.buildURL('project', 'begin', container);
-                //}
-            }());
-
-            tile.on('mouseout', function() {
-                return function() {
-                    me.mouseOutTask.delay(200, undefined, undefined, [tile]);
-                };
-                //var container = tile.id;
-                //return function () {
-                //    window.location = LABKEY.ActionURL.buildURL('project', 'begin', container);
-                //}
-            }());
-
+        Ext.each(tiles, function(t) {
+            if (t.id !== 'home-video') {
+                return;
+            }
+            tile = Ext.get(t);
             tile.on('click', function() {
                 return function() {
                     me.mouseClickTask.delay(200, undefined, undefined, [tile]);
                 };
-                //var container = tile.id;
-                //return function () {
-                //    window.location = LABKEY.ActionURL.buildURL('project', 'begin', container);
-                //}
             }());
-        }
+        });
     },
 
     dismiss : function(scope)
@@ -268,26 +235,5 @@ Ext.define('Connector.component.Started', {
             },
             scope: this
         });
-    },
-
-    // Do not call directly. Use 'resizeTask' instead
-    _onResize : function()
-    {
-        var baseVideoWidth = 1280,
-            baseVideoHeight = 720,
-            width = Ext.getBody().getBox().width < 1100 ? 460 : 560;
-
-        if (this.lastWidth != width)
-        {
-            this.lastWidth = width;
-            var calcVideoWidth = Math.ceil(width * 0.95),
-                calcVideoHeight = Math.ceil((calcVideoWidth / baseVideoWidth) * baseVideoHeight);
-
-            if (this.hasIntro)
-            {
-                //this.introVideo.setSize(calcVideoWidth, calcVideoHeight);
-            }
-            //this.setWidth(width);
-        }
     }
 });
