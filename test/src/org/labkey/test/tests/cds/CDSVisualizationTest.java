@@ -2609,7 +2609,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         weToolTip = Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]//div[contains(@class, 'hopscotch-content')]").findElement(getDriver());
         toolTipText = weToolTip.getText();
-        log(toolTipText);
 
         for(String text: searchText)
         {
