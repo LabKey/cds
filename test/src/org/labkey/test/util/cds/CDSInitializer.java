@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.util;
+package org.labkey.test.util.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
 import org.labkey.test.etl.ETLHelper;
+import org.labkey.test.util.LogMethod;
+import org.labkey.test.util.PortalHelper;
 
 public class CDSInitializer
 {

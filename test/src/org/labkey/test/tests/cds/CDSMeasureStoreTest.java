@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.tests;
+package org.labkey.test.tests.cds;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.pages.DemoMeasureStorePage;
+import org.labkey.test.pages.cds.DemoMeasureStorePage;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

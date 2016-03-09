@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.pages;
+package org.labkey.test.pages.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.tests.CDSTest;
+import org.labkey.test.tests.cds.CDSTest;
 import org.labkey.test.util.LogMethod;
 
 import static org.junit.Assert.*;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.tests;
+package org.labkey.test.tests.cds;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -21,14 +21,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.pages.ColorAxisVariableSelector;
-import org.labkey.test.pages.DataGrid;
-import org.labkey.test.pages.DataGridVariableSelector;
-import org.labkey.test.pages.DataspaceVariableSelector;
-import org.labkey.test.pages.XAxisVariableSelector;
-import org.labkey.test.pages.YAxisVariableSelector;
-import org.labkey.test.util.CDSAsserts;
-import org.labkey.test.util.CDSHelper;
+import org.labkey.test.pages.cds.ColorAxisVariableSelector;
+import org.labkey.test.pages.cds.DataGrid;
+import org.labkey.test.pages.cds.DataGridVariableSelector;
+import org.labkey.test.pages.cds.DataspaceVariableSelector;
+import org.labkey.test.pages.cds.XAxisVariableSelector;
+import org.labkey.test.pages.cds.YAxisVariableSelector;
+import org.labkey.test.util.cds.CDSAsserts;
+import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;

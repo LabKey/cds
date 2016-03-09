@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.labkey.test.util;
+package org.labkey.test.util.cds;
 
 import com.google.common.base.Function;
 import org.apache.commons.lang3.SystemUtils;
@@ -22,7 +22,11 @@ import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
-import org.labkey.test.pages.DataGridVariableSelector;
+import org.labkey.test.pages.cds.DataGridVariableSelector;
+import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.LabKeyExpectedConditions;
+import org.labkey.test.util.LogMethod;
+import org.labkey.test.util.LoggedParam;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -559,7 +563,7 @@ public class CDSHelper
     {
         WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT); // becomes stale after filter is applied
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locators.barLabel.withText(barLabel).toBy()));
-        _test.clickAt(_test.getElement(Locators.barLabel.withText(barLabel)), 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
+        _test.clickAt(Locators.barLabel.withText(barLabel), 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
         _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
         waitForFilterAnimation();
