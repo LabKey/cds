@@ -118,11 +118,6 @@ Ext.define('Connector.component.Started', {
             start.registerTileHandlers();
         },resize: function(c)
         {
-            /*
-            Inline-flex doesn't work with extjs component layout so well.
-            Home.js this.getBody().setHeight() cause the tiles to shift but the div below doesn't adjust position, resulting in overlap.
-            Force div height as a workaround.
-             */
             var divHeight = Ext.get('expanded-intro-div').getHeight();
             var divWidth = c.getEl().dom.offsetWidth;
             var needResize = (divWidth < 880 && divHeight < 600) || (divWidth > 880 && divHeight > 600);
@@ -249,8 +244,6 @@ Ext.define('Connector.component.Started', {
                 showIntro: true
             };
             this._updateData(data);
-            var start = this;
-            this.doLayout();
         }, this);
 
     },
