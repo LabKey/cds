@@ -337,6 +337,9 @@
     <% } %>
 </head>
 <body>
+<div class="banner" style="visibility: hidden;">
+    <div class="banner-msg">Your session will expire in <span class="timer"></span>. Click anywhere to continue.</div>
+</div>
 <!-- BODY -->
 <%  me.include(me.getBody(),out); %>
 <!-- /BODY -->

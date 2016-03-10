@@ -51,6 +51,10 @@ Ext.define('Connector.controller.Router', {
             return !me.BAD_AUTH;
         });
 
+        if (LABKEY.user.isSignedIn) {
+            this.attachTimeoutListeners();
+        }
+
         this.callParent();
     },
 
@@ -104,5 +108,115 @@ Ext.define('Connector.controller.Router', {
             newQueryString += parameterName + "=" + (parameterValue?parameterValue:'');
         }
         return urlParts[0] + newQueryString + urlhash;
+    },
+
+    // copied from Argos Signin.js
+    attachTimeoutListeners : function() {
+
+        // for tests to specify timeout
+        var timeout = LABKEY.ActionURL.getParameter('session_t');
+        if (timeout) {
+            timeout = parseInt(timeout);
+        }
+
+        // How long (in ms) the user has before inactivity logs them out.
+        var TIMEOUT = timeout ||  15 * 60 * 1000, // 15 minutes
+        // How much time (in ms) to give the user advanced warning.
+                TIMEOUT_WARN = timeout || 2 * 60 * 1000, // 2 minutes
+
+                TIME_REMAINING = TIMEOUT_WARN,
+
+        // The animation time for the banner (in ms)
+                BANNER_ANIMATE = 200,
+
+                BANNER_EL, BANNER_TIMER_EL;
+
+        var formatMilliseconds = function(milliseconds) {
+            var temp = Math.floor(milliseconds / 1000);
+            var minutes = Math.floor((temp %= 3600) / 60);
+            if (minutes) {
+                return minutes + ' minute' + ((minutes > 1) ? 's' : '');
+            }
+            var seconds = temp % 60;
+            if (seconds) {
+                return seconds + ' second' + ((seconds > 1) ? 's' : '');
+            }
+            return 'less than a second';
+        };
+
+        var getBanner = function() {
+            return BANNER_EL;
+        };
+
+        var showBanner = function() {
+            updateTick();
+            tickTask.start();
+            getBanner().slideIn('t', {duration: BANNER_ANIMATE });
+        };
+
+        var hideBanner = function() {
+            tickTask.stop();
+            TIME_REMAINING = TIMEOUT_WARN;
+            var banner = getBanner();
+            if (banner.isVisible()) {
+                banner.hide();
+            }
+        };
+
+        var updateTick = function() {
+            BANNER_TIMER_EL.update(formatMilliseconds(TIME_REMAINING));
+            TIME_REMAINING = TIME_REMAINING - 1000;
+        };
+
+        var tickTask = new Ext.util.TaskRunner().newTask({
+            run: updateTick,
+            interval: 1000
+        });
+
+        var showBannerTask = new Ext.util.DelayedTask(showBanner);
+
+        var sessionTask = new Ext.util.DelayedTask(function() {
+            hideBanner();
+            this.logout();
+        }, this);
+
+        var anyClick = function() {
+            sessionTask.delay(TIMEOUT);
+            showBannerTask.delay(TIMEOUT - TIMEOUT_WARN);
+            hideBanner();
+        };
+
+        Connector.getState().onReady(function() {
+
+            // initialize elements
+            BANNER_EL = Ext.get(Ext.DomQuery.select('.banner')[0]);
+            BANNER_TIMER_EL = Ext.get(Ext.DomQuery.select('.timer'), BANNER_EL.id);
+
+            Ext.getBody().on('click', anyClick);
+
+            // kickoff the timers
+            anyClick();
+        });
+    },
+
+    logout : function() {
+        var me = this;
+        Ext.Ajax.request({
+            url : LABKEY.ActionURL.buildURL("login", "logoutAPI.api"),
+            method: 'POST',
+            success: LABKEY.Utils.getCallbackWrapper(function(response) {
+                if (response.success) {
+                    LABKEY.user.isSignedIn = false;
+                    var newLocation = me.addURLParameter(window.location.href, 'login', 'true');
+                    newLocation = me.addURLParameter(newLocation, 'sessiontimedout', 'true');
+                    window.location = newLocation;
+                }
+            }, this),
+            failure: LABKEY.Utils.getCallbackWrapper(function(response) {
+                // Do it manually instead then.
+                window.location = LABKEY.ActionURL.buildURL('login', 'logout');
+            }, this)
+        });
     }
+
 });
