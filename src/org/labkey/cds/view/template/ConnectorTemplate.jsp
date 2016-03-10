@@ -50,7 +50,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
-    <title>HIV CDS</title>
+    <title>DataSpace</title>
 
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/headerlogo.png">
 

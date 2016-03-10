@@ -1,4 +1,4 @@
-<Schema name="CDS" description="HIV Collaborative Dataspace">
+<Schema name="CDS" description="DataSpace">
 
     <Cube name="DataspaceCube" visible="true" defaultMeasure="RowCount" cache="true" enabled="true">
 
