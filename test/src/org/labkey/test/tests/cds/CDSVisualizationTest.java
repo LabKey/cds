@@ -245,8 +245,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
         log("Brush only in the log gutter on the x-axis.");
-        mouseOver(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) > g:nth-of-type(3) > g:nth-of-type(1)"));
-        dragAndDrop(100, 100);
+        cds.dragAndDropFromElement(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) > g:nth-of-type(3) > g:nth-of-type(1)"), 100, 100);
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
         sleep(1000); // Let the plot redraw.
         _ext4Helper.waitForMaskToDisappear();
@@ -267,8 +266,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         log("Now brush only in the log gutter on the y-axis.");
-        mouseOver(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) > g:nth-of-type(4) > g:nth-of-type(1)"));
-        dragAndDrop(-100, 100);
+        cds.dragAndDropFromElement(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) > g:nth-of-type(4) > g:nth-of-type(1)"), -100, 100);
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
         sleep(1000); // Let the plot redraw.
         _ext4Helper.waitForMaskToDisappear();
@@ -296,8 +294,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         log("Brush just the main plot and validate that all of the gutters disappear.");
-        mouseOver(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2)"));
-        dragAndDrop(100, 100);
+        cds.dragAndDropFromElement(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2)"), 100, 100);
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
         sleep(1000); // Let the plot redraw.
         _ext4Helper.waitForMaskToDisappear();
@@ -2025,7 +2022,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTextPresent("Group 1 Arm T1");
 
         log("Click the challenge glyph in the time axis to apply it as a filter.");
-        builder.click(weList.get(0)).perform();
+        builder = new Actions(getDriver());
+        builder.moveToElement(weList.get(0)).click().build().perform();
         clickButton("Filter", 0);
 
         ip.waitForSpinners();
@@ -2988,14 +2986,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if(isXGutter)
         {
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > rect.extent";
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(-100, 0);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), -100, 0);
         }
         else
         {
             cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > rect.extent";
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(0, -100);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), 0, -100);
         }
 
 
@@ -3006,13 +3002,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") > g.brush > rect.extent";
         if(isXGutter)
         {
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(100, 0);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), 100, 0);
         }
         else
         {
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(0, 100);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), 0, 100);
         }
 
         sleep(500);
@@ -3022,14 +3016,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if(isXGutter)
         {
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > g:nth-of-type(1)";
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(-100, 0);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), -100, 0);
         }
         else
         {
             cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > g:nth-of-type(1)";
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(0, -100);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), 0, -100);
         }
 
         sleep(500);
@@ -3037,14 +3029,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if(isXGutter)
         {
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > g:nth-of-type(2)";
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(-100, 0);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), -100, 0);
         }
         else
         {
             cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > g:nth-of-type(2)";
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(0, -100);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), 0, -100);
         }
 
         log("Move the brush window back to starting point.");
@@ -3052,14 +3042,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         if(isXGutter)
         {
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > rect.extent";
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(100, 0);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), 100, 0);
         }
         else
         {
             cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(1) > g.brush > rect.extent";
-            mouseOver(Locator.css(cssPathBrushWindow));
-            dragAndDrop(0, 100);
+            cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), 0, 100);
         }
 
         log("Apply the brushing as a filter.");
@@ -3090,12 +3078,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Mouse over the given point.
         plotElement = Locator.css(cssPointOfOrigin);
 
-        mouseOver(plotElement);
-
         sleep(1000);
-        // To make things easy, don't care about the origin element, just do a drag and drop to an offset.
-        // This avoids the issue in selenium when you try to click on an element in the plot and another element is painted on top of it.
-        dragAndDrop(xOffSet, yOffSet);
+        cds.dragAndDropFromElement(plotElement, xOffSet, yOffSet);
         sleep(CDSHelper.CDS_WAIT);
 
         if(applyFilter)
@@ -3119,8 +3103,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         clickAt(Locator.css(cssPathToPlot), 1, 1, 0);
 
         sleep(1000);
-        mouseOver(Locator.css(cssPathToPlot));
-        dragAndDrop(xOffset, yOffset);
+        cds.dragAndDropFromElement(Locator.css(cssPathToPlot), xOffset, yOffset);
         sleep(CDSHelper.CDS_WAIT);
 
         if(applyFilter)
@@ -3390,7 +3373,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         scrollIntoView(Locator.css(cssVisit));
         mouseOver(Locator.css(cssVisit));
-        sleep(500);
+        sleep(1000);
         log(getAttribute(Locator.css(cssVisit), "href"));
 
         assertTrue("Tool-tip was not present.", waitForElement(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"), CDSHelper.CDS_WAIT_TOOLTIP, true));
