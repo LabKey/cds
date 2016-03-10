@@ -571,32 +571,43 @@ public class CDSHelper
 
     public void clickPointInPlot(String cssPathToSvg, int pointIndex)
     {
-        clickElementInPlot(cssPathToSvg, pointIndex, "a.point", "path[fill='" + PLOT_POINT_HIGHLIGHT_COLOR + "']");
+//        clickElementInPlot(cssPathToSvg, pointIndex, "a.point", "path[fill='" + PLOT_POINT_HIGHLIGHT_COLOR + "']");
+        clickElementInPlot(cssPathToSvg, pointIndex, "a.point");
     }
 
     public void clickHeatPointInPlot(String cssPathToSvg, int pointIndex)
     {
-        clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square", "path[style='fill: " + PLOT_POINT_HIGHLIGHT_COLOR + "']");
+//        clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square", "path[style='fill: " + PLOT_POINT_HIGHLIGHT_COLOR + "']");
+        clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square");
     }
 
-    private void clickElementInPlot(String cssPathToSvg, int pointIndex, String elementTag, String fillStyle)
+//    private void clickElementInPlot(String cssPathToSvg, int pointIndex, String elementTag, String fillStyle)
+//    {
+//        String cssPathToPoint = cssPathToSvg + " " + elementTag + ":nth-of-type(" + pointIndex + ")";
+//
+//        try
+//        {
+//            _test.click(Locator.css(cssPathToPoint));
+//        }
+//        catch(org.openqa.selenium.WebDriverException wde)
+//        {
+//            _test.log("First attempt at clicking the point failed, going to try an alternate way to click.");
+//            // Move the mouse over the point, or where the mouse thinks the point is.
+//            _test.mouseOver(Locator.css(cssPathToPoint));
+//
+//            // Now click the point that is the highlight color.
+//            _test.click(Locator.css(cssPathToSvg + " " + elementTag + " " + fillStyle));
+//        }
+//
+//    }
+
+    private void clickElementInPlot(String cssPathToSvg, int pointIndex, String elementTag)
     {
         String cssPathToPoint = cssPathToSvg + " " + elementTag + ":nth-of-type(" + pointIndex + ")";
 
-        try
-        {
-            _test.click(Locator.css(cssPathToPoint));
-        }
-        catch(org.openqa.selenium.WebDriverException wde)
-        {
-            _test.log("First attempt at clicking the point failed, going to try an alternate way to click.");
-            // Move the mouse over the point, or where the mouse thinks the point is.
-            _test.mouseOver(Locator.css(cssPathToPoint));
-
-            // Now click the point that is the highlight color.
-            _test.click(Locator.css(cssPathToSvg + " " + elementTag + " " + fillStyle));
-        }
-
+        _test.mouseOver(Locator.css(cssPathToPoint));
+        Actions builder = new Actions(_test.getDriver());
+        builder.click().build().perform();
     }
 
     private void waitForFilterAnimation()
