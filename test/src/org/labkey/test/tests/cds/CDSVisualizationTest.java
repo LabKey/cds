@@ -2639,7 +2639,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
         log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(" + pointToClick + ")", 25, -100, true);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1)", pointToClick, CDSHelper.PlotPoints.POINT, 25, -100, true);
 
         // Clear the filter.
         cds.clearFilter(1);
@@ -2655,7 +2655,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) a.point"))/4;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(2) a.point:nth-of-type(" + pointToClick + ")", 250, -250, true);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(2)", pointToClick, CDSHelper.PlotPoints.POINT, 250, -250, true);
 
         // Clear the plot.
         cds.clearFilters();
@@ -2686,7 +2686,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", -50, -100, true);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1)", pointToClick, CDSHelper.PlotPoints.BIN, -50, -100, true);
 
         cds.clearFilters();
         sleep(500);
@@ -2703,7 +2703,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50, true);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1)", pointToClick, CDSHelper.PlotPoints.BIN, 0, -50, true);
 
         // Clear the filter.
         cds.clearFilter(1);
@@ -2717,7 +2717,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/3;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50, true);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1)", pointToClick, CDSHelper.PlotPoints.BIN, 0, -50, true);
 
         // Clear the filter.
         cds.clearFilters();
@@ -2743,10 +2743,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         coloraxis.confirmSelection();
 
         // Try to protect from getting an index out of range error.
-        int boxGroup;
-        boxGroup = getElementCount(Locator.css("div:not(.thumbnail) > svg g.dataspace-box-group"))/2;
-        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg g.dataspace-box-group:nth-of-type(" + boxGroup + ") a.point"))/4;
-        brushPlot("div:not(.thumbnail) > svg g.dataspace-box-group:nth-of-type(" + boxGroup + ") a.point:nth-of-type(" + pointToClick + ")", 0, -50, true);
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg " + CDSHelper.PlotPoints.GLYPH.getTag()))/4;
+        brushPlot("div:not(.thumbnail) > svg", pointToClick, CDSHelper.PlotPoints.GLYPH, 0, -50, true);
 
         // Clear the filter.
         cds.clearFilters();
@@ -2893,6 +2891,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         int heightWidth, pointToClick;
         int mainPlotIndex;
         String tempStr, cssPathBrushWindow;
+        CDSHelper.PlotPoints plotPointType;
 
         refresh();
         sleep(2000);
@@ -2918,20 +2917,22 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
 
             // See what kind of data points we have in the main plot.
-            if (getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") a.point")) != 0)
+            if (getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + CDSHelper.PlotPoints.POINT.getTag())) != 0)
             {
-                dataPointType = "a.point";
+                plotPointType = CDSHelper.PlotPoints.POINT;
             }
             else
             {
-                dataPointType = "a.vis-bin-square";
+                plotPointType = CDSHelper.PlotPoints.BIN;
             }
+
+            dataPointType = plotPointType.getTag();
 
             // Try to protect from getting an index out of range error. Add one just to make sure that if there is a
             // very small number of points we don't end up with 0 as pointToClick;
             pointToClick = (getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType)) / 4) + 1;
             log("Brushing in the main plot area. Going to click at point: div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")");
-            brushPlot("div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")", 50, -50, false);
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ")", pointToClick, plotPointType, 50, -50, false);
 
         }
         else
@@ -3059,31 +3060,31 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
     }
 
-    private void brushPlot(String cssPathToPoint, int xOffSet, int yOffSet, boolean applyFilter)
+    private void brushPlot(String cssPathToSvg, int pointIndex, CDSHelper.PlotPoints pointType, int xOffSet, int yOffSet, boolean applyFilter)
+    {
+        String pointCss;
+        pointCss = cssPathToSvg + " " + pointType.getTag() + ":nth-of-type(" + pointIndex + ")";
+        brushPlot(pointCss, xOffSet, yOffSet, applyFilter);
+    }
+
+    private void brushPlot(String cssPointOfOrigin, int xOffSet, int yOffSet, boolean applyFilter)
     {
         int subjectCountBefore;
         String tempStr;
+        Locator plotElement;
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
-        // Going to move the mouse over the area where it is about to start dragging.
+        // Mouse over the given point.
+        plotElement = Locator.css(cssPointOfOrigin);
 
-        // This try catch is in for a Chrome issue with selenium. With dense plotting I was getting an error in Chrome
-        // where I could not click on a point because some other point (or other aspect of the plot) was drawn on top of it.
-        // To avoid this error try clicking at a point. This error did not show up in Firefox.
-        try
-        {
-            click(Locator.css(cssPathToPoint));
-        }
-        catch(org.openqa.selenium.WebDriverException wde)
-        {
-            log("Got an error trying to click a point, going to try an alternate way to click.");
-            clickAt(Locator.css(cssPathToPoint), 1, 1, 0);
-        }
+        mouseOver(plotElement);
 
         sleep(1000);
-        dragAndDrop(Locator.css(cssPathToPoint), xOffSet, yOffSet);
+        // To make things easy, don't care about the origin element, just do a drag and drop to an offset.
+        // This avoids the issue in selenium when you try to click on an element in the plot and another element is painted on top of it.
+        dragAndDrop(xOffSet, yOffSet);
         sleep(CDSHelper.CDS_WAIT);
 
         if(applyFilter)

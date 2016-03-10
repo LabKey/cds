@@ -1159,4 +1159,34 @@ public class CDSHelper
         }
     }
 
+    public enum PlotPoints
+    {
+
+        POINT("a.point", PLOT_POINT_HIGHLIGHT_COLOR),
+        BIN("a.vis-bin-square", PLOT_POINT_HIGHLIGHT_COLOR),
+        GLYPH("a.point", PLOT_POINT_HIGHLIGHT_COLOR),
+        GLYPH_ASTERISKS("a.point path[d='M3-1.1L2.6-1.9L0.5-0.8v-1.8h-1v1.8l-2.1-1.1L-3-1.1L-0.9,0L-3,1.1l0.4,0.7l2.1-1.1v1.9h1V0.7l2.1,1.1L3,1.1 L0.9,0L3-1.1z']", PLOT_POINT_HIGHLIGHT_COLOR);
+        // That long ugly value is the asterisks glyph. It's one of the better ones for hit testing.
+        // It is not currently used, but it might be in the future, and I didn't want to have to try and find it again.
+
+        private String _tag, _highlightColor;
+
+        private PlotPoints(String linkText, String highlightColor)
+        {
+            _tag = linkText;
+            _highlightColor = highlightColor;
+        }
+
+        public String getTag()
+        {
+            return _tag;
+        }
+
+        public String getHighlightColor()
+        {
+            return _highlightColor;
+        }
+
+    }
+
 }
