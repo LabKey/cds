@@ -37,24 +37,21 @@ Ext.define('Connector.view.Home', {
             this.resizeTask = new Ext.util.DelayedTask(function(c)
             {
                 this.getBody().setHeight(this.getHeight() - this.homeHeaderHeight);
-                //this.getBottom().getEl().setStyle({top: '700px'});
             }, this);
             this.body = Ext.create('Ext.container.Container', {
                 plugins: ['messaging'],
-                //cls: 'left-spacer',
                 layout: {
                     type: 'vbox',
                     align: 'stretch',
                     pack: 'start'
                 },
-                overflowY: 'scroll',
+                overflowY: 'auto',
                 overflowX: 'hidden',
                 items: [this.getMiddle(), this.getBottom()],
                 height: '300px',
                 listeners: {
                     resize: function(c)
                     {
-                        //this.getBody().setHeight(this.getHeight() - this.homeHeaderHeight);
                         this.resizeTask.delay(200, undefined, undefined, [c]);
                     },
                     scope: this
@@ -78,7 +75,7 @@ Ext.define('Connector.view.Home', {
                 },
                 items: [{
                     xtype: 'cds-started',
-                    cls: 'bottom-spacer-xlg'
+                    cls: 'bottom-spacer-xlg cds-started'
                 }]
             });
         }
@@ -92,15 +89,6 @@ Ext.define('Connector.view.Home', {
             var items = [{
                 xtype: 'cds-news'
             }];
-
-            //if (Connector.getProperty(Connector.component.Started.DISMISS_PROPERTY) === true)
-            //{
-            //    items.unshift({
-            //        xtype: 'cds-started',
-            //        cls: 'bottom-spacer-xlg'
-            //    });
-            //}
-
             this.content = Ext.create('Ext.container.Container', {
                 plugins: ['messaging'],
                 cls: 'left-spacer',

@@ -20,47 +20,55 @@ Ext.define('Connector.component.Started', {
                 '</tpl>',
             '>',
                 '<h1 class="section-title bottom-spacer">Get Started!</h1>',
-                '<a id="hidelink" href="#" onclick="return false;" style="float: right; padding-right: 28px;" class="started-dismiss">Hide</a>',
+                '<a id="hidelink" href="#" onclick="return false;" style="float: right; padding-right: 28px;" class="started-dismiss">Hide &nbsp; <span style="font-size: 9px">&#x2715;</span></a>',
                     '<tpl if="videoURL">',
                         '<div class="get-started"',
                         '<tpl if="multiRow">',
-                            ' style="height: 610px; margin-left: auto; margin-right: auto;"',
+                            ' style="height: 650px; margin-left: auto; margin-right: auto;"',
                         '<tpl else>',
                             ' style="height: 310px; margin-left: auto; margin-right: auto;"',
                         '</tpl>',
                         '>',
-                        '<div class="tile-group">',
-                            '<div class="tile" onclick="location.href=\'#learn\'">',
-                                '<span class="tile-title">Answer questions</span>',
-                                '<span class="home_text backgroundimage"></span>',
-                                '<span class="tile-detail">Learn about of {nstudy:htmlEncode} CAVD studies, {nproduct:htmlEncode} products, and {nassay:htmlEncode} assays.</span>',
-                            '</div>',
-                            '<div class="tile right-tile" onclick="location.href=\'#explorer/singleaxis/Study%20Product/Product%20Class\'">',
-                                '<span class="tile-title">Find a cohort</span>',
-                                '<span class="home_bar backgroundimage"></span>',
-                                '<span class="tile-detail">Find subjects based on attributes that span studies.</span>',
-                            '</div>',
-                        '</div>',
 
-                        '<div class="tile-group">',
-                            '<div class="tile" onclick="location.href=\'#chart\'">',
-                                '<span class="tile-title">Explore relationships</span>',
-                                '<span class="home_plot backgroundimage"></span>',
-                                '<span class="tile-detail">Plot assay results across {nsubjectstudy:htmlEncode} studies and years of research.</span>',
-                            '</div>',
-                            '<div id="home-video" class="tile right-tile">',
-                                '<span class="tile-title">Be inspired</span>',
-                                '<span class="home_video backgroundimage"></span>',
-                                '<span class="tile-detail">Watch the most powerful ways to explore the DataSpace.</span>',
-                            '</div>',
-                        '</div>',
+                        '<table class="tile-group"><tr>',
+                            '<td><div>',
+                                '<table class="tile" onclick="location.href=\'#learn\'">',
+                                '<tr><td><p class="tile-title">Answer questions</p></td></tr>',
+                                '<tr><td><div class="home_text backgroundimage"></div></td></tr>',
+                                '<tr><td>Learn about {nstudy:htmlEncode} CAVD studies, {nproduct:htmlEncode} products, and {nassay:htmlEncode} assays.</td></tr>',
+                                '</table>',
+                            '</div></td>',
+                            '<td><div>',
+                                '<table class="tile" onclick="location.href=\'#explorer/singleaxis/Study%20Product/Product%20Class\'">',
+                                '<tr><td><p class="tile-title">Find a cohort</p></td></tr>',
+                                '<tr><td><div class="home_bar backgroundimage"></div></td></tr>',
+                                '<tr><td>Find subjects based on attributes that span studies.</td></tr>',
+                                '</table>',
+                            '</div></td>',
+                        '<tpl if="multiRow">',
+                        '</tr><tr>',
+                        '</tpl>',
+                            '<td><div>',
+                                '<table class="tile" onclick="location.href=\'#chart\'">',
+                                '<tr><td><p class="tile-title">Explore relationships</p></td></tr>',
+                                '<tr><td><div class="home_plot backgroundimage"></div></td></tr>',
+                                '<tr><td>Plot assay results across {nsubjectstudy:htmlEncode} studies and years of research.</td></tr>',
+                                '</table>',
+                            '</div></td>',
+                            '<td><div>',
+                                '<table class="tile" id="home-video">',
+                                '<tr><td><p class="tile-title">Be inspired</p></td></tr>',
+                                '<tr><td><div class="home_video backgroundimage"></div></td></tr>',
+                                '<tr><td>Watch the most powerful ways to explore the DataSpace.</td></tr>',
+                                '</table>',
+                            '</div></td>',
+                        '</tr></table>',
 
-                    '</div>',
                     '<tpl elif="isAdmin">',
                     '<div style="margin-left: 28px;">Hey! You look like an admin. The Get Started Video URL needs to be setup.&nbsp;',
                     '<a href="{adminURL}" target="_blank">Configure</a></div>',
                     '</tpl>',
-            '</div>',
+            '</div></div>',
             '<a id="showlink" href="#" onclick="return false;" class="started-show"',
                 '<tpl if="showIntro==true">',
                 ' style="display: none;"',
@@ -117,10 +125,10 @@ Ext.define('Connector.component.Started', {
              */
             var divHeight = Ext.get('expanded-intro-div').getHeight();
             var divWidth = c.getEl().dom.offsetWidth;
-            var needResize = (divWidth < 1002 && divHeight < 600) || (divWidth > 1002 && divHeight > 600);
+            var needResize = (divWidth < 880 && divHeight < 600) || (divWidth > 880 && divHeight > 600);
             if (needResize) {
                 var isMulti = false;
-                if (divWidth < 1002 && divHeight < 600) {
+                if (divWidth < 880 && divHeight < 600) {
                     isMulti = true;
                 }
                 var data = {
@@ -185,7 +193,7 @@ Ext.define('Connector.component.Started', {
                         xtype : "component",
                         autoEl : {
                             tag : "iframe",
-                            src : LABKEY.moduleContext.cds.GettingStartedVideoURL + "?color=ff9933&title=0&byline=0&portrait=0?color=ff9933&title=0&byline=0&portrait=0"
+                            src : LABKEY.moduleContext.cds.GettingStartedVideoURL
                         }
                     }]
                 });
