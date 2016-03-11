@@ -147,7 +147,8 @@ Ext.define('Connector.model.ChartData', {
                             || (measure.name == 'ParticipantSequenceNum' && alias == QueryUtils.SUBJECT_SEQNUM_ALIAS)
                             || (measure.name == 'VisitRowId' && alias == QueryUtils.VISITROWID_ALIAS)
                             || (measure.name == 'Study' && alias == QueryUtils.STUDY_ALIAS)
-                            || (measure.name == 'TreatmentSummary' && alias == QueryUtils.TREATMENTSUMMARY_ALIAS);
+                            || (measure.name == 'TreatmentSummary' && alias == QueryUtils.TREATMENTSUMMARY_ALIAS)
+                            || (measure.name == 'ProtocolDay' && alias == QueryUtils.PROTOCOLDAY_ALIAS);
 
                 if ((measure.alias && measure.alias == alias) || (measure.name && schemaQueryNameMatch) || keyColumnMatch)
                 {
@@ -188,7 +189,7 @@ Ext.define('Connector.model.ChartData', {
                     dimensionKeys.push(alias);
                 }
 
-                if (alias && alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 && sharedKeys.indexOf(alias) == -1)
+                if (alias && (alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 || alias.indexOf(QueryUtils.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS) == 0) && sharedKeys.indexOf(alias) == -1)
                 {
                     sharedKeys.push(alias);
                 }
@@ -349,6 +350,7 @@ Ext.define('Connector.model.ChartData', {
 
         dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated));
 
+        var allRows = {};
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++)
         {
@@ -408,25 +410,38 @@ Ext.define('Connector.model.ChartData', {
                 hasNegOrZeroY = true;
             }
 
-            var key = '';
+            var timeAxisKey = '';
             if (_row[QueryUtils.STUDY_ALIAS] && _row[QueryUtils.VISITROWID_ALIAS]) {
-                key = ChartUtils.studyAxisKeyDelimiter + xVal;
-                key += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
+                timeAxisKey = ChartUtils.studyAxisKeyDelimiter + xVal;
+                timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
                 if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
-                    key += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
+                    timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
                 }
 
             }
 
+            var rowKey = '';
+            if (_row[QueryUtils.SUBJECT_ALIAS]) {
+                rowKey = ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.SUBJECT_ALIAS];
+                rowKey += ChartUtils.studyAxisKeyDelimiter + xVal;
+                if (yVal) {
+                    rowKey += ChartUtils.studyAxisKeyDelimiter + yVal;
+                }
+                rowKey += ChartUtils.studyAxisKeyDelimiter;
+            }
+
+            allRows[rowKey] = _row;
+
             var entry = {
                 x: xVal,
                 y: yVal,
-                timeAxisKey : key,
+                timeAxisKey : timeAxisKey,
                 color: colorVal,
                 subjectId: _row[QueryUtils.SUBJECT_ALIAS],
                 xname: xa.label,
                 yname: ya.label,
-                colorname: ca.label
+                colorname: ca.label,
+                rowKey: rowKey
             };
 
             // split the data entry based on undefined x and y values for gutter plotting
@@ -507,11 +522,12 @@ Ext.define('Connector.model.ChartData', {
             yDomain: yDomain,
             rows: {
                 main: mainPlotRows,
+                allRowsMap: allRows,
                 undefinedX: undefinedXRows.length > 0 ? undefinedXRows : undefined,
                 undefinedY: undefinedYRows.length > 0 ? undefinedYRows : undefined,
-                logNonPositiveX: logGutterXCount > 0 ? true : false,
-                logNonPositiveY: logGutterYCount > 0 ? true : false,
-                logNonPositiveBoth: logGutterBothCount > 0 ? true : false,
+                logNonPositiveX: logGutterXCount > 0,
+                logNonPositiveY: logGutterYCount > 0,
+                logNonPositiveBoth: logGutterBothCount > 0,
                 totalCount: mainCount + undefinedXRows.length + undefinedYRows.length,
                 invalidLogPlotRowCount: invalidLogPlotRowCount,
                 minPositiveX: minPositiveX === Number.MAX_VALUE ? 0.0001 : minPositiveX,

@@ -68,6 +68,39 @@ Ext.define('Connector.utility.Chart', {
     xAxisNameProp : 'plot-axis-x',
     yAxisNameProp : 'plot-axis-y',
 
+    callOutPositions: {
+        right : {
+            placement: 'right',
+            xOffset: 0,
+            yOffset: -25,
+            arrowOffset: 0
+        },
+        topRight : {
+            placement: 'top',
+            xOffset: -35,
+            yOffset: 0,
+            arrowOffset: 20
+        },
+        top : {
+            placement: 'top',
+            xOffset: -200,
+            yOffset: 0,
+            arrowOffset: 190
+        },
+        bottom : {
+            placement: 'bottom',
+            xOffset: -200,
+            yOffset: 0,
+            arrowOffset: 190
+        },
+        bottomRight : {
+            placement: 'bottom',
+            xOffset: -35,
+            yOffset: 0,
+            arrowOffset: 20
+        }
+    },
+
     constructor : function(config) {
         this.callParent([config]);
         this.brushDelayTask = new Ext.util.DelayedTask(this._onBrush, this);
@@ -716,5 +749,60 @@ Ext.define('Connector.utility.Chart', {
         {
             return measureAKey == measureBKey && ChartUtils.getAssayDimensionsWithDifferentValues(measureA, measureB).length == 0;
         }
+    },
+
+    showDataTooltipCallout : function(content, point, hideEvent, isYGutter, isXGutter, scope) {
+        var positioning = this.getBubblePosition(point,  isYGutter, isXGutter);
+        var config = Ext.apply(positioning, {
+            bubbleWidth: 400,
+            target: point,
+            content: content
+        });
+
+        var calloutMgr = hopscotch.getCalloutManager(), _id = Ext.id();
+
+        Ext.apply(config, {
+            id: _id,
+            showCloseButton: false
+        });
+
+        calloutMgr.createCallout(config);
+
+        scope.on(hideEvent, function() {
+            calloutMgr.removeCallout(_id);
+        }, scope);
+
+        scope.mon(Ext.getCmp('app-main').getEl(), 'mousedown', function(el, e){
+            calloutMgr.removeCallout(_id);
+        }, scope);
+    },
+
+    getBubblePosition: function(point, isYGutter, isXGutter) {
+        var pointNode = point.parentNode;
+        var bbox = pointNode.getBBox();
+        var config = ChartUtils.callOutPositions.top;
+
+        if (isYGutter) {
+            config = ChartUtils.callOutPositions.right;
+        }
+        else if (isXGutter) {
+            if (bbox.x < 250) {
+                config = ChartUtils.callOutPositions.topRight;
+            }
+            else {
+                config = ChartUtils.callOutPositions.top;
+            }
+        }
+        else if (bbox.y < 250 && bbox.x < 250) {
+            config = ChartUtils.callOutPositions.bottomRight;
+        }
+        else if (bbox.y < 250) {
+            config = ChartUtils.callOutPositions.bottom;
+        }
+        else if (bbox.x < 250) {
+            config = ChartUtils.callOutPositions.topRight;
+        }
+        return config;
     }
+
 });
