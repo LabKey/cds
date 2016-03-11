@@ -155,6 +155,7 @@ Connector.view.StudyAxis = function() {
             var multi = d3.event.ctrlKey||d3.event.shiftKey||d3.event.metaKey;
             tagMouseover.call(tagMouseoverScope, d, this);
             highlightGlyph.call(this, d, true, selection, true, multi);
+            tagMouseoverScope.fireEvent('hidetooltipmsg');
         });
     };
 
