@@ -12,6 +12,8 @@ Ext.define('Connector.view.Main', {
 
     xtype: 'app-main',
 
+    id: 'app-main',
+
     layout: {
         type: 'border'
     },

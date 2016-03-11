@@ -139,6 +139,10 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         stopImpersonatingGroup();
         assertSignedInNotImpersonating();
 
+        //TODO The call to stopImpersonatingGroup goes to home.
+        // The group is not available from home, only from the CDS project.
+        goToProjectHome();
+
         impersonateGroup(PERM_GROUPS[1], false);
 
         cds.enterApplication();
