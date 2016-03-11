@@ -689,7 +689,7 @@ div.hopscotch-bubble {
   @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
 
   .hopscotch-bubble-container {
-    max-width: 200px;
+    max-width: 400px;
   }
 
   .hopscotch-title {
@@ -702,6 +702,15 @@ div.hopscotch-bubble {
     padding: 0;
     font-family: $info-font;
     color: $secondary-text-color;
+  }
+
+  .axis-details {
+    padding-left: 20px;
+  }
+
+  .group-title {
+    font-weight: bold;
+    color: #000000;
   }
 
   .hopscotch-actions {

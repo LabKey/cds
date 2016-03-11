@@ -1304,6 +1304,7 @@ public class CDSTest extends CDSReadOnlyTest
     public void testLearnAboutStudyProducts()
     {
         cds.viewLearnAboutPage("Study products");
+        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
 
         List<String> studyProducts = Arrays.asList(CDSHelper.PRODUCTS);
         _asserts.verifyLearnAboutPage(studyProducts);
@@ -1317,18 +1318,18 @@ public class CDSTest extends CDSReadOnlyTest
         final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         cds.viewLearnAboutPage("Study products");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
 
         int index = returnedItems.size()/2;
 
         itemParts = returnedItems.get(index).getText().split("\n");
         log("Looking for product: " + itemParts[0] + " in a list of " + returnedItems.size());
-        shortWait().until(ExpectedConditions.visibilityOf(returnedItems.get(index)));
+        longWait().until(ExpectedConditions.visibilityOf(returnedItems.get(index)));
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
+        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Product Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());

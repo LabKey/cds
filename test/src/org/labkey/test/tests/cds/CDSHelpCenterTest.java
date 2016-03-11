@@ -15,50 +15,22 @@
  */
 package org.labkey.test.tests.cds;
 
-import org.jetbrains.annotations.Nullable;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
-import org.labkey.test.util.cds.CDSInitializer;
-import org.labkey.test.util.PostgresOnlyTest;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
 @Category({CDS.class})
-public class CDSHelpCenterTest extends BaseWebDriverTest implements PostgresOnlyTest
+public class CDSHelpCenterTest extends CDSReadOnlyTest
 {
-    @Nullable
-    @Override
-    protected final String getProjectName()
-    {
-        return "CDSTest Project";
-    }
-
-    @Override
-    protected BrowserType bestBrowser()
-    {
-        return BrowserType.CHROME;
-    }
-
-    @Override
-    public List<String> getAssociatedModules()
-    {
-        return Arrays.asList("CDS");
-    }
-
     private final CDSHelpCenterUtil helpCenter = new CDSHelpCenterUtil(this);
     private final CDSHelper cds = new CDSHelper(this);
 
@@ -122,9 +94,9 @@ public class CDSHelpCenterTest extends BaseWebDriverTest implements PostgresOnly
         // verify closing and re-opening help center
         List<WebElement> logos = Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS).findElements(getDriver());
         doShortWait();
-        WebElement element = logos.get(logos.size() - 1);
-        Actions builder = new Actions(getDriver());
-        builder.moveToElement(element, 10, 10).click().build().perform(); // click outside popup should close the popup
+        // click outside popup should close the popup
+        // Unfortunately selenium won't let you click through the mask behind the help page, so you have to send the click to the mask.
+        clickAt(Locator.css("div.x-mask"), 10, 10, 0);
         doShortWait();
 
         openHelpCenter();
@@ -172,33 +144,11 @@ public class CDSHelpCenterTest extends BaseWebDriverTest implements PostgresOnly
         doShortWait();
     }
 
-    @Override
-    protected void doCleanup(boolean afterTest) throws TestTimeoutException
+    @Before
+    public void preTest()
     {
+        // TODO Check to see if there is a faster way to bulk delete existing wikis.
         helpCenter.deleteWikis();
-    }
-
-    @BeforeClass
-    public static void doSetup() throws Exception
-    {
-        CDSHelpCenterTest initTest = (CDSHelpCenterTest)getCurrentTest();
-
-        boolean needSetUp = false;
-        try
-        {
-            initTest.goToProjectHome();
-            new CDSHelper(initTest).enterApplication();
-        }
-        catch (NoSuchElementException e)
-        {
-            needSetUp = true;
-        }
-
-        if (needSetUp)
-        {
-            CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-            _initializer.setupDataspace();
-        }
     }
 
 }
