@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
-import org.labkey.test.categories.CDS;
 import org.labkey.test.pages.cds.CDSLoginPage;
 import org.labkey.test.util.cds.CDSHelper;
 
@@ -31,7 +30,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.labkey.test.pages.cds.CDSLoginPage.Locators.termsCheckbox;
 
-@Category({CDS.class})
+@Category({})
 public class CDSLoginTest extends CDSReadOnlyTest
 {
     @Before

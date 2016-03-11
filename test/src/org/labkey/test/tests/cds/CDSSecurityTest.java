@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
-import org.labkey.test.categories.CDS;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.EmailRecordTable;
@@ -31,7 +30,7 @@ import org.testng.Assert;
 import java.util.Arrays;
 import java.util.List;
 
-@Category({CDS.class})
+@Category({})
 public class CDSSecurityTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);

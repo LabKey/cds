@@ -22,7 +22,6 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
-import org.labkey.test.categories.CDS;
 import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.cds.CDSInitializer;
@@ -37,7 +36,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-@Category({CDS.class})
+@Category({})
 public class CDSHelpCenterTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     @Nullable
