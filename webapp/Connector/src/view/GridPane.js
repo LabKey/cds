@@ -20,11 +20,14 @@ Ext.define('Connector.view.GridPane', {
     getMiddleContent : function(model)
     {
         var filter = model.get('filter'),
-            gridFilters = filter.get('gridFilter'),
+            dataFilters = filter.get('gridFilter'),
             xLabel = filter.get('xLabel'),
             yLabel = filter.get('yLabel'),
             excludeIndexes = {};
 
+        if (filter.get('isTime')) {
+            dataFilters = filter.get('timeFilters')
+        }
         var content = [{
             xtype: 'box',
             tpl: new Ext.XTemplate(
@@ -77,10 +80,10 @@ Ext.define('Connector.view.GridPane', {
                 html: filter.get('filterDisplayString')
             });
         }
-        else if (Ext.isArray(gridFilters))
+        else if (Ext.isArray(dataFilters))
         {
             var shown = {};
-            Ext.each(gridFilters, function(gf, i)
+            Ext.each(dataFilters, function(gf, i)
             {
                 if (excludeIndexes[i])
                 {
