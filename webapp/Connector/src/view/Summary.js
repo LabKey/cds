@@ -25,7 +25,7 @@ Ext.define('Connector.view.Summary', {
             xtype: 'box',
             cls: 'cascade-header',
             tpl: new Ext.XTemplate(
-                '<h1>Find subjects of interest.</h1>',
+                '<h1>Find subjects of interest with assay data in DataSpace.</h1>',
                 '<h1 class="middle">Filter multiple attributes.</h1>',
                 '<h1 class="bottom">Discover relationships.</h1>'
             ),

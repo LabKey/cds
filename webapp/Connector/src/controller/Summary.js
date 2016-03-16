@@ -84,14 +84,14 @@ Ext.define('Connector.controller.Summary', {
     },
 
     onSummarySelect : function(view) {
-        var hierarchy = view.getSelectionModel().getSelection()[0].get('hierarchy');
+        var defaultLvl = view.getSelectionModel().getSelection()[0].get('defaultLvl');
 
         // Display Explorer
         if (this.linkNavigate) {
             this.linkNavigate = false;
         }
         else {
-            var context = hierarchy.split('.');
+            var context = defaultLvl.split('.');
             this.getViewManager().changeView('explorer', 'singleaxis', context);
         }
     }
