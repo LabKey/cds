@@ -463,7 +463,7 @@ public class CDSHelper
     public void enterApplication()
     {
         _test.refresh();
-        _test.sleep(1000);
+        _test.sleep(2000);
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"), 10000);
         _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");

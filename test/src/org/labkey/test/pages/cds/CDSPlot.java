@@ -144,14 +144,7 @@ public class CDSPlot
         try
         {
             _test.waitForElement(Locator.css(cssPath), 3000);
-            if (Locator.css(cssPath).findElement(_test.getDriver()).isDisplayed())
-            {
-                hasElement = true;
-            }
-            else
-            {
-                hasElement = false;
-            }
+            hasElement = Locator.css(cssPath).findElement(_test.getDriver()).isDisplayed();
         }
         catch(org.openqa.selenium.NoSuchElementException ex){
             hasElement = false;
