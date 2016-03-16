@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
-import org.labkey.test.categories.CDS;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
 import org.labkey.test.pages.cds.InfoPane;
@@ -59,7 +58,7 @@ import static org.labkey.test.tests.cds.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.cds.CDSVisualizationTest.Locators.plotTick;
 import static org.labkey.test.tests.cds.CDSVisualizationTest.Locators.plotTickLinear;
 
-@Category({CDS.class})
+@Category({})
 public class CDSVisualizationTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
