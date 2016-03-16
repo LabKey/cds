@@ -62,7 +62,7 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Subject]',
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',
-                summaryTargetLevel: '[Subject.Sex].[Sex]',
+                summaryTargetLevel: '[Subject.Species].[Species]',
                 findSubjectSummaryLevel: '[Subject.Race].[Race]',
                 priority: 0,
                 defaultOperator: 'OR',
