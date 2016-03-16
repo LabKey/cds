@@ -633,13 +633,34 @@ Ext.define('Connector.utility.Chart', {
         if (Ext.isObject(plotMeasures.color))
         {
             var demographicSource = plotMeasures.color.isDemographic,
+                discreteTimeSource = plotMeasures.color.isDiscreteTime,
                 matchXSource = Ext.isObject(plotMeasures.x) && plotMeasures.x.queryName == plotMeasures.color.queryName,
                 matchYSource = Ext.isObject(plotMeasures.y) && plotMeasures.y.queryName == plotMeasures.color.queryName;
 
-            return demographicSource || matchXSource || matchYSource;
+            return demographicSource || discreteTimeSource || matchXSource || matchYSource;
         }
 
         return false;
+    },
+
+    sortTimeLegends: function (legends) {
+        legends.sort(function(legendA, legendB){
+            var a = legendA.text, b=legendB.text;
+            if (!isNaN(a) && !isNaN(b)) {
+                return parseInt(a) - parseInt(b);
+            }
+            else if (!isNaN(a)) {
+                return -1;
+            }
+            else if (!isNaN(b)) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+
+        });
+        return legends;
     },
 
     applySubjectValuesToMeasures : function(measureSet, subjectFilter) {
