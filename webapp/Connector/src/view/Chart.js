@@ -1305,7 +1305,11 @@ Ext.define('Connector.view.Chart', {
 
                 if (!noplot && this.activeMeasures.color)
                 {
-                    this.getColorSelector().setLegend(this.plot.getLegendData());
+                    var legends = this.plot.getLegendData();
+                    if (this.activeMeasures.color.variableType == 'TIME') {
+                        legends = ChartUtils.sortTimeLegends(legends);
+                    }
+                    this.getColorSelector().setLegend(legends);
                 }
             }
             catch(err) {
@@ -1712,7 +1716,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    retrieveBinSubjectIds : function(plot, target, subjects) {
+    retrieveBinSubjectIds : function(plot, target, subjects, isStudyAxis) {
         var subjectIds = [];
         if (subjects) {
             subjects.forEach(function(s) {
@@ -1738,7 +1742,7 @@ Ext.define('Connector.view.Chart', {
                     if (data.x !== undefined && data.x !== null && data.x.toString() === target) { // use toString for boolean value
                         d[i].isMouseOver = true;
                     }
-                    else {
+                    else if (isStudyAxis){
                         if (data.timeAxisKey.indexOf(target) > -1) {
                             d[i].isMouseOver = true;
                             isTimeAxisTarget = true;
@@ -1766,9 +1770,9 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightBins : function(target, subjects) {
+    highlightBins : function(target, subjects, isStudyAxis) {
         // get the set of subjectIds in the binData
-        var subjectIds = this.retrieveBinSubjectIds(this.plot, target, subjects);
+        var subjectIds = this.retrieveBinSubjectIds(this.plot, target, subjects, isStudyAxis);
         if (subjects) {
             subjects.forEach(function(s) {
                 subjectIds.push(s);
@@ -1857,7 +1861,7 @@ Ext.define('Connector.view.Chart', {
             this.clearHighlightPoints();
     },
 
-    retrievePointSubjectIds : function(target, subjects) {
+    retrievePointSubjectIds : function(target, subjects, isStudyAxis) {
         var subjectIds = [];
         if (subjects) {
             subjects.forEach(function(s) {
@@ -1877,7 +1881,7 @@ Ext.define('Connector.view.Chart', {
                 if (d.x !== undefined && d.x !== null && d.x.toString() === target) { // use toString for boolean value
                     d.isMouseOver = true;
                 }
-                else {
+                else if (isStudyAxis) {
                     if (d.timeAxisKey.indexOf(target) > -1) {
                         d.isMouseOver = true;
                         isTimeAxisTarget = true;
@@ -1913,17 +1917,17 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightPlotData : function(target, subjects) {
+    highlightPlotData : function(target, subjects, isStudyAxis) {
         if (this.showPointsAsBin) {
-            this.highlightBins(target, subjects);
+            this.highlightBins(target, subjects, isStudyAxis);
         }
         else {
-            this.highlightPoints(target, subjects);
+            this.highlightPoints(target, subjects, isStudyAxis);
         }
     },
 
-    highlightPoints : function(target, subjects) {
-        var subjectIds = this.retrievePointSubjectIds(target, subjects);
+    highlightPoints : function(target, subjects, isStudyAxis) {
+        var subjectIds = this.retrievePointSubjectIds(target, subjects, isStudyAxis);
 
         var fillColorFn = function(d) {
             if (d.isMouseOver) {
@@ -2040,6 +2044,9 @@ Ext.define('Connector.view.Chart', {
         var values = [];
         selections.forEach(function(s) {
             var gridData = s.get('gridFilter');
+            if (s.get('isTime')) {
+                gridData = s.get('timeFilters');
+            }
             for (var i = 0; i < gridData.length; i++) {
                 if (gridData[i] != null && Ext.isString(gridData[i].getValue())) {
                     values = gridData[i].getValue().split(';');
@@ -2196,7 +2203,11 @@ Ext.define('Connector.view.Chart', {
                 // Create a 'time filter'
                 if (this.activeMeasures.x.variableType === 'TIME')
                 {
-                    var timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
+                    var timeFilters = [selection.gridFilter[0]];
+                    if (!this.activeMeasures.x.isDiscreteTime)
+                    {
+                        timeFilters.push(selection.gridFilter[1]);
+                    }
 
                     Connector.getFilterService().getTimeFilter(selection.plotMeasures[0], timeFilters, function(_filter)
                     {
@@ -2243,6 +2254,9 @@ Ext.define('Connector.view.Chart', {
         if (multi) {
             for (var i=0; i < selections.length; i++) {
                 data = selections[i].get('gridFilter')[0];
+                if (selections[i].get('isTime')) {
+                    data = selections[i].get('timeFilters')[0];
+                }
                 if (data.getColumnName() === name) {
                     values = values.concat(data.getValue()).concat(';');
                 }
@@ -2416,7 +2430,7 @@ Ext.define('Connector.view.Chart', {
             {
                 this.fireEvent('showload', this);
 
-                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME';
+                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME' && !this.activeMeasures.x.isDiscreteTime;
 
                 this.requestChartData();
             }
@@ -2492,6 +2506,12 @@ Ext.define('Connector.view.Chart', {
             wrapped = {
                 measure: Ext.clone(activeMeasures.color)
             };
+
+            if (activeMeasures.color.variableType == 'TIME') {
+                wrapped.dateOptions = {
+                    interval: activeMeasures.color.alias
+                };
+            }
 
             this.setAxisNameMeasureProperty(wrapped.measure, activeMeasures.x, activeMeasures.y);
         }
@@ -3301,8 +3321,9 @@ Ext.define('Connector.view.Chart', {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
+                    includeTimpointMeasures: true,
                     userFilter : function(row) {
-                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
+                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR' || row.isDiscreteTime;
                     }
                 },
                 listeners: {
@@ -3785,11 +3806,11 @@ Ext.define('Connector.view.Chart', {
         me.clearHighlightedData();
 
         targets.forEach(function(t) {
-            me.highlightPlotData(t);
+            me.highlightPlotData(t, null, true);
         });
 
         if (target) {
-            me.highlightPlotData(target);
+            me.highlightPlotData(target, null, true);
         }
     },
 

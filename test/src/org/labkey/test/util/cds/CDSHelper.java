@@ -375,6 +375,9 @@ public class CDSHelper
     public static final String TIME_POINTS_DAYS = "Study days";
     public static final String TIME_POINTS_WEEKS = "Study weeks";
     public static final String TIME_POINTS_MONTHS = "Study months";
+    public static final String TIME_POINTS_DISCRETE_DAYS = "Study days (discrete)";
+    public static final String TIME_POINTS_DISCRETE_WEEKS = "Study weeks (discrete)";
+    public static final String TIME_POINTS_DISCRETE_MONTHS = "Study months (discrete)";
 
     // These are values used in the data grid.
     public static final String GRID_TITLE_BAMA = TITLE_BAMA;
@@ -460,7 +463,7 @@ public class CDSHelper
     public void enterApplication()
     {
         _test.refresh();
-        _test.sleep(1000);
+        _test.sleep(2000);
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"), 10000);
         _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");

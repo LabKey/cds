@@ -175,6 +175,9 @@ Ext.define('Connector.controller.Query', {
             this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Days'] = 1;
             this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks'] = 1;
             this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Months'] = 1;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Days_Discrete'] = 1;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks_Discrete'] = 1;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Months_Discrete'] = 1;
         }
 
         return this.timeAliases;
