@@ -34,8 +34,10 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -2043,7 +2045,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
 
         log("Remove the tool tip.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -2059,7 +2061,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
 
         log("Remove the tool tip.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -2075,7 +2077,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
 
         log("Change the plot to a heat map.");
         xaxis.openSelectorWindow();
@@ -2102,33 +2104,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        validateToolTipText("Magnitude (% cells) - Background subtracted", "Age at Enrollment", "Functional marker name: IL2", "Data summary level: Protein Panel");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Age at Enrollment", "Functional marker name: IL2", "Data summary level: Protein Panel");
 
-    }
-
-    public void validateToolTipText(String...searchText)
-    {
-        String toolTipText;
-        WebElement weToolTip;
-        boolean pass = true;
-
-        weToolTip = Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]//div[contains(@class, 'hopscotch-content')]").findElement(getDriver());
-        toolTipText = weToolTip.getText();
-
-        for(String text: searchText)
-        {
-            if(!toolTipText.contains(text))
-            {
-                pass = false;
-                log("Could not find text: '" + text + "' in the tool tip");
-            }
-        }
-
-        if(!pass)
-        {
-            log("Tool tip text: " + toolTipText);
-            assertTrue("Tool tip not as expected. See log for missing text.", pass);
-        }
     }
 
     @Test

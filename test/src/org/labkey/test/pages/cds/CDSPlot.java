@@ -19,6 +19,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
@@ -26,6 +27,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.internal.MouseAction;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -278,10 +280,6 @@ public class CDSPlot
     public void timeAxisToolTipsTester(String cssVisit, List<String> expectedToolTipText)
     {
         String actualToolTipText, condensedActual, condensedExpected;
-        WebElement el;
-        Actions builder;
-        int yOffset = 0, yTarget;
-        boolean tryAgain = true;
 
         _test.scrollIntoView(Locator.css(cssVisit));
         _test.sleep(500);
@@ -289,18 +287,74 @@ public class CDSPlot
         _test.mouseOver(Locator.css(cssVisit));
         _test.sleep(500);
 
-        assertTrue("Tool-tip was not present.", _test.waitForElement(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"), CDSHelper.CDS_WAIT_TOOLTIP, true));
-
-        actualToolTipText = _test.getText(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"));
-
-        // Modify the strings to make the comparisons less susceptible to spaces, tabs, /n, etc... and capitalization.
-        condensedActual = actualToolTipText.toLowerCase().replaceAll("\\s+", "");
-
-        // Order of text in tool-tip may change from deployment to deployment. So look only from specific text as oppose to looking for an exact match.
-        for (String strTemp : expectedToolTipText)
+        try
         {
-            condensedExpected = strTemp.toLowerCase().replaceAll("\\s+", "");
-            assertTrue("Item not found in tool tip. Expected: '" + strTemp + "' (" + condensedExpected + "), actual: '" + actualToolTipText + "' (" + condensedActual + ").", condensedActual.contains(condensedExpected));
+            assertTrue("Tool-tip was not present.", _test.waitForElement(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"), CDSHelper.CDS_WAIT_TOOLTIP, true));
+
+            actualToolTipText = _test.getText(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"));
+
+            // Modify the strings to make the comparisons less susceptible to spaces, tabs, /n, etc... and capitalization.
+            condensedActual = actualToolTipText.toLowerCase().replaceAll("\\s+", "");
+
+            // Order of text in tool-tip may change from deployment to deployment. So look only from specific text as oppose to looking for an exact match.
+            for (String strTemp : expectedToolTipText)
+            {
+                condensedExpected = strTemp.toLowerCase().replaceAll("\\s+", "");
+                assertTrue("Item not found in tool tip. Expected: '" + strTemp + "' (" + condensedExpected + "), actual: '" + actualToolTipText + "' (" + condensedActual + ").", condensedActual.contains(condensedExpected));
+            }
+        }
+        catch(NoSuchElementException nse)
+        {
+            Capabilities cap = ((RemoteWebDriver) _test.getWrappedDriver()).getCapabilities();
+            if(cap.getBrowserName().toLowerCase().equals("firefox"))
+            {
+                _test.log("!!!!Popups (hopscotch) are very unreliable for test automation on Firefox. Ignoring the 'NoSuchElementException'!!!!");
+            }
+            else
+            {
+                throw nse;
+            }
+        }
+    }
+
+    // TODO this can be merged with timeAxisToolTipsTester. Will do that at some time in the future.
+    public void validateToolTipText(String...searchText)
+    {
+        String toolTipText;
+        WebElement weToolTip;
+        boolean pass = true;
+
+        try
+        {
+            weToolTip = Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]//div[contains(@class, 'hopscotch-content')]").findElement(_test.getDriver());
+            toolTipText = weToolTip.getText();
+
+            for (String text : searchText)
+            {
+                if (!toolTipText.contains(text))
+                {
+                    pass = false;
+                    _test.log("Could not find text: '" + text + "' in the tool tip");
+                }
+            }
+
+            if (!pass)
+            {
+                _test.log("Tool tip text: " + toolTipText);
+                assertTrue("Tool tip not as expected. See log for missing text.", pass);
+            }
+        }
+        catch(NoSuchElementException nse)
+        {
+            Capabilities cap = ((RemoteWebDriver) _test.getWrappedDriver()).getCapabilities();
+            if(cap.getBrowserName().toLowerCase().equals("firefox"))
+            {
+                _test.log("!!!!Popups (hopscotch) are very unreliable for test automation on Firefox. Ignoring the 'NoSuchElementException'!!!!");
+            }
+            else
+            {
+                throw nse;
+            }
         }
 
     }

@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests.cds;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -28,8 +29,11 @@ import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.Color;
 
 import java.util.ArrayList;
@@ -340,8 +344,8 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 2 Arm T2 Vaccine: Last Vaccination");
         expectedToolTipText.add("Group 3 Arm T3 Vaccine: Last Vaccination");
         cssPath = "div.bottomplot > svg > g:nth-child(2) > image:nth-of-type(6)";
-// TODO Remove when ther eis time to fix this test. THis will always fail on FireFox.
-//        cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
+// TODO Remove when there is time to fix this test. THis will always fail on FireFox.
+        cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111");
@@ -430,14 +434,14 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("ZAP 110 - Day 455");
         expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up");
         cssPath = "div.bottomplot > svg > g:nth-child(18) > image:nth-of-type(10)";
-// TODO Remove when ther eis time to fix this test. THis will always fail on FireFox.
+// TODO Remove when there is time to fix this test. THis will always fail on FireFox.
 //        cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111 - Day 364");
         expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up");
         cssPath = "div.bottomplot > svg > g:nth-child(31) > image:nth-of-type(8)";
-// TODO Remove when ther eis time to fix this test. THis will always fail on FireFox.
+// TODO Remove when there is time to fix this test. THis will always fail on FireFox.
 //        cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         log("Change time axis alignment and validate things remain the same.");
