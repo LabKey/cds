@@ -184,6 +184,7 @@ Ext.define('Connector.component.Started', {
                     draggable: false,
                     closable: false,
                     layout : 'fit',
+                    id: 'started-video-frame',
                     items : [{
                         xtype : "component",
                         autoEl : {
