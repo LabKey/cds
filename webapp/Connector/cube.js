@@ -348,7 +348,8 @@ Ext4.define('Connector.cube.Configuration', {
                 friendlyName: 'Subjects given study products',
                 singularName: 'Study product',
                 pluralName: 'Study products',
-                summaryTargetLevel: '[Study Product.Product Type].[Name]',
+                summaryTargetLevel: '[Study Product.Product Name].[Product Name]',
+                findSubjectSummaryLevel: '[Study Product.Product Name].[Product Name]',
                 defaultOperator: 'OR',
                 hierarchies: [{
                     uniqueName: '[Study Product.Product Name]',
@@ -364,7 +365,7 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Study Product.Product Type]',
                     levels: [{
-                        uniqueName: '[Study Product.Product Type].[Type]',
+                        uniqueName: '[Study Product.Product Type].[Product Type]',
                         countSingular: 'Type',
                         countPlural: 'Types'
                     },{
