@@ -45,7 +45,12 @@ Ext.define('Connector.controller.Navigation', {
 
     markActiveSelection : function() {
         if (this.primaryNav && this.active) {
-            this.primaryNav.getNavigationView().selectByView(this.active);
+            var navName = this.active;
+            if (navName === 'explorer') {
+                // explorer is the detailed view for summary but lack direct navigation
+                navName = 'summary';
+            }
+            this.primaryNav.getNavigationView().selectByView(navName);
         }
     },
 
