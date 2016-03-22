@@ -50,7 +50,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
-    <title>HIV CDS</title>
+    <title>DataSpace</title>
 
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/headerlogo.png">
 
@@ -322,7 +322,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDatasets.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDescription.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
@@ -338,6 +337,9 @@
     <% } %>
 </head>
 <body>
+<div class="banner" style="visibility: hidden;">
+    <div class="banner-msg">Your session will expire in <span class="timer"></span>. Click anywhere to continue.</div>
+</div>
 <!-- BODY -->
 <%  me.include(me.getBody(),out); %>
 <!-- /BODY -->
