@@ -15,6 +15,7 @@ Ext.define('Connector.model.Summary', {
         {name: 'sort', type: 'int'},
         {name: 'dimName'},
         {name: 'hierarchy'},
+        {name: 'defaultLvl'},
         {name: 'counter'},
         {name: 'text'}
     ]

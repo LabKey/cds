@@ -20,7 +20,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      querySchema     - metadata member query schema. Defaults to undefined.
         //      supportsDetails - Learn About views are supported for this dimension. If true, additional view configuration is required. Default is false.
         //      supportsSummary - summary views are supported for this dimension. defaults to true but respects hidden.
-        //      summaryTargetLevel - summary views will respect this levels count when querying. Defaults to first hierarchy, second level.
+        //      summaryTargetLevel - specify the default level to go to when select from find subjects summary view. Defaults to first hierarchy, second level.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to AND.
         //      showOperator    - hide operator in info pane if false. Default is true.
         //      filterType      - The default way of filtering for this dimension. Options are COUNT/WHERE. Defaults to COUNT.
@@ -62,7 +62,7 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Subject]',
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',
-                summaryTargetLevel: '[Subject.Race].[Race]',
+                summaryTargetLevel: '[Subject.Species].[Species]',
                 findSubjectSummaryLevel: '[Subject.Race].[Race]',
                 priority: 0,
                 defaultOperator: 'OR',
@@ -228,9 +228,68 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'title'
                         }
                     },{
-                        type: 'studydescription',
+                        type: 'html',
                         staticData: {
                             title: 'Description'
+                        },
+                        modelData: {
+                            text: 'description'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Objectives'
+                        },
+                        modelData: {
+                            text: 'objectives'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Rationale'
+                        },
+                        modelData: {
+                            text: 'rationale'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Groups'
+                        },
+                        modelData: {
+                            text: 'groups_treatment_schema'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Methods'
+                        },
+                        modelData: {
+                            text: 'methods_assay_schema'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Findings'
+                        },
+                        modelData: {
+                            text: 'findings'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Conclusions'
+                        },
+                        modelData: {
+                            text: 'conclusions'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Publications'
+                        },
+                        modelData: {
+                            text: 'publications'
                         }
                     },{
                         type: 'html',
@@ -289,7 +348,8 @@ Ext4.define('Connector.cube.Configuration', {
                 friendlyName: 'Subjects given study products',
                 singularName: 'Study product',
                 pluralName: 'Study products',
-                summaryTargetLevel: '[Study Product.Product Type].[Name]',
+                summaryTargetLevel: '[Study Product.Product Name].[Product Name]',
+                findSubjectSummaryLevel: '[Study Product.Product Name].[Product Name]',
                 defaultOperator: 'OR',
                 hierarchies: [{
                     uniqueName: '[Study Product.Product Name]',
@@ -305,7 +365,7 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Study Product.Product Type]',
                     levels: [{
-                        uniqueName: '[Study Product.Product Type].[Type]',
+                        uniqueName: '[Study Product.Product Type].[Product Type]',
                         countSingular: 'Type',
                         countPlural: 'Types'
                     },{
@@ -374,6 +434,7 @@ Ext4.define('Connector.cube.Configuration', {
                 priority: 30,
                 singularName: 'Assay',
                 pluralName: 'Assays',
+                summaryTargetLevel: '[Assay.Study].[Study]',
                 findSubjectSummaryLevel: '[Assay.Name].[Assay]',
                 hierarchies: [{
                     uniqueName: "[Assay.Name]",

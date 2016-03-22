@@ -1041,7 +1041,7 @@ public class CDSHelper
     {
         HOME("Home", Locator.tagContainingText("h1", HOME_PAGE_HEADER)),
         LEARN("Learn about", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
-        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest.")),
+        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest with assay data in DataSpace.")),
         PLOT("Plot data", Locator.tagWithClass("a", "colorbtn")),
         GRID("View data grid", DataGridVariableSelector.titleLocator);
 

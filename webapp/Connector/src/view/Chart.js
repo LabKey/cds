@@ -29,6 +29,8 @@ Ext.define('Connector.view.Chart', {
 
     yNoGutterWidth: 24,
 
+    logGutterWidth: 30,
+
     xGutterName: 'xGutterPlot',
 
     yGutterName: 'yGutterPlot',
@@ -931,15 +933,15 @@ Ext.define('Connector.view.Chart', {
         var extraLeftMargin = 0, extraBottomMargin = 0;
 
         if (this.requireBothLogGutter || this.requireYLogGutter) {
-            extraLeftMargin = 30;
+            extraLeftMargin = this.logGutterWidth;
         }
         if (this.requireBothLogGutter || this.requireXLogGutter) {
-            extraBottomMargin = 30;
+            extraBottomMargin = this.logGutterWidth;
         }
         return Ext.apply(this.getBasePlotConfig(), {
             margins : {
                 top: 25,
-                left: yAxisMargin + (this.requireYGutter ? extraLeftMargin : this.yNoGutterWidth),
+                left: yAxisMargin + (this.requireYGutter ? extraLeftMargin : this.yNoGutterWidth + (this.requireYLogGutter ? this.logGutterWidth : 0)),
                 right: 50,
                 bottom: size.extended === true ? 73 + extraBottomMargin: 53 + extraBottomMargin
             },
@@ -1515,7 +1517,7 @@ Ext.define('Connector.view.Chart', {
     generateXGutter : function(plotConfig, chartData, allDataRows, yAxisMargin) {
         var gutterXMargins = {
             top: 0,
-            left: yAxisMargin,
+            left: yAxisMargin + (this.requireYGutter ? 0 : this.yNoGutterWidth),
             right: plotConfig.margins.right,
             bottom: 0
         };
@@ -1542,7 +1544,6 @@ Ext.define('Connector.view.Chart', {
                 }
             }
         };
-        var gutterXWidth = plotConfig.width - (this.requireYGutter ? 0 : this.yNoGutterWidth);
 
         var gutterXAes = {
             xTop: function(row) {return row.x;},
@@ -1562,7 +1563,7 @@ Ext.define('Connector.view.Chart', {
         return Ext.apply(this.getGutterPlotConfig(gutterXAes, gutterXScales), {
             gridLinesVisible: 'y',
             margins : gutterXMargins,
-            width : gutterXWidth,
+            width : plotConfig.width,
             height : this.xGutterHeight,
             data : allDataRows.undefinedY,
             labels : gutterXLabels
@@ -3950,7 +3951,7 @@ Ext.define('Connector.view.Chart', {
         {
             this.plotEl.setStyle('padding-left', '0');
             this.bottomPlotEl.setStyle('margin-left', this.requireXGutter
-                    ? (this.requireYGutter ? this.yGutterWidth + 'px' : this.yNoGutterWidth + 'px') : '0');
+                    ? (this.requireYGutter ? this.yGutterWidth + 'px' : '0') : '0');
 
             this.getBottomPlotPanel().setHeight(this.requireXGutter ? this.xGutterHeight : 0);
             this.getBottomPlotPanel().setVisible(this.requireXGutter);

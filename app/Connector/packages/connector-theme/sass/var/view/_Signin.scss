@@ -58,3 +58,18 @@
     padding-bottom: 20px;
   }
 }
+
+.banner {
+  background-color: $info-color;
+  padding-top: 3px;
+  position: absolute;
+  width: 100%;
+  height: 22px;
+  top: 0;
+  z-index: 30000; /* appear over masking */
+
+  .banner-msg {
+    text-align: center;
+    color: $white;
+  }
+}

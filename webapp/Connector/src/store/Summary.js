@@ -158,7 +158,7 @@ Ext.define('Connector.store.Summary', {
                     // dimension
                     var label = Ext.isDefined(dim.pluralName) ? dim.pluralName : dim.name,
                         hierarchies = dim.getHierarchies(),
-                        summaryLevel, hier, h, l;
+                        summaryLevel, defaultLevel, hier, h, l;
 
                     for (h=0; h < hierarchies.length; h++) {
                         hier = hierarchies[h];
@@ -166,7 +166,9 @@ Ext.define('Connector.store.Summary', {
                         for (l=0; l < hier.levels.length; l++) {
                             if (hier.levels[l].uniqueName === dim.findSubjectSummaryLevel) {
                                 summaryLevel = hier;
-                                break;
+                            }
+                            if (hier.levels[l].uniqueName === dim.summaryTargetLevel) {
+                                defaultLevel = hier;
                             }
                         }
                     }
@@ -177,6 +179,7 @@ Ext.define('Connector.store.Summary', {
                             total: lvlCounts[ca.level] || 0,
                             label: label,
                             subject: label.toLowerCase(),
+                            defaultLvl: defaultLevel.name,
                             hierarchy: summaryLevel.name,
                             details: [],
                             sort: i

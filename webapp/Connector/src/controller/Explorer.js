@@ -208,7 +208,7 @@ Ext.define('Connector.controller.Explorer', {
                 }
             }
             else {
-                Est.Msg.alert('Failed:' + context.dimension);
+                Ext.Msg.alert('Failed:' + context.dimension);
             }
         }, this);
     },
