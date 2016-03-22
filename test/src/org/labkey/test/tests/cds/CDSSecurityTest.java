@@ -23,7 +23,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
-import org.labkey.test.util.EmailRecordTable;
+import org.labkey.test.components.dumbster.EmailRecordTable;
 import org.labkey.test.util.Ext4Helper;
 import org.testng.Assert;
 
