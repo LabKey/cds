@@ -270,7 +270,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         handleSimpleLogin(NEW_USER_ACCOUNTS[0], "P@$$w0rd");
         sleep(5000);
         log("Validate we are on the CDS home page.");
-        assertTextPresent("studies to learn about");
+        assertTextPresent("Welcome to the CAVD DataSpace.");
 
         log("Done. Signing back into main site with default test account to clean up.");
         click(Locator.xpath("//a[contains(@class, 'logout')][contains(text(), 'Logout')]"));
