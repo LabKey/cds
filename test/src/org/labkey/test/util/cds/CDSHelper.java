@@ -947,6 +947,27 @@ public class CDSHelper
 
     }
 
+    public void setGettingStartedVideoURL(String videoUrl)
+    {
+        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[1]";
+        String curValue;
+        Boolean changed = false;
+
+        _test._ext4Helper.resetCssPrefix();
+        _test.goToProjectHome();
+        _test.goToFolderManagement();
+        _test.waitForText(1000, "Module Properties");
+        _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
+        _test.waitForText(1000, "CDSTest Project");
+
+        _test.setFormElement(Locator.xpath(xpathValueTxtBox), videoUrl);
+
+        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
+        _test.waitForText(1000, "Success");
+        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
+
+    }
+
     public void assertPlotTickText(Pattern p)
     {
         assertPlotTickText(1, p);
