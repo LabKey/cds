@@ -448,6 +448,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     onShowVariableSelection : function() {
+        ChartUtils.brushClear.call(this, {}, null, true);
         this.fireEvent('hideload', this);
     },
 
@@ -1781,18 +1782,19 @@ Ext.define('Connector.view.Chart', {
 
         if (this.plot.renderer) {
             var isSubjectInMouseBin = function(d, yesVal, noVal, sameSubjectVal) {
+                var isHightLight = false, isAssociated = false;
                 if (d.length > 0 && d[0].data) {
                     for (var i = 0; i < d.length; i++) {
                         if (d[i].isMouseOver) {
-                            return yesVal;
+                            isHightLight = true;
                         }
                         else if (subjectIds.indexOf(d[i].data.subjectId) != -1) {
-                            return sameSubjectVal;
+                            isAssociated = true;
                         }
                     }
                 }
 
-                return noVal;
+                return isHightLight ? yesVal : isAssociated ? sameSubjectVal : noVal;
             };
 
             var colorFn = function(d)
