@@ -1193,6 +1193,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     {
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.clickBy("Subject characteristics");
+        cds.pickSort("Race");
         cds.applySelection(barLabel);
         cds.useSelectionAsSubjectFilter();
     }

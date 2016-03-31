@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.categories.CDS;
+import org.labkey.test.pages.LabKeyPage;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
@@ -201,6 +202,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
+        cds.pickSort("Race");
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
@@ -721,6 +723,7 @@ public class CDSTest extends CDSReadOnlyTest
         log("Filter on race.");
         cds.goToSummary();
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
+        cds.pickSort("Race");
         cds.selectBars(false, CDSHelper.RACE_ASIAN);
 
         log("Create a plot that will filter.");
@@ -1357,7 +1360,12 @@ public class CDSTest extends CDSReadOnlyTest
     public void testLearnAboutStudyProducts()
     {
         cds.viewLearnAboutPage("Study products");
-        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
+        sleep(30000);
+        refresh();
+        sleep(30000);
+        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000);
+        waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
+//        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
 
         List<String> studyProducts = Arrays.asList(CDSHelper.PRODUCTS);
         _asserts.verifyLearnAboutPage(studyProducts);
@@ -1371,7 +1379,12 @@ public class CDSTest extends CDSReadOnlyTest
         final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         cds.viewLearnAboutPage("Study products");
-        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
+        sleep(30000);
+        refresh();
+        sleep(30000);
+        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000);
+        waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
+//        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
 
         int index = returnedItems.size()/2;
