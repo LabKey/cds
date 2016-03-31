@@ -102,15 +102,18 @@ public class CDSHelper
     public final static int CDS_WAIT_TOOLTIP = 5000;
 
     public final static String RACE_ASIAN = "Asian";
+    public final static String RACE_ASIANPACIFIC = "Asian/Pacific Island";
     public final static String RACE_BLACK = "Black";
     public final static String RACE_HAWAIIAN = "Hawaiian/Pacific Isl";
     public final static String RACE_MULTIRACIAL = "Multiracial";
     public final static String RACE_NATIVE = "Native American";
     public final static String RACE_NATIVE_ALAS = "Native American/Alas";
+    public final static String RACE_NATIVE_HAWAIIAN = "Native Hawaiian/Paci";
     public final static String RACE_OTHER = "Other";
+    public final static String RACE_UNKNOWN = "Unknown";
     public final static String RACE_WHITE = "White";
 
-    public static final String[] RACE_VALUES = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
+    public static final String[] RACE_VALUES = {RACE_ASIAN, RACE_ASIANPACIFIC, RACE_BLACK, RACE_HAWAIIAN, RACE_MULTIRACIAL, RACE_NATIVE, RACE_NATIVE_ALAS, RACE_NATIVE_HAWAIIAN, RACE_OTHER, RACE_UNKNOWN, RACE_WHITE};
 
     public final static String SPECIES_HUMAN = "Human";
     public final static String SPECIES_VULCAN = "Vulcan";
