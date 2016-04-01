@@ -15,26 +15,20 @@
  */
 package org.labkey.test.tests.cds;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
-import org.labkey.test.categories.CDS;
+import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
 import org.labkey.test.pages.cds.InfoPane;
-import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +39,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category({CDS.class})
+@Category({})
 public class CDSPlotTimeTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
