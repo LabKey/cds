@@ -29,6 +29,8 @@ Ext.define('Connector.view.Chart', {
 
     yNoGutterWidth: 24,
 
+    logGutterWidth: 30,
+
     xGutterName: 'xGutterPlot',
 
     yGutterName: 'yGutterPlot',
@@ -577,7 +579,6 @@ Ext.define('Connector.view.Chart', {
         if (!layerScope.isBrushed) {
             data.isMouseOver = true;
             this.highlightPlotData(null, [data.subjectId]);
-            this.pointHoverText(point, data, plotName);
         }
     },
 
@@ -587,8 +588,6 @@ Ext.define('Connector.view.Chart', {
             this.clearHighlightedData();
             this.highlightSelected();
         }
-
-        this.fireEvent('hidepointmsg');
     },
 
     mouseOverBins : function(event, data, layerSel, bin, layerScope, plotName) {
@@ -613,40 +612,219 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    pointHoverText : function(point, data, plotName) {
-        var config, val, content = '', colon = ': ', linebreak = ',<br/>';
-
-        if (data.xname) {
-            val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
-            content += Ext.htmlEncode(data.xname) + colon + val;
+    mouseUpPoints : function(event, data, layerSel, point, layerScope, plotName) {
+        //wait for brushend to fire to clear brushing state, mouseup individual point will clear isBrushed on brushend
+        if (!this.showPointToolTipTask) {
+            this.showPointToolTipTask = new Ext.util.DelayedTask(function(point, data, layerScope, plotName) {
+                if (layerScope.isBrushed)
+                    return;
+                this.pointClickText(point, data, plotName);
+            }, this);
         }
-        content += (content.length > 0 ? linebreak : '') + Ext.htmlEncode(data.yname) + colon + data.y;
+        this.showPointToolTipTask.delay(150, undefined, this, [point, data, layerScope, plotName]);
+    },
+
+    mouseUpBins : function(event, datas, layerSel, point, layerScope, plotName) {
+        //wait for brushend to fire to clear brushing state, mouseup individual bin will clear isBrushed on brushend
+        if (!this.showBinToolTipTask) {
+            this.showBinToolTipTask = new Ext.util.DelayedTask(function(point, datas, layerScope, plotName) {
+                if (layerScope.isBrushed)
+                    return;
+                this.binClickText(point, datas, plotName);
+            }, this);
+        }
+        this.showBinToolTipTask.delay(150, undefined, this, [point, datas, layerScope, plotName]);
+    },
+
+    pointClickText : function(point, data, plotName) {
+        var content = this.buildPointTooltip(data);
+        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
+    },
+
+    binClickText : function(point, datas, plotName) {
+        var content = this.buildBinTooltip(datas);
+        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
+    },
+
+    getAxisDimensionsArray: function(axis) {
+        var dimArray = [];
+        if (axis) {
+            var dimensions = axis.options.dimensions;
+            for (var dim in axis.options.dimensions) {
+                if (dimensions.hasOwnProperty(dim)) {
+                    dimArray.push(dim);
+                }
+            }
+        }
+        return dimArray;
+    },
+
+    buildBinTooltip: function(datas) {
+        var xVals = new Set(), yVals = new Set(), subjects = new Set(), studies = new Set();
+        var content = '', xName, yName, me = this,colon = ': ', linebreak = '<br/>';
+        var xDimensionVals = {}, yDimensionVals = {};
+        var xDimensions = this.getAxisDimensionsArray(this.activeMeasures.x), yDimensions = this.getAxisDimensionsArray(this.activeMeasures.y);
+
+        Ext.each(datas, function(data) {
+            var d = data.data;
+
+            if (d.x !== undefined && d.x !== null && d.x !== '') {
+                xVals.add(d.x);
+            }
+            if (d.y !== undefined && d.y !== null && d.y !== '') {
+                yVals.add(d.y);
+            }
+            if (d.subjectId !== undefined && d.subjectId !== null) {
+                subjects.add(d.subjectId);
+            }
+
+            if (d.xname && !xName) {
+                xName = d.xname;
+            }
+            if (d.yname && !yName) {
+                yName = d.yname;
+            }
+
+            var record = me.allDataRowsMap[d.rowKey];
+            studies.add(record[QueryUtils.STUDY_ALIAS]);
+
+            Ext.each(xDimensions, function(dim) {
+               if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
+                   if (!xDimensionVals[dim]) {
+                       xDimensionVals[dim] = new Set();
+                   }
+                   xDimensionVals[dim].add(record[dim]);
+               }
+            });
+            Ext.each(yDimensions, function(dim) {
+                if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
+                    if (!yDimensionVals[dim]) {
+                        yDimensionVals[dim] = new Set();
+                    }
+                    yDimensionVals[dim].add(record[dim]);
+                }
+            });
+
+        });
+
+        var studyName;
+        if (studies.size == 1) {
+            studyName = Array.from(studies)[0];
+        }
+
+        content += '<span class="group-title">Data</span>';
+        content += colon + datas.length + ' points from ' + subjects.size + ' subjects' + linebreak;
+        if (studyName) {
+            content += '<span class="group-title">Study</span>';
+            content += colon + Ext.htmlEncode(studyName) + linebreak;
+        }
+        if (xName) {
+            content += '<span class="group-title">' + Ext.htmlEncode(xName) + '</span>';
+            content += colon + Ext.htmlEncode(this.getBinRangeTooltip(xVals));
+            content += this.showAsMedian ? ' (median)' : '';
+            content += '<div class="axis-details">';
+            content += this.buildBinAxisDetailTooltip(xDimensionVals);
+            content += '</div>'
+        }
+        if (yName) {
+            content += '<span class="group-title">' + Ext.htmlEncode(yName) + '</span>';
+            content += colon + Ext.htmlEncode(this.getBinRangeTooltip(yVals));
+            content += this.showAsMedian ? ' (median)' : '';
+            content += '<div class="axis-details">';
+            content += this.buildBinAxisDetailTooltip(yDimensionVals);
+            content += '</div>'
+        }
+
+        return content;
+    },
+
+    buildBinAxisDetailTooltip: function(dimensionVals) {
+        var content = '', colon = ': ', linebreak = '<br/>';
+        if (dimensionVals) {
+            for (var dim in dimensionVals) {
+                if (dimensionVals.hasOwnProperty(dim) && dimensionVals[dim].size != 0) {
+                    var value = dimensionVals[dim].size == 1 ? Array.from(dimensionVals[dim])[0]: dimensionVals[dim].size + ' values' ;
+                    var label = Connector.getQueryService().getMeasure(dim).label;
+                    content += Ext.htmlEncode(label) + colon + value + linebreak;
+                }
+            }
+        }
+        return content;
+    },
+
+    getBinRangeTooltip: function(valSet) {
+        if (valSet.size == 0)
+            return null;
+        var vals = Array.from(valSet);
+        if (vals.length == 1)
+            return vals[0];
+        return Ext.Array.min(vals) + ' - ' + Ext.Array.max(vals);
+    },
+
+    buildPointTooltip: function(data) {
+        var content = '', colon = ': ', linebreak = '<br/>';
+        var record = this.allDataRowsMap[data.rowKey];
+
+        if (record[QueryUtils.STUDY_ALIAS]) {
+            content += '<span class="group-title">' + Ext.htmlEncode(record[QueryUtils.STUDY_ALIAS]) + '</span>';
+            content +=  colon + Ext.htmlEncode(record[QueryUtils.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS]);
+            content += '<div class="axis-details">';
+            content += 'Treatment Summary' + colon + record[QueryUtils.TREATMENTSUMMARY_ALIAS] + linebreak;
+            content += 'Subject' + colon + data.subjectId + linebreak;
+            content += 'Study Day' + colon + 'Day ' + record[QueryUtils.PROTOCOLDAY_ALIAS] + linebreak;
+            content += '</div>';
+        }
+
+        if (this.activeMeasures.x && data.xname) {
+            // skip for study, treatment, and time
+            var xAxis = this.activeMeasures.x;
+            if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
+                var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
+                content += '<span class="group-title">' + Ext.htmlEncode(data.xname) + '</span>' + colon + val;
+                content += this.showAsMedian ? ' (median)' : '';
+                content += this.buildPointAxisDetailTooltip(this.activeMeasures.x, record);
+            }
+        }
+
+        if (this.activeMeasures.y) {
+            content += '<span class="group-title">' + Ext.htmlEncode(data.yname) + '</span>' + colon + data.y;
+            content += this.showAsMedian ? ' (median)' : '';
+            content += this.buildPointAxisDetailTooltip(this.activeMeasures.y, record);
+        }
+
         if (data.colorname) {
-            content += linebreak + Ext.htmlEncode(data.colorname) + colon + data.color;
+            content += '<span class="group-title">' + Ext.htmlEncode(data.colorname) + '</span>' + colon + data.color;
         }
 
-        config = {
-            bubbleWidth: 250,
-            target: point,
-            placement: plotName===this.yGutterName?'right':'top',
-            xOffset: plotName===this.yGutterName?0:-125,
-            yOffset: plotName===this.yGutterName?-25:0,
-            arrowOffset: plotName===this.yGutterName?0:110,
-            title: 'Subject: ' + data.subjectId,
-            content: content
-        };
+        return content;
+    },
 
-        ChartUtils.showCallout(config, 'hidepointmsg', this);
+    buildPointAxisDetailTooltip: function(axis, record) {
+        var content = '<div class="axis-details">', colon = ': ', linebreak = '<br/>';
+        if (axis) {
+            var dimensions = axis.options.dimensions;
+            for (var dim in dimensions) {
+                if (dimensions.hasOwnProperty(dim) && record[dim] !== undefined) {
+                    var value = record[dim];
+                    var label = Connector.getQueryService().getMeasure(dim).label;
+                    content += Ext.htmlEncode(label) + colon + value + linebreak;
+                }
+            }
+        }
+        content += '</div>';
+        return content;
     },
 
     getLayerAes : function(layerScope, plotName) {
 
         var mouseOver = this.showPointsAsBin ? this.mouseOverBins : this.mouseOverPoints,
+            mouseUp = this.showPointsAsBin ? this.mouseUpBins : this.mouseUpPoints,
             mouseOut = this.showPointsAsBin ? this.mouseOutBins : this.mouseOutPoints;
 
         return {
             mouseOverFn: Ext.bind(mouseOver, this, [layerScope, plotName], true),
-            mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true)
+            mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true),
+            mouseUpFn: Ext.bind(mouseUp, this, [layerScope, plotName], true)
         };
     },
 
@@ -755,15 +933,15 @@ Ext.define('Connector.view.Chart', {
         var extraLeftMargin = 0, extraBottomMargin = 0;
 
         if (this.requireBothLogGutter || this.requireYLogGutter) {
-            extraLeftMargin = 30;
+            extraLeftMargin = this.logGutterWidth;
         }
         if (this.requireBothLogGutter || this.requireXLogGutter) {
-            extraBottomMargin = 30;
+            extraBottomMargin = this.logGutterWidth;
         }
         return Ext.apply(this.getBasePlotConfig(), {
             margins : {
                 top: 25,
-                left: yAxisMargin + (this.requireYGutter ? extraLeftMargin : this.yNoGutterWidth),
+                left: yAxisMargin + (this.requireYGutter ? extraLeftMargin : this.yNoGutterWidth + (this.requireYLogGutter ? this.logGutterWidth : 0)),
                 right: 50,
                 bottom: size.extended === true ? 73 + extraBottomMargin: 53 + extraBottomMargin
             },
@@ -1004,6 +1182,8 @@ Ext.define('Connector.view.Chart', {
         this.minXPositiveValue = Ext.isDefined(allDataRows) ? allDataRows.minPositiveX : 0.00001;
         this.minYPositiveValue = Ext.isDefined(allDataRows) ? allDataRows.minPositiveY : 0.00001;
 
+        this.allDataRowsMap = Ext.isDefined(allDataRows) ? allDataRows.allRowsMap : {};
+
         this.plotEl.update('');
         this.bottomPlotEl.update('');
         var studyAxisSize = 0;
@@ -1125,7 +1305,11 @@ Ext.define('Connector.view.Chart', {
 
                 if (!noplot && this.activeMeasures.color)
                 {
-                    this.getColorSelector().setLegend(this.plot.getLegendData());
+                    var legends = this.plot.getLegendData();
+                    if (this.activeMeasures.color.variableType == 'TIME') {
+                        legends = ChartUtils.sortTimeLegends(legends);
+                    }
+                    this.getColorSelector().setLegend(legends);
                 }
             }
             catch(err) {
@@ -1333,7 +1517,7 @@ Ext.define('Connector.view.Chart', {
     generateXGutter : function(plotConfig, chartData, allDataRows, yAxisMargin) {
         var gutterXMargins = {
             top: 0,
-            left: yAxisMargin,
+            left: yAxisMargin + (this.requireYGutter ? 0 : this.yNoGutterWidth),
             right: plotConfig.margins.right,
             bottom: 0
         };
@@ -1360,7 +1544,6 @@ Ext.define('Connector.view.Chart', {
                 }
             }
         };
-        var gutterXWidth = plotConfig.width - (this.requireYGutter ? 0 : this.yNoGutterWidth);
 
         var gutterXAes = {
             xTop: function(row) {return row.x;},
@@ -1380,7 +1563,7 @@ Ext.define('Connector.view.Chart', {
         return Ext.apply(this.getGutterPlotConfig(gutterXAes, gutterXScales), {
             gridLinesVisible: 'y',
             margins : gutterXMargins,
-            width : gutterXWidth,
+            width : plotConfig.width,
             height : this.xGutterHeight,
             data : allDataRows.undefinedY,
             labels : gutterXLabels
@@ -1533,7 +1716,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    retrieveBinSubjectIds : function(plot, target, subjects) {
+    retrieveBinSubjectIds : function(plot, target, subjects, isStudyAxis) {
         var subjectIds = [];
         if (subjects) {
             subjects.forEach(function(s) {
@@ -1559,7 +1742,7 @@ Ext.define('Connector.view.Chart', {
                     if (data.x !== undefined && data.x !== null && data.x.toString() === target) { // use toString for boolean value
                         d[i].isMouseOver = true;
                     }
-                    else {
+                    else if (isStudyAxis){
                         if (data.timeAxisKey.indexOf(target) > -1) {
                             d[i].isMouseOver = true;
                             isTimeAxisTarget = true;
@@ -1587,9 +1770,9 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightBins : function(target, subjects) {
+    highlightBins : function(target, subjects, isStudyAxis) {
         // get the set of subjectIds in the binData
-        var subjectIds = this.retrieveBinSubjectIds(this.plot, target, subjects);
+        var subjectIds = this.retrieveBinSubjectIds(this.plot, target, subjects, isStudyAxis);
         if (subjects) {
             subjects.forEach(function(s) {
                 subjectIds.push(s);
@@ -1678,7 +1861,7 @@ Ext.define('Connector.view.Chart', {
             this.clearHighlightPoints();
     },
 
-    retrievePointSubjectIds : function(target, subjects) {
+    retrievePointSubjectIds : function(target, subjects, isStudyAxis) {
         var subjectIds = [];
         if (subjects) {
             subjects.forEach(function(s) {
@@ -1698,7 +1881,7 @@ Ext.define('Connector.view.Chart', {
                 if (d.x !== undefined && d.x !== null && d.x.toString() === target) { // use toString for boolean value
                     d.isMouseOver = true;
                 }
-                else {
+                else if (isStudyAxis) {
                     if (d.timeAxisKey.indexOf(target) > -1) {
                         d.isMouseOver = true;
                         isTimeAxisTarget = true;
@@ -1734,17 +1917,17 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightPlotData : function(target, subjects) {
+    highlightPlotData : function(target, subjects, isStudyAxis) {
         if (this.showPointsAsBin) {
-            this.highlightBins(target, subjects);
+            this.highlightBins(target, subjects, isStudyAxis);
         }
         else {
-            this.highlightPoints(target, subjects);
+            this.highlightPoints(target, subjects, isStudyAxis);
         }
     },
 
-    highlightPoints : function(target, subjects) {
-        var subjectIds = this.retrievePointSubjectIds(target, subjects);
+    highlightPoints : function(target, subjects, isStudyAxis) {
+        var subjectIds = this.retrievePointSubjectIds(target, subjects, isStudyAxis);
 
         var fillColorFn = function(d) {
             if (d.isMouseOver) {
@@ -1861,6 +2044,9 @@ Ext.define('Connector.view.Chart', {
         var values = [];
         selections.forEach(function(s) {
             var gridData = s.get('gridFilter');
+            if (s.get('isTime')) {
+                gridData = s.get('timeFilters');
+            }
             for (var i = 0; i < gridData.length; i++) {
                 if (gridData[i] != null && Ext.isString(gridData[i].getValue())) {
                     values = gridData[i].getValue().split(';');
@@ -2017,7 +2203,11 @@ Ext.define('Connector.view.Chart', {
                 // Create a 'time filter'
                 if (this.activeMeasures.x.variableType === 'TIME')
                 {
-                    var timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
+                    var timeFilters = [selection.gridFilter[0]];
+                    if (!this.activeMeasures.x.isDiscreteTime)
+                    {
+                        timeFilters.push(selection.gridFilter[1]);
+                    }
 
                     Connector.getFilterService().getTimeFilter(selection.plotMeasures[0], timeFilters, function(_filter)
                     {
@@ -2064,6 +2254,9 @@ Ext.define('Connector.view.Chart', {
         if (multi) {
             for (var i=0; i < selections.length; i++) {
                 data = selections[i].get('gridFilter')[0];
+                if (selections[i].get('isTime')) {
+                    data = selections[i].get('timeFilters')[0];
+                }
                 if (data.getColumnName() === name) {
                     values = values.concat(data.getValue()).concat(';');
                 }
@@ -2237,7 +2430,7 @@ Ext.define('Connector.view.Chart', {
             {
                 this.fireEvent('showload', this);
 
-                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME';
+                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME' && !this.activeMeasures.x.isDiscreteTime;
 
                 this.requestChartData();
             }
@@ -2313,6 +2506,12 @@ Ext.define('Connector.view.Chart', {
             wrapped = {
                 measure: Ext.clone(activeMeasures.color)
             };
+
+            if (activeMeasures.color.variableType == 'TIME') {
+                wrapped.dateOptions = {
+                    interval: activeMeasures.color.alias
+                };
+            }
 
             this.setAxisNameMeasureProperty(wrapped.measure, activeMeasures.x, activeMeasures.y);
         }
@@ -2512,6 +2711,7 @@ Ext.define('Connector.view.Chart', {
             this.initPlot(chartData);
         }
 
+        this.fireEvent('hidetooltipmsg');
         this.updatePlotInfoPaneCounts({forSubcounts: false, queryName: this.dataQWP.query});
     },
 
@@ -2739,6 +2939,41 @@ Ext.define('Connector.view.Chart', {
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'Container', 'VARCHAR');
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
 
+                // add measures for tooltip
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        'study',
+                        'Demographics',
+                        'study_short_name',
+                        'VARCHAR'
+                );
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'Study',
+                        'VARCHAR'
+                );
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'TreatmentSummary',
+                        'VARCHAR'
+                );
+
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'ProtocolDay',
+                        'INTEGER'
+                );
+
                 // only add the SequenceNum column for selected measures that are not demographic and no time point
                 if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') 
                 {
@@ -2756,22 +2991,6 @@ Ext.define('Connector.view.Chart', {
                         Connector.studyContext.gridBase,
                         'ParticipantSequenceNum',
                         'VARCHAR'
-                    );
-                    this.addValuesToMeasureMap(
-                            measuresMap,
-                            axisName,
-                            Connector.studyContext.gridBaseSchema,
-                            Connector.studyContext.gridBase,
-                            'Study',
-                            'VARCHAR'
-                    );
-                    this.addValuesToMeasureMap(
-                            measuresMap,
-                            axisName,
-                            Connector.studyContext.gridBaseSchema,
-                            Connector.studyContext.gridBase,
-                            'TreatmentSummary',
-                            'VARCHAR'
                     );
                     this.addValuesToMeasureMap(
                             measuresMap,
@@ -3102,8 +3321,9 @@ Ext.define('Connector.view.Chart', {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
+                    includeTimpointMeasures: true,
                     userFilter : function(row) {
-                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
+                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR' || row.isDiscreteTime;
                     }
                 },
                 listeners: {
@@ -3586,11 +3806,11 @@ Ext.define('Connector.view.Chart', {
         me.clearHighlightedData();
 
         targets.forEach(function(t) {
-            me.highlightPlotData(t);
+            me.highlightPlotData(t, null, true);
         });
 
         if (target) {
-            me.highlightPlotData(target);
+            me.highlightPlotData(target, null, true);
         }
     },
 
@@ -3731,7 +3951,7 @@ Ext.define('Connector.view.Chart', {
         {
             this.plotEl.setStyle('padding-left', '0');
             this.bottomPlotEl.setStyle('margin-left', this.requireXGutter
-                    ? (this.requireYGutter ? this.yGutterWidth + 'px' : this.yNoGutterWidth + 'px') : '0');
+                    ? (this.requireYGutter ? this.yGutterWidth + 'px' : '0') : '0');
 
             this.getBottomPlotPanel().setHeight(this.requireXGutter ? this.xGutterHeight : 0);
             this.getBottomPlotPanel().setVisible(this.requireXGutter);

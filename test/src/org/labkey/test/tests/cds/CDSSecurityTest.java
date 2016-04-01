@@ -138,6 +138,10 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         stopImpersonatingGroup();
         assertSignedInNotImpersonating();
 
+        //TODO The call to stopImpersonatingGroup goes to home.
+        // The group is not available from home, only from the CDS project.
+        goToProjectHome();
+
         impersonateGroup(PERM_GROUPS[1], false);
 
         cds.enterApplication();
@@ -265,7 +269,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         handleSimpleLogin(NEW_USER_ACCOUNTS[0], "P@$$w0rd");
         sleep(5000);
         log("Validate we are on the CDS home page.");
-        assertTextPresent("studies to learn about");
+        assertTextPresent("Welcome to the CAVD DataSpace.");
 
         log("Done. Signing back into main site with default test account to clean up.");
         click(Locator.xpath("//a[contains(@class, 'logout')][contains(text(), 'Logout')]"));

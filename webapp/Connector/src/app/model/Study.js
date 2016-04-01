@@ -57,6 +57,8 @@ Ext.define('Connector.app.model.Study', {
         }},
         {name: 'assays', convert : function(value) {
             return Ext.isArray(value) ? value : [];
-        }}
+        }},
+        {name: 'groups_treatment_schema', defaultValue: undefined},
+        {name: 'methods_assay_schema', defaultValue: undefined}
     ]
 });

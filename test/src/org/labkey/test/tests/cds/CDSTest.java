@@ -20,6 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.pages.LabKeyPage;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
@@ -106,13 +107,66 @@ public class CDSTest extends CDSReadOnlyTest
         log("Verify Home Page");
 
         //
-        // Validate splash counts
+        // Validate splash counts and home header
         //
-        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "55 studies to learn about.");
-        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "46,644 data points collected from 51 studies.");
+        Locator.XPathLocator studyPoints = Locator.tagContainingText("h1", "55 studies to ");
+        Locator.XPathLocator dataPoints = Locator.tagContainingText("h1", "46,644 data points from 51 studies to ");
         waitForElement(studyPoints);
         waitForElement(dataPoints);
+        click(Locator.linkWithText("learn about"));
+        waitForElement(CDSHelper.NavigationLink.LEARN.getExpectedElement());
 
+        log("Verify show/hide get started bar");
+        Locator.XPathLocator hiddenShowBarLink = Locator.xpath("//a[contains(@class, 'started-show')][contains(@style, 'display: none')]");
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        // if it's already hidden, click to show
+        if (!isElementPresent(hiddenShowBarLink)) {
+            click(Locator.linkContainingText("Show tips for getting started "));
+            sleep(500);
+        }
+        assertElementPresent(hiddenShowBarLink);
+        click(Locator.linkContainingText("Hide "));
+        sleep(500);
+        assertElementNotPresent(hiddenShowBarLink);
+        sleep(500);
+        click(Locator.linkContainingText("Show tips for getting started "));
+        sleep(500);
+        assertElementPresent(hiddenShowBarLink);
+
+        log("Verify tile text");
+        String[] tileTitles = {"Answer questions", "Find a cohort", "Explore relationships", "Be inspired"};
+        String[] tileDetails = {"Learn about 55 CAVD studies, 90 products, and 5 assays.",
+                                "Find subjects based on attributes that span studies.",
+                                "Plot assay results across 51 studies and years of research.",
+                                "Watch the most powerful ways to explore the DataSpace."};
+        List<String> tites = Arrays.asList(tileTitles);
+        tites.stream().forEach((tite) ->  {
+            assertTextPresent(tite);
+        });
+        tites = Arrays.asList(tileDetails);
+        tites.stream().forEach((tite) ->  {
+            assertTextPresent(tite);
+        });
+
+        log("Verify tile link");
+        mouseOver(Locator.xpath("//div[contains(@class, 'home_text')]"));
+        sleep(500);
+        click(Locator.xpath("//div[contains(@class, 'home_text')]"));
+        waitForElement(CDSHelper.NavigationLink.LEARN.getExpectedElement());
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        mouseOver(Locator.xpath("//div[contains(@class, 'home_plot')]"));
+        sleep(500);
+        click(Locator.xpath("//div[contains(@class, 'home_plot')]"));
+        waitForElement(CDSHelper.NavigationLink.PLOT.getExpectedElement());
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+
+        log("Verify open video popup");
+        mouseOver(Locator.xpath("//div[contains(@class, 'home_video')]"));
+        sleep(500);
+        click(Locator.xpath("//div[contains(@class, 'home_video')]"));
+        waitForElement(Locator.xpath("id('started-video-frame')"));
+        sleep(500);
+        clickAt(Locator.css("div.x-mask"), 10, 10, 0);
         //
         // Validate News feed
         //
@@ -147,6 +201,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
+        cds.pickSort("Race");
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
@@ -667,6 +722,7 @@ public class CDSTest extends CDSReadOnlyTest
         log("Filter on race.");
         cds.goToSummary();
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
+        cds.pickSort("Race");
         cds.selectBars(false, CDSHelper.RACE_ASIAN);
 
         log("Create a plot that will filter.");
@@ -1303,6 +1359,12 @@ public class CDSTest extends CDSReadOnlyTest
     public void testLearnAboutStudyProducts()
     {
         cds.viewLearnAboutPage("Study products");
+        sleep(30000);
+        refresh();
+        sleep(30000);
+        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000);
+        waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
+//        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
 
         List<String> studyProducts = Arrays.asList(CDSHelper.PRODUCTS);
         _asserts.verifyLearnAboutPage(studyProducts);
@@ -1316,18 +1378,23 @@ public class CDSTest extends CDSReadOnlyTest
         final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         cds.viewLearnAboutPage("Study products");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        sleep(30000);
+        refresh();
+        sleep(30000);
+        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000);
+        waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
+//        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
 
         int index = returnedItems.size()/2;
 
         itemParts = returnedItems.get(index).getText().split("\n");
         log("Looking for product: " + itemParts[0] + " in a list of " + returnedItems.size());
-        shortWait().until(ExpectedConditions.visibilityOf(returnedItems.get(index)));
+        longWait().until(ExpectedConditions.visibilityOf(returnedItems.get(index)));
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
+        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Product Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());

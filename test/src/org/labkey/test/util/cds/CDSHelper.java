@@ -102,15 +102,18 @@ public class CDSHelper
     public final static int CDS_WAIT_TOOLTIP = 5000;
 
     public final static String RACE_ASIAN = "Asian";
+    public final static String RACE_ASIANPACIFIC = "Asian/Pacific Island";
     public final static String RACE_BLACK = "Black";
     public final static String RACE_HAWAIIAN = "Hawaiian/Pacific Isl";
     public final static String RACE_MULTIRACIAL = "Multiracial";
     public final static String RACE_NATIVE = "Native American";
     public final static String RACE_NATIVE_ALAS = "Native American/Alas";
+    public final static String RACE_NATIVE_HAWAIIAN = "Native Hawaiian/Paci";
     public final static String RACE_OTHER = "Other";
+    public final static String RACE_UNKNOWN = "Unknown";
     public final static String RACE_WHITE = "White";
 
-    public static final String[] RACE_VALUES = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
+    public static final String[] RACE_VALUES = {RACE_ASIAN, RACE_ASIANPACIFIC, RACE_BLACK, RACE_HAWAIIAN, RACE_MULTIRACIAL, RACE_NATIVE, RACE_NATIVE_ALAS, RACE_NATIVE_HAWAIIAN, RACE_OTHER, RACE_UNKNOWN, RACE_WHITE};
 
     public final static String SPECIES_HUMAN = "Human";
     public final static String SPECIES_VULCAN = "Vulcan";
@@ -375,6 +378,9 @@ public class CDSHelper
     public static final String TIME_POINTS_DAYS = "Study days";
     public static final String TIME_POINTS_WEEKS = "Study weeks";
     public static final String TIME_POINTS_MONTHS = "Study months";
+    public static final String TIME_POINTS_DISCRETE_DAYS = "Study days (discrete)";
+    public static final String TIME_POINTS_DISCRETE_WEEKS = "Study weeks (discrete)";
+    public static final String TIME_POINTS_DISCRETE_MONTHS = "Study months (discrete)";
 
     // These are values used in the data grid.
     public static final String GRID_TITLE_BAMA = TITLE_BAMA;
@@ -397,6 +403,8 @@ public class CDSHelper
     public static final String TIME_POINTS_ALIGN_LAST_VAC = "Last Vaccination";
 
     public static final String HOME_PAGE_HEADER = "Welcome to the CAVD DataSpace.";
+
+    public static final String PLOT_POINT_HIGHLIGHT_COLOR = "#41C49F";
 
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
@@ -458,9 +466,9 @@ public class CDSHelper
     public void enterApplication()
     {
         _test.refresh();
-        _test.sleep(1000);
+        _test.sleep(2000);
         _test.goToProjectHome();
-        _test.clickAndWait(Locator.linkWithText("Application"));
+        _test.clickAndWait(Locator.linkWithText("Application"), 10000);
         _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
@@ -565,6 +573,48 @@ public class CDSHelper
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
         _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
         waitForFilterAnimation();
+    }
+
+    public void clickPointInPlot(String cssPathToSvg, int pointIndex)
+    {
+        clickElementInPlot(cssPathToSvg, pointIndex, "a.point", "path[fill='" + PLOT_POINT_HIGHLIGHT_COLOR + "']");
+//        clickElementInPlot(cssPathToSvg, pointIndex, "a.point");
+    }
+
+    public void clickHeatPointInPlot(String cssPathToSvg, int pointIndex)
+    {
+        clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square", "path[style='fill: " + PLOT_POINT_HIGHLIGHT_COLOR + "']");
+//        clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square");
+    }
+
+    private void clickElementInPlot(String cssPathToSvg, int pointIndex, String elementTag, String fillStyle)
+    {
+        String cssPathToPoint = cssPathToSvg + " " + elementTag + ":nth-of-type(" + pointIndex + ")";
+
+        try
+        {
+            _test.click(Locator.css(cssPathToPoint));
+        }
+        catch(org.openqa.selenium.WebDriverException wde)
+        {
+            _test.log("First attempt at clicking the point failed, going to try an alternate way to click.");
+            // Move the mouse over the point, or where the mouse thinks the point is.
+            _test.mouseOver(Locator.css(cssPathToPoint));
+
+            // Now click the point that is the highlight color.
+            _test.click(Locator.css(cssPathToSvg + " " + elementTag + " " + fillStyle));
+        }
+
+    }
+
+    private void clickElementInPlot(String cssPathToSvg, int pointIndex, String elementTag)
+    {
+        String cssPathToPoint = cssPathToSvg + " " + elementTag + ":nth-of-type(" + pointIndex + ")";
+
+        _test.mouseOver(Locator.css(cssPathToPoint));
+        _test.sleep(750);
+        Actions builder = new Actions(_test.getDriver());
+        builder.click().perform();
     }
 
     private void waitForFilterAnimation()
@@ -900,6 +950,27 @@ public class CDSHelper
 
     }
 
+    public void setGettingStartedVideoURL(String videoUrl)
+    {
+        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[1]";
+        String curValue;
+        Boolean changed = false;
+
+        _test._ext4Helper.resetCssPrefix();
+        _test.goToProjectHome();
+        _test.goToFolderManagement();
+        _test.waitForText(1000, "Module Properties");
+        _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
+        _test.waitForText(1000, "CDSTest Project");
+
+        _test.setFormElement(Locator.xpath(xpathValueTxtBox), videoUrl);
+
+        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
+        _test.waitForText(1000, "Success");
+        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
+
+    }
+
     public void assertPlotTickText(Pattern p)
     {
         assertPlotTickText(1, p);
@@ -973,7 +1044,7 @@ public class CDSHelper
     {
         HOME("Home", Locator.tagContainingText("h1", HOME_PAGE_HEADER)),
         LEARN("Learn about", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
-        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest.")),
+        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest with assay data in DataSpace.")),
         PLOT("Plot data", Locator.tagWithClass("a", "colorbtn")),
         GRID("View data grid", DataGridVariableSelector.titleLocator);
 
@@ -1127,4 +1198,41 @@ public class CDSHelper
         }
     }
 
+    public enum PlotPoints
+    {
+
+        POINT("a.point", PLOT_POINT_HIGHLIGHT_COLOR),
+        BIN("a.vis-bin-square", PLOT_POINT_HIGHLIGHT_COLOR),
+        GLYPH("a.point", PLOT_POINT_HIGHLIGHT_COLOR),
+        GLYPH_ASTERISKS("a.point path[d='M3-1.1L2.6-1.9L0.5-0.8v-1.8h-1v1.8l-2.1-1.1L-3-1.1L-0.9,0L-3,1.1l0.4,0.7l2.1-1.1v1.9h1V0.7l2.1,1.1L3,1.1 L0.9,0L3-1.1z']", PLOT_POINT_HIGHLIGHT_COLOR);
+        // That long ugly value is the asterisks glyph. It's one of the better ones for hit testing.
+        // It is not currently used, but it might be in the future, and I didn't want to have to try and find it again.
+
+        private String _tag, _highlightColor;
+
+        private PlotPoints(String linkText, String highlightColor)
+        {
+            _tag = linkText;
+            _highlightColor = highlightColor;
+        }
+
+        public String getTag()
+        {
+            return _tag;
+        }
+
+        public String getHighlightColor()
+        {
+            return _highlightColor;
+        }
+
+    }
+
+    public void dragAndDropFromElement(Locator el, int xOffset, int yOffset)
+    {
+        WebElement wel = el.findElement(_test.getDriver());
+        _test.mouseOver(wel);
+        Actions builder = new Actions(_test.getDriver());
+        builder.clickAndHold().moveByOffset(xOffset + 1, yOffset + 1).release().build().perform();
+    }
 }

@@ -32,8 +32,8 @@ Ext.define('Connector.view.HomeHeader', {
                 cls: 'cascade-header',
                 tpl: new Ext.XTemplate(
                     '<h1>Welcome to the CAVD DataSpace.</h1>',
-                    '<h1 class="middle">{nstudy:htmlEncode} studies to learn about. </h1>',
-                    '<h1 class="bottom">{ndatapts:this.commaFormat} data points collected from {nsubjectstudy:htmlEncode} studies.</h1>',
+                    '<h1 class="middle">{nstudy:htmlEncode} studies to <a href="#learn">learn about </a></h1>',
+                    '<h1 class="bottom">{ndatapts:this.commaFormat} data points from {nsubjectstudy:htmlEncode} studies to <a href="#chart">plot</a></h1>',
                     {
                         commaFormat : function(v) {
                             return Ext.util.Format.number(v, '0,000');

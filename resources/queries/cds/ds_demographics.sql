@@ -36,6 +36,7 @@ SELECT
 
   -- STUDY RELATED
   istudy.study_label,
+  istudy.study_short_name,
   istudy.study_start_date,
   istudy.study_first_enr_date,
   istudy.study_fu_complete_date,
