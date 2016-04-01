@@ -266,10 +266,11 @@ Connector.view.StudyAxis = function() {
 
     var renderVerticalTicks = function(selection) {
         var tickEls = selection.selectAll('line.study-axis-tick').data(function(d) {
-            var tickData = xScale.ticks(7);
-            for (var i = 0; i < tickData.length; i++) {
-                tickData[i] = {x: xScale(tickData[i]), y: yScale(studyGroupName(d))};
-            }
+            var ticks = xScale.ticks ? xScale.ticks(7) : xScale.domain();
+            var tickData = [];
+            Ext.each(ticks, function(tick) {
+                tickData.push({x: xScale(tick), y: yScale(studyGroupName(d))});
+            });
             return tickData;
         });
         tickEls.exit().remove();
@@ -541,8 +542,12 @@ Connector.view.StudyAxis = function() {
     studyAxis.scale = function(s) {
         var r;
         xScale = s.copy();
-        r = xScale.range();
-        xScale.range([r[0] + 150, r[1] + 150]);
+        var ranges = xScale.range();
+        var newRanges = [];
+        Ext.each(ranges, function(r) {
+            newRanges.push(r + 150);
+        });
+        xScale.range(newRanges);
         return studyAxis;
     };
 
