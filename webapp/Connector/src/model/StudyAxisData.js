@@ -16,7 +16,8 @@ Ext.define('Connector.model.StudyAxisData', {
 
         /* generated properties based on the processing of the above records */
         {name : 'data', defaultValue: []},
-        {name : 'range', defaultValue: {min: null, max: null}}
+        {name : 'range', defaultValue: {min: null, max: null}},
+        {name : 'visitTags', defaultValue: []}
     ],
 
     constructor : function(config) {
@@ -39,6 +40,10 @@ Ext.define('Connector.model.StudyAxisData', {
 
     getRange : function() {
         return this.get('range');
+    },
+
+    getAllVisitTags : function() {
+        return this.get('visitTags');
     },
 
     getVisitTag : function(studyName, groupName, tagCaption, groupDesc)
@@ -90,7 +95,7 @@ Ext.define('Connector.model.StudyAxisData', {
             study, studyContainer, studyKeys, visit, visitId, visitKeys, visitKey, visitLabel, seqMin,
             seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination, isChallenge,
             shiftVal, i, j, k, alignmentVisitTag, visitTagName,
-            groupKeys, groupVisit, groupVisits, group, groups, groupLabel, groupDesc;
+            groupKeys, groupVisit, groupVisits, group, groups, groupLabel, groupDesc, uniqueAlignedDays = {};
 
         if (Ext.isDefined(measure.interval))
         {
@@ -189,6 +194,7 @@ Ext.define('Connector.model.StudyAxisData', {
             }
 
             alignedDay = this.convertInterval(protocolDay - shiftVal, interval);
+            uniqueAlignedDays[alignedDay] = true;
 
             if (timepointType !== 'VISIT')
             {
@@ -326,9 +332,21 @@ Ext.define('Connector.model.StudyAxisData', {
         // sort by study label
         data.sort(this._naturalSortHelper);
 
+        var allTags = [];
+        for (var tag in uniqueAlignedDays) {
+            if(uniqueAlignedDays.hasOwnProperty(tag)) {
+                allTags.push(tag);
+            }
+        }
+
+        allTags = allTags.sort(function(a, b){
+            return a - b;
+        });
+
         this.set({
             data: data,
-            range: range
+            range: range,
+            visitTags: allTags
         });
     },
 

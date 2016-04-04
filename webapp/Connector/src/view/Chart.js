@@ -1054,6 +1054,15 @@ Ext.define('Connector.view.Chart', {
                             return LABKEY.app.model.Filter.sorters.natural(a, b);
                         }
                     };
+                    if (studyAxisInfo) {
+                        domain = chartData.getXDomain(studyAxisInfo, true);
+                        scales.x.domain = domain;
+                        scales.x.sortFn = function(a, b)
+                        {
+                            return a - b;
+                        };
+                        scales.x.sortMergedDomain = true;
+                    }
                 }
             }
             else
