@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -11,6 +11,8 @@ Ext.define('Connector.model.StudyAxisData', {
         /* values passed in from Chart.js */
         {name : 'measure', defaultValue: {}}, // x-axis timepoint measure
         {name : 'records', defaultValue: []}, // filtered set of StudyVisitTag model records
+        {name : 'studyVisitMap', defaultValue: {}}, // a set of studyVisits that has data in plot
+        {name : 'studyGroupVisitMap', defaultValue: {}}, // a set of studyGroupVisits that has data in plot
 
         /* generated properties based on the processing of the above records */
         {name : 'data', defaultValue: []},
@@ -197,6 +199,8 @@ Ext.define('Connector.model.StudyAxisData', {
             // track each unique visit in a study by rowId
             if (Ext.isNumber(visitId))
             {
+                var tagKey = ChartUtils.studyAxisKeyDelimiter + alignedDay + ChartUtils.studyAxisKeyDelimiter + studyLabel;
+                var hasDataInPlot = this.get('studyVisitMap')[tagKey] === true;
                 visit = this._genVisit({
                     studyLabel: studyLabel,
                     sequenceNumMin: seqMin,
@@ -205,7 +209,9 @@ Ext.define('Connector.model.StudyAxisData', {
                     protocolDay: protocolDay,
                     visitTagCaption: visitTagCaption,
                     isVaccination: isVaccination,
-                    isChallenge: isChallenge
+                    isChallenge: isChallenge,
+                    visitRowId: visitId,
+                    isTagActive: hasDataInPlot
                 });
 
                 // check visit mapping
@@ -247,6 +253,9 @@ Ext.define('Connector.model.StudyAxisData', {
                 {
                     if (!study.groups[groupLabel].visits[alignedDay])
                     {
+                        var tagKey = ChartUtils.studyAxisKeyDelimiter + alignedDay;
+                        tagKey +=  ChartUtils.studyAxisKeyDelimiter + studyLabel + ChartUtils.studyAxisKeyDelimiter + groupLabel;
+                        var hasDataInPlot = this.get('studyGroupVisitMap')[tagKey] === true;
                         study.groups[groupLabel].visits[alignedDay] = this._genVisit({
                             studyLabel: studyLabel,
                             groupName: groupName,
@@ -258,7 +267,9 @@ Ext.define('Connector.model.StudyAxisData', {
                             protocolDay: protocolDay,
                             visitTagCaption: visitTagCaption,
                             isVaccination: isVaccination,
-                            isChallenge: isChallenge
+                            isChallenge: isChallenge,
+                            visitRowId: visitId,
+                            isTagActive: hasDataInPlot
                         });
                     }
 

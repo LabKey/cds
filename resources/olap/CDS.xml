@@ -1,4 +1,4 @@
-<Schema name="CDS" description="HIV Collaborative Dataspace">
+<Schema name="CDS" description="DataSpace">
 
     <Cube name="DataspaceCube" visible="true" defaultMeasure="RowCount" cache="true" enabled="true">
 
@@ -76,8 +76,8 @@
                     <Table name="Demographics" schema="study"/>
                     <Table name="study" schema="cds"/>
                 </Join>
-                <Level name="Treatment Arm Coded Label" visible="true" column="study_arm_coded_label" type="String" uniqueMembers="true" />
                 <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
+                <Level name="Treatment Arm Coded Label" visible="true" column="study_arm_coded_label" type="String" uniqueMembers="true" />
             </Hierarchy>
 
             <Hierarchy name="Type" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
@@ -109,7 +109,7 @@
 
             <Hierarchy name="Product Type" visible="true" hasAll="false" primaryKey="product_group">
                 <Table name="subjectproduct_bridge" schema="cds"/>
-                <Level name="Type" visible="true" column="product_type" type="String" uniqueMembers="true" />
+                <Level name="Product Type" visible="true" column="product_type" type="String" uniqueMembers="true" />
                 <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
             </Hierarchy>
 

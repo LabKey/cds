@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -20,11 +20,14 @@ Ext.define('Connector.view.GridPane', {
     getMiddleContent : function(model)
     {
         var filter = model.get('filter'),
-            gridFilters = filter.get('gridFilter'),
+            dataFilters = filter.get('gridFilter'),
             xLabel = filter.get('xLabel'),
             yLabel = filter.get('yLabel'),
             excludeIndexes = {};
 
+        if (filter.get('isTime')) {
+            dataFilters = filter.get('timeFilters')
+        }
         var content = [{
             xtype: 'box',
             tpl: new Ext.XTemplate(
@@ -71,10 +74,16 @@ Ext.define('Connector.view.GridPane', {
             excludeIndexes[3] = true;
         }
 
-        if (Ext.isArray(gridFilters))
+        if (filter.get('isStudyAxis')) {
+            content.push({
+                xtype: 'box',
+                html: filter.get('filterDisplayString')
+            });
+        }
+        else if (Ext.isArray(dataFilters))
         {
             var shown = {};
-            Ext.each(gridFilters, function(gf, i)
+            Ext.each(dataFilters, function(gf, i)
             {
                 if (excludeIndexes[i])
                 {

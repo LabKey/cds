@@ -45,7 +45,12 @@ Ext.define('Connector.app.view.Study', {
                         '<tpl if="species && species.length &gt; 0">',
                             '<span class="detail-type-text">{species:htmlEncode}</span>',
                         '</tpl>',
-                        '<div class="detail-description-text">{description}</div>', // allow html
+                        '<div class="detail-description-text">',
+                            '<tpl if="data_availability">',
+                                '<div class="data-availability-text">{data_availability}</div>',
+                            '</tpl>',
+                            '{description}',
+                        '</div>', // allow html
                     '</div>',
                     '<div class="detail-middle-column detail-text">',
                         '<tpl if="first_enr_date || followup_complete_date">',

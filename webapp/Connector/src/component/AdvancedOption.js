@@ -382,7 +382,7 @@ Ext.define('Connector.component.AdvancedOptionScale', {
             fields: [this.storeValueField, this.storeLabelField],
             data: [
                 {value: 'LINEAR', label: 'Linear'},
-                {value: 'LOG', label: 'Log (values ≤ 0 will be dropped)'}
+                {value: 'LOG', label: 'Log'}
             ]
         });
 

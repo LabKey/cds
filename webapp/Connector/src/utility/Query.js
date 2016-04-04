@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015-2016 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 // This is a singleton for cds getData query utilities
 Ext.define('Connector.utility.Query', {
 
@@ -6,6 +11,8 @@ Ext.define('Connector.utility.Query', {
     singleton: true,
 
     STUDY_ALIAS_PREFIX: 'cds_GridBase_',
+
+    DEMOGRAPHICS_ALIAS_PREFIX: 'study_Demographics_',
 
     logging: false,
 
@@ -21,6 +28,13 @@ Ext.define('Connector.utility.Query', {
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
         this.CONTAINER_ALIAS = this.STUDY_ALIAS_PREFIX + 'Container';
         this.VISITROWID_ALIAS = this.STUDY_ALIAS_PREFIX + 'VisitRowId';
+        this.STUDY_ALIAS = this.STUDY_ALIAS_PREFIX + 'Study';
+        this.TREATMENTSUMMARY_ALIAS = this.STUDY_ALIAS_PREFIX + 'TreatmentSummary';
+        this.PROTOCOLDAY_ALIAS = this.STUDY_ALIAS_PREFIX + 'ProtocolDay';
+
+        this.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_short_name';
+        this.DEMOGRAPHICS_STUDY_LABEL_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_label';
+        this.DEMOGRAPHICS_STUDY_ARM_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_arm_summary';
 
         if (Ext.isDefined(LABKEY.ActionURL.getParameters()['logQuery']))
         {
@@ -281,7 +295,8 @@ Ext.define('Connector.utility.Query', {
                     targetQuery,
                     baseQuery,
                     hasBaseFilter = false,
-                    baseMeasures = {};
+                    baseMeasures = {},
+                    isStudyAxis = f.isStudyAxis;
 
                 Ext.iterate(f.getAliases(), function(alias)
                 {
@@ -303,7 +318,9 @@ Ext.define('Connector.utility.Query', {
                             hasBaseFilter = true;
                             baseQuery = measure.queryName;
                             baseMeasures[alias] = measure;
-                            return;
+                            if (!isStudyAxis) {
+                                return;
+                            }
                         }
 
                         if (tables[measure.queryName])
@@ -323,6 +340,9 @@ Ext.define('Connector.utility.Query', {
                             {
                                 included = true;
                                 extraFilterMap[measure.queryName].filterArray.push(f);
+                                if (isStudyAxis) {
+                                    extraFilterMap[measure.queryName].isStudyAxis = isStudyAxis;
+                                }
                             }
                         }
                         else
@@ -654,16 +674,22 @@ Ext.define('Connector.utility.Query', {
             }
         }, this);
 
-        // process any extra filters for this dataset
-        if (extraFilterMap[datasetName])
+        for (var property in extraFilterMap)
         {
-            Ext.each(extraFilterMap[datasetName], function(filterDef)
+            if (extraFilterMap.hasOwnProperty(property))
             {
-                Ext.each(filterDef.filterArray, function(filter)
+                // process study axis filters or any extra filters for this dataset
+                if (extraFilterMap[property].isStudyAxis || property === datasetName)
                 {
-                    WHERE.push(this._getWhereClauseFromFilter(filter, filterDef.measures, false /* recursed */, forDebugging));
-                }, this);
-            }, this);
+                    Ext.each(extraFilterMap[property], function (filterDef)
+                    {
+                        Ext.each(filterDef.filterArray, function (filter)
+                        {
+                            WHERE.push(this._getWhereClauseFromFilter(filter, filterDef.measures, false /* recursed */, forDebugging));
+                        }, this);
+                    }, this);
+                }
+            }
         }
 
         // and optimized filters
@@ -834,11 +860,11 @@ Ext.define('Connector.utility.Query', {
 
     getIntervalDenominator : function(interval)
     {
-        if (interval == this.STUDY_ALIAS_PREFIX + 'Weeks')
+        if (interval.startsWith(this.STUDY_ALIAS_PREFIX + 'Weeks'))
             return 7;
-        else if (interval == this.STUDY_ALIAS_PREFIX + 'Months')
+        else if (interval.startsWith(this.STUDY_ALIAS_PREFIX + 'Months'))
             return 365.25/12;
-        else if (interval == this.STUDY_ALIAS_PREFIX + 'Years')
+        else if (interval.startsWith(interval == this.STUDY_ALIAS_PREFIX + 'Years'))
             return 365.25;
         return 1;
     },

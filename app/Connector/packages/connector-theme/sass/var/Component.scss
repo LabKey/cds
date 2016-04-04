@@ -689,7 +689,7 @@ div.hopscotch-bubble {
   @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
 
   .hopscotch-bubble-container {
-    max-width: 200px;
+    max-width: 400px;
   }
 
   .hopscotch-title {
@@ -702,6 +702,15 @@ div.hopscotch-bubble {
     padding: 0;
     font-family: $info-font;
     color: $secondary-text-color;
+  }
+
+  .axis-details {
+    padding-left: 20px;
+  }
+
+  .group-title {
+    font-weight: bold;
+    color: #000000;
   }
 
   .hopscotch-actions {
@@ -895,26 +904,131 @@ div.hopscotch-bubble {
 
 }
 
+.cds-started .x-panel-body-default {
+  border-width: 0;
+}
 
-@import 'windows';
+text.study-label {
+  cursor: pointer;
+}
 
-@import 'grid/Panel';
+.expanded-intro {
+  .section-title {
+    margin-left: 28px;
+    display: inline-block;
+  }
+}
 
-@import 'panel/FilterPanel';
-@import 'panel/GroupList';
-@import 'panel/Selector';
+.started-dismiss {
+  float: right;
+  padding-right: 28px;
+}
 
-@import 'plugin/LoadingMask';
+.started-show {
+  margin-left: 28px;
+}
 
-@import 'view/DetailStatus';
-@import 'view/Header';
-@import 'view/InfoPane';
-@import 'view/Learn';
-@import 'view/Navigation';
-@import 'view/Page';
-@import 'view/Chart';
-@import 'view/Signin';
-@import 'view/SingleAxisExplorer';
-@import 'view/Summary';
-@import 'view/TermsOfUse';
-@import 'view/Variable';
+.get-started-multiRow {
+  height: 650px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.get-started-singleRow {
+  height: 310px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.get-started {
+  background-color: #f0f0f0;
+
+    .tile-group {
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .tile {
+      width: 200px;
+      margin-bottom: 40px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .tile:hover {
+      color:$info-color;
+    }
+    .tile:hover .tile-title {
+      text-decoration: underline;
+    }
+    .tile:hover .home_text {
+      background-image: url('images/home_text_hover.png');
+    }
+    .tile:hover .home_bar {
+      background-image: url('images/home_bars_hover.png');
+    }
+    .tile:hover .home_plot {
+      background-image: url('images/home_plot_hover.png');
+    }
+    .tile:hover .home_video{
+      background-image: url('images/home_video_hover.png');
+    }
+
+    .tile-title {
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .tile-title:hover {
+      text-decoration: underline;
+    }
+    .tile-detail {
+      position: absolute;
+      bottom: 30px;
+      width: 200px;
+    }
+    .tile-detail:hover {
+      color:$info-color;
+    }
+    .backgroundimage {
+      height: 200px;
+      width: 200px;
+      background-size: 100%;
+      margin-bottom: 20px;
+    }
+    .home_text {
+      background-image: url('images/home_text.png');
+    }
+    .home_bar {
+      background-image: url('images/home_bars.png');
+    }
+    .home_plot {
+      background-image: url('images/home_plot.png');
+    }
+    .home_video {
+      background-image: url('images/home_video.png');
+    }
+}
+
+
+  @import 'windows';
+
+  @import 'grid/Panel';
+
+  @import 'panel/FilterPanel';
+  @import 'panel/GroupList';
+  @import 'panel/Selector';
+
+  @import 'plugin/LoadingMask';
+
+  @import 'view/DetailStatus';
+  @import 'view/Header';
+  @import 'view/InfoPane';
+  @import 'view/Learn';
+  @import 'view/Navigation';
+  @import 'view/Page';
+  @import 'view/Chart';
+  @import 'view/Signin';
+  @import 'view/SingleAxisExplorer';
+  @import 'view/Summary';
+  @import 'view/TermsOfUse';
+  @import 'view/Variable';

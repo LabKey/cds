@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015-2016 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 Ext.define('Connector.controller.Filter', {
 
     extend: 'Ext.app.Controller',
@@ -117,7 +122,15 @@ Ext.define('Connector.controller.Filter', {
 
         queryService.onQueryReady(function()
         {
-            queryService.getData([wrappedTimeMeasure], function(metadata)
+            var measuresArray = [];
+            if (Ext.isArray(wrappedTimeMeasure)) {
+                measuresArray = wrappedTimeMeasure;
+            }
+            else {
+                measuresArray.push(wrappedTimeMeasure);
+            }
+
+            queryService.getData(measuresArray, function(metadata)
             {
                 var filters = [
                     LABKEY.Filter.create(QueryUtils.SEQUENCENUM_ALIAS, 0, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL)

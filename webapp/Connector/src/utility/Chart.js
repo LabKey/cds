@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 LabKey Corporation
+ * Copyright (c) 2015-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -37,6 +37,8 @@ Ext.define('Connector.utility.Chart', {
 
     emptyTxt: 'undefined',
 
+    studyAxisKeyDelimiter: '|||',
+
     tickFormat: {
         date: function(val) {
             // D3 converts dates to integers, so we need to convert it back to a date to get the format.
@@ -65,6 +67,39 @@ Ext.define('Connector.utility.Chart', {
     axisNameProp : 'plot-axis',
     xAxisNameProp : 'plot-axis-x',
     yAxisNameProp : 'plot-axis-y',
+
+    callOutPositions: {
+        right : {
+            placement: 'right',
+            xOffset: 0,
+            yOffset: -25,
+            arrowOffset: 0
+        },
+        topRight : {
+            placement: 'top',
+            xOffset: -35,
+            yOffset: 0,
+            arrowOffset: 20
+        },
+        top : {
+            placement: 'top',
+            xOffset: -200,
+            yOffset: 0,
+            arrowOffset: 190
+        },
+        bottom : {
+            placement: 'bottom',
+            xOffset: -200,
+            yOffset: 0,
+            arrowOffset: 190
+        },
+        bottomRight : {
+            placement: 'bottom',
+            xOffset: -35,
+            yOffset: 0,
+            arrowOffset: 20
+        }
+    },
 
     constructor : function(config) {
         this.callParent([config]);
@@ -279,7 +314,9 @@ Ext.define('Connector.utility.Chart', {
             }
             else
             {
-                sqlFilters[0] = LABKEY.Filter.create(properties.xaxis.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+                if (xExtent[0] !== Number.NEGATIVE_INFINITY) {
+                    sqlFilters[0] = LABKEY.Filter.create(properties.xaxis.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+                }
                 sqlFilters[1] = LABKEY.Filter.create(properties.xaxis.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
             }
         }
@@ -289,7 +326,9 @@ Ext.define('Connector.utility.Chart', {
             yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true);
             yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false);
 
-            sqlFilters[2] = LABKEY.Filter.create(properties.yaxis.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+            if (yExtent[0] !== Number.NEGATIVE_INFINITY) {
+                sqlFilters[2] = LABKEY.Filter.create(properties.yaxis.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+            }
             sqlFilters[3] = LABKEY.Filter.create(properties.yaxis.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
         }
 
@@ -336,6 +375,7 @@ Ext.define('Connector.utility.Chart', {
 
     brushStart : function(layerScope, dimension) {
         this.clearHighlightLabels(layerScope.plot);
+        this.clearStudyAxisSelection();
         layerScope.isBrushed = true;
         if (this.initiatedBrushing == '') {
             this.initiatedBrushing = dimension;
@@ -593,13 +633,34 @@ Ext.define('Connector.utility.Chart', {
         if (Ext.isObject(plotMeasures.color))
         {
             var demographicSource = plotMeasures.color.isDemographic,
+                discreteTimeSource = plotMeasures.color.isDiscreteTime,
                 matchXSource = Ext.isObject(plotMeasures.x) && plotMeasures.x.queryName == plotMeasures.color.queryName,
                 matchYSource = Ext.isObject(plotMeasures.y) && plotMeasures.y.queryName == plotMeasures.color.queryName;
 
-            return demographicSource || matchXSource || matchYSource;
+            return demographicSource || discreteTimeSource || matchXSource || matchYSource;
         }
 
         return false;
+    },
+
+    sortTimeLegends: function (legends) {
+        legends.sort(function(legendA, legendB){
+            var a = legendA.text, b=legendB.text;
+            if (!isNaN(a) && !isNaN(b)) {
+                return parseInt(a) - parseInt(b);
+            }
+            else if (!isNaN(a)) {
+                return -1;
+            }
+            else if (!isNaN(b)) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+
+        });
+        return legends;
     },
 
     applySubjectValuesToMeasures : function(measureSet, subjectFilter) {
@@ -688,5 +749,60 @@ Ext.define('Connector.utility.Chart', {
         {
             return measureAKey == measureBKey && ChartUtils.getAssayDimensionsWithDifferentValues(measureA, measureB).length == 0;
         }
+    },
+
+    showDataTooltipCallout : function(content, point, hideEvent, isYGutter, isXGutter, scope) {
+        var positioning = this.getBubblePosition(point,  isYGutter, isXGutter);
+        var config = Ext.apply(positioning, {
+            bubbleWidth: 400,
+            target: point,
+            content: content
+        });
+
+        var calloutMgr = hopscotch.getCalloutManager(), _id = Ext.id();
+
+        Ext.apply(config, {
+            id: _id,
+            showCloseButton: false
+        });
+
+        calloutMgr.createCallout(config);
+
+        scope.on(hideEvent, function() {
+            calloutMgr.removeCallout(_id);
+        }, scope);
+
+        scope.mon(Ext.getCmp('app-main').getEl(), 'mousedown', function(el, e){
+            calloutMgr.removeCallout(_id);
+        }, scope);
+    },
+
+    getBubblePosition: function(point, isYGutter, isXGutter) {
+        var pointNode = point.parentNode;
+        var bbox = pointNode.getBBox();
+        var config = ChartUtils.callOutPositions.top;
+
+        if (isYGutter) {
+            config = ChartUtils.callOutPositions.right;
+        }
+        else if (isXGutter) {
+            if (bbox.x < 250) {
+                config = ChartUtils.callOutPositions.topRight;
+            }
+            else {
+                config = ChartUtils.callOutPositions.top;
+            }
+        }
+        else if (bbox.y < 250 && bbox.x < 250) {
+            config = ChartUtils.callOutPositions.bottomRight;
+        }
+        else if (bbox.y < 250) {
+            config = ChartUtils.callOutPositions.bottom;
+        }
+        else if (bbox.x < 250) {
+            config = ChartUtils.callOutPositions.topRight;
+        }
+        return config;
     }
+
 });

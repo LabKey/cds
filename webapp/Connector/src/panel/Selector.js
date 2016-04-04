@@ -1044,7 +1044,7 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindTimeOptions : function() {
-        if (this.activeMeasure.get('variableType') == 'TIME') {
+        if (this.activeMeasure.get('variableType') == 'TIME' && !this.activeMeasure.get('isDiscreteTime')) {
             this.getAdvancedPane().add(
                 Ext.create('Connector.component.AdvancedOptionTime', {
                     measure: this.activeMeasure,

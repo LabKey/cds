@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -25,6 +25,9 @@ Ext.define('Connector.model.ChartData', {
 
     statics: {
         isContinuousMeasure : function(measure) {
+            if (measure.isDiscreteTime) {
+                return false;
+            }
             var type = measure.type;
             return type === 'INTEGER' || type === 'DOUBLE' || type === 'TIMESTAMP' || type === 'FLOAT' || type === 'REAL';
         }
@@ -141,7 +144,11 @@ Ext.define('Connector.model.ChartData', {
                     keyColumnMatch = (measure.name == 'Container' && alias == QueryUtils.CONTAINER_ALIAS)
                             || (measure.name == 'SubjectId' && alias == QueryUtils.SUBJECT_ALIAS)
                             || (measure.name == 'SequenceNum' && alias == QueryUtils.SEQUENCENUM_ALIAS)
-                            || (measure.name == 'ParticipantSequenceNum' && alias == QueryUtils.SUBJECT_SEQNUM_ALIAS);
+                            || (measure.name == 'ParticipantSequenceNum' && alias == QueryUtils.SUBJECT_SEQNUM_ALIAS)
+                            || (measure.name == 'VisitRowId' && alias == QueryUtils.VISITROWID_ALIAS)
+                            || (measure.name == 'Study' && alias == QueryUtils.STUDY_ALIAS)
+                            || (measure.name == 'TreatmentSummary' && alias == QueryUtils.TREATMENTSUMMARY_ALIAS)
+                            || (measure.name == 'ProtocolDay' && alias == QueryUtils.PROTOCOLDAY_ALIAS);
 
                 if ((measure.alias && measure.alias == alias) || (measure.name && schemaQueryNameMatch) || keyColumnMatch)
                 {
@@ -182,7 +189,7 @@ Ext.define('Connector.model.ChartData', {
                     dimensionKeys.push(alias);
                 }
 
-                if (alias && alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 && sharedKeys.indexOf(alias) == -1)
+                if (alias && (alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 || alias.indexOf(QueryUtils.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS) == 0) && sharedKeys.indexOf(alias) == -1)
                 {
                     sharedKeys.push(alias);
                 }
@@ -242,7 +249,10 @@ Ext.define('Connector.model.ChartData', {
             mainCount = 0,
             nonAggregated,
             singleAntigenComparison = false,
-            _row;
+            _row,
+            logGutterBothCount = 0, logGutterXCount = 0,logGutterYCount = 0,
+            minPositiveX = Number.MAX_VALUE, minPositiveY = Number.MAX_VALUE,
+            studyVisitMap = {}, studyGroupVisitMap = {};
 
         ca = this.getBaseMeasureConfig();
         if (color)
@@ -340,6 +350,7 @@ Ext.define('Connector.model.ChartData', {
 
         dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated));
 
+        var allRows = {};
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++)
         {
@@ -349,6 +360,11 @@ Ext.define('Connector.model.ChartData', {
             if (_row[QueryUtils.CONTAINER_ALIAS])
             {
                 studyContainers[_row[QueryUtils.CONTAINER_ALIAS]] = true;
+                if (_row[QueryUtils.VISITROWID_ALIAS]) {
+                    var studyVisitKey = ChartUtils.studyAxisKeyDelimiter + xVal + ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
+                    studyVisitMap[studyVisitKey] = true;
+                    studyGroupVisitMap[studyVisitKey + ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS]] = true;
+                }
             }
 
             yVal = this._getYValue(y, _yid, _row);
@@ -361,11 +377,11 @@ Ext.define('Connector.model.ChartData', {
             }
 
             // check that the plot value are valid on a log scale
-            if (!this.isValidPlotValue('y', ya, yVal) || !this.isValidPlotValue('x', xa, xVal))
-            {
-                invalidLogPlotRowCount++;
-                continue;
-            }
+            //if (!this.isValidPlotValue('y', ya, yVal) || !this.isValidPlotValue('x', xa, xVal))
+            //{
+            //    //invalidLogPlotRowCount++;
+            //    //continue;
+            //}
 
             // update x-axis and y-axis domain min and max values
             if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date")
@@ -394,14 +410,38 @@ Ext.define('Connector.model.ChartData', {
                 hasNegOrZeroY = true;
             }
 
+            var timeAxisKey = '';
+            if (_row[QueryUtils.STUDY_ALIAS] && _row[QueryUtils.VISITROWID_ALIAS]) {
+                timeAxisKey = ChartUtils.studyAxisKeyDelimiter + xVal;
+                timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
+                if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
+                    timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
+                }
+
+            }
+
+            var rowKey = '';
+            if (_row[QueryUtils.SUBJECT_ALIAS]) {
+                rowKey = ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.SUBJECT_ALIAS];
+                rowKey += ChartUtils.studyAxisKeyDelimiter + xVal;
+                if (yVal) {
+                    rowKey += ChartUtils.studyAxisKeyDelimiter + yVal;
+                }
+                rowKey += ChartUtils.studyAxisKeyDelimiter;
+            }
+
+            allRows[rowKey] = _row;
+
             var entry = {
                 x: xVal,
                 y: yVal,
+                timeAxisKey : timeAxisKey,
                 color: colorVal,
                 subjectId: _row[QueryUtils.SUBJECT_ALIAS],
                 xname: xa.label,
                 yname: ya.label,
-                colorname: ca.label
+                colorname: ca.label,
+                rowKey: rowKey
             };
 
             // split the data entry based on undefined x and y values for gutter plotting
@@ -415,6 +455,10 @@ Ext.define('Connector.model.ChartData', {
                 if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().x !== true)
                 {
                     undefinedXRows.push(entry);
+                    if (yVal > 0 && yVal < minPositiveY)
+                    {
+                        minPositiveY = yVal;
+                    }
                 }
             }
             else if (yVal == null && xa.isContinuous && !xa.isDimension)
@@ -422,10 +466,36 @@ Ext.define('Connector.model.ChartData', {
                 if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().y !== true)
                 {
                     undefinedYRows.push(entry);
+                    if (xVal > 0 && xVal < minPositiveX)
+                    {
+                        minPositiveX = xVal;
+                    }
                 }
             }
             else
             {
+                if (!this.isValidPlotValue('y', ya, yVal) && !this.isValidPlotValue('x', xa, xVal))
+                {
+                    logGutterBothCount++;
+                    logGutterXCount++;
+                    logGutterYCount++
+                }
+                else if (!this.isValidPlotValue('x', xa, xVal))
+                {
+                    logGutterXCount++;
+                }
+                else if (!this.isValidPlotValue('y', ya, yVal))
+                {
+                    logGutterYCount++
+                }
+                if (xVal > 0 && xVal < minPositiveX)
+                {
+                    minPositiveX = xVal;
+                }
+                if (yVal > 0 && yVal < minPositiveY)
+                {
+                    minPositiveY = yVal;
+                }
                 mainCount++;
             }
 
@@ -452,10 +522,20 @@ Ext.define('Connector.model.ChartData', {
             yDomain: yDomain,
             rows: {
                 main: mainPlotRows,
+                allRowsMap: allRows,
                 undefinedX: undefinedXRows.length > 0 ? undefinedXRows : undefined,
                 undefinedY: undefinedYRows.length > 0 ? undefinedYRows : undefined,
+                logNonPositiveX: logGutterXCount > 0,
+                logNonPositiveY: logGutterYCount > 0,
+                logNonPositiveBoth: logGutterBothCount > 0,
                 totalCount: mainCount + undefinedXRows.length + undefinedYRows.length,
-                invalidLogPlotRowCount: invalidLogPlotRowCount
+                invalidLogPlotRowCount: invalidLogPlotRowCount,
+                minPositiveX: minPositiveX === Number.MAX_VALUE ? 0.0001 : minPositiveX,
+                minPositiveY: minPositiveY === Number.MAX_VALUE ? 0.0001 : minPositiveY
+            },
+            studyAxisData: {
+                studyVisitMap: studyVisitMap,
+                studyGroupVisitMap: studyGroupVisitMap
             },
             properties: {
                 xaxis: xa,

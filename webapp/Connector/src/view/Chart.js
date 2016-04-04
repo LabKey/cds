@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -29,6 +29,8 @@ Ext.define('Connector.view.Chart', {
 
     yNoGutterWidth: 24,
 
+    logGutterWidth: 30,
+
     xGutterName: 'xGutterPlot',
 
     yGutterName: 'yGutterPlot',
@@ -42,6 +44,8 @@ Ext.define('Connector.view.Chart', {
     initiatedBrushing: '',
 
     filtersActivated: false,
+
+    isStudyAxisExpanded: false,
 
     statics: {
         // Template used for contents of VisitTag tooltips
@@ -242,8 +246,7 @@ Ext.define('Connector.view.Chart', {
                 },
                 items: [
                     this.getHeatmapModeIndicator(),
-                    this.getMedianModeIndicator(),
-                    this.getLogScaleModeIndicator()
+                    this.getMedianModeIndicator()
                 ]
             },{
                 xtype: 'container',
@@ -255,26 +258,6 @@ Ext.define('Connector.view.Chart', {
                 items: [this.getColorSelector()]
             }]
         };
-    },
-
-    getLogScaleModeIndicator : function() {
-        if (!this.logScaleIndicator) {
-            this.logScaleIndicator = Ext.create('Ext.Component', {
-                hidden: true,
-                cls: 'plotmodeon',
-                html: 'Log filter on',
-                width: 110,
-                listeners: {
-                    scope: this,
-                    afterrender : function(c) {
-                        c.getEl().on('mouseover', function() { this.showWhyLogScale(); }, this);
-                        c.getEl().on('mouseout', function() { this.fireEvent('hidelogscalemsg', this); }, this);
-                    }
-                }
-            });
-        }
-
-        return this.logScaleIndicator;
     },
 
     getHeatmapModeIndicator : function() {
@@ -482,9 +465,6 @@ Ext.define('Connector.view.Chart', {
         this.hideMedianModeTask = new Ext.util.DelayedTask(function() {
             this.fireEvent('hidemedianmsg', this);
         }, this);
-        this.hideLogScaleModeTask = new Ext.util.DelayedTask(function() {
-            this.fireEvent('hidelogscalemsg', this);
-        }, this);
 
         this.on('resize', function() {
             this.plotEl.update('');
@@ -599,7 +579,6 @@ Ext.define('Connector.view.Chart', {
         if (!layerScope.isBrushed) {
             data.isMouseOver = true;
             this.highlightPlotData(null, [data.subjectId]);
-            this.pointHoverText(point, data, plotName);
         }
     },
 
@@ -609,8 +588,6 @@ Ext.define('Connector.view.Chart', {
             this.clearHighlightedData();
             this.highlightSelected();
         }
-
-        this.fireEvent('hidepointmsg');
     },
 
     mouseOverBins : function(event, data, layerSel, bin, layerScope, plotName) {
@@ -635,40 +612,219 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    pointHoverText : function(point, data, plotName) {
-        var config, val, content = '', colon = ': ', linebreak = ',<br/>';
-
-        if (data.xname) {
-            val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
-            content += Ext.htmlEncode(data.xname) + colon + val;
+    mouseUpPoints : function(event, data, layerSel, point, layerScope, plotName) {
+        //wait for brushend to fire to clear brushing state, mouseup individual point will clear isBrushed on brushend
+        if (!this.showPointToolTipTask) {
+            this.showPointToolTipTask = new Ext.util.DelayedTask(function(point, data, layerScope, plotName) {
+                if (layerScope.isBrushed)
+                    return;
+                this.pointClickText(point, data, plotName);
+            }, this);
         }
-        content += (content.length > 0 ? linebreak : '') + Ext.htmlEncode(data.yname) + colon + data.y;
+        this.showPointToolTipTask.delay(150, undefined, this, [point, data, layerScope, plotName]);
+    },
+
+    mouseUpBins : function(event, datas, layerSel, point, layerScope, plotName) {
+        //wait for brushend to fire to clear brushing state, mouseup individual bin will clear isBrushed on brushend
+        if (!this.showBinToolTipTask) {
+            this.showBinToolTipTask = new Ext.util.DelayedTask(function(point, datas, layerScope, plotName) {
+                if (layerScope.isBrushed)
+                    return;
+                this.binClickText(point, datas, plotName);
+            }, this);
+        }
+        this.showBinToolTipTask.delay(150, undefined, this, [point, datas, layerScope, plotName]);
+    },
+
+    pointClickText : function(point, data, plotName) {
+        var content = this.buildPointTooltip(data);
+        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
+    },
+
+    binClickText : function(point, datas, plotName) {
+        var content = this.buildBinTooltip(datas);
+        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
+    },
+
+    getAxisDimensionsArray: function(axis) {
+        var dimArray = [];
+        if (axis) {
+            var dimensions = axis.options.dimensions;
+            for (var dim in axis.options.dimensions) {
+                if (dimensions.hasOwnProperty(dim)) {
+                    dimArray.push(dim);
+                }
+            }
+        }
+        return dimArray;
+    },
+
+    buildBinTooltip: function(datas) {
+        var xVals = new Set(), yVals = new Set(), subjects = new Set(), studies = new Set();
+        var content = '', xName, yName, me = this,colon = ': ', linebreak = '<br/>';
+        var xDimensionVals = {}, yDimensionVals = {};
+        var xDimensions = this.getAxisDimensionsArray(this.activeMeasures.x), yDimensions = this.getAxisDimensionsArray(this.activeMeasures.y);
+
+        Ext.each(datas, function(data) {
+            var d = data.data;
+
+            if (d.x !== undefined && d.x !== null && d.x !== '') {
+                xVals.add(d.x);
+            }
+            if (d.y !== undefined && d.y !== null && d.y !== '') {
+                yVals.add(d.y);
+            }
+            if (d.subjectId !== undefined && d.subjectId !== null) {
+                subjects.add(d.subjectId);
+            }
+
+            if (d.xname && !xName) {
+                xName = d.xname;
+            }
+            if (d.yname && !yName) {
+                yName = d.yname;
+            }
+
+            var record = me.allDataRowsMap[d.rowKey];
+            studies.add(record[QueryUtils.STUDY_ALIAS]);
+
+            Ext.each(xDimensions, function(dim) {
+               if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
+                   if (!xDimensionVals[dim]) {
+                       xDimensionVals[dim] = new Set();
+                   }
+                   xDimensionVals[dim].add(record[dim]);
+               }
+            });
+            Ext.each(yDimensions, function(dim) {
+                if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
+                    if (!yDimensionVals[dim]) {
+                        yDimensionVals[dim] = new Set();
+                    }
+                    yDimensionVals[dim].add(record[dim]);
+                }
+            });
+
+        });
+
+        var studyName;
+        if (studies.size == 1) {
+            studyName = Array.from(studies)[0];
+        }
+
+        content += '<span class="group-title">Data</span>';
+        content += colon + datas.length + ' points from ' + subjects.size + ' subjects' + linebreak;
+        if (studyName) {
+            content += '<span class="group-title">Study</span>';
+            content += colon + Ext.htmlEncode(studyName) + linebreak;
+        }
+        if (xName) {
+            content += '<span class="group-title">' + Ext.htmlEncode(xName) + '</span>';
+            content += colon + Ext.htmlEncode(this.getBinRangeTooltip(xVals));
+            content += this.showAsMedian ? ' (median)' : '';
+            content += '<div class="axis-details">';
+            content += this.buildBinAxisDetailTooltip(xDimensionVals);
+            content += '</div>'
+        }
+        if (yName) {
+            content += '<span class="group-title">' + Ext.htmlEncode(yName) + '</span>';
+            content += colon + Ext.htmlEncode(this.getBinRangeTooltip(yVals));
+            content += this.showAsMedian ? ' (median)' : '';
+            content += '<div class="axis-details">';
+            content += this.buildBinAxisDetailTooltip(yDimensionVals);
+            content += '</div>'
+        }
+
+        return content;
+    },
+
+    buildBinAxisDetailTooltip: function(dimensionVals) {
+        var content = '', colon = ': ', linebreak = '<br/>';
+        if (dimensionVals) {
+            for (var dim in dimensionVals) {
+                if (dimensionVals.hasOwnProperty(dim) && dimensionVals[dim].size != 0) {
+                    var value = dimensionVals[dim].size == 1 ? Array.from(dimensionVals[dim])[0]: dimensionVals[dim].size + ' values' ;
+                    var label = Connector.getQueryService().getMeasure(dim).label;
+                    content += Ext.htmlEncode(label) + colon + value + linebreak;
+                }
+            }
+        }
+        return content;
+    },
+
+    getBinRangeTooltip: function(valSet) {
+        if (valSet.size == 0)
+            return null;
+        var vals = Array.from(valSet);
+        if (vals.length == 1)
+            return vals[0];
+        return Ext.Array.min(vals) + ' - ' + Ext.Array.max(vals);
+    },
+
+    buildPointTooltip: function(data) {
+        var content = '', colon = ': ', linebreak = '<br/>';
+        var record = this.allDataRowsMap[data.rowKey];
+
+        if (record[QueryUtils.STUDY_ALIAS]) {
+            content += '<span class="group-title">' + Ext.htmlEncode(record[QueryUtils.STUDY_ALIAS]) + '</span>';
+            content +=  colon + Ext.htmlEncode(record[QueryUtils.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS]);
+            content += '<div class="axis-details">';
+            content += 'Treatment Summary' + colon + record[QueryUtils.TREATMENTSUMMARY_ALIAS] + linebreak;
+            content += 'Subject' + colon + data.subjectId + linebreak;
+            content += 'Study Day' + colon + 'Day ' + record[QueryUtils.PROTOCOLDAY_ALIAS] + linebreak;
+            content += '</div>';
+        }
+
+        if (this.activeMeasures.x && data.xname) {
+            // skip for study, treatment, and time
+            var xAxis = this.activeMeasures.x;
+            if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
+                var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
+                content += '<span class="group-title">' + Ext.htmlEncode(data.xname) + '</span>' + colon + val;
+                content += this.showAsMedian ? ' (median)' : '';
+                content += this.buildPointAxisDetailTooltip(this.activeMeasures.x, record);
+            }
+        }
+
+        if (this.activeMeasures.y) {
+            content += '<span class="group-title">' + Ext.htmlEncode(data.yname) + '</span>' + colon + data.y;
+            content += this.showAsMedian ? ' (median)' : '';
+            content += this.buildPointAxisDetailTooltip(this.activeMeasures.y, record);
+        }
+
         if (data.colorname) {
-            content += linebreak + Ext.htmlEncode(data.colorname) + colon + data.color;
+            content += '<span class="group-title">' + Ext.htmlEncode(data.colorname) + '</span>' + colon + data.color;
         }
 
-        config = {
-            bubbleWidth: 250,
-            target: point,
-            placement: plotName===this.yGutterName?'right':'top',
-            xOffset: plotName===this.yGutterName?0:-125,
-            yOffset: plotName===this.yGutterName?-25:0,
-            arrowOffset: plotName===this.yGutterName?0:110,
-            title: 'Subject: ' + data.subjectId,
-            content: content
-        };
+        return content;
+    },
 
-        ChartUtils.showCallout(config, 'hidepointmsg', this);
+    buildPointAxisDetailTooltip: function(axis, record) {
+        var content = '<div class="axis-details">', colon = ': ', linebreak = '<br/>';
+        if (axis) {
+            var dimensions = axis.options.dimensions;
+            for (var dim in dimensions) {
+                if (dimensions.hasOwnProperty(dim) && record[dim] !== undefined) {
+                    var value = record[dim];
+                    var label = Connector.getQueryService().getMeasure(dim).label;
+                    content += Ext.htmlEncode(label) + colon + value + linebreak;
+                }
+            }
+        }
+        content += '</div>';
+        return content;
     },
 
     getLayerAes : function(layerScope, plotName) {
 
         var mouseOver = this.showPointsAsBin ? this.mouseOverBins : this.mouseOverPoints,
+            mouseUp = this.showPointsAsBin ? this.mouseUpBins : this.mouseUpPoints,
             mouseOut = this.showPointsAsBin ? this.mouseOutBins : this.mouseOutPoints;
 
         return {
             mouseOverFn: Ext.bind(mouseOver, this, [layerScope, plotName], true),
-            mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true)
+            mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true),
+            mouseUpFn: Ext.bind(mouseUp, this, [layerScope, plotName], true)
         };
     },
 
@@ -774,12 +930,20 @@ Ext.define('Connector.view.Chart', {
             this.getMainPlotPanel().removeCls('plot-scroll');
         }
 
+        var extraLeftMargin = 0, extraBottomMargin = 0;
+
+        if (this.requireBothLogGutter || this.requireYLogGutter) {
+            extraLeftMargin = this.logGutterWidth;
+        }
+        if (this.requireBothLogGutter || this.requireXLogGutter) {
+            extraBottomMargin = this.logGutterWidth;
+        }
         return Ext.apply(this.getBasePlotConfig(), {
             margins : {
                 top: 25,
-                left: yAxisMargin + (this.requireYGutter ? 0 : this.yNoGutterWidth),
+                left: yAxisMargin + (this.requireYGutter ? extraLeftMargin : this.yNoGutterWidth + (this.requireYLogGutter ? this.logGutterWidth : 0)),
                 right: 50,
-                bottom: size.extended === true ? 73 : 53
+                bottom: size.extended === true ? 73 + extraBottomMargin: 53 + extraBottomMargin
             },
             width : size.width,
             height : size.height,
@@ -787,7 +951,8 @@ Ext.define('Connector.view.Chart', {
             aes : aes,
             scales : scales,
             gridLineColor : ChartUtils.colors.SECONDARY,
-            borderColor : ChartUtils.colors.HEATSCALE3
+            borderColor : ChartUtils.colors.HEATSCALE3,
+            isMainPlot: true
         });
     },
 
@@ -1001,17 +1166,36 @@ Ext.define('Connector.view.Chart', {
         else {
             allDataRows = {
                 main: chartData.rows,
-                totalCount: chartData.rows.length,
-                invalidLogPlotRowCount: chartData.invalidLogPlotRowCount
+                totalCount: chartData.rows.length
             };
         }
 
         this.requireXGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedY) && allDataRows.undefinedY.length > 0;
         this.requireYGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedX) && allDataRows.undefinedX.length > 0;
 
+        this.requireYLogGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.logNonPositiveX) && allDataRows.logNonPositiveX;
+        this.requireXLogGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.logNonPositiveY) && allDataRows.logNonPositiveY;
+
+        // not used for now. if there is data with both x and y <= 0, then both x and y log gutter will always show
+        this.requireBothLogGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.logNonPositiveBoth) && allDataRows.logNonPositiveBoth;
+
+        this.minXPositiveValue = Ext.isDefined(allDataRows) ? allDataRows.minPositiveX : 0.00001;
+        this.minYPositiveValue = Ext.isDefined(allDataRows) ? allDataRows.minPositiveY : 0.00001;
+
+        this.allDataRowsMap = Ext.isDefined(allDataRows) ? allDataRows.allRowsMap : {};
+
         this.plotEl.update('');
         this.bottomPlotEl.update('');
-        this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
+        var studyAxisSize = 0;
+        if (studyAxisInfo) {
+            studyAxisSize = studyAxisInfo.getData().length;
+            if (this.isStudyAxisExpanded) {
+                Ext.each(studyAxisInfo.getData(), function(data) {
+                    studyAxisSize += data.groups.length;
+                });
+            }
+        }
+        this.resizePlotContainers(studyAxisSize);
 
         if (this.plot) {
             this.plot.clearGrid();
@@ -1026,9 +1210,6 @@ Ext.define('Connector.view.Chart', {
 
         this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
         this.toggleMedianMode();
-
-        this.invalidLogPlotRowCount = Ext.isDefined(allDataRows) ? allDataRows.invalidLogPlotRowCount : 0;
-        this.toggleLogScaleMode();
 
         var me = this;
         this.highlightSelectedFn = function() {
@@ -1064,12 +1245,22 @@ Ext.define('Connector.view.Chart', {
             // configure gutters
             if (this.requireXGutter) {
                 gutterXPlotConfig = this.generateXGutter(plotConfig, chartData, allDataRows, yAxisMargin, properties, layerScope);
+                gutterXPlotConfig.isShowYAxis = this.requireYLogGutter;
+                gutterXPlotConfig.requireYLogGutter = this.requireYLogGutter;
+                gutterXPlotConfig.requireXLogGutter = this.requireXLogGutter;
+                gutterXPlotConfig.minXPositiveValue = this.minXPositiveValue;
+                gutterXPlotConfig.minYPositiveValue = this.minYPositiveValue;
                 Ext.apply(gutterXPlotConfig.scales.xTop, {trans : xScaleType});
                 Ext.apply(gutterXPlotConfig.scales.xTop, {domain : chartData.getXDomain(studyAxisInfo)});
             }
 
             if (this.requireYGutter) {
                 gutterYPlotConfig = this.generateYGutter(plotConfig, chartData, allDataRows, properties, layerScope);
+                gutterYPlotConfig.isShowXAxis = this.requireXLogGutter;
+                gutterYPlotConfig.requireYLogGutter = this.requireYLogGutter;
+                gutterYPlotConfig.requireXLogGutter = this.requireXLogGutter;
+                gutterYPlotConfig.minXPositiveValue = this.minXPositiveValue;
+                gutterYPlotConfig.minYPositiveValue = this.minYPositiveValue;
                 Ext.apply(gutterYPlotConfig.scales.yRight, {trans : yScaleType});
             }
         }
@@ -1094,6 +1285,14 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
+        if (chartData instanceof Connector.model.ChartData) {
+            plotConfig.requireBothLogGutter = this.requireBothLogGutter;
+            plotConfig.requireYLogGutter = this.requireYLogGutter;
+            plotConfig.requireXLogGutter = this.requireXLogGutter;
+            plotConfig.minXPositiveValue = this.minXPositiveValue;
+            plotConfig.minYPositiveValue = this.minYPositiveValue;
+        }
+
         this.plot = new LABKEY.vis.Plot(plotConfig);
 
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
@@ -1106,7 +1305,11 @@ Ext.define('Connector.view.Chart', {
 
                 if (!noplot && this.activeMeasures.color)
                 {
-                    this.getColorSelector().setLegend(this.plot.getLegendData());
+                    var legends = this.plot.getLegendData();
+                    if (this.activeMeasures.color.variableType == 'TIME') {
+                        legends = ChartUtils.sortTimeLegends(legends);
+                    }
+                    this.getColorSelector().setLegend(legends);
                 }
             }
             catch(err) {
@@ -1168,7 +1371,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (Ext.isDefined(studyAxisInfo)) {
-            this.initStudyAxis(studyAxisInfo);
+            this.initStudyAxis(studyAxisInfo, layerScope, properties);
         }
 
         if (!noplot) {
@@ -1314,7 +1517,7 @@ Ext.define('Connector.view.Chart', {
     generateXGutter : function(plotConfig, chartData, allDataRows, yAxisMargin) {
         var gutterXMargins = {
             top: 0,
-            left: yAxisMargin,
+            left: yAxisMargin + (this.requireYGutter ? 0 : this.yNoGutterWidth),
             right: plotConfig.margins.right,
             bottom: 0
         };
@@ -1341,7 +1544,6 @@ Ext.define('Connector.view.Chart', {
                 }
             }
         };
-        var gutterXWidth = plotConfig.width - (this.requireYGutter ? 0 : this.yNoGutterWidth);
 
         var gutterXAes = {
             xTop: function(row) {return row.x;},
@@ -1361,7 +1563,7 @@ Ext.define('Connector.view.Chart', {
         return Ext.apply(this.getGutterPlotConfig(gutterXAes, gutterXScales), {
             gridLinesVisible: 'y',
             margins : gutterXMargins,
-            width : gutterXWidth,
+            width : plotConfig.width,
             height : this.xGutterHeight,
             data : allDataRows.undefinedY,
             labels : gutterXLabels
@@ -1369,11 +1571,15 @@ Ext.define('Connector.view.Chart', {
     },
 
     generateYGutter : function(plotConfig, chartData, allDataRows) {
+        var extraGutterBottom = 0;
+        if (this.requireBothLogGutter || this.requireXLogGutter) {
+            extraGutterBottom = 30;
+        }
         var gutterYMargins = {
             top: plotConfig.margins.top,
             left: this.yNoGutterWidth,
             right: 0,
-            bottom: plotConfig.margins.bottom
+            bottom: plotConfig.margins.bottom - extraGutterBottom
         };
 
         var me = this;
@@ -1439,10 +1645,6 @@ Ext.define('Connector.view.Chart', {
             if (allDataRows && allDataRows.undefinedY)
             {
                 console.log('plotted x gutter rows:', allDataRows.undefinedY.length);
-            }
-            if (allDataRows && allDataRows.invalidLogPlotRowCount > 0)
-            {
-                console.log('not plotted log rows:', allDataRows.invalidLogPlotRowCount);
             }
         }
     },
@@ -1514,7 +1716,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    retrieveBinSubjectIds : function(plot, target, subjects) {
+    retrieveBinSubjectIds : function(plot, target, subjects, isStudyAxis) {
         var subjectIds = [];
         if (subjects) {
             subjects.forEach(function(s) {
@@ -1526,6 +1728,8 @@ Ext.define('Connector.view.Chart', {
         {
             var bins = plot.renderer.canvas.selectAll('.vis-bin path');
             var selections = this.getCategoricalSelectionValues();
+            var studyAxisSelections = this.getStudyAxisSelectionValues();
+            var hasStudyAxisSelection = this.isStudyAxisSelection();
 
             bins.each(function(d)
             {
@@ -1533,14 +1737,29 @@ Ext.define('Connector.view.Chart', {
                 for (var i = 0; i < d.length; i++)
                 {
                     var data = d[i].data;
-                    if (data.x.toString() === target) { // use toString for boolean value
+                    var isTimeAxisTarget = false;
+
+                    if (data.x !== undefined && data.x !== null && data.x.toString() === target) { // use toString for boolean value
                         d[i].isMouseOver = true;
                     }
-                    if (data.x.toString() === target && subjectIds.indexOf(data.subjectId) === -1)
-                    {
-                        subjectIds.push(data.subjectId);
+                    else if (isStudyAxis){
+                        if (data.timeAxisKey.indexOf(target) > -1) {
+                            d[i].isMouseOver = true;
+                            isTimeAxisTarget = true;
+                        }
+                        else if (hasStudyAxisSelection){
+                            Ext.each(studyAxisSelections, function(sel){
+                                if (data.timeAxisKey.indexOf(sel) > -1){
+                                    d[i].isMouseOver = true;
+                                    isTimeAxisTarget = true;
+                                }
+                            });
+                        }
                     }
-                    else if (selections.indexOf(data.x) != -1 && subjectIds.indexOf(data.subjectId) === -1)
+
+                    if ((data.x !== undefined && data.x !== null && data.x.toString() === target && subjectIds.indexOf(data.subjectId) === -1)
+                        || (selections.indexOf(data.x) != -1 && subjectIds.indexOf(data.subjectId) === -1)
+                        || (isTimeAxisTarget))
                     {
                         subjectIds.push(data.subjectId);
                     }
@@ -1551,9 +1770,9 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightBins : function(target, subjects) {
+    highlightBins : function(target, subjects, isStudyAxis) {
         // get the set of subjectIds in the binData
-        var subjectIds = this.retrieveBinSubjectIds(this.plot, target, subjects);
+        var subjectIds = this.retrieveBinSubjectIds(this.plot, target, subjects, isStudyAxis);
         if (subjects) {
             subjects.forEach(function(s) {
                 subjectIds.push(s);
@@ -1642,7 +1861,7 @@ Ext.define('Connector.view.Chart', {
             this.clearHighlightPoints();
     },
 
-    retrievePointSubjectIds : function(target, subjects) {
+    retrievePointSubjectIds : function(target, subjects, isStudyAxis) {
         var subjectIds = [];
         if (subjects) {
             subjects.forEach(function(s) {
@@ -1653,21 +1872,42 @@ Ext.define('Connector.view.Chart', {
         if (this.plot.renderer) {
             var points = this.plot.renderer.canvas.selectAll('.point path'),
                 selections = this.getCategoricalSelectionValues(),
+                studyAxisSelections = this.getStudyAxisSelectionValues(),
+                hasStudyAxisSelection = this.isStudyAxisSelection(),
                 subject;
 
             points.each(function(d) {
-                if (d.x.toString() === target) { // use toString for boolean value
+                var isTimeAxisTarget = false;
+                if (d.x !== undefined && d.x !== null && d.x.toString() === target) { // use toString for boolean value
                     d.isMouseOver = true;
+                }
+                else if (isStudyAxis) {
+                    if (d.timeAxisKey.indexOf(target) > -1) {
+                        d.isMouseOver = true;
+                        isTimeAxisTarget = true;
+                    }
+                    else if (hasStudyAxisSelection){
+                        Ext.each(studyAxisSelections, function(sel){
+                            if (d.timeAxisKey.indexOf(sel) > -1){
+                                d.isMouseOver = true;
+                                isTimeAxisTarget = true;
+                            }
+                        });
+
+                    }
                 }
 
                 subject = d.subjectId;
 
                 // Check if value matches target or another selection
                 if (subjectIds.indexOf(subject) === -1) {
-                    if (d.x.toString() === target) {
+                    if (d.x !== undefined && d.x !== null && d.x.toString() === target) {
                         subjectIds.push(subject);
                     }
                     else if (selections.indexOf(d.x) != -1) {
+                        subjectIds.push(subject);
+                    }
+                    else if (isTimeAxisTarget) {
                         subjectIds.push(subject);
                     }
                 }
@@ -1677,17 +1917,17 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightPlotData : function(target, subjects) {
+    highlightPlotData : function(target, subjects, isStudyAxis) {
         if (this.showPointsAsBin) {
-            this.highlightBins(target, subjects);
+            this.highlightBins(target, subjects, isStudyAxis);
         }
         else {
-            this.highlightPoints(target, subjects);
+            this.highlightPoints(target, subjects, isStudyAxis);
         }
     },
 
-    highlightPoints : function(target, subjects) {
-        var subjectIds = this.retrievePointSubjectIds(target, subjects);
+    highlightPoints : function(target, subjects, isStudyAxis) {
+        var subjectIds = this.retrievePointSubjectIds(target, subjects, isStudyAxis);
 
         var fillColorFn = function(d) {
             if (d.isMouseOver) {
@@ -1773,12 +2013,30 @@ Ext.define('Connector.view.Chart', {
     },
 
     highlightSelected : function() {
-        var targets = this.getCategoricalSelectionValues(), me = this;
-        me.clearHighlightedData();
+        if (this.isStudyAxisSelection()){
+            this.highlightTimeAxisPlotData();
+        }
+        else {
+            var targets = this.getCategoricalSelectionValues(), me = this;
+            me.clearHighlightedData();
 
-        targets.forEach(function(t) {
-            me.highlightPlotData(t);
-        })
+            targets.forEach(function(t) {
+                me.highlightPlotData(t);
+            })
+        }
+    },
+
+    isStudyAxisSelection: function (){
+        var selections = Connector.getState().getSelections();
+        var isStudyAxis = false;
+        if (Ext.isArray(selections)) {
+            Ext.each(selections, function(s) {
+                if (s.get('isStudyAxis')){
+                    isStudyAxis = true;
+                }
+            });
+        }
+        return isStudyAxis;
     },
 
     getCategoricalSelectionValues : function() {
@@ -1786,6 +2044,9 @@ Ext.define('Connector.view.Chart', {
         var values = [];
         selections.forEach(function(s) {
             var gridData = s.get('gridFilter');
+            if (s.get('isTime')) {
+                gridData = s.get('timeFilters');
+            }
             for (var i = 0; i < gridData.length; i++) {
                 if (gridData[i] != null && Ext.isString(gridData[i].getValue())) {
                     values = gridData[i].getValue().split(';');
@@ -1942,7 +2203,11 @@ Ext.define('Connector.view.Chart', {
                 // Create a 'time filter'
                 if (this.activeMeasures.x.variableType === 'TIME')
                 {
-                    var timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
+                    var timeFilters = [selection.gridFilter[0]];
+                    if (!this.activeMeasures.x.isDiscreteTime)
+                    {
+                        timeFilters.push(selection.gridFilter[1]);
+                    }
 
                     Connector.getFilterService().getTimeFilter(selection.plotMeasures[0], timeFilters, function(_filter)
                     {
@@ -1989,6 +2254,9 @@ Ext.define('Connector.view.Chart', {
         if (multi) {
             for (var i=0; i < selections.length; i++) {
                 data = selections[i].get('gridFilter')[0];
+                if (selections[i].get('isTime')) {
+                    data = selections[i].get('timeFilters')[0];
+                }
                 if (data.getColumnName() === name) {
                     values = values.concat(data.getValue()).concat(';');
                 }
@@ -2162,7 +2430,7 @@ Ext.define('Connector.view.Chart', {
             {
                 this.fireEvent('showload', this);
 
-                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME';
+                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME' && !this.activeMeasures.x.isDiscreteTime;
 
                 this.requestChartData();
             }
@@ -2238,6 +2506,12 @@ Ext.define('Connector.view.Chart', {
             wrapped = {
                 measure: Ext.clone(activeMeasures.color)
             };
+
+            if (activeMeasures.color.variableType == 'TIME') {
+                wrapped.dateOptions = {
+                    interval: activeMeasures.color.alias
+                };
+            }
 
             this.setAxisNameMeasureProperty(wrapped.measure, activeMeasures.x, activeMeasures.y);
         }
@@ -2378,7 +2652,25 @@ Ext.define('Connector.view.Chart', {
             ChartUtils.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
 
             // Request Chart MeasureStore Data
-            Connector.getQueryService().getMeasureStore(measureSet.measures, function(measureStore)
+            var extraFilters = null;
+            var filterSet = Connector.getState().getFilters();
+            Ext.each(filterSet, function(filter)
+            {
+                if (filter.get('isStudyAxis')) {
+                    if (filter.get('studyAxisFilter') && filter.get('studyAxisFilter')['_COMPOUND']) {
+                        if (!extraFilters) {
+                            extraFilters = [];
+                        }
+                        extraFilters.push(filter.get('studyAxisFilter')['_COMPOUND'][0]);
+                        extraFilters[0].isStudyAxis = true;
+                        var queryService = Connector.getQueryService(),
+                            subjectVisitMeasure = queryService.getMeasure(QueryUtils.SUBJECT_SEQNUM_ALIAS);
+
+                        measureSet.measures.push({measure: subjectVisitMeasure});
+                    }
+                }
+            });
+            Connector.getQueryService().getMeasureStore(measureSet.measures, extraFilters, function(measureStore)
             {
                 this.onChartDataSuccess(measureStore, measureSet);
             }, this.onFailure, this);
@@ -2419,6 +2711,7 @@ Ext.define('Connector.view.Chart', {
             this.initPlot(chartData);
         }
 
+        this.fireEvent('hidetooltipmsg');
         this.updatePlotInfoPaneCounts({forSubcounts: false, queryName: this.dataQWP.query});
     },
 
@@ -2485,11 +2778,11 @@ Ext.define('Connector.view.Chart', {
         sql = 'SELECT GROUP_CONCAT(DISTINCT ' + QueryUtils.VISITROWID_ALIAS + ') AS VisitRowIds';
         if (Ext.isString(yAntigenAlias))
         {
-            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(yAntigenAlias, xAntigenAlias, 'plot-axis-y') + ') AS YAntigenCount';
+            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(yAntigenAlias, xAntigenAlias, ChartUtils.yAxisNameProp) + ') AS YAntigenCount';
         }
         if (Ext.isString(xAntigenAlias))
         {
-            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(xAntigenAlias, yAntigenAlias, 'plot-axis-x') + ') AS XAntigenCount';
+            sql += ',\nCOUNT(DISTINCT ' + this.getDistinctAntigenCaseSql(xAntigenAlias, yAntigenAlias, ChartUtils.xAxisNameProp) + ') AS XAntigenCount';
         }
 
         // we either select from the temp query name provided by the requestChartData request or use the generated sql
@@ -2562,34 +2855,6 @@ Ext.define('Connector.view.Chart', {
 
     _closeWhyGutter : function() {
         this.fireEvent('hideguttermsg', this);
-    },
-
-    toggleLogScaleMode : function() {
-        this.getLogScaleModeIndicator().setVisible(this.invalidLogPlotRowCount > 0);
-
-        var msgKey = 'LOG_MODE';
-        if (!this.disableAutoMsg && this.invalidLogPlotRowCount > 0 && Connector.getService('Messaging').isAllowed(msgKey)) {
-            this.showWhyLogScale();
-            this.hideLogScaleModeTask.delay(5000);
-            Connector.getService('Messaging').block(msgKey);
-        }
-    },
-
-    showWhyLogScale : function() {
-        if (this.invalidLogPlotRowCount > 0) {
-            var config = {
-                target: this.getLogScaleModeIndicator().getEl().dom,
-                placement: 'bottom',
-                title: 'Log filter on',
-                xOffset: -65,
-                arrowOffset: 100,
-                content: 'Values ≤ 0 have no log. ' + Ext.util.Format.number(this.invalidLogPlotRowCount, '0,000')
-                    + ' points are not plotted but are still included in the grid and subject count.'
-                    + ' Use a linear scale to see all values.'
-            };
-
-            ChartUtils.showCallout(config, 'hidelogscalemsg', this);
-        }
     },
 
     toggleHeatmapMode : function() {
@@ -2674,6 +2939,41 @@ Ext.define('Connector.view.Chart', {
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'Container', 'VARCHAR');
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
 
+                // add measures for tooltip
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        'study',
+                        'Demographics',
+                        'study_short_name',
+                        'VARCHAR'
+                );
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'Study',
+                        'VARCHAR'
+                );
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'TreatmentSummary',
+                        'VARCHAR'
+                );
+
+                this.addValuesToMeasureMap(
+                        measuresMap,
+                        axisName,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'ProtocolDay',
+                        'INTEGER'
+                );
+
                 // only add the SequenceNum column for selected measures that are not demographic and no time point
                 if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') 
                 {
@@ -2691,6 +2991,14 @@ Ext.define('Connector.view.Chart', {
                         Connector.studyContext.gridBase,
                         'ParticipantSequenceNum',
                         'VARCHAR'
+                    );
+                    this.addValuesToMeasureMap(
+                            measuresMap,
+                            axisName,
+                            Connector.studyContext.gridBaseSchema,
+                            Connector.studyContext.gridBase,
+                            'VisitRowId',
+                            'INTEGER'
                     );
                 }
 
@@ -2801,19 +3109,8 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        var invalidLogPlotRowCount = 0;
-
-        if (Ext.isDefined(chartData))
-        {
-            if (Ext.isFunction(chartData.getDataRows))
-            {
-                invalidLogPlotRowCount = chartData.getDataRows().invalidLogPlotRowCount;
-            }
-        }
-
         this.initPlot({
-            rows: map,
-            invalidLogPlotRowCount: invalidLogPlotRowCount
+            rows: map
         }, undefined, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
@@ -3024,8 +3321,9 @@ Ext.define('Connector.view.Chart', {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
+                    includeTimpointMeasures: true,
                     userFilter : function(row) {
-                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
+                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR' || row.isDiscreteTime;
                     }
                 },
                 listeners: {
@@ -3296,6 +3594,7 @@ Ext.define('Connector.view.Chart', {
                 this.clearAllBrushing();
             }
 
+            this.clearStudyAxisSelection();
             this.updatePlotInfoPaneCounts({forSubcounts: false, queryName: this.dataQWP.query});
         }
         else
@@ -3303,11 +3602,28 @@ Ext.define('Connector.view.Chart', {
             var filterSet = Connector.getState().getFilters().concat(selections),
                 measureSet = this.getMeasureSet(filterSet);
 
+            var extraFilters = null;
+            Ext.each(filterSet, function(filter){
+               if (filter.get('isStudyAxis')) {
+                   if (filter.get('studyAxisFilter') && filter.get('studyAxisFilter')['_COMPOUND']) {
+                       if (!extraFilters) {
+                           extraFilters = [];
+                       }
+                       extraFilters.push(filter.get('studyAxisFilter')['_COMPOUND'][0]);
+                       extraFilters[0].isStudyAxis = true;
+                       var queryService = Connector.getQueryService(),
+                           subjectVisitMeasure = queryService.getMeasure(QueryUtils.SUBJECT_SEQNUM_ALIAS);
+
+                       measureSet.measures.push({measure: subjectVisitMeasure});
+                   }
+               }
+            });
+
             Connector.getQueryService().getSubjectsForSpecificFilters(filterSet, null, function(subjectFilter)
             {
                 ChartUtils.applySubjectValuesToMeasures(measureSet.measures, subjectFilter);
 
-                this.updatePlotInfoPaneCounts({forSubcounts: true, sql: QueryUtils.getDataSql({measures: measureSet.measures})});
+                this.updatePlotInfoPaneCounts({forSubcounts: true, sql: QueryUtils.getDataSql({measures: measureSet.measures, extraFilters: extraFilters})});
             }, this);
         }
 
@@ -3316,7 +3632,6 @@ Ext.define('Connector.view.Chart', {
             this.highlightSelectedFn();
         }
     },
-
     getStudyAxisData : function(chartData) {
         var studyVisitTagStore = Connector.getApplication().getStore('StudyVisitTag');
         if (studyVisitTagStore.loading) {
@@ -3341,6 +3656,8 @@ Ext.define('Connector.view.Chart', {
 
         var studyAxisData = Ext.create('Connector.model.StudyAxisData', {
             records: filteredVisitTags.getRange(),
+            studyVisitMap: chartData.get('studyAxisData').studyVisitMap,
+            studyGroupVisitMap: chartData.get('studyAxisData').studyGroupVisitMap,
             measure: this.activeMeasures.x
         });
 
@@ -3464,18 +3781,160 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    initStudyAxis : function(studyAxisInfo) {
+    initStudyAxis : function(studyAxisInfo, layerScope, properties) {
         if (!this.studyAxis) {
             this.studyAxis = Connector.view.StudyAxis().renderTo(this.bottomPlotEl.id);
         }
 
+        this.studyAxisProperties = properties;
         this.studyAxis.studyData(studyAxisInfo.getData())
                 .scale(this.plot.scales.x.scale)
                 .width(Math.max(0, this.getBottomPlotPanel().getWidth() - 40))
                 .visitTagMouseover(this.showVisitTagHover, this)
-                .visitTagMouseout(this.removeVisitTagHover, this);
+                .visitTagMouseout(this.removeVisitTagHover, this)
+                .highlightPlot(this.highlightTimeAxisPlotData, this)
+                .selectStudyAxis(this.selectStudyAxis, this)
+                .toggleStudyAxis(this.toggleStudyAxis, this)
+                .setCollapsed(!this.isStudyAxisExpanded)
+                .mainPlotLayer(layerScope);
 
         this.studyAxis();
+    },
+
+    highlightTimeAxisPlotData: function(target) {
+        var targets = this.getStudyAxisSelectionValues(), me = this;
+        me.clearHighlightedData();
+
+        targets.forEach(function(t) {
+            me.highlightPlotData(t, null, true);
+        });
+
+        if (target) {
+            me.highlightPlotData(target, null, true);
+        }
+    },
+
+    getStudyAxisSelectionValues : function() {
+        var selections = Connector.getState().getSelections();
+        var values = [];
+        selections.forEach(function(s) {
+            if (s.get('isStudyAxis')){
+                values = s.get('studyAxisKeys');
+            }
+        });
+
+        return values;
+    },
+
+    clearStudyAxisSelection: function () {
+        if (this.studyAxis) {
+            this.studyAxis.clearSelection();
+        }
+    },
+
+    selectStudyAxis: function(d, multi) {
+        this.getParticipantVisits(d, multi, this.buildStudyAxisSelection, this);
+    },
+
+    buildStudyAxisSelection: function(d, multi, participantVisitSel) {
+        var sqlFilters = [null, null, null, null];
+        var keyStr = '';
+
+        var subDisplayStr = '';
+        if (participantVisitSel) {
+            if (participantVisitSel.getValue() && participantVisitSel.getValue() !== '') {
+                sqlFilters[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, participantVisitSel.getValue(), LABKEY.Filter.Types.EQUALS_ONE_OF);
+            }
+            else {
+                sqlFilters[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, null, LABKEY.Filter.Types.ISBLANK);
+            }
+            keyStr += ChartUtils.studyAxisKeyDelimiter + d.alignedDay;
+            keyStr += ChartUtils.studyAxisKeyDelimiter + d.studyLabel;
+            subDisplayStr = '<br/>Study = ' + d.studyLabel + "; ";
+            if (d.groupLabel) {
+                keyStr += ChartUtils.studyAxisKeyDelimiter + d.groupLabel;
+                subDisplayStr = '<br/>Treatment Summary = ' + d.studyLabel + ' ' + d.groupLabel + "; ";
+            }
+            subDisplayStr += ' ' + this.activeMeasures.x.label + ' = ' + d.alignedDay + '<br/>';
+        }
+        else if (d.name && !d.study) {
+            sqlFilters[0] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
+            subDisplayStr = '<br/>Study = ' + d.name + '<br/>';
+            keyStr += ChartUtils.studyAxisKeyDelimiter + d.name;
+        }
+        else if (d.name && d.study) {
+            sqlFilters[0] = LABKEY.Filter.create(QueryUtils.TREATMENTSUMMARY_ALIAS, d.name, LABKEY.Filter.Types.EQUAL);
+            sqlFilters[1] = LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.study, LABKEY.Filter.Types.EQUAL);
+            subDisplayStr = '<br/>Treatment Summary = ' + d.study + ' ' + d.name + '<br/>';
+            if (d.study) {
+                keyStr += ChartUtils.studyAxisKeyDelimiter + d.study;
+            }
+            keyStr += ChartUtils.studyAxisKeyDelimiter + d.name;
+        }
+
+        var keys = [];
+        keys.push(keyStr);
+
+        var displayStr = subDisplayStr;
+        var addToMulti = multi && this.isStudyAxisSelection();
+        var oldSelection = undefined;
+        if (addToMulti) {
+            var existingSelection = Connector.getState().getSelections()[0];
+            oldSelection = existingSelection.get('studyAxisFilter');
+            var existingKeys = existingSelection.get('studyAxisKeys');
+            for (var i = 0; i < existingKeys.length; i++) {
+                keys.push(existingKeys[i]);
+            }
+            displayStr += '<br/>OR<br/>';
+            displayStr += existingSelection.get('filterDisplayString');
+        }
+
+        Connector.getState().addSelection({
+            gridFilter: sqlFilters,
+            plotMeasures: [this._getAxisWrappedMeasure(this.activeMeasures.x), this._getAxisWrappedMeasure(this.activeMeasures.y)],
+            isPlot: true,
+            isGrid: true,
+            operator: LABKEY.app.model.Filter.OperatorTypes.AND,
+            filterSource: 'GETDATA',
+            isWhereFilter: true,
+            showInverseFilter: false,
+            filterDisplayString: displayStr,
+            isStudyAxis: true,
+            studyAxisKeys: keys,
+            studyAxisFilter: oldSelection,
+            isStudySelectionActive: true
+        }, true, false, true);
+
+    },
+
+    getParticipantVisits: function(d, multi, callback, scope) {
+        if (d.visitRowId === undefined || d.visitRowId === null) {
+            callback.call(scope, d, multi);
+            return;
+        }
+        var timeFilters = [];
+        timeFilters.push(LABKEY.Filter.create(this.studyAxisProperties.xaxis.colName, d.alignedDay, LABKEY.Filter.Types.EQUAL));
+        timeFilters.push(LABKEY.Filter.create(QueryUtils.STUDY_ALIAS, d.studyLabel, LABKEY.Filter.Types.EQUAL));
+        if (d.groupLabel) {
+            timeFilters.push(LABKEY.Filter.create(QueryUtils.TREATMENTSUMMARY_ALIAS, d.groupLabel, LABKEY.Filter.Types.EQUAL));
+        }
+
+        var queryService = Connector.getQueryService(),
+            studyMeasure = queryService.getMeasure(QueryUtils.STUDY_ALIAS),
+            armMeasure = queryService.getMeasure(QueryUtils.TREATMENTSUMMARY_ALIAS);
+        var wrappedMeasures = [this._getAxisWrappedMeasure(this.activeMeasures.x)];
+        wrappedMeasures.push({measure: studyMeasure});
+        wrappedMeasures.push({measure: armMeasure});
+
+        Connector.getFilterService().getTimeFilter(wrappedMeasures, timeFilters, function(_filter)
+        {
+            callback.call(scope, d, multi, _filter);
+        }, this);
+    },
+
+    toggleStudyAxis: function() {
+        this.isStudyAxisExpanded = !this.isStudyAxisExpanded;
+        this.redrawPlot();
     },
 
     resizePlotContainers : function(numStudies) {
@@ -3492,7 +3951,7 @@ Ext.define('Connector.view.Chart', {
         {
             this.plotEl.setStyle('padding-left', '0');
             this.bottomPlotEl.setStyle('margin-left', this.requireXGutter
-                    ? (this.requireYGutter ? this.yGutterWidth + 'px' : this.yNoGutterWidth + 'px') : '0');
+                    ? (this.requireYGutter ? this.yGutterWidth + 'px' : '0') : '0');
 
             this.getBottomPlotPanel().setHeight(this.requireXGutter ? this.xGutterHeight : 0);
             this.getBottomPlotPanel().setVisible(this.requireXGutter);

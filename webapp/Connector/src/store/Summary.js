@@ -57,7 +57,7 @@ Ext.define('Connector.store.Summary', {
                                 Ext.each(hier.levels, function(level) {
                                     if (level.uniqueName === hier.findSubjectSubSummaryLevel) {
                                         subSummaryLevel = level;
-                                        return;
+                                        return false;
                                     }
                                 });
                             }
@@ -67,7 +67,8 @@ Ext.define('Connector.store.Summary', {
                                 dimName: dim.name,
                                 hierarchyIndex: i,
                                 targetLevel: subSummaryLevel.uniqueName,
-                                label: subSummaryLevel.countPlural || subSummaryLevel.name,
+                                singleLabel: subSummaryLevel.countSingular || subSummaryLevel.name,
+                                multiLabel: subSummaryLevel.countPlural || subSummaryLevel.name,
                                 priority: dim.priority
                             });
                         }
@@ -140,23 +141,24 @@ Ext.define('Connector.store.Summary', {
             if (dim) {
                 if (Ext.isDefined(ca.hierarchyIndex)) {
                     // hierarchy
-                    var targetLevel = mdx.getLevel(ca.targetLevel);
+                    var targetLevel = mdx.getLevel(ca.targetLevel),
+                        count = lvlCounts[ca.level] || 0;
 
                     if (!dimResults[ca.dimName]) {
                         dimResults[ca.dimName] = [];
                     }
 
                     dimResults[ca.dimName].push({
-                        text: ca.label.toLowerCase(),
+                        text: (count == 1 ? ca.singleLabel : ca.multiLabel).toLowerCase(),
                         nav: 'explorer/singleaxis/' + dim.name + '/' + targetLevel.name,
-                        counter: lvlCounts[ca.level] || 0
+                        counter: count
                     });
                 }
                 else {
                     // dimension
                     var label = Ext.isDefined(dim.pluralName) ? dim.pluralName : dim.name,
-                            hierarchies = dim.getHierarchies(),
-                            summaryLevel, hier, h, l;
+                        hierarchies = dim.getHierarchies(),
+                        summaryLevel, defaultLevel, hier, h, l;
 
                     for (h=0; h < hierarchies.length; h++) {
                         hier = hierarchies[h];
@@ -164,7 +166,9 @@ Ext.define('Connector.store.Summary', {
                         for (l=0; l < hier.levels.length; l++) {
                             if (hier.levels[l].uniqueName === dim.findSubjectSummaryLevel) {
                                 summaryLevel = hier;
-                                break;
+                            }
+                            if (hier.levels[l].uniqueName === dim.summaryTargetLevel) {
+                                defaultLevel = hier;
                             }
                         }
                     }
@@ -175,6 +179,7 @@ Ext.define('Connector.store.Summary', {
                             total: lvlCounts[ca.level] || 0,
                             label: label,
                             subject: label.toLowerCase(),
+                            defaultLvl: defaultLevel.name,
                             hierarchy: summaryLevel.name,
                             details: [],
                             sort: i

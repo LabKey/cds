@@ -1,3 +1,20 @@
+<%
+    /*
+     * Copyright (c) 2015-2016 LabKey Corporation
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+%>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="java.util.LinkedHashSet" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
@@ -158,7 +175,7 @@
                 </div>
                 <form action="" method="post" class="form" id="createnewpasswordform">
                     <div class="credentials">
-                        <span class="password-requirements">Password must be at least 8 characters, and must contain at least one letter and one number.</span>
+                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).</span>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
                         <input placeholder="Re-enter Password" id="password2" name="password2" type="password" value="" required>
                         <div class="checkbox"></div>
@@ -184,7 +201,7 @@
                 </div>
                 <form action="" method="post" class="form" id="createaccountform">
                     <div class="credentials">
-                        <span class="password-requirements">Password must be at least 8 characters, and must contain at least one letter and one number.</span>
+                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).</span>
                         <input placeholder="Password" id="password3" name="password" type="password" value="" required>
                         <input placeholder="Re-enter Password" id="password4" name="reenter-password" type="password" value="" required>
                         <div class="checkbox"></div>
@@ -355,7 +372,7 @@
                         <br>
                         access and simple tools, more scientists can answer more questions and
                         <br>
-                        find new hypotheses. The CDS is a test of these ideas and we will
+                        find new hypotheses. The DataSpace is a test of these ideas and we will
                         <br>
                         measure its value.
                     </p>

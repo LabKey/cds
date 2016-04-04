@@ -152,7 +152,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.AssayHeader": "../../../../webapp/Connector/src/app/view/module/AssayHeader.js",
   "Connector.view.module.AssayStudies": "../../../../webapp/Connector/src/app/view/module/AssayStudies.js",
   "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
-  "Connector.view.module.ContactCDS": "../../../../webapp/Connector/src/view/module/ContactCDS.js",
+  "Connector.view.module.ContactCDS": "../../../../webapp/Connector/src/app/view/module/ContactCDS.js",
   "Connector.view.module.HTML": "../../../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
@@ -1460,7 +1460,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.ContactCDS": [
-    "widget.module.contactcds"
+    "widget.app.module.contactcds"
   ],
   "Connector.view.module.HTML": [
     "widget.module.html"

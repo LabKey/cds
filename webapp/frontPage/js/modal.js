@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015-2016 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 'use strict';
 
 define(['jquery', 'magnific', 'util'], function($, magnific, util) {
@@ -348,13 +353,17 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           }
         }).success(function() {
           $('.create-account-modal .links input').prop("disabled",true);
-          $('.create-account-modal .notifications p').html('Create account successful.');
+          $('.create-account-modal .notifications p').html('Thanks for creating your account. This page will refresh momentarily...');
           setTimeout(function(){
             window.location = LABKEY.ActionURL.buildURL("cds", "app.view?login=true");
           },3000);
 
-        }).error(function() {
-          $('.create-account-modal .notifications p').html('Create account failed.');
+        }).error(function(e) {
+          var errorMsg = 'Create account failed. ';
+          if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+            errorMsg = errorMsg + e.responseJSON.errors[0].message;
+          }
+          $('.create-account-modal .notifications p').html(errorMsg);
         });
 
       });

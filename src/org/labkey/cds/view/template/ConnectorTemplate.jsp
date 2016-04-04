@@ -50,7 +50,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
-    <title>HIV CDS</title>
+    <title>DataSpace</title>
 
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/headerlogo.png">
 
@@ -258,7 +258,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/ContactCDS.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Person.js"></script>
 
@@ -315,6 +314,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAntigenList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ContactCDS.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductManufacturing.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductProvidedBy.js"></script>
@@ -337,6 +337,9 @@
     <% } %>
 </head>
 <body>
+<div class="banner" style="visibility: hidden;">
+    <div class="banner-msg">Your session will expire in <span class="timer"></span>. Click anywhere to continue.</div>
+</div>
 <!-- BODY -->
 <%  me.include(me.getBody(),out); %>
 <!-- /BODY -->
