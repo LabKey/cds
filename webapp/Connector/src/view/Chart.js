@@ -448,6 +448,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     onShowVariableSelection : function() {
+        ChartUtils.brushClear.call(this, {}, null, true);
         this.fireEvent('hideload', this);
     },
 
@@ -718,16 +719,16 @@ Ext.define('Connector.view.Chart', {
             content += '<span class="group-title">Study</span>';
             content += colon + Ext.htmlEncode(studyName) + linebreak;
         }
-        if (xName) {
-            content += '<span class="group-title">' + Ext.htmlEncode(xName) + '</span>';
+        if (xName && this.activeMeasures.x) {
+            content += '<span class="group-title">' +Ext.htmlEncode(this.activeMeasures.x.queryName + ' - ' + xName) + '</span>';
             content += colon + Ext.htmlEncode(this.getBinRangeTooltip(xVals));
             content += this.showAsMedian ? ' (median)' : '';
             content += '<div class="axis-details">';
             content += this.buildBinAxisDetailTooltip(xDimensionVals);
             content += '</div>'
         }
-        if (yName) {
-            content += '<span class="group-title">' + Ext.htmlEncode(yName) + '</span>';
+        if (yName && this.activeMeasures.y) {
+            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.y.queryName + ' - ' + yName) + '</span>';
             content += colon + Ext.htmlEncode(this.getBinRangeTooltip(yVals));
             content += this.showAsMedian ? ' (median)' : '';
             content += '<div class="axis-details">';
@@ -780,20 +781,20 @@ Ext.define('Connector.view.Chart', {
             var xAxis = this.activeMeasures.x;
             if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
                 var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
-                content += '<span class="group-title">' + Ext.htmlEncode(data.xname) + '</span>' + colon + val;
+                content += '<span class="group-title">' + Ext.htmlEncode(xAxis.queryName + ' - ' + data.xname) + '</span>' + colon + val;
                 content += this.showAsMedian ? ' (median)' : '';
                 content += this.buildPointAxisDetailTooltip(this.activeMeasures.x, record);
             }
         }
 
         if (this.activeMeasures.y) {
-            content += '<span class="group-title">' + Ext.htmlEncode(data.yname) + '</span>' + colon + data.y;
+            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.y.queryName + ' - ' + data.yname) + '</span>' + colon + data.y;
             content += this.showAsMedian ? ' (median)' : '';
             content += this.buildPointAxisDetailTooltip(this.activeMeasures.y, record);
         }
 
-        if (data.colorname) {
-            content += '<span class="group-title">' + Ext.htmlEncode(data.colorname) + '</span>' + colon + data.color;
+        if (this.activeMeasures.color && data.colorname) {
+            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.color.queryName + ' - ' + data.colorname) + '</span>' + colon + data.color;
         }
 
         return content;
@@ -1790,18 +1791,19 @@ Ext.define('Connector.view.Chart', {
 
         if (this.plot.renderer) {
             var isSubjectInMouseBin = function(d, yesVal, noVal, sameSubjectVal) {
+                var isHightLight = false, isAssociated = false;
                 if (d.length > 0 && d[0].data) {
                     for (var i = 0; i < d.length; i++) {
                         if (d[i].isMouseOver) {
-                            return yesVal;
+                            isHightLight = true;
                         }
                         else if (subjectIds.indexOf(d[i].data.subjectId) != -1) {
-                            return sameSubjectVal;
+                            isAssociated = true;
                         }
                     }
                 }
 
-                return noVal;
+                return isHightLight ? yesVal : isAssociated ? sameSubjectVal : noVal;
             };
 
             var colorFn = function(d)
