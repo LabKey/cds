@@ -358,13 +358,13 @@ Ext.define('Connector.view.Chart', {
                 region: 'center',
                 layout: {
                     type: 'vbox',
-                    align: 'stretch',
                     pack: 'start'
                 },
                 items: [
                     this.getMainPlotPanel(),
                     this.getBottomPlotPanel()
-                ]
+                ],
+                width: '100%'
             });
         }
         return this.centerContainer;
@@ -375,6 +375,7 @@ Ext.define('Connector.view.Chart', {
         {
             this.mainPlotPanel = Ext.create('Ext.panel.Panel', {
                 border: false,
+                width: '100%',
                 flex: 10,
                 cls: 'plot',
                 listeners: {
@@ -397,13 +398,15 @@ Ext.define('Connector.view.Chart', {
             this.bottomPlotPanel = Ext.create('Ext.panel.Panel', {
                 border: false,
                 frame: false,
-                overflowX: 'hidden',
+                width: '100%',
                 overflowY: 'auto',
                 items: [{
                     xtype: 'component',
                     autoEl: 'div',
-                    cls: 'bottomplot'
+                    cls: 'bottomplot',
+                    width: '100%'
                 }],
+                margin: '0 0 12 0',
                 listeners: {
                     afterrender: {
                         fn: function(box) {
@@ -488,7 +491,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getPlotSize : function(box, properties)
+    getPlotSize : function(box, properties, scales)
     {
         var size = {
                 width: box.width,
@@ -508,7 +511,8 @@ Ext.define('Connector.view.Chart', {
         // for discrete x-axis, expand width for large number of discrete values
         if (Ext.isDefined(properties) && Ext.isObject(properties.xaxis) && !properties.xaxis.isContinuous && !this.requireYGutter)
         {
-            discretePlotWidth = properties.xaxis.discreteValueCount * 50;
+            var xValueCount = scales && scales.x && Ext.isArray(scales.x.domain) ? scales.x.domain.length : properties.xaxis.discreteValueCount;
+            discretePlotWidth = xValueCount * 50;
             if (discretePlotWidth > size.width)
             {
                 size.width = discretePlotWidth;
@@ -920,15 +924,20 @@ Ext.define('Connector.view.Chart', {
     },
 
     getMainPlotConfig : function(data, aes, scales, yAxisMargin, properties) {
-        var size = this.getPlotSize(this.plotEl.getSize(), properties);
+        var size = this.getPlotSize(this.el.getSize(), properties, scales);
 
+        var additionalWidth = this.requireStudyAxis && this.hasStudyAxisData ? this.studyAxisWidthOffset : this.requireYGutter ? this.yGutterWidth : 0;
         if (size.extended === true)
         {
-            this.getMainPlotPanel().addCls('plot-scroll');
+            this.getCenter().addCls('plot-scroll');
+            this.getMainPlotPanel().setWidth(size.width + additionalWidth);
+            this.getBottomPlotPanel().setWidth(size.width + additionalWidth);
         }
         else
         {
-            this.getMainPlotPanel().removeCls('plot-scroll');
+            this.getCenter().removeCls('plot-scroll');
+            this.getMainPlotPanel().setWidth(size.width + additionalWidth);
+            this.getBottomPlotPanel().setWidth(size.width + additionalWidth);
         }
 
         var extraLeftMargin = 0, extraBottomMargin = 0;
@@ -947,7 +956,7 @@ Ext.define('Connector.view.Chart', {
                 bottom: size.extended === true ? 73 + extraBottomMargin: 53 + extraBottomMargin
             },
             width : size.width,
-            height : size.height,
+            height : this.plotEl.getSize().height,
             data : data,
             aes : aes,
             scales : scales,
@@ -3955,7 +3964,7 @@ Ext.define('Connector.view.Chart', {
             this.bottomPlotEl.setStyle('margin-left', '0');
 
             // set max height to 1/3 of the center region height
-            this.getBottomPlotPanel().setHeight(Math.min(this.getCenter().getHeight() / 3, Math.max(20 * numStudies + 5, this.minStudyAxisHeight)));
+            this.getBottomPlotPanel().setHeight(Math.min(this.getCenter().getHeight() / 3, Math.max(20 * numStudies + 15, this.minStudyAxisHeight)));
             this.getBottomPlotPanel().setVisible(true);
         }
         else
