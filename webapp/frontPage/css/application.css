@@ -153,6 +153,10 @@ html { box-sizing: border-box; }
 .signin-modal, .create-new-password-modal, .create-account-modal, .email-modal { position: relative; overflow: hidden; background: #f5f5f5; width: auto; margin: 1.5em auto; max-width: 620px; min-height: 100%; padding: 2.66em 2em 2em 2em; }
 .signin-modal .border, .create-new-password-modal .border, .create-account-modal .border, .email-modal .border { position: absolute; top: 0; left: 0; height: 4px; width: 100%; background-color: #ed365e; }
 .signin-modal .title, .create-new-password-modal .title, .create-account-modal .title, .email-modal .title { margin: 0em 0em 2.66em 0em; }
+.signin-modal .sign-in-help .title {margin: 0em 0em 0em 0em;}
+.signin-modal .sign-in-help .help-info {font-family: "Arial"; font-weight: 100; color: #2d2d2d; line-height: 2em; margin-top: 1em;}
+.signin-modal .sign-in-help .title h1 {margin-bottom: 0.5em;}
+.signin-modal .sign-in-help .contact {text-decoration: none; color: #ed365e;}
 .signin-modal .title h1, .create-new-password-modal .title h1, .create-account-modal .title h1, .email-modal .title h1 { margin: 0; font-size: 2.34em; font-family: "Georgia"; font-weight: 100; color: #2d2d2d; }
 .signin-modal .notifications, .create-new-password-modal .notifications, .create-account-modal .notifications, .email-modal .notifications { display: block; overflow: hidden; margin: 0em 0em 2.66em 0em; }
 .signin-modal .notifications p, .create-new-password-modal .notifications p, .create-account-modal .notifications p, .email-modal .notifications p { margin: 0; color: #ed365e; }

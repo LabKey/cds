@@ -273,7 +273,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           }
 
         }).error(function() {
-          $('.signin-modal .notifications p').html('Login Failed');
+          $('.signin-modal .notifications p').html('Sign-in Failed');
         });
       });
 
