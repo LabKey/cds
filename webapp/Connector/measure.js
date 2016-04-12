@@ -268,69 +268,70 @@ Ext.define('Connector.measure.Configuration', {
             // The key for this map is the column alias, which is the key used for the Query service MEASURE_STORE.
             // See Connector.model.Measure for the set of properties and default values.
             measures: {
-                'cds_GridBase_Days_Discrete': {
+                'cds_GridBase_Days': {
                     sortOrder: 0,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: true,
+                    isRecommendedVariable: true,
+                    name: Connector.studyContext.protocolDayColumn,
+                    label: 'Study days (timeline)',
+                    type: 'INTEGER',
+                    variableType: 'TIME'
+                },
+                'cds_GridBase_Days_Discrete': {
+                    sortOrder: 1,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: false,
                     isRecommendedVariable: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study days (discrete)',
+                    label: 'Study days (box plots)',
                     type: 'INTEGER',
                     variableType: 'TIME',
                     isDiscreteTime: true
                 },
-                'cds_GridBase_Weeks_Discrete': {
-                    sortOrder: 1,
-                    schemaName: Connector.studyContext.gridBaseSchema,
-                    queryName: Connector.studyContext.gridBase,
-                    isMeasure: false,
-                    name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study weeks (discrete)',
-                    type: 'DOUBLE',
-                    variableType: 'TIME',
-                    isDiscreteTime: true
-                },
-                'cds_GridBase_Months_Discrete': {
+                'cds_GridBase_Weeks': {
                     sortOrder: 2,
-                    schemaName: Connector.studyContext.gridBaseSchema,
-                    queryName: Connector.studyContext.gridBase,
-                    isMeasure: false,
-                    name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study months (discrete)',
-                    type: 'DOUBLE',
-                    variableType: 'TIME',
-                    isDiscreteTime: true
-                },
-                'cds_GridBase_Days': {
-                    sortOrder: 3,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study days',
-                    type: 'INTEGER',
+                    label: 'Study weeks (timeline)',
+                    type: 'DOUBLE',
                     variableType: 'TIME'
                 },
-                'cds_GridBase_Weeks': {
+                'cds_GridBase_Weeks_Discrete': {
+                    sortOrder: 3,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: Connector.studyContext.protocolDayColumn,
+                    label: 'Study weeks (box plots)',
+                    type: 'DOUBLE',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Months': {
                     sortOrder: 4,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study weeks',
+                    label: 'Study months (timeline)',
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
-                'cds_GridBase_Months': {
+                'cds_GridBase_Months_Discrete': {
                     sortOrder: 5,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
-                    isMeasure: true,
+                    isMeasure: false,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study months',
+                    label: 'Study months (box plots)',
                     type: 'DOUBLE',
-                    variableType: 'TIME'
+                    variableType: 'TIME',
+                    isDiscreteTime: true
                 },
 
                 // recommended variables

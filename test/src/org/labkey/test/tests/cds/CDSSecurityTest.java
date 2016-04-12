@@ -38,7 +38,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     private final String[] PERM_GROUPS = {"CDSSecurity Test Group01", "CDSSecurity Test Group02", "CDSSecurity Test Group03"};
 
-    private final String[] NEW_USER_ACCOUNTS = {"addusertest01@nowhere.com", "addusertest02@nowhere.com", "addusertest03@nowhere.com"};
+    private final String[] NEW_USER_ACCOUNTS = {"addusertest01@nowhere.com", "addusertest02@nowhere.com", "addusertest03@nowhere.com", "addusertest04@nowhere.com"};
 
     @Before
     public void preTest()
@@ -169,6 +169,11 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         waitForElement(Locator.css(cssAddUsersLink));
         clickAndWait(Locator.css(cssAddUsersLink));
 
+        log("Adding user " + NEW_USER_ACCOUNTS[3] + " this user will validate the Sign-in help.");
+        setFormElement(Locator.css("textarea[name='newUsers']"), NEW_USER_ACCOUNTS[3]);
+        click(Locator.css("input[type='submit'] + a.labkey-button"));
+        waitForText(NEW_USER_ACCOUNTS[3] + " added as a new user to the system and emailed successfully.");
+
         log("Adding user " + NEW_USER_ACCOUNTS[2] + " this user will be deleted before his invitation link is clicked.");
         setFormElement(Locator.css("textarea[name='newUsers']"), NEW_USER_ACCOUNTS[2]);
         click(Locator.css("input[type='submit'] + a.labkey-button"));
@@ -280,6 +285,18 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         beginAt(WebTestHelper.buildURL("cds", getProjectName(), "app"));
         assertElementPresent(Locator.css("div.links > a.signin-modal-trigger"));
         assertElementNotVisible(Locator.css("div.links > a.create-account-modal-trigger"));
+
+        log("Validate using the 'Sign-in Help' button.");
+        click(Locator.xpath("(//a[@class='signin-modal-trigger'][text()='Sign In'])[2]"));
+        waitForElementText(Locator.css("h1"), "CAVD DataSpace member sign-in", 15000);
+        setFormElement(Locator.css("input[name='email']"), NEW_USER_ACCOUNTS[3]);
+        setFormElement(Locator.css("input[name='password']"), "P@$$w0rd");
+        click(Locator.tagWithClass("a", "help"));
+        waitForElement(Locator.tagWithText("h1", "Sign-in Help"));
+        assertTextPresent("To set or reset your password, type in your email address and click the submit button.");
+        Assert.assertTrue(getFormElement(Locator.inputById("emailhelp")).toLowerCase().equals(NEW_USER_ACCOUNTS[3].toLowerCase()), "Did not find email '" + NEW_USER_ACCOUNTS[3] + "' in text box.");
+        click(Locator.linkWithText("Cancel"));
+
         // Log in as admin, like start of test, this will allow test to clean up correctly.
         ensureSignedInAsAdmin();
 
