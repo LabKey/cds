@@ -146,14 +146,18 @@
                 <div class="border"></div>
                 <div class="title">
                     <h1>Sign-in Help</h1>
+                    <span class="help-info">The DataSpace is currently available to CAVD members.<br>To set or reset your password, type in your email address and click the submit button.</span>
                 </div>
                 <div class="notifications">
                     <p></p>
                 </div>
                 <div class="form">
                     <div class="credentials">
-                        <span class="reset">To reset your password, type in your email address and click the submit button.</span>
                         <input placeholder="Email" type="email" id="emailhelp">
+                        <span class="help-info" style="display: block">Members who are still experiencing sign-in trouble should email
+                            <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" class="contact">dataspace.support@scharp.org</a>.
+                            <br>Note: Your DataSpace password is not necessarily the same as your Atlas and CAVD Portal passwords.
+                        </span>
                     </div>
                 </div>
                 <div class="links">
