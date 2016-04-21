@@ -571,7 +571,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_DAYS);
         xaxis.confirmSelection();
 
-        scaleValues = "0\n28\n42\n98\n112\n168\n182\n196\n210\n238\n273\n317\n364\n546\n3\n30\n300\n3000";
+        scaleValues = "01371428293135425659637084981121131151191261401541681691711751821962032102242382522732802883033083173343363643923944084254484554855045165455465766076376677277288199091000109110921182127314541456181818203303003000";
 
         cds.assertPlotTickText(1, scaleValues);
 
@@ -580,7 +580,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_WEEKS);
         xaxis.confirmSelection();
 
-        scaleValues = "0\n4\n6\n14\n16\n24\n26\n28\n30\n34\n39\n45\n52\n78\n3\n30\n300\n3000";
+        scaleValues = "01245689101214161718202224252628293032343639404143444547485256586064656972737778828691951031041171291421551561681812072082592603303003000";
 
         cds.assertPlotTickText(1, scaleValues);
 
@@ -589,19 +589,19 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_MONTHS);
         xaxis.confirmSelection();
 
-        scaleValues = "0\n1\n3\n5\n6\n7\n8\n10\n11\n17\n3\n30\n300\n3000";
+        scaleValues = "01234567891011121314151617181920212326293235384147593303003000";
 
         cds.assertPlotTickText(1, scaleValues);
 
         log("Apply the time axis as a filter.");
-        cdsPlot.selectXAxes(false, "5", "8", "6", "11");
+        cdsPlot.selectXAxes(false, "5", "8", "6", "11", "17");
         waitForElement(CDSPlot.Locators.filterDataButton);
         assertElementPresent(CDSPlot.Locators.removeButton);
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
         sleep(3000); // Let the plot redraw.
         _ext4Helper.waitForMaskToDisappear();
 
-        scaleValues = "5\n6\n8\n11\n3\n30\n300\n3000";
+        scaleValues = "012345678910111213141516171819212329353303003000";
 
         cds.assertPlotTickText(1, scaleValues);
 
@@ -613,6 +613,50 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         int glyphCount = cdsPlot.getPointCountByGlyph(CDSPlot.PlotGlyphs.asterisk);
         assertEquals("Did not find the number of expected asterisk glyphs.", 74, glyphCount);
 
+        log("Validate that various counts in the time axis are as expected.");
+        Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
+        expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 1, 2, 1, 3, 1, 2));
+        expectedCounts.put("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 1, 5, 0, 10, 0, 0));
+        expectedCounts.put("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 1, 2, 0, 5, 0, 0));
+        expectedCounts.put("ZAP_135", new CDSHelper.TimeAxisData("ZAP 135", 0, 0, 0, 0, 0, 0));
+
+        List<WebElement> studies = CDSPlot.Locators.timeAxisStudies.findElements(getDriver());
+        cdsPlot.validateVisitCounts(studies, expectedCounts);
+
+        log("Filter on one study in the Study Axis.");
+        String cssPath = "div.bottomplot > svg > g:nth-child(2) > text.study-label";
+        click(Locator.css(cssPath));
+        assertTextPresent("Study = YOYO 55", 1);
+
+        clickButton("Filter", 0);
+
+        scaleValues = "0123568111417330300";
+
+        cds.assertPlotTickText(1, scaleValues);
+
+        expectedCounts.clear();
+        expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 1, 2, 0, 4, 1, 2));
+
+        studies = CDSPlot.Locators.timeAxisStudies.findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
+
+        cdsPlot.validateVisitCounts(studies, expectedCounts);
+
+        log("Mouse over the challenge glyph and verify that the number of points that are highlighted on the plot are as expected.");
+        int hCount = 0;
+        cssPath = "div.bottomplot > svg > g:nth-child(2) > image";
+        List<WebElement> wes = Locator.css(cssPath).findElements(getDriver());
+        for(WebElement we : wes)
+        {
+            if(we.getAttribute("href").toLowerCase().contains("challenge_normal.svg"))
+            {
+                we.click();
+                hCount = cdsPlot.getPointCountByColor(CDSHelper.PLOT_POINT_HIGHLIGHT_COLOR);
+                break;
+            }
+        }
+
+        assertEquals("Number of highlighted points not as expected.", 546, hCount);
     }
 
 }

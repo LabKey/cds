@@ -37,8 +37,6 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-
 public class CDSHelper
 {
     public static final String[] STUDIES = {"QED 1", "QED 2", "QED 3", "QED 4",

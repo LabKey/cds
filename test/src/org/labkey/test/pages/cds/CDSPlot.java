@@ -253,11 +253,11 @@ public class CDSPlot
                 _test.log("Challenge NoData Count: " + chalCountNoData);
 
                 assertTrue("Vaccination count not as expected. Expected: " + tad.vaccinationCount + " found: " + vacCount, tad.vaccinationCount == vacCount);
-                assertTrue("Vaccination NoDatat count not as expected. Expected: " + tad.vaccinationCountNoData + " found: " + vacCountNoData, tad.vaccinationCountNoData == vacCountNoData);
+                assertTrue("Vaccination NoData count not as expected. Expected: " + tad.vaccinationCountNoData + " found: " + vacCountNoData, tad.vaccinationCountNoData == vacCountNoData);
                 assertTrue("Nonvaccination count not as expected. Expected: " + tad.nonvaccinationCount + " found: " + nonvacCount, tad.nonvaccinationCount == nonvacCount);
-                assertTrue("Nonvaccination NoDatat count not as expected. Expected: " + tad.nonvaccinationCountNoData + " found: " + nonvacCountNoData, tad.nonvaccinationCountNoData == nonvacCountNoData);
+                assertTrue("Nonvaccination NoData count not as expected. Expected: " + tad.nonvaccinationCountNoData + " found: " + nonvacCountNoData, tad.nonvaccinationCountNoData == nonvacCountNoData);
                 assertTrue("Challenge count not as expected. Expected: " + tad.challengeCount + " found: " + chalCount, tad.challengeCount == chalCount);
-                assertTrue("Challenge NoDatat count not as expected. Expected: " + tad.challengeCountNoData + " found: " + chalCountNoData, tad.challengeCountNoData == chalCountNoData);
+                assertTrue("Challenge NoData count not as expected. Expected: " + tad.challengeCountNoData + " found: " + chalCountNoData, tad.challengeCountNoData == chalCountNoData);
 
                 _test.log("Visit counts as expected.");
 
