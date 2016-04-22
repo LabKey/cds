@@ -87,20 +87,25 @@ Ext.define('Connector.model.ChartData', {
         return this.get('studyContainers');
     },
 
-    getXDomain : function(studyAxisInfo) {
+    getXDomain : function(studyAxisInfo, isDiscrete) {
         var domain = Ext.clone(this.get('xDomain')),
             studyRange;
 
         // issue 21300: set x-axis domain min/max based on study axis milestones if they exist
-        if (Ext.isDefined(studyAxisInfo) && studyAxisInfo.getRange()) {
-            studyRange = studyAxisInfo.getRange();
+        if (Ext.isDefined(studyAxisInfo)) {
+            if (studyAxisInfo.getRange() && !isDiscrete) {
+                studyRange = studyAxisInfo.getRange();
 
-            if (studyRange.min < domain[0]) {
-                domain[0] = studyRange.min;
+                if (studyRange.min < domain[0]) {
+                    domain[0] = studyRange.min;
+                }
+
+                if (studyRange.max > domain[1]) {
+                    domain[1] = studyRange.max;
+                }
             }
-
-            if (studyRange.max > domain[1]) {
-                domain[1] = studyRange.max;
+            else if (isDiscrete && studyAxisInfo.getAllVisitTags()) {
+                domain = studyAxisInfo.getAllVisitTags();
             }
         }
 
@@ -356,6 +361,10 @@ Ext.define('Connector.model.ChartData', {
         {
             _row = dataRows[r];
 
+            yVal = this._getYValue(y, _yid, _row);
+            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
+            colorVal = color ? this._getColorValue(color, _cid, _row, singleAntigenComparison) : undefined;
+
             // build study container alignment day map
             if (_row[QueryUtils.CONTAINER_ALIAS])
             {
@@ -366,10 +375,6 @@ Ext.define('Connector.model.ChartData', {
                     studyGroupVisitMap[studyVisitKey + ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS]] = true;
                 }
             }
-
-            yVal = this._getYValue(y, _yid, _row);
-            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
-            colorVal = color ? this._getColorValue(color, _cid, _row, singleAntigenComparison) : undefined;
 
             if (!xa.isContinuous)
             {
