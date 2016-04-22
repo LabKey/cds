@@ -361,6 +361,10 @@ Ext.define('Connector.model.ChartData', {
         {
             _row = dataRows[r];
 
+            yVal = this._getYValue(y, _yid, _row);
+            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
+            colorVal = color ? this._getColorValue(color, _cid, _row, singleAntigenComparison) : undefined;
+
             // build study container alignment day map
             if (_row[QueryUtils.CONTAINER_ALIAS])
             {
@@ -371,10 +375,6 @@ Ext.define('Connector.model.ChartData', {
                     studyGroupVisitMap[studyVisitKey + ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS]] = true;
                 }
             }
-
-            yVal = this._getYValue(y, _yid, _row);
-            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
-            colorVal = color ? this._getColorValue(color, _cid, _row, singleAntigenComparison) : undefined;
 
             if (!xa.isContinuous)
             {
