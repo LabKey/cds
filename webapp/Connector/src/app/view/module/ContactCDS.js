@@ -33,7 +33,7 @@ Ext.define('Connector.view.module.ContactCDS', {
 
             '<tpl if="grant_pi_name">',
                 '<tr>',
-                    '<td class="item-label">Grant PI:</td>',
+                    '<td class="item-label">Grant Principal Investigator:</td>',
                     '<td class="item-value">',
                         '<tpl if="grant_pi_email">',
                             '<a href="mailto:',
@@ -49,7 +49,7 @@ Ext.define('Connector.view.module.ContactCDS', {
             '</tpl>',
 
             '<tpl if="grant_pm_name">',
-                '<tr><td class="item-label">Grant PM:</td>',
+                '<tr><td class="item-label">Grant Project Manager:</td>',
                     '<td class="item-value">',
                         '<tpl if="grant_pm_email">',
                             '<a href="mailto:',

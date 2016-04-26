@@ -297,7 +297,8 @@ Ext.define('Connector.utility.Chart', {
 
         if (xMeasure && xExtent[0] !== null && xExtent[1] !== null)
         {
-            xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true);
+            var minValidXVal = this.requireYLogGutter ? this.minXPositiveValue : null;
+            xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true, minValidXVal);
             xMax = ChartUtils.transformVal(xExtent[1], xMeasure.type, false);
 
             // Issue 24124: With time points, brushing can create a filter that is not a whole number
@@ -323,7 +324,8 @@ Ext.define('Connector.utility.Chart', {
 
         if (yMeasure && yExtent[0] !== null && yExtent[1] !== null)
         {
-            yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true);
+            var minValidYVal = this.requireXLogGutter ? this.minYPositiveValue : null;
+            yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true, minValidYVal);
             yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false);
 
             if (yExtent[0] !== Number.NEGATIVE_INFINITY) {
@@ -476,7 +478,7 @@ Ext.define('Connector.utility.Chart', {
         return false;
     },
 
-    transformVal : function(val, type, isMin) {
+    transformVal : function(val, type, isMin, minVal) {
         var trans = val;
 
         if (type === 'INTEGER') {
@@ -486,7 +488,15 @@ Ext.define('Connector.utility.Chart', {
             trans = isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
         }
         else if (type === 'DOUBLE' || type === 'REAL' || type === 'FLOAT') {
-            var precision = 3;
+            // CDS issue 457: Unable to filter out log values 0 or less
+            // minVal is the minimum positive value for axis in log scale plot
+            // if brush lower extent is smaller than the min positive data, set it to 0
+            if (isMin && minVal && (minVal/val) > 1.2)
+            {
+                return 0;
+            }
+
+            var precision = 4;
 
             if (trans > 100 || trans < -100) {
                 precision = 0;
@@ -497,8 +507,16 @@ Ext.define('Connector.utility.Chart', {
             else if (trans > 1 || trans < -1) {
                 precision = 2;
             }
+            else if (trans > 0.001 || trans < -0.001) {
+                precision = 3;
+            }
 
             trans = parseFloat(val.toFixed(precision));
+
+            if (isMin && minVal && trans > 0 && trans < minVal)
+            {
+                return minVal;
+            }
         }
 
         return trans;

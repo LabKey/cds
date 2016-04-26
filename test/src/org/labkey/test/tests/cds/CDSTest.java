@@ -831,7 +831,7 @@ public class CDSTest extends CDSReadOnlyTest
     }
 
     // TODO: Still needs work, mainly blocked by issue https://www.labkey.org/issues/home/Developer/issues/details.view?issueId=24128
-    @Test @Ignore
+    @Test //@Ignore
     public void verifyGridColumnSelector()
     {
         CDSHelper cds = new CDSHelper(this);
@@ -976,7 +976,9 @@ public class CDSTest extends CDSReadOnlyTest
         selectorTextClean = selectorText.toLowerCase().replaceAll("\\n", "");
         selectorTextClean = selectorTextClean.replaceAll("\\s+", "");
 
-        expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen\nNAb (Neutralizing antibody)\n  Titer IC50\nSubject characteristics\n  Race";
+        expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen\n  Cell type\n  Data summary level\n  Functional marker name\n" +
+                "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer IC50\nStudy and treatment variables\n  Study Name\n" +
+                "Subject characteristics\n  Race\n  Subject Id\nTime points\n  Study days (timeline)";
         expectedTextClean = expectedText.toLowerCase().replaceAll("\\n", "");
         expectedTextClean = expectedTextClean.replaceAll("\\s+", "");
 
@@ -986,7 +988,8 @@ public class CDSTest extends CDSReadOnlyTest
         selectorText = Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]").findElement(getDriver()).getText();
         selectorText = selectorText.trim();
 
-        assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.length() == 0);
+        assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.equals("Study and treatment variables\n  Study Name\nSubject characteristics\n" +
+                "  Subject Id\nTime points\n  Study days (timeline)"));
 
         gridColumnSelector.confirmSelection();
 
@@ -998,13 +1001,10 @@ public class CDSTest extends CDSReadOnlyTest
         sleep(500); //Wait for mask to appear.
         _ext4Helper.waitForMaskToDisappear();
 
-        grid.ensureColumnsPresent(CDSHelper.DEMO_STUDY_NAME, CDSHelper.DEMO_TREAT_SUMM, CDSHelper.DEMO_DATE_SUBJ_ENR,
-                CDSHelper.DEMO_DATE_FUP_COMP, CDSHelper.DEMO_DATE_PUB, CDSHelper.DEMO_DATE_START, CDSHelper.DEMO_NETWORK,
-                CDSHelper.DEMO_PROD_CLASS, CDSHelper.DEMO_PROD_COMB, CDSHelper.DEMO_STUDY_TYPE, CDSHelper.DEMO_TREAT_ARM,
-                CDSHelper.DEMO_TREAT_CODED, CDSHelper.DEMO_VACC_PLAC);
+        grid.ensureColumnsPresent(CDSHelper.DEMO_STUDY, CDSHelper.DEMO_TREAT_SUMM);
 
         columns.clear();
-        columns.put(CDSHelper.DEMO_STUDY_NAME, true);
+        columns.put(CDSHelper.DEMO_STUDY_NAME, false);
         columns.put(CDSHelper.DEMO_TREAT_SUMM, true);
         columns.put(CDSHelper.DEMO_DATE_SUBJ_ENR, true);
         columns.put(CDSHelper.DEMO_DATE_FUP_COMP, true);

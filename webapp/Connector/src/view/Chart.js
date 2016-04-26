@@ -669,6 +669,8 @@ Ext.define('Connector.view.Chart', {
         var content = '', xName, yName, me = this,colon = ': ', linebreak = '<br/>';
         var xDimensionVals = {}, yDimensionVals = {};
         var xDimensions = this.getAxisDimensionsArray(this.activeMeasures.x), yDimensions = this.getAxisDimensionsArray(this.activeMeasures.y);
+        var xOptions = this.activeMeasures.x ? this.activeMeasures.x.options.dimensions : [],
+            yOptions = this.activeMeasures.y ? this.activeMeasures.y.options.dimensions : [];
 
         Ext.each(datas, function(data) {
             var d = data.data;
@@ -694,21 +696,31 @@ Ext.define('Connector.view.Chart', {
             studies.add(record[QueryUtils.STUDY_ALIAS]);
 
             Ext.each(xDimensions, function(dim) {
-               if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
-                   if (!xDimensionVals[dim]) {
-                       xDimensionVals[dim] = new Set();
-                   }
-                   xDimensionVals[dim].add(record[dim]);
-               }
-            });
-            Ext.each(yDimensions, function(dim) {
+                if (!xDimensionVals[dim]) {
+                    xDimensionVals[dim] = new Set();
+                }
                 if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
-                    if (!yDimensionVals[dim]) {
-                        yDimensionVals[dim] = new Set();
-                    }
+                   xDimensionVals[dim].add(record[dim]);
+                }
+                else if (Ext.isArray(xOptions[dim])){
+                    Ext.each(xOptions[dim], function(val){
+                        xDimensionVals[dim].add(val);
+                    });
+                }
+            }, this);
+            Ext.each(yDimensions, function(dim) {
+                if (!yDimensionVals[dim]) {
+                    yDimensionVals[dim] = new Set();
+                }
+                if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
                     yDimensionVals[dim].add(record[dim]);
                 }
-            });
+                else if (Ext.isArray(yOptions[dim])){
+                    Ext.each(yOptions[dim], function(val){
+                        yDimensionVals[dim].add(val);
+                    });
+                }
+            }, this);
 
         });
 
@@ -809,10 +821,17 @@ Ext.define('Connector.view.Chart', {
         if (axis) {
             var dimensions = axis.options.dimensions;
             for (var dim in dimensions) {
-                if (dimensions.hasOwnProperty(dim) && record[dim] !== undefined) {
-                    var value = record[dim];
-                    var label = Connector.getQueryService().getMeasure(dim).label;
-                    content += Ext.htmlEncode(label) + colon + value + linebreak;
+                if (dimensions.hasOwnProperty(dim)) {
+                    var value = null;
+                    if (record[dim] !== undefined) {
+                        value = record[dim];
+                    } else if (Ext.isArray(dimensions[dim])) {
+                        value = dimensions[dim].length == 1 ? dimensions[dim][0] : dimensions[dim].length + ' values';
+                    }
+                    if (value != null) {
+                        var label = Connector.getQueryService().getMeasure(dim).label;
+                        content += Ext.htmlEncode(label) + colon + value + linebreak;
+                    }
                 }
             }
         }
