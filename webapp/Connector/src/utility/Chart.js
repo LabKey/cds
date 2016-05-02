@@ -250,8 +250,8 @@ Ext.define('Connector.utility.Chart', {
         });
     },
 
-    brushClear : function(layerScope, dimension) {
-        if (this.initiatedBrushing === dimension) {
+    brushClear : function(layerScope, dimension, clearAll) {
+        if (this.initiatedBrushing === dimension || clearAll) {
             ChartUtils.brushDelayTask.cancel();
             this.initiatedBrushing = '';
             layerScope.isBrushed = false;

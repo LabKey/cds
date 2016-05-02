@@ -18,6 +18,9 @@ package org.labkey.cds;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.security.AuthenticationProvider.ResetPasswordProvider;
+import org.labkey.api.security.SecurityManager;
+import org.labkey.api.security.SecurityMessage;
+import org.labkey.api.security.User;
 import org.labkey.api.settings.LookAndFeelProperties;
 import org.labkey.api.view.ActionURL;
 
@@ -40,6 +43,17 @@ public class CDSResetPasswordProvider implements ResetPasswordProvider
             url.addParameter("create_password", true);
 
         return url;
+    }
+
+    @Override
+    public SecurityMessage getAPIResetPasswordMessage(User user, boolean isAdminCopy) throws Exception
+    {
+        // if user has never logged in before, use Register New User email template
+        if (user != null && user.getLastLogin() == null)
+        {
+            return SecurityManager.getRegistrationMessage(null, isAdminCopy);
+        }
+        return null;
     }
 
     @Nullable
