@@ -19,6 +19,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
 import org.labkey.test.etl.ETLHelper;
+import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PortalHelper;
 
@@ -93,7 +94,8 @@ public class CDSInitializer
         _test.clickAndWait(Locator.linkContainingText("view data"));
 
         // insert test data feed
-        _test.clickButton("Insert New");
+        DataRegionTable rssTable = new DataRegionTable("query", _test);
+        rssTable.clickHeaderButton("Insert", "Insert New");
         _test.setFormElement(Locator.name("quf_FeedName"), "Dataspace Test Feed");
         _test.setFormElement(Locator.name("quf_FeedURL"), CDSHelper.TEST_FEED);
         _test.clickButton("Submit");
