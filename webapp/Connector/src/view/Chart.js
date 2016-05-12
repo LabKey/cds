@@ -733,7 +733,7 @@ Ext.define('Connector.view.Chart', {
 
     setBinDimensionValues: function(dimensionVals, dimensions, record, axisOptions, recordAggregator) {
         Ext.each(dimensions, function(dim) {
-            var aggregatorValues = recordAggregator && recordAggregator[dim] ? recordAggregator[dim].getValues() : null;
+            var aggregatorValues = recordAggregator && recordAggregator[dim] ? Ext.clone(recordAggregator[dim].getValues()) : null;
 
             if (!dimensionVals[dim]) {
                 dimensionVals[dim] = new Set();
@@ -741,7 +741,7 @@ Ext.define('Connector.view.Chart', {
 
             if (this.hasDimensionalAggregators) {
                 if (aggregatorValues && Ext.isArray(aggregatorValues) && aggregatorValues.length > 0) {
-                    Ext.each(recordAggregator[dim].getValues(), function(val){
+                    Ext.each(aggregatorValues, function(val){
                         dimensionVals[dim].add(val);
                     });
                 }
@@ -843,7 +843,7 @@ Ext.define('Connector.view.Chart', {
                 if (dimensions.hasOwnProperty(dim)) {
                     var value = null;
                     if (this.hasDimensionalAggregators) {
-                        var aggregatorValues = aggregators[dim] ? aggregators[dim].getValues() : null;
+                        var aggregatorValues = aggregators[dim] ? Ext.clone(aggregators[dim].getValues()) : null;
                         if (Ext.isArray(aggregatorValues) && aggregatorValues.length > 0) {
                             value = this.buildTooltipValuesStr(aggregatorValues);
                         }
