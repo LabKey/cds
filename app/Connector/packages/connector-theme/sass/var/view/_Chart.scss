@@ -134,7 +134,8 @@ div.plot-scroll {
 
 
 #xvarselector,
-#yvarselector {
+#yvarselector,
+#colorvarselector {
   &.active {
     background-color: #fff;  
     border: 1px solid $gray-9;
