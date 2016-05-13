@@ -696,15 +696,15 @@
                     $.each(data[0].x.rawRecord, function(name, val){
                         if (val.getValues) {
                             out += '<tr><td>' + name + '</td>';
-                            out += '<td>' + val.getValues().join(', ') + '</td>';
-                            out += '<td>' + data[0].y.rawRecord[name].getValues().join(', ') + '</td></tr>';
+                            out += '<td>' + Ext.clone(val.getValues()).join(', ') + '</td>';
+                            out += '<td>' + Ext.clone(data[0].y.rawRecord[name].getValues()).join(', ') + '</td></tr>';
                         }
                     });
                     out += '</tbody></<table>';
 
                     $('#plot').html(out);
 
-                    console.log(data);
+                    console.log(data[0]);
 
                 },
                 failure: onError
