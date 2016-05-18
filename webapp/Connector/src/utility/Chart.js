@@ -39,6 +39,9 @@ Ext.define('Connector.utility.Chart', {
 
     studyAxisKeyDelimiter: '|||',
 
+    ANTIGEN_LEVEL_DELIMITER: '|||',
+    ANTIGEN_LEVEL_DELIMITER_REGEX: /\|\|\|/g,
+
     tickFormat: {
         date: function(val) {
             // D3 converts dates to integers, so we need to convert it back to a date to get the format.

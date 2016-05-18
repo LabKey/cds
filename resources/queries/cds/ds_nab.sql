@@ -27,9 +27,10 @@ antigen,
 antigen_type,
 neutralization_tier,
 clade,
+-- Delimiter has to match ChartUtil.ANTIGEN_LEVEL_DELIMITER
 (CASE WHEN neutralization_tier IS NULL THEN 'null' ELSE neutralization_tier END)
-  || '|' || (CASE WHEN clade IS NULL THEN 'null' ELSE clade END)
-  || '|' || (CASE WHEN virus IS NULL THEN 'null' ELSE virus END)
+  || '|||' || (CASE WHEN clade IS NULL THEN 'null' ELSE clade END)
+  || '|||' || (CASE WHEN virus IS NULL THEN 'null' ELSE virus END)
   AS tier_clade_virus,
 vaccine_matched,
 target_cell,

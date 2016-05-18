@@ -299,7 +299,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
             if (value != null) {
                 var valueObj = {subjectCount: -1};
                 valueObj[this.storeValueField] = value;
-                valueObj[this.storeLabelField] = value.toString().replace(/\|/g, ' ').replace(/null/g, '[Blank]');
+                valueObj[this.storeLabelField] = value.toString().replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, ' ').replace(/null/g, '[Blank]');
                 data.push(valueObj);
             }
         }, this);
