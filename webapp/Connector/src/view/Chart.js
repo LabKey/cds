@@ -881,14 +881,14 @@ Ext.define('Connector.view.Chart', {
                 var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
                 content += '<span class="group-title">' + Ext.htmlEncode(xAxis.queryName + ' - ' + data.xname) + '</span>' + colon + val;
                 content += this.showAsMedian ? ' (median)' : '';
-                content += this.buildPointAxisDetailTooltip(this.activeMeasures.x, record, record.x && record.x.rawRecord ? record.x.rawRecord : null);
+                content += this.buildPointAxisDetailTooltip(this.activeMeasures.x, record, record.x && record.x.rawRecord ? record.x.rawRecord : null, this.getHierarchicalDimensionInfo(this.activeMeasures.x));
             }
         }
 
         if (this.activeMeasures.y) {
             content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.y.queryName + ' - ' + data.yname) + '</span>' + colon + data.y;
             content += this.showAsMedian ? ' (median)' : '';
-            content += this.buildPointAxisDetailTooltip(this.activeMeasures.y, record, record.y && record.y.rawRecord ? record.y.rawRecord : null);
+            content += this.buildPointAxisDetailTooltip(this.activeMeasures.y, record, record.y && record.y.rawRecord ? record.y.rawRecord : null, this.getHierarchicalDimensionInfo(this.activeMeasures.y));
         }
 
         if (this.activeMeasures.color && data.colorname) {
@@ -898,30 +898,49 @@ Ext.define('Connector.view.Chart', {
         return content;
     },
 
-    buildPointAxisDetailTooltip: function(axis, record, aggregators) {
+    buildPointAxisDetailTooltip: function(axis, record, aggregators, hierarchicalDimensionInfo) {
         var content = '<div class="axis-details">', colon = ': ', linebreak = '<br/>';
         if (axis) {
             var dimensions = axis.options.dimensions;
             for (var dim in dimensions) {
                 if (dimensions.hasOwnProperty(dim)) {
-                    var value = null;
+                    var values = [];
                     if (this.hasDimensionalAggregators) {
                         var aggregatorValues = aggregators[dim] ? Ext.clone(aggregators[dim].getValues()) : null;
                         if (Ext.isArray(aggregatorValues) && aggregatorValues.length > 0) {
-                            value = this.buildTooltipValuesStr(aggregatorValues);
+                            values = aggregatorValues;
                         }
                     }
                     else {
                         if (record[dim] !== undefined) {
-                            value = record[dim];
+                            values.push(record[dim]);
                         }
                         else if (Ext.isArray(dimensions[dim])) {
-                            value = this.buildTooltipValuesStr(dimensions[dim]);
+                            values = dimensions[dim];
                         }
                     }
-                    if (value != null) {
-                        var label = Connector.getQueryService().getMeasure(dim).label;
-                        content += Ext.htmlEncode(label) + colon + value + linebreak;
+                    if (values.length > 0) {
+                        if (hierarchicalDimensionInfo[dim]) {
+                            var levelDimensions = hierarchicalDimensionInfo[dim];
+                            var dimensionVals = {};
+                            Ext.each(values, function(fullStr){
+                                var levels = fullStr.split(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
+                                for (var i = 0; i < levels.length; i++) {
+                                    if (!dimensionVals[levelDimensions[i]]) {
+                                        dimensionVals[levelDimensions[i]] = new Set();
+                                    }
+                                    dimensionVals[levelDimensions[i]].add(levels[i]);
+                                }
+                            });
+                            for (var level in dimensionVals) {
+                                if (dimensionVals.hasOwnProperty(level) && dimensionVals[level].size != 0) {
+                                    content += this.buildSingleDimensionTooltip(level, Array.from(dimensionVals[level]));
+                                }
+                            }
+                        }
+                        else {
+                            content += this.buildSingleDimensionTooltip(dim, values);
+                        }
                     }
                 }
             }
