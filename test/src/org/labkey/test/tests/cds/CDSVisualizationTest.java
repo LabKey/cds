@@ -2021,7 +2021,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         assertElementVisible(Locator.css("div.hopscotch-bubble-container"));
 
-        assertTextPresent("RED 4", "elit ac nulla sed vel enim sit", "Cell type: CD4+");
+        cdsPlot.validateToolTipText("RED 4", "elit ac nulla sed vel enim sit", "Cell type: CD4+", "Functional marker name:", "Data summary level:", "Protein panel:");
 
         log("Click someplace else to make the tool tip go away.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -2046,7 +2046,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg", "Functional marker name: IL2/ifngamma", "Data summary level: Protein Panel");
 
         log("Remove the tool tip.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -2062,7 +2062,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg", "Functional marker name: IL2/ifngamma", "Data summary level: Protein Panel");
 
         log("Remove the tool tip.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -2078,7 +2078,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg", "Functional marker name: IL2/ifngamma", "Data summary level: Protein Panel");
 
         log("Change the plot to a heat map.");
         xaxis.openSelectorWindow();
@@ -2105,7 +2105,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Age at Enrollment", "Functional marker name: IL2", "Data summary level: Protein Panel");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Age at Enrollment", "Functional marker name: IL2", "Data summary level: Protein Panel", "Data summary level: Protein Panel");
 
     }
 
