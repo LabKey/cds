@@ -255,7 +255,6 @@ Ext.define('Connector.controller.Learn', {
     },
 
     onSearchChange : function(search) {
-        console.log('new search:', search);
         var hash = location.hash;
         var newHash;
 
