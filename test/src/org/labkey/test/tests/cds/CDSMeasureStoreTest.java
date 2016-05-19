@@ -127,7 +127,7 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
         ));
 
         click(Locator.linkWithText("Select All Dimensions"));
-        waitForElement(Locator.css("td").withText("Dimension"));
+        waitForElement(Locator.css("th").withText("Dimension"));
         List<String> fields = Arrays.asList(ICS_ELISPOT_DIMENSIONS);
         fields.stream().forEach((field) ->  {
             assertTextPresent(field);
