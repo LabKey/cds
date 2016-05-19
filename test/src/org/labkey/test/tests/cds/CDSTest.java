@@ -170,7 +170,7 @@ public class CDSTest extends CDSReadOnlyTest
         //
         // Validate News feed
         //
-        waitForText("LabKey looks forward to sponsoring the Association of Independent Research Institutes");
+        waitForText("LabKey Software looks forward to sponsoring the Association of Independent Research Institutes");
         assertTextPresentInThisOrder("08 May 2014", "09 Jan 2014", "16 Oct 2013");
 
         //
