@@ -356,7 +356,7 @@
       }
 
       .col-check .x-form-cb-label {
-        width: 99%; // 100% does not induce ellipsis text-overflow
+        width: 90%; // 100% does not induce ellipsis text-overflow, also need to reserve 10% for checkbox
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;

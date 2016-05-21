@@ -47,7 +47,7 @@ Ext.define('Connector.model.Variable', {
                 if (Ext.isObject(variable.options.dimensions)) {
                     Ext.Object.each(variable.options.dimensions, function(alias, value) {
                         if (Ext.isArray(value) && value.length > 0) {
-                            optionsTxt += sep + value.join(', ').replace(/\|/g, ' ').replace(/null/g, '[Blank]');
+                            optionsTxt += sep + value.join(', ').replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, ' ').replace(/null/g, '[Blank]');
                             sep = '; ';
                         }
                     });

@@ -51,7 +51,8 @@
             plotYMeasureXMonthsAligned: plotYMeasureXMonthsAligned,
 
             scatterMeasureSameSource: scatterMeasureSameSource,
-            categoricalSingleSource: categoricalSingleSource
+            categoricalSingleSource: categoricalSingleSource,
+            selectAllDimensionsYMeasureXDiffAssay: selectAllDimensionsYMeasureXDiffAssay
         };
 
         var tabsSel = '.demo-measure-store .tab',
@@ -652,6 +653,66 @@
 
             LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
+
+        function selectAllDimensionsYMeasureXDiffAssay()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('ELISPOT', 'mean_sfc', true);
+            var xMeasure = getVisMeasure('ICS', 'pctpos', true);
+
+            var config = {
+                measures: [
+                    { measure: getVisMeasure('ELISPOT', 'SubjectId')},
+                    { measure: getVisMeasure('ELISPOT', 'SequenceNum', false, undefined, undefined, 'DOUBLE')},
+                    { measure: getVisMeasure('ELISPOT', 'functional_marker_name', false, ['IFNg+'])},
+                    { measure: getVisMeasure('ELISPOT', 'summary_level', false, ['Peptide Pool'])},
+                    { measure: getVisMeasure('ELISPOT', 'protein_panel')},
+                    { measure: getVisMeasure('ELISPOT', 'protein')},
+                    { measure: getVisMeasure('ELISPOT', 'specimen_type')},
+                    { measure: getVisMeasure('ELISPOT', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: getVisMeasure('ICS', 'SubjectId')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum', false, undefined, undefined, 'DOUBLE')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+', 'CD8+'])},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'])},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'])},
+                    { measure: getVisMeasure('ICS', 'protein_panel')},
+                    { measure: getVisMeasure('ICS', 'protein')},
+                    { measure: getVisMeasure('ICS', 'specimen_type')},
+                    { measure: getVisMeasure('ICS', 'lab_code')},
+                    { measure: xMeasure}
+                ],
+                success: function(measureStore) {
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS
+                    ], true);
+
+                    var out = '<table><tr><th>Dimension</th><th>X</th><th>Y</th></tr><tbody>';
+                    $.each(data[0].x.rawRecord, function(name, val){
+                        if (val.getValues) {
+                            out += '<tr><td>' + name + '</td>';
+                            out += '<td>' + Ext.clone(val.getValues()).join(', ') + '</td>';
+                            out += '<td>' + Ext.clone(data[0].y.rawRecord[name].getValues()).join(', ') + '</td></tr>';
+                        }
+                    });
+                    out += '</tbody></<table>';
+
+                    $('#plot').html(out);
+
+                    console.log(data[0]);
+
+                },
+                failure: onError
+            };
+
+            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+        }
+
 
         function plotYMeasureXDiffAssay3()
         {
