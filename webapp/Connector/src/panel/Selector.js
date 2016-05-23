@@ -476,36 +476,44 @@ Ext.define('Connector.panel.Selector', {
 
     showLearnMessage : function(item, title, description, name) {
         if (description) {
-            //truncate description to roughly 4 rows and ensures that a word isn't being cut off.
-            var charLimit = 150;
+            //Allow up to 450 charactors and ensures that a word isn't being cut off.
+            var charLimit = 450;
             
             if (description.length > charLimit) {
                description = description.substring(0, charLimit + 1);
                description = description.substring(0, description.lastIndexOf(' ')) + '...';
             }
 
-
+            var position = this.getLearnTooltipPosition(item.scrollHeight, description.length > charLimit ? charLimit : description.length);
 
             var calloutMgr = hopscotch.getCalloutManager(),
                 _id = Ext.id(),
                 displayTooltip = setTimeout(function() {
-                    calloutMgr.createCallout({
+                    calloutMgr.createCallout(Ext.apply({
                         id: _id,
                         // bubbleWidth: 160, // use CSS instead of JS for this.
-                        yOffset: item.scrollHeight - 37, //Issue 24196 - tooltips for rows immediately following a grouping heading were out of alignment.
                         xOffset: 50,
                         showCloseButton: false,
                         target: item,
                         placement: 'right',
                         title: title,
                         content: description
-                    });
+                    }, position));
                 }, 400);
             this.on('hide' + name + 'LearnMsg', function() {
                 clearTimeout(displayTooltip);
                 calloutMgr.removeCallout(_id);
             }, this);
         }
+    },
+
+    getLearnTooltipPosition: function(scrollHeight, strlength) {
+        // for every 100 charactor, move down the y and arrow by roughly 1 line to center the callout to avoid being cut off
+        var adjustFactor = Math.round(strlength/100), adjustment = 25;
+        return {
+                yOffset: scrollHeight - 37 - adjustment * adjustFactor, //Issue 24196 - tooltips for rows immediately following a grouping heading were out of alignment.
+                arrowOffset: adjustment * adjustFactor
+        };
     },
 
     hideLearnMessage: function(name) {
