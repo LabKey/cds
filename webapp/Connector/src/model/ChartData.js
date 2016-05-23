@@ -353,7 +353,18 @@ Ext.define('Connector.model.ChartData', {
             || x.variableType === 'TIME' // #3
             || (this.isSameSource(xa, ya) && ChartUtils.getAssayDimensionsWithDifferentValues(y, x).length == 0); //#4
 
-        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated));
+        var hasSameDimensions = false;
+        if (this.isSameSource(xa, ya) && x && y) {
+            var intersectDimensions = Ext.Array.intersect(
+                    Object.keys(x.options.dimensions),
+                    Object.keys(y.options.dimensions)
+            );
+            hasSameDimensions = intersectDimensions.length > 0;
+        }
+
+        var getAllDimensions = !nonAggregated || hasSameDimensions;
+
+        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated), getAllDimensions);
 
         var allRows = {};
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
@@ -536,7 +547,8 @@ Ext.define('Connector.model.ChartData', {
                 totalCount: mainCount + undefinedXRows.length + undefinedYRows.length,
                 invalidLogPlotRowCount: invalidLogPlotRowCount,
                 minPositiveX: minPositiveX === Number.MAX_VALUE ? 0.0001 : minPositiveX,
-                minPositiveY: minPositiveY === Number.MAX_VALUE ? 0.0001 : minPositiveY
+                minPositiveY: minPositiveY === Number.MAX_VALUE ? 0.0001 : minPositiveY,
+                hasDimensionalAggregators: getAllDimensions ? true : false
             },
             studyAxisData: {
                 studyVisitMap: studyVisitMap,
@@ -580,7 +592,7 @@ Ext.define('Connector.model.ChartData', {
                 this.set('usesMedian', true);
             }
 
-            return row.y.getMedian();
+            return this.roundMedian(row.y.getMedian());
         }
 
         return null;
@@ -598,7 +610,21 @@ Ext.define('Connector.model.ChartData', {
             this.set('usesMedian', true);
         }
 
-        return row.x.getMedian();
+        return this.roundMedian(row.x.getMedian());
+    },
+
+    roundMedian: function(value) {
+        if (value == null) {
+            return null;
+        }
+        if (Math.abs(value) < 0.0001) {
+            // show the 1st significant digit, we don't want to show 0
+            return value.toPrecision(1);
+        }
+        else {
+            return parseFloat(value.toFixed(4));
+
+        };
     },
 
     _getColorValue : function(measure, alias, row, isMultiValue) {

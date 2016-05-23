@@ -56,7 +56,7 @@ Ext.define('Connector.panel.AntigenSelection', {
 
             for (var i = 0; i < fields.length; i++) {
                 concatValue += sep + (record.get(fields[i]) || 'null');
-                sep = '|';
+                sep = ChartUtils.ANTIGEN_LEVEL_DELIMITER;
 
                 if (!Ext.isDefined(columnValueCounts[concatValue])) {
                     columnValueCounts[concatValue] = 0;
@@ -136,7 +136,7 @@ Ext.define('Connector.panel.AntigenSelection', {
         var key = '', sep = '';
         Ext.each(fields, function(field) {
             key += sep + (record.get(field) || 'null');
-            sep = '|';
+            sep = ChartUtils.ANTIGEN_LEVEL_DELIMITER;
         });
         return key;
     },
@@ -158,7 +158,7 @@ Ext.define('Connector.panel.AntigenSelection', {
     createSubjectCountCmp : function(record, addCls) {
         var value = record.get('subjectCount'),
             cls = 'col-count',
-            testDataValue = record.internalId.replace(/\|/g, '-').replace(/ /g, '_') + '-count';
+            testDataValue = record.internalId.replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, '-').replace(/ /g, '_') + '-count';
 
         if (value == 0) {
             value = '0';
@@ -202,7 +202,7 @@ Ext.define('Connector.panel.AntigenSelection', {
     createCheckboxCmp : function(record, fields, index, value, addCls) {
         var alias = fields[index],
             label = record.get(alias) || '[Blank]',
-            dataValue = alias + '-' + value.replace(/\|/g, '-').replace(/ /g, '_');
+            dataValue = alias + '-' + value.replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, '-').replace(/ /g, '_');
 
         var checkbox = Ext.create('Ext.form.field.Checkbox', {
             name: alias + '-check',
