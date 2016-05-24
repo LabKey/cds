@@ -3474,7 +3474,7 @@ Ext.define('Connector.view.Chart', {
                     includeDefinedMeasureSources: true,
                     includeTimpointMeasures: true,
                     userFilter : function(row) {
-                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR' || row.isDiscreteTime;
+                        return !row.isMeasure;
                     }
                 },
                 listeners: {
