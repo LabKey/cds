@@ -1,5 +1,6 @@
 package org.labkey.test.tests.cds;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -21,6 +22,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String MISSING_SEARCH_STRING = "If this string ever appears something very odd happened.";
+    private final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
+    private final String XPATH_RESULTLIST_WAPPER = "//div[not(contains(@style, 'display: none'))]/div[contains(@class, 'detail-container')]/div[contains(@class, 'detail-wrapper')]";
 
     @Before
     public void preTest()
@@ -87,7 +90,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void testLearnAboutStudiesSearch()
     {
         List<String> searchStrings = new ArrayList<>(Arrays.asList("Proin", "ACETAMINOPHEN", "Phase IIB"));
-        final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
 
         cds.viewLearnAboutPage("Studies");
 
@@ -109,8 +111,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String firstContactName = "Juan Owens";
         final String firstContactEmail = "jowens5@deviantart.com";
         final String rationale = "Nullam molestie nibh in lectus. Pellentesque at nulla.";
-        final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
-        final String XPATH_RESULTLIST = "//div[contains(@class, 'detail-wrapper')]";
 
         cds.viewLearnAboutPage("Studies");
         log("Searching for '" + searchString + "'.");
@@ -121,30 +121,24 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assert(Locator.xpath("//div[contains(@class, 'data-availability-text')][text()='" + dataAvailability + "']").findElement(getDriver()).isDisplayed());
 
         log("Start verifying study detail page.");
-        List<WebElement> returnedItems  = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        List<WebElement> returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         log("Verifying study information.");
         List<String> fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_INFO_FIELDS);
-        fields.stream().forEach((field) ->  {
-            assertTextPresent(field);
-        });
+        fields.stream().forEach((field) -> assertTextPresent(field));
         assertTextPresent(grantAffiliation);
 
         log("Verifying contact information.");
         fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_CONTACT_FIELDS);
-        fields.stream().forEach((field) ->  {
-            assertTextPresent(field);
-        });
+        fields.stream().forEach((field) -> assertTextPresent(field));
 
         assertElementPresent(Locator.xpath("//a[contains(@href, 'mailto:" + firstContactEmail + "')][text()='" + firstContactName + "']"));
 
         log("Verifying description section.");
         fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_DESCRIPTION_FIELDS);
-        fields.stream().forEach((field) ->  {
-            assertTextPresent(field);
-        });
+        fields.stream().forEach((field) -> assertTextPresent(field));
         assertTextPresent(rationale);
         assertElementPresent(Locator.xpath("//a[text()='Click for treatment schema']"));
     }
@@ -161,7 +155,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Page was refreshed.");
         sleep(30000);
         log("Should have slept for another 30 seconds. Now wait at most 60 seconds for the page signal to fire.");
-        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000);
+        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000, false);
         log("Signal should have fired. Now wait, at most, 60 seconds for an h2 element with the text 'verapamil hydrochloride'");
         waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
         log("Element should be there.");
@@ -187,7 +181,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Page was refreshed.");
         sleep(30000);
         log("Should have slept for another 30 seconds. Now wait at most 60 seconds for the page signal to fire.");
-        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000);
+        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000, false);
         log("Signal should have fired. Now wait, at most, 60 seconds for an h2 element with the text 'verapamil hydrochloride'");
         waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
         log("Element should be there.");
@@ -220,7 +214,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void testLearnAboutStudyProductsSearch()
     {
         List<String> searchStrings = new ArrayList<>(Arrays.asList("Pénélope", "acid", "ART", "is a"));
-        final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
 
         cds.viewLearnAboutPage("Study products");
 
@@ -274,12 +267,162 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
     }
 
+    @Test
+    public void validateSearchNavigation()
+    {
+        final String STUDIES_LINK = "//h1[@class='lhdv'][text()='Studies']";
+        final String ASSAYS_LINK = "//h1[@class='lhdv'][text()='Assays']";
+        final String PRODUCTS_LINK = "//h1[@class='lhdv'][text()='Study products']";
+        final String LEARN_ABOUT = "//span[contains(@class, 'right-label')][text()='Learn about']";
+        final String BACK_BUTTON = "//div[contains(@class, 'learnview')]/span/div/div[contains(@class, 'x-container')][not(contains(@style, 'display: none'))]//div[contains(@class, 'learn-up')]//span[contains(@class, 'iarrow')]";
+
+        String searchTextStudies, searchTextAssays, searchTextProducts;
+        List<WebElement> returnedItems;
+
+        cds.viewLearnAboutPage("Studies");
+
+        searchTextStudies = "Proin leo odio, porttitor id";
+        log("Search for '" + searchTextStudies + "' in Studies");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextStudies);
+
+        log("Go to the detail page of the item returned.");
+        returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
+        returnedItems.get(0).click();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        log("Click back button to validate that the search value is saved.");
+        Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
+        waitForText("Learn about...");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Click 'Learn about' and validate that the text box gets cleared.");
+        click(Locator.xpath(LEARN_ABOUT));
+        waitForText("Learn about...");
+        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        Assert.assertTrue(this.getFormElement(Locator.xpath(XPATH_TEXTBOX)).length() == 0);
+
+        log("Search in Studies again to give it a history...");
+        searchTextStudies = "Oxygen";
+        log("Search for '" + searchTextStudies + "' in Studies.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextStudies);
+
+        log("Go to the detail page of one of the items returned.");
+        returnedItems.clear();
+        returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
+        returnedItems.get(0).click();
+        sleep(CDSHelper.CDS_WAIT);
+
+        log("Again click the back button to save the search value. It will be checked again in a little while.");
+        Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
+        waitForText("Learn about...");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Go to Assays and try the same basic scenario.");
+        click(Locator.xpath(ASSAYS_LINK));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        searchTextAssays = "NAB";
+        log("Search for '" + searchTextAssays + "' in Assays");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextAssays);
+
+        log("Go to the detail page for " + searchTextAssays + ".");
+        returnedItems.clear();
+        returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
+        returnedItems.get(0).click();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        log("Click back button to validate that the search value is saved.");
+        Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Go to Study products and try the same basic scenario.");
+        click(Locator.xpath(PRODUCTS_LINK));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        searchTextProducts = "Måns";
+        log("Search for '" + searchTextProducts + "' in Products");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextProducts);
+
+        log("Go to the detail page for " + searchTextProducts + ".");
+        returnedItems.clear();
+        returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
+        returnedItems.get(0).click();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        log("Click back button to validate that the search value is saved.");
+        Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Now click 'Studies' and validate that the search box is populated as expected.");
+        click(Locator.xpath(STUDIES_LINK));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Now click 'Assays' and validate that the search box is populated as expected.");
+        click(Locator.xpath(ASSAYS_LINK));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Click 'Study Products' and validate that the search box is populated as expected.");
+        click(Locator.xpath(PRODUCTS_LINK));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Now go to a different part of the app and return using the 'Learn about' link. Search values should be saved.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        click(Locator.xpath(LEARN_ABOUT));
+        waitForText("Learn about...");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        log("Validate that the 'Study products' search value is there.");
+        Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Now click 'Assays' and validate that the search box has the value last searched for in Assays.");
+        click(Locator.xpath(ASSAYS_LINK));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Go back to Plots and return using the 'Learn about' link. Search values should be saved and show Assays.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        click(Locator.xpath(LEARN_ABOUT));
+        waitForText("Learn about...");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        log("Validate that the 'Assays' search value is there.");
+        Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Finally repeat the tests with 'Studies'.");
+        click(Locator.xpath(STUDIES_LINK));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+        log("Go back to Plots and return using the 'Learn about' link. Search values should be saved and show Studies.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        click(Locator.xpath(LEARN_ABOUT));
+        waitForText("Learn about...");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        log("Validate that the 'Studies' search value is there.");
+        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+
+    }
+
     private void validateSearchFor(String searchString)
     {
         String itemText;
         String[] itemParts;
         List<WebElement> returnedItems;
-        final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
         final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
 
         log("Searching for '" + searchString + "'.");
