@@ -284,6 +284,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         searchTextStudies = "Proin leo odio, porttitor id";
         log("Search for '" + searchTextStudies + "' in Studies");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextStudies);
+        waitForElement(Locator.xpath(XPATH_RESULTLIST_WAPPER));
 
         log("Go to the detail page of the item returned.");
         returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
@@ -300,6 +301,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Click 'Learn about' and validate that the text box gets cleared.");
         click(Locator.xpath(LEARN_ABOUT));
         waitForText("Learn about...");
+        sleep(CDSHelper.CDS_WAIT);
         Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
         Assert.assertTrue(this.getFormElement(Locator.xpath(XPATH_TEXTBOX)).length() == 0);
 
@@ -307,6 +309,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         searchTextStudies = "Oxygen";
         log("Search for '" + searchTextStudies + "' in Studies.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextStudies);
+        waitForElement(Locator.xpath(XPATH_RESULTLIST_WAPPER));
 
         log("Go to the detail page of one of the items returned.");
         returnedItems.clear();
@@ -328,6 +331,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         searchTextAssays = "NAB";
         log("Search for '" + searchTextAssays + "' in Assays");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextAssays);
+        waitForElement(Locator.xpath(XPATH_RESULTLIST_WAPPER));
 
         log("Go to the detail page for " + searchTextAssays + ".");
         returnedItems.clear();
