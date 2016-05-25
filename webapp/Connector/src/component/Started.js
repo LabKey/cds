@@ -32,7 +32,7 @@ Ext.define('Connector.component.Started', {
 
                         '<table class="tile-group"><tr>',
                             '<td><div>',
-                                '<table class="tile" onclick="location.href=\'#learn\'">',
+                                '<table class="tile" onclick="location.href=\'#learn/learn/Study/\'">',
                                 '<tr><td><p class="tile-title">Answer questions</p></td></tr>',
                                 '<tr><td><div class="home_text backgroundimage"></div></td></tr>',
                                 '<tr><td>Learn about {nstudy:htmlEncode} CAVD studies, {nproduct:htmlEncode} products, and {nassay:htmlEncode} assays.</td></tr>',
