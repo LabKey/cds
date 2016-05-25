@@ -46,7 +46,7 @@ Ext.define('Connector.controller.Analytics', {
 
     _bindApplication : function() {
         // tracking page views
-        Connector.getApplication().on('route', function(/* controller, view, viewContext */) {
+        Connector.getApplication().on('route', function() {
             this.setVariable('userId', LABKEY.user.id);
             this.trackPageview(document.URL.replace(window.location.origin, ''));
         }, this);

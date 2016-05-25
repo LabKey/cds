@@ -22,6 +22,8 @@ Ext.define('Connector.view.Learn', {
      */
     allowNestedSearch: true,
 
+    searchFilter: undefined,
+
     initComponent : function() {
 
         this.headerViews = {};
@@ -41,6 +43,7 @@ Ext.define('Connector.view.Learn', {
                 dimensions: this.getDimensions(),
                 hidden: true,
                 cls: 'learnheader',
+                searchValue: this.searchFilter,
                 listeners: {
                     searchchanged: this.onSearchFilterChange,
                     scope: this
@@ -110,6 +113,10 @@ Ext.define('Connector.view.Learn', {
                 dimensionName = hierarchy.getName();
 
             if (!this.dimensionDataLoaded[dimensionName]) {
+                store.on('load', function() {
+                    this.dimensionDataLoaded[dimensionName] = true;
+                    this.dimensionDataLoaded(dimensionName, store);
+                }, this);
                 Connector.getState().onMDXReady(function(mdx) {
                     mdx.query({
                         onRows: [{
@@ -120,8 +127,6 @@ Ext.define('Connector.view.Learn', {
                             if (store) {
                                 store.loadSlice(slice);
                             }
-                            this.dimensionDataLoaded[dimensionName] = true;
-                            this.dimensionDataLoaded(dimension, store);
                         },
                         scope: this
                     });
@@ -308,8 +313,8 @@ Ext.define('Connector.view.Learn', {
         'Study product' : 'StudyProducts'
     },
 
-    selectDimension : function(dimension, id, urlTab) {
-        this.searchFilter = undefined;
+    selectDimension : function(dimension, id, urlTab, searchTerm) {
+        this.searchFilter = searchTerm ? searchTerm : undefined;
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
 
         if (dimension) {
@@ -319,7 +324,7 @@ Ext.define('Connector.view.Learn', {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
-        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension);
+        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension, searchTerm);
     }
 });
 
@@ -338,6 +343,8 @@ Ext.define('Connector.view.LearnHeader', {
         ui: 'custom',
         flex: 1
     },
+
+    searchValue: undefined,
 
     initComponent : function() {
 
@@ -389,6 +396,7 @@ Ext.define('Connector.view.LearnHeader', {
                 emptyText: 'Search',
                 cls: 'learn-search-input',
                 checkChangeBuffer: 500,
+                value: this.searchValue,
                 validator: Ext.bind(function(value) {
                     this.fireEvent('searchchanged', value);
                     return true;
@@ -403,13 +411,14 @@ Ext.define('Connector.view.LearnHeader', {
         this.getDataView().setDimensions(dimensions);
     },
 
-    selectDimension : function(dimUniqueName, id, dimension) {
+    selectDimension : function(dimUniqueName, id, dimension, searchTerm) {
         if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectDimension(dimUniqueName);
         }
         var search = this.getSearchField();
         search.emptyText = 'Search ' + dimension.pluralName.toLowerCase();
-        search.setValue('');
+        search.setValue(searchTerm ? searchTerm : '');
+        this.fireEvent('searchchanged', searchTerm ? searchTerm : '');
     }
 });
 

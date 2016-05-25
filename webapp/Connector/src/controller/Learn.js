@@ -52,6 +52,7 @@ Ext.define('Connector.controller.Learn', {
     init : function() {
 
         this.control('learnheader', {
+            searchchanged: this.onSearchChange,
             //
             // When a dimension is selected the following event is fired. This is used in coordination
             // with this.updateLock to ensure that an infinite loop does not occur
@@ -99,7 +100,8 @@ Ext.define('Connector.controller.Learn', {
 
             Ext.applyIf(c, {
                 ui: 'custom',
-                state: Connector.getState()
+                state: Connector.getState(),
+                searchFilter: context.params.q
             });
 
             var v = Ext.create(type, c);
@@ -110,13 +112,53 @@ Ext.define('Connector.controller.Learn', {
         }
     },
 
-    parseContext : function(ctx) {
+    parseContext : function(ctx, params, newHash, oldHash) {
+        var lastSearch;
+        var currentDimension = ctx[0] ? ctx[0] : this.lastContext && this.lastContext.lastDimension ? this.lastContext.lastDimension : 'Study';
+        if (!ctx[0]) {
+            var newHashLocation = '#' + 'learn/learn/' +  currentDimension;
+            history.replaceState(undefined, undefined, newHashLocation);
+        }
+        lastSearch = currentDimension && this.lastContext && this.lastContext[currentDimension] && this.lastContext[currentDimension].params ? this.lastContext[currentDimension].params.q : undefined;
+
+        // When come to Learn About from other pages, no need to clear lastContext, should load previous search
+        if (oldHash && 'learn' === oldHash.controller) {
+            // When on Learn About and click Learn About, clear all previous context
+            if (!ctx[0]) {
+                this.lastContext = {};
+                lastSearch = '';
+            }else if (oldHash.viewContext && currentDimension === oldHash.viewContext[0]) {
+                // if click on the same tab, clear current dimension's lastContext
+                if (this.isValueEqualContext(oldHash.viewContext[1], ctx[1]) && this.isValueEqualContext(oldHash.viewContext[2], ctx[2])) {
+                    lastSearch = '';
+                    this.lastContext[currentDimension] = {};
+                }
+            }
+
+        }
+
+        if (!this.lastContext) {
+            this.lastContext = {};
+        }
+
         this.context = {
-            dimension: ctx[0],
+            dimension: currentDimension,
             id: ctx[1],
-            tab: ctx[2]
+            tab: ctx[2],
+            params: {
+                q: params ? params.q : lastSearch
+            }
         };
+        this.lastContext[currentDimension] = Ext.clone(this.context);
+        this.lastContext.lastDimension = currentDimension;
         return this.context;
+    },
+
+    isValueEqualContext: function(ctx1, ctx2) {
+        if (Ext.isString(ctx1) && Ext.isString(ctx2)) {
+            return ctx1 === ctx2;
+        }
+        return !ctx1 && !ctx2;
     },
 
     bindLearnView : function(v, context) {
@@ -195,7 +237,7 @@ Ext.define('Connector.controller.Learn', {
                     //
                     this.dimension = dim;
                     this.updateLock = true;
-                    v.selectDimension(dim, id, tab);
+                    v.selectDimension(dim, id, tab, context.params.q);
                     this.updateLock = false;
                 }
                 else {
@@ -210,6 +252,39 @@ Ext.define('Connector.controller.Learn', {
 
     getDefaultView : function() {
         return 'learn';
+    },
+
+    onSearchChange : function(search) {
+        var hash = location.hash;
+        var newHash;
+
+        if (Ext.isString(search) && search.length) {
+            // adding q=
+            if (hash.indexOf('?') < 0) {
+                newHash = hash + '/?q=' + search;
+            }
+            else if (hash.indexOf('q=') !== -1 && hash.indexOf('q=') > hash.indexOf('?')) {
+                var parts = hash.split('q=');
+                parts[1] = [search].concat(parts[1].split('&').slice(1)).join('&');
+                newHash = parts.join('q=');
+            }
+        }
+        else {
+            // removing q=
+            if (hash.indexOf('?') != -1 && hash.indexOf('q=') !== -1 && hash.indexOf('q=') > hash.indexOf('?')) {
+                var parts = hash.split('?');
+                if (parts[1].indexOf('&') == -1) {
+                    newHash = parts[0];
+                }
+            }
+        }
+        if (this.context) {
+            this.context.params.q = Ext.isString(search) && search.length ? search : undefined;
+            this.lastContext[this.context.dimension] = Ext.clone(this.context);
+        }
+        if (Ext.isDefined(newHash)) {
+            history.replaceState(undefined, undefined, newHash);
+        }
     },
 
     onSelectDimension : function(dimension, silent) {
@@ -235,7 +310,7 @@ Ext.define('Connector.controller.Learn', {
             }
             else
             {
-                this.getViewManager().changeView('learn', 'learn', context, 'Learn About: ' + dimension.get('pluralName'));
+                this.getViewManager().changeView('learn', 'learn', context);
             }
         }
     },
@@ -255,6 +330,6 @@ Ext.define('Connector.controller.Learn', {
     },
 
     onSelectItemTab : function(dim, item, itemDetailTab) {
-        this.getViewManager().changeView('learn', 'learn', [dim.name, item.getId(), itemDetailTab.url]);
+        this.getViewManager().changeView('learn', 'learn', [dim.name, item.getId(), itemDetailTab.url], this.lastContext && this.lastContext[dim.name] ? this.lastContext[dim.name].params : undefined);
     }
 });
