@@ -905,6 +905,16 @@ Ext.define('Connector.utility.Chart', {
         bbox.s = point.matrixTransform(matrix);
 
         return bbox
+    },
+
+    getTimeShortLabel: function(alias) {
+        if (alias.startsWith(QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks'))
+            return 'Week';
+        else if (alias.startsWith(QueryUtils.STUDY_ALIAS_PREFIX + 'Months'))
+            return 'Month';
+        else if (alias.startsWith(QueryUtils.STUDY_ALIAS_PREFIX + 'Years'))
+            return 'Year';
+        return 'Day';
     }
 
 });
