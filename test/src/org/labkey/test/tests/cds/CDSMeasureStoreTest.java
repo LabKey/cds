@@ -17,7 +17,11 @@ package org.labkey.test.tests.cds;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.DemoMeasureStorePage;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -25,6 +29,12 @@ import static org.junit.Assert.assertEquals;
 @Category({})
 public class CDSMeasureStoreTest extends CDSReadOnlyTest
 {
+    public static final String[] ICS_ELISPOT_DIMENSIONS = {"study_ICS_summary_level", "cds_GridBase_SequenceNum", "study_ICS_pctpos",
+            "study_ICS_specimen_type", "study_ICS_cell_type", "cds_GridBase_SubjectId", "cds_GridBase_ParticipantSequenceNum",
+            "study_ELISPOT_protein", "study_ELISPOT_summary_level", "cds_GridBase_VisitRowId", "study_ELISPOT_specimen_type",
+            "study_ELISPOT_lab_code", "study_ICS_protein", "study_ICS_lab_code", "study_ELISPOT_protein_panel",
+            "study_ELISPOT_mean_sfc", "study_ICS_protein_panel", "cds_GridBase_Dataset", "study_ELISPOT_functional_marker_name",};
+
     @Test
     public void testDemoMeasureStore()
     {
@@ -114,6 +124,13 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
             new String[]{"100", "200", "300", "400", "500", "600", "700"},
             new String[]{"-10", "-8", "-6", "-4", "-2", "0"}
         ));
+
+        click(Locator.linkWithText("Select All Dimensions"));
+        waitForElement(Locator.css("th").withText("Dimension"));
+        List<String> fields = Arrays.asList(ICS_ELISPOT_DIMENSIONS);
+        fields.stream().forEach((field) ->  {
+            assertTextPresent(field);
+        });
     }
 
     private void verifyPlot(Plot plot)

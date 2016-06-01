@@ -55,7 +55,7 @@ Ext.define('Connector.Application', {
 
     defaultUserProperties: {
         // Used by Connector.component.Started.DISMISS_PROPERTY
-        showIntro: true
+        showIntroPage: true
     },
 
     userProperties: {},

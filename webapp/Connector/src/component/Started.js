@@ -10,7 +10,7 @@ Ext.define('Connector.component.Started', {
     alias: 'widget.cds-started',
 
     statics: {
-        DISMISS_PROPERTY: 'showIntro'
+        DISMISS_PROPERTY: 'showIntroPage'
     },
 
     tpl: new Ext.XTemplate(
@@ -32,7 +32,7 @@ Ext.define('Connector.component.Started', {
 
                         '<table class="tile-group"><tr>',
                             '<td><div>',
-                                '<table class="tile" onclick="location.href=\'#learn\'">',
+                                '<table class="tile" onclick="location.href=\'#learn/learn/Study/\'">',
                                 '<tr><td><p class="tile-title">Answer questions</p></td></tr>',
                                 '<tr><td><div class="home_text backgroundimage"></div></td></tr>',
                                 '<tr><td>Learn about {nstudy:htmlEncode} CAVD studies, {nproduct:htmlEncode} products, and {nassay:htmlEncode} assays.</td></tr>',
@@ -95,7 +95,7 @@ Ext.define('Connector.component.Started', {
     },
 
     data: {
-        showIntro: Connector.user.properties.showIntro === undefined || Ext.decode(Connector.user.properties.showIntro).value === true,
+        showIntro: Connector.user.properties.showIntroPage === undefined || Ext.decode(Connector.user.properties.showIntroPage).value === true,
         isAdmin: LABKEY.user.isAdmin === true,
         adminURL: LABKEY.ActionURL.buildURL('admin', 'folderManagement.view', null, {tabId: 'props'}),
         videoURL: LABKEY.moduleContext.cds.GettingStartedVideoURL,

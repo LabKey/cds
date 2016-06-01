@@ -30,12 +30,13 @@ antigen_type,
 protein_panel,
 protein,
 peptide_pool,
+-- Delimiter has to match ChartUtil.ANTIGEN_LEVEL_DELIMITER
 (CASE WHEN protein_panel IS NULL THEN 'null' ELSE protein_panel END)
-  || '|' || (CASE WHEN protein IS NULL THEN 'null' ELSE protein END)
+  || '|||' || (CASE WHEN protein IS NULL THEN 'null' ELSE protein END)
   AS protein_panel_protein,
 (CASE WHEN protein_panel IS NULL THEN 'null' ELSE protein_panel END)
-  || '|' || (CASE WHEN protein IS NULL THEN 'null' ELSE protein END)
-  || '|' || (CASE WHEN peptide_pool IS NULL THEN 'null' ELSE peptide_pool END)
+  || '|||' || (CASE WHEN protein IS NULL THEN 'null' ELSE protein END)
+  || '|||' || (CASE WHEN peptide_pool IS NULL THEN 'null' ELSE peptide_pool END)
   AS protein_panel_protein_peptide_pool,
 functional_marker_name,
 functional_marker_type,

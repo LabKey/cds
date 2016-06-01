@@ -54,7 +54,8 @@ Ext.define('Connector.view.Summary', {
         if (!Ext.isDefined(this.summaryPanel))
         {
             this.summaryPanel = Ext.create('Connector.view.SummaryDataView', {
-                anchor: '100% 50%',
+                anchor: '100% -155',
+                overflowY: 'auto',
                 ui: 'custom',
                 store: this.store
             });

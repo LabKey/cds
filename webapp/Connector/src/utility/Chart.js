@@ -39,6 +39,9 @@ Ext.define('Connector.utility.Chart', {
 
     studyAxisKeyDelimiter: '|||',
 
+    ANTIGEN_LEVEL_DELIMITER: '|||',
+    ANTIGEN_LEVEL_DELIMITER_REGEX: /\|\|\|/g,
+
     tickFormat: {
         date: function(val) {
             // D3 converts dates to integers, so we need to convert it back to a date to get the format.
@@ -81,17 +84,23 @@ Ext.define('Connector.utility.Chart', {
             yOffset: 0,
             arrowOffset: 20
         },
+        topRightNoOffset : {
+            placement: 'top',
+            xOffset: -15,
+            yOffset: 0,
+            arrowOffset: -1
+        },
         top : {
             placement: 'top',
-            xOffset: -200,
+            xOffset: -225,
             yOffset: 0,
-            arrowOffset: 190
+            arrowOffset: 210
         },
         bottom : {
             placement: 'bottom',
-            xOffset: -200,
+            xOffset: -225,
             yOffset: 0,
-            arrowOffset: 190
+            arrowOffset: 210
         },
         bottomRight : {
             placement: 'bottom',
@@ -297,7 +306,8 @@ Ext.define('Connector.utility.Chart', {
 
         if (xMeasure && xExtent[0] !== null && xExtent[1] !== null)
         {
-            xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true);
+            var minValidXVal = this.requireYLogGutter ? this.minXPositiveValue : null;
+            xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true, minValidXVal);
             xMax = ChartUtils.transformVal(xExtent[1], xMeasure.type, false);
 
             // Issue 24124: With time points, brushing can create a filter that is not a whole number
@@ -323,7 +333,8 @@ Ext.define('Connector.utility.Chart', {
 
         if (yMeasure && yExtent[0] !== null && yExtent[1] !== null)
         {
-            yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true);
+            var minValidYVal = this.requireXLogGutter ? this.minYPositiveValue : null;
+            yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true, minValidYVal);
             yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false);
 
             if (yExtent[0] !== Number.NEGATIVE_INFINITY) {
@@ -476,7 +487,7 @@ Ext.define('Connector.utility.Chart', {
         return false;
     },
 
-    transformVal : function(val, type, isMin) {
+    transformVal : function(val, type, isMin, minVal) {
         var trans = val;
 
         if (type === 'INTEGER') {
@@ -486,7 +497,15 @@ Ext.define('Connector.utility.Chart', {
             trans = isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
         }
         else if (type === 'DOUBLE' || type === 'REAL' || type === 'FLOAT') {
-            var precision = 3;
+            // CDS issue 457: Unable to filter out log values 0 or less
+            // minVal is the minimum positive value for axis in log scale plot
+            // if brush lower extent is smaller than the min positive data, set it to 0
+            if (isMin && minVal && (minVal/val) > 1.2)
+            {
+                return 0;
+            }
+
+            var precision = 4;
 
             if (trans > 100 || trans < -100) {
                 precision = 0;
@@ -497,8 +516,16 @@ Ext.define('Connector.utility.Chart', {
             else if (trans > 1 || trans < -1) {
                 precision = 2;
             }
+            else if (trans > 0.001 || trans < -0.001) {
+                precision = 3;
+            }
 
             trans = parseFloat(val.toFixed(precision));
+
+            if (isMin && minVal && trans > 0 && trans < minVal)
+            {
+                return minVal;
+            }
         }
 
         return trans;
@@ -754,7 +781,7 @@ Ext.define('Connector.utility.Chart', {
     showDataTooltipCallout : function(content, point, hideEvent, isYGutter, isXGutter, scope) {
         var positioning = this.getBubblePosition(point,  isYGutter, isXGutter);
         var config = Ext.apply(positioning, {
-            bubbleWidth: 400,
+            bubbleWidth: 450,
             target: point,
             content: content
         });
@@ -778,12 +805,23 @@ Ext.define('Connector.utility.Chart', {
     },
 
     getBubblePosition: function(point, isYGutter, isXGutter) {
-        var pointNode = point.parentNode;
-        var bbox = pointNode.getBBox();
+        var bbox = point.parentNode.getBBox();
+        // if a plot is scrollalbe, bbox position doesn't indicate the correct screen position
+        if (point.viewportElement) {
+            bbox = this.getScreenBBox(point);
+            if (bbox.se) {
+                bbox = bbox.se;
+            }
+        }
         var config = ChartUtils.callOutPositions.top;
 
         if (isYGutter) {
-            config = ChartUtils.callOutPositions.right;
+            if (bbox.y > 400) {
+                config = ChartUtils.callOutPositions.topRight;
+            }
+            else {
+                config = ChartUtils.callOutPositions.right;
+            }
         }
         else if (isXGutter) {
             if (bbox.x < 250) {
@@ -793,16 +831,90 @@ Ext.define('Connector.utility.Chart', {
                 config = ChartUtils.callOutPositions.top;
             }
         }
-        else if (bbox.y < 250 && bbox.x < 250) {
+        else if (bbox.x < 50) {
+            if (bbox.y > 400) {
+                config = ChartUtils.callOutPositions.topRightNoOffset;
+            }
+            else {
+                config = ChartUtils.callOutPositions.right;
+            }
+        }
+        else if (bbox.y < 400 && bbox.x < 250) {
             config = ChartUtils.callOutPositions.bottomRight;
         }
-        else if (bbox.y < 250) {
+        else if (bbox.y < 400) {
             config = ChartUtils.callOutPositions.bottom;
         }
         else if (bbox.x < 250) {
             config = ChartUtils.callOutPositions.topRight;
         }
         return config;
+    },
+
+    // Gets the screen coordinates of a shape
+    //
+    // Given a shape on the screen, will return an SVGPoint for the directions
+    // n(north), s(south), e(east), w(west), ne(northeast), se(southeast), nw(northwest),
+    // sw(southwest).
+    //
+    //    +-+-+
+    //    |   |
+    //    +   +
+    //    |   |
+    //    +-+-+
+    //
+    // Returns an Object {n, s, e, w, nw, sw, ne, se}
+    getScreenBBox :function(target) {
+        var targetel   = target, point;
+        if (target.viewportElement) {
+            point = target.viewportElement.createSVGPoint();
+        }
+        else {
+            return null;
+        }
+
+        while ('undefined' === typeof targetel.getScreenCTM && 'undefined' === targetel.parentNode) {
+            targetel = targetel.parentNode;
+        }
+
+        var bbox       = {},
+            matrix     = targetel.getScreenCTM(),
+            tbbox      = targetel.getBBox(),
+            width      = tbbox.width,
+            height     = tbbox.height,
+            x          = tbbox.x,
+            y          = tbbox.y;
+
+        point.x = x;
+        point.y = y;
+        bbox.nw = point.matrixTransform(matrix);
+        point.x += width;
+        bbox.ne = point.matrixTransform(matrix);
+        point.y += height;
+        bbox.se = point.matrixTransform(matrix);
+        point.x -= width;
+        bbox.sw = point.matrixTransform(matrix);
+        point.y -= height / 2;
+        bbox.w  = point.matrixTransform(matrix);
+        point.x += width;
+        bbox.e = point.matrixTransform(matrix);
+        point.x -= width / 2;
+        point.y -= height / 2;
+        bbox.n = point.matrixTransform(matrix);
+        point.y += height;
+        bbox.s = point.matrixTransform(matrix);
+
+        return bbox
+    },
+
+    getTimeShortLabel: function(alias) {
+        if (alias.startsWith(QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks'))
+            return 'Week';
+        else if (alias.startsWith(QueryUtils.STUDY_ALIAS_PREFIX + 'Months'))
+            return 'Month';
+        else if (alias.startsWith(QueryUtils.STUDY_ALIAS_PREFIX + 'Years'))
+            return 'Year';
+        return 'Day';
     }
 
 });

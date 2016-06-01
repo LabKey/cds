@@ -37,8 +37,6 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-
 public class CDSHelper
 {
     public static final String[] STUDIES = {"QED 1", "QED 2", "QED 3", "QED 4",
@@ -92,7 +90,7 @@ public class CDSHelper
 //    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
 
     public static final String[] LEARN_ABOUT_QED2_INFO_FIELDS = {"Network", "Grant Affiliation", "Study Type", "Stage", "Study start", "First enrollment", "Follow up complete"};
-    public static final String[] LEARN_ABOUT_QED2_CONTACT_FIELDS = {"First point of contact", "Grant PI", "Grant PM", "Study Investigator"};
+    public static final String[] LEARN_ABOUT_QED2_CONTACT_FIELDS = {"First point of contact", "Grant Principal Investigator", "Grant Project Manager", "Study Investigator"};
     public static final String[] LEARN_ABOUT_QED2_DESCRIPTION_FIELDS = {"Objectives", "Rationale", "Groups", "Methods", "Findings", "Conclusions", "Publications"};
 
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
@@ -291,6 +289,7 @@ public class CDSHelper
     public static final String DEMO_SPECIES = "Species";
     public static final String DEMO_SUBSPECIES = "Subspecies";
     public static final String DEMO_STUDY_NAME = "Study Name";
+    public static final String DEMO_STUDY = "Study";
     public static final String DEMO_TREAT_SUMM = "Treatment Summary";
     public static final String DEMO_DATE_SUBJ_ENR = "Date First Subject Enrolled";
     public static final String DEMO_DATE_FUP_COMP = "Date Follow-up Complete";
