@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
-import org.labkey.test.categories.CDS;
 import org.labkey.test.pages.LabKeyPage;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Category({CDS.class})
+@Category({})
 public class CDSTestLearnAbout extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
