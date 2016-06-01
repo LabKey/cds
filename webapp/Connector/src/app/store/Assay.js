@@ -112,6 +112,9 @@ Ext.define('Connector.app.store.Assay', {
                         });
                     }
                 }
+                studies.sort(function(a, b) {
+                   return a.label.localeCompare(b.label);
+                });
                 assay.studies = studies;
                 assays.push(assay);
             }, this);

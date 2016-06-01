@@ -862,7 +862,7 @@ Ext.define('Connector.view.Chart', {
 
     buildPointTooltip: function(data) {
         var content = '', colon = ': ', linebreak = '<br/>';
-        var record = this.allDataRowsMap[data.rowKey];
+        var record = this.allDataRowsMap[data.rowKey], xAxis = this.activeMeasures.x, yAxis = this.activeMeasures.y;
 
         if (record[QueryUtils.STUDY_ALIAS]) {
             content += '<span class="group-title">' + Ext.htmlEncode(record[QueryUtils.STUDY_ALIAS]) + '</span>';
@@ -870,25 +870,36 @@ Ext.define('Connector.view.Chart', {
             content += '<div class="axis-details">';
             content += 'Treatment Summary' + colon + record[QueryUtils.TREATMENTSUMMARY_ALIAS] + linebreak;
             content += 'Subject' + colon + data.subjectId + linebreak;
-            content += 'Study Day' + colon + 'Day ' + record[QueryUtils.PROTOCOLDAY_ALIAS] + linebreak;
+            if (xAxis && xAxis.name == 'ProtocolDay') {
+                var label = ChartUtils.getTimeShortLabel(xAxis.alias);
+                if (xAxis.options.alignmentVisitTag == 'Last Vaccination'){
+                    label += 's from last vaccination';
+                }
+                else {
+                    label = 'Study ' + label;
+                }
+                content += label + colon + ' ' + ((data.x > 0 && xAxis.options.alignmentVisitTag == 'Last Vaccination'? '+' : '') + data.x) + linebreak;
+            }
+            else {
+                content += 'Study Day' + colon + 'Day ' + record[QueryUtils.PROTOCOLDAY_ALIAS] + linebreak;
+            }
             content += '</div>';
         }
 
-        if (this.activeMeasures.x && data.xname) {
+        if (xAxis && data.xname) {
             // skip for study, treatment, and time
-            var xAxis = this.activeMeasures.x;
             if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
                 var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
                 content += '<span class="group-title">' + Ext.htmlEncode(xAxis.queryName + ' - ' + data.xname) + '</span>' + colon + val;
                 content += this.showAsMedian ? ' (median)' : '';
-                content += this.buildPointAxisDetailTooltip(this.activeMeasures.x, record, record.x && record.x.rawRecord ? record.x.rawRecord : null, this.getHierarchicalDimensionInfo(this.activeMeasures.x));
+                content += this.buildPointAxisDetailTooltip(xAxis, record, record.x && record.x.rawRecord ? record.x.rawRecord : null, this.getHierarchicalDimensionInfo(xAxis));
             }
         }
 
-        if (this.activeMeasures.y) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.y.queryName + ' - ' + data.yname) + '</span>' + colon + data.y;
+        if (yAxis) {
+            content += '<span class="group-title">' + Ext.htmlEncode(yAxis.queryName + ' - ' + data.yname) + '</span>' + colon + data.y;
             content += this.showAsMedian ? ' (median)' : '';
-            content += this.buildPointAxisDetailTooltip(this.activeMeasures.y, record, record.y && record.y.rawRecord ? record.y.rawRecord : null, this.getHierarchicalDimensionInfo(this.activeMeasures.y));
+            content += this.buildPointAxisDetailTooltip(yAxis, record, record.y && record.y.rawRecord ? record.y.rawRecord : null, this.getHierarchicalDimensionInfo(yAxis));
         }
 
         if (this.activeMeasures.color && data.colorname) {
@@ -3474,7 +3485,7 @@ Ext.define('Connector.view.Chart', {
                     includeDefinedMeasureSources: true,
                     includeTimpointMeasures: true,
                     userFilter : function(row) {
-                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR' || row.isDiscreteTime;
+                        return !row.isMeasure;
                     }
                 },
                 listeners: {
@@ -3892,9 +3903,10 @@ Ext.define('Connector.view.Chart', {
         bubbleWidth = Math.min(maxWidth * 8, 400);
 
         var title = data.studyLabel;
-        if (data.label)
+        if (data.alignedDay != undefined)
         {
-            title += ' - ' + data.label;
+            title += ': ' + (data.alignedDay > 0 ? '+' : '') + data.alignedDay;
+            title += ' ' + ChartUtils.getTimeShortLabel(this.activeMeasures.x.alias) + 's';
         }
 
         config = {
