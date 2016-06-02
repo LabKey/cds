@@ -424,13 +424,13 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("ZAP 110 - Day 455");
+        expectedToolTipText.add("ZAP 110: +455 Days");
         expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up");
         cssPath = "div.bottomplot > svg > g:nth-child(18) > image:nth-of-type(10)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("ZAP 111 - Day 364");
+        expectedToolTipText.add("ZAP 111: +364 Days");
         expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up");
         cssPath = "div.bottomplot > svg > g:nth-child(31) > image:nth-of-type(8)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);

@@ -313,7 +313,7 @@ public abstract class DataspaceVariableSelector
 
                     // Since it is a radio button shouldn't really iterate.
                     for(String val : value){
-                        _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
 
                     // Move the mouse to close the drop down.
@@ -339,12 +339,12 @@ public abstract class DataspaceVariableSelector
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[text()='All']"))
                 {
-                    _test.checkCheckbox(allTag);
+                    _test.click(allTag);
                 }
-                _test.checkCheckbox(allTag);
+                _test.click(allTag);
 
                 for(String val : value){
-                    _test.checkCheckbox(Locator.xpath(xpathPanelSelector + "//label[text()='" + val + "']"));
+                    _test.click(Locator.xpath(xpathPanelSelector + "//label[text()='" + val + "']"));
                 }
 
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
@@ -369,12 +369,12 @@ public abstract class DataspaceVariableSelector
                     // Clear the current selection.
                     if(!cds.isCheckboxChecked(xpathDimDropDown + "//label[text()='All']"))
                     {
-                        _test.checkCheckbox(allTag);
+                        _test.click(allTag);
                     }
-                    _test.checkCheckbox(allTag);
+                    _test.click(allTag);
 
                     for(String val : value){
-                        _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
 
                     // Move the mouse to close the drop down.
@@ -398,7 +398,7 @@ public abstract class DataspaceVariableSelector
                     _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
 
                     for(String val : value){
-                        _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
 
                     // Move the mouse to close the drop down.
@@ -423,7 +423,7 @@ public abstract class DataspaceVariableSelector
 
                     // Since it is a radio button shouldn't really iterate.
                     for(String val : value){
-                        _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" + val + "']"));
+                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" + val + "']"));
                     }
 
                     // Move the mouse to close the drop down.
@@ -451,13 +451,13 @@ public abstract class DataspaceVariableSelector
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']"))
                 {
-                    _test.checkCheckbox(allTag);
+                    _test.click(allTag);
                 }
-                _test.checkCheckbox(allTag);
+                _test.click(allTag);
 
                 for(String val : value){
                     // The translate function will turn the value for @test-data-value to lowercase. The function lower-case is only available in XPath 2.0
-                    _test.checkCheckbox(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
+                    _test.click(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
                 }
 
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
@@ -479,7 +479,7 @@ public abstract class DataspaceVariableSelector
 
                     // Since it is a radio button shouldn't really iterate.
                     for(String val : value){
-                        _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
 
                     // Move the mouse to close the drop down.
@@ -508,12 +508,12 @@ public abstract class DataspaceVariableSelector
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[@test-data-value='neutralization_tier-all']"))
                 {
-                    _test.checkCheckbox(allTag);
+                    _test.click(allTag);
                 }
-                _test.checkCheckbox(allTag);
+                _test.click(allTag);
 
                 for(String val : value){
-                    _test.checkCheckbox(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
+                    _test.click(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
                 }
 
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
