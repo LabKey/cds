@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -455,7 +456,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("ZAP 111 - Day 182");
+        expectedToolTipText.add("ZAP 111: -13 Weeks");
         expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
         cssPath = "div.bottomplot > svg > g.study:nth-child(22) > image.visit-tag[x^='3']";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
@@ -516,7 +517,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         log("Mouse over the challenge glyph in the time axis.");
         builder = new Actions(getDriver());
-        builder.moveToElement(weList.get(0), 0, 4).perform();
+        builder.moveToElement(weList.get(0), 1, 4).perform();
         sleep(1000);
 
         assertTextPresent("Group 1 Arm T1");
@@ -545,7 +546,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
     @Test
     public void verifyDiscreteTimeVariables()
     {
-        String scaleValues;
+        Pattern pattern;
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
@@ -565,27 +566,24 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_DAYS);
         xaxis.confirmSelection();
 
-        scaleValues = "01371428293135425659637084981121131151191261401541681691711751821962032102242382522732802883033083173343363643923944084254484554855045165455465766076376677277288199091000109110921182127314541456181818203303003000";
-
-        cds.assertPlotTickText(1, scaleValues);
+        pattern = Pattern.compile("^0137.*3303003000");
+        cds.assertPlotTickText(1, pattern);
 
         log("Choose 'Study weeks (discrete)'.");
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_WEEKS);
         xaxis.confirmSelection();
 
-        scaleValues = "01245689101214161718202224252628293032343639404143444547485256586064656972737778828691951031041171291421551561681812072082592603303003000";
-
-        cds.assertPlotTickText(1, scaleValues);
+        pattern = Pattern.compile("^0124.*3303003000");
+        cds.assertPlotTickText(1, pattern);
 
         log("Choose 'Study months (discrete)'.");
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_MONTHS);
         xaxis.confirmSelection();
 
-        scaleValues = "01234567891011121314151617181920212326293235384147593303003000";
-
-        cds.assertPlotTickText(1, scaleValues);
+        pattern = Pattern.compile("^0123.*3303003000");
+        cds.assertPlotTickText(1, pattern);
 
         log("Apply the time axis as a filter.");
         cdsPlot.selectXAxes(false, "5", "8", "6", "11", "17");
@@ -595,9 +593,8 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         sleep(3000); // Let the plot redraw.
         _ext4Helper.waitForMaskToDisappear();
 
-        scaleValues = "012345678910111213141516171819212329353303003000";
-
-        cds.assertPlotTickText(1, scaleValues);
+        pattern = Pattern.compile("^0123.*3303003000");
+        cds.assertPlotTickText(1, pattern);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickSource(CDSHelper.TIME_POINTS);
@@ -623,10 +620,11 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         assertTextPresent("Study = YOYO 55", 1);
 
         clickButton("Filter", 0);
+        log("Wait for one of the other studies to disappear before moving on.");
+        waitForTextToDisappear("ZAP 117", 5000);
 
-        scaleValues = "0123568111417330300";
-
-        cds.assertPlotTickText(1, scaleValues);
+        pattern = Pattern.compile("^0123.*330300.*");
+        cds.assertPlotTickText(1, pattern);
 
         expectedCounts.clear();
         expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 1, 2, 0, 4, 1, 2));
