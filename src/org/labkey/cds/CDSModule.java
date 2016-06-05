@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerManager;
-import org.labkey.api.data.PropertyManager;
 import org.labkey.api.module.DefaultModule;
 import org.labkey.api.module.ModuleContext;
 import org.labkey.api.module.ModuleProperty;
@@ -119,7 +118,7 @@ public class CDSModule extends DefaultModule
     {
         addController("cds", CDSController.class);
         CDSUserSchema.register(this);
-        AuthenticationManager.registerProvider(new CDSResetPasswordProvider(), AuthenticationManager.Priority.Low);
+        AuthenticationManager.registerProvider(new CDSResetPasswordProvider());
     }
 
 
