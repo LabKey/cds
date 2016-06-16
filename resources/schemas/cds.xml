@@ -197,6 +197,12 @@
             <column columnName="study_site_person_role"/>
         </columns>
     </table>
+    <table tableName="import_studyassay" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="assay_identifier"/>
+        </columns>
+    </table>
     <table tableName="import_assay" tableDbType="TABLE">
         <columns>
             <column columnName="assay_identifier"/>
@@ -523,6 +529,14 @@
                 </fk>
             </column>
             <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="studyassay" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="container"/>
+            <column columnName="assay_identifier"/>
+            <column columnName="has_data"/>
         </columns>
     </table>
     <table tableName="product" tableDbType="TABLE">

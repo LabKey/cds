@@ -68,6 +68,10 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateAssayTask">
             </taskref>
         </transform>
+        <transform id="PopulateStudyAssay" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateStudyAssayTask">
+            </taskref>
+        </transform>
         <transform id="PopulateICSAntigen" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="cds" queryName="ds_icsantigen" />
             <destination schemaName="cds" queryName="ICSAntigen" targetOption="truncate" />
