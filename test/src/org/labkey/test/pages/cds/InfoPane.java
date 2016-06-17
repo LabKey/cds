@@ -202,6 +202,11 @@ public class InfoPane
         _test.click(Locator.css(cssTimePointsCount));
     }
 
+    public String getTimePointsList()
+    {
+        return _test.getText(Locator.css(cssMeasuresGrid));
+    }
+
     public int getAntigensInXCount()
     {
         return Integer.parseInt(_tryToGetCounts(_test, cssAntigensInXCount));

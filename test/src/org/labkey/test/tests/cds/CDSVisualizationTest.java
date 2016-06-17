@@ -1479,6 +1479,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         InfoPane ip = new InfoPane(this);
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        String text;
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -1500,7 +1501,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Validate a list (species) from the info pane.");
         ip.clickSpeciesCount();
-        String text = ip.getSpeciesList();
+        text = ip.getSpeciesList();
         assertTrue("Species list does not contain " + CDSHelper.SPECIES_HUMAN, text.contains(CDSHelper.SPECIES_HUMAN));
         assertTrue("Species list does not contain " + CDSHelper.SPECIES_VULCAN, text.contains(CDSHelper.SPECIES_VULCAN));
         ip.clickCancel();
@@ -1540,6 +1541,16 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             fail("Variable selector was not shown as expected.");
         }
+
+        log("Checking for the time points selector.");
+        ip.clickTimePointsCount();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        text = ip.getTimePointsList();
+        assertTrue("Time Point list does not contain 'Has data in active filters'.", text.contains("Has data in active filters"));
+        assertTrue("Time Point list does not contain 'Day '.", text.contains("Day "));
+        assertTrue("Time Point list does not contain ' study)'.", text.contains(" study)"));
+        ip.clickCancel();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         log("Use the info pane to apply a filter to the plot.");
         ip.clickStudiesCount();
