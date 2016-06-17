@@ -109,7 +109,8 @@ Ext.define('Connector.app.store.StudyProducts', {
                     if (product.product_id === this.studyData[s].product_id.value) {
                         studies.push({
                             study_name: this.studyData[s].study_name.value,
-                            label: this.studyData[s].study_label.value
+                            label: this.studyData[s].study_label.value,
+                            has_data: this.studyData[s].has_data.value
                         });
                     }
                 }
