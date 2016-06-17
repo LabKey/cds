@@ -321,6 +321,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDataAvailability.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDatasets.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>

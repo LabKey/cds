@@ -328,12 +328,9 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Assays'
                         }
                     },{
-                        type: 'html',
+                        type: 'studydataavailability',
                         staticData: {
                             title: 'Data Availability'
-                        },
-                        modelData: {
-                            text: 'data_availability'
                         }
                     },{
                         type: 'studydatasets',

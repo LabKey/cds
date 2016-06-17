@@ -17,6 +17,7 @@ SELECT DISTINCT
 	md.prot,
 	md.assay_identifier,
 	d.prot IS NOT NULL AND d.assay_identifier IS NOT NULL AS "has_data",
+	amd.assay_label AS "assay_label"
 FROM import_studyassay md --metadataTable
 LEFT JOIN (
   -- Could use ds_subjectassay, but then we must ensure this is run after that in the ETL
@@ -47,3 +48,5 @@ LEFT JOIN (
   FROM cds.import_bama
 ) d --dataTable
 ON d.prot=md.prot AND d.assay_identifier=md.assay_identifier
+LEFT JOIN import_assay amd --assay_metadata
+ON amd.assay_identifier=md.assay_identifier

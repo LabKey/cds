@@ -222,6 +222,29 @@ h1.lhdv {
   float: right;
 }
 
+.detail-has-data {
+  background-image: url(images/learn/bigCheck.png);
+  background-size: 75px 75px;
+  background-repeat: no-repeat;
+  width: 100px;
+  height: 100px;
+}
+
+img.detail-has-data-small {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px
+}
+
+.data-availability-header {
+  padding-bottom: 20px;
+  color: $heat-scale-2;
+
+  td:nth-child(even) {
+    padding-right: 10px;
+  }
+}
+
 .detail-container {
   padding: 0px $pageLeftPadding;
 

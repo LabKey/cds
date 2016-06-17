@@ -9,6 +9,7 @@ CREATE TABLE cds.StudyAssay (
   prot VARCHAR(250) NOT NULL REFERENCES cds.Study (study_name),
   container ENTITYID NOT NULL,
   assay_identifier VARCHAR(250) NOT NULL REFERENCES  cds.Assay (assay_identifier),
+  assay_label VARCHAR(250),
   has_data BOOLEAN,
 
   CONSTRAINT PK_StudyAssay PRIMARY KEY (prot, assay_identifier)
