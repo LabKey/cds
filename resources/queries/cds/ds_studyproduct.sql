@@ -14,7 +14,20 @@
  * limitations under the License.
  */
 SELECT
-prot AS study_name,
-prot,
-product_id
-FROM cds.import_studyproduct
+   md.prot AS study_name,
+   md.prot,
+   md.product_id,
+   p.product_name,
+   d.product_id IS NOT NULL AND d.prot IS NOT NULL AS has_data
+FROM import_studyproduct md --metadataTable
+--Pulls in real data for each metadata relationship if it exists.
+LEFT JOIN ds_subjectproduct d --dataTable
+ON (
+   md.prot=d.prot
+   AND md.product_id=d.product_id
+)
+--Pulls in the label from the product metadata table, helps ensure there is a row for that product.
+LEFT JOIN import_product p --productTable
+ON (
+   md.product_id=p.product_id
+)

@@ -14,3 +14,6 @@ CREATE TABLE cds.StudyAssay (
 
   CONSTRAINT PK_StudyAssay PRIMARY KEY (prot, assay_identifier)
 );
+
+ALTER TABLE cds.StudyProductMap ADD COLUMN product_name VARCHAR(250);
+ALTER TABLE cds.StudyProductMap ADD COLUMN has_data BOOLEAN;
