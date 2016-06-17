@@ -37,8 +37,17 @@
     }
   }
 
+  .x-column-header-trigger {
+    background-color: transparent;
+    background-image: none;
+    &:hover {
+      background-image: url(images/filter_hover.svg);
+    }
+  }
+
   .x-column-header-over {
     .x-column-header-trigger {
+      background-color: transparent;
       background-image: url(images/filter.svg);
 
       &:hover {
@@ -144,6 +153,15 @@
   .x-column-header-sort-DESC {
     background-image: none;
     background-color: $secondary-color;
+  }
+
+  .x-column-header-sort-ASC .x-column-header-text {
+    background-image: url(images/sort_asc.gif) !important;
+
+  }
+
+  .x-column-header-sort-DESC .x-column-header-text {
+    background-image: url(images/sort_desc.gif) !important;
   }
 
   .x-grid-row {
