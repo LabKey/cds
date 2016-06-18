@@ -15,6 +15,7 @@
  */
 SELECT DISTINCT
 	md.prot,
+	smd.study_label,
 	md.assay_identifier,
 	d.prot IS NOT NULL AND d.assay_identifier IS NOT NULL AS "has_data",
 	amd.assay_label AS "assay_label"
@@ -50,3 +51,5 @@ LEFT JOIN (
 ON d.prot=md.prot AND d.assay_identifier=md.assay_identifier
 LEFT JOIN import_assay amd --assay_metadata
 ON amd.assay_identifier=md.assay_identifier
+LEFT JOIN import_study smd --study_metadata
+ON smd.prot=md.prot

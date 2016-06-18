@@ -161,7 +161,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.ProductProvidedBy": "../../webapp/Connector/src/app/view/module/ProductProvidedBy.js",
   "Connector.view.module.ProductStudies": "../../webapp/Connector/src/app/view/module/ProductStudies.js",
   "Connector.view.module.StudyAssays": "../../webapp/Connector/src/app/view/module/StudyAssays.js",
-  "Connector.view.module.StudyDataAvailability": "../../webapp/Connector/src/app/view/module/StudyDataAvailability.js",
   "Connector.view.module.StudyDatasets": "../../webapp/Connector/src/app/view/module/StudyDatasets.js",
   "Connector.view.module.StudyHeader": "../../webapp/Connector/src/app/view/module/StudyHeader.js",
   "Connector.view.module.StudyProducts": "../../webapp/Connector/src/app/view/module/StudyProducts.js",
@@ -356,7 +355,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.ProductProvidedBy": [],
   "Connector.view.module.ProductStudies": [],
   "Connector.view.module.StudyAssays": [],
-  "Connector.view.module.StudyDataAvailability": [],
   "Connector.view.module.StudyDatasets": [],
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.StudyProducts": [],
@@ -1488,9 +1486,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.StudyAssays": [
     "widget.app.module.studyassays"
   ],  
-  "Connector.view.module.StudyDataAvailability": [
-    "widget.app.module.StudyDataAvailability"
-  ],
   "Connector.view.module.StudyDatasets": [
     "widget.app.module.studydatasets"
   ],

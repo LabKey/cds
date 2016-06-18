@@ -16,3 +16,4 @@ CREATE TABLE cds.StudyAssay (
 );
 
 ALTER TABLE cds.StudyProductMap ADD COLUMN has_data BOOLEAN;
+ALTER TABLE cds.StudyAssay ADD COLUMN study_label VARCHAR(250);

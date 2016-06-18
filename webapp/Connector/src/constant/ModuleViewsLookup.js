@@ -19,7 +19,6 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	studyheader: 'app.module.studyheader',
 	studysites: 'app.module.studysites',
 	studyassays: 'app.module.studyassays',
-	studydataavailability: 'app.module.studydataavailability',
 	studyproducts: 'app.module.studyproducts',
 	studydatasets: 'app.module.studydatasets',
 	assayheader: 'app.module.assayheader',

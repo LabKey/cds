@@ -220,7 +220,6 @@
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/ProductStudies.js"/>
         <script path="Connector/src/app/view/module/StudyAssays.js"/>
-        <script path="Connector/src/app/view/module/StudyDataAvailability.js"/>
         <script path="Connector/src/app/view/module/StudyDatasets.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
         <script path="Connector/src/app/view/module/StudyProducts.js"/>

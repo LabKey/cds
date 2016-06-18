@@ -325,11 +325,6 @@ Ext4.define('Connector.cube.Configuration', {
                     },{
                         type: 'studyassays',
                         staticData: {
-                            title: 'Assays'
-                        }
-                    },{
-                        type: 'studydataavailability',
-                        staticData: {
                             title: 'Data Availability'
                         }
                     },{
@@ -417,7 +412,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }],[{
                         type: 'productstudies',
                         staticData: {
-                            title: 'Studies using this product'
+                            title: 'Data Availability'
                         }
                     },{
                         type: 'productotherproducts',
@@ -540,7 +535,7 @@ Ext4.define('Connector.cube.Configuration', {
                     },{
                         type: 'assaystudies',
                         staticData: {
-                            title: 'Studies'
+                            title: 'Data Availability'
                         }
                     }]]
                 },{
