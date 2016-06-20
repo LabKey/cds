@@ -28,12 +28,14 @@ import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -404,6 +406,10 @@ public class CDSHelper
     public static final String HOME_PAGE_HEADER = "Welcome to the CAVD DataSpace.";
 
     public static final String PLOT_POINT_HIGHLIGHT_COLOR = "#41C49F";
+
+    // Dimensions used to set the browser window.
+    public static Dimension idealWindowSize = new Dimension(1280, 1040);
+    public static Dimension defaultWindowSize = new Dimension(1280, 1024);
 
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
@@ -1002,6 +1008,36 @@ public class CDSHelper
         shownText = shownText + _test.getText(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text").index(1));
         shownText = shownText.replace("\n", "").toLowerCase();
         return shownText;
+    }
+
+    public ArrayList<String> getLogValueXAxis(int svgIndex)
+    {
+
+        return getAxisLogValue(Locator.css("svg:nth-of-type(" + svgIndex + ") > g:nth-child(3) > g.tick-text"));
+    }
+
+    public ArrayList<String> getLogValueYAxis(int svgIndex)
+    {
+        return getAxisLogValue(Locator.css("svg:nth-of-type(" + svgIndex + ") > g:nth-child(4) > g.tick-text"));
+    }
+
+    private ArrayList<String> getAxisLogValue(Locator l1)
+    {
+        ArrayList<String> tickText = new ArrayList<>();
+        String temp;
+        int elementCount;
+
+        elementCount = _test.getElementCount(((Locator.CssLocator) l1).append(" text"));
+
+        for(int i = 0; i < elementCount; i++)
+        {
+            temp = _test.getText(((Locator.CssLocator) l1).append(" text").index(i));
+            temp = temp.trim();
+            if(temp.length() > 0)
+                tickText.add(temp);
+        }
+
+        return tickText;
     }
 
     private void applyAndMaybeWaitForBars(Function<Void, Void> function)

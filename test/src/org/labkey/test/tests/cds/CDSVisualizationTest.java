@@ -73,6 +73,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.enterApplication();
         cds.ensureNoFilter();
         cds.ensureNoSelection();
+        getDriver().manage().window().setSize(CDSHelper.idealWindowSize);
     }
 
     @BeforeClass
@@ -1802,6 +1803,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Browser window height: " + getDriver().manage().window().getSize().getHeight() + " width: " + getDriver().manage().window().getSize().getWidth());
 
         log("Validate default scale is Log");
 
