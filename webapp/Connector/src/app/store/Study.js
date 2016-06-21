@@ -36,7 +36,7 @@ Ext.define('Connector.app.store.Study', {
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'studyassay',
+            queryName: 'studyassay', //may have to do additional join to cds.assay to get all metadata in future.
             success: this.onLoadAssays,
             scope: this
         })
@@ -100,7 +100,7 @@ Ext.define('Connector.app.store.Study', {
                 study.has_assay_data = false;
                 for (var a=0; a < this.assayData.length; a++) {
                     if (study.study_name === this.assayData[a].prot) {
-                        study.has_assay_data = this.assayData[a].has_data;
+                        study.has_assay_data = study.has_assay_data || this.assayData[a].has_data;
                         assays.push({
                             assay_identifier: this.assayData[a].assay_identifier,
                             assay_label: this.assayData[a].assay_label,

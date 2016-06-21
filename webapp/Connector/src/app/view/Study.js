@@ -20,6 +20,16 @@ Ext.define('Connector.app.view.Study', {
             months += d2.getMonth();
             return months <= 0 ? 0 : months;
         },
+        assaysWithData : function(assays) {
+            var ret = [];
+            for (var itr = 0; itr < assays.length; ++itr) {
+                var assay = assays[itr];
+                if (assay.has_data) {
+                    ret = ret.concat(assay);
+                }
+            }
+            return ret;
+        },
         columnHeaderTpl : new Ext.XTemplate(
             '<div class="learncolumnheader">',
                 '<div class="detail-left-column">Description</div>',
@@ -93,7 +103,7 @@ Ext.define('Connector.app.view.Study', {
                     '<div class="detail-small-column detail-text">',
                         '<tpl if="has_assay_data">',
                             '<div class="detail-has-data"></div>',
-                            '<div class="detail-gray-text">{assays.length} Assays</div>',
+                            '<div class="detail-gray-text">{[this.numAssaysWithData(values.assays)]}</div>',
                         '<tpl else>',
                             'No data found',
                         '</tpl>',
@@ -107,6 +117,10 @@ Ext.define('Connector.app.view.Study', {
             },
             monthDiff : function(date1, date2) {
                 return Connector.app.view.Study.monthDiff(new Date(date1), new Date(date2));
+            },
+            numAssaysWithData : function(assays) {
+                var num = Connector.app.view.Study.assaysWithData(assays).length;
+                return num == 1 ? num + ' Assay' : num + ' Assays';
             }
         }
     ),
@@ -122,5 +136,65 @@ Ext.define('Connector.app.view.Study', {
         ).apply({});
 
         this.callParent();
+
+        this.on({
+            'itemmouseenter' : function(view, record, item) {
+                if (record.data.has_assay_data) {
+                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
+                        id = Ext.id();
+
+                    checkmark.on('mouseenter', this.showAssayDataTooltip, this, {
+                        record: record,
+                        id: id
+                    });
+                    checkmark.on('mouseleave', this.hideAssayDataTooltip, this, {
+                        id: id
+                    });
+                }
+            },
+
+            'itemmouseleave' : function(view, record, item) {
+                if (record.data.has_assay_data) {
+                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
+                    checkmark.un('mouseenter', this.showAssayDataTooltip, this);
+                    checkmark.un('mouseleave', this.hideAssayDataTooltip, this);
+                }
+            },
+
+            scope: this
+        })
+    },
+
+    showAssayDataTooltip : function(event, item, options) {
+        var assays = options.record.data.assays;
+        var assayList = Connector.app.view.Study.assaysWithData(assays);
+        var assayListHTML = "<ul>";
+        for (var itr = 0; itr < assayList.length; ++itr) {
+            assayListHTML += "<li>" + assayList[itr].assay_label + "</li>\n";
+        }
+        assayListHTML += "</ul>";
+
+        var calloutMgr = hopscotch.getCalloutManager(),
+            _id = options.id,
+            displayTooltip = setTimeout(function() {
+                calloutMgr.createCallout(Ext.apply({
+                    id: _id,
+                    xOffset: 10,
+                    showCloseButton: false,
+                    target: item,
+                    placement: 'right',
+                    title: "Assays with Data Available",
+                    content: assayListHTML
+                }, {}));
+            }, 200);
+
+        this.on('hide' + _id, function() {
+            clearTimeout(displayTooltip);
+            calloutMgr.removeCallout(_id);
+        }, this);
+    },
+
+    hideAssayDataTooltip : function(event, item, options) {
+        this.fireEvent('hide' + options.id);
     }
 });
