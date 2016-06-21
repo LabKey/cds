@@ -649,7 +649,7 @@ public class CDSHelper
     {
         NavigationLink.SUMMARY.makeNavigationSelection(_test);
         _test.sleep(1000);
-        _test._ext4Helper.waitForMaskToDisappear();
+        _test._ext4Helper.waitForMaskToDisappear(25000);
         _test.sleep(500);
     }
 
