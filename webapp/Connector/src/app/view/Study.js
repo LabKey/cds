@@ -51,7 +51,7 @@ Ext.define('Connector.app.view.Study', {
         '</tpl>',
         '<tpl for=".">',
             '<div class="detail-container">',
-                '<div class="detail-wrapper">',
+                '<div class="detail-wrapper {[values.data_availability ? "has-data" : ""]}">',
                     '<div class="detail-left-column detail-description">',
                         '<h2>{label:htmlEncode}</h2>',
                         '<tpl if="species && species.length &gt; 0">',
@@ -101,7 +101,7 @@ Ext.define('Connector.app.view.Study', {
                         '</ul>',
                     '</div>',
                     '<div class="detail-small-column detail-text">',
-                        '<tpl if="has_assay_data">',
+                        '<tpl if="data_availability">',
                             '<div class="detail-has-data"></div>',
                             '<div class="detail-gray-text">{[this.numAssaysWithData(values.assays)]}</div>',
                         '<tpl else>',
@@ -139,7 +139,7 @@ Ext.define('Connector.app.view.Study', {
 
         this.on({
             'itemmouseenter' : function(view, record, item) {
-                if (record.data.has_assay_data) {
+                if (record.data.data_availability) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
                         id = Ext.id();
 
@@ -154,7 +154,7 @@ Ext.define('Connector.app.view.Study', {
             },
 
             'itemmouseleave' : function(view, record, item) {
-                if (record.data.has_assay_data) {
+                if (record.data.data_availability) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
                     checkmark.un('mouseenter', this.showAssayDataTooltip, this);
                     checkmark.un('mouseleave', this.hideAssayDataTooltip, this);

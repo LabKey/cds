@@ -97,10 +97,10 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
                 var assays = [];
-                study.has_assay_data = false;
+                study.data_availability = false;
                 for (var a=0; a < this.assayData.length; a++) {
                     if (study.study_name === this.assayData[a].prot) {
-                        study.has_assay_data = study.has_assay_data || this.assayData[a].has_data;
+                        study.data_availability = study.data_availability || this.assayData[a].has_data;
                         assays.push({
                             assay_identifier: this.assayData[a].assay_identifier,
                             assay_label: this.assayData[a].assay_label,

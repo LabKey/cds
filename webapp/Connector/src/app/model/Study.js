@@ -52,7 +52,6 @@ Ext.define('Connector.app.model.Study', {
         {name: 'investigator_email'},
         {name: 'primary_poc_name'},
         {name: 'primary_poc_email'},
-        {name: 'has_assay_data'},
         {name: 'products', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }},
