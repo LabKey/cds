@@ -10,10 +10,10 @@ CREATE TABLE cds.StudyAssay (
   container ENTITYID NOT NULL,
   assay_identifier VARCHAR(250) NOT NULL REFERENCES  cds.Assay (assay_identifier),
   assay_label VARCHAR(250),
+  study_label VARCHAR(250),
   has_data BOOLEAN,
 
   CONSTRAINT PK_StudyAssay PRIMARY KEY (prot, assay_identifier)
 );
 
 ALTER TABLE cds.StudyProductMap ADD COLUMN has_data BOOLEAN;
-ALTER TABLE cds.StudyAssay ADD COLUMN study_label VARCHAR(250);
