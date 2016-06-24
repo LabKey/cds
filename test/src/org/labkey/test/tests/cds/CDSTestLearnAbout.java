@@ -421,6 +421,57 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     }
 
+    @Test
+    public void validateStudySummaryDataAvailability()
+    {
+        cds.viewLearnAboutPage("Studies");
+        assertTextPresent("Data Added");
+
+        List<WebElement> hasDataRows = Locator.css(".has-data").findElements(getDriver());
+        List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
+        Assert.assertTrue(hasDataRows.size() == hasDataIcons.size() && hasDataIcons.size() == 25);
+    }
+
+    @Test
+    public void validateDetailsDataAvailability()
+    {
+        cds.viewLearnAboutPage("Studies");
+
+        Locator element = Locator.xpath("//div[contains(@class, 'has-data')]/div/h2[contains(text(), 'RED 4')]");
+        assertElementPresent(element);
+        waitAndClick(element);
+
+        waitForText("Data Availability");
+
+        Assert.assertTrue(isElementPresent(Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), 'IFNg ELISpot')]/../..//td//img[contains(@src, 'smallCheck.png')]")));
+        Assert.assertTrue(isElementPresent(Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), 'Intracellular Cytokine Staining')]/../..//td//img[contains(@src, 'smallCheck.png')]")));
+        Assert.assertTrue(isElementPresent(Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), 'HIV Binding Antibody')]/../..//td//img[contains(@src, 'smallGreyX.png')]")));
+
+        cds.viewLearnAboutPage("Assays");
+        Locator loc = Locator.xpath("//h2[contains(text(), 'ICS (Intracellular Cytokine Staining)')]");
+        waitAndClick(loc);
+
+        refresh(); //ensures only selecting elements on viewable page.
+
+        waitForText("Data Availability");
+
+        List<WebElement> smallHasDataIcons = Locator.xpath("//tr[contains(@class,'item-row')]/td/a/../..//td//img[contains(@src, 'smallCheck.png')]").findElements(getDriver());
+        Assert.assertTrue(smallHasDataIcons.size() == 14);
+
+        Assert.assertFalse(isElementPresent(Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), 'ZAP 108')]/../..//td//img[contains(@src, 'smallCheck.png')]")));
+        Assert.assertTrue(isElementPresent(Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), 'ZAP 108')]/../..//td//img[contains(@src, 'smallGreyX.png')]")));
+
+        cds.viewLearnAboutPage("Study products");
+        waitAndClick(Locator.xpath("//h2[text() = 'benztropine mesylate']"));
+
+        refresh();
+
+        waitForText("Data Availability");
+
+        Assert.assertTrue(isElementPresent(Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), 'QED 1')]/../..//td//img[contains(@src, 'smallCheck.png')]")));
+        Assert.assertTrue(isElementPresent(Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), 'YOYO 55')]/../..//td//img[contains(@src, 'smallGreyX.png')]")));
+    }
+
     private void validateSearchFor(String searchString)
     {
         String itemText;
