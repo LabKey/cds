@@ -88,6 +88,19 @@ Ext.define('Connector.view.GroupSave', {
             ]
         }];
 
+        LABKEY.Security.getUserPermissions({
+            success: function (userPerms, resp)
+            {
+                if(this.getIsEditorOrHigher(userPerms))
+                {
+                    Ext.getCmp('creategroupshared').show();
+                    Ext.getCmp('editgroupshared').show();
+                    Ext.getCmp('updategroupshared').show();
+                }
+            },
+            scope: this
+        });
+
         this.callParent();
 
         Ext.EventManager.onWindowResize(this.onWindowResize, this);
@@ -137,6 +150,14 @@ Ext.define('Connector.view.GroupSave', {
                         name: 'groupdescription',
                         emptyText: 'Group description',
                         maxLength: 200
+                    },{
+                        xtype: 'checkbox',
+                        id: 'creategroupshared',
+                        itemId: 'groupshared',
+                        name: 'groupshared',
+                        fieldLabel: 'Shared group',
+                        checked: false,
+                        hidden: true
                     }]
                 },{
                     xtype: 'box',
@@ -186,7 +207,6 @@ Ext.define('Connector.view.GroupSave', {
                 scope: this
             });
         }
-
         return this.createGroup;
     },
 
@@ -232,10 +252,24 @@ Ext.define('Connector.view.GroupSave', {
                         name: 'groupdescription',
                         emptyText: 'no description provided',
                         maxLength: 200
-                    },{
+                    }, {
+                        xtype: 'checkbox',
+                        id: 'editgroupshared',
+                        itemId: 'groupshared',
+                        name: 'groupshared',
+                        fieldLabel: 'Shared group',
+                        checked: false,
+                        hidden: true
+                    }
+                    ,{
                         xtype: 'hiddenfield',
                         itemId: 'groupid',
                         name: 'groupid'
+                    }
+                    ,{
+                        xtype: 'hiddenfield',
+                        itemId: 'groupcategoryid',
+                        name: 'groupcategoryid'
                     }]
                 },{
                     xtype: 'toolbar',
@@ -349,6 +383,14 @@ Ext.define('Connector.view.GroupSave', {
                         name: 'groupdescription',
                         emptyText: 'no description provided',
                         maxLength: 200
+                    },{
+                        xtype: 'checkbox',
+                        id: 'updategroupshared',
+                        itemId: 'groupshared',
+                        name: 'groupshared',
+                        fieldLabel: 'Shared group',
+                        checked: false,
+                        hidden: true
                     }]
                 },{
                     xtype: 'box',
@@ -434,6 +476,18 @@ Ext.define('Connector.view.GroupSave', {
         return this.mode;
     },
 
+    getIsEditorOrHigher : function (userPerms)
+    {
+        if ((userPerms.container.roles.indexOf('org.labkey.api.security.roles.SiteAdminRole') !== -1)
+                || (userPerms.container.roles.indexOf('org.labkey.api.security.roles.ProjectAdminRole') !== -1)
+                || (userPerms.container.roles.indexOf('org.labkey.api.security.roles.FolderAdminRole') !== -1)
+                || (userPerms.container.roles.indexOf('org.labkey.api.security.roles.EditorRole') !== -1)
+        )
+            return true;
+        else
+            return false;
+    },
+
     editGroup : function(group)
     {
         if (group)
@@ -458,7 +512,9 @@ Ext.define('Connector.view.GroupSave', {
             var group = Connector.model.FilterGroup.fromCohortGroup(groupModel),
                 _id = form.getComponent('groupid'),
                 name = form.getComponent('groupname'),
-                description = form.getComponent('groupdescription');
+                description = form.getComponent('groupdescription'),
+                categoryId = form.getComponent('groupcategoryid'),
+                shared = form.getComponent('groupshared');
 
             if (_id)
             {
@@ -473,6 +529,16 @@ Ext.define('Connector.view.GroupSave', {
             if (description)
             {
                 description.setValue(group.get('description'));
+            }
+
+            if (categoryId)
+            {
+                categoryId.setValue(group.get('categoryId'));
+            }
+
+            if (shared)
+            {
+                shared.setValue(group.get('shared'));
             }
         }
     },
@@ -534,7 +600,7 @@ Ext.define('Connector.view.GroupSave', {
     },
 
     reset : function() {
-        // only rest in 'create' mode
+        // only reset in 'create' mode
         if (this.getMode() == Connector.view.GroupSave.modes.CREATE) {
             this.clear();
         }

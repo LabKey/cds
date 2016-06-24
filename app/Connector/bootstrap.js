@@ -185,11 +185,16 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.model.Filter": "../../../../internal/webapp/app/Filter.js",
   "LABKEY.app.model.Message": "../../../../internal/webapp/app/Messaging.js",
   "LABKEY.app.model.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
+  "LABKEY.app.model.OlapExplorer2": "../../../../internal/webapp/app/OlapExplorer2.js",
   "LABKEY.app.model.State": "../../../../internal/webapp/app/State.js",
   "LABKEY.app.panel.MeasurePicker": "../../../../internal/webapp/app/MeasurePicker.js",
   "LABKEY.app.plugin.LoadingMask": "../../../../internal/webapp/app/LoadingMask.js",
   "LABKEY.app.store.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
+  "LABKEY.app.store.OlapExplorer2": "../../../../internal/webapp/app/OlapExplorer2.js",
+  "LABKEY.app.util.OlapExplorerNode": "../../../../internal/webapp/app/OlapExplorer2.js",
+  "LABKEY.app.util.OlapExplorerTree": "../../../../internal/webapp/app/OlapExplorer2.js",
   "LABKEY.app.view.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
+  "LABKEY.app.view.OlapExplorer2": "../../../../internal/webapp/app/OlapExplorer2.js",
   "LABKEY.app.view.Selection": "../../../../internal/webapp/app/Selection.js",
   "Statistics": "../../webapp/Connector/src/utility/Statistics.js",
   "StoreCache": "../../webapp/Connector/src/utility/StoreCache.js"
@@ -1192,13 +1197,20 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.Message": [],
   "LABKEY.app.model.OlapExplorer": [],
+  "LABKEY.app.model.OlapExplorer2": [],
   "LABKEY.app.model.State": [],
   "LABKEY.app.panel.MeasurePicker": [],
   "LABKEY.app.plugin.LoadingMask": [],
   "LABKEY.app.store.OlapExplorer": [
     "LABKEY.olapStore"
   ],
+  "LABKEY.app.store.OlapExplorer2": [
+    "LABKEY.olapStore2"
+  ],
+  "LABKEY.app.util.OlapExplorerNode": [],
+  "LABKEY.app.util.OlapExplorerTree": [],
   "LABKEY.app.view.OlapExplorer": [],
+  "LABKEY.app.view.OlapExplorer2": [],
   "LABKEY.app.view.Selection": [],
   "Statistics": [],
   "StoreCache": []
@@ -2505,12 +2517,19 @@ Ext.ClassManager.addNameAliasMappings({
   "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.Message": [],
   "LABKEY.app.model.OlapExplorer": [],
+  "LABKEY.app.model.OlapExplorer2": [],
   "LABKEY.app.model.State": [],
   "LABKEY.app.panel.MeasurePicker": [],
   "LABKEY.app.plugin.LoadingMask": [],
   "LABKEY.app.store.OlapExplorer": [],
+  "LABKEY.app.store.OlapExplorer2": [],
+  "LABKEY.app.util.OlapExplorerNode": [],
+  "LABKEY.app.util.OlapExplorerTree": [],
   "LABKEY.app.view.OlapExplorer": [
     "widget.olapexplorerview"
+  ],
+  "LABKEY.app.view.OlapExplorer2": [
+    "widget.olapexplorerview2"
   ],
   "LABKEY.app.view.Selection": [],
   "Statistics": [],

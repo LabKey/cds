@@ -57,11 +57,12 @@ Ext.define('Connector.view.GroupListView', {
     bubbleEvents: ['deletegroup'],
 
     tpl: new Ext.XTemplate(
-        '<h2 class="section-title bottom-spacer">My saved groups and plots</h2>',
+        '<h2 class="section-title bottom-spacer">Groups and plots</h2>',
         '<tpl if="this.isEmpty(values)">',
             '<div class="grouplist-empty">Saved work will appear here</div>',
         '</tpl>',
         '<tpl for=".">',
+            '{[this.renderGroupHeading(values, parent, xindex)]}',
             '<div class="grouprow">',
                 '<div title="{label:htmlEncode}" class="grouplabel">{label:this.groupLabel}</div>',
                 '<tpl if="this.plotter(containsPlot)">',
@@ -78,6 +79,24 @@ Ext.define('Connector.view.GroupListView', {
             },
             plotter : function(containsPlot) {
                 return containsPlot === true;
+            },
+            renderGroupHeading : function(values, parent, xindex) {
+                // Note: the xindex is 1-based so the previous tile is xindex - 2 in the parent array
+                var prev = parent[xindex - 2];
+                if (prev == undefined || prev.shared != values.shared) {
+
+                    var shared = values.shared;
+                    if (shared === false) {
+                        heading = 'Mine';
+                    }
+                    else {
+                        heading = 'Shared with me';
+                    }
+
+                    return '<h2 class="section-title top-spacer-lg bottom-spacer">' + Ext.htmlEncode(heading) + '</h2>';
+                }
+
+                return '';
             }
         }
     ),

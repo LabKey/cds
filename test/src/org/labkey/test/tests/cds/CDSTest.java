@@ -176,7 +176,7 @@ public class CDSTest extends CDSReadOnlyTest
         //
         // Validate Plot data
         //
-        assertTextPresent("My saved groups and plots");
+        assertTextPresent("Groups and plots");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         YAxisVariableSelector yAxis = new YAxisVariableSelector(this);

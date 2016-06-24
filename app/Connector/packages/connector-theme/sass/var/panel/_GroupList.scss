@@ -20,6 +20,7 @@ div.grouplist-view {
 .grouprow {
   padding: 5px 0;
   border-bottom: 1px solid $gray-7;
+  text-indent: 20px;
 
   .groupicon {
     display: inline-block;
@@ -31,7 +32,7 @@ div.grouplist-view {
   }
 
   .grouplabel {
-    display: inline;
+    //display: inline;
   }
 
   .closeitem {
