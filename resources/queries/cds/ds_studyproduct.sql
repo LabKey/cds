@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-SELECT
+SELECT DISTINCT
    md.prot AS study_name,
    md.prot,
    md.product_id,

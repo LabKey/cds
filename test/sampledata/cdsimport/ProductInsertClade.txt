@@ -34,5 +34,4 @@ product_id	product_name	insert_id	insert_name	clade_id	clade_name
 213	Avobenzone, Homosalate, Octisalate, Oxybenzone	\N	Not Recorded	3	C         
 215	TITANIUM DIOXIDE, ZINC OXIDE	4	ENV	3	C         
 216	Colocynthis Lycopodium Clavatum Natrum Sulphuricum	4	ENV	3	C         
-220	HYDROMORPHONE HYDROCHLORIDE	\N	Not Recorded	3	C         
-138	ALCOHOL	1	Not Recorded	\N	Not Recorded
+220	HYDROMORPHONE HYDROCHLORIDE	\N	Not Recorded	3	C

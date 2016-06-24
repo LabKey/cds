@@ -538,6 +538,7 @@
             <column columnName="assay_identifier"/>
             <column columnName="has_data"/>
             <column columnName="assay_label"/>
+            <column columnName="study_label"/>
         </columns>
     </table>
     <table tableName="product" tableDbType="TABLE">
@@ -670,6 +671,7 @@
             <column columnName="study_name"/>
             <column columnName="container"/>
             <column columnName="product_id"/>
+            <column columnName="has_data"/>
         </columns>
     </table>
     <table tableName="properties" tableDbType="TABLE">
