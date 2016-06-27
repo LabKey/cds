@@ -58,9 +58,6 @@ Ext.define('Connector.app.view.Study', {
                             '<span class="detail-type-text">{species:htmlEncode}</span>',
                         '</tpl>',
                         '<div class="detail-description-text">',
-                            '<tpl if="data_availability">',
-                                '<div class="data-availability-text">{data_availability}</div>',
-                            '</tpl>',
                             '{description}',
                         '</div>', // allow html
                     '</div>',
