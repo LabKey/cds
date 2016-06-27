@@ -26,15 +26,10 @@ Ext.define('Connector.app.store.Assay', {
             success: this.onLoadAssays,
             scope: this
         });
-        // LABKEY.Query.executeSql({
-        //     schemaName: 'cds',
-        //     sql: 'SELECT DISTINCT assay_identifier, label, study_name FROM ds_subjectassay',
-        //     success: this.onLoadStudies,
-        //     scope: this
-        // });
+        
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'studyassay',
+            queryName: 'ds_studiesforassays',
             success: this.onLoadStudies,
             scope: this
         })
@@ -113,8 +108,8 @@ Ext.define('Connector.app.store.Assay', {
                 for (var s = 0; s < this.assayStudies.length; s++) {
                     if (assay.assay_identifier === this.assayStudies[s].assay_identifier) {
                         studies.push({
-                            id: this.assayStudies[s].prot,
-                            label: this.assayStudies[s].study_label,
+                            id: this.assayStudies[s].study_name,
+                            label: this.assayStudies[s].label + ' (' + this.assayStudies[s].short_name + ')',
                             has_data: this.assayStudies[s].has_data
                         });
                     }

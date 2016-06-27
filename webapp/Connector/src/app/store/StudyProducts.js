@@ -30,7 +30,7 @@ Ext.define('Connector.app.store.StudyProducts', {
         });
         LABKEY.Query.executeSql({
             schemaName: 'cds',
-            sql: 'SELECT *, study_name.label AS study_label, FROM cds.studyproductmap',
+            sql: 'SELECT *, study_name.label AS study_label, study_name.short_name AS study_short_name, FROM cds.studyproductmap',
             success: this.onLoadStudies,
             requiredVersion: 13.2,
             scope: this
@@ -109,7 +109,8 @@ Ext.define('Connector.app.store.StudyProducts', {
                     if (product.product_id === this.studyData[s].product_id.value) {
                         studies.push({
                             study_name: this.studyData[s].study_name.value,
-                            label: this.studyData[s].study_label.value,
+                            label: this.studyData[s].study_label.value 
+                                + ' (' + this.studyData[s].study_short_name.value + ')',
                             has_data: this.studyData[s].has_data.value
                         });
                     }

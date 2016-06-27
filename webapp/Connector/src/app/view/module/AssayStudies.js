@@ -46,7 +46,7 @@ Ext.define('Connector.view.module.AssayStudies', {
                                         '</tpl>',
                                     '</td>',
                                     '<td>',
-                                        '<a href="#learn/learn/Study/{study_name}">{label:htmlEncode}</a>',
+                                        '<a href="#learn/learn/Study/{id}">{label:htmlEncode}</a>',
                                     '</td>',
                                 '</tr>',
                             '</tpl>',

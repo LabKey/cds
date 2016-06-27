@@ -537,8 +537,6 @@
             <column columnName="container"/>
             <column columnName="assay_identifier"/>
             <column columnName="has_data"/>
-            <column columnName="assay_label"/>
-            <column columnName="study_label"/>
         </columns>
     </table>
     <table tableName="product" tableDbType="TABLE">

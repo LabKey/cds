@@ -167,7 +167,7 @@ Ext.define('Connector.app.view.Study', {
         var assayList = Connector.app.view.Study.assaysWithData(assays);
         var assayListHTML = "<ul>";
         for (var itr = 0; itr < assayList.length; ++itr) {
-            assayListHTML += "<li>" + assayList[itr].assay_label + "</li>\n";
+            assayListHTML += "<li>" + assayList[itr].assay_full_name + "</li>\n";
         }
         assayListHTML += "</ul>";
 
