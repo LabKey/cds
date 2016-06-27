@@ -1,18 +1,3 @@
-/*
- * Copyright (c) 2015 LabKey Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
@@ -29,46 +14,54 @@ import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.ValidationException;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
-public class PopulateStudyAssayTask extends AbstractPopulateTask
+//Copies data from one table to another, and populates the container column based on the prot column along the way.
+public class ContainerSensitivePopulateTask extends AbstractPopulateTask
 {
-    String SOURCE_SCHEMA = "cds";
-    String SOURCE_QUERY = "ds_studyassay";
-    String TARGET_SCHEMA = "cds";
-    String TARGET_QUERY = "studyassay";
+    String SOURCE_SCHEMA = "sourceSchema";
+    String SOURCE_QUERY = "sourceQuery";
+    String TARGET_SCHEMA = "targetSchema";
+    String TARGET_QUERY = "targetQuery";
+
+    @Override
+    public List<String> getRequiredSettings()
+    {
+        return Arrays.asList(SOURCE_SCHEMA, SOURCE_QUERY, TARGET_SCHEMA, TARGET_QUERY);
+    }
 
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
         DefaultSchema projectSchema = DefaultSchema.get(user, project);
 
-        QuerySchema sourceSchema = projectSchema.getSchema(SOURCE_SCHEMA);
+        QuerySchema sourceSchema = projectSchema.getSchema(settings.get(SOURCE_SCHEMA));
 
         if (null == sourceSchema)
         {
-            throw new PipelineJobException("Unable to find source schema: \"" + SOURCE_SCHEMA + "\".");
+            throw new PipelineJobException("Unable to find source schema: \"" + settings.get(SOURCE_SCHEMA) + "\".");
         }
 
-        TableInfo sourceTable = sourceSchema.getTable(SOURCE_QUERY);
+        TableInfo sourceTable = sourceSchema.getTable(settings.get(SOURCE_QUERY));
 
         if (null == sourceTable)
         {
-            throw new PipelineJobException("Unable to find source table: \"" + SOURCE_QUERY + "\".");
+            throw new PipelineJobException("Unable to find source table: \"" + settings.get(SOURCE_QUERY) + "\".");
         }
 
-        QuerySchema targetSchema = projectSchema.getSchema(TARGET_SCHEMA);
+        QuerySchema targetSchema = projectSchema.getSchema(settings.get(TARGET_SCHEMA));
 
         if (null == targetSchema)
         {
-            throw new PipelineJobException("Unable to find target schema: \"" + TARGET_SCHEMA + "\".");
+            throw new PipelineJobException("Unable to find target schema: \"" + settings.get(TARGET_SCHEMA) + "\".");
         }
 
-        TableInfo targetTable = targetSchema.getTable(TARGET_QUERY);
+        TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
 
         if (null == targetTable)
         {
-            throw new PipelineJobException("Unable to find target table: \"" + TARGET_QUERY + "\".");
+            throw new PipelineJobException("Unable to find target table: \"" + settings.get(TARGET_QUERY) + "\".");
         }
 
         // Truncate the target table
@@ -87,7 +80,7 @@ public class PopulateStudyAssayTask extends AbstractPopulateTask
         }
 
         // Get a new TableInfo with the default container filter
-        targetTable = targetSchema.getTable(TARGET_QUERY);
+        targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
 
         SQLFragment sql;
         Map<String, Object>[] rows;
