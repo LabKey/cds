@@ -181,7 +181,7 @@ Ext.define('Connector.controller.Group', {
                         description: values['groupdescription'],
                         filters: state.getFilters(),
                         isLive: true, // all groups are live
-                        isOwnerShared: null !== values['groupshared']
+                        isOwnerShared: typeof values['groupshared'] != "undefined"
                     }
                 });
             }, this);
@@ -199,63 +199,53 @@ Ext.define('Connector.controller.Group', {
                 Ext.Msg.alert('A group id must be provided!');
             }
             else {
-                // Ensure that the filter set is up to date
-                var state = Connector.getState();
-                state.moveSelectionToFilter();
+                var me = this;
+                var editSuccess = function (response)
+                {
+                    var group = Ext.decode(response.responseText);
+                    me.application.fireEvent('groupedit', group);
+                    view.reset();
+                    Connector.model.Group.getGroupStore().load();
+                    me.getViewManager().changeView('home');
+                };
 
-                state.onMDXReady(function(mdx) {
-
-                    var me = this;
-                    //
-                    // Retrieve the listing of participants matching the current filters
-                    //
-                    mdx.queryParticipantList({
-                        useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
-                        success: function(cs)
-                        {
-                            var editSuccess = function (response)
-                            {
-                                var group = Ext.decode(response.responseText);
-                                me.application.fireEvent('groupedit', group);
-                                view.reset();
-                                Connector.model.Group.getGroupStore().load();
-                            };
-
-                            var editFailure = function ()
-                            {
-                                Ext.Msg.alert('Failed to edit Group');
-                            };
-
-                            var groupData = {};
-                            groupData.rowId = parseInt(values['groupid']);
-                            groupData.participantIds = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions), 'name');
-                            groupData.label = values['groupname'];
-                            groupData.description = values['groupdescription'];
-                            groupData.categoryLabel = values['groupname'];
-                            groupData.categoryId = values['groupcategoryid'];
-                            groupData.categoryType = 'list';
-                            if (typeof values['groupshared'] != "undefined")
-                            {
-                                groupData.categoryOwnerId = -1;  // shared owner ID, see ParticipantCategory.java -> OWNER_SHARED
-                            }
-                            else
-                            {
-                                groupData.categoryOwnerId = LABKEY.user.id;
-                            }
-                            groupData.filters = LABKEY.app.model.Filter.toJSON(state.getFilters(), true);
-
-                            LABKEY.Ajax.request({
-                                url: LABKEY.ActionURL.buildURL("participant-group", "saveParticipantGroup.api", null),
-                                method: 'POST',
-                                success: editSuccess,
-                                failure: editFailure,
-                                jsonData: groupData,
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
-                            });
-                        }
+                var editFailure = function (response)
+                {
+                    var errors = Ext.decode(response.responseText).errors;
+                    var errorMsgs = [];
+                    Ext.each(errors, function(error) {
+                        errorMsgs.push(error.message);
                     });
+                    Ext.Msg.alert('Failed to edit Group', errorMsgs);
+                };
+
+                var groupData = {};
+                groupData.rowId = parseInt(values['groupid']);
+                groupData.label = values['groupname'];
+                groupData.description = values['groupdescription'];
+                groupData.categoryLabel = values['groupname'];
+                groupData.categoryId = values['groupcategoryid'];
+                groupData.participantIds = Ext.decode(values['groupparticipantids']);
+                groupData.categoryType = 'list';
+                if (typeof values['groupshared'] != "undefined")
+                {
+                    groupData.categoryOwnerId = -1;  // shared owner ID, see ParticipantCategory.java -> OWNER_SHARED
+                }
+                else
+                {
+                    groupData.categoryOwnerId = LABKEY.user.id;
+                }
+                groupData.filters = values['groupfilters'];
+
+                LABKEY.Ajax.request({
+                    url: LABKEY.ActionURL.buildURL("participant-group", "saveParticipantGroup.api", null),
+                    method: 'POST',
+                    success: editSuccess,
+                    failure: editFailure,
+                    jsonData: groupData,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 }, this);
             }
         }
@@ -298,8 +288,13 @@ Ext.define('Connector.controller.Group', {
                                 Connector.model.Group.getGroupStore().load();
                             };
 
-                            var updateFailure = function() {
-                                Ext.Msg.alert('Failed to update Group');
+                            var updateFailure = function(response) {
+                                var errors = Ext.decode(response.responseText).errors;
+                                var errorMsgs = [];
+                                Ext.each(errors, function(error) {
+                                    errorMsgs.push(error.message);
+                                });
+                                Ext.Msg.alert('Failed to update Group', errorMsgs);
                             };
 
                             var groupData = {};

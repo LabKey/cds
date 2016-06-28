@@ -252,7 +252,7 @@ Ext.define('Connector.view.GroupSave', {
                         name: 'groupdescription',
                         emptyText: 'no description provided',
                         maxLength: 200
-                    }, {
+                    },{
                         xtype: 'checkbox',
                         id: 'editgroupshared',
                         itemId: 'groupshared',
@@ -260,18 +260,23 @@ Ext.define('Connector.view.GroupSave', {
                         fieldLabel: 'Shared group',
                         checked: false,
                         hidden: true
-                    }
-                    ,{
+                    },{
                         xtype: 'hiddenfield',
                         itemId: 'groupid',
                         name: 'groupid'
-                    }
-                    ,{
+                    },{
                         xtype: 'hiddenfield',
                         itemId: 'groupcategoryid',
                         name: 'groupcategoryid'
-                    }]
-                },{
+                    },{
+                        xtype: 'hiddenfield',
+                        itemId: 'groupfilters',
+                        name: 'groupfilters'
+                    },{
+                        xtype: 'hiddenfield',
+                        itemId: 'groupparticipantids',
+                        name: 'groupparticipantids'
+                    }]},{
                     xtype: 'toolbar',
                     dock: 'bottom',
                     ui: 'lightfooter',
@@ -478,10 +483,8 @@ Ext.define('Connector.view.GroupSave', {
 
     getIsEditorOrHigher : function (userPerms)
     {
-        if ((userPerms.container.roles.indexOf('org.labkey.api.security.roles.SiteAdminRole') !== -1)
-                || (userPerms.container.roles.indexOf('org.labkey.api.security.roles.ProjectAdminRole') !== -1)
-                || (userPerms.container.roles.indexOf('org.labkey.api.security.roles.FolderAdminRole') !== -1)
-                || (userPerms.container.roles.indexOf('org.labkey.api.security.roles.EditorRole') !== -1)
+        if ((userPerms.container.effectivePermissions.indexOf('org.labkey.api.security.permissions.UpdatePermission') !== -1)
+                || (userPerms.container.effectivePermissions.indexOf('org.labkey.api.study.permissions.SharedParticipantGroupPermission') !== -1)
         )
             return true;
         else
@@ -514,7 +517,9 @@ Ext.define('Connector.view.GroupSave', {
                 name = form.getComponent('groupname'),
                 description = form.getComponent('groupdescription'),
                 categoryId = form.getComponent('groupcategoryid'),
-                shared = form.getComponent('groupshared');
+                shared = form.getComponent('groupshared'),
+                filters = form.getComponent('groupfilters'),
+                participantIds = form.getComponent('groupparticipantids');
 
             if (_id)
             {
@@ -539,6 +544,19 @@ Ext.define('Connector.view.GroupSave', {
             if (shared)
             {
                 shared.setValue(group.get('shared'));
+            }
+
+            if (filters)
+            {
+                filters.setValue(Ext.encode({
+                    isLive : true,
+                    filters : group.get('filters')
+                }));
+            }
+            
+            if (participantIds)
+            {
+                participantIds.setValue(Ext.encode(group.get('participantIds')));
             }
         }
     },

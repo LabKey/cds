@@ -44,7 +44,7 @@ Ext.define('Connector.model.Group', {
                     pageSize : 100,
                     model    : 'Connector.model.Group',
                     autoLoad : true,
-                    sorters  : [{ //property: 'label'}],
+                    sorters  : [{
                         sorterFn: function (group1, group2) {
                             var g1shared = group1.get('shared');
                             var g2shared = group2.get('shared');

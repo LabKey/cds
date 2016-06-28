@@ -93,7 +93,7 @@ Ext.define('Connector.view.GroupListView', {
                         heading = 'Shared with me';
                     }
 
-                    return '<h2 class="section-title top-spacer-lg bottom-spacer">' + Ext.htmlEncode(heading) + '</h2>';
+                    return '<h2 class="section-title group-section-title top-spacer-lg bottom-spacer">' + Ext.htmlEncode(heading) + '</h2>';
                 }
 
                 return '';

@@ -32,6 +32,7 @@ Ext.define('Connector.model.FilterGroup', {
             return Ext.create('Connector.model.FilterGroup', {
                 id: cohortGroupModel.get('id'),
                 label: cohortGroupModel.get('label'),
+                participantIds: cohortGroupModel.get('participantIds'),
                 description: cohortGroupModel.get('description'),
                 categoryId: cohortGroupModel.get('categoryId'),
                 shared: cohortGroupModel.get('shared'),
