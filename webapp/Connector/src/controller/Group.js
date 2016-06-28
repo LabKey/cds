@@ -351,10 +351,8 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
-    _groupEditSave : function(grp, filters, applyFilters)
+    _groupEditSave : function(name, filters, applyFilters)
     {
-        var name = grp.label ? grp.label : grp.categoryLabel;
-
         if (applyFilters === true)
         {
             Connector.getState().setFilters(filters);
@@ -370,12 +368,13 @@ Ext.define('Connector.controller.Group', {
 
     onGroupSaved : function(grp, filters)
     {
-        this._groupEditSave(grp, filters, true);
+        var groupLabel = grp.label ? grp.label : grp.category.label;
+        this._groupEditSave(groupLabel, filters, true);
     },
 
     onGroupEdit : function(response)
     {
-        this._groupEditSave(response.group);
+        this._groupEditSave(response.group.categoryLabel);
     },
 
     doGroupDelete : function(config) {
