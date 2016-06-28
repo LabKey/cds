@@ -353,7 +353,7 @@ Ext.define('Connector.controller.Group', {
 
     _groupEditSave : function(grp, filters, applyFilters)
     {
-        var name = grp.label ? grp.label : grp.category.label;
+        var name = grp.label ? grp.label : grp.categoryLabel;
 
         if (applyFilters === true)
         {
@@ -373,9 +373,9 @@ Ext.define('Connector.controller.Group', {
         this._groupEditSave(grp, filters, true);
     },
 
-    onGroupEdit : function(grp)
+    onGroupEdit : function(response)
     {
-        this._groupEditSave(grp);
+        this._groupEditSave(response.group);
     },
 
     doGroupDelete : function(config) {
