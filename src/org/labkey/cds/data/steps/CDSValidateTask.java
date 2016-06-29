@@ -50,7 +50,11 @@ public class CDSValidateTask extends AbstractPopulateTask
             StringBuilder error = new StringBuilder("Validation Failed!");
             for (Map<String, Object> row : rows)
             {
-                error.append("\n\tSubject ").append(row.get("id")).append(" in study ").append(row.get("study")).append(" was not found in the StudySubject table.");
+                error.append("\n\tSubject ")
+                        .append(row.get("id"))
+                        .append(" in study ")
+                        .append(row.get("study"))
+                        .append(" was not found in the StudySubject table.");
             }
             logger.error(error);
         }
@@ -89,6 +93,48 @@ public class CDSValidateTask extends AbstractPopulateTask
                         .append(row.get("subject_id"))
                         .append(" in assay ")
                         .append(row.get("assay_type"));
+
+            }
+            logger.warn(error);
+        }
+
+        logger.info("Validating Subjects in Assays");
+        validationTable = sourceSchema.getTable("ds_validatestudyassay");
+        sql = new SQLFragment("SELECT * FROM ").append(validationTable, "Validator");
+        rows = new SqlSelector(validationTable.getSchema(), sql).getMapArray();
+        if (rows.length > 0)
+        {
+            StringBuilder error = new StringBuilder("Validation Failed!");
+            for (Map<String, Object> row : rows)
+            {
+                error.append("\n\tSubject ")
+                        .append(row.get("subject_id"))
+                        .append(" in invalid Assay. Study ")
+                        .append(row.get("prot"))
+                        .append(" does not have ")
+                        .append(row.get("assay_identifier"))
+                        .append(" listed as a valid assay.");
+
+            }
+            logger.warn(error);
+        }
+
+        logger.info("Validating Study Products Pairs");
+        validationTable = sourceSchema.getTable("ds_validatestudyproduct");
+        sql = new SQLFragment("SELECT * FROM ").append(validationTable, "Validator");
+        rows = new SqlSelector(validationTable.getSchema(), sql).getMapArray();
+        if (rows.length > 0)
+        {
+            StringBuilder error = new StringBuilder("Validation Failed!");
+            for (Map<String, Object> row : rows)
+            {
+                error.append("\n\tSubject ")
+                        .append(row.get("participantid"))
+                        .append(" in study ")
+                        .append(row.get("prot"))
+                        .append(" is listed in the data as receiving product id:")
+                        .append(row.get("product_id"))
+                        .append(" which is not a valid product for that study.");
 
             }
             logger.warn(error);

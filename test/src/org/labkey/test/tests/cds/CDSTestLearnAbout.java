@@ -421,6 +421,86 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     }
 
+    @Test
+    public void validateStudySummaryDataAvailability()
+    {
+        final int STUDY_WITH_DATA_AVAILABLE = 25;
+
+        cds.viewLearnAboutPage("Studies");
+        assertTextPresent("Data Added");
+
+        List<WebElement> hasDataRows = Locator.css(".has-data").findElements(getDriver());
+        List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
+        Assert.assertTrue(hasDataRows.size() == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
+    }
+
+    @Test
+    public void validateDetailsDataAvailability()
+    {
+        final String HAS_DATA_ICON = "smallCheck.png";
+        final String HAS_NO_DATA_ICON = "smallGreyX.png";
+
+        //Valuse for Study Details inspection
+        final String STUDY = "RED 4";
+        final String[] ASSAY_TITLES = {"IFNg ELISpot", "Intracellular Cytokine Staining", "HIV Binding Antibody"};
+
+        //Valuse for Assay Details inspection
+        final int NUM_STUDY_FROM_ASSAY_WITH_DATA = 14;
+        final String STUDY_FROM_ASSAY_WITH_NO_DATA = "ZAP 108";
+
+        //Valuse for Study Products Details inspection
+        final String PRODUCT = "benztropine mesylate";
+        final String[] STUDY_FROM_PRODUCT = {"QED 1", "YOYO 55"};
+
+
+        log("Testing data availability module in Studies");
+        cds.viewLearnAboutPage("Studies");
+
+        Locator element = Locator.xpath("//div[contains(@class, 'has-data')]/div/h2[contains(text(), '" + STUDY + "')]");
+        assertElementPresent(element);
+        waitAndClick(element);
+
+        waitForText("Data Availability");
+
+        Assert.assertTrue(isElementPresent(getDataRowXPath(ASSAY_TITLES[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(getDataRowXPath(ASSAY_TITLES[1]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(getDataRowXPath(ASSAY_TITLES[2]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+
+
+        log("Testing data availability module in Assays");
+        cds.viewLearnAboutPage("Assays");
+        Locator loc = Locator.xpath("//h2[contains(text(), '" + CDSHelper.ICS + "')]");
+        waitAndClick(loc);
+
+        refresh(); //ensures only selecting elements on viewable page.
+
+        waitForText("Data Availability");
+
+        List<WebElement> smallHasDataIcons =getDataRowXPath("").append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]").findElements(getDriver());
+        Assert.assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
+
+        Assert.assertFalse(isElementPresent(getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]")));
+        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+
+
+        log("Testing data availability module in Study Products");
+        cds.viewLearnAboutPage("Study products");
+        waitAndClick(Locator.xpath("//h2[text() = '" + PRODUCT + "']"));
+
+        refresh();
+
+        waitForText("Data Availability");
+
+        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+    }
+
+    //Helper function for data availability tests
+    private Locator.XPathLocator getDataRowXPath(String rowText)
+    {
+        return Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), '" + rowText + "')]").parent().parent();
+    }
+
     private void validateSearchFor(String searchString)
     {
         String itemText;

@@ -1485,7 +1485,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.StudyAssays": [
     "widget.app.module.studyassays"
-  ],
+  ],  
   "Connector.view.module.StudyDatasets": [
     "widget.app.module.studydatasets"
   ],

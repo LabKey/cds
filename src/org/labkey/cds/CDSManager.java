@@ -107,6 +107,7 @@ public class CDSManager
                     "TreatmentArmSubjectMap",
                     "TreatmentArm",
                     "Product",
+                    "StudyAssay",
                     "Study",
                     "Assay",
                     "Lab"

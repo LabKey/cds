@@ -34,9 +34,9 @@ Ext.define('Connector.app.store.Study', {
             requiredVersion: 13.2,
             scope: this
         });
-        LABKEY.Query.executeSql({
+        LABKEY.Query.selectRows({
             schemaName: 'cds',
-            sql: 'SELECT DISTINCT assay_identifier, label, study_name FROM ds_subjectassay',
+            queryName: 'ds_assaysforstudies',
             success: this.onLoadAssays,
             scope: this
         })
@@ -97,10 +97,15 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
                 var assays = [];
+                study.data_availability = false;
                 for (var a=0; a < this.assayData.length; a++) {
-                    if (study.study_name === this.assayData[a].study_name) {
+                    if (study.study_name === this.assayData[a].prot) {
+                        study.data_availability = study.data_availability || this.assayData[a].has_data;
                         assays.push({
-                            assay_identifier: this.assayData[a].assay_identifier
+                            assay_identifier: this.assayData[a].assay_identifier,
+                            assay_full_name: this.assayData[a].assay_short_name
+                                + ' (' + this.assayData[a].assay_label + ')',
+                            has_data: this.assayData[a].has_data
                         });
                     }
                 }
