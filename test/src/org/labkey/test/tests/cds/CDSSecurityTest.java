@@ -298,7 +298,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         click(Locator.linkWithText("Cancel"));
 
         // Log in as admin, like start of test, this will allow test to clean up correctly.
-        ensureSignedInAsAdmin();
+        ensureSignedInAsPrimaryTestUser();
 
     }
 

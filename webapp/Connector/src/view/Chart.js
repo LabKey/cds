@@ -836,7 +836,15 @@ Ext.define('Connector.view.Chart', {
         return '<span><span class="axis-dimension">' + Ext.htmlEncode(label) + '</span>' + colon + value + linebreak + '</span>';
     },
 
-    buildTooltipValuesStr: function(valuesArray) {
+    buildTooltipValuesStr: function(rawValuesArray) {
+        var valuesArray = [];
+        if (Ext.isArray(rawValuesArray)) {
+            if (rawValuesArray.length == 0)
+                return '-';
+            Ext.each(rawValuesArray, function(val) {
+                valuesArray.push(this.formatSingleTooltipValue(val));
+            }, this);
+        }
         var valuesStr = '';
         if (Ext.isArray(valuesArray)) {
             var totalValues = valuesArray.length;
@@ -853,8 +861,11 @@ Ext.define('Connector.view.Chart', {
 
     getBinRangeTooltip: function(valSet) {
         if (valSet.size == 0)
-            return null;
-        var vals = Array.from(valSet);
+            return '-';
+        var rawVals = Array.from(valSet), vals = [];
+        Ext.each(rawVals, function(val) {
+            vals.push(this.formatSingleTooltipValue(val));
+        }, this);
         if (vals.length == 1)
             return vals[0];
         return Ext.Array.min(vals) + ' - ' + Ext.Array.max(vals);
@@ -890,23 +901,30 @@ Ext.define('Connector.view.Chart', {
             // skip for study, treatment, and time
             if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
                 var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
-                content += '<span class="group-title">' + Ext.htmlEncode(xAxis.queryName + ' - ' + data.xname) + '</span>' + colon + val;
+                content += '<span class="group-title">' + Ext.htmlEncode(xAxis.queryName + ' - ' + data.xname) + '</span>' + colon + this.formatSingleTooltipValue(val);
                 content += this.showAsMedian ? ' (median)' : '';
                 content += this.buildPointAxisDetailTooltip(xAxis, record, record.x && record.x.rawRecord ? record.x.rawRecord : null, this.getHierarchicalDimensionInfo(xAxis));
             }
         }
 
         if (yAxis) {
-            content += '<span class="group-title">' + Ext.htmlEncode(yAxis.queryName + ' - ' + data.yname) + '</span>' + colon + data.y;
+            content += '<span class="group-title">' + Ext.htmlEncode(yAxis.queryName + ' - ' + data.yname) + '</span>' + colon + this.formatSingleTooltipValue(data.y);
             content += this.showAsMedian ? ' (median)' : '';
             content += this.buildPointAxisDetailTooltip(yAxis, record, record.y && record.y.rawRecord ? record.y.rawRecord : null, this.getHierarchicalDimensionInfo(yAxis));
         }
 
         if (this.activeMeasures.color && data.colorname) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.color.queryName + ' - ' + data.colorname) + '</span>' + colon + data.color;
+            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.color.queryName + ' - ' + data.colorname) + '</span>' + colon + this.formatSingleTooltipValue(data.color);
         }
 
         return content;
+    },
+
+    formatSingleTooltipValue: function(val) {
+      if (val == undefined || val == 'null') {
+          return '-';
+      }
+      return val;
     },
 
     buildPointAxisDetailTooltip: function(axis, record, aggregators, hierarchicalDimensionInfo) {

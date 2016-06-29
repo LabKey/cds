@@ -132,19 +132,10 @@ Ext.define('Connector.controller.Filter', {
 
             queryService.getData(measuresArray, function(metadata)
             {
-                var filters = [
-                    LABKEY.Filter.create(QueryUtils.SEQUENCENUM_ALIAS, 0, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL)
-                ];
-
-                if (Ext.isArray(timeFilters) && !Ext.isEmpty(timeFilters))
-                {
-                    filters = filters.concat(timeFilters);
-                }
-
                 LABKEY.Query.selectRows({
                     schemaName: metadata.schemaName,
                     queryName: metadata.queryName,
-                    filterArray: filters,
+                    filterArray: Ext.isArray(timeFilters) ? timeFilters : [],
                     success: function(data)
                     {
                         var subjectVisits = Ext.Array.pluck(data.rows, QueryUtils.SUBJECT_SEQNUM_ALIAS),

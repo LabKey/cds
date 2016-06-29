@@ -73,6 +73,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.enterApplication();
         cds.ensureNoFilter();
         cds.ensureNoSelection();
+        getDriver().manage().window().setSize(CDSHelper.idealWindowSize);
     }
 
     @BeforeClass
@@ -1479,6 +1480,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         InfoPane ip = new InfoPane(this);
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        String text;
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -1500,7 +1502,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Validate a list (species) from the info pane.");
         ip.clickSpeciesCount();
-        String text = ip.getSpeciesList();
+        text = ip.getSpeciesList();
         assertTrue("Species list does not contain " + CDSHelper.SPECIES_HUMAN, text.contains(CDSHelper.SPECIES_HUMAN));
         assertTrue("Species list does not contain " + CDSHelper.SPECIES_VULCAN, text.contains(CDSHelper.SPECIES_VULCAN));
         ip.clickCancel();
@@ -1540,6 +1542,29 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             fail("Variable selector was not shown as expected.");
         }
+
+        log("Checking for the time points selector.");
+        ip.clickTimePointsCount();
+        waitForText("Time points in the plot");
+        sleep(CDSHelper.CDS_WAIT);
+        text = ip.getTimePointsList();
+        assertTrue("Time Point list does not contain 'Has data in active filters'.", text.contains("Has data in active filters"));
+        assertTrue("Time Point list does not contain 'Day '.", text.contains("Day 0 - (7 studies)"));
+        log("Use the info pane to apply a filter to the plot.");
+        ip.setFilter("Day 14 - (1 study)");
+
+        assertEquals("Subjects count not as expected.", 49, ip.getSubjectCount());
+        assertEquals("Species count not as expected.", 1, ip.getSpeciesCount());
+        assertEquals("Studies count not as expected.", 1, ip.getStudiesCount());
+        assertEquals("Product count not as expected.", 1, ip.getProductCount());
+        assertEquals("Treatments count not as expected.", 4, ip.getTreatmentsCount());
+        assertEquals("Time Points count not as expected.", 1, ip.getTimePointsCount());
+        assertEquals("Antigens In X count not as expected.", 1, ip.getAntigensInXCount());
+        assertEquals("Antigens In Y count not as expected.", 1, ip.getAntigensInYCount());
+        log("Clearing the filter.");
+        cds.clearFilter(1);
+
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         log("Use the info pane to apply a filter to the plot.");
         ip.clickStudiesCount();
@@ -1791,6 +1816,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Browser window height: " + getDriver().manage().window().getSize().getHeight() + " width: " + getDriver().manage().window().getSize().getWidth());
 
         log("Validate default scale is Log");
 
