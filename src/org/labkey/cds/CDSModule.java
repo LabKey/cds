@@ -89,7 +89,7 @@ public class CDSModule extends DefaultModule
 
     public double getVersion()
     {
-        return 16.11;
+        return 16.20;
     }
 
     public boolean hasScripts()
