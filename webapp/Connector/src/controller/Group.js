@@ -374,7 +374,7 @@ Ext.define('Connector.controller.Group', {
 
     onGroupEdit : function(response)
     {
-        this._groupEditSave(response.group.categoryLabel);
+        this._groupEditSave(response.group.label);
     },
 
     doGroupDelete : function(config) {
