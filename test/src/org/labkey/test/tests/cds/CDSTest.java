@@ -490,10 +490,8 @@ public class CDSTest extends CDSReadOnlyTest
     @Test
     public void verifySharedGroups()
     {
-        final String PASSWORD = "TestPassword";
         final String[] NEW_USER_ACCOUNTS = {"cds_alice@example.com", "cds_bob@example.com", "cds_eve@example.com"};
-        //this test case focusses on whether groups are shared properly.
-//        final String SHARED_GROUP_NAME = "Shared Group";
+        //this test case focuses on whether groups are shared properly.
         final String[] PRIVATE_GROUP_NAME = {"test_Group_reader", "test_Group_editor"};
         final String[] PRIVATE_GROUP_NAME_DESCRIPTION = {"This group selects two studies", "This group selects two studies"};
 
@@ -587,12 +585,7 @@ public class CDSTest extends CDSReadOnlyTest
         _impersonateUser(NEW_USER_ACCOUNTS[2]);
         cds.enterApplication();
 
-//        //Examine shared group
-//        click(sharedGroupRow);
-//        waitForText("Edit details");
-
         //verify that another editor can update shared group
-//        click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[3], CDSHelper.STUDIES[4]);
@@ -620,9 +613,9 @@ public class CDSTest extends CDSReadOnlyTest
                 "/div[contains(text(), '" + SHARED_GROUP_NAME + "')]"));
         _stopImpersonatingUser();
 
-//        _userHelper.deleteUser(NEW_USER_ACCOUNTS[0]);
-//        _userHelper.deleteUser(NEW_USER_ACCOUNTS[1]);
-//        _userHelper.deleteUser(NEW_USER_ACCOUNTS[2]);
+        _userHelper.deleteUser(NEW_USER_ACCOUNTS[0]);
+        _userHelper.deleteUser(NEW_USER_ACCOUNTS[1]);
+        _userHelper.deleteUser(NEW_USER_ACCOUNTS[2]);
 
     }
 
