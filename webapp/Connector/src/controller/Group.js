@@ -366,9 +366,10 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
-    onGroupSaved : function(grp, filters)
+    onGroupSaved : function(response, filters)
     {
-        var groupLabel = grp.label ? grp.label : grp.category.label;
+        // shouldn't use category label, it doesn't get updated in the database properly after renames, but we will use it if group label is missing
+        var groupLabel = response.group ? response.group.label : response.category.label;
         this._groupEditSave(groupLabel, filters, true);
     },
 
