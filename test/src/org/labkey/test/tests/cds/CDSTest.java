@@ -15,23 +15,22 @@
  */
 package org.labkey.test.tests.cds;
 
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
-import org.labkey.test.pages.LabKeyPage;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
+import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -486,6 +485,189 @@ public class CDSTest extends CDSReadOnlyTest
         cds.deleteGroupFromSummaryPage(STUDY_GROUP);
 
         cds.clearFilters();
+    }
+
+    @Test
+    public void verifySharedGroups()
+    {
+        final String PASSWORD = "TestPassword";
+        final String[] NEW_USER_ACCOUNTS = {"cds_alice@example.com", "cds_bob@example.com", "cds_eve@example.com"};
+        //this test case focusses on whether groups are shared properly.
+//        final String SHARED_GROUP_NAME = "Shared Group";
+        final String[] PRIVATE_GROUP_NAME = {"test_Group_reader", "test_Group_editor"};
+        final String[] PRIVATE_GROUP_NAME_DESCRIPTION = {"This group selects two studies", "This group selects two studies"};
+
+        final String SHARED_GROUP_NAME = "shared_Group";
+
+        log("Testing permissions for creating a shared group");
+        //Validate a user with Reader role can create a group without issue.
+        _impersonateRole("Reader");
+        //Create a group.
+        _composeGroup();
+        //saveGroup verifies that the shared group checkbox is not present.
+        boolean result = cds.saveGroup(PRIVATE_GROUP_NAME[0], PRIVATE_GROUP_NAME_DESCRIPTION[0], true);
+        Assert.assertFalse(result);
+        result = cds.saveGroup(PRIVATE_GROUP_NAME[0], PRIVATE_GROUP_NAME_DESCRIPTION[0], false);
+        Assert.assertTrue(result);
+        _stopImpersonatingRole();
+
+        _impersonateRole("Editor");
+        _composeGroup();
+        result = cds.saveGroup(PRIVATE_GROUP_NAME[1], PRIVATE_GROUP_NAME_DESCRIPTION[1], true);
+        Assert.assertTrue(result);
+        _stopImpersonatingRole();
+
+        cds.deleteGroupFromSummaryPage(PRIVATE_GROUP_NAME[0]);
+        cds.deleteGroupFromSummaryPage(PRIVATE_GROUP_NAME[1]);
+
+        //--------------------------------------------//
+
+
+        String rootContainer = getProjectName();
+
+        _userHelper.createUser(NEW_USER_ACCOUNTS[0], false, true);
+        _userHelper.createUser(NEW_USER_ACCOUNTS[1], false, true);
+        _userHelper.createUser(NEW_USER_ACCOUNTS[2], false, true);
+
+        goToProjectHome();
+
+        Ext4Helper.resetCssPrefix();
+        _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
+        _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
+        _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
+        for(String studyName : CDSHelper.PROTS)
+        {
+            goToProjectHome(rootContainer + "/" + studyName);
+            _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
+            _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
+            _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
+        }
+        Ext4Helper.setCssPrefix("x-");
+
+        //As an editor, make a shared group and a private group
+        _impersonateUser(NEW_USER_ACCOUNTS[0]);
+        _composeGroup();
+        cds.saveGroup(PRIVATE_GROUP_NAME[0], PRIVATE_GROUP_NAME_DESCRIPTION[0], false);
+        cds.saveGroup(SHARED_GROUP_NAME, "", true);
+        _stopImpersonatingRole();
+
+
+        //Impersonate the reader
+        _impersonateUser(NEW_USER_ACCOUNTS[1]);
+        cds.enterApplication();
+
+        //Verify that private group is not shared and that public group is
+        Locator mineHeader = Locator.xpath("//h2[contains(text(), 'Mine')][contains(@class, 'group-section-title')]");
+        assertElementNotPresent(mineHeader);
+        assertElementNotPresent(Locator.xpath("//div[contains(@class, 'grouplabel')][contains(text(), '" + PRIVATE_GROUP_NAME[0] + "')]"));
+        Locator sharedGroupRow = Locator.xpath("//*[contains(@class, 'group-section-title')][contains(text(), 'Shared with me')]" +
+                "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + SHARED_GROUP_NAME + "')]");
+        assertElementPresent(sharedGroupRow);
+
+        //Examine shared group
+        click(sharedGroupRow);
+        waitForText("Edit details");
+
+        //verify that reader cannot edit
+        click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
+        click(CDSHelper.Locators.cdsButtonLocator("Save").notHidden());
+        waitForText("Failed to edit Group");
+        click(CDSHelper.Locators.cdsButtonLocator("OK", "x-toolbar-item").notHidden());
+        _ext4Helper.waitForMaskToDisappear();
+
+        //Verify that reader cannot delete
+        click(CDSHelper.Locators.cdsButtonLocator("Delete"));
+        waitForText("Are you sure you want to delete");
+        click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
+        waitForText("ERROR");
+        click(CDSHelper.Locators.cdsButtonLocator("OK", "x-toolbar-item").notHidden());
+
+        //switch to other editor account
+        _stopImpersonatingUser();
+        _impersonateUser(NEW_USER_ACCOUNTS[2]);
+        cds.enterApplication();
+
+//        //Examine shared group
+//        click(sharedGroupRow);
+//        waitForText("Edit details");
+
+        //verify that another editor can update shared group
+//        click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.STUDIES[3], CDSHelper.STUDIES[4]);
+        cds.useSelectionAsSubjectFilter();
+        boolean updateSuccess = cds.updateSharedGroupDetails(SHARED_GROUP_NAME, null, "Updated Description", null);
+        Assert.assertTrue(updateSuccess);
+
+        assertElementPresent(Locator.xpath("//div[contains(@class, 'sel-list-item')][contains(text(), '"
+                + CDSHelper.STUDIES[0] + ", " + CDSHelper.STUDIES[1] + "')]"));
+
+        updateSuccess = cds.updateSharedGroupDetails(SHARED_GROUP_NAME, null, null, false); //should fail
+        Assert.assertFalse(updateSuccess);
+
+        //delete group
+        click(sharedGroupRow);
+        waitForText("Edit details");
+        click(CDSHelper.Locators.cdsButtonLocator("Delete"));
+        waitForText("Are you sure you want to delete");
+        click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
+        waitForText("Shared with me");
+        refresh();
+        assertElementNotPresent(Locator.xpath("//*[contains(@class, 'group-section-title')]" +
+                "[contains(text(), 'Shared with me')]" +
+                "/following::div[contains(@class, 'grouprow')]" +
+                "/div[contains(text(), '" + SHARED_GROUP_NAME + "')]"));
+        _stopImpersonatingUser();
+
+//        _userHelper.deleteUser(NEW_USER_ACCOUNTS[0]);
+//        _userHelper.deleteUser(NEW_USER_ACCOUNTS[1]);
+//        _userHelper.deleteUser(NEW_USER_ACCOUNTS[2]);
+
+    }
+
+    private void _composeGroup()
+    {
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
+        cds.useSelectionAsSubjectFilter();
+    }
+
+    private void _impersonateRole(String role)
+    {
+        goToProjectHome();
+        Ext4Helper.resetCssPrefix();
+        impersonateRole(role);
+        Ext4Helper.setCssPrefix("x-");
+        cds.enterApplication();
+    }
+
+    private void _stopImpersonatingRole()
+    {
+        goToProjectHome();
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingRole();
+        Ext4Helper.setCssPrefix("x-");
+        cds.enterApplication();
+    }
+
+    private void _impersonateUser(String user)
+    {
+        goToProjectHome();
+        Ext4Helper.resetCssPrefix();
+        impersonate(user);
+        Ext4Helper.setCssPrefix("x-");
+        cds.enterApplication();
+    }
+
+    private void _stopImpersonatingUser()
+    {
+        goToProjectHome();
+        Ext4Helper.resetCssPrefix();
+        stopImpersonating();
+        Ext4Helper.setCssPrefix("x-");
+        cds.enterApplication();
     }
 
     @Test

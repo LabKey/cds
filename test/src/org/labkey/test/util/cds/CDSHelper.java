@@ -51,6 +51,12 @@ public class CDSHelper
 
     public static final String[] PROT_NAMES = {"ZAP 117", "ZAP 102", "ZAP 136", "ZAP 110", "ZAP 134", "QED 2", "ZAP 135", "ZAP 139"}; //incomplete list, only first and last under each assay in find subjects view.
 
+    public static final String[] PROTS = {"q1", "q2", "q3", "q4", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9",
+            "y55", "z100", "z101", "z102", "z103", "z104", "z105", "z106", "z107", "z108", "z109", "z110", "z111",
+            "z112", "z113", "z114", "z115", "z116", "z117", "z118", "z119", "z120", "z121", "z122", "z123", "z124",
+            "z125", "z126", "z127", "z128", "z129", "z130", "z131", "z132", "z133", "z134", "z135", "z136", "z137",
+            "z138", "z139", "z140", };
+
     public static final String[] PRODUCTS = {"Acetaminophen, Dextromethorphan Hydrobromide, Doxylamine Succinate",
             "ACETAMINOPHEN, DEXTROMETHORPHAN HYDROBROMIDE, PHENYLEPHRINE HYDROCHLORIDE",
             "Acetaminophen, Diphenhydramine Hydrochloride, and Phenylephrine Hydrochloride",
@@ -511,8 +517,29 @@ public class CDSHelper
 
     public void saveGroup(String name, @Nullable String description)
     {
+        saveGroup(name, description, false);
+    }
+
+    public boolean saveGroup(String name, @Nullable String description, boolean shared)
+    {
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
         _test.waitForText("replace an existing group");
+
+        Locator.XPathLocator shareGroupCheckbox = Locator.xpath("//input[contains(@id,'creategroupshared')]");
+        if (shared)
+        {
+            if (_test.isElementVisible(shareGroupCheckbox))
+            {
+                _test._ext4Helper.checkCheckbox(shareGroupCheckbox);
+            }
+            else
+            {
+                //Expected failure. The user attempts to save, but does not have sufficient permissions.
+                _test.click(Locators.cdsButtonLocator("Cancel", "groupcancelcreate"));
+                return false;
+            }
+        }
+
         _test.setFormElement(Locator.name("groupname"), name);
         if (null != description)
             _test.setFormElement(Locator.name("groupdescription"), description);
@@ -521,12 +548,65 @@ public class CDSHelper
             _test.click(Locators.cdsButtonLocator("Save", "groupcreatesave"));
             return null;
         });
+        return true;
+    }
+
+    public boolean updateSharedGroupDetails(String groupName, @Nullable String newName, @Nullable String newDescription,
+                                         @Nullable Boolean newSharedStatus)
+    {
+        goToAppHome();
+        _test.click(Locator.xpath("//*[contains(@class, 'group-section-title')][contains(text(), 'Shared with me')]" +
+                "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + groupName + "')]"));
+        _test.waitForText("Edit details");
+        _test.click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
+        _test.waitForText("Shared group:");
+
+        if (newName != null)
+        {
+            _test.setFormElement(Locator.name("groupname"), newName);
+        }
+        if (newDescription != null)
+        {
+            _test.setFormElement(Locator.xpath("//*[contains(@id, 'editgroupdescription-inputEl')]"), newDescription);
+        }
+        if (newSharedStatus != null)
+        {
+            Locator.XPathLocator sharedCheckboxLoc = Locator.xpath("//input[contains(@id,'editgroupshared')]");
+            if (newSharedStatus)
+            {
+                _test._ext4Helper.checkCheckbox(sharedCheckboxLoc);
+            }
+            else
+            {
+                _test._ext4Helper.uncheckCheckbox(sharedCheckboxLoc);
+            }
+        }
+        _test.click(Locators.cdsButtonLocator("Save").withClass("groupeditsave"));
+
+        if (newSharedStatus != null && !newSharedStatus)
+        {
+            _test.waitForText("Failed to edit Group");
+            _test.click(Locators.cdsButtonLocator("OK"));
+            _test.click(Locators.cdsButtonLocator("Cancel").withClass("groupcanceledit"));
+            goToAppHome();
+            return false;
+        }
+        else
+        {
+            _test.waitForText(HOME_PAGE_HEADER);
+            return true;
+        }
+    }
+
+    public void createUserWithPermissions(String userName, String projectName, String permissions)
+    {
+        _test.createUserWithPermissions(userName, projectName, permissions);
     }
 
     public void saveOverGroup(String name)
     {
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
-        _test.click(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
+        _test.click(Locators.cdsButtonLocator("replace an existing group"));
         _test.waitAndClick(Locator.tagWithClass("div", "save-label").withText(name));
         _test.click(Locators.cdsButtonLocator("Save", "groupupdatesave"));
     }
