@@ -533,8 +533,11 @@ public class CDSTest extends CDSReadOnlyTest
         _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
         _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
         _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
-        for(String studyName : CDSHelper.PROTS)
+
+        //Arbitrary amount of studies to run through
+        for(int itr = 0; itr < 5; itr++)
         {
+            String studyName = CDSHelper.STUDIES[itr];
             goToProjectHome(rootContainer + "/" + studyName);
             _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
             _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
