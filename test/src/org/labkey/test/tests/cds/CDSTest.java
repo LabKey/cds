@@ -26,6 +26,7 @@ import org.labkey.test.pages.cds.DataGridVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
+import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
@@ -45,6 +46,9 @@ import static org.junit.Assert.assertTrue;
 @Category({})
 public class CDSTest extends CDSReadOnlyTest
 {
+
+    public ApiPermissionsHelper _apiPermissionsHelper = new ApiPermissionsHelper(this);
+
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " + CDSHelper.STUDIES[1] + " and " + CDSHelper.STUDIES[4];
 
@@ -494,8 +498,28 @@ public class CDSTest extends CDSReadOnlyTest
         //this test case focuses on whether groups are shared properly.
         final String[] PRIVATE_GROUP_NAME = {"test_Group_reader", "test_Group_editor"};
         final String[] PRIVATE_GROUP_NAME_DESCRIPTION = {"This group selects two studies", "This group selects two studies"};
-
         final String SHARED_GROUP_NAME = "shared_Group";
+
+        final Locator SHARED_GROUP_LOC = Locator.xpath("//*[contains(@class, 'group-section-title')][contains(text(), 'Shared with me')]" +
+                "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + SHARED_GROUP_NAME + "')]");
+
+
+        //Ensure test users don't already exist
+        _userHelper.deleteUser(NEW_USER_ACCOUNTS[0]);
+        _userHelper.deleteUser(NEW_USER_ACCOUNTS[1]);
+        _userHelper.deleteUser(NEW_USER_ACCOUNTS[2]);
+
+        //Ensure shared group doesn't already exist
+        cds.enterApplication();
+        if (isElementPresent(SHARED_GROUP_LOC))
+        {
+            click(SHARED_GROUP_LOC);
+            waitForText("Edit details");
+            click(CDSHelper.Locators.cdsButtonLocator("Delete"));
+            waitForText("Are you sure you want to delete");
+            click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
+            waitForText("Groups and plots");
+        }
 
         log("Testing permissions for creating a shared group");
         //Validate a user with Reader role can create a group without issue.
@@ -518,9 +542,6 @@ public class CDSTest extends CDSReadOnlyTest
         cds.deleteGroupFromSummaryPage(PRIVATE_GROUP_NAME[0]);
         cds.deleteGroupFromSummaryPage(PRIVATE_GROUP_NAME[1]);
 
-        //--------------------------------------------//
-
-
         String rootContainer = getProjectName();
 
         _userHelper.createUser(NEW_USER_ACCOUNTS[0], false, true);
@@ -530,18 +551,18 @@ public class CDSTest extends CDSReadOnlyTest
         goToProjectHome();
 
         Ext4Helper.resetCssPrefix();
-        _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
-        _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
-        _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
+        _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
+        _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
+        _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
 
         //Arbitrary amount of studies to run through
         for(int itr = 0; itr < 5; itr++)
         {
             String studyName = CDSHelper.PROTS[itr];
             goToProjectHome(rootContainer + "/" + studyName);
-            _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
-            _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
-            _permissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
+            _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
+            _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
+            _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
         }
         Ext4Helper.setCssPrefix("x-");
 
@@ -561,12 +582,10 @@ public class CDSTest extends CDSReadOnlyTest
         Locator mineHeader = Locator.xpath("//h2[contains(text(), 'Mine')][contains(@class, 'group-section-title')]");
         assertElementNotPresent(mineHeader);
         assertElementNotPresent(Locator.xpath("//div[contains(@class, 'grouplabel')][contains(text(), '" + PRIVATE_GROUP_NAME[0] + "')]"));
-        Locator sharedGroupRow = Locator.xpath("//*[contains(@class, 'group-section-title')][contains(text(), 'Shared with me')]" +
-                "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + SHARED_GROUP_NAME + "')]");
-        assertElementPresent(sharedGroupRow);
+        assertElementPresent(SHARED_GROUP_LOC);
 
         //Examine shared group
-        click(sharedGroupRow);
+        click(SHARED_GROUP_LOC);
         waitForText("Edit details");
 
         //verify that reader cannot edit
@@ -603,12 +622,12 @@ public class CDSTest extends CDSReadOnlyTest
         Assert.assertFalse(updateSuccess);
 
         //delete group
-        click(sharedGroupRow);
+        click(SHARED_GROUP_LOC);
         waitForText("Edit details");
         click(CDSHelper.Locators.cdsButtonLocator("Delete"));
         waitForText("Are you sure you want to delete");
         click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
-        waitForText("Shared with me");
+        waitForText("Groups and plots");
         refresh();
         assertElementNotPresent(Locator.xpath("//*[contains(@class, 'group-section-title')]" +
                 "[contains(text(), 'Shared with me')]" +
