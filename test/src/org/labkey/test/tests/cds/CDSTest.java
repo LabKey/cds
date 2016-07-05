@@ -59,6 +59,7 @@ public class CDSTest extends CDSReadOnlyTest
     private static final String GROUP_LIVE_FILTER = "CDSTest_DGroup";
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String STUDY_GROUP = "Study Group Verify";
+    private static final String SHARED_GROUP_NAME = "shared_Group";
 
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
 
@@ -83,6 +84,7 @@ public class CDSTest extends CDSReadOnlyTest
         groups.add(GROUP_STATIC_FILTER);
         groups.add(STUDY_GROUP);
         groups.add(HOME_PAGE_GROUP);
+        groups.add(SHARED_GROUP_NAME);
         ensureGroupsDeleted(groups);
 
         cds.ensureNoFilter();
@@ -498,7 +500,6 @@ public class CDSTest extends CDSReadOnlyTest
         //this test case focuses on whether groups are shared properly.
         final String[] PRIVATE_GROUP_NAME = {"test_Group_reader", "test_Group_editor"};
         final String[] PRIVATE_GROUP_NAME_DESCRIPTION = {"This group selects two studies", "This group selects two studies"};
-        final String SHARED_GROUP_NAME = "shared_Group";
 
         final Locator SHARED_GROUP_LOC = Locator.xpath("//*[contains(@class, 'group-section-title')][contains(text(), 'Shared with me')]" +
                 "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + SHARED_GROUP_NAME + "')]");
@@ -509,18 +510,6 @@ public class CDSTest extends CDSReadOnlyTest
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[1]);
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[2]);
 
-        //Ensure shared group doesn't already exist
-        cds.enterApplication();
-        if (isElementPresent(SHARED_GROUP_LOC))
-        {
-            click(SHARED_GROUP_LOC);
-            waitForText("Edit details");
-            click(CDSHelper.Locators.cdsButtonLocator("Delete"));
-            waitForText("Are you sure you want to delete");
-            click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
-            waitForText("Groups and plots");
-        }
-
         log("Testing permissions for creating a shared group");
         //Validate a user with Reader role can create a group without issue.
         _impersonateRole("Reader");
@@ -528,15 +517,15 @@ public class CDSTest extends CDSReadOnlyTest
         _composeGroup();
         //saveGroup verifies that the shared group checkbox is not present.
         boolean result = cds.saveGroup(PRIVATE_GROUP_NAME[0], PRIVATE_GROUP_NAME_DESCRIPTION[0], true);
-        Assert.assertFalse(result);
+        assertFalse("Updating shared status of group should fail.", result);
         result = cds.saveGroup(PRIVATE_GROUP_NAME[0], PRIVATE_GROUP_NAME_DESCRIPTION[0], false);
-        Assert.assertTrue(result);
+        assertTrue("Failed to update group", result);
         _stopImpersonatingRole();
 
         _impersonateRole("Editor");
         _composeGroup();
         result = cds.saveGroup(PRIVATE_GROUP_NAME[1], PRIVATE_GROUP_NAME_DESCRIPTION[1], true);
-        Assert.assertTrue(result);
+        assertTrue("Failed to create new shared group as Editor.", result);
         _stopImpersonatingRole();
 
         cds.deleteGroupFromSummaryPage(PRIVATE_GROUP_NAME[0]);
@@ -580,9 +569,10 @@ public class CDSTest extends CDSReadOnlyTest
 
         //Verify that private group is not shared and that public group is
         Locator mineHeader = Locator.xpath("//h2[contains(text(), 'Mine')][contains(@class, 'group-section-title')]");
-        assertElementNotPresent(mineHeader);
-        assertElementNotPresent(Locator.xpath("//div[contains(@class, 'grouplabel')][contains(text(), '" + PRIVATE_GROUP_NAME[0] + "')]"));
-        assertElementPresent(SHARED_GROUP_LOC);
+        assertElementNotPresent("User should not have any of their own groups.", mineHeader);
+        assertElementNotPresent(PRIVATE_GROUP_NAME[0] + " should not been visible to this user",
+                Locator.xpath("//div[contains(@class, 'grouplabel')][contains(text(), '" + PRIVATE_GROUP_NAME[0] + "')]"));
+        assertTrue("Shared group should be visible", isElementPresent(SHARED_GROUP_LOC));
 
         //Examine shared group
         click(SHARED_GROUP_LOC);
@@ -613,13 +603,14 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectBars(CDSHelper.STUDIES[3], CDSHelper.STUDIES[4]);
         cds.useSelectionAsSubjectFilter();
         boolean updateSuccess = cds.updateSharedGroupDetails(SHARED_GROUP_NAME, null, "Updated Description", null);
-        Assert.assertTrue(updateSuccess);
+        assertTrue("Expected to successfully update group description", updateSuccess);
 
-        assertElementPresent(Locator.xpath("//div[contains(@class, 'sel-list-item')][contains(text(), '"
-                + CDSHelper.STUDIES[0] + ", " + CDSHelper.STUDIES[1] + "')]"));
+        assertTrue("Filter was not correctly updated", isElementPresent(
+                Locator.xpath("//div[contains(@class, 'sel-list-item')][contains(text(), '"
+                + CDSHelper.STUDIES[0] + ", " + CDSHelper.STUDIES[1] + "')]")));
 
         updateSuccess = cds.updateSharedGroupDetails(SHARED_GROUP_NAME, null, null, false); //should fail
-        Assert.assertFalse(updateSuccess);
+        assertFalse("Expected to fail group update. Should not be able to unshared other user's group", updateSuccess);
 
         //delete group
         click(SHARED_GROUP_LOC);
@@ -629,7 +620,8 @@ public class CDSTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
         waitForText("Groups and plots");
         refresh();
-        assertElementNotPresent(Locator.xpath("//*[contains(@class, 'group-section-title')]" +
+        assertElementNotPresent("Group: " + SHARED_GROUP_NAME + " should not have been present after deletion",
+                Locator.xpath("//*[contains(@class, 'group-section-title')]" +
                 "[contains(text(), 'Shared with me')]" +
                 "/following::div[contains(@class, 'grouprow')]" +
                 "/div[contains(text(), '" + SHARED_GROUP_NAME + "')]"));
@@ -651,36 +643,29 @@ public class CDSTest extends CDSReadOnlyTest
 
     private void _impersonateRole(String role)
     {
-        goToProjectHome();
-        Ext4Helper.resetCssPrefix();
-        impersonateRole(role);
-        Ext4Helper.setCssPrefix("x-");
-        cds.enterApplication();
+        doActionInStandardLabkey(() -> impersonateRole(role));
     }
 
     private void _stopImpersonatingRole()
     {
-        goToProjectHome();
-        Ext4Helper.resetCssPrefix();
-        stopImpersonatingRole();
-        Ext4Helper.setCssPrefix("x-");
-        cds.enterApplication();
+        doActionInStandardLabkey(this::stopImpersonatingRole);
     }
 
     private void _impersonateUser(String user)
     {
-        goToProjectHome();
-        Ext4Helper.resetCssPrefix();
-        impersonate(user);
-        Ext4Helper.setCssPrefix("x-");
-        cds.enterApplication();
+        doActionInStandardLabkey(() -> impersonate(user));
     }
 
     private void _stopImpersonatingUser()
     {
+        doActionInStandardLabkey(this::stopImpersonating);
+    }
+
+    private void doActionInStandardLabkey(Runnable action)
+    {
         goToProjectHome();
         Ext4Helper.resetCssPrefix();
-        stopImpersonating();
+        action.run();
         Ext4Helper.setCssPrefix("x-");
         cds.enterApplication();
     }
