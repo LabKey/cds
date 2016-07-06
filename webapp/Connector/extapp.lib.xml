@@ -186,6 +186,7 @@
         <script path="Connector/src/utility/Chart.js"/>
         <script path="Connector/src/utility/HelpRouter.js"/>
         <script path="Connector/src/utility/Query.js"/>
+        <script path="Connector/src/utility/Report.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
         <script path="Connector/src/app/model/Dataset.js"/>

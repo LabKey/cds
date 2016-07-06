@@ -35,6 +35,8 @@ import org.labkey.api.action.SpringActionController;
 import org.labkey.api.data.ColumnHeaderType;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.ContainerManager;
+import org.labkey.api.data.CoreSchema;
 import org.labkey.api.data.DataColumn;
 import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.DisplayColumn;
@@ -42,13 +44,20 @@ import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.JdbcType;
 import org.labkey.api.data.Results;
 import org.labkey.api.data.ResultsImpl;
+import org.labkey.api.data.SimpleFilter;
 import org.labkey.api.data.SqlSelector;
+import org.labkey.api.data.TableSelector;
 import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
+import org.labkey.api.query.FieldKey;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.reader.Readers;
+import org.labkey.api.reports.Report;
+import org.labkey.api.reports.ReportService;
+import org.labkey.api.reports.report.ReportDB;
+import org.labkey.api.reports.report.ReportDescriptor;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.CSRF;
@@ -58,6 +67,7 @@ import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.RequiresSiteAdmin;
 import org.labkey.api.security.SecurityManager;
+import org.labkey.api.security.UserManager;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
@@ -89,6 +99,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -392,6 +403,61 @@ public class CDSController extends SpringActionController
         }
     }
 
+    @RequiresPermission(ReadPermission.class)
+    public class GetDBReportInfoAction extends ApiAction<DBReportForm>
+    {
+        @Override
+        public Object execute(DBReportForm form, BindException errors) throws Exception
+        {
+            ApiSimpleResponse response = new ApiSimpleResponse();
+            SimpleFilter filter = new SimpleFilter(FieldKey.fromParts("RowId"), form._rowId);
+            ReportDB reportDB = new TableSelector(CoreSchema.getInstance().getTableInfoReport(), filter, null).getObject(ReportDB.class);
+
+            if (reportDB != null)
+            {
+                Report report = ReportService.get().getReport(reportDB);
+                Container reportContainer = null;
+                if (report != null && report.getContainerId() != null)
+                    reportContainer = ContainerManager.getForId(report.getContainerId());
+                if (reportContainer == null || !report.hasPermission(getUser(), reportContainer, ReadPermission.class))
+                {
+                    errors.reject(ERROR_MSG, "User doesn't have permission to view report");
+                }
+                else
+                {
+                    ReportDescriptor descriptor = report.getDescriptor();
+                    SimpleDateFormat dt1 = new SimpleDateFormat("MM/dd/yyyy");
+                    response.put("created", dt1.format(descriptor.getCreated()));
+                    response.put("name", descriptor.getReportName());
+                    response.put("reportContainer", descriptor.getContainerId());
+                    response.put("type", descriptor.getReportType());
+                    response.put("author", UserManager.getDisplayNameOrUserId(reportDB.getCreatedBy(), getUser()));
+                }
+            }
+            else
+            {
+                errors.reject(ERROR_MSG, "Report doesn't exist");
+            }
+
+            response.put("success", !errors.hasErrors());
+            return response;
+        }
+    }
+
+    public static class DBReportForm
+    {
+        private int _rowId = -1;
+
+        public int getRowId()
+        {
+            return _rowId;
+        }
+
+        public void setRowId(int rowId)
+        {
+            _rowId = rowId;
+        }
+    }
 
     public static class GetCitationsForm
     {

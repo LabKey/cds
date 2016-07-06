@@ -162,7 +162,9 @@ Ext.define('Connector.view.PageHeader', {
                 tabEls.push(el);
                 el.on('click', function()
                 {
-                    this.fireEvent('tabselect', this.dimension, this.model, this.tabs[i]);
+                    if (this.tabs) {
+                        this.fireEvent('tabselect', this.dimension, this.model, this.tabs[i]);
+                    }
                 }, this);
 
                 if (i === this.activeTab)

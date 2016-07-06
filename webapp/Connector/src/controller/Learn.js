@@ -146,7 +146,8 @@ Ext.define('Connector.controller.Learn', {
             id: ctx[1],
             tab: ctx[2],
             params: {
-                q: params ? params.q : lastSearch
+                q: params ? params.q : lastSearch,
+                reportId: params ? params.reportId : undefined
             }
         };
         this.lastContext[currentDimension] = Ext.clone(this.context);
@@ -237,7 +238,7 @@ Ext.define('Connector.controller.Learn', {
                     //
                     this.dimension = dim;
                     this.updateLock = true;
-                    v.selectDimension(dim, id, tab, context.params.q);
+                    v.selectDimension(dim, id, tab, context.params);
                     this.updateLock = false;
                 }
                 else {

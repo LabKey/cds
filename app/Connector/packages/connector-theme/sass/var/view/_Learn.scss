@@ -405,3 +405,31 @@ div.list-container {
     }
   }
 }
+
+.reportinfo {
+  font-family: Georgia, serif;
+  .reportinfoheader {
+    font-size: 18px;
+    padding-bottom: 5px;
+  }
+  .reportinfoname {
+    width: 120px;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .reportinfovalue {
+    font-size: 16px;
+  }
+
+}
+
+.reportView {
+  margin-top: 20px;
+}
+
+.reportContent {
+  padding-left: 28px;
+  padding-top: 10px;
+  background-color: #ffffff;
+}
