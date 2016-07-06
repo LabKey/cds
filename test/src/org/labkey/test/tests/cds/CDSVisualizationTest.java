@@ -1545,12 +1545,25 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Checking for the time points selector.");
         ip.clickTimePointsCount();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        waitForText("Time points in the plot");
+        sleep(CDSHelper.CDS_WAIT);
         text = ip.getTimePointsList();
         assertTrue("Time Point list does not contain 'Has data in active filters'.", text.contains("Has data in active filters"));
-        assertTrue("Time Point list does not contain 'Day '.", text.contains("Day "));
-        assertTrue("Time Point list does not contain ' study)'.", text.contains(" study)"));
-        ip.clickCancel();
+        assertTrue("Time Point list does not contain 'Day '.", text.contains("Day 0 - (7 studies)"));
+        log("Use the info pane to apply a filter to the plot.");
+        ip.setFilter("Day 14 - (1 study)");
+
+        assertEquals("Subjects count not as expected.", 49, ip.getSubjectCount());
+        assertEquals("Species count not as expected.", 1, ip.getSpeciesCount());
+        assertEquals("Studies count not as expected.", 1, ip.getStudiesCount());
+        assertEquals("Product count not as expected.", 1, ip.getProductCount());
+        assertEquals("Treatments count not as expected.", 4, ip.getTreatmentsCount());
+        assertEquals("Time Points count not as expected.", 1, ip.getTimePointsCount());
+        assertEquals("Antigens In X count not as expected.", 1, ip.getAntigensInXCount());
+        assertEquals("Antigens In Y count not as expected.", 1, ip.getAntigensInYCount());
+        log("Clearing the filter.");
+        cds.clearFilter(1);
+
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         log("Use the info pane to apply a filter to the plot.");

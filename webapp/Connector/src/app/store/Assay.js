@@ -26,9 +26,10 @@ Ext.define('Connector.app.store.Assay', {
             success: this.onLoadAssays,
             scope: this
         });
-        LABKEY.Query.executeSql({
+        
+        LABKEY.Query.selectRows({
             schemaName: 'cds',
-            sql: 'SELECT DISTINCT assay_identifier, label, study_name FROM ds_subjectassay',
+            queryName: 'ds_studiesforassays',
             success: this.onLoadStudies,
             scope: this
         })
@@ -108,7 +109,8 @@ Ext.define('Connector.app.store.Assay', {
                     if (assay.assay_identifier === this.assayStudies[s].assay_identifier) {
                         studies.push({
                             id: this.assayStudies[s].study_name,
-                            label: this.assayStudies[s].label
+                            label: this.assayStudies[s].label + ' (' + this.assayStudies[s].short_name + ')',
+                            has_data: this.assayStudies[s].has_data
                         });
                     }
                 }

@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-SELECT
-prot AS study_name,
-prot,
-product_id
-FROM cds.import_studyproduct
+SELECT DISTINCT
+   md.prot AS study_name,
+   md.prot,
+   md.product_id,
+   d.product_id IS NOT NULL AND d.prot IS NOT NULL AS has_data
+FROM import_studyproduct md --metadataTable
+--Pulls in real data for each metadata relationship if it exists.
+LEFT JOIN ds_subjectproduct d --dataTable
+ON (
+   md.prot=d.prot
+   AND md.product_id=d.product_id
+)

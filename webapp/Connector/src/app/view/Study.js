@@ -20,15 +20,26 @@ Ext.define('Connector.app.view.Study', {
             months += d2.getMonth();
             return months <= 0 ? 0 : months;
         },
+        assaysWithData : function(assays) {
+            var ret = [];
+            for (var itr = 0; itr < assays.length; ++itr) {
+                var assay = assays[itr];
+                if (assay.has_data) {
+                    ret = ret.concat(assay);
+                }
+            }
+            return ret;
+        },
         columnHeaderTpl : new Ext.XTemplate(
             '<div class="learncolumnheader">',
                 '<div class="detail-left-column">Description</div>',
                 '<div class="detail-middle-column">Start Date</div>',
-                '<div class="detail-end-column">Products</div>',
+                '<div class="detail-small-column">Products</div>',
+                '<div class="detail-small-column">Data Added</div>',
             '</div>'
         ),
         searchFields: [
-            'label', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
+            'label', 'title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
             'conclusions', 'publications', 'context', 'population', 'data_availability',
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
         ]
@@ -40,16 +51,13 @@ Ext.define('Connector.app.view.Study', {
         '</tpl>',
         '<tpl for=".">',
             '<div class="detail-container">',
-                '<div class="detail-wrapper">',
+                '<div class="detail-wrapper {[values.data_availability ? "has-data" : ""]}">',
                     '<div class="detail-left-column detail-description">',
                         '<h2>{label:htmlEncode}</h2>',
                         '<tpl if="species && species.length &gt; 0">',
                             '<span class="detail-type-text">{species:htmlEncode}</span>',
                         '</tpl>',
                         '<div class="detail-description-text">',
-                            '<tpl if="data_availability">',
-                                '<div class="data-availability-text">{data_availability}</div>',
-                            '</tpl>',
                             '{description}',
                         '</div>', // allow html
                     '</div>',
@@ -74,18 +82,28 @@ Ext.define('Connector.app.view.Study', {
                             '<tpl elseif="public_date">',
                                 '<div class="detail-gray-text">Ended {public_date:this.renderDate}</div>',
                             '</tpl>',
+                        '<tpl else>',
+                            '<div>&nbsp</div>', //preserves spacing
                         '</tpl>',
                     '</div>',
-                    '<div class="detail-right-column detail-text">',
+                    '<div class="detail-small-column detail-text">',
                         '<ul>',
                             '<tpl if="products.length &gt; 0">',
                                 '<tpl for="products">',
-                                    '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
+                                    '<li class="detail-gray-text">bar{product_name:htmlEncode}</li>',
                                 '</tpl>',
                             '<tpl else>',
                                 '<li class="detail-gray-text">No related products</li>',
                             '</tpl>',
                         '</ul>',
+                    '</div>',
+                    '<div class="detail-small-column detail-text">',
+                        '<tpl if="data_availability">',
+                            '<div class="detail-has-data"></div>',
+                            '<div class="detail-gray-text">{[this.numAssaysWithData(values.assays)]}</div>',
+                        '<tpl else>',
+                            'No data found',
+                        '</tpl>',
                     '</div>',
                 '</div>',
             '</div>',
@@ -96,6 +114,10 @@ Ext.define('Connector.app.view.Study', {
             },
             monthDiff : function(date1, date2) {
                 return Connector.app.view.Study.monthDiff(new Date(date1), new Date(date2));
+            },
+            numAssaysWithData : function(assays) {
+                var num = Connector.app.view.Study.assaysWithData(assays).length;
+                return num == 1 ? num + ' Assay' : num + ' Assays';
             }
         }
     ),
@@ -111,5 +133,65 @@ Ext.define('Connector.app.view.Study', {
         ).apply({});
 
         this.callParent();
+
+        this.on({
+            'itemmouseenter' : function(view, record, item) {
+                if (record.data.data_availability) {
+                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
+                        id = Ext.id();
+
+                    checkmark.on('mouseenter', this.showAssayDataTooltip, this, {
+                        record: record,
+                        id: id
+                    });
+                    checkmark.on('mouseleave', this.hideAssayDataTooltip, this, {
+                        id: id
+                    });
+                }
+            },
+
+            'itemmouseleave' : function(view, record, item) {
+                if (record.data.data_availability) {
+                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
+                    checkmark.un('mouseenter', this.showAssayDataTooltip, this);
+                    checkmark.un('mouseleave', this.hideAssayDataTooltip, this);
+                }
+            },
+
+            scope: this
+        })
+    },
+
+    showAssayDataTooltip : function(event, item, options) {
+        var assays = options.record.data.assays;
+        var assayList = Connector.app.view.Study.assaysWithData(assays);
+        var assayListHTML = "<ul>";
+        for (var itr = 0; itr < assayList.length; ++itr) {
+            assayListHTML += "<li>" + assayList[itr].assay_full_name + "</li>\n";
+        }
+        assayListHTML += "</ul>";
+
+        var calloutMgr = hopscotch.getCalloutManager(),
+            _id = options.id,
+            displayTooltip = setTimeout(function() {
+                calloutMgr.createCallout(Ext.apply({
+                    id: _id,
+                    xOffset: 10,
+                    showCloseButton: false,
+                    target: item,
+                    placement: 'right',
+                    title: "Assays with Data Available",
+                    content: assayListHTML
+                }, {}));
+            }, 200);
+
+        this.on('hide' + _id, function() {
+            clearTimeout(displayTooltip);
+            calloutMgr.removeCallout(_id);
+        }, this);
+    },
+
+    hideAssayDataTooltip : function(event, item, options) {
+        this.fireEvent('hide' + options.id);
     }
 });

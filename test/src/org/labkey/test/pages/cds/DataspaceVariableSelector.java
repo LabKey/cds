@@ -168,7 +168,7 @@ public abstract class DataspaceVariableSelector
     public void clearVariableOptions()
     {
         // TODO: remove 'x-body' once helper takes a css selector
-        _test._ext4Helper.clearGridSelection("x-body " + window().getLocatorString() + " .variableoptionsgrid");
+        _test._ext4Helper.clearGridSelection("x-body " + window().getLoc() + " .variableoptionsgrid");
     }
 
     public void selectAllVariableOptions()

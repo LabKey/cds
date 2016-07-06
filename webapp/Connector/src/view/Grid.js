@@ -23,6 +23,15 @@ Ext.define('Connector.view.Grid', {
 
     paging: true,
 
+    statics: {
+        getDefaultSort : function () {
+            return [{
+                property: QueryUtils.STUDY_ALIAS_PREFIX + 'SubjectId',
+                direction: 'ASC'
+            }];
+        }
+    },
+
     constructor : function(config)
     {
         this.callParent([config]);
@@ -34,7 +43,7 @@ Ext.define('Connector.view.Grid', {
         // At times the store can be completely replaced for a given grid. When this occurs we want to
         // maintain the sorts that appeared on the previous store instance. They are temporarily stored
         // on this property.
-        this.sorters = undefined;
+        this.sorters = Connector.view.Grid.getDefaultSort();
 
         this.columnMap = {};
 
@@ -256,11 +265,11 @@ Ext.define('Connector.view.Grid', {
                 this.sorters = sorters;
             }
             else {
-                this.sorters = undefined;
+                this.sorters = Connector.view.Grid.getDefaultSort();
             }
         }
         else {
-            this.sorters = undefined;
+            this.sorters = Connector.view.Grid.getDefaultSort();
         }
 
         this.grid = null;

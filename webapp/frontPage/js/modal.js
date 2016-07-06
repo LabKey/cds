@@ -58,7 +58,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
               $.fn.fullpage.setKeyboardScrolling(false);
               self.$modal = $(this.currItem.inlineElement);
               self.registerActions();
-              if (window.frontPage) {
+              if (window.frontPage && window.frontPage.updateVideoSize) {
                 window.frontPage.updateVideoSize();
               }
             },
