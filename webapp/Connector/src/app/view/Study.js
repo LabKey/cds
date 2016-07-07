@@ -20,16 +20,6 @@ Ext.define('Connector.app.view.Study', {
             months += d2.getMonth();
             return months <= 0 ? 0 : months;
         },
-        assaysWithData : function(assays) {
-            var ret = [];
-            for (var itr = 0; itr < assays.length; ++itr) {
-                var assay = assays[itr];
-                if (assay.has_data) {
-                    ret = ret.concat(assay);
-                }
-            }
-            return ret;
-        },
         columnHeaderTpl : new Ext.XTemplate(
             '<div class="learncolumnheader">',
                 '<div class="detail-left-column">Description</div>',
@@ -100,7 +90,7 @@ Ext.define('Connector.app.view.Study', {
                     '<div class="detail-small-column detail-text">',
                         '<tpl if="data_availability">',
                             '<div class="detail-has-data"></div>',
-                            '<div class="detail-gray-text">{[this.numAssaysWithData(values.assays)]}</div>',
+                            '<div class="detail-gray-text">{[this.numAssaysLabel(values.assays_added_count)]}</div>',
                         '<tpl else>',
                             'No data found',
                         '</tpl>',
@@ -115,8 +105,7 @@ Ext.define('Connector.app.view.Study', {
             monthDiff : function(date1, date2) {
                 return Connector.app.view.Study.monthDiff(new Date(date1), new Date(date2));
             },
-            numAssaysWithData : function(assays) {
-                var num = Connector.app.view.Study.assaysWithData(assays).length;
+            numAssaysLabel : function(num) {
                 return num == 1 ? num + ' Assay' : num + ' Assays';
             }
         }
@@ -163,8 +152,7 @@ Ext.define('Connector.app.view.Study', {
     },
 
     showAssayDataTooltip : function(event, item, options) {
-        var assays = options.record.data.assays;
-        var assayList = Connector.app.view.Study.assaysWithData(assays);
+        var assayList = options.record.data.assays_added;
         var assayListHTML = "<ul>";
         for (var itr = 0; itr < assayList.length; ++itr) {
             assayListHTML += "<li>" + assayList[itr].assay_full_name + "</li>\n";
