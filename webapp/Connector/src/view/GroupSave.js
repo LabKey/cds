@@ -88,6 +88,19 @@ Ext.define('Connector.view.GroupSave', {
             ]
         }];
 
+        LABKEY.Security.getUserPermissions({
+            success: function (userPerms, resp)
+            {
+                if(this.getIsEditorOrHigher(userPerms))
+                {
+                    Ext.getCmp('creategroupshared').show();
+                    Ext.getCmp('editgroupshared').show();
+                    Ext.getCmp('updategroupshared').show();
+                }
+            },
+            scope: this
+        });
+
         this.callParent();
 
         Ext.EventManager.onWindowResize(this.onWindowResize, this);
@@ -137,6 +150,14 @@ Ext.define('Connector.view.GroupSave', {
                         name: 'groupdescription',
                         emptyText: 'Group description',
                         maxLength: 200
+                    },{
+                        xtype: 'checkbox',
+                        id: 'creategroupshared',
+                        itemId: 'groupshared',
+                        name: 'groupshared',
+                        fieldLabel: 'Shared group',
+                        checked: false,
+                        hidden: true
                     }]
                 },{
                     xtype: 'box',
@@ -186,7 +207,6 @@ Ext.define('Connector.view.GroupSave', {
                 scope: this
             });
         }
-
         return this.createGroup;
     },
 
@@ -233,11 +253,30 @@ Ext.define('Connector.view.GroupSave', {
                         emptyText: 'no description provided',
                         maxLength: 200
                     },{
+                        xtype: 'checkbox',
+                        id: 'editgroupshared',
+                        itemId: 'groupshared',
+                        name: 'groupshared',
+                        fieldLabel: 'Shared group',
+                        checked: false,
+                        hidden: true
+                    },{
                         xtype: 'hiddenfield',
                         itemId: 'groupid',
                         name: 'groupid'
-                    }]
-                },{
+                    },{
+                        xtype: 'hiddenfield',
+                        itemId: 'groupcategoryid',
+                        name: 'groupcategoryid'
+                    },{
+                        xtype: 'hiddenfield',
+                        itemId: 'groupfilters',
+                        name: 'groupfilters'
+                    },{
+                        xtype: 'hiddenfield',
+                        itemId: 'groupparticipantids',
+                        name: 'groupparticipantids'
+                    }]},{
                     xtype: 'toolbar',
                     dock: 'bottom',
                     ui: 'lightfooter',
@@ -349,6 +388,14 @@ Ext.define('Connector.view.GroupSave', {
                         name: 'groupdescription',
                         emptyText: 'no description provided',
                         maxLength: 200
+                    },{
+                        xtype: 'checkbox',
+                        id: 'updategroupshared',
+                        itemId: 'groupshared',
+                        name: 'groupshared',
+                        fieldLabel: 'Shared group',
+                        checked: false,
+                        hidden: true
                     }]
                 },{
                     xtype: 'box',
@@ -434,6 +481,16 @@ Ext.define('Connector.view.GroupSave', {
         return this.mode;
     },
 
+    getIsEditorOrHigher : function (userPerms)
+    {
+        if ((userPerms.container.effectivePermissions.indexOf('org.labkey.api.security.permissions.UpdatePermission') !== -1)
+                || (userPerms.container.effectivePermissions.indexOf('org.labkey.api.study.permissions.SharedParticipantGroupPermission') !== -1)
+        )
+            return true;
+        else
+            return false;
+    },
+
     editGroup : function(group)
     {
         if (group)
@@ -458,7 +515,11 @@ Ext.define('Connector.view.GroupSave', {
             var group = Connector.model.FilterGroup.fromCohortGroup(groupModel),
                 _id = form.getComponent('groupid'),
                 name = form.getComponent('groupname'),
-                description = form.getComponent('groupdescription');
+                description = form.getComponent('groupdescription'),
+                categoryId = form.getComponent('groupcategoryid'),
+                shared = form.getComponent('groupshared'),
+                filters = form.getComponent('groupfilters'),
+                participantIds = form.getComponent('groupparticipantids');
 
             if (_id)
             {
@@ -473,6 +534,29 @@ Ext.define('Connector.view.GroupSave', {
             if (description)
             {
                 description.setValue(group.get('description'));
+            }
+
+            if (categoryId)
+            {
+                categoryId.setValue(group.get('categoryId'));
+            }
+
+            if (shared)
+            {
+                shared.setValue(group.get('shared'));
+            }
+
+            if (filters)
+            {
+                filters.setValue(Ext.encode({
+                    isLive : true,
+                    filters : group.get('filters')
+                }));
+            }
+            
+            if (participantIds)
+            {
+                participantIds.setValue(Ext.encode(group.get('participantIds')));
             }
         }
     },
@@ -534,7 +618,7 @@ Ext.define('Connector.view.GroupSave', {
     },
 
     reset : function() {
-        // only rest in 'create' mode
+        // only reset in 'create' mode
         if (this.getMode() == Connector.view.GroupSave.modes.CREATE) {
             this.clear();
         }
