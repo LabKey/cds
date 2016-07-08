@@ -66,6 +66,11 @@ Ext.define('Connector.controller.Learn', {
             //itemclick: this.onSelectItem
         });
 
+        this.control('learn > gridpanel', {
+            // itemmouseup: this.onSelectItem
+            itemclick: this.onSelectItem
+        });
+
         this.control('singleaxisview', {
             learnclick : function(data) {
                 // Assumes the data has already been validated to supportDetails

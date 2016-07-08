@@ -5,11 +5,156 @@
  */
 Ext.define('Connector.app.view.Study', {
 
-    extend : 'Ext.view.View',
-
-    itemSelector: 'div.detail-wrapper',
+    extend : 'Ext.grid.Panel',
 
     cls: 'learnstudies',
+
+    viewConfig: {
+        getRowClass: function(record) {
+            var cls = 'detail-row';
+            return record.data.data_availability ? cls + ' detail-row-has-data' : cls;
+        }
+    },
+
+    columnWidth: 600,
+
+    columns : [{
+        text: 'Description',
+        xtype: 'templatecolumn',
+        minWidth: 600,
+        resizable: false,
+        dataIndex: 'label',
+        filter: {
+            type: 'string'
+        },
+        tpl: new Ext.XTemplate(
+            '<div class="detail-description">',
+                '<h2>{label:htmlEncode}</h2>',
+                '<tpl if="species && species.length &gt; 0">',
+                    '<span class="detail-type-text">{species:htmlEncode}</span>',
+                '</tpl>',
+                '<div class="detail-description-text">',
+                    '<tpl if="data_availability">',
+                        '<div class="data-availability-text">{data_availability}</div>',
+                    '</tpl>',
+                    '{description}',
+                '</div>', // allow html
+            '</div>')
+    },{
+        text: 'Date',
+        xtype: 'templatecolumn',
+        minWidth: 200,
+        resizable: false,
+        dataIndex: 'label',
+        filter: {
+            type: 'string'
+        },
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text">',
+                    '<tpl if="first_enr_date || followup_complete_date">',
+                        '<tpl if="first_enr_date && followup_complete_date">',
+                            '<div class="detail-black-text">{first_enr_date:this.renderDate}</div>',
+                            '<div class="detail-gray-text">to {followup_complete_date:this.renderDate}</div>',
+                            '<div class="detail-gray-text">{[this.monthDiff(values.first_enr_date, values.followup_complete_date)]} months in duration</div>',
+                        '<tpl elseif="first_enr_date">',
+                            '<div class="detail-black-text">Began {first_enr_date:this.renderDate}</div>',
+                        '<tpl elseif="followup_complete_date">',
+                            '<div class="detail-gray-text">Ended {followup_complete_date:this.renderDate}</div>',
+                        '</tpl>',
+                    '<tpl elseif="start_date || public_date">',
+                        '<tpl if="start_date && public_date">',
+                            '<div class="detail-black-text">{start_date:this.renderDate}</div>',
+                            '<div class="detail-gray-text">to {public_date:this.renderDate}</div>',
+                            '<div class="detail-gray-text">{[this.monthDiff(values.start_date, values.public_date)]} months in duration</div>',
+                        '<tpl elseif="start_date">',
+                            '<div class="detail-black-text">Began {start_date:this.renderDate}</div>',
+                        '<tpl elseif="public_date">',
+                            '<div class="detail-gray-text">Ended {public_date:this.renderDate}</div>',
+                        '</tpl>',
+                    '<tpl else>',
+                        '<div>&nbsp</div>', //preserves spacing
+                    '</tpl>',
+                '</div>',
+                {
+                    renderDate : function(date) {
+                        return Connector.app.view.Study.dateRenderer(date);
+                    },
+                    monthDiff : function(date1, date2) {
+                        return Connector.app.view.Study.monthDiff(new Date(date1), new Date(date2));
+                    },
+                    numAssaysWithData : function(assays) {
+                        var num = Connector.app.view.Study.assaysWithData(assays).length;
+                        return num == 1 ? num + ' Assay' : num + ' Assays';
+                    }
+                }
+        )
+    }, {
+        text: 'Products',
+        xtype: 'templatecolumn',
+        minWidth: 200,
+        resizable: false,
+        dataIndex: 'products',
+
+        //Holding onto to Renderer function because we may switch this to sorting solely based on the first product
+        // filter: {
+        //     type: 'array'
+        // },
+        // renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+        //     var tpl = new Ext.XTemplate(
+        //         '<div class="detail-small-column detail-text">',
+        //             '<ul>',
+        //                 '<tpl if="products.length &gt; 0">',
+        //                     '<tpl for="products">',
+        //                         '<li class="detail-gray-text">bar{product_name:htmlEncode}</li>',
+        //                     '</tpl>',
+        //                 '<tpl else>',
+        //                     '<li class="detail-gray-text">No related products</li>',
+        //                 '</tpl>',
+        //             '</ul>',
+        //         '</div>');
+        //     // console.log(value);
+        //     VV = value;
+        //     RR = record;
+        //     TT = tpl;
+        //
+        //     // console.log(tpl.apply(record.data));
+        //     return tpl.apply(record.data);
+        // }
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text">',
+                    '<ul>',
+                        '<tpl if="products.length &gt; 0">',
+                            '<tpl for="products">',
+                                '<li class="detail-gray-text">bar{product_name:htmlEncode}</li>',
+                            '</tpl>',
+                        '<tpl else>',
+                            '<li class="detail-gray-text">No related products</li>',
+                        '</tpl>',
+                    '</ul>',
+                '</div>'
+        )
+    },{
+        text: 'Assays',
+        xtype: 'templatecolumn',
+        minWidth: 200,
+        resizable: false,
+        dataIndex: 'assays_added_count',
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text">',
+                    '<tpl if="data_availability">',
+                        '<div class="detail-has-data"></div>',
+                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added_count)]}</div>',
+                    '<tpl else>',
+                        'No data found',
+                    '</tpl>',
+                '</div>',
+                {
+                    assayCountText : function(assay_count) {
+                        return assay_count == 1 ? assay_count + ' Assay' : assay_count + ' Assays';
+                    }
+                }
+        )
+    }],
 
     statics: {
         dateRenderer : Ext.util.Format.dateRenderer("M jS, Y"),
@@ -34,82 +179,6 @@ Ext.define('Connector.app.view.Study', {
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
         ]
     },
-
-    tpl: new Ext.XTemplate(
-        '<tpl if="values.length &gt; 0">',
-            '{[ Connector.app.view.Study.columnHeaderTpl.apply(values) ]}',
-        '</tpl>',
-        '<tpl for=".">',
-            '<div class="detail-container">',
-                '<div class="detail-wrapper {[values.data_availability ? "has-data" : ""]}">',
-                    '<div class="detail-left-column detail-description">',
-                        '<h2>{label:htmlEncode}</h2>',
-                        '<tpl if="species && species.length &gt; 0">',
-                            '<span class="detail-type-text">{species:htmlEncode}</span>',
-                        '</tpl>',
-                        '<div class="detail-description-text">',
-                            '{description}',
-                        '</div>', // allow html
-                    '</div>',
-                    '<div class="detail-middle-column detail-text">',
-                        '<tpl if="first_enr_date || followup_complete_date">',
-                            '<tpl if="first_enr_date && followup_complete_date">',
-                                '<div class="detail-black-text">{first_enr_date:this.renderDate}</div>',
-                                '<div class="detail-gray-text">to {followup_complete_date:this.renderDate}</div>',
-                                '<div class="detail-gray-text">{[this.monthDiff(values.first_enr_date, values.followup_complete_date)]} months in duration</div>',
-                            '<tpl elseif="first_enr_date">',
-                                '<div class="detail-black-text">Began {first_enr_date:this.renderDate}</div>',
-                            '<tpl elseif="followup_complete_date">',
-                                '<div class="detail-gray-text">Ended {followup_complete_date:this.renderDate}</div>',
-                            '</tpl>',
-                        '<tpl elseif="start_date || public_date">',
-                            '<tpl if="start_date && public_date">',
-                                '<div class="detail-black-text">{start_date:this.renderDate}</div>',
-                                '<div class="detail-gray-text">to {public_date:this.renderDate}</div>',
-                                '<div class="detail-gray-text">{[this.monthDiff(values.start_date, values.public_date)]} months in duration</div>',
-                            '<tpl elseif="start_date">',
-                                '<div class="detail-black-text">Began {start_date:this.renderDate}</div>',
-                            '<tpl elseif="public_date">',
-                                '<div class="detail-gray-text">Ended {public_date:this.renderDate}</div>',
-                            '</tpl>',
-                        '<tpl else>',
-                            '<div>&nbsp</div>', //preserves spacing
-                        '</tpl>',
-                    '</div>',
-                    '<div class="detail-small-column detail-text">',
-                        '<ul>',
-                            '<tpl if="products.length &gt; 0">',
-                                '<tpl for="products">',
-                                    '<li class="detail-gray-text">bar{product_name:htmlEncode}</li>',
-                                '</tpl>',
-                            '<tpl else>',
-                                '<li class="detail-gray-text">No related products</li>',
-                            '</tpl>',
-                        '</ul>',
-                    '</div>',
-                    '<div class="detail-small-column detail-text">',
-                        '<tpl if="data_availability">',
-                            '<div class="detail-has-data"></div>',
-                            '<div class="detail-gray-text">{[this.numAssaysLabel(values.assays_added_count)]}</div>',
-                        '<tpl else>',
-                            'No data found',
-                        '</tpl>',
-                    '</div>',
-                '</div>',
-            '</div>',
-        '</tpl>',
-        {
-            renderDate : function(date) {
-                return Connector.app.view.Study.dateRenderer(date);
-            },
-            monthDiff : function(date1, date2) {
-                return Connector.app.view.Study.monthDiff(new Date(date1), new Date(date2));
-            },
-            numAssaysLabel : function(num) {
-                return num == 1 ? num + ' Assay' : num + ' Assays';
-            }
-        }
-    ),
 
     initComponent : function() {
 
