@@ -27,8 +27,13 @@ Ext.define('Connector.model.Group', {
             }
             return containsPlot;
         }},
+        {name: 'categoryId'},
+        {name: 'shared', type: 'boolean', defaultValue: false, convert : function(value, partial) {
+            return partial.raw.category.shared;
+        }},
         {name: 'type'},
-        {name: 'participantIds'} // array
+        {name: 'participantIds'}, // array
+        {name: 'modified', type: 'DATE'}
     ],
 
     statics: {
@@ -39,7 +44,38 @@ Ext.define('Connector.model.Group', {
                     pageSize : 100,
                     model    : 'Connector.model.Group',
                     autoLoad : true,
-                    sorters  : [{property: 'label'}],
+                    sorters  : [{
+                        sorterFn: function (group1, group2) {
+                            var g1shared = group1.get('shared');
+                            var g2shared = group2.get('shared');
+                            if(g1shared !== g2shared) {  // all non-shared items come before all shared items
+                                if (g1shared === true) {
+                                    return 1;
+                                }
+                                else {
+                                    return -1;
+                                }
+                            }
+                            if(g1shared === false) {  // both unshared, sort alphabetically
+                                return group1.get('label').localeCompare(group2.get('label'));
+                            }
+                            else {  // both shared, sort by modified date descending
+                                var g1modified = group1.get('modified');
+                                var g2modified = group2.get('modified');
+
+                                if(g1modified < g2modified) {
+                                    return 1;
+                                }
+                                if(g1modified === g2modified) {
+                                    return 0;
+                                }
+                                else {
+                                    return -1;
+                                }
+                            }
+                        }
+                    }],
+
                     proxy    : {
                         type   : 'ajax',
                         url: LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api', null, {
@@ -56,10 +92,12 @@ Ext.define('Connector.model.Group', {
                             {
                                 for (var i=0; i < recs.length; i++)
                                 {
-                                    if (recs[i].data.id < 0)
+                                    // no filters = LabKey group, not CDS, which won't work in CDS
+                                    if ((recs[i].data.id < 0) || (recs[i].data.filters === ""))
                                         s.remove(recs[i]);
                                 }
                             }
+
                         }
                     }
                 };
