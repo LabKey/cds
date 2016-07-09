@@ -312,6 +312,42 @@ img.detail-has-data-small {
   }
 }
 
+.learngrid {
+  padding-right: $pageLeftPadding !important;
+  padding-left: $pageLeftPadding !important;
+
+  .x-column-header-text {
+    color: $heat-scale-2;
+    font-size: 12px;
+    /*color: $heat-scale-2;*/
+    text-transform: uppercase;
+  }
+
+  .x-grid-header-ct {
+    border: none !important;
+  }
+
+  .x-column-header {
+    border-top: none !important;
+    border-right: none !important;
+    border-left: none !important;
+  }
+
+  .detail-row-text {
+    padding-top: $sectionTopPadding;
+    padding-bottom: $sectionTopPadding;
+  }
+
+  .x-grid-td {
+    background-color: $gray-8 !important;
+  }
+
+  .x-column-header-inner {
+    padding-top: $sectionTopPadding;
+    padding-bottom: 12px;
+  }
+}
+
 .detail-row {
   //padding: 0px $pageLeftPadding;
   margin-bottom: 8px;

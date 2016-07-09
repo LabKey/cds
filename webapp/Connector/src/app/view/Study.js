@@ -7,7 +7,7 @@ Ext.define('Connector.app.view.Study', {
 
     extend : 'Ext.grid.Panel',
 
-    cls: 'learnstudies',
+    cls: 'learnstudies learngrid',
 
     viewConfig: {
         getRowClass: function(record) {
@@ -16,41 +16,36 @@ Ext.define('Connector.app.view.Study', {
         }
     },
 
-    columnWidth: 600,
-
     columns : [{
         text: 'Description',
         xtype: 'templatecolumn',
-        minWidth: 600,
+        minWidth: 1200,
         resizable: false,
         dataIndex: 'label',
         filter: {
             type: 'string'
         },
         tpl: new Ext.XTemplate(
-            '<div class="detail-description">',
+            '<div class="detail-description detail-row-text">',
                 '<h2>{label:htmlEncode}</h2>',
                 '<tpl if="species && species.length &gt; 0">',
                     '<span class="detail-type-text">{species:htmlEncode}</span>',
                 '</tpl>',
                 '<div class="detail-description-text">',
-                    '<tpl if="data_availability">',
-                        '<div class="data-availability-text">{data_availability}</div>',
-                    '</tpl>',
                     '{description}',
                 '</div>', // allow html
             '</div>')
     },{
         text: 'Date',
         xtype: 'templatecolumn',
-        minWidth: 200,
+        minWidth: 300,
         resizable: false,
         dataIndex: 'label',
         filter: {
             type: 'string'
         },
         tpl: new Ext.XTemplate(
-                '<div class="detail-text">',
+                '<div class="detail-text detail-row-text">',
                     '<tpl if="first_enr_date || followup_complete_date">',
                         '<tpl if="first_enr_date && followup_complete_date">',
                             '<div class="detail-black-text">{first_enr_date:this.renderDate}</div>',
@@ -91,7 +86,7 @@ Ext.define('Connector.app.view.Study', {
     }, {
         text: 'Products',
         xtype: 'templatecolumn',
-        minWidth: 200,
+        minWidth: 300,
         resizable: false,
         dataIndex: 'products',
 
@@ -121,7 +116,7 @@ Ext.define('Connector.app.view.Study', {
         //     return tpl.apply(record.data);
         // }
         tpl: new Ext.XTemplate(
-                '<div class="detail-text">',
+                '<div class="detail-text detail-row-text">',
                     '<ul>',
                         '<tpl if="products.length &gt; 0">',
                             '<tpl for="products">',
@@ -136,11 +131,11 @@ Ext.define('Connector.app.view.Study', {
     },{
         text: 'Assays',
         xtype: 'templatecolumn',
-        minWidth: 200,
+        minWidth: 300,
         resizable: false,
         dataIndex: 'assays_added_count',
         tpl: new Ext.XTemplate(
-                '<div class="detail-text">',
+                '<div class="detail-text detail-row-text">',
                     '<tpl if="data_availability">',
                         '<div class="detail-has-data"></div>',
                         '<div class="detail-gray-text">{[this.assayCountText(values.assays_added_count)]}</div>',
@@ -186,7 +181,7 @@ Ext.define('Connector.app.view.Study', {
         // Continue to show the column headers even when no data is present
         //
         this.emptyText = new Ext.XTemplate(
-            Connector.app.view.Study.columnHeaderTpl.apply({}),
+            // Connector.app.view.Study.columnHeaderTpl.apply({}),
             '<div class="detail-container"><div class="saeempty">None of the selected studies have data for this category.</div></div>'
         ).apply({});
 
