@@ -18,13 +18,6 @@ Ext.define('Connector.app.view.StudyProducts', {
     cls: 'learnstudyproducts learngrid',
 
     statics: {
-        columnHeaderTpl: new Ext.XTemplate(
-            '<div class="learncolumnheader">',
-                '<div class="detail-left-column">Product name</div>',
-                '<div class="detail-middle-column">Type</div>',
-                '<div class="detail-right-column">Developer</div>',
-            '</div>'
-        ),
         searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer']
     },
 
@@ -79,7 +72,6 @@ Ext.define('Connector.app.view.StudyProducts', {
         // Continue to show the column headers even when no data is present
         //
         this.emptyText = new Ext.XTemplate(
-            // Connector.app.view.StudyProducts.columnHeaderTpl.apply({}),
             '<div class="detail-container"><div class="saeempty">None of the selected study products have data for this category.</div></div>'
         ).apply({});
 

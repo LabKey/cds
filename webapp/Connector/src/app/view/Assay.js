@@ -27,7 +27,6 @@ Ext.define('Connector.app.view.Assay', {
         minWidth: 500,
         flex: 60/100,
         resizable: false,
-        //todo: this probably needs to be a composite pre-computed column
         dataIndex: 'assay_short_name',
         filter: {
             type: 'string'
@@ -59,7 +58,6 @@ Ext.define('Connector.app.view.Assay', {
         minWidth: 150,
         flex: 20/100,
         resizable: false,
-        //todo: this probably needs to be a composite pre-computed column
         dataIndex: 'assay_body_system_target',
         filter: {
             type: 'string'
@@ -77,7 +75,6 @@ Ext.define('Connector.app.view.Assay', {
         // Continue to show the column headers even when no data is present
         //
         this.emptyText = new Ext.XTemplate(
-                // Connector.app.view.Assay.columnHeaderTpl.apply({}),
                 '<div class="detail-container"><div class="saeempty">None of the selected assays have data for this category.</div></div>'
         ).apply({});
 

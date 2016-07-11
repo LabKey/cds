@@ -79,10 +79,6 @@ Ext.define('Connector.app.view.Study', {
                     },
                     monthDiff : function(date1, date2) {
                         return Connector.app.view.Study.monthDiff(new Date(date1), new Date(date2));
-                    },
-                    numAssaysWithData : function(assays) {
-                        var num = Connector.app.view.Study.assaysWithData(assays).length;
-                        return num == 1 ? num + ' Assay' : num + ' Assays';
                     }
                 }
         )
@@ -93,31 +89,6 @@ Ext.define('Connector.app.view.Study', {
         flex: 15/100,
         resizable: false,
         dataIndex: 'product_to_sort_on',
-        //Holding onto to Renderer function because we may switch this to sorting solely based on the first product
-        // filter: {
-        //     type: 'array'
-        // },
-        // renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-        //     var tpl = new Ext.XTemplate(
-        //         '<div class="detail-small-column detail-text">',
-        //             '<ul>',
-        //                 '<tpl if="products.length &gt; 0">',
-        //                     '<tpl for="products">',
-        //                         '<li class="detail-gray-text">bar{product_name:htmlEncode}</li>',
-        //                     '</tpl>',
-        //                 '<tpl else>',
-        //                     '<li class="detail-gray-text">No related products</li>',
-        //                 '</tpl>',
-        //             '</ul>',
-        //         '</div>');
-        //     // console.log(value);
-        //     VV = value;
-        //     RR = record;
-        //     TT = tpl;
-        //
-        //     // console.log(tpl.apply(record.data));
-        //     return tpl.apply(record.data);
-        // }
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<ul>',
@@ -164,14 +135,6 @@ Ext.define('Connector.app.view.Study', {
             months += d2.getMonth();
             return months <= 0 ? 0 : months;
         },
-        columnHeaderTpl : new Ext.XTemplate(
-            '<div class="learncolumnheader">',
-                '<div class="detail-left-column">Description</div>',
-                '<div class="detail-middle-column">Start Date</div>',
-                '<div class="detail-small-column">Products</div>',
-                '<div class="detail-small-column">Data Added</div>',
-            '</div>'
-        ),
         searchFields: [
             'label', 'title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
             'conclusions', 'publications', 'context', 'population', 'data_availability',
@@ -185,7 +148,6 @@ Ext.define('Connector.app.view.Study', {
         // Continue to show the column headers even when no data is present
         //
         this.emptyText = new Ext.XTemplate(
-            // Connector.app.view.Study.columnHeaderTpl.apply({}),
             '<div class="detail-container"><div class="saeempty">None of the selected studies have data for this category.</div></div>'
         ).apply({});
 
