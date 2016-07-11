@@ -38,12 +38,12 @@ Ext.define('Connector.app.view.Study', {
                 '</div>', // allow html
             '</div>')
     },{
-        text: 'Date',
+        text: 'Start Date',
         xtype: 'templatecolumn',
         minWidth: 150,
         flex: 15/100,
         resizable: false,
-        dataIndex: 'label',
+        dataIndex: 'date_to_sort_on',
         filter: {
             type: 'string'
         },
@@ -92,8 +92,7 @@ Ext.define('Connector.app.view.Study', {
         minWidth: 150,
         flex: 15/100,
         resizable: false,
-        dataIndex: 'products',
-
+        dataIndex: 'product_to_sort_on',
         //Holding onto to Renderer function because we may switch this to sorting solely based on the first product
         // filter: {
         //     type: 'array'

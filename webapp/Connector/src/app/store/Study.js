@@ -85,6 +85,9 @@ Ext.define('Connector.app.store.Study', {
                         study.methods_assay_schema += study.methods;
                     }
                 }
+
+                study.date_to_sort_on = study.first_enr_date || study.start_date;
+                
                 products = [];
                 for (var p=0; p < this.productData.length; p++) {
                     if (study.study_name === this.productData[p].study_name.value) {
@@ -96,6 +99,11 @@ Ext.define('Connector.app.store.Study', {
                         });
                     }
                 }
+                products.sort(function (p1, p2) {
+                    return p1.product_name.toLowerCase().localeCompare(p2.product_name.toLowerCase())
+                });
+                study.product_to_sort_on = products[0] ? products[0].product_name.toLowerCase() : '';
+
                 var assays = [], assaysAdded = [], assayAddedCount = 0;
                 study.data_availability = false;
                 for (var a=0; a < this.assayData.length; a++) {

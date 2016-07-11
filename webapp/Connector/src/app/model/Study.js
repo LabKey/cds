@@ -15,7 +15,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'study_name'},
         {name: 'Container'},
         {name: 'network'},
-        {name: 'label'},
+        {name: 'label', sortType: 'asUCString'},
         {name: 'short_name'},
         {name: 'title'},
         {name: 'type'},
@@ -52,6 +52,8 @@ Ext.define('Connector.app.model.Study', {
         {name: 'investigator_email'},
         {name: 'primary_poc_name'},
         {name: 'primary_poc_email'},
+        {name: 'date_to_sort_on', sortType: 'asDate'},
+        {name: 'product_to_sort_on'},
         {name: 'products', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }},
