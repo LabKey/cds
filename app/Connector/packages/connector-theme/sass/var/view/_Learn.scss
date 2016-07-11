@@ -338,8 +338,8 @@ img.detail-has-data-small {
     padding-bottom: $sectionTopPadding;
   }
 
-  .x-grid-td {
-    background-color: $gray-8 !important;
+  .x-grid-td, .x-grid-row-selected .x-grid-td {
+    background-color: $gray-8;
   }
 
   .x-column-header-inner {
@@ -402,15 +402,17 @@ img.detail-has-data-small {
   }
 
   &:hover {
-    @include transition(background-color 0.2s ease-out);
-    background-color: $select-hover-color;
-    cursor: pointer;
-    border-color: transparent;
+    .x-grid-td {
+      @include transition(background-color 0.2s ease-out);
+      background-color: $select-hover-color;
+      cursor: pointer;
+      border-color: transparent;
+    }
   }
 }
 .detail-row-has-data {
   .x-grid-td {
-    background-color: $gray-9 !important;
+    background-color: $gray-9;
   }
 }
 

@@ -10,9 +10,9 @@ Ext.define('Connector.app.view.Assay', {
     cls: 'learngrid',
     
     viewConfig: {
+        stripeRows: false,
         getRowClass: function(record) {
-            var cls = 'detail-row';
-            return record.data.data_availability ? cls + ' detail-row-has-data' : cls;
+            return 'detail-row';
         }
     },
 
@@ -24,7 +24,8 @@ Ext.define('Connector.app.view.Assay', {
     columns : [{
         text: 'Description & Methodology',
         xtype: 'templatecolumn',
-        minWidth: 600,
+        minWidth: 500,
+        flex: 60/100,
         resizable: false,
         //todo: this probably needs to be a composite pre-computed column
         dataIndex: 'assay_short_name',
@@ -40,7 +41,8 @@ Ext.define('Connector.app.view.Assay', {
     },{
         text: '# of Studies',
         xtype: 'templatecolumn',
-        minWidth: 600,
+        minWidth: 150,
+        flex: 20/100,
         resizable: false,
         dataIndex: 'study_count',
         filter: {
@@ -54,7 +56,8 @@ Ext.define('Connector.app.view.Assay', {
     },{
         text: 'Target Area',
         xtype: 'templatecolumn',
-        minWidth: 600,
+        minWidth: 150,
+        flex: 20/100,
         resizable: false,
         //todo: this probably needs to be a composite pre-computed column
         dataIndex: 'assay_body_system_target',

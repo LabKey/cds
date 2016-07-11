@@ -10,6 +10,7 @@ Ext.define('Connector.app.view.Study', {
     cls: 'learnstudies learngrid',
 
     viewConfig: {
+        stripeRows: false,
         getRowClass: function(record) {
             var cls = 'detail-row';
             return record.data.data_availability ? cls + ' detail-row-has-data' : cls;
@@ -19,7 +20,8 @@ Ext.define('Connector.app.view.Study', {
     columns : [{
         text: 'Description',
         xtype: 'templatecolumn',
-        minWidth: 1200,
+        minWidth: 750,
+        flex: 60/100,
         resizable: false,
         dataIndex: 'label',
         filter: {
@@ -38,7 +40,8 @@ Ext.define('Connector.app.view.Study', {
     },{
         text: 'Date',
         xtype: 'templatecolumn',
-        minWidth: 300,
+        minWidth: 150,
+        flex: 15/100,
         resizable: false,
         dataIndex: 'label',
         filter: {
@@ -86,7 +89,8 @@ Ext.define('Connector.app.view.Study', {
     }, {
         text: 'Products',
         xtype: 'templatecolumn',
-        minWidth: 300,
+        minWidth: 150,
+        flex: 15/100,
         resizable: false,
         dataIndex: 'products',
 
@@ -131,7 +135,8 @@ Ext.define('Connector.app.view.Study', {
     },{
         text: 'Assays',
         xtype: 'templatecolumn',
-        minWidth: 300,
+        minWidth: 150,
+        flex: 15/100,
         resizable: false,
         dataIndex: 'assays_added_count',
         tpl: new Ext.XTemplate(

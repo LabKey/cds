@@ -8,6 +8,7 @@ Ext.define('Connector.app.view.StudyProducts', {
     extend : 'Ext.grid.Panel',
 
     viewConfig: {
+        stripeRows: false,
         getRowClass: function(record) {
             var cls = 'detail-row';
             return record.data.data_availability ? cls + ' detail-row-has-data' : cls;
@@ -31,6 +32,7 @@ Ext.define('Connector.app.view.StudyProducts', {
         text: 'Product name',
         xtype: 'templatecolumn',
         minWidth: 600,
+        flex: 60/100,
         resizable: false,
         dataIndex: 'product_name',
         filter: {
@@ -45,7 +47,8 @@ Ext.define('Connector.app.view.StudyProducts', {
     },{
         text: 'Type',
         xtype: 'templatecolumn',
-        minWidth: 600,
+        minWidth: 150,
+        flex: 20/100,
         resizable: false,
         dataIndex: 'product_type',
         filter: {
@@ -65,7 +68,8 @@ Ext.define('Connector.app.view.StudyProducts', {
     },{
         text: 'Developer',
         xtype: 'templatecolumn',
-        minWidth: 600,
+        minWidth: 150,
+        flex: 20/100,
         resizable: false,
         dataIndex: 'product_developer',
         filter: {
