@@ -5,15 +5,7 @@
  */
 Ext.define('Connector.app.view.StudyProducts', {
 
-    extend : 'Ext.grid.Panel',
-
-    viewConfig: {
-        stripeRows: false,
-        getRowClass: function(record) {
-            var cls = 'detail-row';
-            return record.data.data_availability ? cls + ' detail-row-has-data' : cls;
-        }
-    },
+    extend : 'Connector.app.view.LearnSummary',
 
     cls: 'learnstudyproducts learngrid',
 

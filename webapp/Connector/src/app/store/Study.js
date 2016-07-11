@@ -59,7 +59,7 @@ Ext.define('Connector.app.store.Study', {
 
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)) {
-            var studies = [], products;
+            var studies = [], products, productNames;
 
             // join products to study
             Ext.each(this.studyData, function(study) {
@@ -89,6 +89,7 @@ Ext.define('Connector.app.store.Study', {
                 study.date_to_sort_on = study.first_enr_date || study.start_date;
                 
                 products = [];
+                productNames = [];
                 for (var p=0; p < this.productData.length; p++) {
                     if (study.study_name === this.productData[p].study_name.value) {
                         // Consider: These should probably be of type Connector.app.model.StudyProducts
@@ -97,6 +98,7 @@ Ext.define('Connector.app.store.Study', {
                             product_id: this.productData[p].product_id.value,
                             product_name: this.productData[p].product_id.displayValue
                         });
+                        productNames.push(this.productData[p].product_id.displayValue);
                     }
                 }
                 products.sort(function (p1, p2) {
@@ -123,6 +125,7 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
                 study.products = products;
+                study.product_names = productNames;
                 study.assays = assays;
                 study.assays_added = assaysAdded;
                 study.assays_added_count = assaysAdded.length;
