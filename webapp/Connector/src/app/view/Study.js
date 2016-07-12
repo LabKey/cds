@@ -16,8 +16,10 @@ Ext.define('Connector.app.view.Study', {
         flex: 60/100,
         resizable: false,
         dataIndex: 'label',
-        filter: {
-            type: 'string'
+        filterConfig: {
+            filterField: 'label',
+            valueType: 'string',
+            title: 'Study Label'
         },
         tpl: new Ext.XTemplate(
             '<div class="detail-description detail-row-text">',
@@ -36,6 +38,11 @@ Ext.define('Connector.app.view.Study', {
         flex: 15/100,
         resizable: false,
         dataIndex: 'date_to_sort_on',
+        filterConfig: {
+            filterField: 'start_year',
+            valueType: 'string',
+            title: 'Start Year'
+        },
         filter: {
             type: 'string'
         },
@@ -80,6 +87,11 @@ Ext.define('Connector.app.view.Study', {
         minWidth: 150,
         flex: 15/100,
         resizable: false,
+        filterConfig: {
+            filterField: 'product_names',
+            valueType: 'string',
+            title: 'Products'
+        },
         dataIndex: 'product_to_sort_on',
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
@@ -101,6 +113,11 @@ Ext.define('Connector.app.view.Study', {
         flex: 15/100,
         resizable: false,
         dataIndex: 'assays_added_count',
+        filterConfig: {
+            filterField: 'assays_added_count',
+            valueType: 'number',
+            title: '# of Assays Added'
+        },
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<tpl if="data_availability">',
@@ -131,11 +148,7 @@ Ext.define('Connector.app.view.Study', {
             'label', 'title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
             'conclusions', 'publications', 'context', 'population', 'data_availability',
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
-        ],
-        filterFields: {
-            //TODO
-            'title' : LABKEY.app.model.Filter.sorters.natural
-        }
+        ]
     },
 
     initComponent : function() {

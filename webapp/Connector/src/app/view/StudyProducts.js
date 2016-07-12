@@ -20,6 +20,11 @@ Ext.define('Connector.app.view.StudyProducts', {
         flex: 60/100,
         resizable: false,
         dataIndex: 'product_name',
+        filterConfig: {
+            filterField: 'product_name',
+            valueType: 'string',
+            title: 'Product Name'
+        },
         tpl: new Ext.XTemplate(
                 '<div class="detail-description detail-row-text">',
                     '<h2>{product_name:htmlEncode}</h2>',
@@ -33,6 +38,11 @@ Ext.define('Connector.app.view.StudyProducts', {
         flex: 20/100,
         resizable: false,
         dataIndex: 'product_type',
+        filterConfig: {
+            filterField: 'product_type',
+            valueType: 'string',
+            title: 'Type'
+        },
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-black-text">{product_type:htmlEncode}</div>',
@@ -51,6 +61,11 @@ Ext.define('Connector.app.view.StudyProducts', {
         flex: 20/100,
         resizable: false,
         dataIndex: 'product_developer',
+        filterConfig: {
+            filterField: 'product_developer',
+            valueType: 'string',
+            title: 'Developer'
+        },
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-gray-text"">{product_developer:htmlEncode}</div>',

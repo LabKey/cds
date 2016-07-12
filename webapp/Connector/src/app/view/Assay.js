@@ -21,6 +21,11 @@ Ext.define('Connector.app.view.Assay', {
         flex: 60/100,
         resizable: false,
         dataIndex: 'assay_short_name',
+        filterConfig: {
+            filterField: 'assay_short_name',
+            valueType: 'string',
+            title: 'Assay Name'
+        },
         filter: {
             type: 'string'
         },
@@ -37,6 +42,11 @@ Ext.define('Connector.app.view.Assay', {
         flex: 20/100,
         resizable: false,
         dataIndex: 'study_count',
+        filterConfig: {
+            filterField: 'study_count',
+            valueType: 'number',
+            title: '# of Studies'
+        },
         filter: {
             type: 'string'
         },
@@ -52,6 +62,11 @@ Ext.define('Connector.app.view.Assay', {
         flex: 20/100,
         resizable: false,
         dataIndex: 'assay_body_system_target',
+        filterConfig: {
+            filterField: 'assay_body_system_target',
+            valueType: 'string',
+            title: 'Target Area'
+        },
         filter: {
             type: 'string'
         },

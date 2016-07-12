@@ -53,6 +53,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'primary_poc_name'},
         {name: 'primary_poc_email'},
         {name: 'date_to_sort_on', sortType: 'asDate'},
+        {name: 'start_year'},
         {name: 'product_to_sort_on'},
         {name: 'products', convert : function(value) {
             return Ext.isArray(value) ? value : [];
