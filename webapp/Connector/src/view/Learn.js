@@ -46,6 +46,15 @@ Ext.define('Connector.view.Learn', {
                 searchValue: this.searchFilter,
                 listeners: {
                     searchchanged: this.onSearchFilterChange,
+                    removeLearnFilter: function(dim, column){
+                        //TODO
+                    },
+                    updateLearnFilter: function(dim, column, filters){
+                        //TODO
+                    },
+                    updateLearnSort: function(dim, column, direction){
+                        this.onUpdateLearnSort(dim, column, direction);
+                    },
                     scope: this
                 }
             });
@@ -59,6 +68,27 @@ Ext.define('Connector.view.Learn', {
             if (this.activeListing) {
                 var view = this.activeListing;
                 this.loadData(view.dimension, view.getStore());
+            }
+        }
+    },
+
+    onUpdateLearnSort : function(dim, column, direction) {
+        if (this.activeListing) {
+            var view = this.activeListing;
+            if (!column) {
+                //remove sort
+                if (view.getStore().sorters && view.getStore().sorters.items.length > 0) {
+                    view.getStore().sorters.clear();
+                    view.getView().refresh();
+                }
+            }
+            else {
+                view.getStore().sort([
+                    {
+                        property: column,
+                        direction: direction
+                    }
+                ]);
             }
         }
     },
@@ -211,7 +241,8 @@ Ext.define('Connector.view.Learn', {
                     this.add(Ext.create(dimension.detailView, {
                         itemId: listId,
                         dimension: dimension,
-                        store: store
+                        store: store,
+                        learnView: this
                         //plugins: ['learnheaderlock'],
                     }));
 
@@ -313,8 +344,8 @@ Ext.define('Connector.view.Learn', {
         'Study product' : 'StudyProducts'
     },
 
-    selectDimension : function(dimension, id, urlTab, searchTerm) {
-        this.searchFilter = searchTerm ? searchTerm : undefined;
+    selectDimension : function(dimension, id, urlTab, params) {
+        this.searchFilter = params ? params.q : undefined;
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
 
         if (dimension) {
@@ -324,7 +355,7 @@ Ext.define('Connector.view.Learn', {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
-        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension, searchTerm);
+        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension, params);
     }
 
 });
@@ -359,7 +390,7 @@ Ext.define('Connector.view.LearnHeader', {
 
         this.callParent();
 
-        this.addEvents('selectdimension', 'searchchanged');
+        this.addEvents('selectdimension', 'searchchanged', 'removeLearnFilter', 'updateLearnFilter', 'updateLearnSort');
     },
 
     getDataView : function() {
@@ -412,14 +443,32 @@ Ext.define('Connector.view.LearnHeader', {
         this.getDataView().setDimensions(dimensions);
     },
 
-    selectDimension : function(dimUniqueName, id, dimension, searchTerm) {
+    selectDimension : function(dimUniqueName, id, dimension, params) {
         if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectDimension(dimUniqueName);
         }
+        this.updateSearchValue(dimension, params);
+        this.updateSort(dimension, params);
+    },
+
+    updateSearchValue: function(dimension, params) {
         var search = this.getSearchField();
         search.emptyText = 'Search ' + dimension.pluralName.toLowerCase();
-        search.setValue(searchTerm ? searchTerm : '');
-        this.fireEvent('searchchanged', searchTerm ? searchTerm : '');
+        var newSearchValue = params && params.q ? params.q : '';
+        search.setValue(newSearchValue);
+        if (!newSearchValue) {
+            this.fireEvent('searchchanged', newSearchValue);
+        }
+    },
+
+    updateSort: function(dimension, params) {
+        var newSortStr = params && params.sort ? params.sort : '';
+        var direction = 'ASC', column = newSortStr;
+        if (newSortStr.indexOf('-') == 0) {
+            direction = 'DESC';
+            column = newSortStr.substr(1);
+        }
+        this.fireEvent('updateLearnSort', null, column, direction);
     }
 });
 

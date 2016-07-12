@@ -57,7 +57,10 @@ Ext.define('Connector.controller.Learn', {
             // When a dimension is selected the following event is fired. This is used in coordination
             // with this.updateLock to ensure that an infinite loop does not occur
             //
-            selectdimension: this.onSelectDimension
+            selectdimension: this.onSelectDimension,
+            removeLearnFilter: this.onRemoveLearnFilter,
+            updateLearnFilter: this.onUpdateLearnFilter,
+            updateLearnSort: this.onUpdateLearnSort
         });
 
         this.control('learn > dataview', {
@@ -240,7 +243,7 @@ Ext.define('Connector.controller.Learn', {
                     //
                     this.dimension = dim;
                     this.updateLock = true;
-                    v.selectDimension(dim, id, tab, context.params.q);
+                    v.selectDimension(dim, id, tab, context.params);
                     this.updateLock = false;
                 }
                 else {
@@ -259,6 +262,20 @@ Ext.define('Connector.controller.Learn', {
 
     onSearchChange : function(search) {
         this.replaceHashParam('q', search);
+    },
+
+    onRemoveLearnFilter : function(dim, column) {
+        this.replaceHashParam(column, '');
+    },
+
+    onUpdateLearnFilter : function(dim, column, filters) {
+        this.replaceHashParam(column, Connector.utility.HashURL.delimitValues(filters));
+    },
+
+    onUpdateLearnSort: function(dim, column, direction) {
+        var sortValue = direction === 'DESC' ? '-' : '';
+        sortValue += column;
+        this.replaceHashParam('sort', column ? sortValue : '');
     },
 
     replaceHashParam : function(paramName, paramValue) {

@@ -10,30 +10,36 @@ Ext.define('Connector.app.view.LearnSummary', {
     listeners: {
         beforerender: function (grid)
         {
-            var header = grid.down('headercontainer');
-            header.on('headertriggerclick', function onTriggerClick(headerCt, column)
+            var header = grid.down('headercontainer'), dim = grid.dimension ? grid.dimension.name : undefined;
+            //TODO
+            //header.on('headertriggerclick', function onTriggerClick(headerCt, column)
+            //{
+            //    Ext.create('Connector.window.LearnFacet', {
+            //        dim: dim,
+            //        filterConfig: column.filterConfig,
+            //        col: column,
+            //        columnMetadata: {caption : column.filterConfig.title},
+            //        learnStore: this.store,
+            //        dataView: this,
+            //        listeners: {
+            //            filter: function (filterValues)
+            //            {
+            //                this.learnView.getHeader().fireEvent('updateLearnFilter', dim, column.filterConfig.filterField, filterValues);
+            //            },
+            //            clearfilter: function ()
+            //            {
+            //                this.learnView.getHeader().fireEvent('removeLearnFilter', dim, column.filterConfig.filterField);
+            //            },
+            //            scope: this
+            //        },
+            //        scope: this
+            //    });
+            //    return false;
+            //}, this);
+            header.on('sortchange', function (headerCt, column, direction)
             {
-                // TODO
-                //Ext.create('Connector.window.LearnFacet', {
-                //    col: column,
-                //    columnMetadata: {caption : 'test'},
-                //    dataView: this,
-                //    listeners: {
-                //        filter: function (win, boundColumn, oldFilters, newFilters)
-                //        {
-                //            this.fireEvent('applyfilter', this, boundColumn, oldFilters, newFilters);
-                //        },
-                //        clearfilter: function (win, fieldKeyPath)
-                //        {
-                //            this.fireEvent('removefilter', this, fieldKeyPath);
-                //        },
-                //        scope: this
-                //    },
-                //    scope: this
-                //});
-                return false;
+                this.learnView.getHeader().fireEvent('updateLearnSort', dim, column.filterConfig.filterField, direction);
             }, this);
         }
     }
-
 });

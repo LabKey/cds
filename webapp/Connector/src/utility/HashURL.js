@@ -39,6 +39,26 @@ Ext.define('Connector.utility.HashURL', {
     getHashParam: function(name) {
         var params = this.getHashParams();
         return params[name];
+    },
+
+    getHashParamValueArray: function(name) {
+        var params = this.getHashParams();
+        var valueStr = params[name];
+
+        if (Ext4.isString(valueStr)) {
+            return valueStr.split(';')
+        }
+        return [];
+    },
+
+
+    delimitValues : function(valueArray) {
+        var value = '', sep = '';
+        for (var s=0; s < valueArray.length; s++) {
+            value += sep + valueArray[s];
+            sep = ';';
+        }
+        return value;
     }
 
 });
