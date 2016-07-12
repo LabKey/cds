@@ -24,7 +24,7 @@ Ext.define('Connector.app.view.StudyProducts', {
     columns: [{
         text: 'Product name',
         xtype: 'templatecolumn',
-        minWidth: 600,
+        minWidth: 400,
         flex: 60/100,
         resizable: false,
         dataIndex: 'product_name',

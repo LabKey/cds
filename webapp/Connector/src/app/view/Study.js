@@ -20,7 +20,7 @@ Ext.define('Connector.app.view.Study', {
     columns : [{
         text: 'Description',
         xtype: 'templatecolumn',
-        minWidth: 750,
+        minWidth: 400,
         flex: 60/100,
         resizable: false,
         dataIndex: 'label',
