@@ -5,17 +5,9 @@
  */
 Ext.define('Connector.app.view.Study', {
 
-    extend : 'Ext.grid.Panel',
+    extend : 'Connector.app.view.LearnSummary',
 
     cls: 'learnstudies learngrid',
-
-    viewConfig: {
-        stripeRows: false,
-        getRowClass: function(record) {
-            var cls = 'detail-row';
-            return record.data.data_availability ? cls + ' detail-row-has-data' : cls;
-        }
-    },
 
     columns : [{
         text: 'Description',
@@ -139,7 +131,11 @@ Ext.define('Connector.app.view.Study', {
             'label', 'title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
             'conclusions', 'publications', 'context', 'population', 'data_availability',
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
-        ]
+        ],
+        filterFields: {
+            //TODO
+            'title' : LABKEY.app.model.Filter.sorters.natural
+        }
     },
 
     initComponent : function() {

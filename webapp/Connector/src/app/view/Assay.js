@@ -5,16 +5,9 @@
  */
 Ext.define('Connector.app.view.Assay', {
 
-    extend : 'Ext.grid.Panel',
+    extend : 'Connector.app.view.LearnSummary',
 
     cls: 'learngrid',
-    
-    viewConfig: {
-        stripeRows: false,
-        getRowClass: function(record) {
-            return 'detail-row';
-        }
-    },
 
     statics: {
        searchFields: ['assay_short_name', 'assay_label', 'assay_detection_platform', 'assay_method_description',

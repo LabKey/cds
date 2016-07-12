@@ -116,6 +116,8 @@ Ext.define('Connector.view.Learn', {
                 store.on('load', function() {
                     this.dimensionDataLoaded[dimensionName] = true;
                     this.dimensionDataLoaded(dimensionName, store);
+                    //TODO switch to lazy load
+                    this.createDimensionFilterStores(dimension, store);
                 }, this);
                 Connector.getState().onMDXReady(function(mdx) {
                     mdx.query({
@@ -313,6 +315,12 @@ Ext.define('Connector.view.Learn', {
         'Study product' : 'StudyProducts'
     },
 
+    dataByDimension : {
+        'Assay' : 'assayData',
+        'Study' : 'studyData',
+        'Study product' : 'productData'
+    },
+
     selectDimension : function(dimension, id, urlTab, searchTerm) {
         this.searchFilter = searchTerm ? searchTerm : undefined;
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
@@ -325,6 +333,41 @@ Ext.define('Connector.view.Learn', {
         }
 
         this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension, searchTerm);
+    },
+
+    createDimensionFilterStores: function(dimension, store) {
+        if (!this.filterFields)
+            this.filterFields = Connector.app.view[this.viewByDimension[dimension.singularName]].filterFields;
+
+        var dimensionValues = store[this.dataByDimension[dimension.singularName]];
+        Ext.iterate(this.filterFields, function(field, sortFn){
+            var validvalues = new Set();
+            Ext.each(dimensionValues, function(record){
+                if (Ext.isArray(record[field])) {
+                    Ext.each(record[field], function(val){
+                        validvalues.add(val);
+                    });
+                }
+                else {
+                    validvalues.add(record[field]);
+                }
+            });
+            validValuesArray = Array.from(validvalues).sort(sortFn);
+            var values = [];
+            Ext.each(validValuesArray, function(value){
+                values.push([value]);
+            });
+            var storeId = [dimension.singularName, field].join('||');
+            Ext4.create('Ext.data.ArrayStore', {
+                        fields: [
+                            'value'
+                        ],
+                        data: values,
+                        storeId: storeId
+            });
+
+        });
+
     }
 });
 

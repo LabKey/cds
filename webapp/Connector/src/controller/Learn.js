@@ -118,24 +118,24 @@ Ext.define('Connector.controller.Learn', {
     },
 
     parseContext : function(ctx, params, newHash, oldHash) {
-        var lastSearch;
+        var lastParams;
         var currentDimension = ctx[0] ? ctx[0] : this.lastContext && this.lastContext.lastDimension ? this.lastContext.lastDimension : 'Study';
         if (!ctx[0]) {
             var newHashLocation = '#' + 'learn/learn/' +  currentDimension;
             history.replaceState(undefined, undefined, newHashLocation);
         }
-        lastSearch = currentDimension && this.lastContext && this.lastContext[currentDimension] && this.lastContext[currentDimension].params ? this.lastContext[currentDimension].params.q : undefined;
+        lastParams = currentDimension && this.lastContext && this.lastContext[currentDimension] && this.lastContext[currentDimension].params ? this.lastContext[currentDimension].params : {};
 
         // When come to Learn About from other pages, no need to clear lastContext, should load previous search
         if (oldHash && 'learn' === oldHash.controller) {
             // When on Learn About and click Learn About, clear all previous context
             if (!ctx[0]) {
                 this.lastContext = {};
-                lastSearch = '';
+                lastParams = {};
             }else if (oldHash.viewContext && currentDimension === oldHash.viewContext[0]) {
                 // if click on the same tab, clear current dimension's lastContext
                 if (this.isValueEqualContext(oldHash.viewContext[1], ctx[1]) && this.isValueEqualContext(oldHash.viewContext[2], ctx[2])) {
-                    lastSearch = '';
+                    lastParams = {};
                     this.lastContext[currentDimension] = {};
                 }
             }
@@ -150,9 +150,7 @@ Ext.define('Connector.controller.Learn', {
             dimension: currentDimension,
             id: ctx[1],
             tab: ctx[2],
-            params: {
-                q: params ? params.q : lastSearch
-            }
+            params: params? params : lastParams
         };
         this.lastContext[currentDimension] = Ext.clone(this.context);
         this.lastContext.lastDimension = currentDimension;
@@ -260,33 +258,15 @@ Ext.define('Connector.controller.Learn', {
     },
 
     onSearchChange : function(search) {
-        var hash = location.hash;
-        var newHash;
+        this.replaceHashParam('q', search);
+    },
 
-        if (Ext.isString(search) && search.length) {
-            // adding q=
-            if (hash.indexOf('?') < 0) {
-                newHash = hash + '/?q=' + search;
-            }
-            else if (hash.indexOf('q=') !== -1 && hash.indexOf('q=') > hash.indexOf('?')) {
-                var parts = hash.split('q=');
-                parts[1] = [search].concat(parts[1].split('&').slice(1)).join('&');
-                newHash = parts.join('q=');
-            }
-        }
-        else {
-            // removing q=
-            if (hash.indexOf('?') != -1 && hash.indexOf('q=') !== -1 && hash.indexOf('q=') > hash.indexOf('?')) {
-                var parts = hash.split('?');
-                if (parts[1].indexOf('&') == -1) {
-                    newHash = parts[0];
-                }
-            }
-        }
+    replaceHashParam : function(paramName, paramValue) {
         if (this.context) {
-            this.context.params.q = Ext.isString(search) && search.length ? search : undefined;
+            this.context.params[paramName] = Ext.isString(paramValue) && paramValue.length ? paramValue : undefined;
             this.lastContext[this.context.dimension] = Ext.clone(this.context);
         }
+        var newHash = Connector.utility.HashURL.getUpdatedHashParamStr(paramName, paramValue);
         if (Ext.isDefined(newHash)) {
             history.replaceState(undefined, undefined, newHash);
         }
