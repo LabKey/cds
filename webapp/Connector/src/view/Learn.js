@@ -24,6 +24,8 @@ Ext.define('Connector.view.Learn', {
 
     searchFilter: undefined,
 
+    columnFilters: {},
+
     initComponent : function() {
 
         this.headerViews = {};
@@ -49,11 +51,14 @@ Ext.define('Connector.view.Learn', {
                     removeLearnFilter: function(dim, column){
                         //TODO
                     },
-                    updateLearnFilter: function(dim, column, filters){
-                        //TODO
+                    updateLearnFilter: function(dim, column, filtersStr){
+                        this.onUpdateLearnFilter(dim, column, filtersStr);
                     },
                     updateLearnSort: function(dim, column, direction){
                         this.onUpdateLearnSort(dim, column, direction);
+                    },
+                    updateLearnFilters: function(params){
+                        this.onUpdateLearnFilters(params);
                     },
                     scope: this
                 }
@@ -90,6 +95,53 @@ Ext.define('Connector.view.Learn', {
                     }
                 ]);
             }
+        }
+    },
+
+    onUpdateLearnFilter : function(dim, field, filters) {
+        var filterValues = [];
+        if (filters) {
+            filterValues = Ext.isArray(filters) ? filters: filters.split(';');
+        }
+        this.columnFilters[field] = filterValues;
+        if (this.activeListing) {
+            var grid = this.activeListing;
+            Ext.each(grid.headerCt.getGridColumns(), function(column)
+            {
+                if (column.filterConfig.filterField == field && Ext.isDefined(column.getEl()))
+                {
+                    if (filterValues.length > 0) {
+                        column.getEl().addCls('filtered-column');
+                    }
+                    else {
+                        column.getEl().removeCls('filtered-column');
+                    }
+                    return false;
+                }
+            });
+        }
+    },
+
+    onUpdateLearnFilters : function(params) {
+        if (this.activeListing) {
+            var grid = this.activeListing;
+            Ext.each(grid.headerCt.getGridColumns(), function(column)
+            {
+                if (column.filterConfig.filterField && Ext.isDefined(column.getEl()))
+                {
+                    var field = column.filterConfig.filterField;
+                    var urlFilter = params[field];
+                    var filterValues = [];
+                    if (urlFilter) {
+                        column.getEl().addCls('filtered-column');
+                        filterValues = Ext.isArray(urlFilter) ? urlFilter: urlFilter.split(';');
+                    }
+                    else {
+                        column.getEl().removeCls('filtered-column');
+                    }
+                    this.columnFilters[field] = filterValues;
+                }
+            });
         }
     },
 
@@ -390,7 +442,8 @@ Ext.define('Connector.view.LearnHeader', {
 
         this.callParent();
 
-        this.addEvents('selectdimension', 'searchchanged', 'removeLearnFilter', 'updateLearnFilter', 'updateLearnSort');
+        this.addEvents('selectdimension', 'searchchanged', 'removeLearnFilter',
+                'updateLearnFilter', 'updateLearnFilters', 'updateLearnSort');
     },
 
     getDataView : function() {
@@ -449,6 +502,7 @@ Ext.define('Connector.view.LearnHeader', {
         }
         this.updateSearchValue(dimension, params);
         this.updateSort(dimension, params);
+        this.updateFilters(dimension, params);
     },
 
     updateSearchValue: function(dimension, params) {
@@ -469,6 +523,10 @@ Ext.define('Connector.view.LearnHeader', {
             column = newSortStr.substr(1);
         }
         this.fireEvent('updateLearnSort', null, column, direction);
+    },
+
+    updateFilters: function(dimension, params) {
+        this.fireEvent('updateLearnFilters', params);
     }
 });
 

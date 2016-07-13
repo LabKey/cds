@@ -269,7 +269,7 @@ Ext.define('Connector.controller.Learn', {
     },
 
     onUpdateLearnFilter : function(dim, column, filters) {
-        this.replaceHashParam(column, Connector.utility.HashURL.delimitValues(filters));
+        this.replaceHashParam(column, Ext.isArray(filters) ? Connector.utility.HashURL.delimitValues(filters) : filters);
     },
 
     onUpdateLearnSort: function(dim, column, direction) {

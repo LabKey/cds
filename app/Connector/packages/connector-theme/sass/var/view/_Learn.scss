@@ -335,6 +335,41 @@ img.detail-has-data-small {
     padding-top: $sectionTopPadding;
     padding-bottom: 12px;
   }
+
+  .x-column-header-trigger {
+    display: inline-block;
+    border-left: 1px solid transparent;
+  }
+
+  .x-column-header-trigger {
+    background-color: transparent;
+    background-image: none;
+    &:hover {
+      background-image: url(images/filter_hover.svg);
+    }
+  }
+
+  .x-column-header-over {
+    .x-column-header-trigger {
+      background-color: transparent;
+      background-image: url(images/filter.svg);
+
+      &:hover {
+        background-image: url(images/filter_hover.svg);
+      }
+    }
+  }
+
+  .filtered-column {
+    .x-column-header-trigger {
+      background-color: transparent;
+      background-image: url(images/filter_selected.svg);
+
+      &:hover {
+        background-image: url(images/filter_selected_hover.svg);
+      }
+    }
+  }
 }
 
 .detail-row {
