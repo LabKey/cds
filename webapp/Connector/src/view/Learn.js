@@ -22,6 +22,8 @@ Ext.define('Connector.view.Learn', {
      */
     allowNestedSearch: true,
 
+    sorterArray : [],
+
     searchFilter: undefined,
 
     columnFilters: {},
@@ -64,12 +66,20 @@ Ext.define('Connector.view.Learn', {
         return this.headerViews.main;
     },
 
+    loadDataDelayed: function(dim, store) {
+
+        if (!this.loadDataTask) {
+               this.loadDataTask = new Ext.util.DelayedTask(this.loadData, this);
+        }
+        this.loadDataTask.delay(200, undefined, this, [dim, store]);
+    },
+
     onSearchFilterChange : function(filter) {
         if (Ext.isString(filter)) {
             this.searchFilter = filter;
             if (this.activeListing) {
                 var view = this.activeListing;
-                this.loadData(view.dimension, view.getStore());
+                this.loadDataDelayed(view.dimension, view.getStore());
             }
         }
     },
@@ -81,16 +91,19 @@ Ext.define('Connector.view.Learn', {
                 //remove sort
                 if (view.getStore().sorters && view.getStore().sorters.items.length > 0) {
                     view.getStore().sorters.clear();
+                    this.sorterArray = [];
                     view.getView().refresh();
                 }
             }
             else {
-                view.getStore().sort([
+                var sorters = [
                     {
                         property: column,
                         direction: direction
                     }
-                ]);
+                ];
+                this.sorterArray = sorters;
+                view.getStore().sort(sorters);
             }
         }
     },
@@ -118,12 +131,15 @@ Ext.define('Connector.view.Learn', {
                     return false;
                 }
             });
+            this.loadDataDelayed(grid.dimension, grid.getStore());
         }
     },
 
     onUpdateLearnFilters : function(params) {
+        this.columnFilters = {};
         if (this.activeListing) {
             var grid = this.activeListing;
+            grid.columnFilters = {};
             Ext.each(grid.headerCt.getGridColumns(), function(column)
             {
                 if (column.filterConfig.filterField && Ext.isDefined(column.getEl()))
@@ -142,51 +158,111 @@ Ext.define('Connector.view.Learn', {
                     grid.columnFilters[field] = filterValues;
                 }
             }, this);
+            this.loadDataDelayed(grid.dimension, grid.getStore());
         }
     },
 
     dimensionDataLoaded : function(dimension, store) {
         store.clearFilter();
+        this.filterStoreBySearchAndColumnFilter(store);
+        this.sortStore(store);
+    },
 
-        if (!Ext.isEmpty(this.searchFilter)) {
+    sortStore: function(store) {
+        if (this.sorterArray.length > 0) {
+            store.sort(this.sorterArray);
+        }
+    },
 
-            var fields = this.searchFields || [],
-                regex = new RegExp(LABKEY.Utils.escapeRe(this.searchFilter), 'i'),
-                allowNestedSearch = this.allowNestedSearch === true;
+    filterStoreBySearchAndColumnFilter: function(store) {
+        var me = this;
+        store.filterBy(function(model) {
+            var match = true;
+            if (!Ext.isEmpty(me.searchFilter)) {
 
-            store.filterBy(function(model) {
-                var match = false,
-                    value;
-                Ext.each(fields, function(field) {
-                    if (Ext.isString(field)) {
-                        value = model.get(field);
+                var fields = me.searchFields || [],
+                        regex = new RegExp(LABKEY.Utils.escapeRe(me.searchFilter), 'i'),
+                        allowNestedSearch = this.allowNestedSearch === true;
 
-                        if (regex.test(value)) {
+                match = me.isMatchSearch(fields, regex, allowNestedSearch, model);
+            }
+            //TODO switch to view
+            if (me.columnFilters) {
+                match = match && me.isMatchColumnFilters(me.columnFilters, model);
+            }
+            return match;
+        });
+
+    },
+
+    isMatchColumnFilters: function(columnFilters, storeModel) {
+        var match = true;
+
+        Ext.iterate(columnFilters, function (field, filterValues)
+        {
+            var value = storeModel.get(field);
+            if (!match)
+                return;
+            if (!filterValues || filterValues.length == 0)
+                return;
+
+            var columnMatch = false;
+            if (Ext.isArray(value)) {
+                Ext.each(filterValues, function(filterValue){
+                    if (!match)
+                        return;
+                    Ext.each(value, function(val){
+                        if (filterValue == val) {
+                            columnMatch = true;
+                            return;
+                        }
+                    });
+                });
+            }
+            else {
+                Ext.each(filterValues, function(filterValue){
+                    if (filterValue == value) {
+                        columnMatch = true;
+                        return;
+                    }
+                });
+            }
+            match = match && columnMatch;
+        });
+
+        return match;
+    },
+
+    isMatchSearch: function(fields, regex, allowNestedSearch, storeModel) {
+        var match = false, value;
+        Ext.each(fields, function(field) {
+            if (Ext.isString(field)) {
+                value = storeModel.get(field);
+
+                if (regex.test(value)) {
+                    match = true;
+                }
+            }
+            else if (allowNestedSearch && Ext.isObject(field)) {
+                value = storeModel.get(field.field);
+                if (Ext.isArray(value)) {
+                    if (Ext.isEmpty(value) && Ext.isString(field.emptyText)) {
+                        if (regex.test(field.emptyText)) {
                             match = true;
                         }
                     }
-                    else if (allowNestedSearch && Ext.isObject(field)) {
-                        value = model.get(field.field);
-                        if (Ext.isArray(value)) {
-                            if (Ext.isEmpty(value) && Ext.isString(field.emptyText)) {
-                                if (regex.test(field.emptyText)) {
-                                    match = true;
-                                }
-                            }
-                            else {
-                                for (var i=0; i < value.length; i++) {
-                                    if (regex.test(value[i][field.value])) {
-                                        match = true;
-                                        return;
-                                    }
-                                }
+                    else {
+                        for (var i=0; i < value.length; i++) {
+                            if (regex.test(value[i][field.value])) {
+                                match = true;
+                                return;
                             }
                         }
                     }
-                });
-                return match;
-            });
-        }
+                }
+            }
+        });
+        return match;
     },
 
     loadData : function(dimension, store) {

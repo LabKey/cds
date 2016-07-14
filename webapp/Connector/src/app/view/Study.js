@@ -98,7 +98,7 @@ Ext.define('Connector.app.view.Study', {
                     '<ul>',
                         '<tpl if="products.length &gt; 0">',
                             '<tpl for="products">',
-                                '<li class="detail-gray-text">bar{product_name:htmlEncode}</li>',
+                                '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
                             '</tpl>',
                         '<tpl else>',
                             '<li class="detail-gray-text">No related products</li>',

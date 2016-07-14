@@ -182,13 +182,13 @@ Ext4.define('Connector.grid.LearnFaceted', {
             }
         }
 
-        return this.createColumnFilterStores();
+        return this.createColumnFilterStore();
     },
 
     dataByDimension : {
         'Assay' : 'assayData',
         'Study' : 'studyData',
-        'Study product' : 'productData'
+        'Study Product' : 'productData'
     },
 
     getSortFn: function() {
@@ -200,7 +200,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
       return LABKEY.app.model.Filter.sorters.natural
     },
 
-    createColumnFilterStores: function() {
+    createColumnFilterStore: function() {
         var dimensionValues = this.learnStore[this.dataByDimension[this.dim]];
             var validvalues = new Set(), field = this.columnField;
             Ext.each(dimensionValues, function(record){
