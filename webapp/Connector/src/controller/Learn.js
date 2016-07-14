@@ -58,8 +58,8 @@ Ext.define('Connector.controller.Learn', {
             // with this.updateLock to ensure that an infinite loop does not occur
             //
             selectdimension: this.onSelectDimension,
-            removeLearnFilter: this.onRemoveLearnFilter,
             updateLearnFilter: this.onUpdateLearnFilter,
+            updateLearnFilters: this.onUpdateLearnFilters,
             updateLearnSort: this.onUpdateLearnSort
         });
 
@@ -264,18 +264,30 @@ Ext.define('Connector.controller.Learn', {
         this.replaceHashParam('q', search);
     },
 
-    onRemoveLearnFilter : function(dim, column) {
-        this.replaceHashParam(column, '');
-    },
-
-    onUpdateLearnFilter : function(dim, column, filters) {
+    onUpdateLearnFilter : function(column, filters) {
         this.replaceHashParam(column, Ext.isArray(filters) ? Connector.utility.HashURL.delimitValues(filters) : filters);
     },
 
-    onUpdateLearnSort: function(dim, column, direction) {
+    onUpdateLearnFilters : function(filterParams) {
+        //TODO exclude irrelevant filter params
+        this.replaceHashParams(filterParams);
+    },
+
+    onUpdateLearnSort: function(column, direction) {
         var sortValue = direction === 'DESC' ? '-' : '';
         sortValue += column;
         this.replaceHashParam('sort', column ? sortValue : '');
+    },
+
+    replaceHashParams : function(newParams) {
+        if (this.context) {
+            this.context.params = newParams ? newParams : {};
+            this.lastContext[this.context.dimension] = Ext.clone(this.context);
+        }
+        var newHash = Connector.utility.HashURL.getBatchUpdatedHashParamStr(newParams);
+        if (Ext.isDefined(newHash)) {
+            history.replaceState(undefined, undefined, newHash);
+        }
     },
 
     replaceHashParam : function(paramName, paramValue) {

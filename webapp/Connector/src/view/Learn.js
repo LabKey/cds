@@ -48,14 +48,11 @@ Ext.define('Connector.view.Learn', {
                 searchValue: this.searchFilter,
                 listeners: {
                     searchchanged: this.onSearchFilterChange,
-                    removeLearnFilter: function(dim, column){
-                        //TODO
+                    updateLearnFilter: function(column, filtersStr){
+                        this.onUpdateLearnFilter(column, filtersStr);
                     },
-                    updateLearnFilter: function(dim, column, filtersStr){
-                        this.onUpdateLearnFilter(dim, column, filtersStr);
-                    },
-                    updateLearnSort: function(dim, column, direction){
-                        this.onUpdateLearnSort(dim, column, direction);
+                    updateLearnSort: function(column, direction){
+                        this.onUpdateLearnSort(column, direction);
                     },
                     updateLearnFilters: function(params){
                         this.onUpdateLearnFilters(params);
@@ -77,7 +74,7 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    onUpdateLearnSort : function(dim, column, direction) {
+    onUpdateLearnSort : function(column, direction) {
         if (this.activeListing) {
             var view = this.activeListing;
             if (!column) {
@@ -98,14 +95,16 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    onUpdateLearnFilter : function(dim, field, filters) {
+    onUpdateLearnFilter : function(field, filters) {
         var filterValues = [];
         if (filters) {
             filterValues = Ext.isArray(filters) ? filters: filters.split(';');
         }
-        this.columnFilters[field] = filterValues;
+
         if (this.activeListing) {
             var grid = this.activeListing;
+            this.columnFilters[field] = filterValues;//TODO probably can remove
+            grid.columnFilters[field] = filterValues;
             Ext.each(grid.headerCt.getGridColumns(), function(column)
             {
                 if (column.filterConfig.filterField == field && Ext.isDefined(column.getEl()))
@@ -139,9 +138,10 @@ Ext.define('Connector.view.Learn', {
                     else {
                         column.getEl().removeCls('filtered-column');
                     }
-                    this.columnFilters[field] = filterValues;
+                    this.columnFilters[field] = filterValues;//TODO probably can remove
+                    grid.columnFilters[field] = filterValues;
                 }
-            });
+            }, this);
         }
     },
 
@@ -442,7 +442,7 @@ Ext.define('Connector.view.LearnHeader', {
 
         this.callParent();
 
-        this.addEvents('selectdimension', 'searchchanged', 'removeLearnFilter',
+        this.addEvents('selectdimension', 'searchchanged',
                 'updateLearnFilter', 'updateLearnFilters', 'updateLearnSort');
     },
 
@@ -522,10 +522,11 @@ Ext.define('Connector.view.LearnHeader', {
             direction = 'DESC';
             column = newSortStr.substr(1);
         }
-        this.fireEvent('updateLearnSort', null, column, direction);
+        this.fireEvent('updateLearnSort', column, direction);
     },
 
     updateFilters: function(dimension, params) {
+        //TODO remove non-filter params
         this.fireEvent('updateLearnFilters', params);
     }
 });

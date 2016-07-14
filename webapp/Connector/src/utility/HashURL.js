@@ -10,6 +10,16 @@ Ext.define('Connector.utility.HashURL', {
         return parts[0] + newParamsStr;
     },
 
+    getBatchUpdatedHashParamStr: function(params) {
+        var paramsMap = this.getHashParams();
+        Ext.iterate(params, function(key, value){
+            paramsMap[key] = value;
+        });
+        var newParamsStr = this.buildHashParamsStr(paramsMap);
+        var parts = location.hash.split('?');
+        return parts[0] + newParamsStr;
+    },
+
     getHashParams: function() {
         var hashStr = location.hash;
         var paramsMap = {};
