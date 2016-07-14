@@ -10,7 +10,10 @@ Ext.define('Connector.app.view.StudyProducts', {
     cls: 'learnstudyproducts learngrid',
 
     statics: {
-        searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer']
+        searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer'],
+        filterFields: [
+            'product_name', 'product_type', 'product_developer'
+        ]
     },
 
     columns: [{

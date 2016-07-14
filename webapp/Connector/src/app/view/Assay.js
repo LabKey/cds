@@ -11,7 +11,10 @@ Ext.define('Connector.app.view.Assay', {
 
     statics: {
        searchFields: ['assay_short_name', 'assay_label', 'assay_detection_platform', 'assay_method_description',
-            'assay_body_system_type', 'assay_body_system_target', 'assay_general_specimen_type']
+            'assay_body_system_type', 'assay_body_system_target', 'assay_general_specimen_type'],
+        filterFields: [
+            'assay_short_name', 'study_count', 'assay_body_system_target'
+        ]
     },
 
     columns : [{
@@ -25,9 +28,6 @@ Ext.define('Connector.app.view.Assay', {
             filterField: 'assay_short_name',
             valueType: 'string',
             title: 'Assay Name'
-        },
-        filter: {
-            type: 'string'
         },
         tpl: new Ext.XTemplate(
                 '<div class="detail-description detail-row-text">',
@@ -47,9 +47,6 @@ Ext.define('Connector.app.view.Assay', {
             valueType: 'number',
             title: '# of Studies'
         },
-        filter: {
-            type: 'string'
-        },
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-gray-text">{study_count}</div>',
@@ -66,9 +63,6 @@ Ext.define('Connector.app.view.Assay', {
             filterField: 'assay_body_system_target',
             valueType: 'string',
             title: 'Target Area'
-        },
-        filter: {
-            type: 'string'
         },
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',

@@ -269,7 +269,6 @@ Ext.define('Connector.controller.Learn', {
     },
 
     onUpdateLearnFilters : function(filterParams) {
-        //TODO exclude irrelevant filter params
         this.replaceHashParams(filterParams);
     },
 

@@ -1,6 +1,5 @@
 Ext.define('Connector.app.view.LearnSummary', {
     extend : 'Ext.grid.Panel',
-    columnFilters: [],
     viewConfig: {
         stripeRows: false,
         getRowClass: function(record) {
@@ -11,7 +10,7 @@ Ext.define('Connector.app.view.LearnSummary', {
     listeners: {
         beforerender: function (grid)
         {
-            var me = this;
+            var learnView = this.learnView;
             var header = grid.down('headercontainer'), dim = grid.dimension ? grid.dimension.name : undefined;
             header.on('headertriggerclick', function onTriggerClick(headerCt, column)
             {
@@ -23,7 +22,7 @@ Ext.define('Connector.app.view.LearnSummary', {
                     columnMetadata: {caption : column.filterConfig.title},
                     learnStore: this.store,
                     dataView: this,
-                    filterValues: me.columnFilters[field] ? me.columnFilters[field] : [],
+                    filterValues: learnView.columnFilters[field] ? learnView.columnFilters[field] : [],
                     listeners: {
                         filter: function (filterValues)
                         {

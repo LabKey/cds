@@ -26,6 +26,8 @@ Ext.define('Connector.view.Learn', {
 
     searchFilter: undefined,
 
+    filterFields: [],
+
     columnFilters: {},
 
     initComponent : function() {
@@ -116,8 +118,7 @@ Ext.define('Connector.view.Learn', {
 
         if (this.activeListing) {
             var grid = this.activeListing;
-            this.columnFilters[field] = filterValues;//TODO probably can remove
-            grid.columnFilters[field] = filterValues;
+            this.columnFilters[field] = filterValues;
             Ext.each(grid.headerCt.getGridColumns(), function(column)
             {
                 if (column.filterConfig.filterField == field && Ext.isDefined(column.getEl()))
@@ -139,7 +140,6 @@ Ext.define('Connector.view.Learn', {
         this.columnFilters = {};
         if (this.activeListing) {
             var grid = this.activeListing;
-            grid.columnFilters = {};
             Ext.each(grid.headerCt.getGridColumns(), function(column)
             {
                 if (column.filterConfig.filterField && Ext.isDefined(column.getEl()))
@@ -154,8 +154,7 @@ Ext.define('Connector.view.Learn', {
                     else {
                         column.getEl().removeCls('filtered-column');
                     }
-                    this.columnFilters[field] = filterValues;//TODO probably can remove
-                    grid.columnFilters[field] = filterValues;
+                    this.columnFilters[field] = filterValues;
                 }
             }, this);
             this.loadDataDelayed(grid.dimension, grid.getStore());
@@ -186,7 +185,7 @@ Ext.define('Connector.view.Learn', {
 
                 match = me.isMatchSearch(fields, regex, allowNestedSearch, model);
             }
-            //TODO switch to view
+
             if (me.columnFilters) {
                 match = match && me.isMatchColumnFilters(me.columnFilters, model);
             }
@@ -475,6 +474,7 @@ Ext.define('Connector.view.Learn', {
     selectDimension : function(dimension, id, urlTab, params) {
         this.searchFilter = params ? params.q : undefined;
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
+        this.filterFields = Connector.app.view[this.viewByDimension[dimension.singularName]].filterFields;
 
         if (dimension) {
             this.loadDataView(dimension, id, urlTab);
@@ -602,8 +602,14 @@ Ext.define('Connector.view.LearnHeader', {
     },
 
     updateFilters: function(dimension, params) {
-        //TODO remove non-filter params
-        this.fireEvent('updateLearnFilters', params);
+        var filteredParams = params;
+        if (Ext.isArray(this.filterFields) && this.filterFields.length > 0) {
+            filteredParams = [];
+            Ext.each(this.filterFields, function(field){
+                filteredParams.push(field);
+            });
+        }
+        this.fireEvent('updateLearnFilters', filteredParams);
     }
 });
 

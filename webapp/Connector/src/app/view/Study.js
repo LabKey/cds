@@ -19,7 +19,7 @@ Ext.define('Connector.app.view.Study', {
         filterConfig: {
             filterField: 'label',
             valueType: 'string',
-            title: 'Study Label'
+            title: 'Study'
         },
         tpl: new Ext.XTemplate(
             '<div class="detail-description detail-row-text">',
@@ -42,9 +42,6 @@ Ext.define('Connector.app.view.Study', {
             filterField: 'start_year',
             valueType: 'string',
             title: 'Start Year'
-        },
-        filter: {
-            type: 'string'
         },
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
@@ -148,6 +145,9 @@ Ext.define('Connector.app.view.Study', {
             'label', 'title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
             'conclusions', 'publications', 'context', 'population', 'data_availability',
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
+        ],
+        filterFields: [
+            'label', 'start_year', 'product_names', 'assays_added_count'
         ]
     },
 
