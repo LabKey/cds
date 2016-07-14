@@ -257,10 +257,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
             this.on('render', function() { this.setValue(values); }, this, {single: true});
         }
 
-        if (Ext4.isArray(values) && values.length == 1) {
-            values = values[0].split(';');
-        }
-        else if (!Ext4.isArray(values) && Ext4.isString(values)) {
+        if (!Ext4.isArray(values) && Ext4.isString(values)) {
             values = values.split(';');
         }
 
