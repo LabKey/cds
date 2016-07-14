@@ -42,9 +42,7 @@ Ext.define('Connector.window.LearnFacet', {
 
     onAfterRender : function() {
         this.callParent(arguments);
-        if (this.filterValues.length > 0) {
-            this.getButton('dofilter').setText('Update');
-        }
+        this.getButton('dofilter').setText('Search');
     },
 
     applyFiltersAndColumns : function()
