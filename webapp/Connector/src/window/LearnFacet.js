@@ -7,8 +7,6 @@ Ext.define('Connector.window.LearnFacet', {
 
     extend: 'Connector.window.AbstractFilter',
 
-    alias: 'widget.columnfacetwin',
-
     bodyStyle: 'overflow-y: auto; padding: 10px;',
 
     width: 290,
@@ -23,6 +21,7 @@ Ext.define('Connector.window.LearnFacet', {
 
     learnStore: undefined,
 
+    /* To avoid URL overflow, allow up to 100 selections per column */
     maxSelection: 100,
 
     getItems : function()
