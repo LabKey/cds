@@ -296,26 +296,6 @@ Ext.define('Connector.view.Learn', {
         this.add(pageView);
     },
 
-    loadReport: function(reportId) {
-        var url = LABKEY.ActionURL.buildURL('cds', 'getDBReportInfo', null, {
-            rowId: reportId
-        });
-        var learnView = this;
-        Ext.Ajax.request({
-            url : url,
-            method: 'POST',
-            success: function(response){
-                var rReportPageView = ReportUtils.getRReportPageView(learnView, reportId, Ext.decode(response.responseText));
-                this.add(rReportPageView);
-            },
-            failure : function() {
-                    Ext.Msg.alert("Error", "Failed to load report information.");
-            },
-            scope   : this
-        });
-
-    },
-
     getDimensions : function() {
         return this.dimensions;
     },
@@ -338,7 +318,7 @@ Ext.define('Connector.view.Learn', {
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
 
         if (params && params.reportId) {
-            this.loadReport(params.reportId);
+            ReportUtils.loadReport(this, params.reportId);
         }
         else if (dimension) {
             this.loadDataView(dimension, id, urlTab);

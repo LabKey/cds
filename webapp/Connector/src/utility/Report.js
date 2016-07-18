@@ -1,6 +1,25 @@
 Ext.define('Connector.utility.Report', {
     alternateClassName: ['ReportUtils'],
     singleton: true,
+    loadReport: function(learnView, reportId) {
+        var url = LABKEY.ActionURL.buildURL('cds', 'getDBReportInfo', null, {
+            rowId: reportId
+        });
+
+        Ext.Ajax.request({
+            url : url,
+            method: 'POST',
+            success: function(response){
+                var rReportPageView = ReportUtils.getRReportPageView(learnView, reportId, Ext.decode(response.responseText));
+                learnView.add(rReportPageView);
+            },
+            failure : function() {
+                Ext.Msg.alert("Error", "Failed to load report information.");
+            },
+            scope   : this
+        });
+
+    },
     getRReportPageView : function(learnView, reportId, report) {
         if (learnView.items.length > 1) {
             for (var i=0; i < learnView.items.items.length; i++) {
@@ -72,7 +91,7 @@ Ext.define('Connector.utility.Report', {
                 upText: 'Report',
                 title: report.name,
                 renderTpl: new Ext.XTemplate(
-                        '<div style="background-color: #ebebeb;">',
+                        '<div class="learnpageheader">',
                         '{%this.renderContainer(out,values);%}',
                         '</div>',
                         '<div class="dim-selector learnabouttab">',

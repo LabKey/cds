@@ -410,7 +410,7 @@ public class CDSController extends SpringActionController
         public Object execute(DBReportForm form, BindException errors) throws Exception
         {
             ApiSimpleResponse response = new ApiSimpleResponse();
-            SimpleFilter filter = new SimpleFilter(FieldKey.fromParts("RowId"), form._rowId);
+            SimpleFilter filter = new SimpleFilter(FieldKey.fromParts("RowId"), form.getRowId());
             ReportDB reportDB = new TableSelector(CoreSchema.getInstance().getTableInfoReport(), filter, null).getObject(ReportDB.class);
 
             if (reportDB != null)

@@ -14,6 +14,7 @@
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Query.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Visualization.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/ParticipantGroup.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/core/Security.js"/>
 
         <script path="../../../../staging/labkeyWebapp/clientapi/ext4/Util.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Reader.js"/>

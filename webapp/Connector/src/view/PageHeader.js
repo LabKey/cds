@@ -52,7 +52,7 @@ Ext.define('Connector.view.PageHeader', {
     flex: 1,
 
     renderTpl: new Ext.XTemplate(
-        '<div style="background-color: #ebebeb;">',
+        '<div class="learnpageheader">',
             '{%this.renderContainer(out,values);%}',
         '</div>',
         '<div class="dim-selector learnabouttab">',
