@@ -308,7 +308,7 @@ img.detail-has-data-small {
   .x-column-header-text {
     color: $heat-scale-2;
     font-size: 12px;
-    /*color: $heat-scale-2;*/
+    width: 100%;
     text-transform: uppercase;
   }
 
@@ -339,6 +339,22 @@ img.detail-has-data-small {
   .x-column-header-trigger {
     display: inline-block;
     border-left: 1px solid transparent;
+  }
+
+  .x-column-header-sort-ASC,
+  .x-column-header-sort-DESC {
+    background-image: none;
+    background-color: $secondary-color;
+  }
+
+  .x-column-header-sort-ASC .x-column-header-text {
+    background-image: url(images/sort_asc.gif) !important;
+    background-position-x: calc(100% - 10px)
+  }
+
+  .x-column-header-sort-DESC .x-column-header-text {
+    background-image: url(images/sort_desc.gif) !important;
+    background-position-x: calc(100% - 10px)
   }
 
   .x-column-header-trigger {
