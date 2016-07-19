@@ -181,7 +181,7 @@ Ext.define('Connector.view.Learn', {
 
                 var fields = me.searchFields || [],
                         regex = new RegExp(LABKEY.Utils.escapeRe(me.searchFilter), 'i'),
-                        allowNestedSearch = this.allowNestedSearch === true;
+                        allowNestedSearch = me.allowNestedSearch === true;
 
                 match = me.isMatchSearch(fields, regex, allowNestedSearch, model);
             }

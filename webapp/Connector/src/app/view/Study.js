@@ -104,7 +104,7 @@ Ext.define('Connector.app.view.Study', {
                 '</div>'
         )
     },{
-        text: 'Assays',
+        text: 'Data Added',
         xtype: 'templatecolumn',
         minWidth: 150,
         flex: 15/100,
