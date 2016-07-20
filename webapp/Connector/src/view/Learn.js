@@ -313,18 +313,21 @@ Ext.define('Connector.view.Learn', {
         'Study product' : 'StudyProducts'
     },
 
-    selectDimension : function(dimension, id, urlTab, searchTerm) {
-        this.searchFilter = searchTerm ? searchTerm : undefined;
+    selectDimension : function(dimension, id, urlTab, params) {
+        this.searchFilter = params ? params.q : undefined;
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
 
-        if (dimension) {
+        if (params && params.reportId) {
+            ReportUtils.loadReport(this, params.reportId);
+        }
+        else if (dimension) {
             this.loadDataView(dimension, id, urlTab);
         }
         else {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
-        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension, searchTerm);
+        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension, params);
     }
 });
 
@@ -411,14 +414,14 @@ Ext.define('Connector.view.LearnHeader', {
         this.getDataView().setDimensions(dimensions);
     },
 
-    selectDimension : function(dimUniqueName, id, dimension, searchTerm) {
+    selectDimension : function(dimUniqueName, id, dimension, params) {
         if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectDimension(dimUniqueName);
         }
         var search = this.getSearchField();
         search.emptyText = 'Search ' + dimension.pluralName.toLowerCase();
-        search.setValue(searchTerm ? searchTerm : '');
-        this.fireEvent('searchchanged', searchTerm ? searchTerm : '');
+        search.setValue(params? params.q : '');
+        this.fireEvent('searchchanged', params? params.q : '');
     }
 });
 
