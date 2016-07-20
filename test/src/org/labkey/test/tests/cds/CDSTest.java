@@ -764,7 +764,6 @@ public class CDSTest extends CDSReadOnlyTest
         // Check paging buttons with known dataset. Verify with first and last subject id on page.
         //
         log("Verify grid paging");
-        grid.sort(CDSHelper.GRID_COL_SUBJECT_ID);
         grid.goToLastPage();
 
         if (CDSHelper.validateCounts)

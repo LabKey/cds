@@ -289,6 +289,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Report.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
