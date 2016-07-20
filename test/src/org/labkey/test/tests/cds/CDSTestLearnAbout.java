@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.LabKeyPage;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
@@ -420,7 +421,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Validate that the 'Studies' search value is there.");
         Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
-
     }
 
     @Test
@@ -495,6 +495,67 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
         Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+    }
+
+    @Test
+    public void validateLearnAboutFiltering()
+    {
+        LearnGrid learnGrid = new LearnGrid(this);
+
+        cds.viewLearnAboutPage("Studies");
+
+        log("Evaluating sorting...");
+        learnGrid.sort("Description");
+        List<WebElement> sortedStudyTitles = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver());
+        String titleForLastElement = sortedStudyTitles.get(sortedStudyTitles.size() - 1).getText();
+        learnGrid.sort("Description");
+        Assert.assertTrue(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver())
+                .get(0).getText()
+                .equals(titleForLastElement));
+
+        log("Evaluating filtering...");
+        String[] studiesToFilter = {CDSHelper.STUDIES[0], CDSHelper.STUDIES[7], CDSHelper.STUDIES[20]}; //Arbitrarily chosen
+        int numRowsPreFilter = Locator.tagWithClass("tr", "detail-row").findElements(getDriver()).size();
+
+        learnGrid.setFacet("Description", studiesToFilter);
+        List<WebElement> studyTitlesAfterFilter = Locator.tagWithClass("tr", "detail-row")
+                .append("/td//div/div/h2")
+                .findElements(getDriver());
+
+        List<String> studiesFiltered =  Arrays.asList(studiesToFilter);
+        for(WebElement studyTitlesOnPage : studyTitlesAfterFilter)
+        {
+            Assert.assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
+        }
+
+        log("Evaluating clearing a filter");
+        learnGrid.clearFilters("Description");
+        int numRowsPostFilter = learnGrid.getRowCount();
+        Assert.assertTrue(numRowsPreFilter == numRowsPostFilter && numRowsPostFilter == CDSHelper.STUDIES.length);
+
+        log("Evaluating applying two numeric filters");
+        //finds the number of rows that have a date column and assay column that satisfy the following filter
+        final String yearToFilter = "2004";
+        final String numAssasysToFilter = "1";
+        int numRowsSatisfyFilter = Locator.xpath("//tr/td/div/div/div[contains(@class, 'detail-black-text')]" +
+                "[contains(text(), '" + yearToFilter + "')]/../../../following-sibling::" +
+                "td/div/div/div[contains(@class, 'detail-gray-text')][contains(text(), '" + numAssasysToFilter + " Assay')]")
+                .findElements(getDriver()).size();
+
+        learnGrid.setFacet("Start Date", yearToFilter);
+        learnGrid.setFacet("Data Added", numAssasysToFilter);
+        numRowsPostFilter = learnGrid.getRowCount();
+
+        Assert.assertTrue(numRowsSatisfyFilter == numRowsPostFilter);
+
+        log("Evaluating persisting to URL");
+        refresh();
+        sleep(CDSHelper.CDS_WAIT);
+        int numRowsPostRefresh = learnGrid.getRowCount();
+        Assert.assertTrue(numRowsSatisfyFilter == numRowsPostRefresh);
+
+        learnGrid.clearFilters("Start Date");
+        learnGrid.clearFilters("Data Added");
     }
 
     //Helper function for data availability tests
