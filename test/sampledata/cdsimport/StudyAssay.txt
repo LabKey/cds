@@ -1,6 +1,7 @@
 prot	assay_identifier
 q2	NAB A3R5
 r4	BAMA Biotin LX
+r4	ILLUMINA 454
 r4	ICS
 r4	IFNg ELS
 r5	ICS
@@ -36,4 +37,5 @@ z134	NAB TZM-bl
 z135	NAB A3R5
 z135	NAB TZM-bl
 z136	ICS
+w101	ICS
 z139	NAB TZM-bl
