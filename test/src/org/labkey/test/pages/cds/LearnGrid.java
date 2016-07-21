@@ -6,9 +6,6 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.cds.CDSHelper;
 
-/**
- * Created by Joe on 7/20/2016.
- */
 public class LearnGrid
 {
     protected BaseWebDriverTest _test;
@@ -21,8 +18,7 @@ public class LearnGrid
     @LogMethod
     public int getRowCount()
     {
-        return Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]/div/div/table/tbody/tr")
-                .findElements(_test.getDriver()).size();
+        return Locators.row.findElements(_test.getDriver()).size();
     }
 
     @LogMethod(quiet = true)
@@ -50,9 +46,7 @@ public class LearnGrid
 
         for (String label : labels)
         {
-            Locator.XPathLocator checkBox = Locator.xpath("//tr[contains(@class, 'x-grid-row')]//td/div[contains(text(), '"
-                    + label + "')]/../preceding-sibling::td/div/div[contains(@class, 'x-grid-row-checker')]");
-            _test.click(checkBox);
+            _test.click(Locators.getFacetCheckboxForValue(label));
         }
 
         Locator.XPathLocator search = CDSHelper.Locators.cdsButtonLocator("Search", "filter-btn");
@@ -83,7 +77,14 @@ public class LearnGrid
 
     public static class Locators
     {
-        public static Locator.CssLocator grid = Locator.css("div.learngrid");
+        public static Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
+        public static Locator.XPathLocator row = grid.append("/div/div/table/tbody/tr");
+
+        public static Locator.XPathLocator getFacetCheckboxForValue(String label)
+        {
+            return Locator.xpath("//tr[contains(@class, 'x-grid-row')]//td/div[contains(text(), '"
+                    + label + "')]/../preceding-sibling::td/div/div[contains(@class, 'x-grid-row-checker')]");
+        }
 
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
         {

@@ -63,7 +63,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         List<WebElement> returnedItems;
         String[] itemParts;
-//        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         cds.viewLearnAboutPage("Studies");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -171,7 +170,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         List<WebElement> returnedItems;
         String[] itemParts;
-//        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         log("Extra logging to record time stamps.");
         cds.viewLearnAboutPage("Study products");
@@ -569,7 +567,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String itemText;
         String[] itemParts;
         List<WebElement> returnedItems;
-//        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
 
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
