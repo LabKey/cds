@@ -29,9 +29,8 @@ Ext.define('Connector.app.store.Study', {
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'studyproductmap',
+            queryName: 'ds_productsforstudies',
             success: this.onLoadProducts,
-            requiredVersion: 13.2,
             scope: this
         });
         LABKEY.Query.selectRows({
@@ -97,14 +96,14 @@ Ext.define('Connector.app.store.Study', {
                 products = [];
                 productNames = [];
                 for (var p=0; p < this.productData.length; p++) {
-                    if (study.study_name === this.productData[p].study_name.value) {
+                    if (study.study_name === this.productData[p].study_name) {
                         // Consider: These should probably be of type Connector.app.model.StudyProducts
                         // but it'd be good to then have a common sourcing mechanism for LA models
                         products.push({
-                            product_id: this.productData[p].product_id.value,
-                            product_name: this.productData[p].product_id.displayValue
+                            product_id: this.productData[p].product_id,
+                            product_name: this.productData[p].product_name
                         });
-                        productNames.push(this.productData[p].product_id.displayValue);
+                        productNames.push(this.productData[p].product_name);
                     }
                 }
                 products.sort(function (p1, p2) {

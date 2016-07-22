@@ -108,8 +108,9 @@ Ext.define('Connector.app.store.Assay', {
                 for (var s = 0; s < this.assayStudies.length; s++) {
                     if (assay.assay_identifier === this.assayStudies[s].assay_identifier) {
                         studies.push({
-                            id: this.assayStudies[s].study_name,
-                            label: this.assayStudies[s].label + ' (' + this.assayStudies[s].short_name + ')',
+                            id: this.assayStudies[s].study_name || this.assayStudies[s].prot,
+                            label: this.assayStudies[s].study_name ? 
+                                    this.assayStudies[s].label + ' (' + this.assayStudies[s].short_name + ')' : '',
                             has_data: this.assayStudies[s].has_data
                         });
                     }
