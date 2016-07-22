@@ -194,7 +194,13 @@ Ext4.define('Connector.grid.LearnFaceted', {
               return a - b;
           }
       }
-      return LABKEY.app.model.Filter.sorters.natural
+      return function(a, b){
+          if (a == undefined)
+            return -1;
+          else if (b == undefined)
+            return 1;
+          return a.localeCompare(b);
+      }
     },
 
     createColumnFilterStore: function() {
@@ -270,7 +276,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
 
         Ext4.each(values, function(val) {
             recIdx = store.findBy(function(rec){
-                return rec.get('value') === val;
+                return rec.get('value') == val;
             });
 
             if (recIdx != -1) {

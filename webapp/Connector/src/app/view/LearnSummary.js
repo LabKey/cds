@@ -40,7 +40,7 @@ Ext.define('Connector.app.view.LearnSummary', {
             }, this);
             header.on('sortchange', function (headerCt, column, direction)
             {
-                this.learnView.getHeader().fireEvent('updateLearnSort', column.filterConfig.filterField, direction);
+                this.learnView.getHeader().fireEvent('updateLearnSort', column.dataIndex, direction);
             }, this);
         }
     }
