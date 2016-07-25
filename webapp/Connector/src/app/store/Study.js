@@ -29,9 +29,8 @@ Ext.define('Connector.app.store.Study', {
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'studyproductmap',
+            queryName: 'ds_productsforstudies',
             success: this.onLoadProducts,
-            requiredVersion: 13.2,
             scope: this
         });
         LABKEY.Query.selectRows({
@@ -59,7 +58,7 @@ Ext.define('Connector.app.store.Study', {
 
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)) {
-            var studies = [], products;
+            var studies = [], products, productNames;
 
             // join products to study
             Ext.each(this.studyData, function(study) {
@@ -85,32 +84,56 @@ Ext.define('Connector.app.store.Study', {
                         study.methods_assay_schema += study.methods;
                     }
                 }
+
+                study.date_to_sort_on = study.first_enr_date || study.start_date;
+                if (study.date_to_sort_on) {
+                    var startDate = new Date(study.date_to_sort_on);
+                    study.start_year = startDate.getFullYear().toString();
+                } else {
+                    study.start_year = 'Not available';
+                }
+                
                 products = [];
+                productNames = [];
                 for (var p=0; p < this.productData.length; p++) {
-                    if (study.study_name === this.productData[p].study_name.value) {
+                    if (study.study_name === this.productData[p].study_name) {
                         // Consider: These should probably be of type Connector.app.model.StudyProducts
                         // but it'd be good to then have a common sourcing mechanism for LA models
                         products.push({
-                            product_id: this.productData[p].product_id.value,
-                            product_name: this.productData[p].product_id.displayValue
+                            product_id: this.productData[p].product_id,
+                            product_name: this.productData[p].product_name
                         });
+                        productNames.push(this.productData[p].product_name);
                     }
                 }
-                var assays = [];
+                products.sort(function (p1, p2) {
+                    return p1.product_name.toLowerCase().localeCompare(p2.product_name.toLowerCase())
+                });
+                study.product_to_sort_on = products[0] ? products[0].product_name.toLowerCase() : '';
+
+                var assays = [], assaysAdded = [], assayAddedCount = 0;
                 study.data_availability = false;
                 for (var a=0; a < this.assayData.length; a++) {
                     if (study.study_name === this.assayData[a].prot) {
                         study.data_availability = study.data_availability || this.assayData[a].has_data;
-                        assays.push({
-                            assay_identifier: this.assayData[a].assay_identifier,
-                            assay_full_name: this.assayData[a].assay_short_name
-                                + ' (' + this.assayData[a].assay_label + ')',
+                        var assay = {
+                            assay_identifier: this.assayData[a].assay_identifier || this.assayData[a].study_assay_id,
+                            assay_full_name: this.assayData[a].assay_identifier ?
+                                    this.assayData[a].assay_short_name + ' (' + this.assayData[a].assay_label + ')' : '',
                             has_data: this.assayData[a].has_data
-                        });
+                        };
+                        assays.push(assay);
+                        if (this.assayData[a].has_data) {
+                            assaysAdded.push(assay);
+                            assayAddedCount += 1;
+                        }
                     }
                 }
                 study.products = products;
+                study.product_names = productNames;
                 study.assays = assays;
+                study.assays_added = assaysAdded;
+                study.assays_added_count = assaysAdded.length;
                 studies.push(study);
             }, this);
 

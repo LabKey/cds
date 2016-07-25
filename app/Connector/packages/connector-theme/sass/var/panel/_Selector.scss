@@ -178,6 +178,11 @@
       background: $white;
     }
 
+    .x-grid-row-over .x-grid-td,
+    .x-grid-row-selected .x-grid-td {
+      background-color: $white !important;
+    }
+
     .x-grid-view {
       background-color: $white;
     }
@@ -412,10 +417,6 @@
   }
 }
 
-.x-grid-row-over .x-grid-td,
-.x-grid-row-selected .x-grid-td {
-  background-color: $white !important;
-}
 
 .x-grid-td {
   background-color: $gray-7;

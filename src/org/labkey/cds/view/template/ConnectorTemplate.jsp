@@ -204,6 +204,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractFilter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/window/LearnFacet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
@@ -289,6 +290,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Report.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Dataset.js"></script>
@@ -306,6 +308,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/VariableList.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ModuleContainer.js"></script>

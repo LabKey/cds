@@ -104,6 +104,7 @@
         <script path="Connector/src/window/AbstractFilter.js"/>
         <script path="Connector/src/window/Filter.js"/>
         <script path="Connector/src/window/Facet.js"/>
+        <script path="Connector/src/window/LearnFacet.js"/>
         <script path="Connector/src/window/SystemMessage.js"/>
         <script path="Connector/src/panel/Feedback.js"/>
         <script path="Connector/src/panel/FilterPanel.js"/>
@@ -188,6 +189,7 @@
         <script path="Connector/src/utility/HelpRouter.js"/>
         <script path="Connector/src/utility/Query.js"/>
         <script path="Connector/src/utility/Report.js"/>
+        <script path="Connector/src/utility/HashURL.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
         <script path="Connector/src/app/model/Dataset.js"/>
@@ -205,6 +207,7 @@
         <script path="Connector/src/app/store/StudyProducts.js"/>
         <script path="Connector/src/app/store/VariableList.js"/>
 
+        <script path="Connector/src/app/view/LearnSummary.js"/>
         <script path="Connector/src/app/view/Assay.js"/>
         <script path="Connector/src/app/view/Labs.js"/>
         <script path="Connector/src/app/view/ModuleContainer.js"/>
