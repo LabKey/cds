@@ -1,5 +1,5 @@
 CREATE TABLE cds.StudyPartGroupArmProduct (
-  prot VARCHAR(250) NOT NULL REFERENCES cds.Study (prot),
+  prot VARCHAR(250) NOT NULL REFERENCES cds.Study (study_name),
   container ENTITYID NOT NULL,
   study_part VARCHAR(250) NOT NULL,
   study_group VARCHAR(250) NOT NULL,
