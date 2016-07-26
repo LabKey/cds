@@ -29,9 +29,8 @@ Ext.define('Connector.app.store.Study', {
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'studyproductmap',
+            queryName: 'ds_productsforstudies',
             success: this.onLoadProducts,
-            requiredVersion: 13.2,
             scope: this
         });
         LABKEY.Query.selectRows({
@@ -87,12 +86,12 @@ Ext.define('Connector.app.store.Study', {
                 }
                 products = [];
                 for (var p=0; p < this.productData.length; p++) {
-                    if (study.study_name === this.productData[p].study_name.value) {
+                    if (study.study_name === this.productData[p].study_name) {
                         // Consider: These should probably be of type Connector.app.model.StudyProducts
                         // but it'd be good to then have a common sourcing mechanism for LA models
                         products.push({
-                            product_id: this.productData[p].product_id.value,
-                            product_name: this.productData[p].product_id.displayValue
+                            product_id: this.productData[p].product_id,
+                            product_name: this.productData[p].product_name
                         });
                     }
                 }
@@ -102,9 +101,9 @@ Ext.define('Connector.app.store.Study', {
                     if (study.study_name === this.assayData[a].prot) {
                         study.data_availability = study.data_availability || this.assayData[a].has_data;
                         assays.push({
-                            assay_identifier: this.assayData[a].assay_identifier,
-                            assay_full_name: this.assayData[a].assay_short_name
-                                + ' (' + this.assayData[a].assay_label + ')',
+                            assay_identifier: this.assayData[a].assay_identifier || this.assayData[a].study_assay_id,
+                            assay_full_name: this.assayData[a].assay_identifier ?
+                                    this.assayData[a].assay_short_name + ' (' + this.assayData[a].assay_label + ')' : '',
                             has_data: this.assayData[a].has_data
                         });
                     }

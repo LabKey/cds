@@ -28,11 +28,10 @@ Ext.define('Connector.app.store.StudyProducts', {
             success: this.onLoadProducts,
             scope: this
         });
-        LABKEY.Query.executeSql({
+        LABKEY.Query.selectRows({
             schemaName: 'cds',
-            sql: 'SELECT *, study_name.label AS study_label, study_name.short_name AS study_short_name, FROM cds.studyproductmap',
+            queryName: 'ds_studiesforproducts',
             success: this.onLoadStudies,
-            requiredVersion: 13.2,
             scope: this
         });
         LABKEY.Query.selectRows({
@@ -106,12 +105,13 @@ Ext.define('Connector.app.store.StudyProducts', {
             Ext.each(this.productData, function(product) {
                 studies = [];
                 for (s=0; s < this.studyData.length; s++) {
-                    if (product.product_id === this.studyData[s].product_id.value) {
+                    if (product.product_id === this.studyData[s].product_id) {
                         studies.push({
-                            study_name: this.studyData[s].study_name.value,
-                            label: this.studyData[s].study_label.value 
-                                + ' (' + this.studyData[s].study_short_name.value + ')',
-                            has_data: this.studyData[s].has_data.value
+                            study_name: this.studyData[s].study_name,
+                            label: this.studyData[s].study_label ?
+                                    this.studyData[s].study_label + ' (' + this.studyData[s].study_short_name + ')'
+                                    : '',
+                            has_data: this.studyData[s].has_data
                         });
                     }
                 }
