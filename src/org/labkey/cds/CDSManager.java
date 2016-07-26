@@ -103,6 +103,7 @@ public class CDSManager
                     "StudyGroupVisitMap",
                     "StudyGroup",
                     "SubjectProductMap",
+                    "StudyPartGroupArmProduct",
                     "StudyProductMap",
                     "TreatmentArmSubjectMap",
                     "TreatmentArm",

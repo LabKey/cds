@@ -36,23 +36,24 @@ Ext.define('Connector.app.store.StudyProducts', {
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'subjectproductmap',
-            success: this.onLoadSubjectProduct,
+            queryName: 'studypartgrouparmproduct',
+            success: this.onLoadStudyArmProduct,
             scope: this
         });
     },
 
-    onLoadSubjectProduct: function (subjectProductsData) {
-        var all = subjectProductsData.rows;
-        var subjectProductsMap = {};
+    onLoadStudyArmProduct: function (armProductsData) {
+        var all = armProductsData.rows;
+        var armProductsMap = {};
         Ext.each(all, function (row) {
-            if (!subjectProductsMap[row.participantid]) {
-                subjectProductsMap[row.participantid] = new Set();
+            var studyArm = row.prot + row.study_arm;
+            if (!armProductsMap[studyArm]) {
+                armProductsMap[studyArm] = new Set();
             }
-            subjectProductsMap[row.participantid].add(row.product_id);
+            armProductsMap[studyArm].add(row.product_id);
         });
         var allOtherProducts = {};
-        Ext.iterate(subjectProductsMap, function(subject, products) {
+        Ext.iterate(armProductsMap, function(arm, products) {
             Ext.each(products, function(product) {
                 if (!allOtherProducts[product]) {
                     allOtherProducts[product] = new Set();
@@ -60,7 +61,7 @@ Ext.define('Connector.app.store.StudyProducts', {
             });
         });
 
-        Ext.iterate(subjectProductsMap, function(subject, productsSet) {
+        Ext.iterate(armProductsMap, function(arm, productsSet) {
             var products = Array.from(productsSet);
             for (var i = 0; i < products.length; i++) {
                 var currentProduct = products[i];
