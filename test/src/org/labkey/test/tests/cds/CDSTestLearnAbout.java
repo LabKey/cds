@@ -427,7 +427,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final int STUDY_WITH_DATA_AVAILABLE = 25;
 
         cds.viewLearnAboutPage("Studies");
-        assertTextPresent("Data Added");
+        assertTextPresent("Not added");
 
         List<WebElement> hasDataRows = Locator.css(".has-data").findElements(getDriver());
         List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
