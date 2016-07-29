@@ -109,9 +109,7 @@ Ext.define('Connector.app.store.StudyProducts', {
                     if (product.product_id === this.studyData[s].product_id) {
                         studies.push({
                             study_name: this.studyData[s].study_name,
-                            label: this.studyData[s].study_label ?
-                                    this.studyData[s].study_label + ' (' + this.studyData[s].study_short_name + ')'
-                                    : '',
+                            label: this.studyData[s].study_label ? this.studyData[s].study_label : '',
                             has_data: this.studyData[s].has_data
                         });
                     }

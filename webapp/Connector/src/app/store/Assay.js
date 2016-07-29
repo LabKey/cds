@@ -109,8 +109,7 @@ Ext.define('Connector.app.store.Assay', {
                     if (assay.assay_identifier === this.assayStudies[s].assay_identifier) {
                         studies.push({
                             id: this.assayStudies[s].study_name || this.assayStudies[s].prot,
-                            label: this.assayStudies[s].study_name ? 
-                                    this.assayStudies[s].label + ' (' + this.assayStudies[s].short_name + ')' : '',
+                            label: this.assayStudies[s].label ? this.assayStudies[s].label : '',
                             has_data: this.assayStudies[s].has_data
                         });
                     }

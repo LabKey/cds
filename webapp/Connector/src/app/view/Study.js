@@ -102,7 +102,7 @@ Ext.define('Connector.app.view.Study', {
                             '<div class="detail-has-data"></div>',
                             '<div class="detail-gray-text">{[this.numAssaysWithData(values.assays)]}</div>',
                         '<tpl else>',
-                            'No data found',
+                            'Not added',
                         '</tpl>',
                     '</div>',
                 '</div>',
