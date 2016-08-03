@@ -729,7 +729,7 @@ public class CDSHelper
     {
         NavigationLink.SUMMARY.makeNavigationSelection(_test);
         _test.sleep(1000);
-        _test._ext4Helper.waitForMaskToDisappear(25000);
+        _test._ext4Helper.waitForMaskToDisappear(30000);
         _test.sleep(500);
     }
 
@@ -1084,6 +1084,7 @@ public class CDSHelper
 
     private String getPlotTickText(int svgIndex)
     {
+        _test.waitForElement(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text"));
         String shownText = _test.getText(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text").index(0));
         shownText = shownText + _test.getText(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text").index(1));
         shownText = shownText.replace("\n", "").toLowerCase();
