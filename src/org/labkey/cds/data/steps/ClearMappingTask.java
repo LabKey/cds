@@ -71,6 +71,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
             clearTable("cds", "subjectproductmap", container, logger);
             clearTable("cds", "studyproductmap", container, logger);
             clearTable("cds", "studyassay", container, logger);
+            clearTable("cds", "studydocuments", container, logger);
             clearTable("cds", "study", container, logger);
         }
 

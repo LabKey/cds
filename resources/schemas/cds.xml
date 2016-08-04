@@ -402,6 +402,36 @@
             <column columnName="mfi_blank_baseline"/>
         </columns>
     </table>
+    <table tableName="import_documents" tableDbType="TABLE">
+        <columns>
+            <column columnName="document_id"/>
+            <column columnName="label"/>
+            <column columnName="filename"/>
+            <column columnName="document_type"/>
+        </columns>
+    </table>
+    <table tableName="import_studydocuments" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="document_id"/>
+        </columns>
+    </table>
+    <table tableName="documents" tableDbType="TABLE">
+        <columns>
+            <column columnName="document_id"/>
+            <column columnName="container"/>
+            <column columnName="label"/>
+            <column columnName="filename"/>
+            <column columnName="document_type"/>
+        </columns>
+    </table>
+    <table tableName="studydocuments" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="document_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
     <table tableName="study" tableDbType="TABLE">
         <columns>
             <column columnName="study_name"/>
@@ -444,6 +474,8 @@
             <column columnName="investigator_email"/>
             <column columnName="primary_poc_name"/>
             <column columnName="primary_poc_email"/>
+            <column columnName="atlas_link"/>
+            <column columnName="cavd_link"/>
         </columns>
     </table>
     <table tableName="treatmentarmsubjectmap" tableDbType="TABLE">

@@ -126,5 +126,19 @@
             <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">
             </taskref>
         </transform>
+        <transform id="documents" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_documents" />
+            <destination schemaName="cds" queryName="documents" targetOption="truncate" />
+        </transform>
+        <transform id="PopulateStudyDocuments" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.ContainerSensitivePopulateTask">
+                <settings>
+                    <setting name="sourceSchema" value="cds"/>
+                    <setting name="sourceQuery" value="ds_studydocuments"/>
+                    <setting name="targetSchema" value="cds"/>
+                    <setting name="targetQuery" value="studydocuments"/>
+                </settings>
+            </taskref>
+        </transform>
     </transforms>
 </etl>

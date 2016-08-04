@@ -20,7 +20,13 @@ Ext.define('Connector.view.module.StudyHeader', {
                 '</tpl>',
                 '<tpl if="cavd_affiliation">',
                     '<tr>',
-                        '<td class="item-label">Grant Affiliation:</td><td class="item-value">{cavd_affiliation:htmlEncode}</td>',
+                        '<td class="item-label">Grant Affiliation:</td>',
+                        '<td class="item-value">',
+                            '<tpl if="this.isEmpty(cavd_affiliation_filename) || cavd_affiliation_file_exists !== true">',
+                                '{cavd_affiliation:htmlEncode}</td>',
+                            '<tpl else>',
+                                '<a href="' + LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + '{cavd_affiliation_filename}" target="_blank">{cavd_affiliation:htmlEncode}</a></td>',
+                        '</tpl>',
                     '</tr>',
                 '</tpl>',
                 '<tpl if="type">',
@@ -58,12 +64,32 @@ Ext.define('Connector.view.module.StudyHeader', {
                     '</tr>',
                 '</tpl>',
             '</table>',
-        '</tpl>'
+        '</tpl>',
+        {
+            isEmpty: function(text) {
+                if((typeof(text) == 'undefined') || (text == null) || (text.replace(/^\s+|\s+$/gm,'') === ''))
+                    return true;
+                else
+                    return false;
+            }
+        }
     ),
 
     initComponent : function() {
         var data = this.initialConfig.data.model.data;
         data['title'] = this.initialConfig.data.title;
-        this.update(data);    }
+        LABKEY.Ajax.request({
+            method: 'GET',
+            url: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + data.cavd_affiliation_filename,
+            success: LABKEY.Utils.getCallbackWrapper(function (json, response) {
+                if (200 === response.status) {
+                    data['cavd_affiliation_file_exists'] = true;
+                }
+                this.update(data);
+            }, this),
+            scope: this
+        });
+        this.update(data);
+    }
 
 });
