@@ -116,7 +116,7 @@ Ext.define('Connector.app.store.Study', {
                 for (var a=0; a < this.assayData.length; a++) {
                     if (study.study_name === this.assayData[a].prot) {
                         study.data_availability = study.data_availability || this.assayData[a].has_data;
-                        assays.push({
+                        var assay = {
                             assay_short_name: this.assayData[a].assay_short_name,
                             study_assay_id: this.assayData[a].study_assay_id,
                             assay_identifier: this.assayData[a].assay_identifier,
