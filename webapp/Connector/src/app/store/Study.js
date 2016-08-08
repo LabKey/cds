@@ -20,7 +20,7 @@ Ext.define('Connector.app.store.Study', {
         this.studyData = undefined;
         this.productData = undefined;
         this.assayData = undefined;
-        this.documentsData = undefined;
+        this.documentData = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -63,13 +63,13 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
-    onLoadDocuments : function(documentsData) {
-        this.documentsData = documentsData.rows;
+    onLoadDocuments : function(documentData) {
+        this.documentData = documentData.rows;
         this._onLoadComplete();
     },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData) && Ext.isDefined(this.documentsData)) {
+        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData) && Ext.isDefined(this.documentData)) {
             var studies = [], products, productNames;
 
             // join products to study
@@ -142,10 +142,10 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
 
-                for (var a=0; a < this.documentsData.length; a++) {
-                    if ((study.study_name === this.documentsData[a].prot) && (this.documentsData[a].document_type === 'grant_document')) {
-                        study.cavd_affiliation = this.documentsData[a].label;
-                        study.cavd_affiliation_filename = this.documentsData[a].filename;
+                for (var a=0; a < this.documentData.length; a++) {
+                    if ((study.study_name === this.documentData[a].prot) && (this.documentData[a].document_type === 'grant_document')) {
+                        study.cavd_affiliation = this.documentData[a].label;
+                        study.cavd_affiliation_filename = this.documentData[a].filename;
                         study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
                     }
                 }

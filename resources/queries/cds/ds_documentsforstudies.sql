@@ -2,6 +2,6 @@
 SELECT
   sd.prot,
   doc.*
-FROM cds.studydocuments sd
-LEFT JOIN documents doc
+FROM cds.studydocument sd
+LEFT JOIN document doc
 ON doc.document_id=sd.document_id

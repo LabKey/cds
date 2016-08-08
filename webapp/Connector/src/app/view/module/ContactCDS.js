@@ -88,25 +88,17 @@ Ext.define('Connector.view.module.ContactCDS', {
             '<div class="item-row">',
                 '<a href="https://portal.cavd.org/CAVDStudyProposals/Pages/RequestCSFServices.aspx" target="_blank">Request Central Service Facilities support for an ancillary study</a>',
             '</div>',
-            '<tpl if="!this.isEmpty(atlas_link)">',
+            '<tpl if="atlas_link">',
                 '<div class="item-row">',
                 '<a href="{atlas_link}" target="_blank">View this study in ATLAS <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
                 '</div>',
             '</tpl>',
-            '<tpl if="!this.isEmpty(cavd_link)">',
+            '<tpl if="cavd_link">',
                 '<div class="item-row">',
                 '<a href="{cavd_link}" target="_blank">View this study on the CAVD Portal <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
                 '</div>',
             '</tpl>',
-        '</tpl>',
-        {
-            isEmpty: function(text) {
-                if((typeof(text) == 'undefined') || (text == null) || (text.replace(/^\s+|\s+$/gm,'') === ''))
-                    return true;
-                else
-                    return false;
-            }
-        }
+        '</tpl>'
     ),
     initComponent : function() {
         var data = this.initialConfig.data.model.data;

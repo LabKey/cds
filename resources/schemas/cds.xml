@@ -402,7 +402,7 @@
             <column columnName="mfi_blank_baseline"/>
         </columns>
     </table>
-    <table tableName="import_documents" tableDbType="TABLE">
+    <table tableName="import_document" tableDbType="TABLE">
         <columns>
             <column columnName="document_id"/>
             <column columnName="label"/>
@@ -410,13 +410,13 @@
             <column columnName="document_type"/>
         </columns>
     </table>
-    <table tableName="import_studydocuments" tableDbType="TABLE">
+    <table tableName="import_studydocument" tableDbType="TABLE">
         <columns>
             <column columnName="prot"/>
             <column columnName="document_id"/>
         </columns>
     </table>
-    <table tableName="documents" tableDbType="TABLE">
+    <table tableName="document" tableDbType="TABLE">
         <columns>
             <column columnName="document_id"/>
             <column columnName="container"/>
@@ -425,7 +425,7 @@
             <column columnName="document_type"/>
         </columns>
     </table>
-    <table tableName="studydocuments" tableDbType="TABLE">
+    <table tableName="studydocument" tableDbType="TABLE">
         <columns>
             <column columnName="prot"/>
             <column columnName="document_id"/>
