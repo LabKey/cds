@@ -104,6 +104,10 @@ Ext.define('Connector.app.store.StudyProducts', {
 
             // join studies to product
             Ext.each(this.productData, function(product) {
+                if (product.product_developer == undefined || product.product_developer == '')
+                {
+                    product.product_developer = '[blank]';
+                }
                 studies = [];
                 for (s=0; s < this.studyData.length; s++) {
                     if (product.product_id === this.studyData[s].product_id) {

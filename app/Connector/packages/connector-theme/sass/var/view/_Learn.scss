@@ -196,12 +196,6 @@ h1.lhdv {
   float: left;
 }
 
-.detail-middle-column {
-  width: 20%;
-  float: left;
-  padding-right: 10px;
-}
-
 .detail-small-column {
   width: 10%;
   float: left;
@@ -215,11 +209,6 @@ h1.lhdv {
 .detail-large-column {
   width: 50%;
   float: left;
-}
-
-.detail-right-column {
-  width: 20%;
-  float: right;
 }
 
 .detail-has-data {
@@ -247,7 +236,11 @@ img.detail-has-data-small {
 
 .detail-container {
   padding: 0px $pageLeftPadding;
-  margin-bottom:8px;
+  margin-bottom: 8px;
+
+  .x-grid-cell-inner {
+    white-space: normal;
+  }
 
   .detail-wrapper {
     padding: 24px 0px 24px 16px;
@@ -307,6 +300,164 @@ img.detail-has-data-small {
     background-color: $gray-9;
   }
 }
+
+.learngrid {
+  padding-right: $pageLeftPadding !important;
+  padding-left: $pageLeftPadding !important;
+
+  .x-column-header-text {
+    color: $heat-scale-2;
+    font-size: 12px;
+    width: 100%;
+    text-transform: uppercase;
+  }
+
+  .x-grid-header-ct {
+    border: none !important;
+  }
+
+  .x-column-header {
+    border-top: none !important;
+    border-right: none !important;
+    border-left: none !important;
+  }
+
+  .detail-row-text {
+    padding-top: $sectionTopPadding;
+    padding-bottom: $sectionTopPadding;
+  }
+
+  .x-grid-td, .x-grid-row-selected .x-grid-td {
+    background-color: $gray-8;
+  }
+
+  .x-column-header-inner {
+    padding-top: $sectionTopPadding;
+    padding-bottom: 12px;
+  }
+
+  .x-column-header-trigger {
+    display: inline-block;
+    border-left: 1px solid transparent;
+  }
+
+  .x-column-header-sort-ASC,
+  .x-column-header-sort-DESC {
+    background-image: none;
+    background-color: $secondary-color;
+  }
+
+  .x-column-header-sort-ASC .x-column-header-text {
+    background-image: url(images/sort_asc.gif) !important;
+    background-position-x: calc(100% - 10px)
+  }
+
+  .x-column-header-sort-DESC .x-column-header-text {
+    background-image: url(images/sort_desc.gif) !important;
+    background-position-x: calc(100% - 10px)
+  }
+
+  .x-column-header-trigger {
+    background-color: transparent;
+    background-image: none;
+    &:hover {
+      background-image: url(images/filter_hover.svg);
+    }
+  }
+
+  .x-column-header-over {
+    .x-column-header-trigger {
+      background-color: transparent;
+      background-image: url(images/filter.svg);
+
+      &:hover {
+        background-image: url(images/filter_hover.svg);
+      }
+    }
+  }
+
+  .filtered-column {
+    .x-column-header-trigger {
+      background-color: transparent;
+      background-image: url(images/filter_selected.svg);
+
+      &:hover {
+        background-image: url(images/filter_selected_hover.svg);
+      }
+    }
+  }
+}
+
+.detail-row {
+  //padding: 0px $pageLeftPadding;
+  margin-bottom: 8px;
+  padding: 24px 0px 24px 16px;
+  height: 170px;
+  border-bottom: 1px solid $heat-scale-4;
+  overflow: hidden;
+
+  .x-grid-cell-inner {
+    white-space: normal;
+  }
+
+  .detail-description {
+    height: 123px;
+    overflow: hidden;
+
+    h2 {
+      font: $headline-font;
+    }
+
+    .detail-type-text {
+      font: $body-one-font;
+      color: $heat-scale-2;
+    }
+
+    .detail-description-text {
+      padding-top: 12px;
+      font: $body-one-font;
+      color: $heat-scale-1;
+      margin-right: 5%;
+
+      ol {
+        padding-left: 24px;
+      }
+
+      .data-availability-text {
+        padding-bottom: 12px;
+      }
+    }
+  }
+
+  .detail-text {
+    font: $body-one-font;
+
+    .detail-gray-text {
+      color: $heat-scale-1;
+    }
+
+    .detail-black-text {
+      color: $black;
+    }
+  }
+
+  &:hover {
+    .x-grid-td {
+      @include transition(background-color 0.2s ease-out);
+      background-color: $select-hover-color;
+      cursor: pointer;
+      border-color: transparent;
+    }
+  }
+}
+.detail-row-has-data {
+  .x-grid-td {
+    background-color: $gray-9;
+  }
+}
+
+
+
 
 //todo: merge with detail container as interactive vs non-interactive list.
 div.list-container {
@@ -404,4 +555,36 @@ div.list-container {
       width: 130px;
     }
   }
+}
+
+.reportinfo {
+  font-family: Georgia, serif;
+  .reportinfoheader {
+    font-size: 18px;
+    padding-bottom: 5px;
+  }
+  .reportinfoname {
+    width: 120px;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .reportinfovalue {
+    font-size: 16px;
+  }
+
+}
+
+.reportView {
+  margin-top: 20px;
+}
+
+.reportContent {
+  padding-left: 28px;
+  padding-top: 10px;
+  background-color: #ffffff;
+}
+
+.learnpageheader {
+  background-color: $gray-7;
 }

@@ -169,8 +169,8 @@ public class CDSAsserts
     {
         if(validateItemCount)
         {
-            _test.waitForElement(Locator.tagWithClass("div", "detail-container").append("/div/div/h2"));
-            int elemCount = _test.getElementCount(Locator.xpath("//div[not(contains(@style, 'display: none'))]/div[contains(@class, 'detail-container')]/div/div/h2"));
+            _test.waitForElement(Locator.tagWithClass("div", "detail-row").append("/td/div/div/h2"));
+            int elemCount = _test.getElementCount(Locator.xpath("//div[not(contains(@style, 'display: none'))]/div[contains(@class, 'detail-row')]/td/div/div/div/h2"));
             assertEquals("Unexpected number of items on the Learn About page.", axisItems.size(), elemCount);
         }
         verifyLearnAboutPage(axisItems);
@@ -180,8 +180,8 @@ public class CDSAsserts
     {
         for (String item : axisItems)
         {
-            _test.waitForElement(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(item), _test.WAIT_FOR_PAGE);
-            _test.assertElementVisible(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").withText(item));
+            _test.waitForElement(Locator.tagWithClass("tr", "detail-row").append("/td/div/div/h2").containing(item), _test.WAIT_FOR_PAGE);
+            _test.assertElementVisible(Locator.tagWithClass("tr", "detail-row").append("/td/div/div/h2").withText(item));
         }
 
     }

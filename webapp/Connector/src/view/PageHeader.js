@@ -52,7 +52,7 @@ Ext.define('Connector.view.PageHeader', {
     flex: 1,
 
     renderTpl: new Ext.XTemplate(
-        '<div style="background-color: #ebebeb;">',
+        '<div class="learnpageheader">',
             '{%this.renderContainer(out,values);%}',
         '</div>',
         '<div class="dim-selector learnabouttab">',
@@ -162,7 +162,9 @@ Ext.define('Connector.view.PageHeader', {
                 tabEls.push(el);
                 el.on('click', function()
                 {
-                    this.fireEvent('tabselect', this.dimension, this.model, this.tabs[i]);
+                    if (this.tabs) {
+                        this.fireEvent('tabselect', this.dimension, this.model, this.tabs[i]);
+                    }
                 }, this);
 
                 if (i === this.activeTab)

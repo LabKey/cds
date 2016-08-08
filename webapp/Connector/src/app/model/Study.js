@@ -15,7 +15,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'study_name'},
         {name: 'Container'},
         {name: 'network'},
-        {name: 'label'},
+        {name: 'label', sortType: 'asUCString'},
         {name: 'short_name'},
         {name: 'title'},
         {name: 'type'},
@@ -52,13 +52,23 @@ Ext.define('Connector.app.model.Study', {
         {name: 'investigator_email'},
         {name: 'primary_poc_name'},
         {name: 'primary_poc_email'},
+        {name: 'date_to_sort_on', sortType: 'asDate'},
+        {name: 'start_year'},
+        {name: 'product_to_sort_on'},
         {name: 'products', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'product_names', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }},
         {name: 'assays', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }},
         {name: 'groups_treatment_schema', defaultValue: undefined},
-        {name: 'methods_assay_schema', defaultValue: undefined}
+        {name: 'methods_assay_schema', defaultValue: undefined},
+        {name: 'assays_added_count'},
+        {name: 'assays_added', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }}
     ]
 });
