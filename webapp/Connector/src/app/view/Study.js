@@ -157,7 +157,6 @@ Ext.define('Connector.app.view.Study', {
         // Continue to show the column headers even when no data is present
         //
         this.emptyText = new Ext.XTemplate(
-            Connector.app.view.Study.columnHeaderTpl.apply({}),
             '<div class="detail-container"><div class="saeempty">None of the selected studies have data for this category.</div></div>'
         ).apply({});
 
