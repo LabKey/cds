@@ -1,0 +1,14 @@
+document_id	label	filename	document_type
+1	Nulla tellus. In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.	documents/Test Document 1.docx	grant_document
+2	Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.	documents/Test PDF 1.pdf	grant_document
+3	Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum. In hac habitasse platea dictumst.	documents/Test PDF 2.pdf	grant_document
+4	In congue. Etiam justo. Etiam pretium iaculis justo. In hac habitasse platea dictumst. Etiam faucibus cursus urna.	documents/Test Document 2.docx	grant_document
+5	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue.	documents/Test Document 3.docx	grant_document
+6	Nulla tellus. In sagittis dui vel nisl.	documents/Test PDF 3.pdf	grant_document
+7	In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.	documents/Test PDF 4.pdf	grant_document
+8	Suspendisse accumsan tortor quis turpis. Sed ante. Vivamus tortor. Duis mattis egestas metus.	documents/Test Document 4.docx	grant_document
+9	Nulla suscipit ligula in lacus. Curabitur at ipsum ac tellus semper interdum.	documents/Test Document 5.docx	grant_document
+10	\N	documents/Test PDF 5.pdf	grant_document
+11	Nulla suscipit ligula in lacus. Curabitur at ipsum ac tellus semper interdum.	documents/Test Document 5incorrectname.docx	grant_document
+12	Integer a nibh. In quis justo. Maecenas rhoncus aliquam lacus.	     	grant_document
+13	Integer a nibh. In quis justo. Maecenas rhoncus aliquam lacus.	\N	grant_document
