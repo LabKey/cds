@@ -92,7 +92,7 @@ Ext.define('Connector.app.store.Study', {
                 } else {
                     study.start_year = 'Not available';
                 }
-                
+
                 products = [];
                 productNames = [];
                 for (var p=0; p < this.productData.length; p++) {
@@ -117,9 +117,9 @@ Ext.define('Connector.app.store.Study', {
                     if (study.study_name === this.assayData[a].prot) {
                         study.data_availability = study.data_availability || this.assayData[a].has_data;
                         var assay = {
-                            assay_identifier: this.assayData[a].assay_identifier || this.assayData[a].study_assay_id,
-                            assay_full_name: this.assayData[a].assay_identifier ?
-                                    this.assayData[a].assay_short_name + ' (' + this.assayData[a].assay_label + ')' : '',
+                            assay_short_name: this.assayData[a].assay_short_name,
+                            study_assay_id: this.assayData[a].study_assay_id,
+                            assay_identifier: this.assayData[a].assay_identifier,
                             has_data: this.assayData[a].has_data
                         };
                         assays.push(assay);

@@ -47,10 +47,10 @@ Ext.define('Connector.view.module.StudyAssays', {
                                         '</tpl>',
                                     '</td>',
                                     '<td>',
-                                        '<tpl if="assay_full_name">', //determines if we have a learn about page to back the assay
-                                            '<a href="#learn/learn/Assay/{[encodeURIComponent(values.assay_identifier)]}">{assay_full_name:htmlEncode}</a>',
+                                        '<tpl if="assay_short_name">', //determines if we have a learn about page to back the assay
+                                            '<a href="#learn/learn/Assay/{[encodeURIComponent(values.assay_identifier)]}">{assay_short_name:htmlEncode}</a>',
                                         '<tpl else>',
-                                            '{assay_identifier:htmlEncode}',
+                                            '{study_assay_id:htmlEncode}',
                                         '</tpl>',
                                     '</td>',
                                 '</tr>',

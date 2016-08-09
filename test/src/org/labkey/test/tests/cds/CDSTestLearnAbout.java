@@ -427,7 +427,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final int STUDY_WITH_DATA_AVAILABLE = 25;
 
         cds.viewLearnAboutPage("Studies");
-        assertTextPresent("Data Added");
+        assertTextPresent("Not added");
 
         List<WebElement> hasDataRows = Locator.css(".detail-row-has-data").findElements(getDriver());
         List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
@@ -442,7 +442,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         //Valuse for Study Details inspection
         final String STUDY = "RED 4";
-        final String[] ASSAY_TITLES = {"IFNg ELISpot", "Intracellular Cytokine Staining", "HIV Binding Antibody"};
+        final String[] ASSAY_TITLES = {"IFNg ELISpot", "ICS", "BAMA"};
 
         //Valuse for Assay Details inspection
         final int NUM_STUDY_FROM_ASSAY_WITH_DATA = 14;
