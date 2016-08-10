@@ -25,6 +25,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'population'},
         {name: 'executive_summary'},
         {name: 'description'},
+        {name: 'strategy'},
         {name: 'groups'},
         {name: 'treatment_schema_link'},
         {name: 'rationale'},

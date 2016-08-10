@@ -10,10 +10,11 @@ Ext.define('Connector.app.view.Study', {
     cls: 'learnstudies learngrid',
 
     columns : [{
-        text: 'Description',
+        text: 'Name & Description',
         xtype: 'templatecolumn',
         minWidth: 400,
         flex: 60/100,
+        // locked: true,
         resizable: false,
         dataIndex: 'label',
         filterConfig: {
@@ -32,7 +33,86 @@ Ext.define('Connector.app.view.Study', {
                 '</div>', // allow html
             '</div>')
     },{
-        text: 'Start Date',
+        text: 'Data Added',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 15/100,
+        resizable: false,
+        dataIndex: 'assays_added_count',
+        filterConfig: {
+            filterField: 'assays_added_count',
+            valueType: 'number',
+            title: '# of Assays Added'
+        },
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text detail-row-text">',
+                    '<tpl if="data_availability">',
+                        '<div class="detail-has-data"></div>',
+                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added_count)]}</div>',
+                    '<tpl else>',
+                        'Not added',
+                    '</tpl>',
+                '</div>',
+                {
+                    assayCountText : function(assay_count) {
+                        return assay_count == 1 ? assay_count + ' Assay' : assay_count + ' Assays';
+                    }
+                }
+        )
+    },{
+        text: 'Type',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 15/100,
+        resizable: false,
+        dataIndex: 'type',
+        filterConfig: {
+            filterField: 'type',
+            valueType: 'string',
+            title: 'Type'
+        },
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text detail-row-text">',
+                    '<div class="detail-black-text">{type}</div>',
+                    '<div class="detail-gray-text">{species}</div>',
+                '</div>'
+        )
+    },{
+        text: 'PI',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 15/100,
+        resizable: false,
+        dataIndex: 'grant_pi_name',
+        filterConfig: {
+            filterField: 'grant_pi_name',
+            valueType: 'string',
+            title: 'PI'
+        },
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text detail-row-text">',
+                    '<div class="detail-black-text">{grant_pi_name}</div>',
+                '</div>'
+        )
+    },{
+        text: 'Strategy',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 15/100,
+        resizable: false,
+        dataIndex: 'strategy',
+        filterConfig: {
+            filterField: 'strategy',
+            valueType: 'string',
+            title: 'Strategy'
+        },
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text detail-row-text">',
+                    '<div class="detail-black-text">{strategy}</div>',
+                '</div>'
+        )
+    },{
+        text: 'Status',
         xtype: 'templatecolumn',
         minWidth: 150,
         flex: 15/100,
@@ -45,9 +125,10 @@ Ext.define('Connector.app.view.Study', {
         },
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
+                    '<div class="detail-black-text">{stage}</div>',
                     '<tpl if="first_enr_date || followup_complete_date">',
                         '<tpl if="first_enr_date && followup_complete_date">',
-                            '<div class="detail-black-text">{first_enr_date:this.renderDate}</div>',
+                            '<div class="detail-gray-text">{first_enr_date:this.renderDate}</div>',
                             '<div class="detail-gray-text">to {followup_complete_date:this.renderDate}</div>',
                             '<div class="detail-gray-text">{[this.monthDiff(values.first_enr_date, values.followup_complete_date)]} months in duration</div>',
                         '<tpl elseif="first_enr_date">',
@@ -57,7 +138,7 @@ Ext.define('Connector.app.view.Study', {
                         '</tpl>',
                     '<tpl elseif="start_date || public_date">',
                         '<tpl if="start_date && public_date">',
-                            '<div class="detail-black-text">{start_date:this.renderDate}</div>',
+                            '<div class="detail-gray-text">{start_date:this.renderDate}</div>',
                             '<div class="detail-gray-text">to {public_date:this.renderDate}</div>',
                             '<div class="detail-gray-text">{[this.monthDiff(values.start_date, values.public_date)]} months in duration</div>',
                         '<tpl elseif="start_date">',
@@ -102,33 +183,6 @@ Ext.define('Connector.app.view.Study', {
                         '</tpl>',
                     '</ul>',
                 '</div>'
-        )
-    },{
-        text: 'Data Added',
-        xtype: 'templatecolumn',
-        minWidth: 150,
-        flex: 15/100,
-        resizable: false,
-        dataIndex: 'assays_added_count',
-        filterConfig: {
-            filterField: 'assays_added_count',
-            valueType: 'number',
-            title: '# of Assays Added'
-        },
-        tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
-                    '<tpl if="data_availability">',
-                        '<div class="detail-has-data"></div>',
-                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added_count)]}</div>',
-                    '<tpl else>',
-                        'Not added',
-                    '</tpl>',
-                '</div>',
-                {
-                    assayCountText : function(assay_count) {
-                        return assay_count == 1 ? assay_count + ' Assay' : assay_count + ' Assays';
-                    }
-                }
         )
     }],
 
@@ -212,7 +266,8 @@ Ext.define('Connector.app.view.Study', {
                     target: item,
                     placement: 'right',
                     title: "Assays with Data Available",
-                    content: assayListHTML
+                    content: assayListHTML,
+                    width: 190
                 }, {}));
             }, 200);
 

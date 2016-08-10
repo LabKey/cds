@@ -35,6 +35,25 @@ Ext.define('Connector.app.view.StudyProducts', {
                 '</div>'
         )
     },{
+        text: 'Class',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 20/100,
+        resizable: false,
+        dataIndex: 'product_class',
+        filterConfig: {
+            filterField: 'product_class',
+            valueType: 'string',
+            title: 'Class'
+        },
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text detail-row-text">',
+                    '<div>',
+                        '<span class="detail-gray-text">Class: <span class="detail-black-text">{product_class:htmlEncode}</span></span>',
+                    '</div>',
+                '</div>'
+        )
+    },{
         text: 'Type',
         xtype: 'templatecolumn',
         minWidth: 150,
@@ -49,12 +68,6 @@ Ext.define('Connector.app.view.StudyProducts', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-black-text">{product_type:htmlEncode}</div>',
-                    '<div>',
-                        '<span class="detail-gray-text">Class: <span class="detail-black-text">{product_class:htmlEncode}</span></span>',
-                    '</div>',
-                    '<div>',
-                        '<span class="detail-gray-text">Subclass: <span class="detail-black-text">{product_subclass:htmlEncode}</span></span>',
-                    '</div>',
                 '</div>'
         )
     },{

@@ -26,6 +26,23 @@ Ext.define('Connector.view.Learn', {
 
     searchFilter: undefined,
 
+    dataListPrefix: 'learn-list-',
+
+    listeners: {
+        resize: function (view, width, height)
+        {
+            var visibleGrid = this.items.items.filter(function(item) {
+                return !item.hidden
+                        && item.itemId
+                        && item.itemId.toString().indexOf(this.dataListPrefix) == 0;
+            }, this);
+            if (visibleGrid.length == 1)
+            {
+                visibleGrid[0].fireEvent("learnGridResizeHeight", height);
+            }
+        }
+    },
+
     filterFields: [],
 
     columnFilters: {},
@@ -355,7 +372,7 @@ Ext.define('Connector.view.Learn', {
             }
             else if (dimension.detailModel && dimension.detailView) {
                 // otherwise, show the listing
-                var listId = 'learn-list-' + dimension.uniqueName;
+                var listId = this.dataListPrefix + dimension.uniqueName;
 
                 // listView -- cache hit
                 if (this.listViews[listId]) {

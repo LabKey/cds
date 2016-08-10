@@ -7,6 +7,8 @@ Ext.define('Connector.app.view.LearnSummary', {
             return record.data && record.data.data_availability ? cls + ' detail-row-has-data' : cls;
         }
     },
+    forceFit: true,
+
     listeners: {
         beforerender: function (grid)
         {
@@ -42,6 +44,22 @@ Ext.define('Connector.app.view.LearnSummary', {
             {
                 this.learnView.getHeader().fireEvent('updateLearnSort', column.dataIndex, direction);
             }, this);
+        },
+
+        learnGridResizeHeight : function (viewHeight)
+        {
+            this.setHeight(viewHeight - this.learnView.headerViews.main.height);
+        },
+
+        boxready: function(grid)
+        {
+            this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
         }
+    },
+
+    initComponent : function() {
+        this.addEvents("learnGridResizeHeight");
+
+        this.callParent(arguments);
     }
 });
