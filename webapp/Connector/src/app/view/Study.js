@@ -12,9 +12,8 @@ Ext.define('Connector.app.view.Study', {
     columns : [{
         text: 'Name & Description',
         xtype: 'templatecolumn',
-        minWidth: 400,
-        flex: 60/100,
-        // locked: true,
+        width: 500,
+        locked: true,
         resizable: false,
         dataIndex: 'label',
         filterConfig: {
@@ -221,26 +220,29 @@ Ext.define('Connector.app.view.Study', {
                 if (record.data.data_availability) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
                         id = Ext.id();
-
-                    checkmark.on('mouseenter', this.showAssayDataTooltip, this, {
-                        record: record,
-                        id: id
-                    });
-                    checkmark.on('mouseleave', this.hideAssayDataTooltip, this, {
-                        id: id
-                    });
-                    checkmark.on('click', this.hideAssayDataTooltip, this, {
-                        id: id
-                    })
+                    if (checkmark) {
+                        checkmark.on('mouseenter', this.showAssayDataTooltip, this, {
+                            record: record,
+                            id: id
+                        });
+                        checkmark.on('mouseleave', this.hideAssayDataTooltip, this, {
+                            id: id
+                        });
+                        checkmark.on('click', this.hideAssayDataTooltip, this, {
+                            id: id
+                        })
+                    }
                 }
             },
 
             'itemmouseleave' : function(view, record, item) {
                 if (record.data.data_availability) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
-                    checkmark.un('mouseenter', this.showAssayDataTooltip, this);
-                    checkmark.un('mouseleave', this.hideAssayDataTooltip, this);
-                    checkmark.un('click', this.hideAssayDataTooltip, this);
+                    if (checkmark) {
+                        checkmark.un('mouseenter', this.showAssayDataTooltip, this);
+                        checkmark.un('mouseleave', this.hideAssayDataTooltip, this);
+                        checkmark.un('click', this.hideAssayDataTooltip, this);
+                    }
                 }
             },
 

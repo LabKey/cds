@@ -20,8 +20,8 @@ Ext.define('Connector.app.view.Assay', {
     columns : [{
         text: 'Description & Methodology',
         xtype: 'templatecolumn',
-        minWidth: 400,
-        flex: 60/100,
+        width: 500,
+        locked: true,
         resizable: false,
         dataIndex: 'assay_short_name',
         filterConfig: {
