@@ -13,11 +13,7 @@ CREATE TABLE cds.import_StudyDocument(
   prot VARCHAR(250) NOT NULL,
   document_id VARCHAR(250) NOT NULL,
 
-  CONSTRAINT importstudydocument_document_id_fkey FOREIGN KEY (document_id)
-  REFERENCES cds.import_Document(document_id),
-
-  CONSTRAINT importstudydocument_prot_fkey FOREIGN KEY (prot)
-  REFERENCES cds.import_Study(prot)
+  CONSTRAINT pk_import_StudyDocument PRIMARY KEY (prot, document_id)
 );
 
 ALTER TABLE cds.import_Study ADD COLUMN atlas_link TEXT;
@@ -38,11 +34,7 @@ CREATE TABLE cds.StudyDocument(
   document_id VARCHAR(250) NOT NULL,
   container entityid NOT NULL,
 
-  CONSTRAINT studydocument_document_id_fkey FOREIGN KEY (document_id)
-    REFERENCES cds.Document(document_id),
-
-  CONSTRAINT studydocument_study_name_fkey FOREIGN KEY (prot)
-    REFERENCES cds.Study(study_name)
+  CONSTRAINT pk_StudyDocument PRIMARY KEY (prot, document_id)
 );
 
 ALTER TABLE cds.Study ADD COLUMN atlas_link TEXT;

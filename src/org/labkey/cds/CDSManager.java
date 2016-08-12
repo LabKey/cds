@@ -108,6 +108,8 @@ public class CDSManager
                     "TreatmentArm",
                     "Product",
                     "StudyAssay",
+                    "StudyDocument",
+                    "Document",
                     "Study",
                     "Assay",
                     "Lab"
