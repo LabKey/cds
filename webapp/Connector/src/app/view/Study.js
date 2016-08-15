@@ -70,6 +70,11 @@ Ext.define('Connector.app.view.Study', {
             valueType: 'string',
             title: 'Type'
         },
+        altFilterConfigs: [{
+            filterField: 'species',
+            valueType: 'string',
+            title: 'Species'
+        }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-black-text">{type}</div>',
@@ -122,6 +127,11 @@ Ext.define('Connector.app.view.Study', {
             valueType: 'string',
             title: 'Start Year'
         },
+        altFilterConfigs: [{
+            filterField: 'stage',
+            valueType: 'string',
+            title: 'Stage'
+        }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-black-text">{stage}</div>',
@@ -200,7 +210,8 @@ Ext.define('Connector.app.view.Study', {
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
         ],
         filterFields: [
-            'label', 'start_year', 'product_names', 'assays_added_count'
+            'label',  'assays_added_count', 'type', 'species', 'grant_pi_name', 'strategy', 'stage', 'start_year',
+            'product_names'
         ]
     },
 

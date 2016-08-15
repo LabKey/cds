@@ -17,26 +17,119 @@ Ext.define('Connector.window.LearnFacet', {
 
     filterConfig: {},
 
-    filterValues: [],
+    filterConfigSet: [],
+
+    currentFilterField: '',
 
     learnStore: undefined,
+
+    cls: 'learnFilter',
 
     /* To avoid URL overflow, allow up to 100 selections per column */
     maxSelection: 100,
 
     getItems : function()
     {
-        var faceted = Ext.create('Connector.grid.LearnFaceted', {
-            itemId: 'faceted',
-            border: false,
-            useStoreCache: true,
-            filterValues: this.filterValues,
-            dim: this.dim,
-            columnField: this.filterConfig.filterField,
-            valueType: this.filterConfig.valueType,
-            learnStore: this.learnStore
+        var facetGrids = this.createFacetGrids(this.filterConfigSet);
+        this.facetGrids = facetGrids;
+
+        this.currentFilterField = this.filterConfigSet[0].filterField;
+
+        if (this.filterConfigSet.length > 1) {
+
+            var btnId = Ext.id();
+            var dropDownBtn = {
+                id: btnId,
+                xtype: 'imgbutton',
+                itemId: 'infosortdropdown',
+                cls: 'sortDropdown ipdropdown', // tests
+                style: 'float: right;',
+                menu: {
+                    xtype: 'menu',
+                    autoShow: true,
+                    itemId: 'infosortedmenu',
+                    showSeparator: false,
+                    width: 270,
+                    ui: 'custom',
+                    cls: 'infosortmenu',
+                    btn: btnId,
+                    items: this.filterConfigSet.map(function(config) {
+                        return {text: config.title};
+                    }),
+                    listeners: {
+                        click: function(menu, item) {
+                            var filterConfig = this.getConfigForField('title', item.text);
+                            this.getTitleBar().update(filterConfig);
+                            this.setFacetGridVisibility(filterConfig.filterField);
+                        },
+                        scope: this
+                    }
+                }
+            };
+
+            var selector = {
+                xtype: 'container',
+                ui: 'custom',
+                layout: { type: 'hbox' },
+                items: [this.getTitleBar(), dropDownBtn]
+            };
+            this.setFacetGridVisibility()
+            return [selector].concat(facetGrids);
+        }
+        return facetGrids;
+    },
+
+    createFacetGrids : function(filterConfigSet) {
+        return filterConfigSet.map(function(config) {
+            return Ext.create('Connector.grid.LearnFaceted', {
+                itemId: 'faceted-' + config.filterField,
+                border: false,
+                useStoreCache: true,
+                filterValues: config.filterValues,
+                dim: this.dim,
+                columnField: config.filterField,
+                valueType: config.valueType,
+                learnStore: this.learnStore
+            });
+        }, this)
+    },
+
+    setFacetGridVisibility : function(colName) {
+        if (colName) {
+            this.currentFilterField = colName;
+        }
+        this.facetGrids.forEach(function(grid)
+        {
+            if (grid.columnField == this.currentFilterField) {
+                grid.show();
+            }
+            else {
+                grid.hide();
+            }
+        }, this);
+    },
+
+    getTitleBar : function() {
+        if (!this.titleBar) {
+            this.titleBar = Ext.create('Ext.Component', {
+                xtype: 'box',
+                tpl: new Ext.XTemplate(
+                        '<div class="sorter">',
+                        '<span class="sorter-label">Filter Values by:</span>',
+                        '<span class="sorter-content">{title:htmlEncode}</span>',
+                        '</div>'
+                ),
+                data: this.filterConfig,
+                flex: 10
+            });
+        }
+        return this.titleBar
+    },
+
+    getConfigForField : function(field, value) {
+        return this.filterConfigSet.find(function(config) {
+            return config[field] == value;
         });
-        return [faceted];
     },
 
     onAfterRender : function() {
@@ -46,22 +139,22 @@ Ext.define('Connector.window.LearnFacet', {
 
     applyFiltersAndColumns : function()
     {
-        var view = this.getComponent('faceted');
+        var view = this.getComponent('faceted-' + this.currentFilterField);
         var filterValues = view.getFilterValues();
         if (filterValues.length == 0) {
-            this.fireEvent('clearfilter');
+            this.fireEvent('clearfilter', this.currentFilterField);
         }
         else if (filterValues.length > this.maxSelection) {
             Ext.Msg.alert('Error', 'Maximum selection of ' + this.maxSelection + ' values allowed.')
         }
         else {
-            this.fireEvent('filter', filterValues);
+            this.fireEvent('filter', this.currentFilterField, filterValues);
         }
         this.close();
     },
 
     onClear : function() {
-        this.fireEvent('clearfilter');
+        this.fireEvent('clearfilter', this.currentFilterField);
         this.close();
     }
 });

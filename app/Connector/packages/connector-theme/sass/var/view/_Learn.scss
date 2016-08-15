@@ -588,3 +588,37 @@ div.list-container {
 .learnpageheader {
   background-color: $gray-7;
 }
+
+.learnFilter {
+  .imgbutton {
+    width: 21px!important;
+    height: 21px!important;
+    top: 26px!important;
+    left: 244px!important;
+  }
+
+  .sorter {
+    span.sorter-label {
+      font-size: 12px;
+      text-transform: none;
+      display: block;
+      color: $gray-25;
+      padding: 0 0 4px 0;
+    }
+
+    span.sorter-content {
+      font-size: 12px;
+      margin: 4px 0 20px 0;
+      padding: 4px 8px;
+      display: block;
+      @include prefixer(border-radius, 2px);
+      background-color: $white;
+      border: 1px solid $gray-6;
+      line-height: 22px;
+      height: 32px;
+      width: 270px;
+    }
+
+    @include smallStandout;
+  }
+}

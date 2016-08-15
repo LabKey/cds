@@ -18,23 +18,27 @@ Ext.define('Connector.app.view.LearnSummary', {
             Ext.each(headers, function(header) {
                 header.on('headertriggerclick', function onTriggerClick(headerCt, column)
                 {
-                    var field = column.filterConfig.filterField;
+                    var filterConfigSet = [column.filterConfig].concat(column.altFilterConfigs ? column.altFilterConfigs : []).map(function(config) {
+                        config.filterValues =  learnView.columnFilters[config.filterField] ? learnView.columnFilters[config.filterField] : [];
+                        return config;
+                    });
                     Ext.create('Connector.window.LearnFacet', {
                         dim: dim,
                         filterConfig: column.filterConfig,
-                        col: column,
-                        columnMetadata: {caption : column.filterConfig.title},
+                        filterConfigSet: filterConfigSet,
+                        col: column, //used to position facet window
+                        columnMetadata: column.altFilterConfigs ?
+                            {caption : 'Search By'} : {caption : column.filterConfig.title},
                         learnStore: this.store,
                         dataView: this,
-                        filterValues: learnView.columnFilters[field] ? learnView.columnFilters[field] : [],
                         listeners: {
-                            filter: function (filterValues)
+                            filter: function (columnName, filterValues)
                             {
-                                this.learnView.getHeader().fireEvent('updateLearnFilter', field, filterValues);
+                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, filterValues);
                             },
-                            clearfilter: function ()
+                            clearfilter: function (columnName)
                             {
-                                this.learnView.getHeader().fireEvent('updateLearnFilter', field, []);
+                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, []);
                             },
                             scope: this
                         },
