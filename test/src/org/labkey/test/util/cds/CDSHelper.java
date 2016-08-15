@@ -996,7 +996,7 @@ public class CDSHelper
 
     public void initModuleProperties()
     {
-        boolean changed;
+        boolean changed, returnVal;
 
         _test._ext4Helper.resetCssPrefix();
         _test.goToProjectHome();
@@ -1005,9 +1005,11 @@ public class CDSHelper
         _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
         _test.waitForText(1000, "CDSTest Project");
 
-        changed = showHiddenVariables(true)
-                || setGettingStartedVideoURL("https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0")
-                || setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
+        changed = showHiddenVariables(true);
+        returnVal = setGettingStartedVideoURL("https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0");
+        changed |= returnVal;
+        returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
+        changed |= returnVal;
 
         if (changed)
         {
