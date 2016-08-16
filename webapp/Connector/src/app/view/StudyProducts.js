@@ -5,50 +5,80 @@
  */
 Ext.define('Connector.app.view.StudyProducts', {
 
-    extend : 'Ext.view.View',
+    extend : 'Connector.app.view.LearnSummary',
 
-    itemSelector: 'div.detail-wrapper',
-
-    cls: 'learnstudyproducts',
+    cls: 'learnstudyproducts learngrid',
 
     statics: {
-        columnHeaderTpl: new Ext.XTemplate(
-            '<div class="learncolumnheader">',
-                '<div class="detail-left-column">Product name</div>',
-                '<div class="detail-middle-column">Type</div>',
-                '<div class="detail-right-column">Developer</div>',
-            '</div>'
-        ),
-        searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer']
+        searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer'],
+        filterFields: [
+            'product_name', 'product_type', 'product_developer'
+        ]
     },
 
-    tpl: new Ext.XTemplate(
-        '<tpl if="values.length &gt; 0">',
-            '{[ Connector.app.view.StudyProducts.columnHeaderTpl.apply(values) ]}',
-        '</tpl>',
-        '<tpl for=".">',
-            '<div class="detail-container">',
-                '<div class="detail-wrapper">',
-                    '<div class="detail-left-column detail-description">',
-                        '<h2>{product_name:htmlEncode}</h2>',
-                        '<div class="detail-description-text">{product_description:htmlEncode}</div>',
+    columns: [{
+        text: 'Product name',
+        xtype: 'templatecolumn',
+        minWidth: 400,
+        flex: 60/100,
+        resizable: false,
+        dataIndex: 'product_name',
+        filterConfig: {
+            filterField: 'product_name',
+            valueType: 'string',
+            title: 'Product Name'
+        },
+        tpl: new Ext.XTemplate(
+                '<div class="detail-description detail-row-text">',
+                    '<h2>{product_name:htmlEncode}</h2>',
+                    '<div class="detail-description-text">{product_description:htmlEncode}</div>',
+                '</div>'
+        )
+    },{
+        text: 'Type',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 20/100,
+        resizable: false,
+        dataIndex: 'product_type',
+        filterConfig: {
+            filterField: 'product_type',
+            valueType: 'string',
+            title: 'Type'
+        },
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text detail-row-text">',
+                    '<div class="detail-black-text">{product_type:htmlEncode}</div>',
+                    '<div>',
+                        '<span class="detail-gray-text">Class: <span class="detail-black-text">{product_class:htmlEncode}</span></span>',
                     '</div>',
-                    '<div class="detail-middle-column detail-text">',
-                        '<div class="detail-black-text">{product_type:htmlEncode}</div>',
-                        '<div>',
-                            '<span class="detail-gray-text">Class: <span class="detail-black-text">{product_class:htmlEncode}</span></span>',
-                        '</div>',
-                        '<div>',
-                            '<span class="detail-gray-text">Subclass: <span class="detail-black-text">{product_subclass:htmlEncode}</span></span>',
-                        '</div>',
+                    '<div>',
+                        '<span class="detail-gray-text">Subclass: <span class="detail-black-text">{product_subclass:htmlEncode}</span></span>',
                     '</div>',
-                    '<div class="detail-right-column detail-text">',
-                        '<div class="detail-gray-text"">{product_developer:htmlEncode}</div>',
+                '</div>'
+        )
+    },{
+        text: 'Developer',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 20/100,
+        resizable: false,
+        dataIndex: 'product_developer',
+        filterConfig: {
+            filterField: 'product_developer',
+            valueType: 'string',
+            title: 'Developer'
+        },
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text detail-row-text">',
+                    '<div class="detail-gray-text"">',
+                        '<tpl if="product_developer != &quot;[blank]&quot;">',
+                            '{product_developer:htmlEncode}',
+                        '</tpl>',
                     '</div>',
-                '</div>',
-            '</div>',
-        '</tpl>'
-    ),
+                '</div>'
+        )
+    }],
 
     initComponent : function() {
 
@@ -56,7 +86,6 @@ Ext.define('Connector.app.view.StudyProducts', {
         // Continue to show the column headers even when no data is present
         //
         this.emptyText = new Ext.XTemplate(
-            Connector.app.view.StudyProducts.columnHeaderTpl.apply({}),
             '<div class="detail-container"><div class="saeempty">None of the selected study products have data for this category.</div></div>'
         ).apply({});
 

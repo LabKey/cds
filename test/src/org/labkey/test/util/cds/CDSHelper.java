@@ -729,7 +729,7 @@ public class CDSHelper
     {
         NavigationLink.SUMMARY.makeNavigationSelection(_test);
         _test.sleep(1000);
-        _test._ext4Helper.waitForMaskToDisappear(25000);
+        _test._ext4Helper.waitForMaskToDisappear(60000);
         _test.sleep(500);
     }
 
@@ -994,11 +994,9 @@ public class CDSHelper
 
     }
 
-    public void showHiddenVariables(boolean turnOn)
+    public void initModuleProperties()
     {
-        String xpathValueTxtBox = "//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input";
-        String curValue;
-        Boolean changed = false;
+        boolean changed, returnVal;
 
         _test._ext4Helper.resetCssPrefix();
         _test.goToProjectHome();
@@ -1006,6 +1004,27 @@ public class CDSHelper
         _test.waitForText(1000, "Module Properties");
         _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
         _test.waitForText(1000, "CDSTest Project");
+
+        changed = showHiddenVariables(true);
+        returnVal = setGettingStartedVideoURL("https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0");
+        changed |= returnVal;
+        returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
+        changed |= returnVal;
+
+        if (changed)
+        {
+            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
+            _test.waitForText(1000, "Success");
+            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
+        }
+
+    }
+
+    private boolean showHiddenVariables(boolean turnOn)
+    {
+        String xpathValueTxtBox = "//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input";
+        String curValue;
+        boolean changed = false;
 
         curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
 
@@ -1026,33 +1045,42 @@ public class CDSHelper
             }
         }
 
-        if (changed)
-        {
-            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
-            _test.waitForText(1000, "Success");
-            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
-        }
-
+        return changed;
     }
 
-    public void setGettingStartedVideoURL(String videoUrl)
+    private boolean setGettingStartedVideoURL(String videoUrl)
     {
         String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[1]";
         String curValue;
-        Boolean changed = false;
+        boolean changed = false;
 
-        _test._ext4Helper.resetCssPrefix();
-        _test.goToProjectHome();
-        _test.goToFolderManagement();
-        _test.waitForText(1000, "Module Properties");
-        _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
-        _test.waitForText(1000, "CDSTest Project");
+        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
 
-        _test.setFormElement(Locator.xpath(xpathValueTxtBox), videoUrl);
+        if(!curValue.trim().toLowerCase().equals(videoUrl.trim().toLowerCase()))
+        {
+            _test.setFormElement(Locator.xpath(xpathValueTxtBox), videoUrl);
+            changed = true;
+        }
 
-        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
-        _test.waitForText(1000, "Success");
-        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
+        return changed;
+
+    }
+
+    private boolean setStaticPath(String path)
+    {
+        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[5]";
+        boolean changed = false;
+        String curValue;
+
+        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
+
+        if(!curValue.trim().toLowerCase().equals(path.trim().toLowerCase()))
+        {
+            _test.setFormElement(Locator.xpath(xpathValueTxtBox), path);
+            changed = true;
+        }
+
+        return changed;
 
     }
 
@@ -1084,6 +1112,7 @@ public class CDSHelper
 
     private String getPlotTickText(int svgIndex)
     {
+        _test.waitForElement(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text"));
         String shownText = _test.getText(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text").index(0));
         shownText = shownText + _test.getText(Locator.css("svg:nth-of-type(" + svgIndex + ") > g.axis g.tick-text").index(1));
         shownText = shownText.replace("\n", "").toLowerCase();

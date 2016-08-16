@@ -28,32 +28,32 @@ Ext.define('Connector.app.store.StudyProducts', {
             success: this.onLoadProducts,
             scope: this
         });
-        LABKEY.Query.executeSql({
+        LABKEY.Query.selectRows({
             schemaName: 'cds',
-            sql: 'SELECT *, study_name.label AS study_label, study_name.short_name AS study_short_name, FROM cds.studyproductmap',
+            queryName: 'ds_studiesforproducts',
             success: this.onLoadStudies,
-            requiredVersion: 13.2,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'subjectproductmap',
-            success: this.onLoadSubjectProduct,
+            queryName: 'studypartgrouparmproduct',
+            success: this.onLoadStudyArmProduct,
             scope: this
         });
     },
 
-    onLoadSubjectProduct: function (subjectProductsData) {
-        var all = subjectProductsData.rows;
-        var subjectProductsMap = {};
+    onLoadStudyArmProduct: function (armProductsData) {
+        var all = armProductsData.rows;
+        var armProductsMap = {};
         Ext.each(all, function (row) {
-            if (!subjectProductsMap[row.participantid]) {
-                subjectProductsMap[row.participantid] = new Set();
+            var studyArm = row.prot + row.study_arm;
+            if (!armProductsMap[studyArm]) {
+                armProductsMap[studyArm] = new Set();
             }
-            subjectProductsMap[row.participantid].add(row.product_id);
+            armProductsMap[studyArm].add(row.product_id);
         });
         var allOtherProducts = {};
-        Ext.iterate(subjectProductsMap, function(subject, products) {
+        Ext.iterate(armProductsMap, function(arm, products) {
             Ext.each(products, function(product) {
                 if (!allOtherProducts[product]) {
                     allOtherProducts[product] = new Set();
@@ -61,7 +61,7 @@ Ext.define('Connector.app.store.StudyProducts', {
             });
         });
 
-        Ext.iterate(subjectProductsMap, function(subject, productsSet) {
+        Ext.iterate(armProductsMap, function(arm, productsSet) {
             var products = Array.from(productsSet);
             for (var i = 0; i < products.length; i++) {
                 var currentProduct = products[i];
@@ -104,14 +104,17 @@ Ext.define('Connector.app.store.StudyProducts', {
 
             // join studies to product
             Ext.each(this.productData, function(product) {
+                if (product.product_developer == undefined || product.product_developer == '')
+                {
+                    product.product_developer = '[blank]';
+                }
                 studies = [];
                 for (s=0; s < this.studyData.length; s++) {
-                    if (product.product_id === this.studyData[s].product_id.value) {
+                    if (product.product_id === this.studyData[s].product_id) {
                         studies.push({
-                            study_name: this.studyData[s].study_name.value,
-                            label: this.studyData[s].study_label.value 
-                                + ' (' + this.studyData[s].study_short_name.value + ')',
-                            has_data: this.studyData[s].has_data.value
+                            study_name: this.studyData[s].study_name,
+                            label: this.studyData[s].study_label ? this.studyData[s].study_label : '',
+                            has_data: this.studyData[s].has_data
                         });
                     }
                 }

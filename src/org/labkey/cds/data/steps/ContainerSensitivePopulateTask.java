@@ -83,10 +83,10 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
         targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
 
         SQLFragment sql;
+        SQLFragment queryForRowsWithoutValidStudy = new SQLFragment("SELECT * FROM ").append(sourceTable)
+                .append(" WHERE ");
         Map<String, Object>[] rows;
         BatchValidationException errors = new BatchValidationException();
-        long start;
-        long finish;
 
         // Insert all the rows
         for (Container container : project.getChildren())
@@ -94,6 +94,8 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
             sql.add(container.getName());
             rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+
+            queryForRowsWithoutValidStudy.append("prot != '").append(container.getName()).append("' AND ");
 
             if (rows.length > 0)
             {
@@ -114,6 +116,30 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
                     logger.error(e.getMessage(), e);
                 }
             }
+        }
+
+        String temp = queryForRowsWithoutValidStudy.getRawSQL();
+        queryForRowsWithoutValidStudy = new SQLFragment(temp.substring(0, temp.length() - 5));
+        rows = new SqlSelector(sourceTable.getSchema(), queryForRowsWithoutValidStudy).getMapArray();
+        if (rows.length > 0)
+        {
+            try
+            {
+                targetTable.getUpdateService().insertRows(user, project, Arrays.asList(rows), errors, null, null);
+
+                if (errors.hasErrors())
+                {
+                    for (ValidationException error : errors.getRowErrors())
+                    {
+                        logger.warn(error.getMessage());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
+            }
+
         }
     }
 }

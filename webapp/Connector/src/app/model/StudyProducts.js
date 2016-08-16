@@ -15,12 +15,16 @@ Ext.define('Connector.app.model.StudyProducts', {
 
     fields: [
         {name: 'product_id', type: 'int'},
-        {name: 'product_name'},
+        {name: 'product_name', sortType: 'asUCString'},
         {name: 'product_type'},
         {name: 'product_subclass'},
         {name: 'product_class'},
         {name: 'product_class_label'},
-        {name: 'product_developer'},
+        {name: 'product_developer', sortType: function(a){
+            if (a == '[blank]')
+                return ' ';
+            return a;
+        }},
         {name: 'product_manufacturer'},
         {name: 'product_description'},
         {name: 'studies', convert : function(value) {

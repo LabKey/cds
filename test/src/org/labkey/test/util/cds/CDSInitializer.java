@@ -59,8 +59,7 @@ public class CDSInitializer
         _test.setPipelineRoot(TestFileUtils.getSampleData("MasterDataspace/folder.xml").getParentFile().getParent());
         _test.importFolderFromPipeline("/MasterDataspace/folder.xml");
 
-        _cds.showHiddenVariables(true);
-        _cds.setGettingStartedVideoURL("https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0");
+        _cds.initModuleProperties();
 
         _test.goToProjectHome();
     }

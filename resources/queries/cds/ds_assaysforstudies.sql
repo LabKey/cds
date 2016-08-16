@@ -2,6 +2,7 @@
 SELECT
   sa.prot,
   sa.has_data,
+  sa.assay_identifier AS "study_assay_id",
   amd.*
 FROM cds.studyassay sa
 LEFT JOIN assay amd

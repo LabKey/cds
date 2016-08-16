@@ -6,11 +6,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.LabKeyPage;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +24,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String MISSING_SEARCH_STRING = "If this string ever appears something very odd happened.";
     private final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
-    private final String XPATH_RESULTLIST_WAPPER = "//div[not(contains(@style, 'display: none'))]/div[contains(@class, 'detail-container')]/div[contains(@class, 'detail-wrapper')]";
+    private final String XPATH_RESULT_ROW = "//div[not(contains(@style, 'display: none'))]/div/div/table/tbody/tr[contains(@class, 'detail-row')]";
 
     @Before
     public void preTest()
@@ -62,11 +64,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         List<WebElement> returnedItems;
         String[] itemParts;
-        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         cds.viewLearnAboutPage("Studies");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        returnedItems = Locator.xpath(XPATH_RESULT_ROW).findElements(getDriver());
 
         int index = returnedItems.size()/2;
 
@@ -97,6 +98,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Searching for a string '" + MISSING_SEARCH_STRING + "' that should not be found.");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
+        sleep(CDSHelper.CDS_WAIT);
         _asserts.verifyEmptyLearnAboutStudyPage();
 
     }
@@ -105,7 +107,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void verifyLearnAboutStudyDetails()
     {
         final String searchString = "QED 2";
-        final String grantAffiliation = "Nulla tellus. In sagittis dui vel nisl.";
+        final String grantAffiliation = "Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.";
         final String dataAvailability = "iaculis diam erat fermentum justo nec";
         final String firstContactName = "Juan Owens";
         final String firstContactEmail = "jowens5@deviantart.com";
@@ -120,7 +122,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assert(Locator.xpath("//div[contains(@class, 'data-availability-text')][text()='" + dataAvailability + "']").findElement(getDriver()).isDisplayed());
 
         log("Start verifying study detail page.");
-        List<WebElement> returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
+        List<WebElement> returnedItems  = Locator.xpath(XPATH_RESULT_ROW).findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -169,7 +171,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         List<WebElement> returnedItems;
         String[] itemParts;
-        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         log("Extra logging to record time stamps.");
         cds.viewLearnAboutPage("Study products");
@@ -185,7 +186,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
         log("Element should be there.");
 //        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
-        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        returnedItems = Locator.xpath(XPATH_RESULT_ROW).findElements(getDriver());
 
         int index = returnedItems.size()/2;
 
@@ -221,8 +222,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Searching for a string '" + MISSING_SEARCH_STRING + "' that should not be found.");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
+        sleep(CDSHelper.CDS_WAIT);
         _asserts.verifyEmptyLearnAboutStudyProductsPage();
-
     }
 
     @Test
@@ -232,7 +233,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
-        waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(0)));
+        waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(0)));
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
 
@@ -255,7 +256,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         //testing ICS antigens page
         waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
-        waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(1)));
+        waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(1)));
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
 
         refresh();
@@ -283,10 +284,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         searchTextStudies = "Proin leo odio, porttitor id";
         log("Search for '" + searchTextStudies + "' in Studies");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextStudies);
-        waitForElement(Locator.xpath(XPATH_RESULTLIST_WAPPER));
+        waitForElement(Locator.xpath(XPATH_RESULT_ROW));
 
         log("Go to the detail page of the item returned.");
-        returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
+        returnedItems  = Locator.xpath(XPATH_RESULT_ROW).findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -308,11 +309,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         searchTextStudies = "Oxygen";
         log("Search for '" + searchTextStudies + "' in Studies.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextStudies);
-        waitForElement(Locator.xpath(XPATH_RESULTLIST_WAPPER));
+        sleep(CDSHelper.CDS_WAIT);
 
         log("Go to the detail page of one of the items returned.");
         returnedItems.clear();
-        returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
+        returnedItems  = Locator.xpath(XPATH_RESULT_ROW).findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT);
 
@@ -330,11 +331,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         searchTextAssays = "NAB";
         log("Search for '" + searchTextAssays + "' in Assays");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextAssays);
-        waitForElement(Locator.xpath(XPATH_RESULTLIST_WAPPER));
+        sleep(CDSHelper.CDS_WAIT);
 
         log("Go to the detail page for " + searchTextAssays + ".");
         returnedItems.clear();
-        returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
+        returnedItems  = Locator.xpath(XPATH_RESULT_ROW).findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -348,13 +349,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         click(Locator.xpath(PRODUCTS_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
-        searchTextProducts = "Måns";
+        searchTextProducts = "M\u00E5ns";
         log("Search for '" + searchTextProducts + "' in Products");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextProducts);
+        sleep(CDSHelper.CDS_WAIT);
 
         log("Go to the detail page for " + searchTextProducts + ".");
         returnedItems.clear();
-        returnedItems  = Locator.xpath(XPATH_RESULTLIST_WAPPER).findElements(getDriver());
+        returnedItems  = Locator.xpath(XPATH_RESULT_ROW).findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -418,7 +420,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Validate that the 'Studies' search value is there.");
         Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
-
     }
 
     @Test
@@ -427,9 +428,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final int STUDY_WITH_DATA_AVAILABLE = 25;
 
         cds.viewLearnAboutPage("Studies");
-        assertTextPresent("Data Added");
+        assertTextPresent("Not added");
 
-        List<WebElement> hasDataRows = Locator.css(".has-data").findElements(getDriver());
+        List<WebElement> hasDataRows = Locator.css(".detail-row-has-data").findElements(getDriver());
         List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
         Assert.assertTrue(hasDataRows.size() == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
     }
@@ -442,7 +443,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         //Valuse for Study Details inspection
         final String STUDY = "RED 4";
-        final String[] ASSAY_TITLES = {"IFNg ELISpot", "Intracellular Cytokine Staining", "HIV Binding Antibody"};
+        final String[] ASSAY_TITLES = {"IFNg ELISpot", "ICS", "BAMA"};
 
         //Valuse for Assay Details inspection
         final int NUM_STUDY_FROM_ASSAY_WITH_DATA = 14;
@@ -456,7 +457,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Testing data availability module in Studies");
         cds.viewLearnAboutPage("Studies");
 
-        Locator element = Locator.xpath("//div[contains(@class, 'has-data')]/div/h2[contains(text(), '" + STUDY + "')]");
+        Locator element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + STUDY + "')]");
         assertElementPresent(element);
         waitAndClick(element);
 
@@ -495,6 +496,205 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
     }
 
+    @Test
+    public void validateLearnAboutFiltering()
+    {
+        LearnGrid learnGrid = new LearnGrid(this);
+
+        cds.viewLearnAboutPage("Studies");
+
+        log("Evaluating sorting...");
+        learnGrid.sort("Description");
+        List<WebElement> sortedStudyTitles = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver());
+        String titleForLastElement = sortedStudyTitles.get(sortedStudyTitles.size() - 1).getText();
+        learnGrid.sort("Description");
+        Assert.assertTrue(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver())
+                .get(0).getText()
+                .equals(titleForLastElement));
+
+        log("Evaluating filtering...");
+        String[] studiesToFilter = {CDSHelper.STUDIES[0], CDSHelper.STUDIES[7], CDSHelper.STUDIES[20]}; //Arbitrarily chosen
+        int numRowsPreFilter = Locator.tagWithClass("tr", "detail-row").findElements(getDriver()).size();
+
+        learnGrid.setFacet("Description", studiesToFilter);
+        List<WebElement> studyTitlesAfterFilter = Locator.tagWithClass("tr", "detail-row")
+                .append("/td//div/div/h2")
+                .findElements(getDriver());
+
+        List<String> studiesFiltered =  Arrays.asList(studiesToFilter);
+        for(WebElement studyTitlesOnPage : studyTitlesAfterFilter)
+        {
+            Assert.assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
+        }
+
+        log("Evaluating clearing a filter");
+        learnGrid.clearFilters("Description");
+        int numRowsPostFilter = learnGrid.getRowCount();
+        Assert.assertTrue(numRowsPreFilter == numRowsPostFilter && numRowsPostFilter == CDSHelper.STUDIES.length);
+
+        log("Evaluating applying two numeric filters");
+        //finds the number of rows that have a date column and assay column that satisfy the following filter
+        final String yearToFilter = "2004";
+        final String numAssasysToFilter = "1";
+        int numRowsSatisfyFilter = Locator.xpath("//tr/td/div/div/div[contains(@class, 'detail-black-text')]" +
+                "[contains(text(), '" + yearToFilter + "')]/../../../following-sibling::" +
+                "td/div/div/div[contains(@class, 'detail-gray-text')][contains(text(), '" + numAssasysToFilter + " Assay')]")
+                .findElements(getDriver()).size();
+
+        learnGrid.setFacet("Start Date", yearToFilter);
+        learnGrid.setFacet("Data Added", numAssasysToFilter);
+        numRowsPostFilter = learnGrid.getRowCount();
+
+        Assert.assertTrue(numRowsSatisfyFilter == numRowsPostFilter);
+
+        log("Evaluating persisting to URL");
+        refresh();
+        sleep(CDSHelper.CDS_WAIT);
+        int numRowsPostRefresh = learnGrid.getRowCount();
+        Assert.assertTrue(numRowsSatisfyFilter == numRowsPostRefresh);
+
+        learnGrid.clearFilters("Start Date");
+        learnGrid.clearFilters("Data Added");
+    }
+
+    @Test
+    public void validateLinksToStudyGrantDocuments()
+    {
+        final String PDF01_FILE_NAME = "test%20pdf%201.pdf";
+        final String PDF02_FILE_NAME = "test%20pdf%202.pdf";
+        final String DOCX_FILE_NAME = "test document 1.docx";
+        final int PDF01_STUDY = 1;
+        final int DOCX01_STUDY = 0;
+        final int PDF02_STUDY01 = 14;
+        final int PDF02_STUDY02 = 18;
+        final int PDF02_STUDY03 = 11;
+        final int BROKEN_LINK_STUDY = 4;
+        final String STUDY_INFO_TEXT_TRIGGER = "Study information";
+
+        String studyName;
+        Locator studyElement;
+
+        log("Validate a link to a pdf file works as expected.");
+        validatePDFLink(CDSHelper.STUDIES[PDF01_STUDY], PDF01_FILE_NAME);
+
+        log("Validate that a link to a doc file works as expected.");
+        validateDocLink(CDSHelper.STUDIES[DOCX01_STUDY], DOCX_FILE_NAME);
+
+        log("Validated that a document linked to several studies works as expected.");
+        validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY01], PDF02_FILE_NAME);
+        validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY02], PDF02_FILE_NAME);
+        validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY03], PDF02_FILE_NAME);
+
+        log("Validate a study that has link but the document is not there.");
+        pauseJsErrorChecker();
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.STUDIES[BROKEN_LINK_STUDY];
+        studyElement = Locator.xpath("//h2[text() = '" + studyName + "']");
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+
+        Assert.assertTrue("There was a visible link to a grant document for this study, and there should not be.", getVisibleGrantDocumentLink() == null);
+
+        resumeJsErrorChecker();
+
+        goToHome();
+        log("All done.");
+
+    }
+
+    private void validatePDFLink(String studyName, String pdfFileName)
+    {
+        final String PLUGIN_XPATH = "//embed[@name='plugin']";
+        final String STUDY_XPATH_TEMPLATE = "//h2[text() = '$']";
+        final String STUDY_INFO_TEXT_TRIGGER = "Study information";
+
+        String studyXPath;
+        Locator studyElement;
+        WebElement documentLink;
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        log("Validate that study " + studyName + " has a grant document and is of type pdf.");
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+
+        documentLink = getVisibleGrantDocumentLink();
+        Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
+
+        log("Now click on the document link.");
+        documentLink.click();
+        sleep(10000);
+        switchToWindow(1);
+
+        log("Validate that the pdf document was loaded into the browser.");
+        assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
+        Assert.assertTrue("The embedded element is not a pdf plugin", getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
+        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'.", getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
+
+        log("Close this window.");
+        getDriver().close();
+
+        log("Go back to the main window.");
+        switchToMainWindow();
+
+    }
+
+    private void validateDocLink(String studyName, String docFileName)
+    {
+        final String STUDY_XPATH_TEMPLATE = "//h2[text() = '$']";
+        final String STUDY_INFO_TEXT_TRIGGER = "Study information";
+
+        String studyXPath, foundDocumentName;
+        Locator studyElement;
+        WebElement documentLink;
+        File docFile;
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        log("Validate that study " + studyName + " has a grant document and is of type docx.");
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+
+        documentLink = getVisibleGrantDocumentLink();
+        Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
+
+        log("Now click on the document link.");
+        docFile = clickAndWaitForDownload(documentLink);
+        foundDocumentName = docFile.getName();
+        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + docFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(docFileName));
+
+    }
+
+    // Return the visible grant document link, null otherwise.
+    private WebElement getVisibleGrantDocumentLink()
+    {
+        final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Grant Affiliation:']/following-sibling::td//a";
+        WebElement documentLinkElement = null;
+
+
+        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(getDriver()))
+        {
+            if(we.isDisplayed())
+            {
+                documentLinkElement = we;
+                break;
+            }
+        }
+
+        return documentLinkElement;
+    }
+
     //Helper function for data availability tests
     private Locator.XPathLocator getDataRowXPath(String rowText)
     {
@@ -506,12 +706,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String itemText;
         String[] itemParts;
         List<WebElement> returnedItems;
-        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
 
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
-        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        sleep(CDSHelper.CDS_WAIT);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        returnedItems = Locator.xpath(XPATH_RESULT_ROW).findElements(getDriver());
         log("Found " + returnedItems.size() + " items.");
 
         for (WebElement listItem : returnedItems)
