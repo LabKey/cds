@@ -16,11 +16,11 @@ Ext.define('Connector.app.view.Study', {
         locked: true,
         resizable: false,
         dataIndex: 'label',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'label',
             valueType: 'string',
             title: 'Study'
-        },
+        }],
         tpl: new Ext.XTemplate(
             '<div class="detail-description detail-row-text">',
                 '<h2>{label:htmlEncode}</h2>',
@@ -38,11 +38,11 @@ Ext.define('Connector.app.view.Study', {
         flex: 15/100,
         resizable: false,
         dataIndex: 'assays_added_count',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'assays_added_count',
             valueType: 'number',
             title: '# of Assays Added'
-        },
+        }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<tpl if="data_availability">',
@@ -65,12 +65,11 @@ Ext.define('Connector.app.view.Study', {
         flex: 15/100,
         resizable: false,
         dataIndex: 'type',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'type',
             valueType: 'string',
             title: 'Type'
-        },
-        altFilterConfigs: [{
+        },{
             filterField: 'species',
             valueType: 'string',
             title: 'Species'
@@ -88,11 +87,11 @@ Ext.define('Connector.app.view.Study', {
         flex: 15/100,
         resizable: false,
         dataIndex: 'grant_pi_name',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'grant_pi_name',
             valueType: 'string',
             title: 'PI'
-        },
+        }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-black-text">{grant_pi_name}</div>',
@@ -105,11 +104,11 @@ Ext.define('Connector.app.view.Study', {
         flex: 15/100,
         resizable: false,
         dataIndex: 'strategy',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'strategy',
             valueType: 'string',
             title: 'Strategy'
-        },
+        }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-black-text">{strategy}</div>',
@@ -122,12 +121,11 @@ Ext.define('Connector.app.view.Study', {
         flex: 15/100,
         resizable: false,
         dataIndex: 'date_to_sort_on',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'start_year',
             valueType: 'string',
             title: 'Start Year'
-        },
-        altFilterConfigs: [{
+        },{
             filterField: 'stage',
             valueType: 'string',
             title: 'Stage'
@@ -174,11 +172,11 @@ Ext.define('Connector.app.view.Study', {
         minWidth: 150,
         flex: 15/100,
         resizable: false,
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'product_names',
             valueType: 'string',
             title: 'Products'
-        },
+        }],
         dataIndex: 'product_to_sort_on',
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',

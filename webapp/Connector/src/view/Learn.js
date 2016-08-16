@@ -136,27 +136,21 @@ Ext.define('Connector.view.Learn', {
         if (this.activeListing) {
             var grid = this.activeListing;
             this.columnFilters[field] = filterValues;
-            Ext.each(grid.headerCt.getGridColumns(), function(column)
-            {
-                if (Ext.isDefined(column.getEl()))
-                {
-                    var columnHasFiltersSet = [column.filterConfig].concat(column.altFilterConfigs || [])
-                            .map(function (config)
-                            {
+            Ext.each(grid.headerCt.getGridColumns(), function(column) {
+                if (column.filterConfigSet && Ext.isDefined(column.getEl())) {
+                    var columnHasFiltersSet = column.filterConfigSet
+                            .map(function (config) {
                                 var assignedFilterValues = this.columnFilters[config.filterField];
                                 return assignedFilterValues && assignedFilterValues.length > 0
                             }, this)
-                            .reduce(function (total, curr)
-                            {
+                            .reduce(function (total, curr) {
                                 return total || curr;
                             });
 
-                    if (columnHasFiltersSet)
-                    {
+                    if (columnHasFiltersSet) {
                         column.getEl().addCls('filtered-column');
                     }
-                    else
-                    {
+                    else {
                         column.getEl().removeCls('filtered-column');
                     }
                 }
@@ -169,11 +163,9 @@ Ext.define('Connector.view.Learn', {
         this.columnFilters = {};
         if (this.activeListing) {
             var grid = this.activeListing;
-            Ext.each(grid.headerCt.getGridColumns(), function(column)
-            {
-                if (column.filterConfig.filterField && Ext.isDefined(column.getEl()))
-                {
-                    var fieldsWithFilterValues = [column.filterConfig].concat(column.altFilterConfigs || [])
+            Ext.each(grid.headerCt.getGridColumns(), function(column) {
+                if (column.filterConfigSet && Ext.isDefined(column.getEl())) {
+                    var fieldsWithFilterValues = column.filterConfigSet
                             .map(function(config) {
                                 var field = config.filterField;
                                 var urlFilter = params[field];

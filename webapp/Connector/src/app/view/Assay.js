@@ -24,11 +24,11 @@ Ext.define('Connector.app.view.Assay', {
         locked: true,
         resizable: false,
         dataIndex: 'assay_short_name',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'assay_short_name',
             valueType: 'string',
             title: 'Assay Name'
-        },
+        }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-description detail-row-text">',
                     '<h2>{assay_short_name:htmlEncode} ({assay_label:htmlEncode})</h2>',
@@ -42,11 +42,11 @@ Ext.define('Connector.app.view.Assay', {
         flex: 20/100,
         resizable: false,
         dataIndex: 'study_count',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'study_count',
             valueType: 'number',
             title: '# of Studies'
-        },
+        }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-gray-text">{study_count}</div>',
@@ -59,11 +59,11 @@ Ext.define('Connector.app.view.Assay', {
         flex: 20/100,
         resizable: false,
         dataIndex: 'assay_body_system_target',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'assay_body_system_target',
             valueType: 'string',
             title: 'Target Area'
-        },
+        }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text detail-row-text">',
                     '<div class="detail-gray-text">{assay_body_system_type:htmlEncode}: {assay_body_system_target:htmlEncode} and {assay_general_specimen_type:htmlEncode}</div>',

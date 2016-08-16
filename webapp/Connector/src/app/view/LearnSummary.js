@@ -18,17 +18,17 @@ Ext.define('Connector.app.view.LearnSummary', {
             Ext.each(headers, function(header) {
                 header.on('headertriggerclick', function onTriggerClick(headerCt, column)
                 {
-                    var filterConfigSet = [column.filterConfig].concat(column.altFilterConfigs ? column.altFilterConfigs : []).map(function(config) {
-                        config.filterValues =  learnView.columnFilters[config.filterField] ? learnView.columnFilters[config.filterField] : [];
-                        return config;
-                    });
+                    var filterConfigSet = column.filterConfigSet
+                            .map(function(config) {
+                                config.filterValues = learnView.columnFilters[config.filterField] || [];
+                                return config;
+                            });
                     Ext.create('Connector.window.LearnFacet', {
                         dim: dim,
-                        filterConfig: column.filterConfig,
                         filterConfigSet: filterConfigSet,
                         col: column, //used to position facet window
-                        columnMetadata: column.altFilterConfigs ?
-                            {caption : 'Search By'} : {caption : column.filterConfig.title},
+                        columnMetadata: column.filterConfigSet.length > 1 ?
+                            {caption : 'Search By'} : {caption : column.filterConfigSet[0].title},
                         learnStore: this.store,
                         dataView: this,
                         listeners: {

@@ -15,8 +15,6 @@ Ext.define('Connector.window.LearnFacet', {
 
     dim: undefined,
 
-    filterConfig: {},
-
     filterConfigSet: [],
 
     currentFilterField: '',
@@ -119,7 +117,7 @@ Ext.define('Connector.window.LearnFacet', {
                         '<span class="sorter-content">{title:htmlEncode}</span>',
                         '</div>'
                 ),
-                data: this.filterConfig,
+                data: this.filterConfigSet[0],
                 flex: 10
             });
         }
