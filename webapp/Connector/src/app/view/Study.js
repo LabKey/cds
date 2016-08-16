@@ -121,7 +121,7 @@ Ext.define('Connector.app.view.Study', {
                         '<div class="detail-has-data"></div>',
                         '<div class="detail-gray-text">{[this.assayCountText(values.assays_added_count)]}</div>',
                     '<tpl else>',
-                        'No data found',
+                        'Not added',
                     '</tpl>',
                 '</div>',
                 {
@@ -198,7 +198,7 @@ Ext.define('Connector.app.view.Study', {
         var assayList = options.record.data.assays_added;
         var assayListHTML = "<ul>";
         for (var itr = 0; itr < assayList.length; ++itr) {
-            assayListHTML += "<li>" + assayList[itr].assay_full_name + "</li>\n";
+            assayListHTML += "<li>" + assayList[itr].assay_short_name + "</li>\n";
         }
         assayListHTML += "</ul>";
 

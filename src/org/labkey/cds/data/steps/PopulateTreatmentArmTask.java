@@ -321,5 +321,51 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         finish = System.currentTimeMillis();
 
         logger.info("Populate SubjectProductMap took " + DateUtil.formatDuration(finish - start) + ".");
+
+        start = System.currentTimeMillis();
+        for (Container container : project.getChildren())
+        {
+            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
+
+            if (cdsSchema == null)
+                throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
+
+            sourceTable = cdsSchema.getTable("ds_studypartgrouparmproduct");
+            targetTable = cdsSchema.getTable("StudyPartGroupArmProduct");
+
+            targetService = targetTable.getUpdateService();
+
+            if (targetService == null)
+                throw new PipelineJobException("Unable to find update service for cds.StudyPartGroupArmProduct in " + container.getPath());
+
+            // Insert Subject Product Mapping
+            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
+            sql.add(container.getName());
+
+            Map<String, Object>[] insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            if (insertRows.length > 0)
+            {
+                try
+                {
+                    targetService.insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
+                }
+                catch (Exception e)
+                {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+
+            if (errors.hasErrors())
+            {
+                for (ValidationException error : errors.getRowErrors())
+                {
+                    logger.error(error.getMessage());
+                }
+                return;
+            }
+        }
+        finish = System.currentTimeMillis();
+
+        logger.info("Populate StudyPartGroupArmProduct took " + DateUtil.formatDuration(finish - start) + ".");
     }
 }
