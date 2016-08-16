@@ -85,13 +85,13 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
 
-                study.date_to_sort_on = study.first_enr_date || study.start_date;
-                if (study.date_to_sort_on) {
-                    var startDate = new Date(study.date_to_sort_on);
-                    study.start_year = startDate.getFullYear().toString();
+                var startDate = study.first_enr_date || study.start_date;
+                if (startDate) {
+                    study.start_year = (new Date(startDate)).getFullYear().toString();
                 } else {
                     study.start_year = 'Not available';
                 }
+                study.date_to_sort_on = study.stage + "|" + startDate;
 
                 products = [];
                 productNames = [];

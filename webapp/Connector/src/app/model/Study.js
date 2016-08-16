@@ -53,7 +53,31 @@ Ext.define('Connector.app.model.Study', {
         {name: 'investigator_email'},
         {name: 'primary_poc_name'},
         {name: 'primary_poc_email'},
-        {name: 'date_to_sort_on', sortType: 'asDate'},
+        {name: 'date_to_sort_on', sortType: function(dateToSortOn) {
+            var row = dateToSortOn.split("|");
+            var stage = row[0];
+            var date = new Date(row[1]);
+
+            switch (stage) {
+                case "In Progress":
+                    stage = 1;
+                    break;
+                case "Assays Completed":
+                    stage = 2;
+                    break;
+                case "Primary Analysis Complete":
+                    stage = 3;
+                    break;
+                default:
+                    stage = 4;
+                    break;
+            }
+
+            return [stage,
+                    date.getFullYear(),
+                    date.getMonth().toString().length == 1 ? '0' + date.getMonth() : date.getMonth(),
+                    date.getDay().toString().length == 1 ? '0' + date.getDay() : date.getDay()].join('');
+        }},
         {name: 'start_year'},
         {name: 'product_to_sort_on'},
         {name: 'products', convert : function(value) {
