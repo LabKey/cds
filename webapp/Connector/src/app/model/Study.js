@@ -39,6 +39,8 @@ Ext.define('Connector.app.model.Study', {
         {name: 'public_date', defaultValue: undefined },
         {name: 'data_availability'},
         {name: 'cavd_affiliation'},
+        {name: 'cavd_affiliation_filename'},
+        {name: 'cavd_affiliation_file_exists'},
         {name: 'study_cohort'},
         {name: 'first_enr_date', defaultValue: undefined },
         {name: 'followup_complete_date', defaultValue: undefined },
@@ -69,6 +71,8 @@ Ext.define('Connector.app.model.Study', {
         {name: 'assays_added_count'},
         {name: 'assays_added', convert : function(value) {
             return Ext.isArray(value) ? value : [];
-        }}
+        }},
+        {name: 'atlas_link'},
+        {name: 'cavd_link'}
     ]
 });

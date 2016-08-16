@@ -20,6 +20,7 @@ Ext.define('Connector.app.store.Study', {
         this.studyData = undefined;
         this.productData = undefined;
         this.assayData = undefined;
+        this.documentData = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -37,6 +38,12 @@ Ext.define('Connector.app.store.Study', {
             schemaName: 'cds',
             queryName: 'ds_assaysforstudies',
             success: this.onLoadAssays,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'ds_documentsforstudies',
+            success: this.onLoadDocuments,
             scope: this
         })
     },
@@ -56,8 +63,13 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadDocuments : function(documentData) {
+        this.documentData = documentData.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)) {
+        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData) && Ext.isDefined(this.documentData)) {
             var studies = [], products, productNames;
 
             // join products to study
@@ -127,6 +139,14 @@ Ext.define('Connector.app.store.Study', {
                             assaysAdded.push(assay);
                             assayAddedCount += 1;
                         }
+                    }
+                }
+
+                for (var a=0; a < this.documentData.length; a++) {
+                    if ((study.study_name === this.documentData[a].prot) && (this.documentData[a].document_type === 'grant_document')) {
+                        study.cavd_affiliation = this.documentData[a].label;
+                        study.cavd_affiliation_filename = this.documentData[a].filename;
+                        study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
                     }
                 }
                 study.products = products;
