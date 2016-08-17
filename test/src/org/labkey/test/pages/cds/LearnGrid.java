@@ -78,7 +78,7 @@ public class LearnGrid
     public static class Locators
     {
         public static Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
-        public static Locator.XPathLocator row = grid.append("/div/div/table/tbody/tr");
+        public static Locator.XPathLocator row = grid.append("/div/div/div/div/div/div/table/tbody/tr");
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {
