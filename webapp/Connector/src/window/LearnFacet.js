@@ -42,6 +42,8 @@ Ext.define('Connector.window.LearnFacet', {
                 itemId: 'infosortdropdown',
                 cls: 'sortDropdown ipdropdown', // tests
                 style: 'float: right;',
+                menuAlign: 'tr-br',
+                menuOffsets: [25, 0],
                 menu: {
                     xtype: 'menu',
                     autoShow: true,
@@ -71,7 +73,7 @@ Ext.define('Connector.window.LearnFacet', {
                 layout: { type: 'hbox' },
                 items: [this.getTitleBar(), dropDownBtn]
             };
-            this.setFacetGridVisibility()
+            this.setFacetGridVisibility();
             return [selector].concat(facetGrids);
         }
         return facetGrids;
