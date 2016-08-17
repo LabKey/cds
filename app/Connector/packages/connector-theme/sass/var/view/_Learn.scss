@@ -439,6 +439,10 @@ img.detail-has-data-small {
     .detail-black-text {
       color: $black;
     }
+
+    td:nth-child(1) {
+      padding-right: 1em;
+    }
   }
 
   &:hover {
