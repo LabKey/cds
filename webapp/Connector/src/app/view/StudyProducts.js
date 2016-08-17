@@ -19,7 +19,7 @@ Ext.define('Connector.app.view.StudyProducts', {
     columns: [{
         text: 'Product name',
         xtype: 'templatecolumn',
-        width: 400,
+        width: 500,
         locked: true,
         resizable: false,
         dataIndex: 'product_name',
@@ -98,7 +98,7 @@ Ext.define('Connector.app.view.StudyProducts', {
         //
         // Continue to show the column headers even when no data is present
         //
-        this.emptyText = new Ext.XTemplate(
+        this.viewConfig.emptyText = new Ext.XTemplate(
             '<div class="detail-container"><div class="saeempty">None of the selected study products have data for this category.</div></div>'
         ).apply({});
 

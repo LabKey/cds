@@ -7,7 +7,10 @@ Ext.define('Connector.app.view.LearnSummary', {
             return record.data && record.data.data_availability ? cls + ' detail-row-has-data' : cls;
         }
     },
-    forceFit: true,
+
+    lockedViewConfig: {
+        emptyText: '' //Explicitly set to blank, otherwise emptyText is set for both locked and unlocked portions.
+    },
 
     listeners: {
         beforerender: function (grid)
