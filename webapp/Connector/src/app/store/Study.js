@@ -149,6 +149,15 @@ Ext.define('Connector.app.store.Study', {
                         study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
                     }
                 }
+                assaysAdded.sort(function (a1, a2) {
+                    return a1.assay_short_name.toLowerCase().localeCompare(a2.assay_short_name.toLowerCase())
+                });
+                assays.sort(function (a1, a2) {
+                    var val1 = a1.assay_short_name ? a1.assay_short_name : a1.study_assay_id;
+                    var val2 = a2.assay_short_name ? a2.assay_short_name : a2.study_assay_id;
+                    return val1.toLowerCase().localeCompare(val2.toLowerCase())
+                });
+
                 study.products = products;
                 study.product_names = productNames;
                 study.assays = assays;
