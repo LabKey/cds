@@ -64,6 +64,11 @@ Ext.define('Connector.window.LearnFacet', {
                         },
                         scope: this
                     }
+                },
+                listeners: {
+                    afterrender : function(b) {
+                        b.showMenu(); b.hideMenu(); // allows the menu to layout/render
+                    }
                 }
             };
 
@@ -275,12 +280,6 @@ Ext4.define('Connector.grid.LearnFaceted', {
         return this.createColumnFilterStore();
     },
 
-    dataByDimension : {
-        'Assay' : 'assayData',
-        'Study' : 'studyData',
-        'Study Product' : 'productData'
-    },
-
     getSortFn: function() {
       if (this.valueType == 'number') {
           return function(a, b){
@@ -297,36 +296,41 @@ Ext4.define('Connector.grid.LearnFaceted', {
     },
 
     createColumnFilterStore: function() {
-        var dimensionValues = this.learnStore[this.dataByDimension[this.dim]];
-            var validvalues = new Set(), field = this.columnField;
-            Ext.each(dimensionValues, function(record){
-                if (Ext.isArray(record[field])) {
-                    Ext.each(record[field], function(val){
-                        if (val != undefined) {
-                            validvalues.add(val);
-                        }
-                    });
-                }
-                else {
-                    if (record[field] != undefined) {
-                        validvalues.add(record[field]);
+        var concatBeforeSort = false; //if record is an array.
+        var values = this.learnStore.snapshot.getRange()
+                .map(function(record) {
+                    var value = record.getData()[this.columnField];
+                    if (Ext.isArray(value)) {
+                        concatBeforeSort = true;
                     }
-                }
+                    return value;
+                }, this);
+
+        //converts 2d array to 1d array
+        if (concatBeforeSort) {
+            values = values.reduce(function (prev, curr){
+                return (prev || []).concat(curr);
             });
-            var validValuesArray = Array.from(validvalues).sort(this.getSortFn());
-            var values = [];
-            Ext.each(validValuesArray, function(value){
-                values.push([value]);
-            });
-            var storeId = [this.dim, field].join('||');
-            var columnStore = Ext4.create('Ext.data.ArrayStore', {
-                fields: [
-                    'value'
-                ],
-                data: values,
-                storeId: storeId
-            });
-        return columnStore;
+        }
+
+        values = values.sort(this.getSortFn());
+        values = values.filter(function(record, idx) {
+                    if (!record) {
+                        return false;
+                    }
+                    //remove duplicates
+                    return !(values[idx - 1] && values[idx - 1] == record);
+                }).map(function(record) {
+                    return [record];
+                });
+        var storeId = [this.dim, this.columnField].join('||');
+        return Ext4.create('Ext.data.ArrayStore', {
+            fields: [
+                'value'
+            ],
+            data: values,
+            storeId: storeId
+        });
     },
 
 

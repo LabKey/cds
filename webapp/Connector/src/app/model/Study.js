@@ -25,7 +25,9 @@ Ext.define('Connector.app.model.Study', {
         {name: 'population'},
         {name: 'executive_summary'},
         {name: 'description'},
-        {name: 'strategy'},
+        {name: 'strategy', sortType: function(strategy) {
+                return strategy != "[blank]" ? strategy : '~'; //ensure it comes after standard ascii
+        }},
         {name: 'groups'},
         {name: 'treatment_schema_link'},
         {name: 'rationale'},

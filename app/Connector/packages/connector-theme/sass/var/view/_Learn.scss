@@ -450,7 +450,6 @@ img.detail-has-data-small {
       @include transition(background-color 0.2s ease-out);
       background-color: $select-hover-color;
       cursor: pointer;
-      border-color: transparent;
     }
   }
 }

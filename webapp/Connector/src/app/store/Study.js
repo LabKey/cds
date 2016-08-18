@@ -85,6 +85,10 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
 
+                if (!study.strategy) {
+                    study.strategy = '[blank]';
+                }
+
                 var startDate = study.first_enr_date || study.start_date;
                 if (startDate) {
                     study.start_year = (new Date(startDate)).getFullYear().toString();
@@ -140,6 +144,10 @@ Ext.define('Connector.app.store.Study', {
             studies.sort(function(studyA, studyB) {
                 return LABKEY.app.model.Filter.sorters.natural(studyA.label, studyB.label);
             });
+
+            this.studyData = undefined;
+            this.assayData = undefined;
+            this.productData = undefined;
 
             this.loadRawData(studies);
         }
