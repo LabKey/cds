@@ -67,7 +67,7 @@ Ext.define('Connector.model.Variable', {
     },
 
     updateVariable : function(selections) {
-        var sel = null, source, variable, options;
+        var sel = null, source, variable, options, hideColorSource = false;
         if (Ext.isArray(selections)) {
             if (selections.length > 0) {
                 sel = selections[0];
@@ -81,9 +81,11 @@ Ext.define('Connector.model.Variable', {
             if (sel.$className === 'Measure') {
                 source = Connector.model.Variable.getSourceDisplayText(sel.data);
                 variable = sel.get('label');
+                hideColorSource = sel.get('isDemographic') || sel.get('isDiscreteTime');
             }
             else {
                 // assume an object with measure 'properties'
+                hideColorSource = sel['isDemographic'] || sel['isDiscreteTime'];
                 source = Connector.model.Variable.getSourceDisplayText(sel);
                 variable = sel['label'];
             }
@@ -92,6 +94,7 @@ Ext.define('Connector.model.Variable', {
         }
 
         this.set({
+            hideColorSource: hideColorSource,
             source: source,
             variable: variable,
             options: options
