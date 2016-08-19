@@ -74,6 +74,7 @@ Ext.define('Connector.app.store.Study', {
 
             // join products to study
             Ext.each(this.studyData, function(study) {
+                study.study_title = study.title;
                 if (study.groups || study.treatment_schema_link) {
                     study.groups_treatment_schema = '';
                     if (study.treatment_schema_link) {

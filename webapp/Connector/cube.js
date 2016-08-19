@@ -225,7 +225,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Title'
                         },
                         modelData: {
-                            text: 'title'
+                            text: 'study_title'
                         }
                     },{
                         type: 'html',
