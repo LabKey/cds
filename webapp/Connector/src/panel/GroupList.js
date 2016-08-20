@@ -57,7 +57,6 @@ Ext.define('Connector.view.GroupListView', {
     bubbleEvents: ['deletegroup'],
 
     tpl: new Ext.XTemplate(
-        '<h2 class="section-title bottom-spacer">Groups and plots</h2>',
         '<tpl if="this.isEmpty(values)">',
             '<div class="grouplist-empty">Saved work will appear here</div>',
         '</tpl>',
@@ -85,15 +84,16 @@ Ext.define('Connector.view.GroupListView', {
                 var prev = parent[xindex - 2];
                 if (prev == undefined || prev.shared != values.shared) {
 
-                    var shared = values.shared;
+                    var shared = values.shared, topSpacer = '';
                     if (shared === false) {
-                        heading = 'Mine';
+                        heading = 'My saved groups and plots';
                     }
                     else {
-                        heading = 'Shared with me';
+                        heading = 'Curated groups and plots';
+                        if (prev)
+                            topSpacer = ' top-spacer-lg';
                     }
-
-                    return '<h2 class="section-title group-section-title top-spacer-lg bottom-spacer">' + Ext.htmlEncode(heading) + '</h2>';
+                    return '<h2 class=\"section-title bottom-spacer' + topSpacer + '\">' + Ext.htmlEncode(heading) + '</h2>';
                 }
 
                 return '';
