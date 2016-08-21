@@ -74,7 +74,7 @@ Ext.define('Connector.model.InfoPane', {
 
     /**
      * Can be called to have this model instance produce a set of Connector.model.Filter instances
-     * from it's current configuration
+     * from its current configuration
      * @param members - Array of Connector.model.InfoPaneMember instance records
      * @param totalCount - Number of total Connector.model.InfoPaneMember instance records
      */

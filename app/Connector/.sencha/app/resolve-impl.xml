@@ -21,7 +21,7 @@
     <target name="-before-web-stop"/>
     <target name="-web-stop">
         <!--
-        This needs to be in it's own process due to threading issues when called from a
+        This needs to be in its own process due to threading issues when called from a
         target.
         -->
         <x-shell dir="${app.dir}">

@@ -96,7 +96,7 @@
         
         <!--
         this property is set indicating we've reached the end of the
-        core init phase.  it's presence will indicate that we've already
+        core init phase.  its presence will indicate that we've already
         executed this target, and will bypass firing the init code
         repeatedly in sub projects (antcall, x-ant-call)
         See the above 'unless' attribute on the -init target
