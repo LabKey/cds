@@ -9,6 +9,8 @@ Ext.define('Connector.app.view.Assay', {
 
     cls: 'learngrid',
 
+    itemPluralName: 'assays',
+
     statics: {
        searchFields: ['assay_short_name', 'assay_label', 'assay_detection_platform', 'assay_method_description',
             'assay_body_system_type', 'assay_body_system_target', 'assay_general_specimen_type'],
@@ -69,17 +71,5 @@ Ext.define('Connector.app.view.Assay', {
                     '<div class="detail-gray-text">{assay_body_system_type:htmlEncode}: {assay_body_system_target:htmlEncode} and {assay_general_specimen_type:htmlEncode}</div>',
                 '</div>'
         )
-    }],
-
-    initComponent : function() {
-
-        //
-        // Continue to show the column headers even when no data is present
-        //
-        this.viewConfig.emptyText = new Ext.XTemplate(
-                '<div class="detail-container"><div class="saeempty">None of the selected assays have data for this category.</div></div>'
-        ).apply({});
-
-        this.callParent();
-    }
+    }]
 });

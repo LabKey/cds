@@ -40,6 +40,13 @@ div.learnview {
   .module {
     padding-bottom: 28px;
   }
+
+  .x-grid-locked{
+    .x-grid-inner-locked {
+      border-width: 0px;
+      border-style: none;
+    }
+  }
 }
 
 .module {
@@ -234,73 +241,6 @@ img.detail-has-data-small {
   }
 }
 
-.detail-container {
-  padding: 0px $pageLeftPadding;
-  margin-bottom: 8px;
-
-  .x-grid-cell-inner {
-    white-space: normal;
-  }
-
-  .detail-wrapper {
-    padding: 24px 0px 24px 16px;
-    height: 170px;
-    border-bottom: 1px solid $heat-scale-4;
-    overflow: hidden;
-
-    .detail-description {
-      height: 123px;
-      overflow: hidden;
-
-      h2 {
-        font: $headline-font;
-      }
-
-      .detail-type-text {
-        font: $body-one-font;
-        color: $heat-scale-2;
-      }
-
-      .detail-description-text {
-        padding-top: 12px;
-        font: $body-one-font;
-        color: $heat-scale-1;
-        margin-right: 5%;
-
-        ol {
-          padding-left: 24px;
-        }
-
-        .data-availability-text {
-          padding-bottom: 12px;
-        }
-      }
-    }
-
-    .detail-text {
-      font: $body-one-font;
-
-      .detail-gray-text {
-        color: $heat-scale-1;
-      }
-
-      .detail-black-text {
-        color: $black;
-      }
-    }
-
-    //&:hover {
-    //  @include transition(background-color 0.2s ease-out);
-    //  background-color: $select-hover-color;
-    //  cursor: pointer;
-    //  border-color: transparent;
-    //}
-  }
-  .has-data {
-    background-color: $gray-9;
-  }
-}
-
 .learngrid {
   padding-right: $pageLeftPadding !important;
   padding-left: $pageLeftPadding !important;
@@ -456,6 +396,20 @@ img.detail-has-data-small {
       @include transition(background-color 0.2s ease-out);
       background-color: $select-hover-color;
       cursor: pointer;
+    }
+  }
+
+  .x-grid-empty {
+    background-color: $gray-8;
+    position: fixed;
+    top: 305px; //height of header
+    padding-right: 243px; //width of infopane
+
+
+    .detail-empty-text {
+      color: black;
+      height: 60px;
+      font: $display-two-font;
     }
   }
 }

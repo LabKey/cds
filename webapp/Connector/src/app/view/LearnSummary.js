@@ -11,7 +11,7 @@ Ext.define('Connector.app.view.LearnSummary', {
     },
 
     lockedViewConfig: {
-        emptyText: '' //Explicitly set to blank, otherwise emptyText is set for both locked and unlocked portions.
+        emptyText: ''
     },
 
     listeners: {
@@ -71,6 +71,10 @@ Ext.define('Connector.app.view.LearnSummary', {
 
     initComponent : function() {
         this.addEvents("learnGridResizeHeight");
+
+        this.lockedViewConfig.emptyText = new Ext.XTemplate(
+                '<div class="detail-empty-text">None of the selected {itemPluralName} have data for this category.</div>'
+        ).apply({itemPluralName: this.itemPluralName});
 
         this.callParent(arguments);
     }

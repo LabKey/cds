@@ -9,6 +9,8 @@ Ext.define('Connector.app.view.StudyProducts', {
 
     cls: 'learnstudyproducts learngrid',
 
+    itemPluralName: 'study products',
+
     statics: {
         searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer'],
         filterFields: [
@@ -91,17 +93,5 @@ Ext.define('Connector.app.view.StudyProducts', {
                     '</div>',
                 '</div>'
         )
-    }],
-
-    initComponent : function() {
-
-        //
-        // Continue to show the column headers even when no data is present
-        //
-        this.viewConfig.emptyText = new Ext.XTemplate(
-            '<div class="detail-container"><div class="saeempty">None of the selected study products have data for this category.</div></div>'
-        ).apply({});
-
-        this.callParent();
-    }
+    }]
 });

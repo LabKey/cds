@@ -9,6 +9,8 @@ Ext.define('Connector.app.view.Study', {
 
     cls: 'learnstudies learngrid',
 
+    itemPluralName: "studies",
+
     columns : [{
         text: 'Name & Description',
         xtype: 'templatecolumn',
@@ -222,13 +224,6 @@ Ext.define('Connector.app.view.Study', {
     },
 
     initComponent : function() {
-
-        //
-        // Continue to show the column headers even when no data is present
-        //
-        this.viewConfig.emptyText = new Ext.XTemplate(
-            '<div class="detail-container"><div class="saeempty">None of the selected studies have data for this category.</div></div>'
-        ).apply({});
 
         this.callParent();
 
