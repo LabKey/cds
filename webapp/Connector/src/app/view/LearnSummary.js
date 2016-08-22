@@ -61,11 +61,13 @@ Ext.define('Connector.app.view.LearnSummary', {
         learnGridResizeHeight : function (viewHeight)
         {
             this.setHeight(viewHeight - this.learnView.headerViews.main.height);
+            this.setTitleColumnWidth();
         },
 
         boxready: function(grid)
         {
             this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
+            this.setTitleColumnWidth();
         }
     },
 
@@ -77,5 +79,10 @@ Ext.define('Connector.app.view.LearnSummary', {
         ).apply({itemPluralName: this.itemPluralName});
 
         this.callParent(arguments);
+    },
+
+    setTitleColumnWidth : function () {
+        var col = this.columns[0];
+        col.setWidth(Math.max(this.getWidth() / 2, col.minWidth));
     }
 });

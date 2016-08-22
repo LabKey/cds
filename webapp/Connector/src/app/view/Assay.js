@@ -22,7 +22,7 @@ Ext.define('Connector.app.view.Assay', {
     columns : [{
         text: 'Description & Methodology',
         xtype: 'templatecolumn',
-        width: 500,
+        minWidth: 500,
         locked: true,
         resizable: false,
         dataIndex: 'assay_short_name',
@@ -32,7 +32,7 @@ Ext.define('Connector.app.view.Assay', {
             title: 'Assay Name'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-description detail-row-text">',
+                '<div class="detail-description">',
                     '<h2>{assay_short_name:htmlEncode} ({assay_label:htmlEncode})</h2>',
                     '<div class="detail-description-text">{assay_description:htmlEncode}</div>',
                 '</div>'
@@ -50,7 +50,7 @@ Ext.define('Connector.app.view.Assay', {
             title: '# of Studies'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<div class="detail-gray-text">{study_count}</div>',
                 '</div>'
         )
@@ -67,7 +67,7 @@ Ext.define('Connector.app.view.Assay', {
             title: 'Target Area'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<div class="detail-gray-text">{assay_body_system_type:htmlEncode}: {assay_body_system_target:htmlEncode} and {assay_general_specimen_type:htmlEncode}</div>',
                 '</div>'
         )

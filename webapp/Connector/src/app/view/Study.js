@@ -14,7 +14,7 @@ Ext.define('Connector.app.view.Study', {
     columns : [{
         text: 'Name & Description',
         xtype: 'templatecolumn',
-        width: 500,
+        minWidth: 500,
         locked: true,
         resizable: false,
         dataIndex: 'label',
@@ -24,7 +24,7 @@ Ext.define('Connector.app.view.Study', {
             title: 'Study'
         }],
         tpl: new Ext.XTemplate(
-            '<div class="detail-description detail-row-text">',
+            '<div class="detail-description">',
                 '<h2>{label:htmlEncode}</h2>',
                 '<tpl if="species && species.length &gt; 0">',
                     '<span class="detail-type-text">{species:htmlEncode}</span>',
@@ -46,7 +46,7 @@ Ext.define('Connector.app.view.Study', {
             title: '# of Assays Added'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<tpl if="data_availability">',
                         '<div class="detail-has-data"></div>',
                         '<div class="detail-gray-text">{[this.assayCountText(values.assays_added_count)]}</div>',
@@ -77,7 +77,7 @@ Ext.define('Connector.app.view.Study', {
             title: 'Species'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<div class="detail-black-text">{type}</div>',
                     '<div class="detail-gray-text">{species}</div>',
                 '</div>'
@@ -95,7 +95,7 @@ Ext.define('Connector.app.view.Study', {
             title: 'PI'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<div class="detail-black-text">{grant_pi_name}</div>',
                 '</div>'
         )
@@ -112,7 +112,7 @@ Ext.define('Connector.app.view.Study', {
             title: 'Strategy'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<tpl if="strategy != &quot;[blank]&quot;">',
                         '<div class="detail-black-text">{strategy}</div>',
                     '</tpl>',
@@ -135,7 +135,7 @@ Ext.define('Connector.app.view.Study', {
             title: 'Stage'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<tpl if="stage">',
                         '<div class="detail-black-text">{stage}</div>',
                     '</tpl>',
@@ -189,7 +189,7 @@ Ext.define('Connector.app.view.Study', {
         }],
         dataIndex: 'product_to_sort_on',
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<ul>',
                         '<tpl if="products.length &gt; 0">',
                             '<tpl for="products">',

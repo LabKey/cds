@@ -245,6 +245,14 @@ img.detail-has-data-small {
   padding-right: $pageLeftPadding !important;
   padding-left: $pageLeftPadding !important;
 
+  .x-grid-body {
+    border-width: 0px;
+
+    .x-grid-body {
+      border-top-width: 1px;
+    }
+  }
+
   .x-column-header-text {
     color: $heat-scale-2;
     font-size: 12px;
@@ -260,11 +268,6 @@ img.detail-has-data-small {
     border-top: none !important;
     border-right: none !important;
     border-left: none !important;
-  }
-
-  .detail-row-text {
-    padding-top: $sectionTopPadding;
-    padding-bottom: $sectionTopPadding;
   }
 
   .x-grid-td, .x-grid-row-selected .x-grid-td {
@@ -330,13 +333,13 @@ img.detail-has-data-small {
   .detail-row {
     //padding: 0px $pageLeftPadding;
     margin-bottom: 8px;
-    padding: 24px 0px 24px 16px;
     height: 170px;
     border-bottom: 1px solid $heat-scale-4;
     overflow: hidden;
 
     .x-grid-cell-inner {
       white-space: normal;
+      padding: 24px 0px 24px 16px;
     }
 
     .detail-description {
