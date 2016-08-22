@@ -327,6 +327,11 @@ img.detail-has-data-small {
     padding-bottom: $sectionTopPadding;
   }
 
+  .detail-row-thumbnail {
+    padding-top: $sectionTopPadding - 15;
+    padding-bottom: $sectionTopPadding - 15;
+  }
+
   .x-grid-td, .x-grid-row-selected .x-grid-td {
     background-color: $gray-8;
   }

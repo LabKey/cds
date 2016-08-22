@@ -161,7 +161,7 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    dimensionDataLoaded : function(dimension, store) {
+    dimensionDataLoaded : function(store) {
         store.clearFilter();
         this.filterStoreBySearchAndColumnFilter(store);
         this.sortStore(store);
@@ -266,31 +266,46 @@ Ext.define('Connector.view.Learn', {
 
     loadData : function(dimension, store) {
         if (dimension) {
-            var hierarchy = dimension.getHierarchies()[0],
-                dimensionName = hierarchy.getName();
+            var dimensionName, hasHierarchy =  true;
+            if (dimension.getHierarchies().length > 0)
+            {
+                dimensionName = dimension.getHierarchies()[0].getName();
+            }
+            else {
+                dimensionName = dimension.name;
+                hasHierarchy = false;
+            }
+
 
             if (!this.dimensionDataLoaded[dimensionName]) {
                 store.on('load', function() {
                     this.dimensionDataLoaded[dimensionName] = true;
-                    this.dimensionDataLoaded(dimensionName, store);
+                    this.dimensionDataLoaded(store);
                 }, this);
-                Connector.getState().onMDXReady(function(mdx) {
-                    mdx.query({
-                        onRows: [{
-                            hierarchy: hierarchy.getName(),
-                            member: 'members'
-                        }],
-                        success: function(slice) {
-                            if (store) {
-                                store.loadSlice(slice);
-                            }
-                        },
-                        scope: this
-                    });
-                }, this);
+                if (hasHierarchy)
+                {
+                    Connector.getState().onMDXReady(function(mdx) {
+                        mdx.query({
+                            onRows: [{
+                                hierarchy: dimensionName,
+                                member: 'members'
+                            }],
+                            success: function(slice) {
+                                if (store) {
+                                    store.loadSlice(slice);
+                                }
+                            },
+                            scope: this
+                        });
+                    }, this);
+                }
+                else {
+                    store.loadSlice();
+                }
+
             }
             else {
-                this.dimensionDataLoaded(dimensionName, store);
+                this.dimensionDataLoaded(store);
             }
         }
         else {
@@ -468,7 +483,8 @@ Ext.define('Connector.view.Learn', {
         'Assay' : 'Assay',
         'Study' : 'Study',
         'Lab' : 'Labs',
-        'Study product' : 'StudyProducts'
+        'Study product' : 'StudyProducts',
+        'Report' : 'Report'
     },
 
     selectDimension : function(dimension, id, urlTab, params) {
@@ -661,8 +677,9 @@ Ext.define('Connector.view.LearnHeaderDataView', {
         // Filter out hidden dimensions, and dimensions which do not support detail view
         //
         store.filter('hidden', false);
-        store.filter('supportsDetails', true);
+        store.filter('supportsDetails', true);// TODO
 
+        // populate report store, update store
         //
         // Sort dimensions by stated priority
         //
