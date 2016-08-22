@@ -5,7 +5,9 @@ Ext.define('Connector.app.view.LearnSummary', {
         getRowClass: function(record) {
             var cls = 'detail-row';
             return record.data && record.data.data_availability ? cls + ' detail-row-has-data' : cls;
-        }
+        },
+        overItemCls: 'detail-row-hover',
+        selectedItemCls: ''
     },
 
     lockedViewConfig: {
