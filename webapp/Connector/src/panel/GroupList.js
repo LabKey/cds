@@ -58,6 +58,7 @@ Ext.define('Connector.view.GroupListView', {
 
     tpl: new Ext.XTemplate(
         '<tpl if="this.isEmpty(values)">',
+            '<h2 class="section-title bottom-spacer">Groups and plots</h2>',
             '<div class="grouplist-empty">Saved work will appear here</div>',
         '</tpl>',
         '<tpl for=".">',
