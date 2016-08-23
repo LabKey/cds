@@ -26,9 +26,6 @@ Ext.define('Connector.app.view.Study', {
         tpl: new Ext.XTemplate(
             '<div class="detail-description">',
                 '<h2>{label:htmlEncode}</h2>',
-                '<tpl if="species && species.length &gt; 0">',
-                    '<span class="detail-type-text">{species:htmlEncode}</span>',
-                '</tpl>',
                 '<div class="detail-description-text">',
                     '{description}',
                 '</div>', // allow html

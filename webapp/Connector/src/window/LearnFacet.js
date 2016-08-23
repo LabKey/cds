@@ -315,11 +315,11 @@ Ext4.define('Connector.grid.LearnFaceted', {
 
         values = values.sort(this.getSortFn());
         values = values.filter(function(record, idx) {
-                    if (!record) {
+                    if (record == undefined) {
                         return false;
                     }
                     //remove duplicates
-                    return !(values[idx - 1] && values[idx - 1] == record);
+                    return !(values[idx - 1] != undefined && values[idx - 1] == record);
                 }).map(function(record) {
                     return [record];
                 });
