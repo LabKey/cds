@@ -549,7 +549,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String numAssaysToFilter = "1";
         int numRowsSatisfyFilter = 2 * Locator.xpath("//tr/td/div/div/div[contains(@class, 'detail-gray-text')]" +
                 "[contains(text(), '" + numAssaysToFilter + " Assay')]/../../../following-sibling::" +
-                "td/div/div/div[contains(@class, 'detail-gray-text')][contains(text(), '" + yearToFilter  + "')]")
+                "td/div/div/table/tbody/tr[contains(@class, 'detail-gray-text')]/td[contains(text(), '"+ yearToFilter + "')]")
                 .findElements(getDriver()).size();
 
         learnGrid.setFacet("Status", yearToFilter);
@@ -566,6 +566,48 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         learnGrid.clearFilters("Status");
         learnGrid.clearFilters("Data Added");
+    }
+
+    @Test
+    public void validateMultiFiltering()
+    {
+        LearnGrid learnGrid = new LearnGrid(this);
+
+        //Test basic functionality of multifacet
+        cds.viewLearnAboutPage("Studies");
+        learnGrid.setWithOptionFacet("Type", "Species", "Vulcan");
+        Assert.assertTrue(2 == learnGrid.getRowCount());
+
+        //Test filter for alt property persists correctly
+        refresh();
+        sleep(CDSHelper.CDS_WAIT);
+        Assert.assertTrue(2 == learnGrid.getRowCount());
+
+        //Test clear doesn't fire for wrong selection in facet panel.
+        learnGrid.clearFiltersWithOption("Type", "Type");
+        Assert.assertTrue(2 == learnGrid.getRowCount());
+
+        //Test basic clear works
+        learnGrid.clearFiltersWithOption("Type", "Species");
+        Assert.assertTrue(2 * CDSHelper.STUDIES.length == learnGrid.getRowCount());
+
+        //Test setting two different filters in multifacet
+        learnGrid.setWithOptionFacet("Type", "Species", "Human");
+        learnGrid.setWithOptionFacet("Type", "Type", "Phase IIB");
+        Assert.assertTrue(4 == learnGrid.getRowCount());
+
+        //Test combining filter with another column
+        learnGrid.setFacet("Data Added", "2");
+        _asserts.verifyEmptyLearnAboutStudyPage();
+
+        //clear all filters and check results are correct in succession.
+        learnGrid.clearFilters("Data Added");
+        Assert.assertTrue(4 == learnGrid.getRowCount());
+
+        learnGrid.clearFiltersWithOption("Type", "Species");
+        Assert.assertTrue(4 == learnGrid.getRowCount());
+        learnGrid.clearFiltersWithOption("Type", "Type");
+        Assert.assertTrue(2 * CDSHelper.STUDIES.length == learnGrid.getRowCount());
     }
 
     //Helper function for data availability tests

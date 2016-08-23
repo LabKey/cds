@@ -5,6 +5,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.WebElement;
 
 public class LearnGrid
 {
@@ -38,11 +39,23 @@ public class LearnGrid
     @LogMethod
     public void setFacet(@LoggedParam String columnName, @LoggedParam String... labels)
     {
+        setWithOptionFacet(columnName, null, labels);
+    }
+
+    public void setWithOptionFacet(@LoggedParam String columnName, @LoggedParam String option, @LoggedParam String... labels)
+    {
         openFilterPanel(columnName);
 
         BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
 
-        _test.click(Locator.css(".x-column-header-checkbox"));
+        if (option != null)
+        {
+            _test.click(Locator.css(".sortDropdown"));
+            _test.click(Locator.css(".x-menu-item").withText(option));
+            BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+        }
+
+        _test.click(Locator.css(".x-column-header-checkbox").findElements(_test.getDriver()).stream().filter(WebElement::isDisplayed).findFirst().get());
 
         for (String label : labels)
         {
@@ -57,7 +70,20 @@ public class LearnGrid
     @LogMethod
     public void clearFilters(@LoggedParam String columnName)
     {
+        clearFiltersWithOption(columnName, null);
+    }
+
+    public void clearFiltersWithOption(@LoggedParam String columnName, @LoggedParam String option)
+    {
         openFilterPanel(columnName);
+
+        if (option != null)
+        {
+            _test.click(Locator.css(".sortDropdown"));
+            _test.click(Locator.css(".x-menu-item").withText(option));
+            BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+        }
+
         _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn"));
         BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
     }
