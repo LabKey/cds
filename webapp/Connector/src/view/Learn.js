@@ -492,10 +492,7 @@ Ext.define('Connector.view.Learn', {
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
         this.filterFields = Connector.app.view[this.viewByDimension[dimension.singularName]].filterFields;
 
-        if (params && params.reportId) {
-            ReportUtils.loadReport(this, params.reportId);
-        }
-        else if (dimension) {
+        if (dimension) {
             this.loadDataView(dimension, id, urlTab);
         }
         else {

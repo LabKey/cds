@@ -2,6 +2,7 @@ package org.labkey.test.tests.cds;
 
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assume;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
@@ -35,60 +36,61 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         return Arrays.asList("CDS");
     }
 
-    @Test
-    public void validateSimpleRReportViewerURL() throws MalformedURLException
-    {
-
-        // This is a report that has both a svg and img graphs.
-        final String reportScript = "#PNG report\n" +
-                "png(filename=\"${imgout:labkeyl_png}\")\n" +
-                "plot(c(rep(25,100), 26:75), c(1:100, rep(1, 50)), ylab= \"L\", xlab=\"LabKey\",\n" +
-                "\txlim= c(0, 100), ylim=c(0, 100), main=\"Simple Report by Automation\")\n\n" +
-                "#SVG report\n" +
-                "dev.off()\n" +
-                "svg(\"${svgout:svg}\", width= 4, height=3)\n" +
-                "plot(x=1:10,y=(1:10)^2, type='b')\n" +
-                "dev.off()";
-        Date date = new Date();
-        String reportName = REPORT_NAME + " " + date.getTime();
-        int reportId;
-
-        goToHome();
-
-        // fail fast if R is not configured
-        _rReportHelper.ensureRConfig();
-
-        goToHome();
-        goToProjectHome();
-
-        log("Go to the folder where the report will live.");
-        clickFolder(getProjectName());
-
-        log("Create an R Report in the current folder.");
-        reportId = createReport("CDS", "assay", reportScript, reportName, true);
-
-        log("Go to CDS and validate the report can be seen.");
-        goToHome();
-        goToProjectHome();
-        cds.enterApplication();
-
-        cds.viewLearnAboutPage("Studies");
-        URL studiesUrl = getURL();
-        String urlString = studiesUrl.toString();
-        urlString = urlString + "?reportId=" + reportId;
-        getDriver().navigate().to(urlString);
-
-        log("Wait for the report container to render.");
-
-        // Because of the way that CDS works any previous visits to learnview to view a report will create a separate instance of the element.
-        // So need to make sure that we find one that does not have 'none' in one of the divs in the path.
-        waitForElement(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[not(contains(@style, 'none'))]//span//div//span//div[contains(@class, 'reportContent')]"));
-
-        assertTextNotPresent("Failed to load report information.");
-
-        log("Looks like the report was loaded. Time to go home.");
-
-    }
+    // Test is no longer valid
+//    @Test
+//    public void validateSimpleRReportViewerURL() throws MalformedURLException
+//    {
+//
+//        // This is a report that has both a svg and img graphs.
+//        final String reportScript = "#PNG report\n" +
+//                "png(filename=\"${imgout:labkeyl_png}\")\n" +
+//                "plot(c(rep(25,100), 26:75), c(1:100, rep(1, 50)), ylab= \"L\", xlab=\"LabKey\",\n" +
+//                "\txlim= c(0, 100), ylim=c(0, 100), main=\"Simple Report by Automation\")\n\n" +
+//                "#SVG report\n" +
+//                "dev.off()\n" +
+//                "svg(\"${svgout:svg}\", width= 4, height=3)\n" +
+//                "plot(x=1:10,y=(1:10)^2, type='b')\n" +
+//                "dev.off()";
+//        Date date = new Date();
+//        String reportName = REPORT_NAME + " " + date.getTime();
+//        int reportId;
+//
+//        goToHome();
+//
+//        // fail fast if R is not configured
+//        _rReportHelper.ensureRConfig();
+//
+//        goToHome();
+//        goToProjectHome();
+//
+//        log("Go to the folder where the report will live.");
+//        clickFolder(getProjectName());
+//
+//        log("Create an R Report in the current folder.");
+//        reportId = createReport("CDS", "assay", reportScript, reportName, true);
+//
+//        log("Go to CDS and validate the report can be seen.");
+//        goToHome();
+//        goToProjectHome();
+//        cds.enterApplication();
+//
+//        cds.viewLearnAboutPage("Studies");
+//        URL studiesUrl = getURL();
+//        String urlString = studiesUrl.toString();
+//        urlString = urlString + "?reportId=" + reportId;
+//        getDriver().navigate().to(urlString);
+//
+//        log("Wait for the report container to render.");
+//
+//        // Because of the way that CDS works any previous visits to learnview to view a report will create a separate instance of the element.
+//        // So need to make sure that we find one that does not have 'none' in one of the divs in the path.
+//        waitForElement(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[not(contains(@style, 'none'))]//span//div//span//div[contains(@class, 'reportContent')]"));
+//
+//        assertTextNotPresent("Failed to load report information.");
+//
+//        log("Looks like the report was loaded. Time to go home.");
+//
+//    }
 
     private int createReport(String schemaName, String queryName, @Nullable String reportScript, String reportName, boolean shareReport)
     {

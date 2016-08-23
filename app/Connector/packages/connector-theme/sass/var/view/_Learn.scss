@@ -582,6 +582,9 @@ div.list-container {
 
 .reportView {
   margin-top: 20px;
+  width: 100% !important;
+  background-color: white;
+  padding-left: $pageLeftPadding;
 }
 
 .reportContent {
@@ -592,4 +595,17 @@ div.list-container {
 
 .learnpageheader {
   background-color: $gray-7;
+}
+
+.learn-report-info {
+  width: 100%;
+  padding-left: $pageLeftPadding;
+}
+
+.learn-report-header-column {
+  width: 50%;
+}
+
+.reportmodulecontainer {
+  padding-top: $sectionTopPadding;
 }

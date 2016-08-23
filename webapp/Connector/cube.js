@@ -569,13 +569,7 @@ Ext4.define('Connector.cube.Configuration', {
                     label: 'Overview'
                 }],
                 itemDetail: [{
-                    view: 'Connector.app.view.ModuleContainer',
-                    modules: [[{
-                        type: 'assaystudies',
-                        staticData: {
-                            title: 'Data Availability' //TODO
-                        }
-                    }]]
+                    view: 'Connector.app.view.ReportModuleContainer'
                 }]
             }]
         },
