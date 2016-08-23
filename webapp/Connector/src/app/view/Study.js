@@ -119,6 +119,31 @@ Ext.define('Connector.app.view.Study', {
                 '</div>'
         )
     },{
+        text: 'Products',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 15/100,
+        resizable: false,
+        filterConfigSet: [{
+            filterField: 'product_names',
+            valueType: 'string',
+            title: 'Products'
+        }],
+        dataIndex: 'product_to_sort_on',
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text">',
+                    '<ul>',
+                        '<tpl if="products.length &gt; 0">',
+                            '<tpl for="products">',
+                               '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
+                            '</tpl>',
+                        '<tpl else>',
+                            '<li class="detail-gray-text">No related products</li>',
+                        '</tpl>',
+                    '</ul>',
+                '</div>'
+        )
+    },{
         text: 'Status',
         xtype: 'templatecolumn',
         minWidth: 150,
@@ -175,31 +200,6 @@ Ext.define('Connector.app.view.Study', {
                         return Connector.app.view.Study.monthDiff(new Date(date1), new Date(date2));
                     }
                 }
-        )
-    }, {
-        text: 'Products',
-        xtype: 'templatecolumn',
-        minWidth: 150,
-        flex: 15/100,
-        resizable: false,
-        filterConfigSet: [{
-            filterField: 'product_names',
-            valueType: 'string',
-            title: 'Products'
-        }],
-        dataIndex: 'product_to_sort_on',
-        tpl: new Ext.XTemplate(
-                '<div class="detail-text">',
-                    '<ul>',
-                        '<tpl if="products.length &gt; 0">',
-                            '<tpl for="products">',
-                                '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
-                            '</tpl>',
-                        '<tpl else>',
-                            '<li class="detail-gray-text">No related products</li>',
-                        '</tpl>',
-                    '</ul>',
-                '</div>'
         )
     }],
 
