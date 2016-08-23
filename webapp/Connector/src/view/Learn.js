@@ -474,8 +474,34 @@ Ext.define('Connector.view.Learn', {
     },
 
     setDimensions : function(dimensions) {
-        this.dimensions = dimensions;
-        this.getHeader().setDimensions(dimensions);
+        // hide Report tab if there is no publicly available reports
+        var filteredDimensions = [], reportDimension, me = this;
+        Ext.each(dimensions, function(dim){
+            if (dim && dim.name == 'Report')
+                reportDimension = dim;
+            else
+                filteredDimensions.push(dim);
+        });
+        if (reportDimension) {
+            var reportStore = StoreCache.getStore(reportDimension.detailCollection);
+            var reportDimensionName = reportDimension.name;
+            reportStore.on('load', function() {
+                me.dimensionDataLoaded[reportDimensionName] = true;
+                if (this.getCount() > 0) {
+                    me.dimensions = dimensions;
+                    me.getHeader().setDimensions(dimensions);
+                }
+                else {
+                    me.dimensions = filteredDimensions;
+                    me.getHeader().setDimensions(filteredDimensions);
+                }
+            });
+            reportStore.loadSlice();
+        }
+        else {
+            this.dimensions = dimensions;
+            this.getHeader().setDimensions(dimensions);
+        }
     },
 
     // TODO: Move this to cube.js or hang the search fields on the model definitions themselves
@@ -674,10 +700,8 @@ Ext.define('Connector.view.LearnHeaderDataView', {
         // Filter out hidden dimensions, and dimensions which do not support detail view
         //
         store.filter('hidden', false);
-        store.filter('supportsDetails', true);// TODO
+        store.filter('supportsDetails', true);
 
-        // populate report store, update store
-        //
         // Sort dimensions by stated priority
         //
         store.sort('priority', 'desc');

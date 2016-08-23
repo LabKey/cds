@@ -11,7 +11,7 @@ Ext.define('Connector.app.view.ReportModuleContainer', {
 
     tpl : new Ext.XTemplate(
             '<tpl if="description || created">',
-            '<table class="learn-report-info">',
+            '<table class="learn-report-info module">',
             '<tr>',
             '<td class="learn-report-header-column">',
             '<tpl if="description">',
