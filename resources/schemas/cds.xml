@@ -58,6 +58,8 @@
             <column columnName="study_primary_poc_name"/>
             <column columnName="study_primary_poc_email"/>
             <column columnName="study_strategy"/>
+            <column columnName="atlas_link"/>
+            <column columnName="cavd_link"/>
         </columns>
     </table>
     <table tableName="import_lab" tableDbType="TABLE">
@@ -403,6 +405,36 @@
             <column columnName="mfi_blank_baseline"/>
         </columns>
     </table>
+    <table tableName="import_document" tableDbType="TABLE">
+        <columns>
+            <column columnName="document_id"/>
+            <column columnName="label"/>
+            <column columnName="filename"/>
+            <column columnName="document_type"/>
+        </columns>
+    </table>
+    <table tableName="import_studydocument" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="document_id"/>
+        </columns>
+    </table>
+    <table tableName="document" tableDbType="TABLE">
+        <columns>
+            <column columnName="document_id"/>
+            <column columnName="container"/>
+            <column columnName="label"/>
+            <column columnName="filename"/>
+            <column columnName="document_type"/>
+        </columns>
+    </table>
+    <table tableName="studydocument" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="document_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
     <table tableName="study" tableDbType="TABLE">
         <columns>
             <column columnName="study_name"/>
@@ -446,6 +478,8 @@
             <column columnName="primary_poc_name"/>
             <column columnName="primary_poc_email"/>
             <column columnName="strategy"/>
+            <column columnName="atlas_link"/>
+            <column columnName="cavd_link"/>
         </columns>
     </table>
     <table tableName="treatmentarmsubjectmap" tableDbType="TABLE">

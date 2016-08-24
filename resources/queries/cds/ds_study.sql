@@ -60,7 +60,9 @@ import_study.study_groups AS groups,
 import_study.study_conclusions AS conclusions,
 import_study.study_publications AS publications,
 import_study.study_executive_summary AS executive_summary,
-import_study.study_data_availability AS data_availability
+import_study.study_data_availability AS data_availability,
+import_study.atlas_link AS atlas_link,
+import_study.cavd_link AS cavd_link
 
 FROM cds.import_study AS import_study
 JOIN core.containers AS containers ON (containers.name = import_study.prot)

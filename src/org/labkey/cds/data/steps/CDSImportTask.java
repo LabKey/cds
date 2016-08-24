@@ -59,6 +59,7 @@ public class CDSImportTask extends TaskRefTaskImpl
 //        new TSVCopyConfig("Site"),
         new TSVCopyConfig("Lab"),
         new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
+        new TSVCopyConfig("Document"),
 
         // Dependent Tables
 //        new TSVCopyConfig("StudyPersonnel"),
@@ -73,6 +74,7 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudyProduct"),
         new TSVCopyConfig("StudyAssay"),
         new TSVCopyConfig("StudyPartGroupArmSubject"),
+        new TSVCopyConfig("StudyDocument"),
 //        new TSVCopyConfig("StudySitePersonnel"),
 
         //AntigenMetadata

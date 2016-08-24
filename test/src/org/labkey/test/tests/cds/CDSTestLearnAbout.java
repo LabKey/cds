@@ -12,6 +12,7 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -109,7 +110,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void verifyLearnAboutStudyDetails()
     {
         final String searchString = "QED 2";
-        final String grantAffiliation = "Nulla tellus. In sagittis dui vel nisl.";
+        final String grantAffiliation = "Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.";
         final String dataAvailability = "iaculis diam erat fermentum justo nec";
         final String firstContactName = "Juan Owens";
         final String firstContactEmail = "jowens5@deviantart.com";
@@ -610,6 +611,144 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertTrue(2 == learnGrid.getRowCount());
         learnGrid.clearFiltersWithOption("Type", "Type");
         Assert.assertTrue(CDSHelper.STUDIES.length == learnGrid.getRowCount());
+    }
+
+    @Test
+    public void validateLinksToStudyGrantDocuments()
+    {
+        final String PDF01_FILE_NAME = "test%20pdf%201.pdf";
+        final String PDF02_FILE_NAME = "test%20pdf%202.pdf";
+        final String DOCX_FILE_NAME = "test document 1.docx";
+        final int PDF01_STUDY = 1;
+        final int DOCX01_STUDY = 0;
+        final int PDF02_STUDY01 = 14;
+        final int PDF02_STUDY02 = 18;
+        final int PDF02_STUDY03 = 11;
+        final int BROKEN_LINK_STUDY = 4;
+        final String STUDY_INFO_TEXT_TRIGGER = "Study information";
+
+        String studyName;
+        Locator studyElement;
+
+        log("Validate a link to a pdf file works as expected.");
+        validatePDFLink(CDSHelper.STUDIES[PDF01_STUDY], PDF01_FILE_NAME);
+
+        log("Validate that a link to a doc file works as expected.");
+        validateDocLink(CDSHelper.STUDIES[DOCX01_STUDY], DOCX_FILE_NAME);
+
+        log("Validated that a document linked to several studies works as expected.");
+        validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY01], PDF02_FILE_NAME);
+        validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY02], PDF02_FILE_NAME);
+        validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY03], PDF02_FILE_NAME);
+
+        log("Validate a study that has link but the document is not there.");
+        pauseJsErrorChecker();
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.STUDIES[BROKEN_LINK_STUDY];
+        studyElement = Locator.xpath("//h2[text() = '" + studyName + "']");
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+
+        Assert.assertTrue("There was a visible link to a grant document for this study, and there should not be.", getVisibleGrantDocumentLink() == null);
+
+        resumeJsErrorChecker();
+
+        goToHome();
+        log("All done.");
+
+    }
+
+    private void validatePDFLink(String studyName, String pdfFileName)
+    {
+        final String PLUGIN_XPATH = "//embed[@name='plugin']";
+        final String STUDY_XPATH_TEMPLATE = "//h2[text() = '$']";
+        final String STUDY_INFO_TEXT_TRIGGER = "Study information";
+
+        String studyXPath;
+        Locator studyElement;
+        WebElement documentLink;
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        log("Validate that study " + studyName + " has a grant document and is of type pdf.");
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+
+        documentLink = getVisibleGrantDocumentLink();
+        Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
+
+        log("Now click on the document link.");
+        documentLink.click();
+        sleep(10000);
+        switchToWindow(1);
+
+        log("Validate that the pdf document was loaded into the browser.");
+        assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
+        Assert.assertTrue("The embedded element is not a pdf plugin", getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
+        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'.", getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
+
+        log("Close this window.");
+        getDriver().close();
+
+        log("Go back to the main window.");
+        switchToMainWindow();
+
+    }
+
+    private void validateDocLink(String studyName, String docFileName)
+    {
+        final String STUDY_XPATH_TEMPLATE = "//h2[text() = '$']";
+        final String STUDY_INFO_TEXT_TRIGGER = "Study information";
+
+        String studyXPath, foundDocumentName;
+        Locator studyElement;
+        WebElement documentLink;
+        File docFile;
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        log("Validate that study " + studyName + " has a grant document and is of type docx.");
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+
+        documentLink = getVisibleGrantDocumentLink();
+        Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
+
+        log("Now click on the document link.");
+        docFile = clickAndWaitForDownload(documentLink);
+        foundDocumentName = docFile.getName();
+        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + docFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(docFileName));
+
+    }
+
+    // Return the visible grant document link, null otherwise.
+    private WebElement getVisibleGrantDocumentLink()
+    {
+        final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Grant Affiliation:']/following-sibling::td//a";
+        WebElement documentLinkElement = null;
+
+
+        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(getDriver()))
+        {
+            if(we.isDisplayed())
+            {
+                documentLinkElement = we;
+                break;
+            }
+        }
+
+        return documentLinkElement;
     }
 
     //Helper function for data availability tests
