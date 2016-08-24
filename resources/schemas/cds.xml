@@ -57,7 +57,7 @@
             <column columnName="study_investigator_email"/>
             <column columnName="study_primary_poc_name"/>
             <column columnName="study_primary_poc_email"/>
-            <column columnName="strategy"/>
+            <column columnName="study_strategy"/>
         </columns>
     </table>
     <table tableName="import_lab" tableDbType="TABLE">

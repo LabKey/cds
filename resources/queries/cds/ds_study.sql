@@ -36,7 +36,7 @@ import_study.study_grant_pm_name AS grant_pm_name,
 import_study.study_grant_pm_email AS grant_pm_email,
 import_study.study_investigator_name AS investigator_name,
 import_study.study_investigator_email AS investigator_email,
-import_study.strategy AS strategy,
+import_study.study_strategy AS strategy,
 
 -- DATE
 import_study.study_first_enr_date AS first_enr_date,
