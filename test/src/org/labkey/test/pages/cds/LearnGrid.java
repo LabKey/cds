@@ -1,5 +1,6 @@
 package org.labkey.test.pages.cds;
 
+import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.LogMethod;
@@ -19,7 +20,10 @@ public class LearnGrid
     @LogMethod
     public int getRowCount()
     {
-        return Locators.row.findElements(_test.getDriver()).size();
+        int numRowsWithLockedPortion = Locators.lockedRow.findElements(_test.getDriver()).size();
+        int numRowsWithUnlockedPortion = Locators.unlockedRow.findElements(_test.getDriver()).size();
+        Assert.assertTrue(numRowsWithLockedPortion == numRowsWithUnlockedPortion);
+        return numRowsWithUnlockedPortion;
     }
 
     @LogMethod(quiet = true)
@@ -103,8 +107,9 @@ public class LearnGrid
 
     public static class Locators
     {
-        public static Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
-        public static Locator.XPathLocator row = grid.append("/div/div/div/div/div/div/table/tbody/tr");
+        public static final Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
+        public static final Locator.XPathLocator unlockedRow = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div/div/table/tbody/tr");
+        public static final Locator.XPathLocator lockedRow = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div/div/table/tbody/tr");
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {
