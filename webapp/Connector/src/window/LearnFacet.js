@@ -286,6 +286,11 @@ Ext4.define('Connector.grid.LearnFaceted', {
               return a - b;
           }
       }
+      else if (this.valueType == 'date_display') {
+          return function(a, b){
+              return Ext.Date.parse(a, "M jS, Y").getTime() - Ext.Date.parse(b, "M jS, Y").getTime();
+          }
+      }
       return function(a, b){
           if (a == undefined)
             return -1;

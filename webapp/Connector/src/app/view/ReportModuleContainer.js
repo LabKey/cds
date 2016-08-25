@@ -32,7 +32,7 @@ Ext.define('Connector.app.view.ReportModuleContainer', {
             '</tpl>',
             {
                 renderDate : function(date) {
-                    return Connector.app.view.Study.dateRenderer(date);
+                    return Connector.app.view.LearnSummary.dateRenderer(date);
                 }
             }
     ),

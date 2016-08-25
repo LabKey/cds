@@ -72,6 +72,16 @@ Ext.define('Connector.app.store.Report', {
                 }
             }, this);
 
+            reports.sort(function(a, b){
+               return (new Date(b.created)).getTime() - (new Date(a.created)).getTime();
+            });
+            Ext.each(reports, function(report){
+               if (report.created)
+               {
+                   report.created_display = Connector.app.view.LearnSummary.dateRenderer(report.created);
+               }
+
+            });
             this.loadRawData(reports);
         }
     },

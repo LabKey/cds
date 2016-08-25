@@ -1,6 +1,7 @@
 Ext.define('Connector.app.model.Report', {
     extend: 'Ext.data.Model',
     idProperty: 'reportId',
+    labelProperty: 'name',
     fields: [
         {name : 'category'},
         {name : 'categorylabel',
@@ -11,6 +12,7 @@ Ext.define('Connector.app.model.Report', {
             }
         },
         {name : 'created', type: 'date'},
+        {name : 'created_display'},
         {name : 'createdBy'},
         {name : 'createdByUserId', type: 'int'},
         {name : 'authorUserId',

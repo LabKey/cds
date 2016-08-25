@@ -609,3 +609,13 @@ div.list-container {
 .reportmodulecontainer {
   padding-top: $sectionTopPadding;
 }
+
+.reportlearngrid
+{
+  .detail-row{
+    .x-grid-cell-inner {
+      white-space: normal;
+      padding: 0px 0px 0px 16px;
+    }
+  }
+}

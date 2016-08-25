@@ -505,7 +505,15 @@ Ext.define('Connector.view.Learn', {
                 model: model,
                 dimension: dimension,
                 activeTab: activeTab
-            })
+            }),
+            listeners: {
+                hide: function(cmp){
+                    // detail page needs to be destroyed on hide, otherwise it remains and repeats in the DOM
+                    // For knitr report, custom stylesheet defined in report will then contaminate all Learn about pages
+                    cmp.destroy();
+
+                }
+            }
         });
 
         this.add(pageView);
