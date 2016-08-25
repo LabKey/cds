@@ -3,6 +3,7 @@
         <!-- ExtJS Dependencies -->
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-all.js"/>
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-patches.js"/>
+        <script path="Connector/src/ext-patches.js"/>
 
         <!-- Client API Dependencies -->
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Ajax.js"/>

@@ -25,6 +25,8 @@ Ext.define('Connector.button.Image', {
 
     menuAlign: 'tl-bl?',
 
+    menuOffsets: [0, 0],
+
     initComponent : function() {
 
         var me = this;
@@ -111,7 +113,7 @@ Ext.define('Connector.button.Image', {
             if (menu.isVisible()) {
                 menu.hide();
             }
-            menu.showBy(me.el, me.menuAlign);
+            menu.showBy(me.el, me.menuAlign, me.menuOffsets);
         }
         return me;
     },

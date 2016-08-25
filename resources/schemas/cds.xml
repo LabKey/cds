@@ -57,6 +57,7 @@
             <column columnName="study_investigator_email"/>
             <column columnName="study_primary_poc_name"/>
             <column columnName="study_primary_poc_email"/>
+            <column columnName="study_strategy"/>
             <column columnName="atlas_link"/>
             <column columnName="cavd_link"/>
         </columns>
@@ -476,6 +477,7 @@
             <column columnName="investigator_email"/>
             <column columnName="primary_poc_name"/>
             <column columnName="primary_poc_email"/>
+            <column columnName="strategy"/>
             <column columnName="atlas_link"/>
             <column columnName="cavd_link"/>
         </columns>

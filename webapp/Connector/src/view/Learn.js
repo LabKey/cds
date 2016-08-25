@@ -26,6 +26,23 @@ Ext.define('Connector.view.Learn', {
 
     searchFilter: undefined,
 
+    dataListPrefix: 'learn-list-',
+
+    listeners: {
+        resize: function (view, width, height)
+        {
+            var visibleGrid = this.items.items.filter(function(item) {
+                return !item.hidden
+                        && item.itemId
+                        && item.itemId.toString().indexOf(this.dataListPrefix) == 0;
+            }, this);
+            if (visibleGrid.length == 1)
+            {
+                visibleGrid[0].fireEvent("learnGridResizeHeight", height);
+            }
+        }
+    },
+
     filterFields: [],
 
     columnFilters: {},
@@ -119,19 +136,25 @@ Ext.define('Connector.view.Learn', {
         if (this.activeListing) {
             var grid = this.activeListing;
             this.columnFilters[field] = filterValues;
-            Ext.each(grid.headerCt.getGridColumns(), function(column)
-            {
-                if (column.filterConfig.filterField == field && Ext.isDefined(column.getEl()))
-                {
-                    if (filterValues.length > 0) {
+            Ext.each(grid.headerCt.getGridColumns(), function(column) {
+                if (column.filterConfigSet && Ext.isDefined(column.getEl())) {
+                    var columnHasFiltersSet = column.filterConfigSet
+                            .map(function (config) {
+                                var assignedFilterValues = this.columnFilters[config.filterField];
+                                return assignedFilterValues && assignedFilterValues.length > 0
+                            }, this)
+                            .reduce(function (total, curr) {
+                                return total || curr;
+                            });
+
+                    if (columnHasFiltersSet) {
                         column.getEl().addCls('filtered-column');
                     }
                     else {
                         column.getEl().removeCls('filtered-column');
                     }
-                    return false;
                 }
-            });
+            }, this);
             this.loadDataDelayed(grid.dimension, grid.getStore());
         }
     },
@@ -140,21 +163,40 @@ Ext.define('Connector.view.Learn', {
         this.columnFilters = {};
         if (this.activeListing) {
             var grid = this.activeListing;
-            Ext.each(grid.headerCt.getGridColumns(), function(column)
-            {
-                if (column.filterConfig.filterField && Ext.isDefined(column.getEl()))
-                {
-                    var field = column.filterConfig.filterField;
-                    var urlFilter = params[field];
-                    var filterValues = [];
-                    if (urlFilter) {
+            Ext.each(grid.headerCt.getGridColumns(), function(column) {
+                if (column.filterConfigSet && Ext.isDefined(column.getEl())) {
+                    var fieldsWithFilterValues = column.filterConfigSet
+                            .map(function(config) {
+                                var field = config.filterField;
+                                var urlFilter = params[field];
+                                if (urlFilter) {
+                                    return {
+                                        'field' : field,
+                                        'filterValues' : Ext.isArray(urlFilter) ? urlFilter: urlFilter.split(';')
+                                    }
+                                }
+                                else {
+                                    return {
+                                        'field' : field,
+                                        'filterValues' : []
+                                    }
+                                }
+                            });
+
+                    fieldsWithFilterValues.forEach(function(config) {
+                                this.columnFilters[config.field] = config.filterValues;
+                            }, this);
+
+                    var columnHasFilterApplied = fieldsWithFilterValues.reduce(function(total, curr, idx) {
+                                return total || curr.filterValues.length > 0;
+                            }, false);
+
+                    if (columnHasFilterApplied) {
                         column.getEl().addCls('filtered-column');
-                        filterValues = Ext.isArray(urlFilter) ? urlFilter: urlFilter.split(';');
                     }
                     else {
                         column.getEl().removeCls('filtered-column');
                     }
-                    this.columnFilters[field] = filterValues;
                 }
             }, this);
             this.loadDataDelayed(grid.dimension, grid.getStore());
@@ -370,7 +412,7 @@ Ext.define('Connector.view.Learn', {
             }
             else if (dimension.detailModel && dimension.detailView) {
                 // otherwise, show the listing
-                var listId = 'learn-list-' + dimension.uniqueName;
+                var listId = this.dataListPrefix + dimension.uniqueName;
 
                 // listView -- cache hit
                 if (this.listViews[listId]) {

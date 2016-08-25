@@ -5,43 +5,89 @@ Ext.define('Connector.app.view.LearnSummary', {
         getRowClass: function(record) {
             var cls = 'detail-row';
             return record.data && record.data.data_availability ? cls + ' detail-row-has-data' : cls;
-        }
+        },
+        overItemCls: 'detail-row-hover',
+        selectedItemCls: ''
     },
+
+    lockedViewConfig: {
+        overflowY: 'hidden',
+        emptyText: ''
+    },
+
+    normalViewConfig: {
+        overflowY: 'scroll'
+    },
+
     listeners: {
         beforerender: function (grid)
         {
             var learnView = this.learnView;
-            var header = grid.down('headercontainer'), dim = grid.dimension ? grid.dimension.name : undefined;
-            header.on('headertriggerclick', function onTriggerClick(headerCt, column)
-            {
-                var field = column.filterConfig.filterField;
-                Ext.create('Connector.window.LearnFacet', {
-                    dim: dim,
-                    filterConfig: column.filterConfig,
-                    col: column,
-                    columnMetadata: {caption : column.filterConfig.title},
-                    learnStore: this.store,
-                    dataView: this,
-                    filterValues: learnView.columnFilters[field] ? learnView.columnFilters[field] : [],
-                    listeners: {
-                        filter: function (filterValues)
-                        {
-                            this.learnView.getHeader().fireEvent('updateLearnFilter', field, filterValues);
-                        },
-                        clearfilter: function ()
-                        {
-                            this.learnView.getHeader().fireEvent('updateLearnFilter', field, []);
+            var headers = grid.query('headercontainer'),
+                dim = grid.dimension ? grid.dimension.name : undefined;
+            Ext.each(headers, function(header) {
+                header.on('headertriggerclick', function onTriggerClick(headerCt, column)
+                {
+                    var filterConfigSet = column.filterConfigSet
+                            .map(function(config) {
+                                config.filterValues = learnView.columnFilters[config.filterField] || [];
+                                return config;
+                            });
+                    Ext.create('Connector.window.LearnFacet', {
+                        dim: dim,
+                        filterConfigSet: filterConfigSet,
+                        col: column, //used to position facet window
+                        columnMetadata: column.filterConfigSet.length > 1 ?
+                            {caption : 'Search By'} : {caption : column.filterConfigSet[0].title},
+                        learnStore: this.store,
+                        dataView: this,
+                        listeners: {
+                            filter: function (columnName, filterValues)
+                            {
+                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, filterValues);
+                            },
+                            clearfilter: function (columnName)
+                            {
+                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, []);
+                            },
+                            scope: this
                         },
                         scope: this
-                    },
-                    scope: this
-                });
-                return false;
+                    });
+                    return false;
+                }, this);
+                header.on('sortchange', function (headerCt, column, direction)
+                {
+                    this.learnView.getHeader().fireEvent('updateLearnSort', column.dataIndex, direction);
+                }, this);
             }, this);
-            header.on('sortchange', function (headerCt, column, direction)
-            {
-                this.learnView.getHeader().fireEvent('updateLearnSort', column.dataIndex, direction);
-            }, this);
+        },
+
+        learnGridResizeHeight : function (viewHeight)
+        {
+            this.setHeight(viewHeight - this.learnView.headerViews.main.height);
+            this.setTitleColumnWidth();
+        },
+
+        boxready: function(grid)
+        {
+            this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
+            this.setTitleColumnWidth();
         }
+    },
+
+    initComponent : function() {
+        this.addEvents("learnGridResizeHeight");
+
+        this.lockedViewConfig.emptyText = new Ext.XTemplate(
+                '<div class="detail-empty-text">None of the selected {itemPluralName} have data for this category.</div>'
+        ).apply({itemPluralName: this.itemPluralName});
+
+        this.callParent(arguments);
+    },
+
+    setTitleColumnWidth : function () {
+        var col = this.columns[0];
+        col.setWidth(Math.max(this.getWidth() / 2, col.minWidth));
     }
 });
