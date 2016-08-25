@@ -88,6 +88,16 @@ Ext.define('Connector.view.module.ContactCDS', {
             '<div class="item-row">',
                 '<a href="https://portal.cavd.org/CAVDStudyProposals/Pages/RequestCSFServices.aspx" target="_blank">Request Central Service Facilities support for an ancillary study</a>',
             '</div>',
+            '<tpl if="atlas_link">',
+                '<div class="item-row">',
+                '<a href="{atlas_link}" target="_blank">View this study in ATLAS <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
+                '</div>',
+            '</tpl>',
+            '<tpl if="cavd_link">',
+                '<div class="item-row">',
+                '<a href="{cavd_link}" target="_blank">View this study on the CAVD Portal <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
+                '</div>',
+            '</tpl>',
         '</tpl>'
     ),
     initComponent : function() {
