@@ -11,7 +11,12 @@ Ext.define('Connector.app.view.LearnSummary', {
     },
 
     lockedViewConfig: {
+        overflowY: 'hidden',
         emptyText: ''
+    },
+
+    normalViewConfig: {
+        overflowY: 'scroll'
     },
 
     listeners: {
