@@ -104,8 +104,7 @@ Ext.define('Connector.app.store.StudyProducts', {
 
             // join studies to product
             Ext.each(this.productData, function(product) {
-                if (product.product_developer == undefined || product.product_developer == '')
-                {
+                if (product.product_developer == undefined || product.product_developer == '') {
                     product.product_developer = '[blank]';
                 }
                 studies = [];
@@ -136,6 +135,10 @@ Ext.define('Connector.app.store.StudyProducts', {
             products.sort(function(productA, productB) {
                 return LABKEY.app.model.Filter.sorters.natural(productA.product_name, productB.product_name);
             });
+
+            this.productData = undefined;
+            this.studyData = undefined;
+            this.productProduct = undefined;
 
             this.loadRawData(products);
             LABKEY.Utils.signalWebDriverTest("determinationLearnAboutStudyProductLoaded");

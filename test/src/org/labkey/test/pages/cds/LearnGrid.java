@@ -1,10 +1,12 @@
 package org.labkey.test.pages.cds;
 
+import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.WebElement;
 
 public class LearnGrid
 {
@@ -18,7 +20,10 @@ public class LearnGrid
     @LogMethod
     public int getRowCount()
     {
-        return Locators.row.findElements(_test.getDriver()).size();
+        int numRowsWithLockedPortion = Locators.lockedRow.findElements(_test.getDriver()).size();
+        int numRowsWithUnlockedPortion = Locators.unlockedRow.findElements(_test.getDriver()).size();
+        Assert.assertTrue(numRowsWithLockedPortion == numRowsWithUnlockedPortion);
+        return numRowsWithUnlockedPortion;
     }
 
     @LogMethod(quiet = true)
@@ -38,11 +43,23 @@ public class LearnGrid
     @LogMethod
     public void setFacet(@LoggedParam String columnName, @LoggedParam String... labels)
     {
+        setWithOptionFacet(columnName, null, labels);
+    }
+
+    public void setWithOptionFacet(@LoggedParam String columnName, @LoggedParam String option, @LoggedParam String... labels)
+    {
         openFilterPanel(columnName);
 
         BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
 
-        _test.click(Locator.css(".x-column-header-checkbox"));
+        if (option != null)
+        {
+            _test.click(Locator.css(".sortDropdown"));
+            _test.click(Locator.css(".x-menu-item").withText(option));
+            BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+        }
+
+        _test.click(Locator.css(".x-column-header-checkbox").findElements(_test.getDriver()).stream().filter(WebElement::isDisplayed).findFirst().get());
 
         for (String label : labels)
         {
@@ -57,7 +74,20 @@ public class LearnGrid
     @LogMethod
     public void clearFilters(@LoggedParam String columnName)
     {
+        clearFiltersWithOption(columnName, null);
+    }
+
+    public void clearFiltersWithOption(@LoggedParam String columnName, @LoggedParam String option)
+    {
         openFilterPanel(columnName);
+
+        if (option != null)
+        {
+            _test.click(Locator.css(".sortDropdown"));
+            _test.click(Locator.css(".x-menu-item").withText(option));
+            BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+        }
+
         _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn"));
         BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
     }
@@ -77,8 +107,9 @@ public class LearnGrid
 
     public static class Locators
     {
-        public static Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
-        public static Locator.XPathLocator row = grid.append("/div/div/table/tbody/tr");
+        public static final Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
+        public static final Locator.XPathLocator unlockedRow = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div/div/table/tbody/tr");
+        public static final Locator.XPathLocator lockedRow = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div/div/table/tbody/tr");
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {

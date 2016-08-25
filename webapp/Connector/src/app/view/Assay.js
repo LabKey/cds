@@ -9,6 +9,8 @@ Ext.define('Connector.app.view.Assay', {
 
     cls: 'learngrid',
 
+    itemPluralName: 'assays',
+
     statics: {
        searchFields: ['assay_short_name', 'assay_label', 'assay_detection_platform', 'assay_method_description',
             'assay_body_system_type', 'assay_body_system_target', 'assay_general_specimen_type'],
@@ -20,17 +22,17 @@ Ext.define('Connector.app.view.Assay', {
     columns : [{
         text: 'Description & Methodology',
         xtype: 'templatecolumn',
-        minWidth: 400,
-        flex: 60/100,
+        minWidth: 500,
+        locked: true,
         resizable: false,
         dataIndex: 'assay_short_name',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'assay_short_name',
             valueType: 'string',
             title: 'Assay Name'
-        },
+        }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-description detail-row-text">',
+                '<div class="detail-description">',
                     '<h2>{assay_short_name:htmlEncode} ({assay_label:htmlEncode})</h2>',
                     '<div class="detail-description-text">{assay_description:htmlEncode}</div>',
                 '</div>'
@@ -42,13 +44,13 @@ Ext.define('Connector.app.view.Assay', {
         flex: 20/100,
         resizable: false,
         dataIndex: 'study_count',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'study_count',
             valueType: 'number',
             title: '# of Studies'
-        },
+        }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<div class="detail-gray-text">{study_count}</div>',
                 '</div>'
         )
@@ -59,27 +61,15 @@ Ext.define('Connector.app.view.Assay', {
         flex: 20/100,
         resizable: false,
         dataIndex: 'assay_body_system_target',
-        filterConfig: {
+        filterConfigSet: [{
             filterField: 'assay_body_system_target',
             valueType: 'string',
             title: 'Target Area'
-        },
+        }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text detail-row-text">',
+                '<div class="detail-text">',
                     '<div class="detail-gray-text">{assay_body_system_type:htmlEncode}: {assay_body_system_target:htmlEncode} and {assay_general_specimen_type:htmlEncode}</div>',
                 '</div>'
         )
-    }],
-
-    initComponent : function() {
-
-        //
-        // Continue to show the column headers even when no data is present
-        //
-        this.emptyText = new Ext.XTemplate(
-                '<div class="detail-container"><div class="saeempty">None of the selected assays have data for this category.</div></div>'
-        ).apply({});
-
-        this.callParent();
-    }
+    }]
 });
