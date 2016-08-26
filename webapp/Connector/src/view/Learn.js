@@ -40,6 +40,17 @@ Ext.define('Connector.view.Learn', {
             {
                 visibleGrid[0].fireEvent("learnGridResizeHeight", height);
             }
+        },
+        hide: function(view)
+        {
+            if (view.items.length > 1) {
+                for (var i=1; i < view.items.items.length; i++) {
+                    if (view.items.items[i].pageID)
+                    // hide(destroy) all detail page as they are not longer needed
+                    // keeping them will pollute the DOM
+                        view.items.items[i].hide();
+                }
+            }
         }
     },
 
