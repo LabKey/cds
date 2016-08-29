@@ -39,8 +39,8 @@
         <script path="../../../internal/explodedModule/web/app/LoadingMask.js"/>
 
         <!-- Ext Widget Dependencies -->
-        <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4DefaultFilterPanel.js"/>
-        <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4GridPanel.js"/>
+        <script path="../../../internal/explodedModule/web/extWidgets/Ext4DefaultFilterPanel.js"/>
+        <script path="../../../internal/explodedModule/web/extWidgets/Ext4GridPanel.js"/>
 
         <!-- Visualization Dependencies -->
         <script path="../../../internal/explodedModule/web/vis/lib/d3-3.3.9.min.js"/>
