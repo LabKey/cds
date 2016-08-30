@@ -123,6 +123,9 @@ Ext.define('Connector.app.store.Assay', {
                 assays.push(assay);
             }, this);
 
+            this.assayData = undefined;
+            this.assayStudies = undefined;
+
             this.loadRawData(assays);
         }
     },

@@ -181,19 +181,19 @@ public class CDSAsserts
         for (String item : axisItems)
         {
             _test.waitForElement(Locator.tagWithClass("tr", "detail-row").append("/td/div/div/h2").containing(item), _test.WAIT_FOR_PAGE);
-            _test.assertElementVisible(Locator.tagWithClass("tr", "detail-row").append("/td/div/div/h2").withText(item));
+            _test.assertElementPresent(Locator.tagWithClass("tr", "detail-row").append("/td/div/div/h2").withText(item));
         }
 
     }
 
     public void verifyEmptyLearnAboutStudyPage()
     {
-        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'saeempty')][text() = 'None of the selected studies have data for this category.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'None of the selected studies have data for this category.']"));
     }
 
     public void verifyEmptyLearnAboutStudyProductsPage()
     {
-        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'saeempty')][text() = 'None of the selected study products have data for this category.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'None of the selected study products have data for this category.']"));
     }
 
     public void assertDefaultFilterStatusCounts()
