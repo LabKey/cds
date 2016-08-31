@@ -17,7 +17,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'network'},
         {name: 'label', sortType: 'asUCString'},
         {name: 'short_name'},
-        {name: 'title'},
+        {name: 'study_title'},
         {name: 'type'},
         {name: 'status'},
         {name: 'stage'},

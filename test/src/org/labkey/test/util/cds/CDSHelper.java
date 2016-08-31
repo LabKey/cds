@@ -555,7 +555,7 @@ public class CDSHelper
                                          @Nullable Boolean newSharedStatus)
     {
         goToAppHome();
-        _test.click(Locator.xpath("//*[contains(@class, 'group-section-title')][contains(text(), 'Shared with me')]" +
+        _test.click(Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), 'Curated groups and plots')]" +
                 "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + groupName + "')]"));
         _test.waitForText("Edit details");
         _test.click(CDSHelper.Locators.cdsButtonLocator("Edit details"));

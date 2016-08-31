@@ -157,8 +157,8 @@ Ext.define('Connector.panel.ColorSelector', {
                     return Ext.String.ellipsis(Ext.htmlEncode(v), 45, true);
                 },
                 renderLabel : function(values) {
-                    var label = Ext.isDefined(values.source) ? values.source : '';
-                    label += (Ext.isDefined(values.variable) ? ': ' + values.variable : '');
+                    var label = Ext.isDefined(values.source) && !(values.hideColorSource)? values.source + ': ' : '';
+                    label += (Ext.isDefined(values.variable) ? values.variable : '');
                     return this.elipseEncode(label);
                 }
             }

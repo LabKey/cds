@@ -225,7 +225,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Title'
                         },
                         modelData: {
-                            text: 'title'
+                            text: 'study_title'
                         }
                     },{
                         type: 'html',
@@ -352,7 +352,8 @@ Ext4.define('Connector.cube.Configuration', {
                         activeCount: true,
                         countPriority: 30,
                         countSingular: 'Product',
-                        countPlural: 'Products'
+                        countPlural: 'Products',
+                        supportsLearn: true
                     }]
                 },{
                     uniqueName: '[Study Product.Product Type]',

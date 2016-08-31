@@ -115,7 +115,9 @@ Ext.define('Connector.app.store.Assay', {
                     }
                 }
                 studies.sort(function(a, b) {
-                   return a.label.localeCompare(b.label);
+                    var val1 = a.label ? a.label : a.id;
+                    var val2 = b.label ? b.label : b.id;
+                    return val1.localeCompare(val2);
                 });
                 assay.studies = studies;
                 assays.push(assay);

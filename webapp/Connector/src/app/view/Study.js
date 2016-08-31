@@ -202,7 +202,7 @@ Ext.define('Connector.app.view.Study', {
 
     statics: {
         searchFields: [
-            'label', 'title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
+            'label', 'study_title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
             'conclusions', 'publications', 'context', 'population', 'data_availability',
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
         ],
