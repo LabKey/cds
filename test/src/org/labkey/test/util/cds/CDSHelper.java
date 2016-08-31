@@ -869,6 +869,9 @@ public class CDSHelper
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
 
+        _test.sleep(1000);
+        _test.waitForElements(Locator.xpath("//div[contains(@class, 'x-grid-with-row-lines')]"), 3);
+
         Locator.XPathLocator headerContainer = Locator.tag("div").withClass("dim-selector");
         Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
         Locator.XPathLocator activeHeader = header.withClass("active");
