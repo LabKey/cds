@@ -8,6 +8,9 @@ import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LearnGrid
 {
     protected BaseWebDriverTest _test;
@@ -105,11 +108,40 @@ public class LearnGrid
         assertSortPresent(columnName);
     }
 
+    // Columns are separated by a \n.
+    public String getRowText(int rowIndex)
+    {
+        _test.scrollIntoView(Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex)); // Why do I have to scroll this into view to get the text?
+        return Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex).getText() + "\n" + Locators.unlockedRow.findElements(_test.getDriver()).get(rowIndex).getText();
+    }
+
+    // Text values in each of the columns is separated by a \n.
+    public List<String> getGridText()
+    {
+        List<String> gridText = new ArrayList<>();
+
+        for(int i=0; i < getRowCount(); i++)
+        {
+            gridText.add(getRowText(i));
+        }
+
+        return gridText;
+    }
+
+    public String[] getColumnNames()
+    {
+        String colHeaderStr;
+        colHeaderStr = Locators.lockedRowHeader.findElement(_test.getDriver()).getText() + "\n" + Locators.unlockedRowHeader.findElement(_test.getDriver()).getText();
+        return colHeaderStr.split("\n");
+    }
+
     public static class Locators
     {
         public static final Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
         public static final Locator.XPathLocator unlockedRow = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div/div/table/tbody/tr");
+        public static final Locator.XPathLocator unlockedRowHeader = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div[contains(@class, 'x-grid-header-ct')]");
         public static final Locator.XPathLocator lockedRow = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div/div/table/tbody/tr");
+        public static final Locator.XPathLocator lockedRowHeader = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div[contains(@class, 'x-grid-header-ct')]");
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {
