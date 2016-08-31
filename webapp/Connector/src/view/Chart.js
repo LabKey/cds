@@ -3012,8 +3012,8 @@ Ext.define('Connector.view.Chart', {
             bubbleWidth: 230,
             target: document.querySelector("svg g text.xGutter-label"),
             placement: 'top',
-            title: 'Percent with undefined Y value: ' + percent + '%',
-            content: 'Data points may have no matching Y value due to differing visits, antigens, or assay dimensions. See Help for more details.',
+            title: 'Points with undefined Y value: ' + percent + '%',
+            content: 'Data points may have no matching Y value due to differing visits, antigens, or assay dimensions. Vertical positions are randomized to show density. See Help for more details.',
             xOffset: 0
         }, 'hideguttermsg', this);
     },
@@ -3026,8 +3026,8 @@ Ext.define('Connector.view.Chart', {
             bubbleWidth: 230,
             target: document.querySelector("svg g text.yGutter-label"),
             placement: 'right',
-            title: 'Percent with undefined X value: ' + percent + '%',
-            content: 'Data points may have no matching X value due to differing visits, antigens, or assay dimensions. See Help for more details.',
+            title: 'Points with undefined X value: ' + percent + '%',
+            content: 'Data points may have no matching X value due to differing visits, antigens, or assay dimensions. Horizontal positions are randomized to show density. See Help for more details.',
             yOffset: -100,
             arrowOffset: 100
         }, 'hideguttermsg', this);

@@ -117,6 +117,11 @@ Ext.define('Connector.app.store.StudyProducts', {
                         });
                     }
                 }
+                studies.sort(function(a, b) {
+                    var val1 = a.label ? a.label : a.study_name;
+                    var val2 = b.label ? b.label : b.study_name;
+                    return val1.localeCompare(val2);
+                });
                 product.studies = studies;
                 otherProducts = [];
                 if (this.productProduct && this.productProduct[product.product_id]) {

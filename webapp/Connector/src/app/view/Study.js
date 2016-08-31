@@ -210,7 +210,7 @@ Ext.define('Connector.app.view.Study', {
             return months <= 0 ? 0 : months;
         },
         searchFields: [
-            'label', 'title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
+            'label', 'study_title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
             'conclusions', 'publications', 'context', 'population', 'data_availability',
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
         ],
