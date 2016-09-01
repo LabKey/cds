@@ -98,6 +98,7 @@ Ext.define('Connector.app.store.StudyProducts', {
         if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData) && Ext.isDefined(this.productProduct)) {
             var products = [],
                 studies,
+                studiesWithData,
                 s,
                 otherProducts,
                 me = this;
@@ -108,13 +109,20 @@ Ext.define('Connector.app.store.StudyProducts', {
                     product.product_developer = '[blank]';
                 }
                 studies = [];
+                studiesWithData = [];
+                product.data_availability = false;
                 for (s=0; s < this.studyData.length; s++) {
                     if (product.product_id === this.studyData[s].product_id) {
-                        studies.push({
+                        var study = {
                             study_name: this.studyData[s].study_name,
                             label: this.studyData[s].study_label ? this.studyData[s].study_label : '',
                             has_data: this.studyData[s].has_data
-                        });
+                        };
+                        studies.push(study);
+                        if (study.has_data) {
+                            product.data_availability = true;
+                            studiesWithData.push(study);
+                        }
                     }
                 }
                 studies.sort(function(a, b) {
@@ -123,6 +131,8 @@ Ext.define('Connector.app.store.StudyProducts', {
                     return val1.localeCompare(val2);
                 });
                 product.studies = studies;
+                product.studies_with_data = studiesWithData;
+                product.studies_with_data_count = studiesWithData.length;
                 otherProducts = [];
                 if (this.productProduct && this.productProduct[product.product_id]) {
                     var otherProductIds = Array.from(this.productProduct[product.product_id]);

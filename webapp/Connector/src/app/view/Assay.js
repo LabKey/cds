@@ -38,6 +38,33 @@ Ext.define('Connector.app.view.Assay', {
                 '</div>'
         )
     },{
+        text: 'Data Added',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 15/100,
+        resizable: false,
+        dataIndex: 'studies_with_data_count',
+        filterConfigSet: [{
+            filterField: 'studies_with_data_count',
+            valueType: 'number',
+            title: '# of Studies Added'
+        }],
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text">',
+                    '<tpl if="data_availability">',
+                        '<div class="detail-has-data"></div>',
+                        '<div class="detail-gray-text">{[this.studyCountText(values.studies_with_data_count)]}</div>',
+                    '<tpl else>',
+                        'Not added',
+                    '</tpl>',
+                '</div>',
+                {
+                    studyCountText : function(assay_count) {
+                        return assay_count == 1 ? assay_count + ' Study' : assay_count + ' Studies';
+                    }
+                }
+        )
+    },{
         text: '# of Studies',
         xtype: 'templatecolumn',
         minWidth: 150,
@@ -71,5 +98,12 @@ Ext.define('Connector.app.view.Assay', {
                     '<div class="detail-gray-text">{assay_body_system_type:htmlEncode}: {assay_body_system_target:htmlEncode} and {assay_general_specimen_type:htmlEncode}</div>',
                 '</div>'
         )
-    }]
+    }],
+
+    dataAvailabilityTooltipConfig : function() {
+        return {
+            title: 'Studies',
+            recordField: 'label'
+        }
+    }
 });

@@ -94,11 +94,79 @@ Ext.define('Connector.app.view.LearnSummary', {
                 '<div class="detail-empty-text">None of the selected {itemPluralName} have data for this category.</div>'
         ).apply({itemPluralName: this.itemPluralName});
 
+        this.on({
+            'itemmouseenter' : function(view, record, item) {
+                if (record.data.data_availability) {
+                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
+                            id = Ext.id();
+                    if (checkmark) {
+                        checkmark.on('mouseenter', this.showDataAvailabilityTooltip, this, {
+                            itemsWithDataAvailable: record.getData()[record.dataAvailabilityField],
+                            id: id
+                        });
+                        checkmark.on('mouseleave', this.hideDataAvailabilityTooltip, this, {
+                            id: id
+                        });
+                        checkmark.on('click', this.hideDataAvailabilityTooltip, this, {
+                            id: id
+                        })
+                    }
+                }
+            },
+
+            'itemmouseleave' : function(view, record, item) {
+                if (record.data.data_availability) {
+                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
+                    if (checkmark) {
+                        checkmark.un('mouseenter', this.showDataAvailabilityTooltip, this);
+                        checkmark.un('mouseleave', this.hideDataAvailabilityTooltip, this);
+                        checkmark.un('click', this.hideDataAvailabilityTooltip, this);
+                    }
+                }
+            },
+
+            scope: this
+        });
+
         this.callParent(arguments);
     },
 
     setTitleColumnWidth : function () {
         var col = this.columns[0];
         col.setWidth(Math.max(this.getWidth() / 2, col.minWidth));
+    },
+
+    showDataAvailabilityTooltip : function(event, item, options) {
+        var config = this.dataAvailabilityTooltipConfig();
+
+        var dataAvailableListHTML = "<ul>";
+        for (var itr = 0; itr < options.itemsWithDataAvailable.length; ++itr) {
+            dataAvailableListHTML += "<li>" + options.itemsWithDataAvailable[itr][config.recordField] + "</li>\n";
+        }
+        dataAvailableListHTML += "</ul>";
+
+        var calloutMgr = hopscotch.getCalloutManager(),
+                _id = options.id,
+                displayTooltip = setTimeout(function() {
+                    calloutMgr.createCallout(Ext.apply({
+                        id: _id,
+                        xOffset: 10,
+                        showCloseButton: false,
+                        target: item,
+                        placement: 'right',
+                        title: config.title + " with Data Available",
+                        content: dataAvailableListHTML,
+                        width: 190
+                    }, {}));
+                }, 200);
+
+        this.on('hide' + _id, function() {
+            clearTimeout(displayTooltip);
+            calloutMgr.removeCallout(_id);
+        }, this);
+    },
+
+    hideDataAvailabilityTooltip : function(event, item, options) {
+        this.fireEvent('hide' + options.id);
     }
 });
