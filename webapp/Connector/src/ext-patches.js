@@ -7,6 +7,34 @@
  * Removing it causes no observable issues, but to be safe only apply this patch to CDS.
  */
 Ext.override(Ext.grid.locking.Lockable, {
+    onLockedViewScroll: function ()
+    {
+        if (!this.lockedViewScrollTask)
+        {
+            this.lockedViewScrollTask = new Ext.util.DelayedTask(this.onLockedViewScrollTask, this);
+        }
+        this.lockedViewScrollTask.delay(100, undefined, this);
+    },
+    onLockedViewScrollTask: function() {
+        var me = this,
+                lockedView = me.lockedGrid.getView(),
+                normalView = me.normalGrid.getView(),
+                normalDom = normalView.el.dom,
+                lockedDom = lockedView.el.dom,
+                normalTable,
+                lockedTable;
 
-    onLockedViewScroll: Ext.emptyFn
+        // See onNormalViewScroll
+        if (normalDom.scrollTop !== lockedDom.scrollTop) {
+            normalDom.scrollTop = lockedDom.scrollTop;
+
+            // For buffered views, the absolute position is important as well as scrollTop
+            if (me.store.buffered) {
+                lockedTable = lockedView.el.child('table', true);
+                normalTable = normalView.el.child('table', true);
+                normalTable.style.position = 'absolute';
+                normalTable.style.top = lockedTable.style.top;
+            }
+        }
+    }
 });

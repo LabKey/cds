@@ -40,6 +40,17 @@ Ext.define('Connector.view.Learn', {
             {
                 visibleGrid[0].fireEvent("learnGridResizeHeight", height);
             }
+        },
+        hide: function(view)
+        {
+            if (view.items.length > 1) {
+                for (var i=1; i < view.items.items.length; i++) {
+                    if (view.items.items[i].pageID)
+                    // hide(destroy) all detail page as they are not longer needed
+                    // keeping them will pollute the DOM
+                        view.items.items[i].hide();
+                }
+            }
         }
     },
 
@@ -203,7 +214,7 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    dimensionDataLoaded : function(dimension, store) {
+    dimensionDataLoaded : function(store) {
         store.clearFilter();
         this.filterStoreBySearchAndColumnFilter(store);
         this.sortStore(store);
@@ -308,31 +319,46 @@ Ext.define('Connector.view.Learn', {
 
     loadData : function(dimension, store) {
         if (dimension) {
-            var hierarchy = dimension.getHierarchies()[0],
-                dimensionName = hierarchy.getName();
+            var dimensionName, hasHierarchy =  true;
+            if (dimension.getHierarchies().length > 0)
+            {
+                dimensionName = dimension.getHierarchies()[0].getName();
+            }
+            else {
+                dimensionName = dimension.name;
+                hasHierarchy = false;
+            }
+
 
             if (!this.dimensionDataLoaded[dimensionName]) {
                 store.on('load', function() {
                     this.dimensionDataLoaded[dimensionName] = true;
-                    this.dimensionDataLoaded(dimensionName, store);
+                    this.dimensionDataLoaded(store);
                 }, this);
-                Connector.getState().onMDXReady(function(mdx) {
-                    mdx.query({
-                        onRows: [{
-                            hierarchy: hierarchy.getName(),
-                            member: 'members'
-                        }],
-                        success: function(slice) {
-                            if (store) {
-                                store.loadSlice(slice);
-                            }
-                        },
-                        scope: this
-                    });
-                }, this);
+                if (hasHierarchy)
+                {
+                    Connector.getState().onMDXReady(function(mdx) {
+                        mdx.query({
+                            onRows: [{
+                                hierarchy: dimensionName,
+                                member: 'members'
+                            }],
+                            success: function(slice) {
+                                if (store) {
+                                    store.loadSlice(slice);
+                                }
+                            },
+                            scope: this
+                        });
+                    }, this);
+                }
+                else {
+                    store.loadSlice();
+                }
+
             }
             else {
-                this.dimensionDataLoaded(dimensionName, store);
+                this.dimensionDataLoaded(store);
             }
         }
         else {
@@ -490,7 +516,15 @@ Ext.define('Connector.view.Learn', {
                 model: model,
                 dimension: dimension,
                 activeTab: activeTab
-            })
+            }),
+            listeners: {
+                hide: function(cmp){
+                    // detail page needs to be destroyed on hide, otherwise it remains and repeats in the DOM
+                    // For knitr report, custom stylesheet defined in report will then contaminate all Learn about pages
+                    cmp.destroy();
+
+                }
+            }
         });
 
         this.add(pageView);
@@ -501,8 +535,34 @@ Ext.define('Connector.view.Learn', {
     },
 
     setDimensions : function(dimensions) {
-        this.dimensions = dimensions;
-        this.getHeader().setDimensions(dimensions);
+        // hide Report tab if there is no publicly available reports
+        var filteredDimensions = [], reportDimension, me = this;
+        Ext.each(dimensions, function(dim){
+            if (dim && dim.name == 'Report')
+                reportDimension = dim;
+            else
+                filteredDimensions.push(dim);
+        });
+        if (reportDimension) {
+            var reportStore = StoreCache.getStore(reportDimension.detailCollection);
+            var reportDimensionName = reportDimension.name;
+            reportStore.on('load', function() {
+                me.dimensionDataLoaded[reportDimensionName] = true;
+                if (this.getCount() > 0) {
+                    me.dimensions = dimensions;
+                    me.getHeader().setDimensions(dimensions);
+                }
+                else {
+                    me.dimensions = filteredDimensions;
+                    me.getHeader().setDimensions(filteredDimensions);
+                }
+            });
+            reportStore.loadSlice();
+        }
+        else {
+            this.dimensions = dimensions;
+            this.getHeader().setDimensions(dimensions);
+        }
     },
 
     // TODO: Move this to cube.js or hang the search fields on the model definitions themselves
@@ -510,7 +570,8 @@ Ext.define('Connector.view.Learn', {
         'Assay' : 'Assay',
         'Study' : 'Study',
         'Lab' : 'Labs',
-        'Study product' : 'StudyProducts'
+        'Study product' : 'StudyProducts',
+        'Report' : 'Report'
     },
 
     selectDimension : function(dimension, id, urlTab, params) {
@@ -518,10 +579,7 @@ Ext.define('Connector.view.Learn', {
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
         this.filterFields = Connector.app.view[this.viewByDimension[dimension.singularName]].filterFields;
 
-        if (params && params.reportId) {
-            ReportUtils.loadReport(this, params.reportId);
-        }
-        else if (dimension) {
+        if (dimension) {
             this.loadDataView(dimension, id, urlTab);
         }
         else {
@@ -705,7 +763,6 @@ Ext.define('Connector.view.LearnHeaderDataView', {
         store.filter('hidden', false);
         store.filter('supportsDetails', true);
 
-        //
         // Sort dimensions by stated priority
         //
         store.sort('priority', 'desc');

@@ -19,6 +19,17 @@ Ext.define('Connector.app.view.LearnSummary', {
         overflowY: 'scroll'
     },
 
+    statics: {
+        dateRenderer : Ext.util.Format.dateRenderer("M jS, Y"),
+        monthDiff : function(d1, d2) {
+            var months;
+            months = (d2.getFullYear() - d1.getFullYear()) * 12;
+            months -= d1.getMonth() + 1;
+            months += d2.getMonth();
+            return months <= 0 ? 0 : months;
+        }
+    },
+
     listeners: {
         beforerender: function (grid)
         {

@@ -270,6 +270,16 @@ img.detail-has-data-small {
     border-left: none !important;
   }
 
+  .detail-row-text {
+    padding-top: $sectionTopPadding;
+    padding-bottom: $sectionTopPadding;
+  }
+
+  .detail-row-thumbnail {
+    padding-top: $sectionTopPadding - 15;
+    padding-bottom: $sectionTopPadding - 15;
+  }
+
   .x-grid-td, .x-grid-row-selected .x-grid-td {
     background-color: $gray-8;
   }
@@ -537,7 +547,10 @@ div.list-container {
 }
 
 .reportView {
-  margin-top: 20px;
+  padding-top: $sectionTopPadding;
+  width: 100% !important;
+  background-color: white;
+  padding-left: $pageLeftPadding;
 }
 
 .reportContent {
@@ -581,5 +594,28 @@ div.list-container {
     }
 
     @include smallStandout;
+  }
+}
+.learn-report-info {
+  width: 100%;
+  padding-left: $pageLeftPadding;
+}
+
+.learn-report-header-column {
+  width: 50%;
+  padding-right: 10px;
+}
+
+.reportmodulecontainer {
+  padding-top: $sectionTopPadding;
+}
+
+.reportlearngrid
+{
+  .detail-row{
+    .x-grid-cell-inner {
+      white-space: normal;
+      padding: 0px 0px 0px 16px;
+    }
   }
 }
