@@ -40,6 +40,13 @@ div.learnview {
   .module {
     padding-bottom: 28px;
   }
+
+  .x-grid-locked{
+    .x-grid-inner-locked {
+      border-width: 0px;
+      border-style: none;
+    }
+  }
 }
 
 .module {
@@ -234,76 +241,17 @@ img.detail-has-data-small {
   }
 }
 
-.detail-container {
-  padding: 0px $pageLeftPadding;
-  margin-bottom: 8px;
-
-  .x-grid-cell-inner {
-    white-space: normal;
-  }
-
-  .detail-wrapper {
-    padding: 24px 0px 24px 16px;
-    height: 170px;
-    border-bottom: 1px solid $heat-scale-4;
-    overflow: hidden;
-
-    .detail-description {
-      height: 123px;
-      overflow: hidden;
-
-      h2 {
-        font: $headline-font;
-      }
-
-      .detail-type-text {
-        font: $body-one-font;
-        color: $heat-scale-2;
-      }
-
-      .detail-description-text {
-        padding-top: 12px;
-        font: $body-one-font;
-        color: $heat-scale-1;
-        margin-right: 5%;
-
-        ol {
-          padding-left: 24px;
-        }
-
-        .data-availability-text {
-          padding-bottom: 12px;
-        }
-      }
-    }
-
-    .detail-text {
-      font: $body-one-font;
-
-      .detail-gray-text {
-        color: $heat-scale-1;
-      }
-
-      .detail-black-text {
-        color: $black;
-      }
-    }
-
-    &:hover {
-      @include transition(background-color 0.2s ease-out);
-      background-color: $select-hover-color;
-      cursor: pointer;
-      border-color: transparent;
-    }
-  }
-  .has-data {
-    background-color: $gray-9;
-  }
-}
-
 .learngrid {
   padding-right: $pageLeftPadding !important;
   padding-left: $pageLeftPadding !important;
+
+  .x-grid-body {
+    border-width: 0px;
+
+    .x-grid-body {
+      border-top-width: 1px;
+    }
+  }
 
   .x-column-header-text {
     color: $heat-scale-2;
@@ -325,6 +273,11 @@ img.detail-has-data-small {
   .detail-row-text {
     padding-top: $sectionTopPadding;
     padding-bottom: $sectionTopPadding;
+  }
+
+  .detail-row-thumbnail {
+    padding-top: $sectionTopPadding - 15;
+    padding-bottom: $sectionTopPadding - 15;
   }
 
   .x-grid-td, .x-grid-row-selected .x-grid-td {
@@ -386,73 +339,91 @@ img.detail-has-data-small {
       }
     }
   }
-}
 
-.detail-row {
-  //padding: 0px $pageLeftPadding;
-  margin-bottom: 8px;
-  padding: 24px 0px 24px 16px;
-  height: 170px;
-  border-bottom: 1px solid $heat-scale-4;
-  overflow: hidden;
-
-  .x-grid-cell-inner {
-    white-space: normal;
-  }
-
-  .detail-description {
-    height: 123px;
+  .detail-row {
+    //padding: 0px $pageLeftPadding;
+    margin-bottom: 8px;
+    height: 170px;
+    border-bottom: 1px solid $heat-scale-4;
     overflow: hidden;
 
-    h2 {
-      font: $headline-font;
+    .x-grid-cell-inner {
+      white-space: normal;
+      padding: 24px 0px 24px 16px;
     }
 
-    .detail-type-text {
-      font: $body-one-font;
-      color: $heat-scale-2;
+    .detail-description {
+      height: 123px;
+      overflow: hidden;
+
+      h2 {
+        font: $headline-font;
+      }
+
+      .detail-type-text {
+        font: $body-one-font;
+        color: $heat-scale-2;
+      }
+
+      .detail-description-text {
+        padding-top: 12px;
+        font: $body-one-font;
+        color: $heat-scale-1;
+        margin-right: 5%;
+
+        ol {
+          padding-left: 24px;
+        }
+
+        .data-availability-text {
+          padding-bottom: 12px;
+        }
+      }
     }
 
-    .detail-description-text {
-      padding-top: 12px;
+    .detail-text {
       font: $body-one-font;
-      color: $heat-scale-1;
-      margin-right: 5%;
 
-      ol {
-        padding-left: 24px;
+      .detail-gray-text {
+        color: $heat-scale-1;
       }
 
-      .data-availability-text {
-        padding-bottom: 12px;
+      .detail-black-text {
+        color: $black;
       }
+
+      td:nth-child(1) {
+        padding-right: 1em;
+      }
+    }
+
+  }
+  .detail-row-has-data {
+    .x-grid-td {
+      background-color: $gray-9;
     }
   }
 
-  .detail-text {
-    font: $body-one-font;
-
-    .detail-gray-text {
-      color: $heat-scale-1;
-    }
-
-    .detail-black-text {
-      color: $black;
-    }
-  }
-
-  &:hover {
+  .detail-row-hover {
     .x-grid-td {
       @include transition(background-color 0.2s ease-out);
       background-color: $select-hover-color;
       cursor: pointer;
-      border-color: transparent;
     }
   }
-}
-.detail-row-has-data {
-  .x-grid-td {
-    background-color: $gray-9;
+
+  .x-grid-empty {
+    background-color: $gray-8;
+    position: fixed;
+    top: 305px; //height of header
+    padding-right: 243px; //width of infopane
+
+
+    .detail-empty-text {
+      color: black;
+      height: 60px;
+      font: $display-two-font;
+    }
   }
 }
 
@@ -576,7 +547,10 @@ div.list-container {
 }
 
 .reportView {
-  margin-top: 20px;
+  padding-top: $sectionTopPadding;
+  width: 100% !important;
+  background-color: white;
+  padding-left: $pageLeftPadding;
 }
 
 .reportContent {
@@ -587,4 +561,61 @@ div.list-container {
 
 .learnpageheader {
   background-color: $gray-7;
+}
+
+.learnFilter {
+  .imgbutton {
+    width: 21px!important;
+    height: 21px!important;
+    top: 26px!important;
+    left: 228px!important;
+  }
+
+  .sorter {
+    span.sorter-label {
+      font-size: 12px;
+      text-transform: none;
+      display: block;
+      color: $gray-25;
+      padding: 0 0 4px 0;
+    }
+
+    span.sorter-content {
+      font-size: 12px;
+      margin: 4px 0 20px 0;
+      padding: 4px 8px;
+      display: block;
+      @include prefixer(border-radius, 2px);
+      background-color: $white;
+      border: 1px solid $gray-6;
+      line-height: 22px;
+      height: 32px;
+      width: 253px;
+    }
+
+    @include smallStandout;
+  }
+}
+.learn-report-info {
+  width: 100%;
+  padding-left: $pageLeftPadding;
+}
+
+.learn-report-header-column {
+  width: 50%;
+  padding-right: 10px;
+}
+
+.reportmodulecontainer {
+  padding-top: $sectionTopPadding;
+}
+
+.reportlearngrid
+{
+  .detail-row{
+    .x-grid-cell-inner {
+      white-space: normal;
+      padding: 0px 0px 0px 16px;
+    }
+  }
 }

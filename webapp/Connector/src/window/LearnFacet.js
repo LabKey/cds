@@ -15,28 +15,126 @@ Ext.define('Connector.window.LearnFacet', {
 
     dim: undefined,
 
-    filterConfig: {},
+    filterConfigSet: [],
 
-    filterValues: [],
+    currentFilterField: '',
 
     learnStore: undefined,
+
+    cls: 'learnFilter',
 
     /* To avoid URL overflow, allow up to 100 selections per column */
     maxSelection: 100,
 
     getItems : function()
     {
-        var faceted = Ext.create('Connector.grid.LearnFaceted', {
-            itemId: 'faceted',
-            border: false,
-            useStoreCache: true,
-            filterValues: this.filterValues,
-            dim: this.dim,
-            columnField: this.filterConfig.filterField,
-            valueType: this.filterConfig.valueType,
-            learnStore: this.learnStore
+        var facetGrids = this.createFacetGrids(this.filterConfigSet);
+        this.facetGrids = facetGrids;
+
+        this.currentFilterField = this.filterConfigSet[0].filterField;
+
+        if (this.filterConfigSet.length > 1) {
+
+            var btnId = Ext.id();
+            var dropDownBtn = {
+                id: btnId,
+                xtype: 'imgbutton',
+                itemId: 'infosortdropdown',
+                cls: 'sortDropdown ipdropdown', // tests
+                style: 'float: right;',
+                menuAlign: 'tr-br',
+                menuOffsets: [25, 0],
+                menu: {
+                    xtype: 'menu',
+                    autoShow: true,
+                    itemId: 'infosortedmenu',
+                    showSeparator: false,
+                    width: 270,
+                    ui: 'custom',
+                    cls: 'infosortmenu',
+                    btn: btnId,
+                    items: this.filterConfigSet.map(function(config) {
+                        return {text: config.title};
+                    }),
+                    listeners: {
+                        click: function(menu, item) {
+                            var filterConfig = this.getConfigForField('title', item.text);
+                            this.getTitleBar().update(filterConfig);
+                            this.setFacetGridVisibility(filterConfig.filterField);
+                        },
+                        scope: this
+                    }
+                },
+                listeners: {
+                    afterrender : function(b) {
+                        b.showMenu(); b.hideMenu(); // allows the menu to layout/render
+                    }
+                }
+            };
+
+            var selector = {
+                xtype: 'container',
+                ui: 'custom',
+                layout: { type: 'hbox' },
+                items: [this.getTitleBar(), dropDownBtn]
+            };
+            this.setFacetGridVisibility();
+            return [selector].concat(facetGrids);
+        }
+        return facetGrids;
+    },
+
+    createFacetGrids : function(filterConfigSet) {
+        return filterConfigSet.map(function(config) {
+            return Ext.create('Connector.grid.LearnFaceted', {
+                itemId: 'faceted-' + config.filterField,
+                border: false,
+                useStoreCache: true,
+                filterValues: config.filterValues,
+                dim: this.dim,
+                columnField: config.filterField,
+                valueType: config.valueType,
+                learnStore: this.learnStore
+            });
+        }, this)
+    },
+
+    setFacetGridVisibility : function(colName) {
+        if (colName) {
+            this.currentFilterField = colName;
+        }
+        this.facetGrids.forEach(function(grid)
+        {
+            if (grid.columnField == this.currentFilterField) {
+                grid.show();
+            }
+            else {
+                grid.hide();
+            }
+        }, this);
+    },
+
+    getTitleBar : function() {
+        if (!this.titleBar) {
+            this.titleBar = Ext.create('Ext.Component', {
+                xtype: 'box',
+                tpl: new Ext.XTemplate(
+                        '<div class="sorter">',
+                        '<span class="sorter-label">Filter Values by:</span>',
+                        '<span class="sorter-content">{title:htmlEncode}</span>',
+                        '</div>'
+                ),
+                data: this.filterConfigSet[0],
+                flex: 10
+            });
+        }
+        return this.titleBar
+    },
+
+    getConfigForField : function(field, value) {
+        return this.filterConfigSet.find(function(config) {
+            return config[field] == value;
         });
-        return [faceted];
     },
 
     onAfterRender : function() {
@@ -46,22 +144,22 @@ Ext.define('Connector.window.LearnFacet', {
 
     applyFiltersAndColumns : function()
     {
-        var view = this.getComponent('faceted');
+        var view = this.getComponent('faceted-' + this.currentFilterField);
         var filterValues = view.getFilterValues();
         if (filterValues.length == 0) {
-            this.fireEvent('clearfilter');
+            this.fireEvent('clearfilter', this.currentFilterField);
         }
         else if (filterValues.length > this.maxSelection) {
             Ext.Msg.alert('Error', 'Maximum selection of ' + this.maxSelection + ' values allowed.')
         }
         else {
-            this.fireEvent('filter', filterValues);
+            this.fireEvent('filter', this.currentFilterField, filterValues);
         }
         this.close();
     },
 
     onClear : function() {
-        this.fireEvent('clearfilter');
+        this.fireEvent('clearfilter', this.currentFilterField);
         this.close();
     }
 });
@@ -182,16 +280,15 @@ Ext4.define('Connector.grid.LearnFaceted', {
         return this.createColumnFilterStore();
     },
 
-    dataByDimension : {
-        'Assay' : 'assayData',
-        'Study' : 'studyData',
-        'Study Product' : 'productData'
-    },
-
     getSortFn: function() {
       if (this.valueType == 'number') {
           return function(a, b){
               return a - b;
+          }
+      }
+      else if (this.valueType == 'date_display') {
+          return function(a, b){
+              return Ext.Date.parse(a, "M jS, Y").getTime() - Ext.Date.parse(b, "M jS, Y").getTime();
           }
       }
       return function(a, b){
@@ -204,36 +301,41 @@ Ext4.define('Connector.grid.LearnFaceted', {
     },
 
     createColumnFilterStore: function() {
-        var dimensionValues = this.learnStore[this.dataByDimension[this.dim]];
-            var validvalues = new Set(), field = this.columnField;
-            Ext.each(dimensionValues, function(record){
-                if (Ext.isArray(record[field])) {
-                    Ext.each(record[field], function(val){
-                        if (val != undefined) {
-                            validvalues.add(val);
-                        }
-                    });
-                }
-                else {
-                    if (record[field] != undefined) {
-                        validvalues.add(record[field]);
+        var concatBeforeSort = false; //if record is an array.
+        var values = this.learnStore.snapshot.getRange()
+                .map(function(record) {
+                    var value = record.getData()[this.columnField];
+                    if (Ext.isArray(value)) {
+                        concatBeforeSort = true;
                     }
-                }
+                    return value;
+                }, this);
+
+        //converts 2d array to 1d array
+        if (concatBeforeSort) {
+            values = values.reduce(function (prev, curr){
+                return (prev || []).concat(curr);
             });
-            var validValuesArray = Array.from(validvalues).sort(this.getSortFn());
-            var values = [];
-            Ext.each(validValuesArray, function(value){
-                values.push([value]);
-            });
-            var storeId = [this.dim, field].join('||');
-            var columnStore = Ext4.create('Ext.data.ArrayStore', {
-                fields: [
-                    'value'
-                ],
-                data: values,
-                storeId: storeId
-            });
-        return columnStore;
+        }
+
+        values = values.sort(this.getSortFn());
+        values = values.filter(function(record, idx) {
+                    if (record == undefined) {
+                        return false;
+                    }
+                    //remove duplicates
+                    return !(values[idx - 1] != undefined && values[idx - 1] == record);
+                }).map(function(record) {
+                    return [record];
+                });
+        var storeId = [this.dim, this.columnField].join('||');
+        return Ext4.create('Ext.data.ArrayStore', {
+            fields: [
+                'value'
+            ],
+            data: values,
+            storeId: storeId
+        });
     },
 
 

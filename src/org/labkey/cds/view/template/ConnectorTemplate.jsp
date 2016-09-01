@@ -105,6 +105,7 @@
 
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/ext-patches.js"></script>
 
     <!-- Client API Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
@@ -289,7 +290,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Report.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
@@ -299,6 +299,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/VariableList.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Report.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Dataset.js"></script>
@@ -307,6 +308,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/VariableList.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Report.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Assay.js"></script>
@@ -314,6 +316,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ModuleContainer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Report.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ReportModuleContainer.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAntigenList.js"></script>

@@ -555,7 +555,7 @@ public class CDSHelper
                                          @Nullable Boolean newSharedStatus)
     {
         goToAppHome();
-        _test.click(Locator.xpath("//*[contains(@class, 'group-section-title')][contains(text(), 'Shared with me')]" +
+        _test.click(Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), 'Curated groups and plots')]" +
                 "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + groupName + "')]"));
         _test.waitForText("Edit details");
         _test.click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
@@ -868,6 +868,11 @@ public class CDSHelper
     public void viewLearnAboutPage(String learnAxis)
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
+
+        _test.sleep(1000);
+        // Because of the way CDS hides parts of the UI the total number of these elements may vary.
+        // So can't use the standard waitForElements, which expects an exact number of elements, so doing this slightly modified version.
+        _test.waitFor(() -> 3 <= Locator.xpath("//table[@role='presentation']//tr[@role='row']").findElements(_test.getDriver()).size(), _test.WAIT_FOR_JAVASCRIPT);
 
         Locator.XPathLocator headerContainer = Locator.tag("div").withClass("dim-selector");
         Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");

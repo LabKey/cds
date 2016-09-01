@@ -22,7 +22,7 @@ Ext.define('Connector.app.model.StudyProducts', {
         {name: 'product_class_label'},
         {name: 'product_developer', sortType: function(a){
             if (a == '[blank]')
-                return ' ';
+                return '\uFFFF';
             return a;
         }},
         {name: 'product_manufacturer'},

@@ -74,6 +74,7 @@ Ext.define('Connector.app.store.Study', {
 
             // join products to study
             Ext.each(this.studyData, function(study) {
+                study.study_title = study.title;
                 if (study.groups || study.treatment_schema_link) {
                     study.groups_treatment_schema = '';
                     if (study.treatment_schema_link) {
@@ -97,13 +98,17 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
 
-                study.date_to_sort_on = study.first_enr_date || study.start_date;
-                if (study.date_to_sort_on) {
-                    var startDate = new Date(study.date_to_sort_on);
-                    study.start_year = startDate.getFullYear().toString();
+                if (!study.strategy) {
+                    study.strategy = '[blank]';
+                }
+
+                var startDate = study.first_enr_date || study.start_date;
+                if (startDate) {
+                    study.start_year = (new Date(startDate)).getFullYear().toString();
                 } else {
                     study.start_year = 'Not available';
                 }
+                study.date_to_sort_on = study.stage + "|" + startDate;
 
                 products = [];
                 productNames = [];
@@ -149,6 +154,15 @@ Ext.define('Connector.app.store.Study', {
                         study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
                     }
                 }
+                assaysAdded.sort(function (a1, a2) {
+                    return a1.assay_short_name.toLowerCase().localeCompare(a2.assay_short_name.toLowerCase())
+                });
+                assays.sort(function (a1, a2) {
+                    var val1 = a1.assay_short_name ? a1.assay_short_name : a1.study_assay_id;
+                    var val2 = a2.assay_short_name ? a2.assay_short_name : a2.study_assay_id;
+                    return val1.toLowerCase().localeCompare(val2.toLowerCase())
+                });
+
                 study.products = products;
                 study.product_names = productNames;
                 study.assays = assays;
@@ -160,6 +174,10 @@ Ext.define('Connector.app.store.Study', {
             studies.sort(function(studyA, studyB) {
                 return LABKEY.app.model.Filter.sorters.natural(studyA.label, studyB.label);
             });
+
+            this.studyData = undefined;
+            this.assayData = undefined;
+            this.productData = undefined;
 
             this.loadRawData(studies);
         }

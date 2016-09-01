@@ -225,7 +225,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Title'
                         },
                         modelData: {
-                            text: 'title'
+                            text: 'study_title'
                         }
                     },{
                         type: 'html',
@@ -352,7 +352,8 @@ Ext4.define('Connector.cube.Configuration', {
                         activeCount: true,
                         countPriority: 30,
                         countSingular: 'Product',
-                        countPlural: 'Products'
+                        countPlural: 'Products',
+                        supportsLearn: true
                     }]
                 },{
                     uniqueName: '[Study Product.Product Type]',
@@ -551,6 +552,25 @@ Ext4.define('Connector.cube.Configuration', {
                     modules: [[{
                         type: 'assayantigenlist'
                     }]]
+                }]
+            },{
+                uniqueName: '[Report]',
+                priority: 1,
+                singularName: 'Report',
+                pluralName: 'Reports',
+                hidden: false,
+                supportsSummary: false, // doesn't show up in Find subjects
+                supportsDetails: true, // should show up in Learn about
+                detailCollection: 'Connector.app.store.Report',
+                detailModel: 'Connector.app.model.Report',
+                detailView: 'Connector.app.view.Report',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    label: 'Overview'
+                }],
+                itemDetail: [{
+                    view: 'Connector.app.view.ReportModuleContainer'
                 }]
             }]
         },

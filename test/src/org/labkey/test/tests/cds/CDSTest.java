@@ -501,7 +501,7 @@ public class CDSTest extends CDSReadOnlyTest
         final String[] PRIVATE_GROUP_NAME = {"test_Group_reader", "test_Group_editor"};
         final String[] PRIVATE_GROUP_NAME_DESCRIPTION = {"This group selects two studies", "This group selects two studies"};
 
-        final Locator SHARED_GROUP_LOC = Locator.xpath("//*[contains(@class, 'group-section-title')][contains(text(), 'Shared with me')]" +
+        final Locator SHARED_GROUP_LOC = Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), 'Curated groups and plots')]" +
                 "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + SHARED_GROUP_NAME + "')]");
 
 
@@ -568,7 +568,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.enterApplication();
 
         //Verify that private group is not shared and that public group is
-        Locator mineHeader = Locator.xpath("//h2[contains(text(), 'Mine')][contains(@class, 'group-section-title')]");
+        Locator mineHeader = Locator.xpath("//h2[contains(text(), 'My saved groups and plots')][contains(@class, 'section-title')]");
         assertElementNotPresent("User should not have any of their own groups.", mineHeader);
         assertElementNotPresent(PRIVATE_GROUP_NAME[0] + " should not been visible to this user",
                 Locator.xpath("//div[contains(@class, 'grouplabel')][contains(text(), '" + PRIVATE_GROUP_NAME[0] + "')]"));
@@ -621,8 +621,8 @@ public class CDSTest extends CDSReadOnlyTest
         waitForText("Groups and plots");
         refresh();
         assertElementNotPresent("Group: " + SHARED_GROUP_NAME + " should not have been present after deletion",
-                Locator.xpath("//*[contains(@class, 'group-section-title')]" +
-                "[contains(text(), 'Shared with me')]" +
+                Locator.xpath("//*[contains(@class, 'section-title')]" +
+                "[contains(text(), 'Curated groups and plots')]" +
                 "/following::div[contains(@class, 'grouprow')]" +
                 "/div[contains(text(), '" + SHARED_GROUP_NAME + "')]"));
         _stopImpersonatingUser();
