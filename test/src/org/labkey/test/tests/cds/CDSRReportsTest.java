@@ -349,6 +349,8 @@ public class CDSRReportsTest extends CDSReadOnlyTest
             if(!isTextPresent(category))
             {
                 clickButton("New Category", 0);
+//                waitFor(() -> 1 == Locator.xpath("input[@name='label']/ancestor::div[contains(@class, 'x4-editor')][not(contains(@style, 'display: none'))]").findElements(getDriver()).size(), WAIT_FOR_JAVASCRIPT);
+                waitForElement(Locator.xpath("//input[@name='label']/ancestor::div[contains(@class, 'x4-editor')][not(contains(@style, 'display: none'))]"));
                 setFormElement(Locator.xpath("//input[@name='label']"), category);
                 pressEnter(Locator.xpath("//input[@name='label']"));
             }
