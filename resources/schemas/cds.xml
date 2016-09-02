@@ -204,6 +204,7 @@
         <columns>
             <column columnName="prot"/>
             <column columnName="assay_identifier"/>
+            <column columnName="assay_status"/>
         </columns>
     </table>
     <table tableName="import_assay" tableDbType="TABLE">
@@ -573,6 +574,7 @@
             <column columnName="container"/>
             <column columnName="assay_identifier"/>
             <column columnName="has_data"/>
+            <column columnName="assay_status"/>
         </columns>
     </table>
     <table tableName="product" tableDbType="TABLE">

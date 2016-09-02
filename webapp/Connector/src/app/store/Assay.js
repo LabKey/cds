@@ -110,7 +110,8 @@ Ext.define('Connector.app.store.Assay', {
                         studies.push({
                             id: this.assayStudies[s].study_name || this.assayStudies[s].prot,
                             label: this.assayStudies[s].label ? this.assayStudies[s].label : '',
-                            has_data: this.assayStudies[s].has_data
+                            has_data: this.assayStudies[s].has_data,
+                            assay_status: this.assayStudies[s].assay_status
                         });
                     }
                 }

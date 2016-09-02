@@ -137,7 +137,8 @@ Ext.define('Connector.app.store.Study', {
                             assay_short_name: this.assayData[a].assay_short_name,
                             study_assay_id: this.assayData[a].study_assay_id,
                             assay_identifier: this.assayData[a].assay_identifier,
-                            has_data: this.assayData[a].has_data
+                            has_data: this.assayData[a].has_data,
+                            assay_status: this.assayData[a].assay_status
                         };
                         assays.push(assay);
                         if (this.assayData[a].has_data) {
