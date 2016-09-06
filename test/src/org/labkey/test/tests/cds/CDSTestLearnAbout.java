@@ -275,6 +275,121 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Protein Panel"));
         waitForText(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA[0]);
         assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
+
+        // Go back to assays and validate the Data Added column.
+        cds.viewLearnAboutPage("Assays");
+        LearnGrid learnGrid = new LearnGrid(this);
+        String toolTipText, cellText, expectedText;
+        int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
+
+        log("Checking: " + learnGrid.getCellText(4, 0));
+        expectedText = "11 Studies";
+        cellText = learnGrid.getCellText(4, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        expectedText = "Studies with Data Available\n" +
+                "ZAP 135\n" +
+                "ZAP 139\n" +
+                "ZAP 133\n" +
+                "ZAP 128\n" +
+                "ZAP 129\n" +
+                "ZAP 120\n" +
+                "YOYO 55\n" +
+                "ZAP 118\n" +
+                "ZAP 119\n" +
+                "ZAP 134\n" +
+                "ZAP 117";
+        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("Tool tip text contained the expected values.");
+
+        sleep(1000);
+
+        log("Checking: " + learnGrid.getCellText(3, 0));
+        expectedText = "5 Studies";
+        cellText = learnGrid.getCellText(3, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        expectedText = "Studies with Data Available\n" +
+                "ZAP 133\n" +
+                "ZAP 128\n" +
+                "YOYO 55\n" +
+                "ZAP 135\n" +
+                "QED 2";
+        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("Tool tip text contained the expected values.");
+
+        sleep(1000);
+
+        log("Checking: " + learnGrid.getCellText(2, 0));
+        expectedText = "4 Studies";
+        cellText = learnGrid.getCellText(2, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        expectedText = "Studies with Data Available\n" +
+                "ZAP 134\n" +
+                "RED 4\n" +
+                "ZAP 110\n" +
+                "ZAP 111";
+        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("Tool tip text contained the expected values.");
+
+        sleep(1000);
+
+        log("Checking: " + learnGrid.getCellText(1, 0));
+        expectedText = "14 Studies";
+        cellText = learnGrid.getCellText(1, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        expectedText = "Studies with Data Available\n" +
+                "ZAP 102\n" +
+                "RED 4\n" +
+                "RED 5\n" +
+                "ZAP 105\n" +
+                "RED 6\n" +
+                "ZAP 106\n" +
+                "ZAP 134\n" +
+                "ZAP 136\n" +
+                "ZAP 124\n" +
+                "ZAP 113\n" +
+                "ZAP 115\n" +
+                "ZAP 116\n" +
+                "ZAP 117\n" +
+                "ZAP 118";
+        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("Tool tip text contained the expected values.");
+
+        sleep(1000);
+
+        log("Checking: " + learnGrid.getCellText(0, 0));
+        expectedText = "1 Study";
+        cellText = learnGrid.getCellText(0, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        expectedText = "Studies with Data Available\n" +
+                "ZAP 117";
+        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("Tool tip text contained the expected values.");
+
     }
 
     @Test

@@ -884,7 +884,7 @@ public class CDSHelper
             WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
         }
-        _test.sleep(500);
+        _test.sleep(1000);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
