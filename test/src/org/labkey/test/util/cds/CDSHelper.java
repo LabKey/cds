@@ -977,6 +977,15 @@ public class CDSHelper
         _test.click(Locator.tagWithClass("label", "x-form-cb-label").containing(radioLabel));
     }
 
+    public void addRaceFilter(String barLabel)
+    {
+//        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        clickBy("Subject characteristics");
+        pickSort("Race");
+        applySelection(barLabel);
+        useSelectionAsSubjectFilter();
+    }
+
     public boolean isCheckboxChecked(String xpath)
     {
         WebElement tableParent;
