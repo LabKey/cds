@@ -65,23 +65,6 @@ Ext.define('Connector.app.view.Assay', {
                 }
         )
     },{
-        text: '# of Studies',
-        xtype: 'templatecolumn',
-        minWidth: 150,
-        flex: 20/100,
-        resizable: false,
-        dataIndex: 'study_count',
-        filterConfigSet: [{
-            filterField: 'study_count',
-            valueType: 'number',
-            title: '# of Studies'
-        }],
-        tpl: new Ext.XTemplate(
-                '<div class="detail-text">',
-                    '<div class="detail-gray-text">{study_count}</div>',
-                '</div>'
-        )
-    },{
         text: 'Target Area',
         xtype: 'templatecolumn',
         minWidth: 150,
