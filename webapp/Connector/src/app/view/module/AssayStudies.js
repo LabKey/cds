@@ -9,20 +9,10 @@ Ext.define('Connector.view.module.AssayStudies', {
     extend: 'Connector.view.module.DataAvailabilityModule',
 
     getDataAddedStore : function(data) {
-        Ext.define("StudyAdded", {
-            extend: "Ext.data.Model",
-            fields: [
-                {name: 'id'},
-                {name: 'label'},
-                {name: 'has_data'},
-                {name: 'assay_status'}
-            ]
-        });
-
         return Ext.create('Ext.data.Store', {
             model: "StudyAdded",
-            data: this.data.model.getData()['studies']
-        })
+            data: data.model.getData()['studies']
+        });
     },
 
     getDataAddedTemplate : function() {
@@ -30,7 +20,17 @@ Ext.define('Connector.view.module.AssayStudies', {
                 '<tpl if="label">', //determines if we have a learn about page to back the assay
                     '<a href="#learn/learn/Study/{[encodeURIComponent(values.id)]}">{label:htmlEncode}</a>',
                 '<tpl else>',
-                    '<p>{id:htmlEncode}</p>',
+                    '<span>{id:htmlEncode}</span>',
                 '</tpl>')
     }
+});
+
+Ext.define("StudyAdded", {
+    extend: "Ext.data.Model",
+    fields: [
+        {name: 'id'},
+        {name: 'label'},
+        {name: 'has_data'},
+        {name: 'assay_status'}
+    ]
 });

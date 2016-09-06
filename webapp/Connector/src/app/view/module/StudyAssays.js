@@ -9,17 +9,6 @@ Ext.define('Connector.view.module.StudyAssays', {
     extend: 'Connector.view.module.DataAvailabilityModule',
 
     getDataAddedStore : function(data) {
-        Ext.define("AssayAdded", {
-            extend: "Ext.data.Model",
-            fields: [
-                {name: 'assay_identifier'},
-                {name: 'assay_short_name'},
-                {name: 'has_data'},
-                {name: 'study_assay_id'},
-                {name: 'assay_status'}
-            ]
-        });
-
         return Ext.create('Ext.data.Store', {
             model: 'AssayAdded',
             data: data.model.getData()['assays']
@@ -31,7 +20,18 @@ Ext.define('Connector.view.module.StudyAssays', {
                 '<tpl if="assay_short_name">', //determines if we have a learn about page to back the assay
                     '<a href="#learn/learn/Assay/{[encodeURIComponent(values.assay_identifier)]}">{assay_short_name:htmlEncode}</a>',
                 '<tpl else>',
-                    '<p>{study_assay_id:htmlEncode}</p>',
+                    '<span>{study_assay_id:htmlEncode}</span>',
                 '</tpl>')
     }
+});
+
+Ext.define("AssayAdded", {
+    extend: "Ext.data.Model",
+    fields: [
+        {name: 'assay_identifier'},
+        {name: 'assay_short_name'},
+        {name: 'has_data'},
+        {name: 'study_assay_id'},
+        {name: 'assay_status'}
+    ]
 });

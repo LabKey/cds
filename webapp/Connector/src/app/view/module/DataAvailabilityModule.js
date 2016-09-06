@@ -71,7 +71,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
             listeners : {
                 'itemmouseenter' : function(view, record, item) {
-                    var assayLink = Ext.get(Ext.query("a", item)[0]) || Ext.get(Ext.query("p", item)[0]),
+                    var assayLink = Ext.get(Ext.query("a", item)[0]) || Ext.get(Ext.query("span", item)[0]),
                             id = Ext.id();
                     if (record.data.assay_status && assayLink) {
                         assayLink.on('mouseenter', this.showAssayStatusTooltip, this, {
