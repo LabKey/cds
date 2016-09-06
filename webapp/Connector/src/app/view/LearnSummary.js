@@ -145,12 +145,26 @@ Ext.define('Connector.app.view.LearnSummary', {
         }
         dataAvailableListHTML += "</ul>";
 
+        var itemWrapped = Ext.get(item);
+        var verticalPosition = itemWrapped.getAnchorXY()[1];
+        var viewHeight = itemWrapped.parent("#app-main").getHeight();
+        var calloutHeight = 2 //borders
+                            + 30 //content padding
+                            + 19 //title line height
+                            + 8 //title bottom padding
+                            + (17 //line height for content <li> elements
+                                * options.itemsWithDataAvailable.length);
+
+        var verticalOffset = verticalPosition + calloutHeight > viewHeight ? calloutHeight - itemWrapped.getHeight() : 0;
+
         var calloutMgr = hopscotch.getCalloutManager(),
                 _id = options.id,
                 displayTooltip = setTimeout(function() {
                     calloutMgr.createCallout(Ext.apply({
                         id: _id,
                         xOffset: 10,
+                        yOffset: -verticalOffset,
+                        arrowOffset: verticalOffset,
                         showCloseButton: false,
                         target: item,
                         placement: 'right',
