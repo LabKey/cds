@@ -88,7 +88,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                 },
 
                 'itemmouseleave' : function(view, record, item) {
-                    var assayLink = Ext.get(Ext.query("a", item)[0]);
+                    var assayLink = Ext.get(Ext.query("a", item)[0])|| Ext.get(Ext.query("span", item)[0]);
                     if (assayLink) {
                         assayLink.un('mouseenter', this.showAssayStatusTooltip, this);
                         assayLink.un('mouseleave', this.hideAssayStatusTooltip, this);

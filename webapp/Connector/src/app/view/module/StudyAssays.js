@@ -32,6 +32,8 @@ Ext.define("AssayAdded", {
         {name: 'assay_short_name'},
         {name: 'has_data'},
         {name: 'study_assay_id'},
-        {name: 'assay_status'}
+        {name: 'assay_status', convert: function(value) {
+            return value ? value : "Status not available";
+        }}
     ]
 });
