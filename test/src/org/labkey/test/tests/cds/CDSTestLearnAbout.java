@@ -294,19 +294,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        expectedText = "Studies with Data Available\n" +
-                "ZAP 135\n" +
-                "ZAP 139\n" +
-                "ZAP 133\n" +
-                "ZAP 128\n" +
-                "ZAP 129\n" +
-                "ZAP 120\n" +
-                "YOYO 55\n" +
-                "ZAP 118\n" +
-                "ZAP 119\n" +
-                "ZAP 134\n" +
-                "ZAP 117";
-        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        // Can't depend upon the text in the tooltip to be in the same order every time. So check for each value separately.
+        validateToolTipText(toolTipText, "ZAP 135", "ZAP 139", "ZAP 133", "ZAP 128", "ZAP 129", "ZAP 120", "YOYO 55", "ZAP 118", "ZAP 119", "ZAP 134", "ZAP 117");
         log("Tool tip text contained the expected values.");
 
         sleep(1000);
@@ -320,13 +309,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        expectedText = "Studies with Data Available\n" +
-                "ZAP 133\n" +
-                "ZAP 128\n" +
-                "YOYO 55\n" +
-                "ZAP 135\n" +
-                "QED 2";
-        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        validateToolTipText(toolTipText, "ZAP 133", "ZAP 128", "YOYO 55", "ZAP 135", "QED 2");
         log("Tool tip text contained the expected values.");
 
         sleep(1000);
@@ -340,12 +323,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        expectedText = "Studies with Data Available\n" +
-                "ZAP 134\n" +
-                "RED 4\n" +
-                "ZAP 110\n" +
-                "ZAP 111";
-        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        validateToolTipText(toolTipText, "ZAP 134", "RED 4", "ZAP 110", "ZAP 111");
         log("Tool tip text contained the expected values.");
 
         sleep(1000);
@@ -359,22 +337,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        expectedText = "Studies with Data Available\n" +
-                "ZAP 102\n" +
-                "RED 4\n" +
-                "RED 5\n" +
-                "ZAP 105\n" +
-                "RED 6\n" +
-                "ZAP 106\n" +
-                "ZAP 134\n" +
-                "ZAP 136\n" +
-                "ZAP 124\n" +
-                "ZAP 113\n" +
-                "ZAP 115\n" +
-                "ZAP 116\n" +
-                "ZAP 117\n" +
-                "ZAP 118";
-        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        validateToolTipText(toolTipText, "ZAP 102", "RED 4", "RED 5", "RED 6", "ZAP 105", "ZAP 106", "ZAP 134", "ZAP 136", "ZAP 124", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118");
         log("Tool tip text contained the expected values.");
 
         sleep(1000);
@@ -388,9 +351,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        expectedText = "Studies with Data Available\n" +
-                "ZAP 117";
-        Assert.assertTrue("Tool tip did not contain text: '" + expectedText + "'. Found: '" + toolTipText + "'.",  toolTipText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        validateToolTipText(toolTipText, "ZAP 117");
         log("Tool tip text contained the expected values.");
 
     }
@@ -895,6 +856,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
         }
 
+    }
+
+    private void validateToolTipText(String toolTipText, String... expectedText)
+    {
+        for(String expected : expectedText)
+        {
+            Assert.assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
+        }
     }
 
 }
