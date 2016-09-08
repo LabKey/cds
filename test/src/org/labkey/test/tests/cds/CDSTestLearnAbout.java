@@ -187,7 +187,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         // This code was put in place because we were seeing failure in TeamCity where the page wasn't loading.
         // The TeamCity configuration has been changed to use chrome which looks like it addressed this issue. Going to remove some of these lines for now.
 //        log("Extra logging to record time stamps.");
-//        cds.viewLearnAboutPage("Study products");
+        cds.viewLearnAboutPage("Study products");
 //        log("Should now be on the Learn About - Study Products page.");
 //        sleep(10000);
 //        log("Should have slept for 10 seconds.");

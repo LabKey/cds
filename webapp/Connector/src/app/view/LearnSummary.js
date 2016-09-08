@@ -132,7 +132,7 @@ Ext.define('Connector.app.view.LearnSummary', {
                         checkmark.un('mouseenter', this.showDataAvailabilityTooltip, this);
                         checkmark.un('mouseleave', this.hideDataAvailabilityTooltip, this);
                         checkmark.un('click', this.hideDataAvailabilityTooltip, this);
-                        this.fireEvent('hideTooltip');
+                        this.hideDataAvailabilityTooltip();
                     }
                 }
             },
