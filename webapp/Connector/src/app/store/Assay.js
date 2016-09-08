@@ -112,7 +112,8 @@ Ext.define('Connector.app.store.Assay', {
                         var study = {
                             id: this.assayStudies[s].study_name || this.assayStudies[s].prot,
                             label: this.assayStudies[s].label ? this.assayStudies[s].label : '',
-                            has_data: this.assayStudies[s].has_data
+                            has_data: this.assayStudies[s].has_data,
+                            assay_status: this.assayStudies[s].assay_status
                         };
                         studies.push(study);
                         if (study.has_data) {

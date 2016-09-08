@@ -153,6 +153,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.AssayStudies": "../../../../webapp/Connector/src/app/view/module/AssayStudies.js",
   "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
   "Connector.view.module.ContactCDS": "../../../../webapp/Connector/src/app/view/module/ContactCDS.js",
+  "Connector.view.module.DataAvailabilityModule": "../../../../webapp/Connector/src/app/view/module/DataAvailabilityModule.js",
   "Connector.view.module.HTML": "../../../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
@@ -353,6 +354,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.AssayStudies": [],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.ContactCDS": [],
+  "Connector.view.module.DataAvailabilityModule": [],
   "Connector.view.module.HTML": [],
   "Connector.view.module.Person": [],
   "Connector.view.module.ProductHeader": [],
@@ -1475,6 +1477,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.ContactCDS": [
     "widget.app.module.contactcds"
+  ],
+  "Connector.view.module.DataAvailabilityModule": [
+    "widget.app.module.dataavailability"
   ],
   "Connector.view.module.HTML": [
     "widget.module.html"
