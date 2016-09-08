@@ -2787,9 +2787,13 @@ Ext.define('Connector.view.Chart', {
                         {
                             measures = measures.concat(xMeasures);
 
-                            if (filter.isPlot() && filter.get('gridFilter')[0])
+                            /*
+                             * Issue 27773: unexplained gutter plot
+                             * An non-aggregated filter on x or y would exclude 'null' on x or y, and as a result should hide y gutter or x gutter, respectively.
+                             */
+                            if (filter.isPlot() && filter.get('gridFilter')[0] && filter.get('gridFilter')[0].getColumnName() === activeMeasures.x.alias)
                             {
-                                hasPlotSelectionFilter.x = true;
+                                    hasPlotSelectionFilter.x = true;
                             }
                         }
                     }
@@ -2801,9 +2805,9 @@ Ext.define('Connector.view.Chart', {
                         {
                             measures = measures.concat(yMeasures);
 
-                            if (filter.isPlot() && filter.get('gridFilter')[2])
+                            if (filter.isPlot() && filter.get('gridFilter')[2] && filter.get('gridFilter')[2].getColumnName() === activeMeasures.y.alias)
                             {
-                                hasPlotSelectionFilter.y = true;
+                                    hasPlotSelectionFilter.y = true;
                             }
                         }
                     }
