@@ -9,7 +9,9 @@ import org.labkey.test.pages.LabKeyPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
@@ -109,42 +111,50 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyLearnAboutStudyDetails()
     {
-        final String searchString = "QED 2";
-        final String grantAffiliation = "Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.";
-        final String dataAvailability = "iaculis diam erat fermentum justo nec";
-        final String firstContactName = "Juan Owens";
-        final String firstContactEmail = "jowens5@deviantart.com";
-        final String rationale = "Nullam molestie nibh in lectus. Pellentesque at nulla.";
+        final String searchString = "ZAP 117";
+        final String grantAffiliation = "Nulla tellus. In sagittis dui vel nisl.";
+        final String firstContactName = "Helen Holmes";
+        final String firstContactEmail = "hholmest@alexa.com";
+        final String rationale = "In sagittis dui vel nisl.";
 
         cds.viewLearnAboutPage("Studies");
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        sleep(CDSHelper.CDS_WAIT);
 
         log("Verifying data availability on summary page.");
-        assert(Locator.xpath("//div[contains(@class, 'data-availability-text')][text()='" + dataAvailability + "']").findElement(getDriver()).isDisplayed());
+        LearnGrid learnGrid = new LearnGrid(this);
+        int rowCount = learnGrid.getRowCount();
+        Assert.assertTrue("Expected one row in the grid, found " + rowCount + " row(s).", rowCount == 1);
+        Assert.assertTrue("Row did not contain " + searchString, learnGrid.getRowText(0).contains(searchString));
 
         log("Start verifying study detail page.");
-        List<WebElement> returnedItems  = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
-        returnedItems.get(0).click();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        learnGrid.getCellWebElement(0, 0).click();
+        sleep(CDSHelper.CDS_WAIT);
 
         log("Verifying study information.");
-        List<String> fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_INFO_FIELDS);
+        List<String> fields = Arrays.asList(CDSHelper.LEARN_ABOUT_ZAP117_INFO_FIELDS);
         fields.stream().forEach((field) -> assertTextPresent(field));
         assertTextPresent(grantAffiliation);
 
         log("Verifying contact information.");
-        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_CONTACT_FIELDS);
+        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_CONTACT_FIELDS);
         fields.stream().forEach((field) -> assertTextPresent(field));
 
         assertElementPresent(Locator.xpath("//a[contains(@href, 'mailto:" + firstContactEmail + "')][text()='" + firstContactName + "']"));
 
         log("Verifying description section.");
-        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_DESCRIPTION_FIELDS);
+        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_DESCRIPTION_FIELDS);
         fields.stream().forEach((field) -> assertTextPresent(field));
         assertTextPresent(rationale);
         assertElementPresent(Locator.xpath("//a[text()='Click for treatment schema']"));
+
+        validateToolTip(Locator.linkWithText("NAB").findElement(getDriver()), "provided, but not included");
+
+        validateToolTip(Locator.linkWithText("ICS").findElement(getDriver()), "pending study completion");
+
+        validateToolTip(Locator.linkWithText("BAMA").findElement(getDriver()), "Status not available");
+
     }
 
     @Test
@@ -268,6 +278,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(1)));
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+
+        validateToolTip(Locator.linkWithText("RED 4").findElement(getDriver()), "not approved for sharing");
+        validateToolTip(Locator.linkWithText("RED 6").findElement(getDriver()), "not approved for sharing");
+        validateToolTip(Locator.tagWithText("span", "w101").findElement(getDriver()), "added");
+        validateToolTip(Locator.linkWithText("ZAP 102").findElement(getDriver()), "Status not available");
+        validateToolTip(Locator.linkWithText("ZAP 108").findElement(getDriver()), "provided, but not included");
+        validateToolTip(Locator.linkWithText("ZAP 115").findElement(getDriver()), "being processed");
+        validateToolTip(Locator.linkWithText("ZAP 117").findElement(getDriver()), "pending study completion");
 
         refresh();
 
@@ -779,4 +797,40 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     }
 
+    private void validateToolTip(WebElement el, String toolTipExpected)
+    {
+        log("Hover over the link with text '" + el.getText() + "' to validate that the tooltip is shown.");
+        String toolTipText;
+
+        Assert.assertTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el));
+        log("It looks like a tooltip was shown for '" + el.getText()+ "'.");
+
+        toolTipText = getToolTipText();
+
+        Assert.assertTrue("Tool tip did not have the expected text '" + toolTipExpected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().equals(toolTipExpected.trim().toLowerCase()));
+
+    }
+
+    private boolean triggerToolTip(WebElement el)
+    {
+        int elWidth = el.getSize().getWidth();
+        int elHeight = el.getSize().getHeight();
+        boolean bubblePresent = false;
+
+        Actions builder = new Actions(getDriver());
+
+        for(int i = -10; i <= elWidth && i <= elHeight && !bubblePresent; i++)
+        {
+            sleep(250); // Wait a moment.
+            builder.moveToElement(el, i, i).build().perform();
+            bubblePresent = isElementPresent(Locator.css("div.hopscotch-bubble-container"));
+        }
+
+        return bubblePresent;
+    }
+
+    private String getToolTipText()
+    {
+        return getText(Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content"));
+    }
 }
