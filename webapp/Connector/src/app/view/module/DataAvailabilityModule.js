@@ -70,7 +70,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
             store: this.getDataAddedStore(this.data),
 
             listeners : {
-                'itemmouseenter' : function(view, record, item) {
+                'itemmouseenter' : function(view, record, item, index, evt) {
                     var assayLink = Ext.get(Ext.query("a", item)[0]) || Ext.get(Ext.query("span", item)[0]),
                             id = Ext.id();
                     if (record.data.assay_status && assayLink) {
@@ -83,7 +83,20 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         });
                         assayLink.on('click', this.hideAssayStatusTooltip, this, {
                             id: id
-                        })
+                        });
+
+                        //If moving the cursor reasonably quickly, then it's possible to cause the "mouseenter" event to
+                        //fire before "itemmouseenter" fires.
+                        var textRect = assayLink.dom.getBoundingClientRect();
+                        var cursorX = evt.browserEvent.clientX;
+                        var cursorY = evt.browserEvent.clientY;
+                        if (textRect.top <= cursorY && cursorY <= textRect.bottom
+                            && textRect.left <= cursorX && cursorX <= textRect.right) {
+                            this.showAssayStatusTooltip(evt, assayLink.dom, {
+                                status: record.data.assay_status,
+                                id: id
+                            });
+                        }
                     }
                 },
 
@@ -93,6 +106,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         assayLink.un('mouseenter', this.showAssayStatusTooltip, this);
                         assayLink.un('mouseleave', this.hideAssayStatusTooltip, this);
                         assayLink.un('click', this.hideAssayStatusTooltip, this);
+                        this.fireEvent('hideTooltip');
                     }
                 },
 
@@ -103,8 +117,6 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
         this.callParent();
     },
-
-
 
     showAssayStatusTooltip : function(event, item, options) {
         var calloutMgr = hopscotch.getCalloutManager(),
@@ -122,13 +134,13 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     }, {}));
                 }, 200);
 
-        this.on('hide' + _id, function() {
+        this.on('hideTooltip', function() {
             clearTimeout(displayTooltip);
             calloutMgr.removeCallout(_id);
         }, this);
     },
 
-    hideAssayStatusTooltip : function(event, item, options) {
-        this.fireEvent('hide' + options.id);
+    hideAssayStatusTooltip : function() {
+        this.fireEvent('hideTooltip');
     }
 });
