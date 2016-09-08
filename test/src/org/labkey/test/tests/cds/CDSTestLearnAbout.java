@@ -9,7 +9,6 @@ import org.labkey.test.pages.LabKeyPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -185,20 +184,21 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> lockedColItems;
         List<WebElement> freeColItems;
 
-        log("Extra logging to record time stamps.");
-        cds.viewLearnAboutPage("Study products");
-        log("Should now be on the Learn About - Study Products page.");
-        sleep(30000);
-        log("Should have slept for 30 seconds.");
+        // This code was put in place because we were seeing failure in TeamCity where the page wasn't loading.
+        // The TeamCity configuration has been changed to use chrome which looks like it addressed this issue. Going to remove some of these lines for now.
+//        log("Extra logging to record time stamps.");
+//        cds.viewLearnAboutPage("Study products");
+//        log("Should now be on the Learn About - Study Products page.");
+//        sleep(10000);
+//        log("Should have slept for 10 seconds.");
         refresh();
         log("Page was refreshed.");
-        sleep(30000);
-        log("Should have slept for another 30 seconds. Now wait at most 60 seconds for the page signal to fire.");
-        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000, false);
-        log("Signal should have fired. Now wait, at most, 60 seconds for an h2 element with the text 'verapamil hydrochloride'");
-        waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
+        sleep(10000);
+        log("Should have slept for another 10 seconds. Now wait at most 30 seconds for the page signal to fire.");
+        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 30000, false);
+        log("Signal should have fired. Now wait, at most, 30 seconds for an h2 element with the text 'verapamil hydrochloride'");
+        waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 30000);
         log("Element should be there.");
-//        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
         lockedColItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         freeColItems = XPATH_RESULT_ROW_DATA.findElements(getDriver());
 
@@ -797,6 +797,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     }
 
+    private void validateToolTipText(String toolTipText, String... expectedText)
+    {
+        for(String expected : expectedText)
+        {
+            Assert.assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
+        }
+    }
+
     private void validateToolTip(WebElement el, String toolTipExpected)
     {
         log("Hover over the link with text '" + el.getText() + "' to validate that the tooltip is shown.");
@@ -807,7 +815,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         toolTipText = getToolTipText();
 
-        Assert.assertTrue("Tool tip did not have the expected text '" + toolTipExpected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().equals(toolTipExpected.trim().toLowerCase()));
+        validateToolTipText(toolTipText, toolTipExpected);
 
     }
 
