@@ -259,17 +259,18 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
-        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
         refresh();
 
-        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
         //testing BAMA antigens page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Antigen"));
+        waitForElement(Locator.xpath("//div[@class='list-detail-text']//h2[text()='p24']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA);
 
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
@@ -278,6 +279,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(1)));
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
 
         validateToolTip(Locator.linkWithText("RED 4").findElement(getDriver()), "not approved for sharing");
         validateToolTip(Locator.linkWithText("RED 6").findElement(getDriver()), "not approved for sharing");
