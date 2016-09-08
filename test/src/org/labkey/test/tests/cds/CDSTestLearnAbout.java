@@ -523,8 +523,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(getDataRowXPathNoToolTip(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(getDataRowXPathNoToolTip(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
     }
 
     @Test
@@ -773,6 +773,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     //Helper function for data availability tests
     private Locator.XPathLocator getDataRowXPath(String rowText)
+    {
+        return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
+    }
+
+    //Helper function for data availability tests
+    private Locator.XPathLocator getDataRowXPathNoToolTip(String rowText)
     {
         return Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), '" + rowText + "')]").parent().parent();
     }
