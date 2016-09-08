@@ -10,6 +10,8 @@ Ext.define('Connector.app.view.LearnSummary', {
         selectedItemCls: ''
     },
 
+    normalGridConfig: {},
+
     lockedViewConfig: {
         overflowY: 'hidden',
         emptyText: ''
@@ -94,8 +96,8 @@ Ext.define('Connector.app.view.LearnSummary', {
                 '<div class="detail-empty-text">None of the selected {itemPluralName} have data for this category.</div>'
         ).apply({itemPluralName: this.itemPluralName});
 
-        this.on({
-            'itemmouseenter' : function(view, record, item) {
+        this.normalGridConfig.listeners = {
+            itemmouseenter : function(view, record, item, index, evt) {
                 if (record.data.data_availability) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
                             id = Ext.id();
@@ -104,29 +106,39 @@ Ext.define('Connector.app.view.LearnSummary', {
                             itemsWithDataAvailable: record.getData()[record.dataAvailabilityField],
                             id: id
                         });
-                        checkmark.on('mouseleave', this.hideDataAvailabilityTooltip, this, {
-                            id: id
-                        });
-                        checkmark.on('click', this.hideDataAvailabilityTooltip, this, {
-                            id: id
-                        })
+                        checkmark.on('mouseleave', this.hideDataAvailabilityTooltip, this);
+                        checkmark.on('click', this.hideDataAvailabilityTooltip, this);
+
+                        //If moving the cursor reasonably quickly, then it's possible to cause the "mouseenter" event to
+                        //fire before "itemmouseenter" fires.
+                        var textRect = checkmark.dom.getBoundingClientRect();
+                        var cursorX = evt.browserEvent.clientX;
+                        var cursorY = evt.browserEvent.clientY;
+                        if (textRect.top <= cursorY && cursorY <= textRect.bottom
+                                && textRect.left <= cursorX && cursorX <= textRect.right) {
+                            this.showDataAvailabilityTooltip(evt, checkmark.dom, {
+                                itemsWithDataAvailable: record.getData()[record.dataAvailabilityField],
+                                id: id
+                            });
+                        }
                     }
                 }
             },
 
-            'itemmouseleave' : function(view, record, item) {
+            itemmouseleave : function(view, record, item) {
                 if (record.data.data_availability) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
                     if (checkmark) {
                         checkmark.un('mouseenter', this.showDataAvailabilityTooltip, this);
                         checkmark.un('mouseleave', this.hideDataAvailabilityTooltip, this);
                         checkmark.un('click', this.hideDataAvailabilityTooltip, this);
+                        this.fireEvent('hideTooltip');
                     }
                 }
             },
 
             scope: this
-        });
+        };
 
         this.callParent(arguments);
     },
@@ -174,13 +186,13 @@ Ext.define('Connector.app.view.LearnSummary', {
                     }, {}));
                 }, 200);
 
-        this.on('hide' + _id, function() {
+        this.on('hideTooltip', function() {
             clearTimeout(displayTooltip);
             calloutMgr.removeCallout(_id);
         }, this);
     },
 
-    hideDataAvailabilityTooltip : function(event, item, options) {
-        this.fireEvent('hide' + options.id);
+    hideDataAvailabilityTooltip : function() {
+        this.fireEvent('hideTooltip');
     }
 });
