@@ -10,6 +10,7 @@ import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
@@ -109,42 +110,50 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyLearnAboutStudyDetails()
     {
-        final String searchString = "QED 2";
-        final String grantAffiliation = "Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.";
-        final String dataAvailability = "iaculis diam erat fermentum justo nec";
-        final String firstContactName = "Juan Owens";
-        final String firstContactEmail = "jowens5@deviantart.com";
-        final String rationale = "Nullam molestie nibh in lectus. Pellentesque at nulla.";
+        final String searchString = "ZAP 117";
+        final String grantAffiliation = "Nulla tellus. In sagittis dui vel nisl.";
+        final String firstContactName = "Helen Holmes";
+        final String firstContactEmail = "hholmest@alexa.com";
+        final String rationale = "In sagittis dui vel nisl.";
 
         cds.viewLearnAboutPage("Studies");
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        sleep(CDSHelper.CDS_WAIT);
 
         log("Verifying data availability on summary page.");
-        assert(Locator.xpath("//div[contains(@class, 'data-availability-text')][text()='" + dataAvailability + "']").findElement(getDriver()).isDisplayed());
+        LearnGrid learnGrid = new LearnGrid(this);
+        int rowCount = learnGrid.getRowCount();
+        Assert.assertTrue("Expected one row in the grid, found " + rowCount + " row(s).", rowCount == 1);
+        Assert.assertTrue("Row did not contain " + searchString, learnGrid.getRowText(0).contains(searchString));
 
         log("Start verifying study detail page.");
-        List<WebElement> returnedItems  = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
-        returnedItems.get(0).click();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        learnGrid.getCellWebElement(0, 0).click();
+        sleep(CDSHelper.CDS_WAIT);
 
         log("Verifying study information.");
-        List<String> fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_INFO_FIELDS);
+        List<String> fields = Arrays.asList(CDSHelper.LEARN_ABOUT_ZAP117_INFO_FIELDS);
         fields.stream().forEach((field) -> assertTextPresent(field));
         assertTextPresent(grantAffiliation);
 
         log("Verifying contact information.");
-        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_CONTACT_FIELDS);
+        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_CONTACT_FIELDS);
         fields.stream().forEach((field) -> assertTextPresent(field));
 
         assertElementPresent(Locator.xpath("//a[contains(@href, 'mailto:" + firstContactEmail + "')][text()='" + firstContactName + "']"));
 
         log("Verifying description section.");
-        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_QED2_DESCRIPTION_FIELDS);
+        fields = Arrays.asList(CDSHelper.LEARN_ABOUT_DESCRIPTION_FIELDS);
         fields.stream().forEach((field) -> assertTextPresent(field));
         assertTextPresent(rationale);
         assertElementPresent(Locator.xpath("//a[text()='Click for treatment schema']"));
+
+        validateToolTip(Locator.linkWithText("NAB").findElement(getDriver()), "provided, but not included");
+
+        validateToolTip(Locator.linkWithText("ICS").findElement(getDriver()), "pending study completion");
+
+        validateToolTip(Locator.linkWithText("BAMA").findElement(getDriver()), "Status not available");
+
     }
 
     @Test
@@ -175,20 +184,21 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> lockedColItems;
         List<WebElement> freeColItems;
 
-        log("Extra logging to record time stamps.");
+        // This code was put in place because we were seeing failure in TeamCity where the page wasn't loading.
+        // The TeamCity configuration has been changed to use chrome which looks like it addressed this issue. Going to remove some of these lines for now.
+//        log("Extra logging to record time stamps.");
         cds.viewLearnAboutPage("Study products");
-        log("Should now be on the Learn About - Study Products page.");
-        sleep(30000);
-        log("Should have slept for 30 seconds.");
+//        log("Should now be on the Learn About - Study Products page.");
+//        sleep(10000);
+//        log("Should have slept for 10 seconds.");
         refresh();
         log("Page was refreshed.");
-        sleep(30000);
-        log("Should have slept for another 30 seconds. Now wait at most 60 seconds for the page signal to fire.");
-        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000, false);
-        log("Signal should have fired. Now wait, at most, 60 seconds for an h2 element with the text 'verapamil hydrochloride'");
-        waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
+        sleep(10000);
+        log("Should have slept for another 10 seconds. Now wait at most 30 seconds for the page signal to fire.");
+        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 30000, false);
+        log("Signal should have fired. Now wait, at most, 30 seconds for an h2 element with the text 'verapamil hydrochloride'");
+        waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 30000);
         log("Element should be there.");
-//        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]").toBy()));
         lockedColItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         freeColItems = XPATH_RESULT_ROW_DATA.findElements(getDriver());
 
@@ -245,21 +255,23 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(0)));
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
 
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
-        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
         refresh();
 
-        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
         //testing BAMA antigens page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Antigen"));
+        waitForElement(Locator.xpath("//div[@class='list-detail-text']//h2[text()='p24']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA);
 
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
@@ -268,6 +280,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(1)));
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
+
+        validateToolTip(Locator.linkWithText("RED 4").findElement(getDriver()), "not approved for sharing");
+        validateToolTip(Locator.linkWithText("RED 6").findElement(getDriver()), "not approved for sharing");
+        validateToolTip(Locator.tagWithText("span", "w101").findElement(getDriver()), "added");
+        validateToolTip(Locator.linkWithText("ZAP 102").findElement(getDriver()), "Status not available");
+        validateToolTip(Locator.linkWithText("ZAP 108").findElement(getDriver()), "provided, but not included");
+        validateToolTip(Locator.linkWithText("ZAP 115").findElement(getDriver()), "being processed");
+        validateToolTip(Locator.linkWithText("ZAP 117").findElement(getDriver()), "pending study completion");
 
         refresh();
 
@@ -275,6 +296,82 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Protein Panel"));
         waitForText(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA[0]);
         assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
+
+        // Go back to assays and validate the Data Added column.
+        cds.viewLearnAboutPage("Assays");
+        LearnGrid learnGrid = new LearnGrid(this);
+        String toolTipText, cellText, expectedText;
+        int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
+
+        log("Checking: " + learnGrid.getCellText(4, 0));
+        expectedText = "11 Studies";
+        cellText = learnGrid.getCellText(4, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        // Can't depend upon the text in the tooltip to be in the same order every time. So check for each value separately.
+        validateToolTipText(toolTipText, "ZAP 135", "ZAP 139", "ZAP 133", "ZAP 128", "ZAP 129", "ZAP 120", "YOYO 55", "ZAP 118", "ZAP 119", "ZAP 134", "ZAP 117");
+        log("Tool tip text contained the expected values.");
+
+        sleep(1000);
+
+        log("Checking: " + learnGrid.getCellText(3, 0));
+        expectedText = "5 Studies";
+        cellText = learnGrid.getCellText(3, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        validateToolTipText(toolTipText, "ZAP 133", "ZAP 128", "YOYO 55", "ZAP 135", "QED 2");
+        log("Tool tip text contained the expected values.");
+
+        sleep(1000);
+
+        log("Checking: " + learnGrid.getCellText(2, 0));
+        expectedText = "4 Studies";
+        cellText = learnGrid.getCellText(2, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        validateToolTipText(toolTipText, "ZAP 134", "RED 4", "ZAP 110", "ZAP 111");
+        log("Tool tip text contained the expected values.");
+
+        sleep(1000);
+
+        log("Checking: " + learnGrid.getCellText(1, 0));
+        expectedText = "14 Studies";
+        cellText = learnGrid.getCellText(1, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        validateToolTipText(toolTipText, "ZAP 102", "RED 4", "RED 5", "RED 6", "ZAP 105", "ZAP 106", "ZAP 134", "ZAP 136", "ZAP 124", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118");
+        log("Tool tip text contained the expected values.");
+
+        sleep(1000);
+
+        log("Checking: " + learnGrid.getCellText(0, 0));
+        expectedText = "1 Study";
+        cellText = learnGrid.getCellText(0, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        validateToolTipText(toolTipText, "ZAP 117");
+        log("Tool tip text contained the expected values.");
+
     }
 
     @Test
@@ -503,8 +600,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(getDataRowXPathNoToolTip(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(getDataRowXPathNoToolTip(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
     }
 
     @Test
@@ -754,6 +851,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     //Helper function for data availability tests
     private Locator.XPathLocator getDataRowXPath(String rowText)
     {
+        return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
+    }
+
+    //Helper function for data availability tests
+    private Locator.XPathLocator getDataRowXPathNoToolTip(String rowText)
+    {
         return Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), '" + rowText + "')]").parent().parent();
     }
 
@@ -779,4 +882,48 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     }
 
+    private void validateToolTipText(String toolTipText, String... expectedText)
+    {
+        for(String expected : expectedText)
+        {
+            Assert.assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
+        }
+    }
+
+    private void validateToolTip(WebElement el, String toolTipExpected)
+    {
+        log("Hover over the link with text '" + el.getText() + "' to validate that the tooltip is shown.");
+        String toolTipText;
+
+        Assert.assertTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el));
+        log("It looks like a tooltip was shown for '" + el.getText()+ "'.");
+
+        toolTipText = getToolTipText();
+
+        validateToolTipText(toolTipText, toolTipExpected);
+
+    }
+
+    private boolean triggerToolTip(WebElement el)
+    {
+        int elWidth = el.getSize().getWidth();
+        int elHeight = el.getSize().getHeight();
+        boolean bubblePresent = false;
+
+        Actions builder = new Actions(getDriver());
+
+        for(int i = -10; i <= elWidth && i <= elHeight && !bubblePresent; i++)
+        {
+            sleep(250); // Wait a moment.
+            builder.moveToElement(el, i, i).build().perform();
+            bubblePresent = isElementPresent(Locator.css("div.hopscotch-bubble-container"));
+        }
+
+        return bubblePresent;
+    }
+
+    private String getToolTipText()
+    {
+        return getText(Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content"));
+    }
 }

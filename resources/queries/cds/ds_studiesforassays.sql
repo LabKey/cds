@@ -2,6 +2,7 @@
 SELECT
   sa.assay_identifier,
   sa.has_data,
+  sa.assay_status,
   sa.prot,
   smd.*
 FROM cds.studyassay sa

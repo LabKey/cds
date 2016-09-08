@@ -11,6 +11,8 @@ Ext.define('Connector.app.model.Assay', {
 
     resolvableField: 'assay_identifier',
 
+    dataAvailabilityField: 'studies_with_data',
+
     labelProperty: 'assay_label',
     
     fields: [
@@ -28,8 +30,13 @@ Ext.define('Connector.app.model.Assay', {
         {name: 'assay_method_description'},
         {name: 'assay_endpoint_description'},
         {name: 'assay_endpoint_statistical_analysis'},
+        {name: 'data_availability'},
         {name: 'study_count'}, //generated when the assay store is loaded.
+        {name: 'studies_with_data_count'},
         {name: 'studies', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'studies_with_data', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }}
     ]
