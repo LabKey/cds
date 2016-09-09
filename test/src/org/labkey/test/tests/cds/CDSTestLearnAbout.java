@@ -271,8 +271,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         //testing BAMA antigens page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Antigen"));
-        waitForElement(Locator.xpath("//div[@class='list-detail-text']//h2[text()='p24']"));
-        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA);
+        for(int i = 0; i < CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA.length; i++)
+        {
+            // Use this as the conditional test that the page has loaded, and wait for it to load as well.
+            waitForElement(Locator.xpath("//div[@class='list-detail-text']//h2[text()='" + CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[i] + "']"), 1000, true);
+        }
 
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
 
@@ -294,6 +297,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Protein Panel"));
+        sleep(500);
         waitForText(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA[0]);
         assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
 
