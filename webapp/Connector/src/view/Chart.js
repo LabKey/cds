@@ -1867,7 +1867,8 @@ Ext.define('Connector.view.Chart', {
 
             if (this.activeMeasures.x)
             {
-                this.clickTask.delay(150, null, null, [(node ? node : e.target), this, this.activeMeasures.x.alias, target, multi]);
+                var wrappedX = this.getWrappedMeasures()[0];
+                this.clickTask.delay(150, null, null, [(node ? node : e.target), this, QueryUtils.ensureAlignmentAlias(wrappedX), target, multi]);
             }
             else
             {
