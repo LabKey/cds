@@ -657,6 +657,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
     public void verifyGutterPlotAfterTimeFilter()
     {
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        int pointCount;
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
@@ -664,8 +665,8 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         log("Set the y-axis to Elispot, Magnitude Background Subtracted.");
         yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.ELISPOT);
-        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.confirmSelection();
 
         log("Set the x-axis to ICS Magnitude Background Subtracted.");
@@ -674,9 +675,23 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.confirmSelection();
 
+        log("Set the color variable.");
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
+        coloraxis.pickVariable(CDSHelper.DEMO_STUDY_NAME);
+        coloraxis.confirmSelection();
+
         log("Validate that there is a gutter plot on the x and y axes.");
-        Assert.assertTrue("There was no gutter plot on the x-axis. This is need to validate.", cdsPlot.hasXGutter());
-        Assert.assertTrue("There was no gutter plot on the y-axis. This is need to validate.", cdsPlot.hasYGutter());
+        Assert.assertTrue("There was no gutter plot on the x-axis. This plot cannot be used to validate this fix.", cdsPlot.hasXGutter());
+        Assert.assertTrue("There was no gutter plot on the y-axis. This plot cannot be used to validate this fix.", cdsPlot.hasYGutter());
+
+        log("Validate the point count in the x-gutter plot.");
+        pointCount = cdsPlot.getXGutterPlotPointCount();
+        Assert.assertEquals("Point count in the x-gutter plot not as expected. Expected 318, found: " + pointCount, pointCount, 318);
+
+        log("Validate the point count in the y-gutter plot.");
+        pointCount = cdsPlot.getYGutterPlotPointCount();
+        Assert.assertEquals("Point count in the y-gutter plot not as expected. Expected 104, found: " + pointCount, pointCount, 104);
 
         log("Now change the x-axis to a Time Points.");
         xaxis.openSelectorWindow();
@@ -704,10 +719,20 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.confirmSelection();
 
-        log("Validate that the gutter plots are again on the x and y axes.");
+        log("Validate that the gutter plots are again on the x and y axes and that there counts are as expected.");
         Assert.assertTrue("There was no gutter plot on the x-axis. This is need to validate.", cdsPlot.hasXGutter());
         Assert.assertTrue("There was no gutter plot on the y-axis. This is need to validate.", cdsPlot.hasYGutter());
 
+        log("Validate the point count in the x-gutter plot.");
+        pointCount = cdsPlot.getXGutterPlotPointCount();
+        Assert.assertEquals("Point count in the x-gutter plot not as expected. Expected 318, found: " + pointCount, pointCount, 318);
+
+        log("Validate the point count in the y-gutter plot.");
+        pointCount = cdsPlot.getYGutterPlotPointCount();
+        Assert.assertEquals("Point count in the y-gutter plot not as expected. Expected 104, found: " + pointCount, pointCount, 104);
+
+        log("Looks good, go home.");
+        goToProjectHome();
     }
 
 }
