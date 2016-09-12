@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests.cds;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -650,6 +651,63 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         }
 
         assertEquals("Number of highlighted points not as expected.", 546, hCount);
+    }
+
+    @Test
+    public void verifyGutterPlotAfterTimeFilter()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        log("Set the y-axis to Elispot, Magnitude Background Subtracted.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+
+        log("Set the x-axis to ICS Magnitude Background Subtracted.");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.confirmSelection();
+
+        log("Validate that there is a gutter plot on the x and y axes.");
+        Assert.assertTrue("There was no gutter plot on the x-axis. This is need to validate.", cdsPlot.hasXGutter());
+        Assert.assertTrue("There was no gutter plot on the y-axis. This is need to validate.", cdsPlot.hasYGutter());
+
+        log("Now change the x-axis to a Time Points.");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.confirmSelection();
+
+        log("Create a filter from this plot.");
+        // Going to move the mouse over the area where it is about to start dragging.
+        clickAt(Locator.css("div:not(.thumbnail) > svg g.axis g.tick-text g:nth-of-type(1)"), 1, 1, 0);
+
+        sleep(1000);
+        cds.dragAndDropFromElement(Locator.css("div:not(.thumbnail) > svg g.axis g.tick-text g:nth-of-type(1)"), 500, 0);
+        sleep(CDSHelper.CDS_WAIT);
+
+        assertElementVisible(Locator.linkContainingText("Filter"));
+
+        click(Locator.linkContainingText("Filter"));
+        sleep(1000); // Wait briefly for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Change x-axis back to ICS Magnitude Background Subtracted.");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.confirmSelection();
+
+        log("Validate that the gutter plots are again on the x and y axes.");
+        Assert.assertTrue("There was no gutter plot on the x-axis. This is need to validate.", cdsPlot.hasXGutter());
+        Assert.assertTrue("There was no gutter plot on the y-axis. This is need to validate.", cdsPlot.hasYGutter());
+
     }
 
 }
