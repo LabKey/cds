@@ -910,9 +910,9 @@ Ext.define('Connector.utility.Chart', {
     getTimeShortLabel: function(alias) {
         if (alias.lastIndexOf(QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks', 0) === 0)
             return 'Week';
-        else if (alias.lastIndexOf(QueryUtils.STUDY_ALIAS_PREFIX + 'Months') === 0)
+        else if (alias.lastIndexOf(QueryUtils.STUDY_ALIAS_PREFIX + 'Months', 0) === 0)
             return 'Month';
-        else if (alias.lastIndexOf(QueryUtils.STUDY_ALIAS_PREFIX + 'Years') === 0)
+        else if (alias.lastIndexOf(QueryUtils.STUDY_ALIAS_PREFIX + 'Years', 0) === 0)
             return 'Year';
         return 'Day';
     }

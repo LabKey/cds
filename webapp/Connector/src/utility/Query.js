@@ -860,11 +860,11 @@ Ext.define('Connector.utility.Query', {
 
     getIntervalDenominator : function(interval)
     {
-        if (interval.lastIndexOf(this.STUDY_ALIAS_PREFIX + 'Weeks') === 0)
+        if (interval.lastIndexOf(this.STUDY_ALIAS_PREFIX + 'Weeks', 0) === 0)
             return 7;
-        else if (interval.lastIndexOf(this.STUDY_ALIAS_PREFIX + 'Months') === 0)
+        else if (interval.lastIndexOf(this.STUDY_ALIAS_PREFIX + 'Months', 0) === 0)
             return 365.25/12;
-        else if (interval.lastIndexOf(interval == this.STUDY_ALIAS_PREFIX + 'Years') === 0)
+        else if (interval.lastIndexOf(interval == this.STUDY_ALIAS_PREFIX + 'Years', 0) === 0)
             return 365.25;
         return 1;
     },
