@@ -128,7 +128,7 @@ Ext.define('Connector.app.view.Study', {
         }],
         dataIndex: 'product_to_sort_on',
         tpl: new Ext.XTemplate(
-                '<div class="detail-text">',
+                '<div class="detail-text study-summary-product">',
                     '<ul>',
                         '<tpl if="products.length &gt; 0">',
                             '<tpl for="products">',
