@@ -13,6 +13,8 @@ Ext.define('Connector.app.model.StudyProducts', {
 
     resolvableField: 'product_name',
 
+    dataAvailabilityField: 'studies_with_data',
+
     fields: [
         {name: 'product_id', type: 'int'},
         {name: 'product_name', sortType: 'asUCString'},
@@ -27,10 +29,15 @@ Ext.define('Connector.app.model.StudyProducts', {
         }},
         {name: 'product_manufacturer'},
         {name: 'product_description'},
+        {name: 'data_availability'},
+        {name: 'studies_with_data_count'},
         {name: 'studies', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }},
         {name: 'other_products', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'studies_with_data', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }}
     ]

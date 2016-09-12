@@ -11,6 +11,8 @@ Ext.define('Connector.app.model.Study', {
 
     resolvableField: 'label',
 
+    dataAvailabilityField: 'assays_added',
+
     fields: [
         {name: 'study_name'},
         {name: 'Container'},
