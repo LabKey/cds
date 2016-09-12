@@ -1,14 +1,27 @@
-document_id	label	filename	document_type
-1	Nulla tellus. In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.	documents/Test Document 1.docx	grant_document
-2	Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.	documents/Test PDF 1.pdf	grant_document
-3	Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum. In hac habitasse platea dictumst.	documents/Test PDF 2.pdf	grant_document
-4	In congue. Etiam justo. Etiam pretium iaculis justo. In hac habitasse platea dictumst. Etiam faucibus cursus urna.	documents/Test Document 2.docx	grant_document
-5	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue.	documents/Test Document 3.docx	grant_document
-6	Nulla tellus. In sagittis dui vel nisl.	documents/Test PDF 3.pdf	grant_document
-7	In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.	documents/Test PDF 4.pdf	grant_document
-8	Suspendisse accumsan tortor quis turpis. Sed ante. Vivamus tortor. Duis mattis egestas metus.	documents/Test Document 4.docx	grant_document
-9	Nulla suscipit ligula in lacus. Curabitur at ipsum ac tellus semper interdum.	documents/Test Document 5.docx	grant_document
-10	\N	documents/Test PDF 5.pdf	grant_document
-11	Nulla suscipit ligula in lacus. Curabitur at ipsum ac tellus semper interdum.	documents/Test Document 5incorrectname.docx	grant_document
-12	Integer a nibh. In quis justo. Maecenas rhoncus aliquam lacus.	     	grant_document
-13	Integer a nibh. In quis justo. Maecenas rhoncus aliquam lacus.	\N	grant_document
+document_id	label	filename	document_type	is_external
+1	Nulla tellus. In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.	documents/Test Document 1.docx	grant_document	FALSE
+2	Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.	documents/Test PDF 1.pdf	grant_document	FALSE
+3	Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum. In hac habitasse platea dictumst.	documents/Test PDF 2.pdf	grant_document	FALSE
+4	In congue. Etiam justo. Etiam pretium iaculis justo. In hac habitasse platea dictumst. Etiam faucibus cursus urna.	documents/Test Document 2.docx	grant_document	FALSE
+5	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue.	documents/Test Document 3.docx	grant_document	FALSE
+6	Nulla tellus. In sagittis dui vel nisl.	documents/Test PDF 3.pdf	grant_document	FALSE
+7	In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.	documents/Test PDF 4.pdf	grant_document	FALSE
+8	Suspendisse accumsan tortor quis turpis. Sed ante. Vivamus tortor. Duis mattis egestas metus.	documents/Test Document 4.docx	grant_document	FALSE
+9	Nulla suscipit ligula in lacus. Curabitur at ipsum ac tellus semper interdum.	documents/Test Document 5.docx	grant_document	FALSE
+10	\N	documents/Test PDF 5.pdf	grant_document	FALSE
+11	Nulla suscipit ligula in lacus. Curabitur at ipsum ac tellus semper interdum.	documents/Test Document 5incorrectname.docx	grant_document	FALSE
+12	Integer a nibh. In quis justo. Maecenas rhoncus aliquam lacus.	     	grant_document	FALSE
+13	Integer a nibh. In quis justo. Maecenas rhoncus aliquam lacus.	\N	grant_document	FALSE
+14	Test Protocol Document 3	documents/internalPub3.pdf	protocol_document	FALSE
+15	External Test � Deep Markov Random Field for Image Modeling	https://arxiv.org/pdf/1609.02036.pdf	study_plan	TRUE
+16	Test Report 1	documents/internalDoc1.doc	report	FALSE
+17	External Test - RELARM: A rating model based on relative PCA attributes and k-means clustering	https://arxiv.org/ftp/arxiv/papers/1608/1608.06416.pdf	data_listing	TRUE
+18	Clearing the Skies: A deep network architecture for single-image rain removal	https://arxiv.org/pdf/1609.02087.pdf	protocol_document	TRUE
+19	Test study plan 2	documents/internalDoc2.doc	study_plan	FALSE
+20	Dense Motion Estimation for Smoke	https://arxiv.org/pdf/1609.02001.pdf	report	TRUE
+21	Test Data Listing 3	documents/internalDoc3.doc	data_listing	FALSE
+22	External Test - AUTOMORPHISMS OF K-GROUPS I	https://arxiv.org/pdf/1609.01969.pdf	protocol_document	TRUE
+23	An Investigation into the Mathematical Nature of Electrophysiological Signals with Applications	https://arxiv.org/ftp/arxiv/papers/1609/1609.02081.pdf	study_plan	TRUE
+24	Test Report pub 1	documents/internalPub1.pdf	report	FALSE
+25	Test Data Listing 2	documents/internalPub2.pdf	data_listing	FALSE
+26	A deep learning model for estimating story points	https://arxiv.org/pdf/1609.00489.pdf	protocol_document	TRUE

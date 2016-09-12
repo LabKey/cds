@@ -140,5 +140,19 @@
                 </settings>
             </taskref>
         </transform>
+        <transform id="PopulatePublication" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_publication" />
+            <destination schemaName="cds" queryName="publication" targetOption="truncate" />
+        </transform>
+        <transform id="PopulateStudyPublication" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.ContainerSensitivePopulateTask">
+                <settings>
+                    <setting name="sourceSchema" value="cds"/>
+                    <setting name="sourceQuery" value="ds_studypublication"/>
+                    <setting name="targetSchema" value="cds"/>
+                    <setting name="targetQuery" value="studypublication"/>
+                </settings>
+            </taskref>
+        </transform>
     </transforms>
 </etl>

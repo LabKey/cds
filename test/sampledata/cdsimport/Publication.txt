@@ -1,0 +1,5 @@
+publication_id	label	filename	publication_type	is_external
+1	Good Enough Practices in Scientific Computing 	https://arxiv.org/pdf/1609.00037.pdf	publication	TRUE
+2	Equivalence Checking a Floating-point Unit against a High-level C Model 	https://arxiv.org/pdf/1609.00169.pdf	publication	TRUE
+3	Internal Publication Test 1	documents/Publication1.pdf	publication	FALSE
+4	Internal Publication Test 2	documents/Publication2.pdf	publication	FALSE
