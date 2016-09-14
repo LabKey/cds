@@ -10,10 +10,12 @@ Ext.define('Connector.plugin.DocumentValidation', {
         });
     },
 
-    validateDocLinks : function (docList, data) {
+    validateDocLinks : function (docList, data, callback) {
+        var allExternal = true;
         for (var itr = 0; itr < docList.length; itr++) {
             const doc = docList[itr];
             if (!doc.isExternal) {
+                allExternal = false;
                 if (!doc.isLinkValid) {
                     LABKEY.Ajax.request({
                         method: 'HEAD',
@@ -22,12 +24,15 @@ Ext.define('Connector.plugin.DocumentValidation', {
                             if (200 === response.status) {
                                 doc.isLinkValid = true;
                             }
-                            this.update(data);
+                            callback.call(this);
                         }, this),
                         scope: this
                     });
                 }
             }
+        }
+        if (allExternal) {
+            callback.call(this);
         }
     }
 });

@@ -12,19 +12,10 @@ Ext.define('Connector.view.module.StudyReports', {
     plugins : ['documentvalidation'],
 
     tpl : new Ext.XTemplate(
-            '<tpl if="(reports && reports.length &gt; 0) || (data_listings && data_listings.length &gt; 0)">',
+            '<tpl if="data_listings_and_reports.length &gt; 0">',
                 Connector.constant.Templates.module.title,
                 '<table class="learn-study-info">',
-                    '<tpl for="reports">',
-                        '<tr>',
-                            '<tpl if="isLinkValid">',
-                                '<td class="item-value"><a href="{fileName}">{label:htmlEncode} {suffix}</a></td>',
-                            '<tpl else>',
-                                '<td class="item-value">{label:htmlEncode}</td>',
-                            '</tpl>',
-                        '</tr>',
-                    '</tpl>',
-                    '<tpl for="data_listings">',
+                    '<tpl for="data_listings_and_reports">',
                         '<tr>',
                             '<tpl if="isLinkValid">',
                                 '<td class="item-value"><a href="{fileName}">{label:htmlEncode} {suffix}</a></td>',
@@ -38,14 +29,15 @@ Ext.define('Connector.view.module.StudyReports', {
     ),
 
     initComponent : function() {
+        this.callParent();
+
         var data = this.initialConfig.data.model.data;
-        data['title'] = this.initialConfig.data.title;
 
         this.on("afterrender", function() {
-            this.validateDocLinks(data.reports, data);
-            this.validateDocLinks(data.data_listings, data);
-            this.update(data);
+            this.validateDocLinks(data.data_listings_and_reports, data, function(){
+                data['title'] = this.initialConfig.data.title;
+                this.update(data);
+            });
         }, this);
-        this.update(data);
     }
 });

@@ -29,13 +29,15 @@ Ext.define('Connector.view.module.StudyPublications', {
     ),
 
     initComponent : function() {
+        this.callParent();
+
         var data = this.initialConfig.data.model.data;
-        data['title'] = this.initialConfig.data.title;
 
         this.on("afterrender", function() {
-            this.validateDocLinks(data.publications, data);
-            this.update(data);
+            this.validateDocLinks(data.publications, data, function(){
+                data['title'] = this.initialConfig.data.title;
+                this.update(data);
+            });
         }, this);
-        this.update(data);
     }
 });

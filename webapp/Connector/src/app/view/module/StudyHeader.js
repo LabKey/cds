@@ -65,26 +65,10 @@ Ext.define('Connector.view.module.StudyHeader', {
                         '<td class="item-value">{[Connector.app.view.LearnSummary.dateRenderer(values.followup_complete_date)]}</td>',
                     '</tr>',
                 '</tpl>',
-                '<tpl if="protocol_docs.length &gt; 0">',
-                    '<tpl for="protocol_docs">',
+                '<tpl if="protocol_docs_and_study_plans.length &gt; 0">',
+                    '<tpl for="protocol_docs_and_study_plans">',
                         '<tr>',
                             '<tpl if="xindex == 1">',
-                                '<td class="item-label">Documents:</td>',
-                            '<tpl else>',
-                                '<td class="item-label">&nbsp;</td>',
-                            '</tpl>',
-                            '<tpl if="isLinkValid">',
-                                '<td class="item-value"><a href="{fileName}">{label:htmlEncode} {suffix}</a></td>',
-                            '<tpl else>',
-                                '<td class="item-value">{label:htmlEncode}</td>',
-                            '</tpl>',
-                        '</tr>',
-                    '</tpl>',
-                '</tpl>',
-                '<tpl if="study_plans.length &gt; 0">',
-                    '<tpl for="study_plans">',
-                        '<tr>',
-                            '<tpl if="protocol_docs.length == 0">',
                                 '<td class="item-label">Documents:</td>',
                             '<tpl else>',
                                 '<td class="item-label">&nbsp;</td>',
@@ -105,7 +89,6 @@ Ext.define('Connector.view.module.StudyHeader', {
         this.callParent();
 
         var data = this.initialConfig.data.model.data;
-        data['title'] = this.initialConfig.data.title;
         if (data['cavd_affiliation_file_exists'] !== true) {  // if it's true, we've already verified this link is good previously
             LABKEY.Ajax.request({
                 method: 'HEAD',
@@ -121,10 +104,10 @@ Ext.define('Connector.view.module.StudyHeader', {
         }
 
         this.on("afterrender", function() {
-            this.validateDocLinks(data.protocol_docs, data);
-            this.validateDocLinks(data.study_plans, data);
-            this.update(data);
-
+            this.validateDocLinks(data.protocol_docs_and_study_plans, data, function(){
+                data['title'] = this.initialConfig.data.title;
+                this.update(data);
+            });
         }, this);
     }
 });

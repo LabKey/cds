@@ -412,6 +412,8 @@
             <column columnName="label"/>
             <column columnName="filename"/>
             <column columnName="document_type"/>
+            <column columnName="is_external"/>
+            <column columnName="sort_index"/>
         </columns>
     </table>
     <table tableName="import_studydocument" tableDbType="TABLE">
@@ -426,6 +428,8 @@
             <column columnName="label"/>
             <column columnName="filename"/>
             <column columnName="publication_type"/>
+            <column columnName="is_external"/>
+            <column columnName="sort_index"/>
         </columns>
     </table>
     <table tableName="import_studypublication" tableDbType="TABLE">
@@ -441,6 +445,8 @@
             <column columnName="label"/>
             <column columnName="filename"/>
             <column columnName="document_type"/>
+            <column columnName="is_external"/>
+            <column columnName="sort_index"/>
         </columns>
     </table>
     <table tableName="studydocument" tableDbType="TABLE">
@@ -457,6 +463,8 @@
             <column columnName="label"/>
             <column columnName="filename"/>
             <column columnName="publication_type"/>
+            <column columnName="is_external"/>
+            <column columnName="sort_index"/>
         </columns>
     </table>
     <table tableName="studypublication" tableDbType="TABLE">

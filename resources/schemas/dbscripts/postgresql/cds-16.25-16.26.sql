@@ -4,6 +4,7 @@ CREATE TABLE cds.import_Publication (
   filename VARCHAR(255),
   publication_type VARCHAR(250),
   is_external BOOLEAN,
+  sort_index INTEGER,
 
   CONSTRAINT PK_import_Publication PRIMARY KEY (publication_id)
 );
@@ -22,6 +23,7 @@ CREATE TABLE cds.Publication (
   filename VARCHAR(255),
   publication_type VARCHAR(250),
   is_external BOOLEAN,
+  sort_index INTEGER,
 
   CONSTRAINT PK_Publication PRIMARY KEY (publication_id)
 );
@@ -36,3 +38,5 @@ CREATE TABLE cds.StudyPublication (
 
 ALTER TABLE cds.import_document ADD COLUMN is_external BOOLEAN;
 ALTER TABLE cds.document ADD COLUMN is_external BOOLEAN;
+ALTER TABLE cds.import_document ADD COLUMN sort_index INTEGER;
+ALTER TABLE cds.document ADD COLUMN sort_index INTEGER;

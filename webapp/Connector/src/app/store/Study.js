@@ -170,7 +170,6 @@ Ext.define('Connector.app.store.Study', {
                     return val1.toLowerCase().localeCompare(val2.toLowerCase())
                 });
 
-                var documents = [];
                 for (var d=0; d < this.documentData.length; d++) {
                     if (study.study_name === this.documentData[d].prot)
                     {
@@ -179,42 +178,32 @@ Ext.define('Connector.app.store.Study', {
                             study.cavd_affiliation_filename = this.documentData[d].filename;
                             study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
                         }
-                        else if ((this.documentData[d].document_type === 'protocol_document') ||
-                                (this.documentData[d].document_type === 'study_plan') ||
-                                (this.documentData[d].document_type === 'data_listing') ||
-                                (this.documentData[d].document_type === 'report')) {
-
-                            documents.push({
-                                id: this.documentData[d].document_id,
-                                label: this.documentData[d].label,
-                                fileName: this.documentData[d].is_external ? this.documentData[d].filename :
-                                    LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + this.documentData[d].filename,
-                                isExternal: this.documentData[d].is_external,
-                                docType: this.documentData[d].document_type,
-                                isLinkValid: this.documentData[d].is_external, //initally false for internal documents
-                                suffix: this.documentData[d].is_external ?
-                                    '<img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/>' :
-                                    '(' + Connector.utility.FileExtension.fileDisplayType(this.documentData[d].filename) +')'
-                            })
-                        }
                     }
                 }
 
-                study.publications = this.publicationData.filter(function(pub) {
-                    return pub.prot === study.study_name;
-                }).map(function(pub) {
+                var documentsAndPublications = this.publicationData.concat(this.documentData.filter(function(doc) {
+                    return doc.document_type === 'protocol_document' ||
+                        doc.document_type === 'study_plan' ||
+                        doc.document_type === 'data_listing' ||
+                        doc.document_type === 'report';
+                })).filter(function(doc) {
+                    return study.study_name === doc.prot;
+                }).map(function(doc) {
                     return {
-                        id: pub.publication_id,
-                        label: pub.label,
-                        fileName: pub.is_external ? pub.filename :
-                            LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + pub.filename,
-                        isExternal: pub.is_external,
-                        docType: pub.publication_type,
-                        isLinkValid: pub.is_external,
-                        suffix: pub.is_external ?
+                        id: doc.publication_id || doc.document_id,
+                        label: doc.label,
+                        fileName: doc.is_external ? doc.filename :
+                            LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + doc.filename,
+                        isExternal: doc.is_external,
+                        docType: doc.publication_type || doc.document_type,
+                        isLinkValid: doc.is_external,
+                        suffix: doc.is_external ?
                             '<img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/>' :
-                            '(' + Connector.utility.FileExtension.fileDisplayType(pub.filename) +')'
+                            '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',
+                        sortIndex: doc.sort_index
                     }
+                }).sort(function(docA, docB){
+                    return (docA.sortIndex || 0) - (docB.sortIndex || 0);
                 });
 
                 study.products = products;
@@ -222,17 +211,14 @@ Ext.define('Connector.app.store.Study', {
                 study.assays = assays;
                 study.assays_added = assaysAdded;
                 study.assays_added_count = assaysAdded.length;
-                study.protocol_docs = documents.filter(function (doc) {
-                    return doc.docType === 'protocol_document';
+                study.publications = documentsAndPublications.filter(function(pub) {
+                    return pub.docType === 'publication'
                 });
-                study.study_plans = documents.filter(function (doc) {
-                    return doc.docType === 'study_plan';
+                study.protocol_docs_and_study_plans = documentsAndPublications.filter(function (doc) {
+                    return doc.docType === 'protocol_document' || doc.docType === 'study_plan';
                 });
-                study.data_listings = documents.filter(function (doc) {
-                    return doc.docType === 'data_listing';
-                });
-                study.reports = documents.filter(function (doc) {
-                    return doc.docType === 'report';
+                study.data_listings_and_reports = documentsAndPublications.filter(function (doc) {
+                    return doc.docType === 'data_listing' || doc.docType === 'report';
                 });
                 studies.push(study);
             }, this);
