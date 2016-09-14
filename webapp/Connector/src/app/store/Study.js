@@ -21,6 +21,7 @@ Ext.define('Connector.app.store.Study', {
         this.productData = undefined;
         this.assayData = undefined;
         this.documentData = undefined;
+        this.publicationData = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -45,6 +46,12 @@ Ext.define('Connector.app.store.Study', {
             queryName: 'ds_documentsforstudies',
             success: this.onLoadDocuments,
             scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'ds_publicationsforstudies',
+            success: this.onLoadPublications,
+            scope: this
         })
     },
 
@@ -68,8 +75,14 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadPublications : function(publicationData) {
+        this.publicationData = publicationData.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData) && Ext.isDefined(this.documentData)) {
+        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
+                && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData)) {
             var studies = [], products, productNames;
 
             // join products to study
@@ -148,13 +161,6 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
 
-                for (var a=0; a < this.documentData.length; a++) {
-                    if ((study.study_name === this.documentData[a].prot) && (this.documentData[a].document_type === 'grant_document')) {
-                        study.cavd_affiliation = this.documentData[a].label;
-                        study.cavd_affiliation_filename = this.documentData[a].filename;
-                        study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
-                    }
-                }
                 assaysAdded.sort(function (a1, a2) {
                     return a1.assay_short_name.toLowerCase().localeCompare(a2.assay_short_name.toLowerCase())
                 });
@@ -164,11 +170,70 @@ Ext.define('Connector.app.store.Study', {
                     return val1.toLowerCase().localeCompare(val2.toLowerCase())
                 });
 
+                var documents = [];
+                for (var d=0; d < this.documentData.length; d++) {
+                    if (study.study_name === this.documentData[d].prot)
+                    {
+                        if (this.documentData[d].document_type === 'grant_document') {
+                            study.cavd_affiliation = this.documentData[d].label;
+                            study.cavd_affiliation_filename = this.documentData[d].filename;
+                            study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
+                        }
+                        else if ((this.documentData[d].document_type === 'protocol_document') ||
+                                (this.documentData[d].document_type === 'study_plan') ||
+                                (this.documentData[d].document_type === 'data_listing') ||
+                                (this.documentData[d].document_type === 'report')) {
+
+                            documents.push({
+                                id: this.documentData[d].document_id,
+                                label: this.documentData[d].label,
+                                fileName: this.documentData[d].is_external ? this.documentData[d].filename :
+                                    LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + this.documentData[d].filename,
+                                isExternal: this.documentData[d].is_external,
+                                docType: this.documentData[d].document_type,
+                                isLinkValid: this.documentData[d].is_external, //initally false for internal documents
+                                suffix: this.documentData[d].is_external ?
+                                    '<img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/>' :
+                                    '(' + Connector.utility.FileExtension.fileDisplayType(this.documentData[d].filename) +')'
+                            })
+                        }
+                    }
+                }
+
+                study.publications = this.publicationData.filter(function(pub) {
+                    return pub.prot === study.study_name;
+                }).map(function(pub) {
+                    return {
+                        id: pub.publication_id,
+                        label: pub.label,
+                        fileName: pub.is_external ? pub.filename :
+                            LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + pub.filename,
+                        isExternal: pub.is_external,
+                        docType: pub.publication_type,
+                        isLinkValid: pub.is_external,
+                        suffix: pub.is_external ?
+                            '<img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/>' :
+                            '(' + Connector.utility.FileExtension.fileDisplayType(pub.filename) +')'
+                    }
+                });
+
                 study.products = products;
                 study.product_names = productNames;
                 study.assays = assays;
                 study.assays_added = assaysAdded;
                 study.assays_added_count = assaysAdded.length;
+                study.protocol_docs = documents.filter(function (doc) {
+                    return doc.docType === 'protocol_document';
+                });
+                study.study_plans = documents.filter(function (doc) {
+                    return doc.docType === 'study_plan';
+                });
+                study.data_listings = documents.filter(function (doc) {
+                    return doc.docType === 'data_listing';
+                });
+                study.reports = documents.filter(function (doc) {
+                    return doc.docType === 'report';
+                });
                 studies.push(study);
             }, this);
 
@@ -179,6 +244,8 @@ Ext.define('Connector.app.store.Study', {
             this.studyData = undefined;
             this.assayData = undefined;
             this.productData = undefined;
+            this.documentData = undefined;
+            this.publicationData = undefined;
 
             this.loadRawData(studies);
         }

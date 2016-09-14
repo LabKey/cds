@@ -101,6 +101,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.plugin.HeaderLock": "../../webapp/Connector/src/view/Page.js",
   "Connector.plugin.LoadingMask": "../../webapp/Connector/src/plugin/LoadingMask.js",
   "Connector.plugin.Messaging": "../../webapp/Connector/src/plugin/Messaging.js",
+  "Connector.plugin.DocumentValidation": "../../webapp/Connector/src/plugin/DocumentValidation.js",
   "Connector.store.AssayDistinctValue": "../../webapp/Connector/src/store/AssayDistinctValue.js",
   "Connector.store.Explorer": "../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../webapp/Connector/src/store/FilterStatus.js",
@@ -164,7 +165,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.StudyAssays": "../../webapp/Connector/src/app/view/module/StudyAssays.js",
   "Connector.view.module.StudyDatasets": "../../webapp/Connector/src/app/view/module/StudyDatasets.js",
   "Connector.view.module.StudyHeader": "../../webapp/Connector/src/app/view/module/StudyHeader.js",
+  "Connector.view.module.StudyPublications": "../../webapp/Connector/src/app/view/module/StudyPublications.js",
   "Connector.view.module.StudyProducts": "../../webapp/Connector/src/app/view/module/StudyProducts.js",
+  "Connector.view.module.StudyReports": "../../webapp/Connector/src/app/view/module/StudyReports.js",
   "Connector.view.module.Text": "../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.VariableList": "../../webapp/Connector/src/app/view/module/VariableList.js",
   "Connector.window.AbstractFilter": "../../webapp/Connector/src/window/AbstractFilter.js",
@@ -298,6 +301,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.plugin.HeaderLock": [],
   "Connector.plugin.LoadingMask": [],
   "Connector.plugin.Messaging": [],
+  "Connector.plugin.DocumentValidation": [],
   "Connector.store.AssayDistinctValue": [],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
@@ -365,7 +369,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.StudyAssays": [],
   "Connector.view.module.StudyDatasets": [],
   "Connector.view.module.StudyHeader": [],
+  "Connector.view.module.StudyPublications": [],
   "Connector.view.module.StudyProducts": [],
+  "Connector.view.module.StudyReports": [],
   "Connector.view.module.Text": [],
   "Connector.view.module.VariableList": [],
   "Connector.window.AbstractFilter": [],
@@ -1356,6 +1362,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.plugin.Messaging": [
     "plugin.messaging"
   ],
+  "Connector.plugin.DocumentValidation": [
+    "plugin.documentvalidation"
+  ],
   "Connector.store.AssayDistinctValue": [
     "store.assaydistinctvalue"
   ],
@@ -1510,6 +1519,12 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.StudyHeader": [
     "widget.app.module.studyheader"
+  ],
+   "Connector.view.module.StudyPublications": [
+    "widget.app.module.studypublications"
+  ],
+  "Connector.view.module.StudyReports": [
+    "widget.app.module.studyreports"
   ],
   "Connector.view.module.StudyProducts": [
     "widget.app.module.studyproducts"

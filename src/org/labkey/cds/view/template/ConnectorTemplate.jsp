@@ -217,6 +217,7 @@
 
     <!-- Application plugins -->
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/Messaging.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/plugin/DocumentValidation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/LoadingMask.js"></script>
 
     <!-- Constant singletons -->
@@ -291,6 +292,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/FileExtension.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Dataset.js"></script>
@@ -334,7 +336,9 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDatasets.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyPublications.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyReports.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/VariableList.js"></script>
 

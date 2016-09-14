@@ -1,5 +1,3 @@
-/* cds-16.21-16.22.sql */
-
 CREATE TABLE cds.import_Publication (
   publication_id VARCHAR(250) NOT NULL,
   label VARCHAR(250),
