@@ -218,6 +218,7 @@
         <script path="Connector/src/app/view/Report.js"/>
         <script path="Connector/src/app/view/ReportModuleContainer.js"/>
 
+        <script path="Connector/src/app/view/module/DataAvailabilityModule.js"/>
         <script path="Connector/src/app/view/module/AssayAnalyteList.js"/>
         <script path="Connector/src/app/view/module/AssayAntigenList.js"/>
         <script path="Connector/src/app/view/module/AssayStudies.js"/>

@@ -320,7 +320,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ReportModuleContainer.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/DataAvailabilityModule.js"></script>
-
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAntigenList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayStudies.js"></script>

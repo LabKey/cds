@@ -690,7 +690,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     buildBinTooltip: function(datas) {
-        var xVals = new Set(), yVals = new Set(), subjects = new Set(), studies = new Set();
+        var xValsSet = {}, yValsSet = {}, subjectsSet = {}, studiesSet = {};
         var content = '', xName, yName, me = this,colon = ': ', linebreak = '<br/>';
         var xDimensionVals = {}, yDimensionVals = {};
         var xDimensions = this.getAxisDimensionsArray(this.activeMeasures.x), yDimensions = this.getAxisDimensionsArray(this.activeMeasures.y);
@@ -702,13 +702,13 @@ Ext.define('Connector.view.Chart', {
             var d = data.data;
 
             if (d.x !== undefined && d.x !== null && d.x !== '') {
-                xVals.add(d.x);
+                xValsSet[d.x] = true;
             }
             if (d.y !== undefined && d.y !== null && d.y !== '') {
-                yVals.add(d.y);
+                yValsSet[d.y] = true;
             }
             if (d.subjectId !== undefined && d.subjectId !== null) {
-                subjects.add(d.subjectId);
+                subjectsSet[d.subjectId] = true;
             }
 
             if (d.xname && !xName) {
@@ -719,23 +719,25 @@ Ext.define('Connector.view.Chart', {
             }
 
             var record = me.allDataRowsMap[d.rowKey];
-            studies.add(record[QueryUtils.STUDY_ALIAS]);
+            studiesSet[record[QueryUtils.STUDY_ALIAS]] = true;
 
             this.setBinDimensionValues(xDimensionVals, xDimensions, record, xOptions, record.x ? record.x.rawRecord : null);
             this.setBinDimensionValues(yDimensionVals, yDimensions, record, yOptions, record.y ? record.y.rawRecord : null);
 
         }, this);
 
+        var xVals = Object.keys(xValsSet), yVals = Object.keys(yValsSet), subjects = Object.keys(subjectsSet), studies = Object.keys(studiesSet);
+
         this.updateBinHierarchicalDimensionValues(xDimensionVals, xHierarchicalDimensionInfo);
         this.updateBinHierarchicalDimensionValues(yDimensionVals, yHierarchicalDimensionInfo);
 
         var studyName;
-        if (studies.size == 1) {
-            studyName = Array.from(studies)[0];
+        if (studies.length == 1) {
+            studyName = studies[0];
         }
 
         content += '<span class="group-title">Data</span>';
-        content += colon + datas.length + ' points from ' + subjects.size + ' subjects' + linebreak;
+        content += colon + datas.length + ' points from ' + subjects.length + ' subjects' + linebreak;
         if (studyName) {
             content += '<span class="group-title">Study</span>';
             content += colon + Ext.htmlEncode(studyName) + linebreak;
@@ -774,18 +776,21 @@ Ext.define('Connector.view.Chart', {
     updateBinHierarchicalDimensionValues: function(dimensionVals, hierarchicalDimensionInfo) {
         if (dimensionVals && hierarchicalDimensionInfo) {
             for (var dim in dimensionVals) {
-                if (dimensionVals.hasOwnProperty(dim) && dimensionVals[dim].size != 0 && hierarchicalDimensionInfo[dim]) {
-                    var levelDimensions = hierarchicalDimensionInfo[dim];
-
-                    Ext.each(Array.from(dimensionVals[dim]), function(fullStr){
-                        var levels = fullStr.split(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
-                        for (var i = 0; i < levels.length; i++) {
-                            if (!dimensionVals[levelDimensions[i]]) {
-                                dimensionVals[levelDimensions[i]] = new Set();
+                if (dimensionVals[dim] && hierarchicalDimensionInfo[dim]) {
+                    var currentDimVals = Object.keys(dimensionVals[dim]);
+                    if (currentDimVals.length != 0) {
+                        var levelDimensions = hierarchicalDimensionInfo[dim];
+                        Ext.each(currentDimVals, function(fullStr){
+                            var levels = fullStr.split(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
+                            for (var i = 0; i < levels.length; i++) {
+                                if (!dimensionVals[levelDimensions[i]]) {
+                                    dimensionVals[levelDimensions[i]] = {};
+                                }
+                                dimensionVals[levelDimensions[i]][levels[i]] = true;
                             }
-                            dimensionVals[levelDimensions[i]].add(levels[i]);
-                        }
-                    });
+                        });
+                    }
+
                 }
             }
         }
@@ -796,23 +801,23 @@ Ext.define('Connector.view.Chart', {
             var aggregatorValues = recordAggregator && recordAggregator[dim] ? Ext.clone(recordAggregator[dim].getValues()) : null;
 
             if (!dimensionVals[dim]) {
-                dimensionVals[dim] = new Set();
+                dimensionVals[dim] = {};
             }
 
             if (this.hasDimensionalAggregators) {
                 if (aggregatorValues && Ext.isArray(aggregatorValues) && aggregatorValues.length > 0) {
                     Ext.each(aggregatorValues, function(val){
-                        dimensionVals[dim].add(val);
+                        dimensionVals[dim][val] = true;
                     });
                 }
             }
             else {
                 if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
-                    dimensionVals[dim].add(record[dim]);
+                    dimensionVals[dim][record[dim]] = true;
                 }
                 else if (Ext.isArray(axisOptions[dim])){
                     Ext.each(axisOptions[dim], function(val){
-                        dimensionVals[dim].add(val);
+                        dimensionVals[dim][val] = true;
                     });
                 }
             }
@@ -823,16 +828,21 @@ Ext.define('Connector.view.Chart', {
         var content = '', colon = ': ', linebreak = '<br/>';
         if (dimensionVals) {
             Ext.each(dimensions, function(dim) {
-                if (dimensionVals.hasOwnProperty(dim) && dimensionVals[dim].size != 0) {
-                    if (Ext.isArray(hierarchicalDimensionInfo[dim]) && hierarchicalDimensionInfo[dim].length > 0) {
-                        Ext.each(hierarchicalDimensionInfo[dim], function(level) {
-                            if (dimensionVals.hasOwnProperty(level) && dimensionVals[level].size != 0) {
-                                content += this.buildSingleDimensionTooltip(level, Array.from(dimensionVals[level]));
-                            }
-                        }, this);
-                    }
-                    else {
-                        content += this.buildSingleDimensionTooltip(dim, Array.from(dimensionVals[dim]));
+                if (dimensionVals[dim]) {
+                    var dimVals = Object.keys(dimensionVals[dim]);
+                    if (dimVals.length > 0) {
+                        if (Ext.isArray(hierarchicalDimensionInfo[dim]) && hierarchicalDimensionInfo[dim].length > 0) {
+                            Ext.each(hierarchicalDimensionInfo[dim], function(level) {
+                                if (dimensionVals[level]) {
+                                    var levelVals = Object.keys(dimensionVals[level]);
+                                    if (levelVals && levelVals.length > 0)
+                                        content += this.buildSingleDimensionTooltip(level, levelVals);
+                                }
+                            }, this);
+                        }
+                        else {
+                            content += this.buildSingleDimensionTooltip(dim, dimVals);
+                        }
                     }
                 }
             }, this);
@@ -870,11 +880,11 @@ Ext.define('Connector.view.Chart', {
         return valuesStr;
     },
 
-    getBinRangeTooltip: function(valSet) {
-        if (valSet.size == 0)
+    getBinRangeTooltip: function(rawvalues) {
+        if (rawvalues.length == 0)
             return '-';
-        var rawVals = Array.from(valSet), vals = [];
-        Ext.each(rawVals, function(val) {
+        var vals = [];
+        Ext.each(rawvalues, function(val) {
             vals.push(this.formatSingleTooltipValue(val));
         }, this);
         if (vals.length == 1)
@@ -967,14 +977,17 @@ Ext.define('Connector.view.Chart', {
                                 var levels = fullStr.split(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
                                 for (var i = 0; i < levels.length; i++) {
                                     if (!dimensionVals[levelDimensions[i]]) {
-                                        dimensionVals[levelDimensions[i]] = new Set();
+                                        dimensionVals[levelDimensions[i]] = {};
                                     }
-                                    dimensionVals[levelDimensions[i]].add(levels[i]);
+                                    dimensionVals[levelDimensions[i]][levels[i]] = true;
                                 }
                             });
+
                             for (var level in dimensionVals) {
-                                if (dimensionVals.hasOwnProperty(level) && dimensionVals[level].size != 0) {
-                                    content += this.buildSingleDimensionTooltip(level, Array.from(dimensionVals[level]));
+                                if (dimensionVals[level]) {
+                                    var levelValues = Object.keys(dimensionVals[level]);
+                                    if (levelValues && levelValues.length > 0)
+                                        content += this.buildSingleDimensionTooltip(level, levelValues);
                                 }
                             }
                         }

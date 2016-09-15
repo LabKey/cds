@@ -48,29 +48,29 @@ Ext.define('Connector.app.store.StudyProducts', {
         Ext.each(all, function (row) {
             var studyArm = row.prot + row.study_arm;
             if (!armProductsMap[studyArm]) {
-                armProductsMap[studyArm] = new Set();
+                armProductsMap[studyArm] = {};
             }
-            armProductsMap[studyArm].add(row.product_id);
+            armProductsMap[studyArm][row.product_id] = true;
         });
         var allOtherProducts = {};
         Ext.iterate(armProductsMap, function(arm, products) {
             Ext.each(products, function(product) {
                 if (!allOtherProducts[product]) {
-                    allOtherProducts[product] = new Set();
+                    allOtherProducts[product] = {};
                 }
             });
         });
 
-        Ext.iterate(armProductsMap, function(arm, productsSet) {
-            var products = Array.from(productsSet);
+        Ext.iterate(armProductsMap, function(arm, productsObj) {
+            var products = Object.keys(productsObj);
             for (var i = 0; i < products.length; i++) {
                 var currentProduct = products[i];
                 if (!allOtherProducts[currentProduct]) {
-                    allOtherProducts[currentProduct] = new Set();
+                    allOtherProducts[currentProduct] = {};
                 }
                 Ext.each(products, function(prod) {
                     if (prod !== currentProduct) {
-                        allOtherProducts[currentProduct].add(prod);
+                        allOtherProducts[currentProduct][prod] = true;
                     }
                 });
             }
@@ -135,7 +135,7 @@ Ext.define('Connector.app.store.StudyProducts', {
                 product.studies_with_data_count = studiesWithData.length;
                 otherProducts = [];
                 if (this.productProduct && this.productProduct[product.product_id]) {
-                    var otherProductIds = Array.from(this.productProduct[product.product_id]);
+                    var otherProductIds = Object.keys(this.productProduct[product.product_id]);
                     Ext.each(otherProductIds, function(id) {
                         otherProducts.push({
                             product_id: id,

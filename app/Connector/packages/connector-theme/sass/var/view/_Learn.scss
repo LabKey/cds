@@ -411,7 +411,7 @@ img.detail-has-data-small {
     }
 
     .detail-description {
-      height: 123px;
+      height: 121px;
       overflow: hidden;
 
       h2 {
@@ -453,6 +453,10 @@ img.detail-has-data-small {
       td:nth-child(1) {
         padding-right: 1em;
       }
+    }
+
+    .study-summary-product {
+      height:121px;
     }
 
   }
@@ -560,10 +564,13 @@ div.list-container {
 
   input {
     width: 400px;
-    padding: 16px 12px;
+    height: 34px;
     font-size: 12px;
     border-radius: 2px;
     border-color: $gray-7!important;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
 
   }
   input.x-form-focus {
