@@ -743,7 +743,7 @@ Ext.define('Connector.view.Chart', {
             content += colon + Ext.htmlEncode(studyName) + linebreak;
         }
         if (xName && this.activeMeasures.x) {
-            content += '<span class="group-title">' +Ext.htmlEncode(this.activeMeasures.x.queryName + ' - ' + xName) + '</span>';
+            content += '<span class="group-title">' +Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.x) + ' - ' + xName) + '</span>';
             content += colon + Ext.htmlEncode(this.getBinRangeTooltip(xVals));
             content += this.showAsMedian ? ' (median)' : '';
             content += '<div class="axis-details">';
@@ -751,7 +751,7 @@ Ext.define('Connector.view.Chart', {
             content += '</div>'
         }
         if (yName && this.activeMeasures.y) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.y.queryName + ' - ' + yName) + '</span>';
+            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.y) + ' - ' + yName) + '</span>';
             content += colon + Ext.htmlEncode(this.getBinRangeTooltip(yVals));
             content += this.showAsMedian ? ' (median)' : '';
             content += '<div class="axis-details">';
@@ -760,6 +760,17 @@ Ext.define('Connector.view.Chart', {
         }
 
         return content;
+    },
+
+    getSourceDisplayValue: function(measure) {
+        var definedMeasureSourceMap = Connector.getService('Query').getDefinedMeasuresSourceTitleMap();
+        if (Ext.isDefined(definedMeasureSourceMap[measure.alias])) {
+            return definedMeasureSourceMap[measure.alias];
+        }
+        else if (measure.variableType == 'TIME') {
+            return measure.sourceTitle;
+        }
+        return measure.queryName;
     },
 
     updateBinHierarchicalDimensionValues: function(dimensionVals, hierarchicalDimensionInfo) {
@@ -911,20 +922,20 @@ Ext.define('Connector.view.Chart', {
             // skip for study, treatment, and time
             if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
                 var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
-                content += '<span class="group-title">' + Ext.htmlEncode(xAxis.queryName + ' - ' + data.xname) + '</span>' + colon + this.formatSingleTooltipValue(val);
+                content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(xAxis) + ' - ' + data.xname) + '</span>' + colon + this.formatSingleTooltipValue(val);
                 content += this.showAsMedian ? ' (median)' : '';
                 content += this.buildPointAxisDetailTooltip(xAxis, record, record.x && record.x.rawRecord ? record.x.rawRecord : null, this.getHierarchicalDimensionInfo(xAxis));
             }
         }
 
         if (yAxis) {
-            content += '<span class="group-title">' + Ext.htmlEncode(yAxis.queryName + ' - ' + data.yname) + '</span>' + colon + this.formatSingleTooltipValue(data.y);
+            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(yAxis) + ' - ' + data.yname) + '</span>' + colon + this.formatSingleTooltipValue(data.y);
             content += this.showAsMedian ? ' (median)' : '';
             content += this.buildPointAxisDetailTooltip(yAxis, record, record.y && record.y.rawRecord ? record.y.rawRecord : null, this.getHierarchicalDimensionInfo(yAxis));
         }
 
         if (this.activeMeasures.color && data.colorname) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.color.queryName + ' - ' + data.colorname) + '</span>' + colon + this.formatSingleTooltipValue(data.color);
+            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.color) + ' - ' + data.colorname) + '</span>' + colon + this.formatSingleTooltipValue(data.color);
         }
 
         return content;
@@ -1869,7 +1880,8 @@ Ext.define('Connector.view.Chart', {
 
             if (this.activeMeasures.x)
             {
-                this.clickTask.delay(150, null, null, [(node ? node : e.target), this, this.activeMeasures.x.alias, target, multi]);
+                var wrappedX = this.getWrappedMeasures()[0];
+                this.clickTask.delay(150, null, null, [(node ? node : e.target), this, QueryUtils.ensureAlignmentAlias(wrappedX), target, multi]);
             }
             else
             {
@@ -2800,9 +2812,13 @@ Ext.define('Connector.view.Chart', {
                         {
                             measures = measures.concat(xMeasures);
 
-                            if (filter.isPlot() && filter.get('gridFilter')[0])
+                            /*
+                             * Issue 27773: unexplained gutter plot
+                             * An non-aggregated filter on x or y would exclude 'null' on x or y, and as a result should hide y gutter or x gutter, respectively.
+                             */
+                            if (filter.isPlot() && filter.get('gridFilter')[0] && filter.get('gridFilter')[0].getColumnName() === activeMeasures.x.alias)
                             {
-                                hasPlotSelectionFilter.x = true;
+                                    hasPlotSelectionFilter.x = true;
                             }
                         }
                     }
@@ -2814,9 +2830,9 @@ Ext.define('Connector.view.Chart', {
                         {
                             measures = measures.concat(yMeasures);
 
-                            if (filter.isPlot() && filter.get('gridFilter')[2])
+                            if (filter.isPlot() && filter.get('gridFilter')[2] && filter.get('gridFilter')[2].getColumnName() === activeMeasures.y.alias)
                             {
-                                hasPlotSelectionFilter.y = true;
+                                    hasPlotSelectionFilter.y = true;
                             }
                         }
                     }
