@@ -15,15 +15,8 @@ Ext.define('Connector.utility.FileExtension', {
                     case 'xar':
                     case 'zip':
                         return 'Archive';
-                    case 'dll':
-                    case 'exe':
-                    case 'html':
-                    case 'iqy':
-                    case 'prg':
-                    case 'wiki':
-                    case 'xml':
-                        return 'fa fa-file-code-o';
                     case 'tsv':
+                        return 'TSV';
                     case 'xls':
                     case 'xlsb':
                     case 'xlsm':
@@ -50,8 +43,9 @@ Ext.define('Connector.utility.FileExtension', {
                     case 'docx':
                     case 'dotm':
                     case 'dotx':
-                    case 'rtf':
                         return 'Word Document';
+                    case 'rtf':
+                        return 'Rich Text Document'
                 }
             }
         }
