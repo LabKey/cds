@@ -328,11 +328,6 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Data Availability'
                         }
                     },{
-                        type: 'studydatasets',
-                        staticData: {
-                            title: "Lab & clinical data"
-                        }
-                    },{
                         type: 'studyreports',
                         staticData: {
                             title: "Reports"

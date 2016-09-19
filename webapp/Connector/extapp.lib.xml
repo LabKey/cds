@@ -194,8 +194,6 @@
         <script path="Connector/src/utility/FileExtension.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
-        <script path="Connector/src/app/model/Dataset.js"/>
-        <script path="Connector/src/app/model/DatasetData.js"/>
         <script path="Connector/src/app/model/Labs.js"/>
         <script path="Connector/src/app/model/Study.js"/>
         <script path="Connector/src/app/model/StudyProducts.js"/>
@@ -203,8 +201,6 @@
         <script path="Connector/src/app/model/Report.js"/>
 
         <script path="Connector/src/app/store/Assay.js"/>
-        <script path="Connector/src/app/store/Dataset.js"/>
-        <script path="Connector/src/app/store/DatasetData.js"/>
         <script path="Connector/src/app/store/Labs.js"/>
         <script path="Connector/src/app/store/Study.js"/>
         <script path="Connector/src/app/store/StudyProducts.js"/>
@@ -231,7 +227,6 @@
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/ProductStudies.js"/>
         <script path="Connector/src/app/view/module/StudyAssays.js"/>
-        <script path="Connector/src/app/view/module/StudyDatasets.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
         <script path="Connector/src/app/view/module/StudyPublications.js"/>
         <script path="Connector/src/app/view/module/StudyProducts.js"/>
