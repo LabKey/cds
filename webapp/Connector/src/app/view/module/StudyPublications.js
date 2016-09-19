@@ -17,10 +17,10 @@ Ext.define('Connector.view.module.StudyPublications', {
                 '<table class="learn-study-info">',
                     '<tpl for="publications">',
                         '<tr>',
-                            '<tpl if="isLinkValid">',
-                                '<td class="item-value"><a href="{fileName}">{label:htmlEncode} {suffix}</a></td>',
+                            '<tpl if="issue">',
+                                '<td class="item-value">{authors:htmlEncode}.{title:htmlEncode}.{journal:htmlEncode}.{date:htmlEncode};{volumne}({issue:htmlEncode}):{location:htmlEncode}.<a href="{link}">{pmid:htmlEncode} <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a></td>',
                             '<tpl else>',
-                                '<td class="item-value">{label:htmlEncode}</td>',
+                                '<td class="item-value">{authors:htmlEncode}.{title:htmlEncode}.{journal:htmlEncode}.{date:htmlEncode};{volumne:htmlEncode}:{location:htmlEncode}.<a href="{link}">{pmid:htmlEncode} <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a></td>',
                             '</tpl>',
                         '</tr>',
                     '</tpl>',
@@ -32,12 +32,16 @@ Ext.define('Connector.view.module.StudyPublications', {
         this.callParent();
 
         var data = this.initialConfig.data.model.data;
+        data['title'] = this.initialConfig.data.title;
 
-        this.on("afterrender", function() {
-            this.validateDocLinks(data.publications, data, function(){
-                data['title'] = this.initialConfig.data.title;
-                this.update(data);
-            });
-        }, this);
+        this.update(data);
+    },
+
+    hasContent : function() {
+        var pubs = this.initialConfig.data.model.data.publications;
+        if (pubs) {
+            return pubs.length > 0;
+        }
+        return false;
     }
 });

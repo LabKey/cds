@@ -33,11 +33,21 @@ Ext.define('Connector.view.module.StudyReports', {
 
         var data = this.initialConfig.data.model.data;
 
-        this.on("afterrender", function() {
-            this.validateDocLinks(data.data_listings_and_reports, data, function(){
-                data['title'] = this.initialConfig.data.title;
-                this.update(data);
-            });
-        }, this);
+        if (data.data_listings_and_reports.length > 0) {
+            this.on("afterrender", function() {
+                this.validateDocLinks(data.data_listings_and_reports, data, function(){
+                    data['title'] = this.initialConfig.data.title;
+                    this.update(data);
+                });
+            }, this);
+        }
+    },
+
+    hasContent : function() {
+        var reports = this.initialConfig.data.model.data.data_listings_and_reports;
+        if (reports) {
+            return reports.length > 0;
+        }
+        return false;
     }
 });

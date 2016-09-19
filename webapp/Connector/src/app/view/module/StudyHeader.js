@@ -97,17 +97,20 @@ Ext.define('Connector.view.module.StudyHeader', {
                     if (200 === response.status) {
                         data['cavd_affiliation_file_exists'] = true;
                     }
+                    data['title'] = this.initialConfig.data.title;
                     this.update(data);
                 }, this),
                 scope: this
             });
         }
 
-        this.on("afterrender", function() {
-            this.validateDocLinks(data.protocol_docs_and_study_plans, data, function(){
-                data['title'] = this.initialConfig.data.title;
-                this.update(data);
-            });
-        }, this);
+        if (data.protocol_docs_and_study_plans.length > 0) {
+            this.on("afterrender", function() {
+                this.validateDocLinks(data.protocol_docs_and_study_plans, data, function(){
+                    data['title'] = this.initialConfig.data.title;
+                    this.update(data);
+                });
+            }, this);
+        }
     }
 });

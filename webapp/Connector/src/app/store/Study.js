@@ -181,26 +181,39 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
 
+                var publications = this.publicationData.filter(function(pub){
+                    return pub.prot === study.study_name;
+                }).map(function(pub) {
+                    return {
+                        id: pub.id,
+                        title: pub.title,
+                        authors: pub.author_all,
+                        journal: pub.journal_short,
+                        date: pub.date,
+                        volume: pub.volume,
+                        issue: pub.issue,
+                        location: pub.location,
+                        pmid: pub.pmid,
+                        link: pub.link,
+                        sortIndex: pub.publication_order
+                    };
+                }).sort(function(pubA, pubB){
+                    return (pubA.sortIndex || 0) - (pubB.sortIndex || 0);
+                });
+
                 var documentsAndPublications = this.publicationData.concat(this.documentData.filter(function(doc) {
-                    return doc.document_type === 'protocol_document' ||
-                        doc.document_type === 'study_plan' ||
-                        doc.document_type === 'data_listing' ||
-                        doc.document_type === 'report';
+                    return doc.document_type === 'Report or summary' || doc.document_type === 'Study plan or protocol'
                 })).filter(function(doc) {
                     return study.study_name === doc.prot;
                 }).map(function(doc) {
                     return {
-                        id: doc.publication_id || doc.document_id,
+                        id: doc.document_id,
                         label: doc.label,
-                        fileName: doc.is_external ? doc.filename :
-                            LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + doc.filename,
-                        isExternal: doc.is_external,
-                        docType: doc.publication_type || doc.document_type,
-                        isLinkValid: doc.is_external,
-                        suffix: doc.is_external ?
-                            '<img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/>' :
-                            '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',
-                        sortIndex: doc.sort_index
+                        fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + doc.filename,
+                        docType: doc.document_type,
+                        isLinkValid: false,
+                        suffix: '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',
+                        sortIndex: doc.document_order
                     }
                 }).sort(function(docA, docB){
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
@@ -211,14 +224,12 @@ Ext.define('Connector.app.store.Study', {
                 study.assays = assays;
                 study.assays_added = assaysAdded;
                 study.assays_added_count = assaysAdded.length;
-                study.publications = documentsAndPublications.filter(function(pub) {
-                    return pub.docType === 'publication'
-                });
+                study.publications = publications;
                 study.protocol_docs_and_study_plans = documentsAndPublications.filter(function (doc) {
-                    return doc.docType === 'protocol_document' || doc.docType === 'study_plan';
+                    return doc.docType === 'Study plan or protocol';
                 });
                 study.data_listings_and_reports = documentsAndPublications.filter(function (doc) {
-                    return doc.docType === 'data_listing' || doc.docType === 'report';
+                    return doc.docType === 'Report or summary';
                 });
                 studies.push(study);
             }, this);
