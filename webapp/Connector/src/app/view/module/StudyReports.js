@@ -13,7 +13,7 @@ Ext.define('Connector.view.module.StudyReports', {
 
     tpl : new Ext.XTemplate(
             '<tpl if="data_listings_and_reports.length &gt; 0">',
-                Connector.constant.Templates.module.title,
+                '<h3>{title_study_reports}</h3>',
                 '<table class="learn-study-info">',
                     '<tpl for="data_listings_and_reports">',
                         '<tr>',
@@ -32,13 +32,17 @@ Ext.define('Connector.view.module.StudyReports', {
         this.callParent();
 
         var data = this.initialConfig.data.model.data;
+        data['title_study_reports'] = this.initialConfig.data.title;
 
         if (data.data_listings_and_reports.length > 0) {
+            var docIsValidAction = function(doc) {
+                doc.isLinkValid = true;
+                this.update(data);
+            };
             this.on("afterrender", function() {
-                this.validateDocLinks(data.data_listings_and_reports, data, function(){
-                    data['title'] = this.initialConfig.data.title;
+                this.validateDocLinks(data.data_listings_and_reports, docIsValidAction, function(){
                     this.update(data);
-                });
+                }, this);
             }, this);
         }
     },

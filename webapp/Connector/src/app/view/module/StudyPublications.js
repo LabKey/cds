@@ -13,14 +13,14 @@ Ext.define('Connector.view.module.StudyPublications', {
 
     tpl : new Ext.XTemplate(
             '<tpl if="publications && publications.length &gt; 0">',
-                Connector.constant.Templates.module.title,
+                '<h3>{title_study_publications}</h3>',
                 '<table class="learn-study-info">',
                     '<tpl for="publications">',
                         '<tr>',
                             '<tpl if="issue">',
-                                '<td class="item-value">{authors:htmlEncode}.{title:htmlEncode}.{journal:htmlEncode}.{date:htmlEncode};{volumne}({issue:htmlEncode}):{location:htmlEncode}.<a href="{link}" target="_blank">{pmid:htmlEncode} <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a></td>',
+                                '<td class="item-value">{authors:htmlEncode}.{title:htmlEncode}.{journal:htmlEncode}.{date:htmlEncode};{volume}({issue:htmlEncode}):{location:htmlEncode}.<a href="{link}" target="_blank">{pmid:htmlEncode} <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a></td>',
                             '<tpl else>',
-                                '<td class="item-value">{authors:htmlEncode}.{title:htmlEncode}.{journal:htmlEncode}.{date:htmlEncode};{volumne:htmlEncode}:{location:htmlEncode}.<a href="{link}" target="_blank">{pmid:htmlEncode} <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a></td>',
+                                '<td class="item-value">{authors:htmlEncode}.{title:htmlEncode}.{journal:htmlEncode}.{date:htmlEncode};{volume:htmlEncode}:{location:htmlEncode}.<a href="{link}" target="_blank">{pmid:htmlEncode} <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a></td>',
                             '</tpl>',
                         '</tr>',
                     '</tpl>',
@@ -32,7 +32,7 @@ Ext.define('Connector.view.module.StudyPublications', {
         this.callParent();
 
         var data = this.initialConfig.data.model.data;
-        data['title'] = this.initialConfig.data.title;
+        data['title_study_publications'] = this.initialConfig.data.title;
 
         this.update(data);
     },

@@ -12,8 +12,8 @@ Ext.define('Connector.view.module.StudyHeader', {
     extend : 'Connector.view.module.BaseModule',
 
     tpl : new Ext.XTemplate(
-        '<tpl if="network || cavd_affiliation || type || stage || start_date || public_date || first_enr_date || followup_complete_date">',
-            Connector.constant.Templates.module.title,
+        '<tpl if="network || cavd_affiliation || type || stage || start_date || public_date || first_enr_date || followup_complete_date || protocol_docs_and_study_plans.length &gt; 0">',
+            '<h3>{title_studyheader}</h3>',
             '<table class="learn-study-info">',
                 '<tpl if="network">',
                     '<tr>',
@@ -89,28 +89,37 @@ Ext.define('Connector.view.module.StudyHeader', {
         this.callParent();
 
         var data = this.initialConfig.data.model.data;
+        data['title_studyheader'] = this.initialConfig.data.title;
+
         if (data['cavd_affiliation_file_exists'] !== true) {  // if it's true, we've already verified this link is good previously
-            LABKEY.Ajax.request({
-                method: 'HEAD',
-                url: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + data.cavd_affiliation_filename,
-                success: LABKEY.Utils.getCallbackWrapper(function (json, response) {
-                    if (200 === response.status) {
-                        data['cavd_affiliation_file_exists'] = true;
-                    }
-                    data['title'] = this.initialConfig.data.title;
+            var cavdLinkIsValid = function() {
+                data['cavd_affiliation_file_exists'] = true;
+                this.update(data);
+            };
+            this.on("afterrender", function() {
+                this.validateDocLinks([{
+                    fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + data.cavd_affiliation_filename,
+                    isLinkValid: false
+                }], cavdLinkIsValid, function() {
                     this.update(data);
-                }, this),
-                scope: this
-            });
+                })
+            }, this);
         }
 
         if (data.protocol_docs_and_study_plans.length > 0) {
+            var docIsValidAction = function(doc) {
+                doc.isLinkValid = true;
+                this.update(data);
+            };
             this.on("afterrender", function() {
-                this.validateDocLinks(data.protocol_docs_and_study_plans, data, function(){
-                    data['title'] = this.initialConfig.data.title;
+                this.validateDocLinks(data.protocol_docs_and_study_plans, docIsValidAction, function() {
                     this.update(data);
-                });
+                }, this);
             }, this);
+        }
+
+        if (data['cavd_affiliation_file_exists'] === true && data.protocol_docs_and_study_plans.length == 0) {
+            this.update(data);
         }
     }
 });
