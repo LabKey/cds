@@ -226,10 +226,10 @@ Ext.define('Connector.app.store.Study', {
                 study.assays_added_count = assaysAdded.length;
                 study.publications = publications;
                 study.protocol_docs_and_study_plans = documentsAndPublications.filter(function (doc) {
-                    return doc.docType === 'Study plan or protocol';
+                    return doc.label && doc.docType === 'Study plan or protocol';
                 });
                 study.data_listings_and_reports = documentsAndPublications.filter(function (doc) {
-                    return doc.docType === 'Report or summary';
+                    return doc.label && doc.docType === 'Report or summary';
                 });
                 studies.push(study);
             }, this);
