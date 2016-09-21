@@ -3,6 +3,7 @@
         <!-- ExtJS Dependencies -->
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-all.js"/>
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-patches.js"/>
+        <script path="Connector/src/ext-patches.js"/>
 
         <!-- Client API Dependencies -->
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Ajax.js"/>
@@ -188,7 +189,6 @@
         <script path="Connector/src/utility/Chart.js"/>
         <script path="Connector/src/utility/HelpRouter.js"/>
         <script path="Connector/src/utility/Query.js"/>
-        <script path="Connector/src/utility/Report.js"/>
         <script path="Connector/src/utility/HashURL.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
@@ -198,6 +198,7 @@
         <script path="Connector/src/app/model/Study.js"/>
         <script path="Connector/src/app/model/StudyProducts.js"/>
         <script path="Connector/src/app/model/VariableList.js"/>
+        <script path="Connector/src/app/model/Report.js"/>
 
         <script path="Connector/src/app/store/Assay.js"/>
         <script path="Connector/src/app/store/Dataset.js"/>
@@ -206,6 +207,7 @@
         <script path="Connector/src/app/store/Study.js"/>
         <script path="Connector/src/app/store/StudyProducts.js"/>
         <script path="Connector/src/app/store/VariableList.js"/>
+        <script path="Connector/src/app/store/Report.js"/>
 
         <script path="Connector/src/app/view/LearnSummary.js"/>
         <script path="Connector/src/app/view/Assay.js"/>
@@ -213,6 +215,8 @@
         <script path="Connector/src/app/view/ModuleContainer.js"/>
         <script path="Connector/src/app/view/Study.js"/>
         <script path="Connector/src/app/view/StudyProducts.js"/>
+        <script path="Connector/src/app/view/Report.js"/>
+        <script path="Connector/src/app/view/ReportModuleContainer.js"/>
 
         <script path="Connector/src/app/view/module/AssayAnalyteList.js"/>
         <script path="Connector/src/app/view/module/AssayAntigenList.js"/>

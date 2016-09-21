@@ -94,7 +94,7 @@ public class CDSInitializer
 
         // insert test data feed
         DataRegionTable rssTable = new DataRegionTable("query", _test);
-        rssTable.clickHeaderMenu("Insert", "Insert New");
+        rssTable.clickHeaderMenu("Insert", "Insert New Row");
         _test.setFormElement(Locator.name("quf_FeedName"), "Dataspace Test Feed");
         _test.setFormElement(Locator.name("quf_FeedURL"), CDSHelper.TEST_FEED);
         _test.clickButton("Submit");

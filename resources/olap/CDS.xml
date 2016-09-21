@@ -160,5 +160,9 @@
                 <Level name="Lab" visible="true" column="lab_code" type="String" uniqueMembers="false"/>
             </Hierarchy>
         </Dimension>
+
+        <!--A fake dimension so that Report can show up in Learn about-->
+        <Dimension name="Report" visible="true" highCardinality="false">
+        </Dimension>
     </Cube>
 </Schema>

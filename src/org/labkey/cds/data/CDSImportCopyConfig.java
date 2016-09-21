@@ -21,12 +21,12 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.data.UpdateableTableInfo;
-import org.labkey.api.etl.CopyConfig;
-import org.labkey.api.etl.DataIteratorBuilder;
-import org.labkey.api.etl.DataIteratorContext;
-import org.labkey.api.etl.Pump;
-import org.labkey.api.etl.ResultSetDataIterator;
-import org.labkey.api.etl.StandardETL;
+import org.labkey.api.dataiterator.CopyConfig;
+import org.labkey.api.dataiterator.DataIteratorBuilder;
+import org.labkey.api.dataiterator.DataIteratorContext;
+import org.labkey.api.dataiterator.Pump;
+import org.labkey.api.dataiterator.ResultSetDataIterator;
+import org.labkey.api.dataiterator.StandardDataIteratorBuilder;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
@@ -77,7 +77,7 @@ public class CDSImportCopyConfig extends CopyConfig
     static int copy(final DataIteratorContext context, DataIteratorBuilder from, TableInfo to, Container c, User user)
             throws IOException, BatchValidationException
     {
-        StandardETL etl = StandardETL.forInsert(to, from, c, user, context);
+        StandardDataIteratorBuilder etl = StandardDataIteratorBuilder.forInsert(to, from, c, user, context);
         DataIteratorBuilder insert = ((UpdateableTableInfo)to).persistRows(etl, context);
         Pump pump = new Pump(insert, context);
 //        pump.setProgress(new ListImportProgress()
