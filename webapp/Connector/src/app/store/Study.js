@@ -198,7 +198,8 @@ Ext.define('Connector.app.store.Study', {
                         sortIndex: pub.publication_order
                     };
                 }).sort(function(pubA, pubB){
-                    return (pubA.sortIndex || 0) - (pubB.sortIndex || 0);
+                    return ((pubA.sortIndex || 0) - (pubB.sortIndex || 0)) ||
+                            ((new Date(pubA.date)) > (new Date(pubB.date)) ? -1 : 1)
                 });
 
                 var documentsAndPublications = this.publicationData.concat(this.documentData.filter(function(doc) {
