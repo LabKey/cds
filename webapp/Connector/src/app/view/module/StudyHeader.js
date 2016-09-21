@@ -103,7 +103,7 @@ Ext.define('Connector.view.module.StudyHeader', {
                 }], cavdLinkIsValid, function() {
                     this.update(data);
                 })
-            }, this);
+            });
         }
 
         if (data.protocol_docs_and_study_plans.length > 0) {
@@ -114,7 +114,7 @@ Ext.define('Connector.view.module.StudyHeader', {
             this.on("afterrender", function() {
                 this.validateDocLinks(data.protocol_docs_and_study_plans, docIsValidAction, function() {
                     this.update(data);
-                }, this);
+                });
             }, this);
         }
 

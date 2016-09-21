@@ -42,7 +42,7 @@ Ext.define('Connector.view.module.StudyReports', {
             this.on("afterrender", function() {
                 this.validateDocLinks(data.data_listings_and_reports, docIsValidAction, function(){
                     this.update(data);
-                }, this);
+                });
             }, this);
         }
     },
