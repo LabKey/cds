@@ -41,6 +41,63 @@ import java.util.regex.Pattern;
 
 public class CDSHelper
 {
+    public static final String QED_1 = "QED 1";
+    public static final String QED_2 = "QED 2";
+    public static final String QED_3 = "QED 3";
+    public static final String QED_4 = "QED 4";
+    public static final String RED_1 = "RED 1";
+    public static final String RED_2 = "RED 2";
+    public static final String RED_3 = "RED 3";
+    public static final String RED_4 = "RED 4";
+    public static final String RED_5 = "RED 5";
+    public static final String RED_6 = "RED 6";
+    public static final String RED_7 = "RED 7";
+    public static final String RED_8 = "RED 8";
+    public static final String RED_9 = "RED 9";
+    public static final String YOYO_55 = "YOYO 55";
+    public static final String ZAP_100 = "ZAP 100";
+    public static final String ZAP_101 = "ZAP 101";
+    public static final String ZAP_102 = "ZAP 102";
+    public static final String ZAP_103 = "ZAP 103";
+    public static final String ZAP_104 = "ZAP 104";
+    public static final String ZAP_105 = "ZAP 105";
+    public static final String ZAP_106 = "ZAP 106";
+    public static final String ZAP_107 = "ZAP 107";
+    public static final String ZAP_108 = "ZAP 108";
+    public static final String ZAP_109 = "ZAP 109";
+    public static final String ZAP_110 = "ZAP 110";
+    public static final String ZAP_111 = "ZAP 111";
+    public static final String ZAP_112 = "ZAP 112";
+    public static final String ZAP_113 = "ZAP 113";
+    public static final String ZAP_114 = "ZAP 114";
+    public static final String ZAP_115 = "ZAP 115";
+    public static final String ZAP_116 = "ZAP 116";
+    public static final String ZAP_117 = "ZAP 117";
+    public static final String ZAP_118 = "ZAP 118";
+    public static final String ZAP_119 = "ZAP 119";
+    public static final String ZAP_120 = "ZAP 120";
+    public static final String ZAP_121 = "ZAP 121";
+    public static final String ZAP_122 = "ZAP 122";
+    public static final String ZAP_123 = "ZAP 123";
+    public static final String ZAP_124 = "ZAP 124";
+    public static final String ZAP_125 = "ZAP 125";
+    public static final String ZAP_126 = "ZAP 126";
+    public static final String ZAP_127 = "ZAP 127";
+    public static final String ZAP_128 = "ZAP 128";
+    public static final String ZAP_129 = "ZAP 129";
+    public static final String ZAP_130 = "ZAP 130";
+    public static final String ZAP_131 = "ZAP 131";
+    public static final String ZAP_132 = "ZAP 132";
+    public static final String ZAP_133 = "ZAP 133";
+    public static final String ZAP_134 = "ZAP 134";
+    public static final String ZAP_135 = "ZAP 135";
+    public static final String ZAP_136 = "ZAP 136";
+    public static final String ZAP_137 = "ZAP 137";
+    public static final String ZAP_138 = "ZAP 138";
+    public static final String ZAP_139 = "ZAP 139";
+    public static final String ZAP_140 = "ZAP 140";
+
+
     public static final String[] STUDIES = {"QED 1", "QED 2", "QED 3", "QED 4",
             "RED 1", "RED 2", "RED 3", "RED 4", "RED 5", "RED 6", "RED 7", "RED 8", "RED 9",
             "YOYO 55",

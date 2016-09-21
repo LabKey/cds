@@ -110,8 +110,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyLearnAboutStudyDetails()
     {
-        final String searchString = "ZAP 117";
-        final String grantAffiliation = "Nulla tellus. In sagittis dui vel nisl.";
+        final String searchString = CDSHelper.ZAP_117;
+        final String grantAffiliation = "Weiss: Protection by Neutralizing Antibodies";
         final String firstContactName = "Helen Holmes";
         final String firstContactEmail = "hholmest@alexa.com";
         final String rationale = "In sagittis dui vel nisl.";
@@ -717,37 +717,30 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateLinksToStudyGrantDocuments()
     {
-        final String PDF01_FILE_NAME = "test%20pdf%201.pdf";
-        final String PDF02_FILE_NAME = "test%20pdf%202.pdf";
-        final String DOCX_FILE_NAME = "test document 1.docx";
-        final int PDF01_STUDY = 1;
-        final int DOCX01_STUDY = 0;
-        final int PDF02_STUDY01 = 14;
-        final int PDF02_STUDY02 = 18;
-        final int PDF02_STUDY03 = 11;
-        final int BROKEN_LINK_STUDY = 4;
+        final String PDF01_FILE_NAME = "shattock%20opp37872%20novel%20antigens%20for%20mucosal%20protection.pdf";
+        final String PDF02_FILE_NAME = "mcelrath%20opp38645%20innate%20to%20adaptive%20immunity.pdf";
+        final String DOCX_FILE_NAME = "Gallo OPP41351 Systemic, Mucosal and Passive Immunity.docx";
         final String STUDY_INFO_TEXT_TRIGGER = "Study information";
 
         String studyName;
         Locator studyElement;
 
         log("Validate a link to a pdf file works as expected.");
-        validatePDFLink(CDSHelper.STUDIES[PDF01_STUDY], PDF01_FILE_NAME);
+        clickPDFGrantAffilication(CDSHelper.QED_2, PDF01_FILE_NAME);
 
         log("Validate that a link to a doc file works as expected.");
-        validateDocLink(CDSHelper.STUDIES[DOCX01_STUDY], DOCX_FILE_NAME);
+        clickDocGrantAffiliation(CDSHelper.QED_1, DOCX_FILE_NAME);
 
         log("Validated that a document linked to several studies works as expected.");
-        validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY01], PDF02_FILE_NAME);
-        validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY02], PDF02_FILE_NAME);
-        validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY03], PDF02_FILE_NAME);
+        clickPDFGrantAffilication(CDSHelper.ZAP_100, PDF02_FILE_NAME);
+        clickPDFGrantAffilication(CDSHelper.RED_5, PDF02_FILE_NAME);
+        clickPDFGrantAffilication(CDSHelper.RED_8, PDF02_FILE_NAME);
 
         log("Validate a study that has link but the document is not there.");
         pauseJsErrorChecker();
         cds.viewLearnAboutPage("Studies");
 
-        studyName = CDSHelper.STUDIES[BROKEN_LINK_STUDY];
-        studyElement = Locator.xpath("//h2[text() = '" + studyName + "']");
+        studyElement = Locator.xpath("//h2[text() = '" + CDSHelper.RED_1 + "']");
         scrollIntoView(studyElement);
         click(studyElement);
         sleep(1000);
@@ -762,15 +755,109 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     }
 
-    private void validatePDFLink(String studyName, String pdfFileName)
+    @Test
+    public void validateReportsDocumentLinks()
     {
-        final String PLUGIN_XPATH = "//embed[@name='plugin']";
+        final String STUDY_XPATH_TEMPLATE = "//h2[text() = '$']";
+        final String STUDY_INFO_TEXT_TRIGGER = "Study information";
+        final String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
+
+        String studyXPath, studyName, documentName;
+        Locator studyElement;
+        WebElement documentLink;
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.RED_5;
+
+        log("Check the links for " + studyName);
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+
+        log("Verify that the expected number of links did show up.");
+        Assert.assertEquals("Did not find the expected number of document links.", 3, Locator.xpath(REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
+
+        log("First check the Powerpoint link.");
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'Powerpoint')]").findElement(getDriver());
+        Assert.assertTrue("Was not able to find link to the Powerpoint document for study '" + studyName + "'.", documentLink != null);
+        documentName = "cvd260_CAVIMC 031 Linear Epitope Mapping_BaselineSubtracted-3.pptx";
+        validateDocLink(documentLink, documentName);
+
+        log("Now check the Excel link.");
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'Excel')]").findElement(getDriver());
+        Assert.assertTrue("Was not able to find link to the Excel document for study '" + studyName + "'.", documentLink != null);
+        documentName = "cvd260_CAVIMC-031 Neutralization Data with AUC 3 May 2011-6.xlsx";
+        validateDocLink(documentLink, documentName);
+
+        log("Finally for this study validate the pdf file.");
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'PDF')]").findElement(getDriver());
+        Assert.assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
+        documentName = "cvd260_McElrath_Seder_Antibody Responses 1.1 01Jun11.pdf";
+        validatePDFLink(documentLink, documentName);
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.RED_9;
+
+        log("Check the links for " + studyName);
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+
+        log("Verify that the expected number of links did show up.");
+        Assert.assertEquals("Did not find the expected number of document links.", 9, Locator.xpath(REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
+
+        log("Click on a few of these links to make sure they work. First check the Word Document link.");
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'Word Document')]").findElement(getDriver());
+        Assert.assertTrue("Was not able to find link to the Word Document document for study '" + studyName + "'.", documentLink != null);
+        documentName = "cvd264_DCVax001_CFSE_Memo_JUL13_v4.docx";
+        validateDocLink(documentLink, documentName);
+
+        log("Now check one of the PDF link.");
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'ICS Data Summary (PDF)')]").findElement(getDriver());
+        Assert.assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
+        documentName = "cvd264_ICS_LAB_REPORT_19APR13_n24fcm_fh_IL2_CD154_MIMOSA.pdf";
+        validatePDFLink(documentLink, documentName);
+
+        cds.viewLearnAboutPage("Studies");
+
+        log("Now validate a study that should have no links.");
+        studyName = CDSHelper.QED_2;
+
+        log("Check the links for " + studyName);
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+
+        log("Verify that there are no links.");
+        Assert.assertEquals("Did not find the expected number of document links.", 0, Locator.xpath(REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
+
+        goToHome();
+        log("All done.");
+
+    }
+
+    private void clickPDFGrantAffilication(String studyName, String pdfFileName)
+    {
+//        final String PLUGIN_XPATH = "//embed[@name='plugin']";
         final String STUDY_XPATH_TEMPLATE = "//h2[text() = '$']";
         final String STUDY_INFO_TEXT_TRIGGER = "Study information";
 
         String studyXPath;
         Locator studyElement;
         WebElement documentLink;
+
+        pdfFileName = pdfFileName.toLowerCase();
 
         cds.viewLearnAboutPage("Studies");
 
@@ -785,25 +872,50 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         documentLink = getVisibleGrantDocumentLink();
         Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
 
-        log("Now click on the document link.");
+        validatePDFLink(documentLink, pdfFileName);
+//        log("Now click on the document link.");
+//        documentLink.click();
+//        sleep(10000);
+//        switchToWindow(1);
+//
+//        log("Validate that the pdf document was loaded into the browser.");
+//        assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
+//        Assert.assertTrue("The embedded element is not a pdf plugin", getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
+//        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'. Found: '" + getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase() + "'.", getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
+//
+//        log("Close this window.");
+//        getDriver().close();
+//
+//        log("Go back to the main window.");
+//        switchToMainWindow();
+
+    }
+
+    private void validatePDFLink(WebElement documentLink, String pdfFileName)
+    {
+        final String PLUGIN_XPATH = "//embed[@name='plugin']";
+
+        log("Now click on the pdf link.");
         documentLink.click();
         sleep(10000);
         switchToWindow(1);
 
+        // Since this is a pdf file, it will be validated in the url, so replace any " " with %20.
+        pdfFileName = pdfFileName.replace(" ", "%20").toLowerCase();
+
         log("Validate that the pdf document was loaded into the browser.");
         assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
         Assert.assertTrue("The embedded element is not a pdf plugin", getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
-        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'.", getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
+        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'. Found: '" + getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase() + "'.", getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
 
         log("Close this window.");
         getDriver().close();
 
         log("Go back to the main window.");
         switchToMainWindow();
-
     }
 
-    private void validateDocLink(String studyName, String docFileName)
+    private void clickDocGrantAffiliation(String studyName, String docFileName)
     {
         final String STUDY_XPATH_TEMPLATE = "//h2[text() = '$']";
         final String STUDY_INFO_TEXT_TRIGGER = "Study information";
@@ -811,7 +923,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String studyXPath, foundDocumentName;
         Locator studyElement;
         WebElement documentLink;
-        File docFile;
+//        File docFile;
+
+        docFileName = docFileName.toLowerCase();
 
         cds.viewLearnAboutPage("Studies");
 
@@ -826,10 +940,26 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         documentLink = getVisibleGrantDocumentLink();
         Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
 
+        validateDocLink(documentLink, docFileName);
+//        log("Now click on the document link.");
+//        docFile = clickAndWaitForDownload(documentLink);
+//        foundDocumentName = docFile.getName();
+//        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + docFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(docFileName));
+
+    }
+
+    private void validateDocLink(WebElement documentLink, String expectedFileName)
+    {
+        File docFile;
+        String foundDocumentName;
+
+        // Since this will be a downloaded document, make sure the name is "cleaned up".
+        expectedFileName = expectedFileName.replace("%20", " ").toLowerCase();
+
         log("Now click on the document link.");
         docFile = clickAndWaitForDownload(documentLink);
         foundDocumentName = docFile.getName();
-        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + docFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(docFileName));
+        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + expectedFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(expectedFileName));
 
     }
 
