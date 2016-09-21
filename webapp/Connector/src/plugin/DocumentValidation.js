@@ -59,6 +59,9 @@ Ext.define('Connector.plugin.DocumentValidation', {
                     scope: this
                 });
             }
+            else {
+                flags[i] = false;
+            }
         }
         if (!sendRequest) {
             noRequestsCallback.call(this);
