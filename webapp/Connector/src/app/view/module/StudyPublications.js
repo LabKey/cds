@@ -23,7 +23,7 @@ Ext.define('Connector.view.module.StudyPublications', {
                             '</tpl>',
                             ':{location:htmlEncode}. ',
                             '<tpl if="pmid">',
-                                'PMID: {pmid:htmlEncode} ',
+                                'PMID: {pmid:htmlEncode}. ',
                             '</tpl>',
                             '<tpl if="link">',
                                     '<a href="{link}" target="_blank">View publication <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a></td>',
