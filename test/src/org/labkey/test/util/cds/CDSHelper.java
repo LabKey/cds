@@ -669,6 +669,35 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("Save", "groupupdatesave"));
     }
 
+    public void ensureGroupsDeleted(List<String> groups)
+    {
+        Boolean isVisible;
+
+        List<String> deletable = new ArrayList<>();
+        for (String group : groups)
+        {
+            String subName = group.substring(0, 10);
+
+            // Adding this test for the scenario of a test failure and this is called after the page has been removed.
+            try
+            {
+                isVisible = _test.isElementVisible(Locator.xpath("//div[contains(@class, 'grouplist-view')]//div[contains(@class, 'grouprow')]//div[contains(@title, '" + subName + "')]"));
+            }
+            catch (org.openqa.selenium.NoSuchElementException nse)
+            {
+                isVisible = false;
+            }
+
+            if (_test.isTextPresent(subName) && isVisible)
+                deletable.add(subName);
+        }
+
+        if (deletable.size() > 0)
+        {
+            deletable.forEach(this::deleteGroupFromSummaryPage);
+        }
+    }
+
     public void selectBars(String... bars)
     {
         selectBars(false, bars);
