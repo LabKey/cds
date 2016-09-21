@@ -7,7 +7,7 @@ Ext.define('Connector.plugin.DocumentValidation', {
 
         Ext.override(component, {
             validateDocLinks: this.validateDocLinks,
-            processFinal: this.processFinal
+            checkIfAllRequestsFail: this.checkIfAllRequestsFail
         });
     },
 
