@@ -642,7 +642,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         validatePDFLink(CDSHelper.STUDIES[PDF02_STUDY03], PDF02_FILE_NAME);
 
         log("Validate a study that has link but the document is not there.");
-        pauseJsErrorChecker();
         cds.viewLearnAboutPage("Studies");
 
         studyName = CDSHelper.STUDIES[BROKEN_LINK_STUDY];
@@ -653,8 +652,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
         Assert.assertTrue("There was a visible link to a grant document for this study, and there should not be.", getVisibleGrantDocumentLink() == null);
-
-        resumeJsErrorChecker();
 
         goToHome();
         log("All done.");
