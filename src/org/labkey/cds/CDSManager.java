@@ -111,6 +111,8 @@ public class CDSManager
                     "StudyAssay",
                     "StudyDocument",
                     "Document",
+                    "StudyPublication",
+                    "Publication",
                     "Study",
                     "Assay",
                     "Lab"

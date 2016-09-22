@@ -10,16 +10,12 @@ Ext.Loader.addClassPathMappings({
   "Connector.Application": "../../webapp/Connector/src/Application.js",
   "Connector.Filter": "../../webapp/Connector/src/model/Filter.js",
   "Connector.app.model.Assay": "../../webapp/Connector/src/app/model/Assay.js",
-  "Connector.app.model.Dataset": "../../webapp/Connector/src/app/model/Dataset.js",
-  "Connector.app.model.DatasetData": "../../webapp/Connector/src/app/model/DatasetData.js",
   "Connector.app.model.Labs": "../../webapp/Connector/src/app/model/Labs.js",
   "Connector.app.model.Report": "../../webapp/Connector/src/app/model/Report.js",
   "Connector.app.model.Study": "../../webapp/Connector/src/app/model/Study.js",
   "Connector.app.model.StudyProducts": "../../webapp/Connector/src/app/model/StudyProducts.js",
   "Connector.app.model.VariableList": "../../webapp/Connector/src/app/model/VariableList.js",
   "Connector.app.store.Assay": "../../webapp/Connector/src/app/store/Assay.js",
-  "Connector.app.store.Dataset": "../../webapp/Connector/src/app/store/Dataset.js",
-  "Connector.app.store.DatasetData": "../../webapp/Connector/src/app/store/DatasetData.js",
   "Connector.app.store.Labs": "../../webapp/Connector/src/app/store/Labs.js",
   "Connector.app.store.Report": "../../webapp/Connector/src/app/store/Report.js",
   "Connector.app.store.Study": "../../webapp/Connector/src/app/store/Study.js",
@@ -107,6 +103,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.plugin.HeaderLock": "../../webapp/Connector/src/view/Page.js",
   "Connector.plugin.LoadingMask": "../../webapp/Connector/src/plugin/LoadingMask.js",
   "Connector.plugin.Messaging": "../../webapp/Connector/src/plugin/Messaging.js",
+  "Connector.plugin.DocumentValidation": "../../webapp/Connector/src/plugin/DocumentValidation.js",
   "Connector.store.AssayDistinctValue": "../../webapp/Connector/src/store/AssayDistinctValue.js",
   "Connector.store.Explorer": "../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../webapp/Connector/src/store/FilterStatus.js",
@@ -169,9 +166,10 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.ProductProvidedBy": "../../webapp/Connector/src/app/view/module/ProductProvidedBy.js",
   "Connector.view.module.ProductStudies": "../../webapp/Connector/src/app/view/module/ProductStudies.js",
   "Connector.view.module.StudyAssays": "../../webapp/Connector/src/app/view/module/StudyAssays.js",
-  "Connector.view.module.StudyDatasets": "../../webapp/Connector/src/app/view/module/StudyDatasets.js",
   "Connector.view.module.StudyHeader": "../../webapp/Connector/src/app/view/module/StudyHeader.js",
+  "Connector.view.module.StudyPublications": "../../webapp/Connector/src/app/view/module/StudyPublications.js",
   "Connector.view.module.StudyProducts": "../../webapp/Connector/src/app/view/module/StudyProducts.js",
+  "Connector.view.module.StudyReports": "../../webapp/Connector/src/app/view/module/StudyReports.js",
   "Connector.view.module.Text": "../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.VariableList": "../../webapp/Connector/src/app/view/module/VariableList.js",
   "Connector.window.AbstractFilter": "../../webapp/Connector/src/window/AbstractFilter.js",
@@ -216,16 +214,12 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.Application": [],
   "Connector.Filter": [],
   "Connector.app.model.Assay": [],
-  "Connector.app.model.Dataset": [],
-  "Connector.app.model.DatasetData": [],
   "Connector.app.model.Labs": [],
   "Connector.app.model.Report": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
   "Connector.app.model.VariableList": [],
   "Connector.app.store.Assay": [],
-  "Connector.app.store.Dataset": [],
-  "Connector.app.store.DatasetData": [],
   "Connector.app.store.Labs": [],
   "Connector.app.store.Report": [],
   "Connector.app.store.Study": [],
@@ -313,6 +307,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.plugin.HeaderLock": [],
   "Connector.plugin.LoadingMask": [],
   "Connector.plugin.Messaging": [],
+  "Connector.plugin.DocumentValidation": [],
   "Connector.store.AssayDistinctValue": [],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
@@ -379,9 +374,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.ProductProvidedBy": [],
   "Connector.view.module.ProductStudies": [],
   "Connector.view.module.StudyAssays": [],
-  "Connector.view.module.StudyDatasets": [],
   "Connector.view.module.StudyHeader": [],
+  "Connector.view.module.StudyPublications": [],
   "Connector.view.module.StudyProducts": [],
+  "Connector.view.module.StudyReports": [],
   "Connector.view.module.Text": [],
   "Connector.view.module.VariableList": [],
   "Connector.window.AbstractFilter": [],
@@ -1243,16 +1239,12 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.Application": [],
   "Connector.Filter": [],
   "Connector.app.model.Assay": [],
-  "Connector.app.model.Dataset": [],
-  "Connector.app.model.DatasetData": [],
   "Connector.app.model.Labs": [],
   "Connector.app.model.Report": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
   "Connector.app.model.VariableList": [],
   "Connector.app.store.Assay": [],
-  "Connector.app.store.Dataset": [],
-  "Connector.app.store.DatasetData": [],
   "Connector.app.store.Labs": [],
   "Connector.app.store.Report": [],
   "Connector.app.store.Study": [],
@@ -1379,6 +1371,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.plugin.Messaging": [
     "plugin.messaging"
+  ],
+  "Connector.plugin.DocumentValidation": [
+    "plugin.documentvalidation"
   ],
   "Connector.store.AssayDistinctValue": [
     "store.assaydistinctvalue"
@@ -1530,11 +1525,14 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.StudyAssays": [
     "widget.app.module.studyassays"
   ],
-  "Connector.view.module.StudyDatasets": [
-    "widget.app.module.studydatasets"
-  ],
   "Connector.view.module.StudyHeader": [
     "widget.app.module.studyheader"
+  ],
+   "Connector.view.module.StudyPublications": [
+    "widget.app.module.studypublications"
+  ],
+  "Connector.view.module.StudyReports": [
+    "widget.app.module.studyreports"
   ],
   "Connector.view.module.StudyProducts": [
     "widget.app.module.studyproducts"

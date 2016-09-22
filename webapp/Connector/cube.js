@@ -284,7 +284,7 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'conclusions'
                         }
                     },{
-                        type: 'html',
+                        type: 'studypublications',
                         staticData: {
                             title: 'Publications'
                         },
@@ -328,9 +328,9 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Data Availability'
                         }
                     },{
-                        type: 'studydatasets',
+                        type: 'studyreports',
                         staticData: {
-                            title: "Lab & clinical data"
+                            title: "Reports"
                         }
                     }]]
                 }]

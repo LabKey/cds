@@ -102,6 +102,16 @@ Ext.define('Connector.app.model.Study', {
             return Ext.isArray(value) ? value : [];
         }},
         {name: 'atlas_link'},
-        {name: 'cavd_link'}
+        {name: 'cavd_link'},
+
+        {name: 'protocol_docs_and_study_plans', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'data_listings_and_reports', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'publications', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }}
     ]
 });

@@ -122,10 +122,6 @@
             <source schemaName="cds" queryName="ds_properties"/>
             <destination schemaName="cds" queryName="properties" targetOption="truncate" />
         </transform>
-        <transform id="ClearAndWarmCube" type="TaskrefTransformStep">
-            <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">
-            </taskref>
-        </transform>
         <transform id="document" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="cds" queryName="ds_document" />
             <destination schemaName="cds" queryName="document" targetOption="truncate" />
@@ -138,6 +134,25 @@
                     <setting name="targetSchema" value="cds"/>
                     <setting name="targetQuery" value="studydocument"/>
                 </settings>
+            </taskref>
+        </transform>
+        <transform id="PopulatePublication" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_publication" />
+            <destination schemaName="cds" queryName="publication" targetOption="truncate" />
+        </transform>
+        <transform id="PopulateStudyPublication" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.ContainerSensitivePopulateTask">
+                <settings>
+                    <setting name="sourceSchema" value="cds"/>
+                    <setting name="sourceQuery" value="ds_studypublication"/>
+                    <setting name="targetSchema" value="cds"/>
+                    <setting name="targetQuery" value="studypublication"/>
+                </settings>
+            </taskref>
+        </transform>
+        <!--Should occur last-->
+        <transform id="ClearAndWarmCube" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">
             </taskref>
         </transform>
     </transforms>

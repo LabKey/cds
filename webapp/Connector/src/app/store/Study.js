@@ -21,6 +21,7 @@ Ext.define('Connector.app.store.Study', {
         this.productData = undefined;
         this.assayData = undefined;
         this.documentData = undefined;
+        this.publicationData = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -45,6 +46,12 @@ Ext.define('Connector.app.store.Study', {
             queryName: 'ds_documentsforstudies',
             success: this.onLoadDocuments,
             scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'ds_publicationsforstudies',
+            success: this.onLoadPublications,
+            scope: this
         })
     },
 
@@ -68,8 +75,14 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadPublications : function(publicationData) {
+        this.publicationData = publicationData.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData) && Ext.isDefined(this.documentData)) {
+        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
+                && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData)) {
             var studies = [], products, productNames;
 
             // join products to study
@@ -148,13 +161,6 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
 
-                for (var a=0; a < this.documentData.length; a++) {
-                    if ((study.study_name === this.documentData[a].prot) && (this.documentData[a].document_type === 'grant_document')) {
-                        study.cavd_affiliation = this.documentData[a].label;
-                        study.cavd_affiliation_filename = this.documentData[a].filename;
-                        study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
-                    }
-                }
                 assaysAdded.sort(function (a1, a2) {
                     return a1.assay_short_name.toLowerCase().localeCompare(a2.assay_short_name.toLowerCase())
                 });
@@ -164,11 +170,68 @@ Ext.define('Connector.app.store.Study', {
                     return val1.toLowerCase().localeCompare(val2.toLowerCase())
                 });
 
+                for (var d=0; d < this.documentData.length; d++) {
+                    if (study.study_name === this.documentData[d].prot)
+                    {
+                        if (this.documentData[d].document_type === 'grant_document') {
+                            study.cavd_affiliation = this.documentData[d].label;
+                            study.cavd_affiliation_filename = this.documentData[d].filename;
+                            study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
+                        }
+                    }
+                }
+
+                var publications = this.publicationData.filter(function(pub){
+                    return pub.prot === study.study_name;
+                }).map(function(pub) {
+                    return {
+                        id: pub.id,
+                        title: pub.title,
+                        authors: pub.author_all,
+                        journal: pub.journal_short,
+                        date: pub.date,
+                        volume: pub.volume,
+                        issue: pub.issue,
+                        location: pub.location,
+                        pmid: pub.pmid,
+                        link: pub.link,
+                        sortIndex: pub.publication_order
+                    };
+                }).sort(function(pubA, pubB){
+                    return ((pubA.sortIndex || 0) - (pubB.sortIndex || 0)) ||
+                            ((new Date(pubA.date)) > (new Date(pubB.date)) ? -1 : 1)
+                });
+
+                var documentsAndPublications = this.publicationData.concat(this.documentData.filter(function(doc) {
+                    return doc.document_type === 'Report or summary' || doc.document_type === 'Study plan or protocol'
+                })).filter(function(doc) {
+                    return study.study_name === doc.prot;
+                }).map(function(doc) {
+                    return {
+                        id: doc.document_id,
+                        label: doc.label,
+                        fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + doc.filename,
+                        docType: doc.document_type,
+                        isLinkValid: false,
+                        suffix: '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',
+                        sortIndex: doc.document_order
+                    }
+                }).sort(function(docA, docB){
+                    return (docA.sortIndex || 0) - (docB.sortIndex || 0);
+                });
+
                 study.products = products;
                 study.product_names = productNames;
                 study.assays = assays;
                 study.assays_added = assaysAdded;
                 study.assays_added_count = assaysAdded.length;
+                study.publications = publications;
+                study.protocol_docs_and_study_plans = documentsAndPublications.filter(function (doc) {
+                    return doc.label && doc.docType === 'Study plan or protocol';
+                });
+                study.data_listings_and_reports = documentsAndPublications.filter(function (doc) {
+                    return doc.label && doc.docType === 'Report or summary';
+                });
                 studies.push(study);
             }, this);
 
@@ -179,6 +242,8 @@ Ext.define('Connector.app.store.Study', {
             this.studyData = undefined;
             this.assayData = undefined;
             this.productData = undefined;
+            this.documentData = undefined;
+            this.publicationData = undefined;
 
             this.loadRawData(studies);
         }
