@@ -113,6 +113,7 @@ public class CDSManager
                     "Document",
                     "StudyPublication",
                     "Publication",
+                    "StudyRelationship",
                     "Study",
                     "Assay",
                     "Lab"

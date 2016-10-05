@@ -60,6 +60,12 @@ public class ClearMappingTask extends TaskRefTaskImpl
         logger.info("Clearing mapping tables");
         long start = System.currentTimeMillis();
 
+        // StudyRelationship is special, since it can foreign-key reference two studies at once, so it must be cleared entirely first
+        for (Container container : project.getChildren())
+        {
+            clearTable("cds", "studyrelationship", container, logger);
+        }
+
         for (Container container : project.getChildren())
         {
             clearTable("cds", "facts", container, logger);
