@@ -231,6 +231,7 @@
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
         <script path="Connector/src/app/view/module/StudyPublications.js"/>
         <script path="Connector/src/app/view/module/StudyProducts.js"/>
+        <script path="Connector/src/app/view/module/StudyRelationships.js"/>
         <script path="Connector/src/app/view/module/StudyReports.js"/>
         <script path="Connector/src/app/view/module/StudySites.js"/>
         <script path="Connector/src/app/view/module/VariableList.js"/>

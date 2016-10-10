@@ -22,6 +22,7 @@ Ext.define('Connector.app.store.Study', {
         this.assayData = undefined;
         this.documentData = undefined;
         this.publicationData = undefined;
+        this.relationshipData = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -52,7 +53,13 @@ Ext.define('Connector.app.store.Study', {
             queryName: 'ds_publicationsforstudies',
             success: this.onLoadPublications,
             scope: this
-        })
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'ds_relationshipsforstudies',
+            success: this.onLoadRelationships,
+            scope: this
+        });
     },
 
     onLoadStudies : function(studyData) {
@@ -80,9 +87,14 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadRelationships : function(relationshipData) {
+        this.relationshipData = relationshipData.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
-                && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData)) {
+                && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)) {
             var studies = [], products, productNames;
 
             // join products to study
@@ -220,12 +232,31 @@ Ext.define('Connector.app.store.Study', {
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
                 });
 
+                var relationshipOrder = ['Main study', 'Extension study', 'Co-conducted study', 'HIV follow up study', 'Ancillary study'];
+
+                var relationships = this.relationshipData.filter(function(rel){
+                    return rel.prot === study.study_name;
+                }).map(function(rel) {
+                    return {
+                        prot: rel.prot,
+                        rel_prot: rel.rel_prot,
+                        relationship: rel.relationship,
+                        // sort not-found relationships last
+                        sortIndex: relationshipOrder.indexOf(rel.relationship) === -1 ? relationshipOrder.length : relationshipOrder.indexOf(rel.relationship)
+                    };
+                }).sort(function(relA, relB){
+                    if(relA.sortIndex !== relB.sortIndex)
+                        return relA.sortIndex - relB.sortIndex;
+                    return LABKEY.app.model.Filter.sorters.natural(relA.rel_prot, relB.rel_prot);
+                });
+
                 study.products = products;
                 study.product_names = productNames;
                 study.assays = assays;
                 study.assays_added = assaysAdded;
                 study.assays_added_count = assaysAdded.length;
                 study.publications = publications;
+                study.relationships = relationships;
                 study.protocol_docs_and_study_plans = documentsAndPublications.filter(function (doc) {
                     return doc.label && doc.docType === 'Study plan or protocol';
                 });
@@ -244,6 +275,7 @@ Ext.define('Connector.app.store.Study', {
             this.productData = undefined;
             this.documentData = undefined;
             this.publicationData = undefined;
+            this.relationshipData = undefined;
 
             this.loadRawData(studies);
         }

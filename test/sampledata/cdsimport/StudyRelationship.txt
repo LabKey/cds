@@ -5,8 +5,8 @@ q1	r4	Extension study
 q1	r3	Extension study
 q1	z100	Co-conducted study
 q1	z111	HIV follow up study
-q1	r5	Test
 q1	r2	Ancillary study
 q1	q1	Ancillary study
-q1	r6	A poorly-named study relationship
+q1	z101	A poorly-named study relationship
 q2	q1	Main study
+r1	r2	Extension study
