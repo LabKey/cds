@@ -29,13 +29,13 @@ import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.ValidationException;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PopulateRelationshipTask extends AbstractPopulateTask
 {
-    String MAIN_STUDY = "Main study";  // TODO: change this to an enum reference later
-
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
@@ -73,10 +73,17 @@ public class PopulateRelationshipTask extends AbstractPopulateTask
         Map<String, Object>[] rows;
         BatchValidationException errors = new BatchValidationException();
 
-        Map<String, String> relationshipMap = new HashMap<>();
+        List<Container> containers = project.getChildren();
+
+        // Get valid studies first
+        Set<String> validStudies = new HashSet<>();
+        for (Container container : containers)
+        {
+            validStudies.add(container.getName());
+        }
 
         // Insert all the rows
-        for (Container container : project.getChildren())
+        for (Container container : containers)
         {
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable, sourceTable.getName()).append(" WHERE prot = ?");
             sql.add(container.getName());
@@ -107,21 +114,14 @@ public class PopulateRelationshipTask extends AbstractPopulateTask
                 {
                     String study = (String)row.get("prot");
                     String relatedStudy = (String)row.get("rel_prot");
-                    String relationship = (String)row.get("relationship");
 
-                    relationshipMap.put(study + relatedStudy, relationship);
-
-                    if(study.equals(relatedStudy))
+                    if(!validStudies.contains(relatedStudy))  // have to enforce this at ETL time, not in db, due to container deletion problems
+                    {
+                        throw new PipelineJobException("Related study '" + relatedStudy + "' does not exist in 'study' table.");
+                    }
+                    else if(study.equals(relatedStudy))
                     {
                         logger.warn("Study '" + study + "' is defined as related to itself.");
-                    }
-                    else if(relationship.equals(MAIN_STUDY))
-                    {
-                        String relationshipMapEntry = relationshipMap.get(relatedStudy + study);
-                        if((relationshipMapEntry != null) && relationshipMapEntry.equals(MAIN_STUDY))
-                        {
-                            logger.warn("Studies '" + study + "' and '" + relatedStudy + "' both define each other as a '" + MAIN_STUDY + "' relationship.");
-                        }
                     }
                 }
             }
