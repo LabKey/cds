@@ -842,6 +842,125 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify that there are no links.");
         Assert.assertEquals("Did not find the expected number of document links.", 0, Locator.xpath(REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
 
+        log("Validate the related studies links");
+        String relatedStudiesText, expectedStudiesText;
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.QED_1;
+        expectedStudiesText = "QED 2 (Main study)\nQED 3 (Main study)\nRED 3 (Extension study)\nRED 4 (Extension study)\nZAP 100 (Co-conducted study)\nZAP 111 (HIV follow up study)\nRED 2 (Ancillary study)\nZAP 101 (A poorly-named study relationship)";
+
+        log("Check the links for " + studyName + ". Each of the different relationship types should be listed.");
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+
+        Locator relatedStudiesTable = Locator.xpath("//h3[text()='Related Studies']/following-sibling::table[@class='learn-study-info']");
+
+        relatedStudiesText = getText(relatedStudiesTable);
+        log("Text: " + relatedStudiesText);
+
+        Assert.assertEquals("The text for the related studies is not as expected.", expectedStudiesText, relatedStudiesText);
+
+        log("Now validate that link to the documents works as expected.");
+        click(Locator.linkWithText("QED 3"));
+        sleep(1000);
+        Assert.assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//span[@class='studyname']")).equals("QED 3"));
+        log("Verify that the related study links for this study are as expected.");
+        expectedStudiesText = "QED 1 (Ancillary study)";
+        relatedStudiesText = getText(relatedStudiesTable);
+        log("Text: " + relatedStudiesText);
+        Assert.assertEquals("The text for the related studies is not as expected.", expectedStudiesText, relatedStudiesText);
+
+        log("Click the related study and make sure we navigate back to the original study.");
+        click(Locator.linkWithText("QED 1"));
+        sleep(1000);
+        Assert.assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//span[@class='studyname']")).equals("QED 1"));
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.QED_2;
+        expectedStudiesText = "QED 4 (Main study)\nQED 1 (Ancillary study)";
+
+        log("Check the links for " + studyName + ". THis should only have two studies related.");
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+
+        relatedStudiesText = getText(relatedStudiesTable);
+        log("Text: " + relatedStudiesText);
+
+        Assert.assertEquals("The text for the related studies is not as expected.", expectedStudiesText, relatedStudiesText);
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.ZAP_105;
+        expectedStudiesText = "ZAP 102 (Ancillary study)";
+
+        log("Check the links for " + studyName + ". This should only have one study related, and this should be the last entry in StudyRelationship.txt");
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+
+        relatedStudiesText = getText(relatedStudiesTable);
+        log("Text: " + relatedStudiesText);
+
+        Assert.assertEquals("The text for the related studies is not as expected.", expectedStudiesText, relatedStudiesText);
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.RED_2;
+
+        log("Check the links for " + studyName + ". This should have no studies, so validate the element isn't shown.");
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+
+        Assert.assertFalse("There should be no related studies for this study, but the related studies grid was found.", isElementPresent(relatedStudiesTable));
+        Assert.assertFalse("The header for the related studies section was found.", isElementPresent(Locator.xpath("//h3[text()='Related Studies']")));
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.ZAP_103;
+        expectedStudiesText = "YOYO 55 (Main study)\nZAP 110 (Main study)\nZAP 111 (Main study)\nZAP 105 (HIV follow up study)";
+
+        log("Check the links for " + studyName + ". The relationships for this study were in a 'random' order in StudyRelationship.txt validate that has no effect on the list.");
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+
+        relatedStudiesText = getText(relatedStudiesTable);
+        log("Text: " + relatedStudiesText);
+
+        Assert.assertEquals("The text for the related studies is not as expected.", expectedStudiesText, relatedStudiesText);
+
+        cds.viewLearnAboutPage("Studies");
+
+        studyName = CDSHelper.RED_5;
+        expectedStudiesText = "RED 5 (Ancillary study)";
+
+        log("Check the links for " + studyName + ". This is a self referential study. This should not happen but validating that if it does we are ok with it.");
+        studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
+        studyElement = Locator.xpath(studyXPath);
+        scrollIntoView(studyElement);
+        click(studyElement);
+        sleep(1000);
+
+        relatedStudiesText = getText(relatedStudiesTable);
+        log("Text: " + relatedStudiesText);
+
+        Assert.assertEquals("The text for the related studies is not as expected.", expectedStudiesText, relatedStudiesText);
+
         goToHome();
         log("All done.");
 
