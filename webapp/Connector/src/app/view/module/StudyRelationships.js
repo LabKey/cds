@@ -17,7 +17,7 @@ Ext.define('Connector.view.module.StudyRelationships', {
                 '<table class="learn-study-info">',
                     '<tpl for="relationships">',
                         '<tr>',
-                            '<td class="item-value"><a href="#learn/learn/Study/{rel_prot}" target="_blank">{rel_prot_label}</a> ({relationship:htmlEncode})</td>',
+                            '<td class="item-value"><a href="#learn/learn/Study/{rel_prot}">{rel_prot_label}</a> ({relationship:htmlEncode})</td>',
                         '</tr>',
                     '</tpl>',
                 '</table>',
