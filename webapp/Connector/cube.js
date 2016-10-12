@@ -326,9 +326,6 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'studyrelationships',
                         staticData: {
                             title: 'Related Studies'
-                        },
-                        modelData: {
-                            text: 'relationships'
                         }
                     },{
                         type: 'studyassays',

@@ -3,5 +3,5 @@ SELECT
   sr.prot,
   sr.rel_prot,
   sr.relationship
-FROM cds.studyrelationship sr
+FROM cds.import_studyrelationship sr
 

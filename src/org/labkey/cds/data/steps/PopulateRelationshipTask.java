@@ -46,7 +46,7 @@ public class PopulateRelationshipTask extends AbstractPopulateTask
             throw new PipelineJobException("Schema not found: cds");
         }
 
-        TableInfo sourceTable = cdsSchema.getTable("import_studyrelationship");
+        TableInfo sourceTable = cdsSchema.getTable("ds_relationshipsforstudies");
         TableInfo targetTable = cdsSchema.getTable("studyrelationship");
 
         // Truncate the target table
