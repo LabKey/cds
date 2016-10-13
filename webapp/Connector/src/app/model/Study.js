@@ -112,6 +112,9 @@ Ext.define('Connector.app.model.Study', {
         }},
         {name: 'publications', convert : function(value) {
             return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'relationships', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
         }}
     ]
 });

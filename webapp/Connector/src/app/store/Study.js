@@ -22,6 +22,7 @@ Ext.define('Connector.app.store.Study', {
         this.assayData = undefined;
         this.documentData = undefined;
         this.publicationData = undefined;
+        this.relationshipData = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -52,7 +53,20 @@ Ext.define('Connector.app.store.Study', {
             queryName: 'ds_publicationsforstudies',
             success: this.onLoadPublications,
             scope: this
-        })
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'ds_relationshipsforstudies',
+            success: this.onLoadRelationships,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'ds_studyrelationshiporder',
+            success: this.onLoadRelationshipOrder,
+            scope: this,
+            sort: 'rel_sort_order'
+        });
     },
 
     onLoadStudies : function(studyData) {
@@ -80,9 +94,20 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadRelationships : function(relationshipData) {
+        this.relationshipData = relationshipData.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadRelationshipOrder : function(relationshipOrderData) {
+        this.relationshipOrderData = relationshipOrderData.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
-                && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData)) {
+                && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
+                && Ext.isDefined(this.relationshipOrderData)) {
             var studies = [], products, productNames;
 
             // join products to study
@@ -220,12 +245,36 @@ Ext.define('Connector.app.store.Study', {
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
                 });
 
+                var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
+                        return relOrder.relationship;
+                });
+
+                var relationships = this.relationshipData.filter(function(rel){
+                    return rel.prot === study.study_name;
+                }).map(function(rel) {
+                    return {
+                        prot: rel.prot,
+                        rel_prot: rel.rel_prot,
+                        relationship: rel.relationship,
+                        // sort not-found relationships last
+                        sortIndex: relationshipOrderList.indexOf(rel.relationship) === -1 ? relationshipOrderList.length : relationshipOrderList.indexOf(rel.relationship),
+                        rel_prot_label: this.studyData.filter(function (study) {
+                            return study.study_name === rel.rel_prot;
+                        })[0].label
+                    };
+                }, this).sort(function(relA, relB){
+                    if(relA.sortIndex !== relB.sortIndex)
+                        return relA.sortIndex - relB.sortIndex;
+                    return LABKEY.app.model.Filter.sorters.natural(relA.rel_prot, relB.rel_prot);
+                });
+
                 study.products = products;
                 study.product_names = productNames;
                 study.assays = assays;
                 study.assays_added = assaysAdded;
                 study.assays_added_count = assaysAdded.length;
                 study.publications = publications;
+                study.relationships = relationships;
                 study.protocol_docs_and_study_plans = documentsAndPublications.filter(function (doc) {
                     return doc.label && doc.docType === 'Study plan or protocol';
                 });
@@ -244,6 +293,8 @@ Ext.define('Connector.app.store.Study', {
             this.productData = undefined;
             this.documentData = undefined;
             this.publicationData = undefined;
+            this.relationshipData = undefined;
+            this.relationshipOrderData = undefined;
 
             this.loadRawData(studies);
         }
