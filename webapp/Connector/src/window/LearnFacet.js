@@ -76,7 +76,14 @@ Ext.define('Connector.window.LearnFacet', {
                 xtype: 'container',
                 ui: 'custom',
                 layout: { type: 'hbox' },
-                items: [this.getTitleBar(), dropDownBtn]
+                items: [this.getTitleBar(), dropDownBtn],
+                listeners :{
+                    render: function(cmp) {
+                        cmp.getEl().on('click', function(){
+                            Ext.getCmp(btnId).showMenu();
+                        });
+                    }
+                }
             };
             this.setFacetGridVisibility();
             return [selector].concat(facetGrids);

@@ -78,10 +78,6 @@ Ext.define('Connector.controller.FilterStatus', {
             itemclick: this.onDetailSelect
         });
 
-        this.control('#infosortdropdown', {
-            click: function(btn) { btn.showMenu(); }
-        });
-
         this.control('selectionview', {
             itemselect : function(view, filter) {
                 this.showFilterEditor(filter);
