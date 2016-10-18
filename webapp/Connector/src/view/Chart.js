@@ -3790,7 +3790,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    onSelectionChange : function(selections) {
+    onSelectionChange : function(selections, opChange, isMoveToFilter) {
         // only proceed if the chart is the active view and we have at least a y-axis measure
         if (!this.isActiveView || !this.activeMeasures.y) {
             return;
@@ -3804,7 +3804,9 @@ Ext.define('Connector.view.Chart', {
             }
 
             this.clearStudyAxisSelection();
-            this.updatePlotInfoPaneCounts({forSubcounts: false, queryName: this.dataQWP.query});
+            if (!isMoveToFilter) {
+                this.updatePlotInfoPaneCounts({forSubcounts: false, queryName: this.dataQWP.query});
+            }
         }
         else
         {
