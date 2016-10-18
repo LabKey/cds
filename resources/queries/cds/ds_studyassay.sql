@@ -16,6 +16,7 @@
 SELECT DISTINCT
 	md.prot,
 	md.assay_identifier,
+	md.assay_status,
 	d.prot IS NOT NULL AND d.assay_identifier IS NOT NULL AS "has_data",
 FROM import_studyassay md --metadataTable
 LEFT JOIN (

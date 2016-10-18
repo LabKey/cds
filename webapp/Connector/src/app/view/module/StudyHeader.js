@@ -7,11 +7,13 @@ Ext.define('Connector.view.module.StudyHeader', {
 
     xtype : 'app.module.studyheader',
 
+    plugins : ['documentvalidation'],
+
     extend : 'Connector.view.module.BaseModule',
 
     tpl : new Ext.XTemplate(
-        '<tpl if="network || cavd_affiliation || type || stage || start_date || public_date || first_enr_date || followup_complete_date">',
-            Connector.constant.Templates.module.title,
+        '<tpl if="network || cavd_affiliation || type || stage || start_date || public_date || first_enr_date || followup_complete_date || protocol_docs_and_study_plans.length &gt; 0">',
+            '<h3>{title_studyheader}</h3>',
             '<table class="learn-study-info">',
                 '<tpl if="network">',
                     '<tr>',
@@ -63,29 +65,61 @@ Ext.define('Connector.view.module.StudyHeader', {
                         '<td class="item-value">{[Connector.app.view.LearnSummary.dateRenderer(values.followup_complete_date)]}</td>',
                     '</tr>',
                 '</tpl>',
+                '<tpl if="protocol_docs_and_study_plans.length &gt; 0">',
+                    '<tpl for="protocol_docs_and_study_plans">',
+                        '<tr>',
+                            '<tpl if="xindex == 1">',
+                                '<td class="item-label">Documents:</td>',
+                            '<tpl else>',
+                                '<td class="item-label">&nbsp;</td>',
+                            '</tpl>',
+                            '<tpl if="isLinkValid">',
+                                '<td class="item-value"><a href="{fileName}" target="_blank">{label:htmlEncode} {suffix}</a></td>',
+                            '<tpl else>',
+                                '<td class="item-value">{label:htmlEncode}</td>',
+                            '</tpl>',
+                        '</tr>',
+                    '</tpl>',
+                '</tpl>',
             '</table>',
         '</tpl>'
     ),
 
     initComponent : function() {
+        this.callParent();
+
         var data = this.initialConfig.data.model.data;
-        data['title'] = this.initialConfig.data.title;
+        data['title_studyheader'] = this.initialConfig.data.title;
+
         if (data['cavd_affiliation_file_exists'] !== true) {  // if it's true, we've already verified this link is good previously
-            LABKEY.Ajax.request({
-                method: 'GET',
-                url: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + data.cavd_affiliation_filename,
-                success: LABKEY.Utils.getCallbackWrapper(function (json, response)
-                {
-                    if (200 === response.status)
-                    {
-                        data['cavd_affiliation_file_exists'] = true;
-                    }
+            var cavdLinkIsValid = function() {
+                data['cavd_affiliation_file_exists'] = true;
+                this.update(data);
+            };
+            this.on("afterrender", function() {
+                this.validateDocLinks([{
+                    fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + data.cavd_affiliation_filename,
+                    isLinkValid: false
+                }], cavdLinkIsValid, function() {
                     this.update(data);
-                }, this),
-                scope: this
+                })
             });
         }
-        this.update(data);
-    }
 
+        if (data.protocol_docs_and_study_plans.length > 0) {
+            var docIsValidAction = function(doc) {
+                doc.isLinkValid = true;
+                this.update(data);
+            };
+            this.on("afterrender", function() {
+                this.validateDocLinks(data.protocol_docs_and_study_plans, docIsValidAction, function() {
+                    this.update(data);
+                });
+            }, this);
+        }
+
+        if (data['cavd_affiliation_file_exists'] === true && data.protocol_docs_and_study_plans.length == 0) {
+            this.update(data);
+        }
+    }
 });

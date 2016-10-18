@@ -122,6 +122,35 @@ public class CDSPlot
         }
     }
 
+    public int getGutterPlotPointCount()
+    {
+        return getXGutterPlotPointCount() + getYGutterPlotPointCount();
+    }
+
+    public int getXGutterPlotPointCount()
+    {
+        int points = 0;
+
+        if(hasXGutter())
+        {
+            points = _test.getElementCount(Locator.css("div.plot svg g a.point"));
+        }
+
+        return points;
+    }
+
+    public int getYGutterPlotPointCount()
+    {
+        int points = 0;
+
+        if(hasYGutter())
+        {
+            points = _test.getElementCount(Locator.css("div.bottomplot svg g a.point"));
+        }
+
+        return points;
+    }
+
     public boolean hasYGutter()
     {
         return hasGutter("svg g text.yGutter-label");

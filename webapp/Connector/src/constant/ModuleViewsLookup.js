@@ -17,13 +17,16 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	productstudies: 'app.module.productstudies',
 	productotherproducts: 'app.module.productotherproducts',
 	studyheader: 'app.module.studyheader',
+	studypublications: 'app.module.studypublications',
+	studyreports: 'app.module.studyreports',
 	studysites: 'app.module.studysites',
 	studyassays: 'app.module.studyassays',
 	studyproducts: 'app.module.studyproducts',
-	studydatasets: 'app.module.studydatasets',
+	studyrelationships: 'app.module.studyrelationships',
 	assayheader: 'app.module.assayheader',
 	assayanalytelist: 'app.module.assayanalytelist',
 	assayantigenlist: 'app.module.assayantigenlist',
 	assaystudies: 'app.module.assaystudies',
-	variablelist: 'app.module.variablelist'
+	variablelist: 'app.module.variablelist',
+	dataavailability : 'app.module.dataavailability'
 });

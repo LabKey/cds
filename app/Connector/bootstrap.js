@@ -6,25 +6,27 @@
  */
 Ext.Loader.addClassPathMappings({
   "Animation": "../../webapp/Connector/src/utility/Animation.js",
+  "AssayAdded": "../../webapp/Connector/src/app/view/module/StudyAssays.js",
   "Connector.Application": "../../webapp/Connector/src/Application.js",
   "Connector.Filter": "../../webapp/Connector/src/model/Filter.js",
   "Connector.app.model.Assay": "../../webapp/Connector/src/app/model/Assay.js",
-  "Connector.app.model.Dataset": "../../webapp/Connector/src/app/model/Dataset.js",
-  "Connector.app.model.DatasetData": "../../webapp/Connector/src/app/model/DatasetData.js",
   "Connector.app.model.Labs": "../../webapp/Connector/src/app/model/Labs.js",
+  "Connector.app.model.Report": "../../webapp/Connector/src/app/model/Report.js",
   "Connector.app.model.Study": "../../webapp/Connector/src/app/model/Study.js",
   "Connector.app.model.StudyProducts": "../../webapp/Connector/src/app/model/StudyProducts.js",
   "Connector.app.model.VariableList": "../../webapp/Connector/src/app/model/VariableList.js",
   "Connector.app.store.Assay": "../../webapp/Connector/src/app/store/Assay.js",
-  "Connector.app.store.Dataset": "../../webapp/Connector/src/app/store/Dataset.js",
-  "Connector.app.store.DatasetData": "../../webapp/Connector/src/app/store/DatasetData.js",
   "Connector.app.store.Labs": "../../webapp/Connector/src/app/store/Labs.js",
+  "Connector.app.store.Report": "../../webapp/Connector/src/app/store/Report.js",
   "Connector.app.store.Study": "../../webapp/Connector/src/app/store/Study.js",
   "Connector.app.store.StudyProducts": "../../webapp/Connector/src/app/store/StudyProducts.js",
   "Connector.app.store.VariableList": "../../webapp/Connector/src/app/store/VariableList.js",
   "Connector.app.view.Assay": "../../webapp/Connector/src/app/view/Assay.js",
   "Connector.app.view.Labs": "../../webapp/Connector/src/app/view/Labs.js",
+  "Connector.app.view.LearnSummary": "../../webapp/Connector/src/app/view/LearnSummary.js",
   "Connector.app.view.ModuleContainer": "../../webapp/Connector/src/app/view/ModuleContainer.js",
+  "Connector.app.view.Report": "../../webapp/Connector/src/app/view/Report.js",
+  "Connector.app.view.ReportModuleContainer": "../../webapp/Connector/src/app/view/ReportModuleContainer.js",
   "Connector.app.view.Study": "../../webapp/Connector/src/app/view/Study.js",
   "Connector.app.view.StudyProducts": "../../webapp/Connector/src/app/view/StudyProducts.js",
   "Connector.app.view.module.StudySites": "../../webapp/Connector/src/app/view/module/StudySites.js",
@@ -101,6 +103,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.plugin.HeaderLock": "../../webapp/Connector/src/view/Page.js",
   "Connector.plugin.LoadingMask": "../../webapp/Connector/src/plugin/LoadingMask.js",
   "Connector.plugin.Messaging": "../../webapp/Connector/src/plugin/Messaging.js",
+  "Connector.plugin.DocumentValidation": "../../webapp/Connector/src/plugin/DocumentValidation.js",
   "Connector.store.AssayDistinctValue": "../../webapp/Connector/src/store/AssayDistinctValue.js",
   "Connector.store.Explorer": "../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../webapp/Connector/src/store/FilterStatus.js",
@@ -111,6 +114,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.VisitTagSingleUse": "../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../webapp/Connector/src/types/Filter.js",
   "Connector.utility.Chart": "../../webapp/Connector/src/utility/Chart.js",
+  "Connector.utility.HashURL": "../../webapp/Connector/src/utility/HashURL.js",
   "Connector.utility.Query": "../../webapp/Connector/src/utility/Query.js",
   "Connector.view.Chart": "../../webapp/Connector/src/view/Chart.js",
   "Connector.view.DetailStatus": "../../webapp/Connector/src/view/DetailStatus.js",
@@ -153,6 +157,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.AssayStudies": "../../webapp/Connector/src/app/view/module/AssayStudies.js",
   "Connector.view.module.BaseModule": "../../webapp/Connector/src/view/module/BaseModule.js",
   "Connector.view.module.ContactCDS": "../../webapp/Connector/src/app/view/module/ContactCDS.js",
+  "Connector.view.module.DataAvailabilityModule": "../../webapp/Connector/src/app/view/module/DataAvailabilityModule.js",
   "Connector.view.module.HTML": "../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.Person": "../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../webapp/Connector/src/app/view/module/ProductHeader.js",
@@ -161,14 +166,16 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.ProductProvidedBy": "../../webapp/Connector/src/app/view/module/ProductProvidedBy.js",
   "Connector.view.module.ProductStudies": "../../webapp/Connector/src/app/view/module/ProductStudies.js",
   "Connector.view.module.StudyAssays": "../../webapp/Connector/src/app/view/module/StudyAssays.js",
-  "Connector.view.module.StudyDatasets": "../../webapp/Connector/src/app/view/module/StudyDatasets.js",
   "Connector.view.module.StudyHeader": "../../webapp/Connector/src/app/view/module/StudyHeader.js",
+  "Connector.view.module.StudyPublications": "../../webapp/Connector/src/app/view/module/StudyPublications.js",
   "Connector.view.module.StudyProducts": "../../webapp/Connector/src/app/view/module/StudyProducts.js",
+  "Connector.view.module.StudyReports": "../../webapp/Connector/src/app/view/module/StudyReports.js",
   "Connector.view.module.Text": "../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.VariableList": "../../webapp/Connector/src/app/view/module/VariableList.js",
   "Connector.window.AbstractFilter": "../../webapp/Connector/src/window/AbstractFilter.js",
   "Connector.window.Facet": "../../webapp/Connector/src/window/Facet.js",
   "Connector.window.Filter": "../../webapp/Connector/src/window/Filter.js",
+  "Connector.window.LearnFacet": "../../webapp/Connector/src/window/LearnFacet.js",
   "Connector.window.SystemMessage": "../../webapp/Connector/src/window/SystemMessage.js",
   "Ext": "ext/src",
   "Ext.Msg": "ext/src/window/MessageBox.js",
@@ -198,29 +205,32 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.view.OlapExplorer2": "../../../../internal/webapp/app/OlapExplorer2.js",
   "LABKEY.app.view.Selection": "../../../../internal/webapp/app/Selection.js",
   "Statistics": "../../webapp/Connector/src/utility/Statistics.js",
-  "StoreCache": "../../webapp/Connector/src/utility/StoreCache.js"
+  "StoreCache": "../../webapp/Connector/src/utility/StoreCache.js",
+  "StudyAdded": "../../webapp/Connector/src/app/view/module/AssayStudies.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
   "Animation": [],
+  "AssayAdded": [],
   "Connector.Application": [],
   "Connector.Filter": [],
   "Connector.app.model.Assay": [],
-  "Connector.app.model.Dataset": [],
-  "Connector.app.model.DatasetData": [],
   "Connector.app.model.Labs": [],
+  "Connector.app.model.Report": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
   "Connector.app.model.VariableList": [],
   "Connector.app.store.Assay": [],
-  "Connector.app.store.Dataset": [],
-  "Connector.app.store.DatasetData": [],
   "Connector.app.store.Labs": [],
+  "Connector.app.store.Report": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
   "Connector.app.store.VariableList": [],
   "Connector.app.view.Assay": [],
   "Connector.app.view.Labs": [],
+  "Connector.app.view.LearnSummary": [],
   "Connector.app.view.ModuleContainer": [],
+  "Connector.app.view.Report": [],
+  "Connector.app.view.ReportModuleContainer": [],
   "Connector.app.view.Study": [],
   "Connector.app.view.StudyProducts": [],
   "Connector.app.view.module.StudySites": [],
@@ -297,6 +307,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.plugin.HeaderLock": [],
   "Connector.plugin.LoadingMask": [],
   "Connector.plugin.Messaging": [],
+  "Connector.plugin.DocumentValidation": [],
   "Connector.store.AssayDistinctValue": [],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
@@ -309,6 +320,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.utility.Chart": [
     "ChartUtils"
   ],
+  "Connector.utility.HashURL": [],
   "Connector.utility.Query": [
     "QueryUtils"
   ],
@@ -353,6 +365,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.AssayStudies": [],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.ContactCDS": [],
+  "Connector.view.module.DataAvailabilityModule": [],
   "Connector.view.module.HTML": [],
   "Connector.view.module.Person": [],
   "Connector.view.module.ProductHeader": [],
@@ -361,14 +374,16 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.ProductProvidedBy": [],
   "Connector.view.module.ProductStudies": [],
   "Connector.view.module.StudyAssays": [],
-  "Connector.view.module.StudyDatasets": [],
   "Connector.view.module.StudyHeader": [],
+  "Connector.view.module.StudyPublications": [],
   "Connector.view.module.StudyProducts": [],
+  "Connector.view.module.StudyReports": [],
   "Connector.view.module.Text": [],
   "Connector.view.module.VariableList": [],
   "Connector.window.AbstractFilter": [],
   "Connector.window.Facet": [],
   "Connector.window.Filter": [],
+  "Connector.window.LearnFacet": [],
   "Connector.window.SystemMessage": [],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
@@ -1215,29 +1230,32 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.view.OlapExplorer2": [],
   "LABKEY.app.view.Selection": [],
   "Statistics": [],
-  "StoreCache": []
+  "StoreCache": [],
+  "StudyAdded": []
 });
 Ext.ClassManager.addNameAliasMappings({
   "Animation": [],
+  "AssayAdded": [],
   "Connector.Application": [],
   "Connector.Filter": [],
   "Connector.app.model.Assay": [],
-  "Connector.app.model.Dataset": [],
-  "Connector.app.model.DatasetData": [],
   "Connector.app.model.Labs": [],
+  "Connector.app.model.Report": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
   "Connector.app.model.VariableList": [],
   "Connector.app.store.Assay": [],
-  "Connector.app.store.Dataset": [],
-  "Connector.app.store.DatasetData": [],
   "Connector.app.store.Labs": [],
+  "Connector.app.store.Report": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
   "Connector.app.store.VariableList": [],
   "Connector.app.view.Assay": [],
   "Connector.app.view.Labs": [],
+  "Connector.app.view.LearnSummary": [],
   "Connector.app.view.ModuleContainer": [],
+  "Connector.app.view.Report": [],
+  "Connector.app.view.ReportModuleContainer": [],
   "Connector.app.view.Study": [],
   "Connector.app.view.StudyProducts": [],
   "Connector.app.view.module.StudySites": [
@@ -1354,6 +1372,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.plugin.Messaging": [
     "plugin.messaging"
   ],
+  "Connector.plugin.DocumentValidation": [
+    "plugin.documentvalidation"
+  ],
   "Connector.store.AssayDistinctValue": [
     "store.assaydistinctvalue"
   ],
@@ -1372,6 +1393,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.types.Filter": [],
   "Connector.utility.Chart": [],
+  "Connector.utility.HashURL": [],
   "Connector.utility.Query": [],
   "Connector.view.Chart": [
     "widget.plot"
@@ -1476,6 +1498,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.ContactCDS": [
     "widget.app.module.contactcds"
   ],
+  "Connector.view.module.DataAvailabilityModule": [
+    "widget.app.module.dataavailability"
+  ],
   "Connector.view.module.HTML": [
     "widget.module.html"
   ],
@@ -1500,11 +1525,14 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.StudyAssays": [
     "widget.app.module.studyassays"
   ],
-  "Connector.view.module.StudyDatasets": [
-    "widget.app.module.studydatasets"
-  ],
   "Connector.view.module.StudyHeader": [
     "widget.app.module.studyheader"
+  ],
+   "Connector.view.module.StudyPublications": [
+    "widget.app.module.studypublications"
+  ],
+  "Connector.view.module.StudyReports": [
+    "widget.app.module.studyreports"
   ],
   "Connector.view.module.StudyProducts": [
     "widget.app.module.studyproducts"
@@ -1522,6 +1550,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.window.Filter": [
     "widget.columnfilterwin"
   ],
+  "Connector.window.LearnFacet": [],
   "Connector.window.SystemMessage": [],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
@@ -2536,7 +2565,8 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "LABKEY.app.view.Selection": [],
   "Statistics": [],
-  "StoreCache": []
+  "StoreCache": [],
+  "StudyAdded": []
 });
 Ext.setVersion("connector-theme", "1.0.0");
 Ext.setVersion("ext-theme-base", "4.2.1");

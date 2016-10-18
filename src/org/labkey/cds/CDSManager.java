@@ -111,6 +111,10 @@ public class CDSManager
                     "StudyAssay",
                     "StudyDocument",
                     "Document",
+                    "StudyPublication",
+                    "Publication",
+                    "StudyRelationshipOrder",
+                    "StudyRelationship",
                     "Study",
                     "Assay",
                     "Lab"

@@ -128,7 +128,7 @@ Ext.define('Connector.app.view.Study', {
         }],
         dataIndex: 'product_to_sort_on',
         tpl: new Ext.XTemplate(
-                '<div class="detail-text">',
+                '<div class="detail-text study-summary-product">',
                     '<ul>',
                         '<tpl if="products.length &gt; 0">',
                             '<tpl for="products">',
@@ -212,75 +212,10 @@ Ext.define('Connector.app.view.Study', {
         ]
     },
 
-    initComponent : function() {
-
-        this.callParent();
-
-        this.on({
-            'itemmouseenter' : function(view, record, item) {
-                if (record.data.data_availability) {
-                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
-                        id = Ext.id();
-                    if (checkmark) {
-                        checkmark.on('mouseenter', this.showAssayDataTooltip, this, {
-                            record: record,
-                            id: id
-                        });
-                        checkmark.on('mouseleave', this.hideAssayDataTooltip, this, {
-                            id: id
-                        });
-                        checkmark.on('click', this.hideAssayDataTooltip, this, {
-                            id: id
-                        })
-                    }
-                }
-            },
-
-            'itemmouseleave' : function(view, record, item) {
-                if (record.data.data_availability) {
-                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
-                    if (checkmark) {
-                        checkmark.un('mouseenter', this.showAssayDataTooltip, this);
-                        checkmark.un('mouseleave', this.hideAssayDataTooltip, this);
-                        checkmark.un('click', this.hideAssayDataTooltip, this);
-                    }
-                }
-            },
-
-            scope: this
-        })
-    },
-
-    showAssayDataTooltip : function(event, item, options) {
-        var assayList = options.record.data.assays_added;
-        var assayListHTML = "<ul>";
-        for (var itr = 0; itr < assayList.length; ++itr) {
-            assayListHTML += "<li>" + assayList[itr].assay_short_name + "</li>\n";
+    dataAvailabilityTooltipConfig : function() {
+        return {
+            title: 'Assays',
+            recordField: 'assay_short_name'
         }
-        assayListHTML += "</ul>";
-
-        var calloutMgr = hopscotch.getCalloutManager(),
-            _id = options.id,
-            displayTooltip = setTimeout(function() {
-                calloutMgr.createCallout(Ext.apply({
-                    id: _id,
-                    xOffset: 10,
-                    showCloseButton: false,
-                    target: item,
-                    placement: 'right',
-                    title: "Assays with Data Available",
-                    content: assayListHTML,
-                    width: 190
-                }, {}));
-            }, 200);
-
-        this.on('hide' + _id, function() {
-            clearTimeout(displayTooltip);
-            calloutMgr.removeCallout(_id);
-        }, this);
-    },
-
-    hideAssayDataTooltip : function(event, item, options) {
-        this.fireEvent('hide' + options.id);
     }
 });

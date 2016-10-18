@@ -73,6 +73,8 @@ public class ClearMappingTask extends TaskRefTaskImpl
             clearTable("cds", "studyproductmap", container, logger);
             clearTable("cds", "studyassay", container, logger);
             clearTable("cds", "studydocument", container, logger);
+            clearTable("cds", "studypublication", container, logger);
+            clearTable("cds", "studyrelationship", container, logger);
             clearTable("cds", "study", container, logger);
         }
 
@@ -81,6 +83,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
         clearTable("cds", "elispotantigen", project, logger);
         clearTable("cds", "bamaantigen", project, logger);
         clearTable("cds", "facts", project, logger);
+        clearTable("cds", "studyrelationshiporder", project, logger);
         clearTable("study", "visittag", project, logger);
 
         long finish = System.currentTimeMillis();

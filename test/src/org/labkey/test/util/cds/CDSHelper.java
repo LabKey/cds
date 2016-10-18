@@ -41,6 +41,63 @@ import java.util.regex.Pattern;
 
 public class CDSHelper
 {
+    public static final String QED_1 = "QED 1";
+    public static final String QED_2 = "QED 2";
+    public static final String QED_3 = "QED 3";
+    public static final String QED_4 = "QED 4";
+    public static final String RED_1 = "RED 1";
+    public static final String RED_2 = "RED 2";
+    public static final String RED_3 = "RED 3";
+    public static final String RED_4 = "RED 4";
+    public static final String RED_5 = "RED 5";
+    public static final String RED_6 = "RED 6";
+    public static final String RED_7 = "RED 7";
+    public static final String RED_8 = "RED 8";
+    public static final String RED_9 = "RED 9";
+    public static final String YOYO_55 = "YOYO 55";
+    public static final String ZAP_100 = "ZAP 100";
+    public static final String ZAP_101 = "ZAP 101";
+    public static final String ZAP_102 = "ZAP 102";
+    public static final String ZAP_103 = "ZAP 103";
+    public static final String ZAP_104 = "ZAP 104";
+    public static final String ZAP_105 = "ZAP 105";
+    public static final String ZAP_106 = "ZAP 106";
+    public static final String ZAP_107 = "ZAP 107";
+    public static final String ZAP_108 = "ZAP 108";
+    public static final String ZAP_109 = "ZAP 109";
+    public static final String ZAP_110 = "ZAP 110";
+    public static final String ZAP_111 = "ZAP 111";
+    public static final String ZAP_112 = "ZAP 112";
+    public static final String ZAP_113 = "ZAP 113";
+    public static final String ZAP_114 = "ZAP 114";
+    public static final String ZAP_115 = "ZAP 115";
+    public static final String ZAP_116 = "ZAP 116";
+    public static final String ZAP_117 = "ZAP 117";
+    public static final String ZAP_118 = "ZAP 118";
+    public static final String ZAP_119 = "ZAP 119";
+    public static final String ZAP_120 = "ZAP 120";
+    public static final String ZAP_121 = "ZAP 121";
+    public static final String ZAP_122 = "ZAP 122";
+    public static final String ZAP_123 = "ZAP 123";
+    public static final String ZAP_124 = "ZAP 124";
+    public static final String ZAP_125 = "ZAP 125";
+    public static final String ZAP_126 = "ZAP 126";
+    public static final String ZAP_127 = "ZAP 127";
+    public static final String ZAP_128 = "ZAP 128";
+    public static final String ZAP_129 = "ZAP 129";
+    public static final String ZAP_130 = "ZAP 130";
+    public static final String ZAP_131 = "ZAP 131";
+    public static final String ZAP_132 = "ZAP 132";
+    public static final String ZAP_133 = "ZAP 133";
+    public static final String ZAP_134 = "ZAP 134";
+    public static final String ZAP_135 = "ZAP 135";
+    public static final String ZAP_136 = "ZAP 136";
+    public static final String ZAP_137 = "ZAP 137";
+    public static final String ZAP_138 = "ZAP 138";
+    public static final String ZAP_139 = "ZAP 139";
+    public static final String ZAP_140 = "ZAP 140";
+
+
     public static final String[] STUDIES = {"QED 1", "QED 2", "QED 3", "QED 4",
             "RED 1", "RED 2", "RED 3", "RED 4", "RED 5", "RED 6", "RED 7", "RED 8", "RED 9",
             "YOYO 55",
@@ -98,8 +155,9 @@ public class CDSHelper
 //    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
 
     public static final String[] LEARN_ABOUT_QED2_INFO_FIELDS = {"Network", "Grant Affiliation", "Study Type", "Stage", "Study start", "First enrollment", "Follow up complete"};
-    public static final String[] LEARN_ABOUT_QED2_CONTACT_FIELDS = {"First point of contact", "Grant Principal Investigator", "Grant Project Manager", "Study Investigator"};
-    public static final String[] LEARN_ABOUT_QED2_DESCRIPTION_FIELDS = {"Objectives", "Rationale", "Groups", "Methods", "Findings", "Conclusions", "Publications"};
+    public static final String[] LEARN_ABOUT_ZAP117_INFO_FIELDS = {"Network", "Grant Affiliation", "Study Type", "Stage", "First enrollment"};
+    public static final String[] LEARN_ABOUT_CONTACT_FIELDS = {"First point of contact", "Grant Principal Investigator", "Grant Project Manager", "Study Investigator"};
+    public static final String[] LEARN_ABOUT_DESCRIPTION_FIELDS = {"Objectives", "Rationale", "Groups", "Methods", "Findings", "Conclusions", "Publications"};
 
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
@@ -611,6 +669,35 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("Save", "groupupdatesave"));
     }
 
+    public void ensureGroupsDeleted(List<String> groups)
+    {
+        Boolean isVisible;
+
+        List<String> deletable = new ArrayList<>();
+        for (String group : groups)
+        {
+            String subName = group.substring(0, 10);
+
+            // Adding this test for the scenario of a test failure and this is called after the page has been removed.
+            try
+            {
+                isVisible = _test.isElementVisible(Locator.xpath("//div[contains(@class, 'grouplist-view')]//div[contains(@class, 'grouprow')]//div[contains(@title, '" + subName + "')]"));
+            }
+            catch (org.openqa.selenium.NoSuchElementException nse)
+            {
+                isVisible = false;
+            }
+
+            if (_test.isTextPresent(subName) && isVisible)
+                deletable.add(subName);
+        }
+
+        if (deletable.size() > 0)
+        {
+            deletable.forEach(this::deleteGroupFromSummaryPage);
+        }
+    }
+
     public void selectBars(String... bars)
     {
         selectBars(false, bars);
@@ -884,7 +971,7 @@ public class CDSHelper
             WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
         }
-        _test.sleep(500);
+        _test.sleep(1000);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
@@ -975,6 +1062,15 @@ public class CDSHelper
     {
         String radioLabel = (setAND ? "(AND)" : "(OR)");
         _test.click(Locator.tagWithClass("label", "x-form-cb-label").containing(radioLabel));
+    }
+
+    public void addRaceFilter(String barLabel)
+    {
+//        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        clickBy("Subject characteristics");
+        pickSort("Race");
+        applySelection(barLabel);
+        useSelectionAsSubjectFilter();
     }
 
     public boolean isCheckboxChecked(String xpath)
