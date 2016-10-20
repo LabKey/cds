@@ -74,7 +74,7 @@ Ext.define('Connector.view.module.StudyHeader', {
                                 '<td class="item-label">&nbsp;</td>',
                             '</tpl>',
                             '<tpl if="isLinkValid">',
-                                '<td class="item-value"><a href="{fileName}" target="_blank">{label:htmlEncode} {suffix}</a></td>',
+                                '<td class="item-value"><a href="{fileName}" target="_blank">{label:htmlEncode}</a> {suffix}</td>',
                             '<tpl else>',
                                 '<td class="item-value">{label:htmlEncode}</td>',
                             '</tpl>',
