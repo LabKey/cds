@@ -21,14 +21,15 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
-import org.labkey.test.util.cds.CDSAsserts;
-import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.components.dumbster.EmailRecordTable;
 import org.labkey.test.util.Ext4Helper;
-import org.testng.Assert;
+import org.labkey.test.util.cds.CDSAsserts;
+import org.labkey.test.util.cds.CDSHelper;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 @Category({})
 public class CDSSecurityTest extends CDSReadOnlyTest
@@ -217,7 +218,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         handleCreateAccount("P@$$w0rd", true);
         waitForTextToDisappear("Thanks for creating your account.");
         sleep(5000);
-        Assert.assertTrue(getFormElement(Locator.css("input[name='password']")).trim().length() == 0, "Login dialog should have been shown again with a blank password. I did nopt find an empty password field.");
+        assertTrue("Login dialog should have been shown again with a blank password. I did nopt find an empty password field.", getFormElement(Locator.css("input[name='password']")).trim().length() == 0);
 
         // This sleep is unfortunate. I thought that the delay in the following waitForElementText would be enough, but it's not.
         sleep(5000);
@@ -294,7 +295,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         click(Locator.tagWithClass("a", "help"));
         waitForElement(Locator.tagWithText("h1", "Sign-in Help"));
         assertTextPresent("To set or reset your password, type in your email address and click the submit button.");
-        Assert.assertTrue(getFormElement(Locator.inputById("emailhelp")).toLowerCase().equals(NEW_USER_ACCOUNTS[3].toLowerCase()), "Did not find email '" + NEW_USER_ACCOUNTS[3] + "' in text box.");
+        assertTrue("Did not find email '" + NEW_USER_ACCOUNTS[3] + "' in text box.", getFormElement(Locator.inputById("emailhelp")).toLowerCase().equals(NEW_USER_ACCOUNTS[3].toLowerCase()));
         click(Locator.linkWithText("Cancel"));
 
         // Log in as admin, like start of test, this will allow test to clean up correctly.
