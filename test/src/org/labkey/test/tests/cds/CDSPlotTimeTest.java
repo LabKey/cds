@@ -562,7 +562,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.confirmSelection();
 
-        log("Choose 'Study days (discrete)'.");
+        log("Choose 'Study days (categorical)'.");
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.TIME_POINTS);
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_DAYS);
@@ -571,7 +571,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         pattern = Pattern.compile("^0137.*3303003000");
         cds.assertPlotTickText(1, pattern);
 
-        log("Choose 'Study weeks (discrete)'.");
+        log("Choose 'Study weeks (categorical)'.");
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_WEEKS);
         xaxis.confirmSelection();
@@ -579,7 +579,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         pattern = Pattern.compile("^0124.*3303003000");
         cds.assertPlotTickText(1, pattern);
 
-        log("Choose 'Study months (discrete)'.");
+        log("Choose 'Study months (categorical)'.");
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_MONTHS);
         xaxis.confirmSelection();

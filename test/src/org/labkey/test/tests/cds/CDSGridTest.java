@@ -480,7 +480,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen\n  Cell type\n  Data summary level\n  Functional marker name\n" +
                 "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer IC50\nStudy and treatment variables\n  Study Name\n" +
-                "Subject characteristics\n  Race\n  Subject Id\nTime points\n  Study days (timeline)";
+                "Subject characteristics\n  Race\n  Subject Id\nTime points\n  Study days (continuous)";
         expectedTextClean = expectedText.toLowerCase().replaceAll("\\n", "");
         expectedTextClean = expectedTextClean.replaceAll("\\s+", "");
 
@@ -491,7 +491,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         selectorText = selectorText.trim();
 
         assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.equals("Study and treatment variables\n  Study Name\nSubject characteristics\n" +
-                "  Subject Id\nTime points\n  Study days (timeline)"));
+                "  Subject Id\nTime points\n  Study days (continuous)"));
 
         gridColumnSelector.confirmSelection();
 

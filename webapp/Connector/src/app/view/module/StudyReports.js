@@ -18,7 +18,7 @@ Ext.define('Connector.view.module.StudyReports', {
                     '<tpl for="data_listings_and_reports">',
                         '<tr>',
                             '<tpl if="isLinkValid">',
-                                '<td class="item-value"><a href="{fileName}" target="_blank">{label:htmlEncode} {suffix}</a></td>',
+                                '<td class="item-value"><a href="{fileName}" target="_blank">{label:htmlEncode}</a> {suffix}</td>',
                             '<tpl else>',
                                 '<td class="item-value">{label:htmlEncode}</td>',
                             '</tpl>',
