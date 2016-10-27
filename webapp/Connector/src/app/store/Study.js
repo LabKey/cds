@@ -109,6 +109,12 @@ Ext.define('Connector.app.store.Study', {
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
                 && Ext.isDefined(this.relationshipOrderData)) {
             var studies = [], products, productNames;
+            var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
+                return relOrder.relationship;
+            });
+            var studyNames = this.studyData.map(function(study) {
+                return study.study_name;
+            });
 
             // join products to study
             Ext.each(this.studyData, function(study) {
@@ -243,13 +249,6 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }).sort(function(docA, docB){
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
-                });
-
-                var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
-                        return relOrder.relationship;
-                });
-                var studyNames = this.studyData.map(function(study) {
-                    return study.study_name;
                 });
 
                 var relationships = this.relationshipData.filter(function(rel){
