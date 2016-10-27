@@ -248,9 +248,13 @@ Ext.define('Connector.app.store.Study', {
                 var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                         return relOrder.relationship;
                 });
+                var studyNames = this.studyData.map(function(study) {
+                    return study.study_name;
+                });
 
                 var relationships = this.relationshipData.filter(function(rel){
-                    return rel.prot === study.study_name;
+                    // only return studies this user can see and that are related
+                    return (studyNames.indexOf(rel.rel_prot) !== -1) && (rel.prot === study.study_name);
                 }).map(function(rel) {
                     return {
                         prot: rel.prot,
