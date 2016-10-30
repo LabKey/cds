@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -48,29 +48,29 @@ Ext.define('Connector.app.store.StudyProducts', {
         Ext.each(all, function (row) {
             var studyArm = row.prot + row.study_arm;
             if (!armProductsMap[studyArm]) {
-                armProductsMap[studyArm] = new Set();
+                armProductsMap[studyArm] = {};
             }
-            armProductsMap[studyArm].add(row.product_id);
+            armProductsMap[studyArm][row.product_id] = true;
         });
         var allOtherProducts = {};
         Ext.iterate(armProductsMap, function(arm, products) {
             Ext.each(products, function(product) {
                 if (!allOtherProducts[product]) {
-                    allOtherProducts[product] = new Set();
+                    allOtherProducts[product] = {};
                 }
             });
         });
 
-        Ext.iterate(armProductsMap, function(arm, productsSet) {
-            var products = Array.from(productsSet);
+        Ext.iterate(armProductsMap, function(arm, productsObj) {
+            var products = Object.keys(productsObj);
             for (var i = 0; i < products.length; i++) {
                 var currentProduct = products[i];
                 if (!allOtherProducts[currentProduct]) {
-                    allOtherProducts[currentProduct] = new Set();
+                    allOtherProducts[currentProduct] = {};
                 }
                 Ext.each(products, function(prod) {
                     if (prod !== currentProduct) {
-                        allOtherProducts[currentProduct].add(prod);
+                        allOtherProducts[currentProduct][prod] = true;
                     }
                 });
             }
@@ -98,6 +98,7 @@ Ext.define('Connector.app.store.StudyProducts', {
         if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData) && Ext.isDefined(this.productProduct)) {
             var products = [],
                 studies,
+                studiesWithData,
                 s,
                 otherProducts,
                 me = this;
@@ -108,13 +109,20 @@ Ext.define('Connector.app.store.StudyProducts', {
                     product.product_developer = '[blank]';
                 }
                 studies = [];
+                studiesWithData = [];
+                product.data_availability = false;
                 for (s=0; s < this.studyData.length; s++) {
                     if (product.product_id === this.studyData[s].product_id) {
-                        studies.push({
+                        var study = {
                             study_name: this.studyData[s].study_name,
                             label: this.studyData[s].study_label ? this.studyData[s].study_label : '',
                             has_data: this.studyData[s].has_data
-                        });
+                        };
+                        studies.push(study);
+                        if (study.has_data) {
+                            product.data_availability = true;
+                            studiesWithData.push(study);
+                        }
                     }
                 }
                 studies.sort(function(a, b) {
@@ -123,9 +131,11 @@ Ext.define('Connector.app.store.StudyProducts', {
                     return val1.localeCompare(val2);
                 });
                 product.studies = studies;
+                product.studies_with_data = studiesWithData;
+                product.studies_with_data_count = studiesWithData.length;
                 otherProducts = [];
                 if (this.productProduct && this.productProduct[product.product_id]) {
-                    var otherProductIds = Array.from(this.productProduct[product.product_id]);
+                    var otherProductIds = Object.keys(this.productProduct[product.product_id]);
                     Ext.each(otherProductIds, function(id) {
                         otherProducts.push({
                             product_id: id,

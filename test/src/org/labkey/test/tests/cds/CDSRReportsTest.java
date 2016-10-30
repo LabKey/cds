@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2016 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.labkey.test.tests.cds;
 
 import org.jetbrains.annotations.Nullable;
@@ -7,8 +22,11 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.selenium.LazyWebElement;
 import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
@@ -335,24 +353,29 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
     private void createCategory(String... categoryNames)
     {
+        final String XPATH_TO_DIALOG = "//div[contains(@class, 'data-window')]//div[contains(@class, 'x4-window-header')]//span[text()='Manage Categories']/ancestor::div[contains(@class, 'data-window')]";
         goToHome();
         goToProjectHome();
 
         goToManageViews();
 
         click(Locator.linkContainingText("Manage Categories"));
-        waitForElement(Locator.xpath("//div[contains(@class, 'data-window')]//div[contains(@class, 'x4-toolbar')]//span[text()='New Category']"));
+
+        waitForElement(Locator.xpath(XPATH_TO_DIALOG + "//div[contains(@class, 'x4-toolbar')]//span[text()='New Category']"));
 
         for(String category : categoryNames)
         {
-            // If the category already exists don't do anything.
-            if(!isTextPresent(category))
+            // If the category does not exists create it.
+            if(!isElementPresent(Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']")))
             {
                 clickButton("New Category", 0);
-//                waitFor(() -> 1 == Locator.xpath("input[@name='label']/ancestor::div[contains(@class, 'x4-editor')][not(contains(@style, 'display: none'))]").findElements(getDriver()).size(), WAIT_FOR_JAVASCRIPT);
-                waitForElement(Locator.xpath("//input[@name='label']/ancestor::div[contains(@class, 'x4-editor')][not(contains(@style, 'display: none'))]"));
-                setFormElement(Locator.xpath("//input[@name='label']"), category);
-                pressEnter(Locator.xpath("//input[@name='label']"));
+                waitForElement(Locator.xpath(XPATH_TO_DIALOG + "//input[@name='label']/ancestor::div[contains(@class, 'x4-editor')][not(contains(@style, 'display: none'))]"));
+                setFormElement(Locator.xpath(XPATH_TO_DIALOG + "//input[@name='label']"), category);
+                sleep(250);  // Wait just a moment before hitting enter.
+                pressEnter(Locator.xpath(XPATH_TO_DIALOG + "//input[@name='label']"));
+
+                sleep(250);  // Wait just a moment.
+                assertElementPresent("Something is wrong, it doesn't look like the category'" + category + "' was created.", Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']"), 1);
             }
         }
 

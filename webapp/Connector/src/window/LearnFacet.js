@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 LabKey Corporation
+ * Copyright (c) 2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -132,9 +132,16 @@ Ext.define('Connector.window.LearnFacet', {
     },
 
     getConfigForField : function(field, value) {
-        return this.filterConfigSet.find(function(config) {
-            return config[field] == value;
-        });
+        var targetConfig = null;
+        if (Ext.isArray(this.filterConfigSet)){
+            Ext.each(this.filterConfigSet, function(config){
+                if (config[field] == value) {
+                    targetConfig = config;
+                    return false;
+                }
+            });
+        }
+        return targetConfig;
     },
 
     onAfterRender : function() {

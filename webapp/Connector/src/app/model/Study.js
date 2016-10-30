@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -10,6 +10,8 @@ Ext.define('Connector.app.model.Study', {
     idProperty: 'study_name',
 
     resolvableField: 'label',
+
+    dataAvailabilityField: 'assays_added',
 
     fields: [
         {name: 'study_name'},
@@ -100,6 +102,19 @@ Ext.define('Connector.app.model.Study', {
             return Ext.isArray(value) ? value : [];
         }},
         {name: 'atlas_link'},
-        {name: 'cavd_link'}
+        {name: 'cavd_link'},
+
+        {name: 'protocol_docs_and_study_plans', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'data_listings_and_reports', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'publications', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'relationships', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }}
     ]
 });

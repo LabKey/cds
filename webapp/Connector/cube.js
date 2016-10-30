@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -284,7 +284,7 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'conclusions'
                         }
                     },{
-                        type: 'html',
+                        type: 'studypublications',
                         staticData: {
                             title: 'Publications'
                         },
@@ -323,14 +323,19 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Products'
                         }
                     },{
+                        type: 'studyrelationships',
+                        staticData: {
+                            title: 'Related Studies'
+                        }
+                    },{
                         type: 'studyassays',
                         staticData: {
                             title: 'Data Availability'
                         }
                     },{
-                        type: 'studydatasets',
+                        type: 'studyreports',
                         staticData: {
-                            title: "Lab & clinical data"
+                            title: "Reports"
                         }
                     }]]
                 }]

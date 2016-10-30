@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 LabKey Corporation
+ * Copyright (c) 2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 SELECT DISTINCT
 	md.prot,
 	md.assay_identifier,
+	md.assay_status,
 	d.prot IS NOT NULL AND d.assay_identifier IS NOT NULL AS "has_data",
 FROM import_studyassay md --metadataTable
 LEFT JOIN (

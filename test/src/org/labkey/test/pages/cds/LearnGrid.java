@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2016 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.labkey.test.pages.cds;
 
 import org.junit.Assert;
@@ -6,6 +21,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
@@ -30,7 +46,7 @@ public class LearnGrid
     }
 
     @LogMethod(quiet = true)
-    public void openFilterPanel(@LoggedParam String columnHeaderName)
+    public LearnGrid openFilterPanel(@LoggedParam String columnHeaderName)
     {
         Locator.XPathLocator columnHeader = Locators.columnHeaderLocator(columnHeaderName);
         Locator.XPathLocator filterIcon = columnHeader.append(Locator.tagWithClass("div", "x-column-header-trigger"));
@@ -41,15 +57,18 @@ public class LearnGrid
         _test.waitForElement(hoveredColumn);
         _test.click(filterIcon);
         _test._ext4Helper.waitForMask();
+
+        return this;
     }
 
     @LogMethod
-    public void setFacet(@LoggedParam String columnName, @LoggedParam String... labels)
+    public LearnGrid setFacet(@LoggedParam String columnName, @LoggedParam String... labels)
     {
         setWithOptionFacet(columnName, null, labels);
+        return this;
     }
 
-    public void setWithOptionFacet(@LoggedParam String columnName, @LoggedParam String option, @LoggedParam String... labels)
+    public LearnGrid setWithOptionFacet(@LoggedParam String columnName, @LoggedParam String option, @LoggedParam String... labels)
     {
         openFilterPanel(columnName);
 
@@ -72,15 +91,18 @@ public class LearnGrid
         Locator.XPathLocator search = CDSHelper.Locators.cdsButtonLocator("Search", "filter-btn");
         search.findElement(_test.getDriver()).click();
         BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+
+        return this;
     }
 
     @LogMethod
-    public void clearFilters(@LoggedParam String columnName)
+    public LearnGrid clearFilters(@LoggedParam String columnName)
     {
         clearFiltersWithOption(columnName, null);
+        return this;
     }
 
-    public void clearFiltersWithOption(@LoggedParam String columnName, @LoggedParam String option)
+    public LearnGrid clearFiltersWithOption(@LoggedParam String columnName, @LoggedParam String option)
     {
         openFilterPanel(columnName);
 
@@ -93,19 +115,24 @@ public class LearnGrid
 
         _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn"));
         BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+
+        return this;
     }
 
-    public void assertSortPresent(String columnName)
+    public LearnGrid assertSortPresent(String columnName)
     {
         _test.waitForElement(Locator.tagWithClassContaining("div", "x-column-header-sort-").withText(columnName));
+        return this;
     }
 
     @LogMethod
-    public void sort(@LoggedParam final String columnName)
+    public LearnGrid sort(@LoggedParam final String columnName)
     {
         _test.click(Locators.columnHeaderLocator(columnName));
         BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
         assertSortPresent(columnName);
+
+        return this;
     }
 
     // Columns are separated by a \n.
@@ -113,6 +140,58 @@ public class LearnGrid
     {
         _test.scrollIntoView(Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex)); // Why do I have to scroll this into view to get the text?
         return Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex).getText() + "\n" + Locators.unlockedRow.findElements(_test.getDriver()).get(rowIndex).getText();
+    }
+
+    // Assume 0 based for rows and columns.
+    public String getCellText(int rowIndex, int cellIndex)
+    {
+        return getCellWebElement(rowIndex, cellIndex).getText();
+    }
+
+    public LearnGrid showDataAddedToolTip(int rowIndex, int cellIndex)
+    {
+        // Scroll the row into view.
+        _test.scrollIntoView(Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex));
+
+        // The tool-tip shows up on a mouse enter event. So first go to the grey text under the icon then move over it.
+        _test.mouseOver(getCellWebElement(rowIndex, cellIndex).findElement(By.className("detail-gray-text")));
+        _test.sleep(500); // If the mouse moves too quickly ext may not always see it, so pause for a moment.
+        _test.mouseOver(getCellWebElement(rowIndex, cellIndex).findElement(By.className("detail-has-data")));
+
+        // The tool-tip has a small delay before it is shown.
+        _test.waitForElement(Locator.css("div.hopscotch-bubble-container"), 5000, true);
+
+        return this;
+    }
+
+    // Assume 0 based for both.
+    public WebElement getCellWebElement(int rowIndex, int cellIndex)
+    {
+        int cellCountLocked;
+        WebElement cellWebElement;
+
+        cellWebElement = Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex);
+        _test.scrollIntoView(cellWebElement);
+
+        cellCountLocked = cellWebElement.findElements(By.tagName("td")).size();
+
+        if(cellIndex < cellCountLocked)
+        {
+            return cellWebElement.findElements(By.tagName("td")).get(cellIndex);
+        }
+        else
+        {
+            // The index is not in the locked columns, so we have to do a little offset and need to look at the unlocked grid.
+            cellWebElement = Locators.unlockedRow.findElements(_test.getDriver()).get(rowIndex);
+            return cellWebElement.findElements(By.tagName("td")).get(cellIndex - cellCountLocked);
+        }
+
+    }
+
+    // There should only be one tool-tip present at a time.
+    public String getToolTipText()
+    {
+        return _test.getText(Locator.css("div.hopscotch-bubble-container"));
     }
 
     // Text values in each of the columns is separated by a \n.
@@ -133,6 +212,23 @@ public class LearnGrid
         String colHeaderStr;
         colHeaderStr = Locators.lockedRowHeader.findElement(_test.getDriver()).getText() + "\n" + Locators.unlockedRowHeader.findElement(_test.getDriver()).getText();
         return colHeaderStr.split("\n");
+    }
+
+    public int getColumnIndex(String columnName)
+    {
+        String[] columns = getColumnNames();
+        int index = -1;
+
+        for(int i = 0; i < columns.length; i++)
+        {
+            if(columns[i].trim().toLowerCase().equals(columnName.trim().toLowerCase()))
+            {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
     }
 
     public static class Locators

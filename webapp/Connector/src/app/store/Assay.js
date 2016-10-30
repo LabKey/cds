@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -105,13 +105,21 @@ Ext.define('Connector.app.store.Assay', {
 
             Ext.each(this.assayData, function(assay) {
                 var studies = [];
+                var studiesWithData = [];
+                assay.data_availability = false;
                 for (var s = 0; s < this.assayStudies.length; s++) {
                     if (assay.assay_identifier === this.assayStudies[s].assay_identifier) {
-                        studies.push({
+                        var study = {
                             id: this.assayStudies[s].study_name || this.assayStudies[s].prot,
                             label: this.assayStudies[s].label ? this.assayStudies[s].label : '',
-                            has_data: this.assayStudies[s].has_data
-                        });
+                            has_data: this.assayStudies[s].has_data,
+                            assay_status: this.assayStudies[s].assay_status
+                        };
+                        studies.push(study);
+                        if (study.has_data) {
+                            assay.data_availability = true;
+                            studiesWithData.push(study);
+                        }
                     }
                 }
                 studies.sort(function(a, b) {
@@ -120,6 +128,8 @@ Ext.define('Connector.app.store.Assay', {
                     return val1.localeCompare(val2);
                 });
                 assay.studies = studies;
+                assay.studies_with_data = studiesWithData;
+                assay.studies_with_data_count = studiesWithData.length;
                 assays.push(assay);
             }, this);
 

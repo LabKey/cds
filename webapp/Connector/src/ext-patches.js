@@ -7,6 +7,9 @@
  * Removing it causes no observable issues, but to be safe only apply this patch to CDS.
  */
 Ext.override(Ext.grid.locking.Lockable, {
+    // syncRow with locked grid causes performance issue
+    // resort to css to ensure same row height for locked row and normal row instead
+    syncRowHeight: false,
     onLockedViewScroll: function ()
     {
         if (!this.lockedViewScrollTask)

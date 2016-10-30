@@ -49,6 +49,65 @@ div.learnview {
   }
 }
 
+.learn-data-available-module {
+  .x-panel-body-default {
+    border-width: 0;
+  }
+  .learnmodulegrid {
+    .x-grid-header-ct {
+      border-width: 0!important;
+    }
+
+    .x-grid-body {
+      border-style: none;
+      border-color: $gray-8;
+      border-width: 0px;
+    }
+
+    .x-grid-cell-inner {
+      padding: 0 0 0 2px!important;
+    }
+
+    .x-grid-row-before-focused .x-grid-td {
+      border-bottom-style: none;
+      border-bottom-color: $gray-8;
+      border-bottom-width: 0px;
+    }
+
+    .x-grid-no-row-lines .x-grid-row-focused .x-grid-cell-inner {
+      padding: 3px 6px 4px 6px;
+    }
+
+    .x-grid-row-focused .x-grid-td {
+      border-bottom-style: none;
+      border-bottom-color: $gray-8;
+      border-bottom-width: 0px;
+    }
+    .x-grid-row-selected .x-grid-td {
+      color: #303030;
+      background-color: $gray-8;
+    }
+    .x-grid-row-focused .x-grid-td {
+      background-color: $gray-8;
+    }
+    .x-grid-row-selected .x-grid-td {
+      border-bottom-style: none;
+      border-bottom-color: $gray-8;
+    }
+    .x-grid-cell {
+      font: normal .933/1 Arial, sans-serif;
+      background-color: $gray-8;
+      border-color: $gray-8;
+      border-style: none;
+    }
+    .x-grid-td {
+      overflow: hidden;
+      border-width: 0;
+      vertical-align: middle;
+    }
+  }
+}
+
 .module {
   .groupheader {
     text-transform: uppercase;
@@ -116,7 +175,6 @@ div.learnview {
   .item-row {
     min-height: 19px;
     padding: 2px 0;
-
   }
 
   &.assaylist {
@@ -353,7 +411,7 @@ img.detail-has-data-small {
     }
 
     .detail-description {
-      height: 123px;
+      height: 121px;
       overflow: hidden;
 
       h2 {
@@ -395,6 +453,10 @@ img.detail-has-data-small {
       td:nth-child(1) {
         padding-right: 1em;
       }
+    }
+
+    .study-summary-product {
+      height:121px;
     }
 
   }
@@ -502,10 +564,13 @@ div.list-container {
 
   input {
     width: 400px;
-    padding: 16px 12px;
+    height: 34px;
     font-size: 12px;
     border-radius: 2px;
     border-color: $gray-7!important;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
 
   }
   input.x-form-focus {

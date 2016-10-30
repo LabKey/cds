@@ -690,7 +690,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     buildBinTooltip: function(datas) {
-        var xVals = new Set(), yVals = new Set(), subjects = new Set(), studies = new Set();
+        var xValsSet = {}, yValsSet = {}, subjectsSet = {}, studiesSet = {};
         var content = '', xName, yName, me = this,colon = ': ', linebreak = '<br/>';
         var xDimensionVals = {}, yDimensionVals = {};
         var xDimensions = this.getAxisDimensionsArray(this.activeMeasures.x), yDimensions = this.getAxisDimensionsArray(this.activeMeasures.y);
@@ -702,13 +702,13 @@ Ext.define('Connector.view.Chart', {
             var d = data.data;
 
             if (d.x !== undefined && d.x !== null && d.x !== '') {
-                xVals.add(d.x);
+                xValsSet[d.x] = true;
             }
             if (d.y !== undefined && d.y !== null && d.y !== '') {
-                yVals.add(d.y);
+                yValsSet[d.y] = true;
             }
             if (d.subjectId !== undefined && d.subjectId !== null) {
-                subjects.add(d.subjectId);
+                subjectsSet[d.subjectId] = true;
             }
 
             if (d.xname && !xName) {
@@ -719,29 +719,31 @@ Ext.define('Connector.view.Chart', {
             }
 
             var record = me.allDataRowsMap[d.rowKey];
-            studies.add(record[QueryUtils.STUDY_ALIAS]);
+            studiesSet[record[QueryUtils.STUDY_ALIAS]] = true;
 
             this.setBinDimensionValues(xDimensionVals, xDimensions, record, xOptions, record.x ? record.x.rawRecord : null);
             this.setBinDimensionValues(yDimensionVals, yDimensions, record, yOptions, record.y ? record.y.rawRecord : null);
 
         }, this);
 
+        var xVals = Object.keys(xValsSet), yVals = Object.keys(yValsSet), subjects = Object.keys(subjectsSet), studies = Object.keys(studiesSet);
+
         this.updateBinHierarchicalDimensionValues(xDimensionVals, xHierarchicalDimensionInfo);
         this.updateBinHierarchicalDimensionValues(yDimensionVals, yHierarchicalDimensionInfo);
 
         var studyName;
-        if (studies.size == 1) {
-            studyName = Array.from(studies)[0];
+        if (studies.length == 1) {
+            studyName = studies[0];
         }
 
         content += '<span class="group-title">Data</span>';
-        content += colon + datas.length + ' points from ' + subjects.size + ' subjects' + linebreak;
+        content += colon + datas.length + ' points from ' + subjects.length + ' subjects' + linebreak;
         if (studyName) {
             content += '<span class="group-title">Study</span>';
             content += colon + Ext.htmlEncode(studyName) + linebreak;
         }
         if (xName && this.activeMeasures.x) {
-            content += '<span class="group-title">' +Ext.htmlEncode(this.activeMeasures.x.queryName + ' - ' + xName) + '</span>';
+            content += '<span class="group-title">' +Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.x) + ' - ' + xName) + '</span>';
             content += colon + Ext.htmlEncode(this.getBinRangeTooltip(xVals));
             content += this.showAsMedian ? ' (median)' : '';
             content += '<div class="axis-details">';
@@ -749,7 +751,7 @@ Ext.define('Connector.view.Chart', {
             content += '</div>'
         }
         if (yName && this.activeMeasures.y) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.y.queryName + ' - ' + yName) + '</span>';
+            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.y) + ' - ' + yName) + '</span>';
             content += colon + Ext.htmlEncode(this.getBinRangeTooltip(yVals));
             content += this.showAsMedian ? ' (median)' : '';
             content += '<div class="axis-details">';
@@ -760,21 +762,35 @@ Ext.define('Connector.view.Chart', {
         return content;
     },
 
+    getSourceDisplayValue: function(measure) {
+        var definedMeasureSourceMap = Connector.getService('Query').getDefinedMeasuresSourceTitleMap();
+        if (Ext.isDefined(definedMeasureSourceMap[measure.alias])) {
+            return definedMeasureSourceMap[measure.alias];
+        }
+        else if (measure.variableType == 'TIME') {
+            return measure.sourceTitle;
+        }
+        return measure.queryName;
+    },
+
     updateBinHierarchicalDimensionValues: function(dimensionVals, hierarchicalDimensionInfo) {
         if (dimensionVals && hierarchicalDimensionInfo) {
             for (var dim in dimensionVals) {
-                if (dimensionVals.hasOwnProperty(dim) && dimensionVals[dim].size != 0 && hierarchicalDimensionInfo[dim]) {
-                    var levelDimensions = hierarchicalDimensionInfo[dim];
-
-                    Ext.each(Array.from(dimensionVals[dim]), function(fullStr){
-                        var levels = fullStr.split(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
-                        for (var i = 0; i < levels.length; i++) {
-                            if (!dimensionVals[levelDimensions[i]]) {
-                                dimensionVals[levelDimensions[i]] = new Set();
+                if (dimensionVals[dim] && hierarchicalDimensionInfo[dim]) {
+                    var currentDimVals = Object.keys(dimensionVals[dim]);
+                    if (currentDimVals.length != 0) {
+                        var levelDimensions = hierarchicalDimensionInfo[dim];
+                        Ext.each(currentDimVals, function(fullStr){
+                            var levels = fullStr.split(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
+                            for (var i = 0; i < levels.length; i++) {
+                                if (!dimensionVals[levelDimensions[i]]) {
+                                    dimensionVals[levelDimensions[i]] = {};
+                                }
+                                dimensionVals[levelDimensions[i]][levels[i]] = true;
                             }
-                            dimensionVals[levelDimensions[i]].add(levels[i]);
-                        }
-                    });
+                        });
+                    }
+
                 }
             }
         }
@@ -785,23 +801,23 @@ Ext.define('Connector.view.Chart', {
             var aggregatorValues = recordAggregator && recordAggregator[dim] ? Ext.clone(recordAggregator[dim].getValues()) : null;
 
             if (!dimensionVals[dim]) {
-                dimensionVals[dim] = new Set();
+                dimensionVals[dim] = {};
             }
 
             if (this.hasDimensionalAggregators) {
                 if (aggregatorValues && Ext.isArray(aggregatorValues) && aggregatorValues.length > 0) {
                     Ext.each(aggregatorValues, function(val){
-                        dimensionVals[dim].add(val);
+                        dimensionVals[dim][val] = true;
                     });
                 }
             }
             else {
                 if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
-                    dimensionVals[dim].add(record[dim]);
+                    dimensionVals[dim][record[dim]] = true;
                 }
                 else if (Ext.isArray(axisOptions[dim])){
                     Ext.each(axisOptions[dim], function(val){
-                        dimensionVals[dim].add(val);
+                        dimensionVals[dim][val] = true;
                     });
                 }
             }
@@ -812,16 +828,21 @@ Ext.define('Connector.view.Chart', {
         var content = '', colon = ': ', linebreak = '<br/>';
         if (dimensionVals) {
             Ext.each(dimensions, function(dim) {
-                if (dimensionVals.hasOwnProperty(dim) && dimensionVals[dim].size != 0) {
-                    if (Ext.isArray(hierarchicalDimensionInfo[dim]) && hierarchicalDimensionInfo[dim].length > 0) {
-                        Ext.each(hierarchicalDimensionInfo[dim], function(level) {
-                            if (dimensionVals.hasOwnProperty(level) && dimensionVals[level].size != 0) {
-                                content += this.buildSingleDimensionTooltip(level, Array.from(dimensionVals[level]));
-                            }
-                        }, this);
-                    }
-                    else {
-                        content += this.buildSingleDimensionTooltip(dim, Array.from(dimensionVals[dim]));
+                if (dimensionVals[dim]) {
+                    var dimVals = Object.keys(dimensionVals[dim]);
+                    if (dimVals.length > 0) {
+                        if (Ext.isArray(hierarchicalDimensionInfo[dim]) && hierarchicalDimensionInfo[dim].length > 0) {
+                            Ext.each(hierarchicalDimensionInfo[dim], function(level) {
+                                if (dimensionVals[level]) {
+                                    var levelVals = Object.keys(dimensionVals[level]);
+                                    if (levelVals && levelVals.length > 0)
+                                        content += this.buildSingleDimensionTooltip(level, levelVals);
+                                }
+                            }, this);
+                        }
+                        else {
+                            content += this.buildSingleDimensionTooltip(dim, dimVals);
+                        }
                     }
                 }
             }, this);
@@ -859,11 +880,11 @@ Ext.define('Connector.view.Chart', {
         return valuesStr;
     },
 
-    getBinRangeTooltip: function(valSet) {
-        if (valSet.size == 0)
+    getBinRangeTooltip: function(rawvalues) {
+        if (rawvalues.length == 0)
             return '-';
-        var rawVals = Array.from(valSet), vals = [];
-        Ext.each(rawVals, function(val) {
+        var vals = [];
+        Ext.each(rawvalues, function(val) {
             vals.push(this.formatSingleTooltipValue(val));
         }, this);
         if (vals.length == 1)
@@ -901,20 +922,20 @@ Ext.define('Connector.view.Chart', {
             // skip for study, treatment, and time
             if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
                 var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
-                content += '<span class="group-title">' + Ext.htmlEncode(xAxis.queryName + ' - ' + data.xname) + '</span>' + colon + this.formatSingleTooltipValue(val);
+                content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(xAxis) + ' - ' + data.xname) + '</span>' + colon + this.formatSingleTooltipValue(val);
                 content += this.showAsMedian ? ' (median)' : '';
                 content += this.buildPointAxisDetailTooltip(xAxis, record, record.x && record.x.rawRecord ? record.x.rawRecord : null, this.getHierarchicalDimensionInfo(xAxis));
             }
         }
 
         if (yAxis) {
-            content += '<span class="group-title">' + Ext.htmlEncode(yAxis.queryName + ' - ' + data.yname) + '</span>' + colon + this.formatSingleTooltipValue(data.y);
+            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(yAxis) + ' - ' + data.yname) + '</span>' + colon + this.formatSingleTooltipValue(data.y);
             content += this.showAsMedian ? ' (median)' : '';
             content += this.buildPointAxisDetailTooltip(yAxis, record, record.y && record.y.rawRecord ? record.y.rawRecord : null, this.getHierarchicalDimensionInfo(yAxis));
         }
 
         if (this.activeMeasures.color && data.colorname) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.activeMeasures.color.queryName + ' - ' + data.colorname) + '</span>' + colon + this.formatSingleTooltipValue(data.color);
+            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.color) + ' - ' + data.colorname) + '</span>' + colon + this.formatSingleTooltipValue(data.color);
         }
 
         return content;
@@ -956,14 +977,17 @@ Ext.define('Connector.view.Chart', {
                                 var levels = fullStr.split(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
                                 for (var i = 0; i < levels.length; i++) {
                                     if (!dimensionVals[levelDimensions[i]]) {
-                                        dimensionVals[levelDimensions[i]] = new Set();
+                                        dimensionVals[levelDimensions[i]] = {};
                                     }
-                                    dimensionVals[levelDimensions[i]].add(levels[i]);
+                                    dimensionVals[levelDimensions[i]][levels[i]] = true;
                                 }
                             });
+
                             for (var level in dimensionVals) {
-                                if (dimensionVals.hasOwnProperty(level) && dimensionVals[level].size != 0) {
-                                    content += this.buildSingleDimensionTooltip(level, Array.from(dimensionVals[level]));
+                                if (dimensionVals[level]) {
+                                    var levelValues = Object.keys(dimensionVals[level]);
+                                    if (levelValues && levelValues.length > 0)
+                                        content += this.buildSingleDimensionTooltip(level, levelValues);
                                 }
                             }
                         }
@@ -1856,7 +1880,8 @@ Ext.define('Connector.view.Chart', {
 
             if (this.activeMeasures.x)
             {
-                this.clickTask.delay(150, null, null, [(node ? node : e.target), this, this.activeMeasures.x.alias, target, multi]);
+                var wrappedX = this.getWrappedMeasures()[0];
+                this.clickTask.delay(150, null, null, [(node ? node : e.target), this, QueryUtils.ensureAlignmentAlias(wrappedX), target, multi]);
             }
             else
             {
@@ -2787,9 +2812,13 @@ Ext.define('Connector.view.Chart', {
                         {
                             measures = measures.concat(xMeasures);
 
-                            if (filter.isPlot() && filter.get('gridFilter')[0])
+                            /*
+                             * Issue 27773: unexplained gutter plot
+                             * An non-aggregated filter on x or y would exclude 'null' on x or y, and as a result should hide y gutter or x gutter, respectively.
+                             */
+                            if (filter.isPlot() && filter.get('gridFilter')[0] && filter.get('gridFilter')[0].getColumnName() === activeMeasures.x.alias)
                             {
-                                hasPlotSelectionFilter.x = true;
+                                    hasPlotSelectionFilter.x = true;
                             }
                         }
                     }
@@ -2801,9 +2830,9 @@ Ext.define('Connector.view.Chart', {
                         {
                             measures = measures.concat(yMeasures);
 
-                            if (filter.isPlot() && filter.get('gridFilter')[2])
+                            if (filter.isPlot() && filter.get('gridFilter')[2] && filter.get('gridFilter')[2].getColumnName() === activeMeasures.y.alias)
                             {
-                                hasPlotSelectionFilter.y = true;
+                                    hasPlotSelectionFilter.y = true;
                             }
                         }
                     }

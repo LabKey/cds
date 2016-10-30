@@ -1,0 +1,25 @@
+prot	rel_prot	relationship
+q1	q2	Main study
+q2	q1	Ancillary study
+q1	q3	Main study
+q3	q1	Ancillary study
+q2	q4	Main study
+q4	q2	Extension study
+z102	z105	Main study
+z103	z105	HIV follow up study
+y55	z103	Ancillary study
+z110	z103	HIV follow up study
+z111	z103	Extension study
+z103	y55	Main study
+z103	z110	Main study
+z103	z111	Main study
+z104	z103	Co-conducted study
+q1	r4	Extension study
+q1	r3	Extension study
+q1	z100	Co-conducted study
+q1	z111	HIV follow up study
+q1	r2	Ancillary study
+r5	r5	Ancillary study
+q1	z101	A poorly-named study relationship
+r1	r2	Extension study
+z105	z102	Ancillary study

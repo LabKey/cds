@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -219,13 +219,16 @@ public class CDSController extends SpringActionController
                 AppModel model = new AppModel();
 
                 // Support analytics for white-list users (i.e. if they are in the ANALYTICS_USER_GROUP)
-                List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
-                for (Group group : groups)
+                if (!getUser().isImpersonated()) // 27915
                 {
-                    if (SecurityManager.getDisambiguatedGroupName(group).equalsIgnoreCase(ANALYTICS_USER_GROUP))
+                    List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
+                    for (Group group : groups)
                     {
-                        model.setIsAnalyticsUser(true);
-                        break;
+                        if (SecurityManager.getDisambiguatedGroupName(group).equalsIgnoreCase(ANALYTICS_USER_GROUP))
+                        {
+                            model.setIsAnalyticsUser(true);
+                            break;
+                        }
                     }
                 }
 

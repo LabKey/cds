@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -83,19 +83,19 @@ Ext.define('Connector.view.module.ContactCDS', {
 
             '</table>',
             '<div class="item-row">',
-                '<a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" onclick="Connector.controller.Analytics.onMailRequest();" target="_blank">Contact the CAVD DataSpace team</a> for more information<br/>',
+                'Contact the <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" onclick="Connector.controller.Analytics.onMailRequest();" target="_blank">CAVD DataSpace team</a> for more information<br/>',
             '</div>',
             '<div class="item-row">',
-                '<a href="https://portal.cavd.org/CAVDStudyProposals/Pages/RequestCSFServices.aspx" target="_blank">Request Central Service Facilities support for an ancillary study</a>',
+                'Request <a href="https://portal.cavd.org/CAVDStudyProposals/Pages/RequestCSFServices.aspx" target="_blank">Central Service Facilities support</a> for an ancillary study',
             '</div>',
             '<tpl if="atlas_link">',
                 '<div class="item-row">',
-                '<a href="{atlas_link}" target="_blank">View this study in ATLAS <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
+                'View this study in <a href="{atlas_link}" target="_blank">ATLAS <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
                 '</div>',
             '</tpl>',
             '<tpl if="cavd_link">',
                 '<div class="item-row">',
-                '<a href="{cavd_link}" target="_blank">View this study on the CAVD Portal <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
+                'View this study on the <a href="{cavd_link}" target="_blank">CAVD Portal <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
                 '</div>',
             '</tpl>',
         '</tpl>'

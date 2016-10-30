@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 LabKey Corporation
+ * Copyright (c) 2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,6 +120,35 @@ public class CDSPlot
         {
             fail("Timeout waiting for point count [" + secTimeout + "sec]: " + count);
         }
+    }
+
+    public int getGutterPlotPointCount()
+    {
+        return getXGutterPlotPointCount() + getYGutterPlotPointCount();
+    }
+
+    public int getXGutterPlotPointCount()
+    {
+        int points = 0;
+
+        if(hasXGutter())
+        {
+            points = _test.getElementCount(Locator.css("div.plot svg g a.point"));
+        }
+
+        return points;
+    }
+
+    public int getYGutterPlotPointCount()
+    {
+        int points = 0;
+
+        if(hasYGutter())
+        {
+            points = _test.getElementCount(Locator.css("div.bottomplot svg g a.point"));
+        }
+
+        return points;
     }
 
     public boolean hasYGutter()

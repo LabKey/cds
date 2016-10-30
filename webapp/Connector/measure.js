@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 LabKey Corporation
+ * Copyright (c) 2015-2016 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -275,7 +275,7 @@ Ext.define('Connector.measure.Configuration', {
                     isMeasure: true,
                     isRecommendedVariable: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study days (timeline)',
+                    label: 'Study days (continuous)',
                     type: 'INTEGER',
                     variableType: 'TIME'
                 },
@@ -286,7 +286,7 @@ Ext.define('Connector.measure.Configuration', {
                     isMeasure: false,
                     isRecommendedVariable: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study days (box plots)',
+                    label: 'Study days (categorical)',
                     type: 'INTEGER',
                     variableType: 'TIME',
                     isDiscreteTime: true
@@ -297,7 +297,7 @@ Ext.define('Connector.measure.Configuration', {
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study weeks (timeline)',
+                    label: 'Study weeks (continuous)',
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
@@ -307,7 +307,7 @@ Ext.define('Connector.measure.Configuration', {
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: false,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study weeks (box plots)',
+                    label: 'Study weeks (categorical)',
                     type: 'DOUBLE',
                     variableType: 'TIME',
                     isDiscreteTime: true
@@ -318,7 +318,7 @@ Ext.define('Connector.measure.Configuration', {
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study months (timeline)',
+                    label: 'Study months (continuous)',
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
@@ -328,7 +328,7 @@ Ext.define('Connector.measure.Configuration', {
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: false,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study months (box plots)',
+                    label: 'Study months (categorical)',
                     type: 'DOUBLE',
                     variableType: 'TIME',
                     isDiscreteTime: true
