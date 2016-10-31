@@ -29,6 +29,19 @@ Ext.define('Connector.view.Variable', {
 
     initComponent : function() {
 
+        var me = this;
+        var listeners = me.listeners;
+        Ext.applyIf(listeners, {
+            click: {
+                element: 'el', //bind to the underlying el property on the panel
+                fn: function(){
+                    if (!me.disabled) {
+                        me.fireEvent('requestvariable', me, me.getModel());
+                    }
+                }
+            }
+        });
+
         if (this.model) {
             this.setModel(this.model);
         }
@@ -44,7 +57,6 @@ Ext.define('Connector.view.Variable', {
             itemId: 'cvbutton',
             cls: this.btnCls,
             text: this.buttonText,
-            handler: this.onBtnClick,
             scope: this
         },{
             xtype: 'imgbutton',
@@ -52,7 +64,6 @@ Ext.define('Connector.view.Variable', {
             hidden: true,
             vector: 29,
             cls: this.btnCls + ' ddbutton',
-            handler: this.onBtnClick,
             scope: this
         }];
 
@@ -124,12 +135,6 @@ Ext.define('Connector.view.Variable', {
 
     clearModel : function() {
         this.getModel().updateVariable();
-    },
-
-    onBtnClick : function() {
-        if (!this.disabled) {
-            this.fireEvent('requestvariable', this, this.getModel());
-        }
     },
 
     getActiveButton : function() {

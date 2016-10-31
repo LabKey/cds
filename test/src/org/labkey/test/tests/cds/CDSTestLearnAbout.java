@@ -19,6 +19,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.Timeout;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.LabKeyPage;
 import org.labkey.test.pages.cds.LearnGrid;
@@ -32,8 +34,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSTestLearnAbout extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
@@ -65,6 +69,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public List<String> getAssociatedModules()
     {
         return Arrays.asList("CDS");
+    }
+
+    @Override
+    public Timeout testTimeout()
+    {
+        return new Timeout(60, TimeUnit.MINUTES);
     }
 
     @Test

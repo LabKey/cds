@@ -62,7 +62,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
             }, {
                 xtype: 'templatecolumn',
                 header: 'All',
-                width: 100,
+                width: 250,
                 sortable: false,
                 menuDisabled: true,
                 tpl: this.getDataAddedTemplate()
