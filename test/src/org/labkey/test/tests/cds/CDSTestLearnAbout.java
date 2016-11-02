@@ -804,19 +804,19 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertEquals("Did not find the expected number of document links.", 3, Locator.xpath(REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
 
         log("First check the Powerpoint link.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'Powerpoint')]").findElement(getDriver());
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'Epitope Mapping Results Summary')]").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the Powerpoint document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_CAVIMC 031 Linear Epitope Mapping_BaselineSubtracted-3.pptx";
         validateDocLink(documentLink, documentName);
 
         log("Now check the Excel link.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'Excel')]").findElement(getDriver());
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'NAB Data Summary 2')]").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the Excel document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_CAVIMC-031 Neutralization Data with AUC 3 May 2011-6.xlsx";
         validateDocLink(documentLink, documentName);
 
         log("Finally for this study validate the pdf file.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'PDF')]").findElement(getDriver());
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'NAB Data Summary 1')]").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_McElrath_Seder_Antibody Responses 1.1 01Jun11.pdf";
         validatePDFLink(documentLink, documentName);
@@ -837,13 +837,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertEquals("Did not find the expected number of document links.", 9, Locator.xpath(REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
 
         log("Click on a few of these links to make sure they work. First check the Word Document link.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'Word Document')]").findElement(getDriver());
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'CFSE Results Summary')]").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the Word Document document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd264_DCVax001_CFSE_Memo_JUL13_v4.docx";
         validateDocLink(documentLink, documentName);
 
         log("Now check one of the PDF link.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'ICS Data Summary (PDF)')]").findElement(getDriver());
+        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'ICS Data Summary')]").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd264_ICS_LAB_REPORT_19APR13_n24fcm_fh_IL2_CD154_MIMOSA.pdf";
         validatePDFLink(documentLink, documentName);
