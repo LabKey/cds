@@ -20,10 +20,8 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.components.ext4.Window;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.LearnGrid;
-import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
@@ -301,8 +299,8 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         int reportId;
         String reportUrl;
 
-        goToSchemaBrowser();
-        selectQuery(schemaName, queryName);
+        beginAt(getProjectName() + "/query-begin.view?#sbh-qdp-%26CDS%26assay");
+        waitForElement(Locator.linkWithText("view data"));
         click(Locator.linkWithText("view data"));
 
         // Check to see if the report already exists. If it does, then just ignore this test.
@@ -371,9 +369,10 @@ public class CDSRReportsTest extends CDSReadOnlyTest
                 clickButton("New Category", 0);
                 WebElement newCategoryField = Locator.xpath("//input[contains(@id, 'textfield') and @name='label']").notHidden().waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
                 setFormElement(newCategoryField, category);
+                sleep(500);
                 fireEvent(newCategoryField, SeleniumEvent.blur);
-                waitForElement(Ext4Helper.Locators.window("Manage Categories").append("//div").withText(category));
-                assertElementPresent("Something is wrong, it doesn't look like the category'" + category + "' was created.", Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']"), 1);
+                sleep(500);
+                waitForElement(Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']"));
             }
         }
 
