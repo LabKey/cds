@@ -368,10 +368,15 @@ public class CDSRReportsTest extends CDSReadOnlyTest
             {
                 clickButton("New Category", 0);
                 WebElement newCategoryField = Locator.xpath("//input[contains(@id, 'textfield') and @name='label']").notHidden().waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
-                setFormElement(newCategoryField, category);
-                sleep(500);
+                // Previously was calling:  setFormElement(newCategoryField, category);
+                // However that started failing recently (11/1/2016) and consistently on TeamCity. Maybe new chrome driver is cause?
+                // Took the code out of setFormElement and narrowed it down to jsut what is needed here, and slowed it down.
+                executeScript("arguments[0].value = arguments[1]", newCategoryField, category);
+                sleep(1000);
+                fireEvent(newCategoryField, SeleniumEvent.change);
+                sleep(1000);
                 fireEvent(newCategoryField, SeleniumEvent.blur);
-                sleep(500);
+                sleep(1000);
                 waitForElement(Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']"));
             }
         }
