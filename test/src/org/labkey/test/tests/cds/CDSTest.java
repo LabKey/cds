@@ -172,6 +172,7 @@ public class CDSTest extends CDSReadOnlyTest
         colorAxis.confirmSelection();
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        _ext4Helper.waitForMaskToDisappear();
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
         cds.pickSort("Race");
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
