@@ -101,6 +101,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         assertElementNotPresent("It looks like there is a description tag for this report but there should not be.", Locator.xpath("//td[@class='learn-report-header-column']/h3[text()='Description']/following-sibling::p"));
 
         log("Validate that one img tag is shown for this report.");
+        waitForElement(Locator.xpath("//table[@class='labkey-output']//img[@name='resultImage']"));
         assertElementPresent(Locator.xpath("//table[@class='labkey-output']//img[@name='resultImage']"), 1);
 
         log("Validate that one svg tag is shown for this report.");
