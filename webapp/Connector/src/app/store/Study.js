@@ -108,7 +108,7 @@ Ext.define('Connector.app.store.Study', {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
                 && Ext.isDefined(this.relationshipOrderData)) {
-            var studies = [], products, productNames;
+            var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                 return relOrder.relationship;
             });
@@ -156,6 +156,7 @@ Ext.define('Connector.app.store.Study', {
 
                 products = [];
                 productNames = [];
+                productClasses = [];
                 for (var p=0; p < this.productData.length; p++) {
                     if (study.study_name === this.productData[p].study_name) {
                         // Consider: These should probably be of type Connector.app.model.StudyProducts
@@ -165,6 +166,7 @@ Ext.define('Connector.app.store.Study', {
                             product_name: this.productData[p].product_name
                         });
                         productNames.push(this.productData[p].product_name);
+                        productClasses.push(this.productData[p].product_class || '[Unknown]');
                     }
                 }
                 products.sort(function (p1, p2) {
@@ -210,6 +212,10 @@ Ext.define('Connector.app.store.Study', {
                             study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
                         }
                     }
+                }
+
+                if(!study.cavd_affiliation) {
+                    study.cavd_affiliation = "[Unaffiliated]";
                 }
 
                 var publications = this.publicationData.filter(function(pub){
@@ -273,6 +279,7 @@ Ext.define('Connector.app.store.Study', {
 
                 study.products = products;
                 study.product_names = productNames;
+                study.product_classes = productClasses;
                 study.assays = assays;
                 study.assays_added = assaysAdded;
                 study.assays_added_count = assaysAdded.length;
