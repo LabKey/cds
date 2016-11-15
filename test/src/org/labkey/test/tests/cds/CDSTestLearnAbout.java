@@ -737,6 +737,21 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertTrue(2 == learnGrid.getRowCount());
         learnGrid.clearFiltersWithOption("Type", "Type");
         Assert.assertTrue(CDSHelper.STUDIES.length == learnGrid.getRowCount());
+
+        //test filtering on grant affiliation and network
+        learnGrid.setWithOptionFacet("PI", "Grant Affiliation", "Gallo: Systemic, Mucosal & Passive Immunity");
+        Assert.assertTrue(2 == learnGrid.getRowCount());
+        learnGrid.setWithOptionFacet("Name & Description", "Network", "Q");
+        Assert.assertTrue(1 == learnGrid.getRowCount());
+        refresh();
+        sleep(CDSHelper.CDS_WAIT);
+        Assert.assertTrue(1 == learnGrid.getRowCount());
+        learnGrid.clearFiltersWithOption("PI", "Grant Affiliation");
+        learnGrid.clearFiltersWithOption("Name & Description", "Network");
+
+        learnGrid.setWithOptionFacet("Products", "Product Class", "ante");
+        Assert.assertTrue(2 == learnGrid.getRowCount());
+        learnGrid.clearFiltersWithOption("Products", "Product Class");
     }
 
     @Test
