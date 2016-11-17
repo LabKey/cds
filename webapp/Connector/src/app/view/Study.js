@@ -23,6 +23,10 @@ Ext.define('Connector.app.view.Study', {
             filterField: 'label',
             valueType: 'string',
             title: 'Study'
+        },{
+            filterField: 'network',
+            valueType: 'string',
+            title: 'Network'
         }],
         tpl: new Ext.XTemplate(
             '<div class="detail-description">',
@@ -91,10 +95,15 @@ Ext.define('Connector.app.view.Study', {
             filterField: 'grant_pi_name',
             valueType: 'string',
             title: 'PI'
+        },{
+            filterField: 'cavd_affiliation',
+            valueType: 'string',
+            title: 'Grant Affiliation'
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
                     '<div class="detail-black-text">{grant_pi_name}</div>',
+                    '<div class="detail-gray-text">{cavd_affiliation}</div>',
                 '</div>'
         )
     },{
@@ -126,6 +135,10 @@ Ext.define('Connector.app.view.Study', {
             filterField: 'product_names',
             valueType: 'string',
             title: 'Products'
+        },{
+            filterField: 'product_classes',
+            valueType: 'string',
+            title: 'Product Class'
         }],
         dataIndex: 'product_to_sort_on',
         tpl: new Ext.XTemplate(

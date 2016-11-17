@@ -241,8 +241,8 @@ public class LearnGrid
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {
-            return Locator.xpath("//tr[contains(@class, 'x-grid-row')]//td/div[contains(text(), '"
-                    + label + "')]/../preceding-sibling::td/div/div[contains(@class, 'x-grid-row-checker')]");
+            return Locator.xpath("//tr[contains(@class, 'x-grid-row')]//td/div[text() = '"
+                    + label + "']/../preceding-sibling::td/div/div[contains(@class, 'x-grid-row-checker')]");
         }
 
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
