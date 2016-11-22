@@ -333,6 +333,11 @@ Ext.define('Connector.view.InfoPane', {
             ui: 'lightfooter',
             items: ['->',
                 {
+                    text: 'Cancel',
+                    cls: 'filterinfocancel', // tests
+                    handler: function() { this.hide(); },
+                    scope: this
+                },{
                     text: model.isFilterBased() ? 'Update' : 'Filter',
                     cls: 'filterinfoaction', // tests
                     handler: this.onUpdate,
@@ -345,11 +350,6 @@ Ext.define('Connector.view.InfoPane', {
                         },
                         scope: this
                     },
-                    scope: this
-                },{
-                    text: 'Cancel',
-                    cls: 'filterinfocancel', // tests
-                    handler: function() { this.hide(); },
                     scope: this
                 }
             ]

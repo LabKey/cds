@@ -180,13 +180,13 @@ Ext.define('Connector.view.GroupSave', {
                     ui: 'lightfooter',
                     style: 'padding-top: 60px',
                     items: ['->',{
-                        text: 'Save',
-                        itemId: 'groupcreatesave',
-                        cls: 'groupcreatesave' // tests
-                    },{
                         text: 'Cancel',
                         itemId: 'groupcancel',
                         cls: 'groupcancelcreate' // tests
+                    },{
+                        text: 'Save',
+                        itemId: 'groupcreatesave',
+                        cls: 'groupcreatesave' // tests
                     }]
                 }],
                 listeners : {
