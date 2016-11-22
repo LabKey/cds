@@ -17,16 +17,20 @@ package org.labkey.test.tests.cds;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.Timeout;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.DemoMeasureStorePage;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSMeasureStoreTest extends CDSReadOnlyTest
 {
     public static final String[] ICS_ELISPOT_DIMENSIONS = {"study_ICS_summary_level", "cds_GridBase_SequenceNum", "study_ICS_pctpos",
@@ -34,6 +38,12 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
             "study_ELISPOT_protein", "study_ELISPOT_summary_level", "cds_GridBase_VisitRowId", "study_ELISPOT_specimen_type",
             "study_ELISPOT_lab_code", "study_ICS_protein", "study_ICS_lab_code", "study_ELISPOT_protein_panel",
             "study_ELISPOT_mean_sfc", "study_ICS_protein_panel", "cds_GridBase_Dataset", "study_ELISPOT_functional_marker_name",};
+
+    @Override
+    public Timeout testTimeout()
+    {
+        return new Timeout(60, TimeUnit.MINUTES);
+    }
 
     @Test
     public void testDemoMeasureStore()
