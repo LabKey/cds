@@ -26,7 +26,14 @@ Ext.define('Connector.view.GridPane', {
             excludeIndexes = {};
 
         if (filter.get('isTime')) {
-            dataFilters = filter.get('timeFilters')
+            // skip participant sequence filter and use raw time filters
+            dataFilters = filter.get('timeFilters');
+            Ext.each(filter.get('gridFilter'), function(gFilter){
+               if (gFilter && gFilter.getColumnName() != QueryUtils.SUBJECT_SEQNUM_ALIAS)
+               {
+                   dataFilters.push(gFilter);
+               }
+            });
         }
         var content = [{
             xtype: 'box',
@@ -94,6 +101,11 @@ Ext.define('Connector.view.GridPane', {
                 {
                     // get this columns measure information
                     var measure = Connector.getQueryService().getMeasure(gf.getColumnName());
+                    if (filter.get('isTime') && filter.get('timeMeasure') && !measure)
+                    {
+                        measure = filter.get('timeMeasure').measure;
+                    }
+
                     if (Ext.isDefined(measure))
                     {
 
@@ -103,7 +115,7 @@ Ext.define('Connector.view.GridPane', {
                             content.push({
                                 xtype: 'box',
                                 cls: 'smallstandout soft spacer',
-                                html: Ext.htmlEncode(Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption)
+                                html: Ext.htmlEncode(Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption ? measure.shortCaption : measure.queryLabel)
                             });
                             content.push({
                                 xtype: 'box',
