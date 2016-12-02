@@ -159,14 +159,17 @@ Ext.define('Connector.app.store.Study', {
                 productClasses = [];
                 for (var p=0; p < this.productData.length; p++) {
                     if (study.study_name === this.productData[p].study_name) {
-                        // Consider: These should probably be of type Connector.app.model.StudyProducts
-                        // but it'd be good to then have a common sourcing mechanism for LA models
-                        products.push({
-                            product_id: this.productData[p].product_id,
-                            product_name: this.productData[p].product_name
-                        });
-                        productNames.push(this.productData[p].product_name);
-                        productClasses.push(this.productData[p].product_class || '[Unknown]');
+                        if (this.productData[p].product_name.toLowerCase() !=
+                                Connector.app.model.StudyProducts.prototype.markerProducts.NONE) {
+                            // Consider: These should probably be of type Connector.app.model.StudyProducts
+                            // but it'd be good to then have a common sourcing mechanism for LA models
+                            products.push({
+                                product_id: this.productData[p].product_id,
+                                product_name: this.productData[p].product_name
+                            });
+                            productNames.push(this.productData[p].product_name);
+                            productClasses.push(this.productData[p].product_class || '[Unknown]');
+                        }
                     }
                 }
                 products.sort(function (p1, p2) {
