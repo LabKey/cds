@@ -111,12 +111,16 @@ Ext.define('Connector.app.store.StudyProducts', {
         // return this.secretData[id] || this.callParent(id);
     },
 
-    validProduct : function(productName) {
-        var markerProducts = Connector.app.model.StudyProducts.prototype.markerProducts;
-        productName = productName.toLowerCase();
-        return productName != markerProducts.NONE &&
-                productName != markerProducts.COMING_SOON &&
-                productName != markerProducts.NOT_USED
+    hiddenProduct : function(productName) {
+        var markerProducts = Connector.app.model.StudyProducts.markerProducts, hidden = false;
+        var formattedProductName = productName.toLowerCase().trim();
+        Ext4.iterate(markerProducts, function(key, value){
+           if (formattedProductName == value) {
+               hidden = true;
+               return false;
+           }
+        });
+        return hidden;
     },
 
     _onLoadComplete : function() {
@@ -170,11 +174,12 @@ Ext.define('Connector.app.store.StudyProducts', {
                 }
                 product.other_products = otherProducts;
 
-                if (this.validProduct(product.product_name)) {
+                if (!this.hiddenProduct(product.product_name)) {
                     products.push(product);
                 }
                 else{
-                    this.secretData[product.product_id] = product;
+                    if (product.product_name.toLowerCase().trim() != Connector.app.model.StudyProducts.markerProducts.NONE)
+                        this.secretData[product.product_id] = product;
                 }
             }, this);
 

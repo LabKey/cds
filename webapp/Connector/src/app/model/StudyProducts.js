@@ -23,10 +23,12 @@ Ext.define('Connector.app.model.StudyProducts', {
      * 2. Study learn about detail should not show NONE.
      * 3. Products learn about summary should not show NONE, NOT_USED, COMING_SOON
      */
-    markerProducts: {
-        NONE: "none",
-        NOT_USED: "no products used in study",
-        COMING_SOON: "product info coming soon!"
+    statics: {
+        markerProducts: {
+            NONE: "none",
+            NOT_USED: "no products used in study",
+            COMING_SOON: "product info coming soon!"
+        }
     },
 
     fields: [

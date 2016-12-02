@@ -159,8 +159,8 @@ Ext.define('Connector.app.store.Study', {
                 productClasses = [];
                 for (var p=0; p < this.productData.length; p++) {
                     if (study.study_name === this.productData[p].study_name) {
-                        if (this.productData[p].product_name.toLowerCase() !=
-                                Connector.app.model.StudyProducts.prototype.markerProducts.NONE) {
+                        if (this.productData[p].product_name.toLowerCase().trim() !=
+                                Connector.app.model.StudyProducts.markerProducts.NONE) {
                             // Consider: These should probably be of type Connector.app.model.StudyProducts
                             // but it'd be good to then have a common sourcing mechanism for LA models
                             products.push({
