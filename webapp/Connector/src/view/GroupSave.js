@@ -282,13 +282,13 @@ Ext.define('Connector.view.GroupSave', {
                     ui: 'lightfooter',
                     style: 'padding-top: 60px',
                     items: ['->',{
-                        text: 'Save',
-                        itemId: 'groupeditsave',
-                        cls: 'groupeditsave' // tests
-                    },{
                         text: 'Cancel',
                         itemId: 'groupcancel',
                         cls: 'groupcanceledit' // tests
+                    },{
+                        text: 'Save',
+                        itemId: 'groupeditsave',
+                        cls: 'groupeditsave' // tests
                     }]
                 }],
                 getForm : function()
