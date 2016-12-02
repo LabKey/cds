@@ -210,7 +210,7 @@ Ext.define('Connector.view.Chart', {
                     children: [{
                         tag: 'h1',
                         cls: 'line1',
-                        html: 'There are no data for the selected variable(s) in the current filters.'
+                        html: 'No data to plot. Try other assay dimensions, change variables, or remove filters.'
                     }]
                 }
             });
