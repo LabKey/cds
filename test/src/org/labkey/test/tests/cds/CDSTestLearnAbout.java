@@ -22,7 +22,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.pages.LabKeyPage;
+import org.labkey.test.Locators;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
@@ -193,7 +193,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Page was refreshed.");
         sleep(30000);
         log("Should have slept for another 30 seconds. Now wait at most 60 seconds for the page signal to fire.");
-        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000, false);
+        waitForElement(Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 60000, false);
         log("Signal should have fired. Now wait, at most, 60 seconds for an h2 element with the text 'verapamil hydrochloride'");
         waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 60000);
         log("Element should be there.");
@@ -220,7 +220,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Page was refreshed.");
         sleep(10000);
         log("Should have slept for another 10 seconds. Now wait at most 30 seconds for the page signal to fire.");
-        waitForElement(LabKeyPage.Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 30000, false);
+        waitForElement(Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 30000, false);
         log("Signal should have fired. Now wait, at most, 30 seconds for an h2 element with the text 'verapamil hydrochloride'");
         waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 30000);
         log("Element should be there.");
