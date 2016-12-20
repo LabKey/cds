@@ -99,11 +99,11 @@ public class CDSTest extends CDSReadOnlyTest
         }
         assertElementPresent(hiddenShowBarLink);
         click(Locator.linkContainingText("Hide "));
-        sleep(500);
+        waitForElement(Locator.xpath("//div[contains(@class, 'expanded-intro')][contains(@style, 'display: none')]"));
         assertElementNotPresent(hiddenShowBarLink);
-        sleep(500);
+        waitForElement(Locator.linkContainingText("Show tips for getting started "));
         click(Locator.linkContainingText("Show tips for getting started "));
-        sleep(500);
+        waitForElement(Locator.xpath("//a[@id='showlink'][contains(@style, 'display: none')]"));
         assertElementPresent(hiddenShowBarLink);
 
         log("Verify tile text");
@@ -172,6 +172,7 @@ public class CDSTest extends CDSReadOnlyTest
         colorAxis.confirmSelection();
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        _ext4Helper.waitForMaskToDisappear(30000);
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
         cds.pickSort("Race");
         cds.selectBars(CDSHelper.RACE_VALUES[2]);

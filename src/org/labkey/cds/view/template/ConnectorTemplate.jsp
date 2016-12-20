@@ -101,8 +101,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/internal/jQuery/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/hopscotch/js/hopscotch.min.js"></script>
 
-    <% if (devMode) { %>
-
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/ext-patches.js"></script>
@@ -164,9 +162,14 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/experimental/MeasureStore.js"></script>
 
     <script type="text/javascript" src="<%=text(contextPath)%>/query/olap.js"></script>
+
+    <% if (devMode) { %>
+
+    <!-- CDS Module Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/cube.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/measure.js"></script>
 
+    <!-- Connector Application -->
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
 
     <!-- Application Models -->

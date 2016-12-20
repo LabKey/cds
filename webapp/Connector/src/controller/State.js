@@ -82,8 +82,9 @@ Ext.define('Connector.controller.State', {
      * as distinct sets does not result in the same query.
      * @param skipState
      * @param opChange
+     * @param isMoveToFilter
      */
-    requestSelectionUpdate : function(skipState, opChange) {
+    requestSelectionUpdate : function(skipState, opChange, isMoveToFilter) {
 
         this.onMDXReady(function(mdx) {
 
@@ -99,7 +100,7 @@ Ext.define('Connector.controller.State', {
             if (!skipState)
                 this.updateState();
 
-            this.fireEvent('selectionchange', this.selections, opChange);
+            this.fireEvent('selectionchange', this.selections, opChange, isMoveToFilter);
 
         }, this);
     },
@@ -194,6 +195,26 @@ Ext.define('Connector.controller.State', {
         else
         {
             this.setFilters(filterSet);
+        }
+    },
+
+    // Override to pass in isMoveToFilter param to clearSelections
+    moveSelectionToFilter : function() {
+        var selections = this.selections;
+        this.clearSelections(true, true);
+        this.addFilters(selections);
+    },
+
+    /**
+     * Override
+     * @param {boolean} [skipState=false]
+     * @param {boolean} [isMoveToFilter=false]
+     */
+    clearSelections : function(skipState, isMoveToFilter) {
+        var _skip = skipState === true;
+        if (this.selections.length > 0) {
+            this.selections = [];
+            this.requestSelectionUpdate(_skip, false, isMoveToFilter);
         }
     }
 });

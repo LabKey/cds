@@ -22,11 +22,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.LearnGrid;
-import org.labkey.test.selenium.LazyWebElement;
 import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
@@ -103,6 +101,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         assertElementNotPresent("It looks like there is a description tag for this report but there should not be.", Locator.xpath("//td[@class='learn-report-header-column']/h3[text()='Description']/following-sibling::p"));
 
         log("Validate that one img tag is shown for this report.");
+        waitForElement(Locator.xpath("//table[@class='labkey-output']//img[@name='resultImage']"));
         assertElementPresent(Locator.xpath("//table[@class='labkey-output']//img[@name='resultImage']"), 1);
 
         log("Validate that one svg tag is shown for this report.");
@@ -301,8 +300,8 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         int reportId;
         String reportUrl;
 
-        goToSchemaBrowser();
-        selectQuery(schemaName, queryName);
+        beginAt(getProjectName() + "/query-begin.view?#sbh-qdp-%26CDS%26assay");
+        waitForElement(Locator.linkWithText("view data"));
         click(Locator.linkWithText("view data"));
 
         // Check to see if the report already exists. If it does, then just ignore this test.
@@ -369,13 +368,16 @@ public class CDSRReportsTest extends CDSReadOnlyTest
             if(!isElementPresent(Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']")))
             {
                 clickButton("New Category", 0);
-                waitForElement(Locator.xpath(XPATH_TO_DIALOG + "//input[@name='label']/ancestor::div[contains(@class, 'x4-editor')][not(contains(@style, 'display: none'))]"));
-                setFormElement(Locator.xpath(XPATH_TO_DIALOG + "//input[@name='label']"), category);
-                sleep(250);  // Wait just a moment before hitting enter.
-                pressEnter(Locator.xpath(XPATH_TO_DIALOG + "//input[@name='label']"));
-
-                sleep(250);  // Wait just a moment.
-                assertElementPresent("Something is wrong, it doesn't look like the category'" + category + "' was created.", Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']"), 1);
+                WebElement newCategoryField = Locator.xpath("//input[contains(@id, 'textfield') and @name='label']").notHidden().waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
+                // Previously was calling:  setFormElement(newCategoryField, category);
+                // However that started failing recently (11/1/2016) and consistently on TeamCity. Maybe new chrome driver is cause?
+                // The change below did pass with a personal build on TC. However if this continues to fail I would recommend commenting out the "category" part of the test.
+                newCategoryField.clear();
+                newCategoryField.sendKeys(category);
+                sleep(1000);
+                fireEvent(newCategoryField, SeleniumEvent.blur);
+                sleep(1000);
+                waitForElement(Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']"));
             }
         }
 

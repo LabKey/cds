@@ -75,6 +75,7 @@ Ext.define('Connector.view.InfoPane', {
                 xtype: 'container',
                 ui: 'custom',
                 layout: { type: 'hbox' },
+                itemId: 'infosortbyinput',
                 items: [{
                     xtype: 'box',
                     tpl: new Ext.XTemplate(
@@ -94,43 +95,17 @@ Ext.define('Connector.view.InfoPane', {
                             }, box);
                         },
                         scope: this
-                    },
-                    flex: 10
-                },{
-                    id: btnId,
-                    xtype: 'imgbutton',
-                    itemId: 'infosortdropdown',
-                    cls: 'sortDropdown ipdropdown', // tests
-                    style: 'float: right;',
-                    vector: 21,
-                    width: 21,
-                    margin: '20 0 0 20',
-                    menu: {
-                        xtype: 'menu',
-                        autoShow: true,
-                        itemId: 'infosortedmenu',
-                        showSeparator: false,
-                        width: 200,
-                        ui: 'custom',
-                        cls: 'infosortmenu',
-                        btn: btnId,
-                        listeners: {
-                            afterrender: this.bindSortMenu,
-                            scope: this
-                        }
-                    },
-                    listeners: {
-                        afterrender : function(b) {
-                            b.showMenu(); b.hideMenu(); // allows the menu to layout/render
-
-                            // we don't want to show the dropdown if there is only one item to select (current one)
-                            if (!b.hidden && Ext.isDefined(b.menu) && b.menu.items.items.length < 2) {
-                                b.hide();
-                            }
                         },
-                        scope: this
+                    flex: 10
+                }, this.getInfoSortDropDownButton(btnId)
+                ],
+                listeners :{
+                    render: function(cmp) {
+                        cmp.getEl().on('click', function(){
+                            Ext.getCmp(btnId).showMenu();
+                        });
                     }
-                }]
+                }
             });
         }
 
@@ -202,6 +177,47 @@ Ext.define('Connector.view.InfoPane', {
         var state = Connector.getState();
         state.on('selectionchange', function() { this.hide(); }, this, {single: true});
         state.on('filterchange', function() { this.hide(); }, this, {single: true});
+    },
+
+    getInfoSortDropDownButton: function(btnId) {
+        if (!this.infoSortDropDownButton) {
+            this.infoSortDropDownButton = {
+                id: btnId,
+                xtype: 'imgbutton',
+                itemId: 'infosortdropdown',
+                cls: 'sortDropdown ipdropdown', // tests
+                style: 'float: right;',
+                vector: 21,
+                width: 21,
+                margin: '20 0 0 20',
+                menu: {
+                    xtype: 'menu',
+                    autoShow: true,
+                    itemId: 'infosortedmenu',
+                    showSeparator: false,
+                    width: 200,
+                    ui: 'custom',
+                    cls: 'infosortmenu',
+                    btn: btnId,
+                    listeners: {
+                        afterrender: this.bindSortMenu,
+                        scope: this
+                    }
+                },
+                listeners: {
+                    afterrender : function(b) {
+                        b.showMenu(); b.hideMenu(); // allows the menu to layout/render
+
+                        // we don't want to show the dropdown if there is only one item to select (current one)
+                        if (!b.hidden && Ext.isDefined(b.menu) && b.menu.items.items.length < 2) {
+                            b.hide();
+                        }
+                    },
+                    scope: this
+                }
+            }
+        }
+        return this.infoSortDropDownButton;
     },
 
     getMiddleContent : function(model) {

@@ -1320,6 +1320,7 @@ public class CDSHelper
         public void makeNavigationSelection(BaseWebDriverTest _test)
         {
             _test.click(getLinkLocator());
+            _test._ext4Helper.waitForMaskToDisappear(30000);
             _test.waitForElement(getExpectedElement());
         }
     }
