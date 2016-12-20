@@ -23,6 +23,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
+import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.cds.CDSAsserts;
@@ -98,6 +99,8 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(dataPoints);
         click(Locator.linkWithText("learn about"));
         waitForElement(CDSHelper.NavigationLink.LEARN.getExpectedElement());
+        InfoPane infoPane = new InfoPane(this);
+        infoPane.waitForSpinners();
 
         log("Verify show/hide get started bar");
         Locator.XPathLocator hiddenShowBarLink = Locator.xpath("//a[contains(@class, 'started-show')][contains(@style, 'display: none')]");
@@ -110,11 +113,13 @@ public class CDSTest extends CDSReadOnlyTest
         assertElementPresent(hiddenShowBarLink);
         click(Locator.linkContainingText("Hide "));
         sleep(500);
+        infoPane.waitForSpinners();
         // I don't think this is a good test. I don't think we can guarantee that the element won't be there (it is hidden).
 //        assertElementNotPresent(hiddenShowBarLink);
 //        sleep(500);
         click(Locator.linkContainingText("Show tips for getting started "));
         sleep(500);
+        infoPane.waitForSpinners();
         assertElementPresent(hiddenShowBarLink);
 
         log("Verify tile text");
@@ -135,11 +140,13 @@ public class CDSTest extends CDSReadOnlyTest
         log("Verify tile link");
         mouseOver(Locator.xpath("//div[contains(@class, 'home_text')]"));
         sleep(500);
+        infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_text')]"));
         waitForElement(CDSHelper.NavigationLink.LEARN.getExpectedElement());
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         mouseOver(Locator.xpath("//div[contains(@class, 'home_plot')]"));
         sleep(500);
+        infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_plot')]"));
         waitForElement(CDSHelper.NavigationLink.PLOT.getExpectedElement());
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
@@ -147,9 +154,11 @@ public class CDSTest extends CDSReadOnlyTest
         log("Verify open video popup");
         mouseOver(Locator.xpath("//div[contains(@class, 'home_video')]"));
         sleep(500);
+        infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_video')]"));
         waitForElement(Locator.xpath("id('started-video-frame')"));
         sleep(500);
+        infoPane.waitForSpinners();
         clickAt(Locator.css("div.x-mask"), 10, 10, 0);
         //
         // Validate News feed
