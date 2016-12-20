@@ -38,6 +38,7 @@ Ext.define('Connector.app.model.Assay', {
         }},
         {name: 'studies_with_data', convert : function(value) {
             return Ext.isArray(value) ? value : [];
-        }}
+        }},
+        {name: 'antigen_store'}
     ]
 });

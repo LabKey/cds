@@ -193,6 +193,7 @@
         <script path="Connector/src/utility/HashURL.js"/>
         <script path="Connector/src/utility/FileExtension.js"/>
 
+        <script path="Connector/src/app/model/AssayAntigen.js"/>
         <script path="Connector/src/app/model/Assay.js"/>
         <script path="Connector/src/app/model/Labs.js"/>
         <script path="Connector/src/app/model/Study.js"/>
@@ -200,6 +201,7 @@
         <script path="Connector/src/app/model/VariableList.js"/>
         <script path="Connector/src/app/model/Report.js"/>
 
+        <script path="Connector/src/app/store/AssayAntigen.js"/>
         <script path="Connector/src/app/store/Assay.js"/>
         <script path="Connector/src/app/store/Labs.js"/>
         <script path="Connector/src/app/store/Study.js"/>
@@ -208,6 +210,7 @@
         <script path="Connector/src/app/store/Report.js"/>
 
         <script path="Connector/src/app/view/LearnSummary.js"/>
+        <script path="Connector/src/app/view/AssayAntigen.js"/>
         <script path="Connector/src/app/view/Assay.js"/>
         <script path="Connector/src/app/view/Labs.js"/>
         <script path="Connector/src/app/view/ModuleContainer.js"/>
