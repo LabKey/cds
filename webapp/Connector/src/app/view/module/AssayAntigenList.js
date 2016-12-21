@@ -17,13 +17,22 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 
     initComponent : function() {
         this.data.model.data.antigen_store.loadAntigens();
-        this.items = [{
-            xtype: 'app.view.assayantigengrid',
-            store: this.data.model.data.antigen_store,
-            columns: this.getAntigenColumns(this.data.model.data.assay_type)
-        }];
+        this.items = [this.getGrid()];
 
         this.callParent();
+    },
+
+    getGrid: function()
+    {
+        if (!this.antigenGrid)
+        {
+            this.antigenGrid = Ext.create('Connector.view.AssayAntigen', {
+                store: this.data.model.data.antigen_store,
+                columns: this.getAntigenColumns(this.data.model.data.assay_type),
+                learnView: this.learnView
+            });
+        }
+        return this.antigenGrid;
     },
 
     getAntigenColumns: function(assay_type)
@@ -158,7 +167,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
                     valueType: 'string',
                     title: 'Proteins'
                 },{
-                    filterField: 'product_classes',
+                    filterField: 'antigen_pools',
                     valueType: 'string',
                     title: 'Pools'
                 }],

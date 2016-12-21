@@ -219,10 +219,6 @@ Ext.define('Connector.app.view.Study', {
             'label', 'study_title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
             'conclusions', 'publications', 'context', 'population', 'data_availability',
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
-        ],
-        filterFields: [
-            'label',  'assays_added_count', 'type', 'species', 'grant_pi_name', 'strategy', 'stage', 'start_year',
-            'product_names'
         ]
     },
 

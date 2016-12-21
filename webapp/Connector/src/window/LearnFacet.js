@@ -316,7 +316,8 @@ Ext4.define('Connector.grid.LearnFaceted', {
 
     createColumnFilterStore: function() {
         var concatBeforeSort = false; //if record is an array.
-        var values = this.learnStore.snapshot.getRange()
+        var store = this.learnStore.snapshot || this.learnStore.data;
+        var values = store.getRange()
                 .map(function(record) {
                     var value = record.getData()[this.columnField];
                     if (Ext.isArray(value)) {

@@ -62,11 +62,11 @@ Ext.define('Connector.app.view.LearnSummary', {
                         listeners: {
                             filter: function (columnName, filterValues)
                             {
-                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, filterValues);
+                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, filterValues, this.isDetailLearnGrid);
                             },
                             clearfilter: function (columnName)
                             {
-                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, []);
+                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, [], this.isDetailLearnGrid);
                             },
                             scope: this
                         },
@@ -76,7 +76,7 @@ Ext.define('Connector.app.view.LearnSummary', {
                 }, this);
                 header.on('sortchange', function (headerCt, column, direction)
                 {
-                    this.learnView.getHeader().fireEvent('updateLearnSort', column.dataIndex, direction);
+                    this.learnView.getHeader().fireEvent('updateLearnSort', column.dataIndex, direction, this.isDetailLearnGrid);
                 }, this);
             }, this);
         },
@@ -89,6 +89,8 @@ Ext.define('Connector.app.view.LearnSummary', {
 
         boxready: function(grid)
         {
+            if (this.isDetailLearnGrid)
+                return;
             this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
             this.setTitleColumnWidth();
         }

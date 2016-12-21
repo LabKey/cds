@@ -11,6 +11,8 @@ Ext.define('Connector.view.AssayAntigen', {
 
     cls: 'learngrid antigengrid',
 
+    isDetailLearnGrid: true,
+
     viewConfig: {
         stripeRows: false,
         getRowClass: function(record) {

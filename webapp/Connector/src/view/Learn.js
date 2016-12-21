@@ -28,6 +28,12 @@ Ext.define('Connector.view.Learn', {
 
     dataListPrefix: 'learn-list-',
 
+    dimensionDataLoaded: {},
+
+    statics: {
+        detailGridTabs : ['antigens']
+    },
+
     listeners: {
         resize: function (view, width, height)
         {
@@ -54,8 +60,6 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    filterFields: [],
-
     columnFilters: {},
 
     initComponent : function() {
@@ -80,14 +84,14 @@ Ext.define('Connector.view.Learn', {
                 searchValue: this.searchFilter,
                 listeners: {
                     searchchanged: this.onSearchFilterChange,
-                    updateLearnFilter: function(column, filtersStr){
-                        this.onUpdateLearnFilter(column, filtersStr);
+                    updateLearnFilter: function(column, filtersStr, isDetailPage){
+                        this.onUpdateLearnFilter(column, filtersStr, isDetailPage);
                     },
-                    updateLearnSort: function(column, direction){
-                        this.onUpdateLearnSort(column, direction);
+                    updateLearnSort: function(column, direction, isDetailPage){
+                        this.onUpdateLearnSort(column, direction, isDetailPage);
                     },
-                    updateLearnFilters: function(params){
-                        this.onUpdateLearnFilters(params);
+                    updateLearnFilters: function(params, isDetailPage){
+                        this.onUpdateLearnFilters(params, isDetailPage);
                     },
                     scope: this
                 }
@@ -114,9 +118,9 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    onUpdateLearnSort : function(column, direction) {
-        if (this.activeListing) {
-            var view = this.activeListing;
+    onUpdateLearnSort : function(column, direction, isDetailPage) {
+        var view = isDetailPage ? this.activeListingDetailGrid : this.activeListing;
+        if (view) {
             if (!column) {
                 //remove sort
                 if (view.getStore().sorters && view.getStore().sorters.items.length > 0) {
@@ -138,14 +142,13 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    onUpdateLearnFilter : function(field, filters) {
+    onUpdateLearnFilter : function(field, filters, isDetailPage) {
         var filterValues = [];
         if (filters) {
             filterValues = Ext.isArray(filters) ? filters: filters.split(';');
         }
-
-        if (this.activeListing) {
-            var grid = this.activeListing;
+        var grid = isDetailPage ? this.activeListingDetailGrid : this.activeListing;
+        if (grid) {
             this.columnFilters[field] = filterValues;
             Ext.each(grid.headerCt.getGridColumns(), function(column) {
                 if (column.filterConfigSet && Ext.isDefined(column.getEl())) {
@@ -166,14 +169,15 @@ Ext.define('Connector.view.Learn', {
                     }
                 }
             }, this);
-            this.loadDataDelayed(grid.dimension, grid.getStore());
+            var dimension = this.activeListing.dimension;
+            this.loadDataDelayed(dimension, grid.getStore());
         }
     },
 
-    onUpdateLearnFilters : function(params) {
+    onUpdateLearnFilters : function(params, isDetailPage) {
         this.columnFilters = {};
-        if (this.activeListing) {
-            var grid = this.activeListing;
+        var grid = isDetailPage ? this.activeListingDetailGrid : this.activeListing;
+        if (grid) {
             Ext.each(grid.headerCt.getGridColumns(), function(column) {
                 if (column.filterConfigSet && Ext.isDefined(column.getEl())) {
                     var fieldsWithFilterValues = column.filterConfigSet
@@ -210,11 +214,12 @@ Ext.define('Connector.view.Learn', {
                     }
                 }
             }, this);
-            this.loadDataDelayed(grid.dimension, grid.getStore());
+            var dimension = this.activeListing.dimension;
+            this.loadDataDelayed(dimension, grid.getStore());
         }
     },
 
-    dimensionDataLoaded : function(store) {
+    sortAndFilterStore : function(store) {
         store.clearFilter();
         this.filterStoreBySearchAndColumnFilter(store);
         this.sortStore(store);
@@ -333,7 +338,7 @@ Ext.define('Connector.view.Learn', {
             if (!this.dimensionDataLoaded[dimensionName]) {
                 store.on('load', function() {
                     this.dimensionDataLoaded[dimensionName] = true;
-                    this.dimensionDataLoaded(store);
+                    this.sortAndFilterStore(store);
                 }, this);
                 if (hasHierarchy)
                 {
@@ -358,7 +363,7 @@ Ext.define('Connector.view.Learn', {
 
             }
             else {
-                this.dimensionDataLoaded(store);
+                this.sortAndFilterStore(store);
             }
         }
         else {
@@ -484,12 +489,13 @@ Ext.define('Connector.view.Learn', {
     },
 
     loadModel : function(model, dimension, urlTab) {
-        var tabViews = [];
+        var tabViews = [], me = this;
         Ext.each(dimension.itemDetail, function(item) {
             if (item.view) {
                 tabViews.push(Ext.create(item.view, {
                     model: model,
-                    modules: item.modules
+                    modules: item.modules,
+                    learnView: me
                 }));
             }
         });
@@ -506,6 +512,16 @@ Ext.define('Connector.view.Learn', {
                 }
             });
         }
+
+        Ext.each(Connector.view.Learn.detailGridTabs, function(key){
+            if (urlTab == key)
+            {
+                var detailGridPanel = tabViews[activeTab];
+                detailGridPanel = detailGridPanel.items.items[0].items.items[0];
+                if (detailGridPanel && detailGridPanel.getGrid())
+                    this.activeListingDetailGrid = detailGridPanel.getGrid();
+            }
+        }, this);
 
         var pageView = Ext.create('Connector.view.Page', {
             pageID: 'learnDetail' + dimension.singularName,
@@ -577,7 +593,6 @@ Ext.define('Connector.view.Learn', {
     selectDimension : function(dimension, id, urlTab, params) {
         this.searchFilter = params ? params.q : undefined;
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
-        this.filterFields = Connector.app.view[this.viewByDimension[dimension.singularName]].filterFields;
 
         if (dimension) {
             this.loadDataView(dimension, id, urlTab);
@@ -679,9 +694,11 @@ Ext.define('Connector.view.LearnHeader', {
         if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectDimension(dimUniqueName);
         }
-        this.updateSearchValue(dimension, params);
-        this.updateSort(dimension, params);
-        this.updateFilters(dimension, params);
+        // search doesn't apply for detail tabs
+        if (!id)
+            this.updateSearchValue(dimension, params);
+        this.updateSort(dimension, params, id != null);
+        this.updateFilters(dimension, params, id != null);
     },
 
     updateSearchValue: function(dimension, params) {
@@ -694,25 +711,24 @@ Ext.define('Connector.view.LearnHeader', {
         }
     },
 
-    updateSort: function(dimension, params) {
+    updateSort: function(dimension, params, isDetailLearnGrid) {
         var newSortStr = params && params.sort ? params.sort : '';
         var direction = 'ASC', column = newSortStr;
         if (newSortStr.indexOf('-') == 0) {
             direction = 'DESC';
             column = newSortStr.substr(1);
         }
-        this.fireEvent('updateLearnSort', column, direction);
+        if (column)
+            this.fireEvent('updateLearnSort', column, direction, isDetailLearnGrid);
     },
 
-    updateFilters: function(dimension, params) {
-        var filteredParams = params;
-        if (Ext.isArray(this.filterFields) && this.filterFields.length > 0) {
-            filteredParams = [];
-            Ext.each(this.filterFields, function(field){
-                filteredParams.push(field);
-            });
-        }
-        this.fireEvent('updateLearnFilters', filteredParams);
+    updateFilters: function(dimension, params, isDetailLearnGrid) {
+        var filteredParams = {};
+        Ext.iterate(params, function(key, val) {
+            if (key)
+                filteredParams[key] = val;
+        });
+        this.fireEvent('updateLearnFilters', filteredParams, isDetailLearnGrid);
     }
 });
 
