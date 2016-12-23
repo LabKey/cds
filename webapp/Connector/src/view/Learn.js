@@ -169,8 +169,7 @@ Ext.define('Connector.view.Learn', {
                     }
                 }
             }, this);
-            var dimension = this.activeListing.dimension;
-            this.loadDataDelayed(dimension, grid.getStore());
+            this.loadDataDelayed(grid.dimension, grid.getStore());
         }
     },
 
@@ -214,8 +213,7 @@ Ext.define('Connector.view.Learn', {
                     }
                 }
             }, this);
-            var dimension = this.activeListing.dimension;
-            this.loadDataDelayed(dimension, grid.getStore());
+            this.loadDataDelayed(grid.dimension, grid.getStore());
         }
     },
 
@@ -375,7 +373,7 @@ Ext.define('Connector.view.Learn', {
         this.getHeader().setVisible(id ? false : true);
     },
 
-    loadDataView : function(dimension, id, urlTab) {
+    loadDataView : function(dimension, id, urlTab, params) {
 
         this.setHeader(dimension, id);
 
@@ -386,10 +384,10 @@ Ext.define('Connector.view.Learn', {
             }
         }
 
-        this.completeLoad(dimension, id, urlTab);
+        this.completeLoad(dimension, id, urlTab, params);
     },
 
-    completeLoad : function(dimension, id, urlTab) {
+    completeLoad : function(dimension, id, urlTab, params) {
 
         if (Ext.isDefined(dimension)) {
             var store, _id = id;
@@ -406,7 +404,7 @@ Ext.define('Connector.view.Learn', {
                 var model = store.getById(_id) || this.resolveModel(store, _id);
 
                 if (model) {
-                    this.loadModel(model, dimension, urlTab);
+                    this.loadModel(model, dimension, urlTab, id, params);
                 }
                 else {
                     if (!store.isLoading() && store.getCount() > 0) {
@@ -416,7 +414,7 @@ Ext.define('Connector.view.Learn', {
                         store.on('load', function(s) {
                             var _model = s.getById(_id) || this.resolveModel(s, _id);
                             if (_model) {
-                                this.loadModel(_model, dimension, urlTab);
+                                this.loadModel(_model, dimension, urlTab, id, params);
                             }
                             else {
                                 Connector.getApplication().getController('Connector').showNotFound();
@@ -488,17 +486,30 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    loadModel : function(model, dimension, urlTab) {
+    loadModel : function(model, dimension, urlTab, id, params) {
         var tabViews = [], me = this;
-        Ext.each(dimension.itemDetail, function(item) {
+        Ext.each(dimension.itemDetail, function(item, i) {
             if (item.view) {
-                tabViews.push(Ext.create(item.view, {
+                var tabConfig = {
                     model: model,
-                    modules: item.modules,
-                    learnView: me
-                }));
+                    modules: item.modules
+                };
+
+                if (Connector.view.Learn.detailGridTabs.indexOf(dimension.itemDetailTabs[i].url) > -1)
+                {
+                    var learnViewConfig = {
+                            learnView: me,
+                            tabId: id,
+                                tabDimension: dimension,
+                                tabParams: params
+                        };
+
+                    tabConfig.learnViewConfig = learnViewConfig;
+                }
+
+                tabViews.push(Ext.create(item.view, tabConfig));
             }
-        });
+        }, this);
 
         var activeTab = 0;
         if (!Ext.isEmpty(dimension.itemDetailTabs)) {
@@ -512,17 +523,6 @@ Ext.define('Connector.view.Learn', {
                 }
             });
         }
-
-        Ext.each(Connector.view.Learn.detailGridTabs, function(key){
-            if (urlTab == key)
-            {
-                var detailGridPanel = tabViews[activeTab];
-                detailGridPanel = detailGridPanel.items.items[0].items.items[0];
-                if (detailGridPanel && detailGridPanel.getGrid())
-                    this.activeListingDetailGrid = detailGridPanel.getGrid();
-            }
-        }, this);
-
         var pageView = Ext.create('Connector.view.Page', {
             pageID: 'learnDetail' + dimension.singularName,
             contentViews: tabViews,
@@ -592,10 +592,13 @@ Ext.define('Connector.view.Learn', {
 
     selectDimension : function(dimension, id, urlTab, params) {
         this.searchFilter = params ? params.q : undefined;
+        if (urlTab)
+            this.searchFilter = undefined; // search doesn't apply for detail tabs
+
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
 
         if (dimension) {
-            this.loadDataView(dimension, id, urlTab);
+            this.loadDataView(dimension, id, urlTab, params);
         }
         else {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
@@ -694,6 +697,11 @@ Ext.define('Connector.view.LearnHeader', {
         if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectDimension(dimUniqueName);
         }
+        this.filterStoreFromUrlParams(id, dimension, params);
+    },
+
+    filterStoreFromUrlParams: function(id, dimension, params)
+    {
         // search doesn't apply for detail tabs
         if (!id)
             this.updateSearchValue(dimension, params);

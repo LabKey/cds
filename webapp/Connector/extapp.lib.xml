@@ -209,6 +209,7 @@
         <script path="Connector/src/app/store/VariableList.js"/>
         <script path="Connector/src/app/store/Report.js"/>
 
+        <script path="Connector/src/app/view/LearnGrid.js"/>
         <script path="Connector/src/app/view/LearnSummary.js"/>
         <script path="Connector/src/app/view/AssayAntigen.js"/>
         <script path="Connector/src/app/view/Assay.js"/>

@@ -43,7 +43,7 @@ Ext.define('Connector.app.view.ModuleContainer', {
             if (i < this.modules.length) {
                 config.items = Connector.factory.Module.defineViews(this.modules[i], this.model, this.state);
                 Ext.each(config.items, function(item){
-                    item.learnView = this.learnView;
+                    item.learnViewConfig = this.learnViewConfig;
                 }, this);
             }
             this.items.push(config);

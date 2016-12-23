@@ -7,13 +7,13 @@ Ext.define('Connector.view.AssayAntigen', {
 
     xtype : 'app.view.assayantigengrid',
 
-    extend : 'Connector.app.view.LearnSummary',
+    extend : 'Connector.app.view.LearnGrid',
 
     cls: 'learngrid antigengrid',
 
     isDetailLearnGrid: true,
 
-    viewConfig: {
+    viewConfig: { //TODO override
         stripeRows: false,
         getRowClass: function(record) {
             var cls = 'detail-row';
@@ -36,6 +36,14 @@ Ext.define('Connector.view.AssayAntigen', {
 
     initComponent: function ()
     {
+        if (this.learnViewConfig)
+        {
+            this.learnView = this.learnViewConfig.learnView;
+            this.tabId = this.learnViewConfig.tabId;
+            this.tabDimension = this.learnViewConfig.tabDimension;
+            this.tabParams = this.learnViewConfig.tabParams;
+        }
+
         this.callParent();
     }
 

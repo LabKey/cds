@@ -310,6 +310,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/VariableList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Report.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnGrid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/AssayAntigen.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Assay.js"></script>
