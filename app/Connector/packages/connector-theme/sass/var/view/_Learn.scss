@@ -680,13 +680,54 @@ div.list-container {
   .detail-row{
     .x-grid-cell-inner {
       white-space: normal;
-      padding: 0px 0px 0px 16px;
+      padding: 0 0 0 16px;
     }
   }
 }
 
+.antigen-list-panel
+{
+  padding-right: 42px !important;
+  .x-panel-body
+  {
+    border-width: 0;
+  }
+}
 .antigengrid
 {
   padding-left: 0 !important;
-  padding-right: 28px !important;
+  padding-right: 0 !important;
+
+  .detail-row {
+    height: 123px;
+    .detail-description {
+      height: 74px;
+    }
+  }
+  .antigen-description {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    color: $heat-scale-1;
+    font: $body-one-font;
+  }
+  .x-column-header-trigger {
+    height: 22px;
+  }
+  .x-grid-header-ct {
+    .x-box-inner {
+      border-bottom: 2px solid $heat-scale-4;
+    }
+  }
+  .x-column-header-inner {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+  .x-column-header-text {
+    padding-bottom: 12px;
+
+    overflow: auto;
+    font: $subhead-font;
+    color: $heat-scale-2;
+    text-transform: uppercase;
+  }
 }

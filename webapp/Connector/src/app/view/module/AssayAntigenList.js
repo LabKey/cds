@@ -9,11 +9,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 
     extend : 'Ext.Panel',
 
-    statics: {
-        maintainWidth : function(value) {
-            return value == undefined ? '-' : Ext.htmlEncode(value);
-        }
-    },
+    cls: 'antigen-list-panel',
 
     initComponent : function() {
         this.data.model.data.antigen_store.loadAntigens();
@@ -64,13 +60,13 @@ Ext.define('Connector.view.module.AssayAntigenList', {
             tpl: new Ext.XTemplate(
                     '<div class="detail-description">',
                     '<h2>{antigen_name:htmlEncode}</h2>',
-                    '<ul>',
+                    '<div class="antigen-description">',
                     '<tpl if="antigen_description.length &gt; 0">',
                     '<tpl for="antigen_description">',
-                    '<li class="detail-gray-text">{.:htmlEncode}</li>',
+                    '{.:htmlEncode}',
                     '</tpl>',
                     '</tpl>',
-                    '</ul>',
+                    '</div>',
                     '</div>'
             )
         },this.getSimpleValueColumn('Control', 'antigen_control_value', 'antigen_control_value', 150, flex)];
@@ -94,14 +90,8 @@ Ext.define('Connector.view.module.AssayAntigenList', {
                     '<div class="detail-text">',
                     '<div class="detail-gray-text">{',
                     dataIndex,
-                    ':this.maintainWidth}</div>',
-                    '</div>',
-                    {
-                        maintainWidth: function (value)
-                        {
-                            return Connector.view.module.AssayAntigenList.maintainWidth(value);
-                        }
-                    }
+                    ':htmlEncode}</div>',
+                    '</div>'
             )
         };
     },
@@ -146,7 +136,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
                 }],
                 dataIndex: 'antigen_clades',
                 tpl: new Ext.XTemplate(
-                        '<div class="detail-text study-summary-product">',
+                        '<div class="detail-text detail-description">',
                         '<ul>',
                         '<tpl if="antigen_clades.length &gt; 0">',
                         '<tpl for="antigen_clades">',
@@ -173,11 +163,11 @@ Ext.define('Connector.view.module.AssayAntigenList', {
                 }],
                 dataIndex: 'antigen_proteinAndPools',
                 tpl: new Ext.XTemplate(
-                        '<div class="detail-text study-summary-product">',
+                        '<div class="detail-text detail-description">',
                         '<ul>',
                         '<tpl if="antigen_proteinAndPools.length &gt; 0">',
                         '<tpl for="antigen_proteinAndPools">',
-                        '<div class="list-detail-gray-text">{protein}: {pools}</div>'+
+                        '<div class="detail-gray-text">{protein}: {pools}</div>'+
                         '</tpl>',
                         '</tpl>',
                         '</ul>',

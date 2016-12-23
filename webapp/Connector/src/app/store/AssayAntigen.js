@@ -48,6 +48,7 @@ Ext.define('Connector.app.store.AssayAntigen', {
                             }
                             else {
                                 var antigen = me.getAntigen(row);
+                                antigen.antigen_description = row.antigen_description;
                                 Ext.apply(antigen, {
                                     antigen_proteinAndPools: [{
                                         protein: row.protein,
@@ -93,16 +94,20 @@ Ext.define('Connector.app.store.AssayAntigen', {
         return {
             antigen_identifier: identifier,
             antigen_name: row.antigen_name,
-            antigen_description: row.antigen_description,
-            antigen_type: row.antigen_type,
+            antigen_description: [row.antigen_description],
+            antigen_type: this.getAltEmptyString(row.antigen_type),
             antigen_control_value: row.antigen_control && row.antigen_control != "0" ? "YES" : "NO", //this assumes the control status is the same for all peptide pools of a protein panel
-            antigen_clade: row.clade,
+            antigen_clade: this.getAltEmptyString(row.clade),
             antigen_clades: row.clades,
-            antigen_neutralization_tier: row.neutralization_tier,
-            antigen_protein: row.protein,
-            antigen_target_cell: row.target_cell,
-            antigen_virus_type: row.virus_type
+            antigen_neutralization_tier: this.getAltEmptyString(row.neutralization_tier),
+            antigen_protein: this.getAltEmptyString(row.protein),
+            antigen_target_cell: this.getAltEmptyString(row.target_cell),
+            antigen_virus_type: this.getAltEmptyString(row.virus_type)
         };
+    },
+
+    getAltEmptyString : function(value) {
+        return value == null || value == '' ? '-' : value;
     }
 
 });
