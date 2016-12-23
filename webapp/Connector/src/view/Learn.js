@@ -66,6 +66,7 @@ Ext.define('Connector.view.Learn', {
 
         this.headerViews = {};
         this.listViews = {};
+        this.detailPageView = null;
 
         // Multiple headers are added here but they are initially set to hidden. When the page
         // url changes the headers will be updated and made visible based on the type of view -
@@ -542,7 +543,7 @@ Ext.define('Connector.view.Learn', {
                 }
             }
         });
-
+        this.detailPageView = pageView;
         this.add(pageView);
     },
 

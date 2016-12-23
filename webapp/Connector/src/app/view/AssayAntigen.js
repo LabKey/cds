@@ -13,14 +13,11 @@ Ext.define('Connector.view.AssayAntigen', {
 
     isDetailLearnGrid: true,
 
-    viewConfig: { //TODO override
+    viewConfig: {
         stripeRows: false,
-        getRowClass: function(record) {
-            var cls = 'detail-row';
-            return record.data && record.data.data_availability ? cls + ' detail-row-has-data' : cls;
-        },
-        overItemCls: 'detail-row-hover',
-        selectedItemCls: ''
+        getRowClass: function() {
+            return 'detail-row';
+        }
     },
 
     normalGridConfig: {},
