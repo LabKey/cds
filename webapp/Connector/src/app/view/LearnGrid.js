@@ -47,7 +47,7 @@ Ext.define('Connector.app.view.LearnGrid', {
         },
         beforerender: function (grid)
         {
-            var learnView = this.learnView;
+            var learnView = this.learnView, tabId = this.tabId;
             var headers = grid.query('headercontainer'),
                     dim = grid.dimension ? grid.dimension.name : undefined;
             Ext.each(headers, function(header) {
@@ -60,6 +60,7 @@ Ext.define('Connector.app.view.LearnGrid', {
                             });
                     Ext.create('Connector.window.LearnFacet', {
                         dim: dim,
+                        tabId: tabId,
                         filterConfigSet: filterConfigSet,
                         col: column, //used to position facet window
                         columnMetadata: column.filterConfigSet.length > 1 ?

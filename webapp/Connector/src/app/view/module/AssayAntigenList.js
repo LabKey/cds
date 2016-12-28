@@ -55,7 +55,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
             filterConfigSet: [{
                 filterField: 'antigen_name',
                 valueType: 'string',
-                title: 'antigenNameLabel'
+                title: antigenNameLabel
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-description">',
