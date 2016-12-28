@@ -45,6 +45,15 @@ public class LearnGrid
         return numRowsWithUnlockedPortion;
     }
 
+    @LogMethod
+    public int getTitleRowCount()
+    {
+        List<WebElement> antigensAfterFilter = Locator.tagWithClass("tr", "detail-row")
+                .append("/td//div/div/h2")
+                .findElements(_test.getDriver());
+        return antigensAfterFilter.size();
+    }
+
     @LogMethod(quiet = true)
     public LearnGrid openFilterPanel(@LoggedParam String columnHeaderName)
     {

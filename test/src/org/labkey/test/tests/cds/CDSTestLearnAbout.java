@@ -288,23 +288,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
-        refresh();
-
-        waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
-        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
-
-        //testing BAMA antigens page
-        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
-        waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Antigen"));
-        for(int i = 0; i < CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA.length; i++)
-        {
-            // Use this as the conditional test that the page has loaded, and wait for it to load as well.
-            waitForElement(Locator.xpath("//div[@class='list-detail-text']//h2[text()='" + CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[i] + "']"), 1000, true);
-        }
-
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
 
-        //testing ICS antigens page
+        //testing ICS variables page
         waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(1)));
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
@@ -317,14 +303,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         validateToolTip(Locator.linkWithText("ZAP 108").findElement(getDriver()), "provided, but not included");
         validateToolTip(Locator.linkWithText("ZAP 115").findElement(getDriver()), "being processed");
         validateToolTip(Locator.linkWithText("ZAP 117").findElement(getDriver()), "pending study completion");
-
-        refresh();
-
-        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
-        waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Protein Panel"));
-        sleep(500);
-        waitForText(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA[0]);
-        assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
 
         // Go back to assays and validate the Data Added column.
         cds.viewLearnAboutPage("Assays");
@@ -695,6 +673,86 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         learnGrid.clearFilters("Status");
         learnGrid.clearFilters("Data Added");
+    }
+
+    @Test
+    public void validateAssayAntigens()
+    {
+        cds.viewLearnAboutPage("Assays");
+        List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
+        _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
+
+        waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(0)));
+        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
+
+        log("testing BAMA antigens page...");
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
+        waitForElement(Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Antigen"));
+        for(int i = 0; i < CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA.length; i++)
+        {
+            // Use this as the conditional test that the page has loaded, and wait for it to load as well.
+            waitForElement(Locator.xpath("//div[@class='detail-description']//h2[text()='" + CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[i] + "']"), 1000, true);
+        }
+
+        LearnGrid learnGrid = new LearnGrid(this);
+        log("Evaluating sorting...");
+        learnGrid.sort("Antigen");
+        List<WebElement> sortedAntigenNames = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver());
+        scrollIntoView(sortedAntigenNames.get(sortedAntigenNames.size() - 1));
+        String titleForLastElement = sortedAntigenNames.get(sortedAntigenNames.size() - 1).getText();
+        learnGrid.sort("Antigen");
+        log(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver()).get(0).getText());
+        log(titleForLastElement);
+        Assert.assertTrue(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver())
+                .get(0).getText()
+                .equals(titleForLastElement));
+
+        log("Evaluating filtering...");
+        String[] antigensToFilter = {CDSHelper.BAMA_ANTIGENS_NAME[0], CDSHelper.BAMA_ANTIGENS_NAME[3], CDSHelper.BAMA_ANTIGENS_NAME[5]}; //Arbitrarily chosen
+        learnGrid.setFacet("Antigen", antigensToFilter);
+        List<WebElement> antigensAfterFilter = Locator.tagWithClass("tr", "detail-row")
+                .append("/td//div/div/h2")
+                .findElements(getDriver());
+        Assert.assertTrue(antigensAfterFilter.size() == antigensToFilter.length);
+        List<String> studiesFiltered =  Arrays.asList(antigensToFilter);
+        for(WebElement studyTitlesOnPage : antigensAfterFilter)
+        {
+            scrollIntoView(studyTitlesOnPage);
+            Assert.assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
+        }
+
+        log("Evaluating clearing a filter");
+        learnGrid.clearFilters("Antigen");
+        Assert.assertTrue(learnGrid.getTitleRowCount() == CDSHelper.BAMA_ANTIGENS_NAME.length);
+
+        log("testing ICS antigens page");
+        waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(1)));
+        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        waitForElement(Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Protein Panel"));
+        refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
+        waitForElement(Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Protein Panel"));
+        sleep(500);
+        waitForText(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA[0]);
+        assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
+
+        log("Evaluating multi filtering...");
+        learnGrid.setWithOptionFacet("Protein:Pools", "Proteins", "POL");
+        log(learnGrid.getTitleRowCount() + "a");
+        Assert.assertTrue(2 == learnGrid.getTitleRowCount());
+
+        log("Evaluating filter persistence");
+        refresh();
+        sleep(CDSHelper.CDS_WAIT);
+        Assert.assertTrue(2 == learnGrid.getTitleRowCount());
+
+        learnGrid.setWithOptionFacet("Protein:Pools", "Pools", "POL 2");
+        Assert.assertTrue(1 == learnGrid.getTitleRowCount());
     }
 
     @Test
