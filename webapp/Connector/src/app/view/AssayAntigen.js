@@ -40,6 +40,9 @@ Ext.define('Connector.view.AssayAntigen', {
             this.tabDimension = this.learnViewConfig.tabDimension;
             this.tabParams = this.learnViewConfig.tabParams;
         }
+        this.emptyText = new Ext.XTemplate(
+                '<div class="detail-empty-text">None of the selected Antigens have data for this category.</div>'
+        ).apply({});
 
         this.callParent();
     }

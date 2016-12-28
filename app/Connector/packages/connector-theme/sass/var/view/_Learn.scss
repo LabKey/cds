@@ -698,6 +698,11 @@ div.list-container {
   padding-left: 0 !important;
   padding-right: 0 !important;
 
+  .x-grid-empty
+  {
+    top: 255px;
+  }
+
   .detail-row {
     height: 123px;
     .detail-description {

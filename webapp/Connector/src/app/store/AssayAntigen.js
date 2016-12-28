@@ -23,11 +23,12 @@ Ext.define('Connector.app.store.AssayAntigen', {
     loadAntigens : function() {
         if (this.isAntigensLoaded)
             return;
-        var me = this, assayName = this.assayType.toUpperCase();
+        var assayName = this.assayType.toUpperCase();
         if (assayName === 'ICS' || assayName === 'ELISPOT') {
             LABKEY.Query.selectRows({
                 schemaName: 'cds',
                 queryName: 'learn_' + assayName + '_antigens',
+                scope: this,
                 success: function(result) {
                     var antigens = [],
                             idx = 0;
@@ -47,7 +48,7 @@ Ext.define('Connector.app.store.AssayAntigen', {
                                 }
                             }
                             else {
-                                var antigen = me.getAntigen(row);
+                                var antigen = this.getAntigen(row);
                                 antigen.antigen_description = row.antigen_description;
                                 Ext.apply(antigen, {
                                     antigen_proteinAndPools: [{
@@ -60,10 +61,10 @@ Ext.define('Connector.app.store.AssayAntigen', {
                                 antigens[idx] = antigen;
                                 idx++;
                             }
-                    });
+                    }, this);
 
-                    me.loadRawData(antigens);
-                    me.isAntigensLoaded = true;
+                    this.loadRawData(antigens);
+                    this.isAntigensLoaded = true;
                 }
             })
         }
@@ -72,14 +73,15 @@ Ext.define('Connector.app.store.AssayAntigen', {
             LABKEY.Query.selectRows({
                 schemaName: 'cds',
                 queryName: assayName + 'antigen',
+                scope: this,
                 success: function(result) {
                     var antigens = [];
                     Ext.each(result.rows, function(row) {
-                        var antigen = me.getAntigen(row);
+                        var antigen = this.getAntigen(row);
                         antigens.push(antigen);
-                    });
-                    me.loadRawData(antigens);
-                    me.isAntigensLoaded = true;
+                    }, this);
+                    this.loadRawData(antigens);
+                    this.isAntigensLoaded = true;
                 }
             })
         }
