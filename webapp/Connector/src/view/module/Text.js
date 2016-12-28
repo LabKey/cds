@@ -20,7 +20,7 @@ Ext.define('Connector.view.module.Text', {
 		}),
 
 	hasContent : function() {
-		var data = this.data || this.initalConfig.data || {};
+		var data = this.data || this.initialConfig.data || {};
 		return data.text || data.allowNullText;
 	}
 });
@@ -39,7 +39,7 @@ Ext.define('Connector.view.module.HTML', {
 	),
 
 	hasContent : function() {
-		var data = this.data || this.initalConfig.data || {};
+		var data = this.data || this.initialConfig.data || {};
 		return data.text || data.allowNullText;
 	}
 });

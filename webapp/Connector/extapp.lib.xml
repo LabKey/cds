@@ -102,7 +102,6 @@
 
         <script path="Connector/src/view/module/BaseModule.js"/>
         <script path="Connector/src/view/module/Text.js"/>
-        <script path="Connector/src/view/module/Person.js"/>
 
         <!-- Application Controllers -->
         <script path="Connector/src/controller/AbstractViewController.js"/>
@@ -162,8 +161,6 @@
         <script path="Connector/src/app/view/module/AssayHeader.js"/>
         <script path="Connector/src/app/view/module/ContactCDS.js"/>
         <script path="Connector/src/app/view/module/ProductHeader.js"/>
-        <script path="Connector/src/app/view/module/ProductManufacturing.js"/>
-        <script path="Connector/src/app/view/module/ProductProvidedBy.js"/>
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/ProductStudies.js"/>
         <script path="Connector/src/app/view/module/StudyAssays.js"/>

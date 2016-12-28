@@ -266,7 +266,6 @@
 
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Person.js"></script>
 
     <!-- Application Controllers -->
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/AbstractViewController.js"></script>
@@ -327,8 +326,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ContactCDS.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductManufacturing.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductProvidedBy.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
