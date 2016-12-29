@@ -70,10 +70,10 @@ public class CDSInitializer
         // TODO: Catch any RemoteAPI Command Exceptions
 
         // run initial ETL to populate CDS import tables
-        _etlHelper.getDiHelper().runTransformAndWait("{cds}/CDSImport", WAIT_ON_IMPORT);
+        _etlHelper.getDiHelper().runTransformAndWait("{CDS}/CDSImport", WAIT_ON_IMPORT);
 
         // populate the app
-        _etlHelper.getDiHelper().runTransformAndWait("{cds}/loadApplication", WAIT_ON_LOADAPP);
+        _etlHelper.getDiHelper().runTransformAndWait("{CDS}/LoadApplication", WAIT_ON_LOADAPP);
 
         populateNewsFeed();
 
