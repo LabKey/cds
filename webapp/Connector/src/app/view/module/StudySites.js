@@ -119,7 +119,7 @@ Ext.define('Connector.app.view.module.StudySites', {
 	}],
 
 	hasContent : function() {
-		var data = this.data || this.initalConfig.data || {};
+		var data = this.data || this.initialConfig.data || {};
 		var model = data && data.model;
 		var locations = model && model.get('SiteLocations');
 
