@@ -41,7 +41,7 @@ Ext.define('Connector.app.view.LearnGrid', {
                 this.learnView.activeListingDetailGrid.dimension = dimension;
                 this.learnView.activeListingDetailGrid.store.sorters.clear();
                 this.learnView.sorterArray = [];
-                this.learnView.sortAndFilterStore(this.learnView.activeListingDetailGrid.store);
+                this.learnView.sortAndFilterStoreDelayed(this.learnView.activeListingDetailGrid.store);
                 this.learnView.getHeader().filterStoreFromUrlParams(id, dimension, params);
             }
         },

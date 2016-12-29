@@ -224,6 +224,14 @@ Ext.define('Connector.view.Learn', {
         this.sortStore(store);
     },
 
+    sortAndFilterStoreDelayed: function(store) {
+
+        if (!this.sortAndFilterStoreTask) {
+            this.sortAndFilterStoreTask = new Ext.util.DelayedTask(this.sortAndFilterStore, this);
+        }
+        this.sortAndFilterStoreTask.delay(200, undefined, this, [store]);
+    },
+
     sortStore: function(store) {
         if (this.sorterArray.length > 0) {
             store.sort(this.sorterArray);
@@ -337,7 +345,7 @@ Ext.define('Connector.view.Learn', {
             if (!this.dimensionDataLoaded[dimensionName]) {
                 store.on('load', function() {
                     this.dimensionDataLoaded[dimensionName] = true;
-                    this.sortAndFilterStore(store);
+                    this.sortAndFilterStoreDelayed(store);
                 }, this);
                 if (hasHierarchy)
                 {
@@ -362,7 +370,7 @@ Ext.define('Connector.view.Learn', {
 
             }
             else {
-                this.sortAndFilterStore(store);
+                this.sortAndFilterStoreDelayed(store);
             }
         }
         else {
