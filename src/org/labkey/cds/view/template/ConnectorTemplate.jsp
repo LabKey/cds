@@ -294,6 +294,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/FileExtension.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/AssayAntigen.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Study.js"></script>
@@ -301,6 +302,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/VariableList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Report.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/AssayAntigen.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Study.js"></script>
@@ -308,7 +310,9 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/VariableList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Report.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnGrid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnSummary.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/AssayAntigen.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ModuleContainer.js"></script>

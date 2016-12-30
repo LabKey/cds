@@ -26,7 +26,6 @@ import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
-import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
@@ -35,10 +34,7 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -960,9 +956,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE);
         yaxis.openAntigenPanel();
 
-        for (int i = 0; i < CDSHelper.ANTIGENS_NAME.length; i++)
+        for (int i = 0; i < CDSHelper.BAMA_ANTIGENS_NAME.length; i++)
         {
-            assertElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.ANTIGENS_NAME[i] + "']"));
+            assertElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.BAMA_ANTIGENS_NAME[i] + "']"));
         }
 
         yaxis.cancelSelection();
@@ -973,9 +969,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE);
         xaxis.openAntigenPanel();
 
-        for (int i = 0; i < CDSHelper.ANTIGENS_NAME.length; i++)
+        for (int i = 0; i < CDSHelper.BAMA_ANTIGENS_NAME.length; i++)
         {
-            assertElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.ANTIGENS_NAME[i] + "']"));
+            assertElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.BAMA_ANTIGENS_NAME[i] + "']"));
         }
 
         xaxis.cancelSelection();

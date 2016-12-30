@@ -556,7 +556,8 @@ Ext4.define('Connector.cube.Configuration', {
                     view: 'Connector.app.view.ModuleContainer',
                     modules: [[{
                         type: 'assayantigenlist'
-                    }]]
+                    }]],
+                    detailLearnGrid: 'antigens'
                 }]
             },{
                 uniqueName: '[Report]',

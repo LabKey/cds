@@ -100,9 +100,6 @@ Ext.define('Connector.app.view.Report', {
     statics: {
         searchFields: [
             'name', 'description', 'categorylabel'
-        ],
-        filterFields: [
-            'name', 'description', 'created_display'
         ]
     }
 });
