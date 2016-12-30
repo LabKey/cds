@@ -667,7 +667,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Evaluating persisting to URL");
         refresh();
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDSHelper.CDS_WAIT_LEARN);
         int numRowsPostRefresh = learnGrid.getRowCount();
         Assert.assertTrue(numRowsSatisfyFilter == numRowsPostRefresh);
 
@@ -747,7 +747,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Evaluating filter persistence");
         refresh();
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDSHelper.CDS_WAIT_LEARN);
         Assert.assertTrue("Antigens are not filtered correctly when loading from URL", 2 == learnGrid.getTitleRowCount());
 
         learnGrid.setWithOptionFacet("Protein:Pools", "Pools", "POL 2");
@@ -801,7 +801,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         learnGrid.setWithOptionFacet("Name & Description", "Network", "Q");
         Assert.assertTrue(1 == learnGrid.getRowCount());
         refresh();
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDSHelper.CDS_WAIT_LEARN);
         Assert.assertTrue(1 == learnGrid.getRowCount());
         learnGrid.clearFiltersWithOption("PI", "Grant Affiliation");
         learnGrid.clearFiltersWithOption("Name & Description", "Network");
