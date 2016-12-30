@@ -704,9 +704,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         scrollIntoView(sortedAntigenNames.get(sortedAntigenNames.size() - 1));
         String titleForLastElement = sortedAntigenNames.get(sortedAntigenNames.size() - 1).getText();
         learnGrid.sort("Antigen");
-        log(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver()).get(0).getText());
-        log(titleForLastElement);
-        Assert.assertTrue(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver())
+        Assert.assertTrue("Antigens are not sorted as expected", Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver())
                 .get(0).getText()
                 .equals(titleForLastElement));
 
@@ -716,17 +714,18 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> antigensAfterFilter = Locator.tagWithClass("tr", "detail-row")
                 .append("/td//div/div/h2")
                 .findElements(getDriver());
-        Assert.assertTrue(antigensAfterFilter.size() == antigensToFilter.length);
+        Assert.assertTrue("Expected number of antigens after filtering: " + antigensToFilter.length + ", actual number: " + antigensAfterFilter.size(),
+                antigensAfterFilter.size() == antigensToFilter.length);
         List<String> studiesFiltered =  Arrays.asList(antigensToFilter);
-        for(WebElement studyTitlesOnPage : antigensAfterFilter)
+        for(WebElement antigenTitlesOnPage : antigensAfterFilter)
         {
-            scrollIntoView(studyTitlesOnPage);
-            Assert.assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
+            scrollIntoView(antigenTitlesOnPage);
+            Assert.assertTrue("Antigen " + antigenTitlesOnPage.getText() + " is not present", studiesFiltered.contains(antigenTitlesOnPage.getText()));
         }
 
         log("Evaluating clearing a filter");
         learnGrid.clearFilters("Antigen");
-        Assert.assertTrue(learnGrid.getTitleRowCount() == CDSHelper.BAMA_ANTIGENS_NAME.length);
+        Assert.assertTrue("Not all antigens are present after clearing filter", learnGrid.getTitleRowCount() == CDSHelper.BAMA_ANTIGENS_NAME.length);
 
         log("testing ICS antigens page");
         waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
@@ -744,15 +743,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Evaluating multi filtering...");
         learnGrid.setWithOptionFacet("Protein:Pools", "Proteins", "POL");
         log(learnGrid.getTitleRowCount() + "a");
-        Assert.assertTrue(2 == learnGrid.getTitleRowCount());
+        Assert.assertTrue("Number of antigens is incorrect after filtering by Proteins \"POL\"", 2 == learnGrid.getTitleRowCount());
 
         log("Evaluating filter persistence");
         refresh();
         sleep(CDSHelper.CDS_WAIT);
-        Assert.assertTrue(2 == learnGrid.getTitleRowCount());
+        Assert.assertTrue("Antigens are not filtered correctly when loading from URL", 2 == learnGrid.getTitleRowCount());
 
         learnGrid.setWithOptionFacet("Protein:Pools", "Pools", "POL 2");
-        Assert.assertTrue(1 == learnGrid.getTitleRowCount());
+        Assert.assertTrue("Number of antigens is incorrect after filtering by Pools \"POL 2\"", 1 == learnGrid.getTitleRowCount());
     }
 
     @Test
