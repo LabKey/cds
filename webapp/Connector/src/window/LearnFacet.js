@@ -234,7 +234,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
 
             var gridConfig = {
                 itemId: 'membergrid',
-                store: this.getLookupStore(),
+                store: this.getGroupedLookupStore(),
                 viewConfig : { stripeRows : false },
 
                 /* Selection configuration */
@@ -272,7 +272,25 @@ Ext4.define('Connector.grid.LearnFaceted', {
                         fn: function() { this.changed = true; },
                         scope: this
                     }
-                }
+                },
+
+                requires: ['Ext.grid.feature.Grouping'],
+
+                features: [
+                    {
+                        ftype: 'grouping',
+                        collapsible: false,
+                        groupHeaderTpl: new Ext.XTemplate(
+                                '{name:this.renderHeader}', // 'name' is actually the value of the groupField
+                                {
+                                    renderHeader: function(v) {
+                                        return v ? 'Has data in current selection' : 'No data in current selection';
+                                    }
+                                }
+                        )
+                    }
+                ]
+
             };
 
             this.grid = Ext4.create('Ext.grid.Panel', gridConfig);
@@ -293,6 +311,22 @@ Ext4.define('Connector.grid.LearnFaceted', {
         }
 
         return this.createColumnFilterStore();
+    },
+
+    getGroupedLookupStore : function() {
+        var filteredStore = this.learnStore.data;
+        var filteredValues = this.getLearnStoreValues(filteredStore);
+
+        var facetStore = this.getLookupStore(), allValues = [];
+        facetStore.each(function(record) {
+            allValues.push(record.data);
+        });
+        Ext.each(allValues, function(data) {
+            var value = data.value;
+            data.hasData = filteredValues.indexOf(value) > -1;
+        });
+        facetStore.loadData(allValues);
+        return facetStore;
     },
 
     getStoreId: function()
@@ -330,9 +364,9 @@ Ext4.define('Connector.grid.LearnFaceted', {
       }
     },
 
-    createColumnFilterStore: function() {
+    getLearnStoreValues: function(store)
+    {
         var concatBeforeSort = false; //if record is an array.
-        var store = this.learnStore.snapshot || this.learnStore.data;
         var values = store.getRange()
                 .map(function(record) {
                     var value = record.getData()[this.columnField];
@@ -351,24 +385,40 @@ Ext4.define('Connector.grid.LearnFaceted', {
 
         values = values.sort(this.getSortFn());
         values = values.filter(function(record, idx) {
-                    if (record == undefined) {
-                        return false;
-                    }
-                    //remove duplicates
-                    return !(values[idx - 1] != undefined && values[idx - 1] == record);
-                }).map(function(record) {
-                    return [record];
-                });
-        var storeId = this.getStoreId();
-        return Ext4.create('Ext.data.ArrayStore', {
-            fields: [
-                'value'
-            ],
-            data: values,
-            storeId: storeId
+            if (record == undefined) {
+                return false;
+            }
+            //remove duplicates
+            return !(values[idx - 1] != undefined && values[idx - 1] == record);
         });
+
+        return values;
     },
 
+    createColumnFilterStore: function() {
+        var store = this.learnStore.snapshot || this.learnStore.data;
+        var values = this.getLearnStoreValues(store);
+        values = values.map(function(record) {
+                    return [record, true];
+                });
+        var storeId = this.getStoreId(), me = this;
+        return Ext4.create('Ext.data.ArrayStore', {
+            fields: [
+                'value', {name:'hasData', type: 'boolean', defaultValue: true}
+            ],
+            data: values,
+            storeId: storeId,
+            groupField: 'hasData',
+            groupDir: 'DESC',
+            sorters: [{
+                sorterFn: function(o1, o2) {
+                    var val1 = o1.get('value'), val2 = o2.get('value');
+                    var sortFn = me.getSortFn();
+                    return sortFn.call(me, val1, val2);
+                }
+            }]
+        });
+    },
 
     onViewReady : function() {
 
