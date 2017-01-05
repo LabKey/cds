@@ -103,12 +103,16 @@ Ext.define('Connector.view.GroupSummary', {
             Ext.Msg.show({
                 title: 'Delete Group',
                 msg: 'Are you sure you want to delete "' + Ext.htmlEncode(this.group.get('label')) + '"?',
-                buttons: Ext.Msg.OKCANCEL,
+                // buttons are in a fixed order that cannot be changed without subclassing Ext.window.Messagebox
+                // [ok yes no cancel] is the predefined order. We want the button order cancel -> delete. That's why
+                // even though we want a cancel button, we are using the Ext.Msg.OK constant.
+                buttons: Ext.Msg.OK+Ext.Msg.YES,
                 buttonText: {
-                    ok: 'Delete'
+                    ok: 'Cancel',
+                    yes: 'Delete'
                 },
                 fn: function(id) {
-                    if (id === 'ok') {
+                    if (id === 'yes') {
                         this.fireEvent('requestgroupdelete', this.group.get('id'));
                     }
                 },

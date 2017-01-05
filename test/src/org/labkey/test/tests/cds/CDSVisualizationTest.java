@@ -20,11 +20,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.Timeout;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
-import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
@@ -33,15 +34,13 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
@@ -50,6 +49,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSVisualizationTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
@@ -102,6 +102,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     public BrowserType bestBrowser()
     {
         return BrowserType.CHROME;
+    }
+
+    @Override
+    public Timeout testTimeout()
+    {
+        return new Timeout(60, TimeUnit.MINUTES);
     }
 
     @Test
@@ -950,9 +956,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE);
         yaxis.openAntigenPanel();
 
-        for (int i = 0; i < CDSHelper.ANTIGENS_NAME.length; i++)
+        for (int i = 0; i < CDSHelper.BAMA_ANTIGENS_NAME.length; i++)
         {
-            assertElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.ANTIGENS_NAME[i] + "']"));
+            assertElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.BAMA_ANTIGENS_NAME[i] + "']"));
         }
 
         yaxis.cancelSelection();
@@ -963,9 +969,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE);
         xaxis.openAntigenPanel();
 
-        for (int i = 0; i < CDSHelper.ANTIGENS_NAME.length; i++)
+        for (int i = 0; i < CDSHelper.BAMA_ANTIGENS_NAME.length; i++)
         {
-            assertElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.ANTIGENS_NAME[i] + "']"));
+            assertElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.BAMA_ANTIGENS_NAME[i] + "']"));
         }
 
         xaxis.cancelSelection();

@@ -122,12 +122,19 @@ Ext.define('Connector.controller.Learn', {
 
     parseContext : function(ctx, params, newHash, oldHash) {
         var lastParams;
+
         var currentDimension = ctx[0] ? ctx[0] : this.lastContext && this.lastContext.lastDimension ? this.lastContext.lastDimension : 'Study';
+        var currentContextKey = currentDimension;
+        Ext.each(Connector.view.Learn.detailGridTabs, function(key){
+            if (ctx[2] == key)
+                currentContextKey += (ctx[1]+ctx[2]);
+        });
+
         if (!ctx[0]) {
             var newHashLocation = '#' + 'learn/learn/' +  currentDimension;
             history.replaceState(undefined, undefined, newHashLocation);
         }
-        lastParams = currentDimension && this.lastContext && this.lastContext[currentDimension] && this.lastContext[currentDimension].params ? this.lastContext[currentDimension].params : {};
+        lastParams = currentDimension && this.lastContext && this.lastContext[currentContextKey] && this.lastContext[currentContextKey].params ? this.lastContext[currentContextKey].params : {};
 
         // When come to Learn About from other pages, no need to clear lastContext, should load previous search
         if (oldHash && 'learn' === oldHash.controller) {
@@ -139,10 +146,9 @@ Ext.define('Connector.controller.Learn', {
                 // if click on the same tab, clear current dimension's lastContext
                 if (this.isValueEqualContext(oldHash.viewContext[1], ctx[1]) && this.isValueEqualContext(oldHash.viewContext[2], ctx[2])) {
                     lastParams = {};
-                    this.lastContext[currentDimension] = {};
+                    this.lastContext[currentContextKey] = {};
                 }
             }
-
         }
 
         if (!this.lastContext) {
@@ -155,7 +161,13 @@ Ext.define('Connector.controller.Learn', {
             tab: ctx[2],
             params: params? params : lastParams
         };
-        this.lastContext[currentDimension] = Ext.clone(this.context);
+        Ext.each(Connector.view.Learn.detailGridTabs, function(key){
+            if (ctx[2] == key)
+                delete this.context.params.q;
+        }, this);
+
+
+        this.lastContext[currentContextKey] = Ext.clone(this.context);
         this.lastContext.lastDimension = currentDimension;
         return this.context;
     },
@@ -281,7 +293,12 @@ Ext.define('Connector.controller.Learn', {
     replaceHashParams : function(newParams) {
         if (this.context) {
             this.context.params = newParams ? newParams : {};
-            this.lastContext[this.context.dimension] = Ext.clone(this.context);
+            var currentContextKey = this.context.dimension;
+            Ext.each(Connector.view.Learn.detailGridTabs, function(key){
+                if (this.context.tab == key)
+                    currentContextKey += (this.context.id + this.context.tab);
+            }, this);
+            this.lastContext[currentContextKey] = Ext.clone(this.context);
         }
         var newHash = Connector.utility.HashURL.getBatchUpdatedHashParamStr(newParams);
         if (Ext.isDefined(newHash)) {
@@ -292,7 +309,12 @@ Ext.define('Connector.controller.Learn', {
     replaceHashParam : function(paramName, paramValue) {
         if (this.context) {
             this.context.params[paramName] = Ext.isString(paramValue) && paramValue.length ? paramValue : undefined;
-            this.lastContext[this.context.dimension] = Ext.clone(this.context);
+            var currentContextKey = this.context.dimension;
+            Ext.each(Connector.view.Learn.detailGridTabs, function(key){
+                if (this.context.tab == key)
+                    currentContextKey += (this.context.id + this.context.tab);
+            }, this);
+            this.lastContext[currentContextKey] = Ext.clone(this.context);
         }
         var newHash = Connector.utility.HashURL.getUpdatedHashParamStr(paramName, paramValue);
         if (Ext.isDefined(newHash)) {
@@ -343,6 +365,12 @@ Ext.define('Connector.controller.Learn', {
     },
 
     onSelectItemTab : function(dim, item, itemDetailTab) {
-        this.getViewManager().changeView('learn', 'learn', [dim.name, item.getId(), itemDetailTab.url], this.lastContext && this.lastContext[dim.name] ? this.lastContext[dim.name].params : undefined);
+        var currentContextKey = dim.name;
+        Ext.each(Connector.view.Learn.detailGridTabs, function(key){
+            if (itemDetailTab.url == key)
+                currentContextKey += (item.id + itemDetailTab.url);
+        }, this);
+
+        this.getViewManager().changeView('learn', 'learn', [dim.name, item.internalId, itemDetailTab.url], this.lastContext && this.lastContext[currentContextKey] ? this.lastContext[currentContextKey].params : undefined);
     }
 });

@@ -33,7 +33,7 @@ Ext.define('Connector.utility.HashURL', {
             var paramParts = parts[1].split('&');
             Ext.each(paramParts, function(pairStr){
                 var pair = pairStr.split('=');
-                paramsMap[pair[0]] = pair[1];
+                paramsMap[pair[0]] = decodeURIComponent(pair[1]);
             });
         }
         return paramsMap;
@@ -44,7 +44,7 @@ Ext.define('Connector.utility.HashURL', {
         Ext.iterate(paramsMap, function(key, value) {
             if (value) {
                 paramsStr += hasParam ? '&' : '';
-                paramsStr += key + '=' + value;
+                paramsStr += key + '=' + encodeURIComponent(value);
                 hasParam = true;
             }
         });

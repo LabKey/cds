@@ -99,6 +99,7 @@ Ext.define('Connector.window.LearnFacet', {
                 useStoreCache: true,
                 filterValues: config.filterValues,
                 dim: this.dim,
+                tabId: this.tabId,
                 columnField: config.filterField,
                 valueType: config.valueType,
                 learnStore: this.learnStore
@@ -281,7 +282,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
     },
 
     getLookupStore : function() {
-        var storeId = [this.dim, this.columnField].join('||');
+        var storeId = this.getStoreId();
 
         // cache
         if (this.useStoreCache === true) {
@@ -292,6 +293,21 @@ Ext4.define('Connector.grid.LearnFaceted', {
         }
 
         return this.createColumnFilterStore();
+    },
+
+    getStoreId: function()
+    {
+        var id = '';
+        if (this.dim)
+        {
+            id += this.dim;
+        }
+        else if (this.tabId)
+        {
+            id += this.tabId;
+        }
+        id += ('||' + this.columnField);
+        return id;
     },
 
     getSortFn: function() {
@@ -316,7 +332,8 @@ Ext4.define('Connector.grid.LearnFaceted', {
 
     createColumnFilterStore: function() {
         var concatBeforeSort = false; //if record is an array.
-        var values = this.learnStore.snapshot.getRange()
+        var store = this.learnStore.snapshot || this.learnStore.data;
+        var values = store.getRange()
                 .map(function(record) {
                     var value = record.getData()[this.columnField];
                     if (Ext.isArray(value)) {
@@ -342,7 +359,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
                 }).map(function(record) {
                     return [record];
                 });
-        var storeId = [this.dim, this.columnField].join('||');
+        var storeId = this.getStoreId();
         return Ext4.create('Ext.data.ArrayStore', {
             fields: [
                 'value'

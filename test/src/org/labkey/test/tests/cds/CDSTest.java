@@ -18,9 +18,12 @@ package org.labkey.test.tests.cds;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.Timeout;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
+import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.cds.CDSAsserts;
@@ -29,8 +32,10 @@ import org.labkey.test.util.cds.CDSHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSTest extends CDSReadOnlyTest
 {
 
@@ -74,6 +79,12 @@ public class CDSTest extends CDSReadOnlyTest
         return Arrays.asList("CDS");
     }
 
+    @Override
+    public Timeout testTimeout()
+    {
+        return new Timeout(60, TimeUnit.MINUTES);
+    }
+
     @Test
     public void verifyHomePage()
     {
@@ -88,6 +99,8 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(dataPoints);
         click(Locator.linkWithText("learn about"));
         waitForElement(CDSHelper.NavigationLink.LEARN.getExpectedElement());
+        InfoPane infoPane = new InfoPane(this);
+        infoPane.waitForSpinners();
 
         log("Verify show/hide get started bar");
         Locator.XPathLocator hiddenShowBarLink = Locator.xpath("//a[contains(@class, 'started-show')][contains(@style, 'display: none')]");
@@ -124,11 +137,13 @@ public class CDSTest extends CDSReadOnlyTest
         log("Verify tile link");
         mouseOver(Locator.xpath("//div[contains(@class, 'home_text')]"));
         sleep(500);
+        infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_text')]"));
         waitForElement(CDSHelper.NavigationLink.LEARN.getExpectedElement());
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         mouseOver(Locator.xpath("//div[contains(@class, 'home_plot')]"));
         sleep(500);
+        infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_plot')]"));
         waitForElement(CDSHelper.NavigationLink.PLOT.getExpectedElement());
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
@@ -136,9 +151,11 @@ public class CDSTest extends CDSReadOnlyTest
         log("Verify open video popup");
         mouseOver(Locator.xpath("//div[contains(@class, 'home_video')]"));
         sleep(500);
+        infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_video')]"));
         waitForElement(Locator.xpath("id('started-video-frame')"));
         sleep(500);
+        infoPane.waitForSpinners();
         clickAt(Locator.css("div.x-mask"), 10, 10, 0);
         //
         // Validate News feed

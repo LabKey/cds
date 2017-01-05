@@ -9,6 +9,15 @@ Ext.define('Connector.app.store.StudyProducts', {
 
     model : 'Connector.app.model.StudyProducts',
 
+    /**
+     * Issue 28093 (See annotation on Connector.app.model.StudyProducts)
+     * secretData is an additional data field that is populated on load. It maps from product_id to sets of parameters
+     * from which a StudyProduct can be created. The getById function will check here when trying to return a record.
+     * The use case is for studyProduct records that should not be displayed in the summary, but that we still want
+     * to generate individual itemDetails pages for.
+     */
+    secretData : {},
+
     constructor: function(config) {
         Ext.applyIf(config, {
             cache: []
@@ -94,6 +103,26 @@ Ext.define('Connector.app.store.StudyProducts', {
         this._onLoadComplete();
     },
 
+    getById : function(id) {
+        if (this.secretData[id]) {
+            return Ext.create(this.model, this.secretData[id])
+        }
+        return this.callParent(arguments);
+        // return this.secretData[id] || this.callParent(id);
+    },
+
+    hiddenProduct : function(productName) {
+        var markerProducts = Connector.app.model.StudyProducts.markerProducts, hidden = false;
+        var formattedProductName = productName.toLowerCase().trim();
+        Ext4.iterate(markerProducts, function(key, value){
+           if (formattedProductName == value) {
+               hidden = true;
+               return false;
+           }
+        });
+        return hidden;
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData) && Ext.isDefined(this.productProduct)) {
             var products = [],
@@ -144,7 +173,14 @@ Ext.define('Connector.app.store.StudyProducts', {
                     });
                 }
                 product.other_products = otherProducts;
-                products.push(product);
+
+                if (!this.hiddenProduct(product.product_name)) {
+                    products.push(product);
+                }
+                else{
+                    if (product.product_name.toLowerCase().trim() != Connector.app.model.StudyProducts.markerProducts.NONE)
+                        this.secretData[product.product_id] = product;
+                }
             }, this);
 
             products.sort(function(productA, productB) {

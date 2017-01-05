@@ -13,10 +13,7 @@ Ext.define('Connector.app.view.Assay', {
 
     statics: {
        searchFields: ['assay_short_name', 'assay_label', 'assay_detection_platform', 'assay_method_description',
-            'assay_body_system_type', 'assay_body_system_target', 'assay_general_specimen_type'],
-        filterFields: [
-            'assay_short_name', 'study_count', 'assay_body_system_target'
-        ]
+            'assay_body_system_type', 'assay_body_system_target', 'assay_general_specimen_type']
     },
 
     columns : [{

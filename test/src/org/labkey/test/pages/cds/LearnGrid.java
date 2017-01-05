@@ -45,6 +45,15 @@ public class LearnGrid
         return numRowsWithUnlockedPortion;
     }
 
+    @LogMethod
+    public int getTitleRowCount()
+    {
+        List<WebElement> antigensAfterFilter = Locator.tagWithClass("tr", "detail-row")
+                .append("/td//div/div/h2")
+                .findElements(_test.getDriver());
+        return antigensAfterFilter.size();
+    }
+
     @LogMethod(quiet = true)
     public LearnGrid openFilterPanel(@LoggedParam String columnHeaderName)
     {
@@ -72,13 +81,13 @@ public class LearnGrid
     {
         openFilterPanel(columnName);
 
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
 
         if (option != null)
         {
             _test.click(Locator.css(".sortDropdown"));
             _test.click(Locator.css(".x-menu-item").withText(option));
-            BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+            BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
         }
 
         _test.click(Locator.css(".x-column-header-checkbox").findElements(_test.getDriver()).stream().filter(WebElement::isDisplayed).findFirst().get());
@@ -90,7 +99,7 @@ public class LearnGrid
 
         Locator.XPathLocator search = CDSHelper.Locators.cdsButtonLocator("Search", "filter-btn");
         search.findElement(_test.getDriver()).click();
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
 
         return this;
     }
@@ -110,11 +119,11 @@ public class LearnGrid
         {
             _test.click(Locator.css(".sortDropdown"));
             _test.click(Locator.css(".x-menu-item").withText(option));
-            BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+            BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
         }
 
         _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn"));
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
 
         return this;
     }
@@ -129,7 +138,7 @@ public class LearnGrid
     public LearnGrid sort(@LoggedParam final String columnName)
     {
         _test.click(Locators.columnHeaderLocator(columnName));
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT);
+        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
         assertSortPresent(columnName);
 
         return this;
@@ -241,8 +250,8 @@ public class LearnGrid
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {
-            return Locator.xpath("//tr[contains(@class, 'x-grid-row')]//td/div[contains(text(), '"
-                    + label + "')]/../preceding-sibling::td/div/div[contains(@class, 'x-grid-row-checker')]");
+            return Locator.xpath("//tr[contains(@class, 'x-grid-row')]//td/div[text() = '"
+                    + label + "']/../preceding-sibling::td/div/div[contains(@class, 'x-grid-row-checker')]");
         }
 
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)

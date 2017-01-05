@@ -40,55 +40,6 @@ Ext.define('Connector.app.store.Assay', {
         this._onLoadComplete();
     },
 
-    loadAntigens : function(assayName, callback, scope) {
-        if (assayName === 'ICS' || assayName === 'ELISPOT') {
-            LABKEY.Query.selectRows({
-                schemaName: 'cds',
-                queryName: 'learn_' + assayName + '_antigens',
-                success: function(result) {
-                    var ret = [],
-                        idx = 0;
-                    Ext.each(result.rows, function(row) {
-                        if(ret[idx-1] && ret[idx-1].antigen_name === row.antigen_name) {
-                            ret[idx-1].protienAndPools.push({
-                                protein: row.protein,
-                                pools: row.pools
-                            });
-                            if (!Ext.Array.contains(ret[idx-1].antigen_description, row.antigen_description[0])) {
-                                ret[idx-1].antigen_description.push(', ' + row.antigen_description[0]);
-                            }
-                        }
-                        else {
-                            ret[idx] = {
-                                antigen_name: row.antigen_name,
-                                antigen_description: [row.antigen_description[0]],
-                                antigen_control: row.antigen_control, //this assumes the control status is the same for all peptide pools of a protein panel
-                                clades: row.clades,
-                                protienAndPools: [{
-                                    protein: row.protein,
-                                    pools: row.pools
-                                }]
-                            };
-                            idx++;
-                        }
-                    });
-                    callback.call(scope, ret);
-                },
-                scope: scope
-            })
-        }
-        else {
-            LABKEY.Query.selectRows({
-                schemaName: 'cds',
-                queryName: assayName + 'antigen',
-                success: function (result) {
-                    callback.call(scope, result.rows);
-                },
-                scope: scope
-            })
-        }
-    },
-
     onLoadStudies: function (assayStudies) {
         this.assayStudies = assayStudies.rows;
         this._onLoadComplete();
@@ -130,6 +81,11 @@ Ext.define('Connector.app.store.Assay', {
                 assay.studies = studies;
                 assay.studies_with_data = studiesWithData;
                 assay.studies_with_data_count = studiesWithData.length;
+                assay.antigen_store = Ext.create('Connector.app.store.AssayAntigen', {
+                    model: 'Connector.app.model.AssayAntigen',
+                    storeId: 'assayantigen_' + assay.assay_type,
+                    assayType: assay.assay_type
+                });
                 assays.push(assay);
             }, this);
 

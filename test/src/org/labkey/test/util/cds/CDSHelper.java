@@ -162,6 +162,7 @@ public class CDSHelper
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
+    public final static int CDS_WAIT_LEARN = 4000;
     public final static int CDS_WAIT_ANIMATION = 500;
     public final static int CDS_WAIT_TOOLTIP = 5000;
 
@@ -205,7 +206,7 @@ public class CDSHelper
     public static final String ANTIGEN_CONS_NAME = "Con S gp140 CFI";
     public static final String ANTIGEN_GP70_NAME = "gp70_B.CaseA_V1_V2";
     public static final String ANTIGEN_P24_NAME = "p24";
-    public static final String[] ANTIGENS_NAME = {ANTIGEN_A1_NAME, ANTIGEN_A244_NAME, ANTIGEN_AE244_NAME, ANTIGEN_BCON_NAME,
+    public static final String[] BAMA_ANTIGENS_NAME = {ANTIGEN_A1_NAME, ANTIGEN_A244_NAME, ANTIGEN_AE244_NAME, ANTIGEN_BCON_NAME,
             ANTIGEN_C1086_NAME, ANTIGEN_CCON_NAME, ANTIGEN_CONS_NAME, ANTIGEN_GP70_NAME, ANTIGEN_P24_NAME};
 
     public static final String ANTIGEN_CLADE_A = "A";
