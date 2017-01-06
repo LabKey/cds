@@ -367,11 +367,18 @@ Ext4.define('Connector.grid.LearnFaceted', {
     getLearnStoreValues: function(store)
     {
         var concatBeforeSort = false; //if record is an array.
+        var hasBlank = false; // handle empty value
         var values = store.getRange()
                 .map(function(record) {
                     var value = record.get(this.columnField);
                     if (Ext.isArray(value)) {
                         concatBeforeSort = true;
+                        if (value.length == 0)
+                            hasBlank = true;
+                    }
+                    else {
+                        if (value == null || value === '')
+                            hasBlank = true;
                     }
                     return value;
                 }, this);
@@ -382,6 +389,9 @@ Ext4.define('Connector.grid.LearnFaceted', {
                 return (prev || []).concat(curr);
             });
         }
+
+        if (hasBlank)
+            values.push('[blank]');
 
         //remove null and duplicates
         values = Ext.Array.clean(values);

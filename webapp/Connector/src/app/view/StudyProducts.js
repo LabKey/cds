@@ -111,9 +111,7 @@ Ext.define('Connector.app.view.StudyProducts', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
                     '<div class="detail-gray-text"">',
-                        '<tpl if="product_developer != &quot;[blank]&quot;">',
-                            '{product_developer:htmlEncode}',
-                        '</tpl>',
+                        '{product_developer:htmlEncode}',
                     '</div>',
                 '</div>'
         )
