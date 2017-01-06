@@ -369,7 +369,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
         var concatBeforeSort = false; //if record is an array.
         var values = store.getRange()
                 .map(function(record) {
-                    var value = record.getData()[this.columnField];
+                    var value = record.get(this.columnField);
                     if (Ext.isArray(value)) {
                         concatBeforeSort = true;
                     }
@@ -383,16 +383,9 @@ Ext4.define('Connector.grid.LearnFaceted', {
             });
         }
 
-        values = values.sort(this.getSortFn());
-        values = values.filter(function(record, idx) {
-            if (record == undefined) {
-                return false;
-            }
-            //remove duplicates
-            return !(values[idx - 1] != undefined && values[idx - 1] == record);
-        });
-
-        return values;
+        //remove null and duplicates
+        values = Ext.Array.clean(values);
+        return Ext.Array.unique(values);
     },
 
     createColumnFilterStore: function() {
