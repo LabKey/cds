@@ -633,6 +633,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String[] studiesToFilter = {CDSHelper.STUDIES[0], CDSHelper.STUDIES[7], CDSHelper.STUDIES[20]}; //Arbitrarily chosen
         int numRowsPreFilter = XPATH_RESULT_ROW_TITLE.findElements(getDriver()).size();
 
+        Assert.assertTrue("Facet options should all have data before filtering", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Name & Description"));
+
         learnGrid.setFacet("Name & Description", studiesToFilter);
         List<WebElement> studyTitlesAfterFilter = Locator.tagWithClass("tr", "detail-row")
                 .append("/td//div/div/h2")
@@ -645,10 +647,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             Assert.assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
         }
 
+        Assert.assertTrue("Both 'Has data' and 'No data' group should be present for column with filter", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Name & Description"));
+        Assert.assertTrue("Both 'Has data' and 'No data' group should be present for 'Data Added' column after filtering studies", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Data Added"));
+
         log("Evaluating clearing a filter");
         learnGrid.clearFilters("Name & Description");
         int numRowsPostFilter = learnGrid.getRowCount();
         Assert.assertTrue(numRowsPreFilter == numRowsPostFilter && numRowsPostFilter == CDSHelper.STUDIES.length);
+        Assert.assertTrue("Facet options should have data after clearing filter on column", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Name & Description"));
+        Assert.assertTrue("Facet options should have data for 'Data Added' column after removing study filter", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Data Added"));
 
         log("Evaluating applying two numeric filters");
         //finds the number of rows that have a date column and assay column that satisfy the following filter
@@ -670,6 +677,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_LEARN);
         int numRowsPostRefresh = learnGrid.getRowCount();
         Assert.assertTrue(numRowsSatisfyFilter == numRowsPostRefresh);
+
+        log("Evaluating filtering to empty grid");
+        String strategyToFilter = "s3";
+        learnGrid.setFacet("Strategy", strategyToFilter);
+        numRowsPostFilter = learnGrid.getRowCount();
+        Assert.assertTrue(numRowsPostFilter == 0);
+        Assert.assertTrue("No facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Name & Description"));
+        Assert.assertTrue("No facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Data Added"));
 
         learnGrid.clearFilters("Status");
         learnGrid.clearFilters("Data Added");
