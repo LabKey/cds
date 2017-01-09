@@ -145,7 +145,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4GridPanel.js"></script>
 
     <!-- Visualization Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/d3-3.3.9.min.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/d3-3.5.17.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/hexbin.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/sqbin.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/crossfilter-1.3.11.js"></script>
