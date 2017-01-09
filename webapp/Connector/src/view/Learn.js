@@ -275,17 +275,26 @@ Ext.define('Connector.view.Learn', {
                 Ext.each(filterValues, function(filterValue){
                     if (!match)
                         return;
-                    Ext.each(value, function(val){
-                        if (filterValue == val) {
+                    if (filterValue == '[blank]') {
+                        if (value.length == 0)
+                        {
                             columnMatch = true;
                             return;
                         }
-                    });
+                    }
+                    else {
+                        Ext.each(value, function(val){
+                            if (filterValue == val) {
+                                columnMatch = true;
+                                return;
+                            }
+                        });
+                    }
                 });
             }
             else {
                 Ext.each(filterValues, function(filterValue){
-                    if (filterValue == value) {
+                    if ((filterValue == value) || (filterValue == '[blank]' && (value == null || value == ''))) {
                         columnMatch = true;
                         return;
                     }

@@ -38,11 +38,7 @@ Ext.define('Connector.app.model.StudyProducts', {
         {name: 'product_subclass'},
         {name: 'product_class'},
         {name: 'product_class_label'},
-        {name: 'product_developer', sortType: function(a){
-            if (a == '[blank]')
-                return '\uFFFF';
-            return a;
-        }},
+        {name: 'product_developer'},
         {name: 'product_manufacturer'},
         {name: 'product_description'},
         {name: 'data_availability'},

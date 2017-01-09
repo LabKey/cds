@@ -36,6 +36,8 @@ public class LearnGrid
         _test = test;
     }
 
+    public enum FacetGroups { hasData, noData, both }
+
     @LogMethod
     public int getRowCount()
     {
@@ -68,6 +70,37 @@ public class LearnGrid
         _test._ext4Helper.waitForMask();
 
         return this;
+    }
+
+    @LogMethod
+    public FacetGroups getFacetGroupStatus(@LoggedParam String columnName)
+    {
+        return getFacetGroupStatusWithOption(columnName, null);
+    }
+
+    @LogMethod
+    public FacetGroups getFacetGroupStatusWithOption(@LoggedParam String columnName, @LoggedParam String option)
+    {
+        openFilterPanel(columnName);
+        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
+
+        if (option != null)
+        {
+            _test.click(Locator.css(".sortDropdown"));
+            _test.click(Locator.css(".x-menu-item").withText(option));
+            BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
+        }
+
+        FacetGroups status = FacetGroups.noData;
+        if (_test.isElementPresent(Locators.hasData) && _test.isElementPresent(Locators.noData))
+            status = FacetGroups.both;
+        else if (_test.isElementPresent(Locators.hasData))
+            status = FacetGroups.hasData;
+
+        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Cancel", "filter-btn"));
+        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
+
+        return status;
     }
 
     @LogMethod
@@ -137,6 +170,8 @@ public class LearnGrid
     @LogMethod
     public LearnGrid sort(@LoggedParam final String columnName)
     {
+        _test.mouseOver(Locators.columnHeaderLocator(columnName));
+        _test.sleep(500);
         _test.click(Locators.columnHeaderLocator(columnName));
         BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
         assertSortPresent(columnName);
@@ -247,6 +282,8 @@ public class LearnGrid
         public static final Locator.XPathLocator unlockedRowHeader = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div[contains(@class, 'x-grid-header-ct')]");
         public static final Locator.XPathLocator lockedRow = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div/div/table/tbody/tr");
         public static final Locator.XPathLocator lockedRowHeader = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div[contains(@class, 'x-grid-header-ct')]");
+        public static final Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in current selection");
+        public static final Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in current selection");
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {
