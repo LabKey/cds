@@ -685,8 +685,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         learnGrid.setFacet("Strategy", strategyToFilter);
         numRowsPostFilter = learnGrid.getRowCount();
         Assert.assertTrue(numRowsPostFilter == 0);
-        Assert.assertTrue("No facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Name & Description"));
-        Assert.assertTrue("No facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Data Added"));
+        Assert.assertTrue("Name & Description facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Name & Description"));
+        Assert.assertTrue("Data Added facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Data Added"));
 
         learnGrid.clearFilters("Status");
         learnGrid.clearFilters("Data Added");
