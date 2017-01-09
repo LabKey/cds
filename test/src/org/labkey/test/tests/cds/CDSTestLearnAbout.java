@@ -279,12 +279,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(0)));
+        sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
 
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
+        sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
@@ -781,7 +783,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         //Test filter for alt property persists correctly
         refresh();
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDSHelper.CDS_WAIT_LEARN);
         Assert.assertTrue(1 == learnGrid.getRowCount());
 
         //Test clear doesn't fire for wrong selection in facet panel.
