@@ -491,7 +491,9 @@ Ext.define('Connector.view.Learn', {
                     val = Ext.isNumber(parseInt(_id[1])) ? parseInt(_id[1]) : _id[1],
                     data = store.data.items,
                     ret = [];
-
+            // if a store is filtered, use snapshot items
+            if (store.snapshot)
+                data = store.snapshot.items;
             for (var i = 0; i < data.length; i++) {
                 if (ret.length < 2 && data[i].get(prop) === val) {
                     ret.push(data[i]);
