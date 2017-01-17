@@ -695,6 +695,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateLearnAboutFilterAndDetailsPage()
     {
+
+        // This test is used to validate the fix for issue 29002 (DataSpace: Learn filters restrict info pane link).
         final String STUDY_INFO_TEXT_TRIGGER = "Study information";
 
         LearnGrid learnGrid = new LearnGrid(this);
