@@ -276,8 +276,17 @@ Ext.define('Connector.controller.Learn', {
         this.replaceHashParam('q', search);
     },
 
-    onUpdateLearnFilter : function(column, filters) {
-        this.replaceHashParam(column, Ext.isArray(filters) ? Connector.utility.HashURL.delimitValues(filters) : filters);
+    getFilterParamStr: function(filterValues, negated) {
+        var valueStr = Ext.isArray(filterValues) ? Connector.utility.HashURL.delimitValues(filterValues) : filterValues;
+        if (!valueStr)
+            return '';
+        var paramStr = negated ? 'NotIn(' : 'In(';
+        paramStr = paramStr + valueStr + ')';
+        return paramStr
+    },
+
+    onUpdateLearnFilter : function(column, filters, negated) {
+        this.replaceHashParam(column, this.getFilterParamStr(filters, negated));
     },
 
     onUpdateLearnFilters : function(filterParams) {
