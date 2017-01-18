@@ -7,11 +7,11 @@ Ext.define('Connector.panel.AntigenSelection', {
 
     extend: 'Ext.form.Panel',
 
-    cls: 'content',
+    cls: 'content antigen-selection-panel',
 
     border: false,
 
-    totalColumnWidth: 400,
+    totalColumnWidth: 394,
     subjectColumnWidth: 60,
 
     constructor : function(config) {
@@ -235,9 +235,14 @@ Ext.define('Connector.panel.AntigenSelection', {
     },
 
     createCheckboxGroupCmp : function(items, fields) {
-        var checkboxGroup = Ext.create('Ext.form.CheckboxGroup', {
-            columns: this.hierarchyMeasures.length + 1,
-            items: items
+        var checkboxGroup = Ext.create('Ext.panel.Panel', {
+            layout: {
+                type: 'table',
+                columns: this.hierarchyMeasures.length + 1
+            },
+            border: false,
+            items: items,
+            cls: 'antigen-cb-group'
         });
 
         // before render, update the leaf checkbox parents and all checkbox accordingly
