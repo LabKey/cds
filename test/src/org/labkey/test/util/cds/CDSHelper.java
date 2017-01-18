@@ -1055,6 +1055,20 @@ public class CDSHelper
         }
     }
 
+    public void hoverOverInfoPaneItem(String label)
+    {
+        // Mouse over the label
+        Locator.XPathLocator memberLabel = Locator.tagWithClass("div", "x-grid-cell-inner").containing(label);
+        _test.mouseOver(memberLabel);
+    }
+
+    public void clickLearnAboutInfoPaneItem(String label)
+    {
+        hoverOverInfoPaneItem(label);
+        _test.click(Locator.xpath("//div[contains(@class, 'x-grid-cell-inner')]//div[@title='" + label + "']//a[contains(@class, 'expando')]"));
+        _test.waitForElement(Locator.xpath("//div[contains(@class, 'titlepanel')]//div[contains(@class, 'learn-up')]//span[contains(@class, 'studyname')][text()='" + label + "']"));
+    }
+
     /**
      * Call this with the info pane display open.
      * @param setAND - Exclusive flag that will select either 'AND' or 'OR' depending on the value.
