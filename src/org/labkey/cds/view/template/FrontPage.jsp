@@ -179,7 +179,9 @@
                 </div>
                 <form action="" method="post" class="form" id="createnewpasswordform">
                     <div class="credentials">
-                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).</span>
+                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
+                        Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
+                        </span>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
                         <input placeholder="Re-enter Password" id="password2" name="password2" type="password" value="" required>
                         <div class="checkbox"></div>
@@ -205,7 +207,9 @@
                 </div>
                 <form action="" method="post" class="form" id="createaccountform">
                     <div class="credentials">
-                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).</span>
+                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
+                        Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
+                        </span>
                         <input placeholder="Password" id="password3" name="password" type="password" value="" required>
                         <input placeholder="Re-enter Password" id="password4" name="reenter-password" type="password" value="" required>
                         <div class="checkbox"></div>
