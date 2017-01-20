@@ -693,6 +693,36 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     }
 
     @Test
+    public void validateLearnAboutFilterAndDetailsPage()
+    {
+
+        // This test is used to validate the fix for issue 29002 (DataSpace: Learn filters restrict info pane link).
+        final String STUDY_INFO_TEXT_TRIGGER = "Study information";
+
+        LearnGrid learnGrid = new LearnGrid(this);
+
+        cds.viewLearnAboutPage("Studies");
+
+        log("Filter the type of study to 'Phase I'");
+        String[] studiesToFilter = {"Phase I"}; //Arbitrarily chosen
+
+        learnGrid.setFacet("Type", studiesToFilter);
+
+        log("Open the 'Studies' info pane and then click on the 'learn about' link.");
+        cds.openStatusInfoPane("Studies");
+        cds.clickLearnAboutInfoPaneItem(CDSHelper.QED_1);
+
+        log("Validate that the learn about page is shown.");
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+        assertElementVisible(Locator.linkWithText("Heather Wright"));
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
+
+        cds.viewLearnAboutPage("Studies");
+        learnGrid.clearFilters("Type");
+
+    }
+
+    @Test
     public void validateAssayAntigens()
     {
         cds.viewLearnAboutPage("Assays");

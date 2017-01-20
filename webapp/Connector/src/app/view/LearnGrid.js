@@ -55,7 +55,7 @@ Ext.define('Connector.app.view.LearnGrid', {
                 {
                     var filterConfigSet = column.filterConfigSet
                             .map(function(config) {
-                                config.filterValues = learnView.columnFilters[config.filterField] || [];
+                                config.columnFilter = learnView.columnFilters[config.filterField] || {filterValues: [], negated: false};
                                 return config;
                             });
                     Ext.create('Connector.window.LearnFacet', {
@@ -68,13 +68,13 @@ Ext.define('Connector.app.view.LearnGrid', {
                         learnStore: this.store,
                         dataView: this,
                         listeners: {
-                            filter: function (columnName, filterValues)
+                            filter: function (columnName, filterValues, negated)
                             {
-                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, filterValues, this.isDetailLearnGrid);
+                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, filterValues, negated, this.isDetailLearnGrid);
                             },
                             clearfilter: function (columnName)
                             {
-                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, [], this.isDetailLearnGrid);
+                                this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, [], false, this.isDetailLearnGrid);
                             },
                             scope: this
                         },

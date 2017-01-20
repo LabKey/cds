@@ -148,7 +148,8 @@ Ext.define('Connector.panel.Feedback', {
                 action: 'org.labkey.issue.IssuesController$InsertAction',
                 title: title,
                 priority: 3,
-                comment: comments + '\n\n' + window.location.href
+                comment: comments + '\n\n' + window.location.href,
+                issueDefName: 'issues'
             }
         };
 
@@ -235,7 +236,7 @@ Ext.define('Connector.panel.Feedback', {
                                         }
                                     }
                                     else {
-                                        Ext.Msg.alert('Oops!', 'Looks like something went wrong in gathering your feedback.');
+                                        Ext.Msg.alert('There was an error submitting your feedback.');
                                     }
                                 }
 
