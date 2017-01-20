@@ -273,8 +273,9 @@ Ext.define('Connector.panel.HelpCenter', {
     },
 
     getHelpTemplate: function(json, name) {
-        var pages = json.pages;
         var template = json.container.wikihtml; // display wiki body, unless current wiki has children wiki, then display children
+
+        var pages = this.getNonSystemWikis(json.pages);
 
         if (!name)  {
             // the home view is a summary for all categories
@@ -317,20 +318,30 @@ Ext.define('Connector.panel.HelpCenter', {
         return template;
     },
 
+    getNonSystemWikis: function(wikis) {
+        var pages = [];
+        if (!wikis)
+            return pages;
+        Ext.each(wikis, function(page){
+            if (page.name.indexOf('_') != 0) // Wikis whose names start with an underscore are special functional wikis and shouldn't appear in Help Center
+                pages.push(page);
+        });
+        return pages;
+    },
+
     buildIndividualCategory: function (category) {
         var template = '<h3>' + Ext.htmlEncode(category.text.replace('(' + category.name + ')', '')) + '</h3>',
             child;
 
-        if (category.children) {
-            for (var i=0; i < category.children.length; i++) {
-                if (i > 4) {
-                    template += '<p><a class="see-all" href="' + category.href + '">' + 'See all' + '</a></p>';
-                    break;
-                }
-
-                child = category.children[i];
-                template += '<p><a href="' + child.href + '">' + Ext.htmlEncode(child.text.replace('(' + child.name + ')', '')) + '</a></p>';
+        var childPages = this.getNonSystemWikis(category.children);
+        for (var i = 0; i < childPages.length; i++) {
+            if (i > 4) {
+                template += '<p><a class="see-all" href="' + category.href + '">' + 'See all' + '</a></p>';
+                break;
             }
+
+            child = childPages[i];
+            template += '<p><a href="' + child.href + '">' + Ext.htmlEncode(child.text.replace('(' + child.name + ')', '')) + '</a></p>';
         }
 
         return template;
@@ -345,13 +356,18 @@ Ext.define('Connector.panel.HelpCenter', {
                 break;
             }
         }
+
         if (targetWiki && targetWiki.children)  {
-            template = '<div>';
-            for (var i = 0; i < targetWiki.children.length; i++) {
-                var child = targetWiki.children[i];
-                template += '<p><a href="' + child.href + '">' + Ext.htmlEncode(child.text.replace('(' + child.name + ')', '')) + '</a></p>';
+            var childPages = this.getNonSystemWikis(targetWiki.children);
+            if (childPages.length > 0)
+            {
+                template = '<div>';
+                for (var i = 0; i < childPages.length; i++) {
+                    var child = childPages[i];
+                    template += '<p><a href="' + child.href + '">' + Ext.htmlEncode(child.text.replace('(' + child.name + ')', '')) + '</a></p>';
+                }
+                template += '</div>';
             }
-            template += '</div>';
         }
         return template;
     },
