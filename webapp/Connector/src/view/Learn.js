@@ -158,7 +158,9 @@ Ext.define('Connector.view.Learn', {
                 if (column.filterConfigSet && Ext.isDefined(column.getEl())) {
                     var columnHasFiltersSet = column.filterConfigSet
                             .map(function (config) {
-                                var assignedFilterValues = this.columnFilters[config.filterField].filterValues;
+                                var assignedFilterValues;
+                                if (this.columnFilters[config.filterField])
+                                    assignedFilterValues = this.columnFilters[config.filterField].filterValues;
                                 return assignedFilterValues && assignedFilterValues.length > 0
                             }, this)
                             .reduce(function (total, curr) {
@@ -225,7 +227,7 @@ Ext.define('Connector.view.Learn', {
                             }, this);
 
                     var columnHasFilterApplied = fieldsWithFilterValues.reduce(function(total, curr, idx) {
-                                return total || curr.columnFilter.filterValues.length > 0;
+                                return total || (curr.columnFilter && curr.columnFilter.filterValues.length > 0);
                             }, false);
 
                     if (columnHasFilterApplied) {
