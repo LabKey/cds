@@ -114,7 +114,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
@@ -146,7 +146,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXDemCat()
@@ -171,7 +171,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
@@ -205,7 +205,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXDemNum()
@@ -230,7 +230,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
@@ -264,7 +264,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXSameAssayCat()
@@ -289,7 +289,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
@@ -323,7 +323,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXSameAssayNum()
@@ -348,7 +348,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
@@ -382,7 +382,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXSameDiffFilter()
@@ -408,7 +408,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure), {'study_ICS_cell_type': 'CD8+'});
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure), {'study_ICS_cell_type': 'CD4+'});
 
@@ -442,7 +442,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXSameDiffFilter2()
@@ -478,7 +478,7 @@
                     { measure: getDemVisMeasure('Demographics', 'race')}
                 ],
                 success: function(measureStore) {
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create(),
                         filterX = {}, filterY = {};
 
                     filterX[QueryUtils.DATASET_ALIAS] = 'x';
@@ -522,7 +522,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXDiffAssay()
@@ -556,7 +556,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
@@ -587,7 +587,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXDiffAssay2()
@@ -620,7 +620,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
@@ -651,7 +651,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function selectAllDimensionsYMeasureXDiffAssay()
@@ -684,7 +684,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
@@ -710,7 +710,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
 
@@ -746,7 +746,7 @@
                 ],
                 success: function(measureStore) {
 
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
@@ -777,7 +777,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXWeeksUnaligned()
@@ -802,7 +802,7 @@
                     { measure: xMeasure, dateOptions: {interval: interval, zeroDayVisitTag: null}}
                 ],
                 success: function(measureStore) {
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, interval);
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
@@ -836,7 +836,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function plotYMeasureXMonthsAligned()
@@ -861,7 +861,7 @@
                     { measure: xMeasure, dateOptions: {interval: interval, zeroDayVisitTag: 'Last Vaccination'}}
                 ],
                 success: function(measureStore) {
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    var axisMeasureStore = LABKEY.Query.AxisMeasureStore.create();
 
                     axisMeasureStore.setXMeasure(measureStore, 'cds_GridBase_Months_Last_Vaccination');
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
@@ -897,7 +897,7 @@
                 failure: onError
             };
 
-            LABKEY.Query.experimental.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
+            LABKEY.Query.MeasureStore.getData(config, QueryUtils.getData, QueryUtils);
         }
 
         function scatterMeasureSameSource()
@@ -948,7 +948,7 @@
                 isMeasure: true
             });
 
-            LABKEY.Query.experimental.MeasureStore.getData({
+            LABKEY.Query.MeasureStore.getData({
                 measures: [
                     { measure: subjectMeasure },
                     { measure: visitMeasure },
@@ -960,7 +960,7 @@
                 failure: onError
             });
 
-            LABKEY.Query.experimental.MeasureStore.getData({
+            LABKEY.Query.MeasureStore.getData({
                 measures : [
                     { measure: subjectMeasure },
                     { measure: visitMeasure },
@@ -995,7 +995,7 @@
                 var visitColAlias = measureToAlias(visitMeasure);
                 var mfiColAlias = measureToAlias(mifDeltaMeasure);
 
-                var twoAxis = LABKEY.Query.experimental.AxisMeasureStore.create();
+                var twoAxis = LABKEY.Query.AxisMeasureStore.create();
                 twoAxis.setXMeasure(storeENV, mfiColAlias);
                 twoAxis.setYMeasure(storeGAG, mfiColAlias);
 
@@ -1083,7 +1083,7 @@
                 isMeasure: true
             });
 
-            LABKEY.Query.experimental.MeasureStore.getData({
+            LABKEY.Query.MeasureStore.getData({
                 measures: [
                     { measure: subjectMeasure },
                     { measure: raceMeasure },

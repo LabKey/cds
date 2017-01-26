@@ -159,7 +159,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/layer.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/internal/D3Renderer.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/plot.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/experimental/MeasureStore.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/vis/MeasureStore.js"></script>
 
     <script type="text/javascript" src="<%=text(contextPath)%>/query/olap.js"></script>
 

@@ -637,7 +637,7 @@ Ext.define('Connector.controller.Query', {
 
     getMeasureStore : function(measures, extraFilters, success, failure, scope)
     {
-        LABKEY.Query.experimental.MeasureStore.getData({
+        LABKEY.Query.MeasureStore.getData({
             measures: measures,
             extraFilters: extraFilters,
             success: success,

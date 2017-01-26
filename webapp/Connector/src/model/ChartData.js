@@ -10,7 +10,7 @@ Ext.define('Connector.model.ChartData', {
     fields: [
         {name: 'measureSet', defaultValue: []}, // Full set of measures passed to the cds getData API call
         {name: 'plotMeasures', defaultValue: [null, null, null]}, // Array [x, y, color]
-        {name: 'measureStore', defaultValue: null}, // LABKEY.Query.experimental.MeasureStore
+        {name: 'measureStore', defaultValue: null}, // LABKEY.Query.MeasureStore
         {name: 'plotScales', defaultValue: {}}, // {x: log/linear, y: log/linear}
         {name: 'hasPlotSelectionFilter', defaultValue: {}},
 
@@ -242,7 +242,7 @@ Ext.define('Connector.model.ChartData', {
             color = (wrappedColor ? wrappedColor.measure : undefined),
             xa, ya, ca, _xid, _yid, _cid,
             studyContainers = {},
-            axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
+            axisMeasureStore = LABKEY.Query.AxisMeasureStore.create(),
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
             invalidLogPlotRowCount = 0,
             xDomain = [null,null], yDomain = [null,null],
