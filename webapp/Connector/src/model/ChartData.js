@@ -619,12 +619,11 @@ Ext.define('Connector.model.ChartData', {
         }
         if (Math.abs(value) < 0.0001) {
             // show the 1st significant digit, we don't want to show 0
-            return value.toPrecision(1);
+            return value.toPrecision(1) * 1;  // toPrecision returns string, use *1 to convert back to number
         }
         else {
             return parseFloat(value.toFixed(4));
-
-        };
+        }
     },
 
     _getColorValue : function(measure, alias, row, isMultiValue) {
