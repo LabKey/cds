@@ -98,6 +98,24 @@
                 <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
             </Hierarchy>
 
+            <Hierarchy name="PI" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
+                <Join leftKey="container" rightKey="container">
+                    <Table name="Demographics" schema="study"/>
+                    <Table name="study" schema="cds"/>
+                </Join>
+                <Level name="PI" visible="true" column="study_grant_pi_name" type="String" uniqueMembers="true" />
+                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
+            <Hierarchy name="Strategy" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
+                <Join leftKey="container" rightKey="container">
+                    <Table name="Demographics" schema="study"/>
+                    <Table name="study" schema="cds"/>
+                </Join>
+                <Level name="Strategy" visible="true" column="study_strategy" type="String" uniqueMembers="true" />
+                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
         </Dimension>
 
         <Dimension  name="Study Product" visible="true" highCardinality="false" foreignKey="product_group">
