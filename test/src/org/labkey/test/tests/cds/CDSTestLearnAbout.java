@@ -279,12 +279,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(0)));
+        sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
 
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
+        sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
@@ -633,6 +635,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String[] studiesToFilter = {CDSHelper.STUDIES[0], CDSHelper.STUDIES[7], CDSHelper.STUDIES[20]}; //Arbitrarily chosen
         int numRowsPreFilter = XPATH_RESULT_ROW_TITLE.findElements(getDriver()).size();
 
+        Assert.assertTrue("Facet options should all have data before filtering", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Name & Description"));
+
         learnGrid.setFacet("Name & Description", studiesToFilter);
         List<WebElement> studyTitlesAfterFilter = Locator.tagWithClass("tr", "detail-row")
                 .append("/td//div/div/h2")
@@ -645,10 +649,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             Assert.assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
         }
 
+        Assert.assertTrue("Both 'Has data' and 'No data' group should be present for column with filter", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Name & Description"));
+        Assert.assertTrue("Both 'Has data' and 'No data' group should be present for 'Data Added' column after filtering studies", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Data Added"));
+
         log("Evaluating clearing a filter");
         learnGrid.clearFilters("Name & Description");
         int numRowsPostFilter = learnGrid.getRowCount();
         Assert.assertTrue(numRowsPreFilter == numRowsPostFilter && numRowsPostFilter == CDSHelper.STUDIES.length);
+        Assert.assertTrue("Facet options should have data after clearing filter on column", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Name & Description"));
+        Assert.assertTrue("Facet options should have data for 'Data Added' column after removing study filter", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Data Added"));
 
         log("Evaluating applying two numeric filters");
         //finds the number of rows that have a date column and assay column that satisfy the following filter
@@ -671,8 +680,46 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         int numRowsPostRefresh = learnGrid.getRowCount();
         Assert.assertTrue(numRowsSatisfyFilter == numRowsPostRefresh);
 
+        log("Evaluating filtering to empty grid");
+        String strategyToFilter = "s3";
+        learnGrid.setFacet("Strategy", strategyToFilter);
+        numRowsPostFilter = learnGrid.getRowCount();
+        Assert.assertTrue(numRowsPostFilter == 0);
+        Assert.assertTrue("Name & Description facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Name & Description"));
+        Assert.assertTrue("Data Added facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Data Added"));
+
         learnGrid.clearFilters("Status");
         learnGrid.clearFilters("Data Added");
+    }
+
+    @Test
+    public void validateLearnAboutFilterAndDetailsPage()
+    {
+
+        // This test is used to validate the fix for issue 29002 (DataSpace: Learn filters restrict info pane link).
+        final String STUDY_INFO_TEXT_TRIGGER = "Study information";
+
+        LearnGrid learnGrid = new LearnGrid(this);
+
+        cds.viewLearnAboutPage("Studies");
+
+        log("Filter the type of study to 'Phase I'");
+        String[] studiesToFilter = {"Phase I"}; //Arbitrarily chosen
+
+        learnGrid.setFacet("Type", studiesToFilter);
+
+        log("Open the 'Studies' info pane and then click on the 'learn about' link.");
+        cds.openStatusInfoPane("Studies");
+        cds.clickLearnAboutInfoPaneItem(CDSHelper.QED_1);
+
+        log("Validate that the learn about page is shown.");
+        waitForText(STUDY_INFO_TEXT_TRIGGER);
+        assertElementVisible(Locator.linkWithText("Heather Wright"));
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
+
+        cds.viewLearnAboutPage("Studies");
+        learnGrid.clearFilters("Type");
+
     }
 
     @Test
@@ -766,7 +813,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         //Test filter for alt property persists correctly
         refresh();
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDSHelper.CDS_WAIT_LEARN);
         Assert.assertTrue(1 == learnGrid.getRowCount());
 
         //Test clear doesn't fire for wrong selection in facet panel.

@@ -123,12 +123,11 @@ Ext.define('Connector.grid.Panel', {
                         column.renderer = function(value) {
                             if (Math.abs(value) < 0.0001) {
                                 // show the 1st significant digit, we don't want to show 0
-                                return value.toPrecision(1);
+                                return value.toPrecision(1) * 1; // toPrecision returns string, use *1 to convert back to number
                             }
                             else {
                                 return parseFloat(value.toFixed(4));
-
-                            };
+                            }
                         };
                     }
                 }

@@ -11,7 +11,7 @@ Ext.define('Connector.app.model.Report', {
         {name : 'category'},
         {name : 'categorylabel',
             convert : function(v, record) {
-                if (record.raw && record.raw.category)
+                if (record && record.raw && record.raw.category)
                     return record.raw.category.label;
                 return 0;
             }
@@ -22,14 +22,14 @@ Ext.define('Connector.app.model.Report', {
         {name : 'createdByUserId', type: 'int'},
         {name : 'authorUserId',
             convert : function(v, record) {
-                if (record.raw && record.raw.author)
+                if (record && record.raw && record.raw.author)
                     return record.raw.author.userId;
                 return 0;
             }
         },
         {name : 'authorDisplayName',
             convert : function(v, record) {
-                if (record.raw && record.raw.author)
+                if (record && record.raw && record.raw.author)
                     return record.raw.author.displayName;
                 return '';
             }

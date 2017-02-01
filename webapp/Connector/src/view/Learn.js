@@ -85,8 +85,8 @@ Ext.define('Connector.view.Learn', {
                 searchValue: this.searchFilter,
                 listeners: {
                     searchchanged: this.onSearchFilterChange,
-                    updateLearnFilter: function(column, filtersStr, isDetailPage){
-                        this.onUpdateLearnFilter(column, filtersStr, isDetailPage);
+                    updateLearnFilter: function(column, filtersStr, negated, isDetailPage){
+                        this.onUpdateLearnFilter(column, filtersStr, negated, isDetailPage);
                     },
                     updateLearnSort: function(column, direction, isDetailPage){
                         this.onUpdateLearnSort(column, direction, isDetailPage);
@@ -143,19 +143,24 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    onUpdateLearnFilter : function(field, filters, isDetailPage) {
+    onUpdateLearnFilter : function(field, filters, negated, isDetailPage) {
         var filterValues = [];
         if (filters) {
             filterValues = Ext.isArray(filters) ? filters: filters.split(';');
         }
         var grid = isDetailPage ? this.activeListingDetailGrid : this.activeListing;
         if (grid) {
-            this.columnFilters[field] = filterValues;
+            this.columnFilters[field] = {
+                filterValues: filterValues,
+                negated: negated
+            };
             Ext.each(grid.headerCt.getGridColumns(), function(column) {
                 if (column.filterConfigSet && Ext.isDefined(column.getEl())) {
                     var columnHasFiltersSet = column.filterConfigSet
                             .map(function (config) {
-                                var assignedFilterValues = this.columnFilters[config.filterField];
+                                var assignedFilterValues;
+                                if (this.columnFilters[config.filterField])
+                                    assignedFilterValues = this.columnFilters[config.filterField].filterValues;
                                 return assignedFilterValues && assignedFilterValues.length > 0
                             }, this)
                             .reduce(function (total, curr) {
@@ -174,6 +179,33 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
+    getColumnFilterFromUrlParam: function(urlFilter)
+    {
+        var negated = false;
+        var emptyFilter = {
+            filterValues: [],
+            negated: false
+        };
+        if (!urlFilter)
+            return emptyFilter;
+
+        var filterStr = '';
+        if (urlFilter.startsWith('NotIn('))
+        {
+            negated = true;
+            filterStr = urlFilter.slice(6, -1);
+        }
+        else if (urlFilter.startsWith('In('))
+        {
+            filterStr = urlFilter.slice(3, -1);
+        }
+
+        return {
+            filterValues: filterStr.split(';'),
+            negated: negated
+        }
+    },
+
     onUpdateLearnFilters : function(params, isDetailPage) {
         this.columnFilters = {};
         var grid = isDetailPage ? this.activeListingDetailGrid : this.activeListing;
@@ -184,26 +216,18 @@ Ext.define('Connector.view.Learn', {
                             .map(function(config) {
                                 var field = config.filterField;
                                 var urlFilter = params[field];
-                                if (urlFilter) {
-                                    return {
+                                return {
                                         'field' : field,
-                                        'filterValues' : Ext.isArray(urlFilter) ? urlFilter: urlFilter.split(';')
-                                    }
+                                        columnFilter: this.getColumnFilterFromUrlParam(urlFilter)
                                 }
-                                else {
-                                    return {
-                                        'field' : field,
-                                        'filterValues' : []
-                                    }
-                                }
-                            });
+                            }, this);
 
                     fieldsWithFilterValues.forEach(function(config) {
-                                this.columnFilters[config.field] = config.filterValues;
+                                this.columnFilters[config.field] = config.columnFilter
                             }, this);
 
                     var columnHasFilterApplied = fieldsWithFilterValues.reduce(function(total, curr, idx) {
-                                return total || curr.filterValues.length > 0;
+                                return total || (curr.columnFilter && curr.columnFilter.filterValues.length > 0);
                             }, false);
 
                     if (columnHasFilterApplied) {
@@ -262,8 +286,10 @@ Ext.define('Connector.view.Learn', {
     isMatchColumnFilters: function(columnFilters, storeModel) {
         var match = true;
 
-        Ext.iterate(columnFilters, function (field, filterValues)
+        Ext.iterate(columnFilters, function (field, columnFilter)
         {
+            var filterValues = columnFilter.filterValues;
+            var negated = columnFilter.negated;
             var value = storeModel.get(field);
             if (!match)
                 return;
@@ -275,22 +301,34 @@ Ext.define('Connector.view.Learn', {
                 Ext.each(filterValues, function(filterValue){
                     if (!match)
                         return;
-                    Ext.each(value, function(val){
-                        if (filterValue == val) {
+                    if (filterValue == '[blank]') {
+                        if (value.length == 0)
+                        {
                             columnMatch = true;
                             return;
                         }
-                    });
+                    }
+                    else {
+                        Ext.each(value, function(val){
+                            if (filterValue == val) {
+                                columnMatch = true;
+                                return;
+                            }
+                        });
+                    }
                 });
             }
             else {
                 Ext.each(filterValues, function(filterValue){
-                    if (filterValue == value) {
+                    if ((filterValue == value) || (filterValue == '[blank]' && (value == null || value == ''))) {
                         columnMatch = true;
                         return;
                     }
                 });
             }
+            if (negated)
+                columnMatch = !columnMatch;
+
             match = match && columnMatch;
         });
 
@@ -482,7 +520,9 @@ Ext.define('Connector.view.Learn', {
                     val = Ext.isNumber(parseInt(_id[1])) ? parseInt(_id[1]) : _id[1],
                     data = store.data.items,
                     ret = [];
-
+            // if a store is filtered, use snapshot items
+            if (store.snapshot)
+                data = store.snapshot.items;
             for (var i = 0; i < data.length; i++) {
                 if (ret.length < 2 && data[i].get(prop) === val) {
                     ret.push(data[i]);
@@ -739,13 +779,13 @@ Ext.define('Connector.view.LearnHeader', {
             this.fireEvent('updateLearnSort', column, direction, isDetailLearnGrid);
     },
 
-    updateFilters: function(dimension, params, isDetailLearnGrid) {
+    updateFilters: function(dimension, params, negated, isDetailLearnGrid) {
         var filteredParams = {};
         Ext.iterate(params, function(key, val) {
             if (key)
                 filteredParams[key] = val;
         });
-        this.fireEvent('updateLearnFilters', filteredParams, isDetailLearnGrid);
+        this.fireEvent('updateLearnFilters', filteredParams, negated, isDetailLearnGrid);
     }
 });
 

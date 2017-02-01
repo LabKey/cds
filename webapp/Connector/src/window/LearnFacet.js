@@ -97,7 +97,8 @@ Ext.define('Connector.window.LearnFacet', {
                 itemId: 'faceted-' + config.filterField,
                 border: false,
                 useStoreCache: true,
-                filterValues: config.filterValues,
+                filterValues: config.columnFilter.filterValues,
+                isFilterNegated: config.columnFilter.negated,
                 dim: this.dim,
                 tabId: this.tabId,
                 columnField: config.filterField,
@@ -160,7 +161,8 @@ Ext.define('Connector.window.LearnFacet', {
     applyFiltersAndColumns : function()
     {
         var view = this.getComponent('faceted-' + this.currentFilterField);
-        var filterValues = view.getFilterValues();
+        var facetValues = view.getOptimizedFacetValues();
+        var filterValues = facetValues.values;
         if (filterValues.length == 0) {
             this.fireEvent('clearfilter', this.currentFilterField);
         }
@@ -168,7 +170,7 @@ Ext.define('Connector.window.LearnFacet', {
             Ext.Msg.alert('Error', 'Maximum selection of ' + this.maxSelection + ' values allowed.')
         }
         else {
-            this.fireEvent('filter', this.currentFilterField, filterValues);
+            this.fireEvent('filter', this.currentFilterField, filterValues, facetValues.negated);
         }
         this.close();
     },
@@ -198,6 +200,8 @@ Ext4.define('Connector.grid.LearnFaceted', {
 
     filterValues: [],
 
+    isFilterNegated: false,
+
     initComponent : function() {
 
         this.gridReady = false;
@@ -209,24 +213,47 @@ Ext4.define('Connector.grid.LearnFaceted', {
         this.items = [this.getGrid()];
 
         this.callParent();
-
     },
 
-    getFilterValues : function() {
+    getOptimizedFacetValues : function() {
+        var facetValues = this.getFacetValues();
+        var selected = facetValues.selected, unselected = facetValues.unselected;
+        if (selected && selected.length > 1 && selected.length > unselected.length)
+        {
+            return {
+                values: unselected,
+                negated: true
+            };
+        }
+        return {
+            values: selected,
+            negated: false
+        };
+    },
+
+    getFacetValues : function() {
         var grid = this.getGrid();
-        var filters = [];
+        var selected = [], unselected = [], all = [];
 
         var store = grid.store;
         var count = store.getCount();
-        var selected = grid.getSelectionModel().getSelection();
+        var selections = grid.getSelectionModel().getSelection();
 
-        if (selected.length > 0 && selected.length !== count) {
-            Ext4.each(selected, function(selection){
-                filters.push(selection.get('value'));
+        if (selections.length > 0 && selections.length !== count) {
+            Ext4.each(selections, function(selection){
+                selected.push(selection.get('value'));
             });
+            all = store.getRange()
+                    .map(function(record) {
+                        return record.get('value');
+                    }, this);
+            unselected = Ext.Array.difference(all, selected);
         }
 
-        return filters;
+        return {
+            selected: selected,
+            unselected: unselected
+        };
     },
 
     getGrid : function() {
@@ -234,7 +261,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
 
             var gridConfig = {
                 itemId: 'membergrid',
-                store: this.getLookupStore(),
+                store: this.getGroupedLookupStore(),
                 viewConfig : { stripeRows : false },
 
                 /* Selection configuration */
@@ -272,7 +299,25 @@ Ext4.define('Connector.grid.LearnFaceted', {
                         fn: function() { this.changed = true; },
                         scope: this
                     }
-                }
+                },
+
+                requires: ['Ext.grid.feature.Grouping'],
+
+                features: [
+                    {
+                        ftype: 'grouping',
+                        collapsible: false,
+                        groupHeaderTpl: new Ext.XTemplate(
+                                '{name:this.renderHeader}', // 'name' is actually the value of the groupField
+                                {
+                                    renderHeader: function(v) {
+                                        return v ? 'Has data in current selection' : 'No data in current selection';
+                                    }
+                                }
+                        )
+                    }
+                ]
+
             };
 
             this.grid = Ext4.create('Ext.grid.Panel', gridConfig);
@@ -293,6 +338,22 @@ Ext4.define('Connector.grid.LearnFaceted', {
         }
 
         return this.createColumnFilterStore();
+    },
+
+    getGroupedLookupStore : function() {
+        var filteredStore = this.learnStore.data;
+        var filteredValues = this.getLearnStoreValues(filteredStore);
+
+        var facetStore = this.getLookupStore(), allValues = [];
+        facetStore.each(function(record) {
+            allValues.push(record.data);
+        });
+        Ext.each(allValues, function(data) {
+            var value = data.value;
+            data.hasData = filteredValues.indexOf(value) > -1;
+        });
+        facetStore.loadData(allValues);
+        return facetStore;
     },
 
     getStoreId: function()
@@ -330,14 +391,21 @@ Ext4.define('Connector.grid.LearnFaceted', {
       }
     },
 
-    createColumnFilterStore: function() {
+    getLearnStoreValues: function(store)
+    {
         var concatBeforeSort = false; //if record is an array.
-        var store = this.learnStore.snapshot || this.learnStore.data;
+        var hasBlank = false; // handle empty value
         var values = store.getRange()
                 .map(function(record) {
-                    var value = record.getData()[this.columnField];
+                    var value = record.get(this.columnField);
                     if (Ext.isArray(value)) {
                         concatBeforeSort = true;
+                        if (value.length == 0)
+                            hasBlank = true;
+                    }
+                    else {
+                        if (value == null || value === '')
+                            hasBlank = true;
                     }
                     return value;
                 }, this);
@@ -349,26 +417,38 @@ Ext4.define('Connector.grid.LearnFaceted', {
             });
         }
 
-        values = values.sort(this.getSortFn());
-        values = values.filter(function(record, idx) {
-                    if (record == undefined) {
-                        return false;
-                    }
-                    //remove duplicates
-                    return !(values[idx - 1] != undefined && values[idx - 1] == record);
-                }).map(function(record) {
-                    return [record];
-                });
-        var storeId = this.getStoreId();
-        return Ext4.create('Ext.data.ArrayStore', {
-            fields: [
-                'value'
-            ],
-            data: values,
-            storeId: storeId
-        });
+        if (hasBlank)
+            values.push('[blank]');
+
+        //remove null and duplicates
+        values = Ext.Array.clean(values);
+        return Ext.Array.unique(values);
     },
 
+    createColumnFilterStore: function() {
+        var store = this.learnStore.snapshot || this.learnStore.data;
+        var values = this.getLearnStoreValues(store);
+        values = values.map(function(record) {
+                    return [record, true];
+                });
+        var storeId = this.getStoreId(), me = this;
+        return Ext4.create('Ext.data.ArrayStore', {
+            fields: [
+                'value', {name:'hasData', type: 'boolean', defaultValue: true}
+            ],
+            data: values,
+            storeId: storeId,
+            groupField: 'hasData',
+            groupDir: 'DESC',
+            sorters: [{
+                sorterFn: function(o1, o2) {
+                    var val1 = o1.get('value'), val2 = o2.get('value');
+                    var sortFn = me.getSortFn();
+                    return sortFn.call(me, val1, val2);
+                }
+            }]
+        });
+    },
 
     onViewReady : function() {
 
@@ -380,7 +460,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
                 grid.getSelectionModel().selectAll(true);
             }
             else {
-                this.setValue(this.filterValues);
+                this.setValue(this.filterValues, this.isFilterNegated);
             }
 
         }
@@ -388,9 +468,9 @@ Ext4.define('Connector.grid.LearnFaceted', {
             this.onSuccessfulLoad(this, this.scope);
     },
 
-    setValue : function(values) {
+    setValue : function(values, negated) {
         if (!this.rendered) {
-            this.on('render', function() { this.setValue(values); }, this, {single: true});
+            this.on('render', function() { this.setValue(values, negated); }, this, {single: true});
         }
 
         if (!Ext4.isArray(values) && Ext4.isString(values)) {
@@ -398,11 +478,11 @@ Ext4.define('Connector.grid.LearnFaceted', {
         }
 
         var store = this.getGrid().getStore();
-        this._checkAndLoadValues(store, values);
+        this._checkAndLoadValues(store, values, negated);
 
     },
 
-    _checkAndLoadValues : function(store, values) {
+    _checkAndLoadValues : function(store, values, negated) {
         var records = [],
                 recIdx,
                 recordNotFound = false;
@@ -424,6 +504,21 @@ Ext4.define('Connector.grid.LearnFaceted', {
                 }
             }
         }, this);
+
+        if (negated) {
+            var count = store.getCount(), found = false, negRecords = [], i, j;
+            for (i=0; i < count; i++) {
+                found = false;
+                for (j=0; j < records.length; j++) {
+                    if (records[j] == store.getAt(i))
+                        found = true;
+                }
+                if (!found) {
+                    negRecords.push(store.getAt(i));
+                }
+            }
+            records = negRecords;
+        }
 
         if (recordNotFound) {
             return;

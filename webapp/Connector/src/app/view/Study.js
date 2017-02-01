@@ -120,9 +120,7 @@ Ext.define('Connector.app.view.Study', {
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
-                    '<tpl if="strategy != &quot;[blank]&quot;">',
-                        '<div class="detail-black-text">{strategy}</div>',
-                    '</tpl>',
+                    '<div class="detail-black-text">{strategy}</div>',
                 '</div>'
         )
     },{

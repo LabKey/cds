@@ -27,9 +27,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'population'},
         {name: 'executive_summary'},
         {name: 'description'},
-        {name: 'strategy', sortType: function(strategy) {
-                return strategy != "[blank]" ? strategy : '\uFFFF'; //ensure it comes after standard unicode
-        }},
+        {name: 'strategy'},
         {name: 'groups'},
         {name: 'treatment_schema_link'},
         {name: 'rationale'},
@@ -60,6 +58,9 @@ Ext.define('Connector.app.model.Study', {
         {name: 'primary_poc_name'},
         {name: 'primary_poc_email'},
         {name: 'date_to_sort_on', sortType: function(dateToSortOn) {
+            if (!dateToSortOn)
+                return;
+
             var row = dateToSortOn.split("|");
             var stage = row[0];
             var date = new Date(row[1]);
