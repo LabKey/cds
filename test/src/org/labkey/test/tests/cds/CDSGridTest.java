@@ -528,6 +528,8 @@ public class CDSGridTest extends CDSReadOnlyTest
         columns.put(CDSHelper.DEMO_DATE_PUB, true);
         columns.put(CDSHelper.DEMO_DATE_START, true);
         columns.put(CDSHelper.DEMO_NETWORK, true);
+        columns.put(CDSHelper.DEMO_STRATEGY, true);
+        columns.put(CDSHelper.DEMO_PI, true);
         columns.put(CDSHelper.DEMO_PROD_CLASS, true);
         columns.put(CDSHelper.DEMO_PROD_COMB, true);
         columns.put(CDSHelper.DEMO_STUDY_TYPE, true);

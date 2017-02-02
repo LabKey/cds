@@ -119,6 +119,8 @@ Ext.define('Connector.measure.Configuration', {
                         'study_Demographics_study_fu_complete_date',
                         'study_Demographics_study_public_date',
                         'study_Demographics_study_network',
+                        'study_Demographics_study_grant_pi_name',
+                        'study_Demographics_study_strategy',
                         //'study_Demographics_study_last_vaccination_day',
                         'study_Demographics_study_type',
                         'study_Demographics_study_arm',
