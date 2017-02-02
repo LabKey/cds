@@ -363,6 +363,8 @@ public class CDSHelper
     public static final String DEMO_DATE_PUB = "Date Study Made Public";
     public static final String DEMO_DATE_START = "Date of Study Start";
     public static final String DEMO_NETWORK = "Network";
+    public static final String DEMO_STRATEGY = "Strategy";
+    public static final String DEMO_PI = "PI";
     public static final String DEMO_PROD_CLASS = "Product Class Combination";
     public static final String DEMO_PROD_COMB = "Product Combination";
     public static final String DEMO_STUDY_TYPE = "Study Type";
