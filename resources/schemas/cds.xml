@@ -807,6 +807,8 @@
             <column columnName="ParticipantSequenceNum"/>
             <column columnName="SequenceNum"/>
             <column columnName="ProtocolDay"/>
+            <column columnName="EnrollmentDay"/>
+            <column columnName="LastVaccinationDay"/>
             <column columnName="Container"/>
         </columns>
     </table>
