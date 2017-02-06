@@ -499,7 +499,7 @@ Ext.define('Connector.utility.Query', {
             SELECT.push(sep + rootTable.tableAlias + '.' + visitRowIdAlias + ' AS RowId,');
             Ext.iterate(Connector.getQueryService().getTimeAliases(), function(timeAlias)
             {
-                SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.' + protDayAlias, timeAlias, false) + ' AS ' + timeAlias + ',');
+                SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.' + protDayAlias, timeAlias) + ' AS ' + timeAlias + ',');
             }, this);
 
             // still need to see if there is a study axis measure with a visit tag alignment value
@@ -591,13 +591,16 @@ Ext.define('Connector.utility.Query', {
                 {
                     if (Ext.isObject(m.dateOptions))
                     {
+                        var dayColAlias = m.sourceTable.tableAlias + "." + m.measure.name;
+
                         if (m.dateOptions.zeroDayVisitTag != null)
                         {
                             visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
                             title = Ext.isDefined(colLabel) ? " @title='" + colLabel + " (" + visitAlignmentTag + ")'" : "";
+                            dayColAlias = m.sourceTable.tableAlias + "." + visitAlignmentTag.replace(/\s/g, '') + 'Day';
                         }
 
-                        intervalSelectClause = this._getIntervalSelectClause(m.sourceTable.tableAlias + "." + m.measure.name, m.dateOptions.interval, m.dateOptions.zeroDayVisitTag != null);
+                        intervalSelectClause = this._getIntervalSelectClause(dayColAlias, m.dateOptions.interval);
                         SELECT.push(",\n\t" + intervalSelectClause + " AS " + alias + title);
                     }
                     else
@@ -638,13 +641,13 @@ Ext.define('Connector.utility.Query', {
         });
 
         //
-        // Visit Tag alignment INNER JOIN
+        // Visit Tag alignment INNER JOIN (to filter based on plot data)
         //
         if (visitAlignmentTag != null)
         {
             var gridBaseAlias = this.SUBJECTVISIT_TABLE.replace('.', '_');
-            FROM += "\nINNER JOIN (SELECT Container, ParticipantId, MIN(ProtocolDay) AS ProtocolDay FROM cds.visittagalignment  "
-                + "\n\t\tWHERE visittagname='" + visitAlignmentTag + "' GROUP BY Container, ParticipantId) AS visittagalignment"
+            FROM += "\nINNER JOIN (SELECT DISTINCT Container, ParticipantId FROM cds.visittagalignment  "
+                + "\n\t\tWHERE visittagname='" + visitAlignmentTag + "') AS visittagalignment"
                 + "\n\tON " + gridBaseAlias + ".container=visittagalignment.container"
                 + "\n\tAND " + gridBaseAlias + ".subjectid=visittagalignment.participantid";
         }
@@ -845,17 +848,15 @@ Ext.define('Connector.utility.Query', {
     },
 
 
-    _getIntervalSelectClause : function(protDayCol, interval, hasAlignment)
+    _getIntervalSelectClause : function(dayColAlias, interval)
     {
-        var denom = this.getIntervalDenominator(interval),
-            clause = hasAlignment ? '(' + protDayCol + ' - visittagalignment.ProtocolDay)' : protDayCol;
+        var denom = this.getIntervalDenominator(interval);
 
-        if (denom > 1)
-        {
-            clause = 'CAST(FLOOR(' + clause + '/' + denom + ') AS Integer)';
+        if (denom > 1) {
+            return 'CAST(FLOOR(' + dayColAlias + '/' + denom + ') AS Integer)';
         }
 
-        return clause;
+        return dayColAlias;
     },
 
     getIntervalDenominator : function(interval)
