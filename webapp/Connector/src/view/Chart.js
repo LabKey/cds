@@ -904,13 +904,16 @@ Ext.define('Connector.view.Chart', {
             content += 'Subject' + colon + data.subjectId + linebreak;
             if (xAxis && xAxis.name == 'ProtocolDay') {
                 var label = ChartUtils.getTimeShortLabel(xAxis.alias);
-                if (xAxis.options.alignmentVisitTag == 'Last Vaccination'){
-                    label += 's from last vaccination';
+                if (xAxis.options.alignmentVisitTag != null){
+                    label += 's from ' + xAxis.options.alignmentVisitTag.toLowerCase();
                 }
                 else {
                     label = 'Study ' + label;
                 }
-                content += label + colon + ' ' + ((data.x > 0 && xAxis.options.alignmentVisitTag == 'Last Vaccination'? '+' : '') + data.x) + linebreak;
+
+                content += label + colon + ' '
+                    + (data.x > 0 && xAxis.options.alignmentVisitTag != null ? '+' : '') + data.x
+                    + linebreak;
             }
             else {
                 content += 'Study Day' + colon + 'Day ' + record[QueryUtils.PROTOCOLDAY_ALIAS] + linebreak;
