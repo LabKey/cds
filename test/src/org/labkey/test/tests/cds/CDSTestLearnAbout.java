@@ -140,6 +140,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String firstContactName = "Helen Holmes";
         final String firstContactEmail = "hholmest@alexa.com";
         final String rationale = "In sagittis dui vel nisl.";
+        final String clintrialsId = "blah030";
 
         cds.viewLearnAboutPage("Studies");
         log("Searching for '" + searchString + "'.");
@@ -166,6 +167,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         fields.stream().forEach((field) -> assertTextPresent(field));
 
         assertElementPresent(Locator.xpath("//a[contains(@href, 'mailto:" + firstContactEmail + "')][text()='" + firstContactName + "']"));
+
+        assertElementPresent(Locator.xpath("//a[contains(@href, 'https://clinicaltrials.gov/show/" + clintrialsId + "')]"));
 
         log("Verifying description section.");
         fields = Arrays.asList(CDSHelper.LEARN_ABOUT_DESCRIPTION_FIELDS);
