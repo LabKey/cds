@@ -302,7 +302,7 @@ Ext.define('Connector.view.Grid', {
                 multiSelect: true,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                    includeTimpointMeasures: true,
+                    includeTimepointMeasures: true,
                     includeHidden: this.canShowHidden,
                     includeAssayRequired: true,
                     includeVirtualSources: true,

@@ -3471,7 +3471,7 @@ Ext.define('Connector.view.Chart', {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
-                    includeTimpointMeasures: true
+                    includeTimepointMeasures: true
                 },
                 listeners: {
                     selectionmade: function(selected) {
@@ -3533,7 +3533,7 @@ Ext.define('Connector.view.Chart', {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
-                    includeTimpointMeasures: true,
+                    includeTimepointMeasures: true,
                     userFilter : function(row) {
                         return !row.isMeasure;
                     }

@@ -520,7 +520,7 @@ Ext.define('Connector.controller.Query', {
      * @param config An object which contains the following filterable properties.
      * @param {String} config.queryType Filter for a specific queryType (i.e. DATASET)
      * @param {Boolean} config.measuresOnly Whether or not to filter the measure objects to just those specifically declared as "measures" in the ColumnInfo
-     * @param {Boolean} config.includeTimpointMeasures Whether or not to include the timepoint/group measures
+     * @param {Boolean} config.includeTimepointMeasures Whether or not to include the timepoint/group measures
      * @param {Boolean} config.includeHidden Whether or not the include hidden columns
      * @param {Boolean} config.includeVirtualSources Whether or not the include sources defined as variableType VIRTUAL
      * @param {Boolean} config.includeDefinedMeasureSources Include sources defined as variableType DEFINED_MEASURES
@@ -538,7 +538,7 @@ Ext.define('Connector.controller.Query', {
         Ext.each(this.MEASURE_STORE.getRange(), function(record) {
             queryTypeMatch = !config.queryType || record.get('queryType') == config.queryType;
             measureOnlyMatch = !config.measuresOnly || record.get('isMeasure');
-            timepointMatch = config.includeTimpointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
+            timepointMatch = config.includeTimepointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
             requiredVarMatch = config.includeAssayRequired && record.get('recommendedVariableGrouper') == '1_AssayRequired';
             demogSubjectColMatch = config.includeAssayRequired && record.get('isDemographic') && record.get('name') == Connector.studyContext.subjectColumn;
             hiddenMatch = config.includeHidden || !record.get('hidden') || requiredVarMatch || demogSubjectColMatch;
