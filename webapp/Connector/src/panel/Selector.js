@@ -1062,6 +1062,13 @@ Ext.define('Connector.panel.Selector', {
                     value: this.initOptions ? this.initOptions['alignmentVisitTag'] : undefined
                 })
             );
+            this.getAdvancedPane().add(
+                    Ext.create('Connector.component.AdvancedOptionContinuous', {
+                        measure: this.activeMeasure,
+                        singleUseOnly: true,
+                        value: this.initOptions ? this.initOptions['continuous'] : 'CONTINUOUS' //default to continuous
+                    })
+            );
         }
     },
 

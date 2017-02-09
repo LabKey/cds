@@ -396,6 +396,39 @@ Ext.define('Connector.component.AdvancedOptionScale', {
     }
 });
 
+Ext.define('Connector.component.AdvancedOptionContinuous', {
+
+    extend: 'Connector.component.AdvancedOptionBase',
+
+    fieldName: 'isCategoricalVariable',
+    fieldLabel: 'Is Categorical: ',
+
+    constructor : function(config) {
+        if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
+            console.error('Advanced option scale field must be defined using a Measure record.');
+        }
+
+        this.callParent([config]);
+    },
+
+    initComponent : function() {
+        this.store = Ext.create('Ext.data.Store', {
+            fields: [this.storeValueField, this.storeLabelField],
+            data: [
+                {value: 'CONTINUOUS', label: 'Continuous'},
+                {value: 'DISCRETE', label: 'Discrete'}
+            ]
+        });
+
+        this.setValue(this.value, false);
+
+        this.callParent();
+    },
+
+    onDisplayFieldClick : function() {
+        this.showDropdownPanel();
+    }
+});
 
 Ext.define('Connector.component.AdvancedOptionTime', {
 

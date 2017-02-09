@@ -33,7 +33,6 @@ Ext.define('Connector.model.Measure', {
         {name: 'isUserDefined', type: 'boolean', defaultValue: undefined},
         {name: 'isMeasure', type: 'boolean', defaultValue: false},
         {name: 'isDimension', type: 'boolean', defaultValue: false},
-        {name: 'isDiscreteTime', type: 'boolean', defaultValue: false},
 
         // Misc properties about the measure display in the application
         {name: 'sourceTitle', convert: function(val, rec) {
