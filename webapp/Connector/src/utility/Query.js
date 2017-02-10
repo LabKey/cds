@@ -596,8 +596,10 @@ Ext.define('Connector.utility.Query', {
                         if (m.dateOptions.zeroDayVisitTag != null)
                         {
                             visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
-                            title = Ext.isDefined(colLabel) ? " @title='" + colLabel + " (" + visitAlignmentTag + ")'" : "";
-                            dayColAlias = m.sourceTable.tableAlias + "." + visitAlignmentTag.replace(/\s/g, '') + 'Day';
+
+                            var zeroDayMeasure = Connector.getQueryService().getMeasure(alias);
+                            title = " @title='" + zeroDayMeasure.label + "'";
+                            dayColAlias = m.sourceTable.tableAlias + "." + zeroDayMeasure.name;
                         }
 
                         intervalSelectClause = this._getIntervalSelectClause(dayColAlias, m.dateOptions.interval);
@@ -1004,6 +1006,7 @@ Ext.define('Connector.utility.Query', {
 
         if (Ext.isObject(wrapped.dateOptions) && wrapped.dateOptions.zeroDayVisitTag != null)
         {
+            // Note this should match the measure alias from webapp/Connector/measure.js
             alias += '_' + wrapped.dateOptions.zeroDayVisitTag.replace(/ /g, '_');
         }
 

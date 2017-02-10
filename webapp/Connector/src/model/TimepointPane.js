@@ -136,11 +136,13 @@ Ext.define('Connector.model.TimepointPane', {
         // set the 'sorted by' choices based on the timeAliases
         Ext.iterate(queryService.getTimeAliases(), function(alias, value)
         {
-            timeLabel = queryService.getMeasure(alias).label;
-            items.push({
-                text: timeLabel,
-                uniqueName: alias
-            });
+            if (value == 1) {
+                timeLabel = queryService.getMeasure(alias).label;
+                items.push({
+                    text: timeLabel,
+                    uniqueName: alias
+                });
+            }
         });
 
         this.set('hierarchyItems', items);

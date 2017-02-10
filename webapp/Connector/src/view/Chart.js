@@ -905,7 +905,7 @@ Ext.define('Connector.view.Chart', {
             if (xAxis && xAxis.name == 'ProtocolDay') {
                 var label = ChartUtils.getTimeShortLabel(xAxis.alias);
                 if (xAxis.options.alignmentVisitTag != null){
-                    label += 's from ' + xAxis.options.alignmentVisitTag.toLowerCase();
+                    label += 's relative to ' + xAxis.options.alignmentVisitTag.toLowerCase();
                 }
                 else {
                     label = 'Study ' + label;
@@ -3473,7 +3473,8 @@ Ext.define('Connector.view.Chart', {
                     includeDefinedMeasureSources: true,
                     includeTimepointMeasures: true,
                     userFilter : function(row) {
-                        return row.variableType !== 'TIME' || !row.isDiscreteTime;
+                        // for TIME variables, only show the ProtocolDay based non-discrete ones for the x-axis options
+                        return row.variableType !== 'TIME' || (row.name === Connector.studyContext.protocolDayColumn && !row.isDiscreteTime);
                     }
                 },
                 listeners: {

@@ -175,9 +175,16 @@ Ext.define('Connector.controller.Query', {
             this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Days'] = 1;
             this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks'] = 1;
             this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Months'] = 1;
-            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Days_Discrete'] = 1;
-            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks_Discrete'] = 1;
-            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Months_Discrete'] = 1;
+            // value of 0 indicates it should now show for "Time points in the plot" filter pane
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Days_Discrete'] = 0;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks_Discrete'] = 0;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Months_Discrete'] = 0;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Days_Enrollment'] = 0;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks_Enrollment'] = 0;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Months_Enrollment'] = 0;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Days_Last_Vaccination'] = 0;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks_Last_Vaccination'] = 0;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Months_Last_Vaccination'] = 0;
         }
 
         return this.timeAliases;
