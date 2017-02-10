@@ -301,6 +301,40 @@ Ext.define('Connector.measure.Configuration', {
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
+                // include discrete versions of the timepoint variables for the plot color varaible selector
+                'cds_GridBase_Days_Discrete': {
+                    sortOrder: 4,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: Connector.studyContext.protocolDayColumn,
+                    label: 'Study days (categorical)',
+                    type: 'INTEGER',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Weeks_Discrete': {
+                    sortOrder: 5,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: Connector.studyContext.protocolDayColumn,
+                    label: 'Study weeks (categorical)',
+                    type: 'DOUBLE',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Months_Discrete': {
+                    sortOrder: 6,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: Connector.studyContext.protocolDayColumn,
+                    label: 'Study months (categorical)',
+                    type: 'DOUBLE',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
 
                 // recommended variables
                 'study_ICS_pctpos_adj': {

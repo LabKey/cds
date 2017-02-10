@@ -2412,7 +2412,7 @@ Ext.define('Connector.view.Chart', {
                 if (this.activeMeasures.x.variableType === 'TIME')
                 {
                     var timeFilters = [selection.gridFilter[0]];
-                    if (!this.activeMeasures.x.isDiscreteTime)
+                    if (this.activeMeasures.x.options['timeAxisType'] === 'Continuous')
                     {
                         timeFilters.push(selection.gridFilter[1]);
                     }
@@ -3471,7 +3471,10 @@ Ext.define('Connector.view.Chart', {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
-                    includeTimepointMeasures: true
+                    includeTimepointMeasures: true,
+                    userFilter : function(row) {
+                        return row.variableType !== 'TIME' || !row.isDiscreteTime;
+                    }
                 },
                 listeners: {
                     selectionmade: function(selected) {

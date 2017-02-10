@@ -396,16 +396,16 @@ Ext.define('Connector.component.AdvancedOptionScale', {
     }
 });
 
-Ext.define('Connector.component.AdvancedOptionContinuous', {
+Ext.define('Connector.component.AdvancedOptionTimeAxisType', {
 
     extend: 'Connector.component.AdvancedOptionBase',
 
-    fieldName: 'isCategoricalVariable',
-    fieldLabel: 'Is Categorical: ',
+    fieldName: 'timeAxisType',
+    fieldLabel: 'Axis type',
 
     constructor : function(config) {
         if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
-            console.error('Advanced option scale field must be defined using a Measure record.');
+            console.error('Advanced option axis type field must be defined using a Measure record.');
         }
 
         this.callParent([config]);
@@ -415,8 +415,8 @@ Ext.define('Connector.component.AdvancedOptionContinuous', {
         this.store = Ext.create('Ext.data.Store', {
             fields: [this.storeValueField, this.storeLabelField],
             data: [
-                {value: 'CONTINUOUS', label: 'Continuous'},
-                {value: 'DISCRETE', label: 'Discrete'}
+                {value: 'Continuous', label: 'Continuous'},
+                {value: 'Categorical', label: 'Categorical'}
             ]
         });
 
@@ -443,7 +443,7 @@ Ext.define('Connector.component.AdvancedOptionTime', {
 
     constructor : function(config) {
         if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
-            console.error('Advanced option scale field must be defined using a Measure record.');
+            console.error('Advanced option time field must be defined using a Measure record.');
         }
 
         this.callParent([config]);

@@ -25,13 +25,12 @@ Ext.define('Connector.model.ChartData', {
 
     statics: {
         isContinuousMeasure : function(measure) {
-            if (measure.options['isCategoricalVariable'] === undefined) {
-                var type = measure.type;
-                return type === 'INTEGER' || type === 'DOUBLE' || type === 'TIMESTAMP' || type === 'FLOAT' || type === 'REAL';
+            if (measure.options['timeAxisType'] !== undefined) {
+                return measure.options['timeAxisType'] == 'Continuous'
             }
-            else {
-                return measure.options['isCategoricalVariable'] == 'CONTINUOUS'
-            }
+
+            var type = measure.type;
+            return type === 'INTEGER' || type === 'DOUBLE' || type === 'TIMESTAMP' || type === 'FLOAT' || type === 'REAL';
         }
     },
 

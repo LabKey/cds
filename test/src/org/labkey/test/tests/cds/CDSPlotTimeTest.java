@@ -565,7 +565,8 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         log("Choose 'Study days (categorical)'.");
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.TIME_POINTS);
-        xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_DAYS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.setAxisType("Categorical");
         xaxis.confirmSelection();
 
         pattern = Pattern.compile("^0137.*3303003000");
@@ -573,7 +574,8 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         log("Choose 'Study weeks (categorical)'.");
         xaxis.openSelectorWindow();
-        xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_WEEKS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
+        xaxis.setAxisType("Categorical");
         xaxis.confirmSelection();
 
         pattern = Pattern.compile("^0124.*3303003000");
@@ -581,7 +583,8 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         log("Choose 'Study months (categorical)'.");
         xaxis.openSelectorWindow();
-        xaxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_MONTHS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
+        xaxis.setAxisType("Categorical");
         xaxis.confirmSelection();
 
         pattern = Pattern.compile("^0123.*3303003000");

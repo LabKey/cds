@@ -306,7 +306,10 @@ Ext.define('Connector.view.Grid', {
                     includeHidden: this.canShowHidden,
                     includeAssayRequired: true,
                     includeVirtualSources: true,
-                    includeDefinedMeasureSources: true
+                    includeDefinedMeasureSources: true,
+                    userFilter : function(row) {
+                        return row.variableType !== 'TIME' || !row.isDiscreteTime;
+                    }
                 },
                 disableAdvancedOptions: true,
                 listeners: {

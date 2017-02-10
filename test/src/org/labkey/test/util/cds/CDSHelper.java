@@ -443,9 +443,9 @@ public class CDSHelper
     public static final String NAB_VIRUS_TYPE = "Virus type";
 
     public static final String TIME_POINTS = "Time points";
-    public static final String TIME_POINTS_DAYS = "Study days (continuous)";
-    public static final String TIME_POINTS_WEEKS = "Study weeks (continuous)";
-    public static final String TIME_POINTS_MONTHS = "Study months (continuous)";
+    public static final String TIME_POINTS_DAYS = "Study days";
+    public static final String TIME_POINTS_WEEKS = "Study weeks";
+    public static final String TIME_POINTS_MONTHS = "Study months";
     public static final String TIME_POINTS_DISCRETE_DAYS = "Study days (categorical)";
     public static final String TIME_POINTS_DISCRETE_WEEKS = "Study weeks (categorical)";
     public static final String TIME_POINTS_DISCRETE_MONTHS = "Study months (categorical)";
@@ -461,7 +461,7 @@ public class CDSHelper
     public static final String GRID_COL_STUDY = "Study";
     public static final String GRID_COL_VISIT = "Visit";
     public static final String GRID_COL_TREATMENT_SUMMARY = "Treatment Summary";
-    public static final String GRID_COL_STUDY_DAY = "Study days (continuous)";
+    public static final String GRID_COL_STUDY_DAY = "Study days";
     public static final String GRID_COL_CUR_COL = "Current columns";
     public static final String GRID_COL_ALL_VARS = "All variables from this session";
 

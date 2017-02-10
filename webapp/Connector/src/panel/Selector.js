@@ -152,7 +152,7 @@ Ext.define('Connector.panel.Selector', {
         });
 
         var max = (this.getHeight() - 40) / 2,
-            calcMax = Math.max(visibleItems * 45, 117);
+            calcMax = Math.max(visibleItems * 50, 117);
         return Math.min(max, calcMax);
     },
 
@@ -1054,6 +1054,12 @@ Ext.define('Connector.panel.Selector', {
     bindTimeOptions : function() {
         if (this.activeMeasure.get('variableType') == 'TIME') {
             this.getAdvancedPane().add(
+                Ext.create('Connector.component.AdvancedOptionTimeAxisType', {
+                    measure: this.activeMeasure,
+                    value: this.initOptions ? this.initOptions['timeAxisType'] : 'Continuous' //default to continuous
+                })
+            );
+            this.getAdvancedPane().add(
                 Ext.create('Connector.component.AdvancedOptionTime', {
                     measure: this.activeMeasure,
                     fieldName: 'alignmentVisitTag',
@@ -1061,13 +1067,6 @@ Ext.define('Connector.panel.Selector', {
                     singleUseOnly: true,
                     value: this.initOptions ? this.initOptions['alignmentVisitTag'] : undefined
                 })
-            );
-            this.getAdvancedPane().add(
-                    Ext.create('Connector.component.AdvancedOptionContinuous', {
-                        measure: this.activeMeasure,
-                        singleUseOnly: true,
-                        value: this.initOptions ? this.initOptions['continuous'] : 'CONTINUOUS' //default to continuous
-                    })
             );
         }
     },
