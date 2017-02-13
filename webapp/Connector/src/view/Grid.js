@@ -693,11 +693,12 @@ Ext.define('Connector.view.Grid', {
     getLockedMeasureAliases : function()
     {
         var model = this.getModel();
+        var aliases = Ext.Array.push(Ext.Array.pluck(model.getMeasures('defaultMeasures'), 'alias'));
 
-        var aliases = Ext.Array.push(
-            Ext.Array.pluck(model.getMeasures('defaultMeasures'), 'alias'),
-            Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias')
-        );
+        // special case for getting the alias of an alignment visit from plot
+        Ext4.each(model.get('SQLMeasures'), function(sqlMeasure) {
+            aliases.push(QueryUtils.ensureAlignmentAlias(sqlMeasure, sqlMeasure.measure.alias));
+        }, this);
 
         return Ext.Array.unique(aliases);
     },
