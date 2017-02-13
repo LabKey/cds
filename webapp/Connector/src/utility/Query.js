@@ -597,7 +597,7 @@ Ext.define('Connector.utility.Query', {
                         {
                             visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
 
-                            var zeroDayMeasure = Connector.getQueryService().getMeasure(alias);
+                            var zeroDayMeasure = Ext.isFunction(Connector.getQueryService) ? Connector.getQueryService().getMeasure(alias) : m.measure;
                             title = " @title='" + zeroDayMeasure.label + "'";
                             dayColAlias = m.sourceTable.tableAlias + "." + zeroDayMeasure.name;
                         }
