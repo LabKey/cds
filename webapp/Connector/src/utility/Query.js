@@ -468,7 +468,7 @@ Ext.define('Connector.utility.Query', {
             optimizedFilterValues,
             optimizerResult,
             columnAliasMap = {},
-            visitAlignmentTag = null;
+            visitAlignmentTag = null, visitAlignmentColAlias = null;
 
         // we use sourceTable in the SQL generation, usually the same as table, see _optimizeFilters()
         allMeasures.forEach(function(m) { m.sourceTable = m.table; });
@@ -595,11 +595,12 @@ Ext.define('Connector.utility.Query', {
 
                         if (m.dateOptions.zeroDayVisitTag != null)
                         {
-                            visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
-
                             var zeroDayMeasure = Ext.isFunction(Connector.getQueryService) ? Connector.getQueryService().getMeasure(alias) : m.measure;
                             title = " @title='" + zeroDayMeasure.label + "'";
                             dayColAlias = m.sourceTable.tableAlias + "." + zeroDayMeasure.name;
+
+                            visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
+                            visitAlignmentColAlias = dayColAlias;
                         }
 
                         intervalSelectClause = this._getIntervalSelectClause(dayColAlias, m.dateOptions.interval);
@@ -643,18 +644,6 @@ Ext.define('Connector.utility.Query', {
         });
 
         //
-        // Visit Tag alignment INNER JOIN (to filter based on plot data)
-        //
-        if (visitAlignmentTag != null)
-        {
-            var gridBaseAlias = this.SUBJECTVISIT_TABLE.replace('.', '_');
-            FROM += "\nINNER JOIN (SELECT DISTINCT Container, ParticipantId FROM cds.visittagalignment  "
-                + "\n\t\tWHERE visittagname='" + visitAlignmentTag + "') AS visittagalignment"
-                + "\n\tON " + gridBaseAlias + ".container=visittagalignment.container"
-                + "\n\tAND " + gridBaseAlias + ".subjectid=visittagalignment.participantid";
-        }
-
-        //
         // WHERE
         //
         var WHERE = [], f, fType;
@@ -695,6 +684,14 @@ Ext.define('Connector.utility.Query', {
                     }, this);
                 }
             }
+        }
+
+        //
+        // Visit Tag alignment filter for IS NOT NULL
+        //
+        if (visitAlignmentColAlias != null)
+        {
+            WHERE.push(visitAlignmentColAlias + ' IS NOT NULL');
         }
 
         // and optimized filters

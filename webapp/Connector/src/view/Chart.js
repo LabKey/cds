@@ -743,6 +743,12 @@ Ext.define('Connector.view.Chart', {
             content += colon + Ext.htmlEncode(studyName) + linebreak;
         }
         if (xName && this.activeMeasures.x) {
+            // Issue 29379: use alignment measure label for hover description
+            if (this.activeMeasures.x.name == 'ProtocolDay') {
+                var xMeasureAlias = QueryUtils.ensureAlignmentAlias(this._getAxisWrappedMeasure(this.activeMeasures.x));
+                xName = Connector.getQueryService().getMeasure(xMeasureAlias).label;
+            }
+
             content += '<span class="group-title">' +Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.x) + ' - ' + xName) + '</span>';
             content += colon + Ext.htmlEncode(this.getBinRangeTooltip(xVals));
             content += this.showAsMedian ? ' (median)' : '';
@@ -903,13 +909,9 @@ Ext.define('Connector.view.Chart', {
             content += 'Treatment Summary' + colon + record[QueryUtils.TREATMENTSUMMARY_ALIAS] + linebreak;
             content += 'Subject' + colon + data.subjectId + linebreak;
             if (xAxis && xAxis.name == 'ProtocolDay') {
-                var label = ChartUtils.getTimeShortLabel(xAxis.alias);
-                if (xAxis.options.alignmentVisitTag != null){
-                    label += 's relative to ' + xAxis.options.alignmentVisitTag.toLowerCase();
-                }
-                else {
-                    label = 'Study ' + label;
-                }
+                // Issue 29379: use alignment measure label for hover description
+                var xMeasureAlias = QueryUtils.ensureAlignmentAlias(this._getAxisWrappedMeasure(xAxis));
+                label = Connector.getQueryService().getMeasure(xMeasureAlias).label;
 
                 content += label + colon + ' '
                     + (data.x > 0 && xAxis.options.alignmentVisitTag != null ? '+' : '') + data.x
