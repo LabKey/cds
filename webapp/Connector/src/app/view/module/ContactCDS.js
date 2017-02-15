@@ -98,6 +98,11 @@ Ext.define('Connector.view.module.ContactCDS', {
                 'View this study on the <a href="{cavd_link}" target="_blank">CAVD Portal <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
                 '</div>',
             '</tpl>',
+            '<tpl if="clintrials_id && species == \'Human\'"]}>',
+                '<div class="item-row">',
+                'View this study on <a href=" https://clinicaltrials.gov/show/{clintrials_id}" target="_blank">clintrials.gov <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
+                '</div>',
+            '</tpl>',
         '</tpl>'
     ),
     initComponent : function() {
