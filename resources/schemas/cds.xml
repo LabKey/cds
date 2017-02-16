@@ -60,6 +60,7 @@
             <column columnName="study_strategy"/>
             <column columnName="atlas_link"/>
             <column columnName="cavd_link"/>
+            <column columnName="study_clintrials_id"/>
         </columns>
     </table>
     <table tableName="import_lab" tableDbType="TABLE">
@@ -540,6 +541,7 @@
             <column columnName="strategy"/>
             <column columnName="atlas_link"/>
             <column columnName="cavd_link"/>
+            <column columnName="clintrials_id"/>
         </columns>
     </table>
     <table tableName="treatmentarmsubjectmap" tableDbType="TABLE">

@@ -155,7 +155,7 @@ public class CDSHelper
 //    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
 
     public static final String[] LEARN_ABOUT_QED2_INFO_FIELDS = {"Network", "Grant Affiliation", "Study Type", "Stage", "Study start", "First enrollment", "Follow up complete"};
-    public static final String[] LEARN_ABOUT_ZAP117_INFO_FIELDS = {"Network", "Grant Affiliation", "Study Type", "Stage", "First enrollment"};
+    public static final String[] LEARN_ABOUT_ZAP117_INFO_FIELDS = {"Network", "Grant Affiliation", "Strategy", "Study Type", "Species", "Stage", "First enrollment"};
     public static final String[] LEARN_ABOUT_CONTACT_FIELDS = {"First point of contact", "Grant Principal Investigator", "Grant Project Manager", "Study Investigator"};
     public static final String[] LEARN_ABOUT_DESCRIPTION_FIELDS = {"Objectives", "Rationale", "Groups", "Methods", "Findings", "Conclusions", "Publications"};
 
