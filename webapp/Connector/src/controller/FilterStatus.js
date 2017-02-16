@@ -173,7 +173,8 @@ Ext.define('Connector.controller.FilterStatus', {
 
                     // if we don't have the defined measuresSet or this is an alignment column,
                     // we don't want to show the TimepointPane since we won't know how to get the distinct timepoint members
-                    if (!Ext.isArray(config.measureSet) || (filterOrDetail.timeMeasure.dateOptions && filterOrDetail.timeMeasure.dateOptions.zeroDayVisitTag))
+                    var filterTimeMeasure = filterOrDetail.get('timeMeasure') || filterOrDetail.timeMeasure;
+                    if (!Ext.isArray(config.measureSet) || (filterTimeMeasure.dateOptions && filterTimeMeasure.dateOptions.zeroDayVisitTag))
                     {
                         return;
                     }
