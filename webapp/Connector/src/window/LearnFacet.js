@@ -311,7 +311,7 @@ Ext4.define('Connector.grid.LearnFaceted', {
                                 '{name:this.renderHeader}', // 'name' is actually the value of the groupField
                                 {
                                     renderHeader: function(v) {
-                                        return v ? 'Has data in current selection' : 'No data in current selection';
+                                        return v ? 'In current selection' : 'Not in current selection';
                                     }
                                 }
                         )

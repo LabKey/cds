@@ -652,8 +652,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             Assert.assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
         }
 
-        Assert.assertTrue("Both 'Has data' and 'No data' group should be present for column with filter", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Name & Description"));
-        Assert.assertTrue("Both 'Has data' and 'No data' group should be present for 'Data Added' column after filtering studies", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Data Added"));
+        Assert.assertTrue("Both 'In current selection' and 'Not in current selection' group should be present for column with filter", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Name & Description"));
+        Assert.assertTrue("Both 'In current selection' and 'Not in current selection' group should be present for 'Data Added' column after filtering studies", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Data Added"));
 
         log("Evaluating clearing a filter");
         learnGrid.clearFilters("Name & Description");
