@@ -1886,6 +1886,11 @@ Ext.define('Connector.view.Chart', {
             if (this.activeMeasures.x)
             {
                 var wrappedX = this.getWrappedMeasures()[0];
+
+                if (this.activeMeasures.x.variableType === 'TIME') {
+                    this.convertWrappedTimeMeasure(wrappedX);
+                }
+
                 this.clickTask.delay(150, null, null, [(node ? node : e.target), this, QueryUtils.ensureAlignmentAlias(wrappedX), target, multi]);
             }
             else
@@ -2413,6 +2418,8 @@ Ext.define('Connector.view.Chart', {
                 // Create a 'time filter'
                 if (this.activeMeasures.x.variableType === 'TIME')
                 {
+                    this.convertWrappedTimeMeasure(selection.plotMeasures[0]);
+
                     var timeFilters = [selection.gridFilter[0]];
                     if (this.activeMeasures.x.options['timeAxisType'] === 'Continuous')
                     {
@@ -2452,6 +2459,21 @@ Ext.define('Connector.view.Chart', {
         else
         {
             throw 'Unsupported axis "' + axis + '" requested to buildSelection()';
+        }
+    },
+
+    convertWrappedTimeMeasure : function(wrappedMeasure) {
+        // Issue 29397: continuous vs categorical time filters should not override each other
+        var timeAxisType = wrappedMeasure.measure.options['timeAxisType'];
+        if (timeAxisType === 'Categorical')
+        {
+            // replace the current selection measure and filter with the categorical/discrete version of the time point measure
+            var discreteTimeMeasure = Connector.getQueryService().getMeasure(wrappedMeasure.measure.alias + '_Discrete');
+            if (discreteTimeMeasure) {
+                var newWrappedXMeasure = Ext.clone(discreteTimeMeasure);
+                newWrappedXMeasure.options = Ext.clone(wrappedMeasure.measure.options);
+                wrappedMeasure.measure = newWrappedXMeasure;
+            }
         }
     },
 

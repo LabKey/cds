@@ -373,6 +373,7 @@ Ext.define('Connector.measure.Configuration', {
                     isMeasure: false,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study days (categorical)',
+                    description: 'The number of calendar days relative to Day 0, where Day 0 is typically defined as enrollment and/or first vaccination.',
                     type: 'INTEGER',
                     variableType: 'TIME',
                     isDiscreteTime: true
@@ -384,6 +385,7 @@ Ext.define('Connector.measure.Configuration', {
                     isMeasure: false,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study weeks (categorical)',
+                    description: 'The number of weeks relative to Day 0 (Week 0), where Day 0 is typically defined as enrollment and/or first vaccination.',
                     type: 'DOUBLE',
                     variableType: 'TIME',
                     isDiscreteTime: true
@@ -395,6 +397,7 @@ Ext.define('Connector.measure.Configuration', {
                     isMeasure: false,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study months (categorical)',
+                    description: 'The number of months relative to Day 0 (Month 0), where Day 0 is typically defined as enrollment and/or first vaccination.',
                     type: 'DOUBLE',
                     variableType: 'TIME',
                     isDiscreteTime: true
