@@ -11,8 +11,8 @@ Ext.define('Connector.panel.AntigenSelection', {
 
     border: false,
 
-    totalColumnWidth: 394,
-    subjectColumnWidth: 60,
+    totalColumnWidth: 374,
+    subjectColumnWidth: 80,
 
     constructor : function(config) {
         this.callParent([config]);
