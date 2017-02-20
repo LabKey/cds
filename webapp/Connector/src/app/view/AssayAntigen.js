@@ -41,7 +41,7 @@ Ext.define('Connector.view.AssayAntigen', {
             this.tabParams = this.learnViewConfig.tabParams;
         }
         this.emptyText = new Ext.XTemplate(
-                '<div class="detail-empty-text">None of the selected Antigens have data for this category.</div>'
+                '<div class="detail-empty-text">No available Antigens meet your selection criteria.</div>'
         ).apply({});
 
         this.callParent();
