@@ -916,8 +916,12 @@ text.study-label {
   cursor: pointer;
 }
 
+.started-section-title {
+  margin-bottom: 35px;
+}
+
 .expanded-intro {
-  .section-title {
+  .started-section-title {
     margin-left: 28px;
     display: inline-block;
   }
@@ -933,13 +937,20 @@ text.study-label {
 }
 
 .get-started-multiRow {
-  height: 650px;
+  height: 740px;
   margin-left: auto;
   margin-right: auto;
+  .started-row-2 {
+    .tile-title {
+      margin-top: 10px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+  }
 }
 
 .get-started-singleRow {
-  height: 310px;
+  height: 380px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -947,6 +958,9 @@ text.study-label {
 .get-started {
   background-color: #f0f0f0;
 
+    .started-count {
+      font-weight: 700;
+    }
     .tile-group {
       width: 100%;
       margin-left: auto;
@@ -954,7 +968,7 @@ text.study-label {
     }
     .tile {
       width: 200px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -978,9 +992,9 @@ text.study-label {
     }
 
     .tile-title {
-      margin-bottom: 20px;
+      margin-top: 30px;
+      margin-bottom: 30px;
       text-align: center;
-      font-weight: bold;
     }
     .tile-title:hover {
       text-decoration: underline;
@@ -997,7 +1011,7 @@ text.study-label {
       height: 200px;
       width: 200px;
       background-size: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
     .home_text {
       background-image: url('images/home_text.png');
