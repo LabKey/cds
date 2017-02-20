@@ -430,20 +430,20 @@ Ext.define('Connector.component.AdvancedOptionTimeAxisType', {
     }
 });
 
-Ext.define('Connector.component.AdvancedOptionTime', {
+Ext.define('Connector.component.AdvancedOptionTimeAlignedBy', {
 
     extend: 'Connector.component.AdvancedOptionBase',
 
-    value: null,
-    fieldName: null,
-    fieldLabel: null,
+    fieldName: 'alignmentVisitTag',
+    fieldLabel: 'Aligned by',
     singleUseOnly: true,
     storeValueField: 'Name',
     storeLabelField: 'Caption',
+    value: null,
 
     constructor : function(config) {
         if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
-            console.error('Advanced option time field must be defined using a Measure record.');
+            console.error('Advanced option aligned by field must be defined using a Measure record.');
         }
 
         this.callParent([config]);

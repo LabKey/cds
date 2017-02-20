@@ -1060,11 +1060,8 @@ Ext.define('Connector.panel.Selector', {
                 })
             );
             this.getAdvancedPane().add(
-                Ext.create('Connector.component.AdvancedOptionTime', {
+                Ext.create('Connector.component.AdvancedOptionTimeAlignedBy', {
                     measure: this.activeMeasure,
-                    fieldName: 'alignmentVisitTag',
-                    fieldLabel: 'Aligned by',
-                    singleUseOnly: true,
                     value: this.initOptions ? this.initOptions['alignmentVisitTag'] : undefined
                 })
             );
