@@ -671,7 +671,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 "td/div/div/table/tbody/tr[contains(@class, 'detail-gray-text')]/td[contains(text(), '"+ yearToFilter + "')]")
                 .findElements(getDriver()).size();
 
-        learnGrid.setFacet("Status", yearToFilter);
+        learnGrid.setWithOptionFacet("Status", "Start Year", yearToFilter);
         learnGrid.setFacet("Data Added", numAssaysToFilter);
         numRowsPostFilter = learnGrid.getRowCount();
 
@@ -691,7 +691,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertTrue("Name & Description facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Name & Description"));
         Assert.assertTrue("Data Added facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Data Added"));
 
-        learnGrid.clearFilters("Status");
+        learnGrid.clearFiltersWithOption("Status", "Start Year");
         learnGrid.clearFilters("Data Added");
     }
 
