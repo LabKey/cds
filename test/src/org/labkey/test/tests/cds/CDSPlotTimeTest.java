@@ -546,6 +546,40 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyTimepointAlignment()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.setAxisType("Categorical");
+        xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
+        xaxis.confirmSelection();
+
+        sleep(CDSHelper.CDS_WAIT);
+
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        InfoPane infoPane = new InfoPane(this);
+
+        infoPane.clickActiveFilter("In the plot");
+        String ipText = getText(Locator.css("div.infopane"));
+        assertTrue(ipText.contains("Categorical"));
+        assertTrue(ipText.contains(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC));
+        click(CDSHelper.Locators.cdsButtonLocator("Close", "infoplotcancel"));
+
+        infoPane.clickTimePointsCount();
+        assertEquals(3, cds.getInfoPaneSortOptions("Study days"));
+    }
+
+    @Test
     public void verifyDiscreteTimeVariables()
     {
         Pattern pattern;

@@ -446,6 +446,9 @@ public class CDSHelper
     public static final String TIME_POINTS_DAYS = "Study days";
     public static final String TIME_POINTS_WEEKS = "Study weeks";
     public static final String TIME_POINTS_MONTHS = "Study months";
+    public static final String TIME_POINTS_DAYS_LAST_VACC = "Study days relative to last vaccination";
+    public static final String TIME_POINTS_WEEKS_LAST_VACC = "Study weeks relative to last vaccination";
+    public static final String TIME_POINTS_MONTHS_LAST_VACC = "Study months relative to last vaccination";
     public static final String TIME_POINTS_DISCRETE_DAYS = "Study days (categorical)";
     public static final String TIME_POINTS_DISCRETE_WEEKS = "Study weeks (categorical)";
     public static final String TIME_POINTS_DISCRETE_MONTHS = "Study months (categorical)";
@@ -1022,15 +1025,29 @@ public class CDSHelper
         _test.waitForElement(Locators.cdsButtonLocator("Update", "filterinfoaction"));
     }
 
-    public void changeInfoPaneSort(String fromSort, String toSort)
+    private Locator.XPathLocator  openInfoPaneSort(String sort)
     {
         Locator.XPathLocator infoPane = Locator.tagWithClass("div", "infopane");
         Locator.XPathLocator sorter = infoPane.withDescendant(Locator.tagWithClass("div", "sorter"));
 
         _test.waitForElement(infoPane);
-        _test.waitForElement(sorter.withDescendant(Locator.tagContainingText("span", fromSort)));
+        _test.waitForElement(sorter.withDescendant(Locator.tagContainingText("span", sort)));
 
         _test.click(Locators.infoPaneSortButtonLocator());
+
+        return sorter;
+    }
+
+    public int getInfoPaneSortOptions(String currSort)
+    {
+        openInfoPaneSort(currSort);
+
+        return Locator.findElements(_test.getDriver(), Locator.tagWithClass("div", "infosortmenu").append(Locator.tagWithClass("div", "x-menu-item"))).size();
+    }
+
+    public void changeInfoPaneSort(String fromSort, String toSort)
+    {
+        Locator.XPathLocator sorter = openInfoPaneSort(fromSort);
 
         Locator.XPathLocator sortItemLabel = Locator.tagWithClass("span", "x-menu-item-text").withText(toSort);
         Locator.XPathLocator sortItem = Locator.tagWithClass("div", "infosortmenu").append(Locator.tagWithClass("div", "x-menu-item").withDescendant(sortItemLabel));

@@ -20,6 +20,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 public class InfoPane
@@ -32,6 +33,7 @@ public class InfoPane
     private final static String cssTimePointsCount = "div.detailstatuslist ul.detailstatus div:nth-child(6) li span:nth-child(4)";
     private final static String cssAntigensInXCount = "div.detailstatuslist ul.detailstatus div:nth-child(7) li span:nth-child(4)";
     private final static String cssAntigensInYCount = "div.detailstatuslist ul.detailstatus div:nth-child(8) li span:nth-child(4)";
+    private final static String cssActiveFilter = "div.activefilter";
 
     private final static String cssMeasuresGrid = "div.measuresgrid";
     private final static String cssFilterAction = "a.filterinfoaction";
@@ -54,6 +56,15 @@ public class InfoPane
     public void clickCancel()
     {
         _test.click(Locator.css(cssFilterCancel));
+    }
+
+    public void clickActiveFilter(String text)
+    {
+        Locator.findElements(_test.getDriver(), Locator.css(cssActiveFilter))
+                .stream()
+                .filter(s -> s.getText().contains(text))
+                .findFirst()
+                .ifPresent(WebElement::click);
     }
 
     public void setFilter(String... studiesFilter)

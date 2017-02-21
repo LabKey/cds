@@ -227,6 +227,20 @@ public class CDSGridTest extends CDSReadOnlyTest
             grid.assertRowCount(792); // TODO Test data dependent.
             _asserts.assertFilterStatusCounts(777, 48, 1, 1, 151); // TODO Test data dependent.
         }
+
+
+        log("Verify Aligned Time Point Columns");
+        Map<String, Boolean> columns = new HashMap<>();
+        columns.put(CDSHelper.TIME_POINTS_DAYS, false);
+        columns.put(CDSHelper.TIME_POINTS_WEEKS, true);
+        columns.put(CDSHelper.TIME_POINTS_MONTHS, true);
+        columns.put(CDSHelper.TIME_POINTS_DAYS_LAST_VACC, true);
+        columns.put(CDSHelper.TIME_POINTS_WEEKS_LAST_VACC, true);
+        columns.put(CDSHelper.TIME_POINTS_MONTHS_LAST_VACC, true);
+
+        gridColumnSelector.openSelectorWindow();
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.TIME_POINTS, columns);
+
     }
 
     @Test
