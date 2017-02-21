@@ -24,9 +24,25 @@ SV.Visit.RowId AS VisitRowId,
 SV.participantsequencenum,
 SV.sequencenum,
 CAST(ROUND(Floor(SV.Visit.ProtocolDay)) AS INTEGER) AS ProtocolDay,
-SV.container
+SV.container,
+
+-- single-use visit tag calculations for visit day alignment
+CAST(SV.Visit.ProtocolDay - visittagalignment_enrollment.ProtocolDay_Enrollment AS INTEGER) AS EnrollmentDay,
+CAST(SV.Visit.ProtocolDay - visittagalignment_last_vaccination.ProtocolDay_Last_Vaccination AS INTEGER) AS LastVaccinationDay,
 
 FROM study.ParticipantVisit AS SV
 LEFT JOIN cds.study AS STUDY ON (SV.container = study.container)
 LEFT JOIN cds.treatmentarmsubjectmap AS TASM ON (TASM.participantId = SV.participantId AND TASM.container = SV.container)
 LEFT JOIN cds.treatmentarm AS TS ON (TASM.arm_id = TS.arm_id)
+
+-- Enrollment VisitTag
+LEFT JOIN (SELECT Container, ParticipantId, MIN(ProtocolDay) AS ProtocolDay_Enrollment FROM cds.visittagalignment
+  WHERE visittagname='Enrollment' GROUP BY Container, ParticipantId) AS visittagalignment_enrollment
+  ON SV.container=visittagalignment_enrollment.container
+  AND SV.participantId.participantId=visittagalignment_enrollment.participantid
+
+-- Last Vaccination VisitTag
+LEFT JOIN (SELECT Container, ParticipantId, MIN(ProtocolDay) AS ProtocolDay_Last_Vaccination FROM cds.visittagalignment
+  WHERE visittagname='Last Vaccination' GROUP BY Container, ParticipantId) AS visittagalignment_last_vaccination
+  ON SV.container=visittagalignment_last_vaccination.container
+  AND SV.participantId.participantId=visittagalignment_last_vaccination.participantid

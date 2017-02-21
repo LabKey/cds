@@ -845,6 +845,9 @@
             var interval = 'cds_GridBase_Months';
             var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
             var xMeasure = getTimeMeasure(interval);
+            xMeasure.name = 'LastVaccinationDay';
+            xMeasure.label = 'Study months relative to last vaccination';
+            xMeasure.type = 'DOUBLE';
 
             var config = {
                 measures: [

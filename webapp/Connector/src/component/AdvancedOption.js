@@ -396,21 +396,54 @@ Ext.define('Connector.component.AdvancedOptionScale', {
     }
 });
 
-
-Ext.define('Connector.component.AdvancedOptionTime', {
+Ext.define('Connector.component.AdvancedOptionTimeAxisType', {
 
     extend: 'Connector.component.AdvancedOptionBase',
 
-    value: null,
-    fieldName: null,
-    fieldLabel: null,
-    singleUseOnly: true,
-    storeValueField: 'Name',
-    storeLabelField: 'Caption',
+    fieldName: 'timeAxisType',
+    fieldLabel: 'Axis type',
 
     constructor : function(config) {
         if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
-            console.error('Advanced option scale field must be defined using a Measure record.');
+            console.error('Advanced option axis type field must be defined using a Measure record.');
+        }
+
+        this.callParent([config]);
+    },
+
+    initComponent : function() {
+        this.store = Ext.create('Ext.data.Store', {
+            fields: [this.storeValueField, this.storeLabelField],
+            data: [
+                {value: 'Continuous', label: 'Continuous'},
+                {value: 'Categorical', label: 'Categorical'}
+            ]
+        });
+
+        this.setValue(this.value, false);
+
+        this.callParent();
+    },
+
+    onDisplayFieldClick : function() {
+        this.showDropdownPanel();
+    }
+});
+
+Ext.define('Connector.component.AdvancedOptionTimeAlignedBy', {
+
+    extend: 'Connector.component.AdvancedOptionBase',
+
+    fieldName: 'alignmentVisitTag',
+    fieldLabel: 'Aligned by',
+    singleUseOnly: true,
+    storeValueField: 'Name',
+    storeLabelField: 'Caption',
+    value: null,
+
+    constructor : function(config) {
+        if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
+            console.error('Advanced option aligned by field must be defined using a Measure record.');
         }
 
         this.callParent([config]);

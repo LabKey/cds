@@ -182,7 +182,7 @@ Ext.define('Connector.view.GridPane', {
         var sub = '';
         if (measure.options && measure.options.alignmentVisitTag)
         {
-            sub = " (" + measure.options.alignmentVisitTag + ")";
+            sub = " relative to " + measure.options.alignmentVisitTag.toLowerCase();
         }
         else if (Ext.isString(measure.description))
         {

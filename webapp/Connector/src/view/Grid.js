@@ -302,11 +302,14 @@ Ext.define('Connector.view.Grid', {
                 multiSelect: true,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                    includeTimpointMeasures: true,
+                    includeTimepointMeasures: true,
                     includeHidden: this.canShowHidden,
                     includeAssayRequired: true,
                     includeVirtualSources: true,
-                    includeDefinedMeasureSources: true
+                    includeDefinedMeasureSources: true,
+                    userFilter : function(row) {
+                        return row.variableType !== 'TIME' || !row.isDiscreteTime;
+                    }
                 },
                 disableAdvancedOptions: true,
                 listeners: {
@@ -690,11 +693,12 @@ Ext.define('Connector.view.Grid', {
     getLockedMeasureAliases : function()
     {
         var model = this.getModel();
+        var aliases = Ext.Array.push(Ext.Array.pluck(model.getMeasures('defaultMeasures'), 'alias'));
 
-        var aliases = Ext.Array.push(
-            Ext.Array.pluck(model.getMeasures('defaultMeasures'), 'alias'),
-            Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias')
-        );
+        // special case for getting the alias of an alignment visit from plot
+        Ext4.each(model.get('SQLMeasures'), function(sqlMeasure) {
+            aliases.push(QueryUtils.ensureAlignmentAlias(sqlMeasure, sqlMeasure.measure.alias));
+        }, this);
 
         return Ext.Array.unique(aliases);
     },

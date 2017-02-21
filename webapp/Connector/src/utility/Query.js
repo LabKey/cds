@@ -468,7 +468,7 @@ Ext.define('Connector.utility.Query', {
             optimizedFilterValues,
             optimizerResult,
             columnAliasMap = {},
-            visitAlignmentTag = null;
+            visitAlignmentTag = null, visitAlignmentColAlias = null;
 
         // we use sourceTable in the SQL generation, usually the same as table, see _optimizeFilters()
         allMeasures.forEach(function(m) { m.sourceTable = m.table; });
@@ -499,7 +499,7 @@ Ext.define('Connector.utility.Query', {
             SELECT.push(sep + rootTable.tableAlias + '.' + visitRowIdAlias + ' AS RowId,');
             Ext.iterate(Connector.getQueryService().getTimeAliases(), function(timeAlias)
             {
-                SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.' + protDayAlias, timeAlias, false) + ' AS ' + timeAlias + ',');
+                SELECT.push(sep + this._getIntervalSelectClause(rootTable.tableAlias + '.' + protDayAlias, timeAlias) + ' AS ' + timeAlias + ',');
             }, this);
 
             // still need to see if there is a study axis measure with a visit tag alignment value
@@ -591,13 +591,19 @@ Ext.define('Connector.utility.Query', {
                 {
                     if (Ext.isObject(m.dateOptions))
                     {
+                        var dayColAlias = m.sourceTable.tableAlias + "." + m.measure.name;
+
                         if (m.dateOptions.zeroDayVisitTag != null)
                         {
+                            var zeroDayMeasure = Ext.isFunction(Connector.getQueryService) ? Connector.getQueryService().getMeasure(alias) : m.measure;
+                            title = " @title='" + zeroDayMeasure.label + "'";
+                            dayColAlias = m.sourceTable.tableAlias + "." + zeroDayMeasure.name;
+
                             visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
-                            title = Ext.isDefined(colLabel) ? " @title='" + colLabel + " (" + visitAlignmentTag + ")'" : "";
+                            visitAlignmentColAlias = dayColAlias;
                         }
 
-                        intervalSelectClause = this._getIntervalSelectClause(m.sourceTable.tableAlias + "." + m.measure.name, m.dateOptions.interval, m.dateOptions.zeroDayVisitTag != null);
+                        intervalSelectClause = this._getIntervalSelectClause(dayColAlias, m.dateOptions.interval);
                         SELECT.push(",\n\t" + intervalSelectClause + " AS " + alias + title);
                     }
                     else
@@ -636,18 +642,6 @@ Ext.define('Connector.utility.Query', {
                 sep = "\n\tAND ";
             });
         });
-
-        //
-        // Visit Tag alignment INNER JOIN
-        //
-        if (visitAlignmentTag != null)
-        {
-            var gridBaseAlias = this.SUBJECTVISIT_TABLE.replace('.', '_');
-            FROM += "\nINNER JOIN (SELECT Container, ParticipantId, MIN(ProtocolDay) AS ProtocolDay FROM cds.visittagalignment  "
-                + "\n\t\tWHERE visittagname='" + visitAlignmentTag + "' GROUP BY Container, ParticipantId) AS visittagalignment"
-                + "\n\tON " + gridBaseAlias + ".container=visittagalignment.container"
-                + "\n\tAND " + gridBaseAlias + ".subjectid=visittagalignment.participantid";
-        }
 
         //
         // WHERE
@@ -690,6 +684,14 @@ Ext.define('Connector.utility.Query', {
                     }, this);
                 }
             }
+        }
+
+        //
+        // Visit Tag alignment filter for IS NOT NULL
+        //
+        if (visitAlignmentColAlias != null)
+        {
+            WHERE.push(visitAlignmentColAlias + ' IS NOT NULL');
         }
 
         // and optimized filters
@@ -845,17 +847,15 @@ Ext.define('Connector.utility.Query', {
     },
 
 
-    _getIntervalSelectClause : function(protDayCol, interval, hasAlignment)
+    _getIntervalSelectClause : function(dayColAlias, interval)
     {
-        var denom = this.getIntervalDenominator(interval),
-            clause = hasAlignment ? '(' + protDayCol + ' - visittagalignment.ProtocolDay)' : protDayCol;
+        var denom = this.getIntervalDenominator(interval);
 
-        if (denom > 1)
-        {
-            clause = 'CAST(FLOOR(' + clause + '/' + denom + ') AS Integer)';
+        if (denom > 1) {
+            return 'CAST(FLOOR(' + dayColAlias + '/' + denom + ') AS Integer)';
         }
 
-        return clause;
+        return dayColAlias;
     },
 
     getIntervalDenominator : function(interval)
@@ -1003,6 +1003,7 @@ Ext.define('Connector.utility.Query', {
 
         if (Ext.isObject(wrapped.dateOptions) && wrapped.dateOptions.zeroDayVisitTag != null)
         {
+            // Note this should match the measure alias from webapp/Connector/measure.js
             alias += '_' + wrapped.dateOptions.zeroDayVisitTag.replace(/ /g, '_');
         }
 

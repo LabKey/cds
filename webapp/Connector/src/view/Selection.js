@@ -199,12 +199,12 @@ Ext.define('Connector.view.Selection', {
                             sep = ', ';
                         });
 
-                        if (isTime && measure.dateOptions && measure.dateOptions.zeroDayVisitTag != null)
-                        {
-                            filterValString += ' (' + measure.dateOptions.zeroDayVisitTag + ')';
+                        domString = '<div class="status-over">' + Ext.String.ellipsis(measure.measure.label, 17, true);
+
+                        if (isTime && measure.dateOptions && measure.dateOptions.zeroDayVisitTag != null) {
+                            domString += ' relative to<br/>' + measure.dateOptions.zeroDayVisitTag.toLowerCase();
                         }
 
-                        domString = '<div class="status-over">' + Ext.String.ellipsis(measure.measure.label, 17, true);
                         domString += ': ' + filterValString + '</div>';
                     }
 
