@@ -329,7 +329,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment, Vaccination");
         expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment, Vaccination");
         expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment, Vaccination");
-        cssPath = "div.bottomplot > svg > g:nth-child(2) > image:nth-of-type(1)";
+        cssPath = "div.bottomplot > svg > g:nth-child(2) > image:nth-of-type(9)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         log("Move the mouse off of the current time axis point to clear any existing tool tips");
@@ -340,7 +340,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 1 Arm T1 Vaccine: Last Vaccination");
         expectedToolTipText.add("Group 2 Arm T2 Vaccine: Last Vaccination");
         expectedToolTipText.add("Group 3 Arm T3 Vaccine: Last Vaccination");
-        cssPath = "div.bottomplot > svg > g:nth-child(2) > image:nth-of-type(6)";
+        cssPath = "div.bottomplot > svg > g:nth-child(2) > image:nth-of-type(5)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
@@ -357,7 +357,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 5 Arm T5 Vaccine: Enrollment, Vaccination");
         expectedToolTipText.add("Group 7 Arm Cb Placebo: Enrollment, Vaccination");
         expectedToolTipText.add("Group 7 Arm T7 Vaccine: Enrollment, Vaccination");
-        cssPath = "div.bottomplot > svg > g:nth-child(4) > image:nth-of-type(1)";
+        cssPath = "div.bottomplot > svg > g:nth-child(4) > image:nth-of-type(11)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         log("Verify that points in the main plot get highlighted when mousing over items on the Study Axis.");
@@ -429,13 +429,13 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 110: +455 Days");
         expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up");
-        cssPath = "div.bottomplot > svg > g:nth-child(18) > image:nth-of-type(10)";
+        cssPath = "div.bottomplot > svg > g:nth-child(18) > image:nth-of-type(8)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111: +364 Days");
         expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up");
-        cssPath = "div.bottomplot > svg > g:nth-child(31) > image:nth-of-type(8)";
+        cssPath = "div.bottomplot > svg > g:nth-child(31) > image:nth-of-type(10)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         log("Change time axis alignment and validate things remain the same.");
@@ -460,7 +460,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111: -13 Weeks");
         expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
-        cssPath = "div.bottomplot > svg > g.study:nth-child(22) > image.visit-tag[x^='3']";
+        cssPath = "div.bottomplot > svg > g.study:nth-child(22) > image:nth-of-type(7)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
     }
