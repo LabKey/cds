@@ -277,60 +277,127 @@ Ext.define('Connector.measure.Configuration', {
                     isMeasure: true,
                     isRecommendedVariable: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study days (continuous)',
+                    label: 'Study days',
+                    description: 'The number of calendar days relative to Day 0, where Day 0 is typically defined as enrollment and/or first vaccination.',
                     type: 'INTEGER',
                     variableType: 'TIME'
                 },
-                'cds_GridBase_Days_Discrete': {
+                'cds_GridBase_Weeks': {
                     sortOrder: 1,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
-                    isMeasure: false,
-                    isRecommendedVariable: true,
+                    isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study days (categorical)',
-                    type: 'INTEGER',
-                    variableType: 'TIME',
-                    isDiscreteTime: true
+                    label: 'Study weeks',
+                    description: 'The number of weeks relative to Day 0 (Week 0), where Day 0 is typically defined as enrollment and/or first vaccination.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME'
                 },
-                'cds_GridBase_Weeks': {
+                'cds_GridBase_Months': {
                     sortOrder: 2,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study weeks (continuous)',
+                    label: 'Study months',
+                    description: 'The number of months relative to Day 0 (Month 0), where Day 0 is typically defined as enrollment and/or first vaccination.',
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
-                'cds_GridBase_Weeks_Discrete': {
+                'cds_GridBase_Days_Last_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
                     sortOrder: 3,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: true,
+                    name: 'LastVaccinationDay',
+                    label: 'Study days relative to last vaccination',
+                    description: 'The number of calendar days relative to the visit where the last vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'INTEGER',
+                    variableType: 'TIME'
+                },
+                'cds_GridBase_Weeks_Last_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
+                    sortOrder: 4,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: true,
+                    name: 'LastVaccinationDay',
+                    label: 'Study weeks relative to last vaccination',
+                    description: 'The number of weeks relative to the visit where the last vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME'
+                },
+                'cds_GridBase_Months_Last_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
+                    sortOrder: 5,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: true,
+                    name: 'LastVaccinationDay',
+                    label: 'Study months relative to last vaccination',
+                    description: 'The number of months relative to the visit where the last vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME'
+                },
+                // include other alignment visit tab measures so we can reference the alias, but these won't be shown in grid
+                'cds_GridBase_Days_Enrollment': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    name: 'EnrollmentDay',
+                    label: 'Study days relative to enrollment',
+                    description: 'The number of calendar days relative to the visit where the enrollment was scheduled for the subject\'s assigned treatment group.',
+                    type: 'INTEGER'
+                },
+                'cds_GridBase_Weeks_Enrollment': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    name: 'EnrollmentDay',
+                    label: 'Study weeks relative to enrollment',
+                    description: 'The number of calendar weeks relative to the visit where the enrollment was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE'
+                },
+                'cds_GridBase_Months_Enrollment': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    name: 'EnrollmentDay',
+                    label: 'Study months relative to enrollment',
+                    description: 'The number of calendar months relative to the visit where the enrollment was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE'
+                },
+                // include discrete versions of the timepoint variables for the plot color variable selector
+                'cds_GridBase_Days_Discrete': {
+                    sortOrder: 6,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: Connector.studyContext.protocolDayColumn,
+                    label: 'Study days (categorical)',
+                    description: 'The number of calendar days relative to Day 0, where Day 0 is typically defined as enrollment and/or first vaccination.',
+                    type: 'INTEGER',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Weeks_Discrete': {
+                    sortOrder: 7,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: false,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study weeks (categorical)',
+                    description: 'The number of weeks relative to Day 0 (Week 0), where Day 0 is typically defined as enrollment and/or first vaccination.',
                     type: 'DOUBLE',
                     variableType: 'TIME',
                     isDiscreteTime: true
                 },
-                'cds_GridBase_Months': {
-                    sortOrder: 4,
-                    schemaName: Connector.studyContext.gridBaseSchema,
-                    queryName: Connector.studyContext.gridBase,
-                    isMeasure: true,
-                    name: Connector.studyContext.protocolDayColumn,
-                    label: 'Study months (continuous)',
-                    type: 'DOUBLE',
-                    variableType: 'TIME'
-                },
                 'cds_GridBase_Months_Discrete': {
-                    sortOrder: 5,
+                    sortOrder: 8,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: false,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study months (categorical)',
+                    description: 'The number of months relative to Day 0 (Month 0), where Day 0 is typically defined as enrollment and/or first vaccination.',
                     type: 'DOUBLE',
                     variableType: 'TIME',
                     isDiscreteTime: true

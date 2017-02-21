@@ -743,6 +743,12 @@ Ext.define('Connector.view.Chart', {
             content += colon + Ext.htmlEncode(studyName) + linebreak;
         }
         if (xName && this.activeMeasures.x) {
+            // Issue 29379: use alignment measure label for hover description
+            if (this.activeMeasures.x.name == 'ProtocolDay') {
+                var xMeasureAlias = QueryUtils.ensureAlignmentAlias(this._getAxisWrappedMeasure(this.activeMeasures.x));
+                xName = Connector.getQueryService().getMeasure(xMeasureAlias).label;
+            }
+
             content += '<span class="group-title">' +Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.x) + ' - ' + xName) + '</span>';
             content += colon + Ext.htmlEncode(this.getBinRangeTooltip(xVals));
             content += this.showAsMedian ? ' (median)' : '';
@@ -903,14 +909,13 @@ Ext.define('Connector.view.Chart', {
             content += 'Treatment Summary' + colon + record[QueryUtils.TREATMENTSUMMARY_ALIAS] + linebreak;
             content += 'Subject' + colon + data.subjectId + linebreak;
             if (xAxis && xAxis.name == 'ProtocolDay') {
-                var label = ChartUtils.getTimeShortLabel(xAxis.alias);
-                if (xAxis.options.alignmentVisitTag == 'Last Vaccination'){
-                    label += 's from last vaccination';
-                }
-                else {
-                    label = 'Study ' + label;
-                }
-                content += label + colon + ' ' + ((data.x > 0 && xAxis.options.alignmentVisitTag == 'Last Vaccination'? '+' : '') + data.x) + linebreak;
+                // Issue 29379: use alignment measure label for hover description
+                var xMeasureAlias = QueryUtils.ensureAlignmentAlias(this._getAxisWrappedMeasure(xAxis));
+                label = Connector.getQueryService().getMeasure(xMeasureAlias).label;
+
+                content += label + colon + ' '
+                    + (data.x > 0 && xAxis.options.alignmentVisitTag != null ? '+' : '') + data.x
+                    + linebreak;
             }
             else {
                 content += 'Study Day' + colon + 'Day ' + record[QueryUtils.PROTOCOLDAY_ALIAS] + linebreak;
@@ -1881,6 +1886,11 @@ Ext.define('Connector.view.Chart', {
             if (this.activeMeasures.x)
             {
                 var wrappedX = this.getWrappedMeasures()[0];
+
+                if (this.activeMeasures.x.variableType === 'TIME') {
+                    this.convertWrappedTimeMeasure(wrappedX);
+                }
+
                 this.clickTask.delay(150, null, null, [(node ? node : e.target), this, QueryUtils.ensureAlignmentAlias(wrappedX), target, multi]);
             }
             else
@@ -2408,8 +2418,10 @@ Ext.define('Connector.view.Chart', {
                 // Create a 'time filter'
                 if (this.activeMeasures.x.variableType === 'TIME')
                 {
+                    this.convertWrappedTimeMeasure(selection.plotMeasures[0]);
+
                     var timeFilters = [selection.gridFilter[0]];
-                    if (!this.activeMeasures.x.isDiscreteTime)
+                    if (this.activeMeasures.x.options['timeAxisType'] === 'Continuous')
                     {
                         timeFilters.push(selection.gridFilter[1]);
                     }
@@ -2447,6 +2459,21 @@ Ext.define('Connector.view.Chart', {
         else
         {
             throw 'Unsupported axis "' + axis + '" requested to buildSelection()';
+        }
+    },
+
+    convertWrappedTimeMeasure : function(wrappedMeasure) {
+        // Issue 29397: continuous vs categorical time filters should not override each other
+        var timeAxisType = wrappedMeasure.measure.options['timeAxisType'];
+        if (timeAxisType === 'Categorical')
+        {
+            // replace the current selection measure and filter with the categorical/discrete version of the time point measure
+            var discreteTimeMeasure = Connector.getQueryService().getMeasure(wrappedMeasure.measure.alias + '_Discrete');
+            if (discreteTimeMeasure) {
+                var newWrappedXMeasure = Ext.clone(discreteTimeMeasure);
+                newWrappedXMeasure.options = Ext.clone(wrappedMeasure.measure.options);
+                wrappedMeasure.measure = newWrappedXMeasure;
+            }
         }
     },
 
@@ -3468,7 +3495,11 @@ Ext.define('Connector.view.Chart', {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
-                    includeTimpointMeasures: true
+                    includeTimepointMeasures: true,
+                    userFilter : function(row) {
+                        // for TIME variables, only show the ProtocolDay based non-discrete ones for the x-axis options
+                        return row.variableType !== 'TIME' || (row.name === Connector.studyContext.protocolDayColumn && !row.isDiscreteTime);
+                    }
                 },
                 listeners: {
                     selectionmade: function(selected) {
@@ -3530,7 +3561,7 @@ Ext.define('Connector.view.Chart', {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
-                    includeTimpointMeasures: true,
+                    includeTimepointMeasures: true,
                     userFilter : function(row) {
                         return !row.isMeasure;
                     }
