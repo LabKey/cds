@@ -637,7 +637,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         coloraxis.openSelectorWindow();
         coloraxis.pickSource(CDSHelper.TIME_POINTS);
-        coloraxis.pickVariable(CDSHelper.TIME_POINTS_DISCRETE_DAYS);
+        coloraxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
         coloraxis.confirmSelection();
 
         int glyphCount = cdsPlot.getPointCountByGlyph(CDSPlot.PlotGlyphs.asterisk);

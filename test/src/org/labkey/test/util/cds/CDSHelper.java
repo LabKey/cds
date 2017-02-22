@@ -449,9 +449,6 @@ public class CDSHelper
     public static final String TIME_POINTS_DAYS_LAST_VACC = "Study days relative to last vaccination";
     public static final String TIME_POINTS_WEEKS_LAST_VACC = "Study weeks relative to last vaccination";
     public static final String TIME_POINTS_MONTHS_LAST_VACC = "Study months relative to last vaccination";
-    public static final String TIME_POINTS_DISCRETE_DAYS = "Study days";
-    public static final String TIME_POINTS_DISCRETE_WEEKS = "Study weeks";
-    public static final String TIME_POINTS_DISCRETE_MONTHS = "Study months";
 
     // These are values used in the data grid.
     public static final String GRID_TITLE_BAMA = TITLE_BAMA;
