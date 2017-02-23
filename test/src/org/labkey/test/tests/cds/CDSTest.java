@@ -124,9 +124,9 @@ public class CDSTest extends CDSReadOnlyTest
 
         log("Verify tile text");
         String[] tileTitles = {"Answer questions", "Find a cohort", "Explore relationships", "Get started!"};
-        String[] tileDetails = {"Learn about 55 CAVD studies, 90 products, and 5 assays.",
+        String[] tileDetails = {"Learn about ", "55", " CAVD studies, ", "90", " products, and ", "5", " assays.",
                                 "Find subjects based on attributes that span studies.",
-                                "Plot assay results across 51 studies and years of research.",
+                                "Plot assay results across ", "51", " studies and years of research.",
                                 "Watch the most powerful ways to explore the DataSpace."};
         List<String> tites = Arrays.asList(tileTitles);
         tites.stream().forEach((tite) ->  {
