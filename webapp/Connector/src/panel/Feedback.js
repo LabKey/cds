@@ -149,7 +149,8 @@ Ext.define('Connector.panel.Feedback', {
                 title: title,
                 priority: 3,
                 comment: comments + '\n\n' + window.location.href,
-                issueDefName: 'issues'
+                issueDefName: 'issues',
+                status: 'open'
             }
         };
 

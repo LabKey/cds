@@ -637,6 +637,7 @@
         <description>A code indicating the lab performing the assay.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <measure>false</measure>
+        <dimension>true</dimension>
       </column>
       <column columnName="exp_assayid">
         <datatype>integer</datatype>
@@ -949,6 +950,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Detection System</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="instrument_code">
         <datatype>varchar</datatype>
@@ -1026,6 +1028,7 @@
         <columnTitle>Lab ID</columnTitle>
         <description>A code indicating the lab performing the assay.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="exp_assayid">
         <datatype>integer</datatype>

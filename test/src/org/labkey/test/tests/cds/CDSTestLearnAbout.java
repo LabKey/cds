@@ -652,8 +652,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             Assert.assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
         }
 
-        Assert.assertTrue("Both 'Has data' and 'No data' group should be present for column with filter", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Name & Description"));
-        Assert.assertTrue("Both 'Has data' and 'No data' group should be present for 'Data Added' column after filtering studies", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Data Added"));
+        Assert.assertTrue("Both 'In current selection' and 'Not in current selection' group should be present for column with filter", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Name & Description"));
+        Assert.assertTrue("Both 'In current selection' and 'Not in current selection' group should be present for 'Data Added' column after filtering studies", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Data Added"));
 
         log("Evaluating clearing a filter");
         learnGrid.clearFilters("Name & Description");
@@ -671,7 +671,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 "td/div/div/table/tbody/tr[contains(@class, 'detail-gray-text')]/td[contains(text(), '"+ yearToFilter + "')]")
                 .findElements(getDriver()).size();
 
-        learnGrid.setFacet("Status", yearToFilter);
+        learnGrid.setWithOptionFacet("Status", "Start Year", yearToFilter);
         learnGrid.setFacet("Data Added", numAssaysToFilter);
         numRowsPostFilter = learnGrid.getRowCount();
 
@@ -691,7 +691,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertTrue("Name & Description facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Name & Description"));
         Assert.assertTrue("Data Added facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Data Added"));
 
-        learnGrid.clearFilters("Status");
+        learnGrid.clearFiltersWithOption("Status", "Start Year");
         learnGrid.clearFilters("Data Added");
     }
 

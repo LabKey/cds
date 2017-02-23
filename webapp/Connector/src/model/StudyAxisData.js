@@ -318,13 +318,13 @@ Ext.define('Connector.model.StudyAxisData', {
                     visitKey = visitKeys[k];
                     groupVisits.push(group.visits[visitKey]);
                 }
-                group.visits = groupVisits;
+                group.visits = groupVisits.sort(this.visitSortFn);
                 groups.push(group);
             }
 
             // sort groups separately (e.g. 'Group 1 Vaccine, Group 2 Vaccine, Group 10 Vaccine, etc'
             study.groups = groups.sort(this._naturalSortHelper);
-            study.visits = Ext.Object.getValues(study.visits);
+            study.visits = Ext.Object.getValues(study.visits).sort(this.visitSortFn);
 
             data.push(study);
         }
@@ -348,6 +348,16 @@ Ext.define('Connector.model.StudyAxisData', {
             range: range,
             visitTags: allTags
         });
+    },
+
+    visitSortFn: function(visit1, visit2)
+    {
+        if (visit1.isTagActive && !visit2.isTagActive)
+            return 1;
+        else if (!visit1.isTagActive && visit2.isTagActive)
+            return -1;
+        else
+            return visit1.protocolDay - visit2.protocolDay;
     },
 
     hasPreEnrollment : function(visitTagCaption)
