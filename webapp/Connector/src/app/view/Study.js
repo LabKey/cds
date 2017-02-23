@@ -160,13 +160,13 @@ Ext.define('Connector.app.view.Study', {
         resizable: false,
         dataIndex: 'date_to_sort_on',
         filterConfigSet: [{
-            filterField: 'start_year',
-            valueType: 'string',
-            title: 'Start Year'
-        },{
             filterField: 'stage',
             valueType: 'string',
             title: 'Stage'
+        },{
+            filterField: 'start_year',
+            valueType: 'string',
+            title: 'Start Year'
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',

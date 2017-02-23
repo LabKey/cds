@@ -36,6 +36,10 @@ Ext.define('Connector.model.Variable', {
             var optionsTxt = '', sep = '';
 
             if (Ext.isObject(variable) && Ext.isObject(variable.options)) {
+                if (Ext.isString(variable.options.timeAxisType)) {
+                    optionsTxt += sep + variable.options.timeAxisType;
+                    sep = '; ';
+                }
                 if (Ext.isDefined(variable.options.alignmentVisitTag)) {
                     var tagLabel = variable.options.alignmentVisitTag;
                     if (tagLabel == null) {

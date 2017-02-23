@@ -479,6 +479,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validating Network");
         cds.assertPlotTickText(expectedXYValues);
 
+        expectedXYValues = "s1\ns2\ns3\ns4\ns5\nundefined\n0\n2\n4\n6\n8\n10\n12\n14";
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_STRATEGY);
+        xaxis.confirmSelection();
+        log("Validating Strategy");
+        cds.assertPlotTickText(expectedXYValues);
+
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_PROD_CLASS);
         xaxis.confirmSelection();

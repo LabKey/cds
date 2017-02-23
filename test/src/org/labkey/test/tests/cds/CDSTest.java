@@ -102,7 +102,7 @@ public class CDSTest extends CDSReadOnlyTest
         InfoPane infoPane = new InfoPane(this);
         infoPane.waitForSpinners();
 
-        log("Verify show/hide get started bar");
+        log("Verify show/hide quick links bar");
         Locator.XPathLocator hiddenShowBarLink = Locator.xpath("//a[contains(@class, 'started-show')][contains(@style, 'display: none')]");
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         // if it's already hidden, click to show
@@ -120,10 +120,10 @@ public class CDSTest extends CDSReadOnlyTest
         assertElementPresent(hiddenShowBarLink);
 
         log("Verify tile text");
-        String[] tileTitles = {"Answer questions", "Find a cohort", "Explore relationships", "Be inspired"};
-        String[] tileDetails = {"Learn about 55 CAVD studies, 90 products, and 5 assays.",
+        String[] tileTitles = {"Answer questions", "Find a cohort", "Explore relationships", "Get started!"};
+        String[] tileDetails = {"Learn about ", "55", " CAVD studies, ", "90", " products, and ", "5", " assays.",
                                 "Find subjects based on attributes that span studies.",
-                                "Plot assay results across 51 studies and years of research.",
+                                "Plot assay results across ", "51", " studies and years of research.",
                                 "Watch the most powerful ways to explore the DataSpace."};
         List<String> tites = Arrays.asList(tileTitles);
         tites.stream().forEach((tite) ->  {

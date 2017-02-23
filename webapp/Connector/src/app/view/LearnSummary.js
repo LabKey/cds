@@ -21,7 +21,7 @@ Ext.define('Connector.app.view.LearnSummary', {
         this.addEvents("learnGridResizeHeight");
 
         this.lockedViewConfig.emptyText = new Ext.XTemplate(
-                '<div class="detail-empty-text">None of the selected {itemPluralName} have data for this category.</div>'
+                '<div class="detail-empty-text">No available {itemPluralName} meet your selection criteria.</div>'
         ).apply({itemPluralName: this.itemPluralName});
 
         this.normalGridConfig.listeners = {

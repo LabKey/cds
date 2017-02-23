@@ -282,8 +282,8 @@ public class LearnGrid
         public static final Locator.XPathLocator unlockedRowHeader = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div[contains(@class, 'x-grid-header-ct')]");
         public static final Locator.XPathLocator lockedRow = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div/div/table/tbody/tr");
         public static final Locator.XPathLocator lockedRowHeader = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div[contains(@class, 'x-grid-header-ct')]");
-        public static final Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in current selection");
-        public static final Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in current selection");
+        public static final Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("In current selection");
+        public static final Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("Not in current selection");
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {

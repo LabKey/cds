@@ -140,6 +140,20 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="study_grant_pi_name">
+        <datatype>varchar</datatype>
+        <columnTitle>PI</columnTitle>
+        <description>Primary investigator name for the study.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="study_strategy">
+        <datatype>varchar</datatype>
+        <columnTitle>Strategy</columnTitle>
+        <description>The primary strategy the study was conducted with.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
       <column columnName="study_last_vaccination_day">
         <datatype>integer</datatype>
         <columnTitle>Study day of last vaccination</columnTitle>
@@ -623,6 +637,7 @@
         <description>A code indicating the lab performing the assay.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <measure>false</measure>
+        <dimension>true</dimension>
       </column>
       <column columnName="exp_assayid">
         <datatype>integer</datatype>
@@ -935,6 +950,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Detection System</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="instrument_code">
         <datatype>varchar</datatype>
@@ -1012,6 +1028,7 @@
         <columnTitle>Lab ID</columnTitle>
         <description>A code indicating the lab performing the assay.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="exp_assayid">
         <datatype>integer</datatype>

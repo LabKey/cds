@@ -25,9 +25,10 @@ Ext.define('Connector.model.ChartData', {
 
     statics: {
         isContinuousMeasure : function(measure) {
-            if (measure.isDiscreteTime) {
-                return false;
+            if (measure.options['timeAxisType'] !== undefined) {
+                return measure.options['timeAxisType'] == 'Continuous'
             }
+
             var type = measure.type;
             return type === 'INTEGER' || type === 'DOUBLE' || type === 'TIMESTAMP' || type === 'FLOAT' || type === 'REAL';
         }

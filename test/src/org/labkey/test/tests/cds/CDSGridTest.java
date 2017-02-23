@@ -227,6 +227,20 @@ public class CDSGridTest extends CDSReadOnlyTest
             grid.assertRowCount(792); // TODO Test data dependent.
             _asserts.assertFilterStatusCounts(777, 48, 1, 1, 151); // TODO Test data dependent.
         }
+
+
+        log("Verify Aligned Time Point Columns");
+        Map<String, Boolean> columns = new HashMap<>();
+        columns.put(CDSHelper.TIME_POINTS_DAYS, false);
+        columns.put(CDSHelper.TIME_POINTS_WEEKS, true);
+        columns.put(CDSHelper.TIME_POINTS_MONTHS, true);
+        columns.put(CDSHelper.TIME_POINTS_DAYS_LAST_VACC, true);
+        columns.put(CDSHelper.TIME_POINTS_WEEKS_LAST_VACC, true);
+        columns.put(CDSHelper.TIME_POINTS_MONTHS_LAST_VACC, true);
+
+        gridColumnSelector.openSelectorWindow();
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.TIME_POINTS, columns);
+
     }
 
     @Test
@@ -495,7 +509,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen\n  Cell type\n  Data summary level\n  Functional marker name\n" +
                 "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer IC50\nStudy and treatment variables\n  Study Name\n" +
-                "Subject characteristics\n  Race\n  Subject Id\nTime points\n  Study days (continuous)";
+                "Subject characteristics\n  Race\n  Subject Id\nTime points\n  Study days";
         expectedTextClean = expectedText.toLowerCase().replaceAll("\\n", "");
         expectedTextClean = expectedTextClean.replaceAll("\\s+", "");
 
@@ -506,7 +520,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         selectorText = selectorText.trim();
 
         assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.equals("Study and treatment variables\n  Study Name\nSubject characteristics\n" +
-                "  Subject Id\nTime points\n  Study days (continuous)"));
+                "  Subject Id\nTime points\n  Study days"));
 
         gridColumnSelector.confirmSelection();
 
@@ -528,6 +542,8 @@ public class CDSGridTest extends CDSReadOnlyTest
         columns.put(CDSHelper.DEMO_DATE_PUB, true);
         columns.put(CDSHelper.DEMO_DATE_START, true);
         columns.put(CDSHelper.DEMO_NETWORK, true);
+        columns.put(CDSHelper.DEMO_STRATEGY, true);
+        columns.put(CDSHelper.DEMO_PI, true);
         columns.put(CDSHelper.DEMO_PROD_CLASS, true);
         columns.put(CDSHelper.DEMO_PROD_COMB, true);
         columns.put(CDSHelper.DEMO_STUDY_TYPE, true);

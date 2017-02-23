@@ -155,7 +155,7 @@ public class CDSHelper
 //    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
 
     public static final String[] LEARN_ABOUT_QED2_INFO_FIELDS = {"Network", "Grant Affiliation", "Study Type", "Stage", "Study start", "First enrollment", "Follow up complete"};
-    public static final String[] LEARN_ABOUT_ZAP117_INFO_FIELDS = {"Network", "Grant Affiliation", "Study Type", "Stage", "First enrollment"};
+    public static final String[] LEARN_ABOUT_ZAP117_INFO_FIELDS = {"Network", "Grant Affiliation", "Strategy", "Study Type", "Species", "Stage", "First enrollment"};
     public static final String[] LEARN_ABOUT_CONTACT_FIELDS = {"First point of contact", "Grant Principal Investigator", "Grant Project Manager", "Study Investigator"};
     public static final String[] LEARN_ABOUT_DESCRIPTION_FIELDS = {"Objectives", "Rationale", "Groups", "Methods", "Findings", "Conclusions", "Publications"};
 
@@ -363,6 +363,8 @@ public class CDSHelper
     public static final String DEMO_DATE_PUB = "Date Study Made Public";
     public static final String DEMO_DATE_START = "Date of Study Start";
     public static final String DEMO_NETWORK = "Network";
+    public static final String DEMO_STRATEGY = "Strategy";
+    public static final String DEMO_PI = "PI";
     public static final String DEMO_PROD_CLASS = "Product Class Combination";
     public static final String DEMO_PROD_COMB = "Product Combination";
     public static final String DEMO_STUDY_TYPE = "Study Type";
@@ -441,12 +443,12 @@ public class CDSHelper
     public static final String NAB_VIRUS_TYPE = "Virus type";
 
     public static final String TIME_POINTS = "Time points";
-    public static final String TIME_POINTS_DAYS = "Study days (continuous)";
-    public static final String TIME_POINTS_WEEKS = "Study weeks (continuous)";
-    public static final String TIME_POINTS_MONTHS = "Study months (continuous)";
-    public static final String TIME_POINTS_DISCRETE_DAYS = "Study days (categorical)";
-    public static final String TIME_POINTS_DISCRETE_WEEKS = "Study weeks (categorical)";
-    public static final String TIME_POINTS_DISCRETE_MONTHS = "Study months (categorical)";
+    public static final String TIME_POINTS_DAYS = "Study days";
+    public static final String TIME_POINTS_WEEKS = "Study weeks";
+    public static final String TIME_POINTS_MONTHS = "Study months";
+    public static final String TIME_POINTS_DAYS_LAST_VACC = "Study days relative to last vaccination";
+    public static final String TIME_POINTS_WEEKS_LAST_VACC = "Study weeks relative to last vaccination";
+    public static final String TIME_POINTS_MONTHS_LAST_VACC = "Study months relative to last vaccination";
 
     // These are values used in the data grid.
     public static final String GRID_TITLE_BAMA = TITLE_BAMA;
@@ -459,7 +461,7 @@ public class CDSHelper
     public static final String GRID_COL_STUDY = "Study";
     public static final String GRID_COL_VISIT = "Visit";
     public static final String GRID_COL_TREATMENT_SUMMARY = "Treatment Summary";
-    public static final String GRID_COL_STUDY_DAY = "Study days (continuous)";
+    public static final String GRID_COL_STUDY_DAY = "Study days";
     public static final String GRID_COL_CUR_COL = "Current columns";
     public static final String GRID_COL_ALL_VARS = "All variables from this session";
 
@@ -1020,15 +1022,29 @@ public class CDSHelper
         _test.waitForElement(Locators.cdsButtonLocator("Update", "filterinfoaction"));
     }
 
-    public void changeInfoPaneSort(String fromSort, String toSort)
+    private Locator.XPathLocator  openInfoPaneSort(String sort)
     {
         Locator.XPathLocator infoPane = Locator.tagWithClass("div", "infopane");
         Locator.XPathLocator sorter = infoPane.withDescendant(Locator.tagWithClass("div", "sorter"));
 
         _test.waitForElement(infoPane);
-        _test.waitForElement(sorter.withDescendant(Locator.tagContainingText("span", fromSort)));
+        _test.waitForElement(sorter.withDescendant(Locator.tagContainingText("span", sort)));
 
         _test.click(Locators.infoPaneSortButtonLocator());
+
+        return sorter;
+    }
+
+    public int getInfoPaneSortOptions(String currSort)
+    {
+        openInfoPaneSort(currSort);
+
+        return Locator.findElements(_test.getDriver(), Locator.tagWithClass("div", "infosortmenu").append(Locator.tagWithClass("div", "x-menu-item"))).size();
+    }
+
+    public void changeInfoPaneSort(String fromSort, String toSort)
+    {
+        Locator.XPathLocator sorter = openInfoPaneSort(fromSort);
 
         Locator.XPathLocator sortItemLabel = Locator.tagWithClass("span", "x-menu-item-text").withText(toSort);
         Locator.XPathLocator sortItem = Locator.tagWithClass("div", "infosortmenu").append(Locator.tagWithClass("div", "x-menu-item").withDescendant(sortItemLabel));

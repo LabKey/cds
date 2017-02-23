@@ -39,6 +39,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.component.AdvancedOptionBase": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionDimension": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionScale": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionContinuous": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionTime": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.DropDown": "../../webapp/Connector/src/component/DropDown.js",
   "Connector.component.GridPager": "../../webapp/Connector/src/component/GridPager.js",
@@ -249,6 +250,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.component.AdvancedOptionBase": [],
   "Connector.component.AdvancedOptionDimension": [],
   "Connector.component.AdvancedOptionScale": [],
+  "Connector.component.AdvancedOptionContinuous": [],
   "Connector.component.AdvancedOptionTime": [],
   "Connector.component.DropDown": [],
   "Connector.component.GridPager": [],
@@ -1290,6 +1292,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.advancedoptiondimension"
   ],
   "Connector.component.AdvancedOptionScale": [],
+  "Connector.component.AdvancedOptionContinuous": [],
   "Connector.component.AdvancedOptionTime": [],
   "Connector.component.DropDown": [
     "widget.dropdown"
