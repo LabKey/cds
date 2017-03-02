@@ -641,13 +641,56 @@ Ext.define('Connector.view.Chart', {
         this.showBinToolTipTask.delay(150, undefined, this, [point, datas, layerScope, plotName]);
     },
 
+    loadPointTooltipData: function(point, data, plotName, studyLabel)
+    {
+        if (this.studyMap)
+        {
+            this.showPointTooltip.call(this, point, data, plotName, studyLabel);
+        }
+        else
+        {
+            LABKEY.Query.selectRows({
+                schemaName: 'cds',
+                queryName: 'study',
+                success: function (studyData) {
+                    var studyRows = studyData.rows;
+                    var studyMap = {};
+                    Ext.each(studyRows, function (row) {
+                        studyMap[row.label] = row.short_name;
+                    });
+                    this.studyMap = studyMap;
+                    this.showPointTooltip.call(this, point, data, plotName, studyLabel);
+                },
+                scope: this
+            });
+        }
+    },
+
     pointClickText : function(point, data, plotName) {
-        var content = this.buildPointTooltip(data);
+        var rawRow = this.allDataRowsMap[data.rowKey];
+        var studyLabel = rawRow[QueryUtils.STUDY_ALIAS];
+        this.loadPointTooltipData(point, data, plotName, studyLabel);
+    },
+
+    showPointTooltip: function(point, data, plotName, studyLabel)
+    {
+        var studyShortName = this.studyMap[studyLabel];
+        var content = PlotTooltipUtils.buildPointTooltip(this, data, studyShortName);
         ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
     },
 
+    getRawDataRows: function(datas)
+    {
+        var rawRecords = [];
+        Ext.each(datas, function(data) {
+            var d = data.data;
+            rawRecords.push(this.allDataRowsMap[d.rowKey]);
+        }, this);
+        return rawRecords;
+    },
+
     binClickText : function(point, datas, plotName) {
-        var content = this.buildBinTooltip(datas);
+        var content = PlotTooltipUtils.buildBinTooltip(this, datas);
         ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
     },
 
@@ -662,349 +705,6 @@ Ext.define('Connector.view.Chart', {
             }
         }
         return dimArray;
-    },
-
-    getHierarchicalDimensionInfo: function(axis) {
-        var measureMaps;
-        if (axis) {
-            var dimensions = axis.dimensions;
-            Ext.each(dimensions, function(dim) {
-                var _dim = Connector.getService('Query').getMeasureRecordByAlias(dim);
-                if (_dim) {
-                    var hierarchicalFilterColumnAlias = _dim.get('hierarchicalFilterColumnAlias');
-                    if (hierarchicalFilterColumnAlias != dim && Ext.isDefined(_dim.get('hierarchicalSelectionParent'))) {
-                        var measureSet = _dim.getHierarchicalMeasures();
-                        if (!measureMaps) {
-                            measureMaps = {};
-                        }
-                        var measures = [];
-                        Ext.each(measureSet, function(m){
-                            measures.push(m.get('alias'));
-                        });
-                        measureMaps[hierarchicalFilterColumnAlias] = measures;
-                    }
-                }
-            }, this);
-        }
-        return measureMaps;
-    },
-
-    buildBinTooltip: function(datas) {
-        var xValsSet = {}, yValsSet = {}, subjectsSet = {}, studiesSet = {};
-        var content = '', xName, yName, me = this,colon = ': ', linebreak = '<br/>';
-        var xDimensionVals = {}, yDimensionVals = {};
-        var xDimensions = this.getAxisDimensionsArray(this.activeMeasures.x), yDimensions = this.getAxisDimensionsArray(this.activeMeasures.y);
-        var xOptions = this.activeMeasures.x ? this.activeMeasures.x.options.dimensions : [],
-            yOptions = this.activeMeasures.y ? this.activeMeasures.y.options.dimensions : [];
-        var xHierarchicalDimensionInfo = this.getHierarchicalDimensionInfo(this.activeMeasures.x), yHierarchicalDimensionInfo = this.getHierarchicalDimensionInfo(this.activeMeasures.y);
-
-        Ext.each(datas, function(data) {
-            var d = data.data;
-
-            if (d.x !== undefined && d.x !== null && d.x !== '') {
-                xValsSet[d.x] = true;
-            }
-            if (d.y !== undefined && d.y !== null && d.y !== '') {
-                yValsSet[d.y] = true;
-            }
-            if (d.subjectId !== undefined && d.subjectId !== null) {
-                subjectsSet[d.subjectId] = true;
-            }
-
-            if (d.xname && !xName) {
-                xName = d.xname;
-            }
-            if (d.yname && !yName) {
-                yName = d.yname;
-            }
-
-            var record = me.allDataRowsMap[d.rowKey];
-            studiesSet[record[QueryUtils.STUDY_ALIAS]] = true;
-
-            this.setBinDimensionValues(xDimensionVals, xDimensions, record, xOptions, record.x ? record.x.rawRecord : null);
-            this.setBinDimensionValues(yDimensionVals, yDimensions, record, yOptions, record.y ? record.y.rawRecord : null);
-
-        }, this);
-
-        var xVals = Object.keys(xValsSet), yVals = Object.keys(yValsSet), subjects = Object.keys(subjectsSet), studies = Object.keys(studiesSet);
-
-        this.updateBinHierarchicalDimensionValues(xDimensionVals, xHierarchicalDimensionInfo);
-        this.updateBinHierarchicalDimensionValues(yDimensionVals, yHierarchicalDimensionInfo);
-
-        var studyName;
-        if (studies.length == 1) {
-            studyName = studies[0];
-        }
-
-        content += '<span class="group-title">Data</span>';
-        content += colon + datas.length + ' points from ' + subjects.length + ' subjects' + linebreak;
-        if (studyName) {
-            content += '<span class="group-title">Study</span>';
-            content += colon + Ext.htmlEncode(studyName) + linebreak;
-        }
-        if (xName && this.activeMeasures.x) {
-            // Issue 29379: use alignment measure label for hover description
-            if (this.activeMeasures.x.name == 'ProtocolDay') {
-                var xMeasureAlias = QueryUtils.ensureAlignmentAlias(this._getAxisWrappedMeasure(this.activeMeasures.x));
-                xName = Connector.getQueryService().getMeasure(xMeasureAlias).label;
-            }
-
-            content += '<span class="group-title">' +Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.x) + ' - ' + xName) + '</span>';
-            content += colon + Ext.htmlEncode(this.getBinRangeTooltip(xVals));
-            content += this.showAsMedian ? ' (median)' : '';
-            content += '<div class="axis-details">';
-            content += this.buildBinAxisDetailTooltip(xDimensionVals, xDimensions, xHierarchicalDimensionInfo);
-            content += '</div>'
-        }
-        if (yName && this.activeMeasures.y) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.y) + ' - ' + yName) + '</span>';
-            content += colon + Ext.htmlEncode(this.getBinRangeTooltip(yVals));
-            content += this.showAsMedian ? ' (median)' : '';
-            content += '<div class="axis-details">';
-            content += this.buildBinAxisDetailTooltip(yDimensionVals, yDimensions, yHierarchicalDimensionInfo);
-            content += '</div>'
-        }
-
-        return content;
-    },
-
-    getSourceDisplayValue: function(measure) {
-        var definedMeasureSourceMap = Connector.getService('Query').getDefinedMeasuresSourceTitleMap();
-        if (Ext.isDefined(definedMeasureSourceMap[measure.alias])) {
-            return definedMeasureSourceMap[measure.alias];
-        }
-        else if (measure.variableType == 'TIME') {
-            return measure.sourceTitle;
-        }
-        return measure.queryName;
-    },
-
-    updateBinHierarchicalDimensionValues: function(dimensionVals, hierarchicalDimensionInfo) {
-        if (dimensionVals && hierarchicalDimensionInfo) {
-            for (var dim in dimensionVals) {
-                if (dimensionVals[dim] && hierarchicalDimensionInfo[dim]) {
-                    var currentDimVals = Object.keys(dimensionVals[dim]);
-                    if (currentDimVals.length != 0) {
-                        var levelDimensions = hierarchicalDimensionInfo[dim];
-                        Ext.each(currentDimVals, function(fullStr){
-                            var levels = fullStr.split(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
-                            for (var i = 0; i < levels.length; i++) {
-                                if (!dimensionVals[levelDimensions[i]]) {
-                                    dimensionVals[levelDimensions[i]] = {};
-                                }
-                                dimensionVals[levelDimensions[i]][levels[i]] = true;
-                            }
-                        });
-                    }
-
-                }
-            }
-        }
-    },
-
-    setBinDimensionValues: function(dimensionVals, dimensions, record, axisOptions, recordAggregator) {
-        Ext.each(dimensions, function(dim) {
-            var aggregatorValues = recordAggregator && recordAggregator[dim] ? Ext.clone(recordAggregator[dim].getValues()) : null;
-
-            if (!dimensionVals[dim]) {
-                dimensionVals[dim] = {};
-            }
-
-            if (this.hasDimensionalAggregators) {
-                if (aggregatorValues && Ext.isArray(aggregatorValues) && aggregatorValues.length > 0) {
-                    Ext.each(aggregatorValues, function(val){
-                        dimensionVals[dim][val] = true;
-                    });
-                }
-            }
-            else {
-                if (record[dim] !== undefined && record[dim] !== null && record[dim] !== '')  {
-                    dimensionVals[dim][record[dim]] = true;
-                }
-                else if (Ext.isArray(axisOptions[dim])){
-                    Ext.each(axisOptions[dim], function(val){
-                        dimensionVals[dim][val] = true;
-                    });
-                }
-            }
-        }, this);
-    },
-
-    buildBinAxisDetailTooltip: function(dimensionVals, dimensions, hierarchicalDimensionInfo) {
-        var content = '', colon = ': ', linebreak = '<br/>';
-        if (dimensionVals) {
-            Ext.each(dimensions, function(dim) {
-                if (dimensionVals[dim]) {
-                    var dimVals = Object.keys(dimensionVals[dim]);
-                    if (dimVals.length > 0) {
-                        if (Ext.isArray(hierarchicalDimensionInfo[dim]) && hierarchicalDimensionInfo[dim].length > 0) {
-                            Ext.each(hierarchicalDimensionInfo[dim], function(level) {
-                                if (dimensionVals[level]) {
-                                    var levelVals = Object.keys(dimensionVals[level]);
-                                    if (levelVals && levelVals.length > 0)
-                                        content += this.buildSingleDimensionTooltip(level, levelVals);
-                                }
-                            }, this);
-                        }
-                        else {
-                            content += this.buildSingleDimensionTooltip(dim, dimVals);
-                        }
-                    }
-                }
-            }, this);
-        }
-        return content;
-    },
-
-    buildSingleDimensionTooltip: function(dim, values) {
-        var colon = ': ', linebreak = '<br/>';
-        var value = this.buildTooltipValuesStr(values);
-        var label = Connector.getQueryService().getMeasure(dim).label;
-        return '<span><span class="axis-dimension">' + Ext.htmlEncode(label) + '</span>' + colon + value + linebreak + '</span>';
-    },
-
-    buildTooltipValuesStr: function(rawValuesArray) {
-        var valuesArray = [];
-        if (Ext.isArray(rawValuesArray)) {
-            if (rawValuesArray.length == 0)
-                return '-';
-            Ext.each(rawValuesArray, function(val) {
-                valuesArray.push(this.formatSingleTooltipValue(val));
-            }, this);
-        }
-        var valuesStr = '';
-        if (Ext.isArray(valuesArray)) {
-            var totalValues = valuesArray.length;
-            if (totalValues > 5) {
-                valuesStr = valuesArray.slice(0, 5).join(', ');
-                valuesStr += ', and ' + (totalValues - 5) + ' more'
-            }
-            else {
-                valuesStr = valuesArray.join(', ');
-            }
-        }
-        return valuesStr;
-    },
-
-    getBinRangeTooltip: function(rawvalues) {
-        if (rawvalues.length == 0)
-            return '-';
-        var vals = [];
-        Ext.each(rawvalues, function(val) {
-            vals.push(this.formatSingleTooltipValue(val));
-        }, this);
-        if (vals.length == 1)
-            return vals[0];
-        return Ext.Array.min(vals) + ' - ' + Ext.Array.max(vals);
-    },
-
-    buildPointTooltip: function(data) {
-        var content = '', colon = ': ', linebreak = '<br/>';
-        var record = this.allDataRowsMap[data.rowKey], xAxis = this.activeMeasures.x, yAxis = this.activeMeasures.y;
-
-        if (record[QueryUtils.STUDY_ALIAS]) {
-            content += '<span class="group-title">' + Ext.htmlEncode(record[QueryUtils.STUDY_ALIAS]) + '</span>';
-            content +=  colon + Ext.htmlEncode(record[QueryUtils.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS]);
-            content += '<div class="axis-details">';
-            content += 'Treatment Summary' + colon + record[QueryUtils.TREATMENTSUMMARY_ALIAS] + linebreak;
-            content += 'Subject' + colon + data.subjectId + linebreak;
-            if (xAxis && xAxis.name == 'ProtocolDay') {
-                // Issue 29379: use alignment measure label for hover description
-                var xMeasureAlias = QueryUtils.ensureAlignmentAlias(this._getAxisWrappedMeasure(xAxis));
-                label = Connector.getQueryService().getMeasure(xMeasureAlias).label;
-
-                content += label + colon + ' '
-                    + (data.x > 0 && xAxis.options.alignmentVisitTag != null ? '+' : '') + data.x
-                    + linebreak;
-            }
-            else {
-                content += 'Study Day' + colon + 'Day ' + record[QueryUtils.PROTOCOLDAY_ALIAS] + linebreak;
-            }
-            content += '</div>';
-        }
-
-        if (xAxis && data.xname) {
-            // skip for study, treatment, and time
-            if (xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_LABEL_ALIAS && xAxis.alias != QueryUtils.DEMOGRAPHICS_STUDY_ARM_ALIAS && xAxis.name != 'ProtocolDay') {
-                var val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
-                content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(xAxis) + ' - ' + data.xname) + '</span>' + colon + this.formatSingleTooltipValue(val);
-                content += this.showAsMedian ? ' (median)' : '';
-                content += this.buildPointAxisDetailTooltip(xAxis, record, record.x && record.x.rawRecord ? record.x.rawRecord : null, this.getHierarchicalDimensionInfo(xAxis));
-            }
-        }
-
-        if (yAxis) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(yAxis) + ' - ' + data.yname) + '</span>' + colon + this.formatSingleTooltipValue(data.y);
-            content += this.showAsMedian ? ' (median)' : '';
-            content += this.buildPointAxisDetailTooltip(yAxis, record, record.y && record.y.rawRecord ? record.y.rawRecord : null, this.getHierarchicalDimensionInfo(yAxis));
-        }
-
-        if (this.activeMeasures.color && data.colorname) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.color) + ' - ' + data.colorname) + '</span>' + colon + this.formatSingleTooltipValue(data.color);
-        }
-
-        return content;
-    },
-
-    formatSingleTooltipValue: function(val) {
-      if (val == undefined || val == 'null') {
-          return '-';
-      }
-      return val;
-    },
-
-    buildPointAxisDetailTooltip: function(axis, record, aggregators, hierarchicalDimensionInfo) {
-        var content = '<div class="axis-details">', colon = ': ', linebreak = '<br/>';
-        if (axis) {
-            var dimensions = axis.options.dimensions;
-            for (var dim in dimensions) {
-                if (dimensions.hasOwnProperty(dim)) {
-                    var values = [];
-                    if (this.hasDimensionalAggregators) {
-                        var aggregatorValues = aggregators[dim] ? Ext.clone(aggregators[dim].getValues()) : null;
-                        if (Ext.isArray(aggregatorValues) && aggregatorValues.length > 0) {
-                            values = aggregatorValues;
-                        }
-                    }
-                    else {
-                        if (record[dim] !== undefined) {
-                            values.push(record[dim]);
-                        }
-                        else if (Ext.isArray(dimensions[dim])) {
-                            values = dimensions[dim];
-                        }
-                    }
-                    if (values.length > 0) {
-                        if (hierarchicalDimensionInfo[dim]) {
-                            var levelDimensions = hierarchicalDimensionInfo[dim];
-                            var dimensionVals = {};
-                            Ext.each(values, function(fullStr){
-                                var levels = fullStr.split(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
-                                for (var i = 0; i < levels.length; i++) {
-                                    if (!dimensionVals[levelDimensions[i]]) {
-                                        dimensionVals[levelDimensions[i]] = {};
-                                    }
-                                    dimensionVals[levelDimensions[i]][levels[i]] = true;
-                                }
-                            });
-
-                            for (var level in dimensionVals) {
-                                if (dimensionVals[level]) {
-                                    var levelValues = Object.keys(dimensionVals[level]);
-                                    if (levelValues && levelValues.length > 0)
-                                        content += this.buildSingleDimensionTooltip(level, levelValues);
-                                }
-                            }
-                        }
-                        else {
-                            content += this.buildSingleDimensionTooltip(dim, values);
-                        }
-                    }
-                }
-            }
-        }
-        content += '</div>';
-        return content;
     },
 
     getLayerAes : function(layerScope, plotName) {
@@ -3175,15 +2875,11 @@ Ext.define('Connector.view.Chart', {
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'Container', 'VARCHAR');
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
 
+                //TODO uncomment to enable lazy query
+                //this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'ParticipantSequenceNum', 'VARCHAR');
+
                 // add measures for tooltip
-                this.addValuesToMeasureMap(
-                        measuresMap,
-                        axisName,
-                        'study',
-                        'Demographics',
-                        'study_short_name',
-                        'VARCHAR'
-                );
+                //TODO switch to lazy query to get rid of join on gridbase
                 this.addValuesToMeasureMap(
                         measuresMap,
                         axisName,
