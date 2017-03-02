@@ -27,17 +27,15 @@ Ext.define('Animation', {
             if (Ext.isArray(target) && !Ext.isEmpty(target)) {
                 el = Ext.get(target[0]);
                 if (el.isVisible()) {
-                    // use the selection panel
-                    targetTop = true;
-                    found = true;
                     box = el.getBox();
+                    // Visible doesn't necessarily work...
+                    if (box.x > 0 && box.y > 0) {
+                        // use the selection panel
+                        targetTop = true;
+                        found = true;
+                    }
                 }
             }
-        }
-
-        // Visible doesn't necessarily work...
-        if (found && (box.x == 0 || box.y == 0)) {
-            found = false;
         }
 
         if (found) {

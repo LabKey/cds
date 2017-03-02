@@ -107,6 +107,10 @@ Ext.define('Connector.view.GroupListView', {
         this.callParent([config]);
 
         this.addEvents('deletegroup');
+
+        this.on('itemclick', function(grouplist, record, item){
+            console.log("foo")
+        }, this)
     },
 
     initComponent : function() {
