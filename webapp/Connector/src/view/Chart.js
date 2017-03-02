@@ -1755,7 +1755,7 @@ Ext.define('Connector.view.Chart', {
 
         var gutterXAes = {
             xTop: function(row) {return row.x;},
-            y: function(row) {return row.y;}
+            y: function(row) {return 0;}
         };
         var gutterXScales = {
             xTop: {
@@ -1814,7 +1814,7 @@ Ext.define('Connector.view.Chart', {
         };
 
         var gutterYAes = {
-            x: function(row) {return row.x;},
+            x: function(row) {return 0;},
             yRight: function(row) {return row.y;}
         };
 
@@ -1848,7 +1848,7 @@ Ext.define('Connector.view.Chart', {
             console.log('total plotted rows:', allDataRows.totalCount);
             if (allDataRows && allDataRows.undefinedX)
             {
-                console.log('plotted x gutter rows:', allDataRows.undefinedX.length);
+                console.log('plotted y gutter rows:', allDataRows.undefinedX.length);
             }
             if (allDataRows && allDataRows.undefinedY)
             {
