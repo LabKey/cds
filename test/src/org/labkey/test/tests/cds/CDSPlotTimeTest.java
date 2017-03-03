@@ -720,7 +720,9 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         log("Validate that there is a gutter plot on the x and y axes.");
         Assert.assertTrue("There was no gutter plot on the x-axis. This plot cannot be used to validate this fix.", cdsPlot.hasXGutter());
+        assertTrue("There is a gutter plot on the x-axis, but there are no data points in it. This plot cannot be used to validate this fix.", cdsPlot.getXGutterPlotPointCount() > 0 );
         Assert.assertTrue("There was no gutter plot on the y-axis. This plot cannot be used to validate this fix.", cdsPlot.hasYGutter());
+        assertTrue("There is a gutter plot on the y-axis, but there are no data points in it. This plot cannot be used to validate this fix.", cdsPlot.getYGutterPlotPointCount() > 0 );
 
         log("Validate the point count in the x-gutter plot.");
         pointCount = cdsPlot.getXGutterPlotPointCount();

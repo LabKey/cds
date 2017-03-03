@@ -134,6 +134,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         assertFalse("For BAMA Magnitude vs NAB Lab x-axis gutter plot was present it should not have been.", cdsPlot.hasXGutter());
         assertTrue("For BAMA Magnitude vs NAB Lab y-axis gutter plot was not present.", cdsPlot.hasYGutter());
+        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0 );
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
@@ -154,6 +155,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         assertTrue("For NAB IC80 vs ICS Magnitude x-axis gutter plot was not present.", cdsPlot.hasXGutter());
+        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
         assertFalse("For NAB IC80 vs ICS Magnitude y-axis gutter plot was present and it should not have been.", cdsPlot.hasYGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
@@ -182,7 +184,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         assertTrue("For ELISPOT Background vs ICS Visit x-axis gutter plot was not present.", cdsPlot.hasXGutter());
+        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
         assertTrue("For ELISPOT Background vs ICS Visit y-axis gutter plot was not present.", cdsPlot.hasYGutter());
+        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0 );
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
@@ -237,7 +241,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Validate that the Log Gutters are there.");
         assertTrue("Did not find the Log Gutter on the bottom of the plot.", cdsPlot.hasXLogGutter());
+        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
         assertTrue("Did not find the Log Gutter on the left hand side of the plot.", cdsPlot.hasYLogGutter());
+        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0 );
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
@@ -256,6 +262,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("The y-axis gutter plot did not go away, it should have.", !cdsPlot.hasYGutter());
         assertTrue("The y-axis log gutter did not go away, it should have.", !cdsPlot.hasYLogGutter());
         assertTrue("There is no x-axis gutter, there should be.", cdsPlot.hasXGutter());
+        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
         assertTrue("There is no x-axis log gutter, there should be.", cdsPlot.hasXLogGutter());
         // Removed the check of the plot tick text. Because these test do brushing there is too much randomness to guarantee that the text will alwyas be the same.
 
@@ -277,6 +284,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("The x-axis gutter plot did not go away, it should have.", !cdsPlot.hasXGutter());
         assertTrue("The x-axis log gutter did not go away, it should have.", !cdsPlot.hasXLogGutter());
         assertTrue("There is no y-axis gutter, there should be.", cdsPlot.hasYGutter());
+        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0 );
         assertTrue("There is no y-axis log gutter, there should be.", cdsPlot.hasYLogGutter());
 
         cds.clearFilter(1);
@@ -357,7 +365,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         assertTrue("For ELISPOT vs ICS x-axis gutter plot was not present.", cdsPlot.hasXGutter());
+        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
         assertTrue("For ELISPOT vs ICS y-axis gutter plot was not present.", cdsPlot.hasYGutter());
+        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0 );
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
@@ -378,7 +388,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         assertTrue("For NAB vs ICS x-axis gutter plot was not present.", cdsPlot.hasXGutter());
+        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
         assertTrue("For NAB vs ICS y-axis gutter plot was not present.", cdsPlot.hasYGutter());
+        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
 
         // Test disabled for now as a result of side effect of log transformation story. will re-enable when
         // filter refinement is done and compound filter is used to drop <=0 data but retain null.
