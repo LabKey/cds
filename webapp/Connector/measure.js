@@ -402,6 +402,78 @@ Ext.define('Connector.measure.Configuration', {
                     variableType: 'TIME',
                     isDiscreteTime: true
                 },
+                'cds_GridBase_Days_Discrete_Last_Vaccination': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: 'LastVaccinationDay',
+                    label: 'Study days relative to last vaccination',
+                    description: 'The number of calendar days relative to the visit where the last vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'INTEGER',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Weeks_Discrete_Last_Vaccination': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: 'LastVaccinationDay',
+                    label: 'Study weeks relative to last vaccination',
+                    description: 'The number of weeks relative to the visit where the last vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Months_Discrete_Last_Vaccination': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: 'LastVaccinationDay',
+                    label: 'Study months relative to last vaccination',
+                    description: 'The number of months relative to the visit where the last vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Days_Discrete_Enrollment': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: 'EnrollmentDay',
+                    label: 'Study days relative to enrollment',
+                    description: 'The number of calendar days relative to the visit where the enrollment was scheduled for the subject\'s assigned treatment group.',
+                    type: 'INTEGER',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Weeks_Discrete_Enrollment': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: 'EnrollmentDay',
+                    label: 'Study weeks relative to enrollment',
+                    description: 'The number of calendar weeks relative to the visit where the enrollment was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Months_Discrete_Enrollment': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: 'EnrollmentDay',
+                    label: 'Study months relative to enrollment',
+                    description: 'The number of calendar months relative to the visit where the enrollment was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
 
                 // recommended variables
                 'study_ICS_pctpos_adj': {
