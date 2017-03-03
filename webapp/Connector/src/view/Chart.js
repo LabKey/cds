@@ -1258,7 +1258,8 @@ Ext.define('Connector.view.Chart', {
             selector = this.showPointsAsBin ? '.vis-bin' : '.point';
             plot.renderer.canvas.selectAll(selector).on('mousedown', function() {
                 svgEl = plot.renderer.canvas[0][0];
-                brushNode = d3.select(svgEl.getElementsByClassName('brush')[0]).node();
+                var brushElements = svgEl.getElementsByClassName ? svgEl.getElementsByClassName('brush') : svgEl.querySelectorAll('.brush');
+                brushNode = d3.select(brushElements[0]).node();
 
                 newClickEvent = new CustomEvent('mousedown');
                 newClickEvent.pageX = d3.event.pageX;
