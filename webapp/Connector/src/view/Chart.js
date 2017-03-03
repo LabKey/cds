@@ -623,7 +623,7 @@ Ext.define('Connector.view.Chart', {
             this.showPointToolTipTask = new Ext.util.DelayedTask(function(point, data, layerScope, plotName) {
                 if (layerScope.isBrushed)
                     return;
-                this.pointClickText(point, data, plotName);
+                this.pointClickTooltip(point, data, plotName);
             }, this);
         }
         this.showPointToolTipTask.delay(150, undefined, this, [point, data, layerScope, plotName]);
@@ -635,63 +635,18 @@ Ext.define('Connector.view.Chart', {
             this.showBinToolTipTask = new Ext.util.DelayedTask(function(point, datas, layerScope, plotName) {
                 if (layerScope.isBrushed)
                     return;
-                this.binClickText(point, datas, plotName);
+                this.binClickTooltip(point, datas, plotName);
             }, this);
         }
         this.showBinToolTipTask.delay(150, undefined, this, [point, datas, layerScope, plotName]);
     },
 
-    loadPointTooltipData: function(point, data, plotName, studyLabel)
-    {
-        if (this.studyMap)
-        {
-            this.showPointTooltip.call(this, point, data, plotName, studyLabel);
-        }
-        else
-        {
-            LABKEY.Query.selectRows({
-                schemaName: 'cds',
-                queryName: 'study',
-                success: function (studyData) {
-                    var studyRows = studyData.rows;
-                    var studyMap = {};
-                    Ext.each(studyRows, function (row) {
-                        studyMap[row.label] = row.short_name;
-                    });
-                    this.studyMap = studyMap;
-                    this.showPointTooltip.call(this, point, data, plotName, studyLabel);
-                },
-                scope: this
-            });
-        }
+    pointClickTooltip : function(point, data, plotName) {
+        PlotTooltipUtils.loadPointTooltipData(this, point, data, plotName);
     },
 
-    pointClickText : function(point, data, plotName) {
-        var rawRow = this.allDataRowsMap[data.rowKey];
-        var studyLabel = rawRow[QueryUtils.STUDY_ALIAS];
-        this.loadPointTooltipData(point, data, plotName, studyLabel);
-    },
-
-    showPointTooltip: function(point, data, plotName, studyLabel)
-    {
-        var studyShortName = this.studyMap[studyLabel];
-        var content = PlotTooltipUtils.buildPointTooltip(this, data, studyShortName);
-        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
-    },
-
-    getRawDataRows: function(datas)
-    {
-        var rawRecords = [];
-        Ext.each(datas, function(data) {
-            var d = data.data;
-            rawRecords.push(this.allDataRowsMap[d.rowKey]);
-        }, this);
-        return rawRecords;
-    },
-
-    binClickText : function(point, datas, plotName) {
-        var content = PlotTooltipUtils.buildBinTooltip(this, datas);
-        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===this.yGutterName, plotName===this.xGutterName, this);
+    binClickTooltip : function(point, datas, plotName) {
+        PlotTooltipUtils.loadBinTooltipData(this, point, datas, plotName);
     },
 
     getAxisDimensionsArray: function(axis) {
@@ -2875,36 +2830,8 @@ Ext.define('Connector.view.Chart', {
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'Container', 'VARCHAR');
                 this.addValuesToMeasureMap(measuresMap, axisName, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
 
-                //TODO uncomment to enable lazy query
-                //this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'ParticipantSequenceNum', 'VARCHAR');
-
-                // add measures for tooltip
-                //TODO switch to lazy query to get rid of join on gridbase
-                this.addValuesToMeasureMap(
-                        measuresMap,
-                        axisName,
-                        Connector.studyContext.gridBaseSchema,
-                        Connector.studyContext.gridBase,
-                        'Study',
-                        'VARCHAR'
-                );
-                this.addValuesToMeasureMap(
-                        measuresMap,
-                        axisName,
-                        Connector.studyContext.gridBaseSchema,
-                        Connector.studyContext.gridBase,
-                        'TreatmentSummary',
-                        'VARCHAR'
-                );
-
-                this.addValuesToMeasureMap(
-                        measuresMap,
-                        axisName,
-                        Connector.studyContext.gridBaseSchema,
-                        Connector.studyContext.gridBase,
-                        'ProtocolDay',
-                        'INTEGER'
-                );
+                // include ParticipantSequenceNum to enable 'lazy' querying for point/bin tooltip information
+                this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'ParticipantSequenceNum', 'VARCHAR');
 
                 // only add the SequenceNum column for selected measures that are not demographic and no time point
                 if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') 
@@ -2912,18 +2839,34 @@ Ext.define('Connector.view.Chart', {
                     this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'SequenceNum', 'DOUBLE');
                 }
 
-                // if time is a selected axis, include the 'ParticipantSequenceNum' to allow for resolving
-                // time-based filters (a.k.a. Subject-Visit filters)
                 if (activeMeasures[axis].variableType === 'TIME')
                 {
                     this.addValuesToMeasureMap(
-                        measuresMap,
-                        axisName,
-                        Connector.studyContext.gridBaseSchema,
-                        Connector.studyContext.gridBase,
-                        'ParticipantSequenceNum',
-                        'VARCHAR'
+                            measuresMap,
+                            axisName,
+                            Connector.studyContext.gridBaseSchema,
+                            Connector.studyContext.gridBase,
+                            'Study',
+                            'VARCHAR'
                     );
+                    this.addValuesToMeasureMap(
+                            measuresMap,
+                            axisName,
+                            Connector.studyContext.gridBaseSchema,
+                            Connector.studyContext.gridBase,
+                            'TreatmentSummary',
+                            'VARCHAR'
+                    );
+
+                    this.addValuesToMeasureMap(
+                            measuresMap,
+                            axisName,
+                            Connector.studyContext.gridBaseSchema,
+                            Connector.studyContext.gridBase,
+                            'ProtocolDay',
+                            'INTEGER'
+                    );
+
                     this.addValuesToMeasureMap(
                             measuresMap,
                             axisName,

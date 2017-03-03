@@ -10,15 +10,131 @@ Ext.define('Connector.utility.PlotTooltip', {
 
     singleton: true,
 
-    buildPointTooltip: function(plot, data, studyShortName) {
+    loadBinTooltipData: function(plot, point, datas, plotName)
+    {
+        var rawRows = this.getRawDataRows(plot, datas);
+        var participantSeqContainerMap = {};
+        Ext.each(rawRows, function(row){
+            var participantSeq = row[QueryUtils.SUBJECT_SEQNUM_ALIAS];
+            participantSeqContainerMap[participantSeq] = row[QueryUtils.CONTAINER_ALIAS];
+        });
+        var participantSeqs = Object.keys(participantSeqContainerMap);
+
+        // in the case when a bin contains > 200 participant, skip querying studies for better perf
+        if (participantSeqs.length < 200)
+        {
+            LABKEY.Query.selectRows({
+                schemaName: 'cds',
+                queryName: 'gridbase',
+                method: 'POST',
+                filterArray: [
+                    LABKEY.Filter.create('ParticipantSequenceNum', Object.keys(participantSeqContainerMap).join(';'), LABKEY.Filter.Types.IN)
+                ],
+                success: function (results) {
+                    var records = results.rows, filteredRecords = [];
+                    Ext.each(records, function(record){
+                        if (participantSeqContainerMap[record.ParticipantSequenceNum] == record.Container)
+                            filteredRecords.push(record);
+                    });
+                    var plotData = {
+                        rows: filteredRecords
+                    };
+                    plotData.studyLabels = this.getStudyLabels(filteredRecords);
+                    this.showBinTooltip(plot, point, datas, plotName, plotData);
+                },
+                scope: this
+            });
+        }
+        else
+        {
+            this.showBinTooltip(plot, point, datas, plotName, {studyLabels: []});
+        }
+    },
+
+    showBinTooltip: function(plot, point, datas, plotName, plotData)
+    {
+        var content = this.buildBinTooltip(plot, datas, plotData);
+        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===plot.yGutterName, plotName===plot.xGutterName, plot);
+
+    },
+
+    getStudyLabels: function(records)
+    {
+        var studyLabelsObj = {};
+        Ext.each(records, function(record){
+            studyLabelsObj[record.Study] = true;
+        });
+        return Object.keys(studyLabelsObj);
+    },
+
+    getRawDataRows: function(plot, datas)
+    {
+        var rawRecords = [];
+        Ext.each(datas, function(data) {
+            var d = data.data;
+            rawRecords.push(plot.allDataRowsMap[d.rowKey]);
+        }, this);
+        return rawRecords;
+    },
+
+    loadPointTooltipData: function(plot, point, data, plotName)
+    {
+        var rawRow = plot.allDataRowsMap[data.rowKey];
+        var participantSeq = rawRow[QueryUtils.SUBJECT_SEQNUM_ALIAS];
+        var container = rawRow[QueryUtils.CONTAINER_ALIAS];
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'gridbase',
+            filterArray: [
+                LABKEY.Filter.create('ParticipantSequenceNum', participantSeq),
+                LABKEY.Filter.create('Container', container)
+            ],
+            success: function (results) {
+                var plotData = results.rows[0];
+                var studyLabel = plotData.Study;
+                if (plot.studyMap)
+                {
+                    plotData.StudyShortName = plot.studyMap[studyLabel];
+                    this.showPointTooltip(plot, point, data, plotName, plotData);
+                }
+                else
+                {
+                    LABKEY.Query.selectRows({
+                        schemaName: 'cds',
+                        queryName: 'study',
+                        success: function (studyData) {
+                            var studyRows = studyData.rows;
+                            var studyMap = {};
+                            Ext.each(studyRows, function (row) {
+                                studyMap[row.label] = row.short_name;
+                            });
+                            plot.studyMap = studyMap;
+                            plotData.StudyShortName = plot.studyMap[studyLabel];
+                            this.showPointTooltip(plot, point, data, plotName, plotData);
+                        },
+                        scope: this
+                    });
+                }
+            },
+            scope: this
+        });
+    },
+
+    showPointTooltip: function(plot, point, data, plotName, plotData)
+    {
+        var content = this.buildPointTooltip(plot, data, plotData);
+        ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===plot.yGutterName, plotName===plot.xGutterName, plot);
+    },
+
+    buildPointTooltip: function(plot, data, plotData) {
         var content = '', colon = ': ', linebreak = '<br/>';
         var record = plot.allDataRowsMap[data.rowKey], xAxis = plot.activeMeasures.x, yAxis = plot.activeMeasures.y;
 
-        if (record[QueryUtils.STUDY_ALIAS]) {
-            content += '<span class="group-title">' + Ext.htmlEncode(record[QueryUtils.STUDY_ALIAS]) + '</span>';
-            content +=  colon + Ext.htmlEncode(studyShortName);
+        if (plotData.Study) {
+            content += '<span class="group-title">' + Ext.htmlEncode(plotData.Study) + '</span>';
+            content +=  colon + Ext.htmlEncode(plotData.StudyShortName);
             content += '<div class="axis-details">';
-            content += 'Treatment Summary' + colon + record[QueryUtils.TREATMENTSUMMARY_ALIAS] + linebreak;
+            content += 'Treatment Summary' + colon + plotData.TreatmentSummary + linebreak;
             content += 'Subject' + colon + data.subjectId + linebreak;
             if (xAxis && xAxis.name == 'ProtocolDay') {
                 // Issue 29379: use alignment measure label for hover description
@@ -30,7 +146,7 @@ Ext.define('Connector.utility.PlotTooltip', {
                         + linebreak;
             }
             else {
-                content += 'Study Day' + colon + 'Day ' + record[QueryUtils.PROTOCOLDAY_ALIAS] + linebreak;
+                content += 'Study Day' + colon + 'Day ' + plotData.ProtocolDay + linebreak;
             }
             content += '</div>';
         }
@@ -52,7 +168,7 @@ Ext.define('Connector.utility.PlotTooltip', {
         }
 
         if (plot.activeMeasures.color && data.colorname) {
-            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(this.activeMeasures.color) + ' - ' + data.colorname) + '</span>' + colon + this.formatSingleTooltipValue(data.color);
+            content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(plot.activeMeasures.color) + ' - ' + data.colorname) + '</span>' + colon + this.formatSingleTooltipValue(data.color);
         }
 
         return content;
@@ -160,8 +276,8 @@ Ext.define('Connector.utility.PlotTooltip', {
         return valuesStr;
     },
 
-    buildBinTooltip: function(plot, datas) {
-        var xValsSet = {}, yValsSet = {}, subjectsSet = {}, studiesSet = {};
+    buildBinTooltip: function(plot, datas, plotData) {
+        var xValsSet = {}, yValsSet = {}, subjectsSet = {};
         var content = '', xName, yName, colon = ': ', linebreak = '<br/>';
         var xDimensionVals = {}, yDimensionVals = {};
         var xDimensions = plot.getAxisDimensionsArray(plot.activeMeasures.x), yDimensions = plot.getAxisDimensionsArray(plot.activeMeasures.y);
@@ -190,14 +306,13 @@ Ext.define('Connector.utility.PlotTooltip', {
             }
 
             var record = plot.allDataRowsMap[d.rowKey];
-            studiesSet[record[QueryUtils.STUDY_ALIAS]] = true;
 
             this.setBinDimensionValues(plot, xDimensionVals, xDimensions, record, xOptions, record.x ? record.x.rawRecord : null);
             this.setBinDimensionValues(plot, yDimensionVals, yDimensions, record, yOptions, record.y ? record.y.rawRecord : null);
 
         }, this);
 
-        var xVals = Object.keys(xValsSet), yVals = Object.keys(yValsSet), subjects = Object.keys(subjectsSet), studies = Object.keys(studiesSet);
+        var xVals = Object.keys(xValsSet), yVals = Object.keys(yValsSet), subjects = Object.keys(subjectsSet), studies = plotData.studyLabels;
 
         this.updateBinHierarchicalDimensionValues(xDimensionVals, xHierarchicalDimensionInfo);
         this.updateBinHierarchicalDimensionValues(yDimensionVals, yHierarchicalDimensionInfo);
@@ -351,9 +466,6 @@ Ext.define('Connector.utility.PlotTooltip', {
             }, this);
         }
         return content;
-    },
-
-
-
+    }
 
 });
