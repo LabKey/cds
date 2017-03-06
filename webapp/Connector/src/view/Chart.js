@@ -3203,7 +3203,8 @@ Ext.define('Connector.view.Chart', {
                     includeDefinedMeasureSources: true,
                     includeTimepointMeasures: true,
                     userFilter : function(row) {
-                        return !row.isMeasure;
+                        // Don't show time with alignment even in dev mode
+                        return !row.isMeasure && !(row.isDiscreteTime && row.hidden);
                     }
                 },
                 listeners: {
