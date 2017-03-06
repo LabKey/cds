@@ -28,7 +28,7 @@ Ext.define('Connector.utility.PlotTooltip', {
                 queryName: 'gridbase',
                 method: 'POST',
                 filterArray: [
-                    LABKEY.Filter.create('ParticipantSequenceNum', Object.keys(participantSeqContainerMap).join(';'), LABKEY.Filter.Types.IN)
+                    LABKEY.Filter.create('ParticipantSequenceNum', participantSeqs.join(';'), LABKEY.Filter.Types.IN)
                 ],
                 success: function (results) {
                     var records = results.rows, filteredRecords = [];
@@ -37,9 +37,9 @@ Ext.define('Connector.utility.PlotTooltip', {
                             filteredRecords.push(record);
                     });
                     var plotData = {
-                        rows: filteredRecords
+                        //rows: filteredRecords // if in the futher more info is needed for binned tooltip, pass in gridbase records
                     };
-                    plotData.studyLabels = this.getStudyLabels(filteredRecords);
+                    plotData.studyLabels = Ext.Array.unique(Ext.Array.pluck(filteredRecords, 'Study'));
                     this.showBinTooltip(plot, point, datas, plotName, plotData);
                 },
                 scope: this
@@ -56,15 +56,6 @@ Ext.define('Connector.utility.PlotTooltip', {
         var content = this.buildBinTooltip(plot, datas, plotData);
         ChartUtils.showDataTooltipCallout(content, point, 'hidetooltipmsg', plotName===plot.yGutterName, plotName===plot.xGutterName, plot);
 
-    },
-
-    getStudyLabels: function(records)
-    {
-        var studyLabelsObj = {};
-        Ext.each(records, function(record){
-            studyLabelsObj[record.Study] = true;
-        });
-        return Object.keys(studyLabelsObj);
     },
 
     getRawDataRows: function(plot, datas)
