@@ -226,7 +226,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         waitForElementText(Locator.css("h1"), "CAVD DataSpace member sign-in", 15000);
         handleSimpleLogin(NEW_USER_ACCOUNTS[1], "P@$$w0rd");
         sleep(5000);
-        waitForElementText(Locator.css("td.x-form-display-field-body[role='presentation']"), "Forbidden", 15000);
+        waitForElement(Locator.css("td.x-form-display-field-body[role='presentation']"), 15000);
 
         log("Click the ok button on the 'Forbidden' dialog to dismiss and continue.");
         click(Locator.xpath("//div[contains(@class, 'x-message-box')]//a[contains(@class, 'x-btn-noicon')][not(contains(@style, 'display: none'))]"));
