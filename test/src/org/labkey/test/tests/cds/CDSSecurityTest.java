@@ -218,7 +218,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         handleCreateAccount("P@$$w0rd", true);
         waitForTextToDisappear("Thanks for creating your account.");
         sleep(5000);
-        assertTrue("Login dialog should have been shown again with a blank password. I did nopt find an empty password field.", getFormElement(Locator.css("input[name='password']")).trim().length() == 0);
+        assertTrue("Login dialog should have been shown again with a blank password. I did not find an empty password field.", getFormElement(Locator.css("input[name='password']")).trim().length() == 0);
 
         // This sleep is unfortunate. I thought that the delay in the following waitForElementText would be enough, but it's not.
         sleep(5000);

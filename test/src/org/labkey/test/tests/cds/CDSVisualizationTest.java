@@ -471,7 +471,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Another special case scenario.
         log("Validating Date Made Public");
-        pattern = Pattern.compile("3/\\d\\d/20117/6/201110/30/20112/23/20126/\\d\\d/201210/11/20122/4/20135/31/201302468101214");
+        pattern = Pattern.compile("3/\\d\\d/20117/\\d/201110/30/20112/23/20126/\\d\\d/201210/11/20122/4/20135/31/201302468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
@@ -1405,8 +1405,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.applySelection("RED 4");
+        sleep(500);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        sleep(500);
 
         log("Click on a point in the plot and make sure the tool tip has the expected text.");
 
