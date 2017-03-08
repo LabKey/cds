@@ -133,7 +133,7 @@ public class CDSPlot
 
         if(hasXGutter())
         {
-            points = _test.getElementCount(Locator.css("div.plot svg g a.point"));
+            points = _test.getElementCount(Locator.css("div.bottomplot svg g a.point"));
         }
 
         return points;
@@ -145,7 +145,7 @@ public class CDSPlot
 
         if(hasYGutter())
         {
-            points = _test.getElementCount(Locator.css("div.bottomplot svg g a.point"));
+            points = _test.getElementCount(Locator.css("div.plot svg g a.point"));
         }
 
         return points;
