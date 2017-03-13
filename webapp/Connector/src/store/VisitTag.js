@@ -40,6 +40,7 @@ Ext.define('Connector.store.VisitTag', {
         // Since we are pre-calculating the day values in cds.GridBase for the single-use visit tags
         // (i.e. Enrollment, Last Vaccination), restrict the VisitTagSingleUse store to exactly that set.
         if (this.singleUseOnly) {
+            // TODO add 'First Vaccination'
             var preCalculatedAlignments = ['Enrollment', 'Last Vaccination'];
             filterArray.push(LABKEY.Filter.create('Name', preCalculatedAlignments.join(';'), LABKEY.Filter.Types.IN))
         }

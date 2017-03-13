@@ -191,6 +191,9 @@
             <column columnName="study_arm_visit_detail_label"/>
             <column columnName="isvaccvis"/>
             <column columnName="ischallvis"/>
+            <column columnName="enrollment"/>
+            <column columnName="firstvacc"/>
+            <column columnName="lastvacc"/>
         </columns>
     </table>
     <table tableName="import_studysitepersonnel" tableDbType="TABLE">
@@ -810,6 +813,7 @@
             <column columnName="SequenceNum"/>
             <column columnName="ProtocolDay"/>
             <column columnName="EnrollmentDay"/>
+            <column columnName="FirstVaccinationDay"/>
             <column columnName="LastVaccinationDay"/>
             <column columnName="Container"/>
         </columns>

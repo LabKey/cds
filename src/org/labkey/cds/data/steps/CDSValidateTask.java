@@ -72,7 +72,7 @@ public class CDSValidateTask extends AbstractPopulateTask
                         .append(row.get("study_group")).append("|").append(row.get("study_arm"))
                         .append(" in study ").append(row.get("prot"))
                         .append(" defines the following single-use visit tag for more than one visit: ")
-                        .append(row.get("study_arm_visit_label"))
+                        .append(row.get("visit_tag"))
                         .append(" (").append(row.get("assignment_count")).append(")");
             }
             logger.error(error);
