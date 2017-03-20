@@ -55,6 +55,10 @@ Ext.define('Connector.controller.Group', {
             click : this.onGroupCancel
         });
 
+        this.control('#groupplotview', {
+            click : this.onGroupPlotView
+        })
+
         this.control('groupsummary', {
             requestgroupdelete: this.doGroupDeleteFromSummary
         });
@@ -343,6 +347,10 @@ Ext.define('Connector.controller.Group', {
 
     onGroupCancel : function() {
         this.getViewManager().hideView('groupsave');
+    },
+
+    onGroupPlotView : function() {
+        this.getViewManager().changeView('chart');
     },
 
     onGroupSave : function(cmp)

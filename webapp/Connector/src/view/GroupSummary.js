@@ -210,7 +210,21 @@ Ext.define('Connector.view.GroupSummaryBody', {
                     html: '<div class="module"><h3>In the plot</h3></div>'
                 });
                 rightColumn.add(Connector.view.PlotPane.plotFilterContent(plotFilter));
+                rightColumn.add({
+                    xtype: 'button',
+                    text: 'View in Plot',
+                    itemId: 'groupplotview',
+                    style: 'margin-top: 20px'
+
+                })
             }
+        }
+        else
+        {
+            rightColumn.add({
+                xtype: 'box',
+                html: '<div class="module"><h3>No plot saved for this group.</h3></div>'
+            });
         }
 
         this.items.push(rightColumn);
