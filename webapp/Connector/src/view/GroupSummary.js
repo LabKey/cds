@@ -189,35 +189,28 @@ Ext.define('Connector.view.GroupSummaryBody', {
             items: []
         });
 
+        var plotFilter;
         if (this.group && this.group.get('containsPlot') === true)
         {
-            var filters = this.getGroupFilters(this.group),
-                plotFilter;
-
-            Ext.each(filters, function(filter)
-            {
-                if (filter.isPlot() && !filter.isGrid())
-                {
-                    plotFilter = filter;
-                    return false;
-                }
+            plotFilter = this.getGroupFilters(this.group)
+                    .find(function (filter) {
+                return filter.isPlot() && !filter.isGrid()
+            })
+        }
+        if (plotFilter)
+        {
+            rightColumn.add({
+                xtype: 'box',
+                html: '<div class="module"><h3>In the plot</h3></div>'
             });
+            rightColumn.add(Connector.view.PlotPane.plotFilterContent(plotFilter));
+            rightColumn.add({
+                xtype: 'button',
+                text: 'View in Plot',
+                itemId: 'groupplotview',
+                style: 'margin-top: 20px'
 
-            if (plotFilter)
-            {
-                rightColumn.add({
-                    xtype: 'box',
-                    html: '<div class="module"><h3>In the plot</h3></div>'
-                });
-                rightColumn.add(Connector.view.PlotPane.plotFilterContent(plotFilter));
-                rightColumn.add({
-                    xtype: 'button',
-                    text: 'View in Plot',
-                    itemId: 'groupplotview',
-                    style: 'margin-top: 20px'
-
-                })
-            }
+            })
         }
         else
         {

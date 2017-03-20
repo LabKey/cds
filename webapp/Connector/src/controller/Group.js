@@ -19,14 +19,10 @@ Ext.define('Connector.controller.Group', {
 
         this.control('grouplistview', {
             itemclick: function(v, grp, item) {
-                console.log('bar');
                 Animation.floatTo(item,
                         'div.grouplabel',
                         ['.selectionpanel', '.filterpanel', '.filterstatus .emptytext'],
-                        'div', 'grouprow',
-                        function() {
-                    console.log('baz')
-                }, this);
+                        'div', 'grouprow');
 
                 this.getViewManager().changeView('group', 'groupsummary', [grp.get('id')]);
             },
