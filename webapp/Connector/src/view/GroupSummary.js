@@ -192,10 +192,12 @@ Ext.define('Connector.view.GroupSummaryBody', {
         var plotFilter;
         if (this.group && this.group.get('containsPlot') === true)
         {
-            plotFilter = this.getGroupFilters(this.group)
-                    .find(function (filter) {
-                return filter.isPlot() && !filter.isGrid()
-            })
+            Ext.each(this.getGroupFilters(this.group), function (filter) {
+                if (filter.isPlot() && !filter.isGrid()) {
+                    plotFilter = filter;
+                    return false;
+                }
+            });
         }
         if (plotFilter)
         {
