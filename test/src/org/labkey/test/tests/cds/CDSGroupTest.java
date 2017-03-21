@@ -19,6 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.pages.cds.XAxisVariableSelector;
+import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSAsserts;
@@ -42,6 +44,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String STUDY_GROUP = "Study Group Verify";
     private static final String SHARED_GROUP_NAME = "shared_Group";
+    private static final String GROUP_PLOT_TEST = "Group Plot Test";
 
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
 
@@ -135,6 +138,9 @@ public class CDSGroupTest extends CDSReadOnlyTest
         // Verify that the description has changed.
         waitForText(studyGroupDescModified);
 
+        // Verify that No plot data message is shown
+        assertTextPresent("No plot saved for this group.");
+
         // verify 'whoops' case
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("create a new group");
@@ -183,6 +189,40 @@ public class CDSGroupTest extends CDSReadOnlyTest
         cds.deleteGroupFromSummaryPage(STUDY_GROUP);
 
         cds.clearFilters();
+
+        //Compose new Group
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
+        cds.useSelectionAsSubjectFilter();
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.confirmSelection();
+
+        cds.saveGroup(GROUP_PLOT_TEST , "");
+
+        cds.clearFilters();
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForText(GROUP_PLOT_TEST );
+        click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_PLOT_TEST ));
+        waitForText("View in Plot");
+        click(Locator.xpath("//span/following::span[contains(text(), 'View in Plot')]").parent().parent().parent());
+        // Simply verify that we are on the plot page. Other tests validate plot functionality.
+        assertTrue(getDriver().getCurrentUrl().contains("#chart"));
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        cds.deleteGroupFromSummaryPage(GROUP_PLOT_TEST );
     }
 
     @Test
