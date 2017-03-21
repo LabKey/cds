@@ -326,9 +326,9 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         // but that is more effort that I have time for now.
         expectedToolTipText = new ArrayList<>();
         expectedToolTipText.add("RED 4");
-        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment & First Vaccination");
         cssPath = "div.bottomplot > svg > g:nth-child(2) > image:nth-of-type(9)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
@@ -345,18 +345,18 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111");
-        expectedToolTipText.add("Group 1 Arm Ca Placebo: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 2 Arm Ca Placebo: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 3 Arm Ca Placebo: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 4 Arm Ca Placebo: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 4 Arm T4 Vaccine: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 5 Arm Cb Placebo: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 5 Arm T5 Vaccine: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 7 Arm Cb Placebo: Enrollment, Vaccination");
-        expectedToolTipText.add("Group 7 Arm T7 Vaccine: Enrollment, Vaccination");
+        expectedToolTipText.add("Group 1 Arm Ca Placebo: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 2 Arm Ca Placebo: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 3 Arm Ca Placebo: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 4 Arm Ca Placebo: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 4 Arm T4 Vaccine: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 5 Arm Cb Placebo: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 5 Arm T5 Vaccine: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 7 Arm Cb Placebo: Enrollment & First Vaccination");
+        expectedToolTipText.add("Group 7 Arm T7 Vaccine: Enrollment & First Vaccination");
         cssPath = "div.bottomplot > svg > g:nth-child(4) > image:nth-of-type(11)";
         cdsPlot.timeAxisToolTipsTester(cssPath, expectedToolTipText);
 

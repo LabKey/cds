@@ -23,6 +23,7 @@ vtm.study_group_id.group_name,
 vtm.visit_row_id,
 vtm.is_vaccination,
 vtm.is_challenge,
+vtm.visit_tag_label,
 vtm.detail_label,
 
 v.ProtocolDay AS protocol_day,
