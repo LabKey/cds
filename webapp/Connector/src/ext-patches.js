@@ -63,6 +63,10 @@ Ext.override(Ext.grid.View, {
         var me = this,
                 highlighted = me.highlightedItem;
 
+        // skip highlighting if table row no longer exist (due to the 200ms delay, which is unlikely to happen outside automated tests
+        if (!me.el)
+            return;
+
         if (highlighted && me.el.isAncestor(highlighted) && me.isRowStyleFirst(highlighted)) {
             me.getRowStyleTableEl(highlighted).removeCls(me.tableOverFirstCls);
         }
