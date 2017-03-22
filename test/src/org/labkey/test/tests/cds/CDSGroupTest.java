@@ -210,9 +210,9 @@ public class CDSGroupTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.confirmSelection();
 
-        cds.saveGroup(GROUP_PLOT_TEST , "");
+        cds.saveGroup(GROUP_PLOT_TEST, "a plot", false, true);
 
-        cds.clearFilters();
+        cds.clearFilters(true);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(GROUP_PLOT_TEST );
