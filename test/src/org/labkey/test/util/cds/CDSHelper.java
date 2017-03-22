@@ -601,10 +601,6 @@ public class CDSHelper
             }
         }
 
-        if (_test.isElementVisible(Locators.cdsButtonLocator("create a new group"))) {
-            _test.click(Locators.cdsButtonLocator("create a new group"));
-        }
-
         _test.setFormElement(Locator.name("groupname"), name);
         if (null != description)
             _test.setFormElement(Locator.name("groupdescription"), description);
@@ -1287,7 +1283,7 @@ public class CDSHelper
 
     private void applyAndMaybeWaitForBars(Function<Void, Void> function)
     {
-        if (_test.isElementVisible(Locator.id("single-axis-explorer")))
+        if (_test.isElementPresent(Locator.id("single-axis-explorer")))
         {
             applyAndWaitForBars(function);
         }
