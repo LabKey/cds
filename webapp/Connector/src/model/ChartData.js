@@ -252,6 +252,7 @@ Ext.define('Connector.model.ChartData', {
             hasNegOrZeroX = false, hasNegOrZeroY = false,
             yMeasureFilter = {}, xMeasureFilter = {}, zMeasureFilter = {},
             excludeAliases = [],
+            excludeColorAliases = [],
             mainCount = 0,
             nonAggregated,
             singleAntigenComparison = false,
@@ -311,6 +312,11 @@ Ext.define('Connector.model.ChartData', {
         if (this.isSameSource(xa, ya))
         {
             excludeAliases = ChartUtils.getAssayDimensionsWithDifferentValues(y, x, true);
+            // exclude if x, y and color are all from same source, and ca is not a dimension with diff filter values
+            if (this.isSameSource(xa, ca) && excludeAliases.indexOf(ca.alias) == -1)
+            {
+                excludeColorAliases.push(ca.alias);
+            }
         }
 
         // if there is a DATASET_ALIAS column from the axisName property, use it to filter
@@ -365,7 +371,7 @@ Ext.define('Connector.model.ChartData', {
 
         var getAllDimensions = !nonAggregated || hasSameDimensions;
 
-        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated), getAllDimensions);
+        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases.concat(excludeColorAliases), nonAggregated), getAllDimensions);
 
         var allRows = {};
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
@@ -375,7 +381,7 @@ Ext.define('Connector.model.ChartData', {
 
             yVal = this._getYValue(y, _yid, _row);
             xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
-            colorVal = color ? this._getColorValue(color, _cid, _row, singleAntigenComparison) : undefined;
+            colorVal = color ? this._getColorValue(color, _cid, _row, singleAntigenComparison, excludeColorAliases.length > 0) : undefined;
 
             // build study container alignment day map
             if (_row[QueryUtils.CONTAINER_ALIAS])
@@ -627,8 +633,18 @@ Ext.define('Connector.model.ChartData', {
         }
     },
 
-    _getColorValue : function(measure, alias, row, isMultiValue) {
-        if (isMultiValue || (Ext.isDefined(row.z) && !row.z.isUnique))
+    _getColorValue : function(measure, alias, row, isMultiValue, isSameXYC) {
+        if (isSameXYC && Ext.isDefined(row.z))
+        {
+            var colorVal = row.z.value;
+            var xVal = row.x && row.x.rawRecord && row.x.rawRecord[alias] ? row.x.rawRecord[alias].value : null;
+            var yVal = row.y && row.y.rawRecord && row.y.rawRecord[alias] ? row.y.rawRecord[alias].value : null;
+
+            if (xVal === yVal && xVal === colorVal)
+                return colorVal;
+            return 'Multiple values';
+        }
+        else if (isMultiValue || (Ext.isDefined(row.z) && !row.z.isUnique))
         {
             // issue 23903: if the color value isn't unique because of aggregation, use 'Multiple values' for the legend
             // issue 24805: if the color variable is an assay dimension with an x vs y filter on distinct single values,

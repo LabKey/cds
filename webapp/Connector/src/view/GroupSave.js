@@ -418,14 +418,10 @@ Ext.define('Connector.view.GroupSave', {
                     ui: 'lightfooter',
                     style: 'padding-top: 60px',
                     items: ['->',{
-                        text: 'Save',
-                        itemId: 'groupupdatesave',
-                        cls: 'groupupdatesave' // tests
-                    },{
                         text: 'Cancel',
                         itemId: 'groupcancel',
                         cls: 'groupcancelreplace' // tests
-                    }]
+                    },this.getGroupUpdateSaveBtn()]
                 }],
                 getForm : function()
                 {
@@ -442,6 +438,18 @@ Ext.define('Connector.view.GroupSave', {
         }
 
         return this.replaceGroup;
+    },
+
+    getGroupUpdateSaveBtn : function()
+    {
+        if (!this.groupUpdateSaveBtn) {
+            this.groupUpdateSaveBtn = Ext.create('Ext.Button', {
+                text: 'Save',
+                itemId: 'groupupdatesave',
+                cls: 'groupupdatesave' // tests
+            });
+        }
+        return this.groupUpdateSaveBtn;
     },
 
     changeMode : function(mode)
@@ -588,7 +596,20 @@ Ext.define('Connector.view.GroupSave', {
         if (this.grouplist)
         {
             this.grouplist.getSelectionModel().deselectAll();
-            this.grouplist.getStore().load();
+            var me = this;
+            this.grouplist.getStore().load(function toggleSave(records) {
+                var group = me.grouplist.getStore().getAt(0);
+                if (group)
+                {
+                    me.getGroupUpdateSaveBtn().setDisabled(false);
+                    me.grouplist.getSelectionModel().select(0);
+                    me.setActive(group, me.getReplaceGroup().getForm());
+                }
+                else
+                {
+                    me.getGroupUpdateSaveBtn().setDisabled(true);
+                }
+            });
         }
     },
 

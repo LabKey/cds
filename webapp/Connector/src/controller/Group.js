@@ -395,6 +395,10 @@ Ext.define('Connector.controller.Group', {
             scope: this,
             success: function() {
                 Connector.model.Group.getGroupStore().load();
+                var editGroupView = this.getViewManager().getViewInstance('groupsave');
+                if (editGroupView)
+                    editGroupView.refresh();
+
                 this.getViewManager().changeView('home');
             },
             failure: function(response) {
