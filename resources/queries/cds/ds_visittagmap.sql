@@ -28,7 +28,7 @@ arm_visit.study_arm_visit_detail_label AS detail_label
 FROM cds.import_studypartgrouparmvisit AS arm_visit
 JOIN (SELECT * FROM cds.studygroup) AS studygroup ON (studygroup.container.name = arm_visit.prot AND studygroup.group_name = arm_visit.study_group)
 JOIN (SELECT * FROM study.visit) AS visit ON (visit.Folder.Name = arm_visit.prot AND visit.sequencenummin = CAST(arm_visit.study_day AS DOUBLE))
-WHERE arm_visit.study_arm_visit_type IS NOT NULL
+WHERE arm_visit.study_arm_visit_type IS NOT NULL AND arm_visit.study_arm_visit_type != 'Placeholder'
 
 UNION
 

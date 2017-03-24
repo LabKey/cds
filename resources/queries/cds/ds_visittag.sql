@@ -18,7 +18,7 @@ DISTINCT arm_visit.study_arm_visit_type AS Name,
 arm_visit.study_arm_visit_type AS caption,
 FALSE AS SingleUse
 FROM cds.import_studypartgrouparmvisit AS arm_visit
-WHERE study_arm_visit_type IS NOT NULL
+WHERE study_arm_visit_type IS NOT NULL AND study_arm_visit_type != 'Placeholder'
 
 -- add the pre-defined alignment visits tags
 UNION ALL SELECT 'Enrollment' AS Name, 'Enrollment' AS caption, TRUE AS SingleUse

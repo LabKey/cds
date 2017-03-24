@@ -189,6 +189,10 @@ Ext.define('Connector.model.StudyAxisData', {
             isVaccination = record.get('is_vaccination');
             isChallenge = record.get('is_challenge');
 
+            // don't show study axis icon for Placeholder visit tag
+            if (visitTagLabel == 'Placeholder' || visitTagLabel == null)
+                return true; // continue
+
             if (group)
             {
                 shiftVal -= (study.alignShiftValue - group.alignShiftValue);
