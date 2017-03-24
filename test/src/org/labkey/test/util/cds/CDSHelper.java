@@ -583,7 +583,18 @@ public class CDSHelper
 
     public boolean saveGroup(String name, @Nullable String description, boolean shared)
     {
+        return saveGroup(name, description, shared, false);
+    }
+
+    public boolean saveGroup(String name, @Nullable String description, boolean shared, boolean skipWaitForBar)
+    {
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
+
+        if (_test.isElementVisible(Locators.cdsButtonLocator("create a new group")))
+        {
+            _test.click(Locators.cdsButtonLocator("create a new group"));
+        }
+
         _test.waitForText("replace an existing group");
 
         Locator.XPathLocator shareGroupCheckbox = Locator.xpath("//input[contains(@id,'creategroupshared')]");
@@ -605,10 +616,18 @@ public class CDSHelper
         if (null != description)
             _test.setFormElement(Locator.name("groupdescription"), description);
 
-        applyAndMaybeWaitForBars(aVoid -> {
+        if (skipWaitForBar)
+        {
             _test.click(Locators.cdsButtonLocator("Save", "groupcreatesave"));
-            return null;
-        });
+        }
+        else
+        {
+            applyAndMaybeWaitForBars(aVoid -> {
+                _test.click(Locators.cdsButtonLocator("Save", "groupcreatesave"));
+                return null;
+            });
+        }
+
         return true;
     }
 
@@ -846,12 +865,25 @@ public class CDSHelper
 
     public void clearFilters()
     {
+        clearFilters(false);
+    }
+
+    public void clearFilters(boolean skipWaitForBar)
+    {
         final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
 
-        applyAndMaybeWaitForBars(aVoid -> {
+        if (skipWaitForBar)
+        {
             clearButton.click();
-            return null;
-        });
+        }
+        else
+        {
+            applyAndMaybeWaitForBars(aVoid -> {
+                clearButton.click();
+                return null;
+            });
+        }
+
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));

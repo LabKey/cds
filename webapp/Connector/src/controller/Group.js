@@ -18,7 +18,12 @@ Ext.define('Connector.controller.Group', {
     init : function() {
 
         this.control('grouplistview', {
-            itemclick: function(v, grp) {
+            itemclick: function(v, grp, item) {
+                Animation.floatTo(item,
+                        'div.grouplabel',
+                        ['.selectionpanel', '.filterpanel', '.filterstatus .emptytext'],
+                        'div', 'grouprow');
+
                 this.getViewManager().changeView('group', 'groupsummary', [grp.get('id')]);
             },
             render: function(view) {
@@ -45,6 +50,10 @@ Ext.define('Connector.controller.Group', {
         this.control('#groupcancel', {
             click : this.onGroupCancel
         });
+
+        this.control('#groupplotview', {
+            click : this.onGroupPlotView
+        })
 
         this.control('groupsummary', {
             requestgroupdelete: this.doGroupDeleteFromSummary
@@ -334,6 +343,10 @@ Ext.define('Connector.controller.Group', {
 
     onGroupCancel : function() {
         this.getViewManager().hideView('groupsave');
+    },
+
+    onGroupPlotView : function() {
+        this.getViewManager().changeView('chart');
     },
 
     onGroupSave : function(cmp)
