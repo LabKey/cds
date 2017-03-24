@@ -130,11 +130,11 @@ q2	NA	Group IV	T4	98	701	14	4	Follow-Up	Follow-Up	leo	FALSE	FALSE	FALSE	FALSE	FA
 q2	NA	Group IV	T4	168	801	24	6	Follow-Up	Follow-Up	ante	FALSE	FALSE	FALSE	FALSE	FALSE
 q2	NA	Group IV	T4	273	901	39	10	Follow-Up	Follow-Up	pellentesque	FALSE	FALSE	FALSE	FALSE	FALSE
 q2	NA	Group IV	T4	364	1001	52	13	Follow-Up	Follow-Up	blandit	FALSE	FALSE	FALSE	FALSE	FALSE
-q2	NA	Group V	C	0	201	0	0	Vaccination	Enrollment & First Vaccination	aliquam	TRUE	FALSE	TRUE	TRUE	FALSE
+q2	NA	Group V	C	0	201	0	0	Follow-Up	Enrollment	aliquam	FALSE	FALSE	TRUE	TRUE	FALSE
 q2	NA	Group V	C	14	301	2	1	Follow-Up	Follow-Up	consequat	FALSE	FALSE	FALSE	FALSE	FALSE
-q2	NA	Group V	C	28	401	4	1	Vaccination	Vaccination	ac	TRUE	FALSE	FALSE	FALSE	FALSE
+q2	NA	Group V	C	28	401	4	1	Follow-Up	Follow-Up	ac	FALSE	FALSE	FALSE	FALSE	FALSE
 q2	NA	Group V	C	42	501	6	2	Follow-Up	Follow-Up	gravida	FALSE	FALSE	FALSE	FALSE	FALSE
-q2	NA	Group V	C	84	601	12	3	Vaccination	Last Vaccination	duis	TRUE	FALSE	FALSE	FALSE	TRUE
+q2	NA	Group V	C	84	601	12	3	Placeholder	\N	duis	FALSE	FALSE	FALSE	FALSE	TRUE
 q2	NA	Group V	C	98	701	14	4	Follow-Up	Follow-Up	volutpat	FALSE	FALSE	FALSE	FALSE	FALSE
 q2	NA	Group V	C	168	801	24	6	Follow-Up	Follow-Up	feugiat	FALSE	FALSE	FALSE	FALSE	FALSE
 q2	NA	Group V	C	273	901	39	10	Follow-Up	Follow-Up	rhoncus	FALSE	FALSE	FALSE	FALSE	FALSE
@@ -1793,7 +1793,10 @@ r5	NA	Group 4	C4	168	801	24	6	Vaccination	Last Vaccination	arcu	TRUE	FALSE	FALSE
 r5	NA	Group 4	C4	182	901	26	7	Follow-Up	Follow-Up	luctus	FALSE	FALSE	FALSE	FALSE	FALSE
 r5	NA	Group 4	C4	273	1001	39	10	Follow-Up	Follow-Up	magna	FALSE	FALSE	FALSE	FALSE	FALSE
 r5	NA	Group 4	C4	364	1101	52	13	Follow-Up	Follow-Up	a	FALSE	FALSE	FALSE	FALSE	FALSE
-r6	NA	Group T1	T1	0	201	0	0	Vaccination	Enrollment & First Vaccination	ultrices	TRUE	FALSE	TRUE	TRUE	FALSE
+r6	NA	Group T1	T1	-100	101	-15	-4	Vaccination	First Vaccination	ultrices	TRUE	FALSE	FALSE	TRUE	FALSE
+r6	NA	Group T1	T1	-50	102	-8	-2	Follow-Up	Enrollment	ultrices	FALSE	FALSE	TRUE	FALSE	FALSE
+r6	NA	Group T1	T1	-20	103	-3	-1	Follow-Up	Follow-Up	ultrices	FALSE	FALSE	FALSE	FALSE	FALSE
+r6	NA	Group T1	T1	0	201	0	0	Vaccination	Vaccination	ultrices	TRUE	FALSE	FALSE	FALSE	FALSE
 r6	NA	Group T1	T1	1	301	1	1	Follow-Up	Follow-Up	volutpat	FALSE	FALSE	FALSE	FALSE	FALSE
 r6	NA	Group T1	T1	3	401	1	1	Follow-Up	Follow-Up	erat	FALSE	FALSE	FALSE	FALSE	FALSE
 r6	NA	Group T1	T1	7	501	1	1	Follow-Up	Follow-Up	volutpat	FALSE	FALSE	FALSE	FALSE	FALSE
@@ -3083,13 +3086,13 @@ y55	NA	Group 2	C2	273	1101	39	10	Follow-Up	Follow-Up	dapibus	FALSE	FALSE	FALSE	F
 y55	NA	Group 2	C2	364	1201	52	13	Follow-Up	Follow-Up	eget	FALSE	FALSE	FALSE	FALSE	FALSE
 y55	NA	Group 2	C2	455	1301	65	17	Follow-Up	Follow-Up	morbi	FALSE	FALSE	FALSE	FALSE	FALSE
 y55	NA	Group 2	C2	545	1401	78	20	Follow-Up	Follow-Up	pellentesque	FALSE	FALSE	FALSE	FALSE	FALSE
-y55	NA	Group 3	T3	0	201	0	0	Vaccination	Enrollment & First Vaccination	turpis	TRUE	FALSE	TRUE	TRUE	FALSE
+y55	NA	Group 3	T3	0	201	0	0	Vaccination	Enrollment & First Vaccination & Challenge	turpis	TRUE	TRUE	TRUE	TRUE	FALSE
 y55	NA	Group 3	T3	14	301	2	1	Follow-Up	Follow-Up	suspendisse	FALSE	FALSE	FALSE	FALSE	FALSE
 y55	NA	Group 3	T3	28	401	4	1	Vaccination	Vaccination	lorem	TRUE	FALSE	FALSE	FALSE	FALSE
 y55	NA	Group 3	T3	42	501	6	2	Challenge	Challenge	etiam	FALSE	TRUE	FALSE	FALSE	FALSE
 y55	NA	Group 3	T3	84	601	12	3	Vaccination	Vaccination	cum	TRUE	FALSE	FALSE	FALSE	FALSE
 y55	NA	Group 3	T3	98	701	14	4	Follow-Up	Follow-Up	nunc	FALSE	FALSE	FALSE	FALSE	FALSE
-y55	NA	Group 3	T3	168	801	24	6	Vaccination	Last Vaccination	volutpat	TRUE	FALSE	FALSE	FALSE	TRUE
+y55	NA	Group 3	T3	168	801	24	6	Vaccination	Last Vaccination & Challenge	volutpat	TRUE	TRUE	FALSE	FALSE	TRUE
 y55	NA	Group 3	T3	182	901	26	7	Follow-Up	Follow-Up	est	FALSE	FALSE	FALSE	FALSE	FALSE
 y55	NA	Group 3	T3	196	1001	28	7	Follow-Up	Follow-Up	felis	FALSE	FALSE	FALSE	FALSE	FALSE
 y55	NA	Group 3	T3	273	1101	39	10	Follow-Up	Follow-Up	iaculis	FALSE	FALSE	FALSE	FALSE	FALSE
@@ -3490,9 +3493,9 @@ z134	NA	Group 2	C1	545	1401	78	20	Follow-Up	Follow-Up	ornare	FALSE	FALSE	FALSE	F
 z134	NA	Group 2	C1	727	1501	104	26	Follow-Up	Follow-Up	ut	FALSE	FALSE	FALSE	FALSE	FALSE
 z134	NA	Group 2	C1	909	1601	130	33	Follow-Up	Follow-Up	cras	FALSE	FALSE	FALSE	FALSE	FALSE
 z134	NA	Group 2	C1	1091	1701	156	39	Follow-Up	Follow-Up	imperdiet	FALSE	FALSE	FALSE	FALSE	FALSE
-z136	NA	All	1	0	201	0	0	Vaccination	Enrollment & First Vaccination	posuere	TRUE	FALSE	TRUE	TRUE	FALSE
+z136	NA	All	1	0	201	0	0	Follow-Up	Follow-Up	posuere	FALSE	FALSE	TRUE	TRUE	TRUE
 z136	NA	All	1	14	301	2	1	Follow-Up	Follow-Up	cras	FALSE	FALSE	FALSE	FALSE	FALSE
-z136	NA	All	1	28	401	4	1	Vaccination	Last Vaccination	mauris	TRUE	FALSE	FALSE	FALSE	TRUE
+z136	NA	All	1	28	401	4	1	Follow-Up	Follow-Up	mauris	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	1	56	501	8	2	Follow-Up	Follow-Up	turpis	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	1	84	601	12	3	Follow-Up	Follow-Up	scelerisque	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	1	112	5401	16	4	Follow-Up	Follow-Up	duis	FALSE	FALSE	FALSE	FALSE	FALSE
@@ -3512,9 +3515,9 @@ z136	NA	All	1	1093	1701	157	40	Follow-Up	Follow-Up	interdum	FALSE	FALSE	FALSE	FA
 z136	NA	All	1	1183	1801	169	43	Follow-Up	Follow-Up	eget	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	1	1274	1401	182	46	Follow-Up	Follow-Up	vitae	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	1	1456	1501	208	52	Follow-Up	Follow-Up	tellus	FALSE	FALSE	FALSE	FALSE	FALSE
-z136	NA	All	2	0	201	0	0	Vaccination	Enrollment & First Vaccination	maecenas	TRUE	FALSE	TRUE	TRUE	FALSE
+z136	NA	All	2	0	201	0	0	Follow-Up	Follow-Up	maecenas	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	2	14	301	2	1	Follow-Up	Follow-Up	interdum	FALSE	FALSE	FALSE	FALSE	FALSE
-z136	NA	All	2	28	401	4	1	Vaccination	Last Vaccination	velit	TRUE	FALSE	FALSE	FALSE	TRUE
+z136	NA	All	2	28	401	4	1	Follow-Up	Follow-Up	velit	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	2	56	501	8	2	Follow-Up	Follow-Up	rhoncus	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	2	84	601	12	3	Follow-Up	Follow-Up	ultrices	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	2	112	5401	16	4	Follow-Up	Follow-Up	eleifend	FALSE	FALSE	FALSE	FALSE	FALSE
@@ -3533,7 +3536,7 @@ z136	NA	All	2	1092	1301	156	39	Follow-Up	Follow-Up	mus	FALSE	FALSE	FALSE	FALSE	F
 z136	NA	All	2	1093	1701	157	40	Follow-Up	Follow-Up	libero	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	2	1183	1801	169	43	Follow-Up	Follow-Up	nulla	FALSE	FALSE	FALSE	FALSE	FALSE
 z136	NA	All	2	1274	1401	182	46	Follow-Up	Follow-Up	ut	FALSE	FALSE	FALSE	FALSE	FALSE
-z136	NA	All	2	1456	1501	208	52	Follow-Up	Follow-Up	nisl	FALSE	FALSE	FALSE	FALSE	FALSE
+z136	NA	All	2	1456	1501	208	52	Follow-Up	Follow-Up	nisl	FALSE	FALSE	TRUE	TRUE	TRUE
 z139	NA	Group 1	T1	0	201	0	0	Vaccination	Enrollment & First Vaccination	suscipit	TRUE	FALSE	TRUE	TRUE	FALSE
 z139	NA	Group 1	T1	28	301	4	1	Follow-Up	Follow-Up	ligula	FALSE	FALSE	FALSE	FALSE	FALSE
 z139	NA	Group 1	T1	42	5301	6	2	Follow-Up	Follow-Up	cras	FALSE	FALSE	FALSE	FALSE	FALSE
@@ -3676,35 +3679,35 @@ z138	NA	Group 5	T2+T5	168	3101	24	6	Vaccination	Last Vaccination	tellus	TRUE	FAL
 z138	NA	Group 5	T2+T5	169	3201	25	7	Follow-Up	Follow-Up	ultrices	FALSE	FALSE	FALSE	FALSE	FALSE
 z138	NA	Group 5	T2+T5	273	3301	39	10	Follow-Up	Follow-Up	volutpat	FALSE	FALSE	FALSE	FALSE	FALSE
 z138	NA	Group 5	T2+T5	364	3401	52	13	Follow-Up	Follow-Up	posuere	FALSE	FALSE	FALSE	FALSE	FALSE
-z105	NA	Group 1	AA	0	201	0	0	Vaccination	Enrollment & First Vaccination	tincidunt	TRUE	FALSE	TRUE	TRUE	FALSE
+z105	NA	Group 1	AA	0	201	0	0	Follow-Up	Enrollment	tincidunt	FALSE	FALSE	TRUE	FALSE	FALSE
 z105	NA	Group 1	AA	19	703	3	1	Follow-Up	Follow-Up	porttitor	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 1	AA	38	803	5	2	Follow-Up	Follow-Up	nulla	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 1	AA	57	903	8	2	Follow-Up	Follow-Up	scelerisque	FALSE	FALSE	FALSE	FALSE	FALSE
-z105	NA	Group 1	AA	75	1003	10	3	Vaccination	Last Vaccination	at	TRUE	FALSE	FALSE	FALSE	TRUE
+z105	NA	Group 1	AA	75	1003	10	3	Vaccination	First Vaccination & Last Vaccination	at	TRUE	FALSE	FALSE	TRUE	TRUE
 z105	NA	Group 1	AA	95	1103	13	4	Follow-Up	Follow-Up	augue	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 1	AA	114	1203	16	4	Follow-Up	Follow-Up	dolor	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 1	AA	132	1303	18	5	Challenge	Challenge	amet	FALSE	TRUE	FALSE	FALSE	FALSE
-z105	NA	Group 1	BB	0	201	0	0	Vaccination	Enrollment & First Vaccination	at	TRUE	FALSE	TRUE	TRUE	FALSE
+z105	NA	Group 1	BB	0	201	0	0	Follow-Up	Enrollment	at	FALSE	FALSE	TRUE	FALSE	FALSE
 z105	NA	Group 1	BB	19	703	3	1	Follow-Up	Follow-Up	augue	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 1	BB	38	803	5	2	Follow-Up	Follow-Up	non	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 1	BB	57	903	8	2	Challenge	Challenge	consectetuer	FALSE	TRUE	FALSE	FALSE	FALSE
 z105	NA	Group 1	BB	75	1003	10	3	Follow-Up	Follow-Up	diam	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 1	BB	95	1103	13	4	Follow-Up	Follow-Up	tellus	FALSE	FALSE	FALSE	FALSE	FALSE
-z105	NA	Group 1	BB	114	1203	16	4	Vaccination	Last Vaccination	ultrices	TRUE	FALSE	FALSE	FALSE	TRUE
+z105	NA	Group 1	BB	114	1203	16	4	Vaccination	First Vaccination & Last Vaccination	ultrices	TRUE	FALSE	FALSE	TRUE	TRUE
 z105	NA	Group 1	BB	132	1303	18	5	Follow-Up	Follow-Up	volutpat	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 2	AA	0	201	0	0	Follow-Up	Follow-Up	suscipit	FALSE	FALSE	FALSE	FALSE	FALSE
-z105	NA	Group 2	AA	15	704	3	1	Vaccination	Enrollment & First Vaccination	ligula	TRUE	FALSE	TRUE	TRUE	FALSE
+z105	NA	Group 2	AA	15	704	3	1	Follow-Up	Enrollment	ligula	FALSE	FALSE	TRUE	FALSE	FALSE
 z105	NA	Group 2	AA	30	804	5	1	Follow-Up	Follow-Up	cras	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 2	AA	45	904	7	2	Follow-Up	Follow-Up	sapien	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 2	AA	60	1004	9	2	Follow-Up	Follow-Up	quisque	FALSE	FALSE	FALSE	FALSE	FALSE
-z105	NA	Group 2	AA	75	1104	11	3	Vaccination	Last Vaccination	eget	TRUE	FALSE	FALSE	FALSE	TRUE
+z105	NA	Group 2	AA	75	1104	11	3	Vaccination	First Vaccination & Last Vaccination	eget	TRUE	FALSE	FALSE	TRUE	TRUE
 z105	NA	Group 2	AA	90	1204	13	3	Follow-Up	Follow-Up	ipsum	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 2	AA	105	1304	15	4	Follow-Up	Follow-Up	lectus	FALSE	FALSE	FALSE	FALSE	FALSE
-z105	NA	Group 2	BB	0	201	0	0	Vaccination	Enrollment & First Vaccination	aliquet	TRUE	FALSE	TRUE	TRUE	FALSE
+z105	NA	Group 2	BB	0	201	0	0	Follow-Up	Enrollment	aliquet	FALSE	FALSE	TRUE	FALSE	FALSE
 z105	NA	Group 2	BB	15	704	3	1	Follow-Up	Follow-Up	convallis	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 2	BB	30	804	5	1	Challenge	Challenge	ultrices	FALSE	TRUE	FALSE	FALSE	FALSE
 z105	NA	Group 2	BB	45	904	7	2	Follow-Up	Follow-Up	mauris	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 2	BB	60	1004	9	2	Follow-Up	Follow-Up	ac	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 2	BB	75	1104	11	3	Follow-Up	Follow-Up	sapien	FALSE	FALSE	FALSE	FALSE	FALSE
 z105	NA	Group 2	BB	90	1204	13	3	Follow-Up	Follow-Up	nulla	FALSE	FALSE	FALSE	FALSE	FALSE
-z105	NA	Group 2	BB	110	1304	15	4	Vaccination	Last Vaccination	mauris	TRUE	FALSE	FALSE	FALSE	TRUE
+z105	NA	Group 2	BB	110	1304	15	4	Vaccination	First Vaccination & Last Vaccination	mauris	TRUE	FALSE	FALSE	TRUE	TRUE

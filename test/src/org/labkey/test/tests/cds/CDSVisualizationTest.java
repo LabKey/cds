@@ -444,7 +444,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
 
         log("Validating Treatment Summary");
-        assertEquals("Unexpected number of tick marks on the x-axis.", 89, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis.", 91, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
@@ -461,8 +461,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Special casing this test. for what ever reason sometimes it will have 3/13/2011 other times it will be 3/12/2011.
         // Because this value appears to be calculated I will use regular expression to validate.
         log("Validating Followup Complete");
-//        Pattern p = Pattern.compile("1/10/20088/11/20093/\\d\\d/201110/11/201202468101214");
-        pattern = Pattern.compile(".*02468101214{1}");
+        pattern = Pattern.compile("4/25/20156/22/20158/19/201510/16/201512/1[0-9]/201502468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
@@ -471,7 +470,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Another special case scenario.
         log("Validating Date Made Public");
-        pattern = Pattern.compile("3/\\d\\d/20117/\\d/201110/30/20112/23/20126/\\d\\d/201210/11/20122/4/20135/31/201302468101214");
+        pattern = Pattern.compile("3/1[0-9]/20117/[0-9]/201110/30/20112/23/20126/1[0-9]/201210/11/20122/4/20135/31/201302468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
@@ -480,7 +479,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Another special case scenario.
         log("Validating Start Date");
-        pattern = Pattern.compile("11/9/20046/10/20061/10/20088/11/20093/\\d\\d/201102468101214");
+        pattern = Pattern.compile("11/9/20046/10/20061/10/20088/11/20093/1[0-9]/201102468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
@@ -505,7 +504,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // There are too many labels on the xaxis to validate all, so we will just validate the count.
         log("Validating Product Class");
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-        assertEquals("Unexpected number of tick marks on the x-axis.", 83, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis.", 85, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_PROD_COMB);
@@ -514,7 +513,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // There are too many labels on the xaxis to validate all, so we will just validate the count.
         log("Validating Product Class Combination");
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-        assertEquals("Unexpected number of tick marks on the x-axis.", 81, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis.", 83, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
@@ -531,7 +530,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // There are too many labels on the xaxis to validate all, so we will just validate the count.
         log("Validating Treatment Arm");
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 28, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 30, actualTickCount);
 
 
         xaxis.openSelectorWindow();
@@ -540,7 +539,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Validating Treatment Arm Coded Label");
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 87, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 89, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
@@ -563,7 +562,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
@@ -590,7 +589,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Treatment Summaries in the color axis.", 43, actualTickCount);
+        assertEquals("Unexpected number of Treatment Summaries in the color axis.", 44, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_NETWORK);
@@ -606,7 +605,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Product Class Combinations in the color axis.", 40, actualTickCount);
+        assertEquals("Unexpected number of Product Class Combinations in the color axis.", 41, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_PROD_CLASS);
@@ -614,7 +613,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Product Classes in the color axis.", 41, actualTickCount);
+        assertEquals("Unexpected number of Product Classes in the color axis.", 42, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
@@ -630,7 +629,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Treatment Arms in the color axis.", 17, actualTickCount);
+        assertEquals("Unexpected number of Treatment Arms in the color axis.", 18, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
@@ -638,7 +637,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Treatment Arm Coded Labels in the color axis.", 43, actualTickCount);
+        assertEquals("Unexpected number of Treatment Arm Coded Labels in the color axis.", 44, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
@@ -1701,7 +1700,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
@@ -1729,7 +1728,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
