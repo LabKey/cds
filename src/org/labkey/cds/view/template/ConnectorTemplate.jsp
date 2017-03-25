@@ -24,9 +24,9 @@
 <%@ page import="org.labkey.api.view.ActionURL" %>
 <%@ page import="org.labkey.api.view.HttpView" %>
 <%@ page import="org.labkey.api.view.template.PageConfig" %>
+<%@ page import="org.labkey.cds.CDSController" %>
 <%@ page import="org.labkey.cds.view.template.ConnectorTemplate" %>
 <%@ page import="java.util.LinkedHashSet" %>
-<%@ page import="org.labkey.cds.CDSController" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     ConnectorTemplate me = (ConnectorTemplate) HttpView.currentView();
