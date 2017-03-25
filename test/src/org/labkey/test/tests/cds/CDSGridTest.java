@@ -234,6 +234,9 @@ public class CDSGridTest extends CDSReadOnlyTest
         columns.put(CDSHelper.TIME_POINTS_DAYS, false);
         columns.put(CDSHelper.TIME_POINTS_WEEKS, true);
         columns.put(CDSHelper.TIME_POINTS_MONTHS, true);
+        columns.put(CDSHelper.TIME_POINTS_DAYS_FIRST_VACC, true);
+        columns.put(CDSHelper.TIME_POINTS_WEEKS_FIRST_VACC, true);
+        columns.put(CDSHelper.TIME_POINTS_MONTHS_FIRST_VACC, true);
         columns.put(CDSHelper.TIME_POINTS_DAYS_LAST_VACC, true);
         columns.put(CDSHelper.TIME_POINTS_WEEKS_LAST_VACC, true);
         columns.put(CDSHelper.TIME_POINTS_MONTHS_LAST_VACC, true);
