@@ -308,14 +308,14 @@ public class CDSPlot
         assertEquals("Not all study axis rows were validated", expectedCounts.keySet().size(), validatedTimeAxisRows.size());
     }
 
-    public void timeAxisToolTipsTester(int visitIconIndex, List<String> expectedToolTipText)
+    public void timeAxisToolTipsTester(int studyRowIndex, int visitIconIndex, List<String> expectedToolTipText)
     {
         String actualToolTipText, condensedActual, condensedExpected;
 
-        _test.scrollIntoView(CDSPlot.Locators.getTimeAxisIconLoc(visitIconIndex));
+        _test.scrollIntoView(CDSPlot.Locators.getTimeAxisIconLoc(studyRowIndex, visitIconIndex));
         _test.sleep(500);
 
-        _test.mouseOver(CDSPlot.Locators.getTimeAxisIconLoc(visitIconIndex));
+        _test.mouseOver(CDSPlot.Locators.getTimeAxisIconLoc(studyRowIndex, visitIconIndex));
         _test.sleep(500);
 
         try
@@ -618,9 +618,9 @@ public class CDSPlot
         public static Locator removeButton = Locator.xpath("//span[text()='Remove']");
         public static Locator timeAxisStudies = Locator.css("div.bottomplot > svg > g.study");
 
-        public static Locator getTimeAxisIconLoc(int index)
+        public static Locator getTimeAxisIconLoc(int studyRowIndex, int imageIndex)
         {
-            return Locator.css("div.bottomplot > svg > g:nth-child(2) > image:nth-of-type(" + index + ")");
+            return Locator.css("div.bottomplot > svg > g:nth-child(" + (studyRowIndex+1) + ") > image:nth-of-type(" + imageIndex + ")");
         }
     }
 

@@ -303,7 +303,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 1 Arm T1 Vaccine: Enrollment & First Vaccination");
         expectedToolTipText.add("Group 2 Arm T2 Vaccine: Enrollment & First Vaccination");
         expectedToolTipText.add("Group 3 Arm T3 Vaccine: Enrollment & First Vaccination");
-        cdsPlot.timeAxisToolTipsTester(9, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(1,9, expectedToolTipText);
 
         log("Move the mouse off of the current time axis point to clear any existing tool tips");
         mouseOver(Locator.xpath("//img[contains(@src, 'images/logo.png')]"));
@@ -313,7 +313,10 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 1 Arm T1 Vaccine: Last Vaccination");
         expectedToolTipText.add("Group 2 Arm T2 Vaccine: Last Vaccination");
         expectedToolTipText.add("Group 3 Arm T3 Vaccine: Last Vaccination");
-        cdsPlot.timeAxisToolTipsTester(5, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(1, 5, expectedToolTipText);
+
+        log("Move the mouse off of the current time axis point to clear any existing tool tips");
+        mouseOver(Locator.xpath("//img[contains(@src, 'images/logo.png')]"));
 
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111");
@@ -329,7 +332,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 5 Arm T5 Vaccine: Enrollment & First Vaccination");
         expectedToolTipText.add("Group 7 Arm Cb Placebo: Enrollment & First Vaccination");
         expectedToolTipText.add("Group 7 Arm T7 Vaccine: Enrollment & First Vaccination");
-        cdsPlot.timeAxisToolTipsTester(11, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(3, 11, expectedToolTipText);
 
         log("Verify that points in the main plot get highlighted when mousing over items on the Study Axis.");
 
@@ -399,12 +402,15 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 110: +455 Days");
         expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up");
-        cdsPlot.timeAxisToolTipsTester(8, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(17, 8, expectedToolTipText);
+
+        log("Move the mouse off of the current time axis point to clear any existing tool tips");
+        mouseOver(Locator.xpath("//img[contains(@src, 'images/logo.png')]"));
 
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111: +364 Days");
         expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up");
-        cdsPlot.timeAxisToolTipsTester(10, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(30, 10, expectedToolTipText);
 
         log("Change time axis alignment and validate things remain the same.");
         xaxis.openSelectorWindow();
@@ -428,8 +434,10 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.clear();
         expectedToolTipText.add("ZAP 111: -13 Weeks");
         expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
-        cdsPlot.timeAxisToolTipsTester(7, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(21, 7, expectedToolTipText);
 
+        log("Move the mouse off of the current time axis point to clear any existing tool tips");
+        mouseOver(Locator.xpath("//img[contains(@src, 'images/logo.png')]"));
     }
 
     @Test
@@ -562,7 +570,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add(studyName + ": +114 Days");
         expectedToolTipText.add("Group 1 Arm AA Vaccine: Follow-up");
         expectedToolTipText.add("Group 1 Arm BB Placebo: First Vaccination & Last Vaccination");
-        cdsPlot.timeAxisToolTipsTester(15, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(1, 15, expectedToolTipText);
 
         // expand the study axis and check Group 2 Arm BB treatment group for each plot alignment option
         cdsPlot.toggleTimeAxisExpandCollapseState();
@@ -596,7 +604,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add(studyName + ": 0 Days");
         expectedToolTipText.add("Group All Arm 1 Vaccine: Follow-up");
         expectedToolTipText.add("Group All Arm 2 Placebo: Follow-up");
-        cdsPlot.timeAxisToolTipsTester(1, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(1, 1, expectedToolTipText);
 
         // expand the study axis and check Group All Arm 2 treatment group for each plot alignment option
         cdsPlot.toggleTimeAxisExpandCollapseState();
@@ -627,7 +635,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         List<String> expectedToolTipText = new ArrayList<>();
         expectedToolTipText.add(studyName + ": -50 Days");
         expectedToolTipText.add("Group T1 Arm T1 Vaccine: Enrollment");
-        cdsPlot.timeAxisToolTipsTester(2, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(1, 2, expectedToolTipText);
 
         // expand the study axis and check Group T1 treatment group for each plot alignment option
         cdsPlot.toggleTimeAxisExpandCollapseState();
@@ -663,7 +671,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group II Arm T2 Vaccine: Last Vaccination");
         expectedToolTipText.add("Group III Arm T3 Vaccine: Last Vaccination");
         expectedToolTipText.add("Group IV Arm T4 Vaccine: Last Vaccination");
-        cdsPlot.timeAxisToolTipsTester(4, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(1, 4, expectedToolTipText);
 
         // expand the study axis and check Group V treatment group for each plot alignment option
         cdsPlot.toggleTimeAxisExpandCollapseState();
@@ -702,7 +710,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedToolTipText.add("Group 3 Arm T3 Vaccine: Last Vaccination & Challenge");
         expectedToolTipText.add("Group 4 Arm C4 Placebo: Last Vaccination");
         expectedToolTipText.add("Group 4 Arm T4 Vaccine: Last Vaccination");
-        cdsPlot.timeAxisToolTipsTester(6, expectedToolTipText);
+        cdsPlot.timeAxisToolTipsTester(1, 6, expectedToolTipText);
 
         // expand the study axis and check Group V treatment group for each plot alignment option
         cdsPlot.toggleTimeAxisExpandCollapseState();
