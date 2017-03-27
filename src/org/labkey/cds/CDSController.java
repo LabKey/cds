@@ -202,7 +202,7 @@ public class CDSController extends SpringActionController
         public ModelAndView getView(Object o, BindException errors) throws Exception
         {
             Container c = getContainer();
-            StudyService.Service sss = StudyService.get();
+            StudyService sss = StudyService.get();
             boolean hasStudy = null != sss && null != sss.getStudy(c);
             if (!c.isProject() || !hasStudy)
             {
