@@ -46,12 +46,12 @@ Ext.define('Connector.model.StudyAxisData', {
         return this.get('visitTags');
     },
 
-    getVisitTag : function(studyName, groupName, tagCaption, groupDesc)
+    getVisitTag : function(studyName, groupName, tagLabel, groupDesc)
     {
         return {
             study: studyName,
             group: groupName,
-            tag: tagCaption,
+            tag: tagLabel,
             desc: groupDesc ? groupDesc : ''
         }
     },
