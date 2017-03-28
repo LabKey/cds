@@ -461,7 +461,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Special casing this test. for what ever reason sometimes it will have 3/13/2011 other times it will be 3/12/2011.
         // Because this value appears to be calculated I will use regular expression to validate.
         log("Validating Followup Complete");
-        pattern = Pattern.compile("4/25/20156/22/20158/19/201510/16/201512/1[0-9]/201502468101214");
+        pattern = Pattern.compile("4/2[0-9]/20156/2[0-9]/20158/1[0-9]/201510/1[0-9]/201512/1[0-9]/201502468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
@@ -470,7 +470,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Another special case scenario.
         log("Validating Date Made Public");
-        pattern = Pattern.compile("3/1[0-9]/20117/[0-9]/201110/30/20112/23/20126/1[0-9]/201210/11/20122/4/20135/31/201302468101214");
+        pattern = Pattern.compile("3/1[0-9]/20117/[1-9]/201110/3[0-1]/20112/2[0-9]/20126/1[0-9]/201210/1[0-9]/20122/[1-9]/20135/3[0-1]/201302468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
@@ -479,7 +479,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Another special case scenario.
         log("Validating Start Date");
-        pattern = Pattern.compile("11/9/20046/10/20061/10/20088/11/20093/1[0-9]/201102468101214");
+        pattern = Pattern.compile("11/[1-9]/20046/1[0-9]/20061/1[0-9]/20088/1[0-9]/20093/1[0-9]/201102468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
