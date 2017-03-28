@@ -295,6 +295,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/FileExtension.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/PlotTooltip.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/AssayAntigen.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>

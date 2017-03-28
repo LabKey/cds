@@ -720,15 +720,17 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         log("Validate that there is a gutter plot on the x and y axes.");
         Assert.assertTrue("There was no gutter plot on the x-axis. This plot cannot be used to validate this fix.", cdsPlot.hasXGutter());
+        assertTrue("There is a gutter plot on the x-axis, but there are no data points in it. This plot cannot be used to validate this fix.", cdsPlot.getXGutterPlotPointCount() > 0 );
         Assert.assertTrue("There was no gutter plot on the y-axis. This plot cannot be used to validate this fix.", cdsPlot.hasYGutter());
+        assertTrue("There is a gutter plot on the y-axis, but there are no data points in it. This plot cannot be used to validate this fix.", cdsPlot.getYGutterPlotPointCount() > 0 );
 
         log("Validate the point count in the x-gutter plot.");
         pointCount = cdsPlot.getXGutterPlotPointCount();
-        Assert.assertEquals("Point count in the x-gutter plot not as expected. Expected 318, found: " + pointCount, pointCount, 318);
+        Assert.assertEquals("Point count in the x-gutter plot not as expected. Expected 104, found: " + pointCount, pointCount, 104);
 
         log("Validate the point count in the y-gutter plot.");
         pointCount = cdsPlot.getYGutterPlotPointCount();
-        Assert.assertEquals("Point count in the y-gutter plot not as expected. Expected 104, found: " + pointCount, pointCount, 104);
+        Assert.assertEquals("Point count in the y-gutter plot not as expected. Expected 318, found: " + pointCount, pointCount, 318);
 
         log("Now change the x-axis to a Time Points.");
         xaxis.openSelectorWindow();
@@ -762,11 +764,11 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         log("Validate the point count in the x-gutter plot.");
         pointCount = cdsPlot.getXGutterPlotPointCount();
-        Assert.assertEquals("Point count in the x-gutter plot not as expected. Expected 318, found: " + pointCount, pointCount, 318);
+        Assert.assertEquals("Point count in the x-gutter plot not as expected. Expected 104, found: " + pointCount, pointCount, 104);
 
         log("Validate the point count in the y-gutter plot.");
         pointCount = cdsPlot.getYGutterPlotPointCount();
-        Assert.assertEquals("Point count in the y-gutter plot not as expected. Expected 104, found: " + pointCount, pointCount, 104);
+        Assert.assertEquals("Point count in the y-gutter plot not as expected. Expected 318, found: " + pointCount, pointCount, 318);
 
         log("Looks good, go home.");
         goToProjectHome();
