@@ -228,7 +228,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
 
         Connector.getState().onReady(function()
         {
-            this.applyFilters();
+            this.validateFilters();
         }, this);
     },
 
@@ -287,7 +287,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
                         {
                             cmp.applyLink.on('click', function()
                             {
-                                this.applyFilters();
+                                this.validateFilters();
                                 this.getApplyMsg().hide();
                                 this.getUndoMsg().show();
                             }, this);
@@ -323,19 +323,69 @@ Ext.define('Connector.view.GroupSummaryBody', {
         return desc;
     },
 
-    applyFilters : function()
+    validateFilters : function()
     {
         if (this.group)
         {
             var filters = this.getGroupFilters(this.group);
 
-            if (filters.length > 0)
-            {
-                Connector.getState().setFilters(filters);
+            if (filters.length > 0) {
+                Connector.getState().onMDXReady(function(mdx) {
+                    var invalidMembers = [];
+                    var validatedFilters = filters.filter(function(f) {
+                        var validMembers = f.getMembers().filter(function(m) {
+                            var isInvalidMember = !Ext.isDefined(m.uniqueName) ||
+                                    !Ext.isDefined(mdx.getMember(m.uniqueName));
 
-                Connector.getApplication().fireEvent('grouploaded', Ext.clone(this.group.data), filters);
+                            if (isInvalidMember) {
+                                Ext.Array.push(invalidMembers, m.uniqueName);
+                                return false;
+                            }
+                            return true;
+                        });
+                        f.set({members: validMembers});
+                        return validMembers.length !== 0;
+                    });
+
+                    if (invalidMembers.length > 0) {
+                        var msg = 'This saved group includes criteria no longer available in the data: ' +
+                                '<ul><li>' +
+                                invalidMembers.join('</li><li>') +
+                                '</li></ul>';
+                        msg = msg + '<p ">Do you want to apply the filters without these criteria?</p>';
+                        Ext.Msg.show({
+                            title: 'Error',
+                            msg: msg,
+                            // buttons are in a fixed order that cannot be changed without subclassing Ext.window.Messagebox
+                            // [ok yes no cancel] is the predefined order. We want the button order cancel -> delete. That's why
+                            // even though we want a cancel button, we are using the Ext.Msg.OK constant.
+                            buttons: Ext.Msg.OK+Ext.Msg.YES,
+                            minWidth: 400,
+                            cls: 'group-filter-error-popup',
+                            buttonText: {
+                                ok: 'No',
+                                yes: 'Yes'
+                            },
+                            fn: function(id) {
+                                if (id === 'yes') {
+                                    this.applyFilters(validatedFilters);
+                                }
+                            },
+                            scope: this
+                        });
+                    }
+                    else {
+                        this.applyFilters(validatedFilters);
+                    }
+                }, this);
             }
         }
+    },
+
+    applyFilters : function(validatedFilters) {
+        Connector.getState().setFilters(validatedFilters);
+
+        Connector.getApplication().fireEvent('grouploaded', Ext.clone(this.group.data), validatedFilters);
     },
 
     getGroupFilters : function(group)
