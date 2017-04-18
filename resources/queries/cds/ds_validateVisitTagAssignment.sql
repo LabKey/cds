@@ -17,16 +17,29 @@
 --Returns all the study arms that have the same single-use visit tag defined for more than one visit.
 --Expected to return 0 rows.
 SELECT * FROM (
-   SELECT prot,
-   study_group,
-   study_arm,
-   study_arm_visit_label,
+   SELECT prot, study_group, study_arm,
+   'Enrollment' AS visit_tag,
    count(*) AS assignment_count
    FROM cds.import_studypartgrouparmvisit
-   WHERE study_arm_visit_label IS NOT NULL
-   GROUP BY prot,
-   study_group,
-   study_arm,
-   study_arm_visit_label
+   WHERE enrollment
+   GROUP BY prot, study_group, study_arm
+
+   UNION
+
+   SELECT prot, study_group, study_arm,
+   'Last Vaccination' AS visit_tag,
+   count(*) AS assignment_count
+   FROM cds.import_studypartgrouparmvisit
+   WHERE lastvacc
+   GROUP BY prot, study_group, study_arm
+
+   UNION
+
+   SELECT prot, study_group, study_arm,
+   'First Vaccination' AS visit_tag,
+   count(*) AS assignment_count
+   FROM cds.import_studypartgrouparmvisit
+   WHERE firstvacc
+   GROUP BY prot, study_group, study_arm
 ) X
 WHERE assignment_count > 1

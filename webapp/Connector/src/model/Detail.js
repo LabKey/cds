@@ -10,6 +10,7 @@ Ext.define('Connector.model.Detail', {
     idProperty : 'label',
 
     fields : [
+        {name: 'name'},
         {name: 'label'},
         {name: 'value'},
         {name: 'count', type: 'int'},

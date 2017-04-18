@@ -156,14 +156,14 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(productMember, true);
         cds.selectInfoPaneItem(productMember2, false);
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
-        _asserts.assertFilterStatusCounts(8272, 50, 2, 2, 278); // default is 'OR'
+        _asserts.assertFilterStatusCounts(8272, 50, 2, 2, 280); // default is 'OR'
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(productMember2));
         cds.selectInfoPaneOperator(true);
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(productMember));
         waitForElement(CDSHelper.Locators.filterMemberLocator(productMember2));
         // TODO Test data dependent.
-        _asserts.assertFilterStatusCounts(8272, 50, 2, 2, 278); // now it's 'AND'
+        _asserts.assertFilterStatusCounts(8272, 50, 2, 2, 280); // now it's 'AND'
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(productMember2));
         assertElementPresent(hasData);
         assertElementNotPresent(noData);
@@ -292,7 +292,7 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         cds.applySelection(CDSHelper.ASSAYS[0]);
         _asserts.assertSelectionStatusCounts(75, 1, 1, 1, 8);
         cds.applySelection(CDSHelper.ASSAYS[1]);
-        _asserts.assertSelectionStatusCounts(1604, 14, 2, 1, 89);
+        _asserts.assertSelectionStatusCounts(1604, 14, 2, 1, 91);
         cds.applySelection(CDSHelper.ASSAYS[2]);
         _asserts.assertSelectionStatusCounts(477, 4, 1, 1, 31);
         cds.applySelection(CDSHelper.ASSAYS[3]);
@@ -305,7 +305,7 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         cds.applySelection("South Africa");
         _asserts.assertSelectionStatusCounts(43, 21, 1, 1, 27);
         cds.applySelection("United States");
-        _asserts.assertSelectionStatusCounts(2797, 49, 1, 3, 226);
+        _asserts.assertSelectionStatusCounts(2797, 49, 1, 3, 228);
         cds.applySelection("Thailand");
         _asserts.assertSelectionStatusCounts(98, 32, 1, 3, 45);
     }

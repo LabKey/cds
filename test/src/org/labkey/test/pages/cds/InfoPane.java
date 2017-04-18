@@ -25,14 +25,14 @@ import org.openqa.selenium.interactions.Actions;
 
 public class InfoPane
 {
-    private final static String cssSubjectsCount = "div.detailstatuslist ul.detailstatus div:nth-child(1) li span:nth-child(4)";
-    private final static String cssSpeciesCount = "div.detailstatuslist ul.detailstatus div:nth-child(2) li span:nth-child(4)";
-    private final static String cssStudiesCount = "div.detailstatuslist ul.detailstatus div:nth-child(3) li span:nth-child(4)";
-    private final static String cssProductCount = "div.detailstatuslist ul.detailstatus div:nth-child(4) li span:nth-child(4)";
-    private final static String cssTreatmentsCount = "div.detailstatuslist ul.detailstatus div:nth-child(5) li span:nth-child(4)";
-    private final static String cssTimePointsCount = "div.detailstatuslist ul.detailstatus div:nth-child(6) li span:nth-child(4)";
-    private final static String cssAntigensInXCount = "div.detailstatuslist ul.detailstatus div:nth-child(7) li span:nth-child(4)";
-    private final static String cssAntigensInYCount = "div.detailstatuslist ul.detailstatus div:nth-child(8) li span:nth-child(4)";
+    private final static String cssSubjectsCount = "div.detailstatuslist ul.detailstatus div.info_Subject li span:nth-child(4)";
+    private final static String cssSpeciesCount = "div.detailstatuslist ul.detailstatus div.info_Species li span:nth-child(4)";
+    private final static String cssStudiesCount = "div.detailstatuslist ul.detailstatus div.info_Study li span:nth-child(4)";
+    private final static String cssProductCount = "div.detailstatuslist ul.detailstatus div.info_Product li span:nth-child(4)";
+    private final static String cssTreatmentsCount = "div.detailstatuslist ul.detailstatus div.info_Treatment li span:nth-child(4)";
+    private final static String cssTimePointsCount = "div.detailstatuslist ul.detailstatus div.info_TimePoint li span:nth-child(4)";
+    private final static String cssAntigensInXCount = "div.detailstatuslist ul.detailstatus div.info_AntigensInX li span:nth-child(4)";
+    private final static String cssAntigensInYCount = "div.detailstatuslist ul.detailstatus div.info_AntigensInY li span:nth-child(4)";
     private final static String cssActiveFilter = "div.activefilter";
 
     private final static String cssMeasuresGrid = "div.measuresgrid";
@@ -117,9 +117,9 @@ public class InfoPane
 
     private static String _tryToGetCounts(BaseWebDriverTest _test, String cssPath)
     {
-        String text;
+        _test.waitForElement(Locator.css(cssPath));
 
-        text = _test.getText(Locator.css(cssPath)).replace(",", "");
+        String text = _test.getText(Locator.css(cssPath)).replace(",", "");
 
         // If the text is empty let's try and wait in a semi-smart way.
         if(text.trim().length() == 0)
