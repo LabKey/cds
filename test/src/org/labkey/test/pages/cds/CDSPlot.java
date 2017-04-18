@@ -16,9 +16,11 @@
 package org.labkey.test.pages.cds;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.jetbrains.annotations.Nullable;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -26,16 +28,18 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.internal.MouseAction;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class CDSPlot
@@ -227,20 +231,23 @@ public class CDSPlot
 
     public void validateVisitCounts(List<WebElement> studies, Map<String, CDSHelper.TimeAxisData> expectedCounts)
     {
+        Set<String> validatedTimeAxisRows = new HashSet<>();
 
         for (WebElement study : studies)
         {
-            CDSHelper.TimeAxisData tad = expectedCounts.get(study.findElement(Locator.css("text.study-label").toBy()).getAttribute("test-data-value"));
+            String studyId = study.findElement(By.className("study-label")).getAttribute("test-data-value");
+            CDSHelper.TimeAxisData tad = expectedCounts.get(studyId);
 
             // If tad is null it means we don't want to check the totals for the given study (or a locator is messed up).
             if (tad != null)
             {
+                validatedTimeAxisRows.add(studyId);
 
                 int nonvacCount = 0, nonvacCountNoData = 0, vacCount = 0, vacCountNoData = 0, chalCount = 0, chalCountNoData = 0;
                 List<WebElement> visits;
                 WebElement preEnrollment;
 
-                _test.log("Study Name: '" + study.getText() + "' ID: " + study.findElement(Locator.css("text.study-label").toBy()).getAttribute("test-data-value"));
+                _test.log("Study Name: '" + study.getText() + "' ID: " + studyId);
                 visits = study.findElements(Locator.css("image.visit-tag").toBy());
                 _test.log("Number of visits: " + visits.size());
 
@@ -293,20 +300,22 @@ public class CDSPlot
             }
             else
             {
-                _test.log("Not validating counts for " + study.getText() + " (" + study.findElement(Locator.css("text.study-label").toBy()).getAttribute("test-data-value") + ")");
+                _test.log("Not validating counts for " + study.getText() + " (" + studyId + ")");
             }
 
         }
+
+        assertEquals("Not all study axis rows were validated", expectedCounts.keySet().size(), validatedTimeAxisRows.size());
     }
 
-    public void timeAxisToolTipsTester(String cssVisit, List<String> expectedToolTipText)
+    public void timeAxisToolTipsTester(int studyRowIndex, int visitIconIndex, List<String> expectedToolTipText)
     {
         String actualToolTipText, condensedActual, condensedExpected;
 
-        _test.scrollIntoView(Locator.css(cssVisit));
+        _test.scrollIntoView(CDSPlot.Locators.getTimeAxisIconLoc(studyRowIndex, visitIconIndex));
         _test.sleep(500);
 
-        _test.mouseOver(Locator.css(cssVisit));
+        _test.mouseOver(CDSPlot.Locators.getTimeAxisIconLoc(studyRowIndex, visitIconIndex));
         _test.sleep(500);
 
         try
@@ -422,6 +431,11 @@ public class CDSPlot
         return findTimeAxisPointsWithData("div.bottomplot > svg > g > image", image).size();
     }
 
+    public void toggleTimeAxisExpandCollapseState()
+    {
+        Locator.css("div.bottomplot > svg > g > image.img-expand").findElement(_test.getDriver()).click();
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+    }
 
     public void subjectCountsHelper(Map<String, String> sourcesSubjectCounts, Map<String, String> antigenCounts,
                                      Map<String, String> peptidePoolCounts, Map<String, String> proteinCounts,
@@ -603,6 +617,11 @@ public class CDSPlot
         public static Locator filterDataButton = Locator.xpath("//span[text()='Filter']");
         public static Locator removeButton = Locator.xpath("//span[text()='Remove']");
         public static Locator timeAxisStudies = Locator.css("div.bottomplot > svg > g.study");
+
+        public static Locator getTimeAxisIconLoc(int studyRowIndex, int imageIndex)
+        {
+            return Locator.css("div.bottomplot > svg > g:nth-child(" + (studyRowIndex+1) + ") > image:nth-of-type(" + imageIndex + ")");
+        }
     }
 
     public static class PlotGlyphs

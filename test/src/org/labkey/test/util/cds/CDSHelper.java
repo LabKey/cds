@@ -36,6 +36,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -446,6 +447,9 @@ public class CDSHelper
     public static final String TIME_POINTS_DAYS = "Study days";
     public static final String TIME_POINTS_WEEKS = "Study weeks";
     public static final String TIME_POINTS_MONTHS = "Study months";
+    public static final String TIME_POINTS_DAYS_FIRST_VACC = "Study days relative to first vaccination";
+    public static final String TIME_POINTS_WEEKS_FIRST_VACC = "Study weeks relative to first vaccination";
+    public static final String TIME_POINTS_MONTHS_FIRST_VACC = "Study months relative to first vaccination";
     public static final String TIME_POINTS_DAYS_LAST_VACC = "Study days relative to last vaccination";
     public static final String TIME_POINTS_WEEKS_LAST_VACC = "Study weeks relative to last vaccination";
     public static final String TIME_POINTS_MONTHS_LAST_VACC = "Study months relative to last vaccination";
@@ -465,9 +469,14 @@ public class CDSHelper
     public static final String GRID_COL_CUR_COL = "Current columns";
     public static final String GRID_COL_ALL_VARS = "All variables from this session";
 
+    // Time point axis types
+    public static final String AXIS_TYPE_CONTINUOUS = "Continuous";
+    public static final String AXIS_TYPE_CATEGORICAL = "Categorical";
+
     // Time points alignments
     public static final String TIME_POINTS_ALIGN_DAY0 = "Aligned by Day 0";
     public static final String TIME_POINTS_ALIGN_ENROLL = "Enrollment";
+    public static final String TIME_POINTS_ALIGN_FIRST_VAC = "First Vaccination";
     public static final String TIME_POINTS_ALIGN_LAST_VAC = "Last Vaccination";
 
     public static final String HOME_PAGE_HEADER = "Welcome to the CAVD DataSpace.";

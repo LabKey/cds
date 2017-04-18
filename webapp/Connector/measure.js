@@ -304,8 +304,41 @@ Ext.define('Connector.measure.Configuration', {
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
-                'cds_GridBase_Days_Last_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
+                'cds_GridBase_Days_First_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
                     sortOrder: 3,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: true,
+                    name: 'FirstVaccinationDay',
+                    label: 'Study days relative to first vaccination',
+                    description: 'The number of calendar days relative to the visit where the first vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'INTEGER',
+                    variableType: 'TIME'
+                },
+                'cds_GridBase_Weeks_First_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
+                    sortOrder: 4,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: true,
+                    name: 'FirstVaccinationDay',
+                    label: 'Study weeks relative to first vaccination',
+                    description: 'The number of weeks relative to the visit where the first vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME'
+                },
+                'cds_GridBase_Months_First_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
+                    sortOrder: 5,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: true,
+                    name: 'FirstVaccinationDay',
+                    label: 'Study months relative to first vaccination',
+                    description: 'The number of months relative to the visit where the first vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME'
+                },
+                'cds_GridBase_Days_Last_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
+                    sortOrder: 6,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
@@ -316,7 +349,7 @@ Ext.define('Connector.measure.Configuration', {
                     variableType: 'TIME'
                 },
                 'cds_GridBase_Weeks_Last_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
-                    sortOrder: 4,
+                    sortOrder: 7,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
@@ -327,7 +360,7 @@ Ext.define('Connector.measure.Configuration', {
                     variableType: 'TIME'
                 },
                 'cds_GridBase_Months_Last_Vaccination': { //note that this measure alias matches the generated alias from the plot alignment selection
-                    sortOrder: 5,
+                    sortOrder: 8,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: true,
@@ -367,7 +400,7 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 // include discrete versions of the timepoint variables for the plot color variable selector
                 'cds_GridBase_Days_Discrete': {
-                    sortOrder: 6,
+                    sortOrder: 9,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: false,
@@ -379,7 +412,7 @@ Ext.define('Connector.measure.Configuration', {
                     isDiscreteTime: true
                 },
                 'cds_GridBase_Weeks_Discrete': {
-                    sortOrder: 7,
+                    sortOrder: 10,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: false,
@@ -391,7 +424,7 @@ Ext.define('Connector.measure.Configuration', {
                     isDiscreteTime: true
                 },
                 'cds_GridBase_Months_Discrete': {
-                    sortOrder: 8,
+                    sortOrder: 11,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     isMeasure: false,
@@ -434,6 +467,42 @@ Ext.define('Connector.measure.Configuration', {
                     name: 'LastVaccinationDay',
                     label: 'Study months relative to last vaccination',
                     description: 'The number of months relative to the visit where the last vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Days_Discrete_First_Vaccination': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: 'FirstVaccinationDay',
+                    label: 'Study days relative to first vaccination',
+                    description: 'The number of calendar days relative to the visit where the first vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'INTEGER',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Weeks_Discrete_First_Vaccination': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: 'FirstVaccinationDay',
+                    label: 'Study weeks relative to first vaccination',
+                    description: 'The number of weeks relative to the visit where the first vaccination was scheduled for the subject\'s assigned treatment group.',
+                    type: 'DOUBLE',
+                    variableType: 'TIME',
+                    isDiscreteTime: true
+                },
+                'cds_GridBase_Months_Discrete_First_Vaccination': {
+                    hidden: true,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
+                    isMeasure: false,
+                    name: 'FirstVaccinationDay',
+                    label: 'Study months relative to first vaccination',
+                    description: 'The number of months relative to the visit where the first vaccination was scheduled for the subject\'s assigned treatment group.',
                     type: 'DOUBLE',
                     variableType: 'TIME',
                     isDiscreteTime: true
