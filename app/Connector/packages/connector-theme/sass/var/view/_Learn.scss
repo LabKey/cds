@@ -401,7 +401,7 @@ img.detail-has-data-small {
   .detail-row {
     //padding: 0px $pageLeftPadding;
     margin-bottom: 8px;
-    height: 170px;
+    height: 125px;
     border-bottom: 1px solid $heat-scale-4;
     overflow: hidden;
 
@@ -411,7 +411,7 @@ img.detail-has-data-small {
     }
 
     .detail-description {
-      height: 121px;
+      height: 76px;
       overflow: hidden;
 
       h2 {
@@ -456,7 +456,7 @@ img.detail-has-data-small {
     }
 
     .study-summary-product {
-      height:121px;
+      height:76px;
     }
 
   }
@@ -549,21 +549,15 @@ div.list-container {
   }
 }
 
-.learn-search-input {
-  clear: both;
-  display: block;
-  margin: 32px 0 12px 28px;
-  width: 40%;
+.learn-header-bar {
+  border-bottom: 1px solid #e1e1e1;
+  margin: 0 28px 0 28px;
+}
 
-  tbody,
-  tr,
-  td.x-form-item-body {
-    display: block;
-    width: 400px!important;
-  }
+.learn-search-input {
+  margin: 14px 28px;
 
   input {
-    width: 400px;
     height: 34px;
     font-size: 12px;
     border-radius: 2px;

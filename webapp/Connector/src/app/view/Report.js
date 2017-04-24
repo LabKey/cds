@@ -24,7 +24,7 @@ Ext.define('Connector.app.view.Report', {
                     '<div class="detail-row-thumbnail">',
                     '<div>',
                     '<tpl if="thumbnail">',
-                    '<img src=\"{thumbnail}\" height="130">',
+                    '<img src=\"{thumbnail}\" height="95">',
                     '</tpl>',
                     '</div>')
         },

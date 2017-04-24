@@ -6,7 +6,7 @@
  * forum post: https://www.sencha.com/forum/showthread.php?296278. This function caused the resulting performance hit.
  * Removing it causes no observable issues, but to be safe only apply this patch to CDS.
  */
-if (Ext.isIE)
+if (Ext.isIE || Ext.isWindows)
 {
     Ext.override(Ext.grid.locking.Lockable, {
         // syncRow with locked grid causes performance issue
