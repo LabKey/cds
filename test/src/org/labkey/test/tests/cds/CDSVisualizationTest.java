@@ -36,6 +36,7 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -1779,6 +1780,90 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(1000);
         _ext4Helper.waitForMaskToDisappear();
 
+    }
+
+    @Test
+    public void verifyColorLegend()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        CDSHelper cds = new CDSHelper(this);
+
+        log("Create a plot that will have multiple values.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_ALL);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_ANTIGEN);
+        xaxis.confirmSelection();
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.ICS);
+        coloraxis.pickVariable(CDSHelper.ICS_CELL_NAME);
+        coloraxis.confirmSelection();
+
+        log("Get the legend text.");
+        ArrayList<String> legends = coloraxis.getLegendText();
+        boolean hasMultiValue = false;
+        for(String legendText : legends)
+        {
+            log(legendText);
+            if(legendText.toLowerCase().equals("multiple values"))
+                hasMultiValue = true;
+        }
+
+        assertTrue("Did not find 'Multiple values' in the legend.", hasMultiValue);
+
+        int multiValuePointCount = cdsPlot.getPointCountByGlyph(CDSPlot.PlotGlyphs.circle);
+        log("It looks like there are " + multiValuePointCount + " points on the plot that are 'Multiple values'");
+        assertTrue("There were no points in the plot for 'Multi value'", multiValuePointCount > 0);
+
+        log("Create a plot only with 'Multiple values', use this to test the tool tip of the plot points.");
+
+        String cssPathToSvg;
+        int pointToClick;
+        log("Create a simple data point plot.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ELISPOT);
+        xaxis.pickVariable(CDSHelper.ELISPOT_ANTIGEN_TYPE);
+        xaxis.confirmSelection();
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.ELISPOT);
+        coloraxis.pickVariable(CDSHelper.ELISPOT_CELL_TYPE);
+        coloraxis.confirmSelection();
+
+        log("Click on a point in the plot and make sure the tool tip has the expected text.");
+        // Because all of these points are multiple value clicking any one of the should be ok.
+        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
+        cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
+
+        cds.clickPointInPlot(cssPathToSvg, pointToClick);
+
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+
+        assertElementVisible(Locator.css("div.hopscotch-bubble-container"));
+        cdsPlot.validateToolTipText("Cell Type: Multiple values");
+
+        log("Looks good, go home.");
+        cds.goToAppHome();
     }
 
     // hasXGutter: Does the plot have an x-gutter (i.e. gutter along the bottom).

@@ -22,6 +22,9 @@ import org.labkey.test.util.LabKeyExpectedConditions;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ColorAxisVariableSelector extends DataspaceVariableSelector
 {
     private final String XPATHID = "color-axis-selector";
@@ -88,5 +91,29 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
     public void setScale(Scale scale)
     {
         throw new UnsupportedOperationException("No log scale for color variable");
+    }
+
+    public void showLegend()
+    {
+        // Flaky. The legend is only shown if the mouse is over a part of the icon. If the icon is something like
+        // the circle the mosue will be over the center of the circle and will not result in the legend being shown.
+        _test.mouseOver(Locator.css("li[id='color-legend'] svg path.legend-point"));
+    }
+
+    public ArrayList<String> getLegendText()
+    {
+        ArrayList<String> legendText = new ArrayList<>();
+
+        showLegend();
+
+        List<WebElement> legends = new ArrayList<>();
+
+        legends = Locator.css("div.hopscotch-bubble svg text.legend-text").findElements(_test.getDriver());
+        for(WebElement we : legends)
+        {
+            legendText.add(we.getText());
+        }
+
+        return legendText;
     }
 }

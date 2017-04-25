@@ -369,6 +369,7 @@ public class CDSHelper
 
     public static final String CELL_TYPE_CD4 = "CD4+";
     public static final String CELL_TYPE_CD8 = "CD8+";
+    public static final String CELL_TYPE_ALL = "All";
     public static final String[] CELL_TYPES = {CELL_TYPE_CD4, CELL_TYPE_CD8};
 
     public static final String DATA_SUMMARY_PROTEIN = "Protein";
