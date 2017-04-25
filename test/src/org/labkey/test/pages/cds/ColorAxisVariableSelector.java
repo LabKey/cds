@@ -18,9 +18,8 @@ package org.labkey.test.pages.cds;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
-import org.labkey.test.util.LabKeyExpectedConditions;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,9 +94,27 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
 
     public void showLegend()
     {
-        // Flaky. The legend is only shown if the mouse is over a part of the icon. If the icon is something like
-        // the circle the mosue will be over the center of the circle and will not result in the legend being shown.
-        _test.mouseOver(Locator.css("li[id='color-legend'] svg path.legend-point"));
+        Locator element = Locator.css("li[id='color-legend'] svg path.legend-point");
+        Locator legendElement = Locator.css("div.hopscotch-bubble svg text.legend-text");
+        // The legend is only shown if the mouse is over a visible part of the glyph. If the glyph is something like
+        // the circle the mouse will be over the center of the circle and will not result in the legend being shown.
+        _test.mouseOver(element);
+
+        try
+        {
+            _test.waitForElementToBeVisible(legendElement);
+        }
+        catch(org.openqa.selenium.WebDriverException wde)
+        {
+            _test.log("No legend was shown. Try moving the mouse slightly.");
+            int xOffset = 10;
+            while ((_test.isElementVisible(legendElement)) && (xOffset <= 50))
+            {
+                Actions builder = new Actions(_test.getDriver());
+                builder.moveToElement(element.findElement(_test.getDriver()), xOffset, 0).build().perform();
+                xOffset += 10;
+            }
+        }
     }
 
     public ArrayList<String> getLegendText()
@@ -106,9 +123,7 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
 
         showLegend();
 
-        List<WebElement> legends = new ArrayList<>();
-
-        legends = Locator.css("div.hopscotch-bubble svg text.legend-text").findElements(_test.getDriver());
+        List<WebElement> legends = Locator.css("div.hopscotch-bubble svg text.legend-text").findElements(_test.getDriver());
         for(WebElement we : legends)
         {
             legendText.add(we.getText());

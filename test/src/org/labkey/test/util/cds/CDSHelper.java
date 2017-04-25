@@ -828,13 +828,11 @@ public class CDSHelper
     public void clickPointInPlot(String cssPathToSvg, int pointIndex)
     {
         clickElementInPlot(cssPathToSvg, pointIndex, "a.point", "path[fill='" + PLOT_POINT_HIGHLIGHT_COLOR + "']");
-//        clickElementInPlot(cssPathToSvg, pointIndex, "a.point");
     }
 
     public void clickHeatPointInPlot(String cssPathToSvg, int pointIndex)
     {
         clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square", "path[style='fill: " + PLOT_POINT_HIGHLIGHT_COLOR + "']");
-//        clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square");
     }
 
     private void clickElementInPlot(String cssPathToSvg, int pointIndex, String elementTag, String fillStyle)
