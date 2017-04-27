@@ -316,7 +316,7 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         // 14910
         log("Verify multi-select");
         cds.goToSummary();
-        cds.clickBy("Study products");
+        cds.clickBy("Products");
         cds.pickSort("Product Type");
         cds.shiftSelectBars("Adjuvant", "Risperidone");
         waitForElement(CDSHelper.Locators.filterMemberLocator("benztropine mesylate"), WAIT_FOR_JAVASCRIPT);
