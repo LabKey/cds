@@ -703,6 +703,7 @@ Ext.define('Connector.view.LearnHeader', {
         if (!this.headerDataView) {
             this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
                 flex: 6,
+                cls: 'learn-dim-selector',
                 dimensions: this.dimensions,
                 store: Ext.create('Ext.data.Store', {
                     model: 'Connector.model.Dimension',
