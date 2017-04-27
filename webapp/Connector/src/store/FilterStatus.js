@@ -11,13 +11,15 @@ Ext.define('Connector.store.FilterStatus', {
 
     // initial data record to show loading spinner on page load
     data: [{
-        label: "Subjects",
+        name: 'Subject',
+        label: 'Subjects',
         count: 0,
         subcount: -1,
         highlight: true
     }],
 
     plotCountRecordsCache: [{
+        name: 'TimePoint',
         label: 'Time points',
         count: -1,
         subcount: -1,
@@ -27,6 +29,7 @@ Ext.define('Connector.store.FilterStatus', {
         modelClass: 'Connector.model.TimepointPane',
         highlight: true
     },{
+        name: 'AntigensInX',
         label: 'Antigens in X',
         count: -1,
         subcount: -1,
@@ -34,6 +37,7 @@ Ext.define('Connector.store.FilterStatus', {
         activeCountLink: true,
         activeCountEvent: 'showplotantigensx'
     },{
+        name: 'AntigensInY',
         label: 'Antigens in Y',
         count: -1,
         subcount: -1,
@@ -265,6 +269,7 @@ Ext.define('Connector.store.FilterStatus', {
                 rec.subcount = zeroSelections ? 0 : -1;
             }
 
+            rec.name = ca.label.singular;
             rec.label = rec.count != 1 ? ca.label.plural : ca.label.singular;
 
             recs.push(rec);

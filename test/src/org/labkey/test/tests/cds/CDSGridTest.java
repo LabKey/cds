@@ -182,7 +182,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 151); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 152); // TODO Test data dependent.
         }
 
         //
@@ -225,7 +225,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 151); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 152); // TODO Test data dependent.
         }
 
 
@@ -234,6 +234,9 @@ public class CDSGridTest extends CDSReadOnlyTest
         columns.put(CDSHelper.TIME_POINTS_DAYS, false);
         columns.put(CDSHelper.TIME_POINTS_WEEKS, true);
         columns.put(CDSHelper.TIME_POINTS_MONTHS, true);
+        columns.put(CDSHelper.TIME_POINTS_DAYS_FIRST_VACC, true);
+        columns.put(CDSHelper.TIME_POINTS_WEEKS_FIRST_VACC, true);
+        columns.put(CDSHelper.TIME_POINTS_MONTHS_FIRST_VACC, true);
         columns.put(CDSHelper.TIME_POINTS_DAYS_LAST_VACC, true);
         columns.put(CDSHelper.TIME_POINTS_WEEKS_LAST_VACC, true);
         columns.put(CDSHelper.TIME_POINTS_MONTHS_LAST_VACC, true);
@@ -278,7 +281,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
         log("Validating grid counts");
-        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 44);
+        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 45);
         grid.assertPageTotal(27);
         grid.assertRowCount(658);
 

@@ -3559,7 +3559,7 @@ Ext.define('Connector.view.Chart', {
 
     showVisitTagHover : function(data, visitTagEl) {
         var bubbleWidth, groupWidth = 0, tagWidth = 0,
-            groupTags = {}, maxWidth = 0,
+            groupTags = {}, maxWidth = 20,
             config, visitTag, visitTagGrp, keyCount = 0;
 
         // map data to set object mapped by group (i.e. 'Group 1 Vaccine')
@@ -3578,7 +3578,10 @@ Ext.define('Connector.view.Chart', {
                 };
             }
 
-            groupTags[visitTagGrp].tags.push(visitTag.tag);
+            if (groupTags[visitTagGrp].tags.indexOf(visitTag.tag) == -1) {
+                groupTags[visitTagGrp].tags.push(visitTag.tag);
+            }
+
             groupTags[visitTagGrp].desc = visitTag.desc;
 
             // CONSIDER: Ideally, we could somehow measure the resulting tag's width by

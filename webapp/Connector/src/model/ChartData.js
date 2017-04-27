@@ -255,7 +255,7 @@ Ext.define('Connector.model.ChartData', {
             excludeColorAliases = [],
             mainCount = 0,
             nonAggregated,
-            singleAntigenComparison = false,
+            isSameXYZ = false,
             _row,
             logGutterBothCount = 0, logGutterXCount = 0,logGutterYCount = 0,
             minPositiveX = Number.MAX_VALUE, minPositiveY = Number.MAX_VALUE,
@@ -315,7 +315,7 @@ Ext.define('Connector.model.ChartData', {
             // exclude if x, y and color are all from same source, and ca is not a dimension with diff filter values
             if (this.isSameSource(xa, ca) && excludeAliases.indexOf(ca.alias) == -1)
             {
-                excludeColorAliases.push(ca.alias);
+                excludeAliases.push(ca.alias);
             }
         }
 
@@ -345,7 +345,7 @@ Ext.define('Connector.model.ChartData', {
             axisMeasureStore.setXMeasure(this.getMeasureStore(), _xid, xMeasureFilter);
         }
         if (_cid) {
-            singleAntigenComparison = excludeAliases.indexOf(_cid) > -1;
+            isSameXYZ = excludeAliases.indexOf(_cid) > -1;
             axisMeasureStore.setZMeasure(this.getMeasureStore(), _cid, zMeasureFilter);
         }
 
@@ -371,7 +371,7 @@ Ext.define('Connector.model.ChartData', {
 
         var getAllDimensions = !nonAggregated || hasSameDimensions;
 
-        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases.concat(excludeColorAliases), nonAggregated), getAllDimensions);
+        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated), getAllDimensions);
 
         var allRows = {};
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
@@ -381,7 +381,7 @@ Ext.define('Connector.model.ChartData', {
 
             yVal = this._getYValue(y, _yid, _row);
             xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
-            colorVal = color ? this._getColorValue(color, _cid, _row, singleAntigenComparison, excludeColorAliases.length > 0) : undefined;
+            colorVal = color ? this._getColorValue(color, _cid, _row, isSameXYZ) : undefined;
 
             // build study container alignment day map
             if (_row[QueryUtils.CONTAINER_ALIAS])
@@ -633,22 +633,39 @@ Ext.define('Connector.model.ChartData', {
         }
     },
 
-    _getColorValue : function(measure, alias, row, isMultiValue, isSameXYC) {
+    _getColorValue : function(measure, alias, row, isSameXYC) {
         if (isSameXYC && Ext.isDefined(row.z))
         {
-            var colorVal = row.z.value;
-            var xVal = row.x && row.x.rawRecord && row.x.rawRecord[alias] ? row.x.rawRecord[alias].value : null;
-            var yVal = row.y && row.y.rawRecord && row.y.rawRecord[alias] ? row.y.rawRecord[alias].value : null;
-
-            if (xVal === yVal && xVal === colorVal)
-                return colorVal;
-            return 'Multiple values';
-        }
-        else if (isMultiValue || (Ext.isDefined(row.z) && !row.z.isUnique))
-        {
-            // issue 23903: if the color value isn't unique because of aggregation, use 'Multiple values' for the legend
             // issue 24805: if the color variable is an assay dimension with an x vs y filter on distinct single values,
             //              we know that the points will have multiple values for the color
+            //Issue 25058: Selecting Cell Name for color variable when plotting UCS CD4 vs CD8 changes plot to binned plot
+            var colorVal = row.z.value;
+            var hasXCol = row.x && row.x.rawRecord && row.x.rawRecord[alias] !== undefined;
+            var hasYCol = row.y && row.y.rawRecord && row.y.rawRecord[alias] !== undefined;
+            if (!hasXCol || !hasYCol) // if either x or y doesn't have color alias included, use z value
+                return colorVal;
+            var xVal = row.x.rawRecord[alias].value;
+            var yVal = row.y.rawRecord[alias].value;
+
+            if (xVal === yVal && xVal === colorVal) // if x & y has the same value
+                return colorVal;
+            var sep = '';
+            var allColors = '';
+            if (xVal != undefined)
+            {
+                allColors += xVal;
+                sep = ', '
+            }
+            if (yVal != undefined)
+            {
+                allColors += sep;
+                allColors += yVal;
+            }
+            return allColors;
+        }
+        else if (Ext.isDefined(row.z) && !row.z.isUnique)
+        {
+            // issue 23903: if the color value isn't unique because of aggregation, use 'Multiple values' for the legend
             return 'Multiple values';
         }
         else if (Ext.isDefined(row.z) && row.z.value != null)

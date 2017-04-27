@@ -46,12 +46,12 @@ Ext.define('Connector.model.StudyAxisData', {
         return this.get('visitTags');
     },
 
-    getVisitTag : function(studyName, groupName, tagCaption, groupDesc)
+    getVisitTag : function(studyName, groupName, tagLabel, groupDesc)
     {
         return {
             study: studyName,
             group: groupName,
-            tag: tagCaption,
+            tag: tagLabel,
             desc: groupDesc ? groupDesc : ''
         }
     },
@@ -93,7 +93,7 @@ Ext.define('Connector.model.StudyAxisData', {
             range = {min: null, max: null},
             interval, studyLabel, data = [],
             study, studyContainer, studyKeys, visit, visitId, visitKeys, visitKey, visitLabel, seqMin,
-            seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination, isChallenge,
+            seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, visitTagLabel, isVaccination, isChallenge,
             shiftVal, i, j, k, alignmentVisitTag, visitTagName,
             groupKeys, groupVisit, groupVisits, group, groups, groupLabel, groupDesc, uniqueAlignedDays = {};
 
@@ -185,8 +185,13 @@ Ext.define('Connector.model.StudyAxisData', {
             groupName = record.get('group_name');
             groupDesc = record.get('detail_label');
             visitTagCaption = record.get('visit_tag_caption');
+            visitTagLabel = record.get('visit_tag_label');
             isVaccination = record.get('is_vaccination');
             isChallenge = record.get('is_challenge');
+
+            // don't show study axis icon for Placeholder visit tag
+            if (visitTagLabel == 'Placeholder' || visitTagLabel == null)
+                return true; // continue
 
             if (group)
             {
@@ -214,6 +219,7 @@ Ext.define('Connector.model.StudyAxisData', {
                     alignedDay: alignedDay,
                     protocolDay: protocolDay,
                     visitTagCaption: visitTagCaption,
+                    visitTagLabel: visitTagLabel,
                     isVaccination: isVaccination,
                     isChallenge: isChallenge,
                     visitRowId: visitId,
@@ -234,9 +240,9 @@ Ext.define('Connector.model.StudyAxisData', {
 
                 visit = study.visits[alignedDay];
 
-                if (visitTagCaption)
+                if (visitTagLabel)
                 {
-                    visit.visitTags.push(this.getVisitTag(study.name, groupLabel, visitTagCaption, groupDesc));
+                    visit.visitTags.push(this.getVisitTag(study.name, groupLabel, visitTagLabel, groupDesc));
                 }
 
                 // turning off pre-enrollment until it is established what determines
@@ -272,6 +278,7 @@ Ext.define('Connector.model.StudyAxisData', {
                             alignedDay: alignedDay,
                             protocolDay: protocolDay,
                             visitTagCaption: visitTagCaption,
+                            visitTagLabel: visitTagLabel,
                             isVaccination: isVaccination,
                             isChallenge: isChallenge,
                             visitRowId: visitId,
@@ -280,9 +287,9 @@ Ext.define('Connector.model.StudyAxisData', {
                     }
 
                     groupVisit = study.groups[groupLabel].visits[alignedDay];
-                    if (visitTagCaption)
+                    if (visitTagLabel)
                     {
-                        groupVisit.visitTags.push(this.getVisitTag(study.name, groupLabel, visitTagCaption, groupDesc));
+                        groupVisit.visitTags.push(this.getVisitTag(study.name, groupLabel, visitTagLabel, groupDesc));
                     }
 
                     // turning off pre-enrollment until it is established what determines

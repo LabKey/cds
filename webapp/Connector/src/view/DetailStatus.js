@@ -27,7 +27,7 @@ Ext.define('Connector.view.DetailStatus', {
     tpl: new Ext.XTemplate(
             '<ul class="detailstatus">',
                 '<tpl for=".">',
-                    '<div class="status-row {highlight:this.isHighlight} {[this.isLink(values)]} {count:this.shouldHide}">',
+                    '<div class="status-row {[this.getRowCls(values)]} {highlight:this.isHighlight} {[this.isLink(values)]} {count:this.shouldHide}">',
                         '<tpl if="highlight != undefined && highlight == true">',
                             '<li>',
                                 '<span class="statme hl-status-label">',
@@ -79,6 +79,9 @@ Ext.define('Connector.view.DetailStatus', {
                 },
                 shouldMask : function(value) {
                     return value ? 'plotmaskit' : 'maskit';
+                },
+                getRowCls : function(values) {
+                    return 'info_' + (values['name'] || values['label']);
                 }
             }
     ),
