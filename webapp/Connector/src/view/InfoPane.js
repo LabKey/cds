@@ -400,6 +400,27 @@ Ext.define('Connector.view.InfoPane', {
         }
     },
 
+    bindLearnAboutDetailClick: function()
+    {
+        if (!this.bindLearnAboutDetailTask)
+        {
+            this.bindLearnAboutDetailTask = new Ext.util.DelayedTask(function() {
+                var anodes = Ext.DomQuery.select('a.expando');
+                Ext.each(anodes, function(node) {
+                    Ext.get(node).on('mousedown', function(evt) {
+                        evt.stopPropagation();
+                        return false;
+                    });
+                    Ext.get(node).on('click', function(evt) {
+                        evt.stopPropagation();
+                        return false;
+                    });
+                });
+            }, this);
+        }
+        this.bindLearnAboutDetailTask.delay(200);
+    },
+
     updateSelections : function() {
 
         var grid = this.getGrid(),
@@ -429,14 +450,7 @@ Ext.define('Connector.view.InfoPane', {
                 sm.select(members, false, true);
             }
 
-            var anodes = Ext.DomQuery.select('a.expando');
-            var nodes = Ext.DomQuery.select('a.expando *');
-            anodes = anodes.concat(nodes);
-            Ext.each(anodes, function(node) {
-                Ext.get(node).on('click', function(evt) {
-                    evt.stopPropagation();
-                });
-            });
+            this.bindLearnAboutDetailClick();
         }
 
         //

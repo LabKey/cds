@@ -134,11 +134,9 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             cls : 'iScroll',
             items : [ this.getSingleAxisView(resizeTask) ],
             listeners : {
-                afterlayout : function() {
+                afterlayout : function(p) {
                     var delay = (this.saview.animate ? 250 : 10);
                     this.saview.positionTask.delay(delay, null, null, [false]);
-                },
-                resize : function(p) {
                     resizeTask.delay(100, null, null, [p]);
                 },
                 scope : this
