@@ -19,6 +19,7 @@ Ext.define('Connector.model.StudyVisitTag', {
         {name: 'sequence_num_max'},
         {name: 'visit_tag_name'},
         {name: 'visit_tag_caption'},
+        {name: 'visit_tag_label'},
         {name: 'single_use'},
         {name: 'is_vaccination'},
         {name: 'is_challenge'},

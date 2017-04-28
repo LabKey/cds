@@ -36,6 +36,7 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -444,7 +445,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
 
         log("Validating Treatment Summary");
-        assertEquals("Unexpected number of tick marks on the x-axis.", 89, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis.", 91, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
@@ -461,8 +462,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Special casing this test. for what ever reason sometimes it will have 3/13/2011 other times it will be 3/12/2011.
         // Because this value appears to be calculated I will use regular expression to validate.
         log("Validating Followup Complete");
-//        Pattern p = Pattern.compile("1/10/20088/11/20093/\\d\\d/201110/11/201202468101214");
-        pattern = Pattern.compile(".*02468101214{1}");
+        pattern = Pattern.compile("4/2[0-9]/20156/2[0-9]/20158/1[0-9]/201510/1[0-9]/201512/1[0-9]/201502468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
@@ -471,7 +471,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Another special case scenario.
         log("Validating Date Made Public");
-        pattern = Pattern.compile("3/\\d\\d/20117/\\d/201110/30/20112/23/20126/\\d\\d/201210/11/20122/4/20135/31/201302468101214");
+        pattern = Pattern.compile("3/1[0-9]/20117/[1-9]/201110/3[0-1]/20112/2[0-9]/20126/1[0-9]/201210/1[0-9]/20122/[1-9]/20135/3[0-1]/201302468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
@@ -480,7 +480,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Another special case scenario.
         log("Validating Start Date");
-        pattern = Pattern.compile("11/9/20046/10/20061/10/20088/11/20093/\\d\\d/201102468101214");
+        pattern = Pattern.compile("11/[1-9]/20046/1[0-9]/20061/1[0-9]/20088/1[0-9]/20093/1[0-9]/201102468101214");
         cds.assertPlotTickText(pattern);
 
         xaxis.openSelectorWindow();
@@ -505,7 +505,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // There are too many labels on the xaxis to validate all, so we will just validate the count.
         log("Validating Product Class");
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-        assertEquals("Unexpected number of tick marks on the x-axis.", 83, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis.", 85, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_PROD_COMB);
@@ -514,7 +514,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // There are too many labels on the xaxis to validate all, so we will just validate the count.
         log("Validating Product Class Combination");
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-        assertEquals("Unexpected number of tick marks on the x-axis.", 81, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis.", 83, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
@@ -531,7 +531,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // There are too many labels on the xaxis to validate all, so we will just validate the count.
         log("Validating Treatment Arm");
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 28, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 30, actualTickCount);
 
 
         xaxis.openSelectorWindow();
@@ -540,7 +540,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Validating Treatment Arm Coded Label");
         actualTickCount = Locator.css(cssXaxisTickText).findElements(getDriver()).size();
-        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 87, actualTickCount);
+        assertEquals("Unexpected number of tick marks on the x-axis." + actualTickCount, 89, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
@@ -563,7 +563,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
@@ -590,7 +590,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Treatment Summaries in the color axis.", 43, actualTickCount);
+        assertEquals("Unexpected number of Treatment Summaries in the color axis.", 44, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_NETWORK);
@@ -606,7 +606,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Product Class Combinations in the color axis.", 40, actualTickCount);
+        assertEquals("Unexpected number of Product Class Combinations in the color axis.", 41, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_PROD_CLASS);
@@ -614,7 +614,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Product Classes in the color axis.", 41, actualTickCount);
+        assertEquals("Unexpected number of Product Classes in the color axis.", 42, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
@@ -630,7 +630,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Treatment Arms in the color axis.", 17, actualTickCount);
+        assertEquals("Unexpected number of Treatment Arms in the color axis.", 18, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
@@ -638,7 +638,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Treatment Arm Coded Labels in the color axis.", 43, actualTickCount);
+        assertEquals("Unexpected number of Treatment Arm Coded Labels in the color axis.", 44, actualTickCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
@@ -1701,7 +1701,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
@@ -1729,7 +1729,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 154);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
@@ -1779,6 +1779,90 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(1000);
         _ext4Helper.waitForMaskToDisappear();
 
+    }
+
+    @Test
+    public void verifyColorLegend()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        CDSHelper cds = new CDSHelper(this);
+
+        log("Create a aggregated plot that will have multiple values.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_ALL);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_ANTIGEN);
+        xaxis.confirmSelection();
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.ICS);
+        coloraxis.pickVariable(CDSHelper.ICS_CELL_NAME);
+        coloraxis.confirmSelection();
+
+        log("Get the legend text.");
+        ArrayList<String> legends = coloraxis.getLegendText();
+        boolean hasMultiValue = false;
+        boolean hasCD8Plus = false;
+        for(String legendText : legends)
+        {
+            log(legendText);
+            if(legendText.toLowerCase().equals("multiple values"))
+                hasMultiValue = true;
+            if(legendText.toLowerCase().equals("cd8+"))
+                hasCD8Plus = true;
+        }
+
+        assertTrue("Did not find 'Multiple values' in the legend.", hasMultiValue);
+        assertTrue("Did not find 'CD8+' in the legend.", hasCD8Plus);
+
+        int multiValuePointCount = cdsPlot.getPointCountByGlyph(CDSPlot.PlotGlyphs.circle);
+        log("It looks like there are " + multiValuePointCount + " points on the plot that are 'Multiple values'");
+        assertTrue("There were no points in the plot for 'Multi value'", multiValuePointCount > 0);
+
+        log("Create a plot with X, Y and Color choosing from the same source");
+
+        String cssPathToSvg;
+        int pointToClick;
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ELISPOT);
+        xaxis.pickVariable(CDSHelper.ELISPOT_ANTIGEN_TYPE);
+        xaxis.confirmSelection();
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.ELISPOT);
+        coloraxis.pickVariable(CDSHelper.ELISPOT_CELL_TYPE);
+        coloraxis.confirmSelection();
+
+        log("Get the legend text.");
+        legends = coloraxis.getLegendText();
+        hasCD8Plus = false;
+        for(String legendText : legends)
+        {
+            log(legendText);
+            if(legendText.toLowerCase().equals("cd8+"))
+                hasCD8Plus = true;
+        }
+
+        assertTrue("Did not find 'CD8+' in the legend.", hasCD8Plus);
+
+        cds.goToAppHome();
     }
 
     // hasXGutter: Does the plot have an x-gutter (i.e. gutter along the bottom).

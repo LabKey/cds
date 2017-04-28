@@ -65,4 +65,11 @@ div.grouplist-view {
   color: $gray-7;
 }
 
+.group-filter-error-popup {
+  ul {
+    padding-left: 20px;
+    list-style-type: disc;
+  }
+}
+
 /* -- END Connector.view.GroupListView */

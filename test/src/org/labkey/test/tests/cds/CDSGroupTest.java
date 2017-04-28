@@ -19,17 +19,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.etl.ETLHelper;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -152,7 +157,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
-        _asserts.assertFilterStatusCounts(1604, 14, 2, 1, 89); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(1604, 14, 2, 1, 91); // TODO Test data dependent.
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
@@ -362,6 +367,117 @@ public class CDSGroupTest extends CDSReadOnlyTest
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[0]);
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[1]);
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[2]);
+
+    }
+
+    @Test
+    public void verifySavedGroupAfterDataChange() throws Exception
+    {
+        // This is to validate issue 29978 (Improve handling for saved groups with missing/renamed criteria)
+
+        final String GROUP_NAME = "Study139DataChange";
+
+        log("Create filter that includes a study ZAP 139 and gender female.");
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.ZAP_139);
+        cds.useSelectionAsSubjectFilter();
+        cds.goToSummary();
+        cds.clickBy("Subject characteristics");
+        cds.pickSort("Sex at birth");
+        cds.selectBars("Female");
+        cds.useSelectionAsSubjectFilter();
+
+        log("Save this filter as a group.");
+        cds.saveGroup(GROUP_NAME, "Validate how a group works when the data has changed.");
+
+        log("Now that the group is saved clear the filter.");
+        cds.clearFilters();
+
+        log("Go change the label for the study.");
+        changeStudyLabelAndLoadData(CDSHelper.ZAP_139, CDSHelper.PROT_Z139, CDSHelper.ZAP_139 + "modified");
+
+        log("Go back to the CDS portal, load the group, and validate the expected error message is shown.");
+        cds.enterApplication();
+
+        waitForElement(Locator.tagWithClass("div", "grouplabel").withText(GROUP_NAME));
+        click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_NAME));
+
+        log("Validate that the error message box is shown.");
+        waitForElementToBeVisible(Locator.tagWithClassContaining("div", "x-message-box"));
+
+        log("Validate that the error text is present.");
+        assertTextPresent("This saved group includes criteria no longer available in the data: ", "[Study.Treatment].[ZAP 139]", "Do you want to apply the filters without these criteria?");
+
+        log("Apply the filter.");
+        click(Locator.xpath("//span[text()='Yes']/ancestor::a[contains(@class, 'x-btn')]"));
+        waitForText("No plot saved for this group.");
+
+        cds.goToSummary();
+
+        log("Validate that only one filter is applied, and it should not be for the study ZAP 139.");
+        List<WebElement> activeFilters = cds.getActiveFilters();
+
+        assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
+
+        Assert.assertEquals(activeFilters.get(0).findElement(By.className("sel-label")).getText(), "Subject (Sex)", "Filter selection not as expecxted.");
+
+        log("Clear the filter again and lets go back and undo everything.");
+        cds.clearFilters();
+
+        log("Change the label for the study back.");
+        changeStudyLabelAndLoadData(CDSHelper.ZAP_139, CDSHelper.PROT_Z139, CDSHelper.ZAP_139);
+
+        log("Go back to the CDS portal, load the group, and validate no error is shown and the filter is applied.");
+        cds.enterApplication();
+
+        waitForElement(Locator.tagWithClass("div", "grouplabel").withText(GROUP_NAME));
+        click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_NAME));
+        waitForText("No plot saved for this group.");
+        _ext4Helper.waitForMaskToDisappear();
+
+        cds.goToSummary();
+
+        log("Validate that the filter has both study ZAP 139 and gender female.");
+        activeFilters = cds.getActiveFilters();
+
+        assertEquals("Number of active filters not as expected.", 2, activeFilters.size());
+
+        Assert.assertEquals("Study", activeFilters.get(0).findElement(By.className("sel-label")).getText(), "First filter selection not as expecxted.");
+        Assert.assertEquals( "Subject (Sex)", activeFilters.get(1).findElement(By.className("sel-label")).getText(), "Second filter selection not as expecxted.");
+
+        log("Ok, looks good. Clear the filter, delete the group, and test is done.");
+        cds.goToAppHome();
+        cds.deleteGroupFromSummaryPage(GROUP_NAME);
+        cds.clearFilters();
+
+    }
+
+    private void changeStudyLabelAndLoadData(String studyName, String studyProtocol, String studyLabel) throws Exception
+    {
+
+        log("Go change the label for the study '" + studyName + "'.");
+        Ext4Helper.resetCssPrefix();
+        goToProjectHome();
+        goToSchemaBrowser();
+
+        selectQuery("CDS", "import_study");
+        clickAndWait(Locator.linkWithText("view data"));
+        log("Edit the record for study '" + studyName + "'.");
+        clickAndWait(Locator.xpath("//a[text()='" + studyProtocol + "']/parent::td/preceding-sibling::td/a[text()='edit']"));
+        waitForElement(Locator.input("quf_study_label"));
+        setFormElement(Locator.input("quf_study_label"), studyLabel);
+        clickAndWait(Locator.lkButton("Submit"));
+
+        goToProjectHome();
+
+        log("Run the 'LoadApplication' ETL for CDS to load the updated study.");
+        ETLHelper _etlHelper = new ETLHelper(this, getProjectName());
+        _etlHelper.getDiHelper().runTransformAndWait("{CDS}/LoadApplication", 15 * 60 * 1000);
+
+        goToProjectHome();
+        Ext4Helper.setCssPrefix("x-");
+
 
     }
 

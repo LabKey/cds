@@ -18,13 +18,9 @@ DISTINCT arm_visit.study_arm_visit_type AS Name,
 arm_visit.study_arm_visit_type AS caption,
 FALSE AS SingleUse
 FROM cds.import_studypartgrouparmvisit AS arm_visit
-WHERE study_arm_visit_type IS NOT NULL
+WHERE study_arm_visit_type IS NOT NULL AND study_arm_visit_type != 'Placeholder'
 
-UNION
-
-SELECT
-DISTINCT arm_visit.study_arm_visit_label AS Name,
-arm_visit.study_arm_visit_label AS caption,
-TRUE AS SingleUse
-FROM cds.import_studypartgrouparmvisit AS arm_visit
-WHERE study_arm_visit_label IS NOT NULL
+-- add the pre-defined alignment visits tags
+UNION ALL SELECT 'Enrollment' AS Name, 'Enrollment' AS caption, TRUE AS SingleUse
+UNION ALL SELECT 'First Vaccination' AS Name, 'First Vaccination' AS caption, TRUE AS SingleUse
+UNION ALL SELECT 'Last Vaccination' AS Name, 'Last Vaccination' AS caption, TRUE AS SingleUse
