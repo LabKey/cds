@@ -25,44 +25,44 @@ Ext.define('Connector.app.store.Study', {
         this.relationshipData = undefined;
 
         LABKEY.Query.selectRows({
-            schemaName: 'cds',
+            schemaName: 'cds.metadata',
             queryName: 'study',
             success: this.onLoadStudies,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_productsforstudies',
+            queryName: 'learn_productsforstudies',
             success: this.onLoadProducts,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_assaysforstudies',
+            queryName: 'learn_assaysforstudies',
             success: this.onLoadAssays,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_documentsforstudies',
+            queryName: 'learn_documentsforstudies',
             success: this.onLoadDocuments,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_publicationsforstudies',
+            queryName: 'learn_publicationsforstudies',
             success: this.onLoadPublications,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_relationshipsforstudies',
+            queryName: 'learn_relationshipsforstudies',
             success: this.onLoadRelationships,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_studyrelationshiporder',
+            queryName: 'learn_studyrelationshiporder',
             success: this.onLoadRelationshipOrder,
             scope: this,
             sort: 'rel_sort_order'

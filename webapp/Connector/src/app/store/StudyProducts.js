@@ -39,12 +39,12 @@ Ext.define('Connector.app.store.StudyProducts', {
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_studiesforproducts',
+            queryName: 'learn_studiesforproducts',
             success: this.onLoadStudies,
             scope: this
         });
         LABKEY.Query.selectRows({
-            schemaName: 'cds',
+            schemaName: 'cds.metadata',
             queryName: 'studypartgrouparmproduct',
             success: this.onLoadStudyArmProduct,
             scope: this

@@ -641,13 +641,6 @@
             <column columnName="assay_status"/>
         </columns>
     </table>
-    <table tableName="studyrelationshiporder" tableDbType="TABLE">
-        <columns>
-            <column columnName="relationship"/>
-            <column columnName="rel_sort_order"/>
-            <column columnName="container"/>
-        </columns>
-    </table>
     <table tableName="studyrelationship" tableDbType="TABLE">
         <columns>
             <column columnName="prot"/>

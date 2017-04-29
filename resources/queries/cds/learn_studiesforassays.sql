@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
--- Helper query for store\Study.js. Grabs all metadata for each assay.
+-- Helper query for store\Assay.js. Grabs all metadata for each study.
 SELECT
-  sa.prot,
+  sa.assay_identifier,
   sa.has_data,
-  sa.assay_identifier AS "study_assay_id",
   sa.assay_status,
-  amd.*
-FROM cds.studyassay sa
-LEFT JOIN assay amd
-ON amd.assay_identifier=sa.assay_identifier
+  sa.prot,
+  smd.*
+FROM cds.ds_studyassay sa
+LEFT JOIN study smd
+ON smd.study_name=sa.prot

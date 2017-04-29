@@ -18,6 +18,6 @@ SELECT
   sd.prot,
   sd.document_order,
   doc.*
-FROM cds.studydocument sd
+FROM cds.ds_studydocument sd
 LEFT JOIN document doc
 ON doc.document_id=sd.document_id

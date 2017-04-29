@@ -29,7 +29,7 @@ Ext.define('Connector.app.store.Assay', {
         
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_studiesforassays',
+            queryName: 'learn_studiesforassays',
             success: this.onLoadStudies,
             scope: this
         })

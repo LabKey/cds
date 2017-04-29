@@ -18,6 +18,6 @@ SELECT
   sp.prot,
   sp.publication_order,
   pub.*
-FROM cds.studypublication sp
+FROM cds.ds_studypublication sp
 LEFT JOIN publication pub
 ON pub.id=sp.publication_id

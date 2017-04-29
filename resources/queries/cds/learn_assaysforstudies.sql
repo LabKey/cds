@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
--- Helper query for store\StudyProduct.js. Grabs all metadata for each study.
+-- Helper query for store\Study.js. Grabs all metadata for each assay.
 SELECT
-spm.*,
-s.label AS "study_label",
-s.short_name AS "study_short_name"
-FROM cds.studyproductmap spm
-LEFT JOIN cds.study s ON spm.study_name=s.study_name
+  sa.prot,
+  sa.has_data,
+  sa.assay_identifier AS "study_assay_id",
+  sa.assay_status,
+  amd.*
+FROM cds.ds_studyassay sa
+LEFT JOIN assay amd
+ON amd.assay_identifier=sa.assay_identifier

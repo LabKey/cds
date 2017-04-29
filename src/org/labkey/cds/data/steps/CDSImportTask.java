@@ -70,7 +70,6 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudyPartGroupArmVisit"),
         new TSVCopyConfig("StudyPartGroupArmVisitProduct"),
         new TSVCopyConfig("ProductInsert", "ProductInsertClade"),
-        new TSVCopyConfig("StudyRelationshipOrder"),
         new TSVCopyConfig("StudyRelationship"),
 
         // Mapping Tables
