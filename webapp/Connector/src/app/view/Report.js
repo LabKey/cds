@@ -9,6 +9,10 @@ Ext.define('Connector.app.view.Report', {
 
     cls: 'reportlearngrid learngrid',
 
+    lockedViewConfig: {
+        cls: 'reportlearngridlocked'
+    },
+
     itemPluralName: 'reports',
 
     columns: [
@@ -48,7 +52,8 @@ Ext.define('Connector.app.view.Report', {
                     '<div class="detail-description-text">',
                     '{description:htmlEncode}',
                     '</div>',
-                    '</div>')
+                    '</div>',
+                    '{[Connector.app.view.LearnSummary.overflowFadeOut()]}')
         },
         {
             text: 'Report Type',
