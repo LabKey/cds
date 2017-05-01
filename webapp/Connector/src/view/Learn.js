@@ -734,7 +734,7 @@ Ext.define('Connector.view.LearnHeader', {
             this.searchField = Ext.create('Ext.form.field.Text', {
                 emptyText: 'Search',
                 cls: 'learn-search-input',
-                width: 400,
+                width: 300,
                 checkChangeBuffer: 500,
                 value: this.searchValue,
                 validator: Ext.bind(function(value) {
