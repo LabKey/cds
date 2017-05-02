@@ -27,7 +27,7 @@ Ext.define('Connector.view.module.StudyHeader', {
                             '<tpl if="!cavd_affiliation_filename || cavd_affiliation_file_exists !== true">',
                                 '{cavd_affiliation:htmlEncode}</td>',
                             '<tpl else>',
-                                '<a href="' + LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + '{cavd_affiliation_filename}" target="_blank">{cavd_affiliation:htmlEncode}</a></td>',
+                                '<a href="' + LABKEY.contextPath + LABKEY.moduleContext.cds.StudyDocumentPath + '{cavd_affiliation_filename}" target="_blank">{cavd_affiliation:htmlEncode}</a></td>',
                         '</tpl>',
                     '</tr>',
                 '</tpl>',
@@ -110,7 +110,7 @@ Ext.define('Connector.view.module.StudyHeader', {
             };
             this.on("afterrender", function() {
                 this.validateDocLinks([{
-                    fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + data.cavd_affiliation_filename,
+                    fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StudyDocumentPath + data.cavd_affiliation_filename,
                     isLinkValid: false
                 }], cavdLinkIsValid, function() {
                     this.update(data);

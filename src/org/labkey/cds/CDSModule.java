@@ -50,7 +50,7 @@ public class CDSModule extends DefaultModule
     final ModuleProperty _staticPath;
     final ModuleProperty _cmsURL;
     final ModuleProperty _startedVideoURL;
-
+    final ModuleProperty _studyDocumentPath;
 
     public CDSModule()
     {
@@ -80,6 +80,11 @@ public class CDSModule extends DefaultModule
         _startedVideoURL.setDescription("The full URL of the intro video. This can include whatever parameters are needed for embedding.");
         _startedVideoURL.setCanSetPerContainer(false);
         addModuleProperty(_startedVideoURL);
+
+        _studyDocumentPath = new ModuleProperty(this, "StudyDocumentPath");
+        _studyDocumentPath.setDescription("Full webdav path to which study documents are located");
+        _studyDocumentPath.setCanSetPerContainer(false);
+        addModuleProperty(_studyDocumentPath);
     }
 
     public String getName()
@@ -89,7 +94,7 @@ public class CDSModule extends DefaultModule
 
     public double getVersion()
     {
-        return 17.11;
+        return 17.12;
     }
 
     public boolean hasScripts()

@@ -249,7 +249,7 @@ Ext.define('Connector.app.store.Study', {
                     return {
                         id: doc.document_id,
                         label: doc.label,
-                        fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + doc.filename,
+                        fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StudyDocumentPath + doc.filename,
                         docType: doc.document_type,
                         isLinkValid: false,
                         suffix: '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',

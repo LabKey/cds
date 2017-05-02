@@ -435,6 +435,7 @@
         <columns>
             <column columnName="prot"/>
             <column columnName="document_id"/>
+            <column columnName="access_level"/>
             <column columnName="study_document_order"/>
         </columns>
     </table>
@@ -473,6 +474,7 @@
             <column columnName="prot"/>
             <column columnName="document_id"/>
             <column columnName="container"/>
+            <column columnName="access_level"/>
             <column columnName="document_order"/>
         </columns>
     </table>

@@ -1242,6 +1242,8 @@ public class CDSHelper
         changed |= returnVal;
         returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
         changed |= returnVal;
+        returnVal = setStudyDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
+        changed |= returnVal;
 
         if (changed)
         {
@@ -1298,9 +1300,9 @@ public class CDSHelper
 
     }
 
-    private boolean setStaticPath(String path)
+    private boolean setPropertyPath(String path, int inputIndex)
     {
-        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[5]";
+        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[" + inputIndex + "]";
         boolean changed = false;
         String curValue;
 
@@ -1315,6 +1317,17 @@ public class CDSHelper
         return changed;
 
     }
+
+    private boolean setStaticPath(String path)
+    {
+        return setPropertyPath(path, 6);
+    }
+
+    private boolean setStudyDocumentPath(String path)
+    {
+        return setPropertyPath(path, 2);
+    }
+
 
     public void assertPlotTickText(Pattern p)
     {

@@ -23,6 +23,7 @@ import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.module.Module;
 import org.labkey.api.query.DefaultSchema;
+import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.SimpleUserSchema;
 import org.labkey.api.security.User;
@@ -30,6 +31,7 @@ import org.labkey.api.visualization.VisualizationProvider;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -113,6 +115,12 @@ public class CDSUserSchema extends SimpleUserSchema
                 public synchronized Set<String> getVisibleTableNames()
                 {
                     return Collections.unmodifiableSet(_metatables);
+                }
+
+                @NotNull
+                public Map<String, QueryDefinition> getQueryDefs()
+                {
+                    return Collections.emptyMap();
                 }
 
             };
