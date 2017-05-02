@@ -222,8 +222,7 @@ Ext.define('Connector.app.view.Study', {
 
     dataAvailabilityTooltipConfig : function() {
         return {
-            title: 'Assays',
-            recordField: 'assay_short_name'
+            title: 'Assays'
         }
     }
 });

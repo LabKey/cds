@@ -7,6 +7,10 @@ Ext.define('Connector.app.store.Assay', {
 
     extend : 'Ext.data.Store',
 
+    mixins: {
+        studyAccessHelper: 'Connector.app.store.PermissionedStudy'
+    },
+
     model : 'Connector.app.model.Assay',
 
     constructor: function(config) {
@@ -19,6 +23,8 @@ Ext.define('Connector.app.store.Assay', {
     loadSlice : function() {
         this.assayData = undefined;
         this.assayStudies = undefined;
+
+        this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -46,7 +52,7 @@ Ext.define('Connector.app.store.Assay', {
     },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.assayData) && Ext.isDefined(this.assayStudies)) {
+        if (Ext.isDefined(this.assayData) && Ext.isDefined(this.assayStudies) && Ext.isDefined(this.accessibleStudies)) {
 
             this.assayData.sort(function(assayA, assayB) {
                 return LABKEY.app.model.Filter.sorters.natural(assayA.assay_short_name, assayB.assay_short_name);
@@ -60,23 +66,24 @@ Ext.define('Connector.app.store.Assay', {
                 assay.data_availability = false;
                 for (var s = 0; s < this.assayStudies.length; s++) {
                     if (assay.assay_identifier === this.assayStudies[s].assay_identifier) {
+                        var id = this.assayStudies[s].study_name || this.assayStudies[s].prot;
                         var study = {
-                            id: this.assayStudies[s].study_name || this.assayStudies[s].prot,
-                            label: this.assayStudies[s].label ? this.assayStudies[s].label : '',
+                            data_label: this.assayStudies[s].label ? this.assayStudies[s].label : '',
+                            data_id: id,
+                            data_link_id: id,
                             has_data: this.assayStudies[s].has_data,
-                            assay_status: this.assayStudies[s].assay_status
+                            has_access: this.accessibleStudies[this.assayStudies[s].study_name] === true,
+                            data_status: this.assayStudies[s].assay_status
                         };
                         studies.push(study);
-                        if (study.has_data) {
-                            assay.data_availability = true;
-                            studiesWithData.push(study);
-                        }
                     }
                 }
-                studies.sort(function(a, b) {
-                    var val1 = a.label ? a.label : a.id;
-                    var val2 = b.label ? b.label : b.id;
-                    return val1.localeCompare(val2);
+                studies.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
+                Ext.each(studies, function(study) {
+                    if (study.has_data) {
+                        assay.data_availability = true;
+                        studiesWithData.push(study);
+                    }
                 });
                 assay.studies = studies;
                 assay.studies_with_data = studiesWithData;

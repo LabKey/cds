@@ -7,6 +7,10 @@ Ext.define('Connector.app.store.Study', {
 
     extend : 'Ext.data.Store',
 
+    mixins: {
+        studyAccessHelper: 'Connector.app.store.PermissionedStudy'
+    },
+
     model : 'Connector.app.model.Study',
 
     constructor: function(config) {
@@ -23,6 +27,8 @@ Ext.define('Connector.app.store.Study', {
         this.documentData = undefined;
         this.publicationData = undefined;
         this.relationshipData = undefined;
+
+        this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
         LABKEY.Query.selectRows({
             schemaName: 'cds.metadata',
@@ -107,7 +113,7 @@ Ext.define('Connector.app.store.Study', {
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
-                && Ext.isDefined(this.relationshipOrderData)) {
+                && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)) {
             var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                 return relOrder.relationship;
@@ -118,6 +124,7 @@ Ext.define('Connector.app.store.Study', {
 
             // join products to study
             Ext.each(this.studyData, function(study) {
+                var hasStudyAccess = this.accessibleStudies[study.study_name] === true;
                 study.study_title = study.title;
                 if (study.groups || study.treatment_schema_link) {
                     study.groups_treatment_schema = '';
@@ -179,27 +186,23 @@ Ext.define('Connector.app.store.Study', {
                     if (study.study_name === this.assayData[a].prot) {
                         study.data_availability = study.data_availability || this.assayData[a].has_data;
                         var assay = {
-                            assay_short_name: this.assayData[a].assay_short_name,
-                            study_assay_id: this.assayData[a].study_assay_id,
-                            assay_identifier: this.assayData[a].assay_identifier,
+                            data_label: this.assayData[a].assay_short_name,
+                            data_id: this.assayData[a].study_assay_id,
+                            data_link_id: this.assayData[a].assay_identifier,
                             has_data: this.assayData[a].has_data,
-                            assay_status: this.assayData[a].assay_status
+                            has_access: hasStudyAccess,
+                            data_status: this.assayData[a].assay_status
                         };
                         assays.push(assay);
-                        if (this.assayData[a].has_data) {
-                            assaysAdded.push(assay);
-                            assayAddedCount += 1;
-                        }
                     }
                 }
 
-                assaysAdded.sort(function (a1, a2) {
-                    return a1.assay_short_name.toLowerCase().localeCompare(a2.assay_short_name.toLowerCase())
-                });
-                assays.sort(function (a1, a2) {
-                    var val1 = a1.assay_short_name ? a1.assay_short_name : a1.study_assay_id;
-                    var val2 = a2.assay_short_name ? a2.assay_short_name : a2.study_assay_id;
-                    return val1.toLowerCase().localeCompare(val2.toLowerCase())
+                assays.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
+                Ext.each(assays, function(assay){
+                    if (assay.has_data) {
+                        assaysAdded.push(assay);
+                        assayAddedCount += 1;
+                    }
                 });
 
                 for (var d=0; d < this.documentData.length; d++) {

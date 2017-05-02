@@ -81,7 +81,7 @@ Ext.define('Connector.app.view.LearnSummary', {
 
         var dataAvailableListHTML = "<ul>";
         for (var itr = 0; itr < options.itemsWithDataAvailable.length; ++itr) {
-            dataAvailableListHTML += "<li>" + options.itemsWithDataAvailable[itr][config.recordField] + "</li>\n";
+            dataAvailableListHTML += "<li>" + options.itemsWithDataAvailable[itr]['data_label'] + "</li>\n";
         }
         dataAvailableListHTML += "</ul>";
 

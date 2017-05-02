@@ -7,6 +7,10 @@ Ext.define('Connector.app.store.StudyProducts', {
 
     extend : 'Ext.data.Store',
 
+    mixins: {
+        studyAccessHelper: 'Connector.app.store.PermissionedStudy'
+    },
+
     model : 'Connector.app.model.StudyProducts',
 
     /**
@@ -30,6 +34,8 @@ Ext.define('Connector.app.store.StudyProducts', {
         this.studyData = undefined;
         this.productProduct = undefined;
         this.idProductNameMap = undefined;
+
+        this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -124,7 +130,7 @@ Ext.define('Connector.app.store.StudyProducts', {
     },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData) && Ext.isDefined(this.productProduct)) {
+        if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData) && Ext.isDefined(this.productProduct) && Ext.isDefined(this.accessibleStudies)) {
             var products = [],
                 studies,
                 studiesWithData,
@@ -140,21 +146,22 @@ Ext.define('Connector.app.store.StudyProducts', {
                 for (s=0; s < this.studyData.length; s++) {
                     if (product.product_id === this.studyData[s].product_id) {
                         var study = {
-                            study_name: this.studyData[s].study_name,
-                            label: this.studyData[s].study_label ? this.studyData[s].study_label : '',
-                            has_data: this.studyData[s].has_data
+                            data_label: this.studyData[s].study_label ? this.studyData[s].study_label : '',
+                            data_id: this.studyData[s].study_name,
+                            data_link_id: this.studyData[s].study_name,
+                            has_data: this.studyData[s].has_data,
+                            has_access:  this.accessibleStudies[this.studyData[s].study_name] === true,
+                            data_status: undefined
                         };
                         studies.push(study);
-                        if (study.has_data) {
-                            product.data_availability = true;
-                            studiesWithData.push(study);
-                        }
                     }
                 }
-                studies.sort(function(a, b) {
-                    var val1 = a.label ? a.label : a.study_name;
-                    var val2 = b.label ? b.label : b.study_name;
-                    return val1.localeCompare(val2);
+                studies.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
+                Ext.each(studies, function(study){
+                    if (study.has_data) {
+                        product.data_availability = true;
+                        studiesWithData.push(study);
+                    }
                 });
                 product.studies = studies;
                 product.studies_with_data = studiesWithData;

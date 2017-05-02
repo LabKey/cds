@@ -21,5 +21,5 @@ SELECT
   sa.prot,
   smd.*
 FROM cds.ds_studyassay sa
-LEFT JOIN study smd
+LEFT JOIN cds.metadata.study smd
 ON smd.study_name=sa.prot

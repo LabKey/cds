@@ -20,5 +20,5 @@ spm.product_id,
 spm.has_data,
 s.label AS "study_label",
 s.short_name AS "study_short_name"
-FROM cds.studyproductmap spm
-LEFT JOIN cds.study s ON spm.study_name=s.study_name
+FROM cds.metadata.studyproductmap spm
+LEFT JOIN cds.metadata.study s ON spm.study_name=s.study_name

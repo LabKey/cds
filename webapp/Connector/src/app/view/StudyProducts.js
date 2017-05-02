@@ -119,8 +119,7 @@ Ext.define('Connector.app.view.StudyProducts', {
 
     dataAvailabilityTooltipConfig : function() {
         return {
-            title: 'Studies',
-            recordField: 'label'
+            title: 'Studies'
         }
     }
 });

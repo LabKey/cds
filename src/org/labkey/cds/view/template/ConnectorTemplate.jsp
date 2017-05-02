@@ -305,6 +305,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/VariableList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Report.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/PermissionedStudy.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/AssayAntigen.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Labs.js"></script>
@@ -327,13 +328,10 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/DataAvailabilityModule.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAntigenList.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ContactCDS.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyPublications.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>

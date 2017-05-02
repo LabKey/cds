@@ -82,8 +82,7 @@ Ext.define('Connector.app.view.Assay', {
 
     dataAvailabilityTooltipConfig : function() {
         return {
-            title: 'Studies',
-            recordField: 'label'
+            title: 'Studies'
         }
     }
 });
