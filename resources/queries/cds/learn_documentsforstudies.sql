@@ -17,7 +17,10 @@
 SELECT
   sd.prot,
   sd.document_order,
+  sd.access_level <> 'restricted' OR study.study_name IS NOT NULL AS "accessible",
   doc.*
 FROM cds.ds_studydocument sd
 LEFT JOIN document doc
 ON doc.document_id=sd.document_id
+LEFT JOIN study study
+ON study.study_name=sd.prot

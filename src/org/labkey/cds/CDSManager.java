@@ -27,11 +27,19 @@ import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.data.TableSelector;
+import org.labkey.api.module.ModuleLoader;
+import org.labkey.api.module.ModuleProperty;
+import org.labkey.api.query.FieldKey;
+import org.labkey.api.query.QueryDefinition;
+import org.labkey.api.query.QueryException;
+import org.labkey.api.query.QueryService;
 import org.labkey.api.security.User;
 import org.labkey.api.util.ContainerUtil;
+import org.labkey.api.util.PageFlowUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -162,5 +170,32 @@ public class CDSManager
             activeUserProperties.put(property.getKey(), property.getValue());
         }
         activeUserProperties.save();
+    }
+
+    public boolean isStudyDocumentAccessible(String studyName, String docId, User user, Container container)
+    {
+        TableInfo tableInfo = getCDSQueryTableInfo("learn_documentsforstudies", user, container);
+        SimpleFilter filter = new SimpleFilter();
+        filter.addCondition(FieldKey.fromParts("prot"), studyName);
+        filter.addCondition(FieldKey.fromParts("document_id"), docId);
+
+        TableSelector selector = new TableSelector(tableInfo, Collections.singleton("accessible"), filter, null);
+        return selector.getObject(Boolean.class);
+    }
+
+
+    public static TableInfo getCDSQueryTableInfo(String queryName, User user, Container container)
+    {
+        QueryService queryService = QueryService.get();
+        QueryDefinition qd = queryService.getQueryDef(user, container, "cds", queryName);
+
+        ArrayList<QueryException> qerrors = new ArrayList<>();
+        return qd.getTable(qerrors, true);
+    }
+
+    public String getStudyDocumentPath(Container container)
+    {
+        ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.STUDY_DOCUMENT_PATH);
+        return PageFlowUtil.decode(mp.getEffectiveValue(container));
     }
 }

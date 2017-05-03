@@ -30,6 +30,7 @@ import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
 import org.labkey.api.action.SimpleApiJsonForm;
+import org.labkey.api.action.SimpleErrorView;
 import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
 import org.labkey.api.data.ColumnHeaderType;
@@ -73,6 +74,8 @@ import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
 import org.labkey.api.view.VBox;
 import org.labkey.api.view.template.PageConfig;
+import org.labkey.api.webdav.WebdavResource;
+import org.labkey.api.webdav.WebdavService;
 import org.labkey.api.writer.PrintWriters;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.labkey.cds.view.template.FrontPageTemplate;
@@ -82,6 +85,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -741,4 +745,106 @@ public class CDSController extends SpringActionController
             return response;
         }
     }
+
+    @RequiresPermission(ReadPermission.class)
+    public static class GetStudyDocumentAction extends SimpleViewAction<StudyDocumentForm>
+    {
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+
+        @Override
+        public void validate(StudyDocumentForm form, BindException errors)
+        {
+            if (null == form.getStudy())
+                errors.reject(ERROR_MSG, "study parameter required");
+            if (null == form.getDocumentId())
+                errors.reject(ERROR_MSG, "documentId parameter required");
+            if (null == form.getFilename())
+                errors.reject(ERROR_MSG, "filename parameter required");
+        }
+
+        @Override
+        public ModelAndView getView(StudyDocumentForm form, BindException errors) throws Exception
+        {
+            HttpServletResponse response = getViewContext().getResponse();
+            String filename = form.getFilename();
+            String basePath = CDSManager.get().getStudyDocumentPath(getContainer());
+
+            if (StringUtils.isBlank(basePath))
+            {
+                errors.reject(ERROR_MSG, "Study document location not specified.");
+            }
+            if (!errors.hasErrors() && CDSManager.get().isStudyDocumentAccessible(form.getStudy(), form.getDocumentId(), getUser(), getContainer()) && !StringUtils.isBlank(filename))
+            {
+                WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
+                WebdavResource resource = service.lookup(Path.parse(basePath + filename));
+                if (resource != null)
+                {
+                    File requestedFile = resource.getFile();
+                    if (requestedFile == null || !requestedFile.canRead())
+                    {
+                        errors.reject(ERROR_MSG, "Requested file not found or unreadable");
+                    }
+                    else
+                    {
+                        PageFlowUtil.streamFile(response, requestedFile, false);
+                        return null;
+                    }
+                }
+                else
+                {
+                    errors.reject(ERROR_MSG, "Requested file not found or unreadable");
+                }
+            }
+            else
+            {
+                errors.reject(ERROR_MSG, "User don't have permission to access restricted study documents");
+            }
+            // file was not able to be shown so show error message(s)
+            ModelAndView result = new SimpleErrorView(errors, false);
+            return result;
+        }
+    }
+
+    public static class StudyDocumentForm
+    {
+        private String study;
+        private String documentId;
+        private String filename;
+
+        public String getStudy()
+        {
+            return study;
+        }
+
+        public void setStudy(String study)
+        {
+            this.study = study;
+        }
+
+        public String getDocumentId()
+        {
+            return documentId;
+        }
+
+        public void setDocumentId(String documentId)
+        {
+            this.documentId = documentId;
+        }
+
+        public String getFilename()
+        {
+            return filename;
+        }
+
+        public void setFilename(String name)
+        {
+            this.filename = name;
+        }
+    }
+
+
 }

@@ -45,6 +45,14 @@ public class CDSModule extends DefaultModule
 {
     public static String NAME = "CDS";
 
+    public static final String SHOW_HIDDEN_VARIABLES = "ShowHiddenVariables";
+    public static final String BLOG_PATH = "BlogPath";
+    public static final String STATIC_PATH = "StaticPath";
+    public static final String CMS = "CMS";
+    public static final String GETTING_STARTED_VIDEO_URL = "GettingStartedVideoURL";
+    public static final String STUDY_DOCUMENT_PATH = "StudyDocumentPath";
+
+
     final ModuleProperty _showHiddenVariables;
     final ModuleProperty _blogPath;
     final ModuleProperty _staticPath;
@@ -54,34 +62,34 @@ public class CDSModule extends DefaultModule
 
     public CDSModule()
     {
-        _showHiddenVariables = new ModuleProperty(this, "ShowHiddenVariables");
+        _showHiddenVariables = new ModuleProperty(this, SHOW_HIDDEN_VARIABLES);
         _showHiddenVariables.setDescription("If 'true', show all variables (including hidden) in the variable selector in devMode.");
         _showHiddenVariables.setCanSetPerContainer(true);
         addModuleProperty(_showHiddenVariables);
 
-        _blogPath = new ModuleProperty(this, "BlogPath");
+        _blogPath = new ModuleProperty(this, BLOG_PATH);
         _blogPath.setDescription("Full webdav path to which the short-cut '/blog/' will point");
         _blogPath.setCanSetPerContainer(false);
         addModuleProperty(_blogPath);
 
-        _staticPath = new ModuleProperty(this, "StaticPath");
+        _staticPath = new ModuleProperty(this, STATIC_PATH);
         _staticPath.setDescription("Full webdav path to which the short-cut '/static/' will point");
         _staticPath.setCanSetPerContainer(false);
         addModuleProperty(_staticPath);
 
-        _cmsURL = new ModuleProperty(this, "CMS");
+        _cmsURL = new ModuleProperty(this, CMS);
         _cmsURL.setDescription("Full URL to CMS web server");
         _cmsURL.setCanSetPerContainer(true);
         addModuleProperty(_cmsURL);
 
         // TODO would be nice to have a addPropertyChangeListener()
 
-        _startedVideoURL = new ModuleProperty(this, "GettingStartedVideoURL");
+        _startedVideoURL = new ModuleProperty(this, GETTING_STARTED_VIDEO_URL);
         _startedVideoURL.setDescription("The full URL of the intro video. This can include whatever parameters are needed for embedding.");
         _startedVideoURL.setCanSetPerContainer(false);
         addModuleProperty(_startedVideoURL);
 
-        _studyDocumentPath = new ModuleProperty(this, "StudyDocumentPath");
+        _studyDocumentPath = new ModuleProperty(this, STUDY_DOCUMENT_PATH);
         _studyDocumentPath.setDescription("Full webdav path to which study documents are located");
         _studyDocumentPath.setCanSetPerContainer(false);
         addModuleProperty(_studyDocumentPath);

@@ -211,7 +211,9 @@ Ext.define('Connector.app.store.Study', {
                         if (this.documentData[d].document_type === 'grant_document') {
                             study.cavd_affiliation = this.documentData[d].label;
                             study.cavd_affiliation_filename = this.documentData[d].filename;
-                            study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
+                            study.cavd_affiliation_file_accessible = undefined;  // not set until we check (when StudyHeader is actually loaded)
+                            study.cavd_affiliation_file_has_permission = this.documentData[d].accessible;
+                            study.cavd_affiliation_file_path = Connector.plugin.DocumentValidation.getStudyDocumentUrl(this.documentData[d].filename, study.study_name, this.documentData[d].document_id);
                         }
                     }
                 }
@@ -241,19 +243,21 @@ Ext.define('Connector.app.store.Study', {
                             ((new Date(pubA.date)) > (new Date(pubB.date)) ? -1 : 1)
                 });
 
-                var documentsAndPublications = this.publicationData.concat(this.documentData.filter(function(doc) {
+                var documents = this.documentData.filter(function(doc) {
                     return doc.document_type === 'Report or summary' || doc.document_type === 'Study plan or protocol'
-                })).filter(function(doc) {
+                }).filter(function(doc) {
                     return study.study_name === doc.prot;
                 }).map(function(doc) {
                     return {
                         id: doc.document_id,
                         label: doc.label,
-                        fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StudyDocumentPath + doc.filename,
+                        fileName: doc.filename,
                         docType: doc.document_type,
-                        isLinkValid: false,
+                        isLinkValid: undefined,
                         suffix: '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',
-                        sortIndex: doc.document_order
+                        sortIndex: doc.document_order,
+                        filePath: Connector.plugin.DocumentValidation.getStudyDocumentUrl(doc.filename, study.study_name, doc.document_id),
+                        hasPermission: doc.accessible
                     }
                 }).sort(function(docA, docB){
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
@@ -287,12 +291,18 @@ Ext.define('Connector.app.store.Study', {
                 study.assays_added_count = assaysAdded.length;
                 study.publications = publications;
                 study.relationships = relationships;
-                study.protocol_docs_and_study_plans = documentsAndPublications.filter(function (doc) {
+                study.protocol_docs_and_study_plans = documents.filter(function (doc) {
                     return doc.label && doc.docType === 'Study plan or protocol';
                 });
-                study.data_listings_and_reports = documentsAndPublications.filter(function (doc) {
+                study.protocol_docs_and_study_plans_has_permission = study.protocol_docs_and_study_plans.filter(function(doc) {
+                    return doc.hasPermission === true
+                }).length > 0;
+                study.data_listings_and_reports = documents.filter(function (doc) {
                     return doc.label && doc.docType === 'Report or summary';
                 });
+                study.data_listings_and_reports_has_permission = study.data_listings_and_reports.filter(function(doc) {
+                            return doc.hasPermission === true
+                }).length > 0;
                 studies.push(study);
             }, this);
 

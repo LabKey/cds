@@ -43,7 +43,9 @@ Ext.define('Connector.app.model.Study', {
         {name: 'data_availability'},
         {name: 'cavd_affiliation'},
         {name: 'cavd_affiliation_filename'},
-        {name: 'cavd_affiliation_file_exists'},
+        {name: 'cavd_affiliation_file_path'},
+        {name: 'cavd_affiliation_file_accessible'},
+        {name: 'cavd_affiliation_file_has_permission'},
         {name: 'study_cohort'},
         {name: 'first_enr_date', defaultValue: undefined },
         {name: 'followup_complete_date', defaultValue: undefined },
@@ -111,9 +113,11 @@ Ext.define('Connector.app.model.Study', {
         {name: 'protocol_docs_and_study_plans', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }},
+        {name: 'protocol_docs_and_study_plans_has_permission'},
         {name: 'data_listings_and_reports', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }},
+        {name: 'data_listings_and_reports_has_permission'},
         {name: 'publications', convert : function(value) {
             return Ext.isArray(value) ? value : [];
         }},

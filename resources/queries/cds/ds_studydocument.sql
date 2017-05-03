@@ -16,5 +16,6 @@
 SELECT
   imsd.prot AS prot,
   imsd.document_id AS document_id,
-  imsd.study_document_order AS document_order
+  imsd.study_document_order AS document_order,
+  imsd.access_level AS access_level
 FROM cds.import_studydocument imsd
