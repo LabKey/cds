@@ -31,8 +31,9 @@ Ext.define('Connector.app.view.Assay', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
                     '<h2>{assay_short_name:htmlEncode} ({assay_label:htmlEncode})</h2>',
-                    '<div class="detail-description-text">{assay_description:htmlEncode}</div>',
-                '</div>'
+                    '<div class="detail-description-text"><p>assay_description:htmlEncode}</p></div>',
+                '</div>',
+                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
         )
     },{
         text: 'Data Added',

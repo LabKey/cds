@@ -665,7 +665,7 @@ Ext.define('Connector.view.LearnHeader', {
 
     alias: 'widget.learnheader',
 
-    height: 180,
+    height: 110,
 
     cls: 'header-container learnaboutheader',
 
@@ -683,7 +683,14 @@ Ext.define('Connector.view.LearnHeader', {
             text: 'Learn about...'
         },{
             xtype: 'container',
-            items: [this.getDataView(), this.getSearchField()]
+            items: [this.getDataView(), this.getSearchField()],
+            height: 56,
+            cls: 'learn-header-bar',
+            layout: {
+                type: 'hbox',
+                pack: 'center',
+                align: 'center'
+            }
         }];
 
         this.callParent();
@@ -695,7 +702,8 @@ Ext.define('Connector.view.LearnHeader', {
     getDataView : function() {
         if (!this.headerDataView) {
             this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
-                cls: 'dim-selector',
+                flex: 2,
+                cls: 'learn-dim-selector',
                 dimensions: this.dimensions,
                 store: Ext.create('Ext.data.Store', {
                     model: 'Connector.model.Dimension',
@@ -726,6 +734,8 @@ Ext.define('Connector.view.LearnHeader', {
             this.searchField = Ext.create('Ext.form.field.Text', {
                 emptyText: 'Search',
                 cls: 'learn-search-input',
+                minWidth: 150,
+                flex: 1,
                 checkChangeBuffer: 500,
                 value: this.searchValue,
                 validator: Ext.bind(function(value) {

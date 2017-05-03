@@ -346,7 +346,7 @@ Ext4.define('Connector.cube.Configuration', {
                 priority: 20,
                 friendlyName: 'Subjects given study products',
                 singularName: 'Study product',
-                pluralName: 'Study products',
+                pluralName: 'Products',
                 summaryTargetLevel: '[Study Product.Product Name].[Product Name]',
                 findSubjectSummaryLevel: '[Study Product.Product Name].[Product Name]',
                 defaultOperator: 'OR',

@@ -32,8 +32,9 @@ Ext.define('Connector.app.view.Study', {
             '<div class="detail-description">',
                 '<h2>{label:htmlEncode}</h2>',
                 '<div class="detail-description-text">',
-                    '{description}',
+                    '<p>{description}</p>',
                 '</div>', // allow html
+                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}',
             '</div>')
     },{
         text: 'Data Added',
@@ -104,7 +105,8 @@ Ext.define('Connector.app.view.Study', {
                 '<div class="detail-text">',
                     '<div class="detail-black-text">{grant_pi_name}</div>',
                     '<div class="detail-gray-text">{cavd_affiliation}</div>',
-                '</div>'
+                '</div>',
+                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
         )
     },{
         text: 'Strategy',
@@ -121,7 +123,8 @@ Ext.define('Connector.app.view.Study', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
                     '<div class="detail-black-text">{strategy}</div>',
-                '</div>'
+                '</div>',
+                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
         )
     },{
         text: 'Products',
@@ -150,7 +153,8 @@ Ext.define('Connector.app.view.Study', {
                             '<li class="detail-gray-text">No related products</li>',
                         '</tpl>',
                     '</ul>',
-                '</div>'
+                '</div>',
+                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
         )
     },{
         text: 'Status',

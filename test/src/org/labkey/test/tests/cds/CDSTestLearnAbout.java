@@ -188,8 +188,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void testLearnAboutStudyProducts()
     {
         log("Extra logging to record time stamps.");
-        cds.viewLearnAboutPage("Study products");
-        log("Should now be on the Learn About - Study Products page.");
+        cds.viewLearnAboutPage("Products");
+        log("Should now be on the Learn About - Products page.");
         sleep(30000);
         log("Should have slept for 30 seconds.");
         refresh();
@@ -215,7 +215,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         // This code was put in place because we were seeing failure in TeamCity where the page wasn't loading.
         // The TeamCity configuration has been changed to use chrome which looks like it addressed this issue. Going to remove some of these lines for now.
 //        log("Extra logging to record time stamps.");
-        cds.viewLearnAboutPage("Study products");
+        cds.viewLearnAboutPage("Products");
 //        log("Should now be on the Learn About - Study Products page.");
 //        sleep(10000);
 //        log("Should have slept for 10 seconds.");
@@ -253,7 +253,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Study products / ']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Products / ']"));
 
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
     }
@@ -263,7 +263,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         List<String> searchStrings = new ArrayList<>(Arrays.asList("Pénélope", "acid", "ART", "is a"));
 
-        cds.viewLearnAboutPage("Study products");
+        cds.viewLearnAboutPage("Products");
 
         searchStrings.stream().forEach((searchString) -> validateSearchFor(searchString));
 
@@ -391,7 +391,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         final String STUDIES_LINK = "//h1[@class='lhdv'][text()='Studies']";
         final String ASSAYS_LINK = "//h1[@class='lhdv'][text()='Assays']";
-        final String PRODUCTS_LINK = "//h1[@class='lhdv'][text()='Study products']";
+        final String PRODUCTS_LINK = "//h1[@class='lhdv'][text()='Products']";
         final String LEARN_ABOUT = "//span[contains(@class, 'right-label')][text()='Learn about']";
         final String BACK_BUTTON = "//div[contains(@class, 'learnview')]/span/div/div[contains(@class, 'x-container')][not(contains(@style, 'display: none'))]//div[contains(@class, 'learn-up')]//span[contains(@class, 'iarrow')]";
 
@@ -464,7 +464,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
         Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
-        log("Go to Study products and try the same basic scenario.");
+        log("Go to Products and try the same basic scenario.");
         click(Locator.xpath(PRODUCTS_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -495,7 +495,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
-        log("Click 'Study Products' and validate that the search box is populated as expected.");
+        log("Click 'Products' and validate that the search box is populated as expected.");
         click(Locator.xpath(PRODUCTS_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
@@ -507,7 +507,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText("Learn about...");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
-        log("Validate that the 'Study products' search value is there.");
+        log("Validate that the 'Products' search value is there.");
         Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Now click 'Assays' and validate that the search box has the value last searched for in Assays.");
@@ -604,8 +604,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
 
 
-        log("Testing data availability module in Study Products");
-        cds.viewLearnAboutPage("Study products");
+        log("Testing data availability module in Products");
+        cds.viewLearnAboutPage("Products");
         waitAndClick(Locator.xpath("//h2[text() = '" + PRODUCT + "']"));
 
         refresh();

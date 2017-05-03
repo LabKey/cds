@@ -9,7 +9,7 @@ Ext.define('Connector.app.view.StudyProducts', {
 
     cls: 'learnstudyproducts learngrid',
 
-    itemPluralName: 'study products',
+    itemPluralName: 'products',
 
     statics: {
         searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer']
@@ -30,8 +30,9 @@ Ext.define('Connector.app.view.StudyProducts', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
                     '<h2>{product_name:htmlEncode}</h2>',
-                    '<div class="detail-description-text">{product_description:htmlEncode}</div>',
-                '</div>'
+                    '<div class="detail-description-text"><p>{product_description:htmlEncode}</p></div>',
+                '</div>',
+                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
         )
     },{
         text: 'Data Added',

@@ -45,7 +45,7 @@ public class CDSAsserts
     public void assertAllSubjectsPortalPage()
     {
         assertCDSPortalRow("Subject characteristics", "10 subject characteristics", "2 species", "6 decades by age", "3 ethnicities", "60 countries", "2 sexes", "10 races");
-        assertCDSPortalRow("Study products", "4 study products", "4 products", "4 classes", "4 developers", "3 types");
+        assertCDSPortalRow("Products", "4 products", "4 products", "4 classes", "4 developers", "3 types");
         assertCDSPortalRow("Studies", "51 studies", "4 networks", "6 study types", "282 coded labels", "282 treatments", "48 pi", "6 strategy");
     }
 
@@ -193,7 +193,7 @@ public class CDSAsserts
 
     public void verifyEmptyLearnAboutStudyProductsPage()
     {
-        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available study products meet your selection criteria.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available products meet your selection criteria.']"));
     }
 
     public void assertDefaultFilterStatusCounts()
