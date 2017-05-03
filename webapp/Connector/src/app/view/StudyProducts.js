@@ -30,7 +30,7 @@ Ext.define('Connector.app.view.StudyProducts', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
                     '<h2>{product_name:htmlEncode}</h2>',
-                    '<div class="detail-description-text" style="height: 42px"><p>{product_description:htmlEncode}</p></div>',
+                    '<div class="detail-description-text"><p>{product_description:htmlEncode}</p></div>',
                 '</div>',
                 '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
         )

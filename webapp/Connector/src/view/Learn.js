@@ -702,7 +702,7 @@ Ext.define('Connector.view.LearnHeader', {
     getDataView : function() {
         if (!this.headerDataView) {
             this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
-                flex: 6,
+                flex: 2,
                 cls: 'learn-dim-selector',
                 dimensions: this.dimensions,
                 store: Ext.create('Ext.data.Store', {
@@ -734,7 +734,8 @@ Ext.define('Connector.view.LearnHeader', {
             this.searchField = Ext.create('Ext.form.field.Text', {
                 emptyText: 'Search',
                 cls: 'learn-search-input',
-                width: 300,
+                minWidth: 150,
+                flex: 1,
                 checkChangeBuffer: 500,
                 value: this.searchValue,
                 validator: Ext.bind(function(value) {
