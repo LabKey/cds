@@ -14,6 +14,10 @@ Ext.define('Connector.app.view.LearnSummary', {
             months -= d1.getMonth() + 1;
             months += d2.getMonth();
             return months <= 0 ? 0 : months;
+        },
+        overflowFadeOut : function() {
+            return '<div class="learn-fadeout"></div>' +
+                    '<div class="learn-fadeout-hover"></div>';
         }
     },
 

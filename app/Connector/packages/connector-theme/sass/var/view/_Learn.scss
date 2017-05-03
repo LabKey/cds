@@ -299,6 +299,43 @@ img.detail-has-data-small {
   }
 }
 
+@mixin learn-fade-class($fade-to-color, $is-hover-class) {
+  .learn-fadeout, .learn-fadeout-hover {
+    bottom: 0px;
+    height: 1em;
+    position: absolute;
+    width: 100%;
+  }
+  //The linear-gradient is not currently animatable. Therefore
+  // we have to go around by using opacity for two divs.
+  @if $is-hover-class {
+    .learn-fadeout {
+      opacity: 0;
+      @include transition(opacity 0.2s ease-out);
+    }
+    .learn-fadeout-hover {
+      background: linear-gradient(
+                      rgba($fade-to-color, 0),
+                      rgba($fade-to-color, 1)
+      );
+      opacity: 1;
+      @include transition(opacity 0.2s ease-out);
+    }
+  }
+  @else {
+    .learn-fadeout {
+      background: linear-gradient(
+                      rgba($fade-to-color, 0),
+                      rgba($fade-to-color, 1)
+      );
+      opacity: 1;
+    }
+    .learn-fadeout-hover {
+      opacity: 0;
+    }
+  }
+}
+
 .learngrid {
   padding-right: $pageLeftPadding !important;
   padding-left: $pageLeftPadding !important;
@@ -333,13 +370,8 @@ img.detail-has-data-small {
     padding-bottom: $sectionTopPadding;
   }
 
-  .detail-row-thumbnail {
-    padding-top: $sectionTopPadding - 15;
-    padding-bottom: $sectionTopPadding - 15;
-  }
-
   .x-grid-td, .x-grid-row-selected .x-grid-td {
-    background-color: $gray-8;
+    background-color: #efefef;
   }
 
   .x-column-header-inner {
@@ -399,20 +431,27 @@ img.detail-has-data-small {
   }
 
   .detail-row {
-    //padding: 0px $pageLeftPadding;
     margin-bottom: 8px;
-    height: 170px;
     border-bottom: 1px solid $heat-scale-4;
     overflow: hidden;
+    height: 125px;
+
+    .x-grid-cell {
+      padding: 24px 0px 12px 16px;
+    }
 
     .x-grid-cell-inner {
+      height: 88px;
+      overflow: hidden;
+      padding: 0px;
+      position: relative;
+      text-overflow: clip;
       white-space: normal;
-      padding: 24px 0px 24px 16px;
+
+      @include learn-fade-class(#efefef, false);
     }
 
     .detail-description {
-      height: 121px;
-      overflow: hidden;
 
       h2 {
         font: $headline-font;
@@ -454,15 +493,12 @@ img.detail-has-data-small {
         padding-right: 1em;
       }
     }
-
-    .study-summary-product {
-      height:121px;
-    }
-
   }
   .detail-row-has-data {
     .x-grid-td {
       background-color: $gray-9;
+
+      @include learn-fade-class($gray-9, false);
     }
   }
 
@@ -471,6 +507,7 @@ img.detail-has-data-small {
       @include transition(background-color 0.2s ease-out);
       background-color: $select-hover-color;
       cursor: pointer;
+      @include learn-fade-class($select-hover-color, true);
     }
   }
 
@@ -549,21 +586,16 @@ div.list-container {
   }
 }
 
-.learn-search-input {
-  clear: both;
-  display: block;
-  margin: 32px 0 12px 28px;
-  width: 40%;
+.learn-header-bar {
+  border-bottom: 1px solid #e1e1e1;
+  margin: 0 28px 0 28px;
+  overflow: visible!important;
+}
 
-  tbody,
-  tr,
-  td.x-form-item-body {
-    display: block;
-    width: 400px!important;
-  }
+.learn-search-input {
+  margin: 14px 28px;
 
   input {
-    width: 400px;
     height: 34px;
     font-size: 12px;
     border-radius: 2px;
@@ -675,13 +707,30 @@ div.list-container {
   padding-top: $sectionTopPadding;
 }
 
+.reportlearngridlocked {
+  .detail-row {
+    .x-grid-cell {
+      padding: 13px 0 13px 16px;
+    }
+  }
+
+  .detail-row-text {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}
+
 .reportlearngrid
 {
   .detail-row{
     .x-grid-cell-inner {
       white-space: normal;
-      padding: 0 0 0 16px;
+      padding: 4px 0 16px 0px;
     }
+  }
+
+  .detail-row-text {
+    padding: 0px;
   }
 }
 
