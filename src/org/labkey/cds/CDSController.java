@@ -805,6 +805,7 @@ public class CDSController extends SpringActionController
             }
             // file was not able to be shown so show error message(s)
             ModelAndView result = new SimpleErrorView(errors, false);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return result;
         }
     }

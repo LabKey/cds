@@ -128,8 +128,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
         sleep(CDSHelper.CDS_WAIT);
-        _asserts.verifyEmptyLearnAboutStudyPage();
-
+        List<String> studies = Arrays.asList(CDSHelper.STUDIES);
+        _asserts.verifyLearnAboutPage(studies);
     }
 
     @Test
