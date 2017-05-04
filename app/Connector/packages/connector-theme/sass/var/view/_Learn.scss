@@ -37,6 +37,54 @@
 }
 
 div.learnview {
+
+  /**
+    * css solution for multiline text ellipsis
+    * Solution from
+    *http://hackingui.com/front-end/a-pure-css-solution-for-multiline-text-truncation/
+   */
+  /* styles for '...' */
+  .block-with-text {
+    /* hide text if it more than N lines  */
+    overflow: hidden;
+    /* for set '...' in absolute position */
+    position: relative;
+    /* use this value to count block height */
+    line-height: 1.2em;
+    /* max-height = line-height (1.2) * lines max number (3) */
+    max-height: 3.6em;
+    /* fix problem when last visible word doesn't adjoin right side  */
+    text-align: justify;
+    /* place for '...' */
+    margin-right: -1em;
+    padding-right: 1em;
+  }
+  /* create the ... */
+  .block-with-text:before {
+    /* points in the end */
+    content: '...';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of block */
+    right: 0;
+    bottom: 0;
+  }
+  /* hide ... if we have text, which is less than or equal to max lines */
+  .block-with-text:after {
+    /* points in the end */
+    content: '';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of text */
+    right: 0;
+    /* set width and height */
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    /* bg color = bg color under block */
+    background: $gray-8;
+  }
+
   .module {
     padding-bottom: 28px;
   }
@@ -371,7 +419,7 @@ img.detail-has-data-small {
   }
 
   .x-grid-td, .x-grid-row-selected .x-grid-td {
-    background-color: #efefef;
+    background-color: $gray-8;
   }
 
   .x-column-header-inner {
@@ -495,7 +543,7 @@ img.detail-has-data-small {
     }
   }
   .detail-row-has-data {
-    .x-grid-td {
+    .x-grid-td, .x-grid-td .block-with-text:after{
       background-color: $gray-9;
 
       @include learn-fade-class($gray-9, false);
@@ -503,7 +551,7 @@ img.detail-has-data-small {
   }
 
   .detail-row-hover {
-    .x-grid-td {
+    .x-grid-td, .x-grid-td .block-with-text:after{
       @include transition(background-color 0.2s ease-out);
       background-color: $select-hover-color;
       cursor: pointer;
