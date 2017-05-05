@@ -143,6 +143,7 @@ Ext.define('Connector.app.store.StudyProducts', {
                 studies = [];
                 studiesWithData = [];
                 product.data_availability = false;
+                product.data_accessible = false;
                 for (s=0; s < this.studyData.length; s++) {
                     if (product.product_id === this.studyData[s].product_id) {
                         var study = {
@@ -159,6 +160,8 @@ Ext.define('Connector.app.store.StudyProducts', {
                 studies.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
                 Ext.each(studies, function(study){
                     if (study.has_data) {
+                        if (!product.data_accessible && study.has_access)
+                            product.data_accessible = true;
                         product.data_availability = true;
                         studiesWithData.push(study);
                     }

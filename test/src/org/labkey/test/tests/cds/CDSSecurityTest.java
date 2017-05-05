@@ -148,7 +148,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.enterApplication();
         _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0);
         cds.viewLearnAboutPage("Studies");
-        _asserts.verifyEmptyLearnAboutStudyPage();
+        List<String> allStudies = Arrays.asList(CDSHelper.STUDIES);
+        _asserts.verifyLearnAboutPage(allStudies);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();

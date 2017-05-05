@@ -128,8 +128,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
         sleep(CDSHelper.CDS_WAIT);
-        List<String> studies = Arrays.asList(CDSHelper.STUDIES);
-        _asserts.verifyLearnAboutPage(studies);
+        _asserts.verifyEmptyLearnAboutStudyPage();
     }
 
     @Test
@@ -547,7 +546,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final int STUDY_WITH_DATA_AVAILABLE = 25;
 
         cds.viewLearnAboutPage("Studies");
-        assertTextPresent("Not added");
+        assertTextPresent("Data not added");
 
         List<WebElement> hasDataRows = Locator.css(".detail-row-has-data").findElements(getDriver());
         List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());

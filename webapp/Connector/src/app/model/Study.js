@@ -41,6 +41,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'start_date', defaultValue: undefined },
         {name: 'public_date', defaultValue: undefined },
         {name: 'data_availability'},
+        {name: 'data_accessible'},
         {name: 'cavd_affiliation'},
         {name: 'cavd_affiliation_filename'},
         {name: 'cavd_affiliation_file_path'},

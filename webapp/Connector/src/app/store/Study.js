@@ -182,6 +182,7 @@ Ext.define('Connector.app.store.Study', {
 
                 var assays = [], assaysAdded = [], assayAddedCount = 0;
                 study.data_availability = false;
+                study.data_accessible = hasStudyAccess;
                 for (var a=0; a < this.assayData.length; a++) {
                     if (study.study_name === this.assayData[a].prot) {
                         study.data_availability = study.data_availability || this.assayData[a].has_data;
