@@ -582,9 +582,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        Assert.assertTrue(isElementPresent(getDataRowXPath(ASSAY_TITLES[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPath(ASSAY_TITLES[1]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPath(ASSAY_TITLES[2]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[1]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[2]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
 
 
         log("Testing data availability module in Assays");
@@ -596,11 +596,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        List<WebElement> smallHasDataIcons =getDataRowXPath("").append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]").findElements(getDriver());
+        List<WebElement> smallHasDataIcons =cds.getDataRowXPath("").append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]").findElements(getDriver());
         Assert.assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
 
-        Assert.assertFalse(isElementPresent(getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        Assert.assertFalse(isElementPresent(cds.getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
 
 
         log("Testing data availability module in Products");
@@ -611,8 +611,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
     }
 
     @Test
@@ -1242,12 +1242,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         }
 
         return documentLinkElement;
-    }
-
-    //Helper function for data availability tests
-    private Locator.XPathLocator getDataRowXPath(String rowText)
-    {
-        return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
     }
 
     //Helper function for data availability tests

@@ -23,6 +23,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
+import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
@@ -38,6 +39,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class CDSHelper
@@ -640,6 +642,44 @@ public class CDSHelper
 
         _test.waitForElement(Locators.activeDimensionHeaderLocator(dimension));
     }
+
+
+    //Helper function for data availability tests
+    public Locator.XPathLocator getDataRowXPath(String rowText)
+    {
+        return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
+    }
+
+
+    public void setUpPermGroup(String perm_group, Map<String, String> studyPermissions)
+    {
+        _test.goToProjectHome();
+        ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
+        apiPermissionsHelper.createPermissionsGroup(perm_group);
+        if (_test.isElementPresent(Locator.permissionRendered()) && _test.isButtonPresent("Save and Finish"))
+        {
+            _test.clickButton("Save and Finish");
+        }
+
+        for (String study : studyPermissions.keySet())
+        {
+            String permission = studyPermissions.get(study);
+            _test.goToProjectHome();
+            _test.clickFolder(study);
+
+            apiPermissionsHelper.uncheckInheritedPermissions();
+            _test.clickButton("Save", 0);
+
+            _test.waitForElement(Locator.permissionRendered());
+
+            _test._securityHelper.setProjectPerm(perm_group, permission);
+            _test.clickButton("Save and Finish");
+        }
+        _test.goToProjectHome();
+        _test._securityHelper.setProjectPerm(perm_group, "Reader");
+        _test.clickButton("Save and Finish");
+    }
+
 
     public void saveGroup(String name, @Nullable String description)
     {
