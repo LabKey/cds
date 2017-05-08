@@ -15,10 +15,10 @@ r1	84	restricted	1
 r1	85	restricted	2
 r1	86	restricted	3
 r1	87	restricted	1
-r2	44	public
-r2	88	public	2
-r2	89	public	1
-r2	90	public	1
+r2	44	restricted
+r2	88	restricted	2
+r2	89	restricted	1
+r2	90	restricted	1
 r2	91	public	3
 r3	44	public
 r4	44	public

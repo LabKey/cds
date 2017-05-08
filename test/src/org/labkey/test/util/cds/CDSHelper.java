@@ -35,6 +35,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -544,6 +545,9 @@ public class CDSHelper
     // Dimensions used to set the browser window.
     public static Dimension idealWindowSize = new Dimension(1280, 1040);
     public static Dimension defaultWindowSize = new Dimension(1280, 1024);
+
+    // XPath
+    public static String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
 
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
@@ -1604,6 +1608,11 @@ public class CDSHelper
         {
             return Locator.tagWithClass("div", "filterpanel").append(Locator.tagWithClass("div", "activefilter")).index(index);
         }
+
+        public static Locator.XPathLocator studyReportLink(String studyName)
+        {
+            return Locator.xpath(CDSHelper.REPORTS_LINKS_XPATH + "//a[contains(text(), '" + studyName + "')]");
+        }
     }
 
     // Used to identify data in the time axis.
@@ -1665,5 +1674,80 @@ public class CDSHelper
         _test.mouseOver(wel);
         Actions builder = new Actions(_test.getDriver());
         builder.clickAndHold().moveByOffset(xOffset + 1, yOffset + 1).release().build().perform();
+    }
+
+    public void validateDocLink(WebElement documentLink, String expectedFileName)
+    {
+        File docFile;
+        String foundDocumentName;
+
+        // Since this will be a downloaded document, make sure the name is "cleaned up".
+        expectedFileName = expectedFileName.replace("%20", " ").toLowerCase();
+
+        _test.log("Now click on the document link.");
+        docFile = _test.clickAndWaitForDownload(documentLink);
+        foundDocumentName = docFile.getName();
+        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + expectedFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(expectedFileName));
+
+    }
+
+    public void validatePDFLink(WebElement documentLink, String pdfFileName)
+    {
+        final String PLUGIN_XPATH = "//embed[@name='plugin']";
+
+        _test.log("Now click on the pdf link.");
+        documentLink.click();
+        _test.sleep(10000);
+        _test.switchToWindow(1);
+
+        // Since this is a pdf file, it will be validated in the url, so replace any " " with %20.
+        pdfFileName = pdfFileName.replace(" ", "%20").toLowerCase();
+
+        _test.log("Validate that the pdf document was loaded into the browser.");
+        _test.assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
+        Assert.assertTrue("The embedded element is not a pdf plugin", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
+        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'. Found: '" + _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase() + "'.", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
+
+        _test.log("Close this window.");
+        _test.getDriver().close();
+
+        _test.log("Go back to the main window.");
+        _test.switchToMainWindow();
+    }
+
+    // Return the visible grant document link, null otherwise.
+    public WebElement getVisibleGrantDocumentLink()
+    {
+        final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Grant Affiliation:']/following-sibling::td//a";
+        WebElement documentLinkElement = null;
+
+        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
+        {
+            if(we.isDisplayed())
+            {
+                documentLinkElement = we;
+                break;
+            }
+        }
+
+        return documentLinkElement;
+    }
+
+    public List<WebElement> getVisibleStudyProtocolLinks()
+    {
+        final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Documents:']/following-sibling::td//a";
+        List<WebElement> documentLinkElements = null;
+
+        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
+        {
+            if(we.isDisplayed())
+            {
+                if (documentLinkElements == null)
+                    documentLinkElements = new ArrayList<>();
+                documentLinkElements.add(we);
+            }
+        }
+
+        return documentLinkElements;
     }
 }

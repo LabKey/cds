@@ -180,7 +180,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         studyPermissions = new HashMap<>();
         studyPermissions.put("q1", "Reader");
         studyPermissions.put("q2", "Reader");
-        log("Create a user group with Read permission to project but no permission to any study folder");
+        log("Create a user group with Read permission to project, q1 and q2.");
         cds.setUpPermGroup(PERM_GROUPS[1], studyPermissions);
         impersonateGroup(PERM_GROUPS[1], false);
         cds.enterApplication();
@@ -201,8 +201,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         final String ACCESSIBLE_ICON = "smallCheck.png";
         final String NOT_ACCESSIBLE_ICON = "grayCheck.png";
         final String HAS_NO_DATA_ICON = "smallGreyX.png";
-
-        final String[] ASSAY_TITLES = {"IFNg ELISpot", "ICS", "BAMA", "ILLUMINA 454", "NAB"};
 
         String dataIcon = hasAccessToQ2 ? ACCESSIBLE_ICON : NOT_ACCESSIBLE_ICON;
 
@@ -273,6 +271,95 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         {
             Assert.assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
         }
+    }
+
+    @Test
+    public void verifyStudyDocumentsWithLimitedAccess()
+    {
+        Map<String, String> studyPermissions = new HashMap<>();
+        log("Create a user group with Read permission to project but no permission to any study folder");
+        cds.setUpPermGroup(PERM_GROUPS[0], studyPermissions);
+        impersonateGroup(PERM_GROUPS[0], false);
+        cds.enterApplication();
+
+        log("Verify users with no study permission can see study documents with public access only.");
+        cds.viewLearnAboutPage("Studies");
+        validateStudyDocumentForR2(false);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
+
+        studyPermissions = new HashMap<>();
+        studyPermissions.put("r2", "Reader");
+        log("Create a user group with Read permission to project and R2 folder.");
+        cds.setUpPermGroup(PERM_GROUPS[1], studyPermissions);
+        impersonateGroup(PERM_GROUPS[1], false);
+        cds.enterApplication();
+
+        log("Verify users with study permission can see all study documents.");
+        cds.viewLearnAboutPage("Studies");
+        validateStudyDocumentForR2(true);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
+    }
+
+    private void validateStudyDocumentForR2(boolean hasAccessToR2)
+    {
+        String study = "RED 2";
+        Locator element = Locator.xpath("//tr/td/div/div/h2[contains(text(), '" + study + "')]");
+        assertElementPresent(element);
+        waitAndClick(element);
+        waitForText("Study information");
+        sleep(2000);
+
+        WebElement documentLink;
+
+        log("Verify public Reports");
+        documentLink = CDSHelper.Locators.studyReportLink("ADCC Data Summary").findElementOrNull(getDriver());
+        Assert.assertTrue("Was not able to find link to the public report document for study '" + study + "'.", documentLink != null);
+        String documentName = "cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf";
+        cds.validatePDFLink(documentLink, documentName);
+
+        log("Verify restricted Reports");
+        documentLink = CDSHelper.Locators.studyReportLink("BAMA Results Summary").findElementOrNull(getDriver());
+        if (hasAccessToR2)
+        {
+            Assert.assertTrue("Was not able to find link to the restricted report document for study '" + study + "'.", documentLink != null);
+            documentName = "cvd256_ev03_iga_igg.pdf";
+            cds.validatePDFLink(documentLink, documentName);
+        }
+        else
+        {
+            Assert.assertTrue("User should not see link to restricted report document for study '" + study + "'.", documentLink == null);
+        }
+
+        log("Verify restricted study grant");
+        documentLink = cds.getVisibleGrantDocumentLink();
+        if (hasAccessToR2)
+        {
+            Assert.assertTrue("Was not able to find link to the restricted grant document for study '" + study + "'.", documentLink != null);
+        }
+        else
+        {
+            Assert.assertTrue("There was a visible link to a grant document for this study, and there should not be.", documentLink == null);
+        }
+
+        log("Verify restricted study protocol");
+        List<WebElement> protocolLinksLinks = cds.getVisibleStudyProtocolLinks();
+        if (hasAccessToR2)
+        {
+            Assert.assertTrue("Was not able to find link to the restricted protocol for study '" + study + "'.", protocolLinksLinks != null);
+        }
+        else
+        {
+            Assert.assertTrue("There was a visible link to a protocol for this study, and there should not be.", protocolLinksLinks == null);
+        }
+
     }
 
     @Test
