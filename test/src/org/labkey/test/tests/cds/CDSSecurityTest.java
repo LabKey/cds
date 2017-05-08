@@ -129,7 +129,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     }
 
     @Test
-    public void verifyLearnAboutListingDataAddedWithLimitedAccess()
+    public void verifyLearnAboutListingWithLimitedAccess()
     {
         Map<String, String> studyPermissions = new HashMap<>();
         log("Create a user group with Read permission to project but no permission to any study folder");
