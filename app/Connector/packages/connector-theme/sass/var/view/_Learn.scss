@@ -347,43 +347,6 @@ img.detail-has-data-small {
   }
 }
 
-@mixin learn-fade-class($fade-to-color, $is-hover-class) {
-  .learn-fadeout, .learn-fadeout-hover {
-    bottom: 0px;
-    height: 1em;
-    position: absolute;
-    width: 100%;
-  }
-  //The linear-gradient is not currently animatable. Therefore
-  // we have to go around by using opacity for two divs.
-  @if $is-hover-class {
-    .learn-fadeout {
-      opacity: 0;
-      @include transition(opacity 0.2s ease-out);
-    }
-    .learn-fadeout-hover {
-      background: linear-gradient(
-                      rgba($fade-to-color, 0),
-                      rgba($fade-to-color, 1)
-      );
-      opacity: 1;
-      @include transition(opacity 0.2s ease-out);
-    }
-  }
-  @else {
-    .learn-fadeout {
-      background: linear-gradient(
-                      rgba($fade-to-color, 0),
-                      rgba($fade-to-color, 1)
-      );
-      opacity: 1;
-    }
-    .learn-fadeout-hover {
-      opacity: 0;
-    }
-  }
-}
-
 .learngrid {
   padding-right: $pageLeftPadding !important;
   padding-left: $pageLeftPadding !important;
@@ -495,8 +458,6 @@ img.detail-has-data-small {
       position: relative;
       text-overflow: clip;
       white-space: normal;
-
-      @include learn-fade-class(#efefef, false);
     }
 
     .detail-description {
@@ -545,8 +506,6 @@ img.detail-has-data-small {
   .detail-row-has-data {
     .x-grid-td, .x-grid-td .block-with-text:after{
       background-color: $gray-9;
-
-      @include learn-fade-class($gray-9, false);
     }
   }
 
@@ -555,7 +514,6 @@ img.detail-has-data-small {
       @include transition(background-color 0.2s ease-out);
       background-color: $select-hover-color;
       cursor: pointer;
-      @include learn-fade-class($select-hover-color, true);
     }
   }
 
