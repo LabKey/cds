@@ -17,5 +17,5 @@
 SELECT
 spm.study_name,
 p.*,
-FROM cds.studyproductmap spm
+FROM cds.metadata.studyproductmap spm
 JOIN cds.product p ON spm.product_id=p.product_id
