@@ -37,6 +37,54 @@
 }
 
 div.learnview {
+
+  /**
+    * css solution for multiline text ellipsis
+    * Solution from
+    *http://hackingui.com/front-end/a-pure-css-solution-for-multiline-text-truncation/
+   */
+  /* styles for '...' */
+  .block-with-text {
+    /* hide text if it more than N lines  */
+    overflow: hidden;
+    /* for set '...' in absolute position */
+    position: relative;
+    /* use this value to count block height */
+    line-height: 1.2em;
+    /* max-height = line-height (1.2) * lines max number (3) */
+    max-height: 3.6em;
+    /* fix problem when last visible word doesn't adjoin right side  */
+    text-align: justify;
+    /* place for '...' */
+    margin-right: -1em;
+    padding-right: 1em;
+  }
+  /* create the ... */
+  .block-with-text:before {
+    /* points in the end */
+    content: '...';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of block */
+    right: 0;
+    bottom: 0;
+  }
+  /* hide ... if we have text, which is less than or equal to max lines */
+  .block-with-text:after {
+    /* points in the end */
+    content: '';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of text */
+    right: 0;
+    /* set width and height */
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    /* bg color = bg color under block */
+    background: $gray-8;
+  }
+
   .module {
     padding-bottom: 28px;
   }
@@ -299,43 +347,6 @@ img.detail-has-data-small {
   }
 }
 
-@mixin learn-fade-class($fade-to-color, $is-hover-class) {
-  .learn-fadeout, .learn-fadeout-hover {
-    bottom: 0px;
-    height: 1em;
-    position: absolute;
-    width: 100%;
-  }
-  //The linear-gradient is not currently animatable. Therefore
-  // we have to go around by using opacity for two divs.
-  @if $is-hover-class {
-    .learn-fadeout {
-      opacity: 0;
-      @include transition(opacity 0.2s ease-out);
-    }
-    .learn-fadeout-hover {
-      background: linear-gradient(
-                      rgba($fade-to-color, 0),
-                      rgba($fade-to-color, 1)
-      );
-      opacity: 1;
-      @include transition(opacity 0.2s ease-out);
-    }
-  }
-  @else {
-    .learn-fadeout {
-      background: linear-gradient(
-                      rgba($fade-to-color, 0),
-                      rgba($fade-to-color, 1)
-      );
-      opacity: 1;
-    }
-    .learn-fadeout-hover {
-      opacity: 0;
-    }
-  }
-}
-
 .learngrid {
   padding-right: $pageLeftPadding !important;
   padding-left: $pageLeftPadding !important;
@@ -370,8 +381,8 @@ img.detail-has-data-small {
     padding-bottom: $sectionTopPadding;
   }
 
-  .x-grid-td, .x-grid-row-selected .x-grid-td {
-    background-color: #efefef;
+  .x-grid-td, .x-grid-row-selected .x-grid-td, .x-grid-row-focused .x-grid-td {
+    background-color: $gray-8;
   }
 
   .x-column-header-inner {
@@ -447,8 +458,6 @@ img.detail-has-data-small {
       position: relative;
       text-overflow: clip;
       white-space: normal;
-
-      @include learn-fade-class(#efefef, false);
     }
 
     .detail-description {
@@ -495,19 +504,16 @@ img.detail-has-data-small {
     }
   }
   .detail-row-has-data {
-    .x-grid-td {
+    .x-grid-td, .x-grid-td .block-with-text:after{
       background-color: $gray-9;
-
-      @include learn-fade-class($gray-9, false);
     }
   }
 
   .detail-row-hover {
-    .x-grid-td {
+    .x-grid-td, .x-grid-td .block-with-text:after{
       @include transition(background-color 0.2s ease-out);
       background-color: $select-hover-color;
       cursor: pointer;
-      @include learn-fade-class($select-hover-color, true);
     }
   }
 

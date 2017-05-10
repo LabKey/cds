@@ -32,9 +32,8 @@ Ext.define('Connector.app.view.Study', {
             '<div class="detail-description">',
                 '<h2>{label:htmlEncode}</h2>',
                 '<div class="detail-description-text">',
-                    '<p>{description}</p>',
-                '</div>', // allow html
-                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}',
+                    '<p class="block-with-text">{description}</p>',
+                '</div>',
             '</div>')
     },{
         text: 'Data Added',
@@ -105,8 +104,7 @@ Ext.define('Connector.app.view.Study', {
                 '<div class="detail-text">',
                     '<div class="detail-black-text">{grant_pi_name}</div>',
                     '<div class="detail-gray-text">{cavd_affiliation}</div>',
-                '</div>',
-                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
+                '</div>'
         )
     },{
         text: 'Strategy',
@@ -123,8 +121,7 @@ Ext.define('Connector.app.view.Study', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
                     '<div class="detail-black-text">{strategy}</div>',
-                '</div>',
-                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
+                '</div>'
         )
     },{
         text: 'Products',
@@ -147,14 +144,17 @@ Ext.define('Connector.app.view.Study', {
                     '<ul>',
                         '<tpl if="products.length &gt; 0">',
                             '<tpl for="products">',
-                               '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
+                                '<tpl if="xindex <= 5">',
+                                    '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
+                                '<tpl elseif="xindex == 6">',
+                                    '<li class="detail-gray-text">...</li>',
+                                '</tpl>',
                             '</tpl>',
                         '<tpl else>',
                             '<li class="detail-gray-text">No related products</li>',
                         '</tpl>',
                     '</ul>',
-                '</div>',
-                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
+                '</div>'
         )
     },{
         text: 'Status',
