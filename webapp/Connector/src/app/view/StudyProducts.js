@@ -30,9 +30,8 @@ Ext.define('Connector.app.view.StudyProducts', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
                     '<h2>{product_name:htmlEncode}</h2>',
-                    '<div class="detail-description-text"><p>{product_description:htmlEncode}</p></div>',
-                '</div>',
-                '{[Connector.app.view.LearnSummary.overflowFadeOut()]}'
+                    '<div class="detail-description-text"><p class="block-with-text">{product_description:htmlEncode}</p></div>',
+                '</div>'
         )
     },{
         text: 'Data Added',

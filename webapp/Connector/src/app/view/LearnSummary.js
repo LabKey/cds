@@ -15,10 +15,6 @@ Ext.define('Connector.app.view.LearnSummary', {
             months += d2.getMonth();
             return months <= 0 ? 0 : months;
         },
-        overflowFadeOut : function() {
-            return '<div class="learn-fadeout"></div>' +
-                    '<div class="learn-fadeout-hover"></div>';
-        },
         studyCountText : function(studies) {
             var totalCount = studies.length, accessibleCount = 0;
             var description = "";

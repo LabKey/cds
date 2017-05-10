@@ -50,10 +50,9 @@ Ext.define('Connector.app.view.Report', {
                     '<div class="detail-description detail-row-text">',
                     '<h2>{name:htmlEncode}</h2>',
                     '<div class="detail-description-text">',
-                    '{description:htmlEncode}',
+                    '<p class="block-with-text">{description:htmlEncode}</p>',
                     '</div>',
-                    '</div>',
-                    '{[Connector.app.view.LearnSummary.overflowFadeOut()]}')
+                    '</div>')
         },
         {
             text: 'Report Type',
