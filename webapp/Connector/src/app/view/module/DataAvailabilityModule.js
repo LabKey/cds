@@ -25,7 +25,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         };
 
         this.items = [{
-            html: (new Ext.XTemplate('<tpl>',
+            html: (new Ext.XTemplate('<tpl if="hasDetails">',
                     '<p>',
                         Connector.constant.Templates.module.title,
                     '</p>',
@@ -46,7 +46,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         '</tr>',
                     '</table>',
                     '</tpl>'
-            )).apply(this.data)
+            )).apply(this.getTitleData(this.data))
         },{
             xtype: 'grid',
             cls: 'learnmodulegrid',
@@ -150,6 +150,15 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         return encodeURIComponent(me.data.dataLink);
                     }
                 })
+    },
+
+    getTitleData: function(data) {
+        var details = data.model.getData()[this.data.dataField];
+        if (!details || details.length == 0)
+            data.hasDetails = false;
+        else
+            data.hasDetails = true;
+        return data;
     },
 
     getDataAddedStore : function(data) {
