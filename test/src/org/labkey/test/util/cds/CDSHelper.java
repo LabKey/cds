@@ -23,6 +23,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
+import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
@@ -34,10 +35,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class CDSHelper
@@ -543,6 +546,9 @@ public class CDSHelper
     public static Dimension idealWindowSize = new Dimension(1280, 1040);
     public static Dimension defaultWindowSize = new Dimension(1280, 1024);
 
+    // XPath
+    public static String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
+
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
     {
@@ -640,6 +646,44 @@ public class CDSHelper
 
         _test.waitForElement(Locators.activeDimensionHeaderLocator(dimension));
     }
+
+
+    //Helper function for data availability tests
+    public Locator.XPathLocator getDataRowXPath(String rowText)
+    {
+        return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
+    }
+
+
+    public void setUpPermGroup(String perm_group, Map<String, String> studyPermissions)
+    {
+        _test.goToProjectHome();
+        ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
+        apiPermissionsHelper.createPermissionsGroup(perm_group);
+        if (_test.isElementPresent(Locator.permissionRendered()) && _test.isButtonPresent("Save and Finish"))
+        {
+            _test.clickButton("Save and Finish");
+        }
+
+        for (String study : studyPermissions.keySet())
+        {
+            String permission = studyPermissions.get(study);
+            _test.goToProjectHome();
+            _test.clickFolder(study);
+
+            apiPermissionsHelper.uncheckInheritedPermissions();
+            _test.clickButton("Save", 0);
+
+            _test.waitForElement(Locator.permissionRendered());
+
+            _test._securityHelper.setProjectPerm(perm_group, permission);
+            _test.clickButton("Save and Finish");
+        }
+        _test.goToProjectHome();
+        _test._securityHelper.setProjectPerm(perm_group, "Reader");
+        _test.clickButton("Save and Finish");
+    }
+
 
     public void saveGroup(String name, @Nullable String description)
     {
@@ -1242,6 +1286,8 @@ public class CDSHelper
         changed |= returnVal;
         returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
         changed |= returnVal;
+        returnVal = setStudyDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
+        changed |= returnVal;
 
         if (changed)
         {
@@ -1298,9 +1344,9 @@ public class CDSHelper
 
     }
 
-    private boolean setStaticPath(String path)
+    private boolean setPropertyPath(String path, int inputIndex)
     {
-        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[5]";
+        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[" + inputIndex + "]";
         boolean changed = false;
         String curValue;
 
@@ -1315,6 +1361,17 @@ public class CDSHelper
         return changed;
 
     }
+
+    private boolean setStaticPath(String path)
+    {
+        return setPropertyPath(path, 6);
+    }
+
+    private boolean setStudyDocumentPath(String path)
+    {
+        return setPropertyPath(path, 2);
+    }
+
 
     public void assertPlotTickText(Pattern p)
     {
@@ -1551,6 +1608,11 @@ public class CDSHelper
         {
             return Locator.tagWithClass("div", "filterpanel").append(Locator.tagWithClass("div", "activefilter")).index(index);
         }
+
+        public static Locator.XPathLocator studyReportLink(String studyName)
+        {
+            return Locator.xpath(CDSHelper.REPORTS_LINKS_XPATH + "//a[contains(text(), '" + studyName + "')]");
+        }
     }
 
     // Used to identify data in the time axis.
@@ -1612,5 +1674,80 @@ public class CDSHelper
         _test.mouseOver(wel);
         Actions builder = new Actions(_test.getDriver());
         builder.clickAndHold().moveByOffset(xOffset + 1, yOffset + 1).release().build().perform();
+    }
+
+    public void validateDocLink(WebElement documentLink, String expectedFileName)
+    {
+        File docFile;
+        String foundDocumentName;
+
+        // Since this will be a downloaded document, make sure the name is "cleaned up".
+        expectedFileName = expectedFileName.replace("%20", " ").toLowerCase();
+
+        _test.log("Now click on the document link.");
+        docFile = _test.clickAndWaitForDownload(documentLink);
+        foundDocumentName = docFile.getName();
+        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + expectedFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(expectedFileName));
+
+    }
+
+    public void validatePDFLink(WebElement documentLink, String pdfFileName)
+    {
+        final String PLUGIN_XPATH = "//embed[@name='plugin']";
+
+        _test.log("Now click on the pdf link.");
+        documentLink.click();
+        _test.sleep(10000);
+        _test.switchToWindow(1);
+
+        // Since this is a pdf file, it will be validated in the url, so replace any " " with %20.
+        pdfFileName = pdfFileName.replace(" ", "%20").toLowerCase();
+
+        _test.log("Validate that the pdf document was loaded into the browser.");
+        _test.assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
+        Assert.assertTrue("The embedded element is not a pdf plugin", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
+        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'. Found: '" + _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase() + "'.", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
+
+        _test.log("Close this window.");
+        _test.getDriver().close();
+
+        _test.log("Go back to the main window.");
+        _test.switchToMainWindow();
+    }
+
+    // Return the visible grant document link, null otherwise.
+    public WebElement getVisibleGrantDocumentLink()
+    {
+        final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Grant Affiliation:']/following-sibling::td//a";
+        WebElement documentLinkElement = null;
+
+        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
+        {
+            if(we.isDisplayed())
+            {
+                documentLinkElement = we;
+                break;
+            }
+        }
+
+        return documentLinkElement;
+    }
+
+    public List<WebElement> getVisibleStudyProtocolLinks()
+    {
+        final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Documents:']/following-sibling::td//a";
+        List<WebElement> documentLinkElements = null;
+
+        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
+        {
+            if(we.isDisplayed())
+            {
+                if (documentLinkElements == null)
+                    documentLinkElements = new ArrayList<>();
+                documentLinkElements.add(we);
+            }
+        }
+
+        return documentLinkElements;
     }
 }

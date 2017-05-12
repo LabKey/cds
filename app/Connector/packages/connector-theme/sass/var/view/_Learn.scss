@@ -325,11 +325,17 @@ h1.lhdv {
 }
 
 .detail-has-data {
-  background-image: url(images/learn/bigCheck.png);
   background-size: 44px;
   background-repeat: no-repeat;
   width: 44px;
   height: 50px;
+  margin-left: 20px;
+  &.detail-has-data-gray {
+    background-image: url(images/learn/grayCheck.png);
+  }
+  &.detail-has-data-green {
+    background-image: url(images/learn/bigCheck.png);
+  }
 }
 
 img.detail-has-data-small {
@@ -345,6 +351,12 @@ img.detail-has-data-small {
   td:nth-child(even) {
     padding-right: 10px;
   }
+}
+
+.data-availability-tooltip-header {
+  font-weight: bold;
+  padding-bottom: 5px;
+  color: black;
 }
 
 .learngrid {

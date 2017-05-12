@@ -16,18 +16,23 @@
 package org.labkey.test.tests.cds;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.dumbster.EmailRecordTable;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.WebElement;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
@@ -87,43 +92,12 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         ensureAdminMode();
         Ext4Helper.resetCssPrefix();
 
-        _permissionsHelper.createPermissionsGroup(PERM_GROUPS[0]);
-        if (isElementPresent(Locator.permissionRendered()) && isButtonPresent("Save and Finish"))
-        {
-            clickButton("Save and Finish");
-        }
+        Map<String, String> studyPermissions = new HashMap<>();
+        studyPermissions.put("z119", "Reader");
+        cds.setUpPermGroup(PERM_GROUPS[0], studyPermissions);
 
-        goToProjectHome();
-        clickFolder("z119");
-        _permissionsHelper.enterPermissionsUI();
-        sleep(1000);
-        _permissionsHelper.uncheckInheritedPermissions();
-        clickButton("Save", 0);
-
-        //This is the workaround for issue 20329
-        sleep(1000);
-        _permissionsHelper.uncheckInheritedPermissions();
-        clickButton("Save", 0);
-
-        waitForElement(Locator.permissionRendered());
-
-        _securityHelper.setProjectPerm(PERM_GROUPS[0], "Reader");
-        clickButton("Save and Finish");
-
-        goToProjectHome();
-        _permissionsHelper.enterPermissionsUI();
-        _securityHelper.setProjectPerm(PERM_GROUPS[0], "Reader");
-        clickButton("Save and Finish");
-
-        _permissionsHelper.createPermissionsGroup(PERM_GROUPS[1]);
-        if (isElementPresent(Locator.permissionRendered()) && isButtonPresent("Save and Finish"))
-        {
-            clickButton("Save and Finish");
-        }
-
-        _permissionsHelper.enterPermissionsUI();
-        _securityHelper.setProjectPerm(PERM_GROUPS[1], "Reader");
-        clickButton("Save and Finish");
+        studyPermissions = new HashMap<>();
+        cds.setUpPermGroup(PERM_GROUPS[1], studyPermissions);
 
         impersonateGroup(PERM_GROUPS[0], false);
 
@@ -147,13 +121,245 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         cds.enterApplication();
         _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0);
-        cds.viewLearnAboutPage("Studies");
-        _asserts.verifyEmptyLearnAboutStudyPage();
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
         stopImpersonatingGroup();
         assertSignedInNotImpersonating();
+    }
+
+    @Test
+    public void verifyLearnAboutListingWithLimitedAccess()
+    {
+        Map<String, String> studyPermissions = new HashMap<>();
+        log("Create a user group with Read permission to project but no permission to any study folder");
+        cds.setUpPermGroup(PERM_GROUPS[0], studyPermissions);
+        impersonateGroup(PERM_GROUPS[0], false);
+        cds.enterApplication();
+
+        log("Verify users with no study permission can see all study listing on Learn About.");
+        cds.viewLearnAboutPage("Studies");
+        List<String> allStudies = Arrays.asList(CDSHelper.STUDIES);
+        _asserts.verifyLearnAboutPage(allStudies);
+
+        log("Verify users with no study permission can see all assay listing on Learn About.");
+        cds.viewLearnAboutPage("Assays");
+        List<String> allAssays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
+        _asserts.verifyLearnAboutPage(allAssays);
+
+        log("Verify users with no study permission can see all product listing on Learn About.");
+        cds.viewLearnAboutPage("Products");
+        List<String> allProducts = Arrays.asList(CDSHelper.PRODUCTS);
+        _asserts.verifyLearnAboutPage(allProducts);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
+    }
+
+    @Test
+    public void verifyLearnStudyDataAvailabilityWithLimitedAccess()
+    {
+        Map<String, String> studyPermissions = new HashMap<>();
+        log("Create a user group with Read permission to project but no permission to any study folder");
+        cds.setUpPermGroup(PERM_GROUPS[0], studyPermissions);
+        impersonateGroup(PERM_GROUPS[0], false);
+        cds.enterApplication();
+
+        cds.viewLearnAboutPage("Studies");
+
+        validateStudyListDataAdded(false);
+        validateStudyDetailDataAvailability(false);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
+
+        studyPermissions = new HashMap<>();
+        studyPermissions.put("q1", "Reader");
+        studyPermissions.put("q2", "Reader");
+        log("Create a user group with Read permission to project, q1 and q2.");
+        cds.setUpPermGroup(PERM_GROUPS[1], studyPermissions);
+        impersonateGroup(PERM_GROUPS[1], false);
+        cds.enterApplication();
+
+        cds.viewLearnAboutPage("Studies");
+
+        validateStudyListDataAdded(true);
+        validateStudyDetailDataAvailability(true);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
+    }
+
+    private void validateStudyDetailDataAvailability(boolean hasAccessToQ2)
+    {
+        final String ACCESSIBLE_ICON = "smallCheck.png";
+        final String NOT_ACCESSIBLE_ICON = "grayCheck.png";
+        final String HAS_NO_DATA_ICON = "smallGreyX.png";
+
+        String dataIcon = hasAccessToQ2 ? ACCESSIBLE_ICON : NOT_ACCESSIBLE_ICON;
+
+        log("Verify detailed Data Availability for QED 2");
+        String study = "QED 2";
+        Locator element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
+        assertElementPresent(element);
+        waitAndClick(element);
+        waitForText("Data Availability");
+        Assert.assertTrue("Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
+
+        cds.viewLearnAboutPage("Studies");
+        log("Verify detailed Data Availability for RED 4");
+        study = "RED 4";
+        element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
+        assertElementPresent(element);
+        waitAndClick(element);
+        waitForText("Data Availability");
+
+        Assert.assertTrue("Data Availability status for ICS is not as expected", isElementPresent(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
+        Assert.assertTrue("Data Availability status for IFNg ELISpot is not as expected", isElementPresent(cds.getDataRowXPath("IFNg ELISpot").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
+        Assert.assertTrue("Data Availability status for BAMA is not as expected", isElementPresent(cds.getDataRowXPath("BAMA").append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+
+        cds.viewLearnAboutPage("Studies");
+    }
+
+    private void validateStudyListDataAdded(boolean hasAccessToQ2)
+    {
+        final int STUDY_WITH_DATA_ADDED = 25;
+        int dataAddedCount = hasAccessToQ2 ? (STUDY_WITH_DATA_ADDED - 1) : STUDY_WITH_DATA_ADDED;
+        int dataAccessibleCount = hasAccessToQ2 ? 1 : 0;
+
+        List<WebElement> hasDataIcons = LearnGrid.Locators.rowsWithDataNotAccessible.findElements(getDriver());
+        List<WebElement> hasAccessIcons = LearnGrid.Locators.rowsWithDataAccessible.findElements(getDriver());
+
+        Assert.assertTrue("Number of studies without Data Accessible is not as expected",hasDataIcons.size() == dataAddedCount);
+        assertTrue("Number of studies with Data Accessible is not as expected", hasAccessIcons.size() == dataAccessibleCount);
+
+        LearnGrid learnGrid = new LearnGrid(this);
+        int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
+        String qed2DataAddedText = hasAccessToQ2 ? "1 Assay Accessible" : "0/1 Assay Accessible";
+        String cellText = learnGrid.getCellText(1, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text for study 'QED 2' not as expected. Expected: '" + qed2DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(qed2DataAddedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected for study 'QED 2'.");
+
+        String toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        if (hasAccessToQ2)
+            validateToolTipText(toolTipText, "Assays with Data Accessible", "NAB");
+        else
+            validateToolTipText(toolTipText, "Assays without Data Accessible", "NAB");
+
+        String red4DataAddedText = "0/2 Assays Accessible";
+        cellText = learnGrid.getCellText(7, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text for study 'RED 4' not as expected. Expected: '" + red4DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(red4DataAddedText.trim().toLowerCase()));
+        log("'Data Added' column text as expected for study 'RED 4'.");
+
+        toolTipText = learnGrid.showDataAddedToolTip(7, dataAddedColumn)
+                .getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        validateToolTipText(toolTipText, "Assays without Data Accessible", "ICS", "IFNg ELISpot");
+    }
+
+    private void validateToolTipText(String toolTipText, String... expectedText)
+    {
+        for(String expected : expectedText)
+        {
+            Assert.assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
+        }
+    }
+
+    @Test
+    public void verifyStudyDocumentsWithLimitedAccess()
+    {
+        Map<String, String> studyPermissions = new HashMap<>();
+        log("Create a user group with Read permission to project but no permission to any study folder");
+        cds.setUpPermGroup(PERM_GROUPS[0], studyPermissions);
+        impersonateGroup(PERM_GROUPS[0], false);
+        cds.enterApplication();
+
+        log("Verify users with no study permission can see study documents with public access only.");
+        cds.viewLearnAboutPage("Studies");
+        validateStudyDocumentForR2(false);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
+
+        studyPermissions = new HashMap<>();
+        studyPermissions.put("r2", "Reader");
+        log("Create a user group with Read permission to project and R2 folder.");
+        cds.setUpPermGroup(PERM_GROUPS[1], studyPermissions);
+        impersonateGroup(PERM_GROUPS[1], false);
+        cds.enterApplication();
+
+        log("Verify users with study permission can see all study documents.");
+        cds.viewLearnAboutPage("Studies");
+        validateStudyDocumentForR2(true);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
+    }
+
+    private void validateStudyDocumentForR2(boolean hasAccessToR2)
+    {
+        String study = "RED 2";
+        Locator element = Locator.xpath("//tr/td/div/div/h2[contains(text(), '" + study + "')]");
+        assertElementPresent(element);
+        waitAndClick(element);
+        waitForText("Study information");
+        sleep(2000);
+
+        WebElement documentLink;
+
+        log("Verify public Reports");
+        documentLink = CDSHelper.Locators.studyReportLink("ADCC Data Summary").findElementOrNull(getDriver());
+        Assert.assertTrue("Was not able to find link to the public report document for study '" + study + "'.", documentLink != null);
+        String documentName = "cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf";
+        cds.validatePDFLink(documentLink, documentName);
+
+        log("Verify restricted Reports");
+        documentLink = CDSHelper.Locators.studyReportLink("BAMA Results Summary").findElementOrNull(getDriver());
+        if (hasAccessToR2)
+        {
+            Assert.assertTrue("Was not able to find link to the restricted report document for study '" + study + "'.", documentLink != null);
+            documentName = "cvd256_ev03_iga_igg.pdf";
+            cds.validatePDFLink(documentLink, documentName);
+        }
+        else
+        {
+            Assert.assertTrue("User should not see link to restricted report document for study '" + study + "'.", documentLink == null);
+        }
+
+        log("Verify restricted study grant");
+        documentLink = cds.getVisibleGrantDocumentLink();
+        if (hasAccessToR2)
+        {
+            Assert.assertTrue("Was not able to find link to the restricted grant document for study '" + study + "'.", documentLink != null);
+        }
+        else
+        {
+            Assert.assertTrue("There was a visible link to a grant document for this study, and there should not be.", documentLink == null);
+        }
+
+        log("Verify restricted study protocol");
+        List<WebElement> protocolLinksLinks = cds.getVisibleStudyProtocolLinks();
+        if (hasAccessToR2)
+        {
+            Assert.assertTrue("Was not able to find link to the restricted protocol for study '" + study + "'.", protocolLinksLinks != null);
+        }
+        else
+        {
+            Assert.assertTrue("There was a visible link to a protocol for this study, and there should not be.", protocolLinksLinks == null);
+        }
+
     }
 
     @Test

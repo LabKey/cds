@@ -1,0 +1,6 @@
+relationship	rel_sort_order
+Main study	1
+Extension study	2
+Co-conducted study	3
+HIV follow up study	4
+Ancillary study	5

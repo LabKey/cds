@@ -42,6 +42,7 @@ Ext.define('Connector.app.model.StudyProducts', {
         {name: 'product_manufacturer'},
         {name: 'product_description'},
         {name: 'data_availability'},
+        {name: 'data_accessible'},
         {name: 'studies_with_data_count'},
         {name: 'studies', convert : function(value) {
             return Ext.isArray(value) ? value : [];

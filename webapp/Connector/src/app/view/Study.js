@@ -50,15 +50,30 @@ Ext.define('Connector.app.view.Study', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
                     '<tpl if="data_availability">',
-                        '<div class="detail-has-data"></div>',
-                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added_count)]}</div>',
+                        '<div class="detail-has-data ',
+                            '<tpl if="data_accessible">',
+                            'detail-has-data-green',
+                            '<tpl else>',
+                            'detail-has-data-gray',
+                            '</tpl>',
+                        '"></div>',
+                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
                     '<tpl else>',
-                        'Not added',
+                        'Data not added',
                     '</tpl>',
                 '</div>',
                 {
-                    assayCountText : function(assay_count) {
-                        return assay_count == 1 ? assay_count + ' Assay' : assay_count + ' Assays';
+                    assayCountText : function(assays_added, accessible) {
+                        var totalCount = assays_added.length;
+                        var description = "";
+                        if (accessible)
+                            description += totalCount;
+                        else
+                            description += ('0/' + totalCount);
+                        description += " Assay";
+                        description += (totalCount == 1 ? '' : 's');
+                        description += " Accessible";
+                        return description;
                     }
                 }
         )
@@ -226,8 +241,7 @@ Ext.define('Connector.app.view.Study', {
 
     dataAvailabilityTooltipConfig : function() {
         return {
-            title: 'Assays',
-            recordField: 'assay_short_name'
+            title: 'Assays'
         }
     }
 });

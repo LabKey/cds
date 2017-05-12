@@ -435,6 +435,7 @@
         <columns>
             <column columnName="prot"/>
             <column columnName="document_id"/>
+            <column columnName="access_level"/>
             <column columnName="study_document_order"/>
         </columns>
     </table>
@@ -473,6 +474,7 @@
             <column columnName="prot"/>
             <column columnName="document_id"/>
             <column columnName="container"/>
+            <column columnName="access_level"/>
             <column columnName="document_order"/>
         </columns>
     </table>
@@ -639,13 +641,6 @@
             <column columnName="assay_identifier"/>
             <column columnName="has_data"/>
             <column columnName="assay_status"/>
-        </columns>
-    </table>
-    <table tableName="studyrelationshiporder" tableDbType="TABLE">
-        <columns>
-            <column columnName="relationship"/>
-            <column columnName="rel_sort_order"/>
-            <column columnName="container"/>
         </columns>
     </table>
     <table tableName="studyrelationship" tableDbType="TABLE">
