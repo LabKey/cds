@@ -324,7 +324,7 @@ Ext.define('Connector.model.InfoPane', {
                     useNamedFilters: [LABKEY.app.constant.SELECTION_FILTER],
                     showEmpty: true,
                     success: function(cellset) {
-                        this.processMembers(cellset, mdx);
+                        Connector.getQueryService().getUserLevelMember(hier, lvl, this.processMembers, this, cellset, mdx);
                     },
                     scope: this
                 });
@@ -339,7 +339,7 @@ Ext.define('Connector.model.InfoPane', {
                     useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                     showEmpty: true,
                     success: function(cellset) {
-                        this.processMembers(cellset, mdx);
+                        Connector.getQueryService().getUserLevelMember(hier, lvl, this.processMembers, this, cellset, mdx);
                     },
                     scope: this
                 });
@@ -355,7 +355,7 @@ Ext.define('Connector.model.InfoPane', {
                         showEmpty: true,
                         success: function(cellset) {
                             state.removePrivateSelection(INFO_PANE_SELECTION);
-                            this.processMembers(cellset, mdx);
+                            Connector.getQueryService().getUserLevelMember(hier, lvl, this.processMembers, this, cellset, mdx);
                         },
                         failure: function() {
                             state.removePrivateSelection(INFO_PANE_SELECTION);
@@ -457,7 +457,7 @@ Ext.define('Connector.model.InfoPane', {
         return selfName;
     },
 
-    processMembers : function(cellset, mdx) {
+    processMembers : function(cellset, mdx, validUserLevelMembers) {
 
         // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
         var memberDefinitions = cellset.axes[1].positions,
@@ -475,6 +475,11 @@ Ext.define('Connector.model.InfoPane', {
                     _name = LABKEY.app.model.Filter.getMemberLabel(def.name),
                     _prop = '',
                     _hasDetails;
+
+            if (Ext.isArray(validUserLevelMembers)) {
+                if (validUserLevelMembers.indexOf(def.uniqueName) < 0)
+                    return;
+            }
 
             var _fullName = this.getFullName(def.level.uniqueName, mdx, def.uniqueName, _name);
 
