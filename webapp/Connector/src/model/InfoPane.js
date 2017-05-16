@@ -315,6 +315,7 @@ Ext.define('Connector.model.InfoPane', {
                 }
             });
 
+            var hierarchyUniqName = hier.getUniqueName(), levelUniqName = lvl.getUniqueName();
             if (this.isSelectionBased()) {
                 mdx.query({
                     onRows: [{
@@ -324,7 +325,7 @@ Ext.define('Connector.model.InfoPane', {
                     useNamedFilters: [LABKEY.app.constant.SELECTION_FILTER],
                     showEmpty: true,
                     success: function(cellset) {
-                        Connector.getQueryService().getUserLevelMember(hier, lvl, this.processMembers, this, cellset, mdx);
+                        Connector.getQueryService().getUserLevelMember(this.getBoundProcessMembers(hierarchyUniqName, levelUniqName, cellset, mdx), this, hierarchyUniqName, levelUniqName);
                     },
                     scope: this
                 });
@@ -339,7 +340,7 @@ Ext.define('Connector.model.InfoPane', {
                     useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                     showEmpty: true,
                     success: function(cellset) {
-                        Connector.getQueryService().getUserLevelMember(hier, lvl, this.processMembers, this, cellset, mdx);
+                        Connector.getQueryService().getUserLevelMember(this.getBoundProcessMembers(hierarchyUniqName, levelUniqName, cellset, mdx), this, hierarchyUniqName, levelUniqName);
                     },
                     scope: this
                 });
@@ -355,7 +356,7 @@ Ext.define('Connector.model.InfoPane', {
                         showEmpty: true,
                         success: function(cellset) {
                             state.removePrivateSelection(INFO_PANE_SELECTION);
-                            Connector.getQueryService().getUserLevelMember(hier, lvl, this.processMembers, this, cellset, mdx);
+                            Connector.getQueryService().getUserLevelMember(this.getBoundProcessMembers(hierarchyUniqName, levelUniqName, cellset, mdx), this, hierarchyUniqName, levelUniqName);
                         },
                         failure: function() {
                             state.removePrivateSelection(INFO_PANE_SELECTION);
@@ -457,7 +458,12 @@ Ext.define('Connector.model.InfoPane', {
         return selfName;
     },
 
-    processMembers : function(cellset, mdx, validUserLevelMembers) {
+    getBoundProcessMembers: function(hier, level, cellset, mdx)
+    {
+        return Ext.bind(this.processMembers, this, [hier, level, cellset, mdx], true);
+    },
+
+    processMembers : function(hier, level, cellset, mdx) {
 
         // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
         var memberDefinitions = cellset.axes[1].positions,
@@ -467,6 +473,8 @@ Ext.define('Connector.model.InfoPane', {
             filterBased = this.isFilterBased(),
             dim,
             model;
+
+        var validUserLevelMembers = Connector.getQueryService().getCachedUserLevelMembers(hier, level);
 
         Ext.each(memberDefinitions, function(definition, idx) {
 

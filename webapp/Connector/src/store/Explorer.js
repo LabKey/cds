@@ -29,7 +29,7 @@ Ext.define('Connector.store.Explorer', {
                         success: function(qr) {
 
                             //DataSpace override to user accessible members
-                            Connector.getQueryService().setUserHierarchyMembers(hierarchy, qr);
+                            Connector.getQueryService().setUserHierarchyMembers(uniqueName, qr);
                             // End DataSpace override
 
                             me.totals[uniqueName] = me.processMaxCount.call(me, qr);

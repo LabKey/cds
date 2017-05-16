@@ -904,10 +904,8 @@ Ext.define('Connector.controller.Query', {
         return this.USER_LEVEL_MEMBERS;
     },
 
-    getCachedUserLevelMembers: function(hier, level)
+    getCachedUserLevelMembers: function(hierarchyUniqName, levelUniqName)
     {
-        var hierarchyUniqName = hier.getUniqueName();
-        var levelUniqName = level.getUniqueName();
         var dimMap = this.getUserAccessibleMembersCache();
         var hierachy = dimMap[hierarchyUniqName];
         if (hierachy)
@@ -917,14 +915,14 @@ Ext.define('Connector.controller.Query', {
 
     /**
      * Store member accessibility information for all levels of the hierarchy
-     * @param hier Cube hier
+     * @param hier Cube hier unique name
      * @param cellset The cube result for the hierarchy
      */
     setUserHierarchyMembers: function(hier, cellset)
     {
         var memberDefinitions = cellset.axes[1].positions, counts = cellset.cells;
 
-        var hierarchyUniqName = hier.getUniqueName();
+        var hierarchyUniqName = hier;
         var dimMap = this.getUserAccessibleMembersCache();
         if (!dimMap[hierarchyUniqName])
             dimMap[hierarchyUniqName] = {};
@@ -972,26 +970,24 @@ Ext.define('Connector.controller.Query', {
 
     /**
      * Query the cube for members that's accessible to user for the specified hierarchy and level and store the result in cache
-     * @param hier The cube hierarchy
-     * @param level The cube level to query for
      * @param callback The callback function to call after members querying has completed
      * @param scope The callback scope
-     * @param outercellset
-     * @param mdx
+     * @param hier The cube hierarchy unique name
+     * @param level The cube level unique name to query for
      */
-    getUserLevelMember : function(hier, level, callback, scope, outercellset, mdx) {
+    getUserLevelMember : function(callback, scope, hier, level) {
         var me = this;
 
         if (Ext.isArray(this.getCachedUserLevelMembers(hier, level))) {
             if (callback)
-                callback.call(scope, outercellset, mdx, this.getCachedUserLevelMembers(hier, level));
+                callback.call(scope);
             return;
         }
 
         Connector.getState().onMDXReady(function(mdx) {
             mdx.query({
                 onRows: [{
-                    level: level.getUniqueName(),
+                    level: level,
                     member: 'members'
                 }],
                 showEmpty: true,
@@ -1000,7 +996,7 @@ Ext.define('Connector.controller.Query', {
                     me._setUserLevelMembers(hier, level, cellset);
 
                     if (callback)
-                        callback.call(scope, outercellset, mdx, me.getCachedUserLevelMembers(hier, level));
+                        callback.call(scope);
                 },
                 scope: this
             });
@@ -1009,7 +1005,7 @@ Ext.define('Connector.controller.Query', {
 
     _setUserLevelMembers: function(hier, level, cellset)
     {
-        var hierarchyUniqName = hier.getUniqueName(), levelUniqName = level.getUniqueName();
+        var hierarchyUniqName = hier, levelUniqName = level;
         var memberDefinitions = cellset.axes[1].positions, counts = cellset.cells;
         var dimMap = this.getUserAccessibleMembersCache();
         if (!dimMap[hierarchyUniqName])
