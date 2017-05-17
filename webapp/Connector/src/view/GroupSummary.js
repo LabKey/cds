@@ -170,8 +170,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
             xtype: 'container',
             flex: 1,
             items: [
-                this.getPartialAccessMsg(),
-                this.getNoAccessMsg(),
+                this.getLimitedAccessMsg(),
                 this.getUndoMsg(),
                 this.getApplyMsg(),
             {
@@ -234,42 +233,45 @@ Ext.define('Connector.view.GroupSummaryBody', {
         }, this);
     },
 
-    getPartialAccessMsg : function()
+    getLimitedAccessMsg : function()
     {
-        if (!this._partialAccess)
+        if (!this._limitedAccess)
         {
-            this._partialAccess = Ext.create('Ext.Component', {
+            this._limitedAccess = Ext.create('Ext.Component', {
                 margin: '0 20 20 0',
-                renderTpl: this.getAccessMsgTpl(true),
+                renderTpl: new Ext.XTemplate('<b>Note:&nbsp;</b>'
+                        + 'You may not have access to view all participants in this group. '
+                        + 'Please contact your administracotrs to learn more.'),
                 hidden: true
             });
         }
 
-        return this._partialAccess;
+        return this._limitedAccess;
     },
 
-
-    getNoAccessMsg : function()
+    checkUserAccess: function()
     {
-        if (!this._noAccess)
-        {
-            this._noAccess = Ext.create('Ext.Component', {
-                margin: '0 20 20 0',
-                renderTpl: this.getAccessMsgTpl(false),
-                hidden: true
-            });
-        }
-
-        return this._noAccess;
-    },
-
-    getAccessMsgTpl: function(hasAccess)
-    {
-        var msg = '<p><b>Note:&nbsp;</b>';
-        msg += 'You do not have access to view ';
-        msg += hasAccess ? 'all' : 'any of the';
-        msg += " participants in this group. Please contact your administrator to learn more.</p>";
-        return new Ext.XTemplate(msg);
+        /**
+         *  Show warning message if user does not have access to all studies with DATA ADDED (lacking permission to an empty study shouldn’t trigger warning).
+         *  This approach may result in false positive warning as the group may not include the study that the user is restricted from.
+         *  Currently there is no way to query for the set of studies included in a filter group bypassing permission check.
+         *  May investigate in the future on how to reliably report on what the user doesn't have access to.
+         */
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'UserStudyAccess',
+            success: function(studyAccessData){
+                var studyAccessList = studyAccessData.rows;
+                Ext.each(studyAccessList, function (studyAccess) {
+                    if (!studyAccess.accessible)
+                    {
+                        this.getLimitedAccessMsg().show();
+                        return false;
+                    }
+                }, this)
+            },
+            scope: this
+        });
     },
 
     getUndoMsg : function()
@@ -370,29 +372,23 @@ Ext.define('Connector.view.GroupSummaryBody', {
             var filters = this.getGroupFilters(this.group);
 
             if (filters.length > 0) {
+                this.checkUserAccess();
                 Connector.getState().onMDXReady(function(mdx) {
                     var invalidMembers = [];
                     var validatedFilters = filters.filter(function(f) {
-                        if (Ext.isArray(f.getMembers()) && f.getMembers().length > 0) //member filters
-                        {
-                            var validMembers = f.getMembers().filter(function(m) {
-                                var isInvalidMember = !Ext.isDefined(m.uniqueName) ||
-                                        !Ext.isDefined(mdx.getMember(m.uniqueName));
+                        var validMembers = f.getMembers().filter(function(m) {
+                            var isInvalidMember = !Ext.isDefined(m.uniqueName) ||
+                                    !Ext.isDefined(mdx.getMember(m.uniqueName));
 
-                                if (isInvalidMember) {
-                                    Ext.Array.push(invalidMembers, m.uniqueName);
-                                    return false;
-                                }
-                                return true;
-                            });
-                            f.set({members: validMembers});
-                            return validMembers.length !== 0;
-                        }
-
-                        return true; // if not a member filter
+                            if (isInvalidMember) {
+                                Ext.Array.push(invalidMembers, m.uniqueName);
+                                return false;
+                            }
+                            return true;
+                        });
+                        f.set({members: validMembers});
+                        return validMembers.length !== 0;
                     });
-
-                    this.checkFiltersAccess(validatedFilters, mdx);
 
                     if (invalidMembers.length > 0) {
                         var msg = 'This saved group includes criteria no longer available in the data: ' +
@@ -427,60 +423,6 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 }, this);
             }
         }
-    },
-
-    checkFiltersAccess: function(filters, mdx) {
-        //TODO for non member filter, query participant list instead.
-            //However, time filter uses participantSequenceNum, not participant.
-        var accessResults = filters.map(function(f){
-            return (Ext.isArray(f.getMembers()) && f.getMembers().length == 0) // true if not member filter
-        });
-        Ext.each(filters, function(filter, index){
-            if (accessResults[index]) // not a member filter
-                return;
-            var hier = filter.getHierarchy(), level = filter.getLevel();
-            var callback = Ext.bind(this.updateFilterAccess, this, [mdx, hier, level, filter, index, accessResults], true);
-            Connector.getQueryService().getUserLevelMember(callback, this, hier, level);
-        }, this);
-    },
-
-    updateFilterAccess: function(mdx, hier, level, filter, index, accessResults)
-    {
-        var validUserLevelMembers = Connector.getQueryService().getCachedUserLevelMembers(hier, level);
-        var validFilterMembers = filter.getMembers().filter(function(m) {
-            return (validUserLevelMembers.indexOf(m.uniqueName) > -1);
-        });
-        if (validFilterMembers.length == filter.getMembers().length)
-            accessResults[index] = 'full';
-        else if (validFilterMembers.length == 0)
-            accessResults[index] =  'none';
-        else
-            accessResults[index] =  'partial';
-
-        var pendingFilter = accessResults.filter(function(result){
-            return result == false;
-        });
-
-        if (pendingFilter.length == 0)
-            this.updateGroupAccessMsg(accessResults)
-    },
-
-    updateGroupAccessMsg: function(accessResults)
-    {
-        var fullAccess = accessResults.filter(function(result){
-            return result == 'full' || result === true;
-        });
-        var nonAccess = accessResults.filter(function(result){
-            return result == 'none';
-        });
-        var access = fullAccess.length == accessResults.length ? 'full' : (nonAccess.length == accessResults.length ? 'none' : 'partial');
-
-        if (access == 'none')
-        {
-            this.getNoAccessMsg().show();
-        }
-        else if (access == 'partial')
-            this.getPartialAccessMsg().show();
     },
 
     applyFilters : function(validatedFilters) {
