@@ -89,9 +89,6 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         String productMember = "Unknown";
         String productMember2 = "MENTHOL";
 
-        Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in active filters");
-        Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in active filters");
-
         //
         // Open an filter pane and close it
         //
@@ -127,8 +124,8 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         // open the filter pane via a created filter
         //
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(studyMember));
-        assertElementPresent(hasData);
-        assertElementNotPresent(noData);
+        assertElementPresent(CDSHelper.Locators.INFO_PANE_HAS_DATA);
+        assertElementNotPresent(CDSHelper.Locators.INFO_PANE_NO_DATA);
 
         cds.selectInfoPaneItem(studyMember2, true);
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
@@ -165,8 +162,8 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         // TODO Test data dependent.
         _asserts.assertFilterStatusCounts(8272, 50, 2, 2, 280); // now it's 'AND'
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(productMember2));
-        assertElementPresent(hasData);
-        assertElementNotPresent(noData);
+        assertElementPresent(CDSHelper.Locators.INFO_PANE_HAS_DATA);
+        assertElementNotPresent(CDSHelper.Locators.INFO_PANE_NO_DATA);
         click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
         cds.ensureNoFilter();
 

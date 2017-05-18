@@ -546,9 +546,6 @@ public class CDSHelper
     public static Dimension idealWindowSize = new Dimension(1280, 1040);
     public static Dimension defaultWindowSize = new Dimension(1280, 1024);
 
-    // XPath
-    public static String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
-
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
     {
@@ -1540,6 +1537,9 @@ public class CDSHelper
     public static class Locators
     {
         public static Locator.XPathLocator barLabel = Locator.tagWithClass("span", "barlabel");
+        public static Locator.XPathLocator INFO_PANE_HAS_DATA = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in active filters");
+        public static Locator.XPathLocator INFO_PANE_NO_DATA = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in active filters");
+        public static String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
 
         public static Locator.XPathLocator getByLocator(String byNoun)
         {
@@ -1634,7 +1634,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator studyReportLink(String studyName)
         {
-            return Locator.xpath(CDSHelper.REPORTS_LINKS_XPATH + "//a[contains(text(), '" + studyName + "')]");
+            return Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a[contains(text(), '" + studyName + "')]");
         }
     }
 
