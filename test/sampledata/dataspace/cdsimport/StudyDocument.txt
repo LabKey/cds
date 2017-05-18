@@ -1,14 +1,14 @@
 prot	document_id	access_level	study_document_order
 q1	62
 q1	77	restricted	1
-q1	78	public	2
+q1	78	members	2
 q1	79	restricted	3
 q1	80		4
-q1	81	public	5
+q1	81	members	5
 q1	82	restricted	6
-q2	71	public
-q3	22	public
-q4	70	public
+q2	71	members
+q3	22	members
+q4	70	members
 r1	1	restricted
 r1	83	restricted	4
 r1	84	restricted	1
@@ -17,108 +17,108 @@ r1	86	restricted	3
 r1	87	restricted	1
 r2	44	restricted
 r2	88	restricted	2
-r2	89	restricted	1
+r2	89		1
 r2	90	restricted	1
-r2	91	public	3
-r3	44	public
-r4	44	public
-r4	92	public	1
-r4	93	public	1
-r4	94	public	2
-r4	95	public	3
-r4	96	public	4
-r4	136	public	2
-r5	66	public
-r5	97	public	1
-r5	98	public	2
-r5	99	public	3
-r6	22	public
-r7	59	public
-r8	66	public
-r9	73	public
-r9	100	public	3
-r9	101	public	8
-r9	102	public	1
-r9	103	public	2
-r9	104	public	4
-r9	105	public	5
-r9	106	public	6
-r9	107	public	7
-r9	108	public	9
+r2	91	members	3
+r3	44	members
+r4	44	members
+r4	92	members	1
+r4	93	members	1
+r4	94	members	2
+r4	95	members	3
+r4	96	members	4
+r4	136	members	2
+r5	66	members
+r5	97	members	1
+r5	98	members	2
+r5	99	members	3
+r6	22	members
+r7	59	members
+r8	66	members
+r9	73	members
+r9	100	members	3
+r9	101	members	8
+r9	102	members	1
+r9	103	members	2
+r9	104	members	4
+r9	105	members	5
+r9	106	members	6
+r9	107	members	7
+r9	108	members	9
 y55	74	restricted
-z100	66	public
-z100	109	public	2
-z100	110	public	3
-z100	111	public	4
-z100	112	public	1
-z100	113	public	1
-z101	65	public
-z101	114	public	2
-z101	115	public	1
-z101	116	public	3
-z102	71	public
-z102	117	public	10
-z102	118	public	1
-z102	119	public	9
-z102	120	public	7
-z102	121	public	8
-z102	122	public	1
-z102	123	public	2
-z102	124	public	3
-z102	125	public	4
-z102	126	public	5
-z102	127	public	6
-z103	75	public
-z104	74	public
-z105	22	public
-z106	74	public
-z107	74	public
-z108	22	public
-z109	74	public
-z110	44	public
-z110	128	public	1
-z110	129	public	6
-z110	130	public	2
-z110	131	public	5
-z110	132	public	9
-z110	133	public	3
-z110	134	public	4
-z110	135	public	8
-z110	136	public	1
-z110	137	public	7
-z111	30	public
-z112	31	public
-z113	44	public
-z113	136	public	1
-z114	74	public
-z115	74	public
-z116	74	public
-z117	74	public
-z118	71	public
-z119	64	public
-z120	74	public
-z121	74	public
-z122	64	public
-z123	74	public
-z124	64	public
-z125	72	public
-z126	65	public
-z126	138	public	1
-z126	139	public	2
-z126	140	public	1
-z127	74	public
-z128	74	public
-z129	74	public
-z130	71	public
-z131	64	public
-z132	64	public
-z133	64	public
-z134	72	public
-z135	62	public
-z135	141	public	1
-z136	71	public
-z136	142	public	1
-z137	71	public
-z138	63	public
+z100	66	members
+z100	109	members	2
+z100	110	members	3
+z100	111	members	4
+z100	112	members	1
+z100	113	members	1
+z101	65	members
+z101	114	members	2
+z101	115	members	1
+z101	116	members	3
+z102	71	members
+z102	117	members	10
+z102	118	members	1
+z102	119	members	9
+z102	120	members	7
+z102	121	members	8
+z102	122	members	1
+z102	123	members	2
+z102	124	members	3
+z102	125	members	4
+z102	126	members	5
+z102	127	members	6
+z103	75	members
+z104	74	members
+z105	22	members
+z106	74	members
+z107	74	members
+z108	22	members
+z109	74	members
+z110	44	members
+z110	128	members	1
+z110	129	members	6
+z110	130	members	2
+z110	131	members	5
+z110	132	members	9
+z110	133	members	3
+z110	134	members	4
+z110	135	members	8
+z110	136	members	1
+z110	137	members	7
+z111	30	members
+z112	31	members
+z113	44	members
+z113	136	members	1
+z114	74	members
+z115	74	members
+z116	74	members
+z117	74	members
+z118	71	members
+z119	64	members
+z120	74	members
+z121	74	members
+z122	64	members
+z123	74	members
+z124	64	members
+z125	72	members
+z126	65	members
+z126	138	members	1
+z126	139	members	2
+z126	140	members	1
+z127	74	members
+z128	74	members
+z129	74	members
+z130	71	members
+z131	64	members
+z132	64	members
+z133	64	members
+z134	72	members
+z135	62	members
+z135	141	members	1
+z136	71	members
+z136	142	members	1
+z137	71	members
+z138	63	members
 z139	44	restricted
 z140	74	restricted

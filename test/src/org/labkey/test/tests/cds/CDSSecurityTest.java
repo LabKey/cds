@@ -337,6 +337,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         }
         else
         {
+            log("'BAMA Results Summary' access_level is blank so it should be treated as restricted access" );
             Assert.assertTrue("User should not see link to restricted report document for study '" + study + "'.", documentLink == null);
         }
 

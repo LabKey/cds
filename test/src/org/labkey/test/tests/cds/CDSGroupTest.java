@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.etl.ETLHelper;
+import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.ApiPermissionsHelper;
@@ -194,11 +195,14 @@ public class CDSGroupTest extends CDSReadOnlyTest
         cds.deleteGroupFromSummaryPage(STUDY_GROUP);
 
         cds.clearFilters();
+    }
 
-        //Compose new Group
+    @Test
+    public void verifySharedPlot()
+    {
         cds.goToSummary();
         cds.clickBy("Studies");
-        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
+        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1], "ZAP 117");
         cds.useSelectionAsSubjectFilter();
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -216,6 +220,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         cds.saveGroup(GROUP_PLOT_TEST, "a plot", false, true);
+        waitForText("Group \"Group Plot Test\" saved.");
 
         cds.clearFilters(true);
 
@@ -224,10 +229,13 @@ public class CDSGroupTest extends CDSReadOnlyTest
         click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_PLOT_TEST ));
         waitForText("View in Plot");
         click(Locator.xpath("//span/following::span[contains(text(), 'View in Plot')]").parent().parent().parent());
-        // Simply verify that we are on the plot page. Other tests validate plot functionality.
         assertTrue(getDriver().getCurrentUrl().contains("#chart"));
+        sleep(3000); // wait for the plot to draw.
+        CDSPlot cdsPlot = new CDSPlot(this);
+        assertTrue("Group filter with plot is not applied correctly", cdsPlot.getPointCount() > 0);
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         cds.deleteGroupFromSummaryPage(GROUP_PLOT_TEST );
+        cds.clearFilters();
     }
 
     @Test
