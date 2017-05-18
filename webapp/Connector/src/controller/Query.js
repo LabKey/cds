@@ -897,6 +897,10 @@ Ext.define('Connector.controller.Query', {
         return encodeURIComponent(filter.getURLParameterName()) + '=' + encodeURIComponent(filter.getURLParameterValue());
     },
 
+    /**
+     * The members that user has permission to for any dimension/hierarchy/level will be stored in the cached map.
+     * @returns the map that holds
+     */
     getUserAccessibleMembersCache: function()
     {
         if (!this.USER_LEVEL_MEMBERS)
@@ -907,22 +911,21 @@ Ext.define('Connector.controller.Query', {
     getCachedUserLevelMembers: function(hierarchyUniqName, levelUniqName)
     {
         var dimMap = this.getUserAccessibleMembersCache();
-        var hierachy = dimMap[hierarchyUniqName];
-        if (hierachy)
-            return hierachy[levelUniqName];
+        var hierarchy = dimMap[hierarchyUniqName];
+        if (hierarchy)
+            return hierarchy[levelUniqName];
         return null;
     },
 
     /**
      * Store member accessibility information for all levels of the hierarchy
-     * @param hier Cube hier unique name
+     * @param hierarchyUniqName Cube hierarchy unique name
      * @param cellset The cube result for the hierarchy
      */
-    setUserHierarchyMembers: function(hier, cellset)
+    setUserHierarchyMembers: function(hierarchyUniqName, cellset)
     {
         var memberDefinitions = cellset.axes[1].positions, counts = cellset.cells;
 
-        var hierarchyUniqName = hier;
         var dimMap = this.getUserAccessibleMembersCache();
         if (!dimMap[hierarchyUniqName])
             dimMap[hierarchyUniqName] = {};
@@ -972,13 +975,13 @@ Ext.define('Connector.controller.Query', {
      * Query the cube for members that's accessible to user for the specified hierarchy and level and store the result in cache
      * @param callback The callback function to call after members querying has completed
      * @param scope The callback scope
-     * @param hier The cube hierarchy unique name
-     * @param level The cube level unique name to query for
+     * @param hierarchyUniqName The cube hierarchy unique name
+     * @param levelUniqName The cube level unique name to query for
      */
-    getUserLevelMember : function(callback, scope, hier, level) {
+    getUserLevelMember : function(callback, scope, hierarchyUniqName, levelUniqName) {
         var me = this;
 
-        if (Ext.isArray(this.getCachedUserLevelMembers(hier, level))) {
+        if (Ext.isArray(this.getCachedUserLevelMembers(hierarchyUniqName, levelUniqName))) {
             if (callback)
                 callback.call(scope);
             return;
@@ -987,13 +990,13 @@ Ext.define('Connector.controller.Query', {
         Connector.getState().onMDXReady(function(mdx) {
             mdx.query({
                 onRows: [{
-                    level: level,
+                    level: levelUniqName,
                     member: 'members'
                 }],
                 showEmpty: true,
                 success: function (cellset)
                 {
-                    me._setUserLevelMembers(hier, level, cellset);
+                    me._setUserLevelMembers(hierarchyUniqName, levelUniqName, cellset);
 
                     if (callback)
                         callback.call(scope);
@@ -1003,9 +1006,8 @@ Ext.define('Connector.controller.Query', {
         });
     },
 
-    _setUserLevelMembers: function(hier, level, cellset)
+    _setUserLevelMembers: function(hierarchyUniqName, levelUniqName, cellset)
     {
-        var hierarchyUniqName = hier, levelUniqName = level;
         var memberDefinitions = cellset.axes[1].positions, counts = cellset.cells;
         var dimMap = this.getUserAccessibleMembersCache();
         if (!dimMap[hierarchyUniqName])
