@@ -46,7 +46,7 @@ Ext.define('Connector.view.GroupSummary', {
     _getActiveGroup : function()
     {
         var group;
-        var idx = this.store.find('id', this.groupId, false, true, true);
+        var idx = this.store.find('id', this.groupId, 0 /*start position*/, false /*any match, set to false for exact match*/, true, true);
         if (idx > -1)
         {
             group = this.store.getAt(idx);
@@ -172,6 +172,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
             items: [
                 this.getUndoMsg(),
                 this.getApplyMsg(),
+                this.getInvalidGroupMsg(),
             {
                 xtype: 'box',
                 html: '<div class="module"><h3>Description</h3></div>'
@@ -333,53 +334,103 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 Connector.getState().onMDXReady(function(mdx) {
                     var invalidMembers = [];
                     var validatedFilters = filters.filter(function(f) {
-                        var validMembers = f.getMembers().filter(function(m) {
-                            var isInvalidMember = !Ext.isDefined(m.uniqueName) ||
-                                    !Ext.isDefined(mdx.getMember(m.uniqueName));
+                        if (Ext.isArray(f.getMembers()) && f.getMembers().length > 0) //member filters
+                        {
+                            var validMembers = f.getMembers().filter(function(m) {
+                                var isInvalidMember = !Ext.isDefined(m.uniqueName) ||
+                                        !Ext.isDefined(mdx.getMember(m.uniqueName));
 
-                            if (isInvalidMember) {
-                                Ext.Array.push(invalidMembers, m.uniqueName);
-                                return false;
-                            }
-                            return true;
-                        });
-                        f.set({members: validMembers});
-                        return validMembers.length !== 0;
+                                if (isInvalidMember) {
+                                    Ext.Array.push(invalidMembers, m.uniqueName);
+                                    return false;
+                                }
+                                return true;
+                            });
+                            f.set({members: validMembers});
+                            return validMembers.length !== 0;
+                        }
+                        return true;// if not a member filter
                     });
 
-                    if (invalidMembers.length > 0) {
-                        var msg = 'This saved group includes criteria no longer available in the data: ' +
-                                '<ul><li>' +
-                                invalidMembers.join('</li><li>') +
-                                '</li></ul>';
-                        msg = msg + '<p ">Do you want to apply the filters without these criteria?</p>';
-                        Ext.Msg.show({
-                            title: 'Error',
-                            msg: msg,
-                            // buttons are in a fixed order that cannot be changed without subclassing Ext.window.Messagebox
-                            // [ok yes no cancel] is the predefined order. We want the button order cancel -> delete. That's why
-                            // even though we want a cancel button, we are using the Ext.Msg.OK constant.
-                            buttons: Ext.Msg.OK+Ext.Msg.YES,
-                            minWidth: 400,
-                            cls: 'group-filter-error-popup',
-                            buttonText: {
-                                ok: 'No',
-                                yes: 'Yes'
-                            },
-                            fn: function(id) {
-                                if (id === 'yes') {
-                                    this.applyFilters(validatedFilters);
+                    if (validatedFilters.length > 0)
+                    {
+                        if (invalidMembers.length > 0) {
+                            var msg = 'This saved group includes criteria no longer available in the data: ' +
+                                    '<ul><li>' +
+                                    invalidMembers.join('</li><li>') +
+                                    '</li></ul>';
+                            msg = msg + '<p ">Do you want to apply the filters without these criteria?</p>';
+                            Ext.Msg.show({
+                                title: 'Error',
+                                msg: msg,
+                                // buttons are in a fixed order that cannot be changed without subclassing Ext.window.Messagebox
+                                // [ok yes no cancel] is the predefined order. We want the button order cancel -> delete. That's why
+                                // even though we want a cancel button, we are using the Ext.Msg.OK constant.
+                                buttons: Ext.Msg.OK+Ext.Msg.YES,
+                                minWidth: 400,
+                                cls: 'group-filter-error-popup',
+                                buttonText: {
+                                    ok: 'No',
+                                    yes: 'Yes'
+                                },
+                                fn: function(id) {
+                                    if (id === 'yes') {
+                                        this.applyFilters(validatedFilters);
+                                    }
+                                    else
+                                    {
+                                        this.getUndoMsg().hide();
+                                        this.getApplyMsg().show();
+                                    }
+                                },
+                                scope: this
+                            });
+                        }
+                        else {
+                            this.applyFilters(validatedFilters);
+                        }
+                    }
+                    else
+                    {
+                        if (invalidMembers.length > 0) {
+                            var msg = 'No criteria in the saved group is available in the data: ' +
+                                    '<ul><li>' +
+                                    invalidMembers.join('</li><li>') +
+                                    '</li></ul>';
+                            Ext.Msg.show({
+                                title: 'Error',
+                                msg: msg,
+                                buttons: Ext.Msg.OK,
+                                minWidth: 400,
+                                cls: 'group-filter-error-popup',
+                                buttonText: {
+                                    ok: 'OK'
                                 }
-                            },
-                            scope: this
-                        });
+                            });
+                            this.setInvalidGroup();
+                        }
                     }
-                    else {
-                        this.applyFilters(validatedFilters);
-                    }
+
                 }, this);
             }
         }
+    },
+
+    setInvalidGroup: function() {
+        this.getUndoMsg().hide();
+        this.getInvalidGroupMsg().show();
+    },
+
+    getInvalidGroupMsg: function () {
+        if (!this._invalidGroup) {
+            this._invalidGroup = Ext.create('Ext.Component', {
+                margin: '0 20 20 0',
+                renderTpl: new Ext.XTemplate("No criteria in the saved group is available in the data."),
+                hidden: true
+            });
+        }
+
+        return this._invalidGroup;
     },
 
     applyFilters : function(validatedFilters) {
