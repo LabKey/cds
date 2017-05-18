@@ -372,7 +372,8 @@ Ext.define('Connector.view.GroupSummaryBody', {
             var filters = this.getGroupFilters(this.group);
 
             if (filters.length > 0) {
-                this.checkUserAccess();
+                if (this.group.data.shared) // no access check needed for private groups
+                    this.checkUserAccess();
                 Connector.getState().onMDXReady(function(mdx) {
                     var invalidMembers = [];
                     var validatedFilters = filters.filter(function(f) {
