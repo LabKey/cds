@@ -238,10 +238,11 @@ Ext.define('Connector.view.GroupSummaryBody', {
         if (!this._limitedAccess)
         {
             this._limitedAccess = Ext.create('Ext.Component', {
+                cls: 'cds-group-limited-access',
                 margin: '0 20 20 0',
                 renderTpl: new Ext.XTemplate('<b>Note:&nbsp;</b>'
                         + 'You may not have access to view all participants in this group. '
-                        + 'Please contact your administracotrs to learn more.'),
+                        + 'Please contact your administrators to learn more.'),
                 hidden: true
             });
         }

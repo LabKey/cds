@@ -25,6 +25,7 @@ import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.dumbster.EmailRecordTable;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category({})
@@ -508,6 +510,97 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         ensureSignedInAsPrimaryTestUser();
 
     }
+
+    @Test
+    public void verifyApplyingGroupsWithLimitedAccess()
+    {
+        final String LIMITED_USER_ACCOUNT = "cds_limited_access@example.com";
+        final String PRIVATE_GROUP_NAME = "cds_private_group";
+        final String SHARED_GROUP_NAME = "cds_shared_group";
+        final String SHARED_GROUP_NAME_DESCRIPTION = "This group selects 3 studies: QED 1, QED 2 and RED 4";
+        final Locator SHARED_GROUP_LOC = Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), 'Curated groups and plots')]" +
+                "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + SHARED_GROUP_NAME + "')]");
+        final Locator PRIVATE_GROUP_LOC = Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), 'My saved groups and plots')]" +
+                "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + PRIVATE_GROUP_NAME + "')]");
+
+        ensureAdminMode();
+        Ext4Helper.resetCssPrefix();
+
+        Map<String, String> studyPermissions = new HashMap<>();
+        studyPermissions.put("q1", "Reader");
+        studyPermissions.put("q2", "Reader");
+        cds.setUpUserPerm(LIMITED_USER_ACCOUNT, "Reader", studyPermissions);
+
+        log("Admin creates a shared group consisting of QED 1, QED 2 and RED 4.");
+        cds.enterApplication();
+        composeGroup(SHARED_GROUP_NAME, SHARED_GROUP_NAME_DESCRIPTION, true);
+        verifyGroupWarningMessage(SHARED_GROUP_LOC, true, true);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+
+        impersonate(LIMITED_USER_ACCOUNT);
+        cds.enterApplication();
+        log("User with limited access create a private group");
+        composeGroup(PRIVATE_GROUP_NAME, "", false);
+        log("Verify user with limited access sees a warning message when applying a shared group");
+        verifyGroupWarningMessage(SHARED_GROUP_LOC, true, false);
+        log("Verify user with limited access doesn't see a warning message when applying a private group");
+        verifyGroupWarningMessage(PRIVATE_GROUP_LOC, false, false);
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        cds.deleteGroupFromSummaryPage(PRIVATE_GROUP_NAME); //clean up
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonating();
+        _userHelper.deleteUser(LIMITED_USER_ACCOUNT);
+        cds.enterApplication();
+        cds.deleteGroupFromSummaryPage(SHARED_GROUP_NAME); //clean up
+        cds.clearFilters();
+    }
+
+    private void composeGroup(String groupName, String groupDesc, boolean shared)
+    {
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        if (shared)
+            cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1], "RED 4");
+        else // limited user (without access to RED 4) creates private group
+            cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
+        cds.useSelectionAsSubjectFilter();
+        cds.saveGroup(groupName, groupDesc, shared);
+    }
+
+    @LogMethod
+    private void verifyGroupWarningMessage(Locator groupLoc, boolean isSharedGroup, boolean hasFullAccess)
+    {
+        Locator warningLoc = Locator.css("div.cds-group-limited-access");
+        cds.clearFilters();
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        click(groupLoc);
+        waitForText("No plot saved for this group.");
+        sleep(2000); // wait for access check to complete
+        if (isSharedGroup)
+        {
+            if (hasFullAccess)
+            {
+                assertFalse("Limited access warning message shouldn't show up for users with access to all studies", isElementVisible(warningLoc));
+            }
+            else
+            {
+                assertTrue("Limited access warning message should show up for users without access to some studies", isElementVisible(warningLoc));
+            }
+        }
+        else
+        {
+            assertFalse("Limited access warning message shouldn't show up for private groups", isElementVisible(warningLoc));
+        }
+    }
+
+    // TODO verify find subject with limited access
+
+    // TODO verify info pane with limited access
 
     private String[] getWelcomeLinks()
     {

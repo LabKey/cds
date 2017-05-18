@@ -668,19 +668,42 @@ public class CDSHelper
         for (String study : studyPermissions.keySet())
         {
             String permission = studyPermissions.get(study);
-            _test.goToProjectHome();
-            _test.clickFolder(study);
-
-            apiPermissionsHelper.uncheckInheritedPermissions();
-            _test.clickButton("Save", 0);
-
-            _test.waitForElement(Locator.permissionRendered());
-
-            _test._securityHelper.setProjectPerm(perm_group, permission);
-            _test.clickButton("Save and Finish");
+            setStudyPerm(perm_group, study, permission, apiPermissionsHelper);
         }
         _test.goToProjectHome();
         _test._securityHelper.setProjectPerm(perm_group, "Reader");
+        _test.clickButton("Save and Finish");
+    }
+
+    public void setUpUserPerm(String userEmail, String projectPerm, Map<String, String> studyPermissions)
+    {
+        _test._userHelper.deleteUser(userEmail);
+        _test._userHelper.createUser(userEmail, false, true);
+        Ext4Helper.resetCssPrefix();
+        _test.goToProjectHome();
+        ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
+
+        for (String study : studyPermissions.keySet())
+        {
+            String permission = studyPermissions.get(study);
+            setStudyPerm(userEmail, study, permission, apiPermissionsHelper);
+        }
+        _test.goToProjectHome();
+        _test._securityHelper.setProjectPerm(userEmail, projectPerm);
+        _test.clickButton("Save and Finish");
+    }
+
+    private void setStudyPerm(String userOrGroup, String study, String perm, ApiPermissionsHelper apiPermissionsHelper)
+    {
+        _test.goToProjectHome();
+        _test.clickFolder(study);
+
+        apiPermissionsHelper.uncheckInheritedPermissions();
+        _test.clickButton("Save", 0);
+
+        _test.waitForElement(Locator.permissionRendered());
+
+        _test._securityHelper.setProjectPerm(userOrGroup, perm);
         _test.clickButton("Save and Finish");
     }
 
