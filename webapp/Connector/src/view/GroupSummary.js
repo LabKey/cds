@@ -46,7 +46,7 @@ Ext.define('Connector.view.GroupSummary', {
     _getActiveGroup : function()
     {
         var group;
-        var idx = this.store.find('id', this.groupId, false, true, true);
+        var idx = this.store.find('id', this.groupId, 0 /*start position*/, false /*any match, set to false for exact match*/, true, true);
         if (idx > -1)
         {
             group = this.store.getAt(idx);
