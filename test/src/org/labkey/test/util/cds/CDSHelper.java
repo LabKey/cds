@@ -1523,6 +1523,24 @@ public class CDSHelper
             return Locator.xpath("//div[contains(@class, 'bycolumn')]//span[contains(@class, 'label') and contains(text(), '" + byNoun + "')]");
         }
 
+        public static Locator.XPathLocator getSharedGroupLoc(String groupName)
+        {
+            return getGroupLoc(true, groupName);
+        }
+
+        public static Locator.XPathLocator getPrivateGroupLoc(String groupName)
+        {
+            return getGroupLoc(false, groupName);
+        }
+
+        public static Locator.XPathLocator getGroupLoc(boolean isShared, String groupName)
+        {
+            return Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), '" +
+                    (isShared ? "Curated groups and plots" : "My saved groups and plots") + "')]" +
+                    "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" +
+                    groupName + "')]");
+        }
+
         public static Locator.XPathLocator cdsButtonLocator(String text)
         {
             return Locator.xpath("//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));

@@ -198,6 +198,64 @@ public class CDSGroupTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyApplyingGroups()
+    {
+        String singleFilterGroup = "cds_single_group";
+        String multiFilterGroup = "cds_multi_group";
+        Locator.XPathLocator singleLoc = CDSHelper.Locators.getPrivateGroupLoc(singleFilterGroup);
+        Locator.XPathLocator multiLoc = CDSHelper.Locators.getPrivateGroupLoc(multiFilterGroup);
+
+        log("Compose a group that consist of a single filter");
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.selectBars("ICS");
+        cds.useSelectionAsSubjectFilter();
+        cds.saveGroup(singleFilterGroup, "", false);
+
+        log("Compose a group that consist of 4 filter");
+        cds.goToSummary();
+        cds.clickBy("Subject characteristics");
+        cds.selectBars("Human");
+        cds.goToSummary();
+        cds.clickBy("Products");
+        cds.selectBars("Unknown");
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars("RED 4", "RED 5");
+        cds.useSelectionAsSubjectFilter();
+        cds.saveGroup(multiFilterGroup, "", false);
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        click(singleLoc);
+        sleep(2000); // wait for filter panel to stablize
+        log("Verify the group consist of a single filter is applied correctly");
+        List<WebElement> activeFilters = cds.getActiveFilters();
+        assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        click(multiLoc);
+        sleep(2000); // wait for filter panel to stablize
+        log("Verify the group consist of a 4 filters is applied correctly when current filter panel contains only one filter");
+        activeFilters = cds.getActiveFilters();
+        assertEquals("Number of active filters not as expected.", 4, activeFilters.size());
+
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        click(singleLoc);
+        sleep(2000); // wait for filter panel to stablize
+        log("Verify the group consist of a single filter is applied correctly when current filter panel contains 4 filters");
+        activeFilters = cds.getActiveFilters();
+        assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
+
+        //clean up
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        cds.deleteGroupFromSummaryPage(singleFilterGroup);
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        cds.deleteGroupFromSummaryPage(multiFilterGroup);
+        cds.clearFilters();
+    }
+
+    @Test
     public void verifySharedPlot()
     {
         cds.goToSummary();
