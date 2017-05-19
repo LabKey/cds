@@ -102,7 +102,8 @@ Ext.define('Connector.panel.FilterPanel', {
             }, this);
 
             if (filters.length < length) {
-                for (var i=filters.length; i < length; i++) {
+                // Issue 30387: remove from last to first to avoid trying to remove at already removed index
+                for (var i = length - 1; i > filters.length - 1; i--) {
                     this.content.remove(this.content.items.items[i].id);
                 }
             }
