@@ -921,7 +921,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
         log("Verify that the expected number of links did show up.");
-        Assert.assertEquals("Did not find the expected number of document links.", 3, Locator.xpath(CDSHelper.REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
+        Assert.assertEquals("Did not find the expected number of document links.", 3, Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
 
         log("First check the Powerpoint link.");
         documentLink = CDSHelper.Locators.studyReportLink("Epitope Mapping Results Summary").findElement(getDriver());
@@ -954,7 +954,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
         log("Verify that the expected number of links did show up.");
-        Assert.assertEquals("Did not find the expected number of document links.", 9, Locator.xpath(CDSHelper.REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
+        Assert.assertEquals("Did not find the expected number of document links.", 9, Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
 
         log("Click on a few of these links to make sure they work. First check the Word Document link.");
         documentLink = CDSHelper.Locators.studyReportLink("CFSE Results Summary").findElement(getDriver());
@@ -982,7 +982,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
         log("Verify that there are no links.");
-        Assert.assertEquals("Did not find the expected number of document links.", 0, Locator.xpath(CDSHelper.REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
+        Assert.assertEquals("Did not find the expected number of document links.", 0, Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
 
         log("Validate the related studies links");
         String relatedStudiesText, expectedStudiesText;

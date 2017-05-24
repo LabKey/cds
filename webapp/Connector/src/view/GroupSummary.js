@@ -170,6 +170,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
             xtype: 'container',
             flex: 1,
             items: [
+                this.getLimitedAccessMsg(),
                 this.getUndoMsg(),
                 this.getApplyMsg(),
                 this.getInvalidGroupMsg(),
@@ -231,6 +232,48 @@ Ext.define('Connector.view.GroupSummaryBody', {
         {
             this.validateFilters();
         }, this);
+    },
+
+    getLimitedAccessMsg : function()
+    {
+        if (!this._limitedAccess)
+        {
+            this._limitedAccess = Ext.create('Ext.Component', {
+                cls: 'cds-group-limited-access',
+                margin: '0 20 20 0',
+                renderTpl: new Ext.XTemplate('<b>Note:&nbsp;</b>'
+                        + 'You may not have access to view all participants in this group. '
+                        + 'Please contact your administrators to learn more.'),
+                hidden: true
+            });
+        }
+
+        return this._limitedAccess;
+    },
+
+    checkUserAccess: function()
+    {
+        /**
+         *  Show warning message if user does not have access to all studies with DATA ADDED (lacking permission to an empty study shouldn’t trigger warning).
+         *  This approach may result in false positive warning as the group may not include the study that the user is restricted from.
+         *  Currently there is no way to query for the set of studies included in a filter group bypassing permission check.
+         *  May investigate in the future on how to reliably report on what the user doesn't have access to.
+         */
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'UserStudyAccess',
+            success: function(studyAccessData){
+                var studyAccessList = studyAccessData.rows;
+                Ext.each(studyAccessList, function (studyAccess) {
+                    if (!studyAccess.accessible)
+                    {
+                        this.getLimitedAccessMsg().show();
+                        return false;
+                    }
+                }, this)
+            },
+            scope: this
+        });
     },
 
     getUndoMsg : function()
@@ -331,6 +374,8 @@ Ext.define('Connector.view.GroupSummaryBody', {
             var filters = this.getGroupFilters(this.group);
 
             if (filters.length > 0) {
+                if (this.group.data.shared) // no access check needed for private groups
+                    this.checkUserAccess();
                 Connector.getState().onMDXReady(function(mdx) {
                     var invalidMembers = [];
                     var validatedFilters = filters.filter(function(f) {

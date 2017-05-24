@@ -546,9 +546,6 @@ public class CDSHelper
     public static Dimension idealWindowSize = new Dimension(1280, 1040);
     public static Dimension defaultWindowSize = new Dimension(1280, 1024);
 
-    // XPath
-    public static String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
-
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
     {
@@ -668,19 +665,42 @@ public class CDSHelper
         for (String study : studyPermissions.keySet())
         {
             String permission = studyPermissions.get(study);
-            _test.goToProjectHome();
-            _test.clickFolder(study);
-
-            apiPermissionsHelper.uncheckInheritedPermissions();
-            _test.clickButton("Save", 0);
-
-            _test.waitForElement(Locator.permissionRendered());
-
-            _test._securityHelper.setProjectPerm(perm_group, permission);
-            _test.clickButton("Save and Finish");
+            setStudyPerm(perm_group, study, permission, apiPermissionsHelper);
         }
         _test.goToProjectHome();
         _test._securityHelper.setProjectPerm(perm_group, "Reader");
+        _test.clickButton("Save and Finish");
+    }
+
+    public void setUpUserPerm(String userEmail, String projectPerm, Map<String, String> studyPermissions)
+    {
+        _test._userHelper.deleteUser(userEmail);
+        _test._userHelper.createUser(userEmail, false, true);
+        Ext4Helper.resetCssPrefix();
+        _test.goToProjectHome();
+        ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
+
+        for (String study : studyPermissions.keySet())
+        {
+            String permission = studyPermissions.get(study);
+            setStudyPerm(userEmail, study, permission, apiPermissionsHelper);
+        }
+        _test.goToProjectHome();
+        _test._securityHelper.setProjectPerm(userEmail, projectPerm);
+        _test.clickButton("Save and Finish");
+    }
+
+    private void setStudyPerm(String userOrGroup, String study, String perm, ApiPermissionsHelper apiPermissionsHelper)
+    {
+        _test.goToProjectHome();
+        _test.clickFolder(study);
+
+        apiPermissionsHelper.uncheckInheritedPermissions();
+        _test.clickButton("Save", 0);
+
+        _test.waitForElement(Locator.permissionRendered());
+
+        _test._securityHelper.setProjectPerm(userOrGroup, perm);
         _test.clickButton("Save and Finish");
     }
 
@@ -1517,6 +1537,9 @@ public class CDSHelper
     public static class Locators
     {
         public static Locator.XPathLocator barLabel = Locator.tagWithClass("span", "barlabel");
+        public static Locator.XPathLocator INFO_PANE_HAS_DATA = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in active filters");
+        public static Locator.XPathLocator INFO_PANE_NO_DATA = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in active filters");
+        public static String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
 
         public static Locator.XPathLocator getByLocator(String byNoun)
         {
@@ -1611,7 +1634,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator studyReportLink(String studyName)
         {
-            return Locator.xpath(CDSHelper.REPORTS_LINKS_XPATH + "//a[contains(text(), '" + studyName + "')]");
+            return Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a[contains(text(), '" + studyName + "')]");
         }
     }
 

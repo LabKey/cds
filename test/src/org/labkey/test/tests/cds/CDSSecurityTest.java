@@ -25,6 +25,7 @@ import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.dumbster.EmailRecordTable;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category({})
@@ -508,6 +510,195 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         // Log in as admin, like start of test, this will allow test to clean up correctly.
         ensureSignedInAsPrimaryTestUser();
 
+    }
+
+    @Test
+    public void verifyApplyingGroupsWithLimitedAccess()
+    {
+        final String LIMITED_USER_ACCOUNT = "cds_limited_access@example.com";
+        final String PRIVATE_GROUP_NAME = "cds_private_group";
+        final String SHARED_GROUP_NAME = "cds_shared_group";
+        final String SHARED_GROUP_NAME_DESCRIPTION = "This group selects 3 studies: QED 1, QED 2 and RED 4";
+        final Locator SHARED_GROUP_LOC = Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), 'Curated groups and plots')]" +
+                "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + SHARED_GROUP_NAME + "')]");
+        final Locator PRIVATE_GROUP_LOC = Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), 'My saved groups and plots')]" +
+                "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + PRIVATE_GROUP_NAME + "')]");
+
+        ensureAdminMode();
+        Ext4Helper.resetCssPrefix();
+
+        Map<String, String> studyPermissions = new HashMap<>();
+        studyPermissions.put("q1", "Reader");
+        studyPermissions.put("q2", "Reader");
+        cds.setUpUserPerm(LIMITED_USER_ACCOUNT, "Reader", studyPermissions);
+
+        log("Admin creates a shared group consisting of QED 1, QED 2 and RED 4.");
+        cds.enterApplication();
+        composeGroup(SHARED_GROUP_NAME, SHARED_GROUP_NAME_DESCRIPTION, true);
+        verifyGroupWarningMessage(SHARED_GROUP_LOC, true, true);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+
+        impersonate(LIMITED_USER_ACCOUNT);
+        cds.enterApplication();
+        log("User with limited access create a private group");
+        composeGroup(PRIVATE_GROUP_NAME, "", false);
+        log("Verify user with limited access sees a warning message when applying a shared group");
+        verifyGroupWarningMessage(SHARED_GROUP_LOC, true, false);
+        log("Verify user with limited access doesn't see a warning message when applying a private group");
+        verifyGroupWarningMessage(PRIVATE_GROUP_LOC, false, false);
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        cds.deleteGroupFromSummaryPage(PRIVATE_GROUP_NAME); //clean up
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonating();
+        _userHelper.deleteUser(LIMITED_USER_ACCOUNT);
+        cds.enterApplication();
+        cds.deleteGroupFromSummaryPage(SHARED_GROUP_NAME); //clean up
+        cds.clearFilters();
+    }
+
+    private void composeGroup(String groupName, String groupDesc, boolean shared)
+    {
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        if (shared)
+            cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1], "RED 4");
+        else // limited user (without access to RED 4) creates private group
+            cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
+        cds.useSelectionAsSubjectFilter();
+        cds.saveGroup(groupName, groupDesc, shared);
+    }
+
+    @LogMethod
+    private void verifyGroupWarningMessage(Locator groupLoc, boolean isSharedGroup, boolean hasFullAccess)
+    {
+        Locator warningLoc = Locator.css("div.cds-group-limited-access");
+        cds.clearFilters();
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        click(groupLoc);
+        waitForText("No plot saved for this group.");
+        sleep(2000); // wait for access check to complete
+        if (isSharedGroup)
+        {
+            if (hasFullAccess)
+            {
+                assertFalse("Limited access warning message shouldn't show up for users with access to all studies", isElementVisible(warningLoc));
+            }
+            else
+            {
+                assertTrue("Limited access warning message should show up for users without access to some studies", isElementVisible(warningLoc));
+            }
+        }
+        else
+        {
+            assertFalse("Limited access warning message shouldn't show up for private groups", isElementVisible(warningLoc));
+        }
+    }
+
+    @Test
+    public void verifyInfoPaneAndFindWithLimitedAccess()
+    {
+        Map<String, String> studyPermissions = new HashMap<>();
+        log("Create a user group with Read permission to project but no permission to any study folder");
+        cds.setUpPermGroup(PERM_GROUPS[0], studyPermissions);
+        impersonateGroup(PERM_GROUPS[0], false);
+        cds.enterApplication();
+
+        log("Verify users with no study permission sees empty info pane.");
+        verifyInfoPaneWithLimitedAccess(false);
+        log("Verify users with no study permission sees empty find subject.");
+        verifyFindSubjectWithLimitedAccess(false);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
+
+        studyPermissions = new HashMap<>();
+        studyPermissions.put("q1", "Reader");
+        studyPermissions.put("q2", "Reader");
+        studyPermissions.put("r4", "Reader");
+        log("Create a user group with Read permission to project, q1, q2 and r4.");
+        cds.setUpPermGroup(PERM_GROUPS[1], studyPermissions);
+        impersonateGroup(PERM_GROUPS[1], false);
+        cds.enterApplication();
+
+        log("Verify user with limited study permissions only sees a subset of info pane entries.");
+        verifyInfoPaneWithLimitedAccess(true);
+        log("Verify user with limited study permissions only sees a subset of find subject entries.");
+        verifyFindSubjectWithLimitedAccess(true);
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        stopImpersonatingGroup();
+        assertSignedInNotImpersonating();
+
+    }
+    private void verifyFindSubjectWithLimitedAccess(boolean hasAccessToQ1Q2R4)
+    {
+        cds.goToSummary();
+        log("Verify Find subject counts on summary page");
+        if (!hasAccessToQ1Q2R4)
+        {
+            _asserts.assertCDSPortalRow("Subject characteristics", "0 subject characteristics", "0 species", "0 decades by age", "0 ethnicities", "0 countries", "0 sexes", "0 races");
+            _asserts.assertCDSPortalRow("Products", "0 products", "0 products", "0 classes", "0 developers", "0 types");
+            _asserts.assertCDSPortalRow("Studies", "0 studies", "0 networks", "0 study types", "0 coded labels", "0 treatments", "0 pi", "0 strategy");
+        }
+        else
+        {
+            _asserts.assertCDSPortalRow("Subject characteristics", "10 subject characteristics", "1 species", "6 decades by age", "3 ethnicities", "33 countries", "2 sexes", "10 races");
+            _asserts.assertCDSPortalRow("Products", "3 products", "3 products", "3 classes", "3 developers", "2 types");
+            _asserts.assertCDSPortalRow("Studies", "3 studies", "2 networks", "2 study types", "8 coded labels", "10 treatments", "3 pi", "3 strategy");
+        }
+
+        click(CDSHelper.Locators.getByLocator("Studies"));
+        sleep(2000);
+
+        Locator.XPathLocator studyQED1 = CDSHelper.Locators.barLabel.withText("QED 1");
+        Locator.XPathLocator studyQED3 = CDSHelper.Locators.barLabel.withText("QED 3");
+        assertFalse("Study that user does not have access to shouldn't show up on Find Subject", isElementPresent(studyQED3));
+        if (!hasAccessToQ1Q2R4)
+        {
+            assertFalse("No studies should be present on Find Subject as user has no permission to any studies", isElementPresent(studyQED1));
+        }
+        else
+        {
+            assertTrue("Study QED 1 should show up on Find Subject since user has permission to it", isElementPresent(studyQED1));
+        }
+
+    }
+
+    private void verifyInfoPaneWithLimitedAccess(boolean hasAccessToQ1Q2R4)
+    {
+        log("Verify info pane count");
+        if (!hasAccessToQ1Q2R4)
+            _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0);
+        else
+            _asserts.assertFilterStatusCounts(179, 3, 1, 3, 10);
+
+        log("Verify expanded info pane for Studies");
+        cds.openStatusInfoPane("Studies");
+        assertElementNotPresent(CDSHelper.Locators.INFO_PANE_NO_DATA);
+        log("Verify study that user doesn't have access to is not present in Info Pane options");
+        Locator.XPathLocator studyQED1 = Locator.tagWithClass("div", "x-grid-cell-inner").containing("QED 1");
+        Locator.XPathLocator studyQED3 = Locator.tagWithClass("div", "x-grid-cell-inner").containing("QED 3");
+        assertElementNotPresent(studyQED3);
+        if (!hasAccessToQ1Q2R4)
+        {
+            log("Verify no option is present is user doesn't have access to any study");
+            assertElementNotPresent(CDSHelper.Locators.INFO_PANE_HAS_DATA);
+            assertElementNotPresent(studyQED1);
+        }
+        else
+        {
+            log("Verify studies that the user have access to are present in info pane options");
+            assertElementPresent(CDSHelper.Locators.INFO_PANE_HAS_DATA);
+            assertElementPresent(studyQED1);
+        }
     }
 
     private String[] getWelcomeLinks()

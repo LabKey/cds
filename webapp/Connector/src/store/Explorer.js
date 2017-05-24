@@ -7,5 +7,19 @@ Ext.define('Connector.store.Explorer', {
 
     extend: 'LABKEY.app.store.OlapExplorer',
 
-    subjectName: 'Subject'
+    subjectName: 'Subject',
+
+    //Override
+    //store members that user have access to
+    setTotalHierarchyMembers: function(hierarchyUniqueName, cubeResult)
+    {
+        Connector.getQueryService().setUserHierarchyMembers(hierarchyUniqueName, cubeResult);
+    },
+
+    //Override
+    //exclude members that the user doesn't have access to
+    shouldIncludeMember: function(hierarchyUniqName, levelUniquName, memberName) {
+        return Connector.getQueryService().isUserLevelAccessible(hierarchyUniqName, levelUniquName, memberName);
+    }
+
 });

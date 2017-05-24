@@ -49,7 +49,7 @@ public class CDSAsserts
         assertCDSPortalRow("Studies", "51 studies", "4 networks", "6 study types", "282 coded labels", "282 treatments", "48 pi", "6 strategy");
     }
 
-    private void assertCDSPortalRow(String byNoun, String expectedTotal, String... expectedDetails)
+    public void assertCDSPortalRow(String byNoun, String expectedTotal, String... expectedDetails)
     {
         _test.waitForElement(CDSHelper.Locators.getByLocator(byNoun), 120000);
         assertTrue("'by " + byNoun + "' search option is not present", _test.isElementPresent(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div[" +
