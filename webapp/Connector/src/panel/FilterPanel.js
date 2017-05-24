@@ -68,14 +68,10 @@ Ext.define('Connector.panel.FilterPanel', {
     createHierarchyFilter : function(filterset) {
         return Ext.create('Connector.view.Selection', {
             store: {
-                model: this.getModelClass(filterset),
+                model: 'Connector.model.Filter',
                 data: [filterset]
             }
         });
-    },
-
-    getModelClass : function() {
-        return 'Connector.model.Filter';
     },
 
     // entry point to load raw OLAP Filters
@@ -90,21 +86,33 @@ Ext.define('Connector.panel.FilterPanel', {
             this.clear();
         }
         else {
-            var length = this.content.items.items.length;
+            // The following iteration replaces/adds/removes filter displays based on the incoming filters.
+            // When attempts were made to use removeAll() with suspend/resume layout it causes the filter
+            // displays to briefly flash upon update. To achieve a more fluid display update hierarchy filters
+            // are reused when available (e.g. getStore().loadData(...)) and any remaining filters are removed
+            // in reverse position order due to issue 30387.
+
+            var newItems = [];
+            var length = this.content.items.length;
+
             Ext.each(filters, function(filter, idx) {
                 filter.data.id = filter.id;
                 if (idx < length) {
-                    this.content.items.items[idx].getStore().loadData([filter]);
+                    this.content.items.getAt(idx).getStore().loadData([filter]);
                 }
                 else {
-                    this.content.add(this.createHierarchyFilter(filter));
+                    newItems.push(this.createHierarchyFilter(filter));
                 }
             }, this);
+
+            if (newItems.length) {
+                this.content.add(newItems);
+            }
 
             if (filters.length < length) {
                 // Issue 30387: remove from last to first to avoid trying to remove at already removed index
                 for (var i = length - 1; i > filters.length - 1; i--) {
-                    this.content.remove(this.content.items.items[i].id);
+                    this.content.remove(this.content.items.getAt(i));
                 }
             }
 

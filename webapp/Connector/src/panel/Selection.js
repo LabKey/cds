@@ -39,17 +39,7 @@ Ext.define('Connector.panel.Selection', {
         };
     },
 
-    createHierarchyFilter : function(filterset) {
-        return Ext.create('Connector.view.Selection', {
-            store: {
-                model: this.getModelClass(filterset),
-                data: [filterset]
-            }
-        });
-    },
-
     loadFilters : function(filters) {
-        this.filters = filters;
         // the app currently only allows for 0 or 1 selection filter to be applied
         if (filters.length <= 1) {
             var removeBtn = this.down('#inverse'),
@@ -61,6 +51,6 @@ Ext.define('Connector.panel.Selection', {
             removeBtn.setVisible(showRemoveBtn);
         }
 
-        this.displayFilters(filters);
+        this.callParent(arguments);
     }
 });
