@@ -895,6 +895,138 @@ Ext.define('Connector.controller.Query', {
 
     encodeURLFilter : function(filter) {
         return encodeURIComponent(filter.getURLParameterName()) + '=' + encodeURIComponent(filter.getURLParameterValue());
+    },
+
+    /**
+     * The members that user has permission to for any dimension/hierarchy/level will be stored in the cached map.
+     * @returns the map that holds
+     */
+    getUserAccessibleMembersCache: function()
+    {
+        if (!this.USER_LEVEL_MEMBERS)
+            this.USER_LEVEL_MEMBERS = {};
+        return this.USER_LEVEL_MEMBERS;
+    },
+
+    getCachedUserLevelMembers: function(hierarchyUniqName, levelUniqName)
+    {
+        var dimMap = this.getUserAccessibleMembersCache();
+        var hierarchy = dimMap[hierarchyUniqName];
+        if (hierarchy)
+            return hierarchy[levelUniqName];
+        return null;
+    },
+
+    /**
+     * Store member accessibility information for all levels of the hierarchy
+     * @param hierarchyUniqName Cube hierarchy unique name
+     * @param cellset The cube result for the hierarchy
+     */
+    setUserHierarchyMembers: function(hierarchyUniqName, cellset)
+    {
+        var memberDefinitions = cellset.axes[1].positions, counts = cellset.cells;
+
+        var dimMap = this.getUserAccessibleMembersCache();
+        if (!dimMap[hierarchyUniqName])
+            dimMap[hierarchyUniqName] = {};
+        var hierarchyMap = dimMap[hierarchyUniqName];
+
+        Ext.each(memberDefinitions, function(definition, idx) {
+            var def = definition[0], _count = counts[idx][0].value;
+            if (!Ext.isArray(hierarchyMap[def.level.uniqueName]))
+            {
+                hierarchyMap[def.level.uniqueName] = [];
+            }
+            if (_count)
+            {
+                hierarchyMap[def.level.uniqueName].push(def.uniqueName);
+            }
+
+        }, this);
+    },
+
+    /**
+     * Check the cache to see if a specific member is accessible (has permission to data) to user
+     * @param hierarchyUniqName
+     * @param levelUniqName
+     * @param memberName
+     * @returns {boolean}
+     */
+    isUserLevelAccessible: function(hierarchyUniqName, levelUniqName, memberName)
+    {
+        var dimMap = this.getUserAccessibleMembersCache();
+        var hierarchyMap = dimMap[hierarchyUniqName];
+        if (!hierarchyMap)
+            return false;
+        var levelList = hierarchyMap[levelUniqName];
+        if (!levelList)
+            return false;
+        var accessible = false;
+        Ext.each(levelList, function(member){
+            if (member === memberName) {
+                accessible = true;
+                return false;
+            }
+        }, this);
+        return accessible;
+    },
+
+    /**
+     * Query the cube for members that's accessible to user for the specified hierarchy and level and store the result in cache
+     * @param callback The callback function to call after members querying has completed
+     * @param scope The callback scope
+     * @param hierarchyUniqName The cube hierarchy unique name
+     * @param levelUniqName The cube level unique name to query for
+     */
+    getUserLevelMember : function(callback, scope, hierarchyUniqName, levelUniqName) {
+        var me = this;
+
+        if (Ext.isArray(this.getCachedUserLevelMembers(hierarchyUniqName, levelUniqName))) {
+            if (callback)
+                callback.call(scope);
+            return;
+        }
+
+        Connector.getState().onMDXReady(function(mdx) {
+            mdx.query({
+                onRows: [{
+                    level: levelUniqName,
+                    member: 'members'
+                }],
+                showEmpty: true,
+                success: function (cellset)
+                {
+                    me._setUserLevelMembers(hierarchyUniqName, levelUniqName, cellset);
+
+                    if (callback)
+                        callback.call(scope);
+                },
+                scope: this
+            });
+        });
+    },
+
+    _setUserLevelMembers: function(hierarchyUniqName, levelUniqName, cellset)
+    {
+        var memberDefinitions = cellset.axes[1].positions, counts = cellset.cells;
+        var dimMap = this.getUserAccessibleMembersCache();
+        if (!dimMap[hierarchyUniqName])
+            dimMap[hierarchyUniqName] = {};
+
+        var hierarchyMap = dimMap[hierarchyUniqName];
+
+        if (!hierarchyMap[levelUniqName])
+        {
+            hierarchyMap[levelUniqName] = [];
+        }
+        var levelList = hierarchyMap[levelUniqName];
+
+        Ext.each(memberDefinitions, function(definition, idx) {
+            var def = definition[0], _count = counts[idx][0].value;
+            if (_count)
+                levelList.push(def.uniqueName);
+        });
+
     }
 });
 

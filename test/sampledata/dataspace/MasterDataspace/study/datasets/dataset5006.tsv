@@ -1,0 +1,1 @@
+SubjectId	SequenceNum	date	QCStateLabel	visit_day	specimen_type	assay_identifier	summary_level	antigen	protein	protein_panel	antibody_isotype	clade	vaccine_matched	detection_ligand	instrument_code	response_call	dilution	mfi_delta	mfi_delta_baseline	mfi_raw	mfi_raw_baseline	mfi_blank	mfi_blank_baseline	bama_lab_source_key	lab_code	exp_assayid

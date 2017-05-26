@@ -335,6 +335,11 @@ Ext.define('Connector.model.Filter', {
         return this.callParent(arguments);
     },
 
+    getLevel : function()
+    {
+        return this.get('level');
+    },
+
     getDataFilters : function()
     {
         return this.get('dataFilter');

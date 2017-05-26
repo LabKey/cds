@@ -328,9 +328,11 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Related Studies'
                         }
                     },{
-                        type: 'studyassays',
+                        type: 'dataavailability',
                         staticData: {
-                            title: 'Data Availability'
+                            title: 'Data Availability',
+                            dataField: 'assays',
+                            dataLink: 'Assay'
                         }
                     },{
                         type: 'studyreports',
@@ -344,7 +346,7 @@ Ext4.define('Connector.cube.Configuration', {
                 priority: 20,
                 friendlyName: 'Subjects given study products',
                 singularName: 'Study product',
-                pluralName: 'Study products',
+                pluralName: 'Products',
                 summaryTargetLevel: '[Study Product.Product Name].[Product Name]',
                 findSubjectSummaryLevel: '[Study Product.Product Name].[Product Name]',
                 defaultOperator: 'OR',
@@ -416,9 +418,11 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'product_description'
                         }
                     }],[{
-                        type: 'productstudies',
+                        type: 'dataavailability',
                         staticData: {
-                            title: 'Data Availability'
+                            title: 'Data Availability',
+                            dataField: 'studies',
+                            dataLink: 'Study'
                         }
                     },{
                         type: 'productotherproducts',
@@ -539,9 +543,11 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Contact information'
                         }
                     },{
-                        type: 'assaystudies',
+                        type: 'dataavailability',
                         staticData: {
-                            title: 'Data Availability'
+                            title: 'Data Availability',
+                            dataField: 'studies',
+                            dataLink: 'Study'
                         }
                     }]]
                 },{

@@ -17,16 +17,23 @@ package org.labkey.cds;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.labkey.api.collections.CaseInsensitiveTreeSet;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.module.Module;
 import org.labkey.api.query.DefaultSchema;
+import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.SimpleUserSchema;
 import org.labkey.api.security.User;
 import org.labkey.api.visualization.VisualizationProvider;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * User: markigra
@@ -36,12 +43,14 @@ import org.labkey.api.visualization.VisualizationProvider;
 public class CDSUserSchema extends SimpleUserSchema
 {
     public static final String SCHEMA_NAME = "CDS";
+    public static final String METADATA_SCHEMA_NAME = "metadata";
+
+    private boolean metadata = false;
 
     public CDSUserSchema(User user, Container container)
     {
         super(SCHEMA_NAME, "Schema for DataSpace. Detail data is stored in datasets of study schema.", user, container, DbSchema.get("cds"));
     }
-
 
     @Override
     protected TableInfo createWrappedTable(String name, @NotNull TableInfo sourceTable)
@@ -65,5 +74,70 @@ public class CDSUserSchema extends SimpleUserSchema
     public VisualizationProvider createVisualizationProvider()
     {
         return new CDSVisualizationProvider(this);
+    }
+
+
+    @Override
+    public QuerySchema getSchema(String name)
+    {
+        if (METADATA_SCHEMA_NAME.equals(name))
+        {
+            CDSUserSchema cds = new CDSUserSchema(getUser(), getContainer())
+            {
+                private final Set<String> _metatables = new CaseInsensitiveTreeSet(Arrays.asList("study", "studyproductmap", "studypartgrouparmproduct"));
+                @Override
+                public String getName()
+                {
+                    return METADATA_SCHEMA_NAME;
+                }
+
+                @Override
+                public TableInfo createTable(String name)
+                {
+                    TableInfo sourceTable = createSourceTable(name);
+
+                    if (sourceTable != null)
+                    {
+                        return new CDSMetadataTable(this, sourceTable).init();
+                    }
+
+                    return super.createTable(name);
+
+                }
+
+                @Override
+                public Set<String> getTableNames()
+                {
+                    return Collections.unmodifiableSet(_metatables);
+                }
+
+                @Override
+                public synchronized Set<String> getVisibleTableNames()
+                {
+                    return Collections.unmodifiableSet(_metatables);
+                }
+
+                @NotNull
+                public Map<String, QueryDefinition> getQueryDefs()
+                {
+                    return Collections.emptyMap();
+                }
+
+            };
+            cds.metadata = true;
+            return cds;
+        }
+        return super.getSchema(name);
+    }
+
+    @Override
+    public Set<String> getSchemaNames()
+    {
+        Set<String> names = new TreeSet<>(super.getSchemaNames());
+        if (!this.metadata)
+        {
+            names.add(METADATA_SCHEMA_NAME);
+        }
+        return names;
     }
 }

@@ -46,7 +46,7 @@ Ext.define('Connector.view.GroupSummary', {
     _getActiveGroup : function()
     {
         var group;
-        var idx = this.store.find('id', this.groupId, false, true, true);
+        var idx = this.store.find('id', this.groupId, 0 /*start position*/, false /*any match, set to false for exact match*/, true, true);
         if (idx > -1)
         {
             group = this.store.getAt(idx);
@@ -170,8 +170,10 @@ Ext.define('Connector.view.GroupSummaryBody', {
             xtype: 'container',
             flex: 1,
             items: [
+                this.getLimitedAccessMsg(),
                 this.getUndoMsg(),
                 this.getApplyMsg(),
+                this.getInvalidGroupMsg(),
             {
                 xtype: 'box',
                 html: '<div class="module"><h3>Description</h3></div>'
@@ -228,8 +230,50 @@ Ext.define('Connector.view.GroupSummaryBody', {
 
         Connector.getState().onReady(function()
         {
-            this.applyFilters();
+            this.validateFilters();
         }, this);
+    },
+
+    getLimitedAccessMsg : function()
+    {
+        if (!this._limitedAccess)
+        {
+            this._limitedAccess = Ext.create('Ext.Component', {
+                cls: 'cds-group-limited-access',
+                margin: '0 20 20 0',
+                renderTpl: new Ext.XTemplate('<b>Note:&nbsp;</b>'
+                        + 'You may not have access to view all participants in this group. '
+                        + 'Please contact your administrators to learn more.'),
+                hidden: true
+            });
+        }
+
+        return this._limitedAccess;
+    },
+
+    checkUserAccess: function()
+    {
+        /**
+         *  Show warning message if user does not have access to all studies with DATA ADDED (lacking permission to an empty study shouldn’t trigger warning).
+         *  This approach may result in false positive warning as the group may not include the study that the user is restricted from.
+         *  Currently there is no way to query for the set of studies included in a filter group bypassing permission check.
+         *  May investigate in the future on how to reliably report on what the user doesn't have access to.
+         */
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'UserStudyAccess',
+            success: function(studyAccessData){
+                var studyAccessList = studyAccessData.rows;
+                Ext.each(studyAccessList, function (studyAccess) {
+                    if (!studyAccess.accessible)
+                    {
+                        this.getLimitedAccessMsg().show();
+                        return false;
+                    }
+                }, this)
+            },
+            scope: this
+        });
     },
 
     getUndoMsg : function()
@@ -287,7 +331,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
                         {
                             cmp.applyLink.on('click', function()
                             {
-                                this.applyFilters();
+                                this.validateFilters();
                                 this.getApplyMsg().hide();
                                 this.getUndoMsg().show();
                             }, this);
@@ -323,19 +367,121 @@ Ext.define('Connector.view.GroupSummaryBody', {
         return desc;
     },
 
-    applyFilters : function()
+    validateFilters : function()
     {
         if (this.group)
         {
             var filters = this.getGroupFilters(this.group);
 
-            if (filters.length > 0)
-            {
-                Connector.getState().setFilters(filters);
+            if (filters.length > 0) {
+                if (this.group.data.shared) // no access check needed for private groups
+                    this.checkUserAccess();
+                Connector.getState().onMDXReady(function(mdx) {
+                    var invalidMembers = [];
+                    var validatedFilters = filters.filter(function(f) {
+                        if (Ext.isArray(f.getMembers()) && f.getMembers().length > 0) //member filters
+                        {
+                            var validMembers = f.getMembers().filter(function(m) {
+                                var isInvalidMember = !Ext.isDefined(m.uniqueName) ||
+                                        !Ext.isDefined(mdx.getMember(m.uniqueName));
 
-                Connector.getApplication().fireEvent('grouploaded', Ext.clone(this.group.data), filters);
+                                if (isInvalidMember) {
+                                    Ext.Array.push(invalidMembers, m.uniqueName);
+                                    return false;
+                                }
+                                return true;
+                            });
+                            f.set({members: validMembers});
+                            return validMembers.length !== 0;
+                        }
+                        return true;// if not a member filter
+                    });
+
+                    if (validatedFilters.length > 0)
+                    {
+                        if (invalidMembers.length > 0) {
+                            var msg = 'This saved group includes criteria no longer available in the data: ' +
+                                    '<ul><li>' +
+                                    invalidMembers.join('</li><li>') +
+                                    '</li></ul>';
+                            msg = msg + '<p ">Do you want to apply the filters without these criteria?</p>';
+                            Ext.Msg.show({
+                                title: 'Error',
+                                msg: msg,
+                                // buttons are in a fixed order that cannot be changed without subclassing Ext.window.Messagebox
+                                // [ok yes no cancel] is the predefined order. We want the button order cancel -> delete. That's why
+                                // even though we want a cancel button, we are using the Ext.Msg.OK constant.
+                                buttons: Ext.Msg.OK+Ext.Msg.YES,
+                                minWidth: 400,
+                                cls: 'group-filter-error-popup',
+                                buttonText: {
+                                    ok: 'No',
+                                    yes: 'Yes'
+                                },
+                                fn: function(id) {
+                                    if (id === 'yes') {
+                                        this.applyFilters(validatedFilters);
+                                    }
+                                    else
+                                    {
+                                        this.getUndoMsg().hide();
+                                        this.getApplyMsg().show();
+                                    }
+                                },
+                                scope: this
+                            });
+                        }
+                        else {
+                            this.applyFilters(validatedFilters);
+                        }
+                    }
+                    else
+                    {
+                        if (invalidMembers.length > 0) {
+                            var msg = 'No criteria in the saved group is available in the data: ' +
+                                    '<ul><li>' +
+                                    invalidMembers.join('</li><li>') +
+                                    '</li></ul>';
+                            Ext.Msg.show({
+                                title: 'Error',
+                                msg: msg,
+                                buttons: Ext.Msg.OK,
+                                minWidth: 400,
+                                cls: 'group-filter-error-popup',
+                                buttonText: {
+                                    ok: 'OK'
+                                }
+                            });
+                            this.setInvalidGroup();
+                        }
+                    }
+
+                }, this);
             }
         }
+    },
+
+    setInvalidGroup: function() {
+        this.getUndoMsg().hide();
+        this.getInvalidGroupMsg().show();
+    },
+
+    getInvalidGroupMsg: function () {
+        if (!this._invalidGroup) {
+            this._invalidGroup = Ext.create('Ext.Component', {
+                margin: '0 20 20 0',
+                renderTpl: new Ext.XTemplate("No criteria in the saved group is available in the data."),
+                hidden: true
+            });
+        }
+
+        return this._invalidGroup;
+    },
+
+    applyFilters : function(validatedFilters) {
+        Connector.getState().setFilters(validatedFilters);
+
+        Connector.getApplication().fireEvent('grouploaded', Ext.clone(this.group.data), validatedFilters);
     },
 
     getGroupFilters : function(group)

@@ -7,6 +7,10 @@ Ext.define('Connector.app.store.Study', {
 
     extend : 'Ext.data.Store',
 
+    mixins: {
+        studyAccessHelper: 'Connector.app.store.PermissionedStudy'
+    },
+
     model : 'Connector.app.model.Study',
 
     constructor: function(config) {
@@ -24,45 +28,47 @@ Ext.define('Connector.app.store.Study', {
         this.publicationData = undefined;
         this.relationshipData = undefined;
 
+        this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
+
         LABKEY.Query.selectRows({
-            schemaName: 'cds',
+            schemaName: 'cds.metadata',
             queryName: 'study',
             success: this.onLoadStudies,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_productsforstudies',
+            queryName: 'learn_productsforstudies',
             success: this.onLoadProducts,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_assaysforstudies',
+            queryName: 'learn_assaysforstudies',
             success: this.onLoadAssays,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_documentsforstudies',
+            queryName: 'learn_documentsforstudies',
             success: this.onLoadDocuments,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_publicationsforstudies',
+            queryName: 'learn_publicationsforstudies',
             success: this.onLoadPublications,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_relationshipsforstudies',
+            queryName: 'learn_relationshipsforstudies',
             success: this.onLoadRelationships,
             scope: this
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'ds_studyrelationshiporder',
+            queryName: 'learn_studyrelationshiporder',
             success: this.onLoadRelationshipOrder,
             scope: this,
             sort: 'rel_sort_order'
@@ -107,7 +113,7 @@ Ext.define('Connector.app.store.Study', {
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
-                && Ext.isDefined(this.relationshipOrderData)) {
+                && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)) {
             var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                 return relOrder.relationship;
@@ -118,6 +124,7 @@ Ext.define('Connector.app.store.Study', {
 
             // join products to study
             Ext.each(this.studyData, function(study) {
+                var hasStudyAccess = this.accessibleStudies[study.study_name] === true;
                 study.study_title = study.title;
                 if (study.groups || study.treatment_schema_link) {
                     study.groups_treatment_schema = '';
@@ -175,31 +182,28 @@ Ext.define('Connector.app.store.Study', {
 
                 var assays = [], assaysAdded = [], assayAddedCount = 0;
                 study.data_availability = false;
+                study.data_accessible = hasStudyAccess;
                 for (var a=0; a < this.assayData.length; a++) {
                     if (study.study_name === this.assayData[a].prot) {
                         study.data_availability = study.data_availability || this.assayData[a].has_data;
                         var assay = {
-                            assay_short_name: this.assayData[a].assay_short_name,
-                            study_assay_id: this.assayData[a].study_assay_id,
-                            assay_identifier: this.assayData[a].assay_identifier,
+                            data_label: this.assayData[a].assay_short_name,
+                            data_id: this.assayData[a].study_assay_id,
+                            data_link_id: this.assayData[a].assay_identifier,
                             has_data: this.assayData[a].has_data,
-                            assay_status: this.assayData[a].assay_status
+                            has_access: hasStudyAccess,
+                            data_status: this.assayData[a].assay_status
                         };
                         assays.push(assay);
-                        if (this.assayData[a].has_data) {
-                            assaysAdded.push(assay);
-                            assayAddedCount += 1;
-                        }
                     }
                 }
 
-                assaysAdded.sort(function (a1, a2) {
-                    return a1.assay_short_name.toLowerCase().localeCompare(a2.assay_short_name.toLowerCase())
-                });
-                assays.sort(function (a1, a2) {
-                    var val1 = a1.assay_short_name ? a1.assay_short_name : a1.study_assay_id;
-                    var val2 = a2.assay_short_name ? a2.assay_short_name : a2.study_assay_id;
-                    return val1.toLowerCase().localeCompare(val2.toLowerCase())
+                assays.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
+                Ext.each(assays, function(assay){
+                    if (assay.has_data) {
+                        assaysAdded.push(assay);
+                        assayAddedCount += 1;
+                    }
                 });
 
                 for (var d=0; d < this.documentData.length; d++) {
@@ -208,7 +212,9 @@ Ext.define('Connector.app.store.Study', {
                         if (this.documentData[d].document_type === 'grant_document') {
                             study.cavd_affiliation = this.documentData[d].label;
                             study.cavd_affiliation_filename = this.documentData[d].filename;
-                            study.cavd_affiliation_file_exists = false;  // set to false until we check (when StudyHeader is actually loaded)
+                            study.cavd_affiliation_file_accessible = undefined;  // not set until we check (when StudyHeader is actually loaded)
+                            study.cavd_affiliation_file_has_permission = this.documentData[d].accessible;
+                            study.cavd_affiliation_file_path = Connector.plugin.DocumentValidation.getStudyDocumentUrl(this.documentData[d].filename, study.study_name, this.documentData[d].document_id);
                         }
                     }
                 }
@@ -238,19 +244,21 @@ Ext.define('Connector.app.store.Study', {
                             ((new Date(pubA.date)) > (new Date(pubB.date)) ? -1 : 1)
                 });
 
-                var documentsAndPublications = this.publicationData.concat(this.documentData.filter(function(doc) {
+                var documents = this.documentData.filter(function(doc) {
                     return doc.document_type === 'Report or summary' || doc.document_type === 'Study plan or protocol'
-                })).filter(function(doc) {
+                }).filter(function(doc) {
                     return study.study_name === doc.prot;
                 }).map(function(doc) {
                     return {
                         id: doc.document_id,
                         label: doc.label,
-                        fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + doc.filename,
+                        fileName: doc.filename,
                         docType: doc.document_type,
-                        isLinkValid: false,
+                        isLinkValid: undefined,
                         suffix: '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',
-                        sortIndex: doc.document_order
+                        sortIndex: doc.document_order,
+                        filePath: Connector.plugin.DocumentValidation.getStudyDocumentUrl(doc.filename, study.study_name, doc.document_id),
+                        hasPermission: doc.accessible
                     }
                 }).sort(function(docA, docB){
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
@@ -284,12 +292,18 @@ Ext.define('Connector.app.store.Study', {
                 study.assays_added_count = assaysAdded.length;
                 study.publications = publications;
                 study.relationships = relationships;
-                study.protocol_docs_and_study_plans = documentsAndPublications.filter(function (doc) {
+                study.protocol_docs_and_study_plans = documents.filter(function (doc) {
                     return doc.label && doc.docType === 'Study plan or protocol';
                 });
-                study.data_listings_and_reports = documentsAndPublications.filter(function (doc) {
+                study.protocol_docs_and_study_plans_has_permission = study.protocol_docs_and_study_plans.filter(function(doc) {
+                    return doc.hasPermission === true
+                }).length > 0;
+                study.data_listings_and_reports = documents.filter(function (doc) {
                     return doc.label && doc.docType === 'Report or summary';
                 });
+                study.data_listings_and_reports_has_permission = study.data_listings_and_reports.filter(function(doc) {
+                            return doc.hasPermission === true
+                }).length > 0;
                 studies.push(study);
             }, this);
 

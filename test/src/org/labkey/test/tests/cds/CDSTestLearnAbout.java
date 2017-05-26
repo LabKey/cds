@@ -129,7 +129,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
         sleep(CDSHelper.CDS_WAIT);
         _asserts.verifyEmptyLearnAboutStudyPage();
-
     }
 
     @Test
@@ -188,8 +187,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void testLearnAboutStudyProducts()
     {
         log("Extra logging to record time stamps.");
-        cds.viewLearnAboutPage("Study products");
-        log("Should now be on the Learn About - Study Products page.");
+        cds.viewLearnAboutPage("Products");
+        log("Should now be on the Learn About - Products page.");
         sleep(30000);
         log("Should have slept for 30 seconds.");
         refresh();
@@ -215,7 +214,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         // This code was put in place because we were seeing failure in TeamCity where the page wasn't loading.
         // The TeamCity configuration has been changed to use chrome which looks like it addressed this issue. Going to remove some of these lines for now.
 //        log("Extra logging to record time stamps.");
-        cds.viewLearnAboutPage("Study products");
+        cds.viewLearnAboutPage("Products");
 //        log("Should now be on the Learn About - Study Products page.");
 //        sleep(10000);
 //        log("Should have slept for 10 seconds.");
@@ -253,7 +252,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Study products / ']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Products / ']"));
 
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
     }
@@ -263,7 +262,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         List<String> searchStrings = new ArrayList<>(Arrays.asList("Pénélope", "acid", "ART", "is a"));
 
-        cds.viewLearnAboutPage("Study products");
+        cds.viewLearnAboutPage("Products");
 
         searchStrings.stream().forEach((searchString) -> validateSearchFor(searchString));
 
@@ -391,7 +390,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         final String STUDIES_LINK = "//h1[@class='lhdv'][text()='Studies']";
         final String ASSAYS_LINK = "//h1[@class='lhdv'][text()='Assays']";
-        final String PRODUCTS_LINK = "//h1[@class='lhdv'][text()='Study products']";
+        final String PRODUCTS_LINK = "//h1[@class='lhdv'][text()='Products']";
         final String LEARN_ABOUT = "//span[contains(@class, 'right-label')][text()='Learn about']";
         final String BACK_BUTTON = "//div[contains(@class, 'learnview')]/span/div/div[contains(@class, 'x-container')][not(contains(@style, 'display: none'))]//div[contains(@class, 'learn-up')]//span[contains(@class, 'iarrow')]";
 
@@ -464,7 +463,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
         Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
-        log("Go to Study products and try the same basic scenario.");
+        log("Go to Products and try the same basic scenario.");
         click(Locator.xpath(PRODUCTS_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -495,7 +494,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
-        log("Click 'Study Products' and validate that the search box is populated as expected.");
+        log("Click 'Products' and validate that the search box is populated as expected.");
         click(Locator.xpath(PRODUCTS_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
@@ -507,7 +506,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText("Learn about...");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
-        log("Validate that the 'Study products' search value is there.");
+        log("Validate that the 'Products' search value is there.");
         Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Now click 'Assays' and validate that the search box has the value last searched for in Assays.");
@@ -547,7 +546,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final int STUDY_WITH_DATA_AVAILABLE = 25;
 
         cds.viewLearnAboutPage("Studies");
-        assertTextPresent("Not added");
+        assertTextPresent("Data not added");
 
         List<WebElement> hasDataRows = Locator.css(".detail-row-has-data").findElements(getDriver());
         List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
@@ -583,9 +582,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        Assert.assertTrue(isElementPresent(getDataRowXPath(ASSAY_TITLES[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPath(ASSAY_TITLES[1]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPath(ASSAY_TITLES[2]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[1]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[2]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
 
 
         log("Testing data availability module in Assays");
@@ -597,23 +596,23 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        List<WebElement> smallHasDataIcons =getDataRowXPath("").append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]").findElements(getDriver());
+        List<WebElement> smallHasDataIcons =cds.getDataRowXPath("").append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]").findElements(getDriver());
         Assert.assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
 
-        Assert.assertFalse(isElementPresent(getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        Assert.assertFalse(isElementPresent(cds.getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
 
 
-        log("Testing data availability module in Study Products");
-        cds.viewLearnAboutPage("Study products");
+        log("Testing data availability module in Products");
+        cds.viewLearnAboutPage("Products");
         waitAndClick(Locator.xpath("//h2[text() = '" + PRODUCT + "']"));
 
         refresh();
 
         waitForText("Data Availability");
 
-        Assert.assertTrue(isElementPresent(getDataRowXPathNoToolTip(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(getDataRowXPathNoToolTip(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
     }
 
     @Test
@@ -892,7 +891,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(1000);
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
-        Assert.assertTrue("There was a visible link to a grant document for this study, and there should not be.", getVisibleGrantDocumentLink() == null);
+        Assert.assertTrue("There was a visible link to a grant document for this study, and there should not be.", cds.getVisibleGrantDocumentLink() == null);
 
         goToHome();
         log("All done.");
@@ -904,7 +903,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         final String STUDY_XPATH_TEMPLATE = "//h2[text() = '$']";
         final String STUDY_INFO_TEXT_TRIGGER = "Study information";
-        final String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
 
         String studyXPath, studyName, documentName;
         Locator studyElement;
@@ -923,25 +921,25 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
         log("Verify that the expected number of links did show up.");
-        Assert.assertEquals("Did not find the expected number of document links.", 3, Locator.xpath(REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
+        Assert.assertEquals("Did not find the expected number of document links.", 3, Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
 
         log("First check the Powerpoint link.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'Epitope Mapping Results Summary')]").findElement(getDriver());
+        documentLink = CDSHelper.Locators.studyReportLink("Epitope Mapping Results Summary").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the Powerpoint document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_CAVIMC 031 Linear Epitope Mapping_BaselineSubtracted-3.pptx";
-        validateDocLink(documentLink, documentName);
+        cds.validateDocLink(documentLink, documentName);
 
         log("Now check the Excel link.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'NAB Data Summary 2')]").findElement(getDriver());
+        documentLink = CDSHelper.Locators.studyReportLink("NAB Data Summary 2").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the Excel document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_CAVIMC-031 Neutralization Data with AUC 3 May 2011-6.xlsx";
-        validateDocLink(documentLink, documentName);
+        cds.validateDocLink(documentLink, documentName);
 
         log("Finally for this study validate the pdf file.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'NAB Data Summary 1')]").findElement(getDriver());
+        documentLink = CDSHelper.Locators.studyReportLink("NAB Data Summary 1").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_McElrath_Seder_Antibody Responses 1.1 01Jun11.pdf";
-        validatePDFLink(documentLink, documentName);
+        cds.validatePDFLink(documentLink, documentName);
 
         cds.viewLearnAboutPage("Studies");
 
@@ -956,19 +954,19 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
         log("Verify that the expected number of links did show up.");
-        Assert.assertEquals("Did not find the expected number of document links.", 9, Locator.xpath(REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
+        Assert.assertEquals("Did not find the expected number of document links.", 9, Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
 
         log("Click on a few of these links to make sure they work. First check the Word Document link.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'CFSE Results Summary')]").findElement(getDriver());
+        documentLink = CDSHelper.Locators.studyReportLink("CFSE Results Summary").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the Word Document document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd264_DCVax001_CFSE_Memo_JUL13_v4.docx";
-        validateDocLink(documentLink, documentName);
+        cds.validateDocLink(documentLink, documentName);
 
         log("Now check one of the PDF link.");
-        documentLink = Locator.xpath(REPORTS_LINKS_XPATH + "//a[contains(text(), 'ICS Data Summary')]").findElement(getDriver());
+        documentLink = CDSHelper.Locators.studyReportLink("ICS Data Summary").findElement(getDriver());
         Assert.assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd264_ICS_LAB_REPORT_19APR13_n24fcm_fh_IL2_CD154_MIMOSA.pdf";
-        validatePDFLink(documentLink, documentName);
+        cds.validatePDFLink(documentLink, documentName);
 
         cds.viewLearnAboutPage("Studies");
 
@@ -984,7 +982,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
         log("Verify that there are no links.");
-        Assert.assertEquals("Did not find the expected number of document links.", 0, Locator.xpath(REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
+        Assert.assertEquals("Did not find the expected number of document links.", 0, Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a").findElements(getDriver()).size());
 
         log("Validate the related studies links");
         String relatedStudiesText, expectedStudiesText;
@@ -1132,10 +1130,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(1000);
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
-        documentLink = getVisibleGrantDocumentLink();
+        documentLink = cds.getVisibleGrantDocumentLink();
         Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
 
-        validatePDFLink(documentLink, pdfFileName);
+        cds.validatePDFLink(documentLink, pdfFileName);
 //        log("Now click on the document link.");
 //        documentLink.click();
 //        sleep(10000);
@@ -1152,30 +1150,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 //        log("Go back to the main window.");
 //        switchToMainWindow();
 
-    }
-
-    private void validatePDFLink(WebElement documentLink, String pdfFileName)
-    {
-        final String PLUGIN_XPATH = "//embed[@name='plugin']";
-
-        log("Now click on the pdf link.");
-        documentLink.click();
-        sleep(10000);
-        switchToWindow(1);
-
-        // Since this is a pdf file, it will be validated in the url, so replace any " " with %20.
-        pdfFileName = pdfFileName.replace(" ", "%20").toLowerCase();
-
-        log("Validate that the pdf document was loaded into the browser.");
-        assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
-        Assert.assertTrue("The embedded element is not a pdf plugin", getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
-        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'. Found: '" + getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase() + "'.", getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
-
-        log("Close this window.");
-        getDriver().close();
-
-        log("Go back to the main window.");
-        switchToMainWindow();
     }
 
     private void clickDocGrantAffiliation(String studyName, String docFileName)
@@ -1200,55 +1174,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(1000);
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
-        documentLink = getVisibleGrantDocumentLink();
+        documentLink = cds.getVisibleGrantDocumentLink();
         Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
 
-        validateDocLink(documentLink, docFileName);
+        cds.validateDocLink(documentLink, docFileName);
 //        log("Now click on the document link.");
 //        docFile = clickAndWaitForDownload(documentLink);
 //        foundDocumentName = docFile.getName();
 //        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + docFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(docFileName));
 
-    }
-
-    private void validateDocLink(WebElement documentLink, String expectedFileName)
-    {
-        File docFile;
-        String foundDocumentName;
-
-        // Since this will be a downloaded document, make sure the name is "cleaned up".
-        expectedFileName = expectedFileName.replace("%20", " ").toLowerCase();
-
-        log("Now click on the document link.");
-        docFile = clickAndWaitForDownload(documentLink);
-        foundDocumentName = docFile.getName();
-        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + expectedFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(expectedFileName));
-
-    }
-
-    // Return the visible grant document link, null otherwise.
-    private WebElement getVisibleGrantDocumentLink()
-    {
-        final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Grant Affiliation:']/following-sibling::td//a";
-        WebElement documentLinkElement = null;
-
-
-        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(getDriver()))
-        {
-            if(we.isDisplayed())
-            {
-                documentLinkElement = we;
-                break;
-            }
-        }
-
-        return documentLinkElement;
-    }
-
-    //Helper function for data availability tests
-    private Locator.XPathLocator getDataRowXPath(String rowText)
-    {
-        return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
     }
 
     //Helper function for data availability tests

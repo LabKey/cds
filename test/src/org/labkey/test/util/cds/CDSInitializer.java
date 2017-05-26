@@ -56,10 +56,21 @@ public class CDSInitializer
         _test._containerHelper.enableModule(_project, "CDS");
         _test._containerHelper.enableModule(_project, "DataIntegration");
 
-        _test.setPipelineRoot(TestFileUtils.getSampleData("MasterDataspace/folder.xml").getParentFile().getParent());
+        _test.setPipelineRoot(TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent());
         _test.importFolderFromPipeline("/MasterDataspace/folder.xml");
 
         _cds.initModuleProperties();
+
+        _test.goToProjectHome();
+
+        setupStudyDocumentProject();
+    }
+
+    private void setupStudyDocumentProject()
+    {
+        _test._containerHelper.deleteProject("DataSpaceStudyDocuments", false);
+        _test._containerHelper.createProject("DataSpaceStudyDocuments", "Collaboration");
+        _test.setPipelineRoot(TestFileUtils.getSampleData("/studydocuments/folder.xml").getParent());
 
         _test.goToProjectHome();
     }

@@ -32,8 +32,8 @@ Ext.define('Connector.app.view.Study', {
             '<div class="detail-description">',
                 '<h2>{label:htmlEncode}</h2>',
                 '<div class="detail-description-text">',
-                    '{description}',
-                '</div>', // allow html
+                    '<p class="block-with-text">{description}</p>',
+                '</div>',
             '</div>')
     },{
         text: 'Data Added',
@@ -50,15 +50,30 @@ Ext.define('Connector.app.view.Study', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
                     '<tpl if="data_availability">',
-                        '<div class="detail-has-data"></div>',
-                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added_count)]}</div>',
+                        '<div class="detail-has-data ',
+                            '<tpl if="data_accessible">',
+                            'detail-has-data-green',
+                            '<tpl else>',
+                            'detail-has-data-gray',
+                            '</tpl>',
+                        '"></div>',
+                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
                     '<tpl else>',
-                        'Not added',
+                        'Data not added',
                     '</tpl>',
                 '</div>',
                 {
-                    assayCountText : function(assay_count) {
-                        return assay_count == 1 ? assay_count + ' Assay' : assay_count + ' Assays';
+                    assayCountText : function(assays_added, accessible) {
+                        var totalCount = assays_added.length;
+                        var description = "";
+                        if (accessible)
+                            description += totalCount;
+                        else
+                            description += ('0/' + totalCount);
+                        description += " Assay";
+                        description += (totalCount == 1 ? '' : 's');
+                        description += " Accessible";
+                        return description;
                     }
                 }
         )
@@ -144,7 +159,11 @@ Ext.define('Connector.app.view.Study', {
                     '<ul>',
                         '<tpl if="products.length &gt; 0">',
                             '<tpl for="products">',
-                               '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
+                                '<tpl if="xindex <= 5">',
+                                    '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
+                                '<tpl elseif="xindex == 6">',
+                                    '<li class="detail-gray-text">...</li>',
+                                '</tpl>',
                             '</tpl>',
                         '<tpl else>',
                             '<li class="detail-gray-text">No related products</li>',
@@ -222,8 +241,7 @@ Ext.define('Connector.app.view.Study', {
 
     dataAvailabilityTooltipConfig : function() {
         return {
-            title: 'Assays',
-            recordField: 'assay_short_name'
+            title: 'Assays'
         }
     }
 });

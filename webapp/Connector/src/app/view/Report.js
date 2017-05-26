@@ -9,6 +9,10 @@ Ext.define('Connector.app.view.Report', {
 
     cls: 'reportlearngrid learngrid',
 
+    lockedViewConfig: {
+        cls: 'reportlearngridlocked'
+    },
+
     itemPluralName: 'reports',
 
     columns: [
@@ -24,7 +28,7 @@ Ext.define('Connector.app.view.Report', {
                     '<div class="detail-row-thumbnail">',
                     '<div>',
                     '<tpl if="thumbnail">',
-                    '<img src=\"{thumbnail}\" height="130">',
+                    '<img src=\"{thumbnail}\" height="95">',
                     '</tpl>',
                     '</div>')
         },
@@ -46,7 +50,7 @@ Ext.define('Connector.app.view.Report', {
                     '<div class="detail-description detail-row-text">',
                     '<h2>{name:htmlEncode}</h2>',
                     '<div class="detail-description-text">',
-                    '{description:htmlEncode}',
+                    '<p class="block-with-text">{description:htmlEncode}</p>',
                     '</div>',
                     '</div>')
         },

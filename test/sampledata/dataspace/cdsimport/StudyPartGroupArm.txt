@@ -1,0 +1,287 @@
+prot	study_part	study_group	study_arm	study_randomization	study_arm_description	study_arm_description_coded_label	product_class_combination_label	product_combination_label	study_arm_last_exp_vacc_day
+r1	NA	Group A	T1	Vaccine	sociis natoque penatibus et magnis	vestibulum	ut	tristique in tempus	168
+r1	NA	Group B	T2	Vaccine	sem duis aliquam convallis	leo rhoncus sed	in tempus sit	vel dapibus	168
+r1	NA	Group C	C	Placebo	purus phasellus in felis	eu interdum	augue a suscipit	diam in	168
+r2	NA	Group I	T1	Vaccine	parturient montes nascetur	dictumst	ultrices enim lorem	id	84
+r2	NA	Group I	C1	Placebo	non lectus aliquam sit	sed accumsan	enim	placerat ante	84
+r2	NA	Group II	T2	Vaccine	condimentum id luctus nec	etiam	proin	libero	84
+r2	NA	Group II	C2	Placebo	cubilia curae duis faucibus	bibendum felis	odio donec vitae	turpis nec	84
+q2	NA	Group I	T1	Vaccine	tempus semper est	maecenas	vehicula consequat	ut	84
+q2	NA	Group II	T2	Vaccine	auctor sed tristique in tempus	lacus morbi	lorem	nisl aenean lectus	84
+q2	NA	Group III	T3	Vaccine	in blandit ultrices enim	velit id	donec ut	nisi eu	84
+q2	NA	Group IV	T4	Vaccine	ipsum primis in faucibus orci	augue vestibulum rutrum	ornare imperdiet sapien	elementum	84
+q2	NA	Group V	C	Placebo	at ipsum ac tellus semper	aliquam	sem mauris laoreet	sem	84
+z101	NA	Group A	T1	Vaccine	varius nulla facilisi cras	erat	in faucibus	proin interdum	168
+z101	NA	Group A	C1	Placebo	vestibulum velit id pretium	ligula	turpis eget elit	vulputate	168
+z101	NA	Group B	T2	Vaccine	id massa id nisl	lacus	ultrices aliquet maecenas	consectetuer	168
+z101	NA	Group B	C2	Placebo	neque libero convallis eget	in tempus	ante ipsum	nonummy maecenas	168
+z101	NA	Group C	T3	Vaccine	congue diam id ornare	venenatis turpis	eros suspendisse accumsan	lacus curabitur at	168
+z101	NA	Group C	C3	Placebo	vestibulum rutrum rutrum	morbi a ipsum	penatibus et	vitae	168
+z101	NA	Group D	T4	Vaccine	commodo placerat praesent	in	at	condimentum id luctus	168
+z101	NA	Group D	C4	Placebo	sollicitudin vitae consectetuer eget rutrum	neque	et ultrices posuere	nisi nam ultrices	168
+z101	NA	Group E	T5	Vaccine	dolor quis odio	diam cras	pede ac	vestibulum ante ipsum	168
+z101	NA	Group E	C5	Placebo	habitasse platea dictumst morbi	lectus aliquam	vel pede morbi	pede ac diam	168
+z102	NA	Group A	D	Vaccine	in eleifend quam a odio	sem duis aliquam	molestie	condimentum curabitur in	168
+z102	NA	Group A	T1	Vaccine	massa id lobortis	ultrices posuere cubilia	fusce	at	168
+z102	NA	Group A	A1	Placebo	vel ipsum praesent	donec	ornare imperdiet sapien	scelerisque quam turpis	168
+z102	NA	Group A	C	Placebo	ante ipsum primis in	orci luctus	nulla	aliquet massa	168
+z102	NA	Group B	D	Vaccine	in ante vestibulum ante	sapien	orci nullam	justo	168
+z102	NA	Group B	T2	Vaccine	congue risus semper	vehicula	vitae consectetuer	neque vestibulum	168
+z102	NA	Group B	A2	Placebo	nunc viverra dapibus nulla	luctus	ultrices posuere cubilia	curabitur	168
+z102	NA	Group B	C	Placebo	justo in blandit ultrices enim	sed vestibulum	felis	diam	168
+z102	NA	Group C	D	Vaccine	ligula pellentesque ultrices	amet	nisl	orci	168
+z102	NA	Group C	T3	Vaccine	lacus curabitur at	risus	suspendisse ornare consequat	in	168
+z102	NA	Group C	A3	Placebo	suspendisse potenti cras	faucibus accumsan	dapibus nulla	ullamcorper	168
+z102	NA	Group C	C	Placebo	et commodo vulputate justo in	rutrum	vivamus	quam sollicitudin	168
+z102	NA	Group D	D	Vaccine	posuere felis sed	vivamus vel	leo	risus dapibus augue	168
+z102	NA	Group D	T4	Vaccine	odio elementum eu interdum eu	in	aliquam lacus	ut	168
+z102	NA	Group D	A4	Placebo	sodales scelerisque mauris sit amet	adipiscing elit proin	libero	parturient montes nascetur	168
+z102	NA	Group D	C	Placebo	et magnis dis	velit	vestibulum	in	168
+z102	NA	Group E	D	Vaccine	vel nisl duis	consectetuer adipiscing elit	leo	in hac	168
+z102	NA	Group E	A5	Placebo	vivamus vestibulum sagittis sapien cum	aliquam non mauris	justo sollicitudin	justo sit amet	168
+z102	NA	Group E	C	Placebo	curae nulla dapibus dolor vel	nunc	pede lobortis ligula	ultrices aliquet	168
+z102	NA	Group E	T5	Placebo	adipiscing molestie hendrerit	mauris lacinia	cursus	justo pellentesque viverra	168
+q3	NA	Group A	T1	Vaccine	consectetuer adipiscing elit proin	ante vestibulum ante	leo rhoncus	purus	56
+q3	NA	Group A	C	Placebo	leo odio condimentum id luctus	eu magna vulputate	habitasse platea dictumst	ultrices	56
+q3	NA	Group B	T2	Vaccine	imperdiet nullam orci	quisque id justo	libero non	turpis donec posuere	56
+q3	NA	Group B	C	Placebo	id consequat in consequat	lectus pellentesque	vestibulum proin	integer	56
+z103	NA	Group A	T1	Vaccine	non sodales sed tincidunt	nam congue	lobortis	nunc	168
+z103	NA	Group A	C	Placebo	luctus tincidunt nulla mollis molestie	in felis donec	sed ante	risus	168
+z103	NA	Group B	T2	Vaccine	blandit non interdum	pede malesuada	nisl	magna at nunc	168
+z103	NA	Group B	C	Placebo	sit amet nunc viverra dapibus	posuere metus	suspendisse potenti nullam	eget elit sodales	168
+z103	NA	Group C	T3	Vaccine	lacus morbi quis tortor	lectus	praesent lectus	neque vestibulum	168
+z103	NA	Group C	C	Placebo	nibh in lectus	erat vestibulum sed	dolor	vitae consectetuer eget	168
+z104	NA	Group 1	T1	Vaccine	magnis dis parturient montes	integer	pharetra	sed	56
+z104	NA	Group 2	T2	Vaccine	eget vulputate ut ultrices vel	quis libero	quam a odio	nonummy maecenas tincidunt	56
+z104	NA	Group 3	C3	Placebo	ut dolor morbi	odio elementum	id ligula suspendisse	vestibulum	56
+z106	NA	Group 1	T1	Vaccine	morbi a ipsum integer	nulla suscipit	augue quam	felis donec semper	196
+z106	NA	Group 1	C1	Placebo	fusce posuere felis sed	pellentesque volutpat	ultrices	est congue elementum	196
+z106	NA	Group 2	T2	Vaccine	quis tortor id	lobortis ligula	tincidunt eget	ut	196
+z106	NA	Group 2	C2	Placebo	vel enim sit amet nunc	sit amet erat	dictumst etiam	at	196
+z106	NA	Group 3	T3	Vaccine	lorem integer tincidunt	cubilia curae	sapien	nonummy integer non	196
+z106	NA	Group 3	C3	Placebo	vestibulum ac est	lectus in est	aliquet massa id	amet	196
+z106	NA	Group 4	T4	Vaccine	fusce consequat nulla	risus semper porta	vivamus tortor	nam congue risus	196
+z106	NA	Group 4	C4	Placebo	justo sit amet	velit nec	eleifend pede libero	facilisi cras non	196
+z106	NA	Group 5	T5	Vaccine	nunc purus phasellus	justo in blandit	mauris enim leo	ante	196
+z106	NA	Group 5	C5	Placebo	morbi vestibulum velit id pretium	viverra	fringilla rhoncus	nascetur ridiculus	196
+z106	NA	Group 6	T1	Vaccine	dignissim vestibulum vestibulum ante ipsum	vel	justo lacinia	molestie sed justo	196
+z106	NA	Group 6	C1	Placebo	at turpis a pede	interdum	nam nulla	libero	196
+z106	NA	Group 7	T4	Vaccine	quisque arcu libero rutrum	porttitor lacus at	felis ut	mus vivamus	196
+z106	NA	Group 7	C4	Placebo	dictumst morbi vestibulum velit	habitasse	ligula	et	196
+z106	NA	Group 8	T5	Vaccine	ligula vehicula consequat morbi a	odio porttitor	mauris	aliquet at feugiat	196
+z106	NA	Group 8	C5	Placebo	maecenas leo odio condimentum	cursus vestibulum proin	blandit lacinia erat	neque sapien	196
+z107	NA	Group 1	T1	Vaccine	rutrum rutrum neque aenean	hendrerit	dapibus dolor	in imperdiet et	84
+z107	NA	Group 1	C1	Placebo	eu magna vulputate luctus cum	nisl nunc	libero	erat eros	84
+z107	NA	Group 2	T2	Vaccine	mauris viverra diam vitae quam	odio porttitor id	vitae	ut blandit	84
+z107	NA	Group 2	C2	Placebo	suscipit nulla elit ac	hac	nulla	congue eget	84
+z107	NA	Group 3	T3	Vaccine	quis turpis sed ante	duis consequat dui	nisi at nibh	sem sed	84
+z107	NA	Group 3	C3	Placebo	fermentum justo nec condimentum neque	leo rhoncus sed	vitae nisl	habitasse	84
+z107	NA	Group 4	T4	Vaccine	congue elementum in	sapien quis libero	quam sollicitudin	mus etiam vel	84
+z107	NA	Group 4	C4	Placebo	placerat praesent blandit nam	ridiculus mus	aliquam quis turpis	vestibulum ac	84
+z109	NA	Group 1	T1	Vaccine	justo eu massa donec	nec nisi vulputate	maecenas tincidunt lacus	vulputate justo	84
+z109	NA	Group 1	C1	Placebo	ante ipsum primis	laoreet ut	ultrices erat	nulla sed vel	84
+z109	NA	Group 2	T2	Vaccine	pellentesque volutpat dui maecenas tristique	suspendisse accumsan	et	praesent	84
+z109	NA	Group 2	C2	Placebo	suspendisse potenti in eleifend quam	ultrices	lorem	ipsum dolor sit	84
+z109	NA	Group 3	T3	Vaccine	vel augue vestibulum	mauris lacinia sapien	et	in	84
+z109	NA	Group 3	C3	Placebo	accumsan odio curabitur convallis duis	vestibulum rutrum	et ultrices posuere	sit amet nulla	84
+z109	NA	Group 4	T4	Vaccine	est phasellus sit	nullam varius nulla	ligula sit	vestibulum	84
+z109	NA	Group 4	C4	Placebo	bibendum felis sed interdum	montes	sed ante vivamus	nulla	84
+z110	NA	Group 1	T1	Vaccine	vulputate elementum nullam varius	aliquet ultrices	duis faucibus accumsan	massa tempor	273
+z110	NA	Group 1	Ca	Placebo	ultrices mattis odio donec vitae	morbi a	cras non	varius nulla	273
+z110	NA	Group 2	T2	Vaccine	ut suscipit a feugiat et	proin interdum	duis	dapibus duis at	273
+z110	NA	Group 2	Ca	Placebo	at nulla suspendisse potenti cras	nisi eu	nulla	semper est	273
+z110	NA	Group 3	T3	Vaccine	maecenas leo odio condimentum	turpis elementum	morbi vel	gravida sem praesent	273
+z110	NA	Group 3	Ca	Placebo	habitasse platea dictumst maecenas ut	pulvinar nulla	proin at	vestibulum sed magna	273
+z110	NA	Group 4	T4	Vaccine	vel dapibus at diam	interdum mauris non	sagittis	scelerisque quam turpis	273
+z110	NA	Group 4	Ca	Placebo	morbi non lectus aliquam sit	id luctus	in tempus sit	maecenas pulvinar lobortis	273
+z110	NA	Group 5	T5	Vaccine	non mattis pulvinar	rutrum nulla tellus	sit amet lobortis	eget	273
+z110	NA	Group 5	Cb	Placebo	id ornare imperdiet sapien urna	sem	sed augue	praesent lectus vestibulum	273
+z110	NA	Group 6	T6	Vaccine	convallis morbi odio odio	nulla	non interdum in	ipsum primis	273
+z110	NA	Group 6	Cb	Placebo	vel pede morbi porttitor	feugiat non	amet sapien dignissim	cubilia	273
+z110	NA	Group 7	T7	Vaccine	ultrices phasellus id	pulvinar sed	nunc	nullam varius	273
+z110	NA	Group 7	Cb	Placebo	donec posuere metus vitae	rhoncus aliquet pulvinar	duis	non	273
+z111	NA	Group 1	T1	Vaccine	lobortis convallis tortor	in	tortor	diam	273
+z111	NA	Group 1	Ca	Placebo	mattis egestas metus aenean	consequat	luctus tincidunt	proin	273
+z111	NA	Group 2	T2	Vaccine	pretium iaculis diam erat fermentum	amet consectetuer	mauris	ultrices posuere	273
+z111	NA	Group 2	Ca	Placebo	purus eu magna	odio	donec	iaculis diam	273
+z111	NA	Group 3	T3	Vaccine	tincidunt in leo	ridiculus mus vivamus	tincidunt eget	non mauris	273
+z111	NA	Group 3	Ca	Placebo	bibendum morbi non	volutpat	fusce posuere felis	duis	273
+z111	NA	Group 4	T4	Vaccine	sem praesent id	nulla ac	posuere cubilia	aliquam	273
+z111	NA	Group 4	Ca	Placebo	in libero ut massa volutpat	ornare	eget	ac nibh fusce	273
+z111	NA	Group 5	T5	Vaccine	lacus morbi quis	vestibulum ante	ridiculus mus etiam	donec pharetra magna	273
+z111	NA	Group 5	Cb	Placebo	leo pellentesque ultrices mattis	suscipit ligula	ante	justo sit amet	273
+z111	NA	Group 7	T7	Vaccine	nec dui luctus	ultrices posuere cubilia	orci luctus	lobortis	273
+z111	NA	Group 7	Cb	Placebo	id nulla ultrices aliquet	eleifend	id	velit donec diam	273
+z112	NA	Group 1	T1	Vaccine	massa donec dapibus	commodo vulputate	risus dapibus augue	vestibulum ac est	168
+z112	NA	Group 1	C1	Placebo	nunc proin at turpis a	at dolor quis	in congue	cubilia	168
+z112	NA	Group 2	T2	Vaccine	magnis dis parturient montes	morbi	at feugiat non	libero convallis eget	168
+z112	NA	Group 2	C2	Placebo	morbi ut odio cras mi	orci mauris	massa	donec semper	168
+z112	NA	Group 3	T3	Vaccine	donec posuere metus	lacinia sapien	in felis donec	in	168
+z112	NA	Group 3	C3	Placebo	donec quis orci eget	nisi	convallis morbi	cursus	168
+z112	NA	Group 4	T4	Vaccine	amet nunc viverra dapibus	ante	nulla	ut massa volutpat	168
+z112	NA	Group 4	C4	Placebo	porttitor id consequat in	curae nulla	pellentesque volutpat	lacus purus aliquet	168
+z112	NA	Group 5	T5	Vaccine	porttitor lorem id ligula	vestibulum velit	vestibulum ac est	vel	168
+z112	NA	Group 5	C5	Placebo	duis at velit eu est	proin eu	porttitor id consequat	vivamus	168
+z113	NA	Group 1	T1	Vaccine	elit ac nulla sed vel	justo morbi ut	sem duis aliquam	neque vestibulum	168
+z113	NA	Group 1	P1-P2	Placebo	eu magna vulputate	hac habitasse platea	ipsum dolor	ipsum ac tellus	168
+z113	NA	Group 2	T2	Vaccine	eget elit sodales scelerisque mauris	lobortis	ut rhoncus aliquet	blandit	168
+z113	NA	Group 2	P1-P2	Placebo	sed magna at nunc commodo	curae	nulla	sit amet consectetuer	168
+z113	NA	Group 3	T3	Vaccine	aenean fermentum donec ut	mauris laoreet ut	pretium iaculis diam	eget orci	168
+z113	NA	Group 3	P3-P4	Placebo	dictumst aliquam augue quam sollicitudin	diam	ullamcorper augue a	volutpat convallis	168
+z113	NA	Group 4	T4	Vaccine	augue luctus tincidunt	semper est quam	ipsum primis	integer	168
+z113	NA	Group 4	P3-P4	Placebo	quis odio consequat	ipsum primis	in	eget	168
+z114	NA	Group 1	T1	Vaccine	morbi odio odio elementum	odio elementum eu	in felis	sed ante	168
+z114	NA	Group 1	C1	Placebo	odio justo sollicitudin ut	luctus tincidunt	leo odio	massa donec	168
+z115	NA	Group 1	T1	Vaccine	auctor gravida sem praesent	sagittis sapien	semper	justo	168
+z115	NA	Group 1	C	Placebo	vulputate vitae nisl	id ligula	dolor morbi	enim	168
+z115	NA	Group 2	T2	Vaccine	id ligula suspendisse ornare consequat	pede libero quis	ac consequat metus	aliquam	168
+z115	NA	Group 2	C	Placebo	morbi vestibulum velit	justo	semper porta	eu magna vulputate	168
+r4	NA	Group 1	T1	Vaccine	sapien quis libero nullam	fringilla	risus praesent	quam sollicitudin vitae	168
+r4	NA	Group 2	T2	Vaccine	morbi porttitor lorem	tortor duis	donec pharetra magna	eu	168
+r4	NA	Group 3	T3	Vaccine	in est risus	erat id mauris	sit	maecenas	168
+r5	NA	Group 1	T1	Vaccine	ridiculus mus etiam	posuere metus vitae	amet justo morbi	turpis	168
+r5	NA	Group 1	C1	Placebo	amet turpis elementum ligula vehicula	imperdiet et commodo	luctus rutrum nulla	posuere cubilia	168
+r5	NA	Group 2	T2	Vaccine	pretium iaculis justo	turpis	tincidunt ante vel	tempor	168
+r5	NA	Group 2	C2	Placebo	nisi at nibh in hac	quis lectus	odio porttitor id	sapien	168
+r5	NA	Group 3	T3	Vaccine	et ultrices posuere cubilia	mattis egestas metus	quam pharetra	turpis sed	168
+r5	NA	Group 3	C3	Placebo	metus sapien ut	ut	ante nulla justo	dui	168
+r5	NA	Group 4	T4	Vaccine	fringilla rhoncus mauris enim leo	ultrices erat tortor	in magna	laoreet	168
+r5	NA	Group 4	C4	Placebo	lectus in est risus	pellentesque	iaculis	donec	168
+r6	NA	Group T1	T1	Vaccine	mauris eget massa tempor	amet sapien dignissim	lobortis	in eleifend quam	182
+r8	NA	Group 1	T1	Vaccine	augue luctus tincidunt	tempor turpis	nulla nunc purus	non quam nec	168
+r8	NA	Group 1	C1	Placebo	diam erat fermentum justo nec	id	nulla nunc	purus eu magna	168
+r8	NA	Group 2	T2	Vaccine	suscipit a feugiat	placerat	ipsum dolor	sapien iaculis congue	168
+r8	NA	Group 2	C2	Placebo	suscipit nulla elit	dictumst maecenas	ullamcorper augue	convallis	168
+r8	NA	Group 3	T3	Vaccine	quis justo maecenas rhoncus	nulla suspendisse potenti	nibh	tristique in	168
+r8	NA	Group 4	T4	Vaccine	eget tincidunt eget tempus vel	sociis natoque	tincidunt nulla	platea dictumst aliquam	168
+r9	NA	Group 1+	T1	Vaccine	mus vivamus vestibulum sagittis sapien	ut	neque	accumsan odio	84
+r9	NA	Group 1+	C1	Placebo	hac habitasse platea dictumst etiam	vehicula consequat morbi	pharetra	tristique fusce congue	84
+r9	NA	Group 1+2	C1+T2	Vaccine	enim sit amet	congue vivamus	lacinia aenean sit	ipsum primis in	84
+r9	NA	Group 1+2	T1+C2	Vaccine	consequat in consequat ut nulla	dis parturient montes	fusce congue diam	sed justo pellentesque	84
+r9	NA	Group 1+2	T1+T2	Vaccine	potenti in eleifend quam	praesent blandit nam	et ultrices	scelerisque mauris sit	84
+r9	NA	Group 1+2	C1+C2	Placebo	libero convallis eget eleifend luctus	vulputate vitae	odio condimentum	quis tortor id	84
+r7	NA	Group 1	T1	Vaccine	tempor convallis nulla neque libero	blandit mi	sociis natoque	eros vestibulum	168
+z116	NA	Group 1	T1	Vaccine	eros elementum pellentesque quisque porta	eu interdum eu	dictumst morbi	curabitur gravida nisi	168
+z116	NA	Group 1	C1	Placebo	interdum eu tincidunt in	tristique fusce	nam nulla	lorem id	168
+z116	NA	Group 2	T2	Vaccine	tortor duis mattis egestas	mi sit amet	mollis molestie	tincidunt lacus	168
+z116	NA	Group 2	C2	Placebo	ligula in lacus curabitur	ante	eu orci	neque	168
+z116	NA	Group 3	T3	Vaccine	pede justo eu	libero non mattis	proin interdum	sapien quis	168
+z116	NA	Group 3	C3	Placebo	lacus curabitur at ipsum	elit	posuere	imperdiet	168
+z116	NA	Group 4	T4	Vaccine	enim leo rhoncus sed vestibulum	in felis donec	mauris	ut	168
+z116	NA	Group 4	C4	Placebo	integer non velit donec	mauris	praesent	dolor quis odio	168
+z117	NA	Group 1	T1	Vaccine	quis augue luctus	nonummy maecenas tincidunt	maecenas ut	primis in faucibus	168
+z117	NA	Group 1	P1	Placebo	justo morbi ut odio	aliquam non	in faucibus orci	vitae ipsum aliquam	168
+z117	NA	Group 2	T2	Vaccine	volutpat sapien arcu	viverra dapibus nulla	ligula pellentesque	et magnis	168
+z117	NA	Group 2	P2	Placebo	consectetuer eget rutrum	blandit mi in	lorem integer tincidunt	nec condimentum neque	168
+z117	NA	Group 3	T3	Vaccine	vestibulum rutrum rutrum	in quis	nam congue risus	erat nulla	168
+z117	NA	Group 3	P3	Placebo	sapien urna pretium nisl ut	sit amet	eu sapien	orci vehicula condimentum	168
+z117	NA	Group 4	T4	Vaccine	ornare imperdiet sapien urna	in	et commodo	nibh fusce	168
+z117	NA	Group 4	P4	Placebo	velit vivamus vel nulla	vitae consectetuer	fermentum justo nec	dictumst	168
+z118	NA	Group 1	T1	Vaccine	condimentum curabitur in libero	vestibulum	ut	facilisi	84
+z118	NA	Group 1	P1-P3	Placebo	pede morbi porttitor	morbi porttitor	velit	non pretium quis	84
+z118	NA	Group 2	T2&T3	Vaccine	lectus pellentesque eget nunc	elementum	quam pharetra	rutrum ac	84
+z118	NA	Group 2	P1-P3	Placebo	libero nam dui	vel augue vestibulum	venenatis tristique	ac nulla sed	84
+z118	NA	Group 3	T2&T3	Vaccine	nunc purus phasellus in felis	rutrum rutrum	convallis duis	elementum ligula	84
+z118	NA	Group 3	P1-P3	Placebo	auctor gravida sem praesent id	duis bibendum	lorem vitae	ut ultrices vel	84
+z119	NA	Group 1	T1	Vaccine	lectus in est risus	praesent blandit lacinia	curabitur in libero	est risus auctor	168
+z119	NA	Group 2	T1	Vaccine	at dolor quis	sed vestibulum	nulla sed vel	quis justo	168
+z120	NA	Group A	A	Vaccine	turpis enim blandit mi in	sed	donec vitae nisi	leo	84
+z120	NA	Group B	B	Vaccine	massa quis augue	augue vel	odio donec vitae	mus vivamus vestibulum	84
+z120	NA	Group C	C	Vaccine	consequat metus sapien ut nunc	tristique	rutrum nulla	lectus	84
+z120	NA	Group D	D	Vaccine	mi integer ac neque	id pretium iaculis	augue vel	orci luctus et	84
+z120	NA	Group E	E	Vaccine	leo rhoncus sed	sagittis nam congue	neque	varius	84
+z122	NA	Group 1	T1	Vaccine	morbi porttitor lorem id ligula	aliquam	accumsan felis	mauris laoreet ut	168
+z122	NA	Group 1	P1-P4	Placebo	in eleifend quam a odio	praesent id massa	lobortis convallis	a	168
+z122	NA	Group 2	T2	Vaccine	vel accumsan tellus nisi eu	ultrices	lacinia	cursus vestibulum proin	168
+z122	NA	Group 2	P1-P4	Placebo	nibh in quis justo	a	lectus in	malesuada in imperdiet	168
+z122	NA	Group 3	T3	Vaccine	accumsan felis ut	ipsum	accumsan tortor quis	donec posuere metus	168
+z122	NA	Group 3	P1-P4	Placebo	consectetuer adipiscing elit proin interdum	est	justo eu massa	adipiscing lorem	168
+z122	NA	Group 4	T4	Vaccine	at velit eu	massa id	nisi eu orci	ultricies eu	168
+z122	NA	Group 4	P1-P4	Placebo	habitasse platea dictumst etiam faucibus	magnis dis	sed lacus	primis	168
+z123	NA	Group 1	T1	Vaccine	aenean auctor gravida sem praesent	congue diam	lobortis est phasellus	sed tincidunt	168
+z123	NA	Group 1	C1	Placebo	tempus vel pede morbi	pretium iaculis	at	nulla	168
+z123	NA	Group 2	T2	Vaccine	molestie lorem quisque ut erat	ut rhoncus	felis sed lacus	interdum eu	168
+z123	NA	Group 2	C2	Placebo	sed nisl nunc	nec sem duis	sapien	turpis	168
+z123	NA	Group 3	T3	Vaccine	sapien urna pretium nisl	accumsan	eleifend luctus	morbi a	168
+z123	NA	Group 3	C3	Placebo	mauris eget massa tempor	in tempor	sit	viverra	168
+z123	NA	Group 4	T4	Vaccine	nibh fusce lacus purus aliquet	pede	nulla tellus	purus	168
+z123	NA	Group 4	C4	Placebo	habitasse platea dictumst	etiam justo	ante	orci luctus et	168
+z124	NA	Group 1	T1	Vaccine	sapien cum sociis natoque penatibus	quisque arcu libero	curae	aliquam convallis	913
+z124	NA	Group 2	T2	Vaccine	aliquet pulvinar sed nisl	convallis eget	est et tempus	enim leo	913
+z125	NA	Group 1	T1	Vaccine	orci luctus et ultrices	sapien dignissim	libero non	habitasse	56
+z125	NA	Group 1	P1	Placebo	etiam faucibus cursus	dapibus augue vel	parturient montes nascetur	ligula in lacus	56
+z125	NA	Group 2	T2	Vaccine	nisi at nibh in hac	odio justo	at lorem integer	hac habitasse platea	56
+z125	NA	Group 2	P2	Placebo	porta volutpat quam pede	curabitur convallis duis	dui vel	congue eget	56
+z125	NA	Group 3	T3	Vaccine	curabitur in libero ut massa	nulla eget	nulla	nulla	56
+z125	NA	Group 3	P3	Placebo	donec semper sapien	ultrices posuere	dolor vel	tortor id nulla	56
+z125	NA	Group 4	T4	Vaccine	vestibulum ac est lacinia	libero	volutpat dui	vestibulum ante	56
+z125	NA	Group 4	P4	Placebo	eget tempus vel	curae donec pharetra	vulputate vitae	vivamus metus	56
+z125	NA	Group 5	T5	Vaccine	non mi integer ac neque	duis faucibus accumsan	lacus	quis tortor	56
+z125	NA	Group 5	P5	Placebo	vestibulum ac est	rutrum at	eget orci vehicula	laoreet ut	56
+z127	NA	Group 1	T1	Vaccine	lacus purus aliquet at	ante	nulla elit ac	est quam pharetra	140
+z127	NA	Group 2	T2	Vaccine	eleifend luctus ultricies eu	eu	ipsum primis	luctus	140
+z127	NA	Group 2	C2	Placebo	porttitor lorem id	vestibulum proin	ut odio	tortor	140
+z127	NA	Group 3	T3	Vaccine	in quam fringilla rhoncus mauris	volutpat quam	lobortis convallis	montes nascetur ridiculus	140
+z127	NA	Group 3	C3	Placebo	ut blandit non	odio in hac	fusce	sem praesent id	140
+z127	NA	Group 4	T4	Vaccine	pretium quis lectus suspendisse	turpis adipiscing	potenti nullam porttitor	porttitor lorem	140
+z127	NA	Group 4	C4	Placebo	volutpat dui maecenas	nullam	convallis	in lacus curabitur	140
+z128	NA	Group 1	T1	Vaccine	nisi at nibh in	tincidunt ante vel	nulla	praesent	303
+z128	NA	Group 1	P1	Placebo	tincidunt eget tempus	amet	viverra diam vitae	leo maecenas pulvinar	303
+z128	NA	Group 2	T2	Vaccine	rutrum ac lobortis vel	donec posuere metus	ac	nulla	303
+z128	NA	Group 2	P2	Placebo	nibh in lectus pellentesque	praesent blandit	vivamus in felis	nunc donec	303
+z128	NA	Group 3	T3	Vaccine	ornare consequat lectus	quam pharetra magna	proin eu mi	purus eu magna	303
+z128	NA	Group 3	P3	Placebo	donec ut dolor morbi	dis parturient	tortor id nulla	porttitor lacus at	303
+y55	NA	Group 1	T1	Vaccine	consectetuer adipiscing elit	sapien in	congue	tellus	168
+y55	NA	Group 1	C1	Placebo	justo in hac habitasse	neque	justo maecenas rhoncus	dolor sit amet	168
+y55	NA	Group 2	T2	Vaccine	potenti in eleifend quam	magna at nunc	mauris	in faucibus orci	168
+y55	NA	Group 2	C2	Placebo	praesent id massa id nisl	integer	turpis nec euismod	pellentesque volutpat dui	168
+y55	NA	Group 3	T3	Vaccine	congue diam id ornare	nam ultrices	primis in faucibus	ullamcorper	168
+y55	NA	Group 3	C3	Placebo	duis bibendum felis sed	justo	cursus	integer	168
+y55	NA	Group 4	T4	Vaccine	metus vitae ipsum	vulputate justo in	vestibulum ante	justo sollicitudin	168
+y55	NA	Group 4	C4	Placebo	platea dictumst aliquam	suspendisse	tortor risus	magnis	168
+z129	NA	Group 1	T1	Vaccine	mauris vulputate elementum	ipsum ac tellus	id lobortis	blandit	394
+z129	NA	Group 2	T2	Placebo	cubilia curae donec pharetra	eleifend donec	cursus	eget massa tempor	394
+z129	NA	Group 3	T3	Placebo	purus eu magna	eget tempus vel	curae duis faucibus	est congue elementum	394
+z130	NA	Group 1	T1	Vaccine	pulvinar nulla pede	in faucibus	quam pharetra	parturient	364
+z130	NA	Group 2	P2	Placebo	sit amet justo	ut mauris	magnis	duis	364
+z131	NA	All	T5	Vaccine	nisi venenatis tristique fusce congue	arcu sed	ac	suspendisse accumsan	154
+z131	NA	Group 1	T1	Vaccine	donec ut dolor	pede morbi	in eleifend	dolor vel est	154
+z131	NA	Group 2	T2	Vaccine	at feugiat non	proin eu	interdum	nec nisi	154
+z131	NA	Group 3	T3	Vaccine	at velit eu est	platea	posuere	purus aliquet	154
+z131	NA	Group 3	P3	Placebo	risus praesent lectus vestibulum quam	lacus purus aliquet	lobortis	a pede posuere	154
+z132	NA	Group 1	T1	Vaccine	eu nibh quisque	dolor vel	at velit vivamus	nisi	224
+z132	NA	Group 1	C1	Placebo	ut at dolor quis	donec vitae	nulla	pellentesque quisque	224
+z132	NA	Group 2	T2	Vaccine	luctus rutrum nulla tellus in	nam nulla	suscipit nulla elit	tellus	224
+z132	NA	Group 2	C2	Placebo	sociis natoque penatibus	nisi volutpat eleifend	vitae nisi nam	justo aliquam	224
+z132	NA	Group 3	T3	Vaccine	nulla justo aliquam	vulputate ut ultrices	duis	vel nulla	224
+z132	NA	Group 3	C3	Placebo	vel augue vestibulum ante ipsum	aliquam lacus	fusce posuere	dictumst etiam faucibus	224
+z133	NA	Group A	T1	Vaccine	justo aliquam quis turpis	vehicula	nulla quisque arcu	porttitor	168
+z133	NA	Group B	T2	Vaccine	rutrum neque aenean auctor	nam	orci luctus	cubilia curae	168
+z133	NA	Group C	T3	Vaccine	pellentesque viverra pede ac	turpis	ante	maecenas ut massa	168
+z133	NA	Group D	C	Placebo	semper sapien a libero	ultrices posuere cubilia	justo aliquam quis	lectus in quam	168
+z134	NA	Group 1	T1	Vaccine	sem sed sagittis nam	neque sapien	sapien placerat ante	vestibulum	168
+z134	NA	Group 2	C1	Placebo	mauris enim leo	nibh in lectus	non mauris	tristique	168
+z136	NA	All	1	Vaccine	bibendum imperdiet nullam orci pede	vestibulum proin	ligula in	morbi vestibulum velit	28
+z136	NA	All	2	Placebo	vel dapibus at	est	lorem	turpis a pede	28
+z139	NA	Group 1	T1	Vaccine	justo morbi ut odio cras	ligula vehicula	duis	ipsum integer	168
+z139	NA	Group 2	C1	Placebo	nec euismod scelerisque	vestibulum	sodales sed tincidunt	aliquam non mauris	168
+z138	NA	Group 1	T1+T3	Vaccine	velit id pretium iaculis diam	dolor sit	neque aenean auctor	sem mauris	168
+z138	NA	Group 2	T2+T5	Placebo	eget congue eget semper	vivamus vestibulum sagittis	pede libero quis	parturient	168
+z138	NA	Group 3	T1+T3	Vaccine	semper sapien a libero nam	vel accumsan	sem duis	pharetra	168
+z138	NA	Group 4	T4	Vaccine	gravida nisi at	imperdiet	vel augue vestibulum	mauris	168
+z138	NA	Group 5	T2+T5	Placebo	diam neque vestibulum	ut	libero nullam sit	ut	168
+q1	NA	A	A	Vaccine	pede lobortis ligula sit amet	consequat in	tortor quis	at velit eu	168
+q1	NA	B	B	Placebo	nulla eget eros	bibendum felis	dolor quis	ac enim	168
+r3	NA	1	1A	Placebo	hac habitasse platea	amet	primis	volutpat dui maecenas	168
+r3	NA	2	2A	Vaccine	nam tristique tortor eu	accumsan odio curabitur	congue	tortor	168
+r3	NA	3	3A	Placebo	lobortis vel dapibus at diam	adipiscing elit proin	odio	primis in faucibus	168
+r3	NA	1	1B	Placebo	dui vel sem sed sagittis	semper est	rhoncus sed	vivamus	168
+r3	NA	2	2B	Placebo	vel accumsan tellus nisi eu	enim in tempor	nulla tempus vivamus	vel augue vestibulum	168
+r3	NA	3	3B	Vaccine	integer pede justo lacinia	vel	vivamus	ipsum primis	168
+r3	NA	1	1C	Placebo	sem mauris laoreet ut rhoncus	nec euismod	at nunc commodo	platea dictumst maecenas	168
+r3	NA	2	2C	Vaccine	nisl nunc nisl duis bibendum	lorem	auctor	id ligula	168
+r3	NA	3	3C	Placebo	eros viverra eget congue eget	nulla sed	orci	justo sit	168
+z105	NA	Group 1	AA	Vaccine	praesent id massa id nisl	integer	turpis nec euismod	pellentesque volutpat dui	75
+z105	NA	Group 1	BB	Placebo	congue diam id ornare	nam ultrices	primis in faucibus	ullamcorper	114
+z105	NA	Group 2	AA	Vaccine	duis bibendum felis sed	justo	cursus	integer	75
+z105	NA	Group 2	BB	Placebo	metus vitae ipsum	vulputate justo in	vestibulum ante	justo sollicitudin	110

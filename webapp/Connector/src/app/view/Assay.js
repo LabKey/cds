@@ -31,7 +31,7 @@ Ext.define('Connector.app.view.Assay', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
                     '<h2>{assay_short_name:htmlEncode} ({assay_label:htmlEncode})</h2>',
-                    '<div class="detail-description-text">{assay_description:htmlEncode}</div>',
+                    '<div class="detail-description-text"><p class="block-with-text">{assay_description:htmlEncode}</p></div>',
                 '</div>'
         )
     },{
@@ -49,15 +49,21 @@ Ext.define('Connector.app.view.Assay', {
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
                     '<tpl if="data_availability">',
-                        '<div class="detail-has-data"></div>',
-                        '<div class="detail-gray-text">{[this.studyCountText(values.studies_with_data_count)]}</div>',
+                        '<div class="detail-has-data ',
+                            '<tpl if="data_accessible">',
+                            'detail-has-data-green',
+                            '<tpl else>',
+                            'detail-has-data-gray',
+                            '</tpl>',
+                        '"></div>',
+                        '<div class="detail-gray-text">{[this.studyCountText(values.studies_with_data)]}</div>',
                     '<tpl else>',
-                        'Not added',
+                        'Data not added',
                     '</tpl>',
                 '</div>',
                 {
-                    studyCountText : function(assay_count) {
-                        return assay_count == 1 ? assay_count + ' Study' : assay_count + ' Studies';
+                    studyCountText : function(studies) {
+                        return Connector.app.view.LearnSummary.studyCountText(studies);
                     }
                 }
         )
@@ -82,8 +88,7 @@ Ext.define('Connector.app.view.Assay', {
 
     dataAvailabilityTooltipConfig : function() {
         return {
-            title: 'Studies',
-            recordField: 'label'
+            title: 'Studies'
         }
     }
 });

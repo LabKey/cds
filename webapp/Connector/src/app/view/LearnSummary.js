@@ -14,6 +14,21 @@ Ext.define('Connector.app.view.LearnSummary', {
             months -= d1.getMonth() + 1;
             months += d2.getMonth();
             return months <= 0 ? 0 : months;
+        },
+        studyCountText : function(studies) {
+            var totalCount = studies.length, accessibleCount = 0;
+            var description = "";
+            Ext.each(studies, function(study){
+                if (study.has_access)
+                    accessibleCount++;
+            });
+            if (accessibleCount == totalCount)
+                description += totalCount;
+            else
+                description += (accessibleCount + '/' + totalCount);
+            description += (totalCount == 1 ? ' Study' : ' Studies');
+            description += " Accessible";
+            return description;
         }
     },
 
@@ -80,10 +95,33 @@ Ext.define('Connector.app.view.LearnSummary', {
         var config = this.dataAvailabilityTooltipConfig();
 
         var dataAvailableListHTML = "<ul>";
-        for (var itr = 0; itr < options.itemsWithDataAvailable.length; ++itr) {
-            dataAvailableListHTML += "<li>" + options.itemsWithDataAvailable[itr][config.recordField] + "</li>\n";
+        var records = options.itemsWithDataAvailable, accessible = [], nonAccessible = [];
+        Ext.each(records, function(record){
+            if (record.has_access)
+                accessible.push(record);
+            else
+                nonAccessible.push(record);
+        });
+        if (accessible.length > 0)
+        {
+            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " with Data Accessible" + '</p>';
+            dataAvailableListHTML += "<ul>";
+            Ext.each(accessible, function(record){
+                dataAvailableListHTML += "<li>" + record['data_label'] + "</li>\n";
+            });
+            dataAvailableListHTML += "</ul>";
         }
-        dataAvailableListHTML += "</ul>";
+        if (nonAccessible.length > 0)
+        {
+            if (accessible.length > 0)
+                dataAvailableListHTML += '<br>';
+            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " without Data Accessible" + '</p>';
+            dataAvailableListHTML += "<ul>";
+            Ext.each(nonAccessible, function(record){
+                dataAvailableListHTML += "<li>" + record['data_label'] + "</li>\n";
+            });
+            dataAvailableListHTML += "</ul>";
+        }
 
         var itemWrapped = Ext.get(item);
         var verticalPosition = itemWrapped.getAnchorXY()[1];
@@ -108,9 +146,8 @@ Ext.define('Connector.app.view.LearnSummary', {
                         showCloseButton: false,
                         target: item,
                         placement: 'right',
-                        title: config.title + " with Data Available",
                         content: dataAvailableListHTML,
-                        width: 190
+                        width: 220
                     }, {}));
                 }, 200);
 

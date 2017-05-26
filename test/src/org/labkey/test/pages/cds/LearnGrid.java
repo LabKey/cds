@@ -204,7 +204,7 @@ public class LearnGrid
 
         // The tool-tip has a small delay before it is shown.
         _test.waitForElement(Locator.css("div.hopscotch-bubble-container"), 5000, true);
-
+        _test.sleep(500);
         return this;
     }
 
@@ -284,6 +284,10 @@ public class LearnGrid
         public static final Locator.XPathLocator lockedRowHeader = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div[contains(@class, 'x-grid-header-ct')]");
         public static final Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("In current selection");
         public static final Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("Not in current selection");
+
+        public static final Locator rowsWithData = Locator.css(".detail-row-has-data");
+        public static final Locator rowsWithDataNotAccessible = Locator.css(".detail-has-data-gray");
+        public static final Locator rowsWithDataAccessible = Locator.css(".detail-has-data-green");
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {

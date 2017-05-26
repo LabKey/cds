@@ -1,0 +1,41 @@
+prot	assay_identifier	assay_status
+q2	NAB A3R5	not included at this time
+r4	BAMA Biotin LX	provided, pending processing
+r4	ILLUMINA 454	provided, pending processing
+r4	ICS	not approved for sharing
+r4	IFNg ELS	not provided
+r5	ICS	not approved for sharing
+r6	ICS	not approved for sharing
+y55	NAB A3R5	provided, but not machine-readable
+y55	NAB TZM-bl	provided, but not machine-readable
+z102	ICS	
+z105	ICS	not approved for sharing
+z106	ICS	
+z108	ICS	provided, but not included
+z110	IFNg ELS	
+z111	IFNg ELS	not provided
+z113	ICS	not approved for sharing
+z115	ICS	being processed
+z116	ICS	not approved for sharing
+z117	BAMA Biotin LX	
+z117	ICS	pending study completion
+z117	NAB TZM-bl	provided, but not included
+z118	ICS	not approved for sharing
+z118	NAB TZM-bl	not included at this time
+z119	NAB TZM-bl	added
+z120	NAB TZM-bl	not provided
+z124	ICS	added
+z126	NAB TZM-bl	being processed
+z128	NAB A3R5	provided, pending processing
+z128	NAB TZM-bl	not provided
+z129	NAB TZM-bl	not approved for sharing
+z133	NAB A3R5	provided, pending processing
+z133	NAB TZM-bl	provided, but not included
+z134	ICS	pending study completion
+z134	IFNg ELS	provided, pending processing
+z134	NAB TZM-bl	being processed
+z135	NAB A3R5	not provided
+z135	NAB TZM-bl	provided, pending processing
+z136	ICS	pending study completion
+w101	ICS	added
+z139	NAB TZM-bl	added

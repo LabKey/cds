@@ -23,6 +23,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
+import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
@@ -34,10 +35,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class CDSHelper
@@ -99,21 +102,76 @@ public class CDSHelper
     public static final String ZAP_140 = "ZAP 140";
 
 
-    public static final String[] STUDIES = {"QED 1", "QED 2", "QED 3", "QED 4",
-            "RED 1", "RED 2", "RED 3", "RED 4", "RED 5", "RED 6", "RED 7", "RED 8", "RED 9",
-            "YOYO 55",
-            "ZAP 100", "ZAP 101", "ZAP 102", "ZAP 103", "ZAP 104", "ZAP 105", "ZAP 106", "ZAP 107", "ZAP 108", "ZAP 109", "ZAP 110",
-            "ZAP 111", "ZAP 112", "ZAP 113", "ZAP 114", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118", "ZAP 119", "ZAP 120",
-            "ZAP 121", "ZAP 122", "ZAP 123", "ZAP 124", "ZAP 125", "ZAP 126", "ZAP 127", "ZAP 128", "ZAP 129", "ZAP 130",
-            "ZAP 131", "ZAP 132", "ZAP 133", "ZAP 134", "ZAP 135", "ZAP 136", "ZAP 137", "ZAP 138", "ZAP 139", "ZAP 140"};
+    public static final String[] STUDIES = {QED_1, QED_2, QED_3, QED_4, RED_1, RED_2, RED_3, RED_4, RED_5, RED_6,
+            RED_7, RED_8, RED_9, YOYO_55, ZAP_100, ZAP_101, ZAP_102, ZAP_103, ZAP_104, ZAP_105, ZAP_106, ZAP_107,
+            ZAP_108, ZAP_109, ZAP_110, ZAP_111, ZAP_112, ZAP_113, ZAP_114, ZAP_115, ZAP_116, ZAP_117, ZAP_118,
+            ZAP_119, ZAP_120, ZAP_121, ZAP_122, ZAP_123, ZAP_124, ZAP_125, ZAP_126, ZAP_127, ZAP_128, ZAP_129,
+            ZAP_130, ZAP_131, ZAP_132, ZAP_133, ZAP_134, ZAP_135, ZAP_136, ZAP_137, ZAP_138, ZAP_139, ZAP_140};
 
-    public static final String[] PROT_NAMES = {"ZAP 117", "ZAP 102", "ZAP 136", "ZAP 110", "ZAP 134", "QED 2", "ZAP 135", "ZAP 139"}; //incomplete list, only first and last under each assay in find subjects view.
+    public static final String[] PROT_NAMES = {ZAP_117, ZAP_102, ZAP_136, ZAP_110, ZAP_134, QED_2, ZAP_135, ZAP_139}; //incomplete list, only first and last under each assay in find subjects view.
 
-    public static final String[] PROTS = {"q1", "q2", "q3", "q4", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9",
-            "y55", "z100", "z101", "z102", "z103", "z104", "z105", "z106", "z107", "z108", "z109", "z110", "z111",
-            "z112", "z113", "z114", "z115", "z116", "z117", "z118", "z119", "z120", "z121", "z122", "z123", "z124",
-            "z125", "z126", "z127", "z128", "z129", "z130", "z131", "z132", "z133", "z134", "z135", "z136", "z137",
-            "z138", "z139", "z140", };
+    public static final String PROT_Q1 = "q1";
+    public static final String PROT_Q2 = "q2";
+    public static final String PROT_Q3 = "q3";
+    public static final String PROT_Q4 = "q4";
+    public static final String PROT_R1 = "r1";
+    public static final String PROT_R2 = "r2";
+    public static final String PROT_R3 = "r3";
+    public static final String PROT_R4 =  "r4";
+    public static final String PROT_R5 = "r5";
+    public static final String PROT_R6 = "r6";
+    public static final String PROT_R7 = "r7";
+    public static final String PROT_R8 = "r8";
+    public static final String PROT_R9 = "r9";
+    public static final String PROT_Y55 = "y55";
+    public static final String PROT_Z100 = "z100";
+    public static final String PROT_Z101 = "z101";
+    public static final String PROT_Z102 = "z102";
+    public static final String PROT_Z103 = "z103";
+    public static final String PROT_Z104 = "z104";
+    public static final String PROT_Z105 = "z105";
+    public static final String PROT_Z106 = "z106";
+    public static final String PROT_Z107 = "z107";
+    public static final String PROT_Z108 = "z108";
+    public static final String PROT_Z109 = "z109";
+    public static final String PROT_Z110 = "z110";
+    public static final String PROT_Z111 = "z111";
+    public static final String PROT_Z112 = "z112";
+    public static final String PROT_Z113 = "z113";
+    public static final String PROT_Z114 = "z114";
+    public static final String PROT_Z115 = "z115";
+    public static final String PROT_Z116 = "z116";
+    public static final String PROT_Z117 = "z117";
+    public static final String PROT_Z118 = "z118";
+    public static final String PROT_Z119 = "z119";
+    public static final String PROT_Z120 = "z120";
+    public static final String PROT_Z121 = "z121";
+    public static final String PROT_Z122 = "z122";
+    public static final String PROT_Z123 = "z123";
+    public static final String PROT_Z124 = "z124";
+    public static final String PROT_Z125 = "z125";
+    public static final String PROT_Z126 = "z126";
+    public static final String PROT_Z127 = "z127";
+    public static final String PROT_Z128 = "z128";
+    public static final String PROT_Z129 = "z129";
+    public static final String PROT_Z130 = "z130";
+    public static final String PROT_Z131 = "z131";
+    public static final String PROT_Z132 = "z132";
+    public static final String PROT_Z133 = "z133";
+    public static final String PROT_Z134 = "z134";
+    public static final String PROT_Z135 = "z135";
+    public static final String PROT_Z136 = "z136";
+    public static final String PROT_Z137 = "z137";
+    public static final String PROT_Z138 = "z138";
+    public static final String PROT_Z139 = "z139";
+    public static final String PROT_Z140 = "z140";
+
+    public static final String[] PROTS = {PROT_Q1, PROT_Q2, PROT_Q3, PROT_Q4, PROT_R1, PROT_R2, PROT_R3, PROT_R4, PROT_R5,
+            PROT_R6, PROT_R7, PROT_R8, PROT_R9, PROT_Y55, PROT_Z100, PROT_Z101, PROT_Z102, PROT_Z103, PROT_Z104,
+            PROT_Z105, PROT_Z106, PROT_Z107, PROT_Z108, PROT_Z109, PROT_Z110, PROT_Z111, PROT_Z112, PROT_Z113,
+            PROT_Z114, PROT_Z115, PROT_Z116, PROT_Z117, PROT_Z118, PROT_Z119, PROT_Z120, PROT_Z121, PROT_Z122,
+            PROT_Z123, PROT_Z124, PROT_Z125, PROT_Z126, PROT_Z127, PROT_Z128, PROT_Z129, PROT_Z130, PROT_Z131,
+            PROT_Z132, PROT_Z133, PROT_Z134, PROT_Z135, PROT_Z136, PROT_Z137, PROT_Z138, PROT_Z139, PROT_Z140};
 
     public static final String[] PRODUCTS = {"Acetaminophen, Dextromethorphan Hydrobromide, Doxylamine Succinate",
             "ACETAMINOPHEN, DEXTROMETHORPHAN HYDROBROMIDE, PHENYLEPHRINE HYDROCHLORIDE",
@@ -315,6 +373,7 @@ public class CDSHelper
 
     public static final String CELL_TYPE_CD4 = "CD4+";
     public static final String CELL_TYPE_CD8 = "CD8+";
+    public static final String CELL_TYPE_ALL = "All";
     public static final String[] CELL_TYPES = {CELL_TYPE_CD4, CELL_TYPE_CD8};
 
     public static final String DATA_SUMMARY_PROTEIN = "Protein";
@@ -585,6 +644,67 @@ public class CDSHelper
         _test.waitForElement(Locators.activeDimensionHeaderLocator(dimension));
     }
 
+
+    //Helper function for data availability tests
+    public Locator.XPathLocator getDataRowXPath(String rowText)
+    {
+        return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
+    }
+
+
+    public void setUpPermGroup(String perm_group, Map<String, String> studyPermissions)
+    {
+        _test.goToProjectHome();
+        ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
+        apiPermissionsHelper.createPermissionsGroup(perm_group);
+        if (_test.isElementPresent(Locator.permissionRendered()) && _test.isButtonPresent("Save and Finish"))
+        {
+            _test.clickButton("Save and Finish");
+        }
+
+        for (String study : studyPermissions.keySet())
+        {
+            String permission = studyPermissions.get(study);
+            setStudyPerm(perm_group, study, permission, apiPermissionsHelper);
+        }
+        _test.goToProjectHome();
+        _test._securityHelper.setProjectPerm(perm_group, "Reader");
+        _test.clickButton("Save and Finish");
+    }
+
+    public void setUpUserPerm(String userEmail, String projectPerm, Map<String, String> studyPermissions)
+    {
+        _test._userHelper.deleteUser(userEmail);
+        _test._userHelper.createUser(userEmail, false, true);
+        Ext4Helper.resetCssPrefix();
+        _test.goToProjectHome();
+        ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
+
+        for (String study : studyPermissions.keySet())
+        {
+            String permission = studyPermissions.get(study);
+            setStudyPerm(userEmail, study, permission, apiPermissionsHelper);
+        }
+        _test.goToProjectHome();
+        _test._securityHelper.setProjectPerm(userEmail, projectPerm);
+        _test.clickButton("Save and Finish");
+    }
+
+    private void setStudyPerm(String userOrGroup, String study, String perm, ApiPermissionsHelper apiPermissionsHelper)
+    {
+        _test.goToProjectHome();
+        _test.clickFolder(study);
+
+        apiPermissionsHelper.uncheckInheritedPermissions();
+        _test.clickButton("Save", 0);
+
+        _test.waitForElement(Locator.permissionRendered());
+
+        _test._securityHelper.setProjectPerm(userOrGroup, perm);
+        _test.clickButton("Save and Finish");
+    }
+
+
     public void saveGroup(String name, @Nullable String description)
     {
         saveGroup(name, description, false);
@@ -781,13 +901,11 @@ public class CDSHelper
     public void clickPointInPlot(String cssPathToSvg, int pointIndex)
     {
         clickElementInPlot(cssPathToSvg, pointIndex, "a.point", "path[fill='" + PLOT_POINT_HIGHLIGHT_COLOR + "']");
-//        clickElementInPlot(cssPathToSvg, pointIndex, "a.point");
     }
 
     public void clickHeatPointInPlot(String cssPathToSvg, int pointIndex)
     {
         clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square", "path[style='fill: " + PLOT_POINT_HIGHLIGHT_COLOR + "']");
-//        clickElementInPlot(cssPathToSvg, pointIndex, "a.vis-bin-square");
     }
 
     private void clickElementInPlot(String cssPathToSvg, int pointIndex, String elementTag, String fillStyle)
@@ -870,6 +988,11 @@ public class CDSHelper
         _test.sleep(100);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForText("Filter removed.");
+    }
+
+    public List<WebElement> getActiveFilters()
+    {
+        return Locator.tagWithClass("div", "filterpanel").append(Locator.tagWithClass("div", "activefilter")).findElements(_test.getDriver());
     }
 
     public void clearFilters()
@@ -1005,7 +1128,7 @@ public class CDSHelper
         // So can't use the standard waitForElements, which expects an exact number of elements, so doing this slightly modified version.
         _test.waitFor(() -> 3 <= Locator.xpath("//table[@role='presentation']//tr[@role='row']").findElements(_test.getDriver()).size(), _test.WAIT_FOR_JAVASCRIPT);
 
-        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("dim-selector");
+        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-dim-selector");
         Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
         Locator.XPathLocator activeHeader = header.withClass("active");
 
@@ -1183,6 +1306,8 @@ public class CDSHelper
         changed |= returnVal;
         returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
         changed |= returnVal;
+        returnVal = setStudyDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
+        changed |= returnVal;
 
         if (changed)
         {
@@ -1239,9 +1364,9 @@ public class CDSHelper
 
     }
 
-    private boolean setStaticPath(String path)
+    private boolean setPropertyPath(String path, int inputIndex)
     {
-        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[5]";
+        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[" + inputIndex + "]";
         boolean changed = false;
         String curValue;
 
@@ -1256,6 +1381,17 @@ public class CDSHelper
         return changed;
 
     }
+
+    private boolean setStaticPath(String path)
+    {
+        return setPropertyPath(path, 6);
+    }
+
+    private boolean setStudyDocumentPath(String path)
+    {
+        return setPropertyPath(path, 2);
+    }
+
 
     public void assertPlotTickText(Pattern p)
     {
@@ -1401,10 +1537,31 @@ public class CDSHelper
     public static class Locators
     {
         public static Locator.XPathLocator barLabel = Locator.tagWithClass("span", "barlabel");
+        public static Locator.XPathLocator INFO_PANE_HAS_DATA = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in active filters");
+        public static Locator.XPathLocator INFO_PANE_NO_DATA = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in active filters");
+        public static String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
 
         public static Locator.XPathLocator getByLocator(String byNoun)
         {
             return Locator.xpath("//div[contains(@class, 'bycolumn')]//span[contains(@class, 'label') and contains(text(), '" + byNoun + "')]");
+        }
+
+        public static Locator.XPathLocator getSharedGroupLoc(String groupName)
+        {
+            return getGroupLoc(true, groupName);
+        }
+
+        public static Locator.XPathLocator getPrivateGroupLoc(String groupName)
+        {
+            return getGroupLoc(false, groupName);
+        }
+
+        public static Locator.XPathLocator getGroupLoc(boolean isShared, String groupName)
+        {
+            return Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), '" +
+                    (isShared ? "Curated groups and plots" : "My saved groups and plots") + "')]" +
+                    "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" +
+                    groupName + "')]");
         }
 
         public static Locator.XPathLocator cdsButtonLocator(String text)
@@ -1492,6 +1649,11 @@ public class CDSHelper
         {
             return Locator.tagWithClass("div", "filterpanel").append(Locator.tagWithClass("div", "activefilter")).index(index);
         }
+
+        public static Locator.XPathLocator studyReportLink(String studyName)
+        {
+            return Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a[contains(text(), '" + studyName + "')]");
+        }
     }
 
     // Used to identify data in the time axis.
@@ -1553,5 +1715,80 @@ public class CDSHelper
         _test.mouseOver(wel);
         Actions builder = new Actions(_test.getDriver());
         builder.clickAndHold().moveByOffset(xOffset + 1, yOffset + 1).release().build().perform();
+    }
+
+    public void validateDocLink(WebElement documentLink, String expectedFileName)
+    {
+        File docFile;
+        String foundDocumentName;
+
+        // Since this will be a downloaded document, make sure the name is "cleaned up".
+        expectedFileName = expectedFileName.replace("%20", " ").toLowerCase();
+
+        _test.log("Now click on the document link.");
+        docFile = _test.clickAndWaitForDownload(documentLink);
+        foundDocumentName = docFile.getName();
+        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + expectedFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(expectedFileName));
+
+    }
+
+    public void validatePDFLink(WebElement documentLink, String pdfFileName)
+    {
+        final String PLUGIN_XPATH = "//embed[@name='plugin']";
+
+        _test.log("Now click on the pdf link.");
+        documentLink.click();
+        _test.sleep(10000);
+        _test.switchToWindow(1);
+
+        // Since this is a pdf file, it will be validated in the url, so replace any " " with %20.
+        pdfFileName = pdfFileName.replace(" ", "%20").toLowerCase();
+
+        _test.log("Validate that the pdf document was loaded into the browser.");
+        _test.assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
+        Assert.assertTrue("The embedded element is not a pdf plugin", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
+        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'. Found: '" + _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase() + "'.", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
+
+        _test.log("Close this window.");
+        _test.getDriver().close();
+
+        _test.log("Go back to the main window.");
+        _test.switchToMainWindow();
+    }
+
+    // Return the visible grant document link, null otherwise.
+    public WebElement getVisibleGrantDocumentLink()
+    {
+        final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Grant Affiliation:']/following-sibling::td//a";
+        WebElement documentLinkElement = null;
+
+        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
+        {
+            if(we.isDisplayed())
+            {
+                documentLinkElement = we;
+                break;
+            }
+        }
+
+        return documentLinkElement;
+    }
+
+    public List<WebElement> getVisibleStudyProtocolLinks()
+    {
+        final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Documents:']/following-sibling::td//a";
+        List<WebElement> documentLinkElements = null;
+
+        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
+        {
+            if(we.isDisplayed())
+            {
+                if (documentLinkElements == null)
+                    documentLinkElements = new ArrayList<>();
+                documentLinkElements.add(we);
+            }
+        }
+
+        return documentLinkElements;
     }
 }

@@ -20,15 +20,16 @@ Ext.define('Connector.view.module.StudyHeader', {
                         '<td class="item-label">Network:</td><td class="item-value">{network:htmlEncode}</td>',
                     '</tr>',
                 '</tpl>',
-                '<tpl if="cavd_affiliation">',
+                '<tpl if="cavd_affiliation && cavd_affiliation_file_has_permission">',
                     '<tr>',
                         '<td class="item-label">Grant Affiliation:</td>',
                         '<td class="item-value">',
-                            '<tpl if="!cavd_affiliation_filename || cavd_affiliation_file_exists !== true">',
-                                '{cavd_affiliation:htmlEncode}</td>',
-                            '<tpl else>',
-                                '<a href="' + LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + '{cavd_affiliation_filename}" target="_blank">{cavd_affiliation:htmlEncode}</a></td>',
-                        '</tpl>',
+                            '<tpl if="cavd_affiliation_file_accessible">',
+                                '<a href="{cavd_affiliation_file_path}" target="_blank">{cavd_affiliation:htmlEncode}</a>' +
+                            '<tpl elseif="cavd_affiliation_file_has_permission">',
+                                '{cavd_affiliation:htmlEncode}' +
+                            '</tpl>',
+                        '</td>',
                     '</tr>',
                 '</tpl>',
                 '<tpl if="strategy">',
@@ -77,7 +78,7 @@ Ext.define('Connector.view.module.StudyHeader', {
                         '<td class="item-value">{[Connector.app.view.LearnSummary.dateRenderer(values.followup_complete_date)]}</td>',
                     '</tr>',
                 '</tpl>',
-                '<tpl if="protocol_docs_and_study_plans.length &gt; 0">',
+                '<tpl if="protocol_docs_and_study_plans.length &gt; 0 && protocol_docs_and_study_plans_has_permission">',
                     '<tpl for="protocol_docs_and_study_plans">',
                         '<tr>',
                             '<tpl if="xindex == 1">',
@@ -86,8 +87,8 @@ Ext.define('Connector.view.module.StudyHeader', {
                                 '<td class="item-label">&nbsp;</td>',
                             '</tpl>',
                             '<tpl if="isLinkValid">',
-                                '<td class="item-value"><a href="{fileName}" target="_blank">{label:htmlEncode}</a> {suffix}</td>',
-                            '<tpl else>',
+                                '<td class="item-value"><a href="{filePath}" target="_blank">{label:htmlEncode}</a> {suffix}</td>',
+                            '<tpl elseif="hasPermission">',
                                 '<td class="item-value">{label:htmlEncode}</td>',
                             '</tpl>',
                         '</tr>',
@@ -103,35 +104,24 @@ Ext.define('Connector.view.module.StudyHeader', {
         var data = this.initialConfig.data.model.data;
         data['title_studyheader'] = this.initialConfig.data.title;
 
-        if (data['cavd_affiliation_file_exists'] !== true) {  // if it's true, we've already verified this link is good previously
-            var cavdLinkIsValid = function() {
-                data['cavd_affiliation_file_exists'] = true;
-                this.update(data);
-            };
-            this.on("afterrender", function() {
-                this.validateDocLinks([{
-                    fileName: LABKEY.contextPath + LABKEY.moduleContext.cds.StaticPath + data.cavd_affiliation_filename,
-                    isLinkValid: false
-                }], cavdLinkIsValid, function() {
-                    this.update(data);
-                })
-            });
-        }
-
-        if (data.protocol_docs_and_study_plans.length > 0) {
-            var docIsValidAction = function(doc) {
-                doc.isLinkValid = true;
-                this.update(data);
-            };
-            this.on("afterrender", function() {
-                this.validateDocLinks(data.protocol_docs_and_study_plans, docIsValidAction, function() {
-                    this.update(data);
-                });
-            }, this);
-        }
-
-        if (data['cavd_affiliation_file_exists'] === true && data.protocol_docs_and_study_plans.length == 0) {
+        var cavdLinkIsValid = function (doc, result) {
+            data['cavd_affiliation_file_accessible'] = result;
             this.update(data);
-        }
+        };
+        var docIsValidAction = function (doc, status) {
+            doc.isLinkValid = status;
+            this.update(data);
+        };
+        this.on("afterrender", function () {
+            this.validateDocLinks([{
+                filePath: data.cavd_affiliation_file_path,
+                isLinkValid: Ext.isBoolean(data['cavd_affiliation_file_accessible']) ? data['cavd_affiliation_file_accessible'] : undefined,
+                hasPermission: data.cavd_affiliation_file_has_permission
+            }], cavdLinkIsValid);
+
+            if (data.protocol_docs_and_study_plans.length > 0) {
+                this.validateDocLinks(data.protocol_docs_and_study_plans, docIsValidAction);
+            }
+        });
     }
 });
