@@ -29,7 +29,6 @@ import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -486,7 +485,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
 
         assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
 
-        Assert.assertEquals(activeFilters.get(0).findElement(By.className("sel-label")).getText(), "Subject (Sex)", "Filter selection not as expecxted.");
+        assertEquals(activeFilters.get(0).findElement(By.className("sel-label")).getText(), "Subject (Sex)", "Filter selection not as expecxted.");
 
         log("Clear the filter again and lets go back and undo everything.");
         cds.clearFilters();
@@ -509,8 +508,8 @@ public class CDSGroupTest extends CDSReadOnlyTest
 
         assertEquals("Number of active filters not as expected.", 2, activeFilters.size());
 
-        Assert.assertEquals("Study", activeFilters.get(0).findElement(By.className("sel-label")).getText(), "First filter selection not as expecxted.");
-        Assert.assertEquals( "Subject (Sex)", activeFilters.get(1).findElement(By.className("sel-label")).getText(), "Second filter selection not as expecxted.");
+        assertEquals("First filter selection not as expecxted.", "Study", activeFilters.get(0).findElement(By.className("sel-label")).getText());
+        assertEquals("Second filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(1).findElement(By.className("sel-label")).getText());
 
         log("Ok, looks good. Clear the filter, delete the group, and test is done.");
         cds.goToAppHome();
