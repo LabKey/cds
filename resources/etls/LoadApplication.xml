@@ -159,5 +159,11 @@
             <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">
             </taskref>
         </transform>
+
+        <transform id="ClearImportTables" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.ClearImportTask">
+            </taskref>
+        </transform>
+
     </transforms>
 </etl>
