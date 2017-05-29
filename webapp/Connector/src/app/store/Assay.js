@@ -124,7 +124,7 @@ Ext.define('Connector.app.store.Assay', {
                 sql = sql + "SELECT DISTINCT '"
                 + assayName + "' as Assay, '"
                 + columns[i].label + "' as columnName, "
-                + "CAST(" + columns[i].name + " AS VARCHAR) as Analyte FROM ds_" + assayName.toLowerCase();
+                + "CAST(" + columns[i].name + " AS VARCHAR) as Analyte FROM study." + assayName.toLowerCase();
                 if (i < columns.length - 1) {
                     sql = sql + "\n UNION \n";
                 }
