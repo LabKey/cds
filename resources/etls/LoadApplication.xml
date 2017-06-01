@@ -154,16 +154,10 @@
                 </settings>
             </taskref>
         </transform>
-        <transform id="ClearImportTables" type="TaskrefTransformStep">
-            <taskref ref="org.labkey.cds.data.steps.ClearImportTask">
-            </taskref>
-        </transform>
-
         <!--Should occur last-->
         <transform id="ClearAndWarmCube" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">
             </taskref>
         </transform>
-
     </transforms>
 </etl>

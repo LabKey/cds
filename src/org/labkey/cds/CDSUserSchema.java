@@ -27,10 +27,12 @@ import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.SimpleUserSchema;
 import org.labkey.api.security.User;
+import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.visualization.VisualizationProvider;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -44,6 +46,9 @@ public class CDSUserSchema extends SimpleUserSchema
 {
     public static final String SCHEMA_NAME = "CDS";
     public static final String METADATA_SCHEMA_NAME = "metadata";
+    private static final List<String> SUBJECT_IMPORT_TABLES = Arrays.asList("import_ics", "import_nab", "import_els_ifng", "import_bama",
+            "import_studypartgrouparmsubject", "import_studypartgrouparmproduct", "import_studypartgrouparmvisit", "import_studypartgrouparmvisitproduct",
+            "import_studypartgrouparm", "import_studysubject");
 
     private boolean metadata = false;
 
@@ -52,9 +57,25 @@ public class CDSUserSchema extends SimpleUserSchema
         super(SCHEMA_NAME, "Schema for DataSpace. Detail data is stored in datasets of study schema.", user, container, DbSchema.get("cds"));
     }
 
+
+    @Override
+    public synchronized Set<String> getVisibleTableNames()
+    {
+        Set<String> available = new CaseInsensitiveTreeSet();
+        available.addAll(super.getVisibleTableNames());
+
+        if (!getContainer().hasPermission(getUser(), AdminPermission.class))
+            available.removeAll(SUBJECT_IMPORT_TABLES);
+
+        return Collections.unmodifiableSet(available);
+    }
+
     @Override
     protected TableInfo createWrappedTable(String name, @NotNull TableInfo sourceTable)
     {
+        if (SUBJECT_IMPORT_TABLES.contains(name.toLowerCase()) && !getContainer().hasPermission(getUser(), AdminPermission.class))
+            return null;
+
         return new CDSSimpleTable(this, sourceTable).init();
     }
 
