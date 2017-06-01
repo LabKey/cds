@@ -105,7 +105,7 @@ public class CDSUserSchema extends SimpleUserSchema
         {
             CDSUserSchema cds = new CDSUserSchema(getUser(), getContainer())
             {
-                private final Set<String> _metatables = new CaseInsensitiveTreeSet(Arrays.asList("study", "studyproductmap", "studypartgrouparmproduct"));
+                private final Set<String> _metatables = new CaseInsensitiveTreeSet(Arrays.asList("study", "studyproductmap", "studypartgrouparmproduct", "studyassay"));
                 @Override
                 public String getName()
                 {
