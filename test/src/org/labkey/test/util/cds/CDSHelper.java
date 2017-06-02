@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.TestFileUtils;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
 import org.labkey.test.util.ApiPermissionsHelper;
@@ -546,6 +547,11 @@ public class CDSHelper
     public static Dimension idealWindowSize = new Dimension(1280, 1040);
     public static Dimension defaultWindowSize = new Dimension(1280, 1024);
 
+    // Admin only import tables
+    public static  String[] IMPORT_TABLES_WITH_ADMIN_ACCESS = {"import_ics", "import_nab", "import_els_ifng", "import_bama",
+            "import_studypartgrouparmsubject", "import_studypartgrouparmproduct", "import_studypartgrouparmvisit", "import_studypartgrouparmvisitproduct",
+            "import_studypartgrouparm", "import_studysubject"};
+
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
     {
@@ -651,8 +657,12 @@ public class CDSHelper
         return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
     }
 
-
     public void setUpPermGroup(String perm_group, Map<String, String> studyPermissions)
+    {
+        setUpPermGroup(perm_group, studyPermissions, "Reader");
+    }
+
+    public void setUpPermGroup(String perm_group, Map<String, String> studyPermissions, String projectPerm)
     {
         _test.goToProjectHome();
         ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
@@ -668,7 +678,7 @@ public class CDSHelper
             setStudyPerm(perm_group, study, permission, apiPermissionsHelper);
         }
         _test.goToProjectHome();
-        _test._securityHelper.setProjectPerm(perm_group, "Reader");
+        _test._securityHelper.setProjectPerm(perm_group, projectPerm);
         _test.clickButton("Save and Finish");
     }
 
@@ -1308,6 +1318,8 @@ public class CDSHelper
         changed |= returnVal;
         returnVal = setStudyDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
         changed |= returnVal;
+        returnVal = setCDSImportFolderPath(TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent());
+        changed |= returnVal;
 
         if (changed)
         {
@@ -1384,14 +1396,18 @@ public class CDSHelper
 
     private boolean setStaticPath(String path)
     {
-        return setPropertyPath(path, 6);
+        return setPropertyPath(path, 7);
     }
 
     private boolean setStudyDocumentPath(String path)
     {
-        return setPropertyPath(path, 2);
+        return setPropertyPath(path, 3);
     }
 
+    private boolean setCDSImportFolderPath(String path)
+    {
+        return setPropertyPath(path, 2);
+    }
 
     public void assertPlotTickText(Pattern p)
     {

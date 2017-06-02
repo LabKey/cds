@@ -51,6 +51,7 @@ public class CDSModule extends DefaultModule
     public static final String CMS = "CMS";
     public static final String GETTING_STARTED_VIDEO_URL = "GettingStartedVideoURL";
     public static final String STUDY_DOCUMENT_PATH = "StudyDocumentPath";
+    public static final String CDS_IMPORT_PATH = "CDSImportPath";
 
 
     final ModuleProperty _showHiddenVariables;
@@ -59,6 +60,7 @@ public class CDSModule extends DefaultModule
     final ModuleProperty _cmsURL;
     final ModuleProperty _startedVideoURL;
     final ModuleProperty _studyDocumentPath;
+    final ModuleProperty _importFolderPath;
 
     public CDSModule()
     {
@@ -93,6 +95,11 @@ public class CDSModule extends DefaultModule
         _studyDocumentPath.setDescription("Full webdav path to which study documents are located");
         _studyDocumentPath.setCanSetPerContainer(false);
         addModuleProperty(_studyDocumentPath);
+
+        _importFolderPath = new ModuleProperty(this, CDS_IMPORT_PATH);
+        _importFolderPath.setDescription("File path that cds import files are located");
+        _importFolderPath.setCanSetPerContainer(false);
+        addModuleProperty(_importFolderPath);
     }
 
     public String getName()

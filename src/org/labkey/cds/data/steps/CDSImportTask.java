@@ -35,6 +35,7 @@ import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
 import org.labkey.api.security.User;
 import org.labkey.api.util.DateUtil;
+import org.labkey.cds.CDSManager;
 import org.labkey.cds.data.CDSImportCopyConfig;
 import org.labkey.cds.data.TSVCopyConfig;
 
@@ -47,7 +48,7 @@ import java.util.List;
 public class CDSImportTask extends TaskRefTaskImpl
 {
     private static final String DIRECTORY = "directory";
-    private static final String PIPELINE_TOKEN = "{pipeline}";
+    private static final String PATH_TOKEN = "{importfolder}";
 
     private static CDSImportCopyConfig[] dataspaceTables = new CDSImportCopyConfig[]
     {
@@ -99,16 +100,16 @@ public class CDSImportTask extends TaskRefTaskImpl
     {
         String dir = settings.get(DIRECTORY);
 
-        if (dir.contains(PIPELINE_TOKEN))
+        if (dir.contains(PATH_TOKEN))
         {
-            PipeRoot pipelineRoot = PipelineService.get().getPipelineRootSetting(containerUser.getContainer());
-            if (null != pipelineRoot)
+            String importFolderPath = CDSManager.get().getCDSImportFolderPath(containerUser.getContainer());
+            if (null != importFolderPath)
             {
-                dir = dir.replace(PIPELINE_TOKEN, pipelineRoot.getRootPath().getPath());
+                dir = dir.replace(PATH_TOKEN, importFolderPath);
             }
             else
             {
-                throw new PipelineJobException(PIPELINE_TOKEN + " was found in the path but the pipeline root has not been established for folder: " + containerUser.getContainer().getPath());
+                throw new PipelineJobException(PATH_TOKEN + " has not been established for folder: " + containerUser.getContainer().getPath());
             }
         }
 

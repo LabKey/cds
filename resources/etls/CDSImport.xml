@@ -6,7 +6,7 @@
         <transform id="CDSImport" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.CDSImportTask">
                 <settings>
-                    <setting name="directory" value="{pipeline}/cdsimport"/>
+                    <setting name="directory" value="{importfolder}/cdsimport"/>
                 </settings>
             </taskref>
         </transform>
