@@ -485,7 +485,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
 
         assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
 
-        assertEquals(activeFilters.get(0).findElement(By.className("sel-label")).getText(), "Subject (Sex)", "Filter selection not as expecxted.");
+        assertEquals("Filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(0).findElement(By.className("sel-label")).getText());
 
         log("Clear the filter again and lets go back and undo everything.");
         cds.clearFilters();
