@@ -63,6 +63,13 @@
             <column columnName="study_clintrials_id"/>
         </columns>
     </table>
+    <table tableName="import_studygroups" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="group"/>
+            <column columnName="role"/>
+        </columns>
+    </table>
     <table tableName="import_lab" tableDbType="TABLE">
         <columns>
             <column columnName="lab_code"/>

@@ -53,6 +53,7 @@ public class CDSImportTask extends TaskRefTaskImpl
     {
         // Core Tables
         new TSVCopyConfig("Study"),
+        new TSVCopyConfig("StudyGroups"),
         new TSVCopyConfig("Product"),
         new TSVCopyConfig("Assay"),
 //        new TSVCopyConfig("Personnel"),

@@ -35,13 +35,24 @@ import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
+import org.labkey.api.security.Group;
+import org.labkey.api.security.GroupManager;
+import org.labkey.api.security.MutableSecurityPolicy;
+import org.labkey.api.security.RoleAssignment;
+import org.labkey.api.security.SecurityManager;
+import org.labkey.api.security.SecurityPolicyManager;
 import org.labkey.api.security.User;
+import org.labkey.api.security.UserPrincipal;
+import org.labkey.api.security.roles.Role;
+import org.labkey.api.security.roles.RoleManager;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.study.TimepointType;
 import org.labkey.api.util.DateUtil;
+import org.labkey.api.util.Pair;
 import org.labkey.cds.CDSSchema;
 import org.labkey.cds.CDSSimpleTable;
 import org.labkey.cds.CDSUserSchema;
+import org.labkey.security.xml.GroupEnumType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +61,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class PopulateStudiesTask extends AbstractPopulateTask
 {
@@ -61,6 +74,9 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         // Clean-up old studies and ensure containers for all importStudies
         cleanContainers(importStudies, project, user, logger);
         ensureContainers(importStudies, project, user, logger);
+
+        // Set permissions
+        ensurePermissions(logger);
 
         // Get the coalesced metadata for the studies (including container)
         Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
@@ -135,6 +151,99 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         logger.info("Deleted " + deleted + " studies in " + DateUtil.formatDuration(finish - start) + ".");
     }
 
+    private void ensurePermissions(Logger logger) throws PipelineJobException
+    {
+        QuerySchema schema = DefaultSchema.get(user, project).getSchema("cds");
+
+        if (null == schema)
+            throw new PipelineJobException("Unable to find cds schema.");
+
+        TableInfo importStudyGroups = schema.getTable("import_studygroups");
+
+        if (null == importStudyGroups)
+            throw new PipelineJobException("Unable to find cds.import_studygroups table.");
+
+        SQLFragment sql = new SQLFragment("SELECT * FROM ").append(importStudyGroups);
+        Map<String, Object>[] importStudies = new SqlSelector(importStudyGroups.getSchema(), sql).getMapArray();
+
+        // Map((Study, Role) -> Set(Groups))
+        Map<Pair<String, String>, Set<String>> studyRoleGroups = new HashMap<>();
+
+        for (Map<String, Object> study : importStudies)
+        {
+            String prot = (String) study.get("prot");
+            String role = (String) study.get("role");
+            String group = (String) study.get("group");
+
+            Pair<String, String> key = new Pair<>(prot, role);
+            if (!studyRoleGroups.containsKey(key))
+            {
+                studyRoleGroups.put(key, new HashSet<>());
+            }
+
+            studyRoleGroups.get(key).add(group);
+        }
+
+        Map<String, Role> simpleNameToRole = new HashMap<>();
+        for (Role r : RoleManager.getAllRoles())
+        {
+            simpleNameToRole.put(r.getName(), r);
+        }
+
+        // Wipes out previous settings
+        for (Container c : ContainerManager.getAllChildren(project))
+        {
+            MutableSecurityPolicy policy = (new MutableSecurityPolicy(c));
+            SecurityPolicyManager.savePolicy(policy);
+        }
+
+        // Creates reference list of container names
+        List<String> allContainerNames = new ArrayList<>(ContainerManager.getAllChildren(project).size());
+        for (Container c : ContainerManager.getAllChildren(project))
+        {
+            if (!c.equals(project)) {
+                allContainerNames.add(c.getName());
+            }
+        }
+
+        for (Map.Entry<Pair<String, String>, Set<String>> entry : studyRoleGroups.entrySet())
+        {
+            Container c = ContainerManager.getChild(project, entry.getKey().getKey());
+            allContainerNames.remove(c.getName());
+            MutableSecurityPolicy policy = (new MutableSecurityPolicy(c));
+
+            if (entry.getKey().getValue().equals("*") || entry.getValue().contains("*"))
+            {
+                if(! (entry.getKey().getValue().equals("*") && entry.getValue().contains("*")))
+                {
+                    logger.error("Permissions incorrectly specified for project" + c.getName());
+                }
+
+                SecurityManager.setInheritPermissions(c);
+            }
+            else {
+                Role role = simpleNameToRole.get(entry.getKey().getValue());
+                for (String groupName : entry.getValue())
+                {
+                    UserPrincipal principal = GroupManager.getGroup(c, groupName, GroupEnumType.SITE);
+                    if (principal == null)
+                    {
+                        logger.warn("Non-existent group in role assignment for role " + role.getName() + " will be ignored: " + groupName);
+                    }
+                    else
+                    {
+                        policy.addRoleAssignment(principal, role);
+                    }
+                }
+                SecurityPolicyManager.savePolicy(policy);
+            }
+        }
+
+        for (String cName : allContainerNames)
+        {
+            logger.error("Permissions not specified for container: " + cName);
+        }
+    }
 
     private void ensureContainers(Set<String> importStudies, Container project, User user, Logger logger)
     {
