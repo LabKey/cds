@@ -25,10 +25,8 @@ import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.dataiterator.DataIteratorBuilder;
 import org.labkey.api.dataiterator.DataIteratorContext;
-import org.labkey.api.pipeline.PipeRoot;
 import org.labkey.api.pipeline.PipelineJob;
 import org.labkey.api.pipeline.PipelineJobException;
-import org.labkey.api.pipeline.PipelineService;
 import org.labkey.api.pipeline.RecordedActionSet;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.QueryUpdateService;
@@ -36,6 +34,7 @@ import org.labkey.api.query.ValidationException;
 import org.labkey.api.security.User;
 import org.labkey.api.util.DateUtil;
 import org.labkey.cds.CDSManager;
+import org.labkey.cds.CDSModule;
 import org.labkey.cds.data.CDSImportCopyConfig;
 import org.labkey.cds.data.TSVCopyConfig;
 
@@ -109,7 +108,7 @@ public class CDSImportTask extends TaskRefTaskImpl
             }
             else
             {
-                throw new PipelineJobException(PATH_TOKEN + " has not been established for folder: " + containerUser.getContainer().getPath());
+                throw new PipelineJobException(CDSModule.CDS_IMPORT_PATH + " has not been established for folder: " + containerUser.getContainer().getPath());
             }
         }
 
