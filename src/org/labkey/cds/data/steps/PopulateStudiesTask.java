@@ -75,8 +75,8 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         cleanContainers(importStudies, project, user, logger);
         ensureContainers(importStudies, project, user, logger);
 
-        // Set permissions
-        ensurePermissions(logger);
+        // Set permissions - Destroys importStudies set.
+        ensurePermissions(logger, importStudies);
 
         // Get the coalesced metadata for the studies (including container)
         Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
@@ -151,7 +151,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         logger.info("Deleted " + deleted + " studies in " + DateUtil.formatDuration(finish - start) + ".");
     }
 
-    private void ensurePermissions(Logger logger) throws PipelineJobException
+    private void ensurePermissions(Logger logger, Set<String> studiesStillNeedingPermissions) throws PipelineJobException
     {
         QuerySchema schema = DefaultSchema.get(user, project).getSchema("cds");
 
@@ -164,82 +164,91 @@ public class PopulateStudiesTask extends AbstractPopulateTask
             throw new PipelineJobException("Unable to find cds.import_studygroups table.");
 
         SQLFragment sql = new SQLFragment("SELECT * FROM ").append(importStudyGroups);
-        Map<String, Object>[] importStudies = new SqlSelector(importStudyGroups.getSchema(), sql).getMapArray();
+        Map<String, Object>[] importPermissions = new SqlSelector(importStudyGroups.getSchema(), sql).getMapArray();
 
-        // Map((Study, Role) -> Set(Groups))
-        Map<Pair<String, String>, Set<String>> studyRoleGroups = new HashMap<>();
+        // Map(Study -> Map(Role -> Set(Groups)))
+        Map<String, Map<String, Set<String>>> studyRoleGroups = new HashMap<>();
 
-        for (Map<String, Object> study : importStudies)
+        for (Map<String, Object> study : importPermissions)
         {
             String prot = (String) study.get("prot");
             String role = (String) study.get("role");
             String group = (String) study.get("group");
 
-            Pair<String, String> key = new Pair<>(prot, role);
-            if (!studyRoleGroups.containsKey(key))
-            {
-                studyRoleGroups.put(key, new HashSet<>());
+            if (!studyRoleGroups.containsKey(prot)) {
+                studyRoleGroups.put(prot, new HashMap<>());
             }
-
-            studyRoleGroups.get(key).add(group);
+            if (!studyRoleGroups.get(prot).containsKey(role)) {
+                studyRoleGroups.get(prot).put(role, new HashSet<>());
+            }
+            studyRoleGroups.get(prot).get(role).add(group);
         }
 
+        // Cache simple names for roles
         Map<String, Role> simpleNameToRole = new HashMap<>();
         for (Role r : RoleManager.getAllRoles())
         {
             simpleNameToRole.put(r.getName(), r);
         }
 
-        // Wipes out previous settings
-        for (Container c : ContainerManager.getAllChildren(project))
+        // Cache for groups
+        Map<String, UserPrincipal> groupPrincipalCache = new HashMap<>();
+
+        for (Map.Entry<String, Map<String, Set<String>>> entry : studyRoleGroups.entrySet())
         {
-            MutableSecurityPolicy policy = (new MutableSecurityPolicy(c));
+            Container c = ContainerManager.getChild(project, entry.getKey());
+
+            // Wipe out previous settings
+            MutableSecurityPolicy policy = (new MutableSecurityPolicy(c.getPolicy()));
+
+            Map<String, Set<String>> roleGroupsMap = entry.getValue();
+
+            //inherit permissions case:
+            if (roleGroupsMap.keySet().contains("*")) {
+                if (roleGroupsMap.keySet().size() == 1 &&
+                        roleGroupsMap.get("*").size() == 1 &&
+                        roleGroupsMap.get("*").contains("*"))
+                {
+                    studiesStillNeedingPermissions.remove(c.getName());
+                    SecurityManager.setInheritPermissions(c);
+                }
+                else
+                {
+                    logger.error("Permissions incorrectly specified for container: " + c.getName());
+                }
+            }
+            else {
+                for (Map.Entry<String, Set<String>> roleEntry : roleGroupsMap.entrySet())
+                {
+                    Role role = simpleNameToRole.get(roleEntry.getKey());
+                    for (String groupName : roleEntry.getValue())
+                    {
+                        UserPrincipal principal;
+                        if (groupPrincipalCache.containsKey(groupName))
+                        {
+                            principal = groupPrincipalCache.get(groupName);
+                        }
+                        else
+                        {
+                            principal = GroupManager.getGroup(c, groupName, GroupEnumType.SITE);
+                            groupPrincipalCache.put(groupName, principal);
+                        }
+                        if (principal == null)
+                        {
+                            logger.warn("Non-existent group in role assignment for role " + role.getName() + " will be ignored: " + groupName);
+                        }
+                        else
+                        {
+                            studiesStillNeedingPermissions.remove(c.getName());
+                            policy.addRoleAssignment(principal, role);
+                        }
+                    }
+                }
+            }
             SecurityPolicyManager.savePolicy(policy);
         }
 
-        // Creates reference list of container names
-        List<String> allContainerNames = new ArrayList<>(ContainerManager.getAllChildren(project).size());
-        for (Container c : ContainerManager.getAllChildren(project))
-        {
-            if (!c.equals(project)) {
-                allContainerNames.add(c.getName());
-            }
-        }
-
-        for (Map.Entry<Pair<String, String>, Set<String>> entry : studyRoleGroups.entrySet())
-        {
-            Container c = ContainerManager.getChild(project, entry.getKey().getKey());
-            allContainerNames.remove(c.getName());
-            MutableSecurityPolicy policy = (new MutableSecurityPolicy(c));
-
-            if (entry.getKey().getValue().equals("*") || entry.getValue().contains("*"))
-            {
-                if(! (entry.getKey().getValue().equals("*") && entry.getValue().contains("*")))
-                {
-                    logger.error("Permissions incorrectly specified for project" + c.getName());
-                }
-
-                SecurityManager.setInheritPermissions(c);
-            }
-            else {
-                Role role = simpleNameToRole.get(entry.getKey().getValue());
-                for (String groupName : entry.getValue())
-                {
-                    UserPrincipal principal = GroupManager.getGroup(c, groupName, GroupEnumType.SITE);
-                    if (principal == null)
-                    {
-                        logger.warn("Non-existent group in role assignment for role " + role.getName() + " will be ignored: " + groupName);
-                    }
-                    else
-                    {
-                        policy.addRoleAssignment(principal, role);
-                    }
-                }
-                SecurityPolicyManager.savePolicy(policy);
-            }
-        }
-
-        for (String cName : allContainerNames)
+        for (String cName : studiesStillNeedingPermissions)
         {
             logger.error("Permissions not specified for container: " + cName);
         }

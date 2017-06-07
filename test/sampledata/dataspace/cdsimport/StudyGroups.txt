@@ -43,6 +43,7 @@ z112	FHCRC Approved	Editor
 q2	*	*
 z113	FHCRC Approved	Editor
 q3	FHCRC Approved	Editor
+q3	Data Import	Editor
 z114	FHCRC Approved	Editor
 z115	FHCRC Approved	Editor
 q4	FHCRC Approved	Editor
