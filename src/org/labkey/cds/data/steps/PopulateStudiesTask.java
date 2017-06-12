@@ -163,7 +163,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         if (null == importStudyGroups)
             throw new PipelineJobException("Unable to find cds.import_studygroups table.");
 
-        SQLFragment sql = new SQLFragment("SELECT * FROM ").append(importStudyGroups);
+        SQLFragment sql = new SQLFragment("SELECT * FROM ").append(importStudyGroups, "studyGroups");
         Map<String, Object>[] importPermissions = new SqlSelector(importStudyGroups.getSchema(), sql).getMapArray();
 
         // Map(Study -> Map(Role -> Set(Groups)))
@@ -196,56 +196,71 @@ public class PopulateStudiesTask extends AbstractPopulateTask
 
         for (Map.Entry<String, Map<String, Set<String>>> entry : studyRoleGroups.entrySet())
         {
-            Container c = ContainerManager.getChild(project, entry.getKey());
+            if (project.hasChild(entry.getKey()))
+            {
+                Container c = ContainerManager.getChild(project, entry.getKey());
 
-            // Wipe out previous settings
-            MutableSecurityPolicy policy = (new MutableSecurityPolicy(c.getPolicy()));
+                // Wipe out previous settings
+                MutableSecurityPolicy policy = (new MutableSecurityPolicy(c.getPolicy()));
 
-            Map<String, Set<String>> roleGroupsMap = entry.getValue();
+                Map<String, Set<String>> roleGroupsMap = entry.getValue();
 
-            //inherit permissions case:
-            if (roleGroupsMap.keySet().contains("*")) {
-                if (roleGroupsMap.keySet().size() == 1 &&
-                        roleGroupsMap.get("*").size() == 1 &&
-                        roleGroupsMap.get("*").contains("*"))
-                {
-                    studiesStillNeedingPermissions.remove(c.getName());
-                    SecurityManager.setInheritPermissions(c);
-                }
-                else
-                {
-                    logger.error("Permissions incorrectly specified for container: " + c.getName());
-                }
-            }
-            else {
-                for (Map.Entry<String, Set<String>> roleEntry : roleGroupsMap.entrySet())
-                {
-                    Role role = simpleNameToRole.get(roleEntry.getKey());
-                    for (String groupName : roleEntry.getValue())
+                //inherit permissions case:
+                if (roleGroupsMap.keySet().contains("*")) {
+                    if (roleGroupsMap.keySet().size() == 1 &&
+                            roleGroupsMap.get("*").size() == 1 &&
+                            roleGroupsMap.get("*").contains("*"))
                     {
-                        UserPrincipal principal;
-                        if (groupPrincipalCache.containsKey(groupName))
+                        studiesStillNeedingPermissions.remove(c.getName());
+                        SecurityManager.setInheritPermissions(c);
+                    }
+                    else
+                    {
+                        logger.error("Permissions incorrectly specified for container: " + c.getName());
+                    }
+                }
+                else {
+                    for (Map.Entry<String, Set<String>> roleEntry : roleGroupsMap.entrySet())
+                    {
+                        Role role = simpleNameToRole.get(roleEntry.getKey());
+
+                        if (role != null)
                         {
-                            principal = groupPrincipalCache.get(groupName);
+                            for (String groupName : roleEntry.getValue())
+                            {
+                                UserPrincipal principal;
+                                if (groupPrincipalCache.containsKey(groupName))
+                                {
+                                    principal = groupPrincipalCache.get(groupName);
+                                }
+                                else
+                                {
+                                    principal = GroupManager.getGroup(c, groupName, GroupEnumType.SITE);
+                                    groupPrincipalCache.put(groupName, principal);
+                                }
+                                if (principal == null)
+                                {
+                                    logger.warn("Non-existent group in role assignment for role " + role.getName() + " will be ignored: " + groupName);
+                                }
+                                else
+                                {
+                                    studiesStillNeedingPermissions.remove(c.getName());
+                                    policy.addRoleAssignment(principal, role);
+                                }
+                            }
                         }
                         else
                         {
-                            principal = GroupManager.getGroup(c, groupName, GroupEnumType.SITE);
-                            groupPrincipalCache.put(groupName, principal);
-                        }
-                        if (principal == null)
-                        {
-                            logger.warn("Non-existent group in role assignment for role " + role.getName() + " will be ignored: " + groupName);
-                        }
-                        else
-                        {
-                            studiesStillNeedingPermissions.remove(c.getName());
-                            policy.addRoleAssignment(principal, role);
+                            logger.warn("Non-existent role: " + roleEntry.getKey() + ". Entry will be ignored");
                         }
                     }
                 }
+                SecurityPolicyManager.savePolicy(policy);
             }
-            SecurityPolicyManager.savePolicy(policy);
+            else
+            {
+                logger.warn("Non-existent study: " + entry.getKey() + ". Entry will be ignored.");
+            }
         }
 
         for (String cName : studiesStillNeedingPermissions)
