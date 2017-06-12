@@ -3558,6 +3558,9 @@ Ext.define('Connector.view.Chart', {
     },
 
     showVisitTagHover : function(data, visitTagEl) {
+        if (data.visitTagLabel == null)
+            return;
+
         var bubbleWidth, groupWidth = 0, tagWidth = 0,
             groupTags = {}, maxWidth = 20,
             config, visitTag, visitTagGrp, keyCount = 0;
