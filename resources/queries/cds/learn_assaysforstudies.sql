@@ -20,6 +20,6 @@ SELECT
   sa.assay_identifier AS "study_assay_id",
   sa.assay_status,
   amd.*
-FROM cds.ds_studyassay sa
+FROM cds.metadata.studyassay sa
 LEFT JOIN assay amd
 ON amd.assay_identifier=sa.assay_identifier

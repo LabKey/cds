@@ -284,7 +284,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
-        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_METHODOLOGY);
 
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
@@ -734,7 +734,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(0)));
         waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
-        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_METHODOLOGY);
 
         log("testing BAMA antigens page...");
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));

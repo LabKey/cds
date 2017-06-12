@@ -25,16 +25,16 @@ import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.dataiterator.DataIteratorBuilder;
 import org.labkey.api.dataiterator.DataIteratorContext;
-import org.labkey.api.pipeline.PipeRoot;
 import org.labkey.api.pipeline.PipelineJob;
 import org.labkey.api.pipeline.PipelineJobException;
-import org.labkey.api.pipeline.PipelineService;
 import org.labkey.api.pipeline.RecordedActionSet;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
 import org.labkey.api.security.User;
 import org.labkey.api.util.DateUtil;
+import org.labkey.cds.CDSManager;
+import org.labkey.cds.CDSModule;
 import org.labkey.cds.data.CDSImportCopyConfig;
 import org.labkey.cds.data.TSVCopyConfig;
 
@@ -47,7 +47,7 @@ import java.util.List;
 public class CDSImportTask extends TaskRefTaskImpl
 {
     private static final String DIRECTORY = "directory";
-    private static final String PIPELINE_TOKEN = "{pipeline}";
+    private static final String PATH_TOKEN = "{importfolder}";
 
     private static CDSImportCopyConfig[] dataspaceTables = new CDSImportCopyConfig[]
     {
@@ -99,16 +99,16 @@ public class CDSImportTask extends TaskRefTaskImpl
     {
         String dir = settings.get(DIRECTORY);
 
-        if (dir.contains(PIPELINE_TOKEN))
+        if (dir.contains(PATH_TOKEN))
         {
-            PipeRoot pipelineRoot = PipelineService.get().getPipelineRootSetting(containerUser.getContainer());
-            if (null != pipelineRoot)
+            String importFolderPath = CDSManager.get().getCDSImportFolderPath(containerUser.getContainer());
+            if (null != importFolderPath)
             {
-                dir = dir.replace(PIPELINE_TOKEN, pipelineRoot.getRootPath().getPath());
+                dir = dir.replace(PATH_TOKEN, importFolderPath);
             }
             else
             {
-                throw new PipelineJobException(PIPELINE_TOKEN + " was found in the path but the pipeline root has not been established for folder: " + containerUser.getContainer().getPath());
+                throw new PipelineJobException(CDSModule.CDS_IMPORT_PATH + " has not been established for folder: " + containerUser.getContainer().getPath());
             }
         }
 
