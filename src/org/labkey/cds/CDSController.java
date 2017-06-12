@@ -461,23 +461,26 @@ public class CDSController extends SpringActionController
             }
 
             for (Container c : getContainer().getChildren()) {
-                Map<String, Object> groupPermissionRow = new HashMap<>();
-                groupPermissionRow.put("prot", c.getName());
                 if (c.isInheritedAcl())
                 {
+                    Map<String, Object> groupPermissionRow = new HashMap<>();
+                    groupPermissionRow.put("prot", c.getName());
                     groupPermissionRow.put("group", "*");
                     groupPermissionRow.put("role", "*");
+                    groupPermissionData.add(groupPermissionRow);
                 }
                 else
                 {
                     for (RoleAssignment ra : c.getPolicy().getAssignments())
                     {
+                        Map<String, Object> groupPermissionRow = new HashMap<>();
+                        groupPermissionRow.put("prot", c.getName());
                         groupPermissionRow.put("group", groupIdToName.get(ra.getUserId()));
                         groupPermissionRow.put("role", ra.getRole().getName());
+                        groupPermissionData.add(groupPermissionRow);
                     }
                 }
 
-                groupPermissionData.add(groupPermissionRow);
             }
 
             TSVMapWriter writer = new TSVMapWriter(groupPermissionData);
