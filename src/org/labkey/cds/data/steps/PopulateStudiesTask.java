@@ -35,10 +35,8 @@ import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
-import org.labkey.api.security.Group;
 import org.labkey.api.security.GroupManager;
 import org.labkey.api.security.MutableSecurityPolicy;
-import org.labkey.api.security.RoleAssignment;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.SecurityPolicyManager;
 import org.labkey.api.security.User;
@@ -48,7 +46,6 @@ import org.labkey.api.security.roles.RoleManager;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.study.TimepointType;
 import org.labkey.api.util.DateUtil;
-import org.labkey.api.util.Pair;
 import org.labkey.cds.CDSSchema;
 import org.labkey.cds.CDSSimpleTable;
 import org.labkey.cds.CDSUserSchema;
@@ -61,8 +58,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class PopulateStudiesTask extends AbstractPopulateTask
 {
@@ -200,9 +195,6 @@ public class PopulateStudiesTask extends AbstractPopulateTask
             {
                 Container c = ContainerManager.getChild(project, entry.getKey());
 
-                // Wipe out previous settings
-                MutableSecurityPolicy policy = (new MutableSecurityPolicy(c.getPolicy()));
-
                 Map<String, Set<String>> roleGroupsMap = entry.getValue();
 
                 //inherit permissions case:
@@ -220,6 +212,9 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                     }
                 }
                 else {
+                    // Wipe out previous settings
+                    MutableSecurityPolicy policy = new MutableSecurityPolicy(c);
+
                     for (Map.Entry<String, Set<String>> roleEntry : roleGroupsMap.entrySet())
                     {
                         Role role = simpleNameToRole.get(roleEntry.getKey());
@@ -254,8 +249,8 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                             logger.warn("Non-existent role: " + roleEntry.getKey() + ". Entry will be ignored");
                         }
                     }
+                    SecurityPolicyManager.savePolicy(policy);
                 }
-                SecurityPolicyManager.savePolicy(policy);
             }
             else
             {
