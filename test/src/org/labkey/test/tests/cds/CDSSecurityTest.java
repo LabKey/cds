@@ -110,7 +110,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         impersonateGroup(_permGroups[0], false);
 
         cds.enterApplication();
-        _asserts.assertFilterStatusCounts(8, 1, 1, 1, 2);
+        // Because of the feature change 30212 two studies (z120 & z121) will always be included.
+        _asserts.assertFilterStatusCounts(278, 3, 1, 1, 8);
 
         cds.viewLearnAboutPage("Studies");
         List<String> studies = Arrays.asList("ZAP 119");
@@ -128,7 +129,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         impersonateGroup(_permGroups[1], false);
 
         cds.enterApplication();
-        _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0);
+        _asserts.assertFilterStatusCounts(270, 2, 1, 1, 6);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
@@ -237,9 +238,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     private void validateStudyListDataAdded(boolean hasAccessToQ2)
     {
-        final int STUDY_WITH_DATA_ADDED = 25;
+        final int STUDY_WITH_DATA_ADDED = 24;
         int dataAddedCount = hasAccessToQ2 ? (STUDY_WITH_DATA_ADDED - 1) : STUDY_WITH_DATA_ADDED;
-        int dataAccessibleCount = hasAccessToQ2 ? 1 : 0;
+        int dataAccessibleCount = hasAccessToQ2 ? 2 : 1;
 
         List<WebElement> hasDataIcons = LearnGrid.Locators.rowsWithDataNotAccessible.findElements(getDriver());
         List<WebElement> hasAccessIcons = LearnGrid.Locators.rowsWithDataAccessible.findElements(getDriver());
@@ -422,6 +423,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         }
 
         log("Now special case the studies that inherit from parent.");
+        goToHome();
 
         log("Assign the site user group '" + CDSHelper.GROUP_DATA_IMPORT + "' as a reader of the CDS project.");
         _apiPermissionHelper.addMemberToRole(CDSHelper.GROUP_DATA_IMPORT, "Reader", PermissionsHelper.MemberType.siteGroup, getProjectName());
@@ -432,8 +434,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         // Created an expected list of containers.
         List<String> inheritedStudyList = new LinkedList<>();
         inheritedStudyList.addAll(CDSHelper.siteGroupStudies.get(CDSHelper.GROUP_DATA_IMPORT));
-        inheritedStudyList.add(CDSHelper.PROT_Q1);
-        inheritedStudyList.add(CDSHelper.PROT_Q2);
+        inheritedStudyList.add(CDSHelper.PROT_Z120);
+        inheritedStudyList.add(CDSHelper.PROT_Z121);
 
         log("Validate that the list of expected studies/containers have been updated with the inherited permissions.");
         // Basically the same loop as above.
@@ -443,7 +445,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
                 // Special case the inherited studies.
                 String expectedAccess;
-                if((study.toLowerCase().equals(CDSHelper.PROT_Q1.toLowerCase())) || (study.toLowerCase().equals(CDSHelper.PROT_Q2.toLowerCase()))){
+                if((study.toLowerCase().equals(CDSHelper.PROT_Z120.toLowerCase())) || (study.toLowerCase().equals(CDSHelper.PROT_Z121.toLowerCase()))){
                     expectedAccess = "Reader*";
                 }
                 else {
@@ -743,14 +745,14 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     public void testInfoPaneAndFindWithLimitedAccess()
     {
         Map<String, String> studyPermissions = new HashMap<>();
-        log("Create a user group with Read permission to project but no permission to any study folder");
+        log("Create a user group with Read permission to project but no permission to any study folder (they will see studies z120 &z121 by default).");
         cds.setUpPermGroup(_permGroups[0], studyPermissions);
         impersonateGroup(_permGroups[0], false);
         cds.enterApplication();
 
-        log("Verify users with no study permission sees empty info pane.");
+        log("Verify users with no study permission sees info pane with data only for studies z120 and z121.");
         verifyInfoPaneWithLimitedAccess(false);
-        log("Verify users with no study permission sees empty find subject.");
+        log("Verify users with no study permission sees data only for studies z120 and z121 in find subject.");
         verifyFindSubjectWithLimitedAccess(false);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
@@ -785,15 +787,15 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Verify Find subject counts on summary page");
         if (!hasAccessToQ1Q2R4)
         {
-            _asserts.assertCDSPortalRow("Subject characteristics", "0 subject characteristics", "0 species", "0 decades by age", "0 ethnicities", "0 countries", "0 sexes", "0 races");
-            _asserts.assertCDSPortalRow("Products", "0 products", "0 products", "0 classes", "0 developers", "0 types");
-            _asserts.assertCDSPortalRow("Studies", "0 studies", "0 networks", "0 study types", "0 coded labels", "0 treatments", "0 pi", "0 strategy");
+            _asserts.assertCDSPortalRow("Subject characteristics", "10 subject characteristics", "1 species", "6 decades by age", "3 ethnicities", "33 countries", "2 sexes", "10 races");
+            _asserts.assertCDSPortalRow("Products", "1 products", "1 product", "1 class", "1 developer", "1 type");
+            _asserts.assertCDSPortalRow("Studies", "2 studies", "1 network", "1 study type", "5 coded labels", "6 treatments", "2 pi", "2 strategy");
         }
         else
         {
-            _asserts.assertCDSPortalRow("Subject characteristics", "10 subject characteristics", "1 species", "6 decades by age", "3 ethnicities", "33 countries", "2 sexes", "10 races");
+            _asserts.assertCDSPortalRow("Subject characteristics", "10 subject characteristics", "1 species", "6 decades by age", "3 ethnicities", "42 countries", "2 sexes", "10 races");
             _asserts.assertCDSPortalRow("Products", "3 products", "3 products", "3 classes", "3 developers", "2 types");
-            _asserts.assertCDSPortalRow("Studies", "3 studies", "2 networks", "2 study types", "8 coded labels", "10 treatments", "3 pi", "3 strategy");
+            _asserts.assertCDSPortalRow("Studies", "5 studies", "3 networks", "2 study types", "13 coded labels", "16 treatments", "5 pi", "4 strategy");
         }
 
         click(CDSHelper.Locators.getByLocator("Studies"));
@@ -816,10 +818,11 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     private void verifyInfoPaneWithLimitedAccess(boolean hasAccessToQ1Q2R4)
     {
         log("Verify info pane count");
+        // Since studies z220 & z221 are included from the parent even with limited access these studies will still be visible.
         if (!hasAccessToQ1Q2R4)
-            _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0);
+            _asserts.assertFilterStatusCounts(270, 2, 1, 1, 6);
         else
-            _asserts.assertFilterStatusCounts(179, 3, 1, 3, 10);
+            _asserts.assertFilterStatusCounts(449, 5, 1, 3, 16);
 
         log("Verify expanded info pane for Studies");
         cds.openStatusInfoPane("Studies");
@@ -828,18 +831,18 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         Locator.XPathLocator studyQED1 = Locator.tagWithClass("div", "x-grid-cell-inner").containing("QED 1");
         Locator.XPathLocator studyQED3 = Locator.tagWithClass("div", "x-grid-cell-inner").containing("QED 3");
         assertElementNotPresent(studyQED3);
-        if (!hasAccessToQ1Q2R4)
-        {
-            log("Verify no option is present is user doesn't have access to any study");
-            assertElementNotPresent(CDSHelper.Locators.INFO_PANE_HAS_DATA);
-            assertElementNotPresent(studyQED1);
-        }
-        else
-        {
-            log("Verify studies that the user have access to are present in info pane options");
-            assertElementPresent(CDSHelper.Locators.INFO_PANE_HAS_DATA);
-            assertElementPresent(studyQED1);
-        }
+//        if (!hasAccessToQ1Q2R4)
+//        {
+//            log("Verify no option is present if user doesn't have access to any study");
+//            assertElementNotPresent(CDSHelper.Locators.INFO_PANE_HAS_DATA);
+//            assertElementNotPresent(studyQED1);
+//        }
+//        else
+//        {
+//            log("Verify studies that the user have access to are present in info pane options");
+//            assertElementPresent(CDSHelper.Locators.INFO_PANE_HAS_DATA);
+//            assertElementPresent(studyQED1);
+//        }
     }
 
     private String[] getWelcomeLinks()
