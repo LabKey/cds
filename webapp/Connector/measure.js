@@ -551,10 +551,10 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_response_call': {
                     isRecommendedVariable: true
                 },
-                'study_NAb_titer_ic50': {
+                'study_NAb_titer_ID50': {
                     isRecommendedVariable: true
                 },
-                'study_NAb_response_call': {
+                'study_NAb_nab_response_ID50': {
                     isRecommendedVariable: true
                 },
                 'study_BAMA_mfi_delta': {
@@ -613,6 +613,18 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_ICS_visit_day': {
+                    hidden: true
+                },
+                'study_NAb_titer_ic50' : {
+                    hidden: true
+                },
+                'study_NAb_titer_ic80' : {
+                    hidden: true
+                },
+                'study_NAb_response_call' : {
+                    hidden: true
+                },
+                'study_NAb_virus_insert_name' : {
                     hidden: true
                 },
                 'study_NAb_assay_identifier': {

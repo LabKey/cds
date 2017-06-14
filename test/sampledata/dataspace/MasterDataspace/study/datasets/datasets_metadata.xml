@@ -307,14 +307,14 @@
         <datatype>varchar</datatype>
         <columnTitle>Antigen</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The test article (reagent) that interacts with the specimen.</description>
+        <description>The name of the antigen or stimulant being tested as reported by the lab in the assay dataset.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="antigen_type">
         <datatype>varchar</datatype>
         <columnTitle>Antigen Type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The type of test article (reagent) that interacts with the specimen.</description>
+        <description>The standardized term for the type of antigen or stimulant (e.g. peptide pool, protein, panel) being tested.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="peptide_pool">
@@ -501,7 +501,7 @@
       <column columnName="antigen">
         <datatype>varchar</datatype>
         <columnTitle>Antigen Panel</columnTitle>
-        <description>The name of the panel of antigens (peptide pools) for which a magnitude and response call are calculated. The magnitude and response calls are the maximum of the values of magnitude and response for thegene-based sub-panels making up the panel.</description>
+        <description>The name of the antigen being tested as reported by the lab in the assay dataset.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -509,7 +509,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Antigen Type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The type of test article (reagent) that interacts with the specimen.</description>
+        <description>The standardized term for the type of antigen (e.g. peptide pool, protein, panel) being tested.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="peptide_pool">
@@ -722,14 +722,14 @@
         <datatype>varchar</datatype>
         <columnTitle>Antigen</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The name of the antigen.</description>
+        <description>The term for the name of the virus (antigen) being tested.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="antigen_type">
         <datatype>varchar</datatype>
         <columnTitle>Antigen type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The type of virus used in the construction of the nAb antigen.</description>
+        <description>The term for the clade of the virus (antigen) being tested.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="virus">
@@ -743,7 +743,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Virus type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The type of virus isolate or construct used for the nAb antigen.</description>
+        <description>The type of virus used in the construction of the nAb antigen.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="virus_insert_name">
@@ -752,6 +752,7 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <description>The amino acid sequence inserted in the virus construct.</description>
         <dimension>true</dimension>
+        <isHidden>true</isHidden>
       </column>
       <column columnName="clade">
         <datatype>varchar</datatype>
@@ -794,19 +795,49 @@
         <columnTitle>Titer IC50</columnTitle>
         <description>The half maximal inhibitory concentration (IC50).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <isHidden>true</isHidden>
       </column>
       <column columnName="titer_ic80">
         <datatype>integer</datatype>
         <columnTitle>Titer IC80</columnTitle>
         <description>The 80% maximal inhibitory concentration (IC80).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <isHidden>true</isHidden>
+      </column>
+      <column columnName="titer_ID50">
+        <datatype>double</datatype>
+        <columnTitle>Titer ID50</columnTitle>
+        <description>The adjusted value of 50% maximal inhibitory dilution (ID50).</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="titer_ID80">
+        <datatype>double</datatype>
+        <columnTitle>Titer ID80</columnTitle>
+        <description>The adjusted value of 80% maximal inhibitory dilution (ID80).</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <!-- Could this be a boolean? Spec says value is 1 or 0 -->
+      <column columnName="nab_response_ID50">
+        <datatype>integer</datatype>
+        <columnTitle>Response call ID50</columnTitle>
+        <description>Indicates if neutralization is detected based on ID50 titer.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <!-- Could this be a boolean? Spec says value is 1 or 0 -->
+      <column columnName="nab_response_ID80">
+        <datatype>integer</datatype>
+        <columnTitle>Response call ID80</columnTitle>
+        <description>Indicates if neutralization is detected based on ID80 titer.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="response_call">
         <datatype>boolean</datatype>
         <columnTitle>Response call</columnTitle>
         <description>Indicates if neutralization is detected.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
-        <dimension>true</dimension>
+        <isHidden>true</isHidden>
       </column>
       <column columnName="nab_lab_source_key">
         <datatype>integer</datatype>
@@ -828,6 +859,13 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
         <description>Unique ID assigned to the experiment design of the assay for tracking purposes.</description>
         <measure>false</measure>
+      </column>
+      <column columnName="slope">
+        <datatype>double</datatype>
+        <columnTitle>Slope</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>The slope calculated using the difference  between 50% and 80% neutralization</description>
+        <dimension>true</dimension>
       </column>
     </columns>
     <tableTitle>Neutralizing antibody</tableTitle>
@@ -903,7 +941,7 @@
       <column columnName="antigen">
         <datatype>varchar</datatype>
         <columnTitle>Antigen name</columnTitle>
-        <description>The name of the antigen</description>
+        <description>The name of the antigen being tested as reported by the lab in the assay dataset.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -911,7 +949,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Antigen type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The type of antigen used in the assay.</description>
+        <description>The standardized term for the type of antigen (e.g. virus or protein) being tested.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="protein">
@@ -1014,6 +1052,20 @@
         <columnTitle>Magnitude (mfi) - Blank Baseline</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Fluorescence Intensity of antibody-binding to blank beads at baseline.</description>
+        <measure>true</measure>
+      </column>
+      <column columnName="mfi_bkgd">
+        <datatype>double</datatype>
+        <columnTitle>Magnitude (mfi) – Background subtracted</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Median Fluorescence Intensity of antibody binding to antigen-conjugated beads, adjusted to subtract background.</description>
+        <measure>true</measure>
+      </column>
+      <column columnName="auc">
+        <datatype>double</datatype>
+        <columnTitle>Area under the titration curve (AUTC)</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>The area under the titration curve as calculated for VISC analysis. Method may vary across studies.</description>
         <measure>true</measure>
       </column>
       <column columnName="bama_lab_source_key">
