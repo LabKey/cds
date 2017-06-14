@@ -373,6 +373,51 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyImportTableAccessibility()
+    {
+        log("Verify Site Admin user won't see restricted import tables");
+        verifyRestrictedImportTable(true);
+
+        Map<String, String> studyPermissions = new HashMap<>();
+        log("Create a user group with Editor permission to project");
+        cds.setUpPermGroup(_permGroups[0], studyPermissions, "Editor");
+        impersonateGroup(_permGroups[0], false);
+        log("Verify Editor user won't see restricted import tables");
+        verifyRestrictedImportTable(false);
+        stopImpersonatingGroup();
+
+        log("Create a user group with Folder Administrator permission to project");
+        cds.setUpPermGroup(_permGroups[1], studyPermissions, "Folder Administrator");
+        impersonateGroup(_permGroups[1], false);
+        log("Verify Folder Admin user have access to restricted import tables");
+        verifyRestrictedImportTable(true);
+        stopImpersonatingGroup();
+    }
+
+    private void verifyRestrictedImportTable(boolean isAdmin)
+    {
+        final String schemaName = "CDS";
+        for (String queryName : CDSHelper.IMPORT_TABLES_WITH_ADMIN_ACCESS)
+        {
+            goToProjectHome();
+            clickAndWait(Locator.linkWithText("Browse Schema"), 10000);
+            waitForElement(Locator.tagWithClass("span", "labkey-link").withText("ds_assay").notHidden());
+            Locator loc = Locator.tagWithClass("span", "labkey-link").withText(queryName).notHidden();
+
+            if (isAdmin)
+            {
+                waitAndClick(loc);
+                waitForElementToDisappear(Locator.xpath("//tbody[starts-with(@id, 'treeview')]/tr[not(starts-with(@id, 'treeview'))]"));
+                waitForElement(Locator.xpath("//div[contains(./@class,'lk-qd-name')]/a[contains(text(), '" + schemaName + "." + queryName + "')]/.."), 30000);
+            }
+            else
+            {
+                assertElementNotPresent(loc);
+            }
+        }
+    }
+
+    @Test
     public void testSiteUserGroups() throws IOException, CommandException
     {
 
