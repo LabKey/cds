@@ -22,6 +22,7 @@ import org.labkey.test.etl.ETLHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PortalHelper;
+import org.labkey.test.util.ApiPermissionsHelper;
 
 public class CDSInitializer
 {
@@ -32,7 +33,7 @@ public class CDSInitializer
     private final CDSHelper _cds;
     private final String _project;
     public ETLHelper _etlHelper;
-
+    private final ApiPermissionsHelper _apiPermissionsHelper;
 
     public CDSInitializer(BaseWebDriverTest test, String projectName)
     {
@@ -40,6 +41,7 @@ public class CDSInitializer
         _cds = new CDSHelper(_test);
         _project = projectName;
         _etlHelper = new ETLHelper(_test, _project);
+        _apiPermissionsHelper = new ApiPermissionsHelper(_test);
     }
 
     @LogMethod
@@ -64,6 +66,13 @@ public class CDSInitializer
         _test.goToProjectHome();
 
         setupStudyDocumentProject();
+
+        // Create the Site groups. ETL won't import if these are not present.
+        for(String groupName : CDSHelper.siteGroupRoles.keySet())
+        {
+            _apiPermissionsHelper.createGlobalPermissionsGroup(groupName);
+        }
+
     }
 
     private void setupStudyDocumentProject()
