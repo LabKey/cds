@@ -31,7 +31,7 @@ Ext.define('Connector.view.AssayAntigen', {
             this.tabParams = this.learnViewConfig.tabParams;
         }
         this.emptyText = new Ext.XTemplate(
-                '<div class="detail-empty-text" style="height: 300px">No available Antigens meet your selection criteria.</div>'
+                '<div class="detail-empty-text">No available Antigens meet your selection criteria.</div>'
         ).apply({});
 
         this.model.data.antigen_store.loadAntigens();
