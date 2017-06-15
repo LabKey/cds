@@ -208,7 +208,6 @@ public class CDSTest extends CDSReadOnlyTest
         assertElementPresent(clippedLabel);
         cds.ensureNoFilter();
 
-        getDriver().navigate().refresh();
         waitAndClick(clippedLabel);
         waitForText("Your filters have been");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
