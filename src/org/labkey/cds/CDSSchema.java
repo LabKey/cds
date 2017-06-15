@@ -17,8 +17,7 @@
 package org.labkey.cds;
 
 import org.labkey.api.data.DbSchema;
-import org.labkey.api.data.TableInfo;
-import org.labkey.api.data.dialect.SqlDialect;
+import org.labkey.api.data.DbSchemaType;
 
 public class CDSSchema
 {
@@ -38,16 +37,6 @@ public class CDSSchema
 
     public DbSchema getSchema()
     {
-        return DbSchema.get("cds");
-    }
-
-    public SqlDialect getSqlDialect()
-    {
-        return getSchema().getSqlDialect();
-    }
-
-    public static TableInfo getTableInfoPeople()
-    {
-        return getInstance().getSchema().getTable("People");
+        return DbSchema.get("cds", DbSchemaType.Module);
     }
 }

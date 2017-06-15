@@ -36,8 +36,8 @@ import org.labkey.api.action.SpringActionController;
 import org.labkey.api.data.ColumnHeaderType;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.CoreSchema;
 import org.labkey.api.data.DataColumn;
-import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.JdbcType;
@@ -540,7 +540,7 @@ public class CDSController extends SpringActionController
             else if ("POST".equals(getViewContext().getRequest().getMethod()))
             {
                 String sql = "SELECT L.email, U.lastlogin, L.verification, U.displayname, U.firstname, U.lastname FROM core.logins L INNER JOIN core.principals P ON L.email = P.name INNER JOIN core.usersdata U ON P.userid = U.userid";
-                try (ResultSet rs = new SqlSelector(DbSchema.get("core").getScope(), sql).getResultSet())
+                try (ResultSet rs = new SqlSelector(CoreSchema.getInstance().getScope(), sql).getResultSet())
                 {
                     List<DisplayColumn> list = new ArrayList<>();
                     for (String s : Arrays.asList("email", "displayname", "firstname", "lastname", "lastlogin", "verification"))

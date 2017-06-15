@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.collections.CaseInsensitiveTreeSet;
 import org.labkey.api.data.Container;
-import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.module.Module;
 import org.labkey.api.query.DefaultSchema;
@@ -49,7 +48,7 @@ public class CDSUserSchema extends SimpleUserSchema
 
     public CDSUserSchema(User user, Container container)
     {
-        super(SCHEMA_NAME, "Schema for DataSpace. Detail data is stored in datasets of study schema.", user, container, DbSchema.get("cds"));
+        super(SCHEMA_NAME, "Schema for DataSpace. Detail data is stored in datasets of study schema.", user, container, CDSSchema.getInstance().getSchema());
     }
 
     @Override
