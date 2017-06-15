@@ -752,18 +752,11 @@ div.list-container {
   }
 }
 
-.antigen-list-panel
-{
-  padding-right: 42px !important;
-  .x-panel-body
-  {
-    border-width: 0;
-  }
-}
 .antigengrid
 {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding-left: $pageLeftPadding!important;
+  padding-right: 42px!important;
+  padding-top: $sectionTopPadding!important;
 
   .x-grid-empty
   {
