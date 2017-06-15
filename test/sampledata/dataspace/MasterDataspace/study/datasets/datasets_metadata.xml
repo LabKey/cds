@@ -752,7 +752,6 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <description>The amino acid sequence inserted in the virus construct.</description>
         <dimension>true</dimension>
-        <isHidden>true</isHidden>
       </column>
       <column columnName="clade">
         <datatype>varchar</datatype>
@@ -795,14 +794,12 @@
         <columnTitle>Titer IC50</columnTitle>
         <description>The half maximal inhibitory concentration (IC50).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <isHidden>true</isHidden>
       </column>
       <column columnName="titer_ic80">
         <datatype>integer</datatype>
         <columnTitle>Titer IC80</columnTitle>
         <description>The 80% maximal inhibitory concentration (IC80).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <isHidden>true</isHidden>
       </column>
       <column columnName="titer_ID50">
         <datatype>double</datatype>
@@ -818,7 +815,7 @@
       </column>
       <!-- Could this be a boolean? Spec says value is 1 or 0 -->
       <column columnName="nab_response_ID50">
-        <datatype>integer</datatype>
+        <datatype>boolean</datatype>
         <columnTitle>Response call ID50</columnTitle>
         <description>Indicates if neutralization is detected based on ID50 titer.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
@@ -826,7 +823,7 @@
       </column>
       <!-- Could this be a boolean? Spec says value is 1 or 0 -->
       <column columnName="nab_response_ID80">
-        <datatype>integer</datatype>
+        <datatype>boolean</datatype>
         <columnTitle>Response call ID80</columnTitle>
         <description>Indicates if neutralization is detected based on ID80 titer.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
@@ -837,7 +834,7 @@
         <columnTitle>Response call</columnTitle>
         <description>Indicates if neutralization is detected.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
-        <isHidden>true</isHidden>
+        <dimension>true</dimension>
       </column>
       <column columnName="nab_lab_source_key">
         <datatype>integer</datatype>
@@ -864,8 +861,8 @@
         <datatype>double</datatype>
         <columnTitle>Slope</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <description>The slope calculated using the difference  between 50% and 80% neutralization</description>
-        <dimension>true</dimension>
+        <description>The slope calculated using the difference between 50% and 80% neutralization</description>
+        <measure>true</measure>
       </column>
     </columns>
     <tableTitle>Neutralizing antibody</tableTitle>
