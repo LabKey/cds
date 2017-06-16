@@ -46,7 +46,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     private final String[] PERM_GROUPS = {"CDSSecurity Test Group01", "CDSSecurity Test Group02", "CDSSecurity Test Group03"};
 
-    private final String[] NEW_USER_ACCOUNTS = {"addusertest01@nowhere.com", "addusertest02@nowhere.com", "addusertest03@nowhere.com", "addusertest04@nowhere.com"};
+    private final String[] NEW_USER_ACCOUNTS = {"addusertest01@cdssecurity.test", "addusertest02@cdssecurity.test", "addusertest03@cdssecurity.test", "addusertest04@cdssecurity.test"};
 
     @Before
     public void preTest()
@@ -515,7 +515,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     @Test
     public void verifyApplyingGroupsWithLimitedAccess()
     {
-        final String LIMITED_USER_ACCOUNT = "cds_limited_access@example.com";
+        final String LIMITED_USER_ACCOUNT = "cds_limited_access@cdssecurity.test";
         final String PRIVATE_GROUP_NAME = "cds_private_group";
         final String SHARED_GROUP_NAME = "cds_shared_group";
         final String SHARED_GROUP_NAME_DESCRIPTION = "This group selects 3 studies: QED 1, QED 2 and RED 4";

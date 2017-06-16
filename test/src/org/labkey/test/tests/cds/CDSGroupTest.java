@@ -298,7 +298,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
     @Test
     public void verifySharedGroups()
     {
-        final String[] NEW_USER_ACCOUNTS = {"cds_alice@example.com", "cds_bob@example.com", "cds_eve@example.com"};
+        final String[] NEW_USER_ACCOUNTS = {"cds_alice@cdsgroup.test", "cds_bob@cdsgroup.test", "cds_eve@cdsgroup.test"};
         //this test case focuses on whether groups are shared properly.
         final String[] PRIVATE_GROUP_NAME = {"test_Group_reader", "test_Group_editor"};
         final String[] PRIVATE_GROUP_NAME_DESCRIPTION = {"This group selects two studies", "This group selects two studies"};
