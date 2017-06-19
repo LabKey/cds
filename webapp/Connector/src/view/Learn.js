@@ -580,7 +580,8 @@ Ext.define('Connector.view.Learn', {
                 title: model.get(model.labelProperty ? model.labelProperty : 'label'),
                 model: model,
                 dimension: dimension,
-                activeTab: activeTab
+                activeTab: activeTab,
+                hasSearch: dimension.itemDetailTabs[activeTab].hasSearch
             }),
             listeners: {
                 hide: function(cmp){

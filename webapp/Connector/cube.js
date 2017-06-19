@@ -496,10 +496,12 @@ Ext4.define('Connector.cube.Configuration', {
                     label: 'Overview'
                 },{
                     url: 'vars',
-                    label: 'Variables'
+                    label: 'Variables',
+                    hasSearch: true
                 },{
                     url: 'antigens',
-                    label: 'Antigens'
+                    label: 'Antigens',
+                    hasSearch: true
                 }],
                 itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
