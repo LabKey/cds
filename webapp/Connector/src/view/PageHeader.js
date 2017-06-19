@@ -37,7 +37,7 @@ Ext.define('Connector.view.PageHeader', {
     constructor : function(config) {
         this.callParent([config]);
 
-        this.addEvents('upclick', 'tabselect');
+        this.addEvents('upclick', 'searchchanged', 'tabselect');
     },
 
     initComponent : function() {
@@ -117,14 +117,20 @@ Ext.define('Connector.view.PageHeader', {
                     '</tpl>',
                     '</div>'
             ).apply(this.tabs),
-            flex: 1
+            flex: 2
         };
 
         var detailSearchField = Ext.create('Ext.form.field.Text', {
             emptyText: 'Search',
             cls: 'learn-search-input',
             minWidth: 150,
-            checkChangeBuffer: 500
+            checkChangeBuffer: 500,
+            flex: 1,
+            value: this.searchValue,
+            validator: Ext.bind(function(value) {
+                this.fireEvent('searchchanged', value);
+                return true;
+            }, this)
         });
 
         this.items = [{

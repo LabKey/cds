@@ -13,6 +13,10 @@ Ext.define('Connector.view.AssayAntigen', {
 
     isDetailLearnGrid: true,
 
+    statics: {
+        searchFields: Ext.pluck(Connector.app.model.AssayAntigen.getFields(), 'name')
+    },
+
     viewConfig: {
         stripeRows: false,
         overflowY: 'scroll',

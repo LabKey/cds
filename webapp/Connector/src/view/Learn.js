@@ -84,7 +84,9 @@ Ext.define('Connector.view.Learn', {
                 cls: 'learnheader',
                 searchValue: this.searchFilter,
                 listeners: {
-                    searchchanged: this.onSearchFilterChange,
+                    searchchanged: function(filter) {
+                        this.onSearchFilterChange(filter, false);
+                    },
                     updateLearnFilter: function(column, filtersStr, negated, isDetailPage){
                         this.onUpdateLearnFilter(column, filtersStr, negated, isDetailPage);
                     },
@@ -109,11 +111,11 @@ Ext.define('Connector.view.Learn', {
         this.loadDataTask.delay(200, undefined, this, [dim, store]);
     },
 
-    onSearchFilterChange : function(filter) {
+    onSearchFilterChange : function(filter, isDetailPage) {
         if (Ext.isString(filter)) {
             this.searchFilter = filter;
-            if (this.activeListing) {
-                var view = this.activeListing;
+            var view = isDetailPage ? this.activeListingDetailGrid : this.activeListing;
+            if (view) {
                 this.loadDataDelayed(view.dimension, view.getStore());
             }
         }
@@ -581,14 +583,19 @@ Ext.define('Connector.view.Learn', {
                 model: model,
                 dimension: dimension,
                 activeTab: activeTab,
-                hasSearch: dimension.itemDetailTabs[activeTab].hasSearch
+                hasSearch: dimension.itemDetailTabs[activeTab].hasSearch,
+                listeners: {
+                    searchchanged: function(filter) {
+                        this.onSearchFilterChange(filter, true);
+                    },
+                    scope: this
+                }
             }),
             listeners: {
                 hide: function(cmp){
                     // detail page needs to be destroyed on hide, otherwise it remains and repeats in the DOM
                     // For knitr report, custom stylesheet defined in report will then contaminate all Learn about pages
                     cmp.destroy();
-
                 }
             }
         });
@@ -640,12 +647,20 @@ Ext.define('Connector.view.Learn', {
         'Report' : 'Report'
     },
 
+    viewByUrlTab : {
+        "antigens" : 'AssayAntigen'
+    },
+
     selectDimension : function(dimension, id, urlTab, params) {
         this.searchFilter = params ? params.q : undefined;
-        if (urlTab)
+        if (urlTab) {
             this.searchFilter = undefined; // search doesn't apply for detail tabs
-
-        this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
+            this.searchFields = Connector.view[this.viewByUrlTab[urlTab]] ?
+                    Connector.view[this.viewByUrlTab[urlTab]].searchFields : undefined
+        }
+        else {
+            this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
+        }
 
         if (dimension) {
             this.loadDataView(dimension, id, urlTab, params);
