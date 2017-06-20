@@ -16,27 +16,21 @@ Ext.define('Connector.app.store.VariableList', {
         this.callParent([config]);
     },
 
-    loadSlice : function() {
+    loadVariables : function(assayName) {
         this.variableData = Connector.getService('Query').getVariables('Study');
         var measures = [];
         Ext.each(this.variableData, function(datum) {
-            measures.push(datum.data);
+            if (datum.data.queryName === assayName) {
+                measures.push({
+                    alias: datum.data.alias,
+                    label: datum.data.label,
+                    isRecommendedVariable: datum.data.isRecommendedVariable,
+                    description: datum.data.description,
+                    queryName: datum.data.queryName
+                });
+            }
         });
         this.loadRawData(measures);
-
-    },
-
-    getByAssayName : function(assayName) {
-        if (this.getCount() == 0) {
-            this.loadSlice();
-        }
-        if (this.isFiltered) {
-            this.clearFilter();
-        }
-        this.filterBy(function(record) {
-            return record.get('queryName') === assayName;
-        });
-
         this.sort([
             {
                 property : 'isRecommendedVariable',
@@ -47,7 +41,5 @@ Ext.define('Connector.app.store.VariableList', {
                 direction: 'ASC'
             }
         ]);
-        return this.getRange();
     }
-
 });

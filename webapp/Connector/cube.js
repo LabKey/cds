@@ -548,13 +548,7 @@ Ext4.define('Connector.cube.Configuration', {
                         }
                     }]]
                 },{
-                    view: 'Connector.app.view.ModuleContainer',
-                    modules: [[{
-                        type: 'variablelist',
-                        staticData: {
-                            title: 'Assay variables'
-                        }
-                    }]]
+                    view: 'Connector.view.module.VariableList'
                 },{
                     view: 'Connector.view.AssayAntigen'
                 }]

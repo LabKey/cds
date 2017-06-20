@@ -31,7 +31,7 @@ Ext.define('Connector.view.Learn', {
     dimensionDataLoaded: {},
 
     statics: {
-        detailGridTabs : ['antigens']
+        detailGridTabs : ['vars', 'antigens']
     },
 
     listeners: {
@@ -548,14 +548,12 @@ Ext.define('Connector.view.Learn', {
 
                 if (Connector.view.Learn.detailGridTabs.indexOf(dimension.itemDetailTabs[i].url) > -1)
                 {
-                    var learnViewConfig = {
-                            learnView: me,
-                            tabId: id,
-                                tabDimension: dimension,
-                                tabParams: params
-                        };
-
-                    tabConfig.learnViewConfig = learnViewConfig;
+                    tabConfig.learnViewConfig = {
+                        learnView: me,
+                        tabId: id,
+                        tabDimension: dimension,
+                        tabParams: params
+                    };
                 }
 
                 tabViews.push(Ext.create(item.view, tabConfig));
@@ -647,18 +645,24 @@ Ext.define('Connector.view.Learn', {
         'Report' : 'Report'
     },
 
-    viewByUrlTab : {
-        "antigens" : 'AssayAntigen'
+    searchFieldsByTab : function(name) {
+        switch (name){
+            case "vars":
+                return Connector.view.module.VariableList.searchFields;
+            case "antigens":
+                return Connector.view.AssayAntigen.searchFields;
+        }
     },
 
     selectDimension : function(dimension, id, urlTab, params) {
-        this.searchFilter = params ? params.q : undefined;
         if (urlTab) {
+            // detail tab case
             this.searchFilter = undefined; // search doesn't apply for detail tabs
-            this.searchFields = Connector.view[this.viewByUrlTab[urlTab]] ?
-                    Connector.view[this.viewByUrlTab[urlTab]].searchFields : undefined
+            this.searchFields = this.searchFieldsByTab(urlTab);
         }
         else {
+            // summary view case
+            this.searchFilter = params ? params.q : undefined;
             this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
         }
 
