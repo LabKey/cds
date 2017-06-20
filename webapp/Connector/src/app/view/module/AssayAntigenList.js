@@ -25,13 +25,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
             this.antigenGrid = Ext.create('Connector.view.AssayAntigen', {
                 store: this.data.model.data.antigen_store,
                 columns: this.getAntigenColumns(this.data.model.data.assay_type),
-                learnViewConfig: this.learnViewConfig,
-                listeners: {
-                    render: function(cmp)
-                    {
-                        cmp.doLayout();
-                    }
-                }
+                learnViewConfig: this.learnViewConfig
             });
         }
         return this.antigenGrid;
