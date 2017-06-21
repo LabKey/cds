@@ -44,7 +44,10 @@ Ext.define('Connector.app.store.AssayAntigen', {
                                     antigens[idx-1].antigen_pools.push(pool);
                                 });
                                 if (row.antigen_description[0] && !Ext.Array.contains(antigens[idx-1].antigen_description, row.antigen_description[0])) {
-                                    antigens[idx-1].antigen_description.push(', ' + row.antigen_description[0]);
+                                    var concat = '';
+                                    if (antigens[idx-1].antigen_description.length > 0)
+                                        concat = ', ';
+                                    antigens[idx-1].antigen_description.push(concat + row.antigen_description[0]);
                                 }
                             }
                             else {
@@ -92,10 +95,11 @@ Ext.define('Connector.app.store.AssayAntigen', {
         if (row.target_cell)
             identifier += row.target_cell;
         identifier += row.antigen_type;
+        var description = Ext.isArray(row.antigen_description) ? (row.antigen_description[0] ? [row.antigen_description[0]] : []) : [row.antigen_description];
         return {
             antigen_identifier: identifier,
             antigen_name: row.antigen_name,
-            antigen_description: Ext.isArray(row.antigen_description) ? [row.antigen_description[0]] : [row.antigen_description],
+            antigen_description: description,
             antigen_type: row.antigen_type,
             antigen_control_value: row.antigen_control && row.antigen_control != "0" ? "YES" : "NO", //this assumes the control status is the same for all peptide pools of a protein panel
             antigen_clade: row.clade,
