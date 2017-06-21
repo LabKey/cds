@@ -123,7 +123,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that a y-axis gutter plot is generated.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
@@ -145,7 +145,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that a x-axis gutter plot is generated.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC80);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID80);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
@@ -361,7 +361,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
-        xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        xaxis.pickVariable(CDSHelper.NAB_TITERID50);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
@@ -384,7 +384,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Test log scales
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Log);
         yaxis.confirmSelection();
 
@@ -766,7 +766,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Log);
         yaxis.confirmSelection();
         xaxis.openSelectorWindow();
@@ -841,7 +841,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW},
                         {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_RAW},
-                        {CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80}
+                        {CDSHelper.NAB, CDSHelper.NAB_TITERID50, CDSHelper.NAB_TITERID80}
                 };
         final String[][] X_AXIS_SOURCES =
                 {
@@ -851,7 +851,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
                         {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
-                        {CDSHelper.NAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC80}
+                        {CDSHelper.NAB, CDSHelper.NAB_RESPONSE_CALL_ID50, CDSHelper.NAB_TITERID50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERID80}
                 };
         final String[][] COLOR_AXIS_SOURCES =
                 {
@@ -860,7 +860,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_CLADE, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
                         {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN},
-                        {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL}
+                        {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE_CALL_ID50, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL}
                 };
 
         final Map<String, String> SubjectCounts = new HashMap<>();
@@ -1022,7 +1022,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setVirusName(uniqueVirusId);
         yaxis.confirmSelection();
@@ -1087,14 +1087,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
-        xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        xaxis.pickVariable(CDSHelper.NAB_TITERID50);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.setVirusName(xVirusId);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setVirusName(y1VirusId);
         yaxis.confirmSelection();
@@ -1298,7 +1298,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.confirmSelection();
 
         scaleValues = "3\n30\n300\n3000";
@@ -1763,7 +1763,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
-        xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        xaxis.pickVariable(CDSHelper.NAB_TITERID50);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
         sleep(500);

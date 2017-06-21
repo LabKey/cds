@@ -521,7 +521,7 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        xaxis.pickVariable(CDSHelper.NAB_TITERID50);
         xaxis.setTargetCell(CDSHelper.TARGET_CELL_TZM);
         xaxis.validateVirusSubjectCount(virusCounts, false);
         xaxis.back();

@@ -495,12 +495,12 @@ public class CDSHelper
     public static final String NAB_LAB = "Lab ID";
     public static final String NAB_LAB_SRC_KEY = "Nab Lab Source Key";
     public static final String NAB_NEUTRAL = "Neutralization tier";
-    public static final String NAB_RESPONSE = "Response call";
+    public static final String NAB_RESPONSE_CALL_ID50 = "Response call ID50";
     public static final String NAB_SPECIMEN = "Specimen type";
     public static final String NAB_TARGET_CELL = "Target cell";
     public static final String NAB_TIER = "Tier";
-    public static final String NAB_TITERIC50 = "Titer IC50";
-    public static final String NAB_TITERIC80 = "Titer IC80";
+    public static final String NAB_TITERID50 = "Titer ID50";
+    public static final String NAB_TITERID80 = "Titer ID80";
     public static final String NAB_VIRUS_NAME = "Virus name";
     public static final String NAB_VIRUS_TYPE = "Virus type";
 

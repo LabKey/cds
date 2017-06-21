@@ -218,8 +218,8 @@ public class CDSGridTest extends CDSReadOnlyTest
         }
 
         log("Change column set and ensure still filtered");
-        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
-        grid.ensureColumnsPresent(CDSHelper.NAB_TITERIC50);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERID50, false, true);
+        grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50);
 
         if (CDSHelper.validateCounts)
         {
@@ -318,11 +318,11 @@ public class CDSGridTest extends CDSReadOnlyTest
         grid.assertRowCount(2);
 
         log("Now add a new column to the mix.");
-        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERID50, false, true);
 
         _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
         grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
         grid.assertRowCount(15);
 
         log("Validate checkerboarding.");
@@ -357,7 +357,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
         grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
         grid.assertRowCount(17);
 
         cds.goToAppHome();
@@ -384,7 +384,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         yAxis.openSelectorWindow();
         yAxis.pickSource(CDSHelper.NAB);
-        yAxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yAxis.pickVariable(CDSHelper.NAB_TITERID50);
         yAxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
         yAxis.setScale(DataspaceVariableSelector.Scale.Linear);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -412,12 +412,12 @@ public class CDSGridTest extends CDSReadOnlyTest
         log("Validate expected columns are present.");
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
                 CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                CDSHelper.NAB_TITERIC50, CDSHelper.DEMO_RACE);
+                CDSHelper.NAB_TITERID50, CDSHelper.DEMO_RACE);
 
         gridColumnSelector.openSelectorWindow();
         Map<String, Boolean> columns = new HashMap<>();
         columns.put(CDSHelper.ICS_ANTIGEN, false);
-        columns.put(CDSHelper.NAB_TITERIC50, false);
+        columns.put(CDSHelper.NAB_TITERID50, false);
         columns.put(CDSHelper.DEMO_RACE, false);
 
         log("Validate that Current columns are as expected and not selectable.");
@@ -433,7 +433,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         oneColumn.put(CDSHelper.ICS_ANTIGEN, false);
         gridColumnSelectorValidator(gridColumnSelector, CDSHelper.ICS, oneColumn);
         oneColumn.clear();
-        oneColumn.put(CDSHelper.NAB_TITERIC50, false);
+        oneColumn.put(CDSHelper.NAB_TITERID50, false);
         gridColumnSelectorValidator(gridColumnSelector, CDSHelper.NAB, oneColumn);
         oneColumn.clear();
 
@@ -454,7 +454,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
                 CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                CDSHelper.NAB_TITERIC50, CDSHelper.DEMO_RACE, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+                CDSHelper.NAB_TITERID50, CDSHelper.DEMO_RACE, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
         log("Filter on added column, check to make sure it is now 'locked' in the selector.");
         grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Less Than or Equal To", "0.003");
@@ -482,7 +482,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
                 CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                CDSHelper.NAB_TITERIC50, CDSHelper.DEMO_RACE);
+                CDSHelper.NAB_TITERID50, CDSHelper.DEMO_RACE);
 
         log("Validate the column chooser is correct when a column is removed.");
         String selectorText, selectorTextClean;

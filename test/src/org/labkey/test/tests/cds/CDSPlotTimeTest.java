@@ -96,7 +96,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         log("Verify NAb Titer IC50, A3R5 and Study Days.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
         yaxis.confirmSelection();
@@ -656,7 +656,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
     {
         // Scenario #4: One or more treatment groups are control groups that do not receive any vaccinations
         // Test Data Study QED 2 (Group V given no vaccines but has enrollment/firstvacc/lastvacc set, also has placeholder visit for setting lastvacc)
-        initTimePointPlotSelection(CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.TARGET_CELL_A3R5);
+        initTimePointPlotSelection(CDSHelper.NAB, CDSHelper.NAB_TITERID50, CDSHelper.TARGET_CELL_A3R5);
         String studyName = "QED 2";
         filterForSingleStudy(studyName);
         _asserts.assertFilterStatusCounts(43, 1, 1, 1, 4);
@@ -691,7 +691,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
     {
         // Scenario #5: Vaccination and challenge are on the same day
         // Test Data Study YOYO 55 (Group 3 Arm T3 has day 168 as both Last Vaccination and Challenge, vaccination icon should be shown)
-        initTimePointPlotSelection(CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.TARGET_CELL_A3R5);
+        initTimePointPlotSelection(CDSHelper.NAB, CDSHelper.NAB_TITERID50, CDSHelper.TARGET_CELL_A3R5);
         String studyName = "YOYO 55";
         filterForSingleStudy(studyName);
         _asserts.assertFilterStatusCounts(88, 1, 1, 1, 8);
@@ -788,7 +788,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         log("Choose the y-axis.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.confirmSelection();
 
         log("Choose 'Study days with axis type Categorical'.");
@@ -898,7 +898,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         log("Set the y-axis to Elispot, Magnitude Background Subtracted.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.confirmSelection();
 
         log("Set the x-axis to ICS Magnitude Background Subtracted.");

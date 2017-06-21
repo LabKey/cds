@@ -16,7 +16,6 @@
 package org.labkey.test.pages.cds;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.jetbrains.annotations.Nullable;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
@@ -507,7 +506,7 @@ public class CDSPlot
         {
             _test.log("Validating subject counts in the x-axis NAB - Virus.");
             xaxis.pickSource(CDSHelper.NAB);
-            xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+            xaxis.pickVariable(CDSHelper.NAB_TITERID50);
             xaxis.validateVirusSubjectCount(virusCounts, true);
         }
         else
