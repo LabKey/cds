@@ -813,20 +813,18 @@
         <description>The adjusted value of 80% maximal inhibitory dilution (ID80).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
-      <!-- Could this be a boolean? Spec says value is 1 or 0 -->
       <column columnName="nab_response_ID50">
         <datatype>boolean</datatype>
         <columnTitle>Response call ID50</columnTitle>
         <description>Indicates if neutralization is detected based on ID50 titer.</description>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
-      <!-- Could this be a boolean? Spec says value is 1 or 0 -->
       <column columnName="nab_response_ID80">
         <datatype>boolean</datatype>
         <columnTitle>Response call ID80</columnTitle>
         <description>Indicates if neutralization is detected based on ID80 titer.</description>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="response_call">

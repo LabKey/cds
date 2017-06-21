@@ -555,7 +555,8 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_NAb_nab_response_ID50': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                    isMeasure: false
                 },
                 'study_BAMA_mfi_delta': {
                     isRecommendedVariable: true
@@ -585,6 +586,10 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'study_Demographics_study_arm_summary': {
                     isRecommendedVariable: true
+                },
+
+                'study_NAb_nab_response_ID80': {
+                    isMeasure: false
                 },
 
                 // hidden variables
