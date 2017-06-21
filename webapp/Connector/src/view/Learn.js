@@ -582,6 +582,7 @@ Ext.define('Connector.view.Learn', {
                 dimension: dimension,
                 activeTab: activeTab,
                 hasSearch: dimension.itemDetailTabs[activeTab].hasSearch,
+                searchValue: this.searchFilter,
                 listeners: {
                     searchchanged: function(filter) {
                         this.onSearchFilterChange(filter, true);
@@ -655,14 +656,13 @@ Ext.define('Connector.view.Learn', {
     },
 
     selectDimension : function(dimension, id, urlTab, params) {
+        this.searchFilter = params ? params.q : undefined;
         if (urlTab) {
             // detail tab case
-            this.searchFilter = undefined; // search doesn't apply for detail tabs
             this.searchFields = this.searchFieldsByTab(urlTab);
         }
         else {
             // summary view case
-            this.searchFilter = params ? params.q : undefined;
             this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
         }
 
@@ -781,9 +781,7 @@ Ext.define('Connector.view.LearnHeader', {
 
     filterStoreFromUrlParams: function(id, dimension, params)
     {
-        // search doesn't apply for detail tabs
-        if (!id)
-            this.updateSearchValue(dimension, params);
+        this.updateSearchValue(dimension, params);
         this.updateSort(dimension, params, id != null);
         this.updateFilters(dimension, params, id != null);
     },
