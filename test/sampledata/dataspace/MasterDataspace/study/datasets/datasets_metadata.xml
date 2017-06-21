@@ -305,7 +305,7 @@
       </column>
       <column columnName="antigen">
         <datatype>varchar</datatype>
-        <columnTitle>Antigen</columnTitle>
+        <columnTitle>Antigen name</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <description>The name of the antigen or stimulant being tested as reported by the lab in the assay dataset.</description>
         <dimension>true</dimension>
@@ -500,7 +500,7 @@
       </column>
       <column columnName="antigen">
         <datatype>varchar</datatype>
-        <columnTitle>Antigen Panel</columnTitle>
+        <columnTitle>Antigen name</columnTitle>
         <description>The name of the antigen being tested as reported by the lab in the assay dataset.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
@@ -720,7 +720,7 @@
       </column>
       <column columnName="antigen">
         <datatype>varchar</datatype>
-        <columnTitle>Antigen</columnTitle>
+        <columnTitle>Antigen name</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <description>The term for the name of the virus (antigen) being tested.</description>
         <dimension>true</dimension>
@@ -755,7 +755,7 @@
       </column>
       <column columnName="clade">
         <datatype>varchar</datatype>
-        <columnTitle>Antigen clade</columnTitle>
+        <columnTitle>Virus clade</columnTitle>
         <description>The clade (gene subtype) to which the antigen is most closely aligned. The clade may be a circulating type or a laboratory consensus or global clade.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
@@ -861,7 +861,7 @@
         <datatype>double</datatype>
         <columnTitle>Slope</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <description>The slope calculated using the difference between 50% and 80% neutralization</description>
+        <description>The slope calculated using the difference between 50% and 80% neutralization.</description>
         <measure>true</measure>
       </column>
     </columns>
