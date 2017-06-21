@@ -504,6 +504,9 @@ public class CDSHelper
     public static final String NAB_VIRUS_NAME = "Virus name";
     public static final String NAB_VIRUS_TYPE = "Virus type";
 
+    //Response Call is also hidden, but checking if its present would conflict with Response call ID50, which is valid.
+    public static final String[] NAB_HIDDEN_VARS = {"Titer IC50", "Titer IC80", "Virus Insert Name"};
+
     public static final String TIME_POINTS = "Time points";
     public static final String TIME_POINTS_DAYS = "Study days";
     public static final String TIME_POINTS_WEEKS = "Study weeks";
@@ -1342,6 +1345,11 @@ public class CDSHelper
 
     public void initModuleProperties()
     {
+        initModuleProperties(true);
+    }
+
+    public void initModuleProperties(boolean showHiddenVars)
+    {
         boolean changed, returnVal;
 
         _test._ext4Helper.resetCssPrefix();
@@ -1351,7 +1359,7 @@ public class CDSHelper
         _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
         _test.waitForText(1000, "CDSTest Project");
 
-        changed = showHiddenVariables(true);
+        changed = showHiddenVariables(showHiddenVars);
         returnVal = setGettingStartedVideoURL("https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0");
         changed |= returnVal;
         returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
