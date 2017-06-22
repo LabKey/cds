@@ -285,31 +285,4 @@ public class CDSTest extends CDSReadOnlyTest
         waitForFormElementToEqual(hierarchySelector, "Country at enrollment");
         cds.goToSummary();
     }
-
-    @Test
-    public void testVariablesAreHidden()
-    {
-        cds.initModuleProperties(false);
-
-        goToProjectHome();
-        cds.enterApplication();
-
-        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
-        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-
-        yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.NAB);
-        assertTextNotPresent(CDSHelper.NAB_HIDDEN_VARS);
-        yaxis.cancelSelection();
-
-        xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.NAB);
-        assertTextNotPresent(CDSHelper.NAB_HIDDEN_VARS);
-        xaxis.cancelSelection();
-
-        //Put properties back the way they were.
-        cds.initModuleProperties(true);
-    }
-
 }
