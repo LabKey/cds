@@ -302,13 +302,24 @@ h1.lhdv {
 
 .pageheader {
   height: 112px!important;
-  padding-left: 16px;
 
   .title-and-back-panel {
     font: $title-font;
     background: $gray-7;
     height: 56px;
     line-height: 56px;
+    padding-left: 0!important;
+  }
+
+  .iarrow {
+    background-image: url(images/navigatebackward.svg);
+    background-repeat: no-repeat;
+    background-color: $gray-8;
+    width: 56px;
+    height: 56px;
+    margin: 0 16px 0 0px!important;
+    vertical-align: bottom;
+    float: left;
   }
 }
 
