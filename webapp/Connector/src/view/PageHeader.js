@@ -67,7 +67,7 @@ Ext.define('Connector.view.PageHeader', {
 
         var titleAndBack = {
             xtype: 'box',
-            cls: 'titlepanel inline',
+            cls: 'inline',
             flex: 1,
             renderTpl: new Ext.XTemplate(
                 '<div class="learn-up">',
@@ -138,6 +138,7 @@ Ext.define('Connector.view.PageHeader', {
             xtype: 'container',
             layout: 'hbox',
             width: '100%',
+            cls: 'title-and-back-panel',
             items: this.buttons ? [titleAndBack, buttonsContainer] : [titleAndBack]
         },{
             xtype: 'container',
