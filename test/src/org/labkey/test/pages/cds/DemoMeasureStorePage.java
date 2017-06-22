@@ -49,7 +49,7 @@ public class DemoMeasureStorePage
     {
         List<String> tickLabels = new ArrayList<>();
         WebElement axisElement = Locator.css("svg g.axis").findElements(_test.getDriver()).get("y".equals(axis) ? 1 : 0);
-        for (WebElement tickElement : axisElement.findElements(Locator.css("g.tick-text g text").toBy()))
+        for (WebElement tickElement : Locator.css("g.tick-text g text").findElements(axisElement))
             tickLabels.add(tickElement.getText());
         return tickLabels.toArray(new String[tickLabels.size()]);
     }

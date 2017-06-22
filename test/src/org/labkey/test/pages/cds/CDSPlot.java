@@ -215,10 +215,10 @@ public class CDSPlot
 
         // There will always be two g.axis elements. One horizontal the other vertical.
         cssMainPlotWindow = "div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") > g.axis";
-        axisElements = Locator.css(cssMainPlotWindow).toBy().findElements(_test.getDriver());
+        axisElements = Locator.css(cssMainPlotWindow).findElements(_test.getDriver());
         try
         {
-            axisElements.get(axisIndex).findElement(Locator.css("g.log-gutter").toBy());
+            Locator.css("g.log-gutter").findElement(axisElements.get(axisIndex));
             isPresent = true;
         }
         catch(org.openqa.selenium.NoSuchElementException ex)
@@ -248,7 +248,7 @@ public class CDSPlot
                 WebElement preEnrollment;
 
                 _test.log("Study Name: '" + study.getText() + "' ID: " + studyId);
-                visits = study.findElements(Locator.css("image.visit-tag").toBy());
+                visits = Locator.css("image.visit-tag").findElements(study);
                 _test.log("Number of visits: " + visits.size());
 
                 // Had hoped to get a collection directly, but had trouble getting css to see the href value.
