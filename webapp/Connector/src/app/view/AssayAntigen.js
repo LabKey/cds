@@ -20,6 +20,8 @@ Ext.define('Connector.view.AssayAntigen', {
     viewConfig: {
         stripeRows: false,
         overflowY: 'scroll',
+        trackOver: false,
+
         getRowClass: function() {
             return 'detail-row';
         }

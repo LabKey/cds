@@ -24,7 +24,7 @@ Ext.define('Connector.view.PageHeader', {
 
     model: undefined,
 
-    height: 100,
+    height: 112,
 
     activeTab: 0,
 
@@ -110,8 +110,9 @@ Ext.define('Connector.view.PageHeader', {
 
         var tabPanel = {
             xtype: 'panel',
+            border: false,
             html: new Ext.XTemplate(
-                    '<div class="dim-selector learnabouttab">',
+                    '<div class="learnabouttab">',
                     '<tpl for=".">',
                     '<h1 class="lhdv">{label:htmlEncode}</h1>',
                     '</tpl>',
@@ -142,6 +143,7 @@ Ext.define('Connector.view.PageHeader', {
             xtype: 'container',
             layout: 'hbox',
             width: '100%',
+            cls: "dim-selector",
             items: this.hasSearch ? [tabPanel, detailSearchField] : [tabPanel]
         }];
 

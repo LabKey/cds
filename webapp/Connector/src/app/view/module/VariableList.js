@@ -17,6 +17,18 @@ Ext.define('Connector.view.module.VariableList', {
         searchFields: ['alias', 'description', 'label']
     },
 
+    viewConfig: {
+        stripeRows: false,
+        trackOver: false,
+        selectedItemCls: '',
+
+        getRowClass: function() {
+            return 'variable-list-row';
+        }
+    },
+
+    cls: 'learngrid variable-list-grid',
+
     columns : [{
         text: 'Name & Description',
         xtype: 'templatecolumn',
@@ -24,20 +36,14 @@ Ext.define('Connector.view.module.VariableList', {
         resizable: false,
         dataIndex: 'label',
         tpl: new Ext.XTemplate(
-                '<div class="list-container">',
-                    '<div class="list-entry-container">',
-                        '<div class="detail-left-column">',
-                            '<div class="list-category-container">',
-                                '<div class="list-category-detail">{[values.isRecommendedVariable ? "Recommended" : ""]}</div>',
-                            '</div>',
-                            '<div class="list-entry-title">',
-                                '<h2>{label:htmlEncode}</h2>',
-                            '</div>',
-                            '<div class="list-entry-description">',
-                                '<div>{description:htmlEncode}</div>',
-                            '</div>',
-                        '</div>',
-                    '</div>',
+                '<div class="variable-list-category-container">',
+                    '<div class="variable-list-category-text">{[values.isRecommendedVariable ? "Recommended" : ""]}</div>',
+                '</div>',
+                '<div class="variable-list-title">',
+                    '<h2>{label:htmlEncode}</h2>',
+                '</div>',
+                '<div class="variable-list-description">',
+                    '{description:htmlEncode}',
                 '</div>')
     }],
 
