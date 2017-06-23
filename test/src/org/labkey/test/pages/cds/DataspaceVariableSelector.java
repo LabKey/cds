@@ -167,8 +167,7 @@ public abstract class DataspaceVariableSelector
 
     public void clearVariableOptions()
     {
-        // TODO: remove 'x-body' once helper takes a css selector
-        _test._ext4Helper.clearGridSelection("x-body " + window().getLoc() + " .variableoptionsgrid");
+        _test._ext4Helper.clearGridSelection(window().append(" .variableoptionsgrid").findElement(_test.getDriver()));
     }
 
     public void selectAllVariableOptions()
@@ -180,7 +179,7 @@ public abstract class DataspaceVariableSelector
     {
         Locator radioRows = Locator.css(".variableoptions .x-checkboxgroup-form-item");
         WebElement row = radioRows.withText(text).findElement(_test.getDriver());
-        row.findElement(Locator.css("input").toBy()).click();
+        Locator.css("input").findElement(row).click();
     }
 
     public void pickMeasure(String source, String measure)
@@ -293,7 +292,7 @@ public abstract class DataspaceVariableSelector
     protected void setAssayDimension(String selector, AssayDimensions dimension, String... value)
     {
         String xpathDimField, xpathDimDropDown, xpathPanelSelector;
-        Locator locDimField, allTag;
+        Locator.XPathLocator locDimField, allTag;
         CDSHelper cds = new CDSHelper(_test);
 
         switch(dimension){
