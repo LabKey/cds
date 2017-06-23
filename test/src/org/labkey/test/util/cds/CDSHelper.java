@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 LabKey Corporation
+ * Copyright (c) 2016-2017 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -551,6 +552,45 @@ public class CDSHelper
     public static  String[] IMPORT_TABLES_WITH_ADMIN_ACCESS = {"import_ics", "import_nab", "import_els_ifng", "import_bama",
             "import_studypartgrouparmsubject", "import_studypartgrouparmproduct", "import_studypartgrouparmvisit", "import_studypartgrouparmvisitproduct",
             "import_studypartgrouparm", "import_studysubject"};
+
+    // Site user groups. Needed to run import etls (associated with studies in StudyGroups.txt).
+    public static final String GROUP_CDS_ADMIN = "CDS Admin Group";
+    public static final String GROUP_CDS_TEST = "CDS Test Group";
+    public static final String GROUP_DATA_IMPORT = "Data Import";
+    public static final String GROUP_FHCRC_APPROVED = "FHCRC Approved";
+
+    public static final Map<String, String> siteGroupRoles;
+    static
+    {
+        siteGroupRoles = new HashMap<>();
+        siteGroupRoles.put(GROUP_CDS_ADMIN, "Folder Administrator");
+        siteGroupRoles.put(GROUP_CDS_TEST, "Reader");
+        siteGroupRoles.put(GROUP_DATA_IMPORT, "Editor");
+        siteGroupRoles.put(GROUP_FHCRC_APPROVED, "Editor");
+    }
+
+    public static final Map<String, List<String>> siteGroupStudies;
+    static
+    {
+        siteGroupStudies = new HashMap<>();
+
+        List<String> tempList = Arrays.asList(PROT_Z136, PROT_Z138, PROT_Z139);
+        siteGroupStudies.put(GROUP_CDS_ADMIN, tempList);
+
+        tempList = Arrays.asList(PROT_Z129, PROT_Z130, PROT_Z131, PROT_Z132, PROT_Z133, PROT_Z134);
+        siteGroupStudies.put(GROUP_CDS_TEST, tempList);
+
+        tempList = Arrays.asList(PROT_Q3);
+        siteGroupStudies.put(GROUP_DATA_IMPORT, tempList);
+
+        tempList = Arrays.asList(PROT_Q1, PROT_Q2, PROT_Q3, PROT_Q4, PROT_R1, PROT_R2, PROT_R3, PROT_R4, PROT_R5, PROT_R6, PROT_R7,
+                PROT_R8, PROT_R9, PROT_Y55, PROT_Z100, PROT_Z101, PROT_Z102, PROT_Z103, PROT_Z104, PROT_Z105, PROT_Z106,
+                PROT_Z107, PROT_Z108, PROT_Z109, PROT_Z110, PROT_Z111, PROT_Z112, PROT_Z113, PROT_Z114, PROT_Z115,
+                PROT_Z116, PROT_Z117, PROT_Z118, PROT_Z119, PROT_Z122, PROT_Z123, PROT_Z124,
+                PROT_Z125, PROT_Z126, PROT_Z127, PROT_Z128, PROT_Z135, PROT_Z137, PROT_Z140);
+        siteGroupStudies.put(GROUP_FHCRC_APPROVED, tempList);
+
+    }
 
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)

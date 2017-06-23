@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 LabKey Corporation
+ * Copyright (c) 2014-2017 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.labkey.api.data.JdbcType;
 import org.labkey.api.data.Results;
 import org.labkey.api.data.ResultsImpl;
 import org.labkey.api.data.SqlSelector;
+import org.labkey.api.data.TSVMapWriter;
 import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
@@ -58,6 +59,7 @@ import org.labkey.api.security.IgnoresTermsOfUse;
 import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.RequiresSiteAdmin;
+import org.labkey.api.security.RoleAssignment;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
@@ -433,6 +435,58 @@ public class CDSController extends SpringActionController
         @Override
         public NavTree appendNavTrail(NavTree root)
         {
+            return null;
+        }
+    }
+
+    @RequiresPermission(AdminPermission.class)
+    @Action(ActionType.Export.class)
+    public class PermissionsReportExportAction extends SimpleViewAction<QueryForm>
+    {
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+
+        @Override
+        public ModelAndView getView(QueryForm queryForm, BindException errors) throws Exception
+        {
+            List<Map<String, Object>> groupPermissionData = new ArrayList<>();
+            Map<Integer, String> groupIdToName = new HashMap<>();
+
+            for (Group g : SecurityManager.getGroups(getContainer(), true))
+            {
+                groupIdToName.put(g.getUserId(), g.getName());
+            }
+
+            for (Container c : getContainer().getChildren()) {
+                if (c.isInheritedAcl())
+                {
+                    Map<String, Object> groupPermissionRow = new HashMap<>();
+                    groupPermissionRow.put("prot", c.getName());
+                    groupPermissionRow.put("group", "*");
+                    groupPermissionRow.put("role", "*");
+                    groupPermissionData.add(groupPermissionRow);
+                }
+                else
+                {
+                    for (RoleAssignment ra : c.getPolicy().getAssignments())
+                    {
+                        Map<String, Object> groupPermissionRow = new HashMap<>();
+                        groupPermissionRow.put("prot", c.getName());
+                        groupPermissionRow.put("group", groupIdToName.get(ra.getUserId()));
+                        groupPermissionRow.put("role", ra.getRole().getName());
+                        groupPermissionData.add(groupPermissionRow);
+                    }
+                }
+
+            }
+
+            TSVMapWriter writer = new TSVMapWriter(groupPermissionData);
+            writer.setFilenamePrefix("StudyGroups");
+            writer.write(getViewContext().getResponse());
+
             return null;
         }
     }

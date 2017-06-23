@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 LabKey Corporation
+ * Copyright (c) 2014-2017 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class CDSModule extends DefaultModule
 
     public double getVersion()
     {
-        return 17.12;
+        return 17.13;
     }
 
     public boolean hasScripts()

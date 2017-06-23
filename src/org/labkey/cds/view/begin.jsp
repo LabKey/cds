@@ -1,6 +1,6 @@
 <%
 /*
- * Copyright (c) 2014-2015 LabKey Corporation
+ * Copyright (c) 2014-2017 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@
 <%@ page import="org.labkey.cds.CDSController" %>
 <%@ page import="org.labkey.cds.CDSUserSchema" %>
 <%@ page import="org.labkey.api.view.ActionURL" %>
+<%@ page import="org.labkey.folder.xml.PagesDocument" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%@ taglib prefix="labkey" uri="http://www.labkey.org/taglib" %>
 <%
@@ -56,6 +57,7 @@
         <li><%=textLink("Browse Schema", PageFlowUtil.urlProvider(QueryUrls.class).urlSchemaBrowser(c, CDSUserSchema.SCHEMA_NAME))%></li>
         <li><%=textLink("Manage News Feed", PageFlowUtil.urlProvider(QueryUrls.class).urlExecuteQuery(newsFeedURL))%></li>
         <li><%=textLink("Add Users", addUserUrl)%></li>
+        <li><%=textLink("Download Group Permissions Report", CDSController.PermissionsReportExportAction.class)%></li>
     </ul>
 </div>
 <%

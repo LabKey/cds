@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* cds-16.30-16.31.sql */
-
-ALTER TABLE cds.import_study ADD COLUMN study_clintrials_id VARCHAR(250);
-ALTER TABLE cds.Study ADD COLUMN clintrials_id VARCHAR(250);
-
-/* cds-16.31-16.32.sql */
-
-ALTER TABLE cds.GridBase ADD COLUMN EnrollmentDay INT;
-ALTER TABLE cds.GridBase ADD COLUMN LastVaccinationDay INT;
+CREATE TABLE cds.import_studygroups (
+  prot VARCHAR(250) NOT NULL,
+  "group" VARCHAR(250) NOT NULL,
+  role VARCHAR(250) NOT NULL
+);
