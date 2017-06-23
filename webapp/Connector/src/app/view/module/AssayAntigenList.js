@@ -60,11 +60,13 @@ Ext.define('Connector.view.module.AssayAntigenList', {
             tpl: new Ext.XTemplate(
                     '<div class="detail-description">',
                     '<h2>{antigen_name:htmlEncode}</h2>',
-                    '<div class="antigen-description">',
+                    '<div class="antigen-description detail-description-text">',
                     '<tpl if="antigen_description.length &gt; 0">',
+                    '<p class="block-with-text">',
                     '<tpl for="antigen_description">',
                     '{.:htmlEncode}',
                     '</tpl>',
+                    '</p>',
                     '</tpl>',
                     '</div>',
                     '</div>'

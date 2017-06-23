@@ -97,18 +97,23 @@ Ext.define('Connector.app.view.LearnGrid', {
 
         boxready: function(grid)
         {
+            if (!this.isDetailLearnGrid)
+            {
+                this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
+                this.setTitleColumnWidth();
+            }
+        },
+
+        render: function(grid)
+        {
             if (this.isDetailLearnGrid)
             {
                 if (grid.learnView && grid.learnView.detailPageView)
                 {
                     var headerPadding = 28; //.modulecontainercolumn padding top 28
                     this.height = grid.learnView.container.getHeight() - grid.learnView.detailPageView.header.getEl().dom.clientHeight - headerPadding;
+                    grid.doLayout();
                 }
-            }
-            else
-            {
-                this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
-                this.setTitleColumnWidth();
             }
         }
     }
