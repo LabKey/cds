@@ -21,6 +21,7 @@ Ext.define('Connector.view.AssayAntigen', {
         stripeRows: false,
         overflowY: 'scroll',
         trackOver: false,
+        resizable: false,
 
         getRowClass: function() {
             return 'detail-row';
@@ -67,6 +68,7 @@ Ext.define('Connector.view.AssayAntigen', {
             text: antigenNameLabel,
             xtype: 'templatecolumn',
             minWidth: 300,
+            flex: 2*flex, // increased label & description flex to better reflect spec images.
             dataIndex: 'antigen_name',
             filterConfigSet: [{
                 filterField: 'antigen_name',
@@ -78,9 +80,11 @@ Ext.define('Connector.view.AssayAntigen', {
                         '<h2>{antigen_name:htmlEncode}</h2>',
                         '<div class="antigen-description">',
                             '<tpl if="antigen_description.length &gt; 0">',
-                                '<tpl for="antigen_description">',
-                                    '{.:htmlEncode}',
-                                '</tpl>',
+                                '<p class="block-with-text">',
+                                    '<tpl for="antigen_description">',
+                                        '{.:htmlEncode}',
+                                    '</tpl>',
+                                '</p>',
                             '</tpl>',
                         '</div>',
                     '</div>'
@@ -143,7 +147,7 @@ Ext.define('Connector.view.AssayAntigen', {
                 text: 'Clade(s)',
                 xtype: 'templatecolumn',
                 minWidth: 100,
-                flex: 25/100,
+                flex: 20/100,
                 resizable: false,
                 filterConfigSet: [{
                     filterField: 'antigen_clades',
@@ -166,7 +170,7 @@ Ext.define('Connector.view.AssayAntigen', {
                 text: 'Protein:Pools',
                 xtype: 'templatecolumn',
                 minWidth: 120,
-                flex: 25/100,
+                flex: 20/100,
                 resizable: false,
                 filterConfigSet: [{
                     filterField: 'antigen_proteins',
