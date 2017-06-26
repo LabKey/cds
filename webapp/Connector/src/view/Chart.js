@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 LabKey Corporation
+ * Copyright (c) 2014-2017 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -3558,6 +3558,9 @@ Ext.define('Connector.view.Chart', {
     },
 
     showVisitTagHover : function(data, visitTagEl) {
+        if (data.visitTagLabel == null)
+            return;
+
         var bubbleWidth, groupWidth = 0, tagWidth = 0,
             groupTags = {}, maxWidth = 20,
             config, visitTag, visitTagGrp, keyCount = 0;

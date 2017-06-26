@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 LabKey Corporation
+ * Copyright (c) 2016-2017 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -97,18 +97,23 @@ Ext.define('Connector.app.view.LearnGrid', {
 
         boxready: function(grid)
         {
+            if (!this.isDetailLearnGrid)
+            {
+                this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
+                this.setTitleColumnWidth();
+            }
+        },
+
+        render: function(grid)
+        {
             if (this.isDetailLearnGrid)
             {
                 if (grid.learnView && grid.learnView.detailPageView)
                 {
                     var headerPadding = 28; //.modulecontainercolumn padding top 28
                     this.height = grid.learnView.container.getHeight() - grid.learnView.detailPageView.header.getEl().dom.clientHeight - headerPadding;
+                    grid.doLayout();
                 }
-            }
-            else
-            {
-                this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
-                this.setTitleColumnWidth();
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 LabKey Corporation
+ * Copyright (c) 2014-2017 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -190,7 +190,7 @@ Ext.define('Connector.model.StudyAxisData', {
             isChallenge = record.get('is_challenge');
 
             // don't show study axis icon for Placeholder visit tag
-            if (visitTagLabel == 'Placeholder' || visitTagLabel == null)
+            if (visitTagLabel == 'Placeholder')
                 return true; // continue
 
             if (group)

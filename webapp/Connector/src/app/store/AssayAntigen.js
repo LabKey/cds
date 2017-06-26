@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 LabKey Corporation
+ * Copyright (c) 2016-2017 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -43,13 +43,15 @@ Ext.define('Connector.app.store.AssayAntigen', {
                                 Ext.each(row.pools, function(pool){
                                     antigens[idx-1].antigen_pools.push(pool);
                                 });
-                                if (!Ext.Array.contains(antigens[idx-1].antigen_description, row.antigen_description[0])) {
-                                    antigens[idx-1].antigen_description.push(', ' + row.antigen_description[0]);
+                                if (row.antigen_description[0] && !Ext.Array.contains(antigens[idx-1].antigen_description, row.antigen_description[0])) {
+                                    var concat = '';
+                                    if (antigens[idx-1].antigen_description.length > 0)
+                                        concat = ', ';
+                                    antigens[idx-1].antigen_description.push(concat + row.antigen_description[0]);
                                 }
                             }
                             else {
                                 var antigen = this.getAntigen(row);
-                                antigen.antigen_description = row.antigen_description;
                                 Ext.apply(antigen, {
                                     antigen_proteinAndPools: [{
                                         protein: row.protein,
@@ -93,10 +95,11 @@ Ext.define('Connector.app.store.AssayAntigen', {
         if (row.target_cell)
             identifier += row.target_cell;
         identifier += row.antigen_type;
+        var description = Ext.isArray(row.antigen_description) ? (row.antigen_description[0] ? [row.antigen_description[0]] : []) : [row.antigen_description];
         return {
             antigen_identifier: identifier,
             antigen_name: row.antigen_name,
-            antigen_description: [row.antigen_description],
+            antigen_description: description,
             antigen_type: row.antigen_type,
             antigen_control_value: row.antigen_control && row.antigen_control != "0" ? "YES" : "NO", //this assumes the control status is the same for all peptide pools of a protein panel
             antigen_clade: row.clade,
