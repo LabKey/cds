@@ -155,9 +155,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
-        assertTrue("For NAB IC80 vs ICS Magnitude x-axis gutter plot was not present.", cdsPlot.hasXGutter());
+        assertTrue("For NAB ID80 vs ICS Magnitude x-axis gutter plot was not present.", cdsPlot.hasXGutter());
         assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
-        assertFalse("For NAB IC80 vs ICS Magnitude y-axis gutter plot was present and it should not have been.", cdsPlot.hasYGutter());
+        assertFalse("For NAB ID80 vs ICS Magnitude y-axis gutter plot was present and it should not have been.", cdsPlot.hasYGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
@@ -329,7 +329,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         final String ELISPOT_DATA_PROV = "0\n500\n1000\n1500\n2000\n2500\n3000\n3500\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000";
         final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
-        final String NAB_IC50 = "1\n10\n1\n10\n100\n1000";
+        final String NAB_ID50 = "1\n10\n1\n10\n100\n1000";
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 

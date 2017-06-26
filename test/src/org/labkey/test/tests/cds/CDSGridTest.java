@@ -510,8 +510,8 @@ public class CDSGridTest extends CDSReadOnlyTest
         selectorTextClean = selectorText.toLowerCase().replaceAll("\\n", "");
         selectorTextClean = selectorTextClean.replaceAll("\\s+", "");
 
-        expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen\n  Cell type\n  Data summary level\n  Functional marker name\n" +
-                "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer IC50\nStudy and treatment variables\n  Study Name\n" +
+        expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen name\n  Cell type\n  Data summary level\n  Functional marker name\n" +
+                "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer ID50\nStudy and treatment variables\n  Study Name\n" +
                 "Subject characteristics\n  Race\n  Subject Id\nTime points\n  Study days";
         expectedTextClean = expectedText.toLowerCase().replaceAll("\\n", "");
         expectedTextClean = expectedTextClean.replaceAll("\\s+", "");

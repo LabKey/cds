@@ -93,7 +93,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         final String studyMonthsScales = "0\n5\n10\n15\n20" + yaxisScale;
         final String studyMonthsScalesAlignedVaccination = "-10\n-5\n0\n5\n10" + yaxisScale;
 
-        log("Verify NAb Titer IC50, A3R5 and Study Days.");
+        log("Verify NAb Titer ID50, A3R5 and Study Days.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERID50);
