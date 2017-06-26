@@ -59,10 +59,8 @@ Ext.define('Connector.view.module.VariableList', {
                 '<div class="detail-empty-text">No available Variables meet your selection criteria.</div>'
         ).apply({});
 
-        var store = StoreCache.getStore('Connector.app.store.VariableList');
-        store.loadVariables(this.model.data.assay_type);
-
-        this.store = store;
+        this.model.data.variable_store.loadVariables();
+        this.store = this.model.data.variable_store;
         this.callParent();
     }
 });

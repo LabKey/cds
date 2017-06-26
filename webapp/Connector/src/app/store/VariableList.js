@@ -9,6 +9,10 @@ Ext.define('Connector.app.store.VariableList', {
 
     model : 'Connector.app.model.VariableList',
 
+    isVariablesLoaded: false,
+
+    assayType: "",
+
     constructor: function(config) {
         Ext.applyIf(config, {
             cache: []
@@ -16,20 +20,23 @@ Ext.define('Connector.app.store.VariableList', {
         this.callParent([config]);
     },
 
-    loadVariables : function(assayName) {
-        this.variableData = Connector.getService('Query').getVariables('Study');
-        var measures = [];
-        Ext.each(this.variableData, function(datum) {
-            if (datum.data.queryName === assayName) {
-                measures.push({
-                    alias: datum.data.alias,
-                    label: datum.data.label,
-                    isRecommendedVariable: datum.data.isRecommendedVariable,
-                    description: datum.data.description,
-                    queryName: datum.data.queryName
+    loadVariables : function() {
+        if (this.isVariablesLoaded)
+            return;
+
+        var measures = Connector.getService('Query').getVariables('Study')
+                .filter(function(datum) {
+                    return datum.get('queryName') === this.assayType;
+                }, this)
+                .map(function(datum) {
+                    return {
+                        alias: datum.get('alias'),
+                        label: datum.get('label'),
+                        isRecommendedVariable: datum.get('isRecommendedVariable'),
+                        description: datum.get('description'),
+                        queryName: datum.get('queryName')
+                    }
                 });
-            }
-        });
         this.loadRawData(measures);
         this.sort([
             {
@@ -41,5 +48,6 @@ Ext.define('Connector.app.store.VariableList', {
                 direction: 'ASC'
             }
         ]);
+        this.isVariablesLoaded = true;
     }
 });
