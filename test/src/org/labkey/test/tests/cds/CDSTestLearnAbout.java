@@ -23,6 +23,7 @@ import org.junit.rules.Timeout;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.Locators;
+import org.labkey.test.pages.cds.LearnDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
@@ -383,6 +384,29 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         validateToolTipText(toolTipText, "ZAP 117");
         log("Tool tip text contained the expected values.");
 
+    }
+
+    @Test
+    public void testAntigenSearch()
+    {
+        cds.viewLearnAboutPage("Assays");
+        LearnGrid summaryGrid = new LearnGrid(this);
+
+        log("Test basic search functionality.");
+        LearnDetailsPage.DetailLearnGrid bamaAntigenGrid = summaryGrid.setSearch(CDSHelper.TITLE_BAMA)
+                .clickFirstItem()
+                .getGridTab("Antigens");
+        bamaAntigenGrid.setSearch(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[0]);
+        int rowCount = bamaAntigenGrid.getRowCount();
+
+        Assert.assertEquals("There should only be one row returned", 1, rowCount);
+
+        log("Test search persistence");
+        refresh();
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+        rowCount = bamaAntigenGrid.getRowCount();
+
+        Assert.assertEquals("There should only be one row returned", 1, rowCount);
     }
 
     @Test
