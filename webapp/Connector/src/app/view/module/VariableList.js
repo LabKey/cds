@@ -56,7 +56,7 @@ Ext.define('Connector.view.module.VariableList', {
             this.tabParams = this.learnViewConfig.tabParams;
         }
         this.emptyText = new Ext.XTemplate(
-                '<div class="detail-empty-text">No available Variables meet your selection criteria.</div>'
+                '<div class="detail-empty-text">No available variables meet your selection criteria.</div>'
         ).apply({});
 
         this.model.data.variable_store.loadVariables();
