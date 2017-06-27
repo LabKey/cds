@@ -96,6 +96,11 @@ Ext.define('Connector.app.store.Assay', {
                     storeId: 'assayantigen_' + assay.assay_type,
                     assayType: assay.assay_type
                 });
+                assay.variable_store = Ext.create('Connector.app.store.VariableList', {
+                    storeId: 'assayvariable_' + assay.assay_type,
+                    assayType: assay.assay_type
+                });
+
                 assays.push(assay);
             }, this);
 
@@ -103,63 +108,6 @@ Ext.define('Connector.app.store.Assay', {
             this.assayStudies = undefined;
 
             this.loadRawData(assays);
-        }
-    },
-
-    loadAnalytes : function(assayName, callback, scope) {
-        var queryService = Connector.getService('Query'),
-            dimensions = queryService.getDimensions('study', assayName),
-            columns = [],
-            sql = "SELECT * FROM(";
-
-        if (dimensions.length > 0) {
-            Ext.each(dimensions, function(dimension) {
-                columns.push({
-                    name:dimension.name,
-                    label:dimension.label
-                });
-            }, this);
-
-            for (var i = 0; i<columns.length; i++) {
-                sql = sql + "SELECT DISTINCT '"
-                + assayName + "' as Assay, '"
-                + columns[i].label + "' as columnName, "
-                + "CAST(" + columns[i].name + " AS VARCHAR) as Analyte FROM ds_" + assayName.toLowerCase();
-                if (i < columns.length - 1) {
-                    sql = sql + "\n UNION \n";
-                }
-            }
-            sql = sql + ") AS source_table ORDER BY source_table.Assay, source_table.columnName";
-
-
-            LABKEY.Query.executeSql({
-                schemaName: 'cds',
-                sql: sql,
-                success: function(result) {
-                    var analytes = {};
-                    Ext.each(result.rows, function(row) {
-                        var key = row.columnName;
-
-                        if (key in analytes) {
-                            analytes[key] = analytes[key] + ", " + row.Analyte;
-                        }
-                        else {
-                            analytes[key] = row.Analyte;
-                        }
-                    });
-
-                    var analyteRows = [];
-                    Ext.iterate(analytes, function(prop, value) {
-                        analyteRows.push({
-                            col: prop,
-                            value: value
-                        });
-                    });
-
-                    callback.call(scope, analyteRows);
-                },
-                scope: scope
-            });
         }
     }
 });

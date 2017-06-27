@@ -25,7 +25,7 @@ INNER JOIN
 (
   SELECT DISTINCT
     sa.prot
-  FROM cds.ds_studyassay sa
+  FROM cds.metadata.studyassay sa
   WHERE sa.has_data = true
 ) noEmptyStudy
 ON allStudy.study_name = noEmptyStudy.prot;

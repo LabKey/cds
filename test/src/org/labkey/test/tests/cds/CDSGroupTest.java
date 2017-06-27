@@ -273,7 +273,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.pickVariable(CDSHelper.NAB_TITERID50);
         yaxis.confirmSelection();
 
         cds.saveGroup(GROUP_PLOT_TEST, "a plot", false, true);

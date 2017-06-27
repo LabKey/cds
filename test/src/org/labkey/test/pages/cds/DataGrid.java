@@ -75,6 +75,8 @@ public class DataGrid
         _test.waitForElement(hoveredColumn);
         _test.click(filterIcon);
         _test._ext4Helper.waitForMask();
+        // Sometimes the tooltip sticks around, wait for it's style to change.
+        _test.waitForElement(Locator.tagWithId("div", "ext-quicktips-tip").append("[contains(@style, 'display: none')]"), 10000);
     }
 
     public void setCheckBoxFilter(String columnName, Boolean clearFirst, String... values)

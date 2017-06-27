@@ -1,1 +1,0 @@
-SubjectId	SequenceNum	date	QCStateLabel	visit_day	assay_identifier	summary_level	cell_type	cell_name	antigen antigen_type	peptide_pool	protein	protein_panel   protein_panel_protein	protein_panel_protein_peptide_pool	specimen_type	functional_marker_name	functional_marker_type	clade	vaccine_matched	response_call	pctpos	pctpos_adj	pctpos_neg	lab_code	exp_assayid	ics_lab_source_key

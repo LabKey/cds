@@ -496,10 +496,12 @@ Ext4.define('Connector.cube.Configuration', {
                     label: 'Overview'
                 },{
                     url: 'vars',
-                    label: 'Variables'
+                    label: 'Variables',
+                    hasSearch: true
                 },{
                     url: 'antigens',
-                    label: 'Antigens'
+                    label: 'Antigens',
+                    hasSearch: true
                 }],
                 itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
@@ -507,11 +509,6 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'assayheader',
                         staticData: {
                             title: 'Assay information'
-                        }
-                    },{
-                        type: 'assayanalytelist',
-                        staticData: {
-                            title: 'Assay analytes'
                         }
                     },{
                         type: 'html',
@@ -551,19 +548,9 @@ Ext4.define('Connector.cube.Configuration', {
                         }
                     }]]
                 },{
-                    view: 'Connector.app.view.ModuleContainer',
-                    modules: [[{
-                        type: 'variablelist',
-                        staticData: {
-                            title: 'Assay variables'
-                        }
-                    }]]
+                    view: 'Connector.view.module.VariableList'
                 },{
-                    view: 'Connector.app.view.ModuleContainer',
-                    modules: [[{
-                        type: 'assayantigenlist'
-                    }]],
-                    detailLearnGrid: 'antigens'
+                    view: 'Connector.view.AssayAntigen'
                 }]
             },{
                 uniqueName: '[Report]',

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.TestFileUtils;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
 import org.labkey.test.util.ApiPermissionsHelper;
@@ -39,6 +40,7 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -207,7 +209,7 @@ public class CDSHelper
     public static final String[] ASSAYS_FULL_TITLES = {"BAMA (HIV Binding Antibody)",
             "ICS (Intracellular Cytokine Staining)",
             "IFNg ELISpot (IFNg ELISpot)", "NAB (HIV Neutralizing Antibody)"};
-    public static final String[] LEARN_ABOUT_BAMA_ANALYTE_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
+    public static final String[] LEARN_ABOUT_BAMA_METHODOLOGY = {"Luminex Mutiplex Assay"};
     public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Protein Panel", "The name of the panel of proteins"};
     public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"A1.con.env03 140 CF", "p24"};
     public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"Any v503 Vaccine Matched Antigen", "POL: POL 1", "NEF: NEF 1", "GAG: GAG 1", "Combined: NA"};
@@ -433,7 +435,7 @@ public class CDSHelper
     public static final String DEMO_VACC_PLAC = "Vaccine or Placebo";
 
     public static final String ELISPOT = "ELISPOT (Enzyme-Linked ImmunoSpot)";
-    public static final String ELISPOT_ANTIGEN = "Antigen Panel";
+    public static final String ELISPOT_ANTIGEN = "Antigen name";
     public static final String ELISPOT_ANTIGEN_TYPE = "Antigen Type";
     public static final String ELISPOT_ASSAY = "Assay Identifier";
     public static final String ELISPOT_CELL_NAME = "Cell Name";
@@ -456,7 +458,7 @@ public class CDSHelper
     public static final String ELISPOT_VACCINE =  "Vaccine matched indicator";
 
     public static final String ICS = "ICS (Intracellular Cytokine Staining)";
-    public static final String ICS_ANTIGEN = "Antigen";
+    public static final String ICS_ANTIGEN = "Antigen name";
     public static final String ICS_ANTIGEN_TYPE = "Antigen Type";
     public static final String ICS_ANTIGEN_VAC_MATCH = "Antigen Vaccine Match Indicator";
     public static final String ICS_ASSAY = "Assay identifier";
@@ -481,11 +483,11 @@ public class CDSHelper
     public static final String ICS_VACCINE = "Vaccine matched";
 
     public static final String NAB = "NAb (Neutralizing antibody)";
-    public static final String NAB_ANTIGEN = "Antigen";
-    public static final String NAB_ANTIGEN_CLADE = "Antigen clade";
+    public static final String NAB_ANTIGEN = "Antigen name";
+    public static final String NAB_ANTIGEN_CLADE = "Virus clade";
     public static final String NAB_ANTIGEN_TYPE = "Antigen type";
     public static final String NAB_ASSAY = "Assay identifier";
-    public static final String NAB_CLADE = "Clade";
+    public static final String NAB_CLADE = "Virus Clade";
     public static final String NAB_DATA = "Data provenance";
     public static final String NAB_EXP_ASSAY = "Experimental Assay Design Code";
     public static final String NAB_INIT_DILUTION = "Initial dilution";
@@ -493,14 +495,17 @@ public class CDSHelper
     public static final String NAB_LAB = "Lab ID";
     public static final String NAB_LAB_SRC_KEY = "Nab Lab Source Key";
     public static final String NAB_NEUTRAL = "Neutralization tier";
-    public static final String NAB_RESPONSE = "Response call";
+    public static final String NAB_RESPONSE_CALL_ID50 = "Response call ID50";
     public static final String NAB_SPECIMEN = "Specimen type";
     public static final String NAB_TARGET_CELL = "Target cell";
     public static final String NAB_TIER = "Tier";
-    public static final String NAB_TITERIC50 = "Titer IC50";
-    public static final String NAB_TITERIC80 = "Titer IC80";
+    public static final String NAB_TITERID50 = "Titer ID50";
+    public static final String NAB_TITERID80 = "Titer ID80";
     public static final String NAB_VIRUS_NAME = "Virus name";
     public static final String NAB_VIRUS_TYPE = "Virus type";
+
+    //Response Call is also hidden, but checking if its present would conflict with Response call ID50, which is valid.
+    public static final String[] NAB_HIDDEN_VARS = {"Titer IC50", "Titer IC80", "Virus Insert Name"};
 
     public static final String TIME_POINTS = "Time points";
     public static final String TIME_POINTS_DAYS = "Study days";
@@ -545,6 +550,50 @@ public class CDSHelper
     // Dimensions used to set the browser window.
     public static Dimension idealWindowSize = new Dimension(1280, 1040);
     public static Dimension defaultWindowSize = new Dimension(1280, 1024);
+
+    // Admin only import tables
+    public static  String[] IMPORT_TABLES_WITH_ADMIN_ACCESS = {"import_ics", "import_nab", "import_els_ifng", "import_bama",
+            "import_studypartgrouparmsubject", "import_studypartgrouparmproduct", "import_studypartgrouparmvisit", "import_studypartgrouparmvisitproduct",
+            "import_studypartgrouparm", "import_studysubject"};
+
+    // Site user groups. Needed to run import etls (associated with studies in StudyGroups.txt).
+    public static final String GROUP_CDS_ADMIN = "CDS Admin Group";
+    public static final String GROUP_CDS_TEST = "CDS Test Group";
+    public static final String GROUP_DATA_IMPORT = "Data Import";
+    public static final String GROUP_FHCRC_APPROVED = "FHCRC Approved";
+
+    public static final Map<String, String> siteGroupRoles;
+    static
+    {
+        siteGroupRoles = new HashMap<>();
+        siteGroupRoles.put(GROUP_CDS_ADMIN, "Folder Administrator");
+        siteGroupRoles.put(GROUP_CDS_TEST, "Reader");
+        siteGroupRoles.put(GROUP_DATA_IMPORT, "Editor");
+        siteGroupRoles.put(GROUP_FHCRC_APPROVED, "Editor");
+    }
+
+    public static final Map<String, List<String>> siteGroupStudies;
+    static
+    {
+        siteGroupStudies = new HashMap<>();
+
+        List<String> tempList = Arrays.asList(PROT_Z136, PROT_Z138, PROT_Z139);
+        siteGroupStudies.put(GROUP_CDS_ADMIN, tempList);
+
+        tempList = Arrays.asList(PROT_Z129, PROT_Z130, PROT_Z131, PROT_Z132, PROT_Z133, PROT_Z134);
+        siteGroupStudies.put(GROUP_CDS_TEST, tempList);
+
+        tempList = Arrays.asList(PROT_Q3);
+        siteGroupStudies.put(GROUP_DATA_IMPORT, tempList);
+
+        tempList = Arrays.asList(PROT_Q1, PROT_Q2, PROT_Q3, PROT_Q4, PROT_R1, PROT_R2, PROT_R3, PROT_R4, PROT_R5, PROT_R6, PROT_R7,
+                PROT_R8, PROT_R9, PROT_Y55, PROT_Z100, PROT_Z101, PROT_Z102, PROT_Z103, PROT_Z104, PROT_Z105, PROT_Z106,
+                PROT_Z107, PROT_Z108, PROT_Z109, PROT_Z110, PROT_Z111, PROT_Z112, PROT_Z113, PROT_Z114, PROT_Z115,
+                PROT_Z116, PROT_Z117, PROT_Z118, PROT_Z119, PROT_Z122, PROT_Z123, PROT_Z124,
+                PROT_Z125, PROT_Z126, PROT_Z127, PROT_Z128, PROT_Z135, PROT_Z137, PROT_Z140);
+        siteGroupStudies.put(GROUP_FHCRC_APPROVED, tempList);
+
+    }
 
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
@@ -651,8 +700,12 @@ public class CDSHelper
         return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
     }
 
-
     public void setUpPermGroup(String perm_group, Map<String, String> studyPermissions)
+    {
+        setUpPermGroup(perm_group, studyPermissions, "Reader");
+    }
+
+    public void setUpPermGroup(String perm_group, Map<String, String> studyPermissions, String projectPerm)
     {
         _test.goToProjectHome();
         ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
@@ -668,7 +721,7 @@ public class CDSHelper
             setStudyPerm(perm_group, study, permission, apiPermissionsHelper);
         }
         _test.goToProjectHome();
-        _test._securityHelper.setProjectPerm(perm_group, "Reader");
+        _test._securityHelper.setProjectPerm(perm_group, projectPerm);
         _test.clickButton("Save and Finish");
     }
 
@@ -1246,7 +1299,7 @@ public class CDSHelper
     {
         hoverOverInfoPaneItem(label);
         _test.click(Locator.xpath("//div[contains(@class, 'x-grid-cell-inner')]//div[@title='" + label + "']//a[contains(@class, 'expando')]"));
-        _test.waitForElement(Locator.xpath("//div[contains(@class, 'titlepanel')]//div[contains(@class, 'learn-up')]//span[contains(@class, 'studyname')][text()='" + label + "']"));
+        _test.waitForElement(Locator.xpath("//span").withClass("studyname").withText(label));
     }
 
     /**
@@ -1292,6 +1345,11 @@ public class CDSHelper
 
     public void initModuleProperties()
     {
+        initModuleProperties(true);
+    }
+
+    public void initModuleProperties(boolean showHiddenVars)
+    {
         boolean changed, returnVal;
 
         _test._ext4Helper.resetCssPrefix();
@@ -1301,12 +1359,14 @@ public class CDSHelper
         _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
         _test.waitForText(1000, "CDSTest Project");
 
-        changed = showHiddenVariables(true);
+        changed = showHiddenVariables(showHiddenVars);
         returnVal = setGettingStartedVideoURL("https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0");
         changed |= returnVal;
         returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
         changed |= returnVal;
         returnVal = setStudyDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
+        changed |= returnVal;
+        returnVal = setCDSImportFolderPath(TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent());
         changed |= returnVal;
 
         if (changed)
@@ -1384,14 +1444,18 @@ public class CDSHelper
 
     private boolean setStaticPath(String path)
     {
-        return setPropertyPath(path, 6);
+        return setPropertyPath(path, 7);
     }
 
     private boolean setStudyDocumentPath(String path)
     {
-        return setPropertyPath(path, 2);
+        return setPropertyPath(path, 3);
     }
 
+    private boolean setCDSImportFolderPath(String path)
+    {
+        return setPropertyPath(path, 2);
+    }
 
     public void assertPlotTickText(Pattern p)
     {

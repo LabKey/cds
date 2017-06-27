@@ -20,6 +20,6 @@ SELECT
   sa.assay_status,
   sa.prot,
   smd.*
-FROM cds.ds_studyassay sa
+FROM cds.metadata.studyassay sa
 LEFT JOIN cds.metadata.study smd
 ON smd.study_name=sa.prot
