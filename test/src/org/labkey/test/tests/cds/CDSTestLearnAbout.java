@@ -290,7 +290,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         sleep(CDSHelper.CDS_WAIT);
-        waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
+        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Vaccine matched indicator"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
