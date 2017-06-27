@@ -48,5 +48,10 @@ lab_code,
 nab_response AS response_call,
 titer_ic50,
 titer_ic80,
+titer_response_ID50,
+titer_response_ID80,
+titer_ID50,
+titer_ID80,
+slope,
 
 FROM cds.import_nab;

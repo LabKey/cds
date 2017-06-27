@@ -435,7 +435,7 @@ public class CDSHelper
     public static final String DEMO_VACC_PLAC = "Vaccine or Placebo";
 
     public static final String ELISPOT = "ELISPOT (Enzyme-Linked ImmunoSpot)";
-    public static final String ELISPOT_ANTIGEN = "Antigen Panel";
+    public static final String ELISPOT_ANTIGEN = "Antigen name";
     public static final String ELISPOT_ANTIGEN_TYPE = "Antigen Type";
     public static final String ELISPOT_ASSAY = "Assay Identifier";
     public static final String ELISPOT_CELL_NAME = "Cell Name";
@@ -458,7 +458,7 @@ public class CDSHelper
     public static final String ELISPOT_VACCINE =  "Vaccine matched indicator";
 
     public static final String ICS = "ICS (Intracellular Cytokine Staining)";
-    public static final String ICS_ANTIGEN = "Antigen";
+    public static final String ICS_ANTIGEN = "Antigen name";
     public static final String ICS_ANTIGEN_TYPE = "Antigen Type";
     public static final String ICS_ANTIGEN_VAC_MATCH = "Antigen Vaccine Match Indicator";
     public static final String ICS_ASSAY = "Assay identifier";
@@ -483,11 +483,11 @@ public class CDSHelper
     public static final String ICS_VACCINE = "Vaccine matched";
 
     public static final String NAB = "NAb (Neutralizing antibody)";
-    public static final String NAB_ANTIGEN = "Antigen";
-    public static final String NAB_ANTIGEN_CLADE = "Antigen clade";
+    public static final String NAB_ANTIGEN = "Antigen name";
+    public static final String NAB_ANTIGEN_CLADE = "Virus clade";
     public static final String NAB_ANTIGEN_TYPE = "Antigen type";
     public static final String NAB_ASSAY = "Assay identifier";
-    public static final String NAB_CLADE = "Clade";
+    public static final String NAB_CLADE = "Virus Clade";
     public static final String NAB_DATA = "Data provenance";
     public static final String NAB_EXP_ASSAY = "Experimental Assay Design Code";
     public static final String NAB_INIT_DILUTION = "Initial dilution";
@@ -495,14 +495,17 @@ public class CDSHelper
     public static final String NAB_LAB = "Lab ID";
     public static final String NAB_LAB_SRC_KEY = "Nab Lab Source Key";
     public static final String NAB_NEUTRAL = "Neutralization tier";
-    public static final String NAB_RESPONSE = "Response call";
+    public static final String NAB_RESPONSE_CALL_ID50 = "Response call ID50";
     public static final String NAB_SPECIMEN = "Specimen type";
     public static final String NAB_TARGET_CELL = "Target cell";
     public static final String NAB_TIER = "Tier";
-    public static final String NAB_TITERIC50 = "Titer IC50";
-    public static final String NAB_TITERIC80 = "Titer IC80";
+    public static final String NAB_TITERID50 = "Titer ID50";
+    public static final String NAB_TITERID80 = "Titer ID80";
     public static final String NAB_VIRUS_NAME = "Virus name";
     public static final String NAB_VIRUS_TYPE = "Virus type";
+
+    //Response Call is also hidden, but checking if its present would conflict with Response call ID50, which is valid.
+    public static final String[] NAB_HIDDEN_VARS = {"Titer IC50", "Titer IC80", "Virus Insert Name"};
 
     public static final String TIME_POINTS = "Time points";
     public static final String TIME_POINTS_DAYS = "Study days";
@@ -1342,6 +1345,11 @@ public class CDSHelper
 
     public void initModuleProperties()
     {
+        initModuleProperties(true);
+    }
+
+    public void initModuleProperties(boolean showHiddenVars)
+    {
         boolean changed, returnVal;
 
         _test._ext4Helper.resetCssPrefix();
@@ -1351,7 +1359,7 @@ public class CDSHelper
         _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
         _test.waitForText(1000, "CDSTest Project");
 
-        changed = showHiddenVariables(true);
+        changed = showHiddenVariables(showHiddenVars);
         returnVal = setGettingStartedVideoURL("https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0");
         changed |= returnVal;
         returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");

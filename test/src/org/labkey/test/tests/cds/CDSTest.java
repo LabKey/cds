@@ -284,5 +284,4 @@ public class CDSTest extends CDSReadOnlyTest
         waitForFormElementToEqual(hierarchySelector, "Country at enrollment");
         cds.goToSummary();
     }
-
 }
