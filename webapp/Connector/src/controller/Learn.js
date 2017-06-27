@@ -92,6 +92,7 @@ Ext.define('Connector.controller.Learn', {
                 // TODO: It would nice if we could go 'back' when we know the previous page was 'learn/learn/[dim.name]'
                 this.getViewManager().changeView(link.controller, link.view, link.context);
             },
+            searchchanged: this.onSearchChange,
             tabselect: this.onSelectItemTab,
             scope: this
         });
@@ -161,11 +162,6 @@ Ext.define('Connector.controller.Learn', {
             tab: ctx[2],
             params: params? params : lastParams
         };
-        Ext.each(Connector.view.Learn.detailGridTabs, function(key){
-            if (ctx[2] == key)
-                delete this.context.params.q;
-        }, this);
-
 
         this.lastContext[currentContextKey] = Ext.clone(this.context);
         this.lastContext.lastDimension = currentDimension;

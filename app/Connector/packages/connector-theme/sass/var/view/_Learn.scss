@@ -302,6 +302,25 @@ h1.lhdv {
 
 .pageheader {
   height: 112px!important;
+
+  .title-and-back-panel {
+    font: $title-font;
+    background: $gray-7;
+    height: 56px;
+    line-height: 56px;
+    padding-left: 0!important;
+  }
+
+  .iarrow {
+    background-image: url(images/navigatebackward.svg);
+    background-repeat: no-repeat;
+    background-color: $gray-8;
+    width: 56px;
+    height: 56px;
+    margin: 0 16px 0 0px!important;
+    vertical-align: bottom;
+    float: left;
+  }
 }
 
 .detail-left-column {
@@ -544,63 +563,47 @@ img.detail-has-data-small {
   }
 }
 
+.variable-list-grid {
+  padding-top: 16px!important;
 
-
-
-//todo: merge with detail container as interactive vs non-interactive list.
-div.list-container {
-  padding-right: $pageLeftPadding + 17px; /* 17px is the width of the scroll bar */
-
-  div.list-title-bar {
-    padding-bottom: 12px;
-    border-bottom: 2px solid $heat-scale-4;
-    overflow: auto;
-    font: $subhead-font;
-    color: $heat-scale-2;
-    text-transform: uppercase;
-  }
-
-  div.list-entry-container {
-    min-height: 123px;
-    border-bottom: 1px solid $heat-scale-4;
-    overflow: hidden;
-
-    div.list-entry-title{
-      width: 60%;
-      h2 {
-        font: $headline-font;
-      }
-    }
-
-    div.list-entry-description {
-      padding-top: 12px;
-      padding-bottom: 12px;
-      color: $heat-scale-1;
-      font: $body-one-font;
-    }
-
-    .list-detail-text {
-      padding-top: 24px;
-      font: $body-one-font;
-
-      .list-detail-gray-text {
-        color: $heat-scale-1;
-      }
-
-      .list-detail-black-text {
-        color: $black;
-      }
-    }
-  }
-
-  div.list-category-container {
+  .variable-list-category-container {
     height: 24px;
 
-    div.list-category-detail {
+    .variable-list-category-text {
       padding-top: 5px;
       font: $subhead-font;
       color: $heat-scale-1;
     }
+  }
+
+  .variable-list-title {
+    width: 60%;
+    h2 {
+      font: $headline-font;
+    }
+  }
+
+  .variable-list-row {
+    height: 123px;
+    border-bottom: 1px solid $heat-scale-4;
+    overflow: hidden;
+
+    .x-grid-cell-inner {
+      padding: 0px;
+      white-space: normal;
+    }
+  }
+
+  .variable-list-description {
+    width: 60%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    color: $heat-scale-1;
+    font: $body-one-font;
+  }
+
+  .x-grid-empty {
+    top: 255px;
   }
 }
 
@@ -752,18 +755,11 @@ div.list-container {
   }
 }
 
-.antigen-list-panel
-{
-  padding-right: 42px !important;
-  .x-panel-body
-  {
-    border-width: 0;
-  }
-}
 .antigengrid
 {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding-left: $pageLeftPadding!important;
+  padding-right: 42px!important;
+  padding-top: 16px!important;
 
   .x-grid-empty
   {
@@ -777,8 +773,7 @@ div.list-container {
     }
   }
   .antigen-description {
-    padding-top: 12px;
-    padding-bottom: 12px;
+    padding: 12px 12px 12px 0;
     color: $heat-scale-1;
     font: $body-one-font;
   }

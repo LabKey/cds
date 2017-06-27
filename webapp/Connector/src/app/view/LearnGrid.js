@@ -34,7 +34,7 @@ Ext.define('Connector.app.view.LearnGrid', {
 
             var detailGridPanel = cmp;
 
-            if (detailGridPanel)
+            if (detailGridPanel && cmp.isVisible())
             {
                 var dimension = detailGridPanel.tabDimension, id = detailGridPanel.tabId, params = detailGridPanel.tabParams;
                 this.learnView.activeListingDetailGrid = detailGridPanel;

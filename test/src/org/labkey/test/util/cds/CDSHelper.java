@@ -1299,7 +1299,7 @@ public class CDSHelper
     {
         hoverOverInfoPaneItem(label);
         _test.click(Locator.xpath("//div[contains(@class, 'x-grid-cell-inner')]//div[@title='" + label + "']//a[contains(@class, 'expando')]"));
-        _test.waitForElement(Locator.xpath("//div[contains(@class, 'titlepanel')]//div[contains(@class, 'learn-up')]//span[contains(@class, 'studyname')][text()='" + label + "']"));
+        _test.waitForElement(Locator.xpath("//span").withClass("studyname").withText(label));
     }
 
     /**

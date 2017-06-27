@@ -31,7 +31,7 @@ Ext.define('Connector.view.Learn', {
     dimensionDataLoaded: {},
 
     statics: {
-        detailGridTabs : ['antigens']
+        detailGridTabs : ['vars', 'antigens']
     },
 
     listeners: {
@@ -84,7 +84,9 @@ Ext.define('Connector.view.Learn', {
                 cls: 'learnheader',
                 searchValue: this.searchFilter,
                 listeners: {
-                    searchchanged: this.onSearchFilterChange,
+                    searchchanged: function(filter) {
+                        this.onSearchFilterChange(filter, false);
+                    },
                     updateLearnFilter: function(column, filtersStr, negated, isDetailPage){
                         this.onUpdateLearnFilter(column, filtersStr, negated, isDetailPage);
                     },
@@ -109,11 +111,11 @@ Ext.define('Connector.view.Learn', {
         this.loadDataTask.delay(200, undefined, this, [dim, store]);
     },
 
-    onSearchFilterChange : function(filter) {
+    onSearchFilterChange : function(filter, isDetailPage) {
         if (Ext.isString(filter)) {
             this.searchFilter = filter;
-            if (this.activeListing) {
-                var view = this.activeListing;
+            var view = isDetailPage ? this.activeListingDetailGrid : this.activeListing;
+            if (view) {
                 this.loadDataDelayed(view.dimension, view.getStore());
             }
         }
@@ -546,14 +548,12 @@ Ext.define('Connector.view.Learn', {
 
                 if (Connector.view.Learn.detailGridTabs.indexOf(dimension.itemDetailTabs[i].url) > -1)
                 {
-                    var learnViewConfig = {
-                            learnView: me,
-                            tabId: id,
-                                tabDimension: dimension,
-                                tabParams: params
-                        };
-
-                    tabConfig.learnViewConfig = learnViewConfig;
+                    tabConfig.learnViewConfig = {
+                        learnView: me,
+                        tabId: id,
+                        tabDimension: dimension,
+                        tabParams: params
+                    };
                 }
 
                 tabViews.push(Ext.create(item.view, tabConfig));
@@ -580,14 +580,21 @@ Ext.define('Connector.view.Learn', {
                 title: model.get(model.labelProperty ? model.labelProperty : 'label'),
                 model: model,
                 dimension: dimension,
-                activeTab: activeTab
+                activeTab: activeTab,
+                hasSearch: dimension.itemDetailTabs[activeTab].hasSearch,
+                searchValue: this.searchFilter,
+                listeners: {
+                    searchchanged: function(filter) {
+                        this.onSearchFilterChange(filter, true);
+                    },
+                    scope: this
+                }
             }),
             listeners: {
                 hide: function(cmp){
                     // detail page needs to be destroyed on hide, otherwise it remains and repeats in the DOM
                     // For knitr report, custom stylesheet defined in report will then contaminate all Learn about pages
                     cmp.destroy();
-
                 }
             }
         });
@@ -639,12 +646,25 @@ Ext.define('Connector.view.Learn', {
         'Report' : 'Report'
     },
 
+    searchFieldsByTab : function(name) {
+        switch (name){
+            case "vars":
+                return Connector.view.module.VariableList.searchFields;
+            case "antigens":
+                return Connector.view.AssayAntigen.searchFields;
+        }
+    },
+
     selectDimension : function(dimension, id, urlTab, params) {
         this.searchFilter = params ? params.q : undefined;
-        if (urlTab)
-            this.searchFilter = undefined; // search doesn't apply for detail tabs
-
-        this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
+        if (urlTab) {
+            // detail tab case
+            this.searchFields = this.searchFieldsByTab(urlTab);
+        }
+        else {
+            // summary view case
+            this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
+        }
 
         if (dimension) {
             this.loadDataView(dimension, id, urlTab, params);
@@ -761,9 +781,7 @@ Ext.define('Connector.view.LearnHeader', {
 
     filterStoreFromUrlParams: function(id, dimension, params)
     {
-        // search doesn't apply for detail tabs
-        if (!id)
-            this.updateSearchValue(dimension, params);
+        this.updateSearchValue(dimension, params);
         this.updateSort(dimension, params, id != null);
         this.updateFilters(dimension, params, id != null);
     },

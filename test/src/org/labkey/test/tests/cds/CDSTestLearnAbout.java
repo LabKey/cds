@@ -23,6 +23,7 @@ import org.junit.rules.Timeout;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.Locators;
+import org.labkey.test.pages.cds.LearnDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
@@ -289,7 +290,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         sleep(CDSHelper.CDS_WAIT);
-        waitForElement(Locator.xpath("//div[contains(@class, 'list-entry-container')]//div[@class='list-entry-title']//h2[text()='Vaccine matched indicator']"));
+        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Vaccine matched indicator"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
 
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
@@ -383,6 +384,29 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         validateToolTipText(toolTipText, "ZAP 117");
         log("Tool tip text contained the expected values.");
 
+    }
+
+    @Test
+    public void testAntigenSearch()
+    {
+        cds.viewLearnAboutPage("Assays");
+        LearnGrid summaryGrid = new LearnGrid(this);
+
+        log("Test basic search functionality.");
+        LearnDetailsPage.DetailLearnGrid bamaAntigenGrid = summaryGrid.setSearch(CDSHelper.TITLE_BAMA)
+                .clickFirstItem()
+                .getGridTab("Antigens");
+        bamaAntigenGrid.setSearch(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[0]);
+        int rowCount = bamaAntigenGrid.getRowCount();
+
+        Assert.assertEquals("There should only be one row returned", 1, rowCount);
+
+        log("Test search persistence");
+        refresh();
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+        rowCount = bamaAntigenGrid.getRowCount();
+
+        Assert.assertEquals("There should only be one row returned", 1, rowCount);
     }
 
     @Test

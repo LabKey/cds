@@ -9,6 +9,10 @@ Ext.define('Connector.app.store.VariableList', {
 
     model : 'Connector.app.model.VariableList',
 
+    isVariablesLoaded: false,
+
+    assayType: "",
+
     constructor: function(config) {
         Ext.applyIf(config, {
             cache: []
@@ -16,27 +20,24 @@ Ext.define('Connector.app.store.VariableList', {
         this.callParent([config]);
     },
 
-    loadSlice : function() {
-        this.variableData = Connector.getService('Query').getVariables('Study');
-        var measures = [];
-        Ext.each(this.variableData, function(datum) {
-            measures.push(datum.data);
-        });
+    loadVariables : function() {
+        if (this.isVariablesLoaded)
+            return;
+
+        var measures = Connector.getService('Query').getVariables('Study')
+                .filter(function(datum) {
+                    return datum.get('queryName') === this.assayType;
+                }, this)
+                .map(function(datum) {
+                    return {
+                        alias: datum.get('alias'),
+                        label: datum.get('label'),
+                        isRecommendedVariable: datum.get('isRecommendedVariable'),
+                        description: datum.get('description'),
+                        queryName: datum.get('queryName')
+                    }
+                });
         this.loadRawData(measures);
-
-    },
-
-    getByAssayName : function(assayName) {
-        if (this.getCount() == 0) {
-            this.loadSlice();
-        }
-        if (this.isFiltered) {
-            this.clearFilter();
-        }
-        this.filterBy(function(record) {
-            return record.get('queryName') === assayName;
-        });
-
         this.sort([
             {
                 property : 'isRecommendedVariable',
@@ -47,7 +48,6 @@ Ext.define('Connector.app.store.VariableList', {
                 direction: 'ASC'
             }
         ]);
-        return this.getRange();
+        this.isVariablesLoaded = true;
     }
-
 });

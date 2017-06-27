@@ -4,23 +4,6 @@
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 
-// PARAMS
-// var data = {
-//     label : "Blah",
-//     buttons : {
-//         back: true,
-//         group: [{
-//             groupLabel: "Select",
-//             buttonLabel: 'text',
-//             handler: function() {
-//                 // ...
-//             }
-//         }]
-//     },
-//     tabs : ["Overview", "Variables, Antigens, Analytes"],
-//     lockPixels : 100
-// }
-
 // This is a shared header class for an individual item detail. This will be the header for a single
 // Study, a single Assay or a single Lab etc.
 Ext.define('Connector.view.PageHeader', {
@@ -41,35 +24,20 @@ Ext.define('Connector.view.PageHeader', {
 
     model: undefined,
 
-    height: 100,
+    height: 112,
 
     activeTab: 0,
 
     activeTabCls: 'active',
 
-    layout: 'hbox',
+    layout: 'vbox',
 
-    flex: 1,
-
-    renderTpl: new Ext.XTemplate(
-        '<div class="learnpageheader">',
-            '{%this.renderContainer(out,values);%}',
-        '</div>',
-        '<div class="dim-selector learnabouttab">',
-            '<tpl for="tabs">',
-                '<h1 class="lhdv">{label:htmlEncode}</h1>',
-            '</tpl>',
-        '</div>'
-    ),
-
-    renderSelectors: {
-        tabParentEl: 'div.dim-selector'
-    },
+    width: '100%',
 
     constructor : function(config) {
         this.callParent([config]);
 
-        this.addEvents('upclick', 'tabselect');
+        this.addEvents('upclick', 'searchchanged', 'tabselect');
     },
 
     initComponent : function() {
@@ -97,13 +65,9 @@ Ext.define('Connector.view.PageHeader', {
 
         this.setTabHeader();
 
-        this.renderData = {
-            tabs: this.tabs
-        };
-
-        var backAndTitle = {
+        var titleAndBack = {
             xtype: 'box',
-            cls: 'titlepanel inline',
+            cls: 'inline',
             flex: 1,
             renderTpl: new Ext.XTemplate(
                 '<div class="learn-up">',
@@ -131,29 +95,64 @@ Ext.define('Connector.view.PageHeader', {
             }
         };
 
-        this.items = [backAndTitle];
+        var buttonsContainer = {
+            xtype: 'container',
+            height: 56,
+            layout: {
+                type: 'hbox',
+                align: 'middle',
+                defaultMargins: {
+                    right: 18
+                }
+            },
+            items: this.buttons
+        };
 
-        if (this.buttons)
-        {
-            this.items = this.items.concat({
-                xtype: 'container',
-                height: 56,
-                layout: {
-                    type: 'hbox',
-                    align: 'middle',
-                    defaultMargins: {
-                        right: 18
-                    }
-                },
-                items: this.buttons
-            });
-        }
+        var tabPanel = {
+            xtype: 'panel',
+            border: false,
+            html: new Ext.XTemplate(
+                    '<div class="learnabouttab">',
+                    '<tpl for=".">',
+                    '<h1 class="lhdv">{label:htmlEncode}</h1>',
+                    '</tpl>',
+                    '</div>'
+            ).apply(this.tabs),
+            flex: 2
+        };
+
+        var detailSearchField = Ext.create('Ext.form.field.Text', {
+            emptyText: 'Search',
+            cls: 'learn-search-input',
+            minWidth: 150,
+            checkChangeBuffer: 500,
+            flex: 1,
+            value: this.searchValue,
+            validator: Ext.bind(function(value) {
+                this.fireEvent('searchchanged', value);
+                return true;
+            }, this)
+        });
+
+        this.items = [{
+            xtype: 'container',
+            layout: 'hbox',
+            width: '100%',
+            cls: 'title-and-back-panel',
+            items: this.buttons ? [titleAndBack, buttonsContainer] : [titleAndBack]
+        },{
+            xtype: 'container',
+            layout: 'hbox',
+            width: '100%',
+            cls: "dim-selector",
+            items: this.hasSearch ? [tabPanel, detailSearchField] : [tabPanel]
+        }];
 
         this.callParent();
 
         this.on('render', function(cmp)
         {
-            var headers = cmp.tabParentEl.query('.lhdv'),
+            var headers = cmp.getEl().query('.lhdv'),
                 tabEls = [], el;
 
             Ext.each(headers, function(h, i)

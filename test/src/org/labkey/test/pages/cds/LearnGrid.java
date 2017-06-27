@@ -56,6 +56,29 @@ public class LearnGrid
         return antigensAfterFilter.size();
     }
 
+    public LearnDetailsPage clickFirstItem()
+    {
+        List<WebElement> returnedItems  = Locators.unlockedRow.findElements(_test.getDriver());
+        returnedItems.get(0).click();
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        return new LearnDetailsPage(_test);
+    }
+
+    @LogMethod
+    public LearnGrid setSearch(@LoggedParam String searchQuery)
+    {
+        List<WebElement> possibleSearchBoxes = Locators.searchBox.findElements(_test.getDriver());
+        WebElement searchBox = possibleSearchBoxes.stream()
+                .filter(WebElement::isDisplayed)
+                .findFirst().get();
+
+        _test.setFormElement(searchBox, searchQuery);
+        _test.sleep(CDSHelper.CDS_WAIT);
+
+        return this;
+    }
+
     @LogMethod(quiet = true)
     public LearnGrid openFilterPanel(@LoggedParam String columnHeaderName)
     {
@@ -277,11 +300,16 @@ public class LearnGrid
 
     public static class Locators
     {
+        public static final Locator.XPathLocator searchBox = Locator.xpath("//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input");
+
         public static final Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
         public static final Locator.XPathLocator unlockedRow = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div/div/table/tbody/tr");
         public static final Locator.XPathLocator unlockedRowHeader = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div[contains(@class, 'x-grid-header-ct')]");
         public static final Locator.XPathLocator lockedRow = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div/div/table/tbody/tr");
         public static final Locator.XPathLocator lockedRowHeader = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div[contains(@class, 'x-grid-header-ct')]");
+
+        public static final Locator.XPathLocator unifiedRow = grid.append("//tr"); // use for locators on detail grids
+
         public static final Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("In current selection");
         public static final Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("Not in current selection");
 
