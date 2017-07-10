@@ -1408,19 +1408,7 @@ public class CDSHelper
 
     private boolean setGettingStartedVideoURL(String videoUrl)
     {
-        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[1]";
-        String curValue;
-        boolean changed = false;
-
-        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
-
-        if(!curValue.trim().toLowerCase().equals(videoUrl.trim().toLowerCase()))
-        {
-            _test.setFormElement(Locator.xpath(xpathValueTxtBox), videoUrl);
-            changed = true;
-        }
-
-        return changed;
+        return setPropertyPath(videoUrl, 5);
 
     }
 
@@ -1444,17 +1432,17 @@ public class CDSHelper
 
     private boolean setStaticPath(String path)
     {
-        return setPropertyPath(path, 7);
+        return setPropertyPath(path, 3);
     }
 
     private boolean setStudyDocumentPath(String path)
     {
-        return setPropertyPath(path, 3);
+        return setPropertyPath(path, 6);
     }
 
     private boolean setCDSImportFolderPath(String path)
     {
-        return setPropertyPath(path, 2);
+        return setPropertyPath(path, 7);
     }
 
     public void assertPlotTickText(Pattern p)
