@@ -196,7 +196,7 @@ Ext.define('Connector.utility.Query', {
     },
 
     isStringDate: function(date) {
-        return Ext.isString(date) && (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
+        return Ext.isString(date) && isNaN(date) && (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
     },
 
     _generateVisGetDataSql : function(measuresIN, extraFilters, options)

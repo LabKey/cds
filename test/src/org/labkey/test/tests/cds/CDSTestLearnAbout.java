@@ -91,24 +91,26 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void clickOnLearnAboutStudyItem()
     {
         List<WebElement> returnedItems;
-        String[] itemParts;
+        String[] lockedParts, unlockedParts;
 
         cds.viewLearnAboutPage("Studies");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(getDriver());
 
         int index = returnedItems.size()/2;
 
         scrollIntoView(returnedItems.get(index));
 
-        itemParts = returnedItems.get(index).getText().split("\n");
+        lockedParts = returnedItems.get(index).getText().split("\n");
+        unlockedParts = freeColItems.get(index).getText().split("\n");
         returnedItems.get(index).click();
 
-        log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
+        log("Validating title is " + lockedParts[0]);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + lockedParts[0] + "']").toBy()));
 
-        log("Validating Study Type is: " + itemParts[1]);
-        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
+        log("Validating Study Type is: " + unlockedParts[1]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + unlockedParts[1] + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
         click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Studies / ']"));
@@ -246,11 +248,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Validating title is " + itemTitle);
         longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemTitle + "']").toBy()));
 
-        log("Validating Product Type is: " + itemClassAndType[0]);
-        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
+        log("Validating Product Type is: " + itemClassAndType[1]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[1] + "']").findElement(getDriver()).isDisplayed());
 
-        log("Validating Class is: " + itemClassAndType[1]);
-        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
+        String productClass = itemClassAndType[2].replace("Class: ", "");
+        log("Validating Class is: " + productClass);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + productClass + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
         click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Products / ']"));
@@ -1227,12 +1230,23 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         log("Found " + returnedItems.size() + " items.");
 
-        for (WebElement listItem : returnedItems)
+        for (int i = 0; i < returnedItems.size(); i++)
         {
+            returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+            WebElement listItem = returnedItems.get(i);
+            scrollIntoView(listItem);
+
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
-            log("Looking at study " + itemParts[0]);
-            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+            log("Looking at detail page of " + itemParts[0]);
+
+            click(listItem);
+            sleep(1000);
+
+            assertTextPresentCaseInsensitive(searchString);
+
+            click(CDSHelper.Locators.pageHeaderBack());
+            sleep(2000);
         }
 
     }
