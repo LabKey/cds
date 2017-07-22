@@ -1187,6 +1187,7 @@ public class CDSHelper
 
         if (!_test.isElementPresent(headerContainer.append(activeHeader.withText(learnAxis))))
         {
+            _test.waitForElement(headerContainer.append(header.withText(learnAxis)));
             _test.click(headerContainer.append(header.withText(learnAxis)));
             WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
