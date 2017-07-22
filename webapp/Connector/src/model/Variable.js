@@ -32,6 +32,27 @@ Ext.define('Connector.model.Variable', {
             return sourceTxt;
         },
 
+        getOptionsExportableStrings: function(measure)
+        {
+            if (!measure)
+                return [];
+            var filters = [], query = measure.queryLabel;
+
+            if (Ext.isObject(measure.options) && Ext.isObject(measure.options.dimensions)) {
+                Ext.iterate(measure.options.dimensions, function(alias, values) {
+                    if (Ext.isArray(values) && values.length > 0) {
+                        var field = Connector.getQueryService().getMeasure(alias);
+                        if (field)
+                            field = field.label;
+                        var value = values.join(', ').replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, ' ').replace(/null/g, '[Blank]');
+                        filters.push(query + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field + ": " + value);
+                    }
+                });
+            }
+
+            return filters;
+        },
+
         getOptionsDisplayText : function(variable, includeScale) {
             var optionsTxt = '', sep = '';
 

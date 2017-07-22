@@ -773,22 +773,33 @@ Ext.define('Connector.view.Grid', {
             var newForm = document.createElement('form');
             document.body.appendChild(newForm);
 
-            Ext.Ajax.request({
-                url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
-                method: 'POST',
-                form: newForm,
-                isUpload: true,
-                params: exportParams,
-                callback: function(options, success/*, response*/) {
-                    document.body.removeChild(newForm);
 
-                    if (!success) {
-                        // TODO: show error message
+            Connector.getState().onMDXReady(function(mdx) {
+
+                var filterStrings = [];
+                Ext.each(Connector.getState().filters, function(filter){
+                    filterStrings = filterStrings.concat(QueryUtils.getFilterStrings(filter, mdx));
+                }, this);
+                exportParams.filterStrings = filterStrings;
+
+                Ext.Ajax.request({
+                    url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
+                    method: 'POST',
+                    form: newForm,
+                    isUpload: true,
+                    params: exportParams,
+                    callback: function(options, success/*, response*/) {
+                        document.body.removeChild(newForm);
+
+                        if (!success) {
+                            // TODO: show error message
+                        }
                     }
-                }
-            });
+                });
 
-            this.fireEvent('requestexport', this, exportParams);
+                this.fireEvent('requestexport', this, exportParams);
+
+            });
         }
     },
 

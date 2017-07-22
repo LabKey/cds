@@ -37,6 +37,42 @@ Ext.define('Connector.view.InfoPane', {
 
     mutated: false,
 
+    statics: {
+        getExportableFilterStrings : function (filter, mdx)
+        {
+            var level = mdx.getLevel(filter.get("level")).levelLabel;
+
+            var filterType = '';
+            if (filter.get('operator') == 'AND')
+                filterType = "Subjects related to all: ";
+            else
+                filterType = "Subjects related to any: ";
+            var filterValue = Connector.view.InfoPane.getMembersStr(filter.getMembers());
+            return [level + ChartUtils.ANTIGEN_LEVEL_DELIMITER + filterType + filterValue];
+        },
+
+        getMembersStr: function(members)
+        {
+            var content = '',
+                    sep = '';
+            for (var i=0; i < members.length && i < 10; i++) {
+                content += sep + Connector.view.InfoPane.getMemberStr(members[i].uniqueName);
+                sep = ', ';
+            }
+            return content;
+        },
+
+        getMemberStr: function(uniqueName)
+        {
+            var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
+            var member = arrayName[arrayName.length-1];
+            if (member == '#null') {
+                member = 'Unknown';
+            }
+            return member;
+        }
+    },
+
     initComponent : function() {
 
         // This is the set of keys for selected records to determine if the filter has been mutated

@@ -427,8 +427,8 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(ExportForm form, BindException errors) throws Exception
         {
-            QueryView view = new ExcelExportQueryView(form, errors);
-            view.exportToExcel(getViewContext().getResponse(), form.getHeaderType(), ExcelWriter.ExcelDocumentType.xlsx);
+            CDSExportQueryView view = new CDSExportQueryView(form, errors);
+            view.writeExcelToResponse(getViewContext().getResponse(), form.getHeaderType());
             return null;
         }
 
@@ -491,51 +491,9 @@ public class CDSController extends SpringActionController
         }
     }
 
-
-    public class ExcelExportQueryView extends QueryView
-    {
-        private String[] _columnNamesOrdered;
-        private Map<String, String> _columnAliases;
-
-        public ExcelExportQueryView(ExportForm form, Errors errors)
-        {
-            super(form, errors);
-            _columnNamesOrdered = form.getColumnNamesOrdered();
-            _columnAliases = form.getColumnAliases();
-        }
-
-        @Override
-        public List<DisplayColumn> getExportColumns(List<DisplayColumn> list)
-        {
-            List<DisplayColumn> retColumns = super.getExportColumns(list);
-            List<DisplayColumn> exportColumns = new ArrayList<>();
-
-            // issue 20850: set export column headers to be "Dataset - Variable"
-            for (String colName : _columnNamesOrdered)
-            {
-                for (DisplayColumn col : retColumns)
-                {
-                    if (col.getColumnInfo() != null && colName.equals(col.getColumnInfo().getName()))
-                    {
-                        col.setCaption(_columnAliases.get(col.getColumnInfo().getName()));
-                        exportColumns.add(col);
-                        break;
-                    }
-                    else if (colName.equals(col.getName()))
-                    {
-                        col.setCaption(_columnAliases.get(col.getName()));
-                        exportColumns.add(col);
-                        break;
-                    }
-                }
-            }
-            return exportColumns;
-        }
-    }
-
-
     public static class ExportForm extends QueryForm
     {
+        private String[] _filterStrings;
         private String[] _columnNamesOrdered;
         private Map<String, String> _columnAliases = new HashMap<>();
 
@@ -557,6 +515,7 @@ public class CDSController extends SpringActionController
 
             String[] columnNames = getValues("columnNames", in);
             String[] columnAliases = getValues("columnAliases", in);
+            _filterStrings = getValues("filterStrings", in);
             if (columnNames.length == columnAliases.length)
             {
                 _columnNamesOrdered = columnNames;
@@ -576,6 +535,11 @@ public class CDSController extends SpringActionController
         public Map<String, String> getColumnAliases()
         {
             return _columnAliases;
+        }
+
+        public String[] getFilterStrings()
+        {
+            return _filterStrings;
         }
     }
 

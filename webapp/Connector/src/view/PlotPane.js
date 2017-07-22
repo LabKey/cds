@@ -18,7 +18,7 @@ Ext.define('Connector.view.PlotPane', {
     displayTitle: 'In the plot',
 
     statics: {
-        plotFilterContent : function(filter)
+        plotFilterContent : function(filter, getAsString)
         {
             var measures = filter.get('plotMeasures'),
                 content = [];
@@ -41,21 +41,26 @@ Ext.define('Connector.view.PlotPane', {
                         var options = Connector.model.Variable.getOptionsDisplayText(measures[index].measure);
                         var variable = measures[index].measure.label;
 
-                        content.push({
-                            xtype: 'box',
-                            cls: 'plot-type-label',
-                            html: label
-                        });
-                        content.push({
-                            xtype: 'box',
-                            cls: 'plot-source-label',
-                            html: Ext.htmlEncode(source + (options ? ' (' + options + ')' : ''))
-                        });
-                        content.push({
-                            xtype: 'box',
-                            cls: 'plot-variable-label',
-                            html: Ext.htmlEncode(variable)
-                        });
+                        if (getAsString)
+                            content = content.concat(Connector.model.Variable.getOptionsExportableStrings(measures[index].measure));
+                        else
+                        {
+                            content.push({
+                                xtype: 'box',
+                                cls: 'plot-type-label',
+                                html: label
+                            });
+                            content.push({
+                                xtype: 'box',
+                                cls: 'plot-source-label',
+                                html: Ext.htmlEncode(source + (options ? ' (' + options + ')' : ''))
+                            });
+                            content.push({
+                                xtype: 'box',
+                                cls: 'plot-variable-label',
+                                html: Ext.htmlEncode(variable)
+                            });
+                        }
                     }
                 }
             }
