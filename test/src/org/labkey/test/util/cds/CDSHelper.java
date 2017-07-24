@@ -1690,7 +1690,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator pageHeaderBack()
         {
-            return Locator.tagWithClass("span", "iarrow");
+            return Locator.tagWithClass("div", "iarrow");
         }
 
         public static Locator.XPathLocator selectionPane()

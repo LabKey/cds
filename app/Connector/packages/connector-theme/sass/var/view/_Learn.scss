@@ -1,3 +1,7 @@
+.learn-up {
+  white-space: nowrap;
+}
+
 .learnheader {
 
   .titlepanel {
@@ -12,7 +16,7 @@
     font-weight: 400;
     color: $gray-25;
     text-transform: uppercase;
-    float: left;
+    display: inline-block;
     padding-right:4px;
   }
 
@@ -20,8 +24,8 @@
     font-weight: 100;
     font-size: 22px;
     font-family: $data-font;
+    display: inline-block;
     color: $black;
-    float: left;
   }
 
   .iarrow {
@@ -32,7 +36,7 @@
     height: 56px;
     margin: 0 16px 0 -16px;
     vertical-align: bottom;
-    float: left;
+    display: inline-block;
   }
 }
 
@@ -319,7 +323,7 @@ h1.lhdv {
     height: 56px;
     margin: 0 16px 0 0px!important;
     vertical-align: bottom;
-    float: left;
+    display: inline-block;
   }
 }
 

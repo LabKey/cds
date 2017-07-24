@@ -71,9 +71,9 @@ Ext.define('Connector.view.PageHeader', {
             flex: 1,
             renderTpl: new Ext.XTemplate(
                 '<div class="learn-up">',
-                    '<span class="iarrow">&nbsp;</span>',
-                    '<span class="breadcrumb">{upText:htmlEncode} / </span>',
-                    '<span class="studyname">{title:htmlEncode}</span>',
+                    '<div class="iarrow">&nbsp;</div>',
+                    '<div class="breadcrumb">{upText:htmlEncode} / </div>',
+                    '<div class="studyname">{title:htmlEncode}</div>',
                 '</div>'
             ),
             renderData: {
