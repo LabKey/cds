@@ -389,7 +389,7 @@
         <datatype>boolean</datatype>
         <columnTitle>Response call</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
-        <description>Multiplicity-adjusted Fisher's Exact Test comparing stimulated to unstimulated cells.</description>
+        <description>Response call comparing stimulated to unstimulated cells. Method may vary across studies.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="pctpos">
@@ -714,7 +714,7 @@
       <column columnName="specimen_type">
         <datatype>varchar</datatype>
         <columnTitle>Specimen type</columnTitle>
-        <description>The type of specimen used in the assay. For NAb assays (Ad5 and HIV), this is generally serum or plasma.</description>
+        <description>The type of specimen used in the assay. For nAb assays, this is generally serum or plasma.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -722,14 +722,14 @@
         <datatype>varchar</datatype>
         <columnTitle>Antigen name</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The term for the name of the virus (antigen) being tested.</description>
+        <description>The name of the antigen (virus) being tested.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="antigen_type">
         <datatype>varchar</datatype>
         <columnTitle>Antigen type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The term for the clade of the virus (antigen) being tested.</description>
+        <description>The standardized term for the type of virus used in the construction of the nAb antigen.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="virus">
@@ -756,7 +756,7 @@
       <column columnName="clade">
         <datatype>varchar</datatype>
         <columnTitle>Virus clade</columnTitle>
-        <description>The clade (gene subtype) to which the antigen is most closely aligned. The clade may be a circulating type or a laboratory consensus or global clade.</description>
+        <description>The clade (gene subtype) of the virus (antigen) being tested.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -944,7 +944,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Antigen type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The standardized term for the type of antigen (e.g. virus or protein) being tested.</description>
+        <description>The standardized term for the type of antigen (e.g. protein) being tested.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="protein">
@@ -960,10 +960,12 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <description>The name of the panel of proteins for which a magnitude and response call are calculated. The magnitude and response calls are the maximum of the values of magnitude and response for the proteins making up the panel.</description>
         <dimension>true</dimension>
+        <isHidden>true</isHidden>
       </column>
       <column columnName="antibody_isotype">
         <datatype>varchar</datatype>
         <columnTitle>Isotype</columnTitle>
+        <description>The binding anitbody isotype that is quantified by the assay.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -995,7 +997,7 @@
       <column columnName="response_call">
         <datatype>boolean</datatype>
         <columnTitle>Response Call (1/0) Calculated per Response Code</columnTitle>
-        <description>An antigen-specific and frequently study-specific combination of thresholds and comparisons to baseline and reference</description>
+        <description>Response call calculated using standard criteria across studies.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -1011,21 +1013,22 @@
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) - Delta</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads, adjusted for mean Fluorescence Intensity of antibody-binding to non-specific (non-conjugated) beads.</description>
+        <description>The difference between the Median Fluorescence Intensity (MFI) of antibody binding to antigen-conjugated beads adjusted to subtract background (Magnitude (mfi) - Background subtracted from raw) and the maximum MFI of antibody-binding to non-conjugated (blank) beads adjusted to subtract background (Maginitude (mfi)-Background subtracted from blank).</description>
         <measure>true</measure>
       </column>
       <column columnName="mfi_delta_baseline">
         <datatype>double</datatype>
-        <columnTitle>Magnitude (mfi) - Delta Baseline</columnTitle>
+        <columnTitle>Magnitude (mfi) - Background</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads, adjusted for mean Fluorescence Intensity of antibody-binding to non-specific (non-conjugated) beads at baseline.</description>
         <measure>true</measure>
+        <isHidden>true</isHidden>
       </column>
       <column columnName="mfi_raw">
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) - Raw</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads.</description>
+        <description>Median Fluorescence Intensity of antibody binding to antigen-conjugated beads.</description>
         <measure>true</measure>
       </column>
       <column columnName="mfi_raw_baseline">
@@ -1033,6 +1036,7 @@
         <columnTitle>Magnitude (mfi) - Raw Baseline</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads at baseline.</description>
+        <isHidden>true</isHidden>
         <measure>true</measure>
       </column>
       <column columnName="mfi_blank">
@@ -1051,9 +1055,16 @@
       </column>
       <column columnName="mfi_bkgd">
         <datatype>double</datatype>
-        <columnTitle>Magnitude (mfi) – Background subtracted</columnTitle>
+        <columnTitle>Magnitude (mfi) - Background subtracted from raw</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Median Fluorescence Intensity of antibody binding to antigen-conjugated beads, adjusted to subtract background.</description>
+        <measure>true</measure>
+      </column>
+      <column columnName="mfi_bkgd_blank">
+        <datatype>double</datatype>
+        <columnTitle>Maginitude (mfi) - Background subtracted from blank</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Median Fluorescence Intensity of antibody-binding to non-conjugated (blank) beads adjusted to subtract background.</description>
         <measure>true</measure>
       </column>
       <column columnName="auc">
