@@ -64,9 +64,14 @@ public class CDSExportQueryView extends QueryView
         super(form, errors);
         _columnNamesOrdered = form.getColumnNamesOrdered();
         _columnAliases = form.getColumnAliases();
-        List<String> sortedFilters = Arrays.asList(form.getFilterStrings());
-        Collections.sort(sortedFilters);
-        _filterStrings = sortedFilters;
+        if (form.getFilterStrings() != null && form.getFilterStrings().length > 0)
+        {
+            List<String> sortedFilters = Arrays.asList(form.getFilterStrings());
+            Collections.sort(sortedFilters);
+            _filterStrings = sortedFilters;
+        }
+        else
+            _filterStrings = new ArrayList<>();
     }
 
     @Override
