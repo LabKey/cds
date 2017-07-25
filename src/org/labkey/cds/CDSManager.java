@@ -268,20 +268,17 @@ public class CDSManager
         return allStudies;
     }
 
+    public List<List<String>> getExportableAssays(String[] assays, Container container)
+    {
+        //TODO
+        return null;
+    }
+
     public List<ColumnInfo> getDBColumns(TableInfo table, List<String> columnNames)
     {
         List<ColumnInfo> columnInfos = new ArrayList<>();
         for (String column: columnNames)
             columnInfos.add(table.getColumn(column));
-        return columnInfos;
-    }
-
-    public List<ColumnInfo> getColumns(List<String> columnNames)
-    {
-
-        List<ColumnInfo> columnInfos = new ArrayList<>();
-        for (String column: columnNames)
-            columnInfos.add(new ColumnInfo(FieldKey.fromParts(column)));
         return columnInfos;
     }
 

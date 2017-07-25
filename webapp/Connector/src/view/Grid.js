@@ -784,43 +784,30 @@ Ext.define('Connector.view.Grid', {
 
                 mdx.query({
                     onRows: [{
-                        level: '[Study.Treatment].[Treatment]',
+                        level: '[Assay.Study].[Study]',
                         members: 'members'
                     }],
                     useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                     showEmpty: false,
                     success: function (results) {
-                        exportParams.studies = me.loadExportableMembers(results);
+                        exportParams.studyassays = me.loadExportableStudyAssays(results);
 
-                        mdx.query({
-                            onRows: [{
-                                level: '[Assay.Study].[Assay]',
-                                members: 'members'
-                            }],
-                            useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
-                            showEmpty: false,
-                            success: function (results) {
-                                exportParams.assays = me.loadExportableMembers(results);
+                        Ext.Ajax.request({
+                            url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
+                            method: 'POST',
+                            form: newForm,
+                            isUpload: true,
+                            params: exportParams,
+                            callback: function(options, success/*, response*/) {
+                                document.body.removeChild(newForm);
 
-                                Ext.Ajax.request({
-                                    url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
-                                    method: 'POST',
-                                    form: newForm,
-                                    isUpload: true,
-                                    params: exportParams,
-                                    callback: function(options, success/*, response*/) {
-                                        document.body.removeChild(newForm);
-
-                                        if (!success) {
-                                            // TODO: show error message
-                                        }
-                                    }
-                                });
-
-                                this.fireEvent('requestexport', me, exportParams);
-                            },
-                            scope: me
+                                if (!success) {
+                                    // TODO: show error message
+                                }
+                            }
                         });
+
+                        this.fireEvent('requestexport', me, exportParams);
                     },
                     scope: me
                 });
@@ -829,16 +816,17 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
-    loadExportableMembers: function(cellset)
+    loadExportableStudyAssays: function(cellset)
     {
         if (!cellset || !cellset.axes[1])
             return [];
-        var memberDefinitions = cellset.axes[1].positions, members = [];
+        var memberDefinitions = cellset.axes[1].positions, studyassays = [];
         Ext.each(memberDefinitions, function(definition) {
-            var def = definition[0];
-            members.push(LABKEY.app.model.Filter.getMemberLabel(def.name));
+            var def = definition[0], uniqueName = def.uniqueName, parts = uniqueName.split("].[");
+            var assay = LABKEY.app.model.Filter.getMemberLabel(parts[1]), study = LABKEY.app.model.Filter.getMemberLabel(def.name);
+            studyassays.push(assay + ChartUtils.ANTIGEN_LEVEL_DELIMITER + study);
         });
-        return members;
+        return studyassays;
     },
 
     showAlignFooter : function(resize)

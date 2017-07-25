@@ -27,6 +27,8 @@ SELECT
   assay_method_description,
   assay_endpoint_description,
   assay_endpoint_statistical_analysis,
+  provenance_source,
+  provenance_summary
  FROM cds.import_assay as IA
  INNER JOIN (SELECT DISTINCT
   assay_identifier,

@@ -45,7 +45,7 @@ public class CDSExportQueryView extends QueryView
     private static final String ASSAY_SHEET = "Assays";
     private static final String VARIABLES_SHEET = "Variable definitions";
 
-    private static final String FILTER_DELIMITER = "|||";
+    public static final String FILTER_DELIMITER = "|||";
     private static final String FILTERS_HEADING = "Subject filters applied to exported data:";
     private static final String FILTERS_FOOTER = "For a list of studies and assays included in this data file, please refer to the Studies and Assays tabs.";
 
@@ -75,8 +75,8 @@ public class CDSExportQueryView extends QueryView
         _columnNamesOrdered = form.getColumnNamesOrdered();
         _columnAliases = form.getColumnAliases();
         _filterStrings = getFormValues(form.getFilterStrings());
-        _studies = form.getStudies();
-        _assays = form.getAssays();
+        _studies = form.getStudies().toArray(new String[0]);
+        _assays = form.getAssays().toArray(new String[0]);
     }
 
     private List<String> getFormValues(String[] formValues)
@@ -152,11 +152,19 @@ public class CDSExportQueryView extends QueryView
         ew.renderNewSheet();
         ew.getWorkbook().setSheetOrder(METADATA_SHEET, 0); // move metadata sheet to first tab
 
-        List<ColumnInfo> studyColumns = CDSManager.get().getColumns(STUDY_COLUMNS);
+        List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
         ew.setColumns(studyColumns);
-        List<List<String>> getExportableStudies = CDSManager.get().getExportableStudies(_studies, getContainer());
-        ew.setResults(createResults(getExportableStudies, studyColumns));
+        List<List<String>> exportableStudies = CDSManager.get().getExportableStudies(_studies, getContainer());
+        ew.setResults(createResults(exportableStudies, studyColumns));
         ew.setSheetName(STUDY_SHEET);
+        ew.setCaptionRowFrozen(false);
+
+        ew.renderNewSheet();
+        List<ColumnInfo> assayColumns = getColumns(ASSAY_COLUMNS);
+        ew.setColumns(assayColumns);
+        List<List<String>> exportableAssays = CDSManager.get().getExportableAssays(_assays, getContainer());
+        ew.setResults(createResults(exportableAssays, assayColumns));
+        ew.setSheetName(ASSAY_SHEET);
         ew.setCaptionRowFrozen(false);
 //
 //        List<ColumnInfo> assayColumns = CDSManager.get().getColumns(ASSAY_COLUMNS);
@@ -354,5 +362,16 @@ public class CDSExportQueryView extends QueryView
         ResultSet resultSet = new LabKeyResultSet(rows, cols, null);
         return new ResultsImpl(resultSet, columnInfos);
     }
+
+    private List<ColumnInfo> getColumns(List<String> columnNames)
+    {
+
+        List<ColumnInfo> columnInfos = new ArrayList<>();
+        for (String column: columnNames)
+            columnInfos.add(new ColumnInfo(FieldKey.fromParts(column)));
+        return columnInfos;
+    }
+
+
 
 }

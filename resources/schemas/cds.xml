@@ -245,6 +245,8 @@
             <column columnName="assay_method_description"/>
             <column columnName="assay_endpoint_description"/>
             <column columnName="assay_endpoint_statistical_analysis"/>
+            <column columnName="provenance_source"/>
+            <column columnName="provenance_summary"/>
         </columns>
     </table>
     <table tableName="import_nabantigen" tableDbType="TABLE">
@@ -722,6 +724,12 @@
             <column columnName="assay_endpoint_description"/>
             <column columnName="assay_endpoint_statistical_analysis"/>
             <column columnName="assay_type"/>
+            <column columnName="provenance_source">
+                <columnTitle>Data provenance - Source</columnTitle>
+            </column>
+            <column columnName="provenance_summary">
+                <columnTitle>Data provenance - Processing Summary</columnTitle>
+            </column>
         </columns>
     </table>
     <table tableName="nabantigen" tableDbType="TABLE">

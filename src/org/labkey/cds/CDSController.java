@@ -67,6 +67,7 @@ import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.util.CSRFUtil;
 import org.labkey.api.util.PageFlowUtil;
+import org.labkey.api.util.Pair;
 import org.labkey.api.util.Path;
 import org.labkey.api.util.URLHelper;
 import org.labkey.api.view.HtmlView;
@@ -97,10 +98,13 @@ import java.io.Writer;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -494,10 +498,11 @@ public class CDSController extends SpringActionController
     public static class ExportForm extends QueryForm
     {
         private String[] _filterStrings;
-        private String[] _studies;
-        private String[] _assays;
+        private Set<String> _studies = new HashSet<>();
+        private Set<String> _assays = new HashSet<>();
         private String[] _columnNamesOrdered;
         private Map<String, String> _columnAliases = new HashMap<>();
+        private List<Pair<String, String>> _assayStudyPairs = new ArrayList<>();
 
         protected ColumnHeaderType _headerType = null; // QueryView will provide a default header type if the user doesn't select one
 
@@ -518,8 +523,20 @@ public class CDSController extends SpringActionController
             String[] columnNames = getValues("columnNames", in);
             String[] columnAliases = getValues("columnAliases", in);
             _filterStrings = getValues("filterStrings", in);
-            _studies = getValues("studies", in);
-            _assays = getValues("assays", in);
+            String[] _studyassays = getValues("studyassays", in);
+            if (_studyassays != null && _studyassays.length > 0)
+            {
+                for (String studyAssay : _studyassays)
+                {
+                    String[] parts = studyAssay.split(Pattern.quote(CDSExportQueryView.FILTER_DELIMITER));
+                    if (parts.length < 2)
+                        continue;
+                    _assayStudyPairs.add(new Pair<>(parts[0], parts[1]));
+                    _studies.add(parts[1]);
+                    _assays.add(parts[0]);
+                }
+                _assayStudyPairs.sort(Comparator.comparing(pair -> pair.first));
+            }
 
             if (columnNames.length == columnAliases.length)
             {
@@ -547,14 +564,19 @@ public class CDSController extends SpringActionController
             return _filterStrings;
         }
 
-        public String[] getStudies()
+        public Set<String> getStudies()
         {
             return _studies;
         }
 
-        public String[] getAssays()
+        public Set<String> getAssays()
         {
             return _assays;
+        }
+
+        public List<Pair<String, String>> getAssayStudies()
+        {
+            return _assayStudyPairs;
         }
     }
 
