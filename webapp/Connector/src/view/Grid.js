@@ -773,34 +773,72 @@ Ext.define('Connector.view.Grid', {
             var newForm = document.createElement('form');
             document.body.appendChild(newForm);
 
-
+            var me = this;
             Connector.getState().onMDXReady(function(mdx) {
 
                 var filterStrings = [];
                 Ext.each(Connector.getState().filters, function(filter){
                     filterStrings = filterStrings.concat(QueryUtils.getFilterStrings(filter, mdx));
-                }, this);
+                });
                 exportParams.filterStrings = filterStrings;
 
-                Ext.Ajax.request({
-                    url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
-                    method: 'POST',
-                    form: newForm,
-                    isUpload: true,
-                    params: exportParams,
-                    callback: function(options, success/*, response*/) {
-                        document.body.removeChild(newForm);
+                mdx.query({
+                    onRows: [{
+                        level: '[Study.Treatment].[Treatment]',
+                        members: 'members'
+                    }],
+                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                    showEmpty: false,
+                    success: function (results) {
+                        exportParams.studies = me.loadExportableMembers(results);
 
-                        if (!success) {
-                            // TODO: show error message
-                        }
-                    }
+                        mdx.query({
+                            onRows: [{
+                                level: '[Assay.Study].[Assay]',
+                                members: 'members'
+                            }],
+                            useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                            showEmpty: false,
+                            success: function (results) {
+                                exportParams.assays = me.loadExportableMembers(results);
+
+                                Ext.Ajax.request({
+                                    url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
+                                    method: 'POST',
+                                    form: newForm,
+                                    isUpload: true,
+                                    params: exportParams,
+                                    callback: function(options, success/*, response*/) {
+                                        document.body.removeChild(newForm);
+
+                                        if (!success) {
+                                            // TODO: show error message
+                                        }
+                                    }
+                                });
+
+                                this.fireEvent('requestexport', me, exportParams);
+                            },
+                            scope: me
+                        });
+                    },
+                    scope: me
                 });
-
-                this.fireEvent('requestexport', this, exportParams);
 
             });
         }
+    },
+
+    loadExportableMembers: function(cellset)
+    {
+        if (!cellset || !cellset.axes[1])
+            return [];
+        var memberDefinitions = cellset.axes[1].positions, members = [];
+        Ext.each(memberDefinitions, function(definition) {
+            var def = definition[0];
+            members.push(LABKEY.app.model.Filter.getMemberLabel(def.name));
+        });
+        return members;
     },
 
     showAlignFooter : function(resize)

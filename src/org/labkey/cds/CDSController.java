@@ -494,6 +494,8 @@ public class CDSController extends SpringActionController
     public static class ExportForm extends QueryForm
     {
         private String[] _filterStrings;
+        private String[] _studies;
+        private String[] _assays;
         private String[] _columnNamesOrdered;
         private Map<String, String> _columnAliases = new HashMap<>();
 
@@ -516,6 +518,9 @@ public class CDSController extends SpringActionController
             String[] columnNames = getValues("columnNames", in);
             String[] columnAliases = getValues("columnAliases", in);
             _filterStrings = getValues("filterStrings", in);
+            _studies = getValues("studies", in);
+            _assays = getValues("assays", in);
+
             if (columnNames.length == columnAliases.length)
             {
                 _columnNamesOrdered = columnNames;
@@ -540,6 +545,16 @@ public class CDSController extends SpringActionController
         public String[] getFilterStrings()
         {
             return _filterStrings;
+        }
+
+        public String[] getStudies()
+        {
+            return _studies;
+        }
+
+        public String[] getAssays()
+        {
+            return _assays;
         }
     }
 

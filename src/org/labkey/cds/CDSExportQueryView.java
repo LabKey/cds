@@ -55,7 +55,17 @@ public class CDSExportQueryView extends QueryView
     private static final List<String> TOC_3 = Arrays.asList("", "Please notify the DataSpace team of any presentations or publications resulting from this data and remember to cite the CAVD DataSpace, as well as the grant and study investigators. Thank you!");
     private static final List<List<String>> TOCS = Arrays.asList(Arrays.asList(TOC_TITLE), TOC_1, TOC_2, TOC_3);
 
+    public static final List<String> STUDY_DB_COLUMNS = Arrays.asList("network", "label", "study_name", "grant_pi_name", "investigator_name", "primary_poc_name", "primary_poc_email", "description", "type", "species");
+    private static final List<String> STUDY_COLUMNS = Arrays.asList("Network", "Study", "Grant PI", "Study Investigator", "Primary Contact", "Description", "Study Type", "Species", "Sharing Restrictions");
+    public static final String PUBLIC_STUDY = "Available to share with network members";
+    public static final String PRIVATE_STUDY = "Restricted - contact DataSpace team prior to sharing data";
+
+    private static final List<String> ASSAY_COLUMNS = Arrays.asList("Study", "Assay Name", "Lab ID", "Data provenance - source", "Data provenance - Notes");
+    private static final List<String> VARIABLE_COLUMNS = Arrays.asList("Assay Name", "Field label", "Field description");
+
     private final List<String> _filterStrings;
+    private final String[] _studies;
+    private final String[] _assays;
     private String[] _columnNamesOrdered;
     private Map<String, String> _columnAliases;
 
@@ -64,14 +74,21 @@ public class CDSExportQueryView extends QueryView
         super(form, errors);
         _columnNamesOrdered = form.getColumnNamesOrdered();
         _columnAliases = form.getColumnAliases();
-        if (form.getFilterStrings() != null && form.getFilterStrings().length > 0)
+        _filterStrings = getFormValues(form.getFilterStrings());
+        _studies = form.getStudies();
+        _assays = form.getAssays();
+    }
+
+    private List<String> getFormValues(String[] formValues)
+    {
+        if (formValues != null && formValues.length > 0)
         {
-            List<String> sortedFilters = Arrays.asList(form.getFilterStrings());
+            List<String> sortedFilters = Arrays.asList(formValues);
             Collections.sort(sortedFilters);
-            _filterStrings = sortedFilters;
+            return sortedFilters;
         }
         else
-            _filterStrings = new ArrayList<>();
+            return new ArrayList<>();
     }
 
     @Override
@@ -128,31 +145,25 @@ public class CDSExportQueryView extends QueryView
         ew.setSheetName(DATA);
 
         ew.renderNewSheet();
-//        ew.setHeaders(TERMS_OF_USES);
         ColumnInfo filterColumnInfo = new ColumnInfo(FieldKey.fromParts(METADATA_SHEET));
         ew.setColumns(Collections.singletonList(filterColumnInfo));
         ew.setSheetName(METADATA_SHEET);
 
-        // TermsOfUse
         ew.renderNewSheet();
         ew.getWorkbook().setSheetOrder(METADATA_SHEET, 0); // move metadata sheet to first tab
-//        ew.getWorkbook().setFirstVisibleTab(0);
 
-//        ColumnInfo termsColumnInfo = new ColumnInfo(FieldKey.fromParts("Full Terms of Use agreement "));
-////        termsColumnInfo.setExcelFormatString("4"); //TYPE_MULTILINE_STRING
-////        termsColumnInfo.setInputRows(50);
-//        ew.setColumns(Collections.singletonList(termsColumnInfo));
-//        ew.setResults(createResults(TERMS_OF_USES, termsColumnInfo));
-//        ew.setSheetName(TOU);
-//        ew.setCaptionRowFrozen(false);
+        List<ColumnInfo> studyColumns = CDSManager.get().getColumns(STUDY_COLUMNS);
+        ew.setColumns(studyColumns);
+        List<List<String>> getExportableStudies = CDSManager.get().getExportableStudies(_studies, getContainer());
+        ew.setResults(createResults(getExportableStudies, studyColumns));
+        ew.setSheetName(STUDY_SHEET);
+        ew.setCaptionRowFrozen(false);
 //
-//        ew.renderNewSheet();
-//        Sheet touSheet = ew.getWorkbook().getSheet(TOU);
-        //ew.getWorkbook().setSheetOrder();
-
-//        touSheet.setColumnWidth(0, 10000);
-//        touSheet.getRow(1).setHeightInPoints(5000);
-//        touSheet.set
+//        List<ColumnInfo> assayColumns = CDSManager.get().getColumns(ASSAY_COLUMNS);
+//        ew.setColumns(assayColumns);
+//        ew.setResults(createResults(_assays, assayColumnInfo));
+//        ew.setSheetName(ASSAY_SHEET);
+//        ew.setCaptionRowFrozen(false);
 
         ew.getWorkbook().setActiveSheet(0);
         return ew;
@@ -320,22 +331,28 @@ public class CDSExportQueryView extends QueryView
         }
     }
 
-    private Results createResults(String[] rowTexts, ColumnInfo columnInfo)
+    private Results createResults(List<List<String>> rowTexts, List<ColumnInfo> columnInfos)
     {
-        LabKeyResultSet.Column col2 = new LabKeyResultSet.Column(columnInfo.getAlias(), String.class);
         List<Map<String, Object>> rows = new ArrayList<>();
         if (rowTexts != null)
         {
-            for (String rowText : rowTexts)
+            for (List<String> rowText : rowTexts)
             {
                 Map<String, Object> row = new HashMap<>();
-                row.put(columnInfo.getAlias(), rowText);
+                for (int i = 0 ; i < columnInfos.size(); i++)
+                {
+                    row.put(columnInfos.get(i).getAlias(), rowText.get(i));
+                }
                 rows.add(row);
             }
         }
 
-        ResultSet resultSet = new LabKeyResultSet(rows, Collections.singletonList(col2), null);
-        return new ResultsImpl(resultSet, Collections.singletonList(columnInfo));
+        List<LabKeyResultSet.Column> cols = new ArrayList<>();
+        for (ColumnInfo info : columnInfos)
+            cols.add(new LabKeyResultSet.Column(info.getAlias(), String.class));
+
+        ResultSet resultSet = new LabKeyResultSet(rows, cols, null);
+        return new ResultsImpl(resultSet, columnInfos);
     }
 
 }
