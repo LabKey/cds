@@ -389,7 +389,7 @@
         <datatype>boolean</datatype>
         <columnTitle>Response call</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
-        <description>Response call comparing stimulated to unstimulated cells. Method may vary across studies.</description>
+        <description>Response call comparing cell expression in stimulated versus unstimulated cells. Calculation method may vary (e.g. Fisher's Exact Test or MIMOSA).</description>
         <dimension>true</dimension>
       </column>
       <column columnName="pctpos">
@@ -432,6 +432,27 @@
         <columnTitle>Data provenance</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
         <description>Details regarding the provenance of the assay results.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="response_method">
+        <datatype>varchar</datatype>
+        <columnTitle>Response call method</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Method used to calculate the response call (e.g. Fisher's Exact Test or MIMOSA).</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="control">
+        <datatype>boolean</datatype>
+        <columnTitle>Response call method</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <description>Indicates if the antigen is a negative control.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="pooled_info">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigens aggregated</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Indicates which antigens were inlcuded in the aggregated magnitudes and response calls.</description>
         <measure>false</measure>
       </column>
     </columns>
@@ -568,9 +589,9 @@
         <description>Name of cell or cell subset assessed for antigen-stimulated expression of peptide(s). This cell type is usually CD4+ or CD8+ T-cells, but other cell types can also be assessed.</description>
         <dimension>true</dimension>
       </column>
-      <column columnName="vaccine_method">
+      <column columnName="vaccine_matched">
         <datatype>boolean</datatype>
-        <columnTitle>Vaccine matched indicator</columnTitle>
+        <columnTitle>Antigen vaccine match indicator</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <description>Indicates if the interactive part of the antigen was designed to match the immunogen in the vaccine.</description>
         <dimension>true</dimension>
@@ -708,7 +729,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Data summary level</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>Defines the level at which the magnitude or response has been summarized (i.e. summarized at the isolate level).</description>
+        <description>Defines the level at which the magnitude or response has been summarized (e.g. summarized at the isolate level).</description>
         <dimension>true</dimension>
       </column>
       <column columnName="specimen_type">
@@ -736,7 +757,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Virus name</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>The name of virus used in the construction of the nAb antigen.</description>
+        <description>The term for the virus (antigen) being tested.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="virus_type">
@@ -862,6 +883,13 @@
         <description>The slope calculated using the difference between 50% and 80% neutralization.</description>
         <measure>true</measure>
       </column>
+      <column columnName="vaccine_matched">
+        <datatype>boolean</datatype>
+        <columnTitle>Antigen vaccine match indicator</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <description>Indicates if the interactive part of the antigen was designed to match the immunogen in the vaccine.</description>
+        <dimension>true</dimension>
+      </column>
     </columns>
     <tableTitle>Neutralizing antibody</tableTitle>
   </table>
@@ -978,7 +1006,8 @@
       </column>
       <column columnName="vaccine_matched">
         <datatype>boolean</datatype>
-        <columnTitle>Vaccine matched indicator</columnTitle>
+        <columnTitle>Antigen vaccine match indicator</columnTitle>
+        <description>Indicates if the interactive part of the antigen was designed to match the immunogen in the vaccine</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
       </column>
       <column columnName="detection_ligand">
@@ -996,7 +1025,7 @@
       </column>
       <column columnName="response_call">
         <datatype>boolean</datatype>
-        <columnTitle>Response Call (1/0) Calculated per Response Code</columnTitle>
+        <columnTitle>Response call</columnTitle>
         <description>Response call calculated using standard criteria across studies.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
@@ -1013,7 +1042,7 @@
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) - Delta</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <description>The difference between the Median Fluorescence Intensity (MFI) of antibody binding to antigen-conjugated beads adjusted to subtract background (Magnitude (mfi) - Background subtracted from raw) and the maximum MFI of antibody-binding to non-conjugated (blank) beads adjusted to subtract background (Maginitude (mfi)-Background subtracted from blank).</description>
+        <description>The difference between the Median Fluorescence Intensity (MFI) of antibody binding to antigen-conjugated beads adjusted to subtract background (Magnitude (mfi) - Background subtracted from raw) and the maximum MFI of antibody-binding to non-conjugated (blank) beads adjusted to subtract background (Maginitude (mfi)-Background subtracted from blank).</description>
         <measure>true</measure>
       </column>
       <column columnName="mfi_delta_baseline">
@@ -1043,7 +1072,7 @@
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) - Blank</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <description>Mean Fluorescence Intensity of antibody-binding to blank beads.</description>
+        <description>Median Fluorescence Intensity of antibody-binding to non-conjugated (blank) beads.</description>
         <measure>true</measure>
       </column>
       <column columnName="mfi_blank_baseline">
@@ -1052,6 +1081,7 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Fluorescence Intensity of antibody-binding to blank beads at baseline.</description>
         <measure>true</measure>
+        <isHidden>true</isHidden>
       </column>
       <column columnName="mfi_bkgd">
         <datatype>double</datatype>
