@@ -443,7 +443,7 @@
       </column>
       <column columnName="control">
         <datatype>boolean</datatype>
-        <columnTitle>Response call method</columnTitle>
+        <columnTitle>Negative control</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <description>Indicates if the antigen is a negative control.</description>
         <measure>false</measure>
@@ -1042,7 +1042,7 @@
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) - Delta</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <description>The difference between the Median Fluorescence Intensity (MFI) of antibody binding to antigen-conjugated beads adjusted to subtract background (Magnitude (mfi) - Background subtracted from raw) and the maximum MFI of antibody-binding to non-conjugated (blank) beads adjusted to subtract background (Maginitude (mfi)-Background subtracted from blank).</description>
+        <description>The difference between the Median Fluorescence Intensity (MFI) of antibody binding to antigen-conjugated beads adjusted to subtract background (Magnitude (mfi) - Background subtracted from raw) and the maximum MFI of antibody-binding to non-conjugated (blank) beads adjusted to subtract background (Magnitude (mfi)-Background subtracted from blank).</description>
         <measure>true</measure>
       </column>
       <column columnName="mfi_delta_baseline">
@@ -1092,7 +1092,7 @@
       </column>
       <column columnName="mfi_bkgd_blank">
         <datatype>double</datatype>
-        <columnTitle>Maginitude (mfi) - Background subtracted from blank</columnTitle>
+        <columnTitle>Magnitude (mfi) - Background subtracted from blank</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Median Fluorescence Intensity of antibody-binding to non-conjugated (blank) beads adjusted to subtract background.</description>
         <measure>true</measure>
