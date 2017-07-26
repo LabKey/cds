@@ -107,7 +107,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         returnedItems.get(index).click();
 
         log("Validating title is " + lockedParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + lockedParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + lockedParts[0] + "']").toBy()));
 
         log("Validating Study Type is: " + unlockedParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + unlockedParts[1] + "']").findElement(getDriver()).isDisplayed());
@@ -246,7 +246,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         lockedColItems.get(index).click();
 
         log("Validating title is " + itemTitle);
-        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemTitle + "']").toBy()));
+        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + itemTitle + "']").toBy()));
 
         log("Validating Product Type is: " + itemClassAndType[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[1] + "']").findElement(getDriver()).isDisplayed());
@@ -293,8 +293,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         sleep(CDSHelper.CDS_WAIT);
-        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Vaccine matched indicator"));
-        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
+        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Antigen vaccine match indicator"));
 
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
 
@@ -1036,7 +1035,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Now validate that link to the documents works as expected.");
         click(Locator.linkWithText("QED 3"));
         sleep(1000);
-        Assert.assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//span[@class='studyname']")).equals("QED 3"));
+        Assert.assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 3"));
         log("Verify that the related study links for this study are as expected.");
         expectedStudiesText = "QED 1 (Ancillary study)";
         relatedStudiesText = getText(relatedStudiesTable);
@@ -1046,7 +1045,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Click the related study and make sure we navigate back to the original study.");
         click(Locator.linkWithText("QED 1"));
         sleep(1000);
-        Assert.assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//span[@class='studyname']")).equals("QED 1"));
+        Assert.assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 1"));
 
         cds.viewLearnAboutPage("Studies");
 
