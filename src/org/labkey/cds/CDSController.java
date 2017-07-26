@@ -501,6 +501,7 @@ public class CDSController extends SpringActionController
         private Set<String> _studies = new HashSet<>();
         private Set<String> _assays = new HashSet<>();
         private String[] _columnNamesOrdered;
+        private String[] _studyassays;
         private Map<String, String> _columnAliases = new HashMap<>();
         private List<Pair<String, String>> _assayStudyPairs = new ArrayList<>();
 
@@ -511,11 +512,6 @@ public class CDSController extends SpringActionController
             return _headerType;
         }
 
-        public void setHeaderType(ColumnHeaderType headerType)
-        {
-            _headerType = headerType;
-        }
-
         protected BindException doBindParameters(PropertyValues in)
         {
             BindException errors = super.doBindParameters(in);
@@ -523,7 +519,7 @@ public class CDSController extends SpringActionController
             String[] columnNames = getValues("columnNames", in);
             String[] columnAliases = getValues("columnAliases", in);
             _filterStrings = getValues("filterStrings", in);
-            String[] _studyassays = getValues("studyassays", in);
+            _studyassays = getValues("studyassays", in);
             if (_studyassays != null && _studyassays.length > 0)
             {
                 for (String studyAssay : _studyassays)
@@ -564,6 +560,11 @@ public class CDSController extends SpringActionController
             return _filterStrings;
         }
 
+        public String[] getStudyAssays()
+        {
+            return _studyassays;
+        }
+
         public Set<String> getStudies()
         {
             return _studies;
@@ -574,7 +575,7 @@ public class CDSController extends SpringActionController
             return _assays;
         }
 
-        public List<Pair<String, String>> getAssayStudies()
+        public List<Pair<String, String>> getAssayStudyPairs()
         {
             return _assayStudyPairs;
         }

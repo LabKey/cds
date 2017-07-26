@@ -40,15 +40,19 @@ import org.labkey.api.query.QueryService;
 import org.labkey.api.security.User;
 import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.util.PageFlowUtil;
+import org.labkey.api.util.Pair;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.labkey.cds.CDSExportQueryView.ASSAY_DB_COLUMNS;
+import static org.labkey.cds.CDSExportQueryView.FILTER_DELIMITER;
 import static org.labkey.cds.CDSExportQueryView.PRIVATE_STUDY;
 import static org.labkey.cds.CDSExportQueryView.PUBLIC_STUDY;
 import static org.labkey.cds.CDSExportQueryView.STUDY_DB_COLUMNS;
@@ -268,8 +272,41 @@ public class CDSManager
         return allStudies;
     }
 
+    public List<Map<String, Object>> getAssays(List<String> studyAssayStrs, String[] studyNames, String[] assayIdentifiers)
+    {
+        Map<String, String> studyFolders = new HashMap<>();
+        List<Map<String, Object>> studyMaps = getStudies(studyNames);
+        for (Map<String, Object> studyMap : studyMaps)
+            studyFolders.put((String) studyMap.get("study_name"), (String) studyMap.get("label"));
+
+        List<Map<String, Object>> studyassays = new ArrayList<>();
+        SimpleFilter filter = new SimpleFilter();
+        filter.addCondition(FieldKey.fromParts("prot"), Arrays.asList(studyFolders.keySet()), CompareType.IN);
+        filter.addCondition(FieldKey.fromParts("assay_identifier"), Arrays.asList(assayIdentifiers), CompareType.IN);
+        SchemaTableInfo table = CDSSchema.getInstance().getSchema().getTable("studyassay");
+
+        try (Results results = new TableSelector(table, getDBColumns(table, ASSAY_DB_COLUMNS), filter, null).getResults())
+        {
+            while (results.next())
+            {
+                Map<String, Object> resultMap = results.getRowMap();
+                String studyLabel = studyFolders.get(resultMap.get("prot"));
+                String assayIdentifier = studyFolders.get(resultMap.get("assay_identifier"));
+                if (studyAssayStrs.contains(studyLabel + FILTER_DELIMITER + assayIdentifier))
+                    studyassays.add(resultMap);
+
+            }
+        }
+        catch (SQLException e)
+        {
+            return studyassays;
+        }
+        return studyassays;
+    }
+
     public List<List<String>> getExportableAssays(String[] assays, Container container)
     {
+
         //TODO
         return null;
     }

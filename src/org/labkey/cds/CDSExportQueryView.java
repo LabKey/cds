@@ -19,6 +19,7 @@ import org.labkey.api.data.RuntimeSQLException;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.query.FieldKey;
 import org.labkey.api.query.QueryView;
+import org.labkey.api.util.Pair;
 import org.labkey.api.view.DataView;
 import org.labkey.remoteapi.query.jdbc.LabKeyResultSet;
 
@@ -60,7 +61,8 @@ public class CDSExportQueryView extends QueryView
     public static final String PUBLIC_STUDY = "Available to share with network members";
     public static final String PRIVATE_STUDY = "Restricted - contact DataSpace team prior to sharing data";
 
-    private static final List<String> ASSAY_COLUMNS = Arrays.asList("Study", "Assay Name", "Lab ID", "Data provenance - source", "Data provenance - Notes");
+    public static final List<String> ASSAY_DB_COLUMNS = Arrays.asList("prot", "assay_identifier", "provenance_source", "provenance_summary");
+    private static final List<String> ASSAY_COLUMNS = Arrays.asList("Study", "Assay Name", "Data provenance - source", "Data provenance - Notes");
     private static final List<String> VARIABLE_COLUMNS = Arrays.asList("Assay Name", "Field label", "Field description");
 
     private final List<String> _filterStrings;
@@ -68,6 +70,7 @@ public class CDSExportQueryView extends QueryView
     private final String[] _assays;
     private String[] _columnNamesOrdered;
     private Map<String, String> _columnAliases;
+    private String[] _studyassays;
 
     public CDSExportQueryView(CDSController.ExportForm form, org.springframework.validation.Errors errors)
     {
