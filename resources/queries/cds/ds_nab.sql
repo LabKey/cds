@@ -45,6 +45,7 @@ exp_assayid,
 lab_code,
 
 -- MEASURES
+nab_response AS response_call,
 titer_ic50,
 titer_ic80,
 nab_response_ID50,
