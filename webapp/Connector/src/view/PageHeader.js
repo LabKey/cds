@@ -24,7 +24,7 @@ Ext.define('Connector.view.PageHeader', {
 
     model: undefined,
 
-    height: 112,
+    height: 114,
 
     activeTab: 0,
 
