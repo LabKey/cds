@@ -810,7 +810,7 @@ Ext.define('Connector.view.Grid', {
                                 document.body.removeChild(newForm);
 
                                 if (!success) {
-                                    // TODO: show error message
+                                    Ext.Msg.alert('Error', 'Unable to export.');
                                 }
                             }
                         });
