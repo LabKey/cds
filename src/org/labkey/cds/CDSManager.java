@@ -17,15 +17,11 @@
 package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
-import org.labkey.api.data.ColumnInfo;
-import org.labkey.api.data.CompareType;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.PropertyManager;
-import org.labkey.api.data.Results;
 import org.labkey.api.data.RuntimeSQLException;
 import org.labkey.api.data.SQLFragment;
-import org.labkey.api.data.SchemaTableInfo;
 import org.labkey.api.data.SimpleFilter;
 import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.data.SqlSelector;
@@ -40,22 +36,12 @@ import org.labkey.api.query.QueryService;
 import org.labkey.api.security.User;
 import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.util.PageFlowUtil;
-import org.labkey.api.util.Pair;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.labkey.cds.CDSExportQueryView.ASSAY_DB_COLUMNS;
-import static org.labkey.cds.CDSExportQueryView.FILTER_DELIMITER;
-import static org.labkey.cds.CDSExportQueryView.PRIVATE_STUDY;
-import static org.labkey.cds.CDSExportQueryView.PUBLIC_STUDY;
-import static org.labkey.cds.CDSExportQueryView.STUDY_DB_COLUMNS;
 
 public class CDSManager
 {
@@ -219,116 +205,4 @@ public class CDSManager
         return PageFlowUtil.decode(mp.getEffectiveValue(container));
     }
 
-    public List<Map<String, Object>> getStudies(String[] studyNames)
-    {
-        List<Map<String, Object>> studies = new ArrayList<>();
-        SimpleFilter filter = new SimpleFilter();
-        filter.addCondition(FieldKey.fromParts("label"), Arrays.asList(studyNames), CompareType.IN);
-        SchemaTableInfo table = CDSSchema.getInstance().getSchema().getTable("study");
-
-        try (Results results = new TableSelector(table, getDBColumns(table, STUDY_DB_COLUMNS), filter, null).getResults())
-        {
-            while (results.next())
-            {
-                studies.add(results.getRowMap());
-            }
-        }
-        catch (SQLException e)
-        {
-            return studies;
-        }
-        return studies;
-    }
-
-    public List<List<String>> getExportableStudies(String[] studyNames, Container container)
-    {
-        List<List<String>> allStudies = new ArrayList<>();
-        List<String> studyFolders = new ArrayList<>();
-        List<Map<String, Object>> studyMaps = getStudies(studyNames);
-        for (Map<String, Object> studyMap : studyMaps)
-            studyFolders.add((String) studyMap.get("study_name"));
-
-        List<String> publicStudies = getPublicStudies(studyFolders, container);
-
-        for (Map<String, Object> studyMap : studyMaps)
-        {
-            List<String> studyValues = new ArrayList<>();
-            studyValues.add((String) studyMap.get("network"));
-            studyValues.add((String) studyMap.get("label"));
-            studyValues.add((String) studyMap.get("grant_pi_name"));
-            studyValues.add((String) studyMap.get("investigator_name"));
-            studyValues.add((studyMap.get("primary_poc_name")) + " ("  + (studyMap.get("primary_poc_email")) + ")");
-            studyValues.add((String) studyMap.get("description"));
-            studyValues.add((String) studyMap.get("type"));
-            studyValues.add((String) studyMap.get("species"));
-            String accessLevel = publicStudies.contains(studyMap.get("study_name")) ? PUBLIC_STUDY : PRIVATE_STUDY;
-            studyValues.add(accessLevel);
-            allStudies.add(studyValues);
-        }
-
-        // sort by network
-        allStudies.sort(Comparator.comparing(study -> study.get(0)));
-
-        return allStudies;
-    }
-
-    public List<Map<String, Object>> getAssays(List<String> studyAssayStrs, String[] studyNames, String[] assayIdentifiers)
-    {
-        Map<String, String> studyFolders = new HashMap<>();
-        List<Map<String, Object>> studyMaps = getStudies(studyNames);
-        for (Map<String, Object> studyMap : studyMaps)
-            studyFolders.put((String) studyMap.get("study_name"), (String) studyMap.get("label"));
-
-        List<Map<String, Object>> studyassays = new ArrayList<>();
-        SimpleFilter filter = new SimpleFilter();
-        filter.addCondition(FieldKey.fromParts("prot"), Arrays.asList(studyFolders.keySet()), CompareType.IN);
-        filter.addCondition(FieldKey.fromParts("assay_identifier"), Arrays.asList(assayIdentifiers), CompareType.IN);
-        SchemaTableInfo table = CDSSchema.getInstance().getSchema().getTable("studyassay");
-
-        try (Results results = new TableSelector(table, getDBColumns(table, ASSAY_DB_COLUMNS), filter, null).getResults())
-        {
-            while (results.next())
-            {
-                Map<String, Object> resultMap = results.getRowMap();
-                String studyLabel = studyFolders.get(resultMap.get("prot"));
-                String assayIdentifier = studyFolders.get(resultMap.get("assay_identifier"));
-                if (studyAssayStrs.contains(studyLabel + FILTER_DELIMITER + assayIdentifier))
-                    studyassays.add(resultMap);
-
-            }
-        }
-        catch (SQLException e)
-        {
-            return studyassays;
-        }
-        return studyassays;
-    }
-
-    public List<List<String>> getExportableAssays(String[] assays, Container container)
-    {
-
-        //TODO
-        return null;
-    }
-
-    public List<ColumnInfo> getDBColumns(TableInfo table, List<String> columnNames)
-    {
-        List<ColumnInfo> columnInfos = new ArrayList<>();
-        for (String column: columnNames)
-            columnInfos.add(table.getColumn(column));
-        return columnInfos;
-    }
-
-    public List<String> getPublicStudies(List<String> studyFolders, Container project)
-    {
-        List<String> publicStudies = new ArrayList<>();
-        for (Container c : project.getChildren())
-        {
-            if (!studyFolders.contains(c.getName()))
-                continue;
-            if (!c.getPolicy().getResourceId().equals(c.getResourceId()))
-                publicStudies.add(c.getName());
-        }
-        return publicStudies;
-    }
 }

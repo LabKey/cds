@@ -501,9 +501,9 @@ public class CDSController extends SpringActionController
         private Set<String> _studies = new HashSet<>();
         private Set<String> _assays = new HashSet<>();
         private String[] _columnNamesOrdered;
+        private String[] _variables;
         private String[] _studyassays;
         private Map<String, String> _columnAliases = new HashMap<>();
-        private List<Pair<String, String>> _assayStudyPairs = new ArrayList<>();
 
         protected ColumnHeaderType _headerType = null; // QueryView will provide a default header type if the user doesn't select one
 
@@ -520,6 +520,8 @@ public class CDSController extends SpringActionController
             String[] columnAliases = getValues("columnAliases", in);
             _filterStrings = getValues("filterStrings", in);
             _studyassays = getValues("studyassays", in);
+            _variables = getValues("variables", in);
+
             if (_studyassays != null && _studyassays.length > 0)
             {
                 for (String studyAssay : _studyassays)
@@ -527,11 +529,9 @@ public class CDSController extends SpringActionController
                     String[] parts = studyAssay.split(Pattern.quote(CDSExportQueryView.FILTER_DELIMITER));
                     if (parts.length < 2)
                         continue;
-                    _assayStudyPairs.add(new Pair<>(parts[0], parts[1]));
-                    _studies.add(parts[1]);
-                    _assays.add(parts[0]);
+                    _studies.add(parts[0]);
+                    _assays.add(parts[1]);
                 }
-                _assayStudyPairs.sort(Comparator.comparing(pair -> pair.first));
             }
 
             if (columnNames.length == columnAliases.length)
@@ -575,9 +575,9 @@ public class CDSController extends SpringActionController
             return _assays;
         }
 
-        public List<Pair<String, String>> getAssayStudyPairs()
+        public String[] getVariables()
         {
-            return _assayStudyPairs;
+            return _variables;
         }
     }
 

@@ -742,7 +742,8 @@ Ext.define('Connector.view.Grid', {
                 "query.queryName": [model.get('queryName')],
                 "query.showRows": ['ALL'],
                 columnNames: [],
-                columnAliases: []
+                columnAliases: [],
+                variables: []
             };
 
             // apply filters
@@ -764,6 +765,13 @@ Ext.define('Connector.view.Grid', {
                 Ext.each(colGroup.columns, function(col) {
                     exportParams.columnNames.push(col.dataIndex);
                     exportParams.columnAliases.push(colGroup.text + " - " + col.header);
+
+                    var measure = Connector.getQueryService().getMeasure(col.dataIndex);
+                    if (measure.queryType == 'datasets')
+                    {
+                        var variable = measure.queryLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.label + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.description;
+                        exportParams.variables.push(variable);
+                    }
                 });
             });
 
@@ -824,7 +832,7 @@ Ext.define('Connector.view.Grid', {
         Ext.each(memberDefinitions, function(definition) {
             var def = definition[0], uniqueName = def.uniqueName, parts = uniqueName.split("].[");
             var assay = LABKEY.app.model.Filter.getMemberLabel(parts[1]), study = LABKEY.app.model.Filter.getMemberLabel(def.name);
-            studyassays.push(assay + ChartUtils.ANTIGEN_LEVEL_DELIMITER + study);
+            studyassays.push(study + ChartUtils.ANTIGEN_LEVEL_DELIMITER + assay);
         });
         return studyassays;
     },
