@@ -792,36 +792,59 @@ Ext.define('Connector.view.Grid', {
 
                 mdx.query({
                     onRows: [{
-                        level: '[Assay.Study].[Study]',
+                        level: '[Study.Treatment].[Treatment]',
                         members: 'members'
                     }],
                     useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                     showEmpty: false,
                     success: function (results) {
-                        exportParams.studyassays = me.loadExportableStudyAssays(results);
+                        exportParams.studies = me.loadExportableStudies(results);
 
-                        Ext.Ajax.request({
-                            url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
-                            method: 'POST',
-                            form: newForm,
-                            isUpload: true,
-                            params: exportParams,
-                            callback: function(options, success/*, response*/) {
-                                document.body.removeChild(newForm);
+                        mdx.query({
+                            onRows: [{
+                                level: '[Assay.Study].[Study]',
+                                members: 'members'
+                            }],
+                            useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                            showEmpty: false,
+                            success: function (results) {
+                                exportParams.studyassays = me.loadExportableStudyAssays(results);
 
-                                if (!success) {
-                                    Ext.Msg.alert('Error', 'Unable to export.');
-                                }
-                            }
+                                Ext.Ajax.request({
+                                    url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
+                                    method: 'POST',
+                                    form: newForm,
+                                    isUpload: true,
+                                    params: exportParams,
+                                    callback: function(options, success/*, response*/) {
+                                        document.body.removeChild(newForm);
+
+                                        if (!success) {
+                                            Ext.Msg.alert('Error', 'Unable to export.');
+                                        }
+                                    }
+                                });
+
+                                this.fireEvent('requestexport', me, exportParams);
+                            },
+                            scope: me
                         });
-
-                        this.fireEvent('requestexport', me, exportParams);
-                    },
-                    scope: me
+                    }
                 });
-
             });
         }
+    },
+
+    loadExportableStudies: function(cellset)
+    {
+        if (!cellset || !cellset.axes[1])
+            return [];
+        var memberDefinitions = cellset.axes[1].positions, members = [];
+        Ext.each(memberDefinitions, function(definition) {
+            var def = definition[0];
+            members.push(LABKEY.app.model.Filter.getMemberLabel(def.name));
+        });
+        return members;
     },
 
     loadExportableStudyAssays: function(cellset)

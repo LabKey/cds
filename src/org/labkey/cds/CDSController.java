@@ -521,6 +521,9 @@ public class CDSController extends SpringActionController
             _filterStrings = getValues("filterStrings", in);
             _studyassays = getValues("studyassays", in);
             _variables = getValues("variables", in);
+            String[] studies = getValues("studies", in);
+            if (studies != null && studies.length > 0)
+                _studies.addAll(Arrays.asList(studies));
 
             if (_studyassays != null && _studyassays.length > 0)
             {
@@ -529,7 +532,6 @@ public class CDSController extends SpringActionController
                     String[] parts = studyAssay.split(Pattern.quote(CDSExportQueryView.FILTER_DELIMITER));
                     if (parts.length < 2)
                         continue;
-                    _studies.add(parts[0]);
                     _assays.add(parts[1]);
                 }
             }

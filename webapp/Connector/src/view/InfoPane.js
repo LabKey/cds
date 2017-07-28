@@ -40,7 +40,24 @@ Ext.define('Connector.view.InfoPane', {
     statics: {
         getExportableFilterStrings : function (filter, mdx)
         {
-            var level = mdx.getLevel(filter.get("level")).levelLabel;
+            var level = mdx.getLevel(filter.get("level")), label;
+
+            if (level) {
+                label = level.hierarchy.dimension.friendlyName;
+
+                // friendlyName was not overridden so compose label with lvl info
+                if (label === level.hierarchy.dimension.singularName) {
+                    if (Ext.isDefined(level.countSingular)) {
+                        // escape redundant dim/lvl naming (e.g. Study (Study))
+                        if (level.countSingular.toLowerCase() !== label.toLowerCase()) {
+                            label += ' (' + level.countSingular + ')';
+                        }
+                    }
+                    else {
+                        label += ' (' + level.name + ')';
+                    }
+                }
+            }
 
             var filterType = '';
             if (filter.get('operator') == 'AND')
@@ -48,7 +65,7 @@ Ext.define('Connector.view.InfoPane', {
             else
                 filterType = "Subjects related to any: ";
             var filterValue = Connector.view.InfoPane.getMembersStr(filter.getMembers());
-            return [level + ChartUtils.ANTIGEN_LEVEL_DELIMITER + filterType + filterValue];
+            return [label + ChartUtils.ANTIGEN_LEVEL_DELIMITER + filterType + filterValue];
         },
 
         getMembersStr: function(members)
