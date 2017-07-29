@@ -19,7 +19,7 @@ Ext.define('Connector.view.TimepointPane', {
         getExportableFilterStrings : function (filter)
         {
             var filterDisplayString = filter.get("filterDisplayString").replace("Time points:", "");
-            return ["Time points: " + ChartUtils.ANTIGEN_LEVEL_DELIMITER + filterDisplayString];
+            return ["Time points " + ChartUtils.ANTIGEN_LEVEL_DELIMITER + filterDisplayString];
         }
     },
 

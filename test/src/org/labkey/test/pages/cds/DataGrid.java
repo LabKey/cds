@@ -15,6 +15,7 @@
  */
 package org.labkey.test.pages.cds;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -172,17 +173,186 @@ public class DataGrid
         _test.waitForElement(Locators.sysmsg.containing("Filter removed."));
     }
 
-    public void assertRowCount(int expCount)
+    @LogMethod
+    public void assertRowCount(int i)
     {
-        if (expCount > 25)
+        CDSExcel grid = new CDSExcel(i);
+        verifyCDSExcel(grid, true);
+    }
+
+    @LogMethod
+    public void verifyCDSExcel(CDSExcel excel, boolean countOnly)
+    {
+        File export = exportGrid();
+        verifyRowCount(excel, export);
+
+        if (countOnly)
+            return;
+
+        verifyExportedMetadata(export, excel);
+        verifyExportedStudies(export, excel);
+        verifyExportedAssays(export, excel);
+        verifyExportedVariables(export, excel);
+    }
+
+    private void verifyExportedVariables(File export, CDSExcel excel)
+    {
+        try
         {
-            long actualCount = getExportRowCount();
-            _test.waitForElements(Locators.dataRow, 25);
-            Assert.assertEquals("Wrong number of rows in export.", expCount, actualCount);
+            Workbook wb = ExcelHelper.create(export);
+            Sheet sheet = wb.getSheetAt(4);
+            verifySheetName(sheet,"Variable definitions");
+
+            List<String> fieldLabels = excel.getFieldLabels();
+            verifyColumnValues(sheet, fieldLabels, "Field label", 1);
         }
-        else
+        catch (IOException | InvalidFormatException fail)
+        {
+            throw new RuntimeException("Error reading exported grid file", fail);
+        }
+    }
+
+    private void verifyExportedAssays(File export, CDSExcel excel)
+    {
+        try
+        {
+            Workbook wb = ExcelHelper.create(export);
+            Sheet sheet = wb.getSheetAt(3);
+            verifySheetName(sheet,"Assays");
+
+            List<String> assays = excel.getAssays();
+            List<String> assayProvenances = excel.getAssayProvenances();
+            verifyColumnValues(sheet, assays, "Assay Name", 1);
+            verifyColumnValues(sheet, assayProvenances, "Data provenance - source", 2);
+        }
+        catch (IOException | InvalidFormatException fail)
+        {
+            throw new RuntimeException("Error reading exported grid file", fail);
+        }
+    }
+
+    private void verifyExportedStudies(File export, CDSExcel excel)
+    {
+        try
+        {
+            Workbook wb = ExcelHelper.create(export);
+            Sheet sheet = wb.getSheetAt(2);
+            verifySheetName(sheet,"Studies");
+
+            List<String> studyNetworks = excel.getStudyNetworks();
+            List<String> studies = excel.getStudies();
+            verifyColumnValues(sheet, studyNetworks, "Network", 0);
+            verifyColumnValues(sheet, studies, "Study", 1);
+        }
+        catch (IOException | InvalidFormatException fail)
+        {
+            throw new RuntimeException("Error reading exported grid file", fail);
+        }
+    }
+
+    private void verifyColumnValues(Sheet sheet, List<String> columnValues, String columnTitle, int columnIndex)
+    {
+        if (columnValues == null)
+            return;
+        String cellValue;
+        cellValue = sheet.getRow(0).getCell(columnIndex).getStringCellValue();
+        Assert.assertEquals("Column title is not as expected", columnTitle, cellValue);
+        for (int i = 0; i < columnValues.size(); i++)
+        {
+            cellValue = sheet.getRow(i + 1).getCell(columnIndex).getStringCellValue();
+            Assert.assertEquals(columnTitle + " is not as expected", columnValues.get(i), cellValue);
+        }
+    }
+
+    @LogMethod
+    private void verifyExportedMetadata(File export, CDSExcel excel)
+    {
+        try
+        {
+            Workbook wb = ExcelHelper.create(export);
+            Sheet sheet = wb.getSheetAt(0);
+
+            verifySheetName(sheet,"Metadata");
+            verifyTOC(sheet);
+            verifyFilters(sheet, excel);
+        }
+        catch (IOException | InvalidFormatException fail)
+        {
+            throw new RuntimeException("Error reading exported grid file", fail);
+        }
+    }
+
+    @LogMethod
+    private void verifySheetName(Sheet sheet, String expectedName)
+    {
+        Assert.assertEquals("Sheet name is not as expected", expectedName, sheet.getSheetName());
+    }
+
+    @LogMethod
+    private void verifyFilters(Sheet sheet, CDSExcel excel)
+    {
+        int startingRow = CDSExcel.FILTER_START_ROW;
+        List<String> filterTitles = excel.getFilterTitles();
+        List<String> filterValues = excel.getFilterValues();
+        String cellValue;
+        if (filterTitles != null)
+            for (int i = 0; i < filterTitles.size(); i++)
+            {
+                if (StringUtils.isEmpty(filterTitles.get(i)))
+                    continue;
+                cellValue = sheet.getRow(i + startingRow).getCell(1).getStringCellValue();
+                Assert.assertEquals("Filter title is not as expected", filterTitles.get(i), cellValue);
+            }
+        startingRow = CDSExcel.FILTER_START_ROW + 1;
+        if (filterValues != null)
+            for (int i = 0; i < filterValues.size(); i++)
+            {
+                if (StringUtils.isEmpty(filterValues.get(i)))
+                    continue;
+                cellValue = sheet.getRow(i + startingRow).getCell(2).getStringCellValue();
+                Assert.assertEquals("Filter value is not as expected", filterValues.get(i), cellValue);
+            }
+    }
+
+    @LogMethod
+    private void verifyTOC(Sheet sheet)
+    {
+        String cellValue = sheet.getRow(0).getCell(0).getStringCellValue();
+        Assert.assertEquals("TOC is not as expected", CDSExcel.TOCS.get(0).get(0), cellValue);
+
+        for (int i = 1; i < 4; i++)
+        {
+            cellValue = sheet.getRow(i).getCell(1).getStringCellValue();
+            Assert.assertEquals("TOC is note as expected", CDSExcel.TOCS.get(i).get(1), cellValue);
+        }
+    }
+
+    @LogMethod
+    public void verifyRowCount(CDSExcel expectedExcel, File exported)
+    {
+        int expCount = expectedExcel.getDataRowCount();
+        if (expCount <= 25)
         {
             _test.waitForElements(Locators.dataRow, expCount);
+            return;
+        }
+        long exportedCount = getExportRowCount(exported);
+        _test.waitForElements(Locators.dataRow, 25);
+        Assert.assertEquals("Wrong number of rows in export.", expCount, exportedCount);
+    }
+
+    @LogMethod
+    public int getExportRowCount(File export)
+    {
+        try
+        {
+            Workbook wb = ExcelHelper.create(export);
+            Sheet sheet = wb.getSheetAt(1);
+            return sheet.getLastRowNum(); // +1 for zero-based, -1 for header row
+        }
+        catch (IOException | InvalidFormatException fail)
+        {
+            throw new RuntimeException("Error reading exported grid file", fail);
         }
     }
 
@@ -216,21 +386,6 @@ public class DataGrid
             return null;
         });
         assertSortPresent(columnName);
-    }
-
-    public int getExportRowCount()
-    {
-        File export = exportGrid();
-        try
-        {
-            Workbook wb = ExcelHelper.create(export);
-            Sheet sheet = wb.getSheetAt(1);
-            return sheet.getLastRowNum(); // +1 for zero-based, -1 for header row
-        }
-        catch (IOException | InvalidFormatException fail)
-        {
-            throw new RuntimeException("Error reading exported grid file", fail);
-        }
     }
 
     public File exportGrid()
@@ -306,4 +461,5 @@ public class DataGrid
             return Locator.tagWithClass("div", "x-grid-cell-inner").containing(cellContent);
         }
     }
+
 }

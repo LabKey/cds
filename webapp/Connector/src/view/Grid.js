@@ -767,7 +767,7 @@ Ext.define('Connector.view.Grid', {
                     exportParams.columnAliases.push(colGroup.text + " - " + col.header);
 
                     var measure = Connector.getQueryService().getMeasure(col.dataIndex);
-                    if (measure.queryType == 'datasets')
+                    if (measure && measure.queryType == 'datasets')
                     {
                         var variable = measure.queryLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.label + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.description;
                         exportParams.variables.push(variable);
