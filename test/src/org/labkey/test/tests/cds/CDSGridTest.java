@@ -302,7 +302,46 @@ public class CDSGridTest extends CDSReadOnlyTest
         _asserts.assertFilterStatusCounts(4, 3, 1, 1, 3);
         grid.assertPageTotal(1);
         grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
-        grid.assertRowCount(4);
+
+        exported = new CDSExcel(4);
+        exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining",
+                "",
+                "",
+                "",
+                "",
+                "Subject (Race)"));
+        exported.setFilterValues(Arrays.asList("Data summary level: Protein Panel",
+                "Functional marker name: IL2/ifngamma",
+                "Magnitude (% cells) - Background subtracted >= 1",
+                "",
+                "",
+                "Subjects related to any: Asian"));
+        exported.setStudyNetworks(Arrays.asList("ZED", "ZED", "ZED"));
+        exported.setStudies(Arrays.asList("ZAP 105", "ZAP 134", "ZAP 117"));
+        exported.setAssays(Arrays.asList("HIV Binding Antibody",
+                "HIV Neutralizing Antibody",
+                "HIV Neutralizing Antibody",
+                "IFNg ELISpot",
+                "Intracellular Cytokine Staining",
+                "Intracellular Cytokine Staining",
+                "Intracellular Cytokine Staining"));
+        exported.setAssayProvenances(Arrays.asList("VISC analysis dataset",
+                "LabKey dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset"));
+        exported.setFieldLabels(Arrays.asList("Cell type",
+                "Data summary level",
+                "Functional marker name",
+                "Lab ID",
+                "Magnitude (% cells) - Background subtracted",
+                "Peptide Pool",
+                "Protein",
+                "Protein panel",
+                "Specimen type"));
+        grid.verifyCDSExcel(exported, false);
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
         // Can't use CDSHelper.NavigationLink.Grid.makeNavigationSelection. It expects that it will be going to a blank plot.
