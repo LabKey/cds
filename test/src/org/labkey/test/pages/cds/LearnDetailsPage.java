@@ -23,7 +23,7 @@ public class LearnDetailsPage
 
     public static class Locators
     {
-        public static Locator.XPathLocator tabHeaders = new Locator.XPathLocator("//div").withClass("learnabouttab").child("h1");
+        public static Locator.XPathLocator tabHeaders = Locator.tag("div").withClass("learnabouttab").childTag("h1");
     }
 
     public class DetailLearnGrid extends LearnGrid
