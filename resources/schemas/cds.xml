@@ -341,9 +341,10 @@
             <column columnName="titer_ic80"/>
             <column columnName="titer_ID50"/>
             <column columnName="titer_ID80"/>
-            <column columnName="titer_response_ID50"/>
-            <column columnName="titer_response_ID80"/>
+            <column columnName="nab_response_ID50"/>
+            <column columnName="nab_response_ID80"/>
             <column columnName="slope"/>
+            <column columnName="vaccine_matched"/>
         </columns>
     </table>
     <table tableName="import_ics" tableDbType="TABLE">
@@ -373,6 +374,9 @@
             <column columnName="pctpos"/>
             <column columnName="pctpos_adj"/>
             <column columnName="pctpos_neg"/>
+            <column columnName="response_method"/>
+            <column columnName="control"/>
+            <column columnName="pooled_info"/>
         </columns>
     </table>
     <table tableName="import_els_ifng" tableDbType="TABLE">
@@ -434,6 +438,7 @@
             <column columnName="mfi_blank"/>
             <column columnName="mfi_blank_baseline"/>
             <column columnName="mfi_bkgd"/>
+            <column columnName="mfi_bkgd_blank"/>
             <column columnName="auc"/>
         </columns>
     </table>

@@ -14,6 +14,7 @@ Ext.define('Connector.app.model.VariableList', {
         {name: 'label'},
         {name: 'isRecommendedVariable', type: 'Boolean'},
         {name: 'description'},
-        {name: 'queryName'}
+        {name: 'queryName'},
+        {name: 'sortOrder', type: 'int'}
     ]
 });

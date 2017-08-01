@@ -1,3 +1,7 @@
+.learn-up {
+  white-space: nowrap;
+}
+
 .learnheader {
 
   .titlepanel {
@@ -12,7 +16,7 @@
     font-weight: 400;
     color: $gray-25;
     text-transform: uppercase;
-    float: left;
+    display: inline-block;
     padding-right:4px;
   }
 
@@ -20,8 +24,8 @@
     font-weight: 100;
     font-size: 22px;
     font-family: $data-font;
+    display: inline-block;
     color: $black;
-    float: left;
   }
 
   .iarrow {
@@ -32,7 +36,7 @@
     height: 56px;
     margin: 0 16px 0 -16px;
     vertical-align: bottom;
-    float: left;
+    display: inline-block;
   }
 }
 
@@ -301,7 +305,7 @@ h1.lhdv {
 }
 
 .pageheader {
-  height: 112px!important;
+  height: 114px!important;
 
   .title-and-back-panel {
     font: $title-font;
@@ -319,7 +323,7 @@ h1.lhdv {
     height: 56px;
     margin: 0 16px 0 0px!important;
     vertical-align: bottom;
-    float: left;
+    display: inline-block;
   }
 }
 
@@ -566,24 +570,23 @@ img.detail-has-data-small {
 .variable-list-grid {
   padding-top: 16px!important;
 
-  .variable-list-category-container {
-    height: 24px;
-
-    .variable-list-category-text {
-      padding-top: 5px;
-      font: $subhead-font;
-      color: $heat-scale-1;
-    }
+  .variable-list-category-text {
+    padding-top: 5px;
+    font: $title-font;
+    color: $heat-scale-2;
   }
 
   .variable-list-title {
     width: 60%;
+    padding-top: 24px;
+
     h2 {
       font: $headline-font;
     }
   }
 
-  .variable-list-row {
+  .variable-list-row-header,
+  .variable-list-row-normal {
     height: 123px;
     border-bottom: 1px solid $heat-scale-4;
     overflow: hidden;
@@ -592,6 +595,10 @@ img.detail-has-data-small {
       padding: 0px;
       white-space: normal;
     }
+  }
+
+  .variable-list-row-header {
+    height: 143px;
   }
 
   .variable-list-description {

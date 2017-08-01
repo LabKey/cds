@@ -22,8 +22,21 @@ Ext.define('Connector.view.module.VariableList', {
         trackOver: false,
         selectedItemCls: '',
 
-        getRowClass: function() {
-            return 'variable-list-row';
+        rowIsSectionHeader : function(isRecommended) {
+            if (this.inRecommendedSection ^ isRecommended)
+            {
+                this.inRecommendedSection = !this.inRecommendedSection;
+                return true;
+            }
+        },
+
+        getRowClass: function(record) {
+            if (this.rowIsSectionHeader(record.get("isRecommendedVariable"))){
+                return 'variable-list-row-header';
+            }
+            else {
+                return 'variable-list-row-normal';
+            }
         }
     },
 
@@ -36,15 +49,27 @@ Ext.define('Connector.view.module.VariableList', {
         resizable: false,
         dataIndex: 'label',
         tpl: new Ext.XTemplate(
-                '<div class="variable-list-category-container">',
-                    '<div class="variable-list-category-text">{[values.isRecommendedVariable ? "Recommended" : ""]}</div>',
-                '</div>',
+                '{[this.getSectionHeader(values.isRecommendedVariable)]}',
                 '<div class="variable-list-title">',
                     '<h2>{label:htmlEncode}</h2>',
                 '</div>',
                 '<div class="variable-list-description">',
                     '{description:htmlEncode}',
-                '</div>')
+                '</div>',{
+                    getSectionHeader : function(isRecommended) {
+                        var pre = "<div class=\"variable-list-category-text\">";
+                        var post = "</div>";
+                        if (this.inRecommendedSection === undefined && isRecommended)
+                        {
+                            this.inRecommendedSection = true;
+                            return pre + "Recommended" + post;
+                        }
+                        else if (this.inRecommendedSection && !isRecommended) {
+                            this.inRecommendedSection = undefined;
+                            return pre + "Additional" + post;
+                        }
+                    }
+                })
     }],
 
     initComponent : function() {
