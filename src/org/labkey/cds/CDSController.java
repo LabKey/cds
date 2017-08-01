@@ -432,7 +432,7 @@ public class CDSController extends SpringActionController
         public ModelAndView getView(ExportForm form, BindException errors) throws Exception
         {
             CDSExportQueryView view = new CDSExportQueryView(form, errors);
-            view.writeExcelToResponse(getViewContext().getResponse(), form.getHeaderType());
+            view.writeExcelToResponse(getViewContext().getResponse());
             return null;
         }
 
@@ -504,13 +504,6 @@ public class CDSController extends SpringActionController
         private String[] _variables;
         private String[] _studyassays;
         private Map<String, String> _columnAliases = new HashMap<>();
-
-        protected ColumnHeaderType _headerType = null; // QueryView will provide a default header type if the user doesn't select one
-
-        public ColumnHeaderType getHeaderType()
-        {
-            return _headerType;
-        }
 
         protected BindException doBindParameters(PropertyValues in)
         {

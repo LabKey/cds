@@ -53,5 +53,8 @@ ics_response AS response_call,
 pctpos,
 pctpos_adj,
 pctpos_neg,
+control,
+pooled_info,
+response_method,
 
 FROM cds.import_ics;

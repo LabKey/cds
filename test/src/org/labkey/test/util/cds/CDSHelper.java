@@ -397,13 +397,13 @@ public class CDSHelper
     public static final String BAMA_MAGNITUDE_BASELINE = "Magnitude (mfi) - Blank Baseline";
     public static final String BAMA_MAGNITUDE_DELTA = "Magnitude (mfi) - Delta";
     public static final String BAMA_MAGNITUDE_RAW = "Magnitude (mfi) - Raw";
-    public static final String BAMA_MAGNITUDE_DELTA_BASELINE = "Magnitude (mfi) - Delta Baseline";
+    public static final String BAMA_MAGNITUDE_DELTA_BASELINE = "Magnitude (mfi) - Background";
     public static final String BAMA_MAGNITUDE_RAW_BASELINE = "Magnitude (mfi) - Raw Baseline";
     public static final String BAMA_PROTEIN = "Protein";
     public static final String BAMA_PROTEIN_PANEL = "Protein Panel";
-    public static final String BAMA_RESPONSE_CALL = "Response Call (1/0) Calculated per Response Code";
+    public static final String BAMA_RESPONSE_CALL = "Response call";
     public static final String BAMA_SPECIMEN = "Specimen type";
-    public static final String BAMA_VACCINE = "Vaccine matched indicator";
+    public static final String BAMA_VACCINE = "Antigen vaccine match indicator";
 
     public static final String SUBJECT_CHARS = "Subject characteristics";
     public static final String STUDY_TREATMENT_VARS = "Study and treatment variables";
@@ -455,7 +455,7 @@ public class CDSHelper
     public static final String ELISPOT_PROTEIN_PANEL =  "Protein Panel";
     public static final String ELISPOT_RESPONSE =  "Response call";
     public static final String ELISPOT_SPECIMEN =  "Specimen type";
-    public static final String ELISPOT_VACCINE =  "Vaccine matched indicator";
+    public static final String ELISPOT_VACCINE =  "Antigen vaccine match indicator";
 
     public static final String ICS = "ICS (Intracellular Cytokine Staining)";
     public static final String ICS_ANTIGEN = "Antigen name";
@@ -501,6 +501,7 @@ public class CDSHelper
     public static final String NAB_TIER = "Tier";
     public static final String NAB_TITERID50 = "Titer ID50";
     public static final String NAB_TITERID80 = "Titer ID80";
+    public static final String NAB_TITERIC80 = "Titer IC80";
     public static final String NAB_VIRUS_NAME = "Virus name";
     public static final String NAB_VIRUS_TYPE = "Virus type";
 
@@ -1187,6 +1188,7 @@ public class CDSHelper
 
         if (!_test.isElementPresent(headerContainer.append(activeHeader.withText(learnAxis))))
         {
+            _test.waitForElement(headerContainer.append(header.withText(learnAxis)));
             _test.click(headerContainer.append(header.withText(learnAxis)));
             WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
@@ -1299,7 +1301,7 @@ public class CDSHelper
     {
         hoverOverInfoPaneItem(label);
         _test.click(Locator.xpath("//div[contains(@class, 'x-grid-cell-inner')]//div[@title='" + label + "']//a[contains(@class, 'expando')]"));
-        _test.waitForElement(Locator.xpath("//span").withClass("studyname").withText(label));
+        _test.waitForElement(Locator.xpath("//div").withClass("studyname").withText(label));
     }
 
     /**
@@ -1689,7 +1691,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator pageHeaderBack()
         {
-            return Locator.tagWithClass("span", "iarrow");
+            return Locator.tagWithClass("div", "iarrow");
         }
 
         public static Locator.XPathLocator selectionPane()

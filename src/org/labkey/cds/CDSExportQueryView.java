@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CDSExportQueryView extends QueryView
 {
@@ -148,12 +149,10 @@ public class CDSExportQueryView extends QueryView
         return exportColumns;
     }
 
-    public void writeExcelToResponse(HttpServletResponse response, ColumnHeaderType headerType) throws IOException
+    public void writeExcelToResponse(HttpServletResponse response) throws IOException
     {
         ExcelWriter ew = getExcelWriter();
-        if (headerType == null)
-            headerType = getColumnHeaderType();
-        ew.setCaptionType(headerType);
+        ew.setCaptionType(getColumnHeaderType());
         ew.write(response);
         logAuditEvent("Exported to Excel", ew.getDataRowCount());
     }
@@ -404,11 +403,7 @@ public class CDSExportQueryView extends QueryView
 
     private List<ColumnInfo> getColumns(List<String> columnNames)
     {
-
-        List<ColumnInfo> columnInfos = new ArrayList<>();
-        for (String column: columnNames)
-            columnInfos.add(new ColumnInfo(FieldKey.fromParts(column)));
-        return columnInfos;
+        return columnNames.stream().map(column -> new ColumnInfo(FieldKey.fromParts(column))).collect(Collectors.toList());
     }
 
     public List<Map<String, Object>> getStudies(String[] studyNames)

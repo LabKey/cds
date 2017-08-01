@@ -675,7 +675,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         // expand the study axis and check Group V treatment group for each plot alignment option
         cdsPlot.toggleTimeAxisExpandCollapseState();
-        timeAxisData = new CDSHelper.TimeAxisData(studyName, 0, 0, 2, 6, 0, 0);
+        timeAxisData = new CDSHelper.TimeAxisData(studyName, 0, 0, 2, 7, 0, 0);
         validateStudyScenarioPlot("QED_2-Group_V_Arm_C_Placebo", 1075, timeAxisData, false, expectedPlotTickText);
         changeTimePointAlignment(CDSHelper.TIME_POINTS_DAYS, CDSHelper.TIME_POINTS_ALIGN_ENROLL);
         validateStudyScenarioPlot("QED_2-Group_V_Arm_C_Placebo", 1075, timeAxisData, false, expectedPlotTickText);
