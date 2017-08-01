@@ -365,6 +365,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         log("Filter on new column.");
         grid.setCheckBoxFilter(CDSHelper.DEMO_SEX, true, "Male");
         _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
         grid.assertRowCount(2);
 
         log("Now add a new column to the mix.");
