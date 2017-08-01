@@ -432,7 +432,7 @@ public class CDSController extends SpringActionController
         public ModelAndView getView(ExportForm form, BindException errors) throws Exception
         {
             CDSExportQueryView view = new CDSExportQueryView(form, errors);
-            view.writeExcelToResponse(getViewContext().getResponse(), form.getHeaderType());
+            view.writeExcelToResponse(getViewContext().getResponse());
             return null;
         }
 
