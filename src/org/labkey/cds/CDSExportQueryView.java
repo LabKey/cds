@@ -2,10 +2,13 @@ package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.labkey.api.data.ColumnHeaderType;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.CompareType;
@@ -56,8 +59,9 @@ public class CDSExportQueryView extends QueryView
     private static final String FILTERS_HEADING = "Subject filters applied to exported data:";
     private static final String FILTERS_FOOTER = "For a list of studies and assays included in this data file, please refer to the Studies and Assays tabs.";
 
+    private static final String CAVD_LINK = "https://dataspace.cavd.org/cds/CAVD/app.view?";
     private static final String TOC_TITLE = "IMPORTANT INFORMATION ABOUT THIS DATA:";
-    private static final List<String> TOC_1 = Arrays.asList("", "By exporting data from the CAVD DataSpace, you agree to be bound by the Terms of Use available on the CAVD DataSpace sign-in page at https://dataspace.cavd.org/cds/CAVD/app.view? .");
+    private static final List<String> TOC_1 = Arrays.asList("", "By exporting data from the CAVD DataSpace, you agree to be bound by the Terms of Use available on the CAVD DataSpace sign-in page at " + CAVD_LINK + " .");
     private static final List<String> TOC_2 = Arrays.asList("", "Data included may have additional sharing restrictions; please refer to the Studies tab for details.");
     private static final List<String> TOC_3 = Arrays.asList("", "Please notify the DataSpace team of any presentations or publications resulting from this data and remember to cite the CAVD DataSpace, as well as the grant and study investigators. Thank you!");
     private static final List<List<String>> TOCS = Arrays.asList(Arrays.asList(TOC_TITLE), TOC_1, TOC_2, TOC_3);
@@ -254,12 +258,12 @@ public class CDSExportQueryView extends QueryView
                     boldStyle = (XSSFCellStyle) getWorkbook().createCellStyle();
                     boldStyle.setFont(boldFont);
 
-                    int currentRow = writeTOC(ctx, sheet, visibleColumns, 0);
-                    currentRow = writeExportDate(ctx, sheet, visibleColumns, currentRow);
+                    int currentRow = writeTOC(sheet, 0);
+                    currentRow = writeExportDate(sheet, currentRow);
                     writeFilterSection(ctx, sheet, visibleColumns, currentRow);
                 }
 
-                private int writeTOC(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns, int currentRow)
+                private int writeTOC(Sheet sheet, int currentRow)
                 {
                    for (List<String> row : TOCS)
                    {
@@ -280,6 +284,15 @@ public class CDSExportQueryView extends QueryView
                                else
                                    cell.setCellStyle(boldStyle);
                            }
+
+                           // CAVD link
+                           if (currentRow == 1)
+                           {
+                               CreationHelper createHelper = sheet.getWorkbook().getCreationHelper();
+                               XSSFHyperlink link = (XSSFHyperlink)createHelper.createHyperlink(Hyperlink.LINK_URL);
+                               link.setAddress(CAVD_LINK);
+                               cell.setHyperlink(link);
+                           }
                        }
                        currentRow++;
                    }
@@ -287,7 +300,7 @@ public class CDSExportQueryView extends QueryView
                    return currentRow + 2;
                 }
 
-                private int writeExportDate(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns, int currentRow)
+                private int writeExportDate(Sheet sheet, int currentRow)
                 {
                     Row rowObject = getRow(sheet, currentRow);
                     Cell titleCell = rowObject.getCell(0, Row.CREATE_NULL_AS_BLANK);
@@ -310,7 +323,7 @@ public class CDSExportQueryView extends QueryView
                     titleCell.setCellStyle(boldStyle);
                     currentRow++;
 
-                    currentRow = writeFilterDetails(ctx, sheet, visibleColumns, currentRow);
+                    currentRow = writeFilterDetails(sheet, currentRow);
 
                     rowObject = getRow(sheet, currentRow);
                     Cell footerCell = rowObject.getCell(0, Row.CREATE_NULL_AS_BLANK);
@@ -320,7 +333,7 @@ public class CDSExportQueryView extends QueryView
                     return currentRow;
                 }
 
-                private int writeFilterDetails(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns, int currentRow)
+                private int writeFilterDetails(Sheet sheet, int currentRow)
                 {
                     String previousCategory = "", currentCategory, currentFilter;
                     for (String filter : _filterStrings)
