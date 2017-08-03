@@ -216,6 +216,8 @@
             <column columnName="prot"/>
             <column columnName="assay_identifier"/>
             <column columnName="assay_status"/>
+            <column columnName="provenance_source"/>
+            <column columnName="provenance_summary"/>
         </columns>
     </table>
     <table tableName="import_studyrelationshiporder" tableDbType="TABLE">
@@ -660,6 +662,12 @@
             <column columnName="assay_identifier"/>
             <column columnName="has_data"/>
             <column columnName="assay_status"/>
+            <column columnName="provenance_source">
+                <columnTitle>Data provenance - Source</columnTitle>
+            </column>
+            <column columnName="provenance_summary">
+                <columnTitle>Data provenance - Processing Summary</columnTitle>
+            </column>
         </columns>
     </table>
     <table tableName="studyrelationship" tableDbType="TABLE">

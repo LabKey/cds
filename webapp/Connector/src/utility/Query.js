@@ -1022,5 +1022,25 @@ Ext.define('Connector.utility.Query', {
         }
 
         return alias;
+    },
+
+    getFilterStrings: function(filter, mdx)
+    {
+        if (filter.$className !== 'Connector.model.Filter')
+            return [];
+
+        if (filter.isTime() && !filter.isPlot()) {
+            return Connector.view.TimepointPane.getExportableFilterStrings(filter);
+        }
+        else if (filter.isGrid() || filter.isAggregated()) {
+            return Connector.view.GridPane.gridFilterContent(filter, true);
+        }
+        else if (filter.isPlot()) {
+            return Connector.view.PlotPane.plotFilterContent(filter, true);
+        }
+        else if (filter.data.filterSource == 'OLAP')
+            return Connector.view.InfoPane.getExportableFilterStrings(filter, mdx);
+        return [];
     }
+
 });

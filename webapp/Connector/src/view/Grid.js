@@ -742,7 +742,8 @@ Ext.define('Connector.view.Grid', {
                 "query.queryName": [model.get('queryName')],
                 "query.showRows": ['ALL'],
                 columnNames: [],
-                columnAliases: []
+                columnAliases: [],
+                variables: []
             };
 
             // apply filters
@@ -764,6 +765,13 @@ Ext.define('Connector.view.Grid', {
                 Ext.each(colGroup.columns, function(col) {
                     exportParams.columnNames.push(col.dataIndex);
                     exportParams.columnAliases.push(colGroup.text + " - " + col.header);
+
+                    var measure = Connector.getQueryService().getMeasure(col.dataIndex);
+                    if (measure && measure.queryType == 'datasets')
+                    {
+                        var variable = measure.queryLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.label + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.description;
+                        exportParams.variables.push(variable);
+                    }
                 });
             });
 
@@ -773,23 +781,83 @@ Ext.define('Connector.view.Grid', {
             var newForm = document.createElement('form');
             document.body.appendChild(newForm);
 
-            Ext.Ajax.request({
-                url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
-                method: 'POST',
-                form: newForm,
-                isUpload: true,
-                params: exportParams,
-                callback: function(options, success/*, response*/) {
-                    document.body.removeChild(newForm);
+            var me = this;
+            Connector.getState().onMDXReady(function(mdx) {
 
-                    if (!success) {
-                        // TODO: show error message
+                var filterStrings = [];
+                Ext.each(Connector.getState().filters, function(filter){
+                    filterStrings = filterStrings.concat(QueryUtils.getFilterStrings(filter, mdx));
+                });
+                exportParams.filterStrings = filterStrings;
+
+                mdx.query({
+                    onRows: [{
+                        level: '[Study.Treatment].[Treatment]',
+                        members: 'members'
+                    }],
+                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                    showEmpty: false,
+                    success: function (results) {
+                        exportParams.studies = me.loadExportableStudies(results);
+
+                        mdx.query({
+                            onRows: [{
+                                level: '[Assay.Study].[Study]',
+                                members: 'members'
+                            }],
+                            useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                            showEmpty: false,
+                            success: function (results) {
+                                exportParams.studyassays = me.loadExportableStudyAssays(results);
+
+                                Ext.Ajax.request({
+                                    url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
+                                    method: 'POST',
+                                    form: newForm,
+                                    isUpload: true,
+                                    params: exportParams,
+                                    callback: function(options, success/*, response*/) {
+                                        document.body.removeChild(newForm);
+
+                                        if (!success) {
+                                            Ext.Msg.alert('Error', 'Unable to export.');
+                                        }
+                                    }
+                                });
+
+                                this.fireEvent('requestexport', me, exportParams);
+                            },
+                            scope: me
+                        });
                     }
-                }
+                });
             });
-
-            this.fireEvent('requestexport', this, exportParams);
         }
+    },
+
+    loadExportableStudies: function(cellset)
+    {
+        if (!cellset || !cellset.axes[1])
+            return [];
+        var memberDefinitions = cellset.axes[1].positions, members = [];
+        Ext.each(memberDefinitions, function(definition) {
+            var def = definition[0];
+            members.push(LABKEY.app.model.Filter.getMemberLabel(def.name));
+        });
+        return members;
+    },
+
+    loadExportableStudyAssays: function(cellset)
+    {
+        if (!cellset || !cellset.axes[1])
+            return [];
+        var memberDefinitions = cellset.axes[1].positions, studyassays = [];
+        Ext.each(memberDefinitions, function(definition) {
+            var def = definition[0], uniqueName = def.uniqueName, parts = uniqueName.split("].[");
+            var assay = LABKEY.app.model.Filter.getMemberLabel(parts[1]), study = LABKEY.app.model.Filter.getMemberLabel(def.name);
+            studyassays.push(study + ChartUtils.ANTIGEN_LEVEL_DELIMITER + assay);
+        });
+        return studyassays;
     },
 
     showAlignFooter : function(resize)
