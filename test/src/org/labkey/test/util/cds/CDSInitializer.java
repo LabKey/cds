@@ -90,36 +90,27 @@ public class CDSInitializer
     {
         // TODO: Catch any RemoteAPI Command Exceptions
 
+        // run initial ETL to populate CDS import tables
+        _etlHelper.getDiHelper().runTransformAndWait("{CDS}/CDSImport", WAIT_ON_IMPORT);
+
         // During automation runs set will fail sometimes because of a NPE in Container.hasWorkbookChildren(416).
         // We think this happens because the tests run quicker than human interaction would.
         // Putting in a try/catch to work around the issue if it happens during set up, this should prevent an all out failure of all the tests.
 
-        try
-        {
-            // run initial ETL to populate CDS import tables
-            _etlHelper.getDiHelper().runTransformAndWait("{CDS}/CDSImport", WAIT_ON_IMPORT);
-
-            // Adding a slight pause, trying to avoid the NPE Container.hasWorkbookChildren.
-            _test.sleep(1000);
-        }
-        catch(CommandException ce)
-        {
-            _test.log("Looks like there was an error with runTransformAndWait while doing the CDSImport: " + ce.getMessage());
-            _test.log("Going to ignore this error.");
-            _test.resetErrors();
-        }
-
         try{
-        // populate the app
-        _etlHelper.getDiHelper().runTransformAndWait("{CDS}/LoadApplication", WAIT_ON_LOADAPP);
+            // populate the app
+            _etlHelper.getDiHelper().runTransformAndWait("{CDS}/LoadApplication", WAIT_ON_LOADAPP);
         }
         catch(CommandException ce)
         {
             _test.log("Looks like there was an error with runTransformAndWait while loading the application: " + ce.getMessage());
             _test.log("Going to ignore this error.");
             _test.resetErrors();
+            _test.log("Now wait until the ETL Scheduler view shows the job as being complete.");
+            _test.goToProjectHome();
+            _test.goToModule("DataIntegration");
+            _test.waitForText("COMPLETE", 2, 1000 * 60 * 30);
         }
-
 
         populateNewsFeed();
 
