@@ -109,5 +109,46 @@ Ext.define('Connector.app.store.Assay', {
 
             this.loadRawData(assays);
         }
+    },
+
+    loadAnalytes : function(assayName, dimensions, callback, scope) {
+        var sql = dimensions.map(function(dim){
+            return "SELECT DISTINCT '"
+                    + assayName + "' as Assay, '"
+                    + dim.label + "' as columnName, "
+                    + "CAST(" + dim.name + " AS VARCHAR) as Analyte FROM study." + assayName.toLowerCase();
+        }).join("\n UNION \n");
+
+        sql = "SELECT * FROM(" + sql + ") AS source_table ORDER BY source_table.Assay, source_table.columnName";
+
+
+        LABKEY.Query.executeSql({
+            schemaName: 'cds',
+            sql: sql,
+            success: function(result) {
+                var analytes = {};
+                Ext.each(result.rows, function(row) {
+                    var key = row.columnName;
+
+                    if (key in analytes) {
+                        analytes[key] = analytes[key] + ", " + row.Analyte;
+                    }
+                    else {
+                        analytes[key] = row.Analyte;
+                    }
+                });
+
+                var analyteRows = [];
+                Ext.iterate(analytes, function(prop, value) {
+                    analyteRows.push({
+                        col: prop,
+                        value: value
+                    });
+                });
+
+                callback.call(scope, analyteRows);
+            },
+            scope: scope
+        });
     }
 });
