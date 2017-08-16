@@ -13,7 +13,7 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
 
     tpl : new Ext.XTemplate(
             '<tpl>',
-                '<h3>Assay Analytes</h3>',
+                Connector.constant.Templates.module.title,
                 '<tpl if="results.length &gt; 0">',
                     '<table class="learn-study-info">',
                         '<tpl for="results">',
@@ -28,7 +28,7 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
                         '</tr>',
                     '</table>',
                 '<tpl else>',
-                    '<p>There are no Analytes to Display</p>',
+                    '<p>There are no dimensions to display</p>',
                 '</tpl>',
             '</tpl>'
     ),
@@ -53,11 +53,13 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
 
     initComponent : function() {
         var store = StoreCache.getStore('Connector.app.store.Assay'),
+                title = this.data.title,
                 assay_id = this.data.model.get('assay_identifier'),
                 assay_type = this.data.model.get('assay_type');
 
         store.loadAnalytes(assay_type, this.assayNameToAnalytesMap[assay_type], function(results) {
             this.update({
+                title: title,
                 results: results,
                 antigen_display_name: assay_type == "NAb" ? 'Virus' : 'Antigen',
                 antigen_link: Connector.getService('Learn').getURL('Assay', assay_id) + '/antigens'
