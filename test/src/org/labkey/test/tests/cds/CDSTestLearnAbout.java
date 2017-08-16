@@ -289,6 +289,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_METHODOLOGY);
+        assertElementVisible(Locator.linkWithHref("#learn/learn/Assay/" + CDSHelper.ASSAYS[0].replace(" ", "%20") + "/antigens"));
 
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
@@ -296,6 +297,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Antigen vaccine match indicator"));
 
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
+
+        // testing NAb has virus link rather than antigen link.
+        waitAndClick(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
+        waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(3)));
+        waitForElement(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
+        assertElementVisible(Locator.linkWithHref("#learn/learn/Assay/" + CDSHelper.ASSAYS[3].replace(" ", "%20") + "/antigens"));
+        assertElementVisible(Locator.linkContainingText("Virus List"));
 
         //testing ICS variables page
         waitAndClick(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
