@@ -72,7 +72,7 @@ public abstract class DataspaceVariableSelector
         return Locator.css("." + getPickerClass());
     }
 
-    public Locator.CssLocator sourcePanelRow()
+    public Locator sourcePanelRow()
     {
         return Locator.CssLocator.union(pickerPanel().append(" .sourcepanel div.itemrow span.val"), // selects rows with counts
                 pickerPanel().append(" .sourcepanel div.itemrow")); // selects rows without counts (also rows with counts due to CSS limitations)
