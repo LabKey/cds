@@ -31,7 +31,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -108,7 +107,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Study Type is: " + itemParts[1]);
-        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
+        Assert.assertTrue(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
         click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Studies / ']"));
@@ -247,10 +246,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemTitle + "']").toBy()));
 
         log("Validating Product Type is: " + itemClassAndType[0]);
-        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
+        Assert.assertTrue(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating Class is: " + itemClassAndType[1]);
-        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
+        Assert.assertTrue(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
         click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Products / ']"));
@@ -1232,7 +1231,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
             log("Looking at study " + itemParts[0]);
-            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+            Assert.assertTrue(itemText.toLowerCase().contains(searchString.toLowerCase()));
         }
 
     }
