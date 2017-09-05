@@ -944,7 +944,7 @@ public class CDSHelper
     private void clickBar(String barLabel)
     {
         WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT); // becomes stale after filter is applied
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locators.barLabel.withText(barLabel).toBy()));
+        _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locators.barLabel.withText(barLabel)));
         _test.clickAt(Locators.barLabel.withText(barLabel), 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
         _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
@@ -1204,7 +1204,7 @@ public class CDSHelper
     public void deleteGroupFromSummaryPage(String name)
     {
         Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing.toBy()));
+        _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing));
         _test.click(groupListing);
         _test.waitForElement(Locators.cdsButtonLocator("Delete"));
         _test.click(Locators.cdsButtonLocator("Delete"));
@@ -1328,7 +1328,7 @@ public class CDSHelper
 
         checkBox = Locator.xpath(xpath + "/./ancestor-or-self::table[contains(@class, 'checkbox2')]");
 
-        tableParent = _test.getDriver().findElement(checkBox.toBy());
+        tableParent = _test.getDriver().findElement(checkBox);
 
         String classAttribute = tableParent.getAttribute("class");
 

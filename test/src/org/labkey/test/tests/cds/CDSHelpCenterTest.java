@@ -109,7 +109,7 @@ public class CDSHelpCenterTest extends CDSReadOnlyTest
         assertElementNotPresent(CDSHelpCenterUtil.HELP_POPUP_XPATH);
         assertElementPresent(Locator.linkWithText(CDSHelpCenterUtil.HELP_BUTTON_TEXT));
         mouseOverClick(Locator.linkWithText(CDSHelpCenterUtil.HELP_BUTTON_TEXT));
-        longWait().until(ExpectedConditions.visibilityOfElementLocated(CDSHelpCenterUtil.HELP_POPUP_XPATH.toBy()));
+        longWait().until(ExpectedConditions.visibilityOfElementLocated(CDSHelpCenterUtil.HELP_POPUP_XPATH));
         doShortWait();
     }
 

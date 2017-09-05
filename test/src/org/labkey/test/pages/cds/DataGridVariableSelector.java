@@ -88,7 +88,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
 
     public void pickVariable(String variable, boolean keepSelection)
     {
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow().toBy())); // if one row is ready, all should be
+        _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow())); // if one row is ready, all should be
         _test._ext4Helper.selectGridItem("label", variable, -1, getPickerClass() + " .content-multiselect", keepSelection);
     }
 
@@ -120,14 +120,14 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         addGridColumn(source, measure, true, true);
 
         Locator.CssLocator _variablePanelRow = pickerPanel().append(" .measuresgrid ." + Ext4Helper.getCssPrefix() + "grid-row");
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(_variablePanelRow.toBy()));
+        _test.shortWait().until(ExpectedConditions.elementToBeClickable(_variablePanelRow));
         _test.click(_variablePanelRow.withText(measure));
 
         _test.waitForElement(Locator.tagWithClass("div", "curselauth").withText("Definition: " + measure));
 
         String lookupClass = "variableoptions .lookupgrid";
         Locator.CssLocator _lookupPanelRow = Locator.css("." + lookupClass + " ." + Ext4Helper.getCssPrefix() + "grid-row");
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(_lookupPanelRow.toBy()));
+        _test.shortWait().until(ExpectedConditions.elementToBeClickable(_lookupPanelRow));
         _test._ext4Helper.selectGridItem("shortCaption", lookup, -1, lookupClass, true);
 
         confirmSelection();

@@ -47,15 +47,15 @@ public abstract class DataspaceVariableSelector
     {
         String xpathToCancel = "//div[contains(@class, '" + selector + "')]//a[not(contains(@style, 'display: none'))]//span[(contains(@class, 'x-btn-inner'))][text()='Cancel']";
 
-        WebElement openButton = _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(getOpenButton().toBy()));
+        WebElement openButton = _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(getOpenButton()));
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         openButton.click();
-        _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText(selectorTitle).toBy()));
+        _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText(selectorTitle)));
 
         // Use the cancel button as a validation that the selector is ready.
         _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathToCancel)));
-        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(xpathToCancel).toBy()));
+        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(xpathToCancel)));
 
         // Wait for the spinning orange circle to go away. In some cases don't even see that so wait until counts show up (possible bug?)
         while(!_test.isElementPresent(Locator.xpath("//div[contains(@class, 'content-count')]"))
@@ -142,12 +142,12 @@ public abstract class DataspaceVariableSelector
         //select measure
         if (isMeasureMultiSelect())
         {
-            _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow().toBy())); // if one row is ready, all should be
+            _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow())); // if one row is ready, all should be
             _test._ext4Helper.selectGridItem("label", measure, -1, getPickerClass() + " .measuresgrid", keepSelection);
         }
         else
         {
-            _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow().toBy())); // if one row is ready, all should be
+            _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow())); // if one row is ready, all should be
             _test.click(measuresPanelRow().withText(measure));
         }
     }
@@ -358,7 +358,7 @@ public abstract class DataspaceVariableSelector
 
                 _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
-                _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
+                _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag));
 
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[text()='All']"))
@@ -388,7 +388,7 @@ public abstract class DataspaceVariableSelector
 
                     // Let the drop down render.
                     _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
-                    _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
+                    _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag));
 
                     // Clear the current selection.
                     if(!cds.isCheckboxChecked(xpathDimDropDown + "//label[text()='All']"))
@@ -470,7 +470,7 @@ public abstract class DataspaceVariableSelector
 
                 _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
-                _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
+                _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag));
 
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']"))
@@ -525,7 +525,7 @@ public abstract class DataspaceVariableSelector
                 _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
                 _test.scrollIntoView(allTag);
-                _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
+                _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag));
 
                 _test.waitForElement(allTag, CDSHelper.CDS_WAIT * 3);
 

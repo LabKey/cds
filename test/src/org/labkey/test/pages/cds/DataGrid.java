@@ -91,7 +91,7 @@ public class DataGrid
         if(clearFirst)
         {
             String allXpath = "//div[contains(@class, 'x-window-filterwindow')]//div[contains(@class, 'x-column-header')]";
-            _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(allXpath).toBy()));
+            _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(allXpath)));
             _test.scrollIntoView(Locator.xpath(allXpath));
             _test.click(Locator.xpath(allXpath));
         }
@@ -99,7 +99,7 @@ public class DataGrid
         for(String val : values)
         {
             cellXpath = cellXpathContst.replaceAll("[*]", val);
-            _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(cellXpath).toBy()));
+            _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(cellXpath)));
             _test.scrollIntoView(Locator.xpath(cellXpath));
             _test.click(Locator.xpath(cellXpath));
         }
