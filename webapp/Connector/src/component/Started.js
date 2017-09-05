@@ -97,7 +97,7 @@ Ext.define('Connector.component.Started', {
     data: {
         showIntro: Connector.user.properties.showIntroPage === undefined || Ext.decode(Connector.user.properties.showIntroPage).value === true,
         isAdmin: LABKEY.user.isAdmin === true,
-        adminURL: LABKEY.ActionURL.buildURL('admin', 'folderManagement.view', null, {tabId: 'props'}),
+        adminURL: LABKEY.ActionURL.buildURL('admin', 'moduleProperties.view', null, {tabId: 'props'}),
         videoURL: LABKEY.moduleContext.cds.GettingStartedVideoURL,
         multiRow: false,
         nstudy: 0,
@@ -152,7 +152,7 @@ Ext.define('Connector.component.Started', {
             var newData =  {
                 showIntro: Connector.getProperty(Connector.component.Started.DISMISS_PROPERTY),
                 isAdmin: LABKEY.user.isAdmin === true,
-                adminURL: LABKEY.ActionURL.buildURL('admin', 'folderManagement.view', null, {tabId: 'props'}),
+                adminURL: LABKEY.ActionURL.buildURL('admin', 'moduleProperties.view', null, {tabId: 'props'}),
                 videoURL: LABKEY.moduleContext.cds.GettingStartedVideoURL,
                 multiRow: isSmallSize,
                 nstudy: stats.studies,
