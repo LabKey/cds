@@ -88,7 +88,7 @@ Ext.define('Connector.app.store.Report', {
 
     isValidReportType: function(record)
     {
-        if (record.dataType != 'reports')
+        if (record.dataType != 'reports' || !record.visible)
             return false;
         return record.type == 'R Report';
     }
