@@ -105,19 +105,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         unlockedParts = freeColItems.get(index).getText().split("\n");
         returnedItems.get(index).click();
 
-<<<<<<< HEAD
-        log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']")));
-
-        log("Validating Study Type is: " + itemParts[1]);
-        Assert.assertTrue(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
-=======
         log("Validating title is " + lockedParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + lockedParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + lockedParts[0] + "']")));
 
         log("Validating Study Type is: " + unlockedParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + unlockedParts[1] + "']").findElement(getDriver()).isDisplayed());
->>>>>>> release17.2
 
         log("Validating return link works.");
         click(Locator.xpath("//div[contains(@class, 'learn-up')]/div[contains(@class, 'breadcrumb')][text()='Studies / ']"));
@@ -253,16 +245,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         lockedColItems.get(index).click();
 
         log("Validating title is " + itemTitle);
-<<<<<<< HEAD
-        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemTitle + "']")));
-
-        log("Validating Product Type is: " + itemClassAndType[0]);
-        Assert.assertTrue(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
-
-        log("Validating Class is: " + itemClassAndType[1]);
-        Assert.assertTrue(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
-=======
-        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + itemTitle + "']").toBy()));
+        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + itemTitle + "']")));
 
         log("Validating Product Type is: " + itemClassAndType[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[1] + "']").findElement(getDriver()).isDisplayed());
@@ -270,7 +253,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String productClass = itemClassAndType[2].replace("Class: ", "");
         log("Validating Class is: " + productClass);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + productClass + "']").findElement(getDriver()).isDisplayed());
->>>>>>> release17.2
 
         log("Validating return link works.");
         click(Locator.xpath("//div[contains(@class, 'learn-up')]/div[contains(@class, 'breadcrumb')][text()='Products / ']"));
@@ -1263,10 +1245,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
-<<<<<<< HEAD
-            log("Looking at study " + itemParts[0]);
-            Assert.assertTrue(itemText.toLowerCase().contains(searchString.toLowerCase()));
-=======
             log("Looking at detail page of " + itemParts[0]);
 
             click(listItem);
@@ -1276,7 +1254,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
             click(CDSHelper.Locators.pageHeaderBack());
             sleep(2000);
->>>>>>> release17.2
         }
 
     }
