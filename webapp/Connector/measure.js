@@ -552,6 +552,7 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_NAb_titer_ID50': {
+                    sortOrder: -1,
                     isRecommendedVariable: true
                 },
                 'study_NAb_nab_response_ID50': {

@@ -161,7 +161,7 @@ Ext.define('Connector.utility.Query', {
             return LABKEY.Query.sqlStringLiteral(v);
         }
         else if (Ext.isDate(v)) {
-            return LABKEY.Query.sqlDatetimeLiteral(v);
+            return LABKEY.Query.sqlDateTimeLiteral(v);
         }
 
         throw "unsupported constant: " + v;
@@ -179,11 +179,13 @@ Ext.define('Connector.utility.Query', {
         }
         else if (Ext.isString(v))
         {
+            if (QueryUtils.isStringDate(v))
+                return LABKEY.Query.sqlDateTimeLiteral(v);
             return LABKEY.Query.sqlStringLiteral(v);
         }
         else if (Ext.isDate(v))
         {
-            return LABKEY.Query.sqlDatetimeLiteral(v);
+            return LABKEY.Query.sqlDateTimeLiteral(v);
         }
         else if (Ext.isBoolean(v))
         {
@@ -191,6 +193,10 @@ Ext.define('Connector.utility.Query', {
         }
 
         throw "unsupported constant: " + v;
+    },
+
+    isStringDate: function(date) {
+        return Ext.isString(date) && isNaN(date) && (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
     },
 
     _generateVisGetDataSql : function(measuresIN, extraFilters, options)
@@ -907,16 +913,27 @@ Ext.define('Connector.utility.Query', {
 
         var v, arr, clause = '',
             operator = f.getFilterType().getURLSuffix(),
-            operatorMap = {eq:"=",lt:"<",lte:"<=",gt:">",gte:">=",neq:"<>"};
+            operatorMap = {eq:"=",lt:"<",lte:"<=",gt:">",gte:">=",neq:"<>", neqornull: "<>",
+                            dateeq: "=", dateneq: '<>', datelt: "<", datelte:"<=", dategt: ">",dategte:">="};
 
         switch (operator)
         {
+            case '': // HAS ANY VALUE
+                clause = columnName + " IS NOT NULL";
+                break;
             case 'eq':
             case 'lt':
             case 'lte':
             case 'gt':
             case 'gte':
             case 'neq':
+            case 'neqornull': //DOES NOT EQUAL
+            case 'dateeq':
+            case 'datelt':
+            case 'dateneq':
+            case 'datelte':
+            case 'dategt':
+            case 'dategte':
                 v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
                 clause = columnName + operatorMap[operator] + literalFn(v);
                 break;
@@ -958,12 +975,6 @@ Ext.define('Connector.utility.Query', {
                 break;
             case 'hasmvvalue':
             case 'nomvvalue':
-            case 'dateeq':
-            case 'dateneq':
-            case 'datelt':
-            case 'datelte':
-            case 'dategt':
-            case 'dategte':
             default:
                 throw "operator is not supported: " + operator;
         }
@@ -984,7 +995,10 @@ Ext.define('Connector.utility.Query', {
             var sep = '';
             values.forEach(function(v)
             {
-                parts.push(sep + (literalFn||this._toSqlLiteral)(v));
+                if (Ext.isDate(v))
+                    parts.push(sep + this._toSqlLiteral(v));
+                else
+                    parts.push(sep + (literalFn||this._toSqlLiteral)(v));
                 sep = ',';
             });
         }
@@ -1008,5 +1022,25 @@ Ext.define('Connector.utility.Query', {
         }
 
         return alias;
+    },
+
+    getFilterStrings: function(filter, mdx)
+    {
+        if (filter.$className !== 'Connector.model.Filter')
+            return [];
+
+        if (filter.isTime() && !filter.isPlot()) {
+            return Connector.view.TimepointPane.getExportableFilterStrings(filter);
+        }
+        else if (filter.isGrid() || filter.isAggregated()) {
+            return Connector.view.GridPane.gridFilterContent(filter, true);
+        }
+        else if (filter.isPlot()) {
+            return Connector.view.PlotPane.plotFilterContent(filter, true);
+        }
+        else if (filter.data.filterSource == 'OLAP')
+            return Connector.view.InfoPane.getExportableFilterStrings(filter, mdx);
+        return [];
     }
+
 });

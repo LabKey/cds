@@ -67,6 +67,7 @@ import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.util.CSRFUtil;
 import org.labkey.api.util.PageFlowUtil;
+import org.labkey.api.util.Pair;
 import org.labkey.api.util.Path;
 import org.labkey.api.util.URLHelper;
 import org.labkey.api.view.HtmlView;
@@ -97,10 +98,13 @@ import java.io.Writer;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -427,8 +431,8 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(ExportForm form, BindException errors) throws Exception
         {
-            QueryView view = new ExcelExportQueryView(form, errors);
-            view.exportToExcel(getViewContext().getResponse(), form.getHeaderType(), ExcelWriter.ExcelDocumentType.xlsx);
+            CDSExportQueryView view = new CDSExportQueryView(form, errors);
+            view.writeExcelToResponse(getViewContext().getResponse());
             return null;
         }
 
@@ -491,65 +495,15 @@ public class CDSController extends SpringActionController
         }
     }
 
-
-    public class ExcelExportQueryView extends QueryView
-    {
-        private String[] _columnNamesOrdered;
-        private Map<String, String> _columnAliases;
-
-        public ExcelExportQueryView(ExportForm form, Errors errors)
-        {
-            super(form, errors);
-            _columnNamesOrdered = form.getColumnNamesOrdered();
-            _columnAliases = form.getColumnAliases();
-        }
-
-        @Override
-        public List<DisplayColumn> getExportColumns(List<DisplayColumn> list)
-        {
-            List<DisplayColumn> retColumns = super.getExportColumns(list);
-            List<DisplayColumn> exportColumns = new ArrayList<>();
-
-            // issue 20850: set export column headers to be "Dataset - Variable"
-            for (String colName : _columnNamesOrdered)
-            {
-                for (DisplayColumn col : retColumns)
-                {
-                    if (col.getColumnInfo() != null && colName.equals(col.getColumnInfo().getName()))
-                    {
-                        col.setCaption(_columnAliases.get(col.getColumnInfo().getName()));
-                        exportColumns.add(col);
-                        break;
-                    }
-                    else if (colName.equals(col.getName()))
-                    {
-                        col.setCaption(_columnAliases.get(col.getName()));
-                        exportColumns.add(col);
-                        break;
-                    }
-                }
-            }
-            return exportColumns;
-        }
-    }
-
-
     public static class ExportForm extends QueryForm
     {
+        private String[] _filterStrings;
+        private Set<String> _studies = new HashSet<>();
+        private Set<String> _assays = new HashSet<>();
         private String[] _columnNamesOrdered;
+        private String[] _variables;
+        private String[] _studyassays;
         private Map<String, String> _columnAliases = new HashMap<>();
-
-        protected ColumnHeaderType _headerType = null; // QueryView will provide a default header type if the user doesn't select one
-
-        public ColumnHeaderType getHeaderType()
-        {
-            return _headerType;
-        }
-
-        public void setHeaderType(ColumnHeaderType headerType)
-        {
-            _headerType = headerType;
-        }
 
         protected BindException doBindParameters(PropertyValues in)
         {
@@ -557,6 +511,24 @@ public class CDSController extends SpringActionController
 
             String[] columnNames = getValues("columnNames", in);
             String[] columnAliases = getValues("columnAliases", in);
+            _filterStrings = getValues("filterStrings", in);
+            _studyassays = getValues("studyassays", in);
+            _variables = getValues("variables", in);
+            String[] studies = getValues("studies", in);
+            if (studies != null && studies.length > 0)
+                _studies.addAll(Arrays.asList(studies));
+
+            if (_studyassays != null && _studyassays.length > 0)
+            {
+                for (String studyAssay : _studyassays)
+                {
+                    String[] parts = studyAssay.split(Pattern.quote(CDSExportQueryView.FILTER_DELIMITER));
+                    if (parts.length < 2)
+                        continue;
+                    _assays.add(parts[1]);
+                }
+            }
+
             if (columnNames.length == columnAliases.length)
             {
                 _columnNamesOrdered = columnNames;
@@ -576,6 +548,31 @@ public class CDSController extends SpringActionController
         public Map<String, String> getColumnAliases()
         {
             return _columnAliases;
+        }
+
+        public String[] getFilterStrings()
+        {
+            return _filterStrings;
+        }
+
+        public String[] getStudyAssays()
+        {
+            return _studyassays;
+        }
+
+        public Set<String> getStudies()
+        {
+            return _studies;
+        }
+
+        public Set<String> getAssays()
+        {
+            return _assays;
+        }
+
+        public String[] getVariables()
+        {
+            return _variables;
         }
     }
 

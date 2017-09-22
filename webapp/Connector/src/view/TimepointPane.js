@@ -15,6 +15,14 @@ Ext.define('Connector.view.TimepointPane', {
 
     displayTitle: 'Time points in the plot',
 
+    statics: {
+        getExportableFilterStrings : function (filter)
+        {
+            var filterDisplayString = filter.get("filterDisplayString").replace("Time points:", "");
+            return ["Time points " + ChartUtils.ANTIGEN_LEVEL_DELIMITER + filterDisplayString];
+        }
+    },
+
     updateSelections : function()
     {
         var grid = this.getGrid();

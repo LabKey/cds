@@ -33,12 +33,17 @@ Ext.define('Connector.app.store.VariableList', {
                         alias: datum.get('alias'),
                         label: datum.get('label'),
                         isRecommendedVariable: datum.get('isRecommendedVariable'),
+                        sortOrder: datum.get("sortOrder"),
                         description: datum.get('description'),
                         queryName: datum.get('queryName')
                     }
                 });
         this.loadRawData(measures);
         this.sort([
+            {
+                property : 'sortOrder',
+                direction : 'ASC'
+            },
             {
                 property : 'isRecommendedVariable',
                 direction: 'DESC'

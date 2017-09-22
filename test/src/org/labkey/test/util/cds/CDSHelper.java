@@ -208,7 +208,8 @@ public class CDSHelper
     public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
     public static final String[] ASSAYS_FULL_TITLES = {"BAMA (HIV Binding Antibody)",
             "ICS (Intracellular Cytokine Staining)",
-            "IFNg ELISpot (IFNg ELISpot)", "NAB (HIV Neutralizing Antibody)"};
+            "IFNg ELISpot (IFNg ELISpot)",
+            "NAB (HIV Neutralizing Antibody)"};
     public static final String[] LEARN_ABOUT_BAMA_METHODOLOGY = {"Luminex Mutiplex Assay"};
     public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Protein Panel", "The name of the panel of proteins"};
     public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"A1.con.env03 140 CF", "p24"};
@@ -397,13 +398,13 @@ public class CDSHelper
     public static final String BAMA_MAGNITUDE_BASELINE = "Magnitude (mfi) - Blank Baseline";
     public static final String BAMA_MAGNITUDE_DELTA = "Magnitude (mfi) - Delta";
     public static final String BAMA_MAGNITUDE_RAW = "Magnitude (mfi) - Raw";
-    public static final String BAMA_MAGNITUDE_DELTA_BASELINE = "Magnitude (mfi) - Delta Baseline";
+    public static final String BAMA_MAGNITUDE_DELTA_BASELINE = "Magnitude (mfi) - Background";
     public static final String BAMA_MAGNITUDE_RAW_BASELINE = "Magnitude (mfi) - Raw Baseline";
     public static final String BAMA_PROTEIN = "Protein";
     public static final String BAMA_PROTEIN_PANEL = "Protein Panel";
-    public static final String BAMA_RESPONSE_CALL = "Response Call (1/0) Calculated per Response Code";
+    public static final String BAMA_RESPONSE_CALL = "Response call";
     public static final String BAMA_SPECIMEN = "Specimen type";
-    public static final String BAMA_VACCINE = "Vaccine matched indicator";
+    public static final String BAMA_VACCINE = "Antigen vaccine match indicator";
 
     public static final String SUBJECT_CHARS = "Subject characteristics";
     public static final String STUDY_TREATMENT_VARS = "Study and treatment variables";
@@ -455,7 +456,7 @@ public class CDSHelper
     public static final String ELISPOT_PROTEIN_PANEL =  "Protein Panel";
     public static final String ELISPOT_RESPONSE =  "Response call";
     public static final String ELISPOT_SPECIMEN =  "Specimen type";
-    public static final String ELISPOT_VACCINE =  "Vaccine matched indicator";
+    public static final String ELISPOT_VACCINE =  "Antigen vaccine match indicator";
 
     public static final String ICS = "ICS (Intracellular Cytokine Staining)";
     public static final String ICS_ANTIGEN = "Antigen name";
@@ -501,6 +502,7 @@ public class CDSHelper
     public static final String NAB_TIER = "Tier";
     public static final String NAB_TITERID50 = "Titer ID50";
     public static final String NAB_TITERID80 = "Titer ID80";
+    public static final String NAB_TITERIC80 = "Titer IC80";
     public static final String NAB_VIRUS_NAME = "Virus name";
     public static final String NAB_VIRUS_TYPE = "Virus type";
 
@@ -1187,6 +1189,7 @@ public class CDSHelper
 
         if (!_test.isElementPresent(headerContainer.append(activeHeader.withText(learnAxis))))
         {
+            _test.waitForElement(headerContainer.append(header.withText(learnAxis)));
             _test.click(headerContainer.append(header.withText(learnAxis)));
             WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
@@ -1299,7 +1302,7 @@ public class CDSHelper
     {
         hoverOverInfoPaneItem(label);
         _test.click(Locator.xpath("//div[contains(@class, 'x-grid-cell-inner')]//div[@title='" + label + "']//a[contains(@class, 'expando')]"));
-        _test.waitForElement(Locator.xpath("//span").withClass("studyname").withText(label));
+        _test.waitForElement(Locator.xpath("//div").withClass("studyname").withText(label));
     }
 
     /**
@@ -1408,19 +1411,7 @@ public class CDSHelper
 
     private boolean setGettingStartedVideoURL(String videoUrl)
     {
-        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[1]";
-        String curValue;
-        boolean changed = false;
-
-        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
-
-        if(!curValue.trim().toLowerCase().equals(videoUrl.trim().toLowerCase()))
-        {
-            _test.setFormElement(Locator.xpath(xpathValueTxtBox), videoUrl);
-            changed = true;
-        }
-
-        return changed;
+        return setPropertyPath(videoUrl, 5);
 
     }
 
@@ -1444,17 +1435,17 @@ public class CDSHelper
 
     private boolean setStaticPath(String path)
     {
-        return setPropertyPath(path, 7);
+        return setPropertyPath(path, 3);
     }
 
     private boolean setStudyDocumentPath(String path)
     {
-        return setPropertyPath(path, 3);
+        return setPropertyPath(path, 6);
     }
 
     private boolean setCDSImportFolderPath(String path)
     {
-        return setPropertyPath(path, 2);
+        return setPropertyPath(path, 7);
     }
 
     public void assertPlotTickText(Pattern p)
@@ -1701,7 +1692,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator pageHeaderBack()
         {
-            return Locator.tagWithClass("span", "iarrow");
+            return Locator.tagWithClass("div", "iarrow");
         }
 
         public static Locator.XPathLocator selectionPane()

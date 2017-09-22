@@ -145,7 +145,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that a x-axis gutter plot is generated.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERID80);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC80);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
@@ -155,9 +155,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
-        assertTrue("For NAB ID80 vs ICS Magnitude x-axis gutter plot was not present.", cdsPlot.hasXGutter());
+        assertTrue("For NAB IC80 vs ICS Magnitude x-axis gutter plot was not present.", cdsPlot.hasXGutter());
         assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
-        assertFalse("For NAB ID80 vs ICS Magnitude y-axis gutter plot was present and it should not have been.", cdsPlot.hasYGutter());
+        assertFalse("For NAB IC80 vs ICS Magnitude y-axis gutter plot was present and it should not have been.", cdsPlot.hasYGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 

@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.pages.cds.CDSExcel;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
@@ -283,7 +284,17 @@ public class CDSGridTest extends CDSReadOnlyTest
         log("Validating grid counts");
         _asserts.assertFilterStatusCounts(159, 13, 1, 1, 45);
         grid.assertPageTotal(27);
-        grid.assertRowCount(658);
+        CDSExcel exported = new CDSExcel(658);
+        exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining", "", "", "", "Subject (Race)"));
+        exported.setFilterValues(Arrays.asList("Data summary level: Protein Panel", "Functional marker name: IL2/ifngamma", "", "", "Subjects related to any: Asian"));
+        exported.setStudyNetworks(Arrays.asList("ROGER", "ROGER", "ROGER", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED"));
+        exported.setStudies(Arrays.asList("RED 4", "RED 5", "RED 6", "ZAP 102", "ZAP 105", "ZAP 106", "ZAP 134",
+                "ZAP 136", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118"));
+        exported.setAssays(Arrays.asList("HIV Binding Antibody", "HIV Neutralizing Antibody", "HIV Neutralizing Antibody", "HIV Neutralizing Antibody", "IFNg ELISpot"));
+        exported.setAssayProvenances(Arrays.asList("VISC analysis dataset", "LabKey dataset", "VISC analysis dataset", "VISC analysis dataset", "VISC analysis dataset"));
+        exported.setFieldLabels(Arrays.asList("Cell type", "Data summary level", "Functional marker name", "Lab ID", "Magnitude (% cells) - Background subtracted",
+                "Peptide Pool", "Protein", "Protein panel", "Specimen type"));
+        grid.verifyCDSExcel(exported, false);
 
         log("Applying a column filter.");
         grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Greater Than or Equal To", "1");
@@ -291,7 +302,46 @@ public class CDSGridTest extends CDSReadOnlyTest
         _asserts.assertFilterStatusCounts(4, 3, 1, 1, 3);
         grid.assertPageTotal(1);
         grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
-        grid.assertRowCount(4);
+
+        exported = new CDSExcel(4);
+        exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining",
+                "",
+                "",
+                "",
+                "",
+                "Subject (Race)"));
+        exported.setFilterValues(Arrays.asList("Data summary level: Protein Panel",
+                "Functional marker name: IL2/ifngamma",
+                "Magnitude (% cells) - Background subtracted >= 1",
+                "",
+                "",
+                "Subjects related to any: Asian"));
+        exported.setStudyNetworks(Arrays.asList("ZED", "ZED", "ZED"));
+        exported.setStudies(Arrays.asList("ZAP 105", "ZAP 134", "ZAP 117"));
+        exported.setAssays(Arrays.asList("HIV Binding Antibody",
+                "HIV Neutralizing Antibody",
+                "HIV Neutralizing Antibody",
+                "IFNg ELISpot",
+                "Intracellular Cytokine Staining",
+                "Intracellular Cytokine Staining",
+                "Intracellular Cytokine Staining"));
+        exported.setAssayProvenances(Arrays.asList("VISC analysis dataset",
+                "LabKey dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset"));
+        exported.setFieldLabels(Arrays.asList("Cell type",
+                "Data summary level",
+                "Functional marker name",
+                "Lab ID",
+                "Magnitude (% cells) - Background subtracted",
+                "Peptide Pool",
+                "Protein",
+                "Protein panel",
+                "Specimen type"));
+        grid.verifyCDSExcel(exported, false);
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
         // Can't use CDSHelper.NavigationLink.Grid.makeNavigationSelection. It expects that it will be going to a blank plot.
@@ -315,6 +365,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         log("Filter on new column.");
         grid.setCheckBoxFilter(CDSHelper.DEMO_SEX, true, "Male");
         _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
         grid.assertRowCount(2);
 
         log("Now add a new column to the mix.");

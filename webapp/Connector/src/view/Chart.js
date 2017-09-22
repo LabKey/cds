@@ -3775,7 +3775,7 @@ Ext.define('Connector.view.Chart', {
             for (var i = 0; i < existingKeys.length; i++) {
                 keys.push(existingKeys[i]);
             }
-            displayStr += '<br/>OR<br/>';
+            displayStr += '<br/> OR <br/>';
             displayStr += existingSelection.get('filterDisplayString');
         }
 

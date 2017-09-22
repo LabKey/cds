@@ -90,27 +90,37 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void clickOnLearnAboutStudyItem()
     {
         List<WebElement> returnedItems;
-        String[] itemParts;
+        String[] lockedParts, unlockedParts;
 
         cds.viewLearnAboutPage("Studies");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(getDriver());
 
         int index = returnedItems.size()/2;
 
         scrollIntoView(returnedItems.get(index));
 
-        itemParts = returnedItems.get(index).getText().split("\n");
+        lockedParts = returnedItems.get(index).getText().split("\n");
+        unlockedParts = freeColItems.get(index).getText().split("\n");
         returnedItems.get(index).click();
 
+<<<<<<< HEAD
         log("Validating title is " + itemParts[0]);
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']")));
 
         log("Validating Study Type is: " + itemParts[1]);
         Assert.assertTrue(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
+=======
+        log("Validating title is " + lockedParts[0]);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + lockedParts[0] + "']").toBy()));
+
+        log("Validating Study Type is: " + unlockedParts[1]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + unlockedParts[1] + "']").findElement(getDriver()).isDisplayed());
+>>>>>>> release17.2
 
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Studies / ']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')]/div[contains(@class, 'breadcrumb')][text()='Studies / ']"));
 
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']")));
     }
@@ -243,6 +253,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         lockedColItems.get(index).click();
 
         log("Validating title is " + itemTitle);
+<<<<<<< HEAD
         longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemTitle + "']")));
 
         log("Validating Product Type is: " + itemClassAndType[0]);
@@ -250,9 +261,19 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Validating Class is: " + itemClassAndType[1]);
         Assert.assertTrue(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[0] + "']").findElement(getDriver()).isDisplayed());
+=======
+        longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + itemTitle + "']").toBy()));
+
+        log("Validating Product Type is: " + itemClassAndType[1]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[1] + "']").findElement(getDriver()).isDisplayed());
+
+        String productClass = itemClassAndType[2].replace("Class: ", "");
+        log("Validating Class is: " + productClass);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + productClass + "']").findElement(getDriver()).isDisplayed());
+>>>>>>> release17.2
 
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')]/span[contains(@class, 'breadcrumb')][text()='Products / ']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')]/div[contains(@class, 'breadcrumb')][text()='Products / ']"));
 
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']")));
     }
@@ -282,22 +303,30 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(0)));
         sleep(CDSHelper.CDS_WAIT);
-        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_METHODOLOGY);
+        assertElementVisible(Locator.linkWithHref("#learn/learn/Assay/" + CDSHelper.ASSAYS[0].replace(" ", "%20") + "/antigens"));
 
         //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         sleep(CDSHelper.CDS_WAIT);
-        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Vaccine matched indicator"));
-        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
+        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Antigen vaccine match indicator"));
 
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
 
+        // testing NAb has virus link rather than antigen link.
+        waitAndClick(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
+        waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(3)));
+        waitForElement(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
+        assertElementVisible(Locator.linkWithHref("#learn/learn/Assay/" + CDSHelper.ASSAYS[3].replace(" ", "%20") + "/antigens"));
+        assertElementVisible(Locator.linkContainingText("Virus List"));
+
         //testing ICS variables page
-        waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitAndClick(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(1)));
-        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
 
         validateToolTip(Locator.linkWithText("RED 4").findElement(getDriver()), "not approved for sharing");
@@ -415,7 +444,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String ASSAYS_LINK = "//h1[@class='lhdv'][text()='Assays']";
         final String PRODUCTS_LINK = "//h1[@class='lhdv'][text()='Products']";
         final String LEARN_ABOUT = "//span[contains(@class, 'right-label')][text()='Learn about']";
-        final String BACK_BUTTON = "//div[contains(@class, 'learnview')]/span/div/div[contains(@class, 'x-container')][not(contains(@style, 'display: none'))]//div[contains(@class, 'learn-up')]//span[contains(@class, 'iarrow')]";
+        final String BACK_BUTTON = "//div[contains(@class, 'learnview')]/span/div/div[contains(@class, 'x-container')][not(contains(@style, 'display: none'))]//div[contains(@class, 'learn-up')]//div[contains(@class, 'iarrow')]";
 
         String searchTextStudies, searchTextAssays, searchTextProducts;
         List<WebElement> returnedItems;
@@ -755,7 +784,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(0)));
-        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_METHODOLOGY);
 
@@ -800,9 +829,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertTrue("Not all antigens are present after clearing filter", learnGrid.getTitleRowCount() == CDSHelper.BAMA_ANTIGENS_NAME.length);
 
         log("testing ICS antigens page");
-        waitAndClick(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitAndClick(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(1)));
-        waitForElement(Locator.tagWithClass("span", "breadcrumb").containing("Assays /"));
+        waitForElement(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
 
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         waitForElement(Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Protein Panel"));
@@ -1032,7 +1061,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Now validate that link to the documents works as expected.");
         click(Locator.linkWithText("QED 3"));
         sleep(1000);
-        Assert.assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//span[@class='studyname']")).equals("QED 3"));
+        Assert.assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 3"));
         log("Verify that the related study links for this study are as expected.");
         expectedStudiesText = "QED 1 (Ancillary study)";
         relatedStudiesText = getText(relatedStudiesTable);
@@ -1042,7 +1071,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Click the related study and make sure we navigate back to the original study.");
         click(Locator.linkWithText("QED 1"));
         sleep(1000);
-        Assert.assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//span[@class='studyname']")).equals("QED 1"));
+        Assert.assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 1"));
 
         cds.viewLearnAboutPage("Studies");
 
@@ -1226,12 +1255,28 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         log("Found " + returnedItems.size() + " items.");
 
-        for (WebElement listItem : returnedItems)
+        for (int i = 0; i < returnedItems.size(); i++)
         {
+            returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+            WebElement listItem = returnedItems.get(i);
+            scrollIntoView(listItem);
+
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
+<<<<<<< HEAD
             log("Looking at study " + itemParts[0]);
             Assert.assertTrue(itemText.toLowerCase().contains(searchString.toLowerCase()));
+=======
+            log("Looking at detail page of " + itemParts[0]);
+
+            click(listItem);
+            sleep(1000);
+
+            assertTextPresentCaseInsensitive(searchString);
+
+            click(CDSHelper.Locators.pageHeaderBack());
+            sleep(2000);
+>>>>>>> release17.2
         }
 
     }

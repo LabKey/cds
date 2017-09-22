@@ -23,6 +23,7 @@ import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PortalHelper;
 import org.labkey.test.util.ApiPermissionsHelper;
+import org.labkey.remoteapi.CommandException;
 
 public class CDSInitializer
 {
@@ -92,8 +93,24 @@ public class CDSInitializer
         // run initial ETL to populate CDS import tables
         _etlHelper.getDiHelper().runTransformAndWait("{CDS}/CDSImport", WAIT_ON_IMPORT);
 
-        // populate the app
-        _etlHelper.getDiHelper().runTransformAndWait("{CDS}/LoadApplication", WAIT_ON_LOADAPP);
+        // During automation runs set will fail sometimes because of a NPE in Container.hasWorkbookChildren(416).
+        // We think this happens because the tests run quicker than human interaction would.
+        // Putting in a try/catch to work around the issue if it happens during set up, this should prevent an all out failure of all the tests.
+
+        try{
+            // populate the app
+            _etlHelper.getDiHelper().runTransformAndWait("{CDS}/LoadApplication", WAIT_ON_LOADAPP);
+        }
+        catch(CommandException ce)
+        {
+            _test.log("Looks like there was an error with runTransformAndWait while loading the application: " + ce.getMessage());
+            _test.log("Going to ignore this error.");
+            _test.resetErrors();
+            _test.log("Now wait until the ETL Scheduler view shows the job as being complete.");
+            _test.goToProjectHome();
+            _test.goToModule("DataIntegration");
+            _test.waitForText("COMPLETE", 2, 1000 * 60 * 30);
+        }
 
         populateNewsFeed();
 

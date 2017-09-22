@@ -131,7 +131,9 @@ public abstract class DataspaceVariableSelector
     }
 
     public void pickVariable(String variable){
-        _test.click(window().append(" div.content-label").withText(variable));
+        Locator variableLock = window().append(" div.content-label").withText(variable);
+        _test.scrollIntoView(variableLock);
+        _test.click(variableLock);
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 

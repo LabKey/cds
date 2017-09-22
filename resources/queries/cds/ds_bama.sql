@@ -46,6 +46,7 @@ mfi_raw_baseline,
 mfi_blank,
 mfi_blank_baseline,
 mfi_bkgd,
+mfi_bkgd_blank,
 auc,
 
 FROM cds.import_bama;
