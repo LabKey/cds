@@ -1,6 +1,6 @@
 package org.labkey.test.tests.cds;
 
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
@@ -37,7 +37,7 @@ public class CDSHiddenVarsTest extends CDSReadOnlyTest
         xaxis.cancelSelection();
     }
 
-    @After
+    @Before
     public void resetModuleProperties()
     {
         //Put properties back the way they were.
