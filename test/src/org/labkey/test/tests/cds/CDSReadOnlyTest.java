@@ -31,6 +31,7 @@ import java.util.List;
 
 public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, PostgresOnlyTest
 {
+    {setIsBootstrapWhitelisted(true);}
     @Nullable
     @Override
     protected final String getProjectName()
