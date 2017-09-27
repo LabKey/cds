@@ -23,6 +23,7 @@ import org.junit.rules.Timeout;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.Locators;
+import org.labkey.test.categories.Git;
 import org.labkey.test.pages.cds.LearnDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
@@ -36,10 +37,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Category({})
+@Category({Git.class})
 @BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSTestLearnAbout extends CDSReadOnlyTest
 {
+    {setIsBootstrapWhitelisted(true);}
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String MISSING_SEARCH_STRING = "If this string ever appears something very odd happened.";
