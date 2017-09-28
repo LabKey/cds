@@ -182,8 +182,6 @@ public class CDSExportQueryView extends QueryView
         ew.setSheetName(METADATA_SHEET);
 
         ew.renderNewSheet();
-        ew.getWorkbook().setSheetOrder(METADATA_SHEET, 0); // move metadata sheet to first tab
-
         List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
         ew.setColumns(studyColumns);
         List<List<String>> exportableStudies = getExportableStudies(_studies, getContainer());

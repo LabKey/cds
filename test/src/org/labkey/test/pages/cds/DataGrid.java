@@ -270,7 +270,7 @@ public class DataGrid
         try
         {
             Workbook wb = ExcelHelper.create(export);
-            Sheet sheet = wb.getSheetAt(0);
+            Sheet sheet = wb.getSheetAt(1);
 
             verifySheetName(sheet,"Metadata");
             verifyTOC(sheet);
@@ -347,7 +347,7 @@ public class DataGrid
         try
         {
             Workbook wb = ExcelHelper.create(export);
-            Sheet sheet = wb.getSheetAt(1);
+            Sheet sheet = wb.getSheetAt(0);
             return sheet.getLastRowNum(); // +1 for zero-based, -1 for header row
         }
         catch (IOException | InvalidFormatException fail)
