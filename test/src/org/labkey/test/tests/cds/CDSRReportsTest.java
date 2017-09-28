@@ -158,7 +158,8 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         }
 
         goToProjectHome();
-        goToManageViews();
+        clickTab("Clinical and Assay Data");
+        waitAndClick(Locator.tagWithClass("span", "labkey-wp-icon-button-active").append(Locator.tagWithClass("span", "fa-pencil")));
 
         // Wait for the grid to load at least 5 items (the number of reports created for this test) before starting to check.
         // Can't use the waitForElement library because it expects an exact number of elements. Because other tests may have created reports/plots, we can not be sure of the total in the grid.
@@ -201,12 +202,13 @@ public class CDSRReportsTest extends CDSReadOnlyTest
                 .clickSave();
         _ext4Helper.waitForMaskToDisappear();
 
-        log("Validate report '" + reports[4] + "' is there and then set it's properties.");
+        log("Validate report '" + reports[4] + "' is there and then set report to be hidden.");
         assertTextPresent(reports[4]);
         reportProperties = new ReportProperties(reports[4]);
 //        reportProperties.setCategory(categoryNames[1])
         reportProperties.setDescription(descriptions[4])
                 .setStatus(ReportStatus.UNLOCKED)
+                .setVisibility("Hidden")
                 .clickSave();
         _ext4Helper.waitForMaskToDisappear();
 
@@ -217,11 +219,14 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         cds.viewLearnAboutPage("Reports");
 
-        for(int i = 0; i < reports.length; i++)
+        for(int i = 0; i < reports.length - 1; i++)
         {
             log("Validate that report '" + reports[i] + "' is visible in the CDS grid.");
             assertTextPresent(reports[i]);
         }
+
+        log("Validate the hidden report is not visible in CDS grid");
+        assertTextNotPresent(reports[reports.length - 1]);
 
         log("Now validate individual aspects of the reports in CDS.");
         LearnGrid grid = new LearnGrid(this);
@@ -232,7 +237,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         log("Look at the data for the report as it appears in the grid.");
 
-        for(int i = 0; i < gridText.size(); i++)
+        for(int i = 0; i < gridText.size() - 1; i++)
         {
             // This list may contain more than the reports created in this test. So specifically look for the reports created in this test.
             if(gridText.get(i).contains(reports[0])){
@@ -254,20 +259,15 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 //                Assert.assertTrue("Category for report '" + reports[3] + "' not as expected.", gridText.get(i).contains(categoryNames[1]));
                 reportCounts[3] = reportCounts[3] + 1;
             }
-            if(gridText.get(i).contains(reports[4])){
-                Assert.assertTrue("Description for report '" + reports[4] + "' not as expected.", gridText.get(i).contains(descriptions[4]));
-//                Assert.assertTrue("Category for report '" + reports[4] + "' not as expected.", gridText.get(i).contains(categoryNames[1]));
-                reportCounts[4] = reportCounts[4] + 1;
-            }
         }
 
         log("Validate that the report was present the expected number of times.");
-        for(int i = 0; i < reportCounts.length; i++)
+        for(int i = 0; i < reportCounts.length - 1; i++)
         {
             Assert.assertTrue("Expected to find report '" + reports[i] + "' 1 time, found it " + reportCounts[i] + " times.", reportCounts[i] == 1);
         }
 
-        for(int i = 0; i < reports.length; i++)
+        for(int i = 0; i < reports.length - 1; i++)
         {
             log("Load the report '" + reports[i] + "' and check the detail page for it.");
             scrollIntoView(Locator.tagWithText("h2", reports[i]));
@@ -463,6 +463,12 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         public boolean getSharedCheckbox()
         {
             return _ext4Helper.isChecked(Locator.xpath(XPATH_CHECKBOX));
+        }
+
+        public ReportProperties setVisibility(String option)
+        {
+            _ext4Helper.selectRadioButton("Visibility", option);
+            return this;
         }
 
         public void clickSave()
