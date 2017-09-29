@@ -159,6 +159,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         goToProjectHome();
         clickTab("Clinical and Assay Data");
+        sleep(2000);
         waitAndClick(Locator.tagWithClass("span", "labkey-wp-icon-button-active").append(Locator.tagWithClass("span", "fa-pencil")));
         sleep(2000);
 
