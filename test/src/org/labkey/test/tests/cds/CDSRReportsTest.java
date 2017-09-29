@@ -160,6 +160,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         goToProjectHome();
         clickTab("Clinical and Assay Data");
         waitAndClick(Locator.tagWithClass("span", "labkey-wp-icon-button-active").append(Locator.tagWithClass("span", "fa-pencil")));
+        sleep(2000);
 
         // Wait for the grid to load at least 5 items (the number of reports created for this test) before starting to check.
         // Can't use the waitForElement library because it expects an exact number of elements. Because other tests may have created reports/plots, we can not be sure of the total in the grid.
@@ -237,7 +238,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         log("Look at the data for the report as it appears in the grid.");
 
-        for(int i = 0; i < gridText.size() - 1; i++)
+        for(int i = 0; i < gridText.size(); i++)
         {
             // This list may contain more than the reports created in this test. So specifically look for the reports created in this test.
             if(gridText.get(i).contains(reports[0])){
