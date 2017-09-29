@@ -346,7 +346,6 @@
             <column columnName="nab_response_ID50"/>
             <column columnName="nab_response_ID80"/>
             <column columnName="slope"/>
-            <column columnName="vaccine_matched"/>
         </columns>
     </table>
     <table tableName="import_ics" tableDbType="TABLE">

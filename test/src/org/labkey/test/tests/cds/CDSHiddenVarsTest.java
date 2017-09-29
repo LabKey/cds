@@ -35,12 +35,8 @@ public class CDSHiddenVarsTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.NAB);
         assertTextNotPresent(CDSHelper.NAB_HIDDEN_VARS);
         xaxis.cancelSelection();
+
+        cds.initModuleProperties(true); //TODO test dependency here, if this test fail and module property not set back to true, subsequent test that deal with variables would likely also fail
     }
 
-    @Before
-    public void resetModuleProperties()
-    {
-        //Put properties back the way they were.
-        cds.initModuleProperties(true);
-    }
 }
