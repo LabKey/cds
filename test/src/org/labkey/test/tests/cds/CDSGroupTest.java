@@ -529,7 +529,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
         selectQuery("CDS", "import_study");
         clickAndWait(Locator.linkWithText("view data"));
         log("Edit the record for study '" + studyName + "'.");
-        clickAndWait(Locator.xpath("//a[text()='" + studyProtocol + "']/parent::td/preceding-sibling::td/a[text()='edit']"));
+        clickAndWait(Locator.xpath("//a[text()='" + studyProtocol + "']/parent::td/preceding-sibling::td/a[@data-original-title='edit']"));
         waitForElement(Locator.input("quf_study_label"));
         setFormElement(Locator.input("quf_study_label"), studyLabel);
         clickAndWait(Locator.lkButton("Submit"));
