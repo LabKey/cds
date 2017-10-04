@@ -124,7 +124,7 @@ public class CDSInitializer
     private void populateNewsFeed()
     {
         // prepare RSS news feed
-        _test.clickAdminMenuItem("Go To Module", "Query");
+        _test.goToModule("Query");
         _test.selectQuery("announcement", "RSSFeeds");
         _test.waitForText("view data");
         _test.clickAndWait(Locator.linkContainingText("view data"));
