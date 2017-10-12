@@ -761,6 +761,7 @@ Ext.define('Connector.view.Grid', {
             }
 
             // issue 20850: set export column headers to be "Dataset - Variable"
+            var gridAssays = [];
             Ext.each(this.getGrid().getColumnsConfig(), function(colGroup) {
                 Ext.each(colGroup.columns, function(col) {
                     exportParams.columnNames.push(col.dataIndex);
@@ -769,6 +770,8 @@ Ext.define('Connector.view.Grid', {
                     var measure = Connector.getQueryService().getMeasure(col.dataIndex);
                     if (measure && measure.queryType == 'datasets')
                     {
+                        if (gridAssays.indexOf(measure.queryName) === -1)
+                            gridAssays.push(measure.queryName);
                         var variable = measure.queryLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.label + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.description;
                         exportParams.variables.push(variable);
                     }
@@ -800,34 +803,46 @@ Ext.define('Connector.view.Grid', {
                     success: function (results) {
                         exportParams.studies = me.loadExportableStudies(results);
 
-                        mdx.query({
-                            onRows: [{
-                                level: '[Assay.Study].[Study]',
-                                members: 'members'
-                            }],
-                            useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
-                            showEmpty: false,
-                            success: function (results) {
-                                exportParams.studyassays = me.loadExportableStudyAssays(results);
+                        LABKEY.Query.selectRows({
+                            schemaName: 'study',
+                            queryName: 'ds_assayidentifier',
+                            success: function(assayData) {
+                                var assayIdentifierTypes = {};
+                                Ext.each(assayData.rows, function(assayMeta) {
+                                    assayIdentifierTypes[assayMeta.assay_identifier] = assayMeta.dataset_name;
+                                }, this);
 
-                                Ext.Ajax.request({
-                                    url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
-                                    method: 'POST',
-                                    form: newForm,
-                                    isUpload: true,
-                                    params: exportParams,
-                                    callback: function(options, success/*, response*/) {
-                                        document.body.removeChild(newForm);
+                                mdx.query({
+                                    onRows: [{
+                                        level: '[Assay.Study].[Study]',
+                                        members: 'members'
+                                    }],
+                                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                                    showEmpty: false,
+                                    success: function (results) {
+                                        exportParams.studyassays = me.loadExportableStudyAssays(results, gridAssays, assayIdentifierTypes);
 
-                                        if (!success) {
-                                            Ext.Msg.alert('Error', 'Unable to export.');
-                                        }
-                                    }
+                                        Ext.Ajax.request({
+                                            url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
+                                            method: 'POST',
+                                            form: newForm,
+                                            isUpload: true,
+                                            params: exportParams,
+                                            callback: function(options, success/*, response*/) {
+                                                document.body.removeChild(newForm);
+
+                                                if (!success) {
+                                                    Ext.Msg.alert('Error', 'Unable to export.');
+                                                }
+                                            }
+                                        });
+
+                                        this.fireEvent('requestexport', me, exportParams);
+                                    },
+                                    scope: me
                                 });
-
-                                this.fireEvent('requestexport', me, exportParams);
                             },
-                            scope: me
+                            scope: this
                         });
                     }
                 });
@@ -847,7 +862,7 @@ Ext.define('Connector.view.Grid', {
         return members;
     },
 
-    loadExportableStudyAssays: function(cellset)
+    loadExportableStudyAssays: function(cellset, gridAssays, assayIdentifierTypes)
     {
         if (!cellset || !cellset.axes[1])
             return [];
@@ -855,7 +870,13 @@ Ext.define('Connector.view.Grid', {
         Ext.each(memberDefinitions, function(definition) {
             var def = definition[0], uniqueName = def.uniqueName, parts = uniqueName.split("].[");
             var assay = LABKEY.app.model.Filter.getMemberLabel(parts[1]), study = LABKEY.app.model.Filter.getMemberLabel(def.name);
-            studyassays.push(study + ChartUtils.ANTIGEN_LEVEL_DELIMITER + assay);
+
+            // Issue 31333: Export cover sheet lists all assays regardless of columns chosen
+            // Only include assays listed on data grid, which may be a smaller set compared with active assays in filters
+            // If no assay columns are present on data grid, then list all assays active in filter
+            var assayType = assayIdentifierTypes[assay];
+            if (gridAssays == null || gridAssays.length == 0 || gridAssays.indexOf(assayType) > -1)
+                studyassays.push(study + ChartUtils.ANTIGEN_LEVEL_DELIMITER + assay);
         });
         return studyassays;
     },
