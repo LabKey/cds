@@ -1029,7 +1029,8 @@ Ext.define('Connector.utility.Query', {
         if (filter.$className !== 'Connector.model.Filter')
             return [];
 
-        if (filter.isTime() && !filter.isPlot()) {
+        // use grid filter display for study day filters made from data grid, which doesn't have filterDisplayString
+        if (filter.isTime() && !filter.isPlot() && filter.get("filterDisplayString")) {
             return Connector.view.TimepointPane.getExportableFilterStrings(filter);
         }
         else if (filter.isGrid() || filter.isAggregated()) {
