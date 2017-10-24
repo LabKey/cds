@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.categories.Git;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
@@ -42,9 +43,10 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category({})
+@Category({Git.class})
 public class CDSPlotTimeTest extends CDSReadOnlyTest
 {
+    {setIsBootstrapWhitelisted(true);}
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSPlot cdsPlot = new CDSPlot(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);

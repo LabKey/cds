@@ -124,14 +124,14 @@ public class CDSInitializer
     private void populateNewsFeed()
     {
         // prepare RSS news feed
-        _test.clickAdminMenuItem("Go To Module", "Query");
+        _test.goToModule("Query");
         _test.selectQuery("announcement", "RSSFeeds");
         _test.waitForText("view data");
         _test.clickAndWait(Locator.linkContainingText("view data"));
 
         // insert test data feed
         DataRegionTable rssTable = new DataRegionTable("query", _test);
-        rssTable.clickHeaderMenu("Insert", "Insert New Row");
+        rssTable.clickInsertNewRow();
         _test.setFormElement(Locator.name("quf_FeedName"), "Dataspace Test Feed");
         _test.setFormElement(Locator.name("quf_FeedURL"), CDSHelper.TEST_FEED);
         _test.clickButton("Submit");
