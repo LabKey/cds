@@ -173,7 +173,7 @@ public class CDSExportQueryView extends QueryView
         ExcelWriter ew = getCDSExcelWriter();
         ew.setFilenamePrefix(FILE_NAME_PREFIX);
         ew.setCaptionType(headerType);
-        ew.setShowInsertableColumnsOnly(false);
+        ew.setShowInsertableColumnsOnly(false, null);
         ew.setSheetName(DATA);
 
         ew.renderNewSheet();
