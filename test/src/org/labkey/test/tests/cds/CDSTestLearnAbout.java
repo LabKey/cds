@@ -37,6 +37,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertTrue;
+
 @Category({Git.class})
 @BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSTestLearnAbout extends CDSReadOnlyTest
@@ -153,8 +155,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verifying data availability on summary page.");
         LearnGrid learnGrid = new LearnGrid(this);
         int rowCount = learnGrid.getRowCount();
-        Assert.assertTrue("Expected one row in the grid, found " + rowCount + " row(s).", rowCount == 1);
-        Assert.assertTrue("Row did not contain " + searchString, learnGrid.getRowText(0).contains(searchString));
+        assertTrue("Expected one row in the grid, found " + rowCount + " row(s).", rowCount == 1);
+        assertTrue("Row did not contain " + searchString, learnGrid.getRowText(0).contains(searchString));
 
         log("Start verifying study detail page.");
         learnGrid.getCellWebElement(0, 0).click();
@@ -304,7 +306,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(3)));
         waitForElement(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
-        assertElementVisible(Locator.linkWithHref("#learn/learn/Assay/" + CDSHelper.ASSAYS[3].replace(" ", "%20") + "/antigens"));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.linkWithHref("#learn/learn/Assay/" + CDSHelper.ASSAYS[3].replace(" ", "%20") + "/antigens")));
         assertElementVisible(Locator.linkContainingText("Virus List"));
 
         //testing ICS variables page
@@ -330,7 +332,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(4, 0));
         expectedText = "11 Studies";
         cellText = learnGrid.getCellText(4, dataAddedColumn);
-        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
@@ -345,7 +347,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(3, 0));
         expectedText = "5 Studies";
         cellText = learnGrid.getCellText(3, dataAddedColumn);
-        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
@@ -359,7 +361,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(2, 0));
         expectedText = "4 Studies";
         cellText = learnGrid.getCellText(2, dataAddedColumn);
-        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
@@ -373,7 +375,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(1, 0));
         expectedText = "14 Studies";
         cellText = learnGrid.getCellText(1, dataAddedColumn);
-        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
@@ -387,7 +389,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(0, 0));
         expectedText = "1 Study";
         cellText = learnGrid.getCellText(0, dataAddedColumn);
-        Assert.assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn)
@@ -449,15 +451,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
         waitForText("Learn about...");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Click 'Learn about' and validate that the text box gets cleared.");
         click(Locator.xpath(LEARN_ABOUT));
         waitForText("Learn about...");
         sleep(CDSHelper.CDS_WAIT);
-        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        Assert.assertTrue(this.getFormElement(Locator.xpath(XPATH_TEXTBOX)).length() == 0);
+        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        assertTrue(this.getFormElement(Locator.xpath(XPATH_TEXTBOX)).length() == 0);
 
         log("Search in Studies again to give it a history...");
         searchTextStudies = "Oxygen";
@@ -475,8 +477,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
         waitForText("Learn about...");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Go to Assays and try the same basic scenario.");
         click(Locator.xpath(ASSAYS_LINK));
@@ -496,8 +498,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Click back button to validate that the search value is saved.");
         Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Go to Products and try the same basic scenario.");
         click(Locator.xpath(PRODUCTS_LINK));
@@ -517,23 +519,23 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Click back button to validate that the search value is saved.");
         Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        Assert.assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
+        assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Now click 'Studies' and validate that the search box is populated as expected.");
         click(Locator.xpath(STUDIES_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Now click 'Assays' and validate that the search box is populated as expected.");
         click(Locator.xpath(ASSAYS_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Click 'Products' and validate that the search box is populated as expected.");
         click(Locator.xpath(PRODUCTS_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Now go to a different part of the app and return using the 'Learn about' link. Search values should be saved.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -543,12 +545,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         log("Validate that the 'Products' search value is there.");
-        Assert.assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Now click 'Assays' and validate that the search box has the value last searched for in Assays.");
         click(Locator.xpath(ASSAYS_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Go back to Plots and return using the 'Learn about' link. Search values should be saved and show Assays.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -558,12 +560,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         log("Validate that the 'Assays' search value is there.");
-        Assert.assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Finally repeat the tests with 'Studies'.");
         click(Locator.xpath(STUDIES_LINK));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
 
         log("Go back to Plots and return using the 'Learn about' link. Search values should be saved and show Studies.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -573,7 +575,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         log("Validate that the 'Studies' search value is there.");
-        Assert.assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
     }
 
     @Test
@@ -587,7 +589,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> hasDataRows = Locator.css(".detail-row-has-data").findElements(getDriver());
         List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
         //hasDataRows is larger than hasDataIcons by a factor of two because of locked columns cause rows to be counted twice.
-        Assert.assertTrue(hasDataRows.size()/2 == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
+        assertTrue(hasDataRows.size()/2 == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
     }
 
     @Test
@@ -618,9 +620,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[1]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[2]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[1]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[2]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
 
 
         log("Testing data availability module in Assays");
@@ -633,10 +635,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText("Data Availability");
 
         List<WebElement> smallHasDataIcons =cds.getDataRowXPath("").append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]").findElements(getDriver());
-        Assert.assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
+        assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
 
         Assert.assertFalse(isElementPresent(cds.getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]")));
-        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
 
 
         log("Testing data availability module in Products");
@@ -647,8 +649,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        Assert.assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
+        assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
     }
 
     @Test
@@ -665,7 +667,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         scrollIntoView(sortedStudyTitles.get(sortedStudyTitles.size() - 1));
         String titleForLastElement = sortedStudyTitles.get(sortedStudyTitles.size() - 1).getText();
         learnGrid.sort("Name & Description");
-        Assert.assertTrue(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver())
+        assertTrue(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver())
                 .get(0).getText()
                 .equals(titleForLastElement));
 
@@ -673,7 +675,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String[] studiesToFilter = {CDSHelper.STUDIES[0], CDSHelper.STUDIES[7], CDSHelper.STUDIES[20]}; //Arbitrarily chosen
         int numRowsPreFilter = XPATH_RESULT_ROW_TITLE.findElements(getDriver()).size();
 
-        Assert.assertTrue("Facet options should all have data before filtering", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Name & Description"));
+        assertTrue("Facet options should all have data before filtering", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Name & Description"));
 
         learnGrid.setFacet("Name & Description", studiesToFilter);
         List<WebElement> studyTitlesAfterFilter = Locator.tagWithClass("tr", "detail-row")
@@ -684,18 +686,18 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         for(WebElement studyTitlesOnPage : studyTitlesAfterFilter)
         {
             scrollIntoView(studyTitlesOnPage);
-            Assert.assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
+            assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
         }
 
-        Assert.assertTrue("Both 'In current selection' and 'Not in current selection' group should be present for column with filter", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Name & Description"));
-        Assert.assertTrue("Both 'In current selection' and 'Not in current selection' group should be present for 'Data Added' column after filtering studies", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Data Added"));
+        assertTrue("Both 'In current selection' and 'Not in current selection' group should be present for column with filter", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Name & Description"));
+        assertTrue("Both 'In current selection' and 'Not in current selection' group should be present for 'Data Added' column after filtering studies", LearnGrid.FacetGroups.both == learnGrid.getFacetGroupStatus("Data Added"));
 
         log("Evaluating clearing a filter");
         learnGrid.clearFilters("Name & Description");
         int numRowsPostFilter = learnGrid.getRowCount();
-        Assert.assertTrue(numRowsPreFilter == numRowsPostFilter && numRowsPostFilter == CDSHelper.STUDIES.length);
-        Assert.assertTrue("Facet options should have data after clearing filter on column", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Name & Description"));
-        Assert.assertTrue("Facet options should have data for 'Data Added' column after removing study filter", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Data Added"));
+        assertTrue(numRowsPreFilter == numRowsPostFilter && numRowsPostFilter == CDSHelper.STUDIES.length);
+        assertTrue("Facet options should have data after clearing filter on column", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Name & Description"));
+        assertTrue("Facet options should have data for 'Data Added' column after removing study filter", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Data Added"));
 
         log("Evaluating applying two numeric filters");
         //finds the number of rows that have a date column and assay column that satisfy the following filter
@@ -710,21 +712,21 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         learnGrid.setFacet("Data Added", numAssaysToFilter);
         numRowsPostFilter = learnGrid.getRowCount();
 
-        Assert.assertTrue(numRowsSatisfyFilter == numRowsPostFilter);
+        assertTrue(numRowsSatisfyFilter == numRowsPostFilter);
 
         log("Evaluating persisting to URL");
         refresh();
         sleep(CDSHelper.CDS_WAIT_LEARN);
         int numRowsPostRefresh = learnGrid.getRowCount();
-        Assert.assertTrue(numRowsSatisfyFilter == numRowsPostRefresh);
+        assertTrue(numRowsSatisfyFilter == numRowsPostRefresh);
 
         log("Evaluating filtering to empty grid");
         String strategyToFilter = "s3";
         learnGrid.setFacet("Strategy", strategyToFilter);
         numRowsPostFilter = learnGrid.getRowCount();
-        Assert.assertTrue(numRowsPostFilter == 0);
-        Assert.assertTrue("Name & Description facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Name & Description"));
-        Assert.assertTrue("Data Added facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Data Added"));
+        assertTrue(numRowsPostFilter == 0);
+        assertTrue("Name & Description facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Name & Description"));
+        assertTrue("Data Added facet options should have data with empty grid", LearnGrid.FacetGroups.noData == learnGrid.getFacetGroupStatus("Data Added"));
 
         learnGrid.clearFiltersWithOption("Status", "Start Year");
         learnGrid.clearFilters("Data Added");
@@ -789,7 +791,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         scrollIntoView(sortedAntigenNames.get(sortedAntigenNames.size() - 1));
         String titleForLastElement = sortedAntigenNames.get(sortedAntigenNames.size() - 1).getText();
         learnGrid.sort("Antigen");
-        Assert.assertTrue("Antigens are not sorted as expected", Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver())
+        assertTrue("Antigens are not sorted as expected", Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").findElements(getDriver())
                 .get(0).getText()
                 .equals(titleForLastElement));
 
@@ -799,18 +801,18 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> antigensAfterFilter = Locator.tagWithClass("tr", "detail-row")
                 .append("/td//div/div/h2")
                 .findElements(getDriver());
-        Assert.assertTrue("Expected number of antigens after filtering: " + antigensToFilter.length + ", actual number: " + antigensAfterFilter.size(),
+        assertTrue("Expected number of antigens after filtering: " + antigensToFilter.length + ", actual number: " + antigensAfterFilter.size(),
                 antigensAfterFilter.size() == antigensToFilter.length);
         List<String> studiesFiltered =  Arrays.asList(antigensToFilter);
         for(WebElement antigenTitlesOnPage : antigensAfterFilter)
         {
             scrollIntoView(antigenTitlesOnPage);
-            Assert.assertTrue("Antigen " + antigenTitlesOnPage.getText() + " is not present", studiesFiltered.contains(antigenTitlesOnPage.getText()));
+            assertTrue("Antigen " + antigenTitlesOnPage.getText() + " is not present", studiesFiltered.contains(antigenTitlesOnPage.getText()));
         }
 
         log("Evaluating clearing a filter");
         learnGrid.clearFilters("Antigen");
-        Assert.assertTrue("Not all antigens are present after clearing filter", learnGrid.getTitleRowCount() == CDSHelper.BAMA_ANTIGENS_NAME.length);
+        assertTrue("Not all antigens are present after clearing filter", learnGrid.getTitleRowCount() == CDSHelper.BAMA_ANTIGENS_NAME.length);
 
         log("testing ICS antigens page");
         waitAndClick(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
@@ -828,15 +830,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Evaluating multi filtering...");
         learnGrid.setWithOptionFacet("Protein:Pools", "Proteins", "POL");
         log(learnGrid.getTitleRowCount() + "a");
-        Assert.assertTrue("Number of antigens is incorrect after filtering by Proteins \"POL\"", 2 == learnGrid.getTitleRowCount());
+        assertTrue("Number of antigens is incorrect after filtering by Proteins \"POL\"", 2 == learnGrid.getTitleRowCount());
 
         log("Evaluating filter persistence");
         refresh();
         sleep(CDSHelper.CDS_WAIT_LEARN);
-        Assert.assertTrue("Antigens are not filtered correctly when loading from URL", 2 == learnGrid.getTitleRowCount());
+        assertTrue("Antigens are not filtered correctly when loading from URL", 2 == learnGrid.getTitleRowCount());
 
         learnGrid.setWithOptionFacet("Protein:Pools", "Pools", "POL 2");
-        Assert.assertTrue("Number of antigens is incorrect after filtering by Pools \"POL 2\"", 1 == learnGrid.getTitleRowCount());
+        assertTrue("Number of antigens is incorrect after filtering by Pools \"POL 2\"", 1 == learnGrid.getTitleRowCount());
     }
 
     @Test
@@ -847,25 +849,25 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         //Test basic functionality of multifacet
         cds.viewLearnAboutPage("Studies");
         learnGrid.setWithOptionFacet("Type", "Species", "Vulcan");
-        Assert.assertTrue(1 == learnGrid.getRowCount());
+        assertTrue(1 == learnGrid.getRowCount());
 
         //Test filter for alt property persists correctly
         refresh();
         sleep(CDSHelper.CDS_WAIT_LEARN);
-        Assert.assertTrue(1 == learnGrid.getRowCount());
+        assertTrue(1 == learnGrid.getRowCount());
 
         //Test clear doesn't fire for wrong selection in facet panel.
         learnGrid.clearFiltersWithOption("Type", "Type");
-        Assert.assertTrue(1 == learnGrid.getRowCount());
+        assertTrue(1 == learnGrid.getRowCount());
 
         //Test basic clear works
         learnGrid.clearFiltersWithOption("Type", "Species");
-        Assert.assertTrue(CDSHelper.STUDIES.length == learnGrid.getRowCount());
+        assertTrue(CDSHelper.STUDIES.length == learnGrid.getRowCount());
 
         //Test setting two different filters in multifacet
         learnGrid.setWithOptionFacet("Type", "Species", "Human");
         learnGrid.setWithOptionFacet("Type", "Type", "Phase IIB");
-        Assert.assertTrue(2 == learnGrid.getRowCount());
+        assertTrue(2 == learnGrid.getRowCount());
 
         //Test combining filter with another column
         learnGrid.setFacet("Data Added", "2");
@@ -873,26 +875,26 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         //clear all filters and check results are correct in succession.
         learnGrid.clearFilters("Data Added");
-        Assert.assertTrue(2 == learnGrid.getRowCount());
+        assertTrue(2 == learnGrid.getRowCount());
 
         learnGrid.clearFiltersWithOption("Type", "Species");
-        Assert.assertTrue(2 == learnGrid.getRowCount());
+        assertTrue(2 == learnGrid.getRowCount());
         learnGrid.clearFiltersWithOption("Type", "Type");
-        Assert.assertTrue(CDSHelper.STUDIES.length == learnGrid.getRowCount());
+        assertTrue(CDSHelper.STUDIES.length == learnGrid.getRowCount());
 
         //test filtering on grant affiliation and network
         learnGrid.setWithOptionFacet("PI", "Grant Affiliation", "Gallo: Systemic, Mucosal & Passive Immunity");
-        Assert.assertTrue(2 == learnGrid.getRowCount());
+        assertTrue(2 == learnGrid.getRowCount());
         learnGrid.setWithOptionFacet("Name & Description", "Network", "Q");
-        Assert.assertTrue(1 == learnGrid.getRowCount());
+        assertTrue(1 == learnGrid.getRowCount());
         refresh();
         sleep(CDSHelper.CDS_WAIT_LEARN);
-        Assert.assertTrue(1 == learnGrid.getRowCount());
+        assertTrue(1 == learnGrid.getRowCount());
         learnGrid.clearFiltersWithOption("PI", "Grant Affiliation");
         learnGrid.clearFiltersWithOption("Name & Description", "Network");
 
         learnGrid.setWithOptionFacet("Products", "Product Class", "ante");
-        Assert.assertTrue(2 == learnGrid.getRowCount());
+        assertTrue(2 == learnGrid.getRowCount());
         learnGrid.clearFiltersWithOption("Products", "Product Class");
     }
 
@@ -927,7 +929,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(1000);
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
-        Assert.assertTrue("There was a visible link to a grant document for this study, and there should not be.", cds.getVisibleGrantDocumentLink() == null);
+        assertTrue("There was a visible link to a grant document for this study, and there should not be.", cds.getVisibleGrantDocumentLink() == null);
 
         goToHome();
         log("All done.");
@@ -961,19 +963,19 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("First check the Powerpoint link.");
         documentLink = CDSHelper.Locators.studyReportLink("Epitope Mapping Results Summary").findElement(getDriver());
-        Assert.assertTrue("Was not able to find link to the Powerpoint document for study '" + studyName + "'.", documentLink != null);
+        assertTrue("Was not able to find link to the Powerpoint document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_CAVIMC 031 Linear Epitope Mapping_BaselineSubtracted-3.pptx";
         cds.validateDocLink(documentLink, documentName);
 
         log("Now check the Excel link.");
         documentLink = CDSHelper.Locators.studyReportLink("NAB Data Summary 2").findElement(getDriver());
-        Assert.assertTrue("Was not able to find link to the Excel document for study '" + studyName + "'.", documentLink != null);
+        assertTrue("Was not able to find link to the Excel document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_CAVIMC-031 Neutralization Data with AUC 3 May 2011-6.xlsx";
         cds.validateDocLink(documentLink, documentName);
 
         log("Finally for this study validate the pdf file.");
         documentLink = CDSHelper.Locators.studyReportLink("NAB Data Summary 1").findElement(getDriver());
-        Assert.assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
+        assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_McElrath_Seder_Antibody Responses 1.1 01Jun11.pdf";
         cds.validatePDFLink(documentLink, documentName);
 
@@ -994,13 +996,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Click on a few of these links to make sure they work. First check the Word Document link.");
         documentLink = CDSHelper.Locators.studyReportLink("CFSE Results Summary").findElement(getDriver());
-        Assert.assertTrue("Was not able to find link to the Word Document document for study '" + studyName + "'.", documentLink != null);
+        assertTrue("Was not able to find link to the Word Document document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd264_DCVax001_CFSE_Memo_JUL13_v4.docx";
         cds.validateDocLink(documentLink, documentName);
 
         log("Now check one of the PDF link.");
         documentLink = CDSHelper.Locators.studyReportLink("ICS Data Summary").findElement(getDriver());
-        Assert.assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
+        assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd264_ICS_LAB_REPORT_19APR13_n24fcm_fh_IL2_CD154_MIMOSA.pdf";
         cds.validatePDFLink(documentLink, documentName);
 
@@ -1045,7 +1047,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Now validate that link to the documents works as expected.");
         click(Locator.linkWithText("QED 3"));
         sleep(1000);
-        Assert.assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 3"));
+        assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 3"));
         log("Verify that the related study links for this study are as expected.");
         expectedStudiesText = "QED 1 (Ancillary study)";
         relatedStudiesText = getText(relatedStudiesTable);
@@ -1055,7 +1057,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Click the related study and make sure we navigate back to the original study.");
         click(Locator.linkWithText("QED 1"));
         sleep(1000);
-        Assert.assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 1"));
+        assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 1"));
 
         cds.viewLearnAboutPage("Studies");
 
@@ -1167,7 +1169,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
         documentLink = cds.getVisibleGrantDocumentLink();
-        Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
+        assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
 
         cds.validatePDFLink(documentLink, pdfFileName);
 //        log("Now click on the document link.");
@@ -1211,7 +1213,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText(STUDY_INFO_TEXT_TRIGGER);
 
         documentLink = cds.getVisibleGrantDocumentLink();
-        Assert.assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
+        assertTrue("Was not able to find link to the document for study '" + studyName + "'.", documentLink != null);
 
         cds.validateDocLink(documentLink, docFileName);
 //        log("Now click on the document link.");
@@ -1264,7 +1266,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         for(String expected : expectedText)
         {
-            Assert.assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
+            assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
         }
     }
 
@@ -1273,7 +1275,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Hover over the link with text '" + el.getText() + "' to validate that the tooltip is shown.");
         String toolTipText;
 
-        Assert.assertTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el));
+        assertTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el));
         log("It looks like a tooltip was shown for '" + el.getText()+ "'.");
 
         toolTipText = getToolTipText();
