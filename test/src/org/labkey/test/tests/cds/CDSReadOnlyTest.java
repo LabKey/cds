@@ -19,11 +19,11 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.labkey.test.BaseWebDriverTest;
-import org.labkey.test.util.cds.CDSHelper;
-import org.labkey.test.util.cds.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.labkey.test.util.ReadOnlyTest;
+import org.labkey.test.util.cds.CDSHelper;
+import org.labkey.test.util.cds.CDSInitializer;
 import org.openqa.selenium.NoSuchElementException;
 
 import java.util.Arrays;
@@ -31,8 +31,6 @@ import java.util.List;
 
 public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, PostgresOnlyTest
 {
-    {setIsBootstrapWhitelisted(true);}
-    @Nullable
     @Override
     protected final String getProjectName()
     {

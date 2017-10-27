@@ -46,7 +46,6 @@ import static org.junit.Assert.assertTrue;
 @Category({Git.class})
 public class CDSPlotTimeTest extends CDSReadOnlyTest
 {
-    {setIsBootstrapWhitelisted(true);}
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSPlot cdsPlot = new CDSPlot(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);

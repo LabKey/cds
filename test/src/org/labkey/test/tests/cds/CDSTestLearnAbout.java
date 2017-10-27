@@ -40,10 +40,8 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertTrue;
 
 @Category({Git.class})
-@BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSTestLearnAbout extends CDSReadOnlyTest
 {
-    {setIsBootstrapWhitelisted(true);}
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String MISSING_SEARCH_STRING = "If this string ever appears something very odd happened.";

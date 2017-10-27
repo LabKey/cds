@@ -41,7 +41,6 @@ import static org.junit.Assert.fail;
 @Category({Git.class})
 public class CDSSubjectCountTest extends CDSReadOnlyTest
 {
-    {setIsBootstrapWhitelisted(true);}
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSPlot cdsPlot = new CDSPlot(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
