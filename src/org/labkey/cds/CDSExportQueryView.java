@@ -37,10 +37,13 @@ import org.labkey.api.data.Results;
 import org.labkey.api.data.ResultsImpl;
 import org.labkey.api.data.RuntimeSQLException;
 import org.labkey.api.data.SchemaTableInfo;
+import org.labkey.api.data.ShowRows;
 import org.labkey.api.data.SimpleFilter;
+import org.labkey.api.data.Table;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.data.TableSelector;
 import org.labkey.api.query.FieldKey;
+import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.view.DataView;
 import org.labkey.remoteapi.query.jdbc.LabKeyResultSet;
@@ -63,9 +66,9 @@ import java.util.stream.Collectors;
 public class CDSExportQueryView extends QueryView
 {
     private static final String FILE_NAME_PREFIX = "DataSpace Data Grid";
+    private static final ExcelWriter.ExcelDocumentType docType = ExcelWriter.ExcelDocumentType.xlsx;
 
     private static final String METADATA_SHEET = "Metadata";
-    private static final String DATA = "Data";
     private static final String STUDY_SHEET = "Studies";
     private static final String ASSAY_SHEET = "Assays";
     private static final String VARIABLES_SHEET = "Variable definitions";
@@ -115,6 +118,9 @@ public class CDSExportQueryView extends QueryView
     private List<String> _studyassays;
     private List<String> _variableStrs;
 
+    private Map<String, CDSController.CDSExportQueryForm> _tabQueryForms;
+    private List<String> _dataTabNames;
+
     public CDSExportQueryView(CDSController.ExportForm form, org.springframework.validation.Errors errors)
     {
         super(form, errors);
@@ -125,6 +131,8 @@ public class CDSExportQueryView extends QueryView
         _assays = form.getAssays().toArray(new String[0]);
         _studyassays = getFormValues(form.getStudyAssays(), false);
         _variableStrs = getFormValues(form.getVariables(), false);
+        _tabQueryForms = form.getTabQueryForms();
+        _dataTabNames = getFormValues(form.getDataTabNames(), false);
     }
 
     private List<String> getFormValues(String[] formValues, boolean sort)
@@ -151,13 +159,13 @@ public class CDSExportQueryView extends QueryView
         {
             for (DisplayColumn col : retColumns)
             {
-                if (col.getColumnInfo() != null && colName.equals(col.getColumnInfo().getName()))
+                if (col.getColumnInfo() != null && colName.equalsIgnoreCase(col.getColumnInfo().getName()))
                 {
                     col.setCaption(_columnAliases.get(col.getColumnInfo().getName()));
                     exportColumns.add(col);
                     break;
                 }
-                else if (colName.equals(col.getName()))
+                else if (colName.equalsIgnoreCase(col.getName()))
                 {
                     col.setCaption(_columnAliases.get(col.getName()));
                     exportColumns.add(col);
@@ -179,17 +187,41 @@ public class CDSExportQueryView extends QueryView
     private ExcelWriter getExcelWriter() throws IOException
     {
         TableInfo table = getTable();
-        if (table == null)
-        {
-            throw new IOException("Could not find table to write.");
-        }
         ColumnHeaderType headerType = ColumnHeaderType.Caption;
 
         ExcelWriter ew = getCDSExcelWriter();
         ew.setFilenamePrefix(FILE_NAME_PREFIX);
         ew.setCaptionType(headerType);
         ew.setShowInsertableColumnsOnly(false, null);
-        ew.setSheetName(DATA);
+        ew.setSheetName(_dataTabNames.get(0));
+
+        if (_dataTabNames.size() > 1)
+        {
+            for (int i = 1; i < _dataTabNames.size(); i++)
+            {
+                String tabName = _dataTabNames.get(i);
+                CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
+                ew.renderNewSheet();
+                QueryView queryView = new QueryView(queryform, null);
+                DataView view = queryView.createDataView();
+                DataRegion rgn = view.getDataRegion();
+                rgn.prepareDisplayColumns(view.getViewContext().getContainer());
+                prepareQuerySettings(queryView.getSettings());
+
+                try
+                {
+                    Results rs = rgn.getResultSet(view.getRenderContext());
+                    ew.setResults(rs);
+                    ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
+                    ew.setSheetName(tabName);
+                    ew.setAutoSize(true);
+                }
+                catch (SQLException e)
+                {
+                    throw new RuntimeSQLException(e);
+                }
+            }
+        }
 
         ew.renderNewSheet();
         ColumnInfo filterColumnInfo = new ColumnInfo(FieldKey.fromParts(METADATA_SHEET));
@@ -199,7 +231,7 @@ public class CDSExportQueryView extends QueryView
         ew.renderNewSheet();
         List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
         ew.setColumns(studyColumns);
-        List<List<String>> exportableStudies = getExportableStudies(_studies, getContainer());
+        List<List<String>> exportableStudies = getExportableStudies(_studies, getViewContext().getContainer());
         ew.setResults(createResults(exportableStudies, studyColumns));
         ew.setSheetName(STUDY_SHEET);
         ew.setCaptionRowFrozen(false);
@@ -234,15 +266,17 @@ public class CDSExportQueryView extends QueryView
 
     private ExcelWriter getCDSExcelWriter() throws IOException
     {
-        ExcelWriter.ExcelDocumentType docType = ExcelWriter.ExcelDocumentType.xlsx;
-
-        DataView view = createDataView();
+        QueryView queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
+        DataView view = queryView.createDataView();
         DataRegion rgn = view.getDataRegion();
+        rgn.prepareDisplayColumns(view.getViewContext().getContainer());
 
-        RenderContext rc = configureForExcelExport(docType, view, rgn);
+        QuerySettings settings = queryView.getSettings();
+        prepareQuerySettings(settings);
 
         try
         {
+            RenderContext rc = view.getRenderContext();
             ResultSet rs = rgn.getResultSet(rc);
             Map<FieldKey, ColumnInfo> map = rc.getFieldMap();
             ExcelWriter ew = new ExcelWriter(rs, map, getExportColumns(rgn.getDisplayColumns()), docType){
@@ -393,7 +427,7 @@ public class CDSExportQueryView extends QueryView
                         super.renderColumnCaptions(sheet, visibleColumns);
                 }
             };
-            ew.setFilenamePrefix(getSettings().getQueryName());
+            ew.setFilenamePrefix(settings.getQueryName());
             ew.setAutoSize(true);
             return ew;
         }
@@ -401,6 +435,13 @@ public class CDSExportQueryView extends QueryView
         {
             throw new RuntimeSQLException(e);
         }
+    }
+
+    private void prepareQuerySettings(QuerySettings settings)
+    {
+        settings.setShowRows(ShowRows.PAGINATED);
+        settings.setMaxRows(docType.getMaxRows());
+        settings.setOffset(Table.NO_OFFSET);
     }
 
     private Results createResults(List<List<String>> rowTexts, List<ColumnInfo> columnInfos)

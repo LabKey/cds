@@ -32,6 +32,7 @@ Ext.define('Connector.utility.Query', {
         this.TREATMENTSUMMARY_ALIAS = this.STUDY_ALIAS_PREFIX + 'TreatmentSummary';
         this.PROTOCOLDAY_ALIAS = this.STUDY_ALIAS_PREFIX + 'ProtocolDay';
 
+        this.DEMOGRAPHICS_SUBJECT_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + Connector.studyContext.subjectColumn;
         this.DEMOGRAPHICS_STUDY_SHORT_NAME_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_short_name';
         this.DEMOGRAPHICS_STUDY_LABEL_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_label';
         this.DEMOGRAPHICS_STUDY_ARM_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_arm_summary';
@@ -47,7 +48,11 @@ Ext.define('Connector.utility.Query', {
      */
     getData : function(config)
     {
-        var result = this._generateVisGetDataSql(config.measures, config.extraFilters, {});
+        var result;
+        if (config.gridOptions && config.gridOptions.demographicsOnly)
+            result = this._generateDemographicsGetDataSql(config.measures, config.extraFilters, {});
+        else
+            result = this._generateVisGetDataSql(config.measures, config.extraFilters, {}, config.gridOptions);
 
         LABKEY.Query.executeSql({
             schemaName: Connector.studyContext.schemaName,
@@ -199,7 +204,77 @@ Ext.define('Connector.utility.Query', {
         return Ext.isString(date) && isNaN(date) && (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
     },
 
-    _generateVisGetDataSql : function(measuresIN, extraFilters, options)
+    _generateDemographicsGetDataSql: function(allMeasures, subjectFilters)
+    {
+        var tableName = 'study.demographics',
+                tables = this._getTables(),
+                table = tables[tableName],
+                sourceTableAlas = 'study_demographics',
+                columnAliasMap = {};
+
+        columnAliasMap[this.DEMOGRAPHICS_SUBJECT_ALIAS] = {
+            name: Connector.studyContext.subjectColumn,
+            schemaName: 'study',
+            queryName: 'demographics'
+        };
+
+        // SELECT
+        var SELECT = ['SELECT '], sep = "\n\t";
+
+        // WHERE
+        var WHERE = [];
+        var WHERE_DEBUG = [];
+
+        var subjectAlias = Connector.getQueryService().getDemographicsSubjectColumnAlias().toLowerCase();
+        Ext.each(allMeasures, function (m) {
+            var measure = m.measure;
+            var alias = measure.alias || LABKEY.Utils.getMeasureAlias(measure),
+                    colLabel = measure.shortCaption || measure.label,
+                    title = Ext.isDefined(colLabel) ? " @title='" + colLabel + "'" : "";
+            if (alias.indexOf(QueryUtils.DEMOGRAPHICS_ALIAS_PREFIX) === -1)
+                return true; //skip non demographics measures
+            SELECT.push(sep + sourceTableAlas + "." + measure.name + " AS " + alias + title);
+            sep = ",\n\t";
+
+            columnAliasMap[alias] = {
+                name: measure.name,
+                schemaName: 'study',
+                queryName: 'demographics'
+            };
+
+            if (alias.toLowerCase() == subjectAlias && subjectFilters && subjectFilters.length > 0)
+            {
+                m.sourceTable = table;
+                m.literalFn = this._sqlLiteralFn(m.measure.type);
+                WHERE.push(this._getWhereClauseFromFilter(subjectFilters[0], m, false /* recursed */, false));
+                WHERE_DEBUG.push(this._getWhereClauseFromFilter(subjectFilters[0], m, false /* recursed */, true));
+            }
+
+        }, this);
+
+        // FROM
+        var FROM = "FROM " + table.fullQueryName + " " + table.tableAlias;
+
+        //Order by
+        var orderSQL = '\nORDER BY ' + this.DEMOGRAPHICS_SUBJECT_ALIAS;
+
+        var termSql = SELECT.join('') + "\n" + FROM + (WHERE.length == 0 ? "" : "\nWHERE ") + WHERE.join("\n\tAND ");
+        var sql = 'SELECT * FROM (' + termSql + ') AS _0' + orderSQL;
+
+        if (this.logging)
+        {
+            var termSqlDebug = SELECT.join('') + "\n" + FROM + (WHERE_DEBUG.length == 0 ? "" : "\nWHERE ") + WHERE_DEBUG.join("\n\tAND ");
+            var sqlDebug = 'SELECT * FROM (' + termSqlDebug + ') AS _0' + orderSQL;
+            console.log(sqlDebug);
+        }
+
+        return {
+            sql: sql,
+            columnAliasMap: columnAliasMap
+        };
+    },
+
+    _generateVisGetDataSql : function(measuresIN, extraFilters, options, gridOptions)
     {
         var me = this,
             tables = this._getTables(),
@@ -356,6 +431,8 @@ Ext.define('Connector.utility.Query', {
                             throw 'Unable to resolve table "' + measure.queryName + '". It may not be white-listed for getData queries.';
                         }
                     }
+                    else if (gridOptions)
+                        return true; //skip filters on other data sources
                     else
                     {
                         throw 'Unable to find measure "' + alias + '" from compound filter. This measure must be included.';
@@ -402,6 +479,8 @@ Ext.define('Connector.utility.Query', {
 
         Ext.iterate(datasets, function(name)
         {
+            if (gridOptions && gridOptions.dataSource && datasets[name].queryName != gridOptions.dataSource.toLowerCase() && name != 'cds.gridbase')
+                return;
             term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap, options);
             unionSQL += union + term.sql;
 

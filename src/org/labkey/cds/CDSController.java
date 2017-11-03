@@ -33,7 +33,7 @@ import org.labkey.api.action.SimpleApiJsonForm;
 import org.labkey.api.action.SimpleErrorView;
 import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
-import org.labkey.api.data.ColumnHeaderType;
+import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.CoreSchema;
@@ -495,7 +495,26 @@ public class CDSController extends SpringActionController
         }
     }
 
-    public static class ExportForm extends QueryForm
+    public static class CDSExportQueryForm extends QueryForm
+    {
+        public CDSExportQueryForm()
+        {
+            super();
+        }
+
+        public CDSExportQueryForm(String schemaName, String queryName, PropertyValues values)
+        {
+            super(schemaName, queryName);
+            this._initParameters = values;
+        }
+
+        public PropertyValues getInitParams()
+        {
+            return this._initParameters;
+        }
+    }
+
+    public static class ExportForm extends CDSExportQueryForm
     {
         private String[] _filterStrings;
         private Set<String> _studies = new HashSet<>();
@@ -503,7 +522,13 @@ public class CDSController extends SpringActionController
         private String[] _columnNamesOrdered;
         private String[] _variables;
         private String[] _studyassays;
-        private Map<String, String> _columnAliases = new HashMap<>();
+        private Map<String, String> _columnAliases = new CaseInsensitiveHashMap<>();
+
+        private String[] dataTabNames;
+        private String[] schemaNames;
+        private String[] queryNames;
+
+        private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
 
         protected BindException doBindParameters(PropertyValues in)
         {
@@ -511,6 +536,10 @@ public class CDSController extends SpringActionController
 
             String[] columnNames = getValues("columnNames", in);
             String[] columnAliases = getValues("columnAliases", in);
+            dataTabNames = getValues("dataTabNames", in);
+            schemaNames = getValues("schemaNames", in);
+            queryNames = getValues("queryNames", in);
+
             _filterStrings = getValues("filterStrings", in);
             _studyassays = getValues("studyassays", in);
             _variables = getValues("variables", in);
@@ -526,6 +555,18 @@ public class CDSController extends SpringActionController
                     if (parts.length < 2)
                         continue;
                     _assays.add(parts[1]);
+                }
+            }
+
+            if (dataTabNames.length == schemaNames.length && schemaNames.length == queryNames.length)
+            {
+                for (int i = 0; i < dataTabNames.length; i++)
+                {
+                    CDSExportQueryForm queryForm = new CDSExportQueryForm(schemaNames[i], queryNames[i], this.getInitParams());
+                    queryForm.setViewContext(getViewContext());
+                    queryForm.getSchema();
+
+                    _tabQueryForms.put(dataTabNames[i], queryForm);
                 }
             }
 
@@ -574,6 +615,47 @@ public class CDSController extends SpringActionController
         {
             return _variables;
         }
+
+        public String[] getDataTabNames()
+        {
+            return dataTabNames;
+        }
+
+        public void setDataTabNames(String[] dataTabNames)
+        {
+            this.dataTabNames = dataTabNames;
+        }
+
+        public String[] getSchemaNames()
+        {
+            return schemaNames;
+        }
+
+        public void setSchemaNames(String[] schemaNames)
+        {
+            this.schemaNames = schemaNames;
+        }
+
+        public String[] getQueryNames()
+        {
+            return queryNames;
+        }
+
+        public void setQueryNames(String[] queryNames)
+        {
+            this.queryNames = queryNames;
+        }
+
+        public Map<String, CDSExportQueryForm> getTabQueryForms()
+        {
+            return _tabQueryForms;
+        }
+
+        public void setTabQueryForms(Map<String, CDSExportQueryForm> tabQueryForms)
+        {
+            _tabQueryForms = tabQueryForms;
+        }
+
     }
 
     @RequiresSiteAdmin

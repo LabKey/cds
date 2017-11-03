@@ -35,7 +35,7 @@ Ext.define('Connector.view.Grid', {
     constructor : function(config)
     {
         this.callParent([config]);
-        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter');
+        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter', 'datasourceupdate');
     },
 
     initComponent : function()
@@ -60,6 +60,7 @@ Ext.define('Connector.view.Grid', {
                 flex: 1,
                 text: 'View data grid',
                 buttons: [
+                    this.getDataSourceCombo(),
                     this.getExportButton(),
                     this.getCitationsButton(),
                     this.getSelectColumnsButton()
@@ -74,11 +75,13 @@ Ext.define('Connector.view.Grid', {
         this.on('applyfilter', model.onGridFilterChange, model);
         this.on('removefilter', model.onGridFilterRemove, model);
         this.on('measureselected', model.onMeasureSelected, model);
+        this.on('sheetselected', model.onSheetSelected, model);
         this.on('boxready', model.onViewReady, model, {single: true});
 
         // bind view to model
         model.on('filterchange', this.onFilterChange, this);
         model.on('updatecolumns', this.onColumnUpdate, this, {buffer: 200});
+        model.on('datasourceupdate', this.onDataSourceUpdate, this, {buffer: 200});
 
         // propagate event from model
         this.relayEvents(model, ['usergridfilter']);
@@ -110,6 +113,42 @@ Ext.define('Connector.view.Grid', {
         });
 
         this.on('beforehide', this.hideVisibleWindow);
+    },
+
+    onDataSourceUpdate: function() {
+        var data = this.getModel().getSources();
+        this.getDataSourceCombo().getStore().loadData(data);
+        if (!this.getModel().isValidDataSource())
+        {
+            this.getDataSourceCombo().select("Study and time");
+        }
+    },
+
+    getDataSourceCombo: function() {
+        if (!this.dataSourceCombo) {
+            var store = Ext.create('Ext.data.Store', {
+                fields: ['source'],
+                data: this.getModel().getSources()
+            });
+
+            this.dataSourceCombo = Ext.create('Ext.form.ComboBox', {
+                fieldLabel: 'Choose Sheet',
+                store: store,
+                queryMode: 'local',
+                displayField: 'source',
+                margin: '0 20 0 0',
+                valueField: 'source',
+                listeners: {
+                    change: function(combo, newValue)
+                    {
+                        this.fireEvent('sheetselected', newValue);
+                    },
+                    scope: this
+                }
+            });
+        }
+
+        return this.dataSourceCombo;
     },
 
     getExportButton : function() {
@@ -336,7 +375,7 @@ Ext.define('Connector.view.Grid', {
         var target;
 
         if (Ext.isString(columnName)) {
-            var fields = this.getModel().get('metadata').metaData.fields;
+            var fields = this.getModel().getActiveSheetMetadata().metaData.fields;
 
             if (!Ext.isEmpty(fields)) {
                 Ext.each(fields, function(field) {
@@ -579,7 +618,7 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(),
             modelMap = {},
             columns,
-            models = model.get('metadata').columnModel,
+            models = model.getActiveSheetMetadata().columnModel,
             applyChecker = false,
             queryService = Connector.getService('Query');
 
@@ -712,7 +751,7 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel();
 
         var aliases = Ext.Array.push(
-            Ext.Array.pluck(model.getMeasures('measures'), 'alias')
+            Ext.Array.pluck(model.getMeasures('gridColumnMeasures'), 'alias')
         );
 
         return Ext.Array.unique(aliases);
@@ -734,17 +773,24 @@ Ext.define('Connector.view.Grid', {
 
     requestExport : function() {
         if (this.grid) {
-
             var model = this.getModel(), sort = '', sep = '';
 
             var exportParams = {
-                schemaName: [model.get('schemaName')],
-                "query.queryName": [model.get('queryName')],
                 "query.showRows": ['ALL'],
                 columnNames: [],
                 columnAliases: [],
                 variables: []
             };
+
+            var dataTabNames = [], schemaNames = [], queryNames = [];
+            Ext.iterate(this.getModel().get('metadata'), function(datasource, metadata){
+                dataTabNames.push(datasource);
+                schemaNames.push(metadata.schemaName);
+                queryNames.push(metadata.queryName);
+            });
+            exportParams.dataTabNames = dataTabNames;
+            exportParams.schemaNames = schemaNames;
+            exportParams.queryNames = queryNames;
 
             // apply filters
             Ext.each(model.getBaseFilters(), function(filter) {
@@ -760,16 +806,23 @@ Ext.define('Connector.view.Grid', {
                 exportParams["query.sort"] = sort;
             }
 
-            // issue 20850: set export column headers to be "Dataset - Variable"
             var gridAssays = [];
-            Ext.each(this.getGrid().getColumnsConfig(), function(colGroup) {
-                Ext.each(colGroup.columns, function(col) {
-                    exportParams.columnNames.push(col.dataIndex);
-                    exportParams.columnAliases.push(colGroup.text + " - " + col.header);
+            var gridModel = this.getModel();
 
-                    var measure = Connector.getQueryService().getMeasure(col.dataIndex);
-                    if (measure && measure.queryType == 'datasets')
-                    {
+            var groups = Connector.grid.Panel.groupColumns(gridModel.getAllWrappedMeasures(gridModel.hasDemographics()), true);
+            Ext.each(groups, function(group){
+                var columns = group.columns;
+                Ext.each(columns, function (m) {
+                    var measure = m.measure;
+                    var alias = measure.alias.toLowerCase();
+                    if (exportParams.columnNames.indexOf(alias) > 0)
+                        return; // skip duplicate
+                    else if (alias === QueryUtils.SUBJECT_SEQNUM_ALIAS.toLowerCase())
+                        return; // skip participant sequence num
+                    exportParams.columnNames.push(alias);
+                    exportParams.columnAliases.push(measure.label);
+
+                    if (measure.queryType == 'datasets') {
                         if (gridAssays.indexOf(measure.queryName) === -1)
                             gridAssays.push(measure.queryName);
                         var variable = measure.queryLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.label + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.description;

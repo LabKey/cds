@@ -42,6 +42,11 @@ Ext.define('Connector.controller.Query', {
             this.GRID_MEASURES = [];
         }
 
+        if (!this.GRID_DEMOGRAPHICS_MEASURES)
+        {
+            this.GRID_DEMOGRAPHICS_MEASURES = [];
+        }
+
         // Issue 24670: allow a measure to specify what other measure it was sourced from and return
         // that measure if request made with altLookupType='parent' or altLookupType='child'
         if (!this.SOURCE_MEASURE_ALIAS_MAP)
@@ -71,16 +76,21 @@ Ext.define('Connector.controller.Query', {
             success: function(measures)
             {
                 var defaultGridAliases = this.getDefaultGridAliases(false, true);
+                var defaultGridDemographicsAliases = this.getDefaultGridDemographicsAliases(false);
 
                 // add all of the response measures to the cached store
                 Ext.each(measures, function(measure)
                 {
                     this.addMeasure(measure);
-
+                    var alias = measure.alias.toLowerCase();
                     // separate the set of default grid measures
-                    if (defaultGridAliases[measure.alias.toLowerCase()])
+                    if (defaultGridAliases[alias])
                     {
                         this.GRID_MEASURES.push(Ext.clone(measure));
+                    }
+                    if (defaultGridDemographicsAliases[alias])
+                    {
+                        this.GRID_DEMOGRAPHICS_MEASURES.push(Ext.clone(measure));
                     }
                 }, this);
 
@@ -127,6 +137,14 @@ Ext.define('Connector.controller.Query', {
         return Connector.studyContext.gridBaseSchema + '_' + Connector.studyContext.gridBase + '_' + colName;
     },
 
+    getDemographicsColumnAlias: function(colName) {
+        return QueryUtils.DEMOGRAPHICS_ALIAS_PREFIX + colName;
+    },
+
+    getDemographicsSubjectColumnAlias: function(colName) {
+        return this.getDemographicsColumnAlias(Connector.studyContext.subjectColumn);
+    },
+
     /**
      * @param {boolean} [asArray=false]
      * @param {boolean} [lowerCase=false]
@@ -162,9 +180,24 @@ Ext.define('Connector.controller.Query', {
         return result;
     },
 
+    getDefaultGridDemographicsAliases: function(asArray)
+    {
+        var key = this.getDemographicsColumnAlias(Connector.studyContext.subjectColumn).toLowerCase();
+        if (asArray === true)
+            return [key];
+        var result = {};
+        result[key] = 1;
+        return result;
+    },
+
     getDefaultGridMeasures : function()
     {
         return this.GRID_MEASURES;
+    },
+
+    getDefaultDemographicsMeasures: function()
+    {
+        return this.GRID_DEMOGRAPHICS_MEASURES;
     },
 
     getTimeAliases : function()
@@ -624,14 +657,15 @@ Ext.define('Connector.controller.Query', {
         return this.DEFINED_MEASURE_SOURCE_MAP;
     },
 
-    getData : function(measures, success, failure, scope, extraFilters)
+    getData : function(measures, success, failure, scope, extraFilters, gridOptions)
     {
         var config = {
             measures: measures,
             metaDataOnly: true,
             success: success,
             failure: failure,
-            scope: scope
+            scope: scope,
+            gridOptions: gridOptions
         };
 
         if (Ext.isArray(extraFilters))
