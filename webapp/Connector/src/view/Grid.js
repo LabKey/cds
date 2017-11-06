@@ -120,7 +120,7 @@ Ext.define('Connector.view.Grid', {
         this.getDataSourceCombo().getStore().loadData(data);
         if (!this.getModel().isValidDataSource())
         {
-            this.getDataSourceCombo().select("Study and time");
+            this.getDataSourceCombo().select(QueryUtils.DATA_SOURCE_STUDY_AND_TIME);
         }
     },
 

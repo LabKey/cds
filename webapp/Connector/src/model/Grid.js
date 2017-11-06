@@ -75,13 +75,13 @@ Ext.define('Connector.model.Grid', {
                         var metadatas = scope.get('metadata');
                         metadatas[source] = metadata;
                         scope.set('metadata', metadatas);
-                        if (source === scope.get("dataSource") || (!activeDataSource && source === 'Study and time')) {
+                        if (source === scope.get("dataSource") || (!activeDataSource && source === QueryUtils.DATA_SOURCE_STUDY_AND_TIME)) {
                             scope.updateColumnModel();
                         }
                     }
                 }(source);
 
-                var isDemographicsOnlyQuery = source === 'Subject characteristics';
+                var isDemographicsOnlyQuery = source === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
                 var extraFilters = isDemographicsOnlyQuery ? this.getDemographicsSubjectFilters() : this.get('extraFilters');
 
                 Connector.getQueryService().getData(this.getWrappedSourceMeasures(source), onMetadata, this.onFailure, this, extraFilters, {
@@ -228,7 +228,7 @@ Ext.define('Connector.model.Grid', {
 
     getDefaultWrappedMeasures: function(dataSource)
     {
-        if (dataSource === 'Subject characteristics' || this.isDemographicsTab())
+        if (dataSource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS || this.isDemographicsTab())
             return this.get('defaultDemographicsMeasures');
         return this.get('defaultMeasures');
     },
@@ -281,8 +281,8 @@ Ext.define('Connector.model.Grid', {
             var include = false;
             if (dataSource === group.text)
                 include = true;
-            else if (group.text === 'Study and time' || group.text === 'Study and treatment variables')
-                include = dataSource !== "Subject characteristics";
+            else if (group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TIME || group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TREATMENT)
+                include = dataSource !== QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
 
             if (include)
                 sourceMeasures = sourceMeasures.concat(group.columns);
@@ -338,12 +338,12 @@ Ext.define('Connector.model.Grid', {
 
     isDemographicsTab: function()
     {
-        return this.getDataSource() === 'Subject characteristics';
+        return this.getDataSource() === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
     },
 
     hasDemographics: function()
     {
-        return this.hasValidSource('Subject characteristics');
+        return this.hasValidSource(QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS);
     },
 
     bindApplicationMeasures : function()
@@ -1096,7 +1096,7 @@ Ext.define('Connector.model.Grid', {
     {
         var dataSource = this.get('dataSource');
         if (!dataSource)
-            dataSource = 'Study and time';
+            dataSource = QueryUtils.DATA_SOURCE_STUDY_AND_TIME;
         var metadata = this.get('metadata')[dataSource];
         if (!metadata)
             throw "unable to query grid";
@@ -1161,7 +1161,7 @@ Ext.define('Connector.model.Grid', {
         Ext.iterate(metas, function(dataSource, metadata){
             if (dataSource === activeDataSource)
                 activeMeta = metadata;
-            else if (!activeDataSource && dataSource == 'Study and time')
+            else if (!activeDataSource && dataSource == QueryUtils.DATA_SOURCE_STUDY_AND_TIME)
                 activeMeta = metadata;
         });
         return activeMeta;

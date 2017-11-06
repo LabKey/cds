@@ -41,7 +41,7 @@ Ext.define('Connector.grid.Panel', {
     statics: {
         groupColumns : function(columns, isMeasure)
         {
-            var defaultGroup = 'Study and time',
+            var defaultGroup = QueryUtils.DATA_SOURCE_STUDY_AND_TIME,
                     queryService = Connector.getQueryService(),
                     defaultColumns = queryService.getDefaultGridAliases(false, true),
                     definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
