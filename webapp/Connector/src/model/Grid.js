@@ -61,11 +61,21 @@ Ext.define('Connector.model.Grid', {
         this.viewReady = false;
         this._ready = false;
 
-        this.metadataTask = new Ext.util.DelayedTask(function () {
-            this.set('metadata', {});
+        this.resetAllMetadata();
+        this.metadataTask = new Ext.util.DelayedTask(function (sources, onComplete, cbScope) {
             var scope = this, activeDataSource = this.get('dataSource');
-            Ext.each(this.getSources(), function (s) {
-                var source = s.source;
+            var completedCount = 0;
+            Ext.each(sources, function (s) {
+                var source = s;
+
+                var onOneSourceComplete = function() {
+                    completedCount++;
+                    if (completedCount === sources.length && onComplete)
+                    {
+                        onComplete.call(cbScope);
+                    }
+                };
+
                 var onMetadata = function (source) {
                     return function (metadata) {
                         /**
@@ -75,11 +85,19 @@ Ext.define('Connector.model.Grid', {
                         var metadatas = scope.get('metadata');
                         metadatas[source] = metadata;
                         scope.set('metadata', metadatas);
-                        if (source === scope.get("dataSource") || (!activeDataSource && source === QueryUtils.DATA_SOURCE_STUDY_AND_TIME)) {
+                        if (source === activeDataSource || (!activeDataSource && source === QueryUtils.DATA_SOURCE_STUDY_AND_TIME)) {
                             scope.updateColumnModel();
                         }
+
+                        onOneSourceComplete();
                     }
                 }(source);
+
+                if (scope.get('metadata')[source]) // metadata already queried, skip
+                {
+                    onOneSourceComplete();
+                    return true;
+                }
 
                 var isDemographicsOnlyQuery = source === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
                 var extraFilters = isDemographicsOnlyQuery ? this.getDemographicsSubjectFilters() : this.get('extraFilters');
@@ -98,6 +116,11 @@ Ext.define('Connector.model.Grid', {
         }, this);
 
         this.addEvents('filterchange', 'updatecolumns');
+    },
+
+    resetAllMetadata: function()
+    {
+        this.set('metadata', {});
     },
 
     getDemographicsSubjectFilters: function ()
@@ -129,7 +152,7 @@ Ext.define('Connector.model.Grid', {
                 Connector.getApplication().on('plotmeasures', this.bindApplicationMeasures, this);
 
                 this.bindApplicationMeasures();
-                this.requestMetaData();
+                this.requestMetaData([QueryUtils.DATA_SOURCE_STUDY_AND_TIME]);
             }, this);
         }
     },
@@ -759,10 +782,11 @@ Ext.define('Connector.model.Grid', {
             this.applyFilters(function()
             {
                 this.bindApplicationMeasures();
+                this.resetAllMetadata();
 
                 if (this.isActive())
                 {
-                    this.requestMetaData();
+                    this.requestMetaData([this.get('dataSource')]);
                 }
             }, this);
         }
@@ -1032,7 +1056,8 @@ Ext.define('Connector.model.Grid', {
             gridColumnMeasures: this._wrapMeasures(measures)
         });
 
-        this.requestMetaData();
+        this.resetAllMetadata();
+        this.requestMetaData([this.get('dataSource')]);
         this.fireEvent('datasourceupdate');
     },
 
@@ -1059,9 +1084,9 @@ Ext.define('Connector.model.Grid', {
     /**
      * retrieve new column metadata based on the model configuration
      */
-    requestMetaData : function()
+    requestMetaData : function(sources, onComplete, cbScope)
     {
-        this.metadataTask.delay(50);
+        this.metadataTask.delay(50, null, this, [sources, onComplete, cbScope]);
     },
 
     /**
@@ -1098,6 +1123,16 @@ Ext.define('Connector.model.Grid', {
         if (!dataSource)
             dataSource = QueryUtils.DATA_SOURCE_STUDY_AND_TIME;
         var metadata = this.get('metadata')[dataSource];
+        if (metadata)
+            this.updateCurrentColumnModel(metadata);
+        else
+        {
+            this.requestMetaData([dataSource]);
+        }
+    },
+
+    updateCurrentColumnModel: function(metadata)
+    {
         if (!metadata)
             throw "unable to query grid";
 
@@ -1136,7 +1171,7 @@ Ext.define('Connector.model.Grid', {
             {
                 if (this.activeMeasure)
                 {
-                    this.requestMetaData();
+                    this.requestMetaData([this.get('dataSource')]);
                 }
                 else
                 {

@@ -772,6 +772,14 @@ Ext.define('Connector.view.Grid', {
     },
 
     requestExport : function() {
+        var _sources = this.getModel().getSources(), sources = [];
+        Ext.each(_sources, function(s){
+            sources.push(s.source);
+        });
+        this.getModel().requestMetaData(sources, this.onExport, this);
+    },
+
+    onExport : function() {
         if (this.grid) {
             var model = this.getModel(), sort = '', sep = '';
 
