@@ -96,16 +96,16 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
         <measure>true</measure>
       </column>
-      <column columnName="study_name">
+      <column columnName="study_prot">
         <datatype>varchar</datatype>
-        <columnTitle>Study Name</columnTitle>
+        <columnTitle>Study Protocol</columnTitle>
         <description>Study protocol</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="study_label">
         <datatype>varchar</datatype>
-        <columnTitle>Study Label</columnTitle>
+        <columnTitle>Study Name</columnTitle>
         <description>Standard label composed of network and the unique ID number for the study.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
@@ -282,9 +282,9 @@
         <isKeyField>true</isKeyField>
         <isAutoInc>true</isAutoInc>
       </column>
-      <column columnName="study_name">
+      <column columnName="study_prot">
         <datatype>varchar</datatype>
-        <columnTitle>Study Name</columnTitle>
+        <columnTitle>Study Protocol</columnTitle>
         <description>Study protocol</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
@@ -520,9 +520,9 @@
         <isKeyField>true</isKeyField>
         <isAutoInc>true</isAutoInc>
       </column>
-      <column columnName="study_name">
+      <column columnName="study_prot">
         <datatype>varchar</datatype>
-        <columnTitle>Study Name</columnTitle>
+        <columnTitle>Study Protocol</columnTitle>
         <description>Study protocol</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
@@ -739,9 +739,9 @@
         <isKeyField>true</isKeyField>
         <isAutoInc>true</isAutoInc>
       </column>
-      <column columnName="study_name">
+      <column columnName="study_prot">
         <datatype>varchar</datatype>
-        <columnTitle>Study Name</columnTitle>
+        <columnTitle>Study Protocol</columnTitle>
         <description>Study protocol</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
@@ -976,9 +976,9 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="study_name">
+      <column columnName="study_prot">
         <datatype>varchar</datatype>
-        <columnTitle>Study Name</columnTitle>
+        <columnTitle>Study Protocol</columnTitle>
         <description>Study protocol</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
