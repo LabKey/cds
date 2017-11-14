@@ -96,9 +96,16 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
         <measure>true</measure>
       </column>
-      <column columnName="study_label">
+      <column columnName="study_name">
         <datatype>varchar</datatype>
         <columnTitle>Study Name</columnTitle>
+        <description>Study protocol</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="study_label">
+        <datatype>varchar</datatype>
+        <columnTitle>Study Label</columnTitle>
         <description>Standard label composed of network and the unique ID number for the study.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
@@ -274,6 +281,13 @@
         <isHidden>true</isHidden>
         <isKeyField>true</isKeyField>
         <isAutoInc>true</isAutoInc>
+      </column>
+      <column columnName="study_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Study Name</columnTitle>
+        <description>Study protocol</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="assay_identifier">
         <datatype>varchar</datatype>
@@ -506,6 +520,13 @@
         <isKeyField>true</isKeyField>
         <isAutoInc>true</isAutoInc>
       </column>
+      <column columnName="study_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Study Name</columnTitle>
+        <description>Study protocol</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
       <column columnName="assay_identifier">
         <datatype>varchar</datatype>
         <columnTitle>Assay Identifier</columnTitle>
@@ -717,6 +738,13 @@
         <isHidden>true</isHidden>
         <isKeyField>true</isKeyField>
         <isAutoInc>true</isAutoInc>
+      </column>
+      <column columnName="study_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Study Name</columnTitle>
+        <description>Study protocol</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="assay_identifier">
         <datatype>varchar</datatype>
@@ -945,6 +973,13 @@
         <datatype>varchar</datatype>
         <columnTitle>Specimen type</columnTitle>
         <description>The type of specimen used in the assay</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="study_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Study Name</columnTitle>
+        <description>Study protocol</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
