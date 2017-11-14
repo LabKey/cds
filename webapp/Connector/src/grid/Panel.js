@@ -117,9 +117,9 @@ Ext.define('Connector.grid.Panel', {
                                 var ah = isMeasure ? a.measure.label.toLowerCase() : a.header.toLowerCase(),
                                         bh = isMeasure ? b.measure.label.toLowerCase() : b.header.toLowerCase();
 
-                                if (ah === 'subject id')
+                                if (ah.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
                                     return -1;
-                                else if (bh === 'subject id')
+                                else if (bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
                                     return -1;
 
                                 // sort columns alphabetically by title

@@ -10,6 +10,7 @@
         studyContext: {
             schemaName: 'study',
             subjectColumn: 'SubjectId',
+            subjectLabel: 'Subject Id',
             gridBaseSchema: 'cds',
             gridBase: 'GridBase',
             protocolDayColumn: 'ProtocolDay'

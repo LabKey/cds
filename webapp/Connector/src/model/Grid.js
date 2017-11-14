@@ -20,7 +20,7 @@ Ext.define('Connector.model.Grid', {
         {name: 'gridColumnMeasures', defaultValue: []},
         {name: 'SQLMeasures', defaultValue: []},
 
-        {name: 'metadata', defaultValue: undefined},
+        {name: 'metadatas', defaultValue: undefined},
         {name: 'schemaName', defaultValue: Connector.studyContext.gridBaseSchema},
         {name: 'queryName', defaultValue: Connector.studyContext.gridBase}
     ],
@@ -63,7 +63,7 @@ Ext.define('Connector.model.Grid', {
 
         this.resetAllMetadata();
         this.metadataTask = new Ext.util.DelayedTask(function (sources, onComplete, cbScope) {
-            var scope = this, activeDataSource = this.get('dataSource');
+            var scope = this, activeDataSource = this.getDataSource();
             var completedCount = 0;
             Ext.each(sources, function (s) {
                 var source = s;
@@ -82,9 +82,9 @@ Ext.define('Connector.model.Grid', {
                          * Called whenever the query metadata has been changed.
                          * @param metadata
                          */
-                        var metadatas = scope.get('metadata');
+                        var metadatas = scope.get('metadatas');
                         metadatas[source] = metadata;
-                        scope.set('metadata', metadatas);
+                        scope.set('metadatas', metadatas);
                         if (source === activeDataSource || (!activeDataSource && source === QueryUtils.DATA_SOURCE_STUDY_AND_TIME)) {
                             scope.updateColumnModel();
                         }
@@ -93,7 +93,7 @@ Ext.define('Connector.model.Grid', {
                     }
                 }(source);
 
-                if (scope.get('metadata')[source]) // metadata already queried, skip
+                if (scope.get('metadatas')[source]) // metadata already queried, skip
                 {
                     onOneSourceComplete();
                     return true;
@@ -120,7 +120,7 @@ Ext.define('Connector.model.Grid', {
 
     resetAllMetadata: function()
     {
-        this.set('metadata', {});
+        this.set('metadatas', {});
     },
 
     getDemographicsSubjectFilters: function ()
@@ -292,7 +292,7 @@ Ext.define('Connector.model.Grid', {
 
     getCurrentSheetMeasures: function (measures)
     {
-        var activeSheet = this.get("dataSource");
+        var activeSheet = this.getDataSource();
         return this.getDataSourceMeasures(measures, activeSheet);
     },
 
@@ -786,7 +786,7 @@ Ext.define('Connector.model.Grid', {
 
                 if (this.isActive())
                 {
-                    this.requestMetaData([this.get('dataSource')]);
+                    this.requestMetaData([this.getDataSource()]);
                 }
             }, this);
         }
@@ -1057,7 +1057,7 @@ Ext.define('Connector.model.Grid', {
         });
 
         this.resetAllMetadata();
-        this.requestMetaData([this.get('dataSource')]);
+        this.requestMetaData([this.getDataSource()]);
         this.fireEvent('datasourceupdate');
     },
 
@@ -1119,10 +1119,10 @@ Ext.define('Connector.model.Grid', {
 
     updateColumnModel : function()
     {
-        var dataSource = this.get('dataSource');
+        var dataSource = this.getDataSource();
         if (!dataSource)
             dataSource = QueryUtils.DATA_SOURCE_STUDY_AND_TIME;
-        var metadata = this.get('metadata')[dataSource];
+        var metadata = this.get('metadatas')[dataSource];
         if (metadata)
             this.updateCurrentColumnModel(metadata);
         else
@@ -1171,7 +1171,7 @@ Ext.define('Connector.model.Grid', {
             {
                 if (this.activeMeasure)
                 {
-                    this.requestMetaData([this.get('dataSource')]);
+                    this.requestMetaData([this.getDataSource()]);
                 }
                 else
                 {
@@ -1190,9 +1190,11 @@ Ext.define('Connector.model.Grid', {
         return this.get('active') === true && this.initialized === true;
     },
 
+    // get metadata for currently selected sheet
+    // used for UI iteration of grid
     getActiveSheetMetadata: function()
     {
-        var metas = this.get('metadata'), activeDataSource = this.get('dataSource'), activeMeta = null;
+        var metas = this.get('metadatas'), activeDataSource = this.getDataSource(), activeMeta = null;
         Ext.iterate(metas, function(dataSource, metadata){
             if (dataSource === activeDataSource)
                 activeMeta = metadata;

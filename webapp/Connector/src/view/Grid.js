@@ -35,7 +35,7 @@ Ext.define('Connector.view.Grid', {
     constructor : function(config)
     {
         this.callParent([config]);
-        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter', 'datasourceupdate');
+        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter', 'datasourceupdate', 'sheetselected');
     },
 
     initComponent : function()
@@ -618,12 +618,12 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(),
             modelMap = {},
             columns,
-            models = model.getActiveSheetMetadata().columnModel,
+            columnModels = model.getActiveSheetMetadata().columnModel,
             applyChecker = false,
-            queryService = Connector.getService('Query');
+            queryService = Connector.getQueryService();
 
-        Ext.each(models, function(model) {
-            modelMap[model.dataIndex] = model;
+        Ext.each(columnModels, function(columnModel) {
+            modelMap[columnModel.dataIndex] = columnModel;
         }, this);
 
         if (QueryUtils.DATASET_ALIAS in modelMap) {
@@ -791,7 +791,7 @@ Ext.define('Connector.view.Grid', {
             };
 
             var dataTabNames = [], schemaNames = [], queryNames = [];
-            Ext.iterate(this.getModel().get('metadata'), function(datasource, metadata){
+            Ext.iterate(this.getModel().get('metadatas'), function(datasource, metadata){
                 dataTabNames.push(datasource);
                 schemaNames.push(metadata.schemaName);
                 queryNames.push(metadata.queryName);
@@ -819,11 +819,10 @@ Ext.define('Connector.view.Grid', {
 
             var groups = Connector.grid.Panel.groupColumns(gridModel.getAllWrappedMeasures(gridModel.hasDemographics()), true);
             Ext.each(groups, function(group){
-                var columns = group.columns;
-                Ext.each(columns, function (m) {
+                Ext.each(group.columns, function (m) {
                     var measure = m.measure;
                     var alias = measure.alias.toLowerCase();
-                    if (exportParams.columnNames.indexOf(alias) > 0)
+                    if (exportParams.columnNames.indexOf(alias) !== -1)
                         return; // skip duplicate
                     else if (alias === QueryUtils.SUBJECT_SEQNUM_ALIAS.toLowerCase())
                         return; // skip participant sequence num

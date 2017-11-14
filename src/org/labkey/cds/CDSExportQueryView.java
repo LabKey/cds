@@ -193,9 +193,9 @@ public class CDSExportQueryView extends QueryView
         ew.setFilenamePrefix(FILE_NAME_PREFIX);
         ew.setCaptionType(headerType);
         ew.setShowInsertableColumnsOnly(false, null);
-        ew.setSheetName(_dataTabNames.get(0));
+        ew.setSheetName(_dataTabNames.get(0)); // the 1st data source sheet
 
-        if (_dataTabNames.size() > 1)
+        if (_dataTabNames.size() > 1) // if multiple data sources, write the other data sheets
         {
             for (int i = 1; i < _dataTabNames.size(); i++)
             {

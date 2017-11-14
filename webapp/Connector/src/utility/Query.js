@@ -483,7 +483,9 @@ Ext.define('Connector.utility.Query', {
 
         Ext.iterate(datasets, function(name)
         {
-            if (gridOptions && gridOptions.dataSource && datasets[name].queryName != gridOptions.dataSource.toLowerCase() && name != 'cds.gridbase')
+            if (gridOptions && gridOptions.dataSource &&
+                    datasets[name].queryName !== gridOptions.dataSource.toLowerCase() &&
+                    name !== [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase].join('.').toLowerCase())
                 return;
             term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap, options);
             unionSQL += union + term.sql;

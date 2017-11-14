@@ -524,9 +524,9 @@ public class CDSController extends SpringActionController
         private String[] _studyassays;
         private Map<String, String> _columnAliases = new CaseInsensitiveHashMap<>();
 
-        private String[] dataTabNames;
-        private String[] schemaNames;
-        private String[] queryNames;
+        private String[] _dataTabNames;
+        private String[] _schemaNames;
+        private String[] _queryNames;
 
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
 
@@ -536,9 +536,9 @@ public class CDSController extends SpringActionController
 
             String[] columnNames = getValues("columnNames", in);
             String[] columnAliases = getValues("columnAliases", in);
-            dataTabNames = getValues("dataTabNames", in);
-            schemaNames = getValues("schemaNames", in);
-            queryNames = getValues("queryNames", in);
+            _dataTabNames = getValues("dataTabNames", in);
+            _schemaNames = getValues("schemaNames", in);
+            _queryNames = getValues("queryNames", in);
 
             _filterStrings = getValues("filterStrings", in);
             _studyassays = getValues("studyassays", in);
@@ -558,15 +558,15 @@ public class CDSController extends SpringActionController
                 }
             }
 
-            if (dataTabNames.length == schemaNames.length && schemaNames.length == queryNames.length)
+            if (_dataTabNames.length == _schemaNames.length && _schemaNames.length == _queryNames.length)
             {
-                for (int i = 0; i < dataTabNames.length; i++)
+                for (int i = 0; i < _dataTabNames.length; i++)
                 {
-                    CDSExportQueryForm queryForm = new CDSExportQueryForm(schemaNames[i], queryNames[i], this.getInitParams());
+                    CDSExportQueryForm queryForm = new CDSExportQueryForm(_schemaNames[i], _queryNames[i], this.getInitParams());
                     queryForm.setViewContext(getViewContext());
-                    queryForm.getSchema();
+                    queryForm.getSchema(); // initialize _schema
 
-                    _tabQueryForms.put(dataTabNames[i], queryForm);
+                    _tabQueryForms.put(_dataTabNames[i], queryForm);
                 }
             }
 
@@ -618,32 +618,32 @@ public class CDSController extends SpringActionController
 
         public String[] getDataTabNames()
         {
-            return dataTabNames;
+            return _dataTabNames;
         }
 
         public void setDataTabNames(String[] dataTabNames)
         {
-            this.dataTabNames = dataTabNames;
+            this._dataTabNames = dataTabNames;
         }
 
         public String[] getSchemaNames()
         {
-            return schemaNames;
+            return _schemaNames;
         }
 
         public void setSchemaNames(String[] schemaNames)
         {
-            this.schemaNames = schemaNames;
+            this._schemaNames = schemaNames;
         }
 
         public String[] getQueryNames()
         {
-            return queryNames;
+            return _queryNames;
         }
 
         public void setQueryNames(String[] queryNames)
         {
-            this.queryNames = queryNames;
+            this._queryNames = queryNames;
         }
 
         public Map<String, CDSExportQueryForm> getTabQueryForms()
