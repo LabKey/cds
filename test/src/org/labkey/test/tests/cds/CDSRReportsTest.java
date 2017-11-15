@@ -340,8 +340,12 @@ public class CDSRReportsTest extends CDSReadOnlyTest
             waitForElement(Locator.tagWithText("span", "Save"));
             _rReportHelper.saveReport(reportName);
 
-            waitForText("Query Schema Browser");
+            waitForText(reportName);
             log("Report created: " + reportName);
+
+            beginAt(getProjectName() + "/query-begin.view?#sbh-qdp-%26CDS%26assay");
+            waitForElement(Locator.linkWithText("view data"));
+            click(Locator.linkWithText("view data"));
         }
         log("Get the reportId from the URL");
         table.goToReport(reportName);
