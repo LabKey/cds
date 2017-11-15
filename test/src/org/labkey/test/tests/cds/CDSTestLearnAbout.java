@@ -45,7 +45,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String MISSING_SEARCH_STRING = "If this string ever appears something very odd happened.";
-    private final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
+    public static final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
     private final Locator XPATH_RESULT_ROW_TITLE = LearnGrid.Locators.lockedRow;
     private final Locator XPATH_RESULT_ROW_DATA = LearnGrid.Locators.unlockedRow;
 
