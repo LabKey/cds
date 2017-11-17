@@ -15,7 +15,7 @@
  */
 SELECT
   -- KEYS
-  dd.prot AS study_name,
+  dd.prot AS study_prot,
   dd.prot,
   dd.subject_id AS participantid,
 

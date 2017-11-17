@@ -43,6 +43,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.tests.cds.CDSTestLearnAbout.XPATH_TEXTBOX;
 
 @Category({})
 public class CDSSecurityTest extends CDSReadOnlyTest
@@ -57,6 +58,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
+        super.preTest();
         Ext4Helper.setCssPrefix("x-");
 
         log("Deleting groups that may be left over from a previous run.");
@@ -320,9 +322,11 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     private void validateStudyDocumentForR2(boolean hasAccessToR2)
     {
         String study = "RED 2";
-        Locator element = Locator.xpath("//tr/td/div/div/h2[contains(text(), '" + study + "')]");
-        assertElementPresent(element);
-        waitAndClick(element);
+        setFormElement(Locator.xpath(XPATH_TEXTBOX), study);
+        sleep(CDSHelper.CDS_WAIT);
+
+        List<WebElement> returnedItems  = LearnGrid.Locators.lockedRow.findElements(getDriver());
+        returnedItems.get(0).click();
         waitForText("Study information");
         sleep(2000);
 
@@ -455,7 +459,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
             // If there is anything left in the map of containers and access it means there was a container that this group has access to that wasn't expected.
             log("Validate that there are no extra studies/containers listed for the group.");
-            if(containerAccess.size() > 0)
+            if(containerAccess.size() > 0 && !groupName.equalsIgnoreCase(CDSHelper.GROUP_DATA_IMPORT))
             {
                 log("Found entries in the list that should not be there!");
                 allGood = false;
@@ -500,7 +504,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
                 if (!containerAccess.get(study).toLowerCase().equals(expectedAccess.toLowerCase()))
                 {
                     allGood = false;
-                    errorMessage.append("For special case of inherited permissions group '" + CDSHelper.GROUP_DATA_IMPORT + "' container/study '" + study + "' was listed but permission was listed as '" + containerAccess.get(study) + "' expected '" + CDSHelper.siteGroupRoles.get(CDSHelper.GROUP_DATA_IMPORT) + "'.\n");
+                    errorMessage.append("For special case of inherited permissions group '" + CDSHelper.GROUP_DATA_IMPORT + "' container/study '" + study + "' was listed but permission was listed as '" + containerAccess.get(study) + "' expected '" + expectedAccess + "'.\n");
                 }
 
                 containerAccess.remove(study);

@@ -17,6 +17,7 @@ SELECT
 subject_id AS participantid,
 CAST(study_day AS DOUBLE) AS sequencenum,
 study_day AS visit_day,
+prot AS study_prot,
 prot,
 
 -- DIMENSIONS

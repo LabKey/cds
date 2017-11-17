@@ -15,11 +15,12 @@
  */
 package org.labkey.test.tests.cds;
 
-import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.labkey.test.util.ReadOnlyTest;
 import org.labkey.test.util.cds.CDSHelper;
@@ -73,6 +74,14 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
         {
             return true;
         }
+    }
+
+    @Before
+    @LogMethod
+    public void preTest()
+    {
+        if (isImpersonating())
+            stopImpersonating();
     }
 
     @AfterClass
