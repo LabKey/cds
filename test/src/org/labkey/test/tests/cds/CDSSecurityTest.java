@@ -586,7 +586,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         waitForText(_newUserAccounts[1] + " added as a new user to the system and emailed successfully.");
 
         log("Adding user " + _newUserAccounts[0] + " this user will be added with all permissions.");
-        //TODO This and subsequent security tests broken by issue 31685
         log("Setting clone permission to account: " + getCurrentUser());
         click(Locator.css("input[name='cloneUserCheck']"));
         setFormElement(Locator.css("input[name='cloneUser']"), getCurrentUser());
