@@ -35,14 +35,15 @@ Ext.define('Connector.window.Filter', {
             }
         }, this);
 
+        var metadata = model.getActiveSheetMetadata();
         return [{
             xtype: 'labkey-default-filterpanel',
             itemId: 'filtered',
             cls: 'filterpanel',
             boundColumn: this.columnMetadata,
             filterArray: filters,
-            schemaName: model.get('metadata').schemaName,
-            queryName: model.get('metadata').queryName
+            schemaName: metadata.schemaName,
+            queryName: metadata.queryName
         }];
     },
 

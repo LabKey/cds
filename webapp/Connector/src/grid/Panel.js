@@ -38,6 +38,110 @@ Ext.define('Connector.grid.Panel', {
     colPadding: 10,
     maxColWidth: 400,
 
+    statics: {
+        groupColumns : function(columns, isMeasure)
+        {
+            var defaultGroup = QueryUtils.DATA_SOURCE_STUDY_AND_TIME,
+                    queryService = Connector.getQueryService(),
+                    defaultColumns = queryService.getDefaultGridAliases(false, true),
+                    definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
+                    groups = [],
+                    groupMap = {},
+                    studyTime = [],
+                    remainder = [];
+
+            // Split columns into groups
+            Ext.each(columns, function(col)
+            {
+                var name = isMeasure ? col.measure.alias : col.dataIndex;
+                if (defaultColumns[name.toLowerCase()] ||
+                        name.toLowerCase().indexOf(QueryUtils.STUDY_ALIAS_PREFIX.toLowerCase()) == 0)
+                {
+                    studyTime.push(col);
+                }
+                else
+                {
+                    remainder.push(col);
+                }
+            });
+
+            if (studyTime.length > 0) // demographics tab doesn't include study time
+            {
+                groups.push({
+                    text: defaultGroup,
+                    columns: studyTime
+                });
+            }
+
+            // All other groups based on query label
+            Ext.each(remainder, function(col)
+            {
+                var name = isMeasure ? col.measure.alias : col.dataIndex;
+                var measure = !QueryUtils.isGeneratedColumnAlias(name) ? queryService.getMeasure(name) : undefined,
+                        queryName;
+
+                if (Ext.isObject(measure))
+                {
+                    if (Ext.isDefined(definedMeasureSourceMap[measure.alias]))
+                    {
+                        queryName = definedMeasureSourceMap[measure.alias];
+                    }
+                    else
+                    {
+                        queryName = measure.queryName;
+                    }
+                }
+                else
+                {
+                    queryName = name.split('_')[1];
+                }
+
+                if (Ext.isDefined(queryName))
+                {
+                    if (!groupMap[queryName])
+                    {
+                        groupMap[queryName] = [];
+                    }
+
+                    groupMap[queryName].push(col);
+                }
+            });
+
+            var columnCharacterWidth = 14;
+            Ext.iterate(groupMap, function(key, value)
+            {
+                groups.push({
+                    text: isMeasure ? key: value.length > 2 ? key : Ext.String.ellipsis(key, columnCharacterWidth * value.length, true),
+                    columns: value.sort(function(a, b)
+                            {
+                                var ah = isMeasure ? a.measure.label.toLowerCase() : a.header.toLowerCase(),
+                                        bh = isMeasure ? b.measure.label.toLowerCase() : b.header.toLowerCase();
+
+                                if (ah.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
+                                    return -1;
+                                else if (bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
+                                    return -1;
+
+                                // sort columns alphabetically by title
+                                return ah == bh ? 0 : (ah > bh ? 1 : -1);
+                            })
+                });
+            });
+
+            groups.sort(function(a, b)
+            {
+                if (a.text === defaultGroup)
+                    return -1;
+                else if (b.text === defaultGroup)
+                    return 1;
+                return a.text == b.text ? 0 : (a.text > b.text ? 1 : -1);
+            });
+
+            return groups;
+        }
+
+    },
+
     constructor : function(config)
     {
         this.callParent([config]);
@@ -181,98 +285,7 @@ Ext.define('Connector.grid.Panel', {
 
         var columns = this._getColumnsConfig(config);
 
-        return this.groupColumns(columns);
-    },
-
-    groupColumns : function(columns)
-    {
-        var defaultGroup = 'Study and time',
-            queryService = Connector.getQueryService(),
-            defaultColumns = queryService.getDefaultGridAliases(false, true),
-            definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
-            groups = [],
-            groupMap = {},
-            studyTime = [],
-            remainder = [];
-
-        // Split columns into groups
-        Ext.each(columns, function(col)
-        {
-            if (defaultColumns[col.dataIndex.toLowerCase()] ||
-                col.dataIndex.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0)
-            {
-                studyTime.push(col);
-            }
-            else
-            {
-                remainder.push(col);
-            }
-        }, this);
-
-        groups.push({
-            text: defaultGroup,
-            columns: studyTime
-        });
-
-        // All other groups based on query label
-        Ext.each(remainder, function(col)
-        {
-            var measure = !QueryUtils.isGeneratedColumnAlias(col.dataIndex) ? queryService.getMeasure(col.dataIndex) : undefined,
-                queryName;
-
-            if (Ext.isObject(measure))
-            {
-                if (Ext.isDefined(definedMeasureSourceMap[measure.alias]))
-                {
-                    queryName = definedMeasureSourceMap[measure.alias];
-                }
-                else
-                {
-                    queryName = measure.queryName;
-                }
-            }
-            else
-            {
-                queryName = col.dataIndex.split('_')[1];
-            }
-
-            if (Ext.isDefined(queryName))
-            {
-                if (!groupMap[queryName])
-                {
-                    groupMap[queryName] = [];
-                }
-
-                groupMap[queryName].push(col);
-            }
-        }, this);
-
-        var columnCharacterWidth = 14;
-        Ext.iterate(groupMap, function(key, value)
-        {
-            groups.push({
-                text: value.length > 2 ? key : Ext.String.ellipsis(key, columnCharacterWidth * value.length, true),
-                columns: value.sort(function(a, b)
-                {
-                    var ah = a.header.toLowerCase(),
-                        bh = b.header.toLowerCase();
-
-                    // sort columns alphabetically by header
-                    return ah == bh ? 0 : (ah > bh ? 1 : -1);
-                })
-            });
-        });
-
-        groups.sort(function(a, b)
-        {
-            if (a.text === defaultGroup)
-                return -1;
-            else if (b.text === defaultGroup)
-                return 1;
-            return a.text == b.text ? 0 : (a.text > b.text ? 1 : -1);
-        });
-
-        return groups;
+        return Connector.grid.Panel.groupColumns(columns);
     },
 
     onLookupStoreLoad : function()

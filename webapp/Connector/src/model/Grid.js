@@ -16,12 +16,13 @@ Ext.define('Connector.model.Grid', {
         {name: 'extraFilters', defaultValue: []},
 
         {name: 'defaultMeasures', defaultValue: []},
-        {name: 'measures', defaultValue: []},
+        {name: 'defaultDemographicsMeasures', defaultValue: []},
+        {name: 'gridColumnMeasures', defaultValue: []},
         {name: 'SQLMeasures', defaultValue: []},
 
-        {name: 'metadata', defaultValue: undefined},
-        {name: 'schemaName', defaultValue: Connector.studyContext.gridBaseSchema },
-        {name: 'queryName', defaultValue: Connector.studyContext.gridBase }
+        {name: 'metadatas', defaultValue: undefined},
+        {name: 'schemaName', defaultValue: Connector.studyContext.gridBaseSchema},
+        {name: 'queryName', defaultValue: Connector.studyContext.gridBase}
     ],
 
     statics: {
@@ -60,18 +61,80 @@ Ext.define('Connector.model.Grid', {
         this.viewReady = false;
         this._ready = false;
 
-        this.metadataTask = new Ext.util.DelayedTask(function()
-        {
-            Connector.getQueryService().getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this, this.get('extraFilters'));
+        this.resetAllMetadata();
+        this.metadataTask = new Ext.util.DelayedTask(function (sources, onComplete, cbScope) {
+            var scope = this, activeDataSource = this.getDataSource();
+            var completedCount = 0;
+            Ext.each(sources, function (s) {
+                var source = s;
+
+                var onOneSourceComplete = function() {
+                    completedCount++;
+                    if (completedCount === sources.length && onComplete)
+                    {
+                        onComplete.call(cbScope);
+                    }
+                };
+
+                var onMetadata = function (source) {
+                    return function (metadata) {
+                        /**
+                         * Called whenever the query metadata has been changed.
+                         * @param metadata
+                         */
+                        var metadatas = scope.get('metadatas');
+                        metadatas[source] = metadata;
+                        scope.set('metadatas', metadatas);
+                        if (source === activeDataSource || (!activeDataSource && source === QueryUtils.DATA_SOURCE_STUDY_AND_TIME)) {
+                            scope.updateColumnModel();
+                        }
+
+                        onOneSourceComplete();
+                    }
+                }(source);
+
+                if (scope.get('metadatas')[source]) // metadata already queried, skip
+                {
+                    onOneSourceComplete();
+                    return true;
+                }
+
+                var isDemographicsOnlyQuery = source === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
+                var extraFilters = isDemographicsOnlyQuery ? this.getDemographicsSubjectFilters() : this.get('extraFilters');
+
+                Connector.getQueryService().getData(this.getWrappedSourceMeasures(source), onMetadata, this.onFailure, this, extraFilters, {
+                    dataSource: source,
+                    demographicsOnly: isDemographicsOnlyQuery
+                });
+            }, this);
         }, this);
 
-        Connector.getState().onReady(function()
+        Connector.getState().onReady(function ()
         {
             this.stateReady = true;
             this.applyFilters(this._init, this);
         }, this);
 
         this.addEvents('filterchange', 'updatecolumns');
+    },
+
+    resetAllMetadata: function()
+    {
+        this.set('metadatas', {});
+    },
+
+    getDemographicsSubjectFilters: function ()
+    {
+        var subjectValue, subjectAlias = Connector.getQueryService().getSubjectColumnAlias().toLowerCase();
+        Ext.each(this.get('defaultMeasures'), function(defaultMeasure)
+        {
+            if (defaultMeasure.measure.alias.toLowerCase() === subjectAlias)
+            {
+                subjectValue = defaultMeasure.filterArray[0].getValue();
+                return false;
+            }
+        });
+        return [LABKEY.Filter.create(QueryUtils.DEMOGRAPHICS_SUBJECT_ALIAS, subjectValue, LABKEY.Filter.Types.IN)];
     },
 
     _init : function()
@@ -82,21 +145,22 @@ Ext.define('Connector.model.Grid', {
             {
                 this._ready = true;
 
-                this.bindDefaultMeasures(service.getDefaultGridMeasures());
+                this.bindDefaultMeasures(service.getDefaultGridMeasures(), service.getDefaultDemographicsMeasures());
 
                 // hook listeners
                 Connector.getState().on('filterchange', this.onAppFilterChange, this);
                 Connector.getApplication().on('plotmeasures', this.bindApplicationMeasures, this);
 
                 this.bindApplicationMeasures();
-                this.requestMetaData();
+                this.requestMetaData([QueryUtils.DATA_SOURCE_STUDY_AND_TIME]);
             }, this);
         }
     },
 
-    bindDefaultMeasures : function(defaultMeasures)
+    bindDefaultMeasures: function (defaultMeasures, defaultDemographicsMeasures)
     {
         this.set('defaultMeasures', this._wrapMeasures(defaultMeasures));
+        this.set('defaultDemographicsMeasures', this._wrapMeasures(defaultDemographicsMeasures));
         this._updateDefaultSubjectMeasure(this.get('subjectFilter'));
     },
 
@@ -177,19 +241,132 @@ Ext.define('Connector.model.Grid', {
         else
         {
             return Ext.Array.push(
-                Ext.Array.pluck(this.get('defaultMeasures'), 'measure'),
-                Ext.Array.pluck(this.get('SQLMeasures'), 'measure'),
-                Ext.Array.pluck(this.get('measures'), 'measure')
+                    Ext.Array.pluck(this.get('defaultMeasures'), 'measure'),
+                    Ext.Array.pluck(this.getCurrentSheetSQLMeasures(), 'measure'),
+                    Ext.Array.pluck(this.getCurrentSheetGridColumnMeasures(), 'measure')
             );
         }
         return measures;
     },
 
-    getWrappedMeasures : function()
+    getDefaultWrappedMeasures: function(dataSource)
     {
-        return this.get('defaultMeasures')
-                .concat(this.get('SQLMeasures'))
-                .concat(this.get('measures'));
+        if (dataSource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS || this.isDemographicsTab())
+            return this.get('defaultDemographicsMeasures');
+        return this.get('defaultMeasures');
+    },
+
+    getWrappedMeasures: function ()
+    {
+        return this.getDefaultWrappedMeasures()
+                .concat(this.getCurrentSheetSQLMeasures())
+                .concat(this.getCurrentSheetGridColumnMeasures());
+    },
+
+    getWrappedSourceMeasures: function (dataSource)
+    {
+        return this.getDefaultWrappedMeasures(dataSource)
+                .concat(this.getDataSourceMeasures(this.getSQLMeasures(), dataSource))
+                .concat(this.getDataSourceMeasures(this.getGridColumnMeasures(), dataSource));
+    },
+
+    getGridColumnMeasures: function ()
+    {
+        return this.get('gridColumnMeasures');
+    },
+
+    getCurrentSheetGridColumnMeasures: function ()
+    {
+        return this.getCurrentSheetMeasures(this.getGridColumnMeasures());
+    },
+
+    getSQLMeasures: function ()
+    {
+        return this.get('SQLMeasures');
+    },
+
+    getCurrentSheetSQLMeasures: function ()
+    {
+        return this.getCurrentSheetMeasures(this.getSQLMeasures());
+    },
+
+    getCurrentSheetMeasures: function (measures)
+    {
+        var activeSheet = this.getDataSource();
+        return this.getDataSourceMeasures(measures, activeSheet);
+    },
+
+    getDataSourceMeasures: function (measures, dataSource)
+    {
+        var measureGroups = Connector.grid.Panel.groupColumns(measures, true);
+        var sourceMeasures = [];
+        Ext.each(measureGroups, function (group) {
+            var include = false;
+            if (dataSource === group.text)
+                include = true;
+            else if (group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TIME || group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TREATMENT)
+                include = dataSource !== QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
+
+            if (include)
+                sourceMeasures = sourceMeasures.concat(group.columns);
+        });
+        return sourceMeasures;
+    },
+
+    getAllWrappedMeasures: function (includeDemographicDefaults)
+    {
+        var measures = includeDemographicDefaults ? this.get('defaultDemographicsMeasures') : [];
+        return measures
+                .concat(this.get('defaultMeasures'))
+                .concat(this.getSQLMeasures())
+                .concat(this.getGridColumnMeasures());
+    },
+
+    getSources: function ()
+    {
+        var allMeasures = this.getAllWrappedMeasures(false);
+        var groups = Connector.grid.Panel.groupColumns(allMeasures, true);
+        var sources = [];
+        Ext.each(groups, function (group) {
+            sources.push({
+                source: group.text
+            })
+        });
+        return sources;
+    },
+
+    getDataSource: function ()
+    {
+        return this.get("dataSource");
+    },
+
+    hasValidSource: function (targetSource)
+    {
+        var isValid = false;
+        Ext.each(this.getSources(), function (source) {
+            if (source.source === targetSource)
+            {
+                isValid = true;
+                return false;
+            }
+        });
+        return isValid;
+    },
+
+    isValidDataSource: function ()
+    {
+        var selectedDataSource = this.getDataSource();
+        return this.hasValidSource(selectedDataSource);
+    },
+
+    isDemographicsTab: function()
+    {
+        return this.getDataSource() === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
+    },
+
+    hasDemographics: function()
+    {
+        return this.hasValidSource(QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS);
     },
 
     bindApplicationMeasures : function()
@@ -293,6 +470,8 @@ Ext.define('Connector.model.Grid', {
         {
             this.activeMeasure = true;
         }
+
+        this.fireEvent('datasourceupdate');
     },
 
     _sourceKey : function(measure)
@@ -603,10 +782,11 @@ Ext.define('Connector.model.Grid', {
             this.applyFilters(function()
             {
                 this.bindApplicationMeasures();
+                this.resetAllMetadata();
 
                 if (this.isActive())
                 {
-                    this.requestMetaData();
+                    this.requestMetaData([this.getDataSource()]);
                 }
             }, this);
         }
@@ -873,10 +1053,21 @@ Ext.define('Connector.model.Grid', {
         });
 
         this.set({
-            measures: this._wrapMeasures(measures)
+            gridColumnMeasures: this._wrapMeasures(measures)
         });
 
-        this.requestMetaData();
+        this.resetAllMetadata();
+        this.requestMetaData([this.getDataSource()]);
+        this.fireEvent('datasourceupdate');
+    },
+
+    onSheetSelected: function(newSource)
+    {
+        this.set({
+            dataSource: newSource
+        });
+        this.fireEvent('datasourceupdate');
+        this.updateColumnModel();
     },
 
     /**
@@ -893,19 +1084,9 @@ Ext.define('Connector.model.Grid', {
     /**
      * retrieve new column metadata based on the model configuration
      */
-    requestMetaData : function()
+    requestMetaData : function(sources, onComplete, cbScope)
     {
-        this.metadataTask.delay(50);
-    },
-
-    /**
-     * Called whenever the query metadata has been changed.
-     * @param metadata
-     */
-    onMetaData : function(metadata)
-    {
-        this.set('metadata', metadata);
-        this.updateColumnModel();
+        this.metadataTask.delay(50, null, this, [sources, onComplete, cbScope]);
     },
 
     /**
@@ -938,7 +1119,22 @@ Ext.define('Connector.model.Grid', {
 
     updateColumnModel : function()
     {
-        var metadata = this.get('metadata');
+        var dataSource = this.getDataSource();
+        if (!dataSource)
+            dataSource = QueryUtils.DATA_SOURCE_STUDY_AND_TIME;
+        var metadata = this.get('metadatas')[dataSource];
+        if (metadata)
+            this.updateCurrentColumnModel(metadata);
+        else
+        {
+            this.requestMetaData([dataSource]);
+        }
+    },
+
+    updateCurrentColumnModel: function(metadata)
+    {
+        if (!metadata)
+            throw "unable to query grid";
 
         // The new columns will be available on the metadata query/schema
         this.set({
@@ -975,7 +1171,7 @@ Ext.define('Connector.model.Grid', {
             {
                 if (this.activeMeasure)
                 {
-                    this.requestMetaData();
+                    this.requestMetaData([this.getDataSource()]);
                 }
                 else
                 {
@@ -992,5 +1188,19 @@ Ext.define('Connector.model.Grid', {
     isActive : function()
     {
         return this.get('active') === true && this.initialized === true;
+    },
+
+    // get metadata for currently selected sheet
+    // used for UI iteration of grid
+    getActiveSheetMetadata: function()
+    {
+        var metas = this.get('metadatas'), activeDataSource = this.getDataSource(), activeMeta = null;
+        Ext.iterate(metas, function(dataSource, metadata){
+            if (dataSource === activeDataSource)
+                activeMeta = metadata;
+            else if (!activeDataSource && dataSource == QueryUtils.DATA_SOURCE_STUDY_AND_TIME)
+                activeMeta = metadata;
+        });
+        return activeMeta;
     }
 });
