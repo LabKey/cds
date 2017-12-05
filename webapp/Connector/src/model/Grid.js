@@ -62,7 +62,7 @@ Ext.define('Connector.model.Grid', {
         this._ready = false;
 
         this.resetAllMetadata();
-        this.metadataTask = new Ext.util.DelayedTask(function (sources, onComplete, cbScope) {
+        this.metadataTask = new Ext.util.DelayedTask(function (sources, onComplete, cbScope, isExcel) {
             var scope = this, activeDataSource = this.getDataSource();
             var completedCount = 0;
             Ext.each(sources, function (s) {
@@ -72,7 +72,7 @@ Ext.define('Connector.model.Grid', {
                     completedCount++;
                     if (completedCount === sources.length && onComplete)
                     {
-                        onComplete.call(cbScope);
+                        onComplete.call(cbScope, isExcel);
                     }
                 };
 
@@ -1084,9 +1084,9 @@ Ext.define('Connector.model.Grid', {
     /**
      * retrieve new column metadata based on the model configuration
      */
-    requestMetaData : function(sources, onComplete, cbScope)
+    requestMetaData : function(sources, onComplete, cbScope, isExcelExport)
     {
-        this.metadataTask.delay(50, null, this, [sources, onComplete, cbScope]);
+        this.metadataTask.delay(50, null, this, [sources, onComplete, cbScope, isExcelExport]);
     },
 
     /**
@@ -1203,4 +1203,13 @@ Ext.define('Connector.model.Grid', {
         });
         return activeMeta;
     }
+});
+
+Ext.define('Connector.model.GridHeaderDataView', {
+
+    extend: 'Ext.data.Model',
+
+    fields: [
+        {name: 'source'}
+    ]
 });

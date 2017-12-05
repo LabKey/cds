@@ -17,7 +17,7 @@ Ext.define('Connector.view.Grid', {
 
     headerHeight: 180,
 
-    titleHeight: 93,
+    titleHeight: 50,
 
     id: 'connector-view-grid',
 
@@ -38,6 +38,32 @@ Ext.define('Connector.view.Grid', {
         this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter', 'datasourceupdate', 'sheetselected');
     },
 
+    getSourceTabHeader : function() {
+        if (!this.headerDataView) {
+            var store = Ext.create('Ext.data.Store', {
+                model: 'Connector.model.GridHeaderDataView',
+                data: [{source: 'Study and time'},
+                    {source: 'Subject characteristics'},
+                    {source: 'BAMA'},
+                    {source: 'ELISPOT'},
+                    {source: 'ICS'},
+                    {source: 'NAb'}
+                ]});
+
+            this.headerDataView = Ext.create('Connector.view.GridHeaderDataView', {
+                cls: 'grid-tab-selector',
+                store: store
+            });
+            this.headerDataView.on({
+                itemclick: function(view, model) {
+                    this.fireEvent('sheetselected', model.get('source'));
+                },
+                scope: this
+            });
+        }
+        return this.headerDataView;
+    },
+
     initComponent : function()
     {
         // At times the store can be completely replaced for a given grid. When this occurs we want to
@@ -51,21 +77,29 @@ Ext.define('Connector.view.Grid', {
             xtype: 'container',
             height: this.headerHeight,
             ui: 'custom',
-            cls: 'header-container',
             layout: {
-                type: 'hbox'
+                type: 'vbox',
+                align: 'stretch'
             },
             items: [{
-                xtype: 'actiontitle',
-                flex: 1,
-                text: 'View data grid',
-                buttons: [
-                    this.getDataSourceCombo(),
-                    this.getExportButton(),
-                    this.getCitationsButton(),
-                    this.getSelectColumnsButton()
-                ]
-            }]
+                cls: 'header-container',
+                layout: {
+                    type: 'hbox',
+                },
+                items: [{
+                    xtype: 'actiontitle',
+                    flex: 1,
+                    text: 'View data grid',
+                    buttons: [
+                        this.getDataSourceCombo(),
+                        this.getExportCSVButton(),
+                        this.getExportExcelButton(),
+                        this.getCitationsButton(),
+                        this.getSelectColumnsButton()
+                    ]
+                }]
+            }, this.getSourceTabHeader()]
+
         }];
 
         this.callParent();
@@ -76,6 +110,7 @@ Ext.define('Connector.view.Grid', {
         this.on('removefilter', model.onGridFilterRemove, model);
         this.on('measureselected', model.onMeasureSelected, model);
         this.on('sheetselected', model.onSheetSelected, model);
+        this.getSourceTabHeader().on('sheetselected', model.onSheetSelected, model);
         this.on('boxready', model.onViewReady, model, {single: true});
 
         // bind view to model
@@ -151,19 +186,34 @@ Ext.define('Connector.view.Grid', {
         return this.dataSourceCombo;
     },
 
-    getExportButton : function() {
-        if (!this.exportButton) {
-            this.exportButton = Ext.create('Ext.button.Button', {
+    getExportCSVButton : function() {
+        if (!this.exportCSVButton) {
+            this.exportCSVButton = Ext.create('Ext.button.Button', {
                 cls: 'gridexportbtn',
                 ui: 'rounded-inverted-accent-text',
-                text: 'export',
+                text: 'Export CSV',
                 margin: '0 15 0 0',
-                handler: this.requestExport,
+                handler: this.requestExportCSV,
                 scope: this
             });
         }
 
-        return this.exportButton;
+        return this.exportCSVButton;
+    },
+
+    getExportExcelButton : function() {
+        if (!this.exportExcelButton) {
+            this.exportExcelButton = Ext.create('Ext.button.Button', {
+                cls: 'gridexportbtn',
+                ui: 'rounded-inverted-accent-text',
+                text: 'Export Excel',
+                margin: '0 15 0 0',
+                handler: this.requestExportExcel,
+                scope: this
+            });
+        }
+
+        return this.exportExcelButton;
     },
 
     getCitationsButton : function() {
@@ -409,11 +459,11 @@ Ext.define('Connector.view.Grid', {
                 model: this.getModel(),
                 height: size.height,
                 width: size.width,
-                forceFit: true,
+                forceFit: false,
                 store: this.initGridStore(),
                 border: false,
                 defaultColumnWidth: this.columnWidth,
-                margin: '-93 24 0 24',
+                margin: '-50 24 0 24',
                 ui: 'custom',
                 viewConfig: {
                     loadMask: false
@@ -771,15 +821,23 @@ Ext.define('Connector.view.Grid', {
         }, this);
     },
 
-    requestExport : function() {
+    requestExportCSV: function() {
+        this.requestExport(false);
+    },
+
+    requestExportExcel: function() {
+        this.requestExport(true);
+    },
+
+    requestExport : function(isExcel) {
         var _sources = this.getModel().getSources(), sources = [];
         Ext.each(_sources, function(s){
             sources.push(s.source);
         });
-        this.getModel().requestMetaData(sources, this.onExport, this);
+        this.getModel().requestMetaData(sources, this.onExport, this, isExcel);
     },
 
-    onExport : function() {
+    onExport : function(isExcel) {
         if (this.grid) {
             var model = this.getModel(), sort = '', sep = '';
 
@@ -882,8 +940,9 @@ Ext.define('Connector.view.Grid', {
                                     success: function (results) {
                                         exportParams.studyassays = me.loadExportableStudyAssays(results, gridAssays, assayIdentifierTypes);
 
+                                        var exportUrl = LABKEY.ActionURL.buildURL('cds', isExcel ? 'exportRowsXLSX' : 'exportCSV');
                                         Ext.Ajax.request({
-                                            url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
+                                            url: exportUrl,
                                             method: 'POST',
                                             form: newForm,
                                             isUpload: true,
@@ -949,7 +1008,7 @@ Ext.define('Connector.view.Grid', {
                 size = this.getWidthHeight(),
                 up = this.up(),
                 position = 'c-tl',
-                offsets = [size.width / 2, (size.height + 40)];
+                offsets = [size.width / 2, (size.height + 80)];
 
             if (!footer.isVisible()) {
                 footer.show();
@@ -965,5 +1024,37 @@ Ext.define('Connector.view.Grid', {
                 footer.alignTo(up, position, offsets);
             }
         }
+    }
+});
+
+Ext.define('Connector.view.GridHeaderDataView', {
+
+    extend: 'Connector.view.HeaderDataView',
+
+    alias: 'widget.gridheaderdataview',
+
+    itemSelector: 'h1.lhdv',
+
+    selectedItemCls: 'active',
+
+    loadMask: false,
+
+    selectInitialDimension: false,
+
+    tabSelectEventName: 'sheetselected',
+
+    tpl: new Ext.XTemplate(
+            '<tpl for=".">',
+            '<h1 class="lhdv">{source}</h1>',
+            '</tpl>'
+    ),
+
+    initComponent : function() {
+        this.callParent();
+    },
+
+    _select : function(model) {
+        this.getSelectionModel().select(model);
+        this.fireEvent('sheetselected', model.get("source"));
     }
 });

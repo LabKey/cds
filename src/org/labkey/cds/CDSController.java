@@ -98,7 +98,6 @@ import java.io.Writer;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -433,6 +432,25 @@ public class CDSController extends SpringActionController
         {
             CDSExportQueryView view = new CDSExportQueryView(form, errors);
             view.writeExcelToResponse(getViewContext().getResponse());
+            return null;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+    }
+
+    @RequiresPermission(ReadPermission.class)
+    @Action(ActionType.Export.class)
+    public class exportCSVAction extends SimpleViewAction<ExportForm>
+    {
+        @Override
+        public ModelAndView getView(ExportForm form, BindException errors) throws Exception
+        {
+            CDSExportQueryView view = new CDSExportQueryView(form, errors);
+            view.writeCSVToResponse(getViewContext().getResponse());
             return null;
         }
 

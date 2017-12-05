@@ -186,14 +186,24 @@ Ext.define('Connector.grid.Panel', {
 
     setupColumnModel : function()
     {
-        var columns = this.getColumnsConfig();
+        var columnGroups = this.getColumnsConfig();
+        var columns = this.flattenColumns(this.getColumnsConfig());
 
-        this.fireEvent('columnmodelcustomize', this, columns);
+        this.fireEvent('columnmodelcustomize', this, columnGroups);
 
         this.columns = columns;
 
         //reset the column model
         this.reconfigure(this.store, columns);
+    },
+
+    flattenColumns: function(columnGroups)
+    {
+        var columns = [];
+        Ext.each(columnGroups, function(columnGroup) {
+             columns = columns.concat(columnGroup.columns);
+        });
+        return columns;
     },
 
     _getColumnsConfig : function(config)

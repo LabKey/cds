@@ -209,7 +209,7 @@ Ext.define('Connector.controller.Learn', {
 
             if (defer) {
                 Ext.defer(function() {
-                    v.getHeader().getDataView().selectDimension();
+                    v.getHeader().getDataView().selectTab();
                 }, 200, this);
             }
         }, this);
