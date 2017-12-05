@@ -42,22 +42,28 @@ Ext.define('Connector.grid.Panel', {
         groupColumns : function(columns, isMeasure)
         {
             var defaultGroup = QueryUtils.DATA_SOURCE_STUDY_AND_TIME,
+                    subjectCharacteristicsGroup = QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS,
+                    addedTimeGroup = QueryUtils.DATA_SOURCE_ADDED_TIME_PIONT,
                     queryService = Connector.getQueryService(),
                     defaultColumns = queryService.getDefaultGridAliases(false, true),
                     definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
                     groups = [],
                     groupMap = {},
                     studyTime = [],
+                    time = [],
                     remainder = [];
 
             // Split columns into groups
             Ext.each(columns, function(col)
             {
                 var name = isMeasure ? col.measure.alias : col.dataIndex;
-                if (defaultColumns[name.toLowerCase()] ||
-                        name.toLowerCase().indexOf(QueryUtils.STUDY_ALIAS_PREFIX.toLowerCase()) == 0)
+                if (defaultColumns[name.toLowerCase()])
                 {
                     studyTime.push(col);
+                }
+                else if (name.toLowerCase().indexOf(QueryUtils.STUDY_ALIAS_PREFIX.toLowerCase()) == 0)
+                {
+                    time.push(col);
                 }
                 else
                 {
@@ -65,11 +71,19 @@ Ext.define('Connector.grid.Panel', {
                 }
             });
 
-            if (studyTime.length > 0) // demographics tab doesn't include study time
+            if (studyTime.length > 0)
             {
                 groups.push({
                     text: defaultGroup,
                     columns: studyTime
+                });
+            }
+
+            if (time.length > 0) // demographics tab doesn't include time points
+            {
+                groups.push({
+                    text: addedTimeGroup,
+                    columns: time
                 });
             }
 
@@ -111,16 +125,16 @@ Ext.define('Connector.grid.Panel', {
             Ext.iterate(groupMap, function(key, value)
             {
                 groups.push({
-                    text: isMeasure ? key: value.length > 2 ? key : Ext.String.ellipsis(key, columnCharacterWidth * value.length, true),
+                    text: key,
                     columns: value.sort(function(a, b)
                             {
                                 var ah = isMeasure ? a.measure.label.toLowerCase() : a.header.toLowerCase(),
                                         bh = isMeasure ? b.measure.label.toLowerCase() : b.header.toLowerCase();
 
-                                if (ah.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
+                                if (ah.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || ah.toLowerCase() === Connector.studyContext.subjectLabel.toLowerCase())
                                     return -1;
-                                else if (bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
-                                    return -1;
+                                else if (bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
+                                    return 1;
 
                                 // sort columns alphabetically by title
                                 return ah == bh ? 0 : (ah > bh ? 1 : -1);
@@ -130,9 +144,17 @@ Ext.define('Connector.grid.Panel', {
 
             groups.sort(function(a, b)
             {
-                if (a.text === defaultGroup)
+                if (a.text === subjectCharacteristicsGroup)
+                    return -1;
+                else if (b.text === subjectCharacteristicsGroup)
+                    return 1;
+                else if (a.text === defaultGroup)
                     return -1;
                 else if (b.text === defaultGroup)
+                    return 1;
+                else if (a.text === addedTimeGroup)
+                    return -1;
+                else if (b.text === addedTimeGroup)
                     return 1;
                 return a.text == b.text ? 0 : (a.text > b.text ? 1 : -1);
             });

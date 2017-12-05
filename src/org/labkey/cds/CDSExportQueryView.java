@@ -25,25 +25,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
-import org.labkey.api.data.ColumnHeaderType;
-import org.labkey.api.data.ColumnInfo;
-import org.labkey.api.data.CompareType;
-import org.labkey.api.data.Container;
-import org.labkey.api.data.DataRegion;
-import org.labkey.api.data.DisplayColumn;
-import org.labkey.api.data.ExcelColumn;
-import org.labkey.api.data.ExcelWriter;
-import org.labkey.api.data.RenderContext;
-import org.labkey.api.data.Results;
-import org.labkey.api.data.ResultsImpl;
-import org.labkey.api.data.RuntimeSQLException;
-import org.labkey.api.data.SchemaTableInfo;
-import org.labkey.api.data.ShowRows;
-import org.labkey.api.data.SimpleFilter;
-import org.labkey.api.data.TSVGridWriter;
-import org.labkey.api.data.Table;
-import org.labkey.api.data.TableInfo;
-import org.labkey.api.data.TableSelector;
+import org.labkey.api.data.*;
 import org.labkey.api.query.FieldKey;
 import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
@@ -671,6 +653,7 @@ public class CDSExportQueryView extends QueryView
             {
                 Results rs = rgn.getResultSet(view.getRenderContext());
                 TSVGridWriter tsv = new TSVGridWriter(rs, getExportColumns(rgn.getDisplayColumns()));
+                tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
                 File tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
                 tmpFile.deleteOnExit();
                 tsv.write(tmpFile);
@@ -691,6 +674,7 @@ public class CDSExportQueryView extends QueryView
         try
         {
             tsv = new TSVGridWriter(results);
+            tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
         }
         catch (SQLException e)
         {

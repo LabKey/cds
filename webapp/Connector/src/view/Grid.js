@@ -35,14 +35,14 @@ Ext.define('Connector.view.Grid', {
     constructor : function(config)
     {
         this.callParent([config]);
-        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter', 'datasourceupdate', 'sheetselected');
+        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter', 'sheetselected');
     },
 
     getSourceTabHeader : function() {
         if (!this.headerDataView) {
             var store = Ext.create('Ext.data.Store', {
                 model: 'Connector.model.GridHeaderDataView',
-                data: [{source: 'Study and time'},
+                data: [{source: 'Study and treatment'},
                     {source: 'Subject characteristics'},
                     {source: 'BAMA'},
                     {source: 'ELISPOT'},
@@ -91,7 +91,6 @@ Ext.define('Connector.view.Grid', {
                     flex: 1,
                     text: 'View data grid',
                     buttons: [
-                        this.getDataSourceCombo(),
                         this.getExportCSVButton(),
                         this.getExportExcelButton(),
                         this.getCitationsButton(),
@@ -116,7 +115,6 @@ Ext.define('Connector.view.Grid', {
         // bind view to model
         model.on('filterchange', this.onFilterChange, this);
         model.on('updatecolumns', this.onColumnUpdate, this, {buffer: 200});
-        model.on('datasourceupdate', this.onDataSourceUpdate, this, {buffer: 200});
 
         // propagate event from model
         this.relayEvents(model, ['usergridfilter']);
@@ -148,15 +146,6 @@ Ext.define('Connector.view.Grid', {
         });
 
         this.on('beforehide', this.hideVisibleWindow);
-    },
-
-    onDataSourceUpdate: function() {
-        var data = this.getModel().getSources();
-        this.getDataSourceCombo().getStore().loadData(data);
-        if (!this.getModel().isValidDataSource())
-        {
-            this.getDataSourceCombo().select(QueryUtils.DATA_SOURCE_STUDY_AND_TIME);
-        }
     },
 
     getDataSourceCombo: function() {
@@ -265,9 +254,9 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
-    _showOverlay : function()
+    _showOverlay : function(datasource)
     {
-        if (!this.NO_SHOW)
+        if (!this.NO_SHOW || datasource)
         {
             // Ensure we're in a proper state to show the overlay message
             if (this.getModel().get('columnSet').length <= 8)
@@ -277,10 +266,10 @@ Ext.define('Connector.view.Grid', {
                     cls: 'nogridmsg',
                     autoEl: {
                         tag: 'div',
-                        style: 'position: absolute; left: 600px; top: 47%;',
+                        style: 'position: absolute; left: ' + (datasource ? '40%' : '600px') + '; top: 47%;',
                         children: [{
                             tag: 'h1',
-                            html: 'Choose columns of subject data.'
+                            html: 'Choose columns of ' + (datasource ? datasource : 'subject data') + '.'
                         },{
                             tag: 'h1',
                             html: 'Sort, filter, and label subjects.',
@@ -364,12 +353,21 @@ Ext.define('Connector.view.Grid', {
         this.grid = null;
         this.columnMap = {};
 
+        this._hideOverlay();
+        if (!this.getModel().isValidDataSource())
+        {
+            this.remove(prevGridId, true);
+            this._showOverlay(this.getModel().getDataSource());
+            if (this.footer && this.footer.isVisible())
+                this.footer.hide();
+            return;
+        }
+
         // add the new grid once the store has finished loading
         var newGrid = this.getGrid();
         newGrid.getStore().on('load', function() {
             if (prevGridId != null && prevGridId != newGrid.getId()) {
                 this.remove(prevGridId, true);
-                this._hideOverlay();
             }
 
             this.add(newGrid);
@@ -838,7 +836,7 @@ Ext.define('Connector.view.Grid', {
     },
 
     onExport : function(isExcel) {
-        if (this.grid) {
+        if (this.grid || !this.getModel().isValidDataSource()) {
             var model = this.getModel(), sort = '', sep = '';
 
             var exportParams = {
@@ -850,9 +848,12 @@ Ext.define('Connector.view.Grid', {
 
             var dataTabNames = [], schemaNames = [], queryNames = [];
             Ext.iterate(this.getModel().get('metadatas'), function(datasource, metadata){
-                dataTabNames.push(datasource);
-                schemaNames.push(metadata.schemaName);
-                queryNames.push(metadata.queryName);
+                if (datasource !== QueryUtils.DATA_SOURCE_ADDED_TIME_PIONT)
+                {
+                    dataTabNames.push(datasource);
+                    schemaNames.push(metadata.schemaName);
+                    queryNames.push(metadata.queryName);
+                }
             });
             exportParams.dataTabNames = dataTabNames;
             exportParams.schemaNames = schemaNames;
@@ -864,10 +865,13 @@ Ext.define('Connector.view.Grid', {
             });
 
             // apply sorts
-            Ext.each(this.getGrid().getStore().getSorters(), function(sorter) {
-                sort += sep + (sorter.direction === 'DESC' ? '-' : '') + sorter.property;
-                sep = ',';
-            });
+            if (this.grid)
+            {
+                Ext.each(this.getGrid().getStore().getSorters(), function(sorter) {
+                    sort += sep + (sorter.direction === 'DESC' ? '-' : '') + sorter.property;
+                    sep = ',';
+                });
+            }
             if (!Ext.isEmpty(sort)) {
                 exportParams["query.sort"] = sort;
             }

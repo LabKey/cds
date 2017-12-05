@@ -163,6 +163,22 @@ Ext.define('Connector.controller.Query', {
             _getAlias(QueryUtils.STUDY_ALIAS_PREFIX + 'Days')
         ];
 
+        return this._formatResults(keys, asArray);
+    },
+
+    getDefaultGridDemographicsAliases: function(asArray)
+    {
+        var keys = [
+            this.getDemographicsColumnAlias(Connector.studyContext.subjectColumn).toLowerCase(),
+            this.getDemographicsColumnAlias('study_label').toLowerCase(),
+            this.getDemographicsColumnAlias('study_arm_summary').toLowerCase()
+        ];
+
+        return this._formatResults(keys, asArray);
+    },
+
+    _formatResults: function(keys, asArray)
+    {
         var result;
         if (asArray === true)
         {
@@ -177,16 +193,6 @@ Ext.define('Connector.controller.Query', {
             }
         }
 
-        return result;
-    },
-
-    getDefaultGridDemographicsAliases: function(asArray)
-    {
-        var key = this.getDemographicsColumnAlias(Connector.studyContext.subjectColumn).toLowerCase();
-        if (asArray === true)
-            return [key];
-        var result = {};
-        result[key] = 1;
         return result;
     },
 

@@ -28,7 +28,9 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ICS_protein_panel',
                         'study_ICS_protein',
                         'study_ICS_specimen_type',
-                        'study_ICS_lab_code'
+                        'study_ICS_lab_code',
+                        'study_ICS_antigen',
+                        'study_ICS_pooled_info'
                     ],
                     defaultScale: 'LOG'
                 },
@@ -66,7 +68,8 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ELISPOT_protein',
                         'study_ELISPOT_protein_panel',
                         'study_ELISPOT_specimen_type',
-                        'study_ELISPOT_lab_code'
+                        'study_ELISPOT_lab_code',
+                        'study_ELISPOT_antigen'
                     ],
                     defaultScale: 'LOG'
                 },

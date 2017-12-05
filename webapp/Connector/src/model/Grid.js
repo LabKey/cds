@@ -130,10 +130,15 @@ Ext.define('Connector.model.Grid', {
         {
             if (defaultMeasure.measure.alias.toLowerCase() === subjectAlias)
             {
-                subjectValue = defaultMeasure.filterArray[0].getValue();
-                return false;
+                if (defaultMeasure.filterArray && defaultMeasure.filterArray.length > 0)
+                {
+                    subjectValue = defaultMeasure.filterArray[0].getValue();
+                    return false;
+                }
             }
         });
+        if (!subjectValue)
+            return null;
         return [LABKEY.Filter.create(QueryUtils.DEMOGRAPHICS_SUBJECT_ALIAS, subjectValue, LABKEY.Filter.Types.IN)];
     },
 
@@ -296,16 +301,31 @@ Ext.define('Connector.model.Grid', {
         return this.getDataSourceMeasures(measures, activeSheet);
     },
 
+    /**
+     *                          Default Study And Time  | Added Study And Treatment | Added Time | Subject Characteristics
+     * Study And Treatment      Y                           Y                           N           N
+     * Subject Characteristics  N (demographics version)    Y                           N           Y
+     * Assays                   Y                           N                           Y           N
+     * @param measures
+     * @param dataSource
+     * @returns {Array}
+     */
     getDataSourceMeasures: function (measures, dataSource)
     {
         var measureGroups = Connector.grid.Panel.groupColumns(measures, true);
         var sourceMeasures = [];
         Ext.each(measureGroups, function (group) {
             var include = false;
-            if (dataSource === group.text)
-                include = true;
-            else if (group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TIME || group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TREATMENT)
-                include = dataSource !== QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
+            if (dataSource === QueryUtils.DATA_SOURCE_STUDY_AND_TIME || dataSource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS)
+            {
+                if (group.text === dataSource || group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TREATMENT)
+                    include = true;
+            }
+            else
+            {
+                if (group.text === dataSource || group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TIME || group.text === QueryUtils.DATA_SOURCE_ADDED_TIME_PIONT)
+                    include = true;
+            }
 
             if (include)
                 sourceMeasures = sourceMeasures.concat(group.columns);
@@ -342,6 +362,9 @@ Ext.define('Connector.model.Grid', {
 
     hasValidSource: function (targetSource)
     {
+        if (!targetSource || targetSource === QueryUtils.DATA_SOURCE_STUDY_AND_TIME)
+            return true;
+
         var isValid = false;
         Ext.each(this.getSources(), function (source) {
             if (source.source === targetSource)
@@ -471,7 +494,6 @@ Ext.define('Connector.model.Grid', {
             this.activeMeasure = true;
         }
 
-        this.fireEvent('datasourceupdate');
     },
 
     _sourceKey : function(measure)
@@ -1058,7 +1080,6 @@ Ext.define('Connector.model.Grid', {
 
         this.resetAllMetadata();
         this.requestMetaData([this.getDataSource()]);
-        this.fireEvent('datasourceupdate');
     },
 
     onSheetSelected: function(newSource)
@@ -1066,7 +1087,6 @@ Ext.define('Connector.model.Grid', {
         this.set({
             dataSource: newSource
         });
-        this.fireEvent('datasourceupdate');
         this.updateColumnModel();
     },
 
@@ -1122,6 +1142,13 @@ Ext.define('Connector.model.Grid', {
         var dataSource = this.getDataSource();
         if (!dataSource)
             dataSource = QueryUtils.DATA_SOURCE_STUDY_AND_TIME;
+
+        if (!this.isValidDataSource())
+        {
+            this.updateCurrentColumnModel(null, true);
+            return;
+        }
+
         var metadata = this.get('metadatas')[dataSource];
         if (metadata)
             this.updateCurrentColumnModel(metadata);
@@ -1131,17 +1158,28 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    updateCurrentColumnModel: function(metadata)
+    updateCurrentColumnModel: function(metadata, emptyGrid)
     {
-        if (!metadata)
+        if (!metadata && !emptyGrid)
             throw "unable to query grid";
 
         // The new columns will be available on the metadata query/schema
-        this.set({
-            schemaName: metadata.schemaName,
-            queryName: metadata.queryName,
-            columnSet: this.generateColumnSet()
-        });
+        if (metadata)
+        {
+            this.set({
+                schemaName: metadata.schemaName,
+                queryName: metadata.queryName,
+                columnSet: this.generateColumnSet()
+            });
+
+        }
+        else {
+            this.set({
+                schemaName: null,
+                queryName: null,
+                columnSet: []
+            });
+        }
 
         this.applyFilters(function()
         {

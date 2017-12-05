@@ -468,6 +468,7 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <description>Indicates which antigens were inlcuded in the aggregated magnitudes and response calls.</description>
         <measure>false</measure>
+        <dimension>true</dimension>
       </column>
     </columns>
     <tableTitle>Intracellular Cytokine Staining</tableTitle>

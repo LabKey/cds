@@ -67,7 +67,8 @@
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
                 gridBaseSchema: 'cds',
                 gridBase: 'GridBase',
-                protocolDayColumn: 'ProtocolDay'
+                protocolDayColumn: 'ProtocolDay',
+                subjectLabel: 'Subject Id'
             },
             resourceContext: {
                 path: <%=PageFlowUtil.jsString(resourcePath)%>,

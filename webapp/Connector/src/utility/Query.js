@@ -15,8 +15,9 @@ Ext.define('Connector.utility.Query', {
     DEMOGRAPHICS_ALIAS_PREFIX: 'study_Demographics_',
 
     DATA_SOURCE_SUBJECT_CHARACTERISTICS : 'Subject characteristics',
-    DATA_SOURCE_STUDY_AND_TIME : 'Study and time',
+    DATA_SOURCE_STUDY_AND_TIME : 'Study and treatment',
     DATA_SOURCE_STUDY_AND_TREATMENT: 'Study and treatment variables',
+    DATA_SOURCE_ADDED_TIME_PIONT : 'Time point',
 
     logging: false,
 
