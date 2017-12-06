@@ -24,9 +24,10 @@ Ext.define('Connector.view.Grid', {
     paging: true,
 
     statics: {
-        getDefaultSort : function () {
+        getDefaultSort : function (datasource) {
+            var isDemographics = datasource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
             return [{
-                property: QueryUtils.STUDY_ALIAS_PREFIX + 'SubjectId',
+                property: isDemographics ? QueryUtils.DEMOGRAPHICS_SUBJECT_ALIAS : QueryUtils.STUDY_ALIAS_PREFIX + 'SubjectId',
                 direction: 'ASC'
             }];
         }
@@ -46,6 +47,8 @@ Ext.define('Connector.view.Grid', {
         this.sorters = Connector.view.Grid.getDefaultSort();
 
         this.columnMap = {};
+
+        this.gridSorters = {}; // hold on to client side sorts for each grid
 
         this.items = [{
             xtype: 'container',
@@ -331,19 +334,22 @@ Ext.define('Connector.view.Grid', {
 
         // hold on to the previous grid id so it can be removed once we are ready to add the new grid
         var prevGridId = this.grid ? this.grid.getId() : null;
-
+        var newDataSource = this.getModel().get('dataSource');
+        var defaultSorters = Connector.view.Grid.getDefaultSort(newDataSource);
         // reset the grid and column mapping
         if (prevGridId != null) {
-            var sorters = this.grid.getStore().getSorters();
-            if (!Ext.isEmpty(sorters)) {
-                this.sorters = sorters;
-            }
-            else {
-                this.sorters = Connector.view.Grid.getDefaultSort();
+            var prevGridSorters = this.grid.getStore().getSorters();
+            var previousDataSource = this.grid.datasource ? this.grid.datasource : QueryUtils.DATA_SOURCE_STUDY_AND_TIME;
+            if (!Ext.isEmpty(prevGridSorters)) {
+                this.gridSorters[previousDataSource] = prevGridSorters;
             }
         }
+
+        if (this.gridSorters[newDataSource] && !Ext.isEmpty(this.gridSorters[newDataSource])) {
+            this.sorters = this.gridSorters[newDataSource];
+        }
         else {
-            this.sorters = Connector.view.Grid.getDefaultSort();
+            this.sorters = defaultSorters;
         }
 
         this.grid = null;
@@ -451,6 +457,7 @@ Ext.define('Connector.view.Grid', {
 
             this.grid = Ext.create('Connector.grid.Panel', {
                 model: this.getModel(),
+                datasource: this.getModel().get("dataSource"),
                 height: size.height,
                 width: size.width,
                 forceFit: false,
@@ -864,13 +871,8 @@ Ext.define('Connector.view.Grid', {
                 });
 
                 // apply sorts
-                if (this.grid)
-                {
-                    Ext.each(this.getGrid().getStore().getSorters(), function(sorter) {
-                        sort += sep + (sorter.direction === 'DESC' ? '-' : '') + sorter.property;
-                        sep = ',';
-                    });
-                }
+                sort = this.getGridSortExportParams();
+
                 if (!Ext.isEmpty(sort)) {
                     exportParams["query.sort"] = sort;
                 }
@@ -973,6 +975,28 @@ Ext.define('Connector.view.Grid', {
             }, this);
 
         }
+    },
+
+    getGridSortExportParams: function() {
+        var currentGridSorters = this.grid.getStore().getSorters();
+        var currentDataSource = this.grid.datasource ? this.grid.datasource : QueryUtils.DATA_SOURCE_STUDY_AND_TIME;
+        if (!Ext.isEmpty(currentGridSorters)) {
+            this.gridSorters[currentDataSource] = currentGridSorters;
+        }
+
+        var rOrderedTabs = this.gridTabNames.slice().reverse(); // reverse tab order so sorting is performed on the significant column for each tab
+        var sort = '', sep = '';
+        Ext.each(rOrderedTabs, function(datasource){
+            var sorters = this.gridSorters[datasource];
+            if (!sorters)
+                return true; // skip
+            Ext.each(sorters, function(sorter) {
+                sort += sep + (sorter.direction === 'DESC' ? '-' : '') + sorter.property;
+                sep = ',';
+            });
+        }, this);
+
+        return sort;
     },
 
     loadExportableStudies: function(cellset)
