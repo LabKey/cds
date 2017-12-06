@@ -38,32 +38,6 @@ Ext.define('Connector.view.Grid', {
         this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter', 'sheetselected');
     },
 
-    getSourceTabHeader : function() {
-        if (!this.headerDataView) {
-            var store = Ext.create('Ext.data.Store', {
-                model: 'Connector.model.GridHeaderDataView',
-                data: [{source: 'Study and treatment'},
-                    {source: 'Subject characteristics'},
-                    {source: 'BAMA'},
-                    {source: 'ELISPOT'},
-                    {source: 'ICS'},
-                    {source: 'NAb'}
-                ]});
-
-            this.headerDataView = Ext.create('Connector.view.GridHeaderDataView', {
-                cls: 'grid-tab-selector',
-                store: store
-            });
-            this.headerDataView.on({
-                itemclick: function(view, model) {
-                    this.fireEvent('sheetselected', model.get('source'));
-                },
-                scope: this
-            });
-        }
-        return this.headerDataView;
-    },
-
     initComponent : function()
     {
         // At times the store can be completely replaced for a given grid. When this occurs we want to
@@ -84,7 +58,7 @@ Ext.define('Connector.view.Grid', {
             items: [{
                 cls: 'header-container',
                 layout: {
-                    type: 'hbox',
+                    type: 'hbox'
                 },
                 items: [{
                     xtype: 'actiontitle',
@@ -148,31 +122,53 @@ Ext.define('Connector.view.Grid', {
         this.on('beforehide', this.hideVisibleWindow);
     },
 
-    getDataSourceCombo: function() {
-        if (!this.dataSourceCombo) {
+    getSourceTabHeader : function() {
+        if (!this.headerDataView) {
             var store = Ext.create('Ext.data.Store', {
-                fields: ['source'],
-                data: this.getModel().getSources()
+                model: 'Connector.model.GridHeaderDataView',
+                data: []
             });
 
-            this.dataSourceCombo = Ext.create('Ext.form.ComboBox', {
-                fieldLabel: 'Choose Sheet',
-                store: store,
-                queryMode: 'local',
-                displayField: 'source',
-                margin: '0 20 0 0',
-                valueField: 'source',
-                listeners: {
-                    change: function(combo, newValue)
-                    {
-                        this.fireEvent('sheetselected', newValue);
-                    },
-                    scope: this
-                }
+            this.queryGridTabNames(function(){
+                var sourceData = this.gridTabNames.map(function(sourceName){
+                    return {source: sourceName}
+                });
+                store.loadData(sourceData);
+            }, this);
+
+            this.headerDataView = Ext.create('Connector.view.GridHeaderDataView', {
+                cls: 'grid-tab-selector',
+                store: store
+            });
+            this.headerDataView.on({
+                itemclick: function(view, model) {
+                    this.fireEvent('sheetselected', model.get('source'));
+                },
+                scope: this
             });
         }
+        return this.headerDataView;
+    },
 
-        return this.dataSourceCombo;
+    queryGridTabNames: function(cb, scope)
+    {
+        if (!this.gridTabNames)
+        {
+            Connector.getQueryService().onQueryReady(function(service)
+            {
+                var sourceNames = [];
+                Ext.each(service.getSources('queryType', 'datasets'), function(dataset)
+                {
+                    if (!dataset.get('isDemographic'))
+                        sourceNames.push(dataset.get('queryName'));
+                }, this);
+                sourceNames.sort();
+                this.gridTabNames = [QueryUtils.DATA_SOURCE_STUDY_AND_TIME, QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS].concat(sourceNames);
+                cb.call(scope)
+            }, this);
+        }
+        else
+            cb.call(scope);
     },
 
     getExportCSVButton : function() {
@@ -846,130 +842,136 @@ Ext.define('Connector.view.Grid', {
                 variables: []
             };
 
-            var dataTabNames = [], schemaNames = [], queryNames = [];
-            Ext.iterate(this.getModel().get('metadatas'), function(datasource, metadata){
-                if (datasource !== QueryUtils.DATA_SOURCE_ADDED_TIME_PIONT)
+            var dataTabNames = [], schemaNames = [], queryNames = [], metadatas = this.getModel().get('metadatas');
+
+            this.queryGridTabNames(function(){
+                Ext.each(this.gridTabNames, function(datasource){ // ensure tab ordering
+                    var metadata = metadatas[datasource];
+                    if (metadata) {
+                        dataTabNames.push(datasource);
+                        schemaNames.push(metadata.schemaName);
+                        queryNames.push(metadata.queryName);
+                    }
+                });
+
+                exportParams.dataTabNames = dataTabNames;
+                exportParams.schemaNames = schemaNames;
+                exportParams.queryNames = queryNames;
+
+                // apply filters
+                Ext.each(model.getBaseFilters(), function(filter) {
+                    exportParams[filter.getURLParameterName()] = [filter.getURLParameterValue()];
+                });
+
+                // apply sorts
+                if (this.grid)
                 {
-                    dataTabNames.push(datasource);
-                    schemaNames.push(metadata.schemaName);
-                    queryNames.push(metadata.queryName);
+                    Ext.each(this.getGrid().getStore().getSorters(), function(sorter) {
+                        sort += sep + (sorter.direction === 'DESC' ? '-' : '') + sorter.property;
+                        sep = ',';
+                    });
                 }
-            });
-            exportParams.dataTabNames = dataTabNames;
-            exportParams.schemaNames = schemaNames;
-            exportParams.queryNames = queryNames;
+                if (!Ext.isEmpty(sort)) {
+                    exportParams["query.sort"] = sort;
+                }
 
-            // apply filters
-            Ext.each(model.getBaseFilters(), function(filter) {
-                exportParams[filter.getURLParameterName()] = [filter.getURLParameterValue()];
-            });
+                var gridAssays = [];
+                var gridModel = this.getModel();
 
-            // apply sorts
-            if (this.grid)
-            {
-                Ext.each(this.getGrid().getStore().getSorters(), function(sorter) {
-                    sort += sep + (sorter.direction === 'DESC' ? '-' : '') + sorter.property;
-                    sep = ',';
+                var groups = Connector.grid.Panel.groupColumns(gridModel.getAllWrappedMeasures(gridModel.hasDemographics()), true);
+                Ext.each(groups, function(group){
+                    Ext.each(group.columns, function (m) {
+                        var measure = m.measure;
+                        var alias = measure.alias.toLowerCase();
+                        if (exportParams.columnNames.indexOf(alias) !== -1)
+                            return; // skip duplicate
+                        else if (alias === QueryUtils.SUBJECT_SEQNUM_ALIAS.toLowerCase())
+                            return; // skip participant sequence num
+                        exportParams.columnNames.push(alias);
+                        exportParams.columnAliases.push(measure.label);
+
+                        if (measure.queryType == 'datasets') {
+                            if (gridAssays.indexOf(measure.queryName) === -1)
+                                gridAssays.push(measure.queryName);
+                            var variable = measure.queryLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.label + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.description;
+                            exportParams.variables.push(variable);
+                        }
+                    });
                 });
-            }
-            if (!Ext.isEmpty(sort)) {
-                exportParams["query.sort"] = sort;
-            }
 
-            var gridAssays = [];
-            var gridModel = this.getModel();
+                /**
+                 * Sometimes the GET URL gets too long, so use a POST instead. We have to create a separate <form>.
+                 */
+                var newForm = document.createElement('form');
+                document.body.appendChild(newForm);
 
-            var groups = Connector.grid.Panel.groupColumns(gridModel.getAllWrappedMeasures(gridModel.hasDemographics()), true);
-            Ext.each(groups, function(group){
-                Ext.each(group.columns, function (m) {
-                    var measure = m.measure;
-                    var alias = measure.alias.toLowerCase();
-                    if (exportParams.columnNames.indexOf(alias) !== -1)
-                        return; // skip duplicate
-                    else if (alias === QueryUtils.SUBJECT_SEQNUM_ALIAS.toLowerCase())
-                        return; // skip participant sequence num
-                    exportParams.columnNames.push(alias);
-                    exportParams.columnAliases.push(measure.label);
+                var me = this;
+                Connector.getState().onMDXReady(function(mdx) {
 
-                    if (measure.queryType == 'datasets') {
-                        if (gridAssays.indexOf(measure.queryName) === -1)
-                            gridAssays.push(measure.queryName);
-                        var variable = measure.queryLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.label + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measure.description;
-                        exportParams.variables.push(variable);
-                    }
-                });
-            });
+                    var filterStrings = [];
+                    Ext.each(Connector.getState().filters, function(filter){
+                        filterStrings = filterStrings.concat(QueryUtils.getFilterStrings(filter, mdx));
+                    });
+                    exportParams.filterStrings = filterStrings;
 
-            /**
-             * Sometimes the GET URL gets too long, so use a POST instead. We have to create a separate <form>.
-             */
-            var newForm = document.createElement('form');
-            document.body.appendChild(newForm);
+                    mdx.query({
+                        onRows: [{
+                            level: '[Study.Treatment].[Treatment]',
+                            members: 'members'
+                        }],
+                        useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                        showEmpty: false,
+                        success: function (results) {
+                            exportParams.studies = me.loadExportableStudies(results);
 
-            var me = this;
-            Connector.getState().onMDXReady(function(mdx) {
+                            LABKEY.Query.selectRows({
+                                schemaName: 'study',
+                                queryName: 'ds_assayidentifier',
+                                success: function(assayData) {
+                                    var assayIdentifierTypes = {};
+                                    Ext.each(assayData.rows, function(assayMeta) {
+                                        assayIdentifierTypes[assayMeta.assay_identifier] = assayMeta.dataset_name;
+                                    }, this);
 
-                var filterStrings = [];
-                Ext.each(Connector.getState().filters, function(filter){
-                    filterStrings = filterStrings.concat(QueryUtils.getFilterStrings(filter, mdx));
-                });
-                exportParams.filterStrings = filterStrings;
+                                    mdx.query({
+                                        onRows: [{
+                                            level: '[Assay.Study].[Study]',
+                                            members: 'members'
+                                        }],
+                                        useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                                        showEmpty: false,
+                                        success: function (results) {
+                                            exportParams.studyassays = me.loadExportableStudyAssays(results, gridAssays, assayIdentifierTypes);
 
-                mdx.query({
-                    onRows: [{
-                        level: '[Study.Treatment].[Treatment]',
-                        members: 'members'
-                    }],
-                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
-                    showEmpty: false,
-                    success: function (results) {
-                        exportParams.studies = me.loadExportableStudies(results);
+                                            var exportUrl = LABKEY.ActionURL.buildURL('cds', isExcel ? 'exportRowsXLSX' : 'exportCSV');
+                                            Ext.Ajax.request({
+                                                url: exportUrl,
+                                                method: 'POST',
+                                                form: newForm,
+                                                isUpload: true,
+                                                params: exportParams,
+                                                callback: function(options, success/*, response*/) {
+                                                    document.body.removeChild(newForm);
 
-                        LABKEY.Query.selectRows({
-                            schemaName: 'study',
-                            queryName: 'ds_assayidentifier',
-                            success: function(assayData) {
-                                var assayIdentifierTypes = {};
-                                Ext.each(assayData.rows, function(assayMeta) {
-                                    assayIdentifierTypes[assayMeta.assay_identifier] = assayMeta.dataset_name;
-                                }, this);
-
-                                mdx.query({
-                                    onRows: [{
-                                        level: '[Assay.Study].[Study]',
-                                        members: 'members'
-                                    }],
-                                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
-                                    showEmpty: false,
-                                    success: function (results) {
-                                        exportParams.studyassays = me.loadExportableStudyAssays(results, gridAssays, assayIdentifierTypes);
-
-                                        var exportUrl = LABKEY.ActionURL.buildURL('cds', isExcel ? 'exportRowsXLSX' : 'exportCSV');
-                                        Ext.Ajax.request({
-                                            url: exportUrl,
-                                            method: 'POST',
-                                            form: newForm,
-                                            isUpload: true,
-                                            params: exportParams,
-                                            callback: function(options, success/*, response*/) {
-                                                document.body.removeChild(newForm);
-
-                                                if (!success) {
-                                                    Ext.Msg.alert('Error', 'Unable to export.');
+                                                    if (!success) {
+                                                        Ext.Msg.alert('Error', 'Unable to export.');
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
 
-                                        this.fireEvent('requestexport', me, exportParams);
-                                    },
-                                    scope: me
-                                });
-                            },
-                            scope: this
-                        });
-                    }
+                                            this.fireEvent('requestexport', me, exportParams);
+                                        },
+                                        scope: me
+                                    });
+                                },
+                                scope: this
+                            });
+                        }
+                    });
                 });
-            });
+
+            }, this);
+
         }
     },
 
