@@ -17,7 +17,6 @@
 
   .x-column-header-text {
     font-size: 11px;
-    text-transform: uppercase;
     font-weight: bold;
   }
 
@@ -94,16 +93,20 @@
       text-align: justify;
       color: $heat-scale-2;
     }
+
+    &.x-column-header-sort-ASC,
+    &.x-column-header-sort-DESC,
+    &.filtered-column {
+      .x-column-header-text {
+        color: black;
+      }
+    }
   }
 
   /* Column Header Hovered */
   .x-column-header-over {
     background-image: none;
     background-color: $select-hover-color;
-
-    .x-column-header-text {
-      color: $black;
-    }
   }
 
   .x-column-header-sort-ASC,
@@ -168,7 +171,57 @@ div.filterpanel .x-panel-body-default {
 }
 
 .grid-tab-selector {
-  border-bottom: 1px solid $gray-6;
-  margin: 0 28px;
+  //border-bottom: 1px solid $gray-6;
+  margin: 16px 28px 0 28px;
   overflow: visible!important;
+}
+
+.connector-grid-container {
+  h1 {
+    &.lhdv {
+      margin-right: 0;
+      padding-right: 28px;
+      font: bold 12px $info-font;
+      border-bottom: 1px solid $gray-6;
+      line-height: 40px;
+      height: 40px;
+
+      &:hover {
+        border-color: $gray-6;
+      }
+
+      span {
+        padding-bottom: 12px;
+        border-bottom: 1px solid $gray-6;
+        &:hover {
+          cursor: pointer;
+          border-color: $gray-4;
+          @include prefixer(transition, border-color 0.3s linear);
+          @include prefixer(transition, color 0.3s linear);
+        }
+      }
+
+
+      &.active {
+        color: $action-red;
+        border-color: $gray-6;
+        &:hover {
+          cursor: default;
+          border-color: $gray-6;
+        }
+        span {
+          border-bottom: 1px solid $action-red;
+          &:hover {
+            border-color: $action-red-hover;
+          }
+        }
+      }
+    }
+  }
+}
+
+.gridcolumnsbtn {
+  position: absolute;
+  right: 0;
+  margin: 24px 28px 0 28px;
 }

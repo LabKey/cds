@@ -22,7 +22,7 @@ Ext.define('Connector.view.HeaderDataView', {
     // Select a dimension by keyFieldName value. If this method is called and a name is
     // not provided then the first valid tab will be selected.
     //
-    selectTab : function(fieldValue) {
+    selectTab : function(fieldValue, skipEvent) {
         var store = this.getStore();
 
         if (!Ext.isDefined(fieldValue)) {
@@ -33,10 +33,10 @@ Ext.define('Connector.view.HeaderDataView', {
         if (idx >= 0) {
             var model = store.getAt(idx);
             if (!this.rendered) {
-                this.on('afterrender', function() { this._select(model); }, this, {single: true});
+                this.on('afterrender', function() { this._select(model, skipEvent); }, this, {single: true});
             }
             else {
-                this._select(model);
+                this._select(model, skipEvent);
             }
         }
         else {
@@ -44,9 +44,9 @@ Ext.define('Connector.view.HeaderDataView', {
         }
     },
 
-    _select : function(model) {
+    _select : function(model, skipEvent) {
         this.getSelectionModel().select(model);
-        if (this.tabSelectEventName)
+        if (this.tabSelectEventName && !skipEvent)
             this.fireEvent(this.tabSelectEventName, model);
     }
 });
