@@ -27,6 +27,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.Map;
 
+import static org.labkey.test.pages.cds.DataspaceVariableSelector.AssayDimensions.CellType;
+
 public abstract class DataspaceVariableSelector
 {
     protected BaseWebDriverTest _test;
@@ -377,8 +379,10 @@ public abstract class DataspaceVariableSelector
 
                 break;
             case CellType:
-                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]";
-                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')][not(contains(@style, 'display: none'))]";
+            case AntigensAggregated:
+                String option = dimension == CellType ? "cell_type" : "pooled_info";
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-" + option + "')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-" + option + "-dropdown')][not(contains(@style, 'display: none'))]";
 
                 locDimField = Locator.xpath(xpathDimField);
                 allTag = Locator.xpath(xpathDimDropDown + "//label[text()='All']");
@@ -556,6 +560,7 @@ public abstract class DataspaceVariableSelector
         AxisType,
         AlignBy,
         AntigenName,
+        AntigensAggregated,
         CellType,
         DataSummaryLevel,
         DetectionSystem,

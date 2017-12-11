@@ -15,10 +15,12 @@
  */
 package org.labkey.test.pages.cds;
 
+import org.labkey.api.util.Pair;
+
 import java.util.Arrays;
 import java.util.List;
 
-public class CDSExcel
+public class CDSExport
 {
     private static final String TOC_TITLE = "IMPORTANT INFORMATION ABOUT THIS DATA:";
     private static final List<String> TOC_1 = Arrays.asList("", "By exporting data from the CAVD DataSpace, you agree to be bound by the Terms of Use available on the CAVD DataSpace sign-in page at https://dataspace.cavd.org/cds/CAVD/app.view? .");
@@ -32,7 +34,7 @@ public class CDSExcel
 
     private List<String> filterValues;
 
-    private int dataRowCount;
+    private List<Pair<String, Integer>> dataTabCounts;
 
     private List<String> studies;
     private List<String> studyNetworks;
@@ -42,48 +44,48 @@ public class CDSExcel
 
     private List<String> fieldLabels;
 
-    public CDSExcel(int dataRowCount)
+    public CDSExport(List<Pair<String, Integer>> dataTabCounts)
     {
-        this.dataRowCount = dataRowCount;
+        this.dataTabCounts = dataTabCounts;
     }
 
-    public CDSExcel setFilterTitles(List<String> filterTitles)
+    public CDSExport setFilterTitles(List<String> filterTitles)
     {
         this.filterTitles = filterTitles;
         return this;
     }
 
-    public CDSExcel setFilterValues(List<String> filterValues)
+    public CDSExport setFilterValues(List<String> filterValues)
     {
         this.filterValues = filterValues;
         return this;
     }
 
-    public CDSExcel setStudies(List<String> studies)
+    public CDSExport setStudies(List<String> studies)
     {
         this.studies = studies;
         return this;
     }
 
-    public CDSExcel setStudyNetworks(List<String> studyNetworks)
+    public CDSExport setStudyNetworks(List<String> studyNetworks)
     {
         this.studyNetworks = studyNetworks;
         return this;
     }
 
-    public CDSExcel setAssays(List<String> assays)
+    public CDSExport setAssays(List<String> assays)
     {
         this.assays = assays;
         return this;
     }
 
-    public CDSExcel setAssayProvenances(List<String> assayProvenances)
+    public CDSExport setAssayProvenances(List<String> assayProvenances)
     {
         this.assayProvenances = assayProvenances;
         return this;
     }
 
-    public CDSExcel setFieldLabels(List<String> fieldLabels)
+    public CDSExport setFieldLabels(List<String> fieldLabels)
     {
         this.fieldLabels = fieldLabels;
         return this;
@@ -99,9 +101,21 @@ public class CDSExcel
         return filterValues;
     }
 
-    public int getDataRowCount()
+    public List<Pair<String, Integer>> getDataTabCounts()
     {
-        return dataRowCount;
+        return dataTabCounts;
+    }
+
+    public Integer getDataTabCount(String dataTabName)
+    {
+        for (Pair<String, Integer> pair : this.dataTabCounts)
+        {
+            if (pair.first.equals(dataTabName))
+            {
+                return pair.second;
+            }
+        }
+        return null;
     }
 
     public List<String> getStudies()
@@ -127,6 +141,26 @@ public class CDSExcel
     public List<String> getFieldLabels()
     {
         return fieldLabels;
+    }
+
+    public int getMetadataSheetIndex()
+    {
+        return this.getDataTabCounts().size();
+    }
+
+    public int getStudiesSheetIndex()
+    {
+        return this.getMetadataSheetIndex() + 1;
+    }
+
+    public int getAssaysSheetIndex()
+    {
+        return this.getMetadataSheetIndex() + 2;
+    }
+
+    public int getVariablesSheetIndex()
+    {
+        return this.getMetadataSheetIndex() + 3;
     }
 
 }

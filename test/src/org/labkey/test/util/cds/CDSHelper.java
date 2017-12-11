@@ -476,6 +476,7 @@ public class CDSHelper
     public static final String ICS_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
     public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
     public static final String ICS_PEPTIDE_POOL = "Peptide pool";
+    public static final String ICS_ANY_POL = "Any POL";
     public static final String ICS_PROTEIN = "Protein";
     public static final String ICS_PROTEIN_CLADE = "Protein Clade";
     public static final String ICS_PROTEIN_PANEL = "Protein Panel";
@@ -529,6 +530,7 @@ public class CDSHelper
     public static final String GRID_TITLE_PLOT = "Plot Data Results";
     public static final String GRID_COL_SUBJECT_ID = "Subject Id";
     public static final String GRID_COL_STUDY = "Study";
+    public static final String GRID_TITLE_STUDY_TREATMENT = "Study and treatment";
     public static final String GRID_COL_VISIT = "Visit";
     public static final String GRID_COL_TREATMENT_SUMMARY = "Treatment Summary";
     public static final String GRID_COL_STUDY_DAY = "Study days";
