@@ -31,7 +31,7 @@ Ext.define('Connector.controller.Data', {
                         v.onDeactivate.call(v);
                     }
                 }
-                if (currentContext.view == gridType)
+                else if (currentContext.view == gridType)
                 {
                     v.onDeactivate.call(v);
                 }

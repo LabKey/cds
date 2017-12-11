@@ -217,12 +217,6 @@ Ext.define('Connector.utility.Query', {
                 sourceTableAlas = 'study_demographics',
                 columnAliasMap = {};
 
-        columnAliasMap[this.DEMOGRAPHICS_SUBJECT_ALIAS] = {
-            name: Connector.studyContext.subjectColumn,
-            schemaName: 'study',
-            queryName: 'demographics'
-        };
-
         // SELECT
         var SELECT = ['SELECT '], sep = "\n\t";
 
@@ -238,6 +232,12 @@ Ext.define('Connector.utility.Query', {
                     title = Ext.isDefined(colLabel) ? " @title='" + colLabel + "'" : "";
             if (alias.indexOf(QueryUtils.DEMOGRAPHICS_ALIAS_PREFIX) === -1)
                 return true; //skip non demographics measures
+
+            if (columnAliasMap[alias])
+            {
+                return;
+            }
+
             SELECT.push(sep + sourceTableAlas + "." + measure.name + " AS " + alias + title);
             sep = ",\n\t";
 

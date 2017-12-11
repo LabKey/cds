@@ -147,14 +147,7 @@ Ext.define('Connector.view.Grid', {
             this.headerDataView = Ext.create('Connector.view.GridHeaderDataView', {
                 cls: 'grid-tab-selector',
                 flex: 1,
-                store: store,
-                listeners: {
-                    afterrender: function(dv) {
-                        Ext.defer(function() {
-                            dv.selectTab(QueryUtils.DATA_SOURCE_STUDY_AND_TIME);
-                        }, 100); // small delay
-                    }
-                }
+                store: store
             });
             this.headerDataView.on({
                 itemclick: function(view, model) {

@@ -65,9 +65,7 @@ Ext.define('Connector.model.Grid', {
         this.metadataTask = new Ext.util.DelayedTask(function (sources, onComplete, cbScope, isExcel) {
             var scope = this, activeDataSource = this.getDataSource();
             var completedCount = 0;
-            Ext.each(sources, function (s) {
-                var source = s;
-
+            Ext.each(sources, function (source) {
                 var onOneSourceComplete = function() {
                     completedCount++;
                     if (completedCount === sources.length && onComplete)
@@ -256,14 +254,14 @@ Ext.define('Connector.model.Grid', {
 
     getDefaultWrappedMeasures: function(dataSource)
     {
-        if (dataSource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS || this.isDemographicsTab())
+        if (dataSource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS)
             return this.get('defaultDemographicsMeasures');
         return this.get('defaultMeasures');
     },
 
     getWrappedMeasures: function ()
     {
-        return this.getDefaultWrappedMeasures()
+        return this.getDefaultWrappedMeasures(this.getDataSource())
                 .concat(this.getCurrentSheetSQLMeasures())
                 .concat(this.getCurrentSheetGridColumnMeasures());
     },
