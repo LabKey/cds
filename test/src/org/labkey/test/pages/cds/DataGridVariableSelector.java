@@ -110,6 +110,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
             _test.waitForElement(Locator.tagWithClass("h1", "lhdv").withText(sourceColumnTitle));
             _test.sleep(500);
             _test._ext4Helper.waitForMaskToDisappear();
+            _test.sleep(1000);
         }
     }
 

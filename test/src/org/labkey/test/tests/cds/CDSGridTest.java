@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.cds.CDSHelper.GRID_TITLE_NAB;
@@ -90,12 +91,10 @@ public class CDSGridTest extends CDSReadOnlyTest
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
         waitForText("View data grid"); // grid warning
-        // verify default tab present
 
         gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
         gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
 
-        // verify 2 tabs
         grid.goToDataTab(GRID_TITLE_NAB);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
         if (CDSHelper.validateCounts)
@@ -470,6 +469,68 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
         sleep(1000);
+    }
+
+    @Test
+    public void verifyGridTabsAndColumns()
+    {
+        /*
+         *                          Default Study And Time  | Added Study And Treatment | Added Time | Subject Characteristics
+         * Study And Treatment      Y                           Y                           N           N
+         * Subject Characteristics  N (demographics version)    Y                           N           Y
+         * Assays                   Y                           N                           Y           N
+         */
+
+        DataGrid grid = new DataGrid(this);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
+
+        log("Verify Default Grid: " + CDSHelper.GRID_TITLE_STUDY_TREATMENT);
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        Locator.XPathLocator activeTabLoc = DataGrid.Locators.getActiveHeader(CDSHelper.GRID_TITLE_STUDY_TREATMENT);
+        waitForElement(activeTabLoc);
+        grid.ensureColumnsPresent(); // verify default columns
+
+        log("Verify grid with added study and treatment columns");
+        gridColumnSelector.addGridColumn(CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.DEMO_NETWORK, true, true);
+        gridColumnSelector.confirmSelection();
+        sleep(2000);
+        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT)));
+        grid.ensureColumnsPresent(CDSHelper.DEMO_NETWORK);
+
+        log("Verify grid with added assay columns");
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
+        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_NAB)));
+        grid.goToDataTab(GRID_TITLE_NAB);
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
+
+        log("Verify grid with subject characteristics and time point columns");
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_RACE, false, true);
+        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB)));
+        gridColumnSelector.addGridColumn(CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_MONTHS, true, true);
+        gridColumnSelector.confirmSelection();
+        sleep(2000);
+
+        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB)));
+
+        // go to another page and come back to grid
+        cds.goToSummary();
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        assertEquals("Grid tab selection should not have changed", GRID_TITLE_NAB, grid.getActiveDataTab());
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.TIME_POINTS_MONTHS);
+
+        log("Verify subject characteristics and study treatment columns are not added to assay tabs");
+        grid.assertColumnsNotPresent(CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE, CDSHelper.DEMO_NETWORK);
+
+        log("Verify assay and time columns are not added to subject characteristics tab");
+        grid.goToDataTab(CDSHelper.GRID_TITLE_DEMO);
+        grid.ensureSubjectCharacteristicsColumnsPresent(CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE, CDSHelper.DEMO_NETWORK);
+        grid.assertColumnsNotPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.TIME_POINTS_MONTHS);
+
+        log("Verify subject characteristics columns are not added to study and treatment tab");
+        grid.goToDataTab(CDSHelper.GRID_TITLE_STUDY_TREATMENT);
+        grid.assertColumnsNotPresent(CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE);
     }
 
     @Test

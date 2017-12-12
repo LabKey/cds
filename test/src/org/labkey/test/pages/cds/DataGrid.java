@@ -52,14 +52,6 @@ public class DataGrid
         _test = test;
     }
 
-    public List<String> getDataTabs()
-    {
-        List<String> tabs = new ArrayList<>();
-        Locator tabLoc = Locators.tabHeaderContainer.append(Locators.header);
-        tabLoc.findElements(_test.getDriver()).forEach(element -> tabs.add(element.getText()));
-        return tabs;
-    }
-
     public String getActiveDataTab()
     {
         return Locators.tabHeaderContainer.append(Locators.activeHeader).findElement(_test.getDriver()).getText();
@@ -72,9 +64,30 @@ public class DataGrid
         return _test.isElementPresent(tabLoc);
     }
 
+    public List<String> getDataTabs()
+    {
+        List<String> tabs = new ArrayList<>();
+        Locator tabLoc = Locators.tabHeaderContainer.append(Locators.header);
+        tabLoc.findElements(_test.getDriver()).forEach(element -> tabs.add(element.getText()));
+        return tabs;
+    }
+
+    public boolean isDataTabsEquals(List<String> expected)
+    {
+        List<String> actual = getDataTabs();
+        if (expected.size() != actual.size())
+            return false;
+        for (int i = 0; i < expected.size(); i++)
+        {
+            if (!expected.get(i).equals(actual.get(i)))
+                return false;
+        }
+        return true;
+    }
+
     public void goToDataTab(String tabName)
     {
-        Locator.XPathLocator activeTabLoc = Locators.tabHeaderContainer.append(Locators.activeHeader.withText(tabName));
+        Locator.XPathLocator activeTabLoc = Locators.getActiveHeader(tabName);
         if (!_test.isElementPresent(activeTabLoc))
         {
             Locator tabLoc = Locators.tabHeaderContainer.append(Locators.header.withText(tabName));
@@ -620,6 +633,11 @@ public class DataGrid
         public static Locator.XPathLocator cellLocator(String cellContent)
         {
             return Locator.tagWithClass("div", "x-grid-cell-inner").containing(cellContent);
+        }
+
+        public static Locator.XPathLocator getActiveHeader(String tabname)
+        {
+            return Locators.tabHeaderContainer.append(Locators.activeHeader.withText(tabname));
         }
     }
 
