@@ -99,7 +99,7 @@ public abstract class DataspaceVariableSelector
                 || (_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + selector + "')][contains(@class, 'item-spinner-mask-orange')]"))))
         {
             _test.log("Waiting for subject counts before clicking source.");
-            _test.sleep(1000);
+            _test.sleep(5000);
         }
         _test.click(window().append(" div.content-label").withText(source));
 //        _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(window().append(" div.content-label").withText(source)));

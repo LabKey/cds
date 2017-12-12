@@ -277,7 +277,7 @@ public class CDSGridTest extends CDSReadOnlyTest
                 "ZAP 136", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118"));
         exported.setAssays(Arrays.asList("Intracellular Cytokine Staining", "Intracellular Cytokine Staining", "Intracellular Cytokine Staining"));
         exported.setAssayProvenances(Arrays.asList("VISC analysis dataset", "VISC analysis dataset", "LabKey dataset", "VISC analysis dataset", "VISC analysis dataset"));
-        exported.setFieldLabels(Arrays.asList("Antigen name", "Cell type", "Data summary level", "Functional marker name", "Lab ID", "Magnitude (% cells) - Background subtracted",
+        exported.setFieldLabels(Arrays.asList("Antigen name", "Antigens aggregated", "Cell type", "Data summary level", "Functional marker name", "Lab ID", "Magnitude (% cells) - Background subtracted",
                 "Peptide Pool", "Protein", "Protein panel", "Specimen type"));
         grid.verifyCDSExcel(exported, false);
         grid.verifyCDSCSV(exported);
