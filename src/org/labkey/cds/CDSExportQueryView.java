@@ -67,6 +67,7 @@ public class CDSExportQueryView extends QueryView
     public static final String FILTER_DELIMITER = "|||";
     private static final String FILTERS_HEADING = "Subject filters applied to exported data:";
     private static final String FILTERS_FOOTER = "For a list of studies and assays included in this data file, please refer to the Studies and Assays tabs.";
+    private static final String FILTERS_FOOTER_TXT = "For a list of studies and assays included in the export, please refer to Studies and Assays files.";
 
     private static final String CAVD_LINK = "https://dataspace.cavd.org/cds/CAVD/app.view?";
     private static final String TOC_TITLE = "IMPORTANT INFORMATION ABOUT THIS DATA:";
@@ -756,7 +757,7 @@ public class CDSExportQueryView extends QueryView
             }
             builder.append("\t\t").append(currentFilter).append("\n");
         }
-        builder.append("\n" + FILTERS_FOOTER + "\n");
+        builder.append("\n" + FILTERS_FOOTER_TXT + "\n");
 
         File tmpFile = File.createTempFile("tmpMetadata" + FileUtil.getTimestamp(), null);
         tmpFile.deleteOnExit();
