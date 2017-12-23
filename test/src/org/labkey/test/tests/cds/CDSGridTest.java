@@ -319,6 +319,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         exported.setFieldLabels(Arrays.asList("Subject Id",
                 "Sex at birth",
                 "Antigen name",
+                "Antigens aggregated",
                 "Cell type",
                 "Data summary level",
                 "Functional marker name",

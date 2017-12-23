@@ -100,6 +100,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         {
             openSelectorWindow();
         }
+        _test.sleep(1000);
         pickSource(source);
         pickVariable(measure, keepSelection);
 
