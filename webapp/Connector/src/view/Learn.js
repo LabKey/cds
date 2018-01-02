@@ -673,7 +673,7 @@ Ext.define('Connector.view.Learn', {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
-        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension, params);
+        this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params);
     }
 
 });
@@ -772,9 +772,9 @@ Ext.define('Connector.view.LearnHeader', {
         this.getDataView().setDimensions(dimensions);
     },
 
-    selectDimension : function(dimUniqueName, id, dimension, params) {
+    selectTab : function(dimUniqueName, id, dimension, params) {
         if (!Ext.isEmpty(this.dimensions)) {
-            this.getDataView().selectDimension(dimUniqueName);
+            this.getDataView().selectTab(dimUniqueName);
         }
         this.filterStoreFromUrlParams(id, dimension, params);
     },
@@ -822,17 +822,15 @@ Ext.define('Connector.view.LearnHeader', {
 //
 Ext.define('Connector.view.LearnHeaderDataView', {
 
-    extend: 'Ext.view.View',
+    extend: 'Connector.view.HeaderDataView',
 
     alias: 'widget.learnheaderdataview',
 
-    itemSelector: 'h1.lhdv',
-
-    selectedItemCls: 'active',
-
-    loadMask: false,
-
     selectInitialDimension: false,
+
+    tabSelectEventName: 'requestselect',
+
+    keyFieldName: 'uniqueName',
 
     tpl: new Ext.XTemplate(
         '<tpl for=".">',
@@ -841,9 +839,6 @@ Ext.define('Connector.view.LearnHeaderDataView', {
     ),
 
     initComponent : function() {
-
-        this.addEvents('requestselect');
-
         this.callParent();
 
         if (this.dimensions) {
@@ -872,41 +867,10 @@ Ext.define('Connector.view.LearnHeaderDataView', {
         // Select the initial dimension
         //
         if (this.selectInitialDimension && store.getCount() > 0) {
-            this.selectDimension(store.getAt(0).get('uniqueName'));
+            this.selectTab(store.getAt(0).get('uniqueName'));
         }
-    },
-
-    //
-    // Select a dimension by unique name. If this method is called and a name is
-    // not provided then the first valid dimension will be selected.
-    //
-    selectDimension : function(dimUniqueName) {
-        var uniqueName = dimUniqueName;
-        var store = this.getStore();
-
-        if (!Ext.isDefined(uniqueName)) {
-            uniqueName = store.getAt(0).get('uniqueName');
-        }
-
-        var idx = store.findExact('uniqueName', uniqueName);
-        if (idx >= 0) {
-            var model = store.getAt(idx);
-            if (!this.rendered) {
-                this.on('afterrender', function() { this._select(model); }, this, {single: true});
-            }
-            else {
-                this._select(model);
-            }
-        }
-        else {
-            console.warn('Unable to select dimension:', uniqueName);
-        }
-    },
-
-    _select : function(model) {
-        this.getSelectionModel().select(model);
-        this.fireEvent('requestselect', model);
     }
+
 });
 
 Ext.define('Connector.view.LearnColumnHeader', {

@@ -48,7 +48,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     public Locator getOpenButton()
     {
-        return CDSHelper.Locators.cdsButtonLocator("Select columns", "gridcolumnsbtn");
+        return CDSHelper.Locators.cdsButtonLocator("Add/Remove columns", "gridcolumnsbtn");
     }
 
     @Override
@@ -100,6 +100,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         {
             openSelectorWindow();
         }
+        _test.sleep(1000);
         pickSource(source);
         pickVariable(measure, keepSelection);
 
@@ -107,11 +108,10 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         {
             confirmSelection();
             // confirm source header
-            _test.waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText(sourceColumnTitle));
-            // confirm column header
-            _test.waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText(measure));
+            _test.waitForElement(Locator.tagWithClass("h1", "lhdv").withText(sourceColumnTitle));
             _test.sleep(500);
             _test._ext4Helper.waitForMaskToDisappear();
+            _test.sleep(1000);
         }
     }
 

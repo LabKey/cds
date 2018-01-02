@@ -60,30 +60,39 @@ Ext.define('Connector.window.Facet', {
             }
         });
 
-        Connector.getQueryService().getData(newMeasures, function(metadata)
-        {
-            this.remove(loader);
+        var datasource = model.getDataSource();
+        var isDemographicsOnlyQuery = datasource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
+        var extraFilters = isDemographicsOnlyQuery ? model.getDemographicsSubjectFilters() : model.get('extraFilters');
 
-            var faceted = Ext.create('LABKEY.dataregion.filter.Faceted', {
-                itemId: 'faceted',
-                border: false,
-                useGrouping: true,
-                useStoreCache: false,
-                filters: matchFilters,
-                groupFilters: model.getFilterArray(true),
-                model: {
-                    column: this.columnMetadata,
-                    schemaName: metadata.schemaName,
-                    queryName: metadata.queryName
-                }
-            });
+        Connector.getQueryService().getData(newMeasures, function(metadata) {
+                this.remove(loader);
 
-            this.add(faceted);
-        },
-        function()
-        {
-            console.log('Failed to load...');
-        }, this, model.get('extraFilters'));
+                var faceted = Ext.create('LABKEY.dataregion.filter.Faceted', {
+                    itemId: 'faceted',
+                    border: false,
+                    useGrouping: true,
+                    useStoreCache: false,
+                    filters: matchFilters,
+                    groupFilters: model.getFilterArray(true),
+                    model: {
+                        column: this.columnMetadata,
+                        schemaName: metadata.schemaName,
+                        queryName: metadata.queryName
+                    }
+                });
+
+                this.add(faceted);
+            },
+            function() {
+                console.log('Failed to load...');
+            },
+            this,
+            extraFilters,
+            {
+                dataSource: datasource,
+                demographicsOnly: isDemographicsOnlyQuery
+            }
+        );
 
         return [loader];
     },

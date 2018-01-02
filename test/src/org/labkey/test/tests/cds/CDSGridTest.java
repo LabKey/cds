@@ -18,8 +18,9 @@ package org.labkey.test.tests.cds;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.api.util.Pair;
 import org.labkey.test.Locator;
-import org.labkey.test.pages.cds.CDSExcel;
+import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
@@ -31,13 +32,16 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.util.cds.CDSHelper.GRID_TITLE_NAB;
 
 @Category({})
 public class CDSGridTest extends CDSReadOnlyTest
@@ -88,13 +92,13 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         waitForText("View data grid"); // grid warning
 
-        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
-        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
-        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
 
+        grid.goToDataTab(GRID_TITLE_NAB);
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(10783); // TODO Test data dependent.
             grid.assertPageTotal(432); // TODO Test data dependent.
         }
 
@@ -146,7 +150,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             sleep(CDSHelper.CDS_WAIT_ANIMATION);
-            grid.assertRowCount(1075); // TODO Test data dependent.
+            grid.assertPageTotal(43); // TODO Test data dependent.
         }
 
         cds.clearFilters();
@@ -159,16 +163,25 @@ public class CDSGridTest extends CDSReadOnlyTest
         }
 
         gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
-        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.GRID_TITLE_DEMO, CDSHelper.DEMO_RACE, false, true);
-        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE);
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_RACE, false, true);
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
 
         if (CDSHelper.validateCounts)
         {
             grid.assertRowCount(10783); // TODO Test data dependent.
         }
 
+        grid.goToDataTab("Subject characteristics");
+        grid.ensureSubjectCharacteristicsColumnsPresent(CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE);
+
+        if (CDSHelper.validateCounts)
+        {
+            grid.assertPageTotal(332); // TODO Test data dependent.
+        }
+
         log("Remove a column");
         gridColumnSelector.removeGridColumn(CDSHelper.NAB, CDSHelper.NAB_ASSAY, false);
+        grid.goToDataTab("NAb");
         grid.assertColumnsNotPresent(CDSHelper.NAB_ASSAY);
         grid.ensureColumnsPresent(CDSHelper.NAB_LAB); // make sure other columns from the same source still exist
 
@@ -177,6 +190,7 @@ public class CDSGridTest extends CDSReadOnlyTest
             grid.assertRowCount(10783); // TODO Test data dependent.
         }
 
+        grid.goToDataTab("Subject characteristics");
         grid.setFacet(CDSHelper.DEMO_RACE, "White");
 
         if (CDSHelper.validateCounts)
@@ -190,6 +204,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         // More page button tests
         //
         log("Verify grid paging with filtered dataset");
+        grid.goToDataTab("NAb");
         grid.sort(CDSHelper.GRID_COL_SUBJECT_ID);
         grid.clickNextBtn();
         grid.assertCurrentPage(2);
@@ -219,7 +234,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         }
 
         log("Change column set and ensure still filtered");
-        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERID50, false, true);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_TITERID50, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50);
 
         if (CDSHelper.validateCounts)
@@ -248,14 +263,131 @@ public class CDSGridTest extends CDSReadOnlyTest
     }
 
     @Test
-    public void verifyGridCheckerboarding()
+    public void verifyGridExport() throws IOException
     {
-        log("Verify Grid with filters and checkerboarding.");
+        DataGrid grid = new DataGrid(this);
+        setUpGridStep1();
 
+        CDSExport exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 495),
+                new Pair<>(CDSHelper.TITLE_ICS, 658)));
+        exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining", "", "", "", "Subject (Race)"));
+        exported.setFilterValues(Arrays.asList("Data summary level: Protein Panel", "Functional marker name: IL2/ifngamma", "", "", "Subjects related to any: Asian"));
+        exported.setStudyNetworks(Arrays.asList("ROGER", "ROGER", "ROGER", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED"));
+        exported.setStudies(Arrays.asList("RED 4", "RED 5", "RED 6", "ZAP 102", "ZAP 105", "ZAP 106", "ZAP 134",
+                "ZAP 136", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118"));
+        exported.setAssays(Arrays.asList("Intracellular Cytokine Staining", "Intracellular Cytokine Staining", "Intracellular Cytokine Staining"));
+        exported.setAssayProvenances(Arrays.asList("VISC analysis dataset", "VISC analysis dataset", "LabKey dataset", "VISC analysis dataset", "VISC analysis dataset"));
+        exported.setFieldLabels(Arrays.asList("Antigen name", "Antigens aggregated", "Cell type", "Data summary level", "Functional marker name", "Lab ID", "Magnitude (% cells) - Background subtracted",
+                "Peptide Pool", "Protein", "Protein panel", "Specimen type"));
+        grid.verifyCDSExcel(exported, false);
+        grid.verifyCDSCSV(exported);
+
+        setUpGridStep2(false);
+
+        exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 7),
+                new Pair<>(CDSHelper.GRID_TITLE_DEMO, 2),
+                new Pair<>(CDSHelper.GRID_TITLE_ICS, 2),
+                new Pair<>(CDSHelper.GRID_TITLE_NAB, 13)));
+        exported.setFilterTitles(Arrays.asList("Demographics",
+                "",
+                "",
+                "Intracellular Cytokine Staining",
+                "",
+                "",
+                "",
+                "",
+                "Subject (Race)"));
+        exported.setFilterValues(Arrays.asList("Sex at birth = Male",
+                "",
+                "",
+                "Data summary level: Protein Panel",
+                "Functional marker name: IL2/ifngamma",
+                "Magnitude (% cells) - Background subtracted >= 1",
+                "",
+                "",
+                "Subjects related to any: Asian"));
+        exported.setStudyNetworks(Arrays.asList("ZED", "ZED"));
+        exported.setStudies(Arrays.asList("ZAP 134", "ZAP 117"));
+        exported.setAssays(Arrays.asList("HIV Neutralizing Antibody",
+                "HIV Neutralizing Antibody",
+                "Intracellular Cytokine Staining",
+                "Intracellular Cytokine Staining"));
+        exported.setAssayProvenances(Arrays.asList("LabKey dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset",
+                "VISC analysis dataset"));
+        exported.setFieldLabels(Arrays.asList("Subject Id",
+                "Sex at birth",
+                "Antigen name",
+                "Antigens aggregated",
+                "Cell type",
+                "Data summary level",
+                "Functional marker name",
+                "Lab ID",
+                "Magnitude (% cells) - Background subtracted",
+                "Peptide Pool",
+                "Protein",
+                "Protein panel",
+                "Specimen type",
+                "Data summary level",
+                "Initial dilution",
+                "Lab ID",
+                "Specimen type",
+                "Target cell",
+                "Titer ID50",
+                "Virus name",
+                "Study Name",
+                "Treatment Summary"));
+        grid.verifyCDSExcel(exported, false);
+        grid.verifyCDSCSV(exported);
+    }
+
+    @Test
+    public void verifyGridWithPlotAndFilters()
+    {
+        log("Verify Grid with filters.");
+        DataGrid grid = new DataGrid(this);
+        setUpGridStep1();
+
+        log("Validate expected columns are present.");
+        grid.goToDataTab(CDSHelper.TITLE_ICS);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+
+        log("Validating grid counts");
+        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 45);
+        grid.assertPageTotal(27);
+
+        setUpGridStep2(true);
+
+        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        grid.assertPageTotal(1);
+        grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
+        grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.assertRowCount(13);
+        grid.goToDataTab(CDSHelper.GRID_TITLE_ICS);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        grid.assertRowCount(2);
+
+        log("Remove the plot and validate that the columns stay the same, but the counts could change.");
+        cds.clearFilter(0);
+        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        grid.assertPageTotal(1);
+        grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
+        grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.assertRowCount(13);
+        grid.goToDataTab(CDSHelper.GRID_TITLE_ICS);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        grid.assertRowCount(4);
+
+        cds.goToAppHome();
+        cds.clearFilters();
+    }
+
+    private void setUpGridStep1()
+    {
         DataGrid grid = new DataGrid(this);
         DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
-        log("Filter on race.");
         cds.goToSummary();
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
         cds.pickSort("Race");
@@ -277,69 +409,32 @@ public class CDSGridTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        sleep(1000);
 
-        log("Validate expected columns are present.");
-        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+    }
 
-        log("Validating grid counts");
-        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 45);
-        grid.assertPageTotal(27);
-        CDSExcel exported = new CDSExcel(658);
-        exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining", "", "", "", "Subject (Race)"));
-        exported.setFilterValues(Arrays.asList("Data summary level: Protein Panel", "Functional marker name: IL2/ifngamma", "", "", "Subjects related to any: Asian"));
-        exported.setStudyNetworks(Arrays.asList("ROGER", "ROGER", "ROGER", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED"));
-        exported.setStudies(Arrays.asList("RED 4", "RED 5", "RED 6", "ZAP 102", "ZAP 105", "ZAP 106", "ZAP 134",
-                "ZAP 136", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118"));
-        exported.setAssays(Arrays.asList("Intracellular Cytokine Staining", "Intracellular Cytokine Staining", "Intracellular Cytokine Staining"));
-        exported.setAssayProvenances(Arrays.asList("VISC analysis dataset", "VISC analysis dataset", "LabKey dataset", "VISC analysis dataset", "VISC analysis dataset"));
-        exported.setFieldLabels(Arrays.asList("Cell type", "Data summary level", "Functional marker name", "Lab ID", "Magnitude (% cells) - Background subtracted",
-                "Peptide Pool", "Protein", "Protein panel", "Specimen type"));
-        grid.verifyCDSExcel(exported, false);
+    private void setUpGridStep2(boolean verifyGrid)
+    {
+        DataGrid grid = new DataGrid(this);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
         log("Applying a column filter.");
+        grid.goToDataTab(CDSHelper.TITLE_ICS);
         grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Greater Than or Equal To", "1");
+        sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
 
-        _asserts.assertFilterStatusCounts(4, 3, 1, 1, 3);
-        grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
-
-        exported = new CDSExcel(4);
-        exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining",
-                "",
-                "",
-                "",
-                "",
-                "Subject (Race)"));
-        exported.setFilterValues(Arrays.asList("Data summary level: Protein Panel",
-                "Functional marker name: IL2/ifngamma",
-                "Magnitude (% cells) - Background subtracted >= 1",
-                "",
-                "",
-                "Subjects related to any: Asian"));
-        exported.setStudyNetworks(Arrays.asList("ZED", "ZED", "ZED"));
-        exported.setStudies(Arrays.asList("ZAP 105", "ZAP 134", "ZAP 117"));
-        exported.setAssays(Arrays.asList("Intracellular Cytokine Staining",
-                "Intracellular Cytokine Staining",
-                "Intracellular Cytokine Staining"));
-        exported.setAssayProvenances(Arrays.asList("VISC analysis dataset",
-                "VISC analysis dataset",
-                "VISC analysis dataset"));
-        exported.setFieldLabels(Arrays.asList("Cell type",
-                "Data summary level",
-                "Functional marker name",
-                "Lab ID",
-                "Magnitude (% cells) - Background subtracted",
-                "Peptide Pool",
-                "Protein",
-                "Protein panel",
-                "Specimen type"));
-        grid.verifyCDSExcel(exported, false);
+        if (verifyGrid)
+        {
+            _asserts.assertFilterStatusCounts(4, 3, 1, 1, 3);
+            grid.assertPageTotal(1);
+            grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        }
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
         // Can't use CDSHelper.NavigationLink.Grid.makeNavigationSelection. It expects that it will be going to a blank plot.
         click(CDSHelper.NavigationLink.PLOT.getLinkLocator());
 
-        sleep(500); // There is a brief moment where the grid refreshes because of filters applied in the grid.
+        sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
 
         ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
 
@@ -350,65 +445,96 @@ public class CDSGridTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
 
-        log("Validate new column added to grid.");
-        grid.ensureColumnsPresent(CDSHelper.DEMO_SEX);
+        grid.goToDataTab(CDSHelper.GRID_TITLE_DEMO);
+        if (verifyGrid)
+        {
+            log("Validate new column added to grid.");
+            grid.ensureSubjectCharacteristicsColumnsPresent(CDSHelper.DEMO_SEX);
+        }
 
         log("Filter on new column.");
         grid.setCheckBoxFilter(CDSHelper.DEMO_SEX, true, "Male");
-        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
         sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
-        grid.assertRowCount(2);
-
-        log("Now add a new column to the mix.");
-        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERID50, false, true);
-
-        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
-        grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
-        grid.assertRowCount(15);
-
-        log("Validate checkerboarding.");
-        List<WebElement> gridRows, gridRowCells;
-        String xpathAllGridRows = "//div[contains(@class, 'connector-grid')]//div[contains(@class, 'x-grid-body')]//div//table//tr[contains(@class, 'x-grid-data-row')]";
-        gridRows = Locator.xpath(xpathAllGridRows).findElements(getDriver());
-        for (WebElement row : gridRows)
+        if (verifyGrid)
         {
-            gridRowCells = row.findElements(By.xpath("./descendant::td"));
-
-            // If the Magnitude Background subtracted column is "empty"
-            if (gridRowCells.get(8).getText().trim().length() == 0)
-            {
-                // There should be no lab id
-                assertTrue(gridRowCells.get(7).getAttribute("class").toLowerCase().contains("no-value"));
-                // but there should be a value for Titer IC50.
-                assertTrue(!gridRowCells.get(18).getText().trim().isEmpty());
-            }
-            else
-            {
-                // There should be a lab id
-                assertTrue(!gridRowCells.get(7).getText().trim().isEmpty());
-                // but there should not be a value for Titer IC50.
-                assertTrue(gridRowCells.get(18).getAttribute("class").toLowerCase().contains("no-value"));
-            }
-
+            _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+            grid.assertRowCount(2);
         }
 
-        log("Remove the plot and validate that the columns stay the same, but the counts could change.");
+        log("Now add a new column to the mix.");
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_TITERID50, false, true);
 
-        cds.clearFilter(0);
+        _ext4Helper.waitForMaskToDisappear();
 
-        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
-        grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
-        grid.assertRowCount(17);
-
-        cds.goToAppHome();
-        cds.clearFilters();
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        sleep(1000);
     }
 
-    // TODO: Still needs work, mainly blocked by issue https://www.labkey.org/issues/home/Developer/issues/details.view?issueId=24128
-    @Test //@Ignore
+    @Test
+    public void verifyGridTabsAndColumns()
+    {
+        /*
+         *                          Default Study And Time  | Added Study And Treatment | Added Time | Subject Characteristics
+         * Study And Treatment      Y                           Y                           N           N
+         * Subject Characteristics  N (demographics version)    Y                           N           Y
+         * Assays                   Y                           N                           Y           N
+         */
+
+        DataGrid grid = new DataGrid(this);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
+
+        log("Verify Default Grid: " + CDSHelper.GRID_TITLE_STUDY_TREATMENT);
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        Locator.XPathLocator activeTabLoc = DataGrid.Locators.getActiveHeader(CDSHelper.GRID_TITLE_STUDY_TREATMENT);
+        waitForElement(activeTabLoc);
+        grid.ensureColumnsPresent(); // verify default columns
+
+        log("Verify grid with added study and treatment columns");
+        gridColumnSelector.addGridColumn(CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.DEMO_NETWORK, true, true);
+        gridColumnSelector.confirmSelection();
+        sleep(2000);
+        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT)));
+        grid.ensureColumnsPresent(CDSHelper.DEMO_NETWORK);
+
+        log("Verify grid with added assay columns");
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
+        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_NAB)));
+        grid.goToDataTab(GRID_TITLE_NAB);
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
+
+        log("Verify grid with subject characteristics and time point columns");
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_RACE, false, true);
+        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB)));
+        gridColumnSelector.addGridColumn(CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_MONTHS, true, true);
+        gridColumnSelector.confirmSelection();
+        sleep(2000);
+
+        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB)));
+
+        // go to another page and come back to grid
+        cds.goToSummary();
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        assertEquals("Grid tab selection should not have changed", GRID_TITLE_NAB, grid.getActiveDataTab());
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.TIME_POINTS_MONTHS);
+
+        log("Verify subject characteristics and study treatment columns are not added to assay tabs");
+        grid.assertColumnsNotPresent(CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE, CDSHelper.DEMO_NETWORK);
+
+        log("Verify assay and time columns are not added to subject characteristics tab");
+        grid.goToDataTab(CDSHelper.GRID_TITLE_DEMO);
+        grid.ensureSubjectCharacteristicsColumnsPresent(CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE, CDSHelper.DEMO_NETWORK);
+        grid.assertColumnsNotPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.TIME_POINTS_MONTHS);
+
+        log("Verify subject characteristics columns are not added to study and treatment tab");
+        grid.goToDataTab(CDSHelper.GRID_TITLE_STUDY_TREATMENT);
+        grid.assertColumnsNotPresent(CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE);
+    }
+
+    @Test
     public void verifyGridColumnSelector()
     {
         CDSHelper cds = new CDSHelper(this);
@@ -453,9 +579,12 @@ public class CDSGridTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         log("Validate expected columns are present.");
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
-                CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                CDSHelper.NAB_TITERID50, CDSHelper.DEMO_RACE);
+        grid.goToDataTab(CDSHelper.TITLE_NAB);
+        grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50);
+        grid.goToDataTab(CDSHelper.TITLE_ICS);
+        grid.ensureColumnsPresent(CDSHelper.ICS_ANTIGEN);
+        grid.goToDataTab(CDSHelper.SUBJECT_CHARS);
+        grid.ensureSubjectCharacteristicsColumnsPresent(CDSHelper.DEMO_RACE);
 
         gridColumnSelector.openSelectorWindow();
         Map<String, Boolean> columns = new HashMap<>();
@@ -495,11 +624,15 @@ public class CDSGridTest extends CDSReadOnlyTest
         gridColumnSelector.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
-                CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                CDSHelper.NAB_TITERID50, CDSHelper.DEMO_RACE, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        grid.goToDataTab(CDSHelper.TITLE_NAB);
+        grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50);
+        grid.goToDataTab(CDSHelper.TITLE_ICS);
+        grid.ensureColumnsPresent(CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        grid.goToDataTab(CDSHelper.SUBJECT_CHARS);
+        grid.ensureSubjectCharacteristicsColumnsPresent(CDSHelper.DEMO_RACE);
 
         log("Filter on added column, check to make sure it is now 'locked' in the selector.");
+        grid.goToDataTab(CDSHelper.TITLE_ICS);
         grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Less Than or Equal To", "0.003");
 
         gridColumnSelector.openSelectorWindow();
@@ -523,9 +656,12 @@ public class CDSGridTest extends CDSReadOnlyTest
         click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-grid-cell-inner')][text()='" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "']"));
         gridColumnSelector.confirmSelection();
 
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
-                CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                CDSHelper.NAB_TITERID50, CDSHelper.DEMO_RACE);
+        grid.goToDataTab(CDSHelper.TITLE_NAB);
+        grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50);
+        grid.goToDataTab(CDSHelper.TITLE_ICS);
+        grid.ensureColumnsPresent(CDSHelper.ICS_ANTIGEN);
+        grid.goToDataTab(CDSHelper.SUBJECT_CHARS);
+        grid.ensureSubjectCharacteristicsColumnsPresent(CDSHelper.DEMO_RACE);
 
         log("Validate the column chooser is correct when a column is removed.");
         String selectorText, selectorTextClean;
@@ -553,7 +689,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         selectorTextClean = selectorText.toLowerCase().replaceAll("\\n", "");
         selectorTextClean = selectorTextClean.replaceAll("\\s+", "");
 
-        expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen name\n  Cell type\n  Data summary level\n  Functional marker name\n" +
+        expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen name\n  Antigens aggregated\n  Cell type\n  Data summary level\n  Functional marker name\n" +
                 "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer ID50\nStudy and treatment variables\n  Study Name\n" +
                 "Subject characteristics\n  Race\n  Subject Id\nTime points\n  Study days";
         expectedTextClean = expectedText.toLowerCase().replaceAll("\\n", "");
@@ -578,7 +714,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         sleep(500); //Wait for mask to appear.
         _ext4Helper.waitForMaskToDisappear();
 
-        grid.ensureColumnsPresent(CDSHelper.DEMO_STUDY, CDSHelper.DEMO_TREAT_SUMM);
+        grid.ensureColumnsPresent();
 
         columns.clear();
         columns.put(CDSHelper.DEMO_STUDY_NAME, false);

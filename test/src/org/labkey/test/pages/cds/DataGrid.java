@@ -20,8 +20,11 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
+import org.labkey.api.util.Pair;
+import org.labkey.api.writer.ZipUtil;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.TestFileUtils;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.ExcelHelper;
 import org.labkey.test.util.LabKeyExpectedConditions;
@@ -31,10 +34,14 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import com.google.common.base.Function;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class DataGrid
 {
@@ -45,6 +52,54 @@ public class DataGrid
         _test = test;
     }
 
+    public String getActiveDataTab()
+    {
+        return Locators.tabHeaderContainer.append(Locators.activeHeader).findElement(_test.getDriver()).getText();
+    }
+
+    public boolean hasDataTab(String tabName)
+    {
+        Locator tabLoc = Locators.tabHeaderContainer.append(Locators.header.withText(tabName));
+        _test.sleep(1000);
+        return _test.isElementPresent(tabLoc);
+    }
+
+    public List<String> getDataTabs()
+    {
+        List<String> tabs = new ArrayList<>();
+        Locator tabLoc = Locators.tabHeaderContainer.append(Locators.header);
+        tabLoc.findElements(_test.getDriver()).forEach(element -> tabs.add(element.getText()));
+        return tabs;
+    }
+
+    public boolean isDataTabsEquals(List<String> expected)
+    {
+        List<String> actual = getDataTabs();
+        if (expected.size() != actual.size())
+            return false;
+        for (int i = 0; i < expected.size(); i++)
+        {
+            if (!expected.get(i).equals(actual.get(i)))
+                return false;
+        }
+        return true;
+    }
+
+    public void goToDataTab(String tabName)
+    {
+        Locator.XPathLocator activeTabLoc = Locators.getActiveHeader(tabName);
+        if (!_test.isElementPresent(activeTabLoc))
+        {
+            Locator tabLoc = Locators.tabHeaderContainer.append(Locators.header.withText(tabName));
+            _test.waitForElement(tabLoc);
+            _test.click(tabLoc);
+            WebElement activeTabHeader = activeTabLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+            _test.shortWait().until(ExpectedConditions.visibilityOf(activeTabHeader));
+            _test._ext4Helper.waitForMaskToDisappear();
+        }
+        _test.sleep(1000);
+    }
+
     public void assertColumnsNotPresent(String... columns)
     {
         for (String column : columns)
@@ -53,15 +108,39 @@ public class DataGrid
 
     public void ensureColumnsPresent(String... columns)
     {
-        String[] defaultColumns = {
-            CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY
-        };
+        ensureColumnsPresent(false, columns);
+    }
+
+    public void ensureSubjectCharacteristicsColumnsPresent(String... columns)
+    {
+        ensureColumnsPresent(true, columns);
+    }
+
+    public void ensureColumnsPresent(boolean isSubjectCharacteristics, String... columns)
+    {
+        String[] defaultColumns = getDefaultColumns(isSubjectCharacteristics);
 
         for (String column : defaultColumns)
             _test.waitForElement(Locators.columnHeaderLocator(column));
 
         for (String column : columns)
             _test.waitForElement(Locators.columnHeaderLocator(column));
+
+    }
+
+    public String[] getDefaultColumns(boolean isSubjectCharacteristics)
+    {
+        if (isSubjectCharacteristics)
+        {
+            return new String[]{
+                    CDSHelper.GRID_COL_SUBJECT_ID, "Study Name", CDSHelper.GRID_COL_TREATMENT_SUMMARY
+            };
+
+        }
+
+        return new String[]{
+                CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY
+        };
     }
 
     @LogMethod(quiet = true)
@@ -174,33 +253,38 @@ public class DataGrid
     }
 
     @LogMethod
-    public void assertRowCount(int i)
+    public void assertRowCount(int expCount)
     {
-        CDSExcel grid = new CDSExcel(i);
-        verifyCDSExcel(grid, true);
+        if (expCount <= 25)
+        {
+            _test.waitForElements(Locators.dataRow, expCount);
+            return;
+        }
+        int expectedPage = (int) Math.ceil(expCount / 25.0);
+        assertPageTotal(expectedPage);
     }
 
     @LogMethod
-    public void verifyCDSExcel(CDSExcel excel, boolean countOnly)
+    public void verifyCDSExcel(CDSExport expected, boolean countOnly)
     {
-        File export = exportGrid();
-        verifyRowCount(excel, export);
+        File export = exportExcel();
+        verifyExcelRowCount(expected, export);
 
         if (countOnly)
             return;
 
-        verifyExportedMetadata(export, excel);
-        verifyExportedStudies(export, excel);
-        verifyExportedAssays(export, excel);
-        verifyExportedVariables(export, excel);
+        verifyExportedMetadata(export, expected);
+        verifyExportedStudies(export, expected);
+        verifyExportedAssays(export, expected);
+        verifyExportedVariables(export, expected);
     }
 
-    private void verifyExportedVariables(File export, CDSExcel excel)
+    private void verifyExportedVariables(File export, CDSExport excel)
     {
         try
         {
             Workbook wb = ExcelHelper.create(export);
-            Sheet sheet = wb.getSheetAt(4);
+            Sheet sheet = wb.getSheetAt(excel.getVariablesSheetIndex());
             verifySheetName(sheet,"Variable definitions");
 
             List<String> fieldLabels = excel.getFieldLabels();
@@ -212,12 +296,12 @@ public class DataGrid
         }
     }
 
-    private void verifyExportedAssays(File export, CDSExcel excel)
+    private void verifyExportedAssays(File export, CDSExport excel)
     {
         try
         {
             Workbook wb = ExcelHelper.create(export);
-            Sheet sheet = wb.getSheetAt(3);
+            Sheet sheet = wb.getSheetAt(excel.getAssaysSheetIndex());
             verifySheetName(sheet,"Assays");
 
             List<String> assays = excel.getAssays();
@@ -231,12 +315,12 @@ public class DataGrid
         }
     }
 
-    private void verifyExportedStudies(File export, CDSExcel excel)
+    private void verifyExportedStudies(File export, CDSExport excel)
     {
         try
         {
             Workbook wb = ExcelHelper.create(export);
-            Sheet sheet = wb.getSheetAt(2);
+            Sheet sheet = wb.getSheetAt(excel.getStudiesSheetIndex());
             verifySheetName(sheet,"Studies");
 
             List<String> studyNetworks = excel.getStudyNetworks();
@@ -265,12 +349,12 @@ public class DataGrid
     }
 
     @LogMethod
-    private void verifyExportedMetadata(File export, CDSExcel excel)
+    private void verifyExportedMetadata(File export, CDSExport excel)
     {
         try
         {
             Workbook wb = ExcelHelper.create(export);
-            Sheet sheet = wb.getSheetAt(1);
+            Sheet sheet = wb.getSheetAt(excel.getMetadataSheetIndex());
 
             verifySheetName(sheet,"Metadata");
             verifyTOC(sheet);
@@ -289,9 +373,9 @@ public class DataGrid
     }
 
     @LogMethod
-    private void verifyFilters(Sheet sheet, CDSExcel excel)
+    private void verifyFilters(Sheet sheet, CDSExport excel)
     {
-        int startingRow = CDSExcel.FILTER_START_ROW;
+        int startingRow = CDSExport.FILTER_START_ROW;
         List<String> filterTitles = excel.getFilterTitles();
         List<String> filterValues = excel.getFilterValues();
         String cellValue;
@@ -303,7 +387,7 @@ public class DataGrid
                 cellValue = sheet.getRow(i + startingRow).getCell(1).getStringCellValue();
                 Assert.assertEquals("Filter title is not as expected", filterTitles.get(i), cellValue);
             }
-        startingRow = CDSExcel.FILTER_START_ROW + 1;
+        startingRow = CDSExport.FILTER_START_ROW + 1;
         if (filterValues != null)
             for (int i = 0; i < filterValues.size(); i++)
             {
@@ -318,36 +402,40 @@ public class DataGrid
     private void verifyTOC(Sheet sheet)
     {
         String cellValue = sheet.getRow(0).getCell(0).getStringCellValue();
-        Assert.assertEquals("TOC is not as expected", CDSExcel.TOCS.get(0).get(0), cellValue);
+        Assert.assertEquals("TOC is not as expected", CDSExport.TOCS.get(0).get(0), cellValue);
 
         for (int i = 1; i < 4; i++)
         {
             cellValue = sheet.getRow(i).getCell(1).getStringCellValue();
-            Assert.assertEquals("TOC is note as expected", CDSExcel.TOCS.get(i).get(1), cellValue);
+            Assert.assertEquals("TOC is note as expected", CDSExport.TOCS.get(i).get(1), cellValue);
         }
     }
 
     @LogMethod
-    public void verifyRowCount(CDSExcel expectedExcel, File exported)
+    public void verifyExcelRowCount(CDSExport expectedExcel, File exported)
     {
-        int expCount = expectedExcel.getDataRowCount();
-        if (expCount <= 25)
+        List<Pair<String, Integer>> dataTabCounts = expectedExcel.getDataTabCounts();
+        List<String> missingDataFiles = new ArrayList<>();
+        dataTabCounts.forEach(pair -> missingDataFiles.add(pair.first));
+        for (int i = 0; i < dataTabCounts.size(); i++)
         {
-            _test.waitForElements(Locators.dataRow, expCount);
-            return;
+            Pair<String, Integer> dataTabCount = dataTabCounts.get(i);
+            String tab = dataTabCount.first;
+            int expCount = dataTabCount.second;
+            int exportedCount = getExportRowCount(exported, i, tab);
+            Assert.assertEquals("Wrong number of rows in export.", expCount, exportedCount);
         }
-        long exportedCount = getExportRowCount(exported);
-        _test.waitForElements(Locators.dataRow, 25);
-        Assert.assertEquals("Wrong number of rows in export.", expCount, exportedCount);
     }
 
     @LogMethod
-    public int getExportRowCount(File export)
+    public int getExportRowCount(File export, int tabIndex, String expectedName)
     {
         try
         {
             Workbook wb = ExcelHelper.create(export);
-            Sheet sheet = wb.getSheetAt(0);
+            Sheet sheet = wb.getSheetAt(tabIndex);
+            if (expectedName != null)
+                Assert.assertEquals("Sheet name not as expected: ", expectedName, sheet.getSheetName());
             return sheet.getLastRowNum(); // +1 for zero-based, -1 for header row
         }
         catch (IOException | InvalidFormatException fail)
@@ -388,9 +476,92 @@ public class DataGrid
         assertSortPresent(columnName);
     }
 
-    public File exportGrid()
+    public File exportExcel()
     {
-        return _test.clickAndWaitForDownload(Locator.css("a.gridexportbtn"));
+        return exportGrid(true);
+    }
+
+    public File exportCSV()
+    {
+        return exportGrid(false);
+    }
+
+    public File exportGrid(boolean isExcel)
+    {
+        return _test.clickAndWaitForDownload(Locator.css("a." + (isExcel ? "gridexportexcelbtn" : "gridexportcsvbtn")));
+    }
+
+    private void verifyExportedCSVContent(File export, List<String> expectedContent)
+    {
+        String exportedContent = TestFileUtils.getFileContents(export);
+        for (String expectedFragment : expectedContent)
+        {
+            assertTrue("Exported file doesn't contain " + expectedFragment, exportedContent.contains(expectedFragment));
+        }
+    }
+
+    private int getExportedCSVRowCount(File export) throws IOException
+    {
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(export));
+        String input;
+        int rowCount = 0;
+        while((input = bufferedReader.readLine()) != null)
+        {
+            rowCount++;
+        }
+        return rowCount;
+    }
+
+    @LogMethod
+    public void verifyCDSCSV(CDSExport expected) throws IOException
+    {
+        File dir = TestFileUtils.getTestTempDir();
+        dir.mkdirs();
+
+        File exportedZip = exportCSV();
+
+        List<String> missingDataFiles = new ArrayList<>();
+        expected.getDataTabCounts().forEach(pair -> missingDataFiles.add(pair.first));
+
+        for (File file : ZipUtil.unzipToDirectory(exportedZip, dir))
+        {
+            String filename = file.getName();
+            if ("Metadata.txt".equals(filename))
+            {
+                CDSExport.TOCS.forEach(expectedContent -> verifyExportedCSVContent(file, expectedContent));
+                verifyExportedCSVContent(file, expected.getFilterTitles());
+                verifyExportedCSVContent(file, expected.getFilterValues());
+            }
+            else if ("Studies.csv".equals(filename))
+            {
+                verifyExportedCSVContent(file, expected.getStudyNetworks());
+                verifyExportedCSVContent(file, expected.getStudies());
+            }
+            else if ("Assays.csv".equals(filename))
+            {
+                verifyExportedCSVContent(file, expected.getAssays());
+                verifyExportedCSVContent(file, expected.getAssayProvenances());
+            }
+            else if ("Variable definitions.csv".equals(filename))
+            {
+                verifyExportedCSVContent(file, expected.getFieldLabels());
+            }
+            else
+            {
+                for (Pair<String, Integer> dataCount :expected.getDataTabCounts())
+                {
+                    String dataName = dataCount.first;
+                    int expCount = dataCount.second;
+                    if (filename.equals(dataName + ".csv"))
+                    {
+                        missingDataFiles.remove(dataName);
+                        int exportedCount = getExportedCSVRowCount(file) - 1;
+                        Assert.assertEquals("Wrong number of rows for " + dataName, expCount, exportedCount);
+                    }
+                }
+            }
+        }
+        Assert.assertTrue("Expected files missing from export: " + StringUtils.join(missingDataFiles), missingDataFiles.isEmpty());
     }
 
     public void applyAndWaitForGrid(Function<Void, Void> function)
@@ -450,6 +621,9 @@ public class DataGrid
         public static Locator.CssLocator nextBtn = Locator.css("a.paging-next-button");
         public static Locator.CssLocator previousPage = Locator.css("a.pager-previous");
         public static Locator.CssLocator nextPage = Locator.css("a.pager-next");
+        public static Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
+        public static Locator.XPathLocator activeHeader = header.withClass("active");
+        public static Locator.XPathLocator tabHeaderContainer = Locator.tag("div").withClass("grid-tab-selector");
 
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
         {
@@ -459,6 +633,11 @@ public class DataGrid
         public static Locator.XPathLocator cellLocator(String cellContent)
         {
             return Locator.tagWithClass("div", "x-grid-cell-inner").containing(cellContent);
+        }
+
+        public static Locator.XPathLocator getActiveHeader(String tabname)
+        {
+            return Locators.tabHeaderContainer.append(Locators.activeHeader.withText(tabname));
         }
     }
 
