@@ -63,7 +63,10 @@ Ext.define('Connector.grid.Panel', {
                 }
                 else if (name.toLowerCase().indexOf(QueryUtils.STUDY_ALIAS_PREFIX.toLowerCase()) == 0)
                 {
-                    time.push(col);
+                    if (name.toLowerCase() === QueryUtils.SUBJECT_SEQNUM_ALIAS.toLowerCase())
+                        studyTime.push(col);
+                    else
+                        time.push(col);
                 }
                 else
                 {
