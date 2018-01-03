@@ -59,34 +59,18 @@ Ext.define('Connector.window.Filter', {
 });
 
 Ext.define('Connector.field.BooleanCombo', {
-    extend: 'Ext.form.field.ComboBox',
+    extend: 'Ext.form.field.Text',
     alias: 'widget.labkey-booleantextfield',
-    displayField: 'displayText',
-    valueField: 'value',
-    triggerAction: 'all',
-    listWidth: 200,
-    forceSelection: true,
-    queryMode: 'local',
 
-    initComponent : function() {
-        Ext.apply(this, {
-            store: Ext.create('Ext.data.ArrayStore', {
-                fields: [
-                    'value',
-                    'displayText'
-                ],
-                idIndex: 0,
-                data: [
-                    [false, 'No'],
-                    [true, 'Yes']
-                ]
-            })
-        });
+    initComponent : function()
+    {
+        this.callParent();
 
-        this.callParent(arguments);
+        this.validator = function(val){
+            if(!val)
+                return true;
 
-        if (this.includeNullRecord) {
-            this.store.add([[null, ' ']]);
+            return LABKEY.Utils.isBoolean(val) ? true : val + " is not a valid boolean. Try true/false; yes/no; on/off; or 1/0.";
         }
     }
 });
