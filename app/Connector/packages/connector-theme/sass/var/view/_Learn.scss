@@ -637,6 +637,29 @@ img.detail-has-data-small {
     border-color: $gray-6!important;
     color: $black;
   }
+
+  .x-trigger-cell {
+    background: none;
+
+    .x-form-trigger, .x-form-clear-trigger {
+      background: none;
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      border-bottom: none;
+      color: lightgray;
+
+      &:hover {
+        color: grey;
+        font-weight: bold;
+      }
+    }
+
+    .x-form-clear-trigger::before {
+      content: "\2715";
+    }
+  }
+
 }
 
 .learn-study-info {
