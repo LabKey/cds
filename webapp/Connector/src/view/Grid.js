@@ -27,11 +27,24 @@ Ext.define('Connector.view.Grid', {
 
     statics: {
         getDefaultSort : function (datasource) {
-            var isDemographics = datasource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
-            return [{
-                property: isDemographics ? QueryUtils.DEMOGRAPHICS_SUBJECT_ALIAS : QueryUtils.STUDY_ALIAS_PREFIX + 'SubjectId',
-                direction: 'ASC'
-            }];
+            if (datasource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS)
+            {
+                return [{
+                    property: QueryUtils.DEMOGRAPHICS_SUBJECT_ALIAS,
+                    direction: 'ASC'
+                }];
+            }
+            else
+            {
+                return [{
+                    property: QueryUtils.STUDY_ALIAS_PREFIX + 'SubjectId',
+                    direction: 'ASC'
+                },{
+                    property: QueryUtils.STUDY_ALIAS_PREFIX + 'Days',
+                    direction: 'ASC'
+                }];
+            }
+
         }
     },
 

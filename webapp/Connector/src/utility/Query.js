@@ -476,7 +476,7 @@ Ext.define('Connector.utility.Query', {
             term,
             hasMultiple = Object.keys(datasets).length > 1,
             setOperator = options.intersect ? "\nINTERSECT\n" : "\nUNION ALL\n",
-            orderSQL,
+            orderSQL = '',
             wildcardSQL,
             debugSql,
             psnFilter,
@@ -527,10 +527,11 @@ Ext.define('Connector.utility.Query', {
                 }
             }
         }
-        else
-        {
-            orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
-        }
+        // Skip Order By since it is memory expensive, switch to client side sorting, see view/Grid.js getDefaultSort
+        // else
+        // {
+        //     orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
+        // }
 
         wildcardSQL = options.timepointOnly ? 'DISTINCT *' : '*';
 
