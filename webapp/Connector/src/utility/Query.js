@@ -527,7 +527,7 @@ Ext.define('Connector.utility.Query', {
                 }
             }
         }
-        // Skip Order By since it is memory expensive, switch to client side sorting, see view/Grid.js getDefaultSort
+        // Skip Order By here since it's memory expensive combined with joins. Switch to parent query side sorting, see view/Grid.js getDefaultSort
         // else
         // {
         //     orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
