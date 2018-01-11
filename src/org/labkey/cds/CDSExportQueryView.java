@@ -16,10 +16,11 @@
 package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -248,6 +249,7 @@ public class CDSExportQueryView extends QueryView
             ExcelWriter ew = new ExcelWriter(rs, map, getExportColumns(rgn.getDisplayColumns()), docType){
                 private XSSFCellStyle importantStyle = null;
                 private XSSFCellStyle boldStyle = null;
+
                 @Override
                 public void renderGrid(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns) throws SQLException, MaxRowsExceededException
                 {
@@ -259,11 +261,9 @@ public class CDSExportQueryView extends QueryView
 
                     XSSFFont importantFont= (XSSFFont) getWorkbook().createFont();
                     importantFont.setFontHeightInPoints((short)14);
-                    importantFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
                     importantFont.setBold(true);
 
                     XSSFFont boldFont= (XSSFFont) getWorkbook().createFont();
-                    boldFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
                     boldFont.setBold(true);
 
                     importantStyle = (XSSFCellStyle) getWorkbook().createCellStyle();
@@ -287,7 +287,7 @@ public class CDSExportQueryView extends QueryView
                                continue;
 
                            Row rowObject = getRow(sheet, currentRow);
-                           Cell cell = rowObject.getCell(col, Row.CREATE_NULL_AS_BLANK);
+                           Cell cell = rowObject.getCell(col, MissingCellPolicy.CREATE_NULL_AS_BLANK);
                            cell.setCellValue(value);
 
                            if (col == 0)
@@ -302,7 +302,7 @@ public class CDSExportQueryView extends QueryView
                            if (currentRow == 1)
                            {
                                CreationHelper createHelper = sheet.getWorkbook().getCreationHelper();
-                               XSSFHyperlink link = (XSSFHyperlink)createHelper.createHyperlink(Hyperlink.LINK_URL);
+                               XSSFHyperlink link = (XSSFHyperlink)createHelper.createHyperlink(HyperlinkType.URL);
                                link.setAddress(CAVD_LINK);
                                cell.setHyperlink(link);
                            }
@@ -316,12 +316,12 @@ public class CDSExportQueryView extends QueryView
                 private int writeExportDate(Sheet sheet, int currentRow)
                 {
                     Row rowObject = getRow(sheet, currentRow);
-                    Cell titleCell = rowObject.getCell(0, Row.CREATE_NULL_AS_BLANK);
+                    Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
                     titleCell.setCellValue("Date Exported:");
                     titleCell.setCellStyle(boldStyle);
 
                     rowObject = getRow(sheet, ++currentRow);
-                    Cell valueCell = rowObject.getCell(1, Row.CREATE_NULL_AS_BLANK);
+                    Cell valueCell = rowObject.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
                     Date date = new Date();
                     valueCell.setCellValue(date.toString());
 
@@ -331,7 +331,7 @@ public class CDSExportQueryView extends QueryView
                 private int writeFilterSection(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns, int currentRow)
                 {
                     Row rowObject = getRow(sheet, currentRow);
-                    Cell titleCell = rowObject.getCell(0, Row.CREATE_NULL_AS_BLANK);
+                    Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
                     titleCell.setCellValue(FILTERS_HEADING);
                     titleCell.setCellStyle(boldStyle);
                     currentRow++;
@@ -339,7 +339,7 @@ public class CDSExportQueryView extends QueryView
                     currentRow = writeFilterDetails(sheet, currentRow);
 
                     rowObject = getRow(sheet, currentRow);
-                    Cell footerCell = rowObject.getCell(0, Row.CREATE_NULL_AS_BLANK);
+                    Cell footerCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
                     footerCell.setCellValue(FILTERS_FOOTER);
                     footerCell.setCellStyle(boldStyle);
 
@@ -363,14 +363,14 @@ public class CDSExportQueryView extends QueryView
                         {
                             currentRow++;
                             rowObject = getRow(sheet, currentRow);
-                            cell = rowObject.getCell(1, Row.CREATE_NULL_AS_BLANK);
+                            cell = rowObject.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
                             cell.setCellValue(currentCategory);
                             previousCategory = currentCategory;
                             currentRow++;
                         }
 
                         rowObject = getRow(sheet, currentRow++);
-                        cell = rowObject.getCell(2, Row.CREATE_NULL_AS_BLANK);
+                        cell = rowObject.getCell(2, MissingCellPolicy.CREATE_NULL_AS_BLANK);
                         cell.setCellValue(currentFilter);
                     }
                     return currentRow + 1;
