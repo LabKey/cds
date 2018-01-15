@@ -153,6 +153,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        xaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         xaxis.confirmSelection();
 
         assertTrue("For NAB IC80 vs ICS Magnitude x-axis gutter plot was not present.", cdsPlot.hasXGutter());
@@ -170,6 +171,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
         // Put this in here to work around issue with FireFox scrollIntoView behaving differently than Chrome.
@@ -184,9 +186,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
-        assertTrue("For ELISPOT Background vs ICS Visit x-axis gutter plot was not present.", cdsPlot.hasXGutter());
+        assertTrue("For ICS CD8+ vs ICS CD4+ x-axis gutter plot was not present.", cdsPlot.hasXGutter());
         assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
-        assertTrue("For ELISPOT Background vs ICS Visit y-axis gutter plot was not present.", cdsPlot.hasYGutter());
+        assertTrue("For ICS CD8+ vs ICS CD4+ y-axis gutter plot was not present.", cdsPlot.hasYGutter());
         assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0 );
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
@@ -232,12 +234,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         xaxis.confirmSelection();
 
         log("Validate that the Log Gutters are there.");
@@ -1382,6 +1386,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
         log("Click on a point in the plot and make sure the tool tip is as expected.");
@@ -1436,6 +1441,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         xaxis.confirmSelection();
 
         log("Click on a point in the 'Undefined X value' gutter and make sure the tool tip is as expected.");
@@ -1534,6 +1540,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
         // Try to protect from getting an index out of range error.
@@ -1551,6 +1558,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        xaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         xaxis.confirmSelection();
 
         // Try to protect from getting an index out of range error.
@@ -1572,6 +1580,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
         xaxis.setCellType("All");
+        xaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -1582,6 +1591,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType("All");
         yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
+        yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
         // Try to protect from getting an index out of range error.
@@ -1673,12 +1683,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         xaxis.confirmSelection();
 
         // Adding color just to make it more interesting.
@@ -1707,12 +1719,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD4, CDSHelper.CELL_TYPE_CD8);
+        xaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         xaxis.confirmSelection();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
@@ -1735,12 +1749,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4, CDSHelper.CELL_TYPE_CD8);
+        yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        xaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         xaxis.confirmSelection();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));

@@ -124,6 +124,11 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
         super.setAssayDimension(XPATHID, AssayDimensions.AntigenName, value);
     }
 
+    public void setAntigensAggregated(String... value)
+    {
+        super.setAssayDimension(XPATHID, AssayDimensions.AntigensAggregated, value);
+    }
+
     public Locator openAntigenPanel()
     {
         return super.openAntigenPanel(XPATHID);

@@ -166,7 +166,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         goToProjectHome();
         clickTab("Clinical and Assay Data");
         sleep(2000);
-        waitAndClick(Locator.linkWithHref("javascript:editDataViews(5258);").append(Locator.tagWithClass("span", "fa-pencil")));
+        click(Locator.tag("a").withAttributeContaining("href", "editDataViews"));
         sleep(2000);
 
         // Wait for the grid to load at least 5 items (the number of reports created for this test) before starting to check.
@@ -340,8 +340,12 @@ public class CDSRReportsTest extends CDSReadOnlyTest
             waitForElement(Locator.tagWithText("span", "Save"));
             _rReportHelper.saveReport(reportName);
 
-            waitForText("Query Schema Browser");
+            waitForText(reportName);
             log("Report created: " + reportName);
+
+            beginAt(getProjectName() + "/query-begin.view?#sbh-qdp-%26CDS%26assay");
+            waitForElement(Locator.linkWithText("view data"));
+            click(Locator.linkWithText("view data"));
         }
         log("Get the reportId from the URL");
         table.goToReport(reportName);

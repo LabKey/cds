@@ -15,6 +15,7 @@
  */
 package org.labkey.cds;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,29 +26,20 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
-import org.labkey.api.data.ColumnHeaderType;
-import org.labkey.api.data.ColumnInfo;
-import org.labkey.api.data.CompareType;
-import org.labkey.api.data.Container;
-import org.labkey.api.data.DataRegion;
-import org.labkey.api.data.DisplayColumn;
-import org.labkey.api.data.ExcelColumn;
-import org.labkey.api.data.ExcelWriter;
-import org.labkey.api.data.RenderContext;
-import org.labkey.api.data.Results;
-import org.labkey.api.data.ResultsImpl;
-import org.labkey.api.data.RuntimeSQLException;
-import org.labkey.api.data.SchemaTableInfo;
-import org.labkey.api.data.SimpleFilter;
-import org.labkey.api.data.TableInfo;
-import org.labkey.api.data.TableSelector;
+import org.labkey.api.data.*;
 import org.labkey.api.query.FieldKey;
+import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
+import org.labkey.api.util.FileUtil;
+import org.labkey.api.util.StringUtilsLabKey;
 import org.labkey.api.view.DataView;
 import org.labkey.remoteapi.query.jdbc.LabKeyResultSet;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -60,13 +52,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class CDSExportQueryView extends QueryView
 {
     private static final String FILE_NAME_PREFIX = "DataSpace Data Grid";
+    private static final ExcelWriter.ExcelDocumentType docType = ExcelWriter.ExcelDocumentType.xlsx;
 
     private static final String METADATA_SHEET = "Metadata";
-    private static final String DATA = "Data";
     private static final String STUDY_SHEET = "Studies";
     private static final String ASSAY_SHEET = "Assays";
     private static final String VARIABLES_SHEET = "Variable definitions";
@@ -74,6 +68,7 @@ public class CDSExportQueryView extends QueryView
     public static final String FILTER_DELIMITER = "|||";
     private static final String FILTERS_HEADING = "Subject filters applied to exported data:";
     private static final String FILTERS_FOOTER = "For a list of studies and assays included in this data file, please refer to the Studies and Assays tabs.";
+    private static final String FILTERS_FOOTER_TXT = "For a list of studies and assays included in the export, please refer to Studies and Assays files.";
 
     private static final String CAVD_LINK = "https://dataspace.cavd.org/cds/CAVD/app.view?";
     private static final String TOC_TITLE = "IMPORTANT INFORMATION ABOUT THIS DATA:";
@@ -116,6 +111,9 @@ public class CDSExportQueryView extends QueryView
     private List<String> _studyassays;
     private List<String> _variableStrs;
 
+    private Map<String, CDSController.CDSExportQueryForm> _tabQueryForms;
+    private List<String> _dataTabNames;
+
     public CDSExportQueryView(CDSController.ExportForm form, org.springframework.validation.Errors errors)
     {
         super(form, errors);
@@ -126,6 +124,8 @@ public class CDSExportQueryView extends QueryView
         _assays = form.getAssays().toArray(new String[0]);
         _studyassays = getFormValues(form.getStudyAssays(), false);
         _variableStrs = getFormValues(form.getVariables(), false);
+        _tabQueryForms = form.getTabQueryForms();
+        _dataTabNames = getFormValues(form.getDataTabNames(), false);
     }
 
     private List<String> getFormValues(String[] formValues, boolean sort)
@@ -152,13 +152,13 @@ public class CDSExportQueryView extends QueryView
         {
             for (DisplayColumn col : retColumns)
             {
-                if (col.getColumnInfo() != null && colName.equals(col.getColumnInfo().getName()))
+                if (col.getColumnInfo() != null && colName.equalsIgnoreCase(col.getColumnInfo().getName()))
                 {
                     col.setCaption(_columnAliases.get(col.getColumnInfo().getName()));
                     exportColumns.add(col);
                     break;
                 }
-                else if (colName.equals(col.getName()))
+                else if (colName.equalsIgnoreCase(col.getName()))
                 {
                     col.setCaption(_columnAliases.get(col.getName()));
                     exportColumns.add(col);
@@ -177,20 +177,69 @@ public class CDSExportQueryView extends QueryView
         logAuditEvent("Exported to Excel", ew.getDataRowCount());
     }
 
+    private Results getStudies(List<ColumnInfo> studyColumns)
+    {
+        List<List<String>> exportableStudies = getExportableStudies(_studies, getViewContext().getContainer());
+        return createResults(exportableStudies, studyColumns);
+    }
+
+    private Results getAssays(List<ColumnInfo> assayColumns)
+    {
+        List<List<String>> exportableAssays = getExportableStudyAssays(_studyassays, _studies, _assays);
+        return createResults(exportableAssays, assayColumns);
+    }
+
+    private Results getVariables(List<ColumnInfo> variableColumns)
+    {
+        List<List<String>> exportableVariables = new ArrayList<>();
+        for (String variableStr : _variableStrs)
+        {
+            String[] parts = variableStr.split(Pattern.quote(FILTER_DELIMITER));
+            if (parts.length != 3)
+                continue;
+            exportableVariables.add(Arrays.asList(parts));
+        }
+        return createResults(exportableVariables, variableColumns);
+    }
+
     private ExcelWriter getExcelWriter() throws IOException
     {
-        TableInfo table = getTable();
-        if (table == null)
-        {
-            throw new IOException("Could not find table to write.");
-        }
         ColumnHeaderType headerType = ColumnHeaderType.Caption;
 
         ExcelWriter ew = getCDSExcelWriter();
         ew.setFilenamePrefix(FILE_NAME_PREFIX);
         ew.setCaptionType(headerType);
         ew.setShowInsertableColumnsOnly(false, null);
-        ew.setSheetName(DATA);
+        ew.setSheetName(_dataTabNames.get(0)); // the 1st data source sheet
+
+        if (_dataTabNames.size() > 1) // if multiple data sources, write the other data sheets
+        {
+            for (int i = 1; i < _dataTabNames.size(); i++)
+            {
+                String tabName = _dataTabNames.get(i);
+                CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
+                ew.renderNewSheet();
+                QueryView queryView = new QueryView(queryform, null);
+                DataView view = queryView.createDataView();
+                DataRegion rgn = view.getDataRegion();
+                rgn.prepareDisplayColumns(view.getViewContext().getContainer());
+                prepareQuerySettings(queryView.getSettings());
+
+                try
+                {
+                    Results rs = rgn.getResultSet(view.getRenderContext());
+                    ew.setResults(rs);
+                    ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
+                    ew.setSheetName(tabName);
+                    ew.setAutoSize(true);
+                    logAuditEvent("Exported to Excel", ew.getDataRowCount());
+                }
+                catch (SQLException e)
+                {
+                    throw new RuntimeSQLException(e);
+                }
+            }
+        }
 
         ew.renderNewSheet();
         ColumnInfo filterColumnInfo = new ColumnInfo(FieldKey.fromParts(METADATA_SHEET));
@@ -200,32 +249,21 @@ public class CDSExportQueryView extends QueryView
         ew.renderNewSheet();
         List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
         ew.setColumns(studyColumns);
-        List<List<String>> exportableStudies = getExportableStudies(_studies, getContainer());
-        ew.setResults(createResults(exportableStudies, studyColumns));
+        ew.setResults(getStudies(studyColumns));
         ew.setSheetName(STUDY_SHEET);
         ew.setCaptionRowFrozen(false);
 
         ew.renderNewSheet();
         List<ColumnInfo> assayColumns = getColumns(ASSAY_COLUMNS);
         ew.setColumns(assayColumns);
-        List<List<String>> exportableAssays = getExportableStudyAssays(_studyassays, _studies, _assays);
-        ew.setResults(createResults(exportableAssays, assayColumns));
+        ew.setResults(getAssays(assayColumns));
         ew.setSheetName(ASSAY_SHEET);
         ew.setCaptionRowFrozen(false);
 
         ew.renderNewSheet();
         List<ColumnInfo> variableColumns = getColumns(VARIABLE_COLUMNS);
         ew.setColumns(variableColumns);
-
-        List<List<String>> exportableVariables = new ArrayList<>();
-        for (String variableStr : _variableStrs)
-        {
-            String[] parts = variableStr.split(Pattern.quote(FILTER_DELIMITER));
-            if (parts.length != 3)
-                continue;
-            exportableVariables.add(Arrays.asList(parts));
-        }
-        ew.setResults(createResults(exportableVariables, variableColumns));
+        ew.setResults(getVariables(variableColumns));
         ew.setSheetName(VARIABLES_SHEET);
         ew.setCaptionRowFrozen(false);
 
@@ -235,15 +273,17 @@ public class CDSExportQueryView extends QueryView
 
     private ExcelWriter getCDSExcelWriter() throws IOException
     {
-        ExcelWriter.ExcelDocumentType docType = ExcelWriter.ExcelDocumentType.xlsx;
-
-        DataView view = createDataView();
+        QueryView queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
+        DataView view = queryView.createDataView();
         DataRegion rgn = view.getDataRegion();
+        rgn.prepareDisplayColumns(view.getViewContext().getContainer());
 
-        RenderContext rc = configureForExcelExport(docType, view, rgn);
+        QuerySettings settings = queryView.getSettings();
+        prepareQuerySettings(settings);
 
         try
         {
+            RenderContext rc = view.getRenderContext();
             ResultSet rs = rgn.getResultSet(rc);
             Map<FieldKey, ColumnInfo> map = rc.getFieldMap();
             ExcelWriter ew = new ExcelWriter(rs, map, getExportColumns(rgn.getDisplayColumns()), docType){
@@ -393,7 +433,7 @@ public class CDSExportQueryView extends QueryView
                         super.renderColumnCaptions(sheet, visibleColumns);
                 }
             };
-            ew.setFilenamePrefix(getSettings().getQueryName());
+            ew.setFilenamePrefix(settings.getQueryName());
             ew.setAutoSize(true);
             return ew;
         }
@@ -401,6 +441,13 @@ public class CDSExportQueryView extends QueryView
         {
             throw new RuntimeSQLException(e);
         }
+    }
+
+    private void prepareQuerySettings(QuerySettings settings)
+    {
+        settings.setShowRows(ShowRows.PAGINATED);
+        settings.setMaxRows(docType.getMaxRows());
+        settings.setOffset(Table.NO_OFFSET);
     }
 
     private Results createResults(List<List<String>> rowTexts, List<ColumnInfo> columnInfos)
@@ -577,6 +624,146 @@ public class CDSExportQueryView extends QueryView
                 publicStudies.add(c.getName());
         }
         return publicStudies;
+    }
+
+    private void copyFileToZip(File tmpFile, ZipOutputStream out) throws IOException
+    {
+        try (InputStream in = new FileInputStream(tmpFile))
+        {
+            FileUtil.copyData(in, out);
+        }
+        finally
+        {
+            tmpFile.delete();
+        }
+    }
+
+    private void writeCSVQueries(ZipOutputStream out) throws IOException
+    {
+        for (String tabName : _dataTabNames)
+        {
+            CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
+            ZipEntry entry = new ZipEntry(tabName + ".csv");
+            out.putNextEntry(entry);
+            QueryView queryView = new QueryView(queryform, null);
+            DataView view = queryView.createDataView();
+            DataRegion rgn = view.getDataRegion();
+            rgn.prepareDisplayColumns(view.getViewContext().getContainer());
+
+            try
+            {
+                Results rs = rgn.getResultSet(view.getRenderContext());
+                TSVGridWriter tsv = new TSVGridWriter(rs, getExportColumns(rgn.getDisplayColumns()));
+                tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
+                File tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
+                tmpFile.deleteOnExit();
+                tsv.write(tmpFile);
+                logAuditEvent("Exported to CSV", tsv.getDataRowCount());
+
+                copyFileToZip(tmpFile, out);
+            }
+            catch (SQLException e)
+            {
+                throw new RuntimeSQLException(e);
+            }
+        }
+    }
+
+    private void writeGridCSV(String tabName, Results results, ZipOutputStream out) throws IOException
+    {
+        TSVGridWriter tsv = null;
+        try
+        {
+            tsv = new TSVGridWriter(results);
+            tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeSQLException(e);
+        }
+        File tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
+        tmpFile.deleteOnExit();
+        tsv.write(tmpFile);
+
+        ZipEntry entry = new ZipEntry(tabName + ".csv");
+        out.putNextEntry(entry);
+        copyFileToZip(tmpFile, out);
+    }
+
+    private void writeExtraCSVs(ZipOutputStream out) throws IOException
+    {
+        List<ColumnInfo> columns = getColumns(STUDY_COLUMNS);
+        Results results = getStudies(columns);
+        writeGridCSV(STUDY_SHEET, results, out);
+
+        columns = getColumns(ASSAY_COLUMNS);
+        results = getAssays(columns);
+        writeGridCSV(ASSAY_SHEET, results, out);
+
+        columns = getColumns(VARIABLE_COLUMNS);
+        results = getVariables(columns);
+        writeGridCSV(VARIABLES_SHEET, results, out);
+    }
+
+    public void writeCSVToResponse(HttpServletResponse response) throws IOException
+    {
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + FILE_NAME_PREFIX + "_" + FileUtil.getTimestamp() + ".zip\"");
+
+        try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
+        {
+            writeCSVQueries(out);
+            writeMetadataTxt(out);
+            writeExtraCSVs(out);
+        }
+    }
+
+    private void writeMetadataTxt(ZipOutputStream out) throws IOException
+    {
+        ZipEntry entry = new ZipEntry("Metadata.txt");
+        out.putNextEntry(entry);
+
+        StringBuilder builder = new StringBuilder();
+
+        // term of use
+        for (List<String> row : TOCS)
+        {
+            for (int col = 0; col < row.size(); col++)
+            {
+                builder.append(row.get(col)).append(col == row.size() - 1 ? "\n" : "\t");
+            }
+        }
+
+        // export date
+        builder.append("\nDate Exported: \n");
+        Date date = new Date();
+        builder.append("\t").append(date.toString()).append("\n");
+
+        // filters
+        builder.append("\n" + FILTERS_HEADING + "\n");
+        String previousCategory = "", currentCategory, currentFilter;
+        for (String filter : _filterStrings)
+        {
+            String[] parts = filter.split(Pattern.quote(FILTER_DELIMITER));
+            if (parts.length < 2)
+                continue;
+            currentCategory = parts[0];
+            currentFilter = parts[1];
+
+            if (!currentCategory.equals(previousCategory))
+            {
+                builder.append("\t").append(currentCategory).append("\n");
+                previousCategory = currentCategory;
+            }
+            builder.append("\t\t").append(currentFilter).append("\n");
+        }
+        builder.append("\n" + FILTERS_FOOTER_TXT + "\n");
+
+        File tmpFile = File.createTempFile("tmpMetadata" + FileUtil.getTimestamp(), null);
+        tmpFile.deleteOnExit();
+
+        FileUtils.writeStringToFile(tmpFile, builder.toString(), StringUtilsLabKey.DEFAULT_CHARSET);
+        copyFileToZip(tmpFile, out);
     }
 
 }
