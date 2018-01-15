@@ -23,6 +23,10 @@
   .x-grid-view {
     z-index: 5;
     padding-bottom: 70px;
+
+    .x-grid-empty {
+      background: none;
+    }
   }
 
   .x-column-header-trigger {

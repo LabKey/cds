@@ -27,11 +27,24 @@ Ext.define('Connector.view.Grid', {
 
     statics: {
         getDefaultSort : function (datasource) {
-            var isDemographics = datasource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS;
-            return [{
-                property: isDemographics ? QueryUtils.DEMOGRAPHICS_SUBJECT_ALIAS : QueryUtils.STUDY_ALIAS_PREFIX + 'SubjectId',
-                direction: 'ASC'
-            }];
+            if (datasource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS)
+            {
+                return [{
+                    property: QueryUtils.DEMOGRAPHICS_SUBJECT_ALIAS,
+                    direction: 'ASC'
+                }];
+            }
+            else
+            {
+                return [{
+                    property: QueryUtils.STUDY_ALIAS_PREFIX + 'SubjectId',
+                    direction: 'ASC'
+                },{
+                    property: QueryUtils.STUDY_ALIAS_PREFIX + 'Days',
+                    direction: 'ASC'
+                }];
+            }
+
         }
     },
 
@@ -457,6 +470,8 @@ Ext.define('Connector.view.Grid', {
 
             var size = this.getWidthHeight();
 
+            var defaultRowSize = this.getDefaultRowSize();
+
             this.grid = Ext.create('Connector.grid.Panel', {
                 model: this.getModel(),
                 datasource: this.getModel().get("dataSource"),
@@ -469,6 +484,8 @@ Ext.define('Connector.view.Grid', {
                 margin: '-50 24 0 24',
                 ui: 'custom',
                 viewConfig: {
+                    emptyText: '<div style="width:' + defaultRowSize + 'px;">No grid data with current filters</div>',
+                    deferEmptyText: false,
                     loadMask: false
                 },
                 listeners: {
@@ -495,6 +512,17 @@ Ext.define('Connector.view.Grid', {
         }
 
         return this.grid;
+    },
+
+    getDefaultRowSize: function() {
+        var uniqColumns = this.getModel().get('columnSet');
+        uniqColumns = Ext.Array.map(uniqColumns, function(v){
+            return v.toLowerCase();
+        });
+        uniqColumns = uniqColumns.filter(function(value, index) {
+            return uniqColumns.indexOf(value) === index;
+        });
+        return uniqColumns.length * this.columnWidth;
     },
 
     getMeasureSelectionWindow : function() {

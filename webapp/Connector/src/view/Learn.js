@@ -751,7 +751,7 @@ Ext.define('Connector.view.LearnHeader', {
 
     getSearchField : function() {
         if (!this.searchField) {
-            this.searchField = Ext.create('Ext.form.field.Text', {
+            this.searchField = Ext.create('Connector.view.Learn.SearchField', {
                 emptyText: 'Search',
                 cls: 'learn-search-input',
                 minWidth: 150,
@@ -1036,5 +1036,39 @@ Ext.define('Connector.view.Learn.plugin.HeaderLock', {
     // Nullable
     selectUnique : function(selector) {
         return Ext.get(Ext.DomQuery.select(selector)[0])
+    }
+});
+
+Ext.define('Connector.view.Learn.SearchField', {
+    extend: 'Ext.form.field.Trigger',
+    alias  : 'widget.learn-search',
+    trigger1Cls: 'x-form-clear-trigger',
+
+    onRender: function(){
+        this.callParent(arguments);
+        if (this.value === undefined || this.value === '') {
+            var el = this.triggerEl.first();
+            el.hide();
+        }
+    },
+
+    onChange: function(newVal, oldVal){
+        var el = this.triggerEl.first();
+
+        this.callParent(arguments);
+
+        if (newVal.length){
+            el.show();
+        } else {
+            el.hide();
+        }
+    },
+
+    onTrigger1Click: function(event){
+        if (this.hideTrigger){
+            return;
+        }
+        this.setValue("");
+        this.fireEvent('cleartriggerclick', this, event);
     }
 });
