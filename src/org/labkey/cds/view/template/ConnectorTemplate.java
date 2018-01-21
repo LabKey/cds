@@ -15,14 +15,14 @@
  */
 package org.labkey.cds.view.template;
 
+import org.labkey.api.view.JspView;
 import org.labkey.api.view.template.PageConfig;
-import org.labkey.api.view.template.PrintTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by Nick Arnold on 1/15/14.
  */
-public class ConnectorTemplate extends PrintTemplate
+public class ConnectorTemplate extends JspView<PageConfig>
 {
     private Object model;
 
@@ -30,6 +30,7 @@ public class ConnectorTemplate extends PrintTemplate
     {
         super("/org/labkey/cds/view/template/ConnectorTemplate.jsp", page);
         this.model = model;
+        page.setShowHeader(false);
         setFrame(FrameType.NONE);
         setBody(body);
     }

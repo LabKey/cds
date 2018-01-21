@@ -15,18 +15,19 @@
  */
 package org.labkey.cds.view.template;
 
+import org.labkey.api.view.JspView;
 import org.labkey.api.view.WebPartView;
 import org.labkey.api.view.template.PageConfig;
-import org.labkey.api.view.template.PrintTemplate;
 
 /**
  * Created by Joe on 8/28/2015.
  */
-public class FrontPageTemplate extends PrintTemplate
+public class FrontPageTemplate extends JspView<PageConfig>
 {
     public FrontPageTemplate(PageConfig page)
     {
         super("/org/labkey/cds/view/template/FrontPage.jsp", page);
+        page.setShowHeader(false);
         setFrame(WebPartView.FrameType.NONE);
     }
 }
