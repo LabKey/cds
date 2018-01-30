@@ -15,7 +15,6 @@
  */
 package org.labkey.test.tests.cds;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,19 +67,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         deleteUsersIfPresent(_newUserAccounts);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
-    }
-
-    @AfterClass
-    public static void afterClassCleanUp()
-    {
-        CDSSecurityTest init = (CDSSecurityTest)getCurrentTest();
-
-        init.log("Cleaning up and deleting groups that were created.");
-        init.deletePermissionGroups();
-
-        init.log("Cleaning up and deleting user email accounts that were created.");
-        init.deleteUsersIfPresent(init._newUserAccounts);
-
     }
 
     @Override
