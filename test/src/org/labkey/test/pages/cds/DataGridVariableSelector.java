@@ -15,11 +15,10 @@
  */
 package org.labkey.test.pages.cds;
 
-import com.google.common.base.Function;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class DataGridVariableSelector extends DataspaceVariableSelector
@@ -168,14 +167,6 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
-        _dataGrid.applyAndWaitForGrid(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
-                return null;
-            }
-        });
+        _dataGrid.applyAndWaitForGrid(() -> _test.click(CDSHelper.Locators.cdsButtonLocator("Done")));
     }
 }

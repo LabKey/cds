@@ -15,7 +15,6 @@
  */
 package org.labkey.test.util.cds;
 
-import com.google.common.base.Function;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
@@ -43,6 +42,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class CDSHelper

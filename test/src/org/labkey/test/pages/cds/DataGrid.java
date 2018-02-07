@@ -25,14 +25,13 @@ import org.labkey.api.writer.ZipUtil;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
-import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.ExcelHelper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
+import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import com.google.common.base.Function;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -184,10 +183,7 @@ public class DataGrid
             _test.click(Locator.xpath(cellXpath));
         }
 
-        applyAndWaitForGrid(aVoid -> {
-            _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn"));
-            return null;
-        });
+        applyAndWaitForGrid(() -> _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn")));
 
     }
 
@@ -205,10 +201,7 @@ public class DataGrid
 
         _test.waitForElement(Locator.id("value_1"));
         _test.setFormElement(Locator.css("#value_1 input"), value);
-        applyAndWaitForGrid(aVoid -> {
-            _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn"));
-            return null;
-        });
+        applyAndWaitForGrid(() -> _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn")));
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(columnName));
     }
 
@@ -233,11 +226,10 @@ public class DataGrid
 
         final WebElement button = buttons.get(0);
 
-        applyAndWaitForGrid(aVoid -> {
+        applyAndWaitForGrid(() -> {
             button.click();
             _test.sleep(500);
             _test._ext4Helper.waitForMaskToDisappear();
-            return null;
         });
     }
 
@@ -245,10 +237,7 @@ public class DataGrid
     public void clearFilters(@LoggedParam String columnName)
     {
         openFilterPanel(columnName);
-        applyAndWaitForGrid(aVoid -> {
-            _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn"));
-            return null;
-        });
+        applyAndWaitForGrid(() -> _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn")));
         _test.waitForElement(Locators.sysmsg.containing("Filter removed."));
     }
 
@@ -467,11 +456,10 @@ public class DataGrid
     @LogMethod
     public void sort(@LoggedParam final String columnName)
     {
-        applyAndWaitForGrid(aVoid -> {
+        applyAndWaitForGrid(() -> {
             _test.click(Locators.columnHeaderLocator(columnName));
             _test.sleep(500);
             _test._ext4Helper.waitForMaskToDisappear();
-            return null;
         });
         assertSortPresent(columnName);
     }
@@ -564,11 +552,11 @@ public class DataGrid
         Assert.assertTrue("Expected files missing from export: " + StringUtils.join(missingDataFiles), missingDataFiles.isEmpty());
     }
 
-    public void applyAndWaitForGrid(Function<Void, Void> function)
+    public void applyAndWaitForGrid(Runnable function)
     {
         WebElement gridView = Locators.grid.append(Locator.css("table.x-grid-table")).findElement(_test.getDriver());
 
-        function.apply(null);
+        function.run();
 
         _test.longWait().until(ExpectedConditions.stalenessOf(gridView));
         _test._ext4Helper.waitForMaskToDisappear();
