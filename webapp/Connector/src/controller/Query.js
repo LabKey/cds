@@ -93,6 +93,14 @@ Ext.define('Connector.controller.Query', {
                         this.GRID_DEMOGRAPHICS_MEASURES.push(Ext.clone(measure));
                     }
                 }, this);
+                this.GRID_MEASURES.sort(function(a, b){
+                    var aliasA = a.alias.toLowerCase(), aliasB = b.alias.toLowerCase();
+                    return defaultGridAliases[aliasA] - defaultGridAliases[aliasB];
+                });
+                this.GRID_DEMOGRAPHICS_MEASURES.sort(function(a, b){
+                    var aliasA = a.alias.toLowerCase(), aliasB = b.alias.toLowerCase();
+                    return defaultGridDemographicsAliases[aliasA] - defaultGridDemographicsAliases[aliasB];
+                });
 
                 // bootstrap client-defined measures
                 Ext.iterate(Connector.measure.Configuration.context.measures, function(alias, measure)

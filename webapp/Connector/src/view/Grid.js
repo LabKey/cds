@@ -907,6 +907,7 @@ Ext.define('Connector.view.Grid', {
             var gridModel = this.getModel();
 
             var groups = Connector.grid.Panel.groupColumns(gridModel.getAllWrappedMeasures(gridModel.hasDemographics()), true);
+            groups = this.getSortedDemographicsCols(groups);
             Ext.each(groups, function (group) {
                 Ext.each(group.columns, function (m) {
                     var measure = m.measure;
@@ -999,6 +1000,14 @@ Ext.define('Connector.view.Grid', {
             });
 
         }
+    },
+
+    getSortedDemographicsCols: function(groups) {
+        if (groups[0].text === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS)
+        {
+            groups[0].columns = this.model.getDefaultWrappedMeasures(QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS).concat(groups[0].columns);
+        }
+        return groups;
     },
 
     getGridSortExportParams: function() {
