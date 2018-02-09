@@ -1048,7 +1048,7 @@ Ext.define('Connector.view.Grid', {
             // Only include assays listed on data grid, which may be a smaller set compared with active assays in filters
             // If no assay columns are present on data grid, then list all assays active in filter
             var assayType = assayIdentifierTypes[assay];
-            if (gridAssays == null || gridAssays.length == 0 || gridAssays.indexOf(assayType) > -1)
+            if (gridAssays != null && gridAssays.length > 0 && gridAssays.indexOf(assayType) > -1)
                 studyassays.push(study + ChartUtils.ANTIGEN_LEVEL_DELIMITER + assay);
         });
         return studyassays;
