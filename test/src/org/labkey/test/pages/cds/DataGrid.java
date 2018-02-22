@@ -17,6 +17,7 @@ package org.labkey.test.pages.cds;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
@@ -273,10 +274,49 @@ public class DataGrid
         if (countOnly)
             return;
 
+        verifyExcelTabHeaders(export, expected);
         verifyExportedMetadata(export, expected);
         verifyExportedStudies(export, expected);
         verifyExportedAssays(export, expected);
         verifyExportedVariables(export, expected);
+    }
+
+    private void verifyExcelTabHeaders(File export, CDSExport excel)
+    {
+        try
+        {
+            Workbook wb = ExcelHelper.create(export);
+            List<Pair<String, List<String>>> tabHeaders = excel.getDataTabHeaders();
+            if (tabHeaders != null)
+            {
+                for (int i = 0; i < tabHeaders.size(); i++)
+                {
+                    Pair<String, List<String>> tabHeader = tabHeaders.get(i);
+                    String tabName = tabHeader.first;
+                    List<String> expHeaders = tabHeader.second;
+                    Sheet sheet = wb.getSheet(tabName);
+                    verifyHeaderValues(sheet, expHeaders);
+                }
+            }
+        }
+        catch (IOException | InvalidFormatException fail)
+        {
+            throw new RuntimeException("Error reading exported grid file", fail);
+        }
+    }
+
+    private void verifyHeaderValues(Sheet sheet, List<String> headerValues)
+    {
+        if (headerValues == null)
+            return;
+        String cellValue;
+        Row headerRow = sheet.getRow(0);
+
+        for (int i = 0; i < headerValues.size(); i++)
+        {
+            cellValue = headerRow.getCell(i).getStringCellValue();
+            Assert.assertEquals(sheet.getSheetName() + " header is not as expected", headerValues.get(i), cellValue);
+        }
     }
 
     private void verifyExportedVariables(File export, CDSExport excel)
@@ -557,6 +597,18 @@ public class DataGrid
                         missingDataFiles.remove(dataName);
                         int exportedCount = getExportedCSVRowCount(file) - 1;
                         Assert.assertEquals("Wrong number of rows for " + dataName, expCount, exportedCount);
+                    }
+                }
+                if (expected.getDataTabHeaders() != null)
+                {
+                    for (Pair<String, List<String>> header :expected.getDataTabHeaders())
+                    {
+                        String dataName = header.first;
+                        List<String> expHeaders = header.second;
+                        if (filename.equals(dataName + ".csv"))
+                        {
+                            verifyExportedCSVContent(file, expHeaders);
+                        }
                     }
                 }
             }
