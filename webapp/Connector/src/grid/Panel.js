@@ -211,8 +211,13 @@ Ext.define('Connector.grid.Panel', {
 
     setupColumnModel : function()
     {
-        var columnGroups = this.getColumnsConfig();
-        var columns = this.flattenColumns(this.getColumnsConfig());
+        var columns = this.getColumnsConfig();
+        var columnGroups = Connector.grid.Panel.groupColumns(columns);
+
+        if (!this.model.isDemographicsTab())
+        {
+            columns = this.flattenColumns(columnGroups);
+        }
 
         this.fireEvent('columnmodelcustomize', this, columnGroups);
 
@@ -318,9 +323,7 @@ Ext.define('Connector.grid.Panel', {
             Ext.Object.merge(config, this.metadataDefaults);
         }
 
-        var columns = this._getColumnsConfig(config);
-
-        return Connector.grid.Panel.groupColumns(columns);
+        return this._getColumnsConfig(config);
     },
 
     onLookupStoreLoad : function()

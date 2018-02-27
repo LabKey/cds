@@ -62,6 +62,8 @@ Ext.define('Connector.field.BooleanCombo', {
     extend: 'Ext.form.field.Text',
     alias: 'widget.labkey-booleantextfield',
 
+    checkChangeBuffer: 800,
+
     initComponent : function()
     {
         this.callParent();
