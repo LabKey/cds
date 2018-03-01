@@ -34,6 +34,7 @@ import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -266,10 +267,22 @@ public class CDSGridTest extends CDSReadOnlyTest
     public void verifyGridExport() throws IOException
     {
         DataGrid grid = new DataGrid(this);
-        setUpGridStep1();
+        log("Export without filter or additional columns");
+        CDSExport exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 13860)));
+        exported.setDataTabHeaders(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
+                Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days"))));
+        exported.setAssays(Collections.emptyList());
+        exported.setFieldLabels(Collections.emptyList());
 
-        CDSExport exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 495),
+        setUpGridStep1();
+        exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 495),
                 new Pair<>(CDSHelper.TITLE_ICS, 658)));
+        exported.setDataTabHeaders(Arrays.asList(
+                new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
+                        Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days")),
+                new Pair<>(CDSHelper.GRID_TITLE_ICS,
+                        Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days", "Antigen name", "Antigens aggregated"))
+        ));
         exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining", "", "", "", "Subject (Race)"));
         exported.setFilterValues(Arrays.asList("Data summary level: Protein Panel", "Functional marker name: IL2/ifngamma", "", "", "Subjects related to any: Asian"));
         exported.setStudyNetworks(Arrays.asList("ROGER", "ROGER", "ROGER", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED"));
@@ -288,6 +301,14 @@ public class CDSGridTest extends CDSReadOnlyTest
                 new Pair<>(CDSHelper.GRID_TITLE_DEMO, 2),
                 new Pair<>(CDSHelper.GRID_TITLE_ICS, 2),
                 new Pair<>(CDSHelper.GRID_TITLE_NAB, 13)));
+        exported.setDataTabHeaders(Arrays.asList(
+                new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
+                        Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days")),
+                new Pair<>(CDSHelper.GRID_TITLE_DEMO,
+                        Arrays.asList("Subject Id", "Study Name", "Treatment Summary", "Sex at birth")),
+                new Pair<>(CDSHelper.GRID_TITLE_ICS,
+                        Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days", "Antigen name", "Antigens aggregated"))
+        ));
         exported.setFilterTitles(Arrays.asList("Demographics",
                 "",
                 "",
@@ -317,6 +338,8 @@ public class CDSGridTest extends CDSReadOnlyTest
                 "VISC analysis dataset",
                 "VISC analysis dataset"));
         exported.setFieldLabels(Arrays.asList("Subject Id",
+                "Study Name",
+                "Treatment Summary",
                 "Sex at birth",
                 "Antigen name",
                 "Antigens aggregated",
@@ -335,9 +358,7 @@ public class CDSGridTest extends CDSReadOnlyTest
                 "Specimen type",
                 "Target cell",
                 "Titer ID50",
-                "Virus name",
-                "Study Name",
-                "Treatment Summary"));
+                "Virus name"));
         grid.verifyCDSExcel(exported, false);
         grid.verifyCDSCSV(exported);
     }

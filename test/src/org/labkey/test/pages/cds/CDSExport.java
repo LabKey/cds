@@ -36,6 +36,8 @@ public class CDSExport
 
     private List<Pair<String, Integer>> dataTabCounts;
 
+    private List<Pair<String, List<String>>> dataTabHeaders;
+
     private List<String> studies;
     private List<String> studyNetworks;
 
@@ -163,4 +165,13 @@ public class CDSExport
         return this.getMetadataSheetIndex() + 3;
     }
 
+    public List<Pair<String, List<String>>> getDataTabHeaders()
+    {
+        return dataTabHeaders;
+    }
+
+    public void setDataTabHeaders(List<Pair<String, List<String>>> dataTabHeaders)
+    {
+        this.dataTabHeaders = dataTabHeaders;
+    }
 }

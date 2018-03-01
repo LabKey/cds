@@ -223,6 +223,7 @@ public class CDSExportQueryView extends QueryView
                 DataView view = queryView.createDataView();
                 DataRegion rgn = view.getDataRegion();
                 rgn.prepareDisplayColumns(view.getViewContext().getContainer());
+                rgn.setAllowAsync(false);
                 prepareQuerySettings(queryView.getSettings());
 
                 try
@@ -277,7 +278,7 @@ public class CDSExportQueryView extends QueryView
         DataView view = queryView.createDataView();
         DataRegion rgn = view.getDataRegion();
         rgn.prepareDisplayColumns(view.getViewContext().getContainer());
-
+        rgn.setAllowAsync(false);
         QuerySettings settings = queryView.getSettings();
         prepareQuerySettings(settings);
 
@@ -649,6 +650,7 @@ public class CDSExportQueryView extends QueryView
             DataView view = queryView.createDataView();
             DataRegion rgn = view.getDataRegion();
             rgn.prepareDisplayColumns(view.getViewContext().getContainer());
+            rgn.setAllowAsync(false);
 
             try
             {

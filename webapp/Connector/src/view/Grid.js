@@ -907,6 +907,7 @@ Ext.define('Connector.view.Grid', {
             var gridModel = this.getModel();
 
             var groups = Connector.grid.Panel.groupColumns(gridModel.getAllWrappedMeasures(gridModel.hasDemographics()), true);
+            groups = this.getSortedDemographicsCols(groups);
             Ext.each(groups, function (group) {
                 Ext.each(group.columns, function (m) {
                     var measure = m.measure;
@@ -1001,6 +1002,14 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
+    getSortedDemographicsCols: function(groups) {
+        if (groups[0].text === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS)
+        {
+            groups[0].columns = this.model.getDefaultWrappedMeasures(QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS).concat(groups[0].columns);
+        }
+        return groups;
+    },
+
     getGridSortExportParams: function() {
         var currentGridSorters = this.grid.getStore().getSorters();
         var currentDataSource = this.grid.datasource ? this.grid.datasource : QueryUtils.DATA_SOURCE_STUDY_AND_TIME;
@@ -1048,7 +1057,7 @@ Ext.define('Connector.view.Grid', {
             // Only include assays listed on data grid, which may be a smaller set compared with active assays in filters
             // If no assay columns are present on data grid, then list all assays active in filter
             var assayType = assayIdentifierTypes[assay];
-            if (gridAssays == null || gridAssays.length == 0 || gridAssays.indexOf(assayType) > -1)
+            if (gridAssays != null && gridAssays.length > 0 && gridAssays.indexOf(assayType) > -1)
                 studyassays.push(study + ChartUtils.ANTIGEN_LEVEL_DELIMITER + assay);
         });
         return studyassays;
