@@ -287,7 +287,8 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           method: 'POST',
           data: {
             email: email.value,
-            provider: 'cds'
+            provider: 'cds',
+            'X-LABKEY-CSRF': LABKEY.CSRF
           }
         }).success(function() {
 
@@ -316,7 +317,8 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             password: pw1.value,
             password2: pw2.value,
             email: emailVal,
-            verification: verificationVal
+            verification: verificationVal,
+            'X-LABKEY-CSRF': LABKEY.CSRF
           }
         }).success(function() {
           $('.create-new-password-modal .links input').prop("disabled",true);
@@ -351,7 +353,8 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             password: pw1.value,
             password2: pw2.value,
             email: emailVal,
-            verification: verificationVal
+            verification: verificationVal,
+            'X-LABKEY-CSRF': LABKEY.CSRF
           }
         }).success(function() {
           $('.create-account-modal .links input').prop("disabled",true);
