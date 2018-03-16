@@ -614,6 +614,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         Locator element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + STUDY + "')]");
         assertElementPresent(element);
+        scrollIntoView(element);
+        mouseOver(element);
+        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
         waitAndClick(element);
 
         waitForText("Data Availability");
