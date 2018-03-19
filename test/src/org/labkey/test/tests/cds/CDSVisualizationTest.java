@@ -1455,7 +1455,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg", "Functional marker name: IL2/ifngamma", "Data summary level: Protein Panel");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any ", "Functional marker name: IL2/ifngamma", "Data summary level: Protein Panel");
 
         log("Remove the tool tip.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1471,7 +1471,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg", "Functional marker name: IL2/ifngamma", "Data summary level: Protein Panel");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any ", "Functional marker name: IL2/ifngamma", "Data summary level: Protein Panel");
 
         log("Remove the tool tip.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1487,7 +1487,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
         sleep(1000);
 
-        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any HIV PTEg", "Functional marker name: IL2/ifngamma", "Data summary level: Protein Panel");
+        cdsPlot.validateToolTipText("Magnitude (% cells) - Background subtracted", "Data summary level: Protein Panel", "Protein panel: Any ", "Functional marker name: IL2/ifngamma", "Data summary level: Protein Panel");
 
         log("Change the plot to a heat map.");
         xaxis.openSelectorWindow();
