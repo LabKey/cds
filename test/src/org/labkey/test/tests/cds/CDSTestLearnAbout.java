@@ -645,6 +645,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Testing data availability module in Products");
         cds.viewLearnAboutPage("Products");
         Locator productRow = Locator.xpath("//h2[text() = '" + PRODUCT + "']");
+        assertElementPresent(productRow);
         scrollIntoView(productRow);
         mouseOver(productRow);
         waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
