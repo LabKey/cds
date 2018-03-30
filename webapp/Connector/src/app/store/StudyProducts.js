@@ -50,6 +50,12 @@ Ext.define('Connector.app.store.StudyProducts', {
             scope: this
         });
         LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_assaysforstudies',
+            success: this.onLoadAssays,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
             schemaName: 'cds.metadata',
             queryName: 'studypartgrouparmproduct',
             success: this.onLoadStudyArmProduct,
@@ -109,6 +115,16 @@ Ext.define('Connector.app.store.StudyProducts', {
         this._onLoadComplete();
     },
 
+    onLoadAssays : function(assayData) {
+        this.studyAssayMap = {};
+        Ext.each(assayData.rows, function(studyAssay){
+            if (!this.studyAssayMap[studyAssay.prot])
+                this.studyAssayMap[studyAssay.prot] = [];
+            this.studyAssayMap[studyAssay.prot].push(studyAssay);
+        }, this);
+        this._onLoadComplete();
+    },
+
     getById : function(id) {
         if (this.secretData[id]) {
             return Ext.create(this.model, this.secretData[id])
@@ -130,7 +146,8 @@ Ext.define('Connector.app.store.StudyProducts', {
     },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData) && Ext.isDefined(this.productProduct) && Ext.isDefined(this.accessibleStudies)) {
+        if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData) && Ext.isDefined(this.productProduct)
+                && Ext.isDefined(this.accessibleStudies) && Ext.isDefined(this.studyAssayMap)) {
             var products = [],
                 studies,
                 studiesWithData,
@@ -146,13 +163,21 @@ Ext.define('Connector.app.store.StudyProducts', {
                 product.data_accessible = false;
                 for (s=0; s < this.studyData.length; s++) {
                     if (product.product_id === this.studyData[s].product_id) {
+                        var dataStatus = 'Data not added', studyName = this.studyData[s].study_name;
+                        var hasAccess = this.accessibleStudies[studyName] === true;
+                        var assays = this.studyAssayMap[studyName];
+                        if (assays) {
+                            dataStatus = assays.length + ' Assay' + (assays.length > 1 ? 's' : '') + ' Available';
+                            if (!hasAccess)
+                                dataStatus = '0/' + dataStatus;
+                        }
                         var study = {
                             data_label: this.studyData[s].study_label ? this.studyData[s].study_label : '',
-                            data_id: this.studyData[s].study_name,
-                            data_link_id: this.studyData[s].study_name,
+                            data_id: studyName,
+                            data_link_id: studyName,
                             has_data: this.studyData[s].has_data,
-                            has_access:  this.accessibleStudies[this.studyData[s].study_name] === true,
-                            data_status: undefined
+                            has_access:  hasAccess,
+                            data_status: dataStatus
                         };
                         studies.push(study);
                     }

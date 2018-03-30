@@ -205,6 +205,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         String study = "QED 2";
         Locator element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
+        scrollIntoView(element);
+        mouseOver(element);
+        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
         waitAndClick(element);
         waitForText("Data Availability");
         Assert.assertTrue("Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
@@ -214,6 +217,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         study = "RED 4";
         element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
+        scrollIntoView(element);
+        mouseOver(element);
+        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
         waitAndClick(element);
         waitForText("Data Availability");
 
