@@ -45,7 +45,7 @@ public class CDSMetadataContainerFilter extends ContainerFilter.ContainerFilterW
         Container project = currentContainer.getProject();
         if (null != project &&  project.hasPermission(_user, perm, roles))
         {
-            Set<Container> containers = new HashSet<>(removeWorkbooks(ContainerManager.getAllChildren(project)));
+            Set<Container> containers = new HashSet<>(removeDuplicatedContainers(ContainerManager.getAllChildren(project)));
             allowedContainerIds.addAll(ContainerFilter.toIds(containers));
         }
 
