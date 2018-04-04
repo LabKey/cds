@@ -888,12 +888,10 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         goToModule("Dumbster");
 
         EmailRecordTable emailRecordTable = new EmailRecordTable(this);
-        EmailRecordTable.EmailMessage msg = new EmailRecordTable.EmailMessage();
 
         for(int index = 0; index < _newUserAccounts.length; index++)
         {
-            msg.setSubject(_newUserAccounts[index] + msgSubject);
-            emailRecordTable.clickMessage(msg);
+            emailRecordTable.clickSubject(_newUserAccounts[index] + msgSubject);
             usrEmail = _newUserAccounts[index].substring(0, _newUserAccounts[index].indexOf("@"));
             urls[index] = getAttribute(Locator.css("a[href*='&email=" + usrEmail + "']"), "href");
         }
