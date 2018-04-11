@@ -770,7 +770,7 @@ public class CDSController extends SpringActionController
                 url = url + "/";
 
             Container blogContainer = getTarget();
-            FileContentService svc = ServiceRegistry.get().getService(FileContentService.class);
+            FileContentService svc = FileContentService.get();
             File root = svc.getFileRoot(blogContainer);
             File fullPath = new File(root,"@files/blog");
             fullPath.mkdirs();
