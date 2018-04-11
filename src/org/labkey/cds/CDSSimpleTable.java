@@ -32,7 +32,14 @@ public class CDSSimpleTable extends SimpleUserSchema.SimpleTable<SimpleUserSchem
     {
         super(schema, table);
 
-        setContainerFilter(new DataspaceContainerFilter(schema.getUser(), schema.getContainer().getProject()));
+        setContainerFilter(new DataspaceContainerFilter(schema.getUser(), schema.getContainer().getProject())
+        {
+            @Override
+            public boolean useCTE()
+            {
+                return false;       // TODO: Issue 33819: now that import tables have container filter, some queries, such as ds_studyassay, yield bad sql for the CTE
+            }
+        });
     }
 
     @Override

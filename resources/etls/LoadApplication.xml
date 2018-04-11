@@ -98,6 +98,9 @@
             <source schemaName="cds" queryName="ds_bamaantigen" />
             <destination schemaName="cds" queryName="BAMAAntigen" targetOption="truncate" />
         </transform>
+        <transform id="truncate_studyproductmap" type="org.labkey.di.pipeline.TransformTask">
+            <destination schemaName="cds" queryName="studyproductmap" targetOption="truncate" />
+        </transform>
         <transform id="product" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="cds" queryName="ds_product" />
             <destination schemaName="cds" queryName="product" targetOption="truncate" />
