@@ -43,7 +43,7 @@
     <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/headerlogo.png">
 
     <!-- Include base labkey.js -->
-    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>())%>
+    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>(), false)%>
     <script data-main="<%=text(frontPagePath)%>/js/config" src="<%=text(frontPagePath)%>/components/requirejs/require.js"></script>
 
     <%--<!-- Client API Dependencies -->--%>
