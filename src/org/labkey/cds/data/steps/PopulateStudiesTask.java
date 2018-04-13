@@ -20,6 +20,7 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.ContainerFilterable;
 import org.labkey.api.data.ContainerManager;
+import org.labkey.api.data.NormalContainerType;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
@@ -278,7 +279,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
             if (c == null)
             {
                 logger.info("Creating container for study (" + studyName + ")");
-                c = ContainerManager.createContainer(project, studyName, null, null, Container.TYPE.normal, user);
+                c = ContainerManager.createContainer(project, studyName, null, null, NormalContainerType.NAME, user);
                 c.setFolderType(studyFolderType, user);
                 StudyService.get().createStudy(c, user, studyName, TimepointType.VISIT, false);
                 created++;
