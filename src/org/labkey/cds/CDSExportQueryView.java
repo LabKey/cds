@@ -674,15 +674,8 @@ public class CDSExportQueryView extends QueryView
     private void writeGridCSV(String tabName, Results results, ZipOutputStream out) throws IOException
     {
         TSVGridWriter tsv = null;
-        try
-        {
-            tsv = new TSVGridWriter(results);
-            tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeSQLException(e);
-        }
+        tsv = new TSVGridWriter(results);
+        tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
         File tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
         tmpFile.deleteOnExit();
         tsv.write(tmpFile);

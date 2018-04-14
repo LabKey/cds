@@ -46,7 +46,7 @@ public class CDSResetPasswordProvider implements ResetPasswordProvider
     }
 
     @Override
-    public SecurityMessage getAPIResetPasswordMessage(User user, boolean isAdminCopy) throws Exception
+    public SecurityMessage getAPIResetPasswordMessage(User user, boolean isAdminCopy)
     {
         // if user has never logged in before, use Register New User email template
         if (user != null && user.getLastLogin() == null)
