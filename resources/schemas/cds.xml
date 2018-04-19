@@ -249,6 +249,34 @@
             <column columnName="assay_endpoint_statistical_analysis"/>
         </columns>
     </table>
+    <table tableName="import_MAbMetadata" tableDbType="TABLE">
+        <columns>
+            <column columnName="container"/>
+            <column columnName="mab_id"/>
+            <column columnName="mab_name_std"/>
+            <column columnName="mab_lanlid"/>
+            <column columnName="mab_hxb2_location"/>
+            <column columnName="mab_ab_binding_type"/>
+            <column columnName="mab_isotype"/>
+            <column columnName="mab_donorid"/>
+            <column columnName="mab_donor_species"/>
+            <column columnName="mab_donor_clade"/>
+        </columns>
+    </table>
+    <table tableName="import_MAbMixMetadata" tableDbType="TABLE">
+        <columns>
+            <column columnName="container"/>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_mix_name_std"/>
+        </columns>
+    </table>
+    <table tableName="import_MAbMix" tableDbType="TABLE">
+        <columns>
+            <column columnName="container"/>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_id"/>
+        </columns>
+    </table>
     <table tableName="import_nabantigen" tableDbType="TABLE">
         <columns>
             <column columnName="assay_identifier"/>
@@ -346,6 +374,47 @@
             <column columnName="nab_response_ID50"/>
             <column columnName="nab_response_ID80"/>
             <column columnName="slope"/>
+        </columns>
+    </table>
+    <table tableName="import_nabmab" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="container"/>
+            <column columnName="prot"/>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_name_source"/>
+            <column columnName="target_cell"/>
+            <column columnName="assay_identifier"/>
+            <column columnName="summary_level"/>
+            <column columnName="clade"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="specimen_type"/>
+            <column columnName="lab_code"/>
+            <column columnName="virus"/>
+            <column columnName="virus_type"/>
+            <column columnName="initial_concentration"/>
+            <column columnName="mab_concentration"/>
+            <column columnName="mab_concentration_units"/>
+            <column columnName="specimen_concentration_id"/>
+            <column columnName="min_concentration"/>
+            <column columnName="max_concentration"/>
+            <column columnName="min_well_value"/>
+            <column columnName="max_well_value"/>
+            <column columnName="mean_well_value"/>
+            <column columnName="well_std_dev"/>
+            <column columnName="percent_neutralization"/>
+            <column columnName="neutralization_plus_minus"/>
+            <column columnName="titer_ic50"/>
+            <column columnName="titer_ic80"/>
+            <column columnName="nab_response_ic50"/>
+            <column columnName="nab_response_ic80"/>
+            <column columnName="slope"/>
+            <column columnName="fit_min"/>
+            <column columnName="fit_max"/>
+            <column columnName="fit_asymmetry"/>
+            <column columnName="fit_slope"/>
+            <column columnName="fit_inflection"/>
+            <column columnName="fit_error"/>
         </columns>
     </table>
     <table tableName="import_ics" tableDbType="TABLE">
@@ -487,6 +556,34 @@
             <column columnName="label"/>
             <column columnName="filename"/>
             <column columnName="document_type"/>
+        </columns>
+    </table>
+    <table tableName="MAbMetadata" tableDbType="TABLE">
+        <columns>
+            <column columnName="container"/>
+            <column columnName="mab_id"/>
+            <column columnName="mab_name_std"/>
+            <column columnName="mab_lanlid"/>
+            <column columnName="mab_hxb2_location"/>
+            <column columnName="mab_ab_binding_type"/>
+            <column columnName="mab_isotype"/>
+            <column columnName="mab_donorid"/>
+            <column columnName="mab_donor_species"/>
+            <column columnName="mab_donor_clade"/>
+        </columns>
+    </table>
+    <table tableName="MAbMixMetadata" tableDbType="TABLE">
+        <columns>
+            <column columnName="container"/>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_mix_name_std"/>
+        </columns>
+    </table>
+    <table tableName="MAbMix" tableDbType="TABLE">
+        <columns>
+            <column columnName="container"/>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_id"/>
         </columns>
     </table>
     <table tableName="studydocument" tableDbType="TABLE">
