@@ -1,0 +1,6 @@
+mab_mix_id	mab_mix_name_std
+cds_mab_mix_5	PGT128/3BNC117 + PGDM1400
+cds_mab_mix_6	PGT128 + 3BNC117 + PGDM1400
+cds_mab_mix_7	PGT151/3BNC117
+cds_mab_mix_14	2F5 (PlantForm)
+cds_mab_mix_15	2F5 (Polymun)

@@ -62,6 +62,8 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
         new TSVCopyConfig("Document"),
         new TSVCopyConfig("Publication"),
+        new TSVCopyConfig("MAbMetadata"),
+        new TSVCopyConfig("MAbMixMetadata"),
 
         // Dependent Tables
 //        new TSVCopyConfig("StudyPersonnel"),
@@ -73,6 +75,7 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("ProductInsert", "ProductInsertClade"),
         new TSVCopyConfig("StudyRelationshipOrder"),
         new TSVCopyConfig("StudyRelationship"),
+        new TSVCopyConfig("MAbMix"),
 
         // Mapping Tables
         new TSVCopyConfig("StudyProduct"),
@@ -92,7 +95,8 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("ICS", "AssayICS"),
         new TSVCopyConfig("ELS_IFNg", "AssayELS_IFNg"),
         new TSVCopyConfig("NAB", "AssayNAB"),
-        new TSVCopyConfig("BAMA", "AssayBAMA")
+        new TSVCopyConfig("BAMA", "AssayBAMA"),
+        new TSVCopyConfig("NABMAb", "AssayNABMAb")
     };
 
     @Override

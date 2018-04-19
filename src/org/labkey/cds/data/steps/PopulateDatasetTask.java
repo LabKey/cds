@@ -39,6 +39,7 @@ public class PopulateDatasetTask extends AbstractPopulateTask
     private static final String SOURCE_SCHEMA = "sourceSchema";
     private static final String SOURCE_QUERY = "sourceQuery";
     private static final String TARGET_DATASET = "targetDataset";
+    private static final String CALCULATE_MAB_SEQ = "calculateMAbSeq";
 
 
     @Override
@@ -53,6 +54,7 @@ public class PopulateDatasetTask extends AbstractPopulateTask
     {
         DefaultSchema projectSchema = DefaultSchema.get(user, project);
         String datasetName = settings.get(TARGET_DATASET);
+        boolean isMAb = "true".equalsIgnoreCase(settings.get(CALCULATE_MAB_SEQ));
 
         QuerySchema sourceSchema = projectSchema.getSchema(settings.get(SOURCE_SCHEMA));
 
@@ -92,6 +94,9 @@ public class PopulateDatasetTask extends AbstractPopulateTask
             if (job.checkInterrupted())
                 return;
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
+            if (isMAb)
+                sql.append(" ORDER BY row_id");
+
             sql.add(container.getName());
 
             Map<String, Object>[] subjects = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
@@ -121,6 +126,15 @@ public class PopulateDatasetTask extends AbstractPopulateTask
 
                 if (subjects.length > 0)
                 {
+                    if (isMAb)
+                    {
+                        int ind = 0;
+                        for (Map<String, Object> row : subjects)
+                        {
+                            row.put("mab_concentration_order", (ind++ % 8) + 1);
+                        }
+                    }
+
                     logger.info("Inserting " + subjects.length + " rows into \"" + targetDataset.getName() + "\" dataset. (" + container.getName() + ")");
                     start = System.currentTimeMillis();
                     ListofMapsDataIterator maps = new ListofMapsDataIterator(subjects[0].keySet(), Arrays.asList(subjects));
