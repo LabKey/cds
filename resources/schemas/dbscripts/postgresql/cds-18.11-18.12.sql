@@ -54,6 +54,7 @@ CREATE TABLE cds.import_MAbMixMetadata (
   container ENTITYID NOT NULL,
   mab_mix_id VARCHAR(250) NOT NULL,
   mab_mix_name_std VARCHAR(250),
+  mab_mix_label VARCHAR(250),
 
   CONSTRAINT PK_import_MAbMixMetadata PRIMARY KEY (container, mab_mix_id)
 );
@@ -62,6 +63,7 @@ CREATE TABLE cds.MAbMixMetadata (
   container ENTITYID NOT NULL,
   mab_mix_id VARCHAR(250) NOT NULL,
   mab_mix_name_std VARCHAR(250),
+  mab_mix_label VARCHAR(250),
 
   CONSTRAINT PK_MAbMixMetadata PRIMARY KEY (container, mab_mix_id)
 );

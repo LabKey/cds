@@ -268,6 +268,7 @@
             <column columnName="container"/>
             <column columnName="mab_mix_id"/>
             <column columnName="mab_mix_name_std"/>
+            <column columnName="mab_mix_label"/>
         </columns>
     </table>
     <table tableName="import_MAbMix" tableDbType="TABLE">
@@ -577,6 +578,7 @@
             <column columnName="container"/>
             <column columnName="mab_mix_id"/>
             <column columnName="mab_mix_name_std"/>
+            <column columnName="mab_mix_label"/>
         </columns>
     </table>
     <table tableName="MAbMix" tableDbType="TABLE">
