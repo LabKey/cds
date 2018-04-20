@@ -115,6 +115,7 @@ public class CDSManager
                     "StudyProductMap",
                     "TreatmentArmSubjectMap",
                     "TreatmentArm",
+                    "MAbMix",
                     "Product",
                     "StudyAssay",
                     "StudyDocument",
@@ -122,10 +123,13 @@ public class CDSManager
                     "StudyPublication",
                     "Publication",
                     "StudyRelationship",
+                    "MAbMetadata",
+                    "MAbMixMetadata",
                     "Study",
                     "Assay",
                     "Lab",
 
+                    "import_nabmab",
                     "import_ics",
                     "import_els_ifng",
                     "import_bama",
@@ -149,6 +153,7 @@ public class CDSManager
                     "import_elispotantigen",
                     "import_bamaantigen",
                     "import_studysubject",
+                    "import_mabmix",
                     "import_product",
                     "import_nab",
                     "import_assay",
@@ -157,6 +162,8 @@ public class CDSManager
                     "import_publication",
                     "import_personnel",
                     "import_document",
+                    "import_mabmetadata",
+                    "import_mabmixmetadata",
                     "import_lab",
                     "import_study"
             })
