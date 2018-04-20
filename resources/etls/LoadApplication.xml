@@ -46,7 +46,6 @@
                     <setting name="sourceSchema" value="cds"/>
                     <setting name="sourceQuery" value="ds_nabmab"/>
                     <setting name="targetDataset" value="NABMAb" />
-                    <setting name="calculateMAbSeq" value="true" />
                 </settings>
             </taskref>
         </transform>

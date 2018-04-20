@@ -115,9 +115,9 @@ CREATE TABLE cds.import_NABMAb (
   virus_type VARCHAR(250),
 
   initial_concentration NUMERIC(15,4),
+  specimen_concentration_id INTEGER,
   mab_concentration NUMERIC(15,4),
   mab_concentration_units VARCHAR(250),
-  specimen_concentration_id INTEGER,
   min_concentration NUMERIC(15,4),
   max_concentration NUMERIC(15,4),
   min_well_value NUMERIC(15,4),

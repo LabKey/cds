@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 SELECT
-  dd.row_id,
   dd.prot,
   0 AS sequencenum,
   dd.mab_mix_id AS participantid,
   dd.mab_mix_id,
-  meta.mab_mix_name_std,
   dd.mab_name_source,
   dd.summary_level,
   dd.target_cell,
@@ -55,6 +53,4 @@ SELECT
   dd.fit_inflection,
   dd.fit_error
 
-FROM cds.import_NABMAb AS dd
-  LEFT JOIN cds.import_MAbMixMetadata AS meta
-    ON dd.mab_mix_id = meta.mab_mix_id;
+FROM cds.import_NABMAb AS dd;
