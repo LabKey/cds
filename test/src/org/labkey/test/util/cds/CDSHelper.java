@@ -205,6 +205,7 @@ public class CDSHelper
     public static final String[] LABS = {"DL", "WA", "PC", "JN"};
     public static final String[] I_TYPES = {"Cellular", "Humoral"};
     public static final String[] H_TYPES = {"HIV Immunogenicity"};
+    public static final String[] SUBJECT_ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
     public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl", "NAB MAB"};
     public static final String[] ASSAYS_FULL_TITLES = {"BAMA (HIV Binding Antibody)",
             "ICS (Intracellular Cytokine Staining)",
