@@ -37,7 +37,7 @@ public class CDSSimpleTable extends SimpleUserSchema.SimpleTable<SimpleUserSchem
             @Override
             public boolean useCTE()
             {
-                return false;       // TODO: Issue 33819: now that import tables have container filter, some queries, such as ds_studyassay, yield bad sql for the CTE
+                return true;
             }
         });
     }
