@@ -29,7 +29,7 @@ SV.container,
 -- single-use visit tag calculations for visit day alignment
 CAST(SV.Visit.ProtocolDay - visittagalignment_enrollment.ProtocolDay_Enrollment AS INTEGER) AS EnrollmentDay,
 CAST(SV.Visit.ProtocolDay - visittagalignment_last_vaccination.ProtocolDay_Last_Vaccination AS INTEGER) AS LastVaccinationDay,
-CAST(SV.Visit.ProtocolDay - visittagalignment_first_vaccination.ProtocolDay_First_Vaccination AS INTEGER) AS FirstVaccinationDay,
+CAST(SV.Visit.ProtocolDay - visittagalignment_first_vaccination.ProtocolDay_First_Vaccination AS INTEGER) AS FirstVaccinationDay
 
 FROM study.ParticipantVisit AS SV
 LEFT JOIN cds.study AS STUDY ON (SV.container = study.container)
@@ -53,3 +53,6 @@ LEFT JOIN (SELECT Container, ParticipantId, MIN(ProtocolDay) AS ProtocolDay_Firs
   WHERE visittagname='First Vaccination' GROUP BY Container, ParticipantId) AS visittagalignment_first_vaccination
   ON SV.container=visittagalignment_first_vaccination.container
   AND SV.participantId.participantId=visittagalignment_first_vaccination.participantid
+
+WHERE SV.participantId NOT IN
+      (SELECT MAB.participantId FROM study.NABMAb AS MAB WHERE MAB.participantId = SV.participantId AND MAB.container = SV.container);
