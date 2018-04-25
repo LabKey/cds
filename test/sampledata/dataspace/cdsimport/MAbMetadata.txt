@@ -1,0 +1,6 @@
+mab_id	mab_name_std	mab_lanlid	mab_hxb2_location	mab_ab_binding_type	mab_isotype	mab_donorid	mab_donor_species	mab_donor_clade
+cds_mab_1	PGT128	2642	Env	gp120 V3	IgG1	Donor 36	human	CRF02_AG
+cds_mab_2	PGDM1400	3201	Env	gp120 V2	IgG	Donor 84	human	C
+cds_mab_3	3BNC117 	2586	gp160	gp120 CD4BS	IgG	Patient 3	human	B
+cds_mab_4	PGT151	3107	Env	gp41-gp120 quartenary interface	IgG	Donor 31	human	
+cds_mab_9	2F5	815	gp160	gp41 MPER (membrane proximal external region)	IgG3κ		human	

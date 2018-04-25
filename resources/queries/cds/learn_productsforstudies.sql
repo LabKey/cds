@@ -16,6 +16,6 @@
 -- Helper query for store\Study.js. Grabs all metadata for each product.
 SELECT
 spm.study_name,
-p.*,
+p.*
 FROM cds.metadata.studyproductmap spm
-JOIN cds.product p ON spm.product_id=p.product_id
+JOIN cds.product p ON spm.product_id = p.product_id AND spm.projectContainer = p.container

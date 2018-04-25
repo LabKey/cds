@@ -205,11 +205,13 @@ public class CDSHelper
     public static final String[] LABS = {"DL", "WA", "PC", "JN"};
     public static final String[] I_TYPES = {"Cellular", "Humoral"};
     public static final String[] H_TYPES = {"HIV Immunogenicity"};
-    public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
+    public static final String[] SUBJECT_ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
+    public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl", "NAB MAB"};
     public static final String[] ASSAYS_FULL_TITLES = {"BAMA (HIV Binding Antibody)",
             "ICS (Intracellular Cytokine Staining)",
             "IFNg ELISpot (IFNg ELISpot)",
-            "NAB (HIV Neutralizing Antibody)"};
+            "NAB (HIV Neutralizing Antibody)",
+            "NABMAB (Neutralization Antibody - Monoclonal Antibodies)"};
     public static final String[] LEARN_ABOUT_BAMA_METHODOLOGY = {"Luminex Mutiplex Assay"};
     public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Protein Panel", "The name of the panel of proteins"};
     public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"A1.con.env03 140 CF", "p24"};
@@ -252,6 +254,7 @@ public class CDSHelper
     public static final String TITLE_BAMA = "BAMA";
     public static final String TITLE_ELISPOT = "ELISPOT";
     public static final String TITLE_ICS = "ICS";
+    public static final String TITLE_NABMAB = "NABMAB";
 
     // These are used to build ids of elements on the tree panels.
     public static final String PANEL_PREFIX = "study";
@@ -566,6 +569,9 @@ public class CDSHelper
     public static final String GROUP_DATA_IMPORT = "Data Import";
     public static final String GROUP_FHCRC_APPROVED = "FHCRC Approved";
 
+    public static final String HAS_DATA_ICON = "smallCheck.png";
+    public static final String HAS_NO_DATA_ICON = "smallGreyX.png";
+
     public static final Map<String, String> siteGroupRoles;
     static
     {
@@ -702,6 +708,16 @@ public class CDSHelper
     public Locator.XPathLocator getDataRowXPath(String rowText)
     {
         return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
+    }
+
+    public Locator.XPathLocator hasDataDetailIconXPath(String rowText)
+    {
+        return getDataRowXPath(rowText).append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]");
+    }
+
+    public Locator.XPathLocator noDataDetailIconXPath(String rowText)
+    {
+        return getDataRowXPath(rowText).append("//td//img[contains(@src, '"  + HAS_NO_DATA_ICON +  "')]");
     }
 
     public void setUpPermGroup(String perm_group, Map<String, String> studyPermissions)

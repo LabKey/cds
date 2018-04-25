@@ -51,7 +51,7 @@ Ext.define('Connector.view.AssayAntigen', {
     getAntigenColumns: function(assay_type)
     {
         assay_type = assay_type.toUpperCase();
-        if (assay_type === 'NAB') {
+        if (assay_type === 'NAB' || assay_type === 'NABMAB') {
             return this.getNABColumns();
         }
         else if (assay_type === 'ICS' || assay_type === 'ELISPOT') {

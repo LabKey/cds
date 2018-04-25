@@ -23,11 +23,11 @@ Ext.define('Connector.app.store.AssayAntigen', {
     loadAntigens : function() {
         if (this.isAntigensLoaded)
             return;
-        var assayName = this.assayType.toUpperCase();
-        if (assayName === 'ICS' || assayName === 'ELISPOT') {
+        var assayType = this.assayType.toUpperCase();
+        if (assayType === 'ICS' || assayType === 'ELISPOT') {
             LABKEY.Query.selectRows({
                 schemaName: 'cds',
-                queryName: 'learn_' + assayName + '_antigens',
+                queryName: 'learn_' + assayType + '_antigens',
                 scope: this,
                 success: function(result) {
                     var antigens = [],
@@ -72,15 +72,19 @@ Ext.define('Connector.app.store.AssayAntigen', {
         }
         else
         {
+            if (assayType === 'NABMAB')
+                assayType = "NAB";
             LABKEY.Query.selectRows({
                 schemaName: 'cds',
-                queryName: assayName + 'antigen',
+                queryName: assayType + 'antigen',
                 scope: this,
                 success: function(result) {
                     var antigens = [];
                     Ext.each(result.rows, function(row) {
-                        var antigen = this.getAntigen(row);
-                        antigens.push(antigen);
+                        if (row.assay_identifier === this.assayId) {
+                            var antigen = this.getAntigen(row);
+                            antigens.push(antigen);
+                        }
                     }, this);
                     this.loadRawData(antigens);
                     this.isAntigensLoaded = true;

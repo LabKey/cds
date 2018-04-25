@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category({Git.class})
@@ -399,6 +400,36 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     }
 
     @Test
+    public void testLearnAboutNABMAbAssay()
+    {
+        cds.viewLearnAboutPage("Assays");
+        LearnGrid summaryGrid = new LearnGrid(this);
+
+        log("Go to NAB MAB assay page");
+        summaryGrid.setSearch(CDSHelper.TITLE_NABMAB)
+                .clickFirstItem();
+
+        log("Verify Data Availability");
+        waitForText("Data Availability");
+        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
+        assertTrue(smallHasDataIcons.size() == 2);
+
+        assertTrue(isElementPresent(cds.hasDataDetailIconXPath("QED 2")));
+        assertFalse(isElementPresent(cds.hasDataDetailIconXPath("QED 1")));
+        assertTrue(isElementPresent(cds.noDataDetailIconXPath("RED 5")));
+
+        log("Verify Variables page");
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
+        sleep(CDSHelper.CDS_WAIT);
+        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Fit Asymmetry"));
+
+        log("Verify Antigens page");
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        sleep(CDSHelper.CDS_WAIT);
+        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("BaL.26-mab"));
+    }
+
+    @Test
     public void testAntigenSearch()
     {
         cds.viewLearnAboutPage("Assays");
@@ -593,9 +624,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateDetailsDataAvailability()
     {
-        final String HAS_DATA_ICON = "smallCheck.png";
-        final String HAS_NO_DATA_ICON = "smallGreyX.png";
-
         //Valuse for Study Details inspection
         final String STUDY = "RED 4";
         final String[] ASSAY_TITLES = {"IFNg ELISpot", "ICS", "BAMA"};
@@ -621,9 +649,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[1]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        assertTrue(isElementPresent(cds.getDataRowXPath(ASSAY_TITLES[2]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[0])));
+        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[1])));
+        assertTrue(isElementPresent(cds.noDataDetailIconXPath(ASSAY_TITLES[2])));
 
 
         log("Testing data availability module in Assays");
@@ -635,11 +663,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        List<WebElement> smallHasDataIcons =cds.getDataRowXPath("").append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]").findElements(getDriver());
+        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
 
-        Assert.assertFalse(isElementPresent(cds.getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '"  + HAS_DATA_ICON +  "')]")));
-        assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_ASSAY_WITH_NO_DATA).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        assertFalse(isElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA)));
+        assertTrue(isElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA)));
 
 
         log("Testing data availability module in Products");
@@ -657,8 +685,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[0]).append("//td//img[contains(@src, '" + HAS_DATA_ICON + "')]")));
-        assertTrue(isElementPresent(cds.getDataRowXPath(STUDY_FROM_PRODUCT[1]).append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_PRODUCT[0])));
+        assertTrue(isElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_PRODUCT[1])));
     }
 
     @Test
@@ -1112,8 +1140,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         click(studyElement);
         sleep(1000);
 
-        Assert.assertFalse("There should be no related studies for this study, but the related studies grid was found.", isElementPresent(relatedStudiesTable));
-        Assert.assertFalse("The header for the related studies section was found.", isElementPresent(Locator.xpath("//h3[text()='Related Studies']")));
+        assertFalse("There should be no related studies for this study, but the related studies grid was found.", isElementPresent(relatedStudiesTable));
+        assertFalse("The header for the related studies section was found.", isElementPresent(Locator.xpath("//h3[text()='Related Studies']")));
 
         cds.viewLearnAboutPage("Studies");
 
