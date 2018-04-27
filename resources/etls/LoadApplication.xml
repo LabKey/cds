@@ -49,6 +49,18 @@
                 </settings>
             </taskref>
         </transform>
+        <transform id="PopulateMAbGridBase" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateGridBaseTask">
+                <settings>
+                    <setting name="sourceSchema" value="study"/>
+                    <setting name="sourceQuery" value="ds_mabgridbase"/>
+                    <setting name="targetSchema" value="cds"/>
+                    <setting name="targetQuery" value="mAbGridBase"/>
+                    <!-- ds_mabgridbase joins cds.mabmixmetadata, which is project instead of study scoped -->
+                    <setting name="bypassContainerFilter" value="true"/>
+                </settings>
+            </taskref>
+        </transform>
         <transform id="PopulateICS" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
                 <settings>
@@ -138,7 +150,14 @@
             </taskref>
         </transform>
         <transform id="PopulateGridBase" type="TaskrefTransformStep">
-            <taskref ref="org.labkey.cds.data.steps.PopulateGridBaseTask"/>
+            <taskref ref="org.labkey.cds.data.steps.PopulateGridBaseTask">
+                <settings>
+                    <setting name="sourceSchema" value="study"/>
+                    <setting name="sourceQuery" value="ds_gridbase"/>
+                    <setting name="targetSchema" value="cds"/>
+                    <setting name="targetQuery" value="GridBase"/>
+                </settings>
+            </taskref>
         </transform>
         <transform id="PopulateFacts" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateFactsTask"/>

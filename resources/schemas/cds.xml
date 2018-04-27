@@ -985,4 +985,17 @@
             <column columnName="projectContainer"/>
         </columns>
     </table>
+    <table tableName="mAbGridBase" tableDbType="TABLE">
+        <columns>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_mix_name_std"/>
+            <column columnName="study"/>
+            <column columnName="virus"/>
+            <column columnName="clade"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="tier_clade_virus"/>
+            <column columnName="titer_ic50"/>
+            <column columnName="Container"/>
+        </columns>
+    </table>
 </tables>

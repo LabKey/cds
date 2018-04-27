@@ -102,6 +102,7 @@ public class CDSManager
                     "icsantigen",
                     "elispotantigen",
                     "bamaantigen",
+                    "mAbGridBase",
                     "GridBase",
                     "Sites",
                     "Feedback",
