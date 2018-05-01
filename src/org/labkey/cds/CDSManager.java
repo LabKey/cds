@@ -116,6 +116,7 @@ public class CDSManager
                     "StudyProductMap",
                     "TreatmentArmSubjectMap",
                     "TreatmentArm",
+                    "mAbMetaGridBase",
                     "MAbMix",
                     "Product",
                     "StudyAssay",

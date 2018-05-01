@@ -44,6 +44,7 @@ Ext.define('Connector.Application', {
         'Learn',
         'Navigation',
         'Data',
+        'MabGrid',
         'Summary'
     ],
 

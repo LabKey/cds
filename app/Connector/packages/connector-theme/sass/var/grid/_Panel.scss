@@ -98,6 +98,13 @@
       color: $heat-scale-2;
     }
 
+    &.x-column-header-checkbox {
+      .x-column-header-text {
+        width: 13px;
+        left: 5px;
+      }
+    }
+
     &.x-column-header-sort-ASC,
     &.x-column-header-sort-DESC,
     &.filtered-column {

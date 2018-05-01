@@ -5,6 +5,9 @@
  */
 Ext.define('Connector.controller.State', {
     extend: 'LABKEY.app.controller.State',
+    requires : [
+        'Connector.model.State'
+    ],
 
     defaultTitle: 'CAVD DataSpace',
 
@@ -17,6 +20,8 @@ Ext.define('Connector.controller.State', {
     useMergeFilters: true,
 
     isService: true,
+
+    modelClazz: 'Connector.model.State',
 
     init : function() {
         this.callParent();
@@ -216,5 +221,56 @@ Ext.define('Connector.controller.State', {
             this.selections = [];
             this.requestSelectionUpdate(_skip, false, isMoveToFilter);
         }
+    },
+
+    getMabFilters : function(flat) {
+        if (!this.mabfilters || this.mabfilters.length == 0)
+            return [];
+
+        if (!flat)
+            return this.mabfilters;
+
+        var flatFilters = [],
+                f = 0,
+                data;
+
+        for (; f < this.mabfilters.length; f++) {
+            data = Ext.clone(this.mabfilters[f].data);
+            flatFilters.push(data);
+        }
+
+        return flatFilters;
+    },
+
+    removeMabFilters : function(filterIds)
+    {
+        var idMap = Ext.Array.toMap(filterIds),
+                filterSet = [];
+
+        Ext.each(this.getMabFilters(), function(filter)
+        {
+            if (!idMap[filter.id])
+            {
+                filterSet.push(filter);
+            }
+        });
+
+        if (Ext.isEmpty(filterSet))
+        {
+            this.clearMabFilters();
+        }
+        else
+        {
+            this.setMabFilters(filterSet);
+        }
+    },
+
+    clearMabFilters: function()
+    {
+        this.mabfilters = [];
+    },
+
+    setMabFilters : function(filters, skipState) {
+        this.mabfilters = this._getFilterSet(filters);
     }
 });

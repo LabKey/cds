@@ -998,4 +998,15 @@
             <column columnName="Container"/>
         </columns>
     </table>
+    <table tableName="mAbMetaGridBase" tableDbType="TABLE">
+        <columns>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_mix_name_std"/>
+            <column columnName="mab_id"/>
+            <column columnName="mab_hxb2_location"/>
+            <column columnName="mab_isotype"/>
+            <column columnName="mab_donor_species"/>
+            <column columnName="Container"/>
+        </columns>
+    </table>
 </tables>

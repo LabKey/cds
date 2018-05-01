@@ -1075,6 +1075,28 @@ Ext.define('Connector.controller.Query', {
                 levelList.push(def.uniqueName);
         });
 
+    },
+
+    getMabData : function(success, failure, scope)
+    {
+        var config = {
+            success: success,
+            failure: failure,
+            scope: scope
+        };
+
+        MabQueryUtils.getData(config);
+    },
+
+    getMabMetaData : function(success, failure, scope)
+    {
+        var config = {
+            success: success,
+            failure: failure,
+            scope: scope
+        };
+
+        MabQueryUtils.getMetaData(config);
     }
 });
 
