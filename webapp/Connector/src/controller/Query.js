@@ -1097,6 +1097,16 @@ Ext.define('Connector.controller.Query', {
         };
 
         MabQueryUtils.getMetaData(config);
+    },
+
+    getMabAllFieldValues: function(config)
+    {
+        MabQueryUtils.getMabUniqueValues(config);
+    },
+
+    getMabActiveFieldValues: function(config)
+    {
+        MabQueryUtils.getMabUniqueValues(config);
     }
 });
 

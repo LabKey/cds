@@ -47,6 +47,8 @@
         <script path="Connector/src/window/AbstractFilter.js"/>
         <script path="Connector/src/window/Filter.js"/>
         <script path="Connector/src/window/Facet.js"/>
+        <script path="Connector/src/window/AbstractGroupedFacet.js"/>
+        <script path="Connector/src/window/MabGridFacet.js"/>
         <script path="Connector/src/window/LearnFacet.js"/>
         <script path="Connector/src/window/SystemMessage.js"/>
         <script path="Connector/src/panel/Feedback.js"/>

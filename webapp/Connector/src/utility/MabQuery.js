@@ -43,9 +43,7 @@ Ext.define('Connector.utility.MabQuery', {
         });
     },
 
-    getData: function (config) {
-        var sql = this._generateMAbSql();
-
+    _executeSql: function(config, sql) {
         LABKEY.Query.executeSql({
             schemaName: 'cds',
             sql: sql,
@@ -57,37 +55,58 @@ Ext.define('Connector.utility.MabQuery', {
         });
     },
 
-    _generateMAbSql: function()
-    {
-       /**SELECT
-        mab_mix_name_std,
+    getMabUniqueValues: function(config) {
+        var sql = null;
+        if (config.isMeta)
+            sql = this._generateMabMetaUniqueValuesSql(config);
+        else
+            sql = this._generateMabAssayUniqueValuesSql(config);
 
-        COUNT(DISTINCT study) as StudyCount,
-        COUNT(DISTINCT virus) as VirusCount,
-        COUNT(DISTINCT clade) as CladeCount,
-        COUNT(DISTINCT neutralization_tier) as Tier,
+        this._executeSql(config, sql);
+    },
 
-        exp(AVG(log(titer_ic50))) as IC50
+    getData: function (config) {
+        this._executeSql(config, this._generateMAbSql());
+    },
 
-        FROM cds.mAbGridBase
+    _generateMabMetaUniqueValuesSql: function(config) {
+        var sep = "\n\t", WHERE = [];
+        var SELECT = 'SELECT DISTINCT ' + this.MAB_META_GRID_BASE_ALIAS + '.' + config.fieldName;
+        if (config.useFilter) {
+            WHERE.push(this._getActiveMabMixIdWhere());
+        }
 
-        WHERE study in () AND mab_mix_id in (sub select)
+        return SELECT + sep + this._getMabMixMetaFrom() + sep +
+                this._buildWhere(WHERE) + sep + 'ORDER BY ' + config.fieldName;
 
-        GROUP BY mab_mix_name_std
+    },
 
-        ORDER BY IC50 DESC; **/
+    _getActiveMabMixIdWhere: function() {
+        var sub = this._generateMabAssayUniqueValuesSql({
+            useFilter: true,
+            fieldName: this.MAB_MIX_ID
+        });
+        return this.MAB_MIX_ID + ' IN (' + sub + ') ';
+    },
 
-        var SELECT = ['SELECT '], sep = "\n\t";
-        SELECT.push('mab_mix_name_std, ' + sep);
-        Ext.each(MabQueryUtils.COUNT_COLUMNS, function(col) {
-            SELECT.push('COUNT(DISTINCT ' + col + ") as " + col + 'Count, ' + sep);
-        }, this);
-        SELECT.push('exp(AVG(log(titer_ic50))) as IC50geomean');
+    _buildWhere: function(WHERE) {
+        return (WHERE.length === 0 ? "" : "\nWHERE ") + WHERE.join("\n\tAND ");
+    },
 
-        var FROM = "FROM " + MabQueryUtils.MAB_GRID_BASE + " " + MabQueryUtils.MAB_GRID_BASE_ALIAS + sep;
+    _generateMabAssayUniqueValuesSql: function(config) {
+        var sep = "\n\t", WHERE = [];
+        var SELECT = 'SELECT DISTINCT ' + this.MAB_GRID_BASE_ALIAS + '.' + config.fieldName;
+        if (config.useFilter) {
+            WHERE = this._getMabStateFilterWhere()
+        }
 
-        var WHERE = [];
-        var assayFilters = [], metaFilters = [];
+        return SELECT + sep + this._getFromGroupBy() + sep +
+                this._buildWhere(WHERE) + sep + 'ORDER BY ' + config.fieldName;
+
+    },
+
+    _getMabStateFilterWhere: function() {
+        var assayFilters = [], metaFilters = [], WHERE = [];
 
         // process filters on the measures
         Ext.each(assayFilters, function(filter) {
@@ -97,15 +116,34 @@ Ext.define('Connector.utility.MabQuery', {
         if (metaFilters && metaFilters.length > 0)
             WHERE.push(this._getMabMixMetadataWhere(metaFilters, this.logging));
 
-        var GROUPBY = 'GROUP BY mab_mix_name_std ' + sep;
-        return SELECT.join('') + "\n" + FROM + GROUPBY + (WHERE.length == 0 ? "" : "\nWHERE ") + WHERE.join("\n\tAND ")
-        //TODO order by
+        return WHERE;
+    },
+
+    _getFromGroupBy: function(group) {
+        var sep = "\n\t";
+        var fromGroupBy = "FROM " + this.MAB_GRID_BASE + " " + this.MAB_GRID_BASE_ALIAS + sep;
+        if (group)
+            fromGroupBy += 'GROUP BY mab_mix_name_std ' + sep;
+        return fromGroupBy;
+    },
+
+    _generateMAbSql: function()
+    {
+        var SELECT = ['SELECT '], sep = "\n\t";
+        SELECT.push('mab_mix_name_std, ' + sep);
+        Ext.each(this.COUNT_COLUMNS, function(col) {
+            SELECT.push('COUNT(DISTINCT ' + col + ") as " + col + 'Count, ' + sep);
+        }, this);
+        SELECT.push('exp(AVG(log(titer_ic50))) as IC50geomean');
+
+        var WHERE = this._getMabStateFilterWhere();
+        return SELECT.join('') + "\n" + this._getFromGroupBy(true) + this._buildWhere(WHERE)
     },
 
     _getAssayDimensionalFilter: function(f, forDebugging)
     {
         var v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-        return MabQueryUtils.MAB_GRID_BASE_ALIAS + '.' + f.columnName + " IN " + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
+        return this.MAB_GRID_BASE_ALIAS + '.' + f.columnName + " IN " + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
     },
 
     _getIC50Filter: function(f, forDebugging)
@@ -119,15 +157,15 @@ Ext.define('Connector.utility.MabQuery', {
 
     _getMabMixMetadataWhere: function(metaFilters, forDebugging)
     {
-        var outer = MabQueryUtils.MAB_GRID_BASE_ALIAS + '.' + MabQueryUtils.MAB_MIX_ID + " IN ";
+        var outer = this.MAB_GRID_BASE_ALIAS + '.' + this.MAB_MIX_ID + " IN ";
         return outer + '(' + this._getMabMixMetadataFilter(metaFilters, forDebugging) + ')';
     },
 
     _getMabMixMetadataFilter: function(metaFilters, forDebugging)
     {
         var sep = "\n\t";
-        var SELECT = 'SELECT ' + MabQueryUtils.MAB_META_GRID_BASE_ALIAS + '.' + MabQueryUtils.MAB_MIX_ID + sep;
-        var FROM = "FROM " + MabQueryUtils.MAB_META_GRID_BASE + " " + MabQueryUtils.MAB_META_GRID_BASE_ALIAS + sep;
+        var SELECT = 'SELECT ' + this.MAB_META_GRID_BASE_ALIAS + '.' + this.MAB_MIX_ID + sep;
+        var FROM = this._getMabMixMetaFrom();
         var WHERE = [];
         Ext.each(metaFilters, function(filter) {
             WHERE.push(this._getMetadataSubWhere(filter, forDebugging))
@@ -136,10 +174,15 @@ Ext.define('Connector.utility.MabQuery', {
         return SELECT.join('') + "\n" + FROM + "\nWHERE " + WHERE.join("\n\tAND ");
     },
 
+    _getMabMixMetaFrom: function() {
+        var sep = "\n\t";
+        return "FROM " + this.MAB_META_GRID_BASE + " " + this.MAB_META_GRID_BASE_ALIAS + sep;
+    },
+
     _getMetadataSubWhere: function(f, forDebugging)
     {
         var v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-        return MabQueryUtils.MAB_META_GRID_BASE_ALIAS + '.' + f.columnName + " IN " + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
+        return this.MAB_META_GRID_BASE_ALIAS + '.' + f.columnName + " IN " + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
     }
 
 });

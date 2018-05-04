@@ -26,9 +26,55 @@ Ext.define('Connector.controller.State', {
     init : function() {
         this.callParent();
 
+        this.mabfilters = [];
+
         this.onMDXReady(function(mdx) {
             Connector.model.Filter.loadSubjectContainer(mdx);
         });
+    },
+
+    loadState: function(idx) {
+        if (!idx) {
+            idx = this.state.getCount()-1; // load most recent state
+        }
+
+        if (idx >= 0) {
+            var s = this.state.getAt(idx).data;
+            if (s.mabfilters && s.mabfilters.length > 0) {
+                this.setMabFilters(s.mabfilters, true);
+            }
+        }
+
+        this.callParent();
+    },
+
+    updateState : function() {
+
+        // prepare filters
+        var jsonReadyFilters = [];
+        Ext.each(this.filters, function(f) {
+            jsonReadyFilters.push(f.jsonify());
+        });
+
+        // prepare selections
+        var jsonReadySelections = [];
+        Ext.each(this.selections, function(s) {
+            jsonReadySelections.push(s.jsonify());
+        });
+
+        var jsonReadyMabFilters = [];
+        Ext.each(this.mabfilters, function(f) {
+            jsonReadyMabFilters.push(f.jsonify());
+        });
+
+        this._sync([{
+            name: this.getStateFilterName(),
+            viewState: {},
+            customState: this.customState,
+            filters: jsonReadyFilters,
+            selections: jsonReadySelections,
+            mabfilters: jsonReadyMabFilters
+        }]);
     },
 
     checkReady : function() {
@@ -224,32 +270,34 @@ Ext.define('Connector.controller.State', {
     },
 
     getMabFilters : function(flat) {
-        if (!this.mabfilters || this.mabfilters.length == 0)
+        if (!this.mabfilters)
             return [];
 
         if (!flat)
             return this.mabfilters;
 
-        var flatFilters = [],
-                f = 0,
-                data;
-
-        for (; f < this.mabfilters.length; f++) {
-            data = Ext.clone(this.mabfilters[f].data);
-            flatFilters.push(data);
+        var flatMabFilters = [];
+        for (var f=0; f < this.mabfilters.length; f++) {
+            flatMabFilters.push(this.mabfilters[f].data);
         }
 
-        return flatFilters;
+        return flatMabFilters;
     },
 
-    removeMabFilters : function(filterIds)
+    setMabFilters : function(mabfilters, skipState) {
+        this.mabfilters = this._getFilterSet(mabfilters);
+        if (!skipState)
+            this.updateState();
+    },
+
+    removeMabFilters : function(columnNames, skipState)
     {
-        var idMap = Ext.Array.toMap(filterIds),
+        var idMap = Ext.Array.toMap(columnNames),
                 filterSet = [];
 
-        Ext.each(this.getMabFilters(), function(filter)
+        Ext.each(this.getMabFilters(true), function(filter)
         {
-            if (!idMap[filter.id])
+            if (!idMap[filter.getColumnName()])
             {
                 filterSet.push(filter);
             }
@@ -257,20 +305,37 @@ Ext.define('Connector.controller.State', {
 
         if (Ext.isEmpty(filterSet))
         {
-            this.clearMabFilters();
+            this.clearMabFilters(skipState);
         }
         else
         {
-            this.setMabFilters(filterSet);
+            this.setMabFilters(filterSet, skipState);
         }
     },
 
-    clearMabFilters: function()
+    updateMabFilter: function(columnName, newFilter, skipState)
     {
-        this.mabfilters = [];
+        var filterSet = [], updated = false;
+        Ext.each(this.getMabFilters(true), function(filter)
+        {
+            if (columnName === filter.getColumnName()) {
+                updated = true;
+                filterSet.push(newFilter);
+            }
+            else
+                filterSet.push(filter);
+        });
+        if (!updated)
+            filterSet.push(newFilter);
+
+        this.setMabFilters(filterSet, skipState);
     },
 
-    setMabFilters : function(filters, skipState) {
-        this.mabfilters = this._getFilterSet(filters);
+    clearMabFilters: function(skipState)
+    {
+        this.mabfilters = [];
+        if (!skipState)
+            this.updateState();
     }
+
 });

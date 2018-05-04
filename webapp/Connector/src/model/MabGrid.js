@@ -33,7 +33,7 @@ Ext.define('Connector.model.MabGrid', {
             this.applyFilters(this._init, this);
         }, this);
 
-        this.addEvents('mabfilterchange');
+        this.addEvents('mabfilterchange', 'initmabgrid');
     },
 
     updateData : function(onMAbData, cbScope)
@@ -49,9 +49,13 @@ Ext.define('Connector.model.MabGrid', {
     processMetaMap: function(response)
     {
         var rows = response.rows;
-        var mabMap = {};
+        var mabMap = {}, nameMap = {}, speciesMap = {}, locationMap = {}, isotypeMap = {};
         Ext.each(rows, function(row){
             var name = row.mab_mix_name_std;
+            nameMap[name] = true;
+            speciesMap[row.mab_donor_species] = true;
+            locationMap[row.mab_hxb2_location] = true;
+            isotypeMap[row.mab_isotype] = true;
             if (!mabMap[name]) {
                 mabMap[name] = {
                     mab_donor_species: [],
@@ -80,8 +84,28 @@ Ext.define('Connector.model.MabGrid', {
             };
         });
 
+        this['mab_mix_name_std_values'] = Object.keys(nameMap);
+        this['mab_donor_species_values'] = Object.keys(speciesMap);
+        this['mab_hxb2_location_values'] = Object.keys(locationMap);
+        this['mab_isotype_values'] = Object.keys(isotypeMap);
         this.mabMetaMap = mabMapProcessed;
         this.updateData();
+    },
+
+    getUniqueFieldValues: function(field) {
+        var key = field + '_values';
+        if (this[key]) {
+            return this[key];
+        }
+        return [];
+    },
+
+    getAllFacetValues: function(config) {
+        Connector.getQueryService().getMabAllFieldValues(config);
+    },
+
+    getActiveFacetValues: function(config) {
+        Connector.getQueryService().getMabActiveFieldValues(config);
     },
 
     onMAbData: function(response)
@@ -95,6 +119,7 @@ Ext.define('Connector.model.MabGrid', {
                 row.mab_donor_species = metaObj.mab_donor_species;
                 row.mab_hxb2_location = metaObj.mab_hxb2_location;
                 row.mab_isotype = metaObj.mab_isotype;
+                row.IC50geomean = parseFloat(row.IC50geomean.toFixed(5));
                 mabRows.push(row);
             }
         }, this);
@@ -121,13 +146,14 @@ Ext.define('Connector.model.MabGrid', {
             {
                 this._ready = true;
                 this.loadMetaData();
+                this.fireEvent('initmabgrid', this);
             }, this);
         }
     },
 
     applyFilters : function(callback, scope)
     {
-        Ext.each(Connector.getState().getMabFilters(), function(appFilter) {
+        Ext.each(Connector.getState().getMabFilters(true), function(appFilter) {
               // TODO
         }, this);
         if (Ext.isFunction(callback))
@@ -141,20 +167,46 @@ Ext.define('Connector.model.MabGrid', {
         return this.get('filterArray');
     },
 
-    onGridFilterChange : function(view, boundColumn, oldFilters, newFilters)
+    onGridFilterChange : function(columnName, filter)
     {
-        if (Ext.isEmpty(oldFilters))
-        {
-
+        if (filter === null) {
+            this.removeGridFilter(columnName);
+            return;
         }
-        else
-        {
 
-        }
-    },
+        Connector.getState().updateMabFilter(columnName, filter);
 
-    buildFilter : function(filterArray, callback, scope)
-    {
+        // update mab state
+            // mab state trigger info pane update
+
+        // update grid data
+        // update filter ui
+
+
+        // Connector.getState().removeMabFilters;//
+        // var keysToDelete = [],
+        //         idsToDelete = {},
+        //         hasFilter = false;
+        //
+        // Ext.iterate(this.filterMap, function(urlParam, id)
+        // {
+        //     if (urlParam.indexOf(fieldKey) > -1)
+        //     {
+        //         keysToDelete.push(urlParam);
+        //         idsToDelete[id] = true;
+        //         hasFilter = true;
+        //     }
+        // }, this);
+        //
+        // if (hasFilter)
+        // {
+        //     Ext.each(keysToDelete, function(key)
+        //     {
+        //         delete this.filterMap[key];
+        //     }, this);
+        //
+        //     Connector.getState().removeMabFilters(Ext.Object.getKeys(idsToDelete));
+        // }
 
     },
 
@@ -169,7 +221,7 @@ Ext.define('Connector.model.MabGrid', {
         this.filterMap[key] = id;
     },
 
-    onGridFilterRemove : function(view, fieldKey)
+    removeGridFilter : function(fieldKey)
     {
         var keysToDelete = [],
                 idsToDelete = {},
@@ -205,13 +257,11 @@ Ext.define('Connector.model.MabGrid', {
     setActive : function(active)
     {
         this.set('active', active);
-
-        //
     },
 
     isActive : function()
     {
-        return this.get('active') === true && this.initialized === true;
+        return this.get('active') === true;
     }
 
 });

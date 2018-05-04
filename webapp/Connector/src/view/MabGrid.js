@@ -15,9 +15,11 @@ Ext.define('Connector.view.MabGrid', {
 
     columnWidth: 125,
 
+    countColumnWidth: 60,
+
     headerHeight: 120,
 
-    titleHeight: 50,
+    titleHeight: 56,
 
     id: 'connector-view-mabgrid',
 
@@ -35,6 +37,7 @@ Ext.define('Connector.view.MabGrid', {
     constructor : function(config)
     {
         this.callParent([config]);
+        this.addEvents('updateMabFilter');
         // this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter', 'datasourceupdate', 'sheetselected');
     },
 
@@ -68,13 +71,12 @@ Ext.define('Connector.view.MabGrid', {
         this.callParent();
         var model = this.getModel();
 
-        // bind model to view
-        this.on('applyfilter', model.onGridFilterChange, model);
-        this.on('removefilter', model.onGridFilterRemove, model);
+        this.on('updateMabFilter', model.onGridFilterChange, model);
         this.on('boxready', model.onViewReady, model, {single: true});
 
         // bind view to model
-        model.on('filterchange', this.onFilterChange, this);
+        model.on('initmabgrid', this.onInitMabGrid, this, {buffer: 200});
+        model.on('mabfilterchange', this.onFilterChange, this);
 
         // propagate event from model
         this.relayEvents(model, ['usergridfilter']);
@@ -93,9 +95,13 @@ Ext.define('Connector.view.MabGrid', {
             }]
         });
 
-        this.add(this.getGrid());
-
         this.on('beforehide', this.hideVisibleWindow);
+
+        this.fireEvent('showload', this);
+    },
+
+    onInitMabGrid: function() {
+        this.add(this.getGrid());
     },
 
     hideVisibleWindow : function() {
@@ -134,36 +140,92 @@ Ext.define('Connector.view.MabGrid', {
         return this.exportExcelButton;
     },
 
+    getGridColumnsConfig: function() {
+        var ind = 1;
+        return [
+            this._getMabMixColumnConfig('Mab/Mixture', 'mab_mix_name_std', ind++),
+            this._getMetaColumnConfig('Donor Species', 'mab_donor_species', ind++),
+            this._getMetaColumnConfig('Isotype', 'mab_isotype', ind++),
+            this._getMetaColumnConfig('HXB2 Location', 'mab_hxb2_location', ind++),
+            this._getCountColumnConfig('Viruses', 'virusCount', ind++, 'virus'),
+            this._getCountColumnConfig('Clades', 'cladeCount', ind++, 'clade'),
+            this._getCountColumnConfig('Tiers', 'neutralization_tierCount', ind++, 'neutralization_tier'),
+            this._getIC50MeanColumnConfig('Geometric mean IC50', 'IC50geomean', ind++),
+            this._getCountColumnConfig('Studies', 'studyCount', ind++, 'study')
+        ];
+    },
+
+    _getMabMixColumnConfig: function(title, dataIndex, colInd) {
+        var config = this._getBaseColumnConfig(title, dataIndex, colInd);
+        config = Ext.apply(config, {
+            width: 250,
+            filterConfig: {
+                isMeta: true,
+                fieldName: dataIndex,
+                caption: title
+            }
+        });
+        return config;
+    },
+
+    _getMetaColumnConfig: function(title, dataIndex, colInd) {
+        var config = this._getBaseColumnConfig(title, dataIndex, colInd);
+        config = Ext.apply(config, {
+            filterConfig: {
+                isMeta: true,
+                fieldName: dataIndex,
+                caption: title
+            }
+        });
+        return config;
+    },
+
+    _getCountColumnConfig: function(title, dataIndex, colInd, fieldName) {
+        var config = this._getBaseColumnConfig(title, dataIndex, colInd);
+        config = Ext.apply(config, {
+            width: this.countColumnWidth,
+            filterConfig: {
+                isMeta: false,
+                fieldName: fieldName,
+                caption: title
+            }
+        });
+        return config;
+    },
+
+    _getIC50MeanColumnConfig: function(title, dataIndex, colInd) {
+        var config = this._getBaseColumnConfig(title, dataIndex, colInd);
+        return config;
+    },
+
+    _getBaseColumnConfig: function(title, dataIndex, colInd) {
+        return {
+            text: title,
+            dataIndex: dataIndex,
+            cls: 'mabcolheader' + colInd,
+            tdCls: 'mabcol' + colInd
+        }
+    },
+
     getGrid : function() {
 
         if (!this.grid) {
-            // this.fireEvent('showload', this); //TODO fix
-
             if (!this.gridStore) {
                 this.gridStore = this.getModel().getGridStore(Connector.view.MabGrid.getDefaultSort());
             }
-
             this.grid = Ext.create('Ext.grid.Panel', {
                 store: this.gridStore,
                 selModel: {
                     selType: 'checkboxmodel',
                     showHeaderCheckbox: true
                 },
-                columns: [
-                    { text: 'Mab/Mixture',  dataIndex: 'mab_mix_name_std' },
-                    { text: 'Donor Species', dataIndex: 'mab_donor_species' },
-                    { text: 'Isotype', dataIndex: 'mab_isotype' },
-                    { text: 'HXB2 Location',  dataIndex: 'mab_hxb2_location' },
-                    { text: 'Viruses', dataIndex: 'virusCount' },
-                    { text: 'Clades', dataIndex: 'cladeCount' },
-                    { text: 'Tiers',  dataIndex: 'neutralization_tierCount' },
-                    { text: 'Geometric mean IC50', dataIndex: 'IC50geomean' },
-                    { text: 'Studies', dataIndex: 'studyCount' }
-                ],
+                columns: this.getGridColumnsConfig(),
                 cls: 'connector-grid',
                 border: false,
-                defaultColumnWidth: this.columnWidth,
-                margin: '-50 24 0 24',
+                columnWidth: this.columnWidth,
+                forceFit: false,
+                height: this.getWidthHeight().height,
+                margin: '-56 24 0 24',
                 ui: 'custom',
                 viewConfig: {
                     emptyText: '<div style="width: 300px;">No mab data with current filters</div>',
@@ -178,8 +240,30 @@ Ext.define('Connector.view.MabGrid', {
                     viewready: function(grid) {
                         // reapply filters to the column UI
                         this.applyFilterColumnState(grid);
-
                         this.fireEvent('hideload', this);
+                    },
+                    itemmouseenter : function(view, record, item, index, evt) {
+                        //TODO only bind once?
+                        var me = this;
+                        for (var i = 1; i < 10; i++) {
+                            var cell = Ext.get(Ext.query(".mabcol" + i, item)[0]);
+                            if (cell) {
+                                (function (cell, colInd) {
+                                    cell.on('mouseenter', me.triggerColumnHeaderOver, me, {colInd: colInd, isEnter: true});
+                                    cell.on('mouseleave', me.triggerColumnHeaderOver, me, {colInd: colInd, isEnter: false});
+
+                                    // the first time a row and a cell is entered, events aren't bound to cell yet
+                                    var textRect = cell.dom.getBoundingClientRect();
+                                    var cursorX = evt.browserEvent.clientX;
+                                    var cursorY = evt.browserEvent.clientY;
+                                    if (textRect.top <= cursorY && cursorY <= textRect.bottom
+                                            && textRect.left <= cursorX && cursorX <= textRect.right) {
+                                        me.triggerColumnHeaderOver(event, item, {colInd: colInd, isEnter: true});
+                                    }
+
+                                })(cell, i);
+                            }
+                        }
                     },
                     scope: this
                 }
@@ -187,6 +271,45 @@ Ext.define('Connector.view.MabGrid', {
         }
 
         return this.grid;
+    },
+
+    onTriggerClick: function(headerCt, column) {
+        var filterConfig = column.filterConfig, me = this;
+        // query for all values
+        Ext.create('Connector.window.MabGridFacet', {
+            filterConfig: filterConfig,
+            columnMetadata: filterConfig,
+            col: column, //used to position facet window
+            mabModel: this.getModel(),
+            // columnMetadata: {caption : filterConfig.title},
+            listeners: {
+                mabfilter: function (columnName, filter)
+                {
+                    console.log('filtered');
+                    this.fireEvent('updateMabFilter', columnName, filter);
+                },
+                scope: this
+            },
+            scope: this
+        });
+        return false;
+    },
+
+    triggerColumnHeaderOver: function(event, item, options) {
+        var colInd = options.colInd;
+        var isEnter = options.isEnter;
+        var colHeader = Ext.DomQuery.select("div.x-column-header.mabcolheader" + colInd)[0];
+        var highlightCls = 'x-column-header-over';
+        if (colHeader) {
+            if (isEnter) {
+                if (colHeader.className.indexOf(highlightCls) === -1) {
+                    colHeader.className += ' ' + highlightCls;
+                }
+            }
+            else {
+                colHeader.className = colHeader.className.replace(' ' + highlightCls, '');
+            }
+        }
     },
 
     onViewResize : function() {
@@ -241,19 +364,13 @@ Ext.define('Connector.view.MabGrid', {
      * should show a filter being present or not on that column.
      * @param grid
      */
-    applyFilterColumnState : function(grid)
+    applyFilterColumnState : function()
     {
         // TODO
     },
 
     cellRenderer : function(v, meta, record, measure) {
         return v;
-    },
-
-    onTriggerClick : function(headerCt, column)
-    {
-        // ensure that the default trigger events do not occur
-        return false;
     },
 
     requestExportCSV: function() {

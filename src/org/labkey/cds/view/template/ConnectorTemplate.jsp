@@ -212,6 +212,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractFilter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractGroupedFacet.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/window/MabGridFacet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/LearnFacet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>
