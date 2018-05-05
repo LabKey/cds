@@ -66,20 +66,51 @@ Ext.define('Connector.window.MabGridFacet', {
                 activeValues.push(row[this.filterConfig.fieldName]);
             }, this);
         }
+        var filterStatus = this._getFilterValues();
         var config = this.filterConfig;
         this.facetGrid = Ext.create('Connector.grid.MabGridFacet', {
             itemId: 'faceted-mab-' + config.fieldName,
             border: false,
             useStoreCache: true,
-            filterValues: [], //TODO, from state
+            filterValues: filterStatus.filterValues,
             activeValues: activeValues,
             allValues: this.mabModel.getUniqueFieldValues(config.fieldName),
-            isFilterNegated: false, //TODO, from state
+            isFilterNegated: filterStatus.isFilterNegated,
             columnField: config.fieldName,
             valueType: config.valueType
         });
 
         this.add(this.facetGrid);
+    },
+
+    _getFilterValues: function() {
+        var fieldName = this.filterConfig.fieldName;
+        var filter = this._getStateFilter(fieldName);
+        if (filter) {
+            return {
+                filterValues: filter.getValue(),
+                isFilterNegated: filter.getFilterType().getURLSuffix() === 'notin'
+            }
+        }
+        else {
+            return {
+                filterValues: [],
+                isFilterNegated: false
+            }
+        }
+    },
+
+    _getStateFilter: function(fieldName) {
+        var allFilters = Connector.getState().getMabFilters(true);
+        var targetFilter = null;
+        Ext.each(allFilters, function(filter) {
+            var f = filter.gridFilter[0];
+            if (f.getColumnName() === fieldName) {
+                targetFilter = f;
+                return false;
+            }
+        });
+        return targetFilter;
     },
 
     onAfterRender : function() {

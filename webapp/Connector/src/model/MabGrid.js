@@ -36,9 +36,9 @@ Ext.define('Connector.model.MabGrid', {
         this.addEvents('mabfilterchange', 'initmabgrid');
     },
 
-    updateData : function(onMAbData, cbScope)
+    updateData : function()
     {
-        this.queryTask.delay(50, null, this, [onMAbData, cbScope]);
+        this.queryTask.delay(50, null, this);
     },
 
     loadMetaData: function()
@@ -165,87 +165,6 @@ Ext.define('Connector.model.MabGrid', {
     getFilterArray : function(includeBaseFilters)
     {
         return this.get('filterArray');
-    },
-
-    onGridFilterChange : function(columnName, filter)
-    {
-        if (filter === null) {
-            this.removeGridFilter(columnName);
-            return;
-        }
-
-        Connector.getState().updateMabFilter(columnName, filter);
-
-        // update mab state
-            // mab state trigger info pane update
-
-        // update grid data
-        // update filter ui
-
-
-        // Connector.getState().removeMabFilters;//
-        // var keysToDelete = [],
-        //         idsToDelete = {},
-        //         hasFilter = false;
-        //
-        // Ext.iterate(this.filterMap, function(urlParam, id)
-        // {
-        //     if (urlParam.indexOf(fieldKey) > -1)
-        //     {
-        //         keysToDelete.push(urlParam);
-        //         idsToDelete[id] = true;
-        //         hasFilter = true;
-        //     }
-        // }, this);
-        //
-        // if (hasFilter)
-        // {
-        //     Ext.each(keysToDelete, function(key)
-        //     {
-        //         delete this.filterMap[key];
-        //     }, this);
-        //
-        //     Connector.getState().removeMabFilters(Ext.Object.getKeys(idsToDelete));
-        // }
-
-    },
-
-    getFilterId : function(filter)
-    {
-        return filter.getURLParameterName() + '=' + filter.getValue();
-    },
-
-    addToFilters : function(filter, id)
-    {
-        var key = this.getFilterId(filter);
-        this.filterMap[key] = id;
-    },
-
-    removeGridFilter : function(fieldKey)
-    {
-        var keysToDelete = [],
-                idsToDelete = {},
-                hasFilter = false;
-
-        Ext.iterate(this.filterMap, function(urlParam, id)
-        {
-            if (urlParam.indexOf(fieldKey) > -1)
-            {
-                keysToDelete.push(urlParam);
-                idsToDelete[id] = true;
-                hasFilter = true;
-            }
-        }, this);
-
-        if (hasFilter)
-        {
-            Ext.each(keysToDelete, function(key)
-            {
-                delete this.filterMap[key];
-            }, this);
-
-            Connector.getState().removeMabFilters(Ext.Object.getKeys(idsToDelete));
-        }
     },
 
     onViewReady : function(view)

@@ -25,6 +25,7 @@ SELECT
   dd.mab_concentration,
   dd.mab_concentration_units,
   dd.specimen_concentration_id,
+  dd.curve_id,
   dd.specimen_type,
   dd.lab_code,
   dd.virus,
@@ -37,10 +38,12 @@ SELECT
   dd.max_well_value,
   dd.mean_well_value,
   dd.well_std_dev,
-  dd.titer_ic50,
-  dd.titer_ic80,
-  dd.nab_response_ic50,
-  dd.nab_response_ic80,
+  dd.titer_curve_ic50,
+  dd.titer_curve_ic80,
+  dd.response_ic50 as nab_response_ic50,
+  dd.response_ic80 as nab_response_ic80,
+  dd.titer_point_ic50,
+  dd.titer_point_ic80,
   dd.slope,
   dd.virus_type,
   dd.virus_dilution,
@@ -51,6 +54,7 @@ SELECT
   dd.fit_asymmetry,
   dd.fit_slope,
   dd.fit_inflection,
-  dd.fit_error
+  dd.fit_error,
+  dd.vaccine_matched
 
 FROM cds.import_NABMAb AS dd;

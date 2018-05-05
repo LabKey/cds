@@ -22,6 +22,8 @@ Ext.define('Connector.utility.MabQuery', {
 
     COUNT_COLUMNS: ['study', 'virus', 'clade', 'neutralization_tier'],
 
+    IC50_COLUMN: 'titer_curve_ic50',
+
     logging: false,
 
     constructor: function (config) {
@@ -100,15 +102,26 @@ Ext.define('Connector.utility.MabQuery', {
             WHERE = this._getMabStateFilterWhere()
         }
 
-        return SELECT + sep + this._getFromGroupBy() + sep +
+        return SELECT + sep + this._getAssayFrom() + sep +
                 this._buildWhere(WHERE) + sep + 'ORDER BY ' + config.fieldName;
 
     },
 
     _getMabStateFilterWhere: function() {
-        var assayFilters = [], metaFilters = [], WHERE = [];
+        var assayFilters = [], metaFilters = [], ic50Filter, WHERE = [];
+        var stateFilters = Connector.getState().getMabFilters(true);
+        Ext.each(stateFilters, function(filter)
+        {
+            var f = filter.gridFilter[0], columnName = f.getColumnName();
+            if (this.COUNT_COLUMNS.indexOf(columnName) > -1) {
+                assayFilters.push(filter);
+            }
+            else if (columnName === this.IC50_COLUMN)
+                ic50Filter = filter;
+            else
+                metaFilters.push(filter);
+        }, this);
 
-        // process filters on the measures
         Ext.each(assayFilters, function(filter) {
             WHERE.push(this._getAssayDimensionalFilter(filter, this.logging));
         }, this);
@@ -127,6 +140,14 @@ Ext.define('Connector.utility.MabQuery', {
         return fromGroupBy;
     },
 
+    _getAssayFrom: function() {
+        return  "FROM " + this.MAB_GRID_BASE + " " + this.MAB_GRID_BASE_ALIAS + "\n\t";
+    },
+
+    _getAssayGroupBy: function() {
+        return  "\n\t" + 'GROUP BY mab_mix_name_std ' + "\n\t";
+    },
+
     _generateMAbSql: function()
     {
         var SELECT = ['SELECT '], sep = "\n\t";
@@ -134,16 +155,17 @@ Ext.define('Connector.utility.MabQuery', {
         Ext.each(this.COUNT_COLUMNS, function(col) {
             SELECT.push('COUNT(DISTINCT ' + col + ") as " + col + 'Count, ' + sep);
         }, this);
-        SELECT.push('exp(AVG(log(titer_ic50))) as IC50geomean');
+        SELECT.push('exp(AVG(log(' + this.IC50_COLUMN + '))) as IC50geomean');
 
         var WHERE = this._getMabStateFilterWhere();
-        return SELECT.join('') + "\n" + this._getFromGroupBy(true) + this._buildWhere(WHERE)
+        return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getAssayGroupBy();
     },
 
-    _getAssayDimensionalFilter: function(f, forDebugging)
+    _getAssayDimensionalFilter: function(filter, forDebugging)
     {
+        var f = filter.gridFilter[0];
         var v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-        return this.MAB_GRID_BASE_ALIAS + '.' + f.columnName + " IN " + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
+        return this.MAB_GRID_BASE_ALIAS + '.' + f.getColumnName() + this._getFilterOp(f) + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
     },
 
     _getIC50Filter: function(f, forDebugging)
@@ -171,7 +193,7 @@ Ext.define('Connector.utility.MabQuery', {
             WHERE.push(this._getMetadataSubWhere(filter, forDebugging))
         }, this);
 
-        return SELECT.join('') + "\n" + FROM + "\nWHERE " + WHERE.join("\n\tAND ");
+        return SELECT + "\n" + FROM + "\nWHERE " + WHERE.join("\n\tAND ");
     },
 
     _getMabMixMetaFrom: function() {
@@ -179,10 +201,14 @@ Ext.define('Connector.utility.MabQuery', {
         return "FROM " + this.MAB_META_GRID_BASE + " " + this.MAB_META_GRID_BASE_ALIAS + sep;
     },
 
-    _getMetadataSubWhere: function(f, forDebugging)
+    _getMetadataSubWhere: function(filter, forDebugging)
     {
+        var f = filter.gridFilter[0];
         var v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-        return this.MAB_META_GRID_BASE_ALIAS + '.' + f.columnName + " IN " + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
-    }
+        return this.MAB_META_GRID_BASE_ALIAS + '.' + f.getColumnName() + this._getFilterOp(f) + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
+    },
 
+    _getFilterOp: function(f) {
+        return (f.getFilterType().getURLSuffix() === 'notin' ? ' NOT' : '') + ' IN ';
+    }
 });

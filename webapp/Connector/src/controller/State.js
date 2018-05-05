@@ -290,14 +290,13 @@ Ext.define('Connector.controller.State', {
             this.updateState();
     },
 
-    removeMabFilters : function(columnNames, skipState)
+    removeMabFilter : function(columnName, skipState)
     {
-        var idMap = Ext.Array.toMap(columnNames),
-                filterSet = [];
+        var filterSet = [];
 
         Ext.each(this.getMabFilters(true), function(filter)
         {
-            if (!idMap[filter.getColumnName()])
+            if (columnName !== filter.gridFilter[0].getColumnName())
             {
                 filterSet.push(filter);
             }
@@ -318,7 +317,7 @@ Ext.define('Connector.controller.State', {
         var filterSet = [], updated = false;
         Ext.each(this.getMabFilters(true), function(filter)
         {
-            if (columnName === filter.getColumnName()) {
+            if (columnName === filter.gridFilter[0].getColumnName()) {
                 updated = true;
                 filterSet.push(newFilter);
             }

@@ -1,3 +1,21 @@
+ALTER TABLE cds.import_NABMAb
+  RENAME COLUMN nab_response_ic50 to response_ic50;
+ALTER TABLE cds.import_NABMAb
+  RENAME COLUMN nab_response_ic80 to response_ic80;
+
+ALTER TABLE cds.import_NABMAb
+  RENAME COLUMN titer_ic50 to titer_curve_ic50;
+ALTER TABLE cds.import_NABMAb
+  RENAME COLUMN titer_ic80 to titer_curve_ic80;
+
+ALTER TABLE cds.import_NABMAb ALTER COLUMN titer_curve_ic50 TYPE double precision;
+ALTER TABLE cds.import_NABMAb ALTER COLUMN titer_curve_ic80 TYPE double precision;
+
+ALTER TABLE cds.import_NABMAb ADD COLUMN curve_id INTEGER;
+ALTER TABLE cds.import_NABMAb ADD COLUMN vaccine_matched BOOLEAN;
+ALTER TABLE cds.import_NABMAb ADD COLUMN titer_point_ic50 double precision;
+ALTER TABLE cds.import_NABMAb ADD COLUMN titer_point_ic80 double precision;
+
 /* Materialize the mabgridbase query */
 DROP TABLE IF EXISTS cds.mAbGridBase;
 
@@ -9,7 +27,7 @@ CREATE TABLE cds.mAbGridBase (
   clade VARCHAR(250),
   neutralization_tier VARCHAR(250),
   tier_clade_virus VARCHAR(250),
-  titer_ic50 NUMERIC(15,4),
+  titer_curve_ic50 NUMERIC(15,4),
   container ENTITYID,
 
   CONSTRAINT PK_mAbGridBase PRIMARY KEY (container, mab_mix_id, tier_clade_virus)

@@ -424,6 +424,7 @@
             <column columnName="mab_concentration"/>
             <column columnName="mab_concentration_units"/>
             <column columnName="specimen_concentration_id"/>
+            <column columnName="curve_id"/>
             <column columnName="min_concentration"/>
             <column columnName="max_concentration"/>
             <column columnName="min_well_value"/>
@@ -432,10 +433,12 @@
             <column columnName="well_std_dev"/>
             <column columnName="percent_neutralization"/>
             <column columnName="neutralization_plus_minus"/>
-            <column columnName="titer_ic50"/>
-            <column columnName="titer_ic80"/>
-            <column columnName="nab_response_ic50"/>
-            <column columnName="nab_response_ic80"/>
+            <column columnName="titer_curve_ic50"/>
+            <column columnName="titer_curve_ic80"/>
+            <column columnName="titer_point_ic50"/>
+            <column columnName="titer_point_ic80"/>
+            <column columnName="response_ic50"/>
+            <column columnName="response_ic80"/>
             <column columnName="slope"/>
             <column columnName="fit_min"/>
             <column columnName="fit_max"/>
@@ -443,6 +446,7 @@
             <column columnName="fit_slope"/>
             <column columnName="fit_inflection"/>
             <column columnName="fit_error"/>
+            <column columnName="vaccine_matched"/>
         </columns>
     </table>
     <table tableName="import_ics" tableDbType="TABLE">
@@ -994,7 +998,7 @@
             <column columnName="clade"/>
             <column columnName="neutralization_tier"/>
             <column columnName="tier_clade_virus"/>
-            <column columnName="titer_ic50"/>
+            <column columnName="titer_curve_ic50"/>
             <column columnName="Container"/>
         </columns>
     </table>

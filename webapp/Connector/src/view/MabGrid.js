@@ -31,6 +31,18 @@ Ext.define('Connector.view.MabGrid', {
                 property: 'mab_mix_name_std',
                 direction: 'ASC'
             }];
+        },
+
+        ColumnMap : {
+            'mab_mix_name_std' : 1,
+            'mab_species' : 2,
+            'mab_isotype' : 3,
+            'mab_hxb2_location' : 4,
+            'virus' : 5,
+            'clade' : 6,
+            'neutralization_tier' : 7,
+            'titer_curve_ic50' : 8,
+            'study' : 9
         }
     },
 
@@ -71,12 +83,11 @@ Ext.define('Connector.view.MabGrid', {
         this.callParent();
         var model = this.getModel();
 
-        this.on('updateMabFilter', model.onGridFilterChange, model);
+        this.on('updateMabFilter', this.onMabGridFilterChange, this);
         this.on('boxready', model.onViewReady, model, {single: true});
 
         // bind view to model
         model.on('initmabgrid', this.onInitMabGrid, this, {buffer: 200});
-        model.on('mabfilterchange', this.onFilterChange, this);
 
         // propagate event from model
         this.relayEvents(model, ['usergridfilter']);
@@ -150,7 +161,7 @@ Ext.define('Connector.view.MabGrid', {
             this._getCountColumnConfig('Viruses', 'virusCount', ind++, 'virus'),
             this._getCountColumnConfig('Clades', 'cladeCount', ind++, 'clade'),
             this._getCountColumnConfig('Tiers', 'neutralization_tierCount', ind++, 'neutralization_tier'),
-            this._getIC50MeanColumnConfig('Geometric mean IC50', 'IC50geomean', ind++),
+            this._getIC50MeanColumnConfig('Geometric mean Curve IC50', 'IC50geomean', ind++, 'titer_curve_ic50'),
             this._getCountColumnConfig('Studies', 'studyCount', ind++, 'study')
         ];
     },
@@ -193,8 +204,16 @@ Ext.define('Connector.view.MabGrid', {
         return config;
     },
 
-    _getIC50MeanColumnConfig: function(title, dataIndex, colInd) {
+    _getIC50MeanColumnConfig: function(title, dataIndex, colInd, fieldName) {
         var config = this._getBaseColumnConfig(title, dataIndex, colInd);
+        config = Ext.apply(config, {
+            width: 105,
+            filterConfig: {
+                isIC50: true,
+                fieldName: fieldName,
+                caption: title
+            }
+        });
         return config;
     },
 
@@ -295,6 +314,52 @@ Ext.define('Connector.view.MabGrid', {
         return false;
     },
 
+    onMabGridFilterChange: function(columnName, filter) {
+        if (filter === null)
+            Connector.getState().removeMabFilter(columnName);
+        else
+            Connector.getState().updateMabFilter(columnName, {
+                gridFilter: [filter],
+                filterSource: 'GETDATA'
+            });
+
+        this.getModel().updateData();
+        this.applyFilterColumnState();
+    },
+
+    /**
+     * This method can be called to refresh the state of the grid column headers to determine if they
+     * should show a filter being present or not on that column.
+     */
+    applyFilterColumnState : function()
+    {
+        var grid = this.getGrid();
+        // remove all filter classes
+        Ext.each(grid.headerCt.getGridColumns(), function(column)
+        {
+            if (Ext.isDefined(column.getEl()))
+            {
+                column.getEl().removeCls('filtered-column');
+            }
+        });
+
+        var filters = Connector.getState().getMabFilters(true);
+        Ext.each(filters, function(filter)
+        {
+            var f = filter.gridFilter[0];
+            var fieldName = f.getColumnName();
+            var colIndex = Connector.view.MabGrid.ColumnMap[fieldName];
+            if (colIndex > 0) {
+                var col = grid.headerCt.getHeaderAtIndex(colIndex);
+                if (col)
+                {
+                    col.getEl().addCls('filtered-column');
+                }
+            }
+        }, this);
+    },
+
+
     triggerColumnHeaderOver: function(event, item, options) {
         var colInd = options.colInd;
         var isEnter = options.isEnter;
@@ -341,11 +406,6 @@ Ext.define('Connector.view.MabGrid', {
             infopane[0].show();
     },
 
-    onFilterChange : function()
-    {
-        //
-    },
-
     getModel : function() {
         return this.model;
     },
@@ -357,16 +417,6 @@ Ext.define('Connector.view.MabGrid', {
             width: box.width - 27,
             height: box.height - this.headerHeight + this.titleHeight
         };
-    },
-
-    /**
-     * This method can be called to refresh the state of the grid column headers to determine if they
-     * should show a filter being present or not on that column.
-     * @param grid
-     */
-    applyFilterColumnState : function()
-    {
-        // TODO
     },
 
     cellRenderer : function(v, meta, record, measure) {
