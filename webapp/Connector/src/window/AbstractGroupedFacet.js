@@ -105,7 +105,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
                     flex: 1,
                     sortable: false,
                     menuDisabled: true,
-                    tpl: new Ext4.XTemplate('{value:htmlEncode}')
+                    tpl: new Ext4.XTemplate('{displayValue:htmlEncode}')
                 }],
 
                 /* Styling configuration */
@@ -151,16 +151,12 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
     },
 
     createColumnFilterStore: function() {
-        var values = this.getAllValues();
-        values = values.map(function(record) {
-            return [record, true];
-        });
         var storeId = this.getStoreId(), me = this;
         return Ext4.create('Ext.data.ArrayStore', {
             fields: [
-                'value', {name:'hasData', type: 'boolean', defaultValue: true}
+                'value', 'displayValue', {name:'hasData', type: 'boolean', defaultValue: true}
             ],
-            data: values,
+            data: this.prepareValuesArray(),
             storeId: storeId,
             groupField: 'hasData',
             groupDir: 'DESC',
@@ -172,6 +168,16 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
                 }
             }]
         });
+    },
+
+    prepareValuesArray: function() {
+        var values = this.getAllValues();
+        values = values.map(function(record) {
+            if (record != undefined && !Ext.isObject(record))
+                return [record, record, true];
+            return [record.value, record.displayValue, true];
+        });
+        return values;
     },
 
     getLookupStore : function() {

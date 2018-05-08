@@ -24,6 +24,10 @@ Ext.define('Connector.utility.MabQuery', {
 
     IC50_COLUMN: 'titer_curve_ic50',
 
+    IC50_GROUP_COLUMN: 'titer_curve_ic50_group',
+
+    BLANK_VALUE: '[blank]',
+
     logging: false,
 
     constructor: function (config) {
@@ -116,7 +120,7 @@ Ext.define('Connector.utility.MabQuery', {
             if (this.COUNT_COLUMNS.indexOf(columnName) > -1) {
                 assayFilters.push(filter);
             }
-            else if (columnName === this.IC50_COLUMN)
+            else if (columnName === this.IC50_GROUP_COLUMN)
                 ic50Filter = filter;
             else
                 metaFilters.push(filter);
@@ -126,18 +130,13 @@ Ext.define('Connector.utility.MabQuery', {
             WHERE.push(this._getAssayDimensionalFilter(filter, this.logging));
         }, this);
 
+        if (ic50Filter)
+            WHERE.push(this._getAssayDimensionalFilter(ic50Filter, this.logging));
+
         if (metaFilters && metaFilters.length > 0)
             WHERE.push(this._getMabMixMetadataWhere(metaFilters, this.logging));
 
         return WHERE;
-    },
-
-    _getFromGroupBy: function(group) {
-        var sep = "\n\t";
-        var fromGroupBy = "FROM " + this.MAB_GRID_BASE + " " + this.MAB_GRID_BASE_ALIAS + sep;
-        if (group)
-            fromGroupBy += 'GROUP BY mab_mix_name_std ' + sep;
-        return fromGroupBy;
     },
 
     _getAssayFrom: function() {
@@ -163,18 +162,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     _getAssayDimensionalFilter: function(filter, forDebugging)
     {
-        var f = filter.gridFilter[0];
-        var v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-        return this.MAB_GRID_BASE_ALIAS + '.' + f.getColumnName() + this._getFilterOp(f) + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
-    },
-
-    _getIC50Filter: function(f, forDebugging)
-    {
-        var v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-        var values = v.split(';');
-        Ext.each(values, function(value){
-            //TODO
-        }, this);
+        return this._getFilterWhereSub(this.MAB_GRID_BASE_ALIAS, filter, forDebugging);
     },
 
     _getMabMixMetadataWhere: function(metaFilters, forDebugging)
@@ -203,12 +191,37 @@ Ext.define('Connector.utility.MabQuery', {
 
     _getMetadataSubWhere: function(filter, forDebugging)
     {
+        return this._getFilterWhereSub(this.MAB_META_GRID_BASE_ALIAS, filter, forDebugging);
+    },
+
+    _getFilterWhereSub: function(tableAliasName, filter, forDebugging) {
         var f = filter.gridFilter[0];
         var v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-        return this.MAB_META_GRID_BASE_ALIAS + '.' + f.getColumnName() + this._getFilterOp(f) + QueryUtils._toSqlValuesList(v.split(';'), LABKEY.Query.sqlStringLiteral, forDebugging);
+        var values = v.split(';'), noEmptyWhere, emptyWhere;
+        var nullInd = values.indexOf(this.BLANK_VALUE);
+        if (nullInd > -1) {
+            values.splice(nullInd, 1);
+            emptyWhere = tableAliasName + '.' + f.getColumnName() + this._getNULLFilterOp(f);
+        }
+
+        if (values.length > 0)
+            noEmptyWhere = tableAliasName + '.' + f.getColumnName() + this._getFilterOp(f) + QueryUtils._toSqlValuesList(values, LABKEY.Query.sqlStringLiteral, forDebugging);
+
+        if (emptyWhere && noEmptyWhere)
+            return '(' + noEmptyWhere + ' OR ' + emptyWhere + ')';
+        else if (emptyWhere)
+            return emptyWhere;
+        else if (noEmptyWhere)
+            return noEmptyWhere;
+
+        return ''
     },
 
     _getFilterOp: function(f) {
         return (f.getFilterType().getURLSuffix() === 'notin' ? ' NOT' : '') + ' IN ';
+    },
+
+    _getNULLFilterOp: function(f) {
+        return f.getFilterType().getURLSuffix() === 'notin' ? '  IS NOT NULL ' : ' IS NULL ';
     }
 });

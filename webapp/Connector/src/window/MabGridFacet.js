@@ -15,6 +15,8 @@ Ext.define('Connector.window.MabGridFacet', {
 
     cls: 'learnFilter',
 
+    blankValue: '[blank]',
+
     /* To avoid URL overflow, allow up to 100 selections per column */
     maxSelection: 100,
 
@@ -45,7 +47,7 @@ Ext.define('Connector.window.MabGridFacet', {
             var key = this.filterConfig.fieldName + '_values';
             var values = [];
             Ext.each(response.rows, function(row) {
-                values.push(row[this.filterConfig.fieldName]);
+                values.push(row[this.filterConfig.fieldName] ? row[this.filterConfig.fieldName] : this.blankValue);
             }, this);
             this.mabModel[key] = values;
         }
@@ -63,7 +65,7 @@ Ext.define('Connector.window.MabGridFacet', {
         var activeValues = [];
         if (response && response.rows) {
             Ext.each(response.rows, function(row) {
-                activeValues.push(row[this.filterConfig.fieldName]);
+                activeValues.push(row[this.filterConfig.fieldName] ? row[this.filterConfig.fieldName] : this.blankValue);
             }, this);
         }
         var filterStatus = this._getFilterValues();
@@ -87,8 +89,9 @@ Ext.define('Connector.window.MabGridFacet', {
         var fieldName = this.filterConfig.fieldName;
         var filter = this._getStateFilter(fieldName);
         if (filter) {
+            var value = Ext.isArray(filter.getValue()) ? filter.getValue()[0] : filter.getValue();
             return {
-                filterValues: filter.getValue(),
+                filterValues: value ? value.split(";") : [],
                 isFilterNegated: filter.getFilterType().getURLSuffix() === 'notin'
             }
         }

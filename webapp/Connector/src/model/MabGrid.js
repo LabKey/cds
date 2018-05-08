@@ -13,6 +13,16 @@ Ext.define('Connector.model.MabGrid', {
         {name: 'filterArray', defaultValue: []}
     ],
 
+    statics: {
+        ic50Ranges : [
+            {value: 'G0.1', displayValue: '< 0.1'},
+            {value: 'G1', displayValue: '< 1'},
+            {value: 'G10', displayValue: '< 10'},
+            {value: 'G50', displayValue: '<= 50'},
+            {value: 'G50+', displayValue: '> 50'}
+        ]
+    },
+
     constructor : function(config)
     {
         this.callParent([config]);
@@ -33,7 +43,7 @@ Ext.define('Connector.model.MabGrid', {
             this.applyFilters(this._init, this);
         }, this);
 
-        this.addEvents('mabfilterchange', 'initmabgrid');
+        this.addEvents('mabdataloaded', 'initmabgrid');
     },
 
     updateData : function()
@@ -48,14 +58,14 @@ Ext.define('Connector.model.MabGrid', {
 
     processMetaMap: function(response)
     {
-        var rows = response.rows;
+        var rows = response.rows, NO_VALUE = '[blank]';
         var mabMap = {}, nameMap = {}, speciesMap = {}, locationMap = {}, isotypeMap = {};
         Ext.each(rows, function(row){
             var name = row.mab_mix_name_std;
             nameMap[name] = true;
-            speciesMap[row.mab_donor_species] = true;
-            locationMap[row.mab_hxb2_location] = true;
-            isotypeMap[row.mab_isotype] = true;
+            speciesMap[row.mab_donor_species ? row.mab_donor_species : NO_VALUE] = true;
+            locationMap[row.mab_hxb2_location ? row.mab_hxb2_location : NO_VALUE] = true;
+            isotypeMap[row.mab_isotype ? row.mab_isotype : NO_VALUE] = true;
             if (!mabMap[name]) {
                 mabMap[name] = {
                     mab_donor_species: [],
@@ -93,6 +103,9 @@ Ext.define('Connector.model.MabGrid', {
     },
 
     getUniqueFieldValues: function(field) {
+        if (field === 'titer_curve_ic50_group')
+            return Connector.model.MabGrid.ic50Ranges;
+
         var key = field + '_values';
         if (this[key]) {
             return this[key];
@@ -132,7 +145,13 @@ Ext.define('Connector.model.MabGrid', {
         {
             this.gridStore = Ext.create('Ext.data.Store', {
                 model: 'Connector.model.MabSummary',
-                sorters: sorters ? sorters : Connector.view.MabGrid.getDefaultSort()
+                sorters: sorters ? sorters : Connector.view.MabGrid.getDefaultSort(),
+                listeners: {
+                    load: function() {
+                        this.fireEvent('mabdataloaded', this);
+                    },
+                    scope: this
+                }
             });
         }
         return this.gridStore;

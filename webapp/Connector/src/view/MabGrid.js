@@ -15,7 +15,7 @@ Ext.define('Connector.view.MabGrid', {
 
     columnWidth: 125,
 
-    countColumnWidth: 60,
+    countColumnWidth: 90,
 
     headerHeight: 120,
 
@@ -35,13 +35,13 @@ Ext.define('Connector.view.MabGrid', {
 
         ColumnMap : {
             'mab_mix_name_std' : 1,
-            'mab_species' : 2,
+            'mab_donor_species' : 2,
             'mab_isotype' : 3,
             'mab_hxb2_location' : 4,
             'virus' : 5,
             'clade' : 6,
             'neutralization_tier' : 7,
-            'titer_curve_ic50' : 8,
+            'titer_curve_ic50_group' : 8,
             'study' : 9
         }
     },
@@ -50,14 +50,12 @@ Ext.define('Connector.view.MabGrid', {
     {
         this.callParent([config]);
         this.addEvents('updateMabFilter');
-        // this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter', 'datasourceupdate', 'sheetselected');
+        // this.addEvents('updateMabSelection');
     },
 
     initComponent : function()
     {
         this.sorters = [];
-
-        this.columnMap = {};
 
         this.gridSorters = {}; // hold on to client side sorts for each grid
 
@@ -88,6 +86,7 @@ Ext.define('Connector.view.MabGrid', {
 
         // bind view to model
         model.on('initmabgrid', this.onInitMabGrid, this, {buffer: 200});
+        model.on('mabdataloaded', this.onMabDataLoaded, this, {buffer: 200});
 
         // propagate event from model
         this.relayEvents(model, ['usergridfilter']);
@@ -161,7 +160,7 @@ Ext.define('Connector.view.MabGrid', {
             this._getCountColumnConfig('Viruses', 'virusCount', ind++, 'virus'),
             this._getCountColumnConfig('Clades', 'cladeCount', ind++, 'clade'),
             this._getCountColumnConfig('Tiers', 'neutralization_tierCount', ind++, 'neutralization_tier'),
-            this._getIC50MeanColumnConfig('Geometric mean Curve IC50', 'IC50geomean', ind++, 'titer_curve_ic50'),
+            this._getIC50MeanColumnConfig('Geometric mean Curve IC50', 'IC50geomean', ind++, 'titer_curve_ic50_group'),
             this._getCountColumnConfig('Studies', 'studyCount', ind++, 'study')
         ];
     },
@@ -211,7 +210,7 @@ Ext.define('Connector.view.MabGrid', {
             filterConfig: {
                 isIC50: true,
                 fieldName: fieldName,
-                caption: title
+                caption: 'Curve IC50'
             }
         });
         return config;
@@ -262,7 +261,6 @@ Ext.define('Connector.view.MabGrid', {
                         this.fireEvent('hideload', this);
                     },
                     itemmouseenter : function(view, record, item, index, evt) {
-                        //TODO only bind once?
                         var me = this;
                         for (var i = 1; i < 10; i++) {
                             var cell = Ext.get(Ext.query(".mabcol" + i, item)[0]);
@@ -304,7 +302,6 @@ Ext.define('Connector.view.MabGrid', {
             listeners: {
                 mabfilter: function (columnName, filter)
                 {
-                    console.log('filtered');
                     this.fireEvent('updateMabFilter', columnName, filter);
                 },
                 scope: this
@@ -322,8 +319,10 @@ Ext.define('Connector.view.MabGrid', {
                 gridFilter: [filter],
                 filterSource: 'GETDATA'
             });
-
         this.getModel().updateData();
+    },
+
+    onMabDataLoaded: function() {
         this.applyFilterColumnState();
     },
 
@@ -340,6 +339,7 @@ Ext.define('Connector.view.MabGrid', {
             if (Ext.isDefined(column.getEl()))
             {
                 column.getEl().removeCls('filtered-column');
+                column.getEl().removeCls('x-column-header-over');
             }
         });
 

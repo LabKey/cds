@@ -999,6 +999,10 @@
             <column columnName="neutralization_tier"/>
             <column columnName="tier_clade_virus"/>
             <column columnName="titer_curve_ic50"/>
+            <column columnName="titer_curve_ic50_group"/>
+            <column columnName="target_cell"/>
+            <column columnName="lab_code"/>
+            <column columnName="summary_level"/>
             <column columnName="Container"/>
         </columns>
     </table>
