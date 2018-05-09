@@ -27,8 +27,6 @@ Ext.define('Connector.model.MabGrid', {
     {
         this.callParent([config]);
 
-        this.filterMap = {}; // 'key' is column fieldKey, 'value' is Id of Connector.model.Filter instance
-
         this.stateReady = false;
         this.viewReady = false;
         this._ready = false;
@@ -40,7 +38,7 @@ Ext.define('Connector.model.MabGrid', {
         Connector.getState().onReady(function ()
         {
             this.stateReady = true;
-            this.applyFilters(this._init, this);
+            this._init();
         }, this);
 
         this.addEvents('mabdataloaded', 'initmabgrid');
@@ -170,20 +168,22 @@ Ext.define('Connector.model.MabGrid', {
         }
     },
 
-    applyFilters : function(callback, scope)
-    {
-        Ext.each(Connector.getState().getMabFilters(true), function(appFilter) {
-              // TODO
-        }, this);
-        if (Ext.isFunction(callback))
-        {
-            callback.call(scope || this);
-        }
-    },
-
-    getFilterArray : function(includeBaseFilters)
+    getFilterArray : function()
     {
         return this.get('filterArray');
+    },
+
+    getFieldStateFilter: function(fieldName) {
+        var allFilters = Connector.getState().getMabFilters(true);
+        var targetFilter = null;
+        Ext.each(allFilters, function(filter) {
+            var f = filter.gridFilter[0];
+            if (f.getColumnName() === fieldName) {
+                targetFilter = f;
+                return false;
+            }
+        });
+        return targetFilter;
     },
 
     onViewReady : function(view)

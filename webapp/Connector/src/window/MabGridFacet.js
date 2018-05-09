@@ -11,10 +11,6 @@ Ext.define('Connector.window.MabGridFacet', {
 
     currentfieldName: '',
 
-    learnStore: undefined,
-
-    cls: 'learnFilter',
-
     blankValue: '[blank]',
 
     /* To avoid URL overflow, allow up to 100 selections per column */
@@ -23,51 +19,10 @@ Ext.define('Connector.window.MabGridFacet', {
     initComponent : function()
     {
         this.callParent();
-        this.getAllFacetValues();
+        this.createFacetGrid();
     },
 
-    getAllFacetValues: function() {
-        var allValues = this.mabModel.getUniqueFieldValues(this.filterConfig.fieldName);
-        if (!allValues || allValues.length === 0) {
-            var params = {
-                isMeta: this.filterConfig.isMeta,
-                fieldName: this.filterConfig.fieldName,
-                useFilter: false,
-                success: this.getActiveFacetValues,
-                scope: this
-            };
-            this.mabModel.getAllFacetValues(params);
-        }
-        else
-            this.getActiveFacetValues();
-    },
-
-    getActiveFacetValues: function(response) {
-        if (response && response.rows) {
-            var key = this.filterConfig.fieldName + '_values';
-            var values = [];
-            Ext.each(response.rows, function(row) {
-                values.push(row[this.filterConfig.fieldName] ? row[this.filterConfig.fieldName] : this.blankValue);
-            }, this);
-            this.mabModel[key] = values;
-        }
-        var params = {
-            isMeta: this.filterConfig.isMeta,
-            fieldName: this.filterConfig.fieldName,
-            useFilter: true,
-            success: this.createFacetGrid,
-            scope: this
-        };
-        this.mabModel.getActiveFacetValues(params);
-    },
-
-    createFacetGrid : function(response) {
-        var activeValues = [];
-        if (response && response.rows) {
-            Ext.each(response.rows, function(row) {
-                activeValues.push(row[this.filterConfig.fieldName] ? row[this.filterConfig.fieldName] : this.blankValue);
-            }, this);
-        }
+    createFacetGrid : function() {
         var filterStatus = this._getFilterValues();
         var config = this.filterConfig;
         this.facetGrid = Ext.create('Connector.grid.MabGridFacet', {
@@ -75,7 +30,7 @@ Ext.define('Connector.window.MabGridFacet', {
             border: false,
             useStoreCache: true,
             filterValues: filterStatus.filterValues,
-            activeValues: activeValues,
+            activeValues: this.activeValues,
             allValues: this.mabModel.getUniqueFieldValues(config.fieldName),
             isFilterNegated: filterStatus.isFilterNegated,
             columnField: config.fieldName,
@@ -87,7 +42,7 @@ Ext.define('Connector.window.MabGridFacet', {
 
     _getFilterValues: function() {
         var fieldName = this.filterConfig.fieldName;
-        var filter = this._getStateFilter(fieldName);
+        var filter = this.mabModel.getFieldStateFilter(fieldName);
         if (filter) {
             var value = Ext.isArray(filter.getValue()) ? filter.getValue()[0] : filter.getValue();
             return {
@@ -101,19 +56,6 @@ Ext.define('Connector.window.MabGridFacet', {
                 isFilterNegated: false
             }
         }
-    },
-
-    _getStateFilter: function(fieldName) {
-        var allFilters = Connector.getState().getMabFilters(true);
-        var targetFilter = null;
-        Ext.each(allFilters, function(filter) {
-            var f = filter.gridFilter[0];
-            if (f.getColumnName() === fieldName) {
-                targetFilter = f;
-                return false;
-            }
-        });
-        return targetFilter;
     },
 
     onAfterRender : function() {

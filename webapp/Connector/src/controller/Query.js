@@ -1107,6 +1107,11 @@ Ext.define('Connector.controller.Query', {
     getMabActiveFieldValues: function(config)
     {
         MabQueryUtils.getMabUniqueValues(config);
+    },
+
+    getMabViruses: function(config)
+    {
+        MabQueryUtils.getMabViruses(config);
     }
 });
 

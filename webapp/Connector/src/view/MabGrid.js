@@ -25,6 +25,8 @@ Ext.define('Connector.view.MabGrid', {
 
     paging: false,
 
+    blankValue: '[blank]',
+
     statics: {
         getDefaultSort : function () {
             return [{
@@ -34,15 +36,13 @@ Ext.define('Connector.view.MabGrid', {
         },
 
         ColumnMap : {
-            'mab_mix_name_std' : 1,
-            'mab_donor_species' : 2,
-            'mab_isotype' : 3,
-            'mab_hxb2_location' : 4,
-            'virus' : 5,
-            'clade' : 6,
-            'neutralization_tier' : 7,
-            'titer_curve_ic50_group' : 8,
-            'study' : 9
+            'mab_mix_name_std' : [1],
+            'mab_donor_species' : [2],
+            'mab_isotype' : [3],
+            'mab_hxb2_location' : [4],
+            'tier_clade_virus' : [5, 6, 7],
+            'titer_curve_ic50_group' : [8],
+            'study' : [9]
         }
     },
 
@@ -71,10 +71,10 @@ Ext.define('Connector.view.MabGrid', {
                 xtype: 'actiontitle',
                 flex: 1,
                 text: 'Explore monoclonal antibody (MAb) screening data',
-                buttons: [
-                    this.getExportCSVButton(),
-                    this.getExportExcelButton()
-                ]
+                // buttons: [
+                //     this.getExportCSVButton(),
+                //     this.getExportExcelButton()
+                // ]
             }]
         }];
 
@@ -157,11 +157,11 @@ Ext.define('Connector.view.MabGrid', {
             this._getMetaColumnConfig('Donor Species', 'mab_donor_species', ind++),
             this._getMetaColumnConfig('Isotype', 'mab_isotype', ind++),
             this._getMetaColumnConfig('HXB2 Location', 'mab_hxb2_location', ind++),
-            this._getCountColumnConfig('Viruses', 'virusCount', ind++, 'virus'),
-            this._getCountColumnConfig('Clades', 'cladeCount', ind++, 'clade'),
-            this._getCountColumnConfig('Tiers', 'neutralization_tierCount', ind++, 'neutralization_tier'),
+            this._getVirusColumnConfig('Viruses', 'virusCount', ind++),
+            this._getVirusColumnConfig('Clades', 'cladeCount', ind++),
+            this._getVirusColumnConfig('Tiers', 'neutralization_tierCount', ind++),
             this._getIC50MeanColumnConfig('Geometric mean Curve IC50', 'IC50geomean', ind++, 'titer_curve_ic50_group'),
-            this._getCountColumnConfig('Studies', 'studyCount', ind++, 'study')
+            this._getCountColumnConfig('Studies', 'studyCount', ind, 'study')
         ];
     },
 
@@ -198,6 +198,19 @@ Ext.define('Connector.view.MabGrid', {
                 isMeta: false,
                 fieldName: fieldName,
                 caption: title
+            }
+        });
+        return config;
+    },
+
+    _getVirusColumnConfig: function(title, dataIndex, colInd) {
+        var config = this._getBaseColumnConfig(title, dataIndex, colInd);
+        config = Ext.apply(config, {
+            width: this.countColumnWidth,
+            filterConfig: {
+                isMeta: false,
+                isVirus: true,
+                fieldName: 'tier_clade_virus'
             }
         });
         return config;
@@ -290,15 +303,67 @@ Ext.define('Connector.view.MabGrid', {
         return this.grid;
     },
 
-    onTriggerClick: function(headerCt, column) {
-        var filterConfig = column.filterConfig, me = this;
-        // query for all values
+    openFilterPanel: function(filterConfig) {
+        var allValues = this.getModel().getUniqueFieldValues(filterConfig.fieldName);
+        if (!allValues || allValues.length === 0) {
+            var params = {
+                isMeta: filterConfig.isMeta,
+                fieldName: filterConfig.fieldName,
+                useFilter: false,
+                filterConfig: filterConfig,
+                success: this.getActiveFacetValues,
+                scope: this
+            };
+            this.getModel().getAllFacetValues(params);
+        }
+        else
+            this.getActiveFacetValues(null, {filterConfig: filterConfig});
+    },
+
+    getActiveFacetValues: function(response, config) {
+        var filterConfig = config.filterConfig;
+        if (response && response.rows) {
+            var key = filterConfig.fieldName + '_values';
+            var values = [];
+            Ext.each(response.rows, function(row) {
+                values.push(row[filterConfig.fieldName] ? row[filterConfig.fieldName] : this.blankValue);
+            }, this);
+            this.getModel()[key] = values;
+        }
+        if (filterConfig.isVirus) {
+            this.createFilterPopup(null, config);
+            return;
+        }
+
+        var params = {
+            isMeta: filterConfig.isMeta,
+            fieldName: filterConfig.fieldName,
+            useFilter: true,
+            filterConfig: filterConfig,
+            success: this.createFilterPopup,
+            scope: this
+        };
+        this.getModel().getActiveFacetValues(params);
+    },
+
+    createFilterPopup : function(response, config) {
+        var filterConfig = config.filterConfig;
+        filterConfig.isVirus ? this.createVirusSelectionPanel() : this.createFacetFilterPanel(response, filterConfig);
+    },
+
+    createFacetFilterPanel: function(response, filterConfig) {
+        var activeValues = [];
+        if (response && response.rows) {
+            Ext.each(response.rows, function(row) {
+                activeValues.push(row[filterConfig.fieldName] ? row[filterConfig.fieldName] : this.blankValue);
+            }, this);
+        }
         Ext.create('Connector.window.MabGridFacet', {
             filterConfig: filterConfig,
             columnMetadata: filterConfig,
-            col: column, //used to position facet window
+            col: filterConfig.column, //used to position facet window
             mabModel: this.getModel(),
-            // columnMetadata: {caption : filterConfig.title},
+            activeValues: activeValues,
             listeners: {
                 mabfilter: function (columnName, filter)
                 {
@@ -308,6 +373,82 @@ Ext.define('Connector.view.MabGrid', {
             },
             scope: this
         });
+    },
+
+    createVirusSelectionPanel: function() {
+        var virusPanel = Ext.create('Connector.panel.MabVirusSelection', {
+            initSelection: null,
+            mabModel: this.getModel()
+        });
+
+        this.virusFilterPanel = Ext.create('Ext.window.Window', {
+            ui: 'filterwindow',
+            cls: 'variable-selector',
+            height: 660,
+            width: 520,
+            modal: true,
+            draggable: false,
+            header: false,
+            resizable: false,
+            border: false,
+            style: 'padding: 0',
+            items: [this.getVirusFilterHeader(),
+                {
+                    xtype: 'panel',
+                    cls: 'hierarchy-pane',
+                    border: false,
+                    height: 553,
+                    items : [virusPanel]
+                },
+                this.getVirusFilterFooter(virusPanel)]
+        });
+        this.virusFilterPanel.show();
+    },
+
+    getVirusFilterHeader: function() {
+        return {
+            xtype: 'box',
+            html: '<div class="header">' +
+            '<div style="font-size: 13.5pt; font-weight: bold;">Viruses tested against MAbs</div>' +
+            '</div>'
+        }
+    },
+
+    getVirusFilterFooter : function(filterPanel) {
+        return {
+            itemId: 'bottombar',
+            xtype: 'toolbar',
+            dock: 'bottom',
+            ui: 'footer',
+            items: ['->',
+                {
+                    itemId: 'docancel',
+                    text : 'Cancel',
+                    cls: 'filter-btn',
+                    handler : function(){
+                        this.virusFilterPanel.close();
+                    },
+                    scope : this
+                },
+                {
+                    itemId: 'dofilter',
+                    text: 'Done',
+                    cls: 'filter-btn',
+                    handler: function() {
+                        var filter = filterPanel.constructFilter();
+                        this.fireEvent('updateMabFilter', 'tier_clade_virus', filter);
+                        this.virusFilterPanel.close();
+                    },
+                    scope: this
+                }
+            ]
+        };
+    },
+
+    onTriggerClick: function(headerCt, column) {
+        var filterConfig = column.filterConfig, me = this;
+        filterConfig.column = column;
+        this.openFilterPanel(filterConfig);
         return false;
     },
 
@@ -348,13 +489,15 @@ Ext.define('Connector.view.MabGrid', {
         {
             var f = filter.gridFilter[0];
             var fieldName = f.getColumnName();
-            var colIndex = Connector.view.MabGrid.ColumnMap[fieldName];
-            if (colIndex > 0) {
-                var col = grid.headerCt.getHeaderAtIndex(colIndex);
-                if (col)
-                {
-                    col.getEl().addCls('filtered-column');
-                }
+            var colIndexes = Connector.view.MabGrid.ColumnMap[fieldName];
+            if (colIndexes && Ext.isArray(colIndexes)) {
+                Ext.each(colIndexes, function(colIndex) {
+                    var col = grid.headerCt.getHeaderAtIndex(colIndex);
+                    if (col)
+                    {
+                        col.getEl().addCls('filtered-column');
+                    }
+                })
             }
         }, this);
     },
@@ -432,10 +575,10 @@ Ext.define('Connector.view.MabGrid', {
     },
 
     requestExport : function(isExcel) {
-        //TODO
+        //
     },
 
     onExport : function(isExcel) {
-        //TODO
+        //
     }
 });

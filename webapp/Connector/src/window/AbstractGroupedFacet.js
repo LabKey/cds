@@ -15,8 +15,6 @@ Ext.define('Connector.window.AbstractGroupedFacet', {
 
     currentFilterField: '',
 
-    learnStore: undefined,
-
     cls: 'learnFilter',
 
     /* To avoid URL overflow, allow up to 100 selections per column */
