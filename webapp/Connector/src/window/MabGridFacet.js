@@ -19,7 +19,58 @@ Ext.define('Connector.window.MabGridFacet', {
     initComponent : function()
     {
         this.callParent();
+        this.addEvents('mabfiltersearchchanged');
         this.createFacetGrid();
+        this.on('mabfiltersearchchanged', this.facetGrid.filterFacetOptions, this.facetGrid);
+    },
+
+    // Override to add search box
+    getTopConfig : function() {
+        var allValues = this.mabModel.getUniqueFieldValues(this.filterConfig.fieldName);
+        if (allValues && allValues.length > 10) {
+            return {
+                xtype: 'container',
+                dock: 'top',
+                border: false,
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
+                items: [{
+                    xtype: 'toolbar',
+                    dock: 'top',
+                    ui: 'actionheader',
+                    cls: 'filter-top-toolbar',
+                    items: [
+                        {
+                            xtype: 'tbtext',
+                            style: 'font-size: 13.5pt; font-weight: bold; text-transform: uppercase; font-family: Arial;',
+                            text: Ext.htmlEncode(this.columnMetadata.caption)
+                        },
+                        '->',
+                        {
+                            text: '&#215;',
+                            ui: 'custom',
+                            style: 'font-size: 16pt; color: black; font-weight: bold;',
+                            handler: this.close,
+                            scope: this
+                        }
+                    ]
+                }, {
+                    xtype: 'textfield',
+                    emptyText: 'Search ' + this.filterConfig.caption,
+                    padding: '10 50 0 15',
+                    width: 200,
+                    checkChangeBuffer: 500,
+                    value: '',
+                    validator: Ext.bind(function(value) {
+                        this.fireEvent('mabfiltersearchchanged', value);
+                        return true;
+                    }, this)
+                }]
+            };
+        }
+        return this.callParent();
     },
 
     createFacetGrid : function() {
@@ -107,6 +158,8 @@ Ext4.define('Connector.grid.MabGridFacet', {
 
     extend: 'Connector.grid.AbstractGroupedFacet',
 
+    resetSearch: true,
+
     getFilteredValues: function() {
         return this.activeValues;
     },
@@ -118,6 +171,14 @@ Ext4.define('Connector.grid.MabGridFacet', {
 
     getAllValues: function() {
         return this.allValues;
+    },
+
+    filterFacetOptions: function(value) {
+        var facetStore = this.getLookupStore();
+        var regex = new RegExp(LABKEY.Utils.escapeRe(value), 'i');
+        facetStore.filterBy(function(record){
+            return regex.test(record.get('displayValue'));
+        });
     }
 
 });

@@ -57,7 +57,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
         var grid = this.getGrid();
         var selected = [], unselected = [], all = [];
 
-        var store = grid.store;
+        var store = grid.store.snapshot ? grid.store.snapshot : grid.store;
         var count = store.getCount();
         var selections = grid.getSelectionModel().getSelection();
 
@@ -216,6 +216,8 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
         var filteredValues = this.getFilteredValues();
 
         var facetStore = this.getLookupStore(), allValues = [];
+        if (this.resetSearch)
+            facetStore.clearFilter();
         facetStore.each(function(record) {
             allValues.push(record.data);
         });
