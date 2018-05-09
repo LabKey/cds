@@ -16,8 +16,6 @@ Ext.define('Connector.panel.MabVirusSelection', {
     constructor : function(config) {
         this.callParent([config]);
 
-        this.addEvents('selectionchange');
-
         this.loadDistinctValuesStore();
     },
 
@@ -100,8 +98,7 @@ Ext.define('Connector.panel.MabVirusSelection', {
     },
 
     onSelectionChange: function() {
-        var selectedValues = this.getSelectedValues();
-        // this.fireEvent('selectionchange', selectedValues, this.uniqueValuesStore.getCount() == selectedValues.length);
+        // do nothing
     },
 
     getColumnSize : function() {

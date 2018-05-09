@@ -275,6 +275,7 @@ Ext.define('Connector.view.MabGrid', {
                     },
                     itemmouseenter : function(view, record, item, index, evt) {
                         var me = this;
+                        // on column cell hover, show filter icon
                         for (var i = 1; i < 10; i++) {
                             var cell = Ext.get(Ext.query(".mabcol" + i, item)[0]);
                             if (cell) {
