@@ -251,7 +251,7 @@ Ext.define('Connector.view.MabGrid', {
                     showHeaderCheckbox: true
                 },
                 columns: this.getGridColumnsConfig(),
-                cls: 'connector-grid',
+                cls: 'connector-grid mab-connector-grid',
                 border: false,
                 columnWidth: this.columnWidth,
                 forceFit: false,

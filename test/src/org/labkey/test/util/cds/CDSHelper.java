@@ -1572,7 +1572,8 @@ public class CDSHelper
         LEARN("Learn about", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
         SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest with assay data in DataSpace.")),
         PLOT("Plot data", Locator.tagWithClass("a", "colorbtn")),
-        GRID("View data grid", DataGridVariableSelector.titleLocator);
+        GRID("View data grid", DataGridVariableSelector.titleLocator),
+        MABGRID("Monoclonal Antibodies", Locator.tag("div").containing("Explore monoclonal antibody (MAb) screening data"));
 
         private String _linkText;
         private Locator.XPathLocator _expectedElement;
@@ -1696,6 +1697,11 @@ public class CDSHelper
         public static Locator.XPathLocator infoPaneSortButtonLocator()
         {
             return Locator.tagWithClass("button", "ipdropdown");
+        }
+
+        public static Locator.XPathLocator subjectInfoPaneHeader()
+        {
+            return Locator.tagWithClass("div", "filterstatus");
         }
 
         public static Locator.XPathLocator dimensionHeaderLocator(String dimension)

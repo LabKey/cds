@@ -257,6 +257,9 @@ Ext.define('Connector.utility.MabQuery', {
             values.splice(nullInd, 1);
             emptyWhere = tableAliasName + '.' + f.getColumnName() + this._getNULLFilterOp(f);
         }
+        else if (f.getFilterType().getURLSuffix() === 'notin') {
+            emptyWhere = tableAliasName + '.' + f.getColumnName() + ' IS NULL';
+        }
 
         if (values.length > 0)
             noEmptyWhere = tableAliasName + '.' + f.getColumnName() + this._getFilterOp(f) + QueryUtils._toSqlValuesList(values, LABKEY.Query.sqlStringLiteral, forDebugging);

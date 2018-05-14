@@ -143,6 +143,11 @@ public class DataGrid
         };
     }
 
+    public boolean isColumnFiltered(String columnHeaderName)
+    {
+        return _test.isElementPresent(Locators.filteredColumnHeaderLocator(columnHeaderName));
+    }
+
     @LogMethod(quiet = true)
     public void openFilterPanel(@LoggedParam String columnHeaderName)
     {
@@ -681,6 +686,12 @@ public class DataGrid
         {
             return Locators.tabHeaderContainer.append(Locators.activeHeader.withText(tabname));
         }
+
+        public static Locator.XPathLocator filteredColumnHeaderLocator(String columnHeaderName)
+        {
+            return Locator.tagWithClass("div", "filtered-column").withText(columnHeaderName);
+        }
+
     }
 
 }

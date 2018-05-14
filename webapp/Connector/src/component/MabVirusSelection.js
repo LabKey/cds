@@ -11,6 +11,8 @@ Ext.define('Connector.panel.MabVirusSelection', {
 
     filterFieldName: 'tier_clade_virus',
 
+    subjectNoun: 'Mab/Mix',
+
     virusFields: ['neutralization_tier', 'clade', 'virus'],
 
     constructor : function(config) {

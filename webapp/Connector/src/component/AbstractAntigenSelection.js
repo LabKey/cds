@@ -11,6 +11,8 @@ Ext.define('Connector.panel.AbstractAntigenSelection', {
 
     border: false,
 
+    subjectNoun: 'Subject',
+
     totalColumnWidth: 374,
     subjectColumnWidth: 80,
 
@@ -19,7 +21,7 @@ Ext.define('Connector.panel.AbstractAntigenSelection', {
                 fields = this.getFields();
 
         this.createFieldColumnHeaders(checkboxItems);
-        checkboxItems.push(this.createColumnHeaderCmp('Subject count', 'col-count-title'));
+        checkboxItems.push(this.createColumnHeaderCmp(this.subjectNoun + ' count', 'col-count-title'));
 
         this.createAllCheckboxes(checkboxItems);
         checkboxItems.push(this.createSpacerCmp()); // this will eventually be the "hide empty" button
