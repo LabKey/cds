@@ -289,7 +289,7 @@ Ext.define('Connector.view.MabGrid', {
                                     var cursorY = evt.browserEvent.clientY;
                                     if (textRect.top <= cursorY && cursorY <= textRect.bottom
                                             && textRect.left <= cursorX && cursorX <= textRect.right) {
-                                        me.triggerColumnHeaderOver(event, item, {colInd: colInd, isEnter: true});
+                                        me.triggerColumnHeaderOver(evt, item, {colInd: colInd, isEnter: true});
                                     }
 
                                 })(cell, i);

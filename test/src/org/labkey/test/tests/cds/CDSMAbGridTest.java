@@ -66,7 +66,7 @@ public class CDSMAbGridTest extends CDSReadOnlyTest
 
         log("Verify mAb summary grid content");
         grid.clearAllFilters();
-        Assert.assertEquals("Number of mab/mabmix rows is not as expected", 49, grid.getMabCounts());
+        Assert.assertEquals("Number of mab/mabmix rows is not as expected", 54, grid.getMabCounts());
         Assert.assertEquals("Geometric mean value for '2F5' is not as expected", "1.50583", grid.getMabCellValue("2F5", GEOMETRIC_MEAN_IC50_COL));
     }
 
@@ -81,12 +81,12 @@ public class CDSMAbGridTest extends CDSReadOnlyTest
         List<String> filteredColumns = new ArrayList<>();
         grid.setFacet(MAB_COL,false,"2F5", "A14");
         filteredColumns.add(MAB_COL);
-        verifyGridCountAndFilteredColumns(grid, 47, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 52, filteredColumns);
 
         log("Verify mAb mix metadata filters");
         grid.setFacet(SPECIES_COL,false,"llama");
         filteredColumns.add(SPECIES_COL);
-        verifyGridCountAndFilteredColumns(grid, 44, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 49, filteredColumns);
 
         grid.setFacet(ISOTYPE_COL,true,"[blank]", "IgG3?");
         filteredColumns.add(ISOTYPE_COL);
@@ -100,13 +100,13 @@ public class CDSMAbGridTest extends CDSReadOnlyTest
         Assert.assertEquals("Geometric mean value for 'AB-000402-1' is not as expected prior to filtering", "0.03717", grid.getMabCellValue("AB-000402-1", GEOMETRIC_MEAN_IC50_COL));
         grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1");
         filteredColumns.add(GEOMETRIC_MEAN_IC50_COL);
-        verifyGridCountAndFilteredColumns(grid, 20, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 21, filteredColumns);
         Assert.assertEquals("Geometric mean value for 'AB-000402-1' is not as expected after filtering", "0.02388", grid.getMabCellValue("AB-000402-1", GEOMETRIC_MEAN_IC50_COL));
 
         log("Verify study filter");
         grid.setFacet(STUDIES_COL,true,"z118", "z128");
         filteredColumns.add(STUDIES_COL);
-        verifyGridCountAndFilteredColumns(grid, 9, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 10, filteredColumns);
 
         log("Verify virus filter panel reflects active filter counts");
         AntigenFilterPanel virusPanel = grid.openVirusPanel(null);
@@ -124,7 +124,7 @@ public class CDSMAbGridTest extends CDSReadOnlyTest
         grid.applyFilter();
         filteredColumns.addAll(4, Arrays.asList(VIRUSES_COL, CLADES_COL, TIERS_COL));
         log("Verify virus filter panel reflects active filter counts");
-        verifyGridCountAndFilteredColumns(grid, 7, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 8, filteredColumns);
 
         virusPanel = grid.openVirusPanel(CLADES_COL);
         Assert.assertFalse(virusPanel.isVirusChecked(testValue));
@@ -133,7 +133,7 @@ public class CDSMAbGridTest extends CDSReadOnlyTest
 
         log("Verify removing filters");
         grid.clearAllFilters();
-        verifyGridCountAndFilteredColumns(grid, 49, new ArrayList<>());
+        verifyGridCountAndFilteredColumns(grid, 54, new ArrayList<>());
     }
 
     private void verifyGridCountAndFilteredColumns(MAbDataGrid grid, int rowCount, List<String> filteredColumns)

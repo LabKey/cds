@@ -34,9 +34,11 @@ CREATE TABLE cds.mAbGridBase (
   lab_code VARCHAR(250),
   summary_level VARCHAR(250),
 
+  ic_key VARCHAR(20),
+
   container ENTITYID,
 
-  CONSTRAINT PK_mAbGridBase PRIMARY KEY (container, mab_mix_id, tier_clade_virus, target_cell, lab_code, summary_level)
+  CONSTRAINT PK_mAbGridBase PRIMARY KEY (container, mab_mix_id, tier_clade_virus, target_cell, lab_code, summary_level, ic_key)
 );
 
 DROP TABLE IF EXISTS cds.mAbMetaGridBase;

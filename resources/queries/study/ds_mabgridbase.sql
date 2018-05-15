@@ -27,6 +27,8 @@ select
   lab_code,
   summary_level,
 
+  to_char(initial_concentration, 'FM999999.99') as ic_key,
+
   MixMeta.mab_mix_name_std
 FROM study.NABMAb as MAB
   LEFT JOIN cds.MAbMixMetadata as MixMeta on (MixMeta.mab_mix_id = MAB.mab_mix_id)
