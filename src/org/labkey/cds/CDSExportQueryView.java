@@ -33,7 +33,6 @@ import org.labkey.api.query.QueryView;
 import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.StringUtilsLabKey;
 import org.labkey.api.view.DataView;
-import org.labkey.remoteapi.query.jdbc.LabKeyResultSet;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -467,12 +466,9 @@ public class CDSExportQueryView extends QueryView
             }
         }
 
-        List<LabKeyResultSet.Column> cols = new ArrayList<>();
-        for (ColumnInfo info : columnInfos)
-            cols.add(new LabKeyResultSet.Column(info.getAlias(), String.class));
+        List<String> cols = columnInfos.stream().map(ColumnInfo::getAlias).collect(Collectors.toList());
 
-        ResultSet resultSet = new LabKeyResultSet(rows, cols, null);
-        return new ResultsImpl(resultSet, columnInfos);
+        return new ResultsImpl(CachedResultSets.create(rows, cols), columnInfos);
     }
 
     private List<ColumnInfo> getColumns(List<String> columnNames)
