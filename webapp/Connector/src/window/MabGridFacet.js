@@ -61,10 +61,18 @@ Ext.define('Connector.window.MabGridFacet', {
                     emptyText: 'Search ' + this.filterConfig.caption,
                     padding: '10 50 0 15',
                     width: 200,
-                    checkChangeBuffer: 500,
+                    checkChangeBuffer: 800,
                     value: '',
                     validator: Ext.bind(function(value) {
-                        this.fireEvent('mabfiltersearchchanged', value);
+                        var allSelect = Ext.select('.learnFilter .x-grid-header-ct-docked-top');
+                        if (value === '')
+                            allSelect.show();
+                        else
+                            allSelect.hide();
+                        if (value != this.searchValue) {
+                            this.fireEvent('mabfiltersearchchanged', value, this.searchValue);
+                            this.searchValue = value;
+                        }
                         return true;
                     }, this)
                 }]
@@ -76,16 +84,18 @@ Ext.define('Connector.window.MabGridFacet', {
     createFacetGrid : function() {
         var filterStatus = this._getFilterValues();
         var config = this.filterConfig;
+        var allValues = this.mabModel.getUniqueFieldValues(config.fieldName);
         this.facetGrid = Ext.create('Connector.grid.MabGridFacet', {
             itemId: 'faceted-mab-' + config.fieldName,
             border: false,
             useStoreCache: true,
             filterValues: filterStatus.filterValues,
             activeValues: this.activeValues,
-            allValues: this.mabModel.getUniqueFieldValues(config.fieldName),
+            allValues: allValues,
             isFilterNegated: filterStatus.isFilterNegated,
             columnField: config.fieldName,
-            valueType: config.valueType
+            valueType: config.valueType,
+            useSearch: allValues && allValues.length > 10 ? true: false
         });
 
         this.add(this.facetGrid);
@@ -154,7 +164,7 @@ Ext.define('Connector.window.MabGridFacet', {
 });
 
 
-Ext4.define('Connector.grid.MabGridFacet', {
+Ext.define('Connector.grid.MabGridFacet', {
 
     extend: 'Connector.grid.AbstractGroupedFacet',
 
@@ -173,12 +183,51 @@ Ext4.define('Connector.grid.MabGridFacet', {
         return this.allValues;
     },
 
-    filterFacetOptions: function(value) {
+    filterFacetOptions: function(value, previousValue) {
         var facetStore = this.getLookupStore();
         var regex = new RegExp(LABKEY.Utils.escapeRe(value), 'i');
+
+        facetStore.clearFilter(false);
+
+        if (value !== '')
+            facetStore.filterBy(function(record){
+                return regex.test(record.get('displayValue'));
+            });
+        if (value === '' || (previousValue && previousValue.indexOf(value) === 0)) {
+            if (this.useSearch && this.latestSelections.length > 0)
+                this.updateSelectionOnSearch();
+        }
+    },
+
+    updateStoreFiltering : function(facetStore, regex)
+    {
+        if (!this.updateStoreFilteringTask) {
+            this.updateStoreFilteringTask = new Ext.util.DelayedTask(this.filterStore, this);
+        }
+        this.updateStoreFilteringTask.delay(200, null, this, [facetStore, regex]);
+    },
+
+    filterStore: function(facetStore, regex)
+    {
         facetStore.filterBy(function(record){
             return regex.test(record.get('displayValue'));
         });
+    },
+
+    updateSelectionOnSearch : function()
+    {
+        if (!this.updateSelectionTask) {
+            this.updateSelectionTask = new Ext.util.DelayedTask(function () {
+                var selModel = this.getGrid().getSelectionModel(), store = selModel.store, selections = [];
+                var validKeys = store.data.keys;
+                Ext.each(this.latestSelections, function(sel) {
+                    if (validKeys.indexOf(sel.internalId) > -1)
+                        selections.push(sel);
+                });
+                selModel.select(selections, false, true);
+            }, this);
+        }
+        this.updateSelectionTask.delay(600, null, this);
     }
 
 });

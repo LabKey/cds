@@ -22,7 +22,7 @@ Ext.define('Connector.window.AbstractGroupedFacet', {
 
 });
 
-Ext4.define('Connector.grid.AbstractGroupedFacet', {
+Ext.define('Connector.grid.AbstractGroupedFacet', {
 
     extend: 'Ext.panel.Panel',
 
@@ -39,6 +39,8 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
     filterValues: [],
 
     isFilterNegated: false,
+
+    latestSelections: [],
 
     initComponent : function() {
 
@@ -59,10 +61,10 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
 
         var store = grid.store.snapshot ? grid.store.snapshot : grid.store;
         var count = store.getCount();
-        var selections = grid.getSelectionModel().getSelection();
+        var selections = this.useSearch ? this.latestSelections : grid.getSelectionModel().getSelection();
 
         if (selections.length > 0 && selections.length !== count) {
-            Ext4.each(selections, function(selection){
+            Ext.each(selections, function(selection){
                 selected.push(selection.get('value'));
             });
             all = store.getRange()
@@ -79,7 +81,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
     },
 
     getGrid : function() {
-        if (!Ext4.isDefined(this.grid)) {
+        if (!Ext.isDefined(this.grid)) {
 
             var gridConfig = {
                 itemId: 'membergrid',
@@ -103,7 +105,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
                     flex: 1,
                     sortable: false,
                     menuDisabled: true,
-                    tpl: new Ext4.XTemplate('{displayValue:htmlEncode}')
+                    tpl: new Ext.XTemplate('{displayValue:htmlEncode}')
                 }],
 
                 /* Styling configuration */
@@ -120,7 +122,23 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
                     selectionchange : {
                         fn: function() { this.changed = true; },
                         scope: this
-                    }
+                    },
+                    select: function(view, model)
+                    {
+                        if (this.useSearch)
+                            this.latestSelections.push(model);
+                        return true;
+                    },
+                    deselect: function(view, model)
+                    {
+                        if (this.useSearch) {
+                            this.latestSelections = Ext.Array.filter(this.latestSelections, function(sel) {
+                                return sel.id !== model.id;
+                            });
+                        }
+                        return true;
+                    },
+                    scope: this
                 },
 
                 requires: ['Ext.grid.feature.Grouping'],
@@ -142,7 +160,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
 
             };
 
-            this.grid = Ext4.create('Ext.grid.Panel', gridConfig);
+            this.grid = Ext.create('Ext.grid.Panel', gridConfig);
         }
 
         return this.grid;
@@ -150,7 +168,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
 
     createColumnFilterStore: function() {
         var storeId = this.getStoreId(), me = this;
-        return Ext4.create('Ext.data.ArrayStore', {
+        return Ext.create('Ext.data.ArrayStore', {
             fields: [
                 'value', 'displayValue', {name:'hasData', type: 'boolean', defaultValue: true}
             ],
@@ -183,7 +201,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
 
         // cache
         if (this.useStoreCache === true) {
-            var store = Ext4.StoreMgr.get(storeId);
+            var store = Ext.StoreMgr.get(storeId);
             if (store) {
                 return store;
             }
@@ -242,8 +260,10 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
                 this.setValue(this.filterValues, this.isFilterNegated);
             }
 
+            if (this.useSearch)
+                this.latestSelections = grid.getSelectionModel().getSelection();
         }
-        if(Ext4.isDefined(this.onSuccessfulLoad) && Ext4.isFunction(this.onSuccessfulLoad))
+        if(Ext.isDefined(this.onSuccessfulLoad) && Ext.isFunction(this.onSuccessfulLoad))
             this.onSuccessfulLoad(this, this.scope);
     },
 
@@ -252,7 +272,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
             this.on('render', function() { this.setValue(values, negated); }, this, {single: true});
         }
 
-        if (!Ext4.isArray(values) && Ext4.isString(values)) {
+        if (!Ext.isArray(values) && Ext.isString(values)) {
             values = values.split(';');
         }
 
@@ -266,7 +286,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
                 recIdx,
                 recordNotFound = false;
 
-        Ext4.each(values, function(val) {
+        Ext.each(values, function(val) {
             recIdx = store.findBy(function(rec){
                 return rec.get('value') == val;
             });
@@ -277,7 +297,7 @@ Ext4.define('Connector.grid.AbstractGroupedFacet', {
             else {
                 // Issue 14710: if the record is not found, we will not be able to select it, so should reject.
                 // If it's null/empty, ignore silently
-                if (!Ext4.isEmpty(val)) {
+                if (!Ext.isEmpty(val)) {
                     recordNotFound = true;
                     return false;
                 }

@@ -49,8 +49,7 @@ Ext.define('Connector.view.MabGrid', {
     constructor : function(config)
     {
         this.callParent([config]);
-        this.addEvents('updateMabFilter');
-        // this.addEvents('updateMabSelection');
+        this.addEvents('updateMabFilter', 'updateMabSelection');
     },
 
     initComponent : function()
@@ -82,6 +81,7 @@ Ext.define('Connector.view.MabGrid', {
         var model = this.getModel();
 
         this.on('updateMabFilter', this.onMabGridFilterChange, this);
+        this.on('updateMabSelection', this.onMabSelectionChange, this);
         this.on('boxready', model.onViewReady, model, {single: true});
 
         // bind view to model
@@ -296,6 +296,9 @@ Ext.define('Connector.view.MabGrid', {
                             }
                         }
                     },
+                    selectionchange: function(model, selections) {
+                        this.fireEvent('updateMabSelection', selections);
+                    },
                     scope: this
                 }
             });
@@ -466,6 +469,35 @@ Ext.define('Connector.view.MabGrid', {
 
     onMabDataLoaded: function() {
         this.applyFilterColumnState();
+        this.applyMAbSelections();
+    },
+
+    applyMAbSelections: function() {
+        var values = Connector.getState().getSelectedMAbs();
+        var records = [],
+                recIdx;
+
+        var store = this.gridStore;
+        Ext.each(values, function(val) {
+            recIdx = store.findBy(function(rec){
+                return rec.get('mab_mix_name_std') === val;
+            });
+
+            if (recIdx !== -1) {
+                records.push(store.getAt(recIdx));
+            }
+
+        }, this);
+
+        this.getGrid().getSelectionModel().select(records, false, true);
+    },
+
+    onMabSelectionChange: function(mAbSelections) {
+        var mAbs = [];
+        Ext.each(mAbSelections, function(selection){
+            mAbs.push(selection.get('mab_mix_name_std'));
+        });
+        Connector.getState().updateSelectedMAbs(mAbs);
     },
 
     /**

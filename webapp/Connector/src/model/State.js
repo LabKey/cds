@@ -20,6 +20,7 @@ Ext.define('Connector.model.State', {
         {name : 'filters'}, // type: Ext.data.Types.FILTER,
         {name : 'mabfilters'}, // type: Ext.data.Types.FILTER,
         {name : 'selections'},
+        {name : 'selectedMAbs'},
         {name : 'detail'}
     ],
 

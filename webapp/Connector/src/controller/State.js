@@ -43,6 +43,10 @@ Ext.define('Connector.controller.State', {
             if (s.mabfilters && s.mabfilters.length > 0) {
                 this.setMabFilters(s.mabfilters, true);
             }
+
+            if (s.selectedMAbs && s.selectedMAbs.length > 0) {
+                this.updateSelectedMAbs(s.selectedMAbs, true);
+            }
         }
 
         this.callParent();
@@ -73,7 +77,8 @@ Ext.define('Connector.controller.State', {
             customState: this.customState,
             filters: jsonReadyFilters,
             selections: jsonReadySelections,
-            mabfilters: jsonReadyMabFilters
+            mabfilters: jsonReadyMabFilters,
+            selectedMAbs: this.selectedMAbs
         }]);
     },
 
@@ -333,6 +338,18 @@ Ext.define('Connector.controller.State', {
     clearMabFilters: function(skipState)
     {
         this.mabfilters = [];
+        if (!skipState)
+            this.updateState();
+    },
+
+    getSelectedMAbs: function()
+    {
+        return this.selectedMAbs;
+    },
+
+    updateSelectedMAbs: function(mAbs, skipState)
+    {
+        this.selectedMAbs = mAbs;
         if (!skipState)
             this.updateState();
     }
