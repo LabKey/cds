@@ -142,11 +142,45 @@ public class CDSMAbGridTest extends CDSReadOnlyTest
         Assert.assertEquals("Columns with filtered icons aren't as expected", filteredColumns, grid.getFilteredColumns());
     }
 
-//    @Test TODO
-//    public void testMAbSearchFilter()
-//    {
-//
-//    }
+    @Test
+    public void testMAbSearchFilter()
+    {
+        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
+        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        grid.clearAllFilters();
+
+        log("Verify mAb mix filter with search");
+        List<String> filteredColumns = new ArrayList<>();
+        grid.setFacet(MAB_COL,true,"2F5", "A14");
+        filteredColumns.add(MAB_COL);
+        verifyGridCountAndFilteredColumns(grid, 2, filteredColumns);
+
+        log("Verify search narrows down options");
+        grid.setFilterSearch(MAB_COL, "B21");
+        Assert.assertEquals("Facet options aren't narrowed down as expected", 1, grid.getFilterOptionsCount());
+
+        log("Verify 'Check All' not present with search");
+        Assert.assertFalse("Check All shouldn't be visible with search text present", grid.isCheckAllPresent());
+
+        log("Verify newly checked as well as hidden checked values are both applied as filters");
+        grid.setFacet(MAB_COL,true, true, true, false, "B21");
+        verifyGridCountAndFilteredColumns(grid, 3, filteredColumns);
+
+        log("Verify backspace on search");
+        grid.setFilterSearch(MAB_COL, "f5");
+        Assert.assertEquals("Facet options aren't narrowed down as expected", 1, grid.getFilterOptionsCount());
+        grid.setFacet(MAB_COL,false, true, true, true, "2F5");
+
+        grid.setFilterSearch(MAB_COL, "f", true);
+        Assert.assertEquals("Facet options aren't narrowed down as expected", 5, grid.getFilterOptionsCount());
+
+        log("Verify clear on search");
+        grid.setFilterSearch(MAB_COL, "", true);
+        Assert.assertTrue("Facet options aren't narrowed down as expected", grid.getFilterOptionsCount() > 100);
+
+        grid.applyFilter();
+        verifyGridCountAndFilteredColumns(grid, 2, filteredColumns);
+    }
 
     private WebElement getGridEl()
     {

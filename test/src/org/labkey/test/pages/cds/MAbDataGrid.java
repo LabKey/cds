@@ -47,10 +47,18 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void setFacet(String columnName, boolean check, String... values)
     {
-        _gridHelper.openFilterPanel(columnName);
+        setFacet(columnName, check, false, false, false, values);
+    }
+
+    public void setFacet(String columnName, boolean check, boolean skipCheckAll, boolean skipOpenDialog, boolean skipDone, String... values)
+    {
+        if (!skipOpenDialog)
+            _gridHelper.openFilterPanel(columnName);
+
         Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
 
-        checkAll(!check);
+        if (!skipCheckAll)
+            checkAll(!check);
 
         for (String value : values)
         {
@@ -61,7 +69,31 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
             _webDriverWrapper.waitAndClick(1000, checkbox, 0);
         }
 
-        applyFilter();
+        if (!skipDone)
+            applyFilter();
+    }
+
+    public int getFilterOptionsCount()
+    {
+        Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
+        Locator.XPathLocator optionsLoc = gridLoc.append(Locator.tagWithClass("td", "x-grid-cell-row-checker"));
+        return optionsLoc.findElements(_webDriverWrapper.getDriver()).size();
+    }
+
+    public void setFilterSearch(String columnName, String searchValue)
+    {
+        setFilterSearch(columnName, searchValue, false);
+    }
+
+    public void setFilterSearch(String columnName, String searchValue, boolean skipOpenDialog)
+    {
+        if (!skipOpenDialog)
+            _gridHelper.openFilterPanel(columnName);
+        Locator.XPathLocator searchBoxLoc = Locator.tagWithClass("table", "mab-facet-search").append(Locator.tag("input"));
+        _webDriverWrapper.waitForElement(searchBoxLoc);
+        WebElement searchBox = searchBoxLoc.findElement(_webDriverWrapper.getDriver());
+        _webDriverWrapper.setFormElement(searchBox, searchValue);
+        WebDriverWrapper.sleep(1000);
     }
 
     public AntigenFilterPanel openVirusPanel(String columnName)
@@ -77,6 +109,11 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         if((check && !_webDriverWrapper.isElementPresent(checkedLoc))
             || (!check && _webDriverWrapper.isElementPresent(checkedLoc)))
             _webDriverWrapper.click(checkbox.append(Locator.tagWithClass("div", "x-column-header-checkbox")));
+    }
+
+    public boolean isCheckAllPresent()
+    {
+        return _webDriverWrapper.isElementVisible(Locators.filterCheckAllLoc);
     }
 
     public void clearAllFilters()

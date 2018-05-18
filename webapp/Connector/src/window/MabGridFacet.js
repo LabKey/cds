@@ -62,6 +62,7 @@ Ext.define('Connector.window.MabGridFacet', {
                     padding: '10 50 0 15',
                     width: 200,
                     checkChangeBuffer: 800,
+                    cls: 'mab-facet-search',
                     value: '',
                     validator: Ext.bind(function(value) {
                         var allSelect = Ext.select('.learnFilter .x-grid-header-ct-docked-top');
