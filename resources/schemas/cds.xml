@@ -1003,7 +1003,7 @@
             <column columnName="target_cell"/>
             <column columnName="lab_code"/>
             <column columnName="summary_level"/>
-            <column columnName="ic_key"/>
+            <column columnName="curve_id"/>
             <column columnName="Container"/>
         </columns>
     </table>

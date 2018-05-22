@@ -27,7 +27,7 @@ select
   lab_code,
   summary_level,
 
-  to_char(initial_concentration, 'FM999999.99') as ic_key,
+  curve_id,
 
   MixMeta.mab_mix_name_std
 FROM study.NABMAb as MAB
