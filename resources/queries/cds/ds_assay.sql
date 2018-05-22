@@ -28,7 +28,16 @@ SELECT
   assay_endpoint_description,
   assay_endpoint_statistical_analysis
  FROM cds.import_assay as IA
- INNER JOIN (SELECT DISTINCT
-  assay_identifier,
-  assay_type
-  FROM cds.ds_subjectassay) AS SA ON IA.assay_identifier=SA.assay_identifier;
+ INNER JOIN (
+              SELECT DISTINCT
+                assay_identifier,
+                assay_type
+              FROM cds.ds_subjectassay
+
+              UNION
+              SELECT DISTINCT
+                assay_identifier,
+                'NABMAb'
+              FROM cds.ds_nabmab
+
+            ) AS SA ON IA.assay_identifier=SA.assay_identifier;

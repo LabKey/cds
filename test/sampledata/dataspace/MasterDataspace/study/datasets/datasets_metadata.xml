@@ -1164,4 +1164,292 @@
     </columns>
     <tableTitle>Binding Ab multiplex assay</tableTitle>
   </table>
+  <table tableName="NABMAb" tableDbType="TABLE">
+    <description>Contains NAb MAb data.</description>
+    <columns>
+      <column columnName="SubjectId">
+        <datatype>varchar</datatype>
+        <columnTitle>Mab Mix Id</columnTitle>
+        <description>Unique ID assigned to a subject for a given study.</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>cds</fkDbSchema>
+          <fkTable>MAbMixMetadata</fkTable>
+          <fkColumnName>mab_mix_id</fkColumnName>
+        </fk>
+        <isHidden>true</isHidden>
+      </column>
+      <column columnName="third_key">
+        <datatype>integer</datatype>
+        <columnTitle>Third Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <isHidden>true</isHidden>
+        <isKeyField>true</isKeyField>
+        <isAutoInc>true</isAutoInc>
+      </column>
+      <column columnName="prot">
+        <datatype>varchar</datatype>
+        <columnTitle>Study Protocol</columnTitle>
+        <description>Unique ID assigned to the study by the network indicating the main study (e.g. CAVD 583)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="mab_mix_id">
+        <datatype>varchar</datatype>
+        <columnTitle>mab mix id</columnTitle>
+        <description>Unique ID assigned to an individual mAb or mixture of mAbs. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <fk>
+          <fkDbSchema>cds</fkDbSchema>
+          <fkTable>MAbMixMetadata</fkTable>
+          <fkColumnName>mab_mix_id</fkColumnName>
+        </fk>
+        <dimension>false</dimension>
+      </column>
+      <column columnName="mab_name_source">
+        <datatype>varchar</datatype>
+        <columnTitle>mAb name source</columnTitle>
+        <description>Unique ID assigned to the mAb (often recoded) being tested in a given study. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>false</dimension>
+      </column>
+      <column columnName="target_cell">
+        <datatype>varchar</datatype>
+        <columnTitle>Target cell</columnTitle>
+        <description>The cell line used in the assay to determine infection (lack of neutralization). Generally TZM-bl.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="assay_identifier">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay identifier</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The short name identifying the assay</description>
+        <dimension>false</dimension>
+      </column>
+      <column columnName="summary_level">
+        <datatype>varchar</datatype>
+        <columnTitle>Data summary level</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Defines the level at which the magnitude or response has been summarized (i.e. summarized at the across dilutions).</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="clade">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus clade</columnTitle>
+        <description>The clade (gene subtype) of the virus (antigen) being tested.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="neutralization_tier">
+        <datatype>varchar</datatype>
+        <columnTitle>Neutralization tier</columnTitle>
+        <description>A classification specific to HIV NAb assay design, in which an antigen is assessed for its ease of neutralization (1=most easily neutralized, 3=least easily neutralized). As indicated in the master virus list. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_dilution">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus dilution</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The dilution at which the virus is being tested.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="specimen_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimen type</columnTitle>
+        <description>The type of specimen used in the assay. For nAb assays, this is generally serum or plasma.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="lab_code">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab ID</columnTitle>
+        <description>A code indicating the lab performing the assay.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus name</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The standardized name of the virus being tested - as indicated in the master virus list. </description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The type of virus used in the construction of the nAb antigen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="initial_concentration">
+        <datatype>double</datatype>
+        <columnTitle>Initial Concentration</columnTitle>
+        <description>Indicates the initial specimen concentration</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="specimen_concentration_id">
+        <datatype>integer</datatype>
+        <columnTitle>Specimen concentration id</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>The number of times the mAb has been diluted from the initial concentration to reach the mAb concentration being tested. </description>
+        <dimension>false</dimension>
+      </column>
+      <column columnName="mab_concentration">
+        <datatype>double</datatype>
+        <columnTitle>MAb concentration</columnTitle>
+        <description>The concentration of the specimen (mab) being tested in a given well on a plate. The initial concentration of each specimen is reduced by the dilution factor (3). Typically, a total of 8 concentrations are tested for each specimen (mab). </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="mab_concentration_units">
+        <datatype>varchar</datatype>
+        <columnTitle>MAb concentration units</columnTitle>
+        <description>The units in which the concentration is measured (ug/mL)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>false</dimension>
+      </column>
+      <column columnName="min_concentration">
+        <datatype>double</datatype>
+        <columnTitle>Min Concentration</columnTitle>
+        <description>The minimum concentration of a given specimen (mab) being tested  across all wells for that specimen on a given plate. The initial concentration of each specimen is reduced by the dilution factor (3). Typically, a total of 8 concentrations are tested for each specimen (mab). The minimum concentration equals the initial concentration. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="max_concentration">
+        <datatype>double</datatype>
+        <columnTitle>Max Concentration</columnTitle>
+        <description>The maximum concentration of a given specimen (mab) being tested  across all wells for that specimen on a given plate. The initial concentration of each specimen is reduced by the dilution factor (3). Typically, a total of 8 concentrations are tested for each specimen (mab). The maximum concentration equals the last dilution made on the plate. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="min_well_value">
+        <datatype>double</datatype>
+        <columnTitle>Min Well Value</columnTitle>
+        <description>The minimum well value (luminescence?) across replicates/duplicates for each unique assay_id-run-plate_number-specimen_id-dilution)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="max_well_value">
+        <datatype>double</datatype>
+        <columnTitle>Max Well Value</columnTitle>
+        <description>The maximum well value (luminescence?) across replicates/duplicates for each unique assay_id-run-plate_number-specimen_id-dilution)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="mean_well_value">
+        <datatype>double</datatype>
+        <columnTitle>Mean Well Value</columnTitle>
+        <description>The mean of the well values (luminescence?) across replicates/duplicates for each unique assay_id-run-plate_number-specimen_id-dilution)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="well_std_dev">
+        <datatype>double</datatype>
+        <columnTitle>Well Std Dev</columnTitle>
+        <description>The standard deviation around the mean of the well values (luminscence?) across replicates/duplicates for each unique assay_id-run-plate_number-specimen_id-dilution)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="percent_neutralization">
+        <datatype>double</datatype>
+        <columnTitle>Percent Neutralization</columnTitle>
+        <description>Represents the percent of virus neutralized by the specimen at a specific dilution. The percent neutralization is calculated using the mean well value (luminiscence?) of each unique assay_id-run-plate_number-specimen_id-dilution, where the mean is calculated across 1 or more replicates/duplicates (ReplicateNumber).</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="neutralization_plus_minus">
+        <datatype>double</datatype>
+        <columnTitle>Neutralization Plus Minus</columnTitle>
+        <description>Represents a range around the percent neutralization. The plus/minus is calculated by taking the standard deviation of the well data for that sample/dilution group and dividing it by the control range for the plate. The control range is mean of the virus control wells minus the mean of the cell control wells.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="titer_ic50">
+        <datatype>double</datatype>
+        <columnTitle>Titer IC50</columnTitle>
+        <description>The adjusted value of 50% maximal inhibitory concentration (IC50)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="titer_ic80">
+        <datatype>double</datatype>
+        <columnTitle>Titer IC80</columnTitle>
+        <description>The adjusted value of 80% maximal inhibitory concentration (IC80)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="nab_response_ic50">
+        <datatype>boolean</datatype>
+        <columnTitle>Response call IC50</columnTitle>
+        <description>Indicates if neutralization is detected at this concentration.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="nab_response_ic80">
+        <datatype>boolean</datatype>
+        <columnTitle>Response call IC80</columnTitle>
+        <description>Indicates if neutralization is detected at this concentration.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="slope">
+        <datatype>double</datatype>
+        <columnTitle>Slope</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>The slope of the dose–response curve. </description>
+        <measure>true</measure>
+      </column>
+      <column columnName="fit_min">
+        <datatype>double</datatype>
+        <columnTitle>Fit Min</columnTitle>
+        <description>Curve fit parameter - Minimum</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="fit_max">
+        <datatype>double</datatype>
+        <columnTitle>Fit Max</columnTitle>
+        <description>Curve fit parameter - Maximum</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="fit_asymmetry">
+        <datatype>double</datatype>
+        <columnTitle>Fit Asymmetry</columnTitle>
+        <description>Curve fit parameter - Asymmetry</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="fit_slope">
+        <datatype>double</datatype>
+        <columnTitle>Fit Slope</columnTitle>
+        <description>Curve fit parameter - Slope</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="fit_inflection">
+        <datatype>double</datatype>
+        <columnTitle>Fit Inflection</columnTitle>
+        <description>Curve fit parameter - Inflection point</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="fit_error">
+        <datatype>double</datatype>
+        <columnTitle>Fit Error</columnTitle>
+        <description>Curve fit error</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+
+    </columns>
+    <tableTitle>Neutralization Antibody - Monoclonal Antibodies</tableTitle>
+  </table>
 </tables>

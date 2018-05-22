@@ -15,7 +15,7 @@
  */
 SELECT
 (prot || '-' || study_part || '-' || study_group || '-' || study_arm) AS arm_id,
-containers.EntityId AS container,
+subCont.EntityId AS container,
 study_part AS arm_part,
 study_group AS arm_group,
 study_arm AS arm_name,
@@ -35,4 +35,4 @@ study_arm_last_exp_vacc_day AS last_day,
 prot
 FROM
 cds.import_studypartgrouparm AS arm
-JOIN core.containers AS containers ON (containers.name = arm.prot)
+JOIN core.containers AS subCont ON (subCont.name = arm.prot AND arm.container = subCont.parent)

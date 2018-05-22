@@ -16,6 +16,7 @@
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
+import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.ContainerFilterable;
@@ -30,7 +31,9 @@ import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
 import org.labkey.api.util.DateUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class PopulateTreatmentArmTask extends AbstractPopulateTask
@@ -38,38 +41,29 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
-        SQLFragment sql;
         BatchValidationException errors = new BatchValidationException();
-
-        QuerySchema cdsSchema;
-        QuerySchema studySchema;
-
-        TableInfo sourceTable;
-        TableInfo targetTable;
-
-        QueryUpdateService targetService;
 
         logger.info("Starting populate treatment arms.");
         long start = System.currentTimeMillis();
         for (Container container : project.getChildren())
         {
-            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
+            QuerySchema cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
 
             if (cdsSchema == null)
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            sourceTable = cdsSchema.getTable("ds_treatmentarm");
-            targetTable = cdsSchema.getTable("treatmentarm");
+            TableInfo treatmentArmSource = cdsSchema.getTable("ds_treatmentarm");
+            TableInfo treatmentArmTarget = cdsSchema.getTable("treatmentarm");
 
-            targetService = targetTable.getUpdateService();
+            QueryUpdateService TreatmentArmTargetService = treatmentArmTarget.getUpdateService();
 
-            if (targetService == null)
+            if (TreatmentArmTargetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.treatmentarm in " + container.getPath());
 
             // Delete Treatment Arms
             try
             {
-                targetService.truncateRows(user, container, null, null);
+                TreatmentArmTargetService.truncateRows(user, container, null, null);
             }
             catch (Exception e)
             {
@@ -86,15 +80,15 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
             }
 
             // Insert Treatment Arms
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
-            sql.add(container.getName());
+            SQLFragment treatmentArmSql = new SQLFragment("SELECT * FROM ").append(treatmentArmSource).append(" WHERE prot = ?");
+            treatmentArmSql.add(container.getName());
 
-            Map<String, Object>[] insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (insertRows.length > 0)
+            Map<String, Object>[] treatmentArmRows = new SqlSelector(treatmentArmSource.getSchema(), treatmentArmSql).getMapArray();
+            if (treatmentArmRows.length > 0)
             {
                 try
                 {
-                    targetTable.getUpdateService().insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
+                    treatmentArmTarget.getUpdateService().insertRows(user, container, Arrays.asList(treatmentArmRows), errors, null, null);
                 }
                 catch (Exception e)
                 {
@@ -112,25 +106,27 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
             }
 
             // Insert Treatment Arm Subject Mappings
-            sourceTable = cdsSchema.getTable("ds_treatmentarmsubject");
-            targetTable = cdsSchema.getTable("treatmentarmsubjectmap");
+            SQLFragment treatmentArmsMapSql = new SQLFragment("SELECT TA.arm_id, ITS.subject_id AS participantId, ITS.prot\n");
+            treatmentArmsMapSql.append("FROM (SELECT * FROM cds.import_studypartgrouparmsubject WHERE container = ? AND prot = ?) AS ITS\n")
+                    .add(project)
+                    .add(container.getName())
+                    .append("INNER JOIN (SELECT * FROM cds.treatmentarm WHERE container = ?) AS TA\n")
+                    .add(container)
+                    .append("ON (TA.arm_part = ITS.study_part AND TA.arm_group = ITS.study_group AND TA.arm_name = ITS.study_arm)\n");
 
-            targetService = targetTable.getUpdateService();
+            TableInfo treatmentArmsMapTarget = cdsSchema.getTable("treatmentarmsubjectmap");
 
-            if (targetService == null)
+            QueryUpdateService treatmentArmsMapTargetService = treatmentArmsMapTarget.getUpdateService();
+
+            if (treatmentArmsMapTargetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.treatmentarmsubjectmap in " + container.getPath());
 
-            ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
-
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
-            sql.add(container.getName());
-
-            insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (insertRows.length > 0)
+            Map<String, Object>[] treatmentArmsMapRows = new SqlSelector(cdsSchema.getDbSchema(), treatmentArmsMapSql).getMapArray();
+            if (treatmentArmsMapRows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
+                    treatmentArmsMapTargetService.insertRows(user, container, Arrays.asList(treatmentArmsMapRows), errors, null, null);
                 }
                 catch (Exception e)
                 {
@@ -155,31 +151,31 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         // Populate Visit Tags (Project level only)
         //
         start = System.currentTimeMillis();
-        studySchema = DefaultSchema.get(user, project).getSchema("study");
+        QuerySchema studySchema = DefaultSchema.get(user, project).getSchema("study");
 
         if (studySchema == null)
             throw new PipelineJobException("Unable to find study schema for project " + project.getPath());
 
-        cdsSchema = DefaultSchema.get(user, project).getSchema("cds");
+        QuerySchema projectCdsSchema = DefaultSchema.get(user, project).getSchema("cds");
 
-        if (cdsSchema == null)
+        if (projectCdsSchema == null)
             throw new PipelineJobException("Unable to find cds schema for project " + project.getPath());
 
-        sourceTable = cdsSchema.getTable("ds_visittag");
-        targetTable = studySchema.getTable("visittag");
-        targetService = targetTable.getUpdateService();
+        TableInfo visitTagSourceTable = projectCdsSchema.getTable("ds_visittag");
+        TableInfo visitTagTargetTable = studySchema.getTable("visittag");
+        QueryUpdateService visitTagTargetService = visitTagTargetTable.getUpdateService();
 
-        if (targetService == null)
+        if (visitTagTargetService == null)
             throw new PipelineJobException("Unable to find update service for study.visittag in project " + project.getPath());
 
-        sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
+        SQLFragment visitTagSql = new SQLFragment("SELECT * FROM ").append(visitTagSourceTable);
 
-        Map<String, Object>[] rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-        if (rows.length > 0)
+        Map<String, Object>[] visitTagRows = new SqlSelector(visitTagSourceTable.getSchema(), visitTagSql).getMapArray();
+        if (visitTagRows.length > 0)
         {
             try
             {
-                targetService.insertRows(user, project, Arrays.asList(rows), errors, null, null);
+                visitTagTargetService.insertRows(user, project, Arrays.asList(visitTagRows), errors, null, null);
             }
             catch (Exception e)
             {
@@ -201,29 +197,79 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         //
         for (Container container : project.getChildren())
         {
-            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
+            QuerySchema cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
 
             if (cdsSchema == null)
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            sourceTable = cdsSchema.getTable("ds_visittagmap");
-            ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
+            TableInfo visitTagMapTarget = cdsSchema.getTable("visittagmap");
+            QueryUpdateService visitTagMapTargetService = visitTagMapTarget.getUpdateService();
 
-            targetTable = cdsSchema.getTable("visittagmap");
-            targetService = targetTable.getUpdateService();
-
-            if (targetService == null)
+            if (visitTagMapTargetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.visittagmap in folder " + container.getPath());
 
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
-            sql.add(container.getName());
+            // Get all rows from this query and then set visit_tag and single_use before inserting
+            // Some rows in import_studypartgrouparmvisit map to multiple rows in the target
+            SQLFragment visitTagMapSql = new SQLFragment("SELECT DISTINCT visit.rowid AS visit_row_id,\n");
+            visitTagMapSql.append("studygroup.row_id AS study_group_id,\n")
+                    .append("arm_visit.study_arm,\n")
+                    .append("arm_visit.prot || '-' || arm_visit.study_part || '-' || arm_visit.study_group || '-' || arm_visit.study_arm AS arm_id,\n")
+                    .append("arm_visit.prot,\n")
+                    .append("arm_visit.study_arm_visit_label AS visit_tag_label,\n")
+                    .append("arm_visit.isvaccvis AS is_vaccination,\n")
+                    .append("arm_visit.ischallvis AS is_challenge,\n")
+                    .append("arm_visit.study_arm_visit_detail_label AS detail_label,\n")
+                    .append("arm_visit.study_arm_visit_type,\n")
+                    .append("arm_visit.enrollment,\n")
+                    .append("arm_visit.lastvacc,\n")
+                    .append("arm_visit.firstvacc\n")
+                    .append("FROM (SELECT * FROM cds.import_studypartgrouparmvisit WHERE container = ? AND prot = ?) AS arm_visit\n")
+                    .add(project)
+                    .add(container.getName())
+                    .append("INNER JOIN (SELECT * FROM cds.studygroup WHERE container = ?) AS studygroup\n")
+                    .add(container)
+                    .append("ON (studygroup.group_name = arm_visit.study_group)\n")
+                    .append("INNER JOIN (SELECT * FROM study.visit WHERE container = ?) AS visit\n")
+                    .add(container)
+                    .append("ON (visit.sequencenummin = CAST(arm_visit.study_day AS DOUBLE PRECISION))");
 
-            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (rows.length > 0)
+            List<Map<String, Object>> visitTagMapRows = new ArrayList<>();
+            new SqlSelector(cdsSchema.getDbSchema(), visitTagMapSql).getMapCollection().forEach(row -> {
+                String study_arm_visit_type = (String)row.get("study_arm_visit_type");
+                if (null != study_arm_visit_type && !"Placeholder".equalsIgnoreCase(study_arm_visit_type))
+                {
+                    Map<String, Object> newRow = new CaseInsensitiveHashMap<>(row);
+                    newRow.put("visit_tag", study_arm_visit_type);
+                    newRow.put("single_use", false);
+                    visitTagMapRows.add(newRow);
+                }
+                if ((Boolean)row.get("enrollment"))
+                {
+                    Map<String, Object> newRow = new CaseInsensitiveHashMap<>(row);
+                    newRow.put("visit_tag", "Enrollment");
+                    newRow.put("single_use", true);
+                    visitTagMapRows.add(newRow);
+                }
+                if ((Boolean)row.get("lastvacc"))
+                {
+                    Map<String, Object> newRow = new CaseInsensitiveHashMap<>(row);
+                    newRow.put("visit_tag", "Last Vaccination");
+                    newRow.put("single_use", true);
+                    visitTagMapRows.add(newRow);
+                }
+                if ((Boolean)row.get("firstvacc"))
+                {
+                    Map<String, Object> newRow = new CaseInsensitiveHashMap<>(row);
+                    newRow.put("visit_tag", "First Vaccination");
+                    newRow.put("single_use", true);
+                    visitTagMapRows.add(newRow);
+                }
+            });
+            if (visitTagMapRows.size() > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                    visitTagMapTargetService.insertRows(user, container, visitTagMapRows, errors, null, null);
                 }
                 catch (Exception e)
                 {
@@ -241,21 +287,21 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
             }
 
             // Insert Visit Tag Alignment
-            targetTable = cdsSchema.getTable("visittagalignment");
-            targetService = targetTable.getUpdateService();
-            if (targetService == null)
+            TableInfo visitTagAlignTarget = cdsSchema.getTable("visittagalignment");
+            QueryUpdateService visitTagAlignTargetService = visitTagAlignTarget.getUpdateService();
+            if (visitTagAlignTargetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.visittagalignment in " + container.getPath());
 
-            sourceTable = cdsSchema.getTable("ds_visittagalignment");
-            ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
+            TableInfo visitTagAlignSource = cdsSchema.getTable("ds_visittagalignment");
+            ((ContainerFilterable) visitTagAlignSource).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
+            SQLFragment visitTagAlignSql = new SQLFragment("SELECT * FROM ").append(visitTagAlignSource);
 
-            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (rows.length > 0)
+            Map<String, Object>[] visitTagAlignRows = new SqlSelector(visitTagAlignSource.getSchema(), visitTagAlignSql).getMapArray();
+            if (visitTagAlignRows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                    visitTagAlignTargetService.insertRows(user, container, Arrays.asList(visitTagAlignRows), errors, null, null);
                 }
                 catch (Exception e)
                 {
@@ -279,29 +325,29 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         start = System.currentTimeMillis();
         for (Container container : project.getChildren())
         {
-            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
+            QuerySchema cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
 
             if (cdsSchema == null)
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            sourceTable = cdsSchema.getTable("ds_subjectproduct");
-            targetTable = cdsSchema.getTable("SubjectProductMap");
+            TableInfo subjectProductSource = cdsSchema.getTable("ds_subjectproduct");
+            TableInfo subjectProductTarget = cdsSchema.getTable("SubjectProductMap");
 
-            targetService = targetTable.getUpdateService();
+            QueryUpdateService subjectProductTargetService = subjectProductTarget.getUpdateService();
 
-            if (targetService == null)
+            if (subjectProductTargetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.SubjectProductMap in " + container.getPath());
 
             // Insert Subject Product Mapping
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
-            sql.add(container.getName());
+            SQLFragment subjectProductSql = new SQLFragment("SELECT * FROM ").append(subjectProductSource).append(" WHERE prot = ?");
+            subjectProductSql.add(container.getName());
 
-            Map<String, Object>[] insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            Map<String, Object>[] insertRows = new SqlSelector(subjectProductSource.getSchema(), subjectProductSql).getMapArray();
             if (insertRows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
+                    subjectProductTargetService.insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
                 }
                 catch (Exception e)
                 {
@@ -325,29 +371,29 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         start = System.currentTimeMillis();
         for (Container container : project.getChildren())
         {
-            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
+            QuerySchema cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
 
             if (cdsSchema == null)
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            sourceTable = cdsSchema.getTable("ds_studypartgrouparmproduct");
-            targetTable = cdsSchema.getTable("StudyPartGroupArmProduct");
+            TableInfo studyPartGroupSource = cdsSchema.getTable("ds_studypartgrouparmproduct");
+            TableInfo studyPartGroupTarget = cdsSchema.getTable("StudyPartGroupArmProduct");
 
-            targetService = targetTable.getUpdateService();
+            QueryUpdateService studyPartGroupTargetService = studyPartGroupTarget.getUpdateService();
 
-            if (targetService == null)
+            if (studyPartGroupTargetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.StudyPartGroupArmProduct in " + container.getPath());
 
             // Insert Subject Product Mapping
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
-            sql.add(container.getName());
+            SQLFragment studyPartSql = new SQLFragment("SELECT * FROM ").append(studyPartGroupSource).append(" WHERE prot = ?");
+            studyPartSql.add(container.getName());
 
-            Map<String, Object>[] insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            Map<String, Object>[] insertRows = new SqlSelector(studyPartGroupSource.getSchema(), studyPartSql).getMapArray();
             if (insertRows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
+                    studyPartGroupTargetService.insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
                 }
                 catch (Exception e)
                 {

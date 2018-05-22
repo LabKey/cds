@@ -48,5 +48,12 @@ LEFT JOIN (
   prot,
   assay_identifier
   FROM cds.import_bama
+
+  UNION
+
+  SELECT DISTINCT
+    prot,
+    assay_identifier
+  FROM cds.import_nabmab
 ) d --dataTable
 ON d.prot=md.prot AND d.assay_identifier=md.assay_identifier

@@ -13,5 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-SELECT *
+SELECT *,
+    container AS projectContainer
 FROM cds.import_studypartgrouparmproduct

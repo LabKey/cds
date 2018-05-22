@@ -38,39 +38,30 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
-        SQLFragment sql;
         BatchValidationException errors = new BatchValidationException();
 
         // populate cohorts
-        QuerySchema studySchema;
-        QuerySchema cdsSchema;
-
-        TableInfo sourceTable;
-        TableInfo targetTable;
-
-        QueryUpdateService targetService;
-        Map<String, Object>[] rows;
-
+        QuerySchema projectCdsSchema = DefaultSchema.get(user, project).getSchema("cds");
         logger.info("Starting visit management.");
         long start = System.currentTimeMillis();
         for (Container container : project.getChildren())
         {
-            studySchema = DefaultSchema.get(user, container).getSchema("study");
+            QuerySchema studySchema = DefaultSchema.get(user, container).getSchema("study");
 
             if (studySchema == null)
                 throw new PipelineJobException("Unable to find study schema for folder " + container.getPath());
 
-            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
+            QuerySchema cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
 
             if (cdsSchema == null)
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            sourceTable = cdsSchema.getTable("ds_studygroup");
-            targetTable = cdsSchema.getTable("studygroup");
+            TableInfo studyGroupSource = cdsSchema.getTable("ds_studygroup");
+            TableInfo studyGroupTarget = cdsSchema.getTable("studygroup");
 
-            targetService = targetTable.getUpdateService();
+            QueryUpdateService studyGroupTargetService = studyGroupTarget.getUpdateService();
 
-            if (targetService == null)
+            if (studyGroupTargetService == null)
                 throw new PipelineJobException("Unable to find update service for study.cohort in folder " + container.getPath());
 
             //
@@ -78,7 +69,7 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
             //
             try
             {
-                targetService.truncateRows(user, container, null, null);
+                studyGroupTargetService.truncateRows(user, container, null, null);
             }
             catch (Exception e)
             {
@@ -97,15 +88,15 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
             //
             // Insert Study Groups
             //
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
-            sql.add(container.getName());
+            SQLFragment studyGroupSql = new SQLFragment("SELECT * FROM ").append(studyGroupSource).append(" WHERE prot = ?");
+            studyGroupSql.add(container.getName());
 
-            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (rows.length > 0)
+            Map<String, Object>[] studyGroupRows = new SqlSelector(studyGroupSource.getSchema(), studyGroupSql).getMapArray();
+            if (studyGroupRows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                    studyGroupTargetService.insertRows(user, container, Arrays.asList(studyGroupRows), errors, null, null);
                 }
                 catch (Exception e)
                 {
@@ -125,22 +116,22 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
             //
             // Update Visits
             //
-            sourceTable = cdsSchema.getTable("ds_visit");
-            targetTable = studySchema.getTable("visit");
-            targetService = targetTable.getUpdateService();
+            TableInfo visitSource = cdsSchema.getTable("ds_visit");
+            TableInfo visitTarget = studySchema.getTable("visit");
+            QueryUpdateService visitTargetService = visitTarget.getUpdateService();
 
-            if (targetService == null)
+            if (visitTargetService == null)
                 throw new PipelineJobException("Unable to find update service for study.visit in folder " + container.getPath());
 
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
-            sql.add(container.getName());
+            SQLFragment visitSql = new SQLFragment("SELECT * FROM ").append(visitSource).append(" WHERE prot = ?");
+            visitSql.add(container.getName());
 
-            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (rows.length > 0)
+            Map<String, Object>[] visitRows = new SqlSelector(visitSource.getSchema(), visitSql).getMapArray();
+            if (visitRows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                    visitTargetService.insertRows(user, container, Arrays.asList(visitRows), errors, null, null);
                 }
                 catch (Exception e)
                 {
@@ -151,24 +142,29 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
             //
             // Populate Study Group Visit Map (Schedule)
             //
-            sourceTable = cdsSchema.getTable("ds_studygroupvisit");
-            targetTable = cdsSchema.getTable("studygroupvisitmap");
-            targetService = targetTable.getUpdateService();
+            SQLFragment studyGroupVisitMapSql = new SQLFragment("SELECT DISTINCT studygroup.row_id AS group_id, visit.rowid AS visit_row_id, arm_visit.prot\n");
+            studyGroupVisitMapSql.append("FROM (SELECT * FROM cds.import_studypartgrouparmvisit WHERE container = ? AND prot = ?) AS arm_visit\n")
+                    .add(project)
+                    .add(container.getName())
+                    .append("INNER JOIN (SELECT * FROM cds.studygroup WHERE container = ?) AS studygroup\n")
+                    .add(container)
+                    .append("ON (studygroup.group_name = arm_visit.study_group)\n")
+                    .append("INNER JOIN (SELECT * FROM study.visit WHERE container = ?) AS visit\n")
+                    .add(container)
+                    .append("ON (visit.sequencenummin = CAST(arm_visit.study_day AS DOUBLE PRECISION))");
 
-            if (targetService == null)
+            TableInfo studyGroupVisitMapTarget = cdsSchema.getTable("studygroupvisitmap");
+            QueryUpdateService studyGroupVisitMapTargetService = studyGroupVisitMapTarget.getUpdateService();
+
+            if (studyGroupVisitMapTargetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.studygroupvisitmap in folder " + container.getPath());
 
-            ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
-
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
-            sql.add(container.getName());
-
-            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (rows.length > 0)
+            Map<String, Object>[] studyGroupVisitMapRows = new SqlSelector(projectCdsSchema.getDbSchema(), studyGroupVisitMapSql).getMapArray();
+            if (studyGroupVisitMapRows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                    studyGroupVisitMapTargetService.insertRows(user, container, Arrays.asList(studyGroupVisitMapRows), errors, null, null);
                 }
                 catch (Exception e)
                 {

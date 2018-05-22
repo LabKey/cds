@@ -189,6 +189,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         _ext4Helper.waitForMaskToDisappear(30000);
+        waitForText(CDSHelper.SUBJECT_CHARS);
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
         cds.pickSort("Race");
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
@@ -230,7 +231,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.pickSort("Lab");
-        for (String assay : CDSHelper.ASSAYS)
+        for (String assay : CDSHelper.SUBJECT_ASSAYS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
         }
@@ -239,7 +240,7 @@ public class CDSTest extends CDSReadOnlyTest
             assertElementPresent(CDSHelper.Locators.barLabel.withText(lab));
         }
         cds.pickSort("Immunogenicity Type");
-        for (String assay : CDSHelper.ASSAYS)
+        for (String assay : CDSHelper.SUBJECT_ASSAYS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
         }
@@ -248,7 +249,7 @@ public class CDSTest extends CDSReadOnlyTest
             assertElementPresent(CDSHelper.Locators.barLabel.withText(i_type));
         }
         cds.pickSort("Study");
-        for (String assay : CDSHelper.ASSAYS)
+        for (String assay : CDSHelper.SUBJECT_ASSAYS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
         }
@@ -257,7 +258,7 @@ public class CDSTest extends CDSReadOnlyTest
             assertElementPresent(CDSHelper.Locators.barLabel.withText(protocol));
         }
         cds.pickSort("Assay Type");
-        for (String assay : CDSHelper.ASSAYS)
+        for (String assay : CDSHelper.SUBJECT_ASSAYS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
         }

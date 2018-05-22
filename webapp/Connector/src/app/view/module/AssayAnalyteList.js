@@ -56,6 +56,9 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
                 assay_id = this.data.model.get('assay_identifier'),
                 assay_type = this.data.model.get('assay_type');
 
+        if (assay_type.toUpperCase() === 'NABMAB')
+            return;
+
         store.loadAnalytes(assay_type, this.assayNameToAnalytesMap[assay_type], function(results) {
             this.update({
                 title: title,

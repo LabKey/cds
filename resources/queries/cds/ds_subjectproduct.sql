@@ -19,6 +19,8 @@ ArmSubject.subject_id AS participantid,
 ProductInsert.insert_name,
 ProductInsert.clade_name,
 ArmProduct.prot,
+ArmProduct.container AS projectContainer
+
 FROM cds.import_studypartgrouparmproduct AS ArmProduct
 JOIN cds.import_studypartgrouparmsubject AS ArmSubject ON (
   ArmSubject.prot = ArmProduct.prot AND

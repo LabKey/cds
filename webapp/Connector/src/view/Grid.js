@@ -873,7 +873,8 @@ Ext.define('Connector.view.Grid', {
                 "query.showRows": ['ALL'],
                 columnNames: [],
                 columnAliases: [],
-                variables: []
+                variables: [],
+                'X-LABKEY-CSRF': LABKEY.CSRF
             };
 
             var dataTabNames = [], schemaNames = [], queryNames = [], metadatas = this.getModel().get('metadatas');
