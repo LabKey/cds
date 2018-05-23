@@ -17,6 +17,7 @@ SELECT DISTINCT
    md.prot AS study_name,
    md.prot,
    md.product_id,
+   md.container AS projectContainer,
    d.product_id IS NOT NULL AND d.prot IS NOT NULL AS has_data
 FROM import_studyproduct md --metadataTable
 --Pulls in real data for each metadata relationship if it exists.

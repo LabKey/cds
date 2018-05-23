@@ -47,7 +47,7 @@ public class CDSUserSchema extends SimpleUserSchema
     public static final String METADATA_SCHEMA_NAME = "metadata";
     private static final List<String> SUBJECT_IMPORT_TABLES = Arrays.asList("import_ics", "import_nab", "import_els_ifng", "import_bama",
             "import_studypartgrouparmsubject", "import_studypartgrouparmproduct", "import_studypartgrouparmvisit", "import_studypartgrouparmvisitproduct",
-            "import_studypartgrouparm", "import_studysubject");
+            "import_studypartgrouparm", "import_studysubject", "import_nabmab");
 
     private boolean metadata = false;
 

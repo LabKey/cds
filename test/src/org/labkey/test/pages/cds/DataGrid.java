@@ -197,12 +197,14 @@ public class DataGrid
     public void setFilter(@LoggedParam String columnName, @LoggedParam String filter, @LoggedParam String value)
     {
         openFilterPanel(columnName);
+        Locator filterBtn = CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn");
+        _test.scrollIntoView(filterBtn);
         if (null != filter)
             _test._ext4Helper.selectComboBoxItem("Value:", filter);
 
         _test.waitForElement(Locator.id("value_1"));
         _test.setFormElement(Locator.css("#value_1 input"), value);
-        applyAndWaitForGrid(() -> _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn")));
+        applyAndWaitForGrid(() -> _test.click(filterBtn));
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(columnName));
     }
 

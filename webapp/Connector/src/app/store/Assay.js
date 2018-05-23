@@ -94,7 +94,8 @@ Ext.define('Connector.app.store.Assay', {
                 assay.antigen_store = Ext.create('Connector.app.store.AssayAntigen', {
                     model: 'Connector.app.model.AssayAntigen',
                     storeId: 'assayantigen_' + assay.assay_type,
-                    assayType: assay.assay_type
+                    assayType: assay.assay_type,
+                    assayId: assay.assay_identifier
                 });
                 assay.variable_store = Ext.create('Connector.app.store.VariableList', {
                     storeId: 'assayvariable_' + assay.assay_type,

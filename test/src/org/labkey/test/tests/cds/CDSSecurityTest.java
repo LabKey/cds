@@ -205,6 +205,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         String study = "QED 2";
         Locator element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
+        scrollIntoView(element);
+        mouseOver(element);
+        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
         waitAndClick(element);
         waitForText("Data Availability");
         Assert.assertTrue("Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
@@ -214,6 +217,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         study = "RED 4";
         element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
+        scrollIntoView(element);
+        mouseOver(element);
+        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
         waitAndClick(element);
         waitForText("Data Availability");
 
@@ -238,7 +244,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         LearnGrid learnGrid = new LearnGrid(this);
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
-        String qed2DataAddedText = hasAccessToQ2 ? "1 Assay Accessible" : "0/1 Assay Accessible";
+        String qed2DataAddedText = hasAccessToQ2 ? "2 Assays Accessible" : "0/2 Assays Accessible";
         String cellText = learnGrid.getCellText(1, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for study 'QED 2' not as expected. Expected: '" + qed2DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(qed2DataAddedText.trim().toLowerCase()));
         log("'Data Added' column text as expected for study 'QED 2'.");
@@ -247,11 +253,11 @@ public class CDSSecurityTest extends CDSReadOnlyTest
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         if (hasAccessToQ2)
-            validateToolTipText(toolTipText, "Assays with Data Accessible", "NAB");
+            validateToolTipText(toolTipText, "Assays with Data Accessible", "NAB", "NABMAB");
         else
-            validateToolTipText(toolTipText, "Assays without Data Accessible", "NAB");
+            validateToolTipText(toolTipText, "Assays without Data Accessible", "NAB", "NABMAB");
 
-        String red4DataAddedText = "0/2 Assays Accessible";
+        String red4DataAddedText = "0/3 Assays Accessible";
         cellText = learnGrid.getCellText(7, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for study 'RED 4' not as expected. Expected: '" + red4DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(red4DataAddedText.trim().toLowerCase()));
         log("'Data Added' column text as expected for study 'RED 4'.");
@@ -259,7 +265,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(7, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateToolTipText(toolTipText, "Assays without Data Accessible", "ICS", "IFNg ELISpot");
+        validateToolTipText(toolTipText, "Assays without Data Accessible", "ICS", "IFNg ELISpot", "NABMAB");
     }
 
     private void validateToolTipText(String toolTipText, String... expectedText)
