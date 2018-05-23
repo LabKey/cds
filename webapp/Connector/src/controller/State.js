@@ -5,6 +5,9 @@
  */
 Ext.define('Connector.controller.State', {
     extend: 'LABKEY.app.controller.State',
+    requires : [
+        'Connector.model.State'
+    ],
 
     defaultTitle: 'CAVD DataSpace',
 
@@ -18,12 +21,65 @@ Ext.define('Connector.controller.State', {
 
     isService: true,
 
+    modelClazz: 'Connector.model.State',
+
     init : function() {
         this.callParent();
+
+        this.mabfilters = [];
 
         this.onMDXReady(function(mdx) {
             Connector.model.Filter.loadSubjectContainer(mdx);
         });
+    },
+
+    loadState: function(idx) {
+        if (!idx) {
+            idx = this.state.getCount()-1; // load most recent state
+        }
+
+        if (idx >= 0) {
+            var s = this.state.getAt(idx).data;
+            if (s.mabfilters && s.mabfilters.length > 0) {
+                this.setMabFilters(s.mabfilters, true);
+            }
+
+            if (s.selectedMAbs && s.selectedMAbs.length > 0) {
+                this.updateSelectedMAbs(s.selectedMAbs, true);
+            }
+        }
+
+        this.callParent();
+    },
+
+    updateState : function() {
+
+        // prepare filters
+        var jsonReadyFilters = [];
+        Ext.each(this.filters, function(f) {
+            jsonReadyFilters.push(f.jsonify());
+        });
+
+        // prepare selections
+        var jsonReadySelections = [];
+        Ext.each(this.selections, function(s) {
+            jsonReadySelections.push(s.jsonify());
+        });
+
+        var jsonReadyMabFilters = [];
+        Ext.each(this.mabfilters, function(f) {
+            jsonReadyMabFilters.push(f.jsonify());
+        });
+
+        this._sync([{
+            name: this.getStateFilterName(),
+            viewState: {},
+            customState: this.customState,
+            filters: jsonReadyFilters,
+            selections: jsonReadySelections,
+            mabfilters: jsonReadyMabFilters,
+            selectedMAbs: this.selectedMAbs
+        }]);
     },
 
     checkReady : function() {
@@ -216,5 +272,86 @@ Ext.define('Connector.controller.State', {
             this.selections = [];
             this.requestSelectionUpdate(_skip, false, isMoveToFilter);
         }
+    },
+
+    getMabFilters : function(flat) {
+        if (!this.mabfilters)
+            return [];
+
+        if (!flat)
+            return this.mabfilters;
+
+        var flatMabFilters = [];
+        for (var f=0; f < this.mabfilters.length; f++) {
+            flatMabFilters.push(this.mabfilters[f].data);
+        }
+
+        return flatMabFilters;
+    },
+
+    setMabFilters : function(mabfilters, skipState) {
+        this.mabfilters = this._getFilterSet(mabfilters);
+        if (!skipState)
+            this.updateState();
+    },
+
+    removeMabFilter : function(columnName, skipState)
+    {
+        var filterSet = [];
+
+        Ext.each(this.getMabFilters(true), function(filter)
+        {
+            if (columnName !== filter.gridFilter[0].getColumnName())
+            {
+                filterSet.push(filter);
+            }
+        });
+
+        if (Ext.isEmpty(filterSet))
+        {
+            this.clearMabFilters(skipState);
+        }
+        else
+        {
+            this.setMabFilters(filterSet, skipState);
+        }
+    },
+
+    updateMabFilter: function(columnName, newFilter, skipState)
+    {
+        var filterSet = [], updated = false;
+        Ext.each(this.getMabFilters(true), function(filter)
+        {
+            if (columnName === filter.gridFilter[0].getColumnName()) {
+                updated = true;
+                filterSet.push(newFilter);
+            }
+            else
+                filterSet.push(filter);
+        });
+        if (!updated)
+            filterSet.push(newFilter);
+
+        this.setMabFilters(filterSet, skipState);
+    },
+
+    clearMabFilters: function(skipState)
+    {
+        this.mabfilters = [];
+        if (!skipState)
+            this.updateState();
+    },
+
+    getSelectedMAbs: function()
+    {
+        return this.selectedMAbs;
+    },
+
+    updateSelectedMAbs: function(mAbs, skipState)
+    {
+        this.selectedMAbs = mAbs;
+        if (!skipState)
+            this.updateState();
     }
+
 });

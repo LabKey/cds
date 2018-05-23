@@ -12,12 +12,16 @@ Ext.define('Connector.model.State', {
     ],
 
     fields: [
-        {name: 'activeView'},
-        {name: 'viewState'},
-        {name: 'views'},
-        {name: 'filters'}, // type: Ext.data.Types.FILTER,
-        {name: 'selections'},
-        {name: 'detail'}
+        {name : 'name'},
+        {name : 'activeView'},
+        {name : 'viewState'},
+        {name : 'views'},
+        {name : 'customState'},
+        {name : 'filters'}, // type: Ext.data.Types.FILTER,
+        {name : 'mabfilters'}, // type: Ext.data.Types.FILTER,
+        {name : 'selections'},
+        {name : 'selectedMAbs'},
+        {name : 'detail'}
     ],
 
     proxy: {

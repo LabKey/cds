@@ -63,6 +63,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
         for (Container container : project.getChildren())
         {
             clearTable("cds", "facts", container, logger);
+            clearTable("cds", "mAbGridBase", container, logger);
             clearTable("cds", "GridBase", container, logger);
             clearTable("cds", "visittagalignment", container, logger);
             clearTable("cds", "visittagmap", container, logger);
@@ -80,6 +81,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
 
         clearTable("cds", "studyproductmap", project, logger);      // May have project data, too
         clearTable("cds", "mabmix", project, logger);
+        clearTable("cds", "mAbMetaGridBase", project, logger);
         clearTable("cds", "icsantigen", project, logger);
         clearTable("cds", "nabantigen", project, logger);
         clearTable("cds", "elispotantigen", project, logger);
