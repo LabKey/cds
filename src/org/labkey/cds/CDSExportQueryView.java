@@ -243,7 +243,7 @@ public class CDSExportQueryView extends QueryView
         }
 
         ew.renderNewSheet();
-        ColumnInfo filterColumnInfo = new ColumnInfo(FieldKey.fromParts(METADATA_SHEET));
+        ColumnInfo filterColumnInfo = new ColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
         ew.setColumns(Collections.singletonList(filterColumnInfo));
         ew.setSheetName(METADATA_SHEET);
 
@@ -472,7 +472,7 @@ public class CDSExportQueryView extends QueryView
 
     private List<ColumnInfo> getColumns(List<String> columnNames)
     {
-        return columnNames.stream().map(column -> new ColumnInfo(FieldKey.fromParts(column))).collect(Collectors.toList());
+        return columnNames.stream().map(column -> new ColumnInfo(column, JdbcType.VARCHAR)).collect(Collectors.toList());
     }
 
     public List<Map<String, Object>> getStudies(String[] studyNames)
