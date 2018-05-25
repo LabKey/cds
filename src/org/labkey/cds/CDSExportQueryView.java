@@ -33,6 +33,7 @@ import org.labkey.api.query.QueryView;
 import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.StringUtilsLabKey;
 import org.labkey.api.view.DataView;
+import org.labkey.remoteapi.collections.CaseInsensitiveHashMap;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -457,7 +458,7 @@ public class CDSExportQueryView extends QueryView
         {
             for (List<String> rowText : rowTexts)
             {
-                Map<String, Object> row = new HashMap<>();
+                Map<String, Object> row = new CaseInsensitiveHashMap<>();
                 for (int i = 0 ; i < columnInfos.size(); i++)
                 {
                     row.put(columnInfos.get(i).getAlias(), rowText.get(i));
@@ -465,9 +466,7 @@ public class CDSExportQueryView extends QueryView
                 rows.add(row);
             }
         }
-
         List<String> cols = columnInfos.stream().map(ColumnInfo::getAlias).collect(Collectors.toList());
-
         return new ResultsImpl(CachedResultSets.create(rows, cols), columnInfos);
     }
 
