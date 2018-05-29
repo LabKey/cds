@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
+import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.*;
 import org.labkey.api.query.FieldKey;
 import org.labkey.api.query.QuerySettings;
@@ -33,7 +34,6 @@ import org.labkey.api.query.QueryView;
 import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.StringUtilsLabKey;
 import org.labkey.api.view.DataView;
-import org.labkey.remoteapi.query.jdbc.LabKeyResultSet;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -243,7 +243,7 @@ public class CDSExportQueryView extends QueryView
         }
 
         ew.renderNewSheet();
-        ColumnInfo filterColumnInfo = new ColumnInfo(FieldKey.fromParts(METADATA_SHEET));
+        ColumnInfo filterColumnInfo = new ColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
         ew.setColumns(Collections.singletonList(filterColumnInfo));
         ew.setSheetName(METADATA_SHEET);
 
@@ -458,7 +458,7 @@ public class CDSExportQueryView extends QueryView
         {
             for (List<String> rowText : rowTexts)
             {
-                Map<String, Object> row = new HashMap<>();
+                Map<String, Object> row = new CaseInsensitiveHashMap<>();
                 for (int i = 0 ; i < columnInfos.size(); i++)
                 {
                     row.put(columnInfos.get(i).getAlias(), rowText.get(i));
@@ -466,18 +466,13 @@ public class CDSExportQueryView extends QueryView
                 rows.add(row);
             }
         }
-
-        List<LabKeyResultSet.Column> cols = new ArrayList<>();
-        for (ColumnInfo info : columnInfos)
-            cols.add(new LabKeyResultSet.Column(info.getAlias(), String.class));
-
-        ResultSet resultSet = new LabKeyResultSet(rows, cols, null);
-        return new ResultsImpl(resultSet, columnInfos);
+        List<String> cols = columnInfos.stream().map(ColumnInfo::getAlias).collect(Collectors.toList());
+        return new ResultsImpl(CachedResultSets.create(rows, cols), columnInfos);
     }
 
     private List<ColumnInfo> getColumns(List<String> columnNames)
     {
-        return columnNames.stream().map(column -> new ColumnInfo(FieldKey.fromParts(column))).collect(Collectors.toList());
+        return columnNames.stream().map(column -> new ColumnInfo(column, JdbcType.VARCHAR)).collect(Collectors.toList());
     }
 
     public List<Map<String, Object>> getStudies(String[] studyNames)
