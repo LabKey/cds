@@ -5,58 +5,17 @@
  */
 Ext.define('Connector.controller.Data', {
 
-    extend : 'Connector.controller.AbstractViewController',
+    extend : 'Connector.controller.AbstractGridController',
 
     views: ['Grid'],
 
-    createView : function(xtype, context) {
+    controllerName: 'data',
 
-        var v, gridType = 'groupdatagrid';
+    viewXtype: 'groupdatagrid',
 
-        if (xtype === gridType) {
-            v = Ext.create('Connector.view.Grid', {
-                model: Ext.create('Connector.model.Grid', {})
-            });
+    viewClazz: 'Connector.view.Grid',
 
-            var vm = this.getViewManager();
+    modelClazz: 'Connector.model.Grid',
 
-            vm.on('beforechangeview', function(controller, view, currentContext)
-            {
-                // If a chart view is being activated, ensure it is not
-                // a view of plotType so to not deactivate the view unintentionally
-                if (controller == 'data')
-                {
-                    if (Ext.isDefined(view) && view != gridType)
-                    {
-                        v.onDeactivate.call(v);
-                    }
-                }
-                else if (currentContext.view == gridType)
-                {
-                    v.onDeactivate.call(v);
-                }
-            });
-            vm.on('afterchangeview', function(c, view)
-            {
-                if (view == gridType)
-                {
-                    v.onActivate.call(v);
-                }
-            });
-        }
-
-        return v;
-    },
-
-    updateView : function(xtype, context) { },
-
-    getViewTitle : function(xtype, context) {
-        if (xtype === 'groupdatagrid') {
-            return 'Data Grid';
-        }
-    },
-
-    getDefaultView : function() {
-        return 'groupdatagrid';
-    }
+    viewTitle: 'Data Grid'
 });

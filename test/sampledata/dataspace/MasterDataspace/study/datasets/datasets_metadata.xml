@@ -1200,7 +1200,7 @@
       </column>
       <column columnName="mab_mix_id">
         <datatype>varchar</datatype>
-        <columnTitle>mab mix id</columnTitle>
+        <columnTitle>mAb Mix Id</columnTitle>
         <description>Unique ID assigned to an individual mAb or mixture of mAbs. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <fk>
@@ -1301,6 +1301,13 @@
         <description>The number of times the mAb has been diluted from the initial concentration to reach the mAb concentration being tested. </description>
         <dimension>false</dimension>
       </column>
+      <column columnName="curve_id">
+        <datatype>integer</datatype>
+        <columnTitle>Curve id</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Indicates a unique set of records with the same combination of study mAb, virus, mAb concentration, target cell, and lab code. Used for plotting neutralization curves. </description>
+        <dimension>true</dimension>
+      </column>
       <column columnName="mab_concentration">
         <datatype>double</datatype>
         <columnTitle>MAb concentration</columnTitle>
@@ -1371,17 +1378,31 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
-      <column columnName="titer_ic50">
+      <column columnName="titer_curve_ic50">
         <datatype>double</datatype>
-        <columnTitle>Titer IC50</columnTitle>
-        <description>The adjusted value of 50% maximal inhibitory concentration (IC50)</description>
+        <columnTitle>Titer Curve IC50</columnTitle>
+        <description>The adjusted curve-based value of 50% maximal inhibitory concentration (IC50)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
-      <column columnName="titer_ic80">
+      <column columnName="titer_curve_ic80">
         <datatype>double</datatype>
-        <columnTitle>Titer IC80</columnTitle>
-        <description>The adjusted value of 80% maximal inhibitory concentration (IC80)</description>
+        <columnTitle>Titer Curve IC80</columnTitle>
+        <description>The adjusted curve-based value of 80% maximal inhibitory concentration (IC80)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="titer_point_ic50">
+        <datatype>double</datatype>
+        <columnTitle>Titer Point IC50</columnTitle>
+        <description>The adjusted point-based value of 50% maximal inhibitory concentration (IC50)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="titer_point_ic80">
+        <datatype>double</datatype>
+        <columnTitle>Titer Point IC80</columnTitle>
+        <description>The adjusted point-based value of 80% maximal inhibitory concentration (IC80)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
@@ -1447,6 +1468,13 @@
         <description>Curve fit error</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
+      </column>
+      <column columnName="vaccine_matched">
+        <datatype>boolean</datatype>
+        <columnTitle>Vaccine Matched</columnTitle>
+        <description>Indicates if the interactive part of the antigen was designed to match the immunogen in the vaccine</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <dimension>true</dimension>
       </column>
 
     </columns>

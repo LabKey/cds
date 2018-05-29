@@ -412,11 +412,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify Data Availability");
         waitForText("Data Availability");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
-        assertTrue(smallHasDataIcons.size() == 2);
+        assertTrue(smallHasDataIcons.size() == 10);
 
         assertTrue(isElementPresent(cds.hasDataDetailIconXPath("QED 2")));
         assertFalse(isElementPresent(cds.hasDataDetailIconXPath("QED 1")));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath("RED 5")));
+        assertTrue(isElementPresent(cds.noDataDetailIconXPath("RED 6")));
 
         log("Verify Variables page");
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
@@ -426,7 +426,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify Antigens page");
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         sleep(CDSHelper.CDS_WAIT);
-        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("BaL.26-mab"));
+        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("X2160_C25"));
     }
 
     @Test

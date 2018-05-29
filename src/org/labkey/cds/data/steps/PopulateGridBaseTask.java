@@ -30,62 +30,72 @@ import org.labkey.api.query.ValidationException;
 import org.labkey.api.util.DateUtil;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class PopulateGridBaseTask extends AbstractPopulateTask
 {
-    String SOURCE_SCHEMA = "study";
-    String SOURCE_QUERY = "ds_gridbase";
-    String TARGET_SCHEMA = "cds";
-    String TARGET_QUERY = "GridBase";
+    String SOURCE_SCHEMA = "sourceSchema";
+    String SOURCE_QUERY = "sourceQuery";
+    String TARGET_SCHEMA = "targetSchema";
+    String TARGET_QUERY = "targetQuery";
+    String SKIP_CONTAINER_FILTERING = "bypassContainerFilter";
+
+    @Override
+    public List<String> getRequiredSettings()
+    {
+        return Arrays.asList(SOURCE_SCHEMA, SOURCE_QUERY, TARGET_SCHEMA, TARGET_QUERY, SKIP_CONTAINER_FILTERING);
+    }
 
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
         DefaultSchema projectSchema = DefaultSchema.get(user, project);
 
-        QuerySchema targetSchema = projectSchema.getSchema(TARGET_SCHEMA);
+        QuerySchema targetSchema = projectSchema.getSchema(settings.get(TARGET_SCHEMA));
 
         if (null == targetSchema)
         {
-            throw new PipelineJobException("Unable to find target schema: \"" + TARGET_SCHEMA + "\".");
+            throw new PipelineJobException("Unable to find target schema: \"" + settings.get(TARGET_SCHEMA) + "\".");
         }
 
-        TableInfo targetTable = targetSchema.getTable(TARGET_QUERY);
+        TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
 
         if (null == targetTable)
         {
-            throw new PipelineJobException("Unable to find target table: \"" + TARGET_QUERY + "\".");
+            throw new PipelineJobException("Unable to find target table: \"" + settings.get(TARGET_QUERY) + "\".");
         }
 
         // Get a new TableInfo with the default container filter
-        targetTable = targetSchema.getTable(TARGET_QUERY);
+        targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
 
         SQLFragment sql;
         Map<String, Object>[] rows;
         BatchValidationException errors = new BatchValidationException();
         long start = System.currentTimeMillis();
 
+        boolean skipContainerFiltering = "true".equalsIgnoreCase(settings.get(SKIP_CONTAINER_FILTERING));
+
         // Insert all the rows
         for (Container container : project.getChildren())
         {
             DefaultSchema childSchema = DefaultSchema.get(user, container);
 
-            QuerySchema sourceSchema = childSchema.getSchema(SOURCE_SCHEMA);
+            QuerySchema sourceSchema = childSchema.getSchema(settings.get(SOURCE_SCHEMA));
 
             if (null == sourceSchema)
             {
-                throw new PipelineJobException("Unable to find source schema: \"" + SOURCE_SCHEMA + "\".");
+                throw new PipelineJobException("Unable to find source schema: \"" + settings.get(SOURCE_SCHEMA) + "\".");
             }
 
-            TableInfo sourceTable = sourceSchema.getTable(SOURCE_QUERY);
+            TableInfo sourceTable = sourceSchema.getTable(settings.get(SOURCE_QUERY));
 
             if (null == sourceTable)
             {
-                throw new PipelineJobException("Unable to find source table: \"" + SOURCE_QUERY + "\".");
+                throw new PipelineJobException("Unable to find source table: \"" + settings.get(SOURCE_QUERY) + "\".");
             }
 
-            if (sourceTable instanceof ContainerFilterable)
+            if (sourceTable instanceof ContainerFilterable && !skipContainerFiltering)
             {
                 ((ContainerFilterable) sourceTable).setContainerFilter(ContainerFilter.CURRENT);
             }
@@ -116,6 +126,6 @@ public class PopulateGridBaseTask extends AbstractPopulateTask
 
         long finish = System.currentTimeMillis();
 
-        logger.info("Populating GridBase took " + DateUtil.formatDuration(finish - start) + ".");
+        logger.info("Populating " + settings.get(TARGET_QUERY) + " took " + DateUtil.formatDuration(finish - start) + ".");
     }
 }
