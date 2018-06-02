@@ -17,6 +17,7 @@ package org.labkey.test.util.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.ModulePropertyValue;
 import org.labkey.test.TestFileUtils;
 import org.labkey.test.etl.ETLHelper;
 import org.labkey.test.util.DataRegionTable;
@@ -24,6 +25,13 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PortalHelper;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.remoteapi.CommandException;
+import org.labkey.test.util.RReportHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
+import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_IC50_REPORT;
 
 public class CDSInitializer
 {
@@ -35,6 +43,7 @@ public class CDSInitializer
     private final String _project;
     public ETLHelper _etlHelper;
     private final ApiPermissionsHelper _apiPermissionsHelper;
+    private RReportHelper _rReportHelper;
 
     public CDSInitializer(BaseWebDriverTest test, String projectName)
     {
@@ -43,6 +52,7 @@ public class CDSInitializer
         _project = projectName;
         _etlHelper = new ETLHelper(_test, _project);
         _apiPermissionsHelper = new ApiPermissionsHelper(_test);
+        _rReportHelper  = new RReportHelper(test);
     }
 
     @LogMethod
@@ -111,7 +121,7 @@ public class CDSInitializer
             _test.goToModule("DataIntegration");
             _test.waitForText("COMPLETE", 2, 1000 * 60 * 30);
         }
-
+        initMAbModuleProperties();
         populateNewsFeed();
 
         _test.goToProjectHome();
@@ -137,4 +147,33 @@ public class CDSInitializer
         _test.clickButton("Submit");
         _test.assertTextPresent(CDSHelper.TEST_FEED);
     }
+
+    public void initMAbModuleProperties()
+    {
+        _test.goToHome();
+        _rReportHelper.ensureRConfig();
+        _test.goToProjectHome();
+        String mAbUrl = _project +  "/study-dataset.view?datasetId=5007";
+        String dilutionScript = "print('Number of data rows')\n" +
+                "nrow(labkey.data)\n" +
+                "\n" +
+                "cat('\\n\\n')\n" +
+                "cat(length(names(labkey.data)), 'Columns:\\n')\n" +
+                "names(labkey.data)";
+        String heatmapScript = "# ${imgout:labkeyl.png}\n" +
+                "png(filename=\"labkeyl.png\")\n" +
+                "plot(labkey.data$virus, labkey.data$min_concentration, ylab=\"Min Concentration\", xlab=\"Virus\")\n" +
+                "dev.off()";
+        int dilutionReportId = _cds.createReport(_rReportHelper, mAbUrl, dilutionScript, NAB_MAB_DILUTION_REPORT, true, true);
+        int heatmapReportId = _cds.createReport(_rReportHelper, mAbUrl, heatmapScript, NAB_MAB_IC50_REPORT, true, true);
+
+        List<ModulePropertyValue> propList = new ArrayList<>();
+        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportID1", "db:" + dilutionReportId));
+        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportLabel1", NAB_MAB_DILUTION_REPORT));
+        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportID2", "db:" + heatmapReportId));
+        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportLabel2", NAB_MAB_IC50_REPORT));
+        _test.setModuleProperties(propList);
+        _test.goToProjectHome();
+    }
+
 }

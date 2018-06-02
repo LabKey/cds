@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 {
-    public static final String MAB_COL = "Mab/Mixture";
+    public static final String MAB_COL = "MAb/Mixture";
     public static final String SPECIES_COL = "Donor Species";
     public static final String ISOTYPE_COL = "Isotype";
     public static final String HXB2_COL = "HXB2 Location";

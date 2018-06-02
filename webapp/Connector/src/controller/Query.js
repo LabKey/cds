@@ -1112,7 +1112,12 @@ Ext.define('Connector.controller.Query', {
     getMabViruses: function(config)
     {
         MabQueryUtils.getMabViruses(config);
+    },
+
+    prepareMAbReportQueries: function(config) {
+        MabQueryUtils.prepareMAbReportQueries(config)
     }
+
 });
 
 Ext.define('Connector.controller.HttpInterceptor', {

@@ -1280,6 +1280,14 @@
         <description>The standardized name of the virus being tested - as indicated in the master virus list. </description>
         <dimension>true</dimension>
       </column>
+      <column columnName="tier_clade_virus">
+        <datatype>varchar</datatype>
+        <columnTitle>Tier Clade Virus</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The concated tier-clade-virus value for filtering. </description>
+        <dimension>false</dimension>
+        <isHidden>true</isHidden>
+      </column>
       <column columnName="virus_type">
         <datatype>varchar</datatype>
         <columnTitle>Virus type</columnTitle>

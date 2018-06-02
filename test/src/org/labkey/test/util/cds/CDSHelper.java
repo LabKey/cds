@@ -22,12 +22,15 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
 import org.labkey.test.WebTestHelper;
+import org.labkey.test.components.html.BootstrapMenu;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
 import org.labkey.test.util.ApiPermissionsHelper;
+import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
+import org.labkey.test.util.RReportHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -571,6 +574,9 @@ public class CDSHelper
 
     public static final String HAS_DATA_ICON = "smallCheck.png";
     public static final String HAS_NO_DATA_ICON = "smallGreyX.png";
+
+    public static final String NAB_MAB_DILUTION_REPORT = "NAb dilution report";
+    public static final String NAB_MAB_IC50_REPORT = "NAb ic50 heatmap";
 
     public static final Map<String, String> siteGroupRoles;
     static
@@ -1870,4 +1876,85 @@ public class CDSHelper
 
         return documentLinkElements;
     }
+
+    public int createReport(RReportHelper rReportHelper, String queryUrl, @Nullable String reportScript, String reportName, boolean shareReport)
+    {
+        return createReport(rReportHelper, queryUrl, reportScript, reportName, shareReport, false);
+    }
+
+    public int createReport(RReportHelper rReportHelper, String queryUrl, @Nullable String reportScript, String reportName, boolean shareReport, boolean skipViewData)
+    {
+        int reportId;
+        String reportUrl;
+
+        _test.beginAt(queryUrl);
+        if (!skipViewData)
+        {
+            _test.waitForElement(Locator.linkWithText("view data"));
+            _test.click(Locator.linkWithText("view data"));
+        }
+
+        // Check to see if the report already exists. If it does, then just ignore this test.
+        DataRegionTable table = DataRegionTable.DataRegion(_test.getDriver()).find();
+        BootstrapMenu menu = table.getReportMenu();
+        menu.openMenuTo("Create Chart");
+        if (menu.findVisibleMenuItems()
+                .stream()
+                .anyMatch(webElement -> webElement.getText().equals(reportName)))
+        {
+            _test.log("Report already exists: " + reportName);
+        }
+        else
+        {
+            table.goToReport("Create R Report");
+
+            if (null != reportScript)
+                _test.setCodeEditorValue("script-report-editor", reportScript);
+
+            if (shareReport)
+                rReportHelper.selectOption(RReportHelper.ReportOption.shareReport);
+
+            _test.waitForElement(Locator.tagWithText("span", "Save"));
+            rReportHelper.saveReport(reportName);
+
+            _test.waitForText(reportName);
+            _test.log("Report created: " + reportName);
+
+            _test.beginAt(queryUrl);
+            if (!skipViewData)
+            {
+                _test.waitForElement(Locator.linkWithText("view data"));
+                _test.click(Locator.linkWithText("view data"));
+            }
+        }
+        _test.log("Get the reportId from the URL");
+        table.goToReport(reportName);
+
+        _test.waitForText(reportName);
+
+        reportUrl = _test.getDriver().getCurrentUrl();
+
+        reportId = getReportNumberFromUrl(reportUrl);
+
+        _test.log("Report ID: " + reportId);
+
+        return reportId;
+    }
+
+    // Not really used any more. Could be useful to identify a report if needed.
+    private int getReportNumberFromUrl(String url)
+    {
+        // The last part of the url looks like .reportId=db%3A# where # is the report id.
+        // The call to substring(3) skips over the %3A in the url.
+        final String REPORT_TAG = ".reportId=db";
+        int index;
+        String subString;
+
+        index = url.indexOf(REPORT_TAG);
+        subString = url.substring(index + REPORT_TAG.length()).substring(3);
+
+        return Integer.parseInt(subString);
+    }
+
+
 }

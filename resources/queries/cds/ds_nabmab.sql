@@ -49,6 +49,11 @@ SELECT
   dd.virus_dilution,
   dd.clade,
   dd.neutralization_tier,
+  -- Delimiter has to match ChartUtil.ANTIGEN_LEVEL_DELIMITER
+  (CASE WHEN dd.neutralization_tier IS NULL THEN 'null' ELSE dd.neutralization_tier END)
+  || '|||' || (CASE WHEN dd.clade IS NULL THEN 'null' ELSE dd.clade END)
+  || '|||' || (CASE WHEN dd.virus IS NULL THEN 'null' ELSE dd.virus END)
+    AS tier_clade_virus,
   dd.fit_min,
   dd.fit_max,
   dd.fit_asymmetry,
