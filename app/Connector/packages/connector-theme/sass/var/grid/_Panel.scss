@@ -242,3 +242,14 @@ div.filterpanel .x-panel-body-default {
   right: 0;
   margin: 0 0 0 28px;
 }
+
+.mabreportheader {
+  .title-and-back-panel {
+    line-height: 56px !important;
+    font: $title-font;
+    background: $gray-7;
+    .iarrow {
+      margin: 0 16px 0 0!important;
+    }
+  }
+}

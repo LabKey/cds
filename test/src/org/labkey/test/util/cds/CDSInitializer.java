@@ -45,6 +45,49 @@ public class CDSInitializer
     private final ApiPermissionsHelper _apiPermissionsHelper;
     private RReportHelper _rReportHelper;
 
+    private static final String DILUTION_REPORT_SOURCE = "library(Rlabkey)\n" +
+            "if (!is.null(labkey.url.params$\"filteredKeysQuery\"))  {\n" +
+            "   \tlabkey.keysQuery <- labkey.url.params$\"filteredKeysQuery\"\n" +
+            "   \tcat('Query name for filtered unique keys: ', labkey.keysQuery)\n" +
+            "   \tuniquekeys <- labkey.selectRows(baseUrl=labkey.url.base, folderPath=labkey.url.path, schemaName=\"cds\", queryName=labkey.keysQuery)\n" +
+            "\n" +
+            "   \tcat('\\n\\n', 'Number of unique keys: ', nrow(uniquekeys), '\\n\\n')\n" +
+            "\t\n" +
+            "\tcat(length(names(uniquekeys)), 'Columns for unique keys:\\n')\n" +
+            "\tnames(uniquekeys)\n" +
+            "} else {\n" +
+            "   print(\"Error: filteredKeysQuery param doesn't exist\")\n" +
+            "}\n" +
+            "\n" +
+            "if (!is.null(labkey.url.params$\"filteredDatasetQuery\"))  {\n" +
+            "   \tlabkey.datasetQuery <- labkey.url.params$\"filteredDatasetQuery\"\n" +
+            "   \tcat('Query name for filtered dataset: ', labkey.datasetQuery)\n" +
+            "   \tfiltereddataset <- labkey.selectRows(baseUrl=labkey.url.base, folderPath=labkey.url.path, schemaName=\"cds\", queryName=labkey.datasetQuery)\n" +
+            "\n" +
+            "   \tcat('\\n\\n', 'Number of filtered data rows: ', nrow(filtereddataset), '\\n\\n')\n" +
+            "\t\n" +
+            "\tcat(length(names(filtereddataset)), 'Columns for dataset:\\n')\n" +
+            "\tnames(filtereddataset)\n" +
+            "} else {\n" +
+            "   print(\"Error: filteredDatasetQuery param doesn't exist\")\n" +
+            "}";
+
+    private static final String CONCENTRATION_PLOT_REPORT_SOURCE = "library(Rlabkey)\n" +
+            "\n" +
+            "if (!is.null(labkey.url.params$\"filteredDatasetQuery\"))  {\n" +
+            "   \tlabkey.datasetQuery <- labkey.url.params$\"filteredDatasetQuery\"\n" +
+            "   \tcat('Query name for filtered dataset: ', labkey.datasetQuery, '\\n')\n" +
+            "   \tfiltereddataset <- labkey.selectRows(baseUrl=labkey.url.base, folderPath=labkey.url.path, schemaName=\"cds\", queryName=labkey.datasetQuery, colNameOpt=\"rname\")\n" +
+            "\n" +
+            "   # ${imgout:labkeyl.png}\n" +
+            "   \tpng(filename=\"labkeyl.png\")\n" +
+            "\tplot(filtereddataset$\"curve_id\", filtereddataset$\"titer_curve_ic50\", ylab=\"IC50\", xlab=\"Curve Id\")\n" +
+            "\tdev.off()\n" +
+            "   \n" +
+            "} else {\n" +
+            "   print(\"Error: filteredDatasetQuery param doesn't exist\")\n" +
+            "}";
+
     public CDSInitializer(BaseWebDriverTest test, String projectName)
     {
         _test = test;
@@ -121,7 +164,7 @@ public class CDSInitializer
             _test.goToModule("DataIntegration");
             _test.waitForText("COMPLETE", 2, 1000 * 60 * 30);
         }
-        initMAbModuleProperties();
+        initMAbReportConfig();
         populateNewsFeed();
 
         _test.goToProjectHome();
@@ -148,24 +191,15 @@ public class CDSInitializer
         _test.assertTextPresent(CDSHelper.TEST_FEED);
     }
 
-    public void initMAbModuleProperties()
+    public void initMAbReportConfig()
     {
         _test.goToHome();
         _rReportHelper.ensureRConfig();
         _test.goToProjectHome();
         String mAbUrl = _project +  "/study-dataset.view?datasetId=5007";
-        String dilutionScript = "print('Number of data rows')\n" +
-                "nrow(labkey.data)\n" +
-                "\n" +
-                "cat('\\n\\n')\n" +
-                "cat(length(names(labkey.data)), 'Columns:\\n')\n" +
-                "names(labkey.data)";
-        String heatmapScript = "# ${imgout:labkeyl.png}\n" +
-                "png(filename=\"labkeyl.png\")\n" +
-                "plot(labkey.data$virus, labkey.data$min_concentration, ylab=\"Min Concentration\", xlab=\"Virus\")\n" +
-                "dev.off()";
-        int dilutionReportId = _cds.createReport(_rReportHelper, mAbUrl, dilutionScript, NAB_MAB_DILUTION_REPORT, true, true);
-        int heatmapReportId = _cds.createReport(_rReportHelper, mAbUrl, heatmapScript, NAB_MAB_IC50_REPORT, true, true);
+
+        int dilutionReportId = _cds.createReport(_rReportHelper, mAbUrl, DILUTION_REPORT_SOURCE, NAB_MAB_DILUTION_REPORT, true, true);
+        int heatmapReportId = _cds.createReport(_rReportHelper, mAbUrl, CONCENTRATION_PLOT_REPORT_SOURCE, NAB_MAB_IC50_REPORT, true, true);
 
         List<ModulePropertyValue> propList = new ArrayList<>();
         propList.add(new ModulePropertyValue("CDS", "/", "MAbReportID1", "db:" + dilutionReportId));

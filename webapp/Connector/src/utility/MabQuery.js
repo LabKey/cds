@@ -328,7 +328,7 @@ Ext.define('Connector.utility.MabQuery', {
                         queryName: response.queryName
                     }));
                 }
-                response.filteredKeysQuery = response.queryName;
+                config.filteredKeysQuery = response.queryName;
                 this.getSelectedDatasetQuery.call(this, config);
             },
             failure: config.failure,
@@ -354,7 +354,7 @@ Ext.define('Connector.utility.MabQuery', {
                         queryName: response.queryName
                     }));
                 }
-                response.fiteredDatasetQuery = response.queryName;
+                config.filteredDatasetQuery = response.queryName;
                 config.success.call(config.scope, config);
             },
             failure: config.failure,
@@ -413,8 +413,7 @@ Ext.define('Connector.utility.MabQuery', {
             WHERE.push(this._getDatasetAssayDimensionalFilter(filter, forDebugging));
         }, this);
 
-        if (ic50Filter)
-            WHERE.push(this.getDatasetIC50Where(ic50Filter));
+        WHERE.push(this.getDatasetIC50Where(ic50Filter));
 
         WHERE.push(this._getDatasetMabMixMetadataWhere(metaFilters, forDebugging));
 

@@ -61,29 +61,8 @@ Ext.define('Connector.view.MabGrid', {
 
         this.gridSorters = {}; // hold on to client side sorts for each grid
 
-        var buttons = [
-            // this.getExportCSVButton(),
-            this.getExportExcelButton()
-        ];
-        buttons = buttons.concat(this.getRReportButtons());
-
-        this.items = [{
-            xtype: 'container',
-            height: this.headerHeight,
-            ui: 'custom',
-            cls: 'header-container',
-            layout: {
-                type: 'hbox'
-            },
-            items: [{
-                xtype: 'actiontitle',
-                flex: 1,
-                text: 'Explore monoclonal antibody (MAb) screening data',
-                buttons: buttons
-            }]
-        }];
-
         this.callParent();
+        this.add(this.getGridHeader());
         var model = this.getModel();
 
         this.on('updateMabFilter', this.onMabGridFilterChange, this);
@@ -114,6 +93,32 @@ Ext.define('Connector.view.MabGrid', {
         this.on('beforehide', this.hideVisibleWindow);
 
         this.fireEvent('showload', this);
+    },
+
+    getGridHeader: function() {
+        if (!this.gridHeader) {
+            var buttons = [
+                // this.getExportCSVButton(),
+                // this.getExportExcelButton()
+            ];
+            buttons = buttons.concat(this.getRReportButtons());
+
+            this.gridHeader = Ext.create('Ext.container.Container', {
+                height: this.headerHeight,
+                ui: 'custom',
+                cls: 'header-container',
+                layout: {
+                    type: 'hbox'
+                },
+                items: [{
+                    xtype: 'actiontitle',
+                    flex: 1,
+                    text: 'Explore monoclonal antibody (MAb) screening data',
+                    buttons: buttons
+                }]
+            });
+        }
+        return this.gridHeader;
     },
 
     onInitMabGrid: function() {
@@ -665,7 +670,30 @@ Ext.define('Connector.view.MabGrid', {
 
     renderRReportPanel: function(config)
     {
-        // config.filteredMAbAssayKeys
-        // config.filteredMAbAssayData
+        this.showGridView(false);
+        this.add({
+            xtype: 'mabreportview',
+            parentGrid: this,
+            reportId: config.reportId,
+            reportLabel: config.reportLabel,
+            filteredKeysQuery: config.filteredKeysQuery,
+            filteredDatasetQuery: config.filteredDatasetQuery
+        });
+        this.doLayout();
+
+    },
+
+    showGridView: function(show)
+    {
+        if (show) {
+            this.getGridHeader().show();
+            this.getGrid().show();
+            this.removeCls('auto-scroll-y');
+        }
+        else {
+            this.getGridHeader().hide();
+            this.getGrid().hide();
+            this.addCls('auto-scroll-y');
+        }
     }
 });
