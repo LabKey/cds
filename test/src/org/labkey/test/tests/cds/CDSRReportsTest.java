@@ -37,6 +37,7 @@ import java.util.function.Predicate;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
 
 @Category({})
 public class CDSRReportsTest extends CDSReadOnlyTest
@@ -98,6 +99,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Reports");
 
         assertTextPresent(reportName);
+        Assert.assertFalse("MAb reports shouldn't be visible in Learn About", isTextPresent(NAB_MAB_DILUTION_REPORT));
 
         log("Load the report.");
         click(Locator.tagWithText("h2", reportName));

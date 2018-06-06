@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import static org.labkey.test.pages.cds.MAbDataGrid.*;
 
 @Category({})
-public class CDSMAbGridTest extends CDSReadOnlyTest
+public class CDSMAbTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
 
@@ -180,6 +180,74 @@ public class CDSMAbGridTest extends CDSReadOnlyTest
 
         grid.applyFilter();
         verifyGridCountAndFilteredColumns(grid, 2, filteredColumns);
+    }
+
+    @Test
+    public void testMAbReports()
+    {
+        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
+        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        grid.clearAllFilters();
+        grid.clearAllSelections();
+
+        log("Verify mAb report buttons");
+        Assert.assertTrue("MAb report buttons not present",
+                isElementPresent(grid.getDilutionReportBtn()) && isElementPresent(grid.getIC50ReportBtn()));
+
+        log("Verify error message for view reports when no selection is made");
+        click(grid.getDilutionReportBtn());
+        waitForElementToBeVisible(Locator.tagWithClassContaining("div", "x-message-box"));
+        assertTextPresent("No MAb/Mixture has been selected.");
+        click(Locator.xpath("//span[text()='OK']/ancestor::a[contains(@class, 'x-btn')]"));
+
+        log("Set an initial set of filters for grid");
+        grid.setFacet(MAB_COL,false,"2F5", "A14");
+        grid.setFacet(SPECIES_COL,false,"llama");
+        AntigenFilterPanel virusPanel = grid.openVirusPanel(null);
+        String testValue = "virus-1B-A-Q23.17";
+        virusPanel.checkVirus(testValue, false);
+        grid.applyFilter();
+
+        log("Select one mAb");
+        grid.selectMAbs("4.00E+10");
+
+        log("Verify report content with active filter and selection");
+        List<String> expectedContent = Arrays.asList("Query name for filtered unique keys:  CDS_temp_",
+                "Number of unique keys:  33",
+                "7 Columns for unique keys:",
+                "Query name for filtered dataset:  CDS_temp_",
+                "Number of filtered data rows:  264");
+        grid.openDilutionReport();
+        verifyReportContent(expectedContent, grid.getReportOutput());
+        grid.leaveReportView();
+
+        log("Change ic50 filter and verify updated report content");
+        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1");
+        grid.openDilutionReport();
+        expectedContent = Arrays.asList("Number of unique keys:  1",
+                "Number of filtered data rows:  8");
+        verifyReportContent(expectedContent, grid.getReportOutput());
+        grid.leaveReportView();
+
+        log("Change mAb selections and verify updated report content");
+        grid.selectMAbs("AB-000402-1", "AB-000404-1");
+        grid.openDilutionReport();
+        expectedContent = Arrays.asList("Number of unique keys:  7",
+                "Number of filtered data rows:  56");
+        verifyReportContent(expectedContent, grid.getReportOutput());
+        grid.leaveReportView();
+
+        log("Verify the 2nd R report");
+        grid.openIC50Report();
+        Assert.assertTrue("Report image is not rendered", isElementPresent(grid.getReportImageOut()));
+    }
+
+    private void verifyReportContent(List<String> expectedContent, String reportContent)
+    {
+        for (String expected : expectedContent)
+        {
+            Assert.assertTrue("Report content is not as expected", reportContent.contains(expected));
+        }
     }
 
     private WebElement getGridEl()
