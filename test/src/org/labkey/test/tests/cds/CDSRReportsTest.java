@@ -99,7 +99,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Reports");
 
         assertTextPresent(reportName);
-        Assert.assertFalse("MAb reports shouldn't be visible in Learn About", isTextPresent(NAB_MAB_DILUTION_REPORT));
+        Assert.assertFalse("MAb reports shouldn't be visible in Learn About", isElementPresent(Locator.tagWithText("h2", NAB_MAB_DILUTION_REPORT)));
 
         log("Load the report.");
         click(Locator.tagWithText("h2", reportName));

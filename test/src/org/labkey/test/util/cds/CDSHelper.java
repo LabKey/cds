@@ -576,7 +576,7 @@ public class CDSHelper
     public static final String HAS_NO_DATA_ICON = "smallGreyX.png";
 
     public static final String NAB_MAB_DILUTION_REPORT = "NAb dilution report";
-    public static final String NAB_MAB_IC50_REPORT = "NAb ic50 heatmap";
+    public static final String NAB_MAB_IC50_REPORT = "NAb ic50 plot";
 
     public static final Map<String, String> siteGroupRoles;
     static
