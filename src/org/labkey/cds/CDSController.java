@@ -521,12 +521,12 @@ public class CDSController extends SpringActionController
         public CDSExportQueryForm(String schemaName, String queryName, PropertyValues values)
         {
             super(schemaName, queryName);
-            this._initParameters = values;
+            _initParameters = values;
         }
 
         public PropertyValues getInitParams()
         {
-            return this._initParameters;
+            return _initParameters;
         }
     }
 
@@ -639,7 +639,7 @@ public class CDSController extends SpringActionController
 
         public void setDataTabNames(String[] dataTabNames)
         {
-            this._dataTabNames = dataTabNames;
+            _dataTabNames = dataTabNames;
         }
 
         public String[] getSchemaNames()
@@ -649,7 +649,7 @@ public class CDSController extends SpringActionController
 
         public void setSchemaNames(String[] schemaNames)
         {
-            this._schemaNames = schemaNames;
+            _schemaNames = schemaNames;
         }
 
         public String[] getQueryNames()
@@ -659,7 +659,7 @@ public class CDSController extends SpringActionController
 
         public void setQueryNames(String[] queryNames)
         {
-            this._queryNames = queryNames;
+            _queryNames = queryNames;
         }
 
         public Map<String, CDSExportQueryForm> getTabQueryForms()
