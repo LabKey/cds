@@ -492,6 +492,8 @@
                             <!--End mc_embed_signup-->
                         </div>
                     </div>
+                    
+                    <a href="https://twitter.com/CAVDDataSpace" class="twitter">Twitter</a>
                 </div>
                 <div class="links sign-in">
                     <span>CAVD DataSpace Members:</span>
