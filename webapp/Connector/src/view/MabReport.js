@@ -64,6 +64,9 @@ Ext.define('Connector.view.MabReport', {
                         method: 'POST',
                         success: function(resp){
                             cmp.getEl().unmask();
+                            var json = LABKEY.Utils.decode(resp.responseText);
+                            if (!json || !json.html)
+                                Ext.Msg.alert("Error", "Unable to load " + this.reportLabel + ". The report doesn't exist or you may not have permission to view it.");
                             LABKEY.Utils.loadAjaxContent(resp, 'mabreportrenderpanel', function() {
                             });
                         },
