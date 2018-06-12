@@ -40,7 +40,7 @@ Ext.define('Connector.app.store.Report', {
         if (Ext.isDefined(this.reportData)) {
 
             var reports = [];
-
+            var excludedReports = this.getExcludedReports();
             // category level
             Ext4.each(this.reportData.children, function(category){  // some of these may be reports instead
                 var subcategories = category.children;
@@ -53,20 +53,20 @@ Ext.define('Connector.app.store.Report', {
 
                             // report level
                             Ext4.each(views, function (view) {  // no categories/subcategories here, but not all are reports
-                                if(this.isValidReportType(view)) {
+                                if(this.isValidReportType(view, excludedReports)) {
                                     reports.push(view);
                                 }
                             }, this);
                         }
                         else {  // no children, so might be a report -- let's check
-                            if (this.isValidReportType(subcategory)) {  // not a subcategory, actually a report instead
+                            if (this.isValidReportType(subcategory, excludedReports)) {  // not a subcategory, actually a report instead
                                 reports.push(subcategory)
                             }
                         }
                     }, this);
                 }
                 else {  // no children, so might be a report -- let's check
-                    if (this.isValidReportType(category)) {  // not a category, actually a report instead
+                    if (this.isValidReportType(category, excludedReports)) {  // not a category, actually a report instead
                         reports.push(category);
                     }
                 }
@@ -86,10 +86,23 @@ Ext.define('Connector.app.store.Report', {
         }
     },
 
-    isValidReportType: function(record)
+    isValidReportType: function(record, excludedReports)
     {
         if (record.dataType != 'reports' || !record.visible)
             return false;
+        if (excludedReports && record.reportId && excludedReports.indexOf(record.reportId) > -1)
+            return false;
         return record.type == 'R Report';
+    },
+
+    getExcludedReports: function() {
+        var mAbParameterizedReports = [];
+        for (var i = 1 ; i < 3; i++) {
+            var reportId = LABKEY.getModuleProperty('cds', Connector.view.MabGrid.MAbReportID_PROP_PREFIX + i);
+            if (reportId) {
+                mAbParameterizedReports.push(reportId)
+            }
+        }
+        return mAbParameterizedReports;
     }
 });

@@ -43,7 +43,10 @@ Ext.define('Connector.view.MabGrid', {
             'tier_clade_virus' : [5, 6, 7],
             'titer_curve_ic50_group' : [8],
             'study' : [9]
-        }
+        },
+
+        MAbReportID_PROP_PREFIX: "MAbReportID",
+        MAbReportLabel_PROP_PREFIX: "MAbReportLabel"
     },
 
     constructor : function(config)
@@ -58,26 +61,8 @@ Ext.define('Connector.view.MabGrid', {
 
         this.gridSorters = {}; // hold on to client side sorts for each grid
 
-        this.items = [{
-            xtype: 'container',
-            height: this.headerHeight,
-            ui: 'custom',
-            cls: 'header-container',
-            layout: {
-                type: 'hbox'
-            },
-            items: [{
-                xtype: 'actiontitle',
-                flex: 1,
-                text: 'Explore monoclonal antibody (MAb) screening data'
-                // buttons: [
-                //     this.getExportCSVButton(),
-                //     this.getExportExcelButton()
-                // ]
-            }]
-        }];
-
         this.callParent();
+        this.add(this.getGridHeader());
         var model = this.getModel();
 
         this.on('updateMabFilter', this.onMabGridFilterChange, this);
@@ -108,6 +93,32 @@ Ext.define('Connector.view.MabGrid', {
         this.on('beforehide', this.hideVisibleWindow);
 
         this.fireEvent('showload', this);
+    },
+
+    getGridHeader: function() {
+        if (!this.gridHeader) {
+            var buttons = [
+                // this.getExportCSVButton(),
+                // this.getExportExcelButton()
+            ];
+            buttons = buttons.concat(this.getRReportButtons());
+
+            this.gridHeader = Ext.create('Ext.container.Container', {
+                height: this.headerHeight,
+                ui: 'custom',
+                cls: 'header-container',
+                layout: {
+                    type: 'hbox'
+                },
+                items: [{
+                    xtype: 'actiontitle',
+                    flex: 1,
+                    text: 'Explore monoclonal antibody (MAb) screening data',
+                    buttons: buttons
+                }]
+            });
+        }
+        return this.gridHeader;
     },
 
     onInitMabGrid: function() {
@@ -150,10 +161,31 @@ Ext.define('Connector.view.MabGrid', {
         return this.exportExcelButton;
     },
 
+    getRReportButtons: function() {
+        var reports = [];
+        for (var i = 1 ; i < 3; i++) {
+            var reportId = LABKEY.getModuleProperty('cds', Connector.view.MabGrid.MAbReportID_PROP_PREFIX + i);
+            var reportLabel = LABKEY.getModuleProperty('cds', Connector.view.MabGrid.MAbReportLabel_PROP_PREFIX + i);
+            if (reportId && reportLabel) {
+                reports.push(Ext.create('Ext.button.Button', {
+                    cls: 'mabgridcolumnsbtn',
+                    text: reportLabel,
+                    handler: (function(id, label){
+                        return function(){
+                            this.showRReport(id, label);
+                        }
+                    })(reportId, reportLabel),
+                    scope: this
+                }))
+            }
+        }
+        return reports;
+    },
+
     getGridColumnsConfig: function() {
         var ind = 1;
         return [
-            this._getMabMixColumnConfig('Mab/Mixture', 'mab_mix_name_std', ind++),
+            this._getMabMixColumnConfig('MAb/Mixture', 'mab_mix_name_std', ind++),
             this._getMetaColumnConfig('Donor Species', 'mab_donor_species', ind++),
             this._getMetaColumnConfig('Isotype', 'mab_isotype', ind++),
             this._getMetaColumnConfig('HXB2 Location', 'mab_hxb2_location', ind++),
@@ -608,10 +640,60 @@ Ext.define('Connector.view.MabGrid', {
     },
 
     requestExport : function(isExcel) {
-        //
+        if (isExcel)
+            this.getGrid().hide();
+        else
+            this.getGrid().show();
     },
 
     onExport : function(isExcel) {
         //
+    },
+
+    showRReport: function(reportId, reportLabel) {
+        if (!this.getModel().hasMAbSelected())
+        {
+            Ext.Msg.alert('Error', "No MAb/Mixture has been selected.");
+            return false;
+        }
+        Connector.getQueryService().prepareMAbReportQueries({
+            reportId: reportId,
+            reportLabel: reportLabel,
+            success: this.renderRReportPanel,
+            failure: function() {
+                Ext.Msg.alert('Error', "Unable to render report.");
+            },
+            scope: this
+        });
+
+    },
+
+    renderRReportPanel: function(config)
+    {
+        this.showGridView(false);
+        this.add({
+            xtype: 'mabreportview',
+            parentGrid: this,
+            reportId: config.reportId,
+            reportLabel: config.reportLabel,
+            filteredKeysQuery: config.filteredKeysQuery,
+            filteredDatasetQuery: config.filteredDatasetQuery
+        });
+        this.doLayout();
+
+    },
+
+    showGridView: function(show)
+    {
+        if (show) {
+            this.getGridHeader().show();
+            this.getGrid().show();
+            this.removeCls('auto-scroll-y');
+        }
+        else {
+            this.getGridHeader().hide();
+            this.getGrid().hide();
+            this.addCls('auto-scroll-y');
+        }
     }
 });

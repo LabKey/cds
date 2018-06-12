@@ -52,7 +52,10 @@ public class CDSModule extends DefaultModule
     public static final String GETTING_STARTED_VIDEO_URL = "GettingStartedVideoURL";
     public static final String STUDY_DOCUMENT_PATH = "StudyDocumentPath";
     public static final String CDS_IMPORT_PATH = "CDSImportPath";
-
+    public static final String REPORT_1_ID = "MAbReportID1";
+    public static final String REPORT_1_LABEL = "MAbReportLabel1";
+    public static final String REPORT_2_ID = "MAbReportID2";
+    public static final String REPORT_2_LABEL = "MAbReportLabel2";
 
     final ModuleProperty _showHiddenVariables;
     final ModuleProperty _blogPath;
@@ -61,6 +64,11 @@ public class CDSModule extends DefaultModule
     final ModuleProperty _startedVideoURL;
     final ModuleProperty _studyDocumentPath;
     final ModuleProperty _importFolderPath;
+
+    final ModuleProperty _mabReport1ID;
+    final ModuleProperty _mabReport1Label;
+    final ModuleProperty _mabReport2ID;
+    final ModuleProperty _mabReport2Label;
 
     public CDSModule()
     {
@@ -100,6 +108,26 @@ public class CDSModule extends DefaultModule
         _importFolderPath.setDescription("File path that cds import files are located");
         _importFolderPath.setCanSetPerContainer(false);
         addModuleProperty(_importFolderPath);
+
+        _mabReport1ID = new ModuleProperty(this, REPORT_1_ID);
+        _mabReport1ID.setDescription("Report Id for the 1st MAb R report, should start with 'db:'");
+        _mabReport1ID.setCanSetPerContainer(false);
+        addModuleProperty(_mabReport1ID);
+
+        _mabReport1Label = new ModuleProperty(this, REPORT_1_LABEL);
+        _mabReport1Label.setDescription("Button display label for the 1st MAb R report on MAb grid");
+        _mabReport1Label.setCanSetPerContainer(false);
+        addModuleProperty(_mabReport1Label);
+
+        _mabReport2ID = new ModuleProperty(this, REPORT_2_ID);
+        _mabReport2ID.setDescription("Report Id for the 2nd MAb R report, should start with 'db:'");
+        _mabReport2ID.setCanSetPerContainer(false);
+        addModuleProperty(_mabReport2ID);
+
+        _mabReport2Label = new ModuleProperty(this, REPORT_2_LABEL);
+        _mabReport2Label.setDescription("Button display label for the 1st MAb R report on MAb grid");
+        _mabReport2Label.setCanSetPerContainer(false);
+        addModuleProperty(_mabReport2Label);
     }
 
     public String getName()
@@ -109,7 +137,7 @@ public class CDSModule extends DefaultModule
 
     public double getVersion()
     {
-        return 18.13;
+        return 18.14;
     }
 
     public boolean hasScripts()
