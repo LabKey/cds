@@ -16,9 +16,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
+import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_IC50_REPORT;
+
 public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 {
-    public static final String MAB_COL = "Mab/Mixture";
+    public static final String MAB_COL = "MAb/Mixture";
     public static final String SPECIES_COL = "Donor Species";
     public static final String ISOTYPE_COL = "Isotype";
     public static final String HXB2_COL = "HXB2 Location";
@@ -205,6 +208,87 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public WebElement getComponentElement()
     {
         return _gridEl;
+    public void clearAllSelections()
+    {
+        Locator.XPathLocator checkbox = Locators.headerCheckboxLoc;
+        Locator.XPathLocator checkedLoc = checkbox.withClass("x-grid-hd-checker-on");
+        if(_webDriverWrapper.isElementPresent(checkedLoc))
+            _webDriverWrapper.click(checkbox);
+    }
+
+    public void selectMAbs(String ...mabNames)
+    {
+        checkMAbs(true, mabNames);
+    }
+
+    public void unselectMAbs(String ...mabNames)
+    {
+        checkMAbs(false, mabNames);
+    }
+
+    public void checkMAbs(boolean check, String ...mabNames)
+    {
+        for (String mabName: mabNames)
+        {
+            if (isMabChecked(mabName) != check)
+            {
+                _webDriverWrapper.click(Locators.getMabCheckbox(mabName));
+            }
+        }
+    }
+
+    public boolean isMabChecked(String mabName)
+    {
+        return _webDriverWrapper.isElementPresent(Locators.getSelectedRowLocByMabName(mabName));
+    }
+
+    public void openDilutionReport()
+    {
+        openMAbReport(NAB_MAB_DILUTION_REPORT);
+    }
+
+    public void openIC50Report()
+    {
+        openMAbReport(NAB_MAB_IC50_REPORT);
+    }
+
+    public void openMAbReport(String reportName)
+    {
+        _webDriverWrapper.click(Locators.getMAbReportBtn(reportName));
+        _webDriverWrapper.sleep(500);
+        _webDriverWrapper.waitForElement(Locators.getMAbReportHeader(reportName));
+        _webDriverWrapper._ext4Helper.waitForMaskToDisappear();
+    }
+
+    public void leaveReportView()
+    {
+        _webDriverWrapper.click(Locators.reportHeader);
+    }
+
+    public Locator.XPathLocator getDilutionReportBtn()
+    {
+        return Locators.getMAbReportBtn(NAB_MAB_DILUTION_REPORT);
+    }
+
+    public Locator.XPathLocator getIC50ReportBtn()
+    {
+        return Locators.getMAbReportBtn(NAB_MAB_IC50_REPORT);
+    }
+
+    public String getReportOutput()
+    {
+        return Locators.reportOutput.findElement(_webDriverWrapper.getDriver()).getText();
+    }
+
+    public Locator.XPathLocator getReportImageOut()
+    {
+        return Locators.reportImgOutput();
+    }
+
+    @Override
+    public WebElement getComponentElement()
+    {
+        return this._gridEl;
     }
 
     @Override
@@ -230,6 +314,12 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         public static Locator.XPathLocator columnHeader = Locator.tagWithClass("div", "x-column-header-align-left");
         public static Locator.XPathLocator rowCheckBoxLoc = Locator.tagWithClass("td", "x-grid-cell-row-checker");
         public static Locator.XPathLocator filterCheckAllLoc = Locator.tagWithClass("div", "x-box-target").withChild(Locator.tagWithClass("div", "x-column-header-last").withText("All"));
+        public static Locator.XPathLocator headerCheckboxLoc = Locator.tagWithClass("div", "x-column-header-checkbox");
+        public static Locator.XPathLocator filterCheckAllLoc = Locator.tagWithClass("div", "x-box-target").withChild(Locator.tagWithClass("div", "x-column-header-last").withText("All"));
+        public static Locator.XPathLocator reportBtn = Locator.tagWithClass("a", "mabgridcolumnsbtn");
+        public static Locator.XPathLocator reportHeader = Locator.tagWithClass("div", "title-and-back-panel")
+                .withChild(Locator.tagWithClass("div", "breadcrumb").withText("Monoclonal Antibodies /"));
+        public static Locator.XPathLocator reportOutput = Locator.tagWithClass("table", "labkey-output");
 
         public static Locator.XPathLocator getRowLocByMabName(String mAbName)
         {
@@ -244,6 +334,26 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         public static Locator.XPathLocator getMabCheckbox(String mAbName)
         {
             return Locators.getRowLocByMabName(mAbName).append(Locators.rowCheckBoxLoc);
+        }
+
+        public static Locator.XPathLocator getSelectedRowLocByMabName(String mAbName)
+        {
+            return Locator.tagWithAttribute("tr", "data-recordid", mAbName).withClass("x-grid-row-selected");
+        }
+
+        public static Locator.XPathLocator getMAbReportBtn(String reportName)
+        {
+            return reportBtn.withText(reportName);
+        }
+
+        public static Locator.XPathLocator getMAbReportHeader(String reportName)
+        {
+            return reportHeader.withChild(Locator.tagWithText("div", reportName));
+        }
+
+        public static Locator.XPathLocator reportImgOutput()
+        {
+            return reportOutput.append(Locator.tagWithAttribute("img", "name", "resultImage"));
         }
     }
 

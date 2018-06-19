@@ -17,6 +17,7 @@ package org.labkey.test.util.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.ModulePropertyValue;
 import org.labkey.test.TestFileUtils;
 import org.labkey.test.etl.ETLHelper;
 import org.labkey.test.util.DataRegionTable;
@@ -24,6 +25,13 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PortalHelper;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.remoteapi.CommandException;
+import org.labkey.test.util.RReportHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
+import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_IC50_REPORT;
 
 public class CDSInitializer
 {
@@ -35,6 +43,50 @@ public class CDSInitializer
     private final String _project;
     public ETLHelper _etlHelper;
     private final ApiPermissionsHelper _apiPermissionsHelper;
+    private RReportHelper _rReportHelper;
+
+    private static final String DILUTION_REPORT_SOURCE = "library(Rlabkey)\n" +
+            "if (!is.null(labkey.url.params$\"filteredKeysQuery\"))  {\n" +
+            "   \tlabkey.keysQuery <- labkey.url.params$\"filteredKeysQuery\"\n" +
+            "   \tcat('Query name for filtered unique keys: ', labkey.keysQuery)\n" +
+            "   \tuniquekeys <- labkey.selectRows(baseUrl=labkey.url.base, folderPath=labkey.url.path, schemaName=\"cds\", queryName=labkey.keysQuery)\n" +
+            "\n" +
+            "   \tcat('\\n\\n', 'Number of unique keys: ', nrow(uniquekeys), '\\n\\n')\n" +
+            "\t\n" +
+            "\tcat(length(names(uniquekeys)), 'Columns for unique keys:\\n')\n" +
+            "\tnames(uniquekeys)\n" +
+            "} else {\n" +
+            "   print(\"Error: filteredKeysQuery param doesn't exist\")\n" +
+            "}\n" +
+            "\n" +
+            "if (!is.null(labkey.url.params$\"filteredDatasetQuery\"))  {\n" +
+            "   \tlabkey.datasetQuery <- labkey.url.params$\"filteredDatasetQuery\"\n" +
+            "   \tcat('Query name for filtered dataset: ', labkey.datasetQuery)\n" +
+            "   \tfiltereddataset <- labkey.selectRows(baseUrl=labkey.url.base, folderPath=labkey.url.path, schemaName=\"cds\", queryName=labkey.datasetQuery)\n" +
+            "\n" +
+            "   \tcat('\\n\\n', 'Number of filtered data rows: ', nrow(filtereddataset), '\\n\\n')\n" +
+            "\t\n" +
+            "\tcat(length(names(filtereddataset)), 'Columns for dataset:\\n')\n" +
+            "\tnames(filtereddataset)\n" +
+            "} else {\n" +
+            "   print(\"Error: filteredDatasetQuery param doesn't exist\")\n" +
+            "}";
+
+    private static final String CONCENTRATION_PLOT_REPORT_SOURCE = "library(Rlabkey)\n" +
+            "\n" +
+            "if (!is.null(labkey.url.params$\"filteredDatasetQuery\"))  {\n" +
+            "   \tlabkey.datasetQuery <- labkey.url.params$\"filteredDatasetQuery\"\n" +
+            "   \tcat('Query name for filtered dataset: ', labkey.datasetQuery, '\\n')\n" +
+            "   \tfiltereddataset <- labkey.selectRows(baseUrl=labkey.url.base, folderPath=labkey.url.path, schemaName=\"cds\", queryName=labkey.datasetQuery, colNameOpt=\"rname\")\n" +
+            "\n" +
+            "   # ${imgout:labkeyl.png}\n" +
+            "   \tpng(filename=\"labkeyl.png\")\n" +
+            "\tplot(filtereddataset$\"curve_id\", filtereddataset$\"titer_curve_ic50\", ylab=\"IC50\", xlab=\"Curve Id\")\n" +
+            "\tdev.off()\n" +
+            "   \n" +
+            "} else {\n" +
+            "   print(\"Error: filteredDatasetQuery param doesn't exist\")\n" +
+            "}";
 
     public CDSInitializer(BaseWebDriverTest test, String projectName)
     {
@@ -43,6 +95,7 @@ public class CDSInitializer
         _project = projectName;
         _etlHelper = new ETLHelper(_test, _project);
         _apiPermissionsHelper = new ApiPermissionsHelper(_test);
+        _rReportHelper  = new RReportHelper(test);
     }
 
     @LogMethod
@@ -111,7 +164,7 @@ public class CDSInitializer
             _test.goToModule("DataIntegration");
             _test.waitForText("COMPLETE", 2, 1000 * 60 * 30);
         }
-
+        initMAbReportConfig();
         populateNewsFeed();
 
         _test.goToProjectHome();
@@ -137,4 +190,24 @@ public class CDSInitializer
         _test.clickButton("Submit");
         _test.assertTextPresent(CDSHelper.TEST_FEED);
     }
+
+    public void initMAbReportConfig()
+    {
+        _test.goToHome();
+        _rReportHelper.ensureRConfig();
+        _test.goToProjectHome();
+        String mAbUrl = _project +  "/study-dataset.view?datasetId=5007";
+
+        int dilutionReportId = _cds.createReport(_rReportHelper, mAbUrl, DILUTION_REPORT_SOURCE, NAB_MAB_DILUTION_REPORT, true, true);
+        int heatmapReportId = _cds.createReport(_rReportHelper, mAbUrl, CONCENTRATION_PLOT_REPORT_SOURCE, NAB_MAB_IC50_REPORT, true, true);
+
+        List<ModulePropertyValue> propList = new ArrayList<>();
+        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportID1", "db:" + dilutionReportId));
+        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportLabel1", NAB_MAB_DILUTION_REPORT));
+        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportID2", "db:" + heatmapReportId));
+        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportLabel2", NAB_MAB_IC50_REPORT));
+        _test.setModuleProperties(propList);
+        _test.goToProjectHome();
+    }
+
 }

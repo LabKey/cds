@@ -437,8 +437,8 @@
             <column columnName="titer_curve_ic80"/>
             <column columnName="titer_point_ic50"/>
             <column columnName="titer_point_ic80"/>
-            <column columnName="response_ic50"/>
-            <column columnName="response_ic80"/>
+            <column columnName="nab_response_ic50"/>
+            <column columnName="nab_response_ic80"/>
             <column columnName="slope"/>
             <column columnName="fit_min"/>
             <column columnName="fit_max"/>

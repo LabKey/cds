@@ -37,6 +37,7 @@ import java.util.function.Predicate;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
 
 @Category({})
 public class CDSRReportsTest extends CDSReadOnlyTest
@@ -89,7 +90,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         clickFolder(getProjectName());
 
         log("Create an R Report in the current folder.");
-        createReport("CDS", "assay", REPORT_SCRIPT, reportName, true);
+        cds.createReport(_rReportHelper, getProjectName() + "/query-begin.view?#sbh-qdp-%26CDS%26assay", REPORT_SCRIPT, reportName, true);
 
         log("Go to CDS and validate the report can be seen in the grid.");
         goToProjectHome();
@@ -98,6 +99,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Reports");
 
         assertTextPresent(reportName);
+        Assert.assertFalse("MAb reports shouldn't be visible in Learn About", isElementPresent(Locator.tagWithText("h2", NAB_MAB_DILUTION_REPORT)));
 
         log("Load the report.");
         click(Locator.tagWithText("h2", reportName));
@@ -159,7 +161,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         for(int i = 0; i < reports.length; i++)
         {
             reports[i] = reports[i] + " " + date.getTime();
-            createReport("CDS", "assay", REPORT_SCRIPT, reports[i], true);
+            cds.createReport(_rReportHelper, getProjectName() + "/query-begin.view?#sbh-qdp-%26CDS%26assay", REPORT_SCRIPT, reports[i], true);
             sleep(500);
         }
 
@@ -306,74 +308,6 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         log("Looks like the report was loaded. Time to go home.");
 
-    }
-
-    private int createReport(String schemaName, String queryName, @Nullable String reportScript, String reportName, boolean shareReport)
-    {
-        int reportId;
-        String reportUrl;
-
-        beginAt(getProjectName() + "/query-begin.view?#sbh-qdp-%26CDS%26assay");
-        waitForElement(Locator.linkWithText("view data"));
-        click(Locator.linkWithText("view data"));
-
-        // Check to see if the report already exists. If it does, then just ignore this test.
-        DataRegionTable table = DataRegionTable.DataRegion(getDriver()).find();
-        BootstrapMenu menu = table.getReportMenu();
-        menu.openMenuTo("Create Chart");
-        if (menu.findVisibleMenuItems()
-                .stream()
-                .anyMatch(webElement -> webElement.getText().equals(reportName)))
-        {
-            log("Report already exists: " + reportName);
-        }
-        else
-        {
-            table.goToReport("Create R Report");
-
-            if (null != reportScript)
-                setCodeEditorValue("script-report-editor", reportScript);
-
-            if (shareReport)
-                _rReportHelper.selectOption(RReportHelper.ReportOption.shareReport);
-
-            waitForElement(Locator.tagWithText("span", "Save"));
-            _rReportHelper.saveReport(reportName);
-
-            waitForText(reportName);
-            log("Report created: " + reportName);
-
-            beginAt(getProjectName() + "/query-begin.view?#sbh-qdp-%26CDS%26assay");
-            waitForElement(Locator.linkWithText("view data"));
-            click(Locator.linkWithText("view data"));
-        }
-        log("Get the reportId from the URL");
-        table.goToReport(reportName);
-
-        waitForText(reportName);
-
-        reportUrl = getDriver().getCurrentUrl();
-
-        reportId = getReportNumberFromUrl(reportUrl);
-
-        log("Report ID: " + reportId);
-
-        return reportId;
-    }
-
-    // Not really used any more. Could be useful to identify a report if needed.
-    private int getReportNumberFromUrl(String url)
-    {
-        // The last part of the url looks like .reportId=db%3A# where # is the report id.
-        // The call to substring(3) skips over the %3A in the url.
-        final String REPORT_TAG = ".reportId=db";
-        int index;
-        String subString;
-
-        index = url.indexOf(REPORT_TAG);
-        subString = url.substring(index + REPORT_TAG.length()).substring(3);
-
-        return Integer.parseInt(subString);
     }
 
     private void createCategory(String... categoryNames)

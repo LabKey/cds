@@ -266,6 +266,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Page.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PageHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/MabReport.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/MabGrid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>

@@ -5,11 +5,7 @@ select
   virus,
   clade,
   neutralization_tier,
-  -- Delimiter has to match ChartUtil.ANTIGEN_LEVEL_DELIMITER
-  (CASE WHEN neutralization_tier IS NULL THEN 'null' ELSE neutralization_tier END)
-  || '|||' || (CASE WHEN clade IS NULL THEN 'null' ELSE clade END)
-  || '|||' || (CASE WHEN virus IS NULL THEN 'null' ELSE virus END)
-    AS tier_clade_virus,
+  tier_clade_virus,
   titer_curve_ic50,
 
   CASE WHEN titer_curve_ic50 < 0.1

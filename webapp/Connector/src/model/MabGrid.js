@@ -200,6 +200,12 @@ Ext.define('Connector.model.MabGrid', {
     isActive : function()
     {
         return this.get('active') === true;
+    },
+
+    hasMAbSelected: function()
+    {
+        var selection = Connector.getState().getSelectedMAbs();
+        return selection && selection.length > 0;
     }
 
 });
