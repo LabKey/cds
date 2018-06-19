@@ -40,9 +40,9 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public MAbDataGrid(WebElement gridEl, BaseWebDriverTest test, WebDriverWrapper webDriverWrapper)
     {
-        this._webDriverWrapper = webDriverWrapper;
-        this._gridHelper = new DataGrid(test);
-        this._gridEl = gridEl;
+        _webDriverWrapper = webDriverWrapper;
+        _gridHelper = new DataGrid(test);
+        _gridEl = gridEl;
     }
 
     public void setFacet(String columnName, boolean check, String... values)
@@ -204,7 +204,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     @Override
     public WebElement getComponentElement()
     {
-        return this._gridEl;
+        return _gridEl;
     }
 
     @Override
