@@ -204,10 +204,6 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         return cells.get(colInd).getText();
     }
 
-    @Override
-    public WebElement getComponentElement()
-    {
-        return _gridEl;
     public void clearAllSelections()
     {
         Locator.XPathLocator checkbox = Locators.headerCheckboxLoc;
@@ -288,7 +284,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     @Override
     public WebElement getComponentElement()
     {
-        return this._gridEl;
+        return _gridEl;
     }
 
     @Override
@@ -315,7 +311,6 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         public static Locator.XPathLocator rowCheckBoxLoc = Locator.tagWithClass("td", "x-grid-cell-row-checker");
         public static Locator.XPathLocator filterCheckAllLoc = Locator.tagWithClass("div", "x-box-target").withChild(Locator.tagWithClass("div", "x-column-header-last").withText("All"));
         public static Locator.XPathLocator headerCheckboxLoc = Locator.tagWithClass("div", "x-column-header-checkbox");
-        public static Locator.XPathLocator filterCheckAllLoc = Locator.tagWithClass("div", "x-box-target").withChild(Locator.tagWithClass("div", "x-column-header-last").withText("All"));
         public static Locator.XPathLocator reportBtn = Locator.tagWithClass("a", "mabgridcolumnsbtn");
         public static Locator.XPathLocator reportHeader = Locator.tagWithClass("div", "title-and-back-panel")
                 .withChild(Locator.tagWithClass("div", "breadcrumb").withText("Monoclonal Antibodies /"));
