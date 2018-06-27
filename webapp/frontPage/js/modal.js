@@ -201,6 +201,8 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           $.magnificPopup.close();
         }
       });
+
+      self.action('help-register', self.toggleRegistrationHelp);
     };
 
     /**
@@ -279,25 +281,59 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         });
       });
 
-
-      self.action('confirmhelp', function($click) {
-        var email = document.getElementById('emailhelp');
+      self.action('register', function($click) {
+        var email = document.getElementById('emailRegister');
+        var emailConfirm = document.getElementById('emailRegisterConfirm');
+        var verification = document.getElementById('kaptchaText');
+        if (!email.checkValidity() || !emailConfirm.checkValidity() || !verification.checkValidity()) {
+          $('#submit_hidden_register').click(); //click a hidden submit to do form validation
+          return false;
+        }
+        if (email.value !== emailConfirm.value) {
+          alert("The 2 emails entered don't match.");
+          return;
+        }
         $.ajax({
-          url: LABKEY.ActionURL.buildURL("login", "resetPasswordAPI.api"),
+          url: LABKEY.ActionURL.buildURL("login", "registerUser.api"),
           method: 'POST',
           data: {
             email: email.value,
+            emailConfirmation: emailConfirm.value,
             provider: 'cds',
-            'X-LABKEY-CSRF': LABKEY.CSRF
+            'X-LABKEY-CSRF': LABKEY.CSRF,
+            kaptchaText: document.getElementById('kaptchaText').value
           }
         }).success(function() {
-
-          $('.signin-modal .notifications p').html('Reset successful. Please check your email.');
-        }).error(function() {
-          $('.signin-modal .notifications p').html('Reset password failed.');
+          $('.register-account-modal #registeraccountform').html('Thank you for signing up! A verification email has been sent to ' + email.value +
+          '.  Please check your inbox to confirm your email address and complete your account setup. <br><br><br>');
+        }).error(function(e) {
+          var errorMsg = 'Unable to register account. ';
+          window.toggleRegistrationHelp = self.toggleRegistrationHelp;
+          if (e && e.responseJSON) {
+            if (e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+                var additionalMsg = e.responseJSON.errors[0].message;
+                // replace link that would take user to LabKey reset url
+                if (additionalMsg.indexOf('already associated with an account') > 0)
+                    additionalMsg = 'The email address you have entered is already associated with an account.  If you have forgotten your password, you can ' +
+                        '<a class="register-links-error" onclick="return toggleRegistrationHelp();">reset your password</a>' +
+                        '.  Otherwise, please contact your administrator.';
+                errorMsg = errorMsg + additionalMsg;
+            }
+            else if (e.responseJSON.exception) {
+                errorMsg = errorMsg + e.responseJSON.exception;
+            }
+          }
+          $('.register-account-modal .modal .notifications p').html(errorMsg);
         });
       });
 
+      self.action('confirmhelp', function($click) {
+        self.submitPasswordHelp('emailhelp', 'signin-modal', 'submit_hidden_help');
+      });
+
+      self.action('confirmregisterhelp', function($click) {
+        self.submitPasswordHelp('emailhelpregister', 'register-account-modal', 'submit_hidden_registerhelp');
+      });
 
       self.action('confirmchangepassword', function($click) {
         var pw1 = document.getElementById('password1');
@@ -375,6 +411,42 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
 
     };
 
+    self.toggleRegistrationHelp = function() {
+      var $register_container = self.$modal.find('[data-form=register]');
+
+        // If there is a register form toggle between register and register help forms
+        if( $register_container.length > 0 ) {
+            var $register_help_container = self.$modal.find('[data-form=register-help]');
+            $register_container.toggleClass('hidden');
+            $register_help_container.toggleClass('hidden');
+        }  else {
+          // otherwise we are deeplinking - just close the form
+          $.magnificPopup.close();
+        }
+    };
+
+    self.submitPasswordHelp = function(emailId, modalCss, hiddensubmitid) {
+        var email = document.getElementById(emailId);
+        if (!email.checkValidity()) {
+            $('#' + hiddensubmitid).click(); //click a hidden submit to do form validation
+            return false;
+        }
+
+        $.ajax({
+          url: LABKEY.ActionURL.buildURL("login", "resetPasswordAPI.api"),
+          method: 'POST',
+          data: {
+            email: email.value,
+            provider: 'cds',
+            'X-LABKEY-CSRF': LABKEY.CSRF
+          }
+        }).success(function() {
+
+          $('.' + modalCss  +' .notifications p').html('Reset successful. Please check your email.');
+        }).error(function() {
+          $('.' + modalCss + ' .notifications p').html('Reset password failed.');
+        });
+      };
     /**
      * expandTOS
      * Handle click event of Terms of service
@@ -403,7 +475,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         e.preventDefault();
         callback($(this), $(action_selector));
       });
-    }
+    };
 
     /**
      * queryParamTriggerModal

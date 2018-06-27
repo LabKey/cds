@@ -49,6 +49,11 @@
     <%--<!-- Client API Dependencies -->--%>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
+    <script type="text/javascript">
+        reloadRegisterPage = function() {
+            window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
+        }
+    </script>
 </head>
 <body>
     <div id="navigation">
@@ -65,12 +70,12 @@
             <div class="link hide sign-in">
                 <span>CAVD DataSpace Members:</span>
                 <a href="#" class="create-account-modal-trigger">Create Account</a>
-                <a href="#" class="signin-modal-trigger">Sign In</a>
+                <a href="#" class="signin-modal-trigger front-page-button">Sign In</a>
             </div>
         </div>
     </div>
     <div class="signin-modal-popup hidden">
-        <div class="signin-modal">
+        <div class="signin-modal front-page-popup-container">
             <div data-form="sign-in" class="sign-in">
                 <div class="border"></div>
                 <div class="title">
@@ -146,24 +151,94 @@
                 <div class="border"></div>
                 <div class="title">
                     <h1>Sign-in Help</h1>
-                    <span class="help-info">The DataSpace is currently available to CAVD members.<br>To set or reset your password, type in your email address and click the submit button.</span>
+                    <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
                 </div>
                 <div class="notifications">
                     <p></p>
                 </div>
-                <div class="form">
-                    <div class="credentials">
-                        <input placeholder="Email" type="email" id="emailhelp">
-                        <span class="help-info" style="display: block">Members who are still experiencing sign-in trouble should email
-                            <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" class="contact">dataspace.support@scharp.org</a>.
-                            <br>Note: Your DataSpace password is not necessarily the same as your Atlas and CAVD Portal passwords.
-                        </span>
+                <form action="" method="post" class="form">
+                    <div class="form">
+                        <div class="credentials">
+                            <input placeholder="Email" type="email" id="emailhelp" required>
+                            <span class="help-info" style="display: block">Members who are still experiencing sign-in trouble should email
+                                <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" class="contact">dataspace.support@scharp.org</a>.
+                                <br>Note: Your DataSpace password is not necessarily the same as your Atlas and CAVD Portal passwords.
+                            </span>
+                        </div>
                     </div>
+                    <div class="links">
+                        <a href="#" data-click="help" class="help">Cancel</a>
+                        <a href="#" data-click="confirmhelp" class="confirm" id="signinhelpsubmit">Submit</a>
+                        <input id="submit_hidden_help" type="submit" style="display: none;">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="register-modal-popup hidden">
+        <div class="register-account-modal front-page-popup-container">
+            <div class="modal" data-form="register" >
+                <div class="border"></div>
+                <div class="title" style="margin-bottom: 1em;">
+                    <h1>Register for DataSpace</h1>
                 </div>
-                <div class="links">
-                    <a href="#" data-click="help" class="help">Cancel</a>
-                    <a href="#" data-click="confirmhelp" class="confirm" id="signinhelpsubmit">Submit</a>
+                <div class="notifications">
+                    <p></p>
                 </div>
+                <form action="" method="post" class="form" id="registeraccountform">
+                    <div class="credentials">
+                        <p class="section-header">Network members</p>
+                        <span class="help-info" style="display: block">
+                            If you are a CAVD member or a member of an invited network or research organization, you may be pre-registered with DataSpace account which grants you access to data and information not yet available to public members. Go to
+                            <a href="#" data-click="help-register" class="help-register register-links">Sign-in Help</a> to set or reset your password.
+                        </span>
+                        <br>
+                        <p class="section-header">Not a network member?</p>
+                        <input placeholder="Email" type="email" id="emailRegister" required>
+                        <input placeholder="Verify Email" type="email" id="emailRegisterConfirm" required>
+                        <span class="help-info" style="display: block;">
+                            To help protect against abuse by bots, please enter the six characters shown below (case insensitive).
+                        </span>
+                        <div class="kaptcha" onclick="return reloadRegisterPage();">
+                            <img src="<%= text(contextPath) %>/kaptcha.jpg" alt="Verification text" title="Click to get a new image." height="50" width="200"/>
+                            <br><a class="register-links">Click to get a different image</a>
+                        </div>
+                        <input id="kaptchaText" name="kaptchaText" type="text" placeholder="Verification code" required>
+
+                    </div>
+                    <div class="links">
+                        <a href="#" data-click="dismiss" class="dismiss">Cancel</a>
+                        <a href="#" data-click="register" class="confirm" id="registeraccountsubmit">Register</a>
+                        <input id="submit_hidden_register" type="submit" style="display: none">
+                    </div>
+                </form>
+            </div>
+            <div data-form="register-help" class="sign-in-help hidden">
+                <div class="border"></div>
+                <div class="title">
+                    <h1>Sign-in Help</h1>
+                    <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
+                </div>
+                <div class="notifications">
+                    <p></p>
+                </div>
+                <form action="" method="post" class="form">
+                    <div class="form">
+                        <div class="credentials">
+                            <input placeholder="Email" type="email" id="emailhelpregister" required>
+                            <span class="help-info" style="display: block">Members who are still experiencing sign-in trouble should email
+                                <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" class="contact">dataspace.support@scharp.org</a>.
+                                <br>Note: Your DataSpace password is not necessarily the same as your Atlas and CAVD Portal passwords.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="links">
+                        <a href="#" data-click="help-register" class="help">Cancel</a>
+                        <a href="#" data-click="confirmregisterhelp" class="confirm" id="signinhelpregistersubmit">Submit</a>
+                        <input id="submit_hidden_registerhelp" type="submit" style="display: none">
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -271,7 +346,11 @@
             <div class="links">
                 <span>CAVD DataSpace Members:</span>
                 <a href="#" class="create-account-modal-trigger">Create Account</a>
-                <a href="#" class="signin-modal-trigger">Sign In</a>
+                <a href="#" class="signin-modal-trigger front-page-button">Sign In</a>
+            </div>
+            <div class="links sublink sign-in1">
+                <span>Don't have an account?</span>
+                <a href="#" class="register-modal-trigger front-page-button">Register Here</a>
             </div>
             <div class="welcome">
                 <div class="title">
@@ -453,7 +532,7 @@
                         <a href="http://www.gatesfoundation.org/" target="_blank">The Bill & Melinda Gates Foundation</a>,
                         has funded the program to date.
                         <br>
-                        The DataSpace is currently available to CAVD members.
+                        The DataSpace is open access.
                     </p>
                 </div>
                 <div class="links">
@@ -497,7 +576,11 @@
                     <span>CAVD DataSpace Members:</span>
                     <a href="#" class="create-account-modal-trigger">Create Account</a>
                     <p></p>
-                    <a href="#" class="signin-modal-trigger">Sign In</a>
+                    <a href="#" class="signin-modal-trigger front-page-button">Sign In</a>
+                </div>
+                <div class="links sublink sign-in">
+                    <span>Don't have an account?</span>
+                    <a href="#" class="register-modal-trigger front-page-button">Register Here</a>
                 </div>
             </div>
         </div>
