@@ -110,9 +110,9 @@
                             <h1>Full Terms of Use agreement</h1>
                             <p>To access and view data in this site you must agree to the Terms of Use for CAVD DataSpace below. Please read these terms carefully. By accessing this site you agree to be bound by these terms. These terms are subject to change. Any changes will be incorporated into the terms posted to this site from time to time. If you do not agree with these terms, please do not access the site. If you are not an authorized user of this site you are hereby notified that any access or use of the information herein is strictly prohibited.</p>
                             <h3>General Information</h3>
-                            <p>The CAVD DataSpace ("Site") is made available to members and trusted entities of the Collaboration for AIDS Vaccine Discovery (CAVD) by the Statistical Center for HIV/AIDS Research & Prevention ("SCHARP") at the Fred Hutchinson Cancer Research Center ("FHCRC"). The CAVD DataSpace is a pilot project in support of SCHARP's Vaccine Immunology Statistical Center (VISC) award funded by the Bill & Melinda Gates Foundation. The purpose of the project is to help accelerate shared progress in the search for an effective HIV vaccine by making the community more aware of work being done and enabling exploration beyond primary publications.</p>
+                            <p>The CAVD DataSpace ("Site") is made available to members and guests of the Collaboration for AIDS Vaccine Discovery (CAVD) by the Statistical Center for HIV/AIDS Research & Prevention ("SCHARP") at the Fred Hutchinson Cancer Research Center ("FHCRC"). The CAVD DataSpace is supported by SCHARP's Vaccine Immunology Statistical Center (VISC) award funded by the Bill & Melinda Gates Foundation. The purpose of the DataSpace is to help accelerate shared progress in the search for an effective HIV vaccine by making the research community more aware of work being done and enabling exploration beyond primary publications.</p>
                             <h3>Limitations on the Use of the Site</h3>
-                            <p>You agree to comply with all terms and conditions defined in the <a href="https://www.cavd.org/about/Pages/LegalAgreements.aspx" target="_blank">CAVD Data and Material Sharing Agreement</a>, including the Data & Materials Sharing Principles, Master CAVD Confidential Disclosure Agreement, and Master CAVD Material Transfer Agreement.<br/><br/>You agree (i) to make only lawful use of the Site in compliance with all applicable federal, state and local laws and regulations, (ii) not to permit unauthorized users to have access to or to view information or data on the Site and to establish and maintain appropriate administrative, technical, and physical safeguards to protect against such unauthorized use or access (iii) not to violate anyone else's rights, including copyright, trademark, trade secret, right of privacy, right of publicity or other rights, (iv) not to upload, post, transmit, distribute or otherwise publish on or to the Site any materials that contain a software virus or other harmful component.</p>
+                            <p>You agree to comply with all terms and conditions defined in the <a href="https://www.cavd.org/about/Pages/LegalAgreements.aspx" target="_blank">CAVD Data and Material Sharing Agreement (DMSA)</a>, including the CAVD DMSA Clinical Trials Addendum, Data & Materials Sharing Principles, Master CAVD Confidential Disclosure Agreement, and Master CAVD Material Transfer Agreement.<br/><br/>You agree (i) to make only lawful use of the Site in compliance with all applicable federal, state and local laws and regulations, (ii) not to permit unauthorized users to have access to or to view information or data on the Site and to establish and maintain appropriate administrative, technical, and physical safeguards to protect against such unauthorized use or access (iii) not to violate anyone else's rights, including copyright, trademark, trade secret, right of privacy, right of publicity or other rights, (iv) not to upload, post, transmit, distribute or otherwise publish on or to the Site any materials that contain a software virus or other harmful component.</p>
                             <h3>Limitations on the Use of Data and Information from the Site</h3>
                             <p>Without the prior written consent of FHCRC, you:</p>
                             <ul>
@@ -243,7 +243,7 @@
         </div>
     </div>
     <div class="create-new-password-modal-popup hidden">
-        <div class="create-new-password-modal">
+        <div class="create-new-password-modal front-page-popup-container">
             <div class="modal">
                 <div class="border"></div>
                 <div class="title">
@@ -254,7 +254,7 @@
                 </div>
                 <form action="" method="post" class="form" id="createnewpasswordform">
                     <div class="credentials">
-                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
+                        <span class="password-requirements help-info">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
                         Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
                         </span>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
@@ -271,7 +271,7 @@
         </div>
     </div>
     <div class="create-account-modal-popup hidden">
-        <div class="create-account-modal">
+        <div class="create-account-modal front-page-popup-container">
             <div class="modal">
                 <div class="border"></div>
                 <div class="title">
@@ -282,7 +282,7 @@
                 </div>
                 <form action="" method="post" class="form" id="createaccountform">
                     <div class="credentials">
-                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
+                        <span class="password-requirements help-info">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
                         Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
                         </span>
                         <input placeholder="Password" id="password3" name="password" type="password" value="" required>
@@ -302,9 +302,9 @@
                             <h1>Full Terms of Use agreement</h1>
                             <p>To access and view data in this site must agree to the Terms of Use for CAVD DataSpace below. Please read these terms carefully. By accessing this site you agree to be bound by these terms. These terms are subject to change. Any changes will be incorporated into the terms posted to this site from time to time. If you do not agree with these terms, please do not access the site. If you are not an authorized user of this site you are hereby notified that any access or use of the information herein is strictly prohibited.</p>
                             <h3>General Information</h3>
-                            <p>The CAVD DataSpace ("Site") is made available to members and trusted entities of the Collaboration for AIDS Vaccine Discovery (CAVD) by the Statistical Center for HIV/AIDS Research & Prevention ("SCHARP") at the Fred Hutchinson Cancer Research Center ("FHCRC"). The CAVD DataSpace is a pilot project in support of SCHARP's Vaccine Immunology Statistical Center (VISC) award funded by the Bill & Melinda Gates Foundation. The purpose of the project is to help accelerate shared progress in the search for an effective HIV vaccine by making the community more aware of work being done and enabling exploration beyond primary publications.</p>
+                            <p>The CAVD DataSpace ("Site") is made available to members and guests of the Collaboration for AIDS Vaccine Discovery (CAVD) by the Statistical Center for HIV/AIDS Research & Prevention ("SCHARP") at the Fred Hutchinson Cancer Research Center ("FHCRC"). The CAVD DataSpace is supported by SCHARP's Vaccine Immunology Statistical Center (VISC) award funded by the Bill & Melinda Gates Foundation. The purpose of the DataSpace is to help accelerate shared progress in the search for an effective HIV vaccine by making the research community more aware of work being done and enabling exploration beyond primary publications.</p>
                             <h3>Limitations on the Use of the Site</h3>
-                            <p>You agree to comply with all terms and conditions defined in the <a href="https://www.cavd.org/about/Pages/LegalAgreements.aspx" target="_blank">CAVD Data and Material Sharing Agreement</a>, including the Data & Materials Sharing Principles, Master CAVD Confidential Disclosure Agreement, and Master CAVD Material Transfer Agreement.<br/><br/>You agree (i) to make only lawful use of the Site in compliance with all applicable federal, state and local laws and regulations, (ii) not to permit unauthorized users to have access to or to view information or data on the Site and to establish and maintain appropriate administrative, technical, and physical safeguards to protect against such unauthorized use or access (iii) not to violate anyone else's rights, including copyright, trademark, trade secret, right of privacy, right of publicity or other rights, (iv) not to upload, post, transmit, distribute or otherwise publish on or to the Site any materials that contain a software virus or other harmful component.</p>
+                            <p>You agree to comply with all terms and conditions defined in the <a href="https://www.cavd.org/about/Pages/LegalAgreements.aspx" target="_blank">CAVD Data and Material Sharing Agreement (DMSA)</a>, including the CAVD DMSA Clinical Trials Addendum, Data & Materials Sharing Principles, Master CAVD Confidential Disclosure Agreement, and Master CAVD Material Transfer Agreement.<br/><br/>You agree (i) to make only lawful use of the Site in compliance with all applicable federal, state and local laws and regulations, (ii) not to permit unauthorized users to have access to or to view information or data on the Site and to establish and maintain appropriate administrative, technical, and physical safeguards to protect against such unauthorized use or access (iii) not to violate anyone else's rights, including copyright, trademark, trade secret, right of privacy, right of publicity or other rights, (iv) not to upload, post, transmit, distribute or otherwise publish on or to the Site any materials that contain a software virus or other harmful component.</p>
                             <h3>Limitations on the Use of Data and Information from the Site</h3>
                             <p>Without the prior written consent of FHCRC, you:</p>
                             <ul>
