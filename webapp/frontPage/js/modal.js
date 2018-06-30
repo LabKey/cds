@@ -85,9 +85,10 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       self.expandTOS();
       self.confirm();
       self.dismiss();
-      self.help();
+      self.toggle();
       self.initLoginInfo();
       self.bindEnterKey();
+      self.initAccountSurvey();
     };
 
     self.initLoginInfo = function() {
@@ -170,17 +171,19 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
     };
 
     /**
-     * help
-     * Handle click event of help button
-     * sign in form = [data-form=sign-in]
-     * sign in help form = [data-form=sign-in-help]
-     * Transition to hidden modal form from sign in form
-     * to sign in help form.
-     * Otherwise close magnific popup.
-     * Move email value from one sign in form to sign in help form
+     * toggle
+     * Handle click event of button that navigate between forms
      */
-    self.help = function() {
+    self.toggle = function() {
       // Toggle between sign-in form and sign-in-help form
+        /**
+         * sign in form = [data-form=sign-in]
+         * sign in help form = [data-form=sign-in-help]
+         * Transition to hidden modal form from sign in form
+         * to sign in help form.
+         * Otherwise close magnific popup.
+         * Move email value from one sign in form to sign in help form
+         */
       self.action('help', function($click) {
         var $sign_in_container = self.$modal.find('[data-form=sign-in]');
 
@@ -409,20 +412,95 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
 
       });
 
+      self.action('confirmsurvey', function($click) {
+        var firstname = document.getElementById('accountfirstname');
+        var lastname = document.getElementById('accountlastname');
+        var institution = document.getElementById('accountinstitution');
+        var role = document.getElementById('accountrole');
+
+        if (!firstname.checkValidity() || !lastname.checkValidity() || !institution.checkValidity() || !role.checkValidity()) {
+          $('#submit_hidden_account_survey').click(); //click a hidden submit to do form validation
+          return false;
+        }
+        if (!LABKEY.user.isSignedIn)
+        {
+            $('.account-survey-modal .notifications p').html("Your session has timed out. Please sign in to continue.");
+            $('#accountsurveysubmit').attr("disabled", "disabled");
+            return;
+        }
+
+        var networks = [];
+        $(".survey-form input:checkbox[name=network]:checked").each(function(){
+            networks.push($(this).val());
+        });
+
+        var otherNetwork = document.getElementById('accountothernetwork');
+        if (otherNetwork && otherNetwork.value)
+          networks.push('Other: ' + otherNetwork.value);
+
+        var researchArea = document.getElementById('accountarea');
+
+          $.ajax({
+          url: LABKEY.ActionURL.buildURL("cds", "updateCDSUserInfo.api"),
+          method: 'POST',
+          data: {
+            firstName: firstname.value,
+            lastName: lastname.value,
+            institution: institution.value,
+            role: role.value,
+            network: networks.join(", "),
+            researchArea: researchArea.value,
+            'X-LABKEY-CSRF': LABKEY.CSRF
+          }
+        }).success(function() {
+          $('.account-survey-modal .links input').prop("disabled",true);
+          $('.account-survey-modal .notifications p').html('Thanks for the additional information. You will be redirected to the DataSpace application now.');
+          setTimeout(function(){
+              window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
+          },3000);
+
+        }).error(function(e) {
+          var errorMsg = 'Unable to update member details. ';
+          if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+            errorMsg = errorMsg + e.responseJSON.errors[0].message;
+          }
+          $('.account-survey-modal .notifications p').html(errorMsg);
+        });
+
+      });
+    };
+
+    self.initAccountSurvey = function() {
+        var $survey_container = self.$modal.find('[data-form=account-survey]');
+        if ($survey_container.length > 0) {
+            var $account_email = $survey_container.find('label[id=verifiedaccountemail]');
+            var email = LABKEY.user.email;
+
+            // Set email address
+            $account_email.text(email);
+            if (!LABKEY.user.isSignedIn)
+            {
+                $('.account-survey-modal .notifications p').html("Your session has timed out. Please sign in to continue.");
+                $('#accountsurveysubmit').prop("disabled", true);
+            }
+        }
     };
 
     self.toggleRegistrationHelp = function() {
-      var $register_container = self.$modal.find('[data-form=register]');
+      self.toggleContainer('register', 'register-help');
+    };
 
-        // If there is a register form toggle between register and register help forms
-        if( $register_container.length > 0 ) {
-            var $register_help_container = self.$modal.find('[data-form=register-help]');
-            $register_container.toggleClass('hidden');
-            $register_help_container.toggleClass('hidden');
-        }  else {
-          // otherwise we are deeplinking - just close the form
-          $.magnificPopup.close();
-        }
+    self.toggleContainer = function(mainContainer, secondContainer) {
+      var $register_container = self.$modal.find('[data-form=' + mainContainer + ']');
+
+      if( $register_container.length > 0 ) {
+        var $register_help_container = self.$modal.find('[data-form=' + secondContainer + ']');
+        $register_container.toggleClass('hidden');
+        $register_help_container.toggleClass('hidden');
+      }  else {
+        // otherwise we are deeplinking - just close the form
+        $.magnificPopup.close();
+      }
     };
 
     self.submitPasswordHelp = function(emailId, modalCss, hiddensubmitid) {

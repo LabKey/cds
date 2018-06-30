@@ -272,7 +272,7 @@
     </div>
     <div class="create-account-modal-popup hidden">
         <div class="create-account-modal front-page-popup-container">
-            <div class="modal">
+            <div class="modal" data-form="account-new-password">
                 <div class="border"></div>
                 <div class="title">
                     <h1>Create your account</h1>
@@ -341,6 +341,112 @@
             </div>
         </div>
     </div>
+
+    <div class="survey-modal-popup hidden">
+        <div class="account-survey-modal front-page-popup-container">
+
+            <div data-form="account-survey">
+                <div class="border"></div>
+                <div class="title" style="margin-bottom: 0;">
+                    <h1>Member details</h1>
+                </div>
+                <div class="notifications" style="margin-bottom: 0.5em;">
+                    <p></p>
+                </div>
+                <span class="help-info" style="display: block">
+                    We're almost there!
+                </span>
+                <span class="help-info" style="display: block">
+                    The DataSpace is a data sharing and discovery tool developed for HIV vaccine researchers. We want to make the community more aware of its own work and encourage self-service exploration of data outside the analyses done in primary publications.
+                </span>
+                <span class="help-info" style="display: block">
+                    Understanding who our members are and their particular areas of interest helps us create a better experience. Please provide us with some additional information about you. Fields marked with * are required.
+                </span><br>
+                <form action="" method="post" class="form">
+                    <div class="form">
+                        <div class="credentials survey-form">
+                            <table>
+                                <tr>
+                                    <td class="label"><label>Email</label></td>
+                                    <td><label id="verifiedaccountemail"></label></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountfirstname">First Name *</label></td>
+                                    <td class="input"><input placeholder="First Name" type="text" id="accountfirstname"
+                                                             required></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountlastname">Last Name *</label></td>
+                                    <td><input placeholder="Last Name" type="text" id="accountlastname" required></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountinstitution">Primary Institution *</label></td>
+                                    <td><input placeholder="Primary Institution" type="text" id="accountinstitution"
+                                               required></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountrole">Title/Role *</label></td>
+                                    <td><input placeholder="Title/Role" type="text" id="accountrole" required></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label>Network Affiliations (past or present)</label></td>
+                                    <td>
+                                        <label>Mark all that apply</label>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox1" name="network" value="HIV Vaccine Trials Network (HVTN)">
+                                            <label for="tos-checkbox1">HIV Vaccine Trials Network (HVTN)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox2" name="network" value="International AIDS Vaccine Initiative (IAVI)">
+                                            <label for="tos-checkbox2">International AIDS Vaccine Initiative (IAVI)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox3" name="network" value="Military HIV Research Program (MHRP)">
+                                            <label for="tos-checkbox3">Military HIV Research Program (MHRP)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox4" name="network" value="European AIDS Vaccine Initiative (EAVI)">
+                                            <label for="tos-checkbox4">European AIDS Vaccine Initiative (EAVI)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox5" name="network" value="Center for HIV/AIDS Vaccine Immunology (CHAVI)">
+                                            <label for="tos-checkbox5">Center for HIV/AIDS Vaccine Immunology (CHAVI)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox6" name="network" value="National Institutes of Health (NIH)">
+                                            <label for="tos-checkbox6">National Institutes of Health (NIH)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox7" name="network" value="NIH Vaccine Research Center (VRC)">
+                                            <label for="tos-checkbox7">NIH Vaccine Research Center (VRC)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox8">
+                                            <label for="tos-checkbox8">Other, specify</label>
+                                            <input placeholder="Other network affiliations" type="text"
+                                                   id="accountothernetwork">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountarea">Research areas of interest</label></td>
+                                    <td><input placeholder="Research areas of interest" type="text" id="accountarea"
+                                               required></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="links">
+                        <input id="submit_hidden_account_survey" type="submit" style="display: none">
+                        <input type="button" data-click="confirmsurvey" class="confirm" value="Submit"
+                               id="accountsurveysubmit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="fullpage">
         <div data-index='1' data-name="Welcome" class="section intro-section">
             <div class="links">

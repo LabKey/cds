@@ -70,6 +70,11 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
         name: 'register-modal',
         query_param_regex: /register=true/i
       });
+
+      modal.initialize({
+        name: 'survey-modal',
+        query_param_regex: /survey=true/i
+      });
     },
 
     /**

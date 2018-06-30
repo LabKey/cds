@@ -18,7 +18,10 @@ package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.ContainerManager;
+import org.labkey.api.data.CoreSchema;
 import org.labkey.api.data.DbSchema;
+import org.labkey.api.data.DbScope;
 import org.labkey.api.data.PropertyManager;
 import org.labkey.api.data.RuntimeSQLException;
 import org.labkey.api.data.SQLFragment;
@@ -27,19 +30,32 @@ import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.data.TableSelector;
+import org.labkey.api.exp.ObjectProperty;
+import org.labkey.api.exp.OntologyManager;
+import org.labkey.api.exp.property.Domain;
+import org.labkey.api.exp.property.DomainProperty;
 import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.module.ModuleProperty;
+import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.FieldKey;
+import org.labkey.api.query.InvalidKeyException;
 import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryException;
 import org.labkey.api.query.QueryService;
+import org.labkey.api.query.QueryUpdateServiceException;
+import org.labkey.api.query.UserSchema;
+import org.labkey.api.query.ValidationException;
 import org.labkey.api.security.User;
+import org.labkey.api.security.UserManager;
+import org.labkey.api.security.ValidEmail;
 import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.util.PageFlowUtil;
+import org.labkey.api.view.NotFoundException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -247,5 +263,107 @@ public class CDSManager
         ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.CDS_IMPORT_PATH);
         return PageFlowUtil.decode(mp.getEffectiveValue(container));
     }
+
+    public TableInfo getSiteUserTableInfo(User user)
+    {
+        UserSchema coreSchema = QueryService.get().getUserSchema(user, getUserTableContainer(), "core");
+        TableInfo tableInfo = coreSchema.getTable("SiteUsers");
+        if (tableInfo == null)
+            throw new NotFoundException("SiteUsers table not available. You don't have permission to the project.");
+        return tableInfo;
+    }
+
+    private Container getUserTableContainer()
+    {
+        return ContainerManager.getSharedContainer();
+    }
+
+    public boolean isNeedSurvey(User user)
+    {
+        SimpleFilter filter = new SimpleFilter();
+        filter.addCondition(FieldKey.fromParts("UserId"), user.getUserId());
+        filter.addCondition(FieldKey.fromParts("NeedSurvey"), true);
+
+        TableSelector selector = new TableSelector(getSiteUserTableInfo(user), Collections.singleton("NeedSurvey"), filter, null);
+        return selector.exists();
+    }
+
+    public void setNeedSurvey(User user, boolean needSurvey) throws ValidEmail.InvalidEmailException, SQLException, BatchValidationException, InvalidKeyException, QueryUpdateServiceException, ValidationException
+    {
+        Domain domain = getSiteUserTableInfo(user).getDomain();
+        if (domain == null)
+            return;
+
+        Map<String, DomainProperty> propsMap = new HashMap<>();
+        for (DomainProperty dp : domain.getProperties())
+            propsMap.put(dp.getName(), dp);
+
+        updateUserSingleInfo(user.getEntityId(), propsMap, "NeedSurvey", needSurvey);
+    }
+
+    public void updateSurvey(User user, String firstName, String lastName, String institution, String role, String network, String researchArea) throws SQLException, QueryUpdateServiceException, BatchValidationException, InvalidKeyException, ValidationException
+    {
+        //TODO simplify code once "Issue 34721: UsersTable permission handling improvement" is fixed
+        updateUserName(user, firstName, lastName);
+
+        Domain domain = getSiteUserTableInfo(user).getDomain();
+        if (domain == null)
+            return;
+
+        Map<String, DomainProperty> propsMap = new HashMap<>();
+        for (DomainProperty dp : domain.getProperties())
+            propsMap.put(dp.getName(), dp);
+
+        updateUserInfo(propsMap, user.getEntityId(), institution, role, network, researchArea);
+    }
+
+    public void updateUserName(User user, String firstName, String lastName)
+    {
+        SQLFragment sql = new SQLFragment("UPDATE core.usersdata ");
+        sql.append(" SET firstname = ? , lastname = ? WHERE userid = ?;");
+        sql.add(firstName);
+        sql.add(lastName);
+        sql.add(user.getUserId());
+
+        new SqlExecutor(QueryService.get().getUserSchema(user, getUserTableContainer(), "core").getDbSchema()).execute(sql);
+    }
+
+    public synchronized void updateUserInfo(Map<String, DomainProperty> propMap, String userEntityId, String institution, String role, String network, String researchArea) throws ValidationException
+    {
+        if (userEntityId == null)
+            return;
+
+        DbScope scope = CoreSchema.getInstance().getSchema().getScope();
+
+        try (DbScope.Transaction transaction = scope.ensureTransaction())
+        {
+            updateUserSingleInfo(userEntityId, propMap, "NeedSurvey", null);
+            updateUserSingleInfo(userEntityId, propMap, "Institution", institution);
+            updateUserSingleInfo(userEntityId, propMap, "Role", role);
+            updateUserSingleInfo(userEntityId, propMap, "Network", network);
+            updateUserSingleInfo(userEntityId, propMap, "ResearchArea", researchArea);
+
+            transaction.commit();
+        }
+
+        UserManager.clearUserList(); // invalidate user cache, otherwise user won't exit out of survey
+    }
+
+    public void updateUserSingleInfo(String userEntityId, Map<String, DomainProperty> propMap, String propName, Object updatedValue) throws ValidationException
+    {
+        if (propMap.containsKey(propName))
+        {
+            DomainProperty prop = propMap.get(propName);
+            Container container = getUserTableContainer();
+            OntologyManager.deleteProperty(userEntityId, prop.getPropertyURI(), container, container);
+            if (updatedValue != null)
+            {
+                ObjectProperty oProp = new ObjectProperty(userEntityId, container, prop.getPropertyURI(), updatedValue, prop.getPropertyDescriptor().getPropertyType());
+                oProp.setPropertyId(prop.getPropertyId());
+                OntologyManager.insertProperties(container, userEntityId, oProp);
+            }
+        }
+    }
+
 
 }

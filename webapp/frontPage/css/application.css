@@ -351,3 +351,16 @@ a.register-links {text-decoration: none; color: #ed365e;}
 
 a.register-links-error {text-decoration: underline; color: #ed365e;}
 a.register-links-error:hover {cursor: pointer;}
+
+.front-page-popup-container .form .checkbox.checkboxgroup label, .create-account-modal .form .checkbox.checkboxgroup label {padding-right: 0}
+
+.front-page-popup-container .form .credentials .checkbox.checkboxgroup, .create-account-modal .form .credentials .checkbox.checkboxgroup {margin-top: 0; padding-bottom: 0.2em;}
+
+.account-survey-modal table {width: 100%;}
+.account-survey-modal tr {margin-bottom: 0.5em;}
+.account-survey-modal td.label {width: 40%; font-weight: bold;}
+.account-survey-modal td label {color: #2d2d2d;}
+
+.front-page-popup-container .form .survey-form input {width:100%; padding: 0.3em;}
+
+.front-page-popup-container .form .survey-form input#accountothernetwork {width:93%; margin-left: 2em;}
