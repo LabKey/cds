@@ -638,7 +638,7 @@
                         <a href="http://www.gatesfoundation.org/" target="_blank">The Bill & Melinda Gates Foundation</a>,
                         has funded the program to date.
                         <br>
-                        The DataSpace is open access.
+                        The DataSpace is open to the public.
                     </p>
                 </div>
                 <div class="links">
