@@ -85,9 +85,10 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       self.expandTOS();
       self.confirm();
       self.dismiss();
-      self.help();
+      self.toggle();
       self.initLoginInfo();
       self.bindEnterKey();
+      self.initAccountSurvey();
     };
 
     self.initLoginInfo = function() {
@@ -170,17 +171,19 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
     };
 
     /**
-     * help
-     * Handle click event of help button
-     * sign in form = [data-form=sign-in]
-     * sign in help form = [data-form=sign-in-help]
-     * Transition to hidden modal form from sign in form
-     * to sign in help form.
-     * Otherwise close magnific popup.
-     * Move email value from one sign in form to sign in help form
+     * toggle
+     * Handle click event of button that navigate between forms
      */
-    self.help = function() {
+    self.toggle = function() {
       // Toggle between sign-in form and sign-in-help form
+        /**
+         * sign in form = [data-form=sign-in]
+         * sign in help form = [data-form=sign-in-help]
+         * Transition to hidden modal form from sign in form
+         * to sign in help form.
+         * Otherwise close magnific popup.
+         * Move email value from one sign in form to sign in help form
+         */
       self.action('help', function($click) {
         var $sign_in_container = self.$modal.find('[data-form=sign-in]');
 
@@ -201,6 +204,8 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           $.magnificPopup.close();
         }
       });
+
+      self.action('help-register', self.toggleRegistrationHelp);
     };
 
     /**
@@ -279,25 +284,59 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         });
       });
 
-
-      self.action('confirmhelp', function($click) {
-        var email = document.getElementById('emailhelp');
+      self.action('register', function($click) {
+        var email = document.getElementById('emailRegister');
+        var emailConfirm = document.getElementById('emailRegisterConfirm');
+        var verification = document.getElementById('kaptchaText');
+        if (!email.checkValidity() || !emailConfirm.checkValidity() || !verification.checkValidity()) {
+          $('#submit_hidden_register').click(); //click a hidden submit to do form validation
+          return false;
+        }
+        if (email.value !== emailConfirm.value) {
+          alert("The 2 emails entered don't match.");
+          return;
+        }
         $.ajax({
-          url: LABKEY.ActionURL.buildURL("login", "resetPasswordAPI.api"),
+          url: LABKEY.ActionURL.buildURL("login", "registerUser.api"),
           method: 'POST',
           data: {
             email: email.value,
+            emailConfirmation: emailConfirm.value,
             provider: 'cds',
-            'X-LABKEY-CSRF': LABKEY.CSRF
+            'X-LABKEY-CSRF': LABKEY.CSRF,
+            kaptchaText: document.getElementById('kaptchaText').value
           }
         }).success(function() {
-
-          $('.signin-modal .notifications p').html('Reset successful. Please check your email.');
-        }).error(function() {
-          $('.signin-modal .notifications p').html('Reset password failed.');
+          $('.register-account-modal #registeraccountform').html('Thank you for signing up! A verification email has been sent to ' + email.value +
+          '.  Please check your inbox to confirm your email address and complete your account setup. <br><br><br>');
+        }).error(function(e) {
+          var errorMsg = 'Unable to register account. ';
+          window.toggleRegistrationHelp = self.toggleRegistrationHelp;
+          if (e && e.responseJSON) {
+            if (e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+                var additionalMsg = e.responseJSON.errors[0].message;
+                // replace link that would take user to LabKey reset url
+                if (additionalMsg.indexOf('already associated with an account') > 0)
+                    additionalMsg = 'The email address you have entered is already associated with an account.  If you have forgotten your password, you can ' +
+                        '<a class="register-links-error" onclick="return toggleRegistrationHelp();">reset your password</a>' +
+                        '.  Otherwise, please contact your administrator.';
+                errorMsg = errorMsg + additionalMsg;
+            }
+            else if (e.responseJSON.exception) {
+                errorMsg = errorMsg + e.responseJSON.exception;
+            }
+          }
+          $('.register-account-modal .modal .notifications p').html(errorMsg);
         });
       });
 
+      self.action('confirmhelp', function($click) {
+        self.submitPasswordHelp('emailhelp', 'signin-modal', 'submit_hidden_help');
+      });
+
+      self.action('confirmregisterhelp', function($click) {
+        self.submitPasswordHelp('emailhelpregister', 'register-account-modal', 'submit_hidden_registerhelp');
+      });
 
       self.action('confirmchangepassword', function($click) {
         var pw1 = document.getElementById('password1');
@@ -373,8 +412,119 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
 
       });
 
+      self.action('confirmsurvey', function($click) {
+        var firstname = document.getElementById('accountfirstname');
+        var lastname = document.getElementById('accountlastname');
+        var institution = document.getElementById('accountinstitution');
+        var role = document.getElementById('accountrole');
+
+        if (!firstname.checkValidity() || !lastname.checkValidity() || !institution.checkValidity() || !role.checkValidity()) {
+          $('#submit_hidden_account_survey').click(); //click a hidden submit to do form validation
+          return false;
+        }
+        if (!LABKEY.user.isSignedIn)
+        {
+            $('.account-survey-modal .notifications p').html("Your session has timed out. Please sign in to continue.");
+            $('#accountsurveysubmit').attr("disabled", "disabled");
+            return;
+        }
+
+        var networks = [];
+        $(".survey-form input:checkbox[name=network]:checked").each(function(){
+            networks.push($(this).val());
+        });
+
+        var otherNetwork = document.getElementById('accountothernetwork');
+        if (otherNetwork && otherNetwork.value)
+          networks.push('Other: ' + otherNetwork.value);
+
+        var researchArea = document.getElementById('accountarea');
+
+          $.ajax({
+          url: LABKEY.ActionURL.buildURL("cds", "updateCDSUserInfo.api"),
+          method: 'POST',
+          data: {
+            firstName: firstname.value,
+            lastName: lastname.value,
+            institution: institution.value,
+            role: role.value,
+            network: networks.join(", "),
+            researchArea: researchArea.value,
+            'X-LABKEY-CSRF': LABKEY.CSRF
+          }
+        }).success(function() {
+          $('.account-survey-modal .links input').prop("disabled",true);
+          $('.account-survey-modal .notifications p').html('Thanks for the additional information. You will be redirected to the DataSpace application now.');
+          setTimeout(function(){
+              window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
+          },3000);
+
+        }).error(function(e) {
+          var errorMsg = 'Unable to update member details. ';
+          if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+            errorMsg = errorMsg + e.responseJSON.errors[0].message;
+          }
+          $('.account-survey-modal .notifications p').html(errorMsg);
+        });
+
+      });
     };
 
+    self.initAccountSurvey = function() {
+        var $survey_container = self.$modal.find('[data-form=account-survey]');
+        if ($survey_container.length > 0) {
+            var $account_email = $survey_container.find('label[id=verifiedaccountemail]');
+            var email = LABKEY.user.email;
+
+            // Set email address
+            $account_email.text(email);
+            if (!LABKEY.user.isSignedIn)
+            {
+                $('.account-survey-modal .notifications p').html("Your session has timed out. Please sign in to continue.");
+                $('#accountsurveysubmit').prop("disabled", true);
+            }
+        }
+    };
+
+    self.toggleRegistrationHelp = function() {
+      self.toggleContainer('register', 'register-help');
+    };
+
+    self.toggleContainer = function(mainContainer, secondContainer) {
+      var $register_container = self.$modal.find('[data-form=' + mainContainer + ']');
+
+      if( $register_container.length > 0 ) {
+        var $register_help_container = self.$modal.find('[data-form=' + secondContainer + ']');
+        $register_container.toggleClass('hidden');
+        $register_help_container.toggleClass('hidden');
+      }  else {
+        // otherwise we are deeplinking - just close the form
+        $.magnificPopup.close();
+      }
+    };
+
+    self.submitPasswordHelp = function(emailId, modalCss, hiddensubmitid) {
+        var email = document.getElementById(emailId);
+        if (!email.checkValidity()) {
+            $('#' + hiddensubmitid).click(); //click a hidden submit to do form validation
+            return false;
+        }
+
+        $.ajax({
+          url: LABKEY.ActionURL.buildURL("login", "resetPasswordAPI.api"),
+          method: 'POST',
+          data: {
+            email: email.value,
+            provider: 'cds',
+            'X-LABKEY-CSRF': LABKEY.CSRF
+          }
+        }).success(function() {
+
+          $('.' + modalCss  +' .notifications p').html('Reset successful. Please check your email.');
+        }).error(function() {
+          $('.' + modalCss + ' .notifications p').html('Reset password failed.');
+        });
+      };
     /**
      * expandTOS
      * Handle click event of Terms of service
@@ -403,7 +553,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         e.preventDefault();
         callback($(this), $(action_selector));
       });
-    }
+    };
 
     /**
      * queryParamTriggerModal
