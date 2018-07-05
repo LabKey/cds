@@ -279,8 +279,12 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             window.location = newLocation;
           }
 
-        }).error(function() {
-          $('.signin-modal .notifications p').html('Sign-in Failed');
+        }).error(function(e) {
+          var errorMsg = "Sign-in Failed. ";
+            if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+                errorMsg = errorMsg + e.responseJSON.errors[0].message;
+            }
+          $('.signin-modal .notifications p').html(errorMsg);
         });
       });
 
