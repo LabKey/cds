@@ -49,6 +49,11 @@
     <%--<!-- Client API Dependencies -->--%>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
+    <script type="text/javascript">
+        reloadRegisterPage = function() {
+            window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
+        }
+    </script>
 </head>
 <body>
     <div id="navigation">
@@ -65,12 +70,12 @@
             <div class="link hide sign-in">
                 <span>CAVD DataSpace Members:</span>
                 <a href="#" class="create-account-modal-trigger">Create Account</a>
-                <a href="#" class="signin-modal-trigger">Sign In</a>
+                <a href="#" class="signin-modal-trigger front-page-button">Sign In</a>
             </div>
         </div>
     </div>
     <div class="signin-modal-popup hidden">
-        <div class="signin-modal">
+        <div class="signin-modal front-page-popup-container">
             <div data-form="sign-in" class="sign-in">
                 <div class="border"></div>
                 <div class="title">
@@ -105,9 +110,9 @@
                             <h1>Full Terms of Use agreement</h1>
                             <p>To access and view data in this site you must agree to the Terms of Use for CAVD DataSpace below. Please read these terms carefully. By accessing this site you agree to be bound by these terms. These terms are subject to change. Any changes will be incorporated into the terms posted to this site from time to time. If you do not agree with these terms, please do not access the site. If you are not an authorized user of this site you are hereby notified that any access or use of the information herein is strictly prohibited.</p>
                             <h3>General Information</h3>
-                            <p>The CAVD DataSpace ("Site") is made available to members and trusted entities of the Collaboration for AIDS Vaccine Discovery (CAVD) by the Statistical Center for HIV/AIDS Research & Prevention ("SCHARP") at the Fred Hutchinson Cancer Research Center ("FHCRC"). The CAVD DataSpace is a pilot project in support of SCHARP's Vaccine Immunology Statistical Center (VISC) award funded by the Bill & Melinda Gates Foundation. The purpose of the project is to help accelerate shared progress in the search for an effective HIV vaccine by making the community more aware of work being done and enabling exploration beyond primary publications.</p>
+                            <p>The CAVD DataSpace ("Site") is made available to members and guests of the Collaboration for AIDS Vaccine Discovery (CAVD) by the Statistical Center for HIV/AIDS Research & Prevention ("SCHARP") at the Fred Hutchinson Cancer Research Center ("FHCRC"). The CAVD DataSpace is supported by SCHARP's Vaccine Immunology Statistical Center (VISC) award funded by the Bill & Melinda Gates Foundation. The purpose of the DataSpace is to help accelerate shared progress in the search for an effective HIV vaccine by making the research community more aware of work being done and enabling exploration beyond primary publications.</p>
                             <h3>Limitations on the Use of the Site</h3>
-                            <p>You agree to comply with all terms and conditions defined in the <a href="https://www.cavd.org/about/Pages/LegalAgreements.aspx" target="_blank">CAVD Data and Material Sharing Agreement</a>, including the Data & Materials Sharing Principles, Master CAVD Confidential Disclosure Agreement, and Master CAVD Material Transfer Agreement.<br/><br/>You agree (i) to make only lawful use of the Site in compliance with all applicable federal, state and local laws and regulations, (ii) not to permit unauthorized users to have access to or to view information or data on the Site and to establish and maintain appropriate administrative, technical, and physical safeguards to protect against such unauthorized use or access (iii) not to violate anyone else's rights, including copyright, trademark, trade secret, right of privacy, right of publicity or other rights, (iv) not to upload, post, transmit, distribute or otherwise publish on or to the Site any materials that contain a software virus or other harmful component.</p>
+                            <p>You agree to comply with all terms and conditions defined in the <a href="https://www.cavd.org/about/Pages/LegalAgreements.aspx" target="_blank">CAVD Data and Material Sharing Agreement (DMSA)</a>, including the CAVD DMSA Clinical Trials Addendum, Data & Materials Sharing Principles, Master CAVD Confidential Disclosure Agreement, and Master CAVD Material Transfer Agreement.<br/><br/>You agree (i) to make only lawful use of the Site in compliance with all applicable federal, state and local laws and regulations, (ii) not to permit unauthorized users to have access to or to view information or data on the Site and to establish and maintain appropriate administrative, technical, and physical safeguards to protect against such unauthorized use or access (iii) not to violate anyone else's rights, including copyright, trademark, trade secret, right of privacy, right of publicity or other rights, (iv) not to upload, post, transmit, distribute or otherwise publish on or to the Site any materials that contain a software virus or other harmful component.</p>
                             <h3>Limitations on the Use of Data and Information from the Site</h3>
                             <p>Without the prior written consent of FHCRC, you:</p>
                             <ul>
@@ -146,29 +151,99 @@
                 <div class="border"></div>
                 <div class="title">
                     <h1>Sign-in Help</h1>
-                    <span class="help-info">The DataSpace is currently available to CAVD members.<br>To set or reset your password, type in your email address and click the submit button.</span>
+                    <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
                 </div>
                 <div class="notifications">
                     <p></p>
                 </div>
-                <div class="form">
-                    <div class="credentials">
-                        <input placeholder="Email" type="email" id="emailhelp">
-                        <span class="help-info" style="display: block">Members who are still experiencing sign-in trouble should email
-                            <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" class="contact">dataspace.support@scharp.org</a>.
-                            <br>Note: Your DataSpace password is not necessarily the same as your Atlas and CAVD Portal passwords.
-                        </span>
+                <form action="" method="post" class="form">
+                    <div class="form">
+                        <div class="credentials">
+                            <input placeholder="Email" type="email" id="emailhelp" required>
+                            <span class="help-info" style="display: block">Members who are still experiencing sign-in trouble should email
+                                <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" class="contact">dataspace.support@scharp.org</a>.
+                                <br>Note: Your DataSpace password is not necessarily the same as your Atlas and CAVD Portal passwords.
+                            </span>
+                        </div>
                     </div>
+                    <div class="links">
+                        <a href="#" data-click="help" class="help">Cancel</a>
+                        <a href="#" data-click="confirmhelp" class="confirm" id="signinhelpsubmit">Submit</a>
+                        <input id="submit_hidden_help" type="submit" style="display: none;">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="register-modal-popup hidden">
+        <div class="register-account-modal front-page-popup-container">
+            <div class="modal" data-form="register" >
+                <div class="border"></div>
+                <div class="title" style="margin-bottom: 1em;">
+                    <h1>Register for DataSpace</h1>
                 </div>
-                <div class="links">
-                    <a href="#" data-click="help" class="help">Cancel</a>
-                    <a href="#" data-click="confirmhelp" class="confirm" id="signinhelpsubmit">Submit</a>
+                <div class="notifications">
+                    <p></p>
                 </div>
+                <form action="" method="post" class="form" id="registeraccountform">
+                    <div class="credentials">
+                        <p class="section-header">Network members</p>
+                        <span class="help-info" style="display: block">
+                            If you are a CAVD member or a member of an invited network or research organization, you may be pre-registered with DataSpace account which grants you access to data and information not yet available to public members. Go to
+                            <a href="#" data-click="help-register" class="help-register register-links">Sign-in Help</a> to set or reset your password.
+                        </span>
+                        <br>
+                        <p class="section-header">Not a network member?</p>
+                        <input placeholder="Email" type="email" id="emailRegister" required>
+                        <input placeholder="Verify Email" type="email" id="emailRegisterConfirm" required>
+                        <span class="help-info" style="display: block;">
+                            To help protect against abuse by bots, please enter the six characters shown below (case insensitive).
+                        </span>
+                        <div class="kaptcha" onclick="return reloadRegisterPage();">
+                            <img src="<%= text(contextPath) %>/kaptcha.jpg" alt="Verification text" title="Click to get a new image." height="50" width="200"/>
+                            <br><a class="register-links">Click to get a different image</a>
+                        </div>
+                        <input id="kaptchaText" name="kaptchaText" type="text" placeholder="Verification code" required>
+
+                    </div>
+                    <div class="links">
+                        <a href="#" data-click="dismiss" class="dismiss">Cancel</a>
+                        <a href="#" data-click="register" class="confirm" id="registeraccountsubmit">Register</a>
+                        <input id="submit_hidden_register" type="submit" style="display: none">
+                    </div>
+                </form>
+            </div>
+            <div data-form="register-help" class="sign-in-help hidden">
+                <div class="border"></div>
+                <div class="title">
+                    <h1>Sign-in Help</h1>
+                    <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
+                </div>
+                <div class="notifications">
+                    <p></p>
+                </div>
+                <form action="" method="post" class="form">
+                    <div class="form">
+                        <div class="credentials">
+                            <input placeholder="Email" type="email" id="emailhelpregister" required>
+                            <span class="help-info" style="display: block">Members who are still experiencing sign-in trouble should email
+                                <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" class="contact">dataspace.support@scharp.org</a>.
+                                <br>Note: Your DataSpace password is not necessarily the same as your Atlas and CAVD Portal passwords.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="links">
+                        <a href="#" data-click="help-register" class="help">Cancel</a>
+                        <a href="#" data-click="confirmregisterhelp" class="confirm" id="signinhelpregistersubmit">Submit</a>
+                        <input id="submit_hidden_registerhelp" type="submit" style="display: none">
+                    </div>
+                </form>
             </div>
         </div>
     </div>
     <div class="create-new-password-modal-popup hidden">
-        <div class="create-new-password-modal">
+        <div class="create-new-password-modal front-page-popup-container">
             <div class="modal">
                 <div class="border"></div>
                 <div class="title">
@@ -179,7 +254,7 @@
                 </div>
                 <form action="" method="post" class="form" id="createnewpasswordform">
                     <div class="credentials">
-                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
+                        <span class="password-requirements help-info">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
                         Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
                         </span>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
@@ -196,8 +271,8 @@
         </div>
     </div>
     <div class="create-account-modal-popup hidden">
-        <div class="create-account-modal">
-            <div class="modal">
+        <div class="create-account-modal front-page-popup-container">
+            <div class="modal" data-form="account-new-password">
                 <div class="border"></div>
                 <div class="title">
                     <h1>Create your account</h1>
@@ -207,7 +282,7 @@
                 </div>
                 <form action="" method="post" class="form" id="createaccountform">
                     <div class="credentials">
-                        <span class="password-requirements">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
+                        <span class="password-requirements help-info">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
                         Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
                         </span>
                         <input placeholder="Password" id="password3" name="password" type="password" value="" required>
@@ -227,9 +302,9 @@
                             <h1>Full Terms of Use agreement</h1>
                             <p>To access and view data in this site must agree to the Terms of Use for CAVD DataSpace below. Please read these terms carefully. By accessing this site you agree to be bound by these terms. These terms are subject to change. Any changes will be incorporated into the terms posted to this site from time to time. If you do not agree with these terms, please do not access the site. If you are not an authorized user of this site you are hereby notified that any access or use of the information herein is strictly prohibited.</p>
                             <h3>General Information</h3>
-                            <p>The CAVD DataSpace ("Site") is made available to members and trusted entities of the Collaboration for AIDS Vaccine Discovery (CAVD) by the Statistical Center for HIV/AIDS Research & Prevention ("SCHARP") at the Fred Hutchinson Cancer Research Center ("FHCRC"). The CAVD DataSpace is a pilot project in support of SCHARP's Vaccine Immunology Statistical Center (VISC) award funded by the Bill & Melinda Gates Foundation. The purpose of the project is to help accelerate shared progress in the search for an effective HIV vaccine by making the community more aware of work being done and enabling exploration beyond primary publications.</p>
+                            <p>The CAVD DataSpace ("Site") is made available to members and guests of the Collaboration for AIDS Vaccine Discovery (CAVD) by the Statistical Center for HIV/AIDS Research & Prevention ("SCHARP") at the Fred Hutchinson Cancer Research Center ("FHCRC"). The CAVD DataSpace is supported by SCHARP's Vaccine Immunology Statistical Center (VISC) award funded by the Bill & Melinda Gates Foundation. The purpose of the DataSpace is to help accelerate shared progress in the search for an effective HIV vaccine by making the research community more aware of work being done and enabling exploration beyond primary publications.</p>
                             <h3>Limitations on the Use of the Site</h3>
-                            <p>You agree to comply with all terms and conditions defined in the <a href="https://www.cavd.org/about/Pages/LegalAgreements.aspx" target="_blank">CAVD Data and Material Sharing Agreement</a>, including the Data & Materials Sharing Principles, Master CAVD Confidential Disclosure Agreement, and Master CAVD Material Transfer Agreement.<br/><br/>You agree (i) to make only lawful use of the Site in compliance with all applicable federal, state and local laws and regulations, (ii) not to permit unauthorized users to have access to or to view information or data on the Site and to establish and maintain appropriate administrative, technical, and physical safeguards to protect against such unauthorized use or access (iii) not to violate anyone else's rights, including copyright, trademark, trade secret, right of privacy, right of publicity or other rights, (iv) not to upload, post, transmit, distribute or otherwise publish on or to the Site any materials that contain a software virus or other harmful component.</p>
+                            <p>You agree to comply with all terms and conditions defined in the <a href="https://www.cavd.org/about/Pages/LegalAgreements.aspx" target="_blank">CAVD Data and Material Sharing Agreement (DMSA)</a>, including the CAVD DMSA Clinical Trials Addendum, Data & Materials Sharing Principles, Master CAVD Confidential Disclosure Agreement, and Master CAVD Material Transfer Agreement.<br/><br/>You agree (i) to make only lawful use of the Site in compliance with all applicable federal, state and local laws and regulations, (ii) not to permit unauthorized users to have access to or to view information or data on the Site and to establish and maintain appropriate administrative, technical, and physical safeguards to protect against such unauthorized use or access (iii) not to violate anyone else's rights, including copyright, trademark, trade secret, right of privacy, right of publicity or other rights, (iv) not to upload, post, transmit, distribute or otherwise publish on or to the Site any materials that contain a software virus or other harmful component.</p>
                             <h3>Limitations on the Use of Data and Information from the Site</h3>
                             <p>Without the prior written consent of FHCRC, you:</p>
                             <ul>
@@ -266,12 +341,122 @@
             </div>
         </div>
     </div>
+
+    <div class="survey-modal-popup hidden">
+        <div class="account-survey-modal front-page-popup-container">
+
+            <div data-form="account-survey">
+                <div class="border"></div>
+                <div class="title" style="margin-bottom: 0;">
+                    <h1>Member details</h1>
+                </div>
+                <div class="notifications" style="margin-bottom: 0.5em;">
+                    <p></p>
+                </div>
+                <span class="help-info" style="display: block">
+                    We're almost there!
+                </span>
+                <span class="help-info" style="display: block">
+                    The DataSpace is a data sharing and discovery tool developed for HIV vaccine researchers. We want to make the community more aware of its own work and encourage self-service exploration of data outside the analyses done in primary publications.
+                </span>
+                <span class="help-info" style="display: block">
+                    Understanding who our members are and their particular areas of interest helps us create a better experience. Please provide us with some additional information about you. Fields marked with * are required.
+                </span><br>
+                <form action="" method="post" class="form">
+                    <div class="form">
+                        <div class="credentials survey-form">
+                            <table>
+                                <tr>
+                                    <td class="label"><label>Email</label></td>
+                                    <td><label id="verifiedaccountemail"></label></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountfirstname">First Name *</label></td>
+                                    <td class="input"><input placeholder="First Name" type="text" id="accountfirstname"
+                                                             required></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountlastname">Last Name *</label></td>
+                                    <td><input placeholder="Last Name" type="text" id="accountlastname" required></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountinstitution">Primary Institution *</label></td>
+                                    <td><input placeholder="Primary Institution" type="text" id="accountinstitution"
+                                               required></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountrole">Title/Role *</label></td>
+                                    <td><input placeholder="Title/Role" type="text" id="accountrole" required></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label>Network Affiliations (past or present)</label></td>
+                                    <td>
+                                        <label>Mark all that apply</label>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox1" name="network" value="HIV Vaccine Trials Network (HVTN)">
+                                            <label for="tos-checkbox1">HIV Vaccine Trials Network (HVTN)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox2" name="network" value="International AIDS Vaccine Initiative (IAVI)">
+                                            <label for="tos-checkbox2">International AIDS Vaccine Initiative (IAVI)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox3" name="network" value="Military HIV Research Program (MHRP)">
+                                            <label for="tos-checkbox3">Military HIV Research Program (MHRP)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox4" name="network" value="European AIDS Vaccine Initiative (EAVI)">
+                                            <label for="tos-checkbox4">European AIDS Vaccine Initiative (EAVI)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox5" name="network" value="Center for HIV/AIDS Vaccine Immunology (CHAVI)">
+                                            <label for="tos-checkbox5">Center for HIV/AIDS Vaccine Immunology (CHAVI)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox6" name="network" value="National Institutes of Health (NIH)">
+                                            <label for="tos-checkbox6">National Institutes of Health (NIH)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox7" name="network" value="NIH Vaccine Research Center (VRC)">
+                                            <label for="tos-checkbox7">NIH Vaccine Research Center (VRC)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="tos-checkbox8">
+                                            <label for="tos-checkbox8">Other, specify</label>
+                                            <input placeholder="Other network affiliations" type="text"
+                                                   id="accountothernetwork">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label for="accountarea">Research areas of interest</label></td>
+                                    <td><input placeholder="Research areas of interest" type="text" id="accountarea"
+                                               required></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="links">
+                        <input id="submit_hidden_account_survey" type="submit" style="display: none">
+                        <input type="button" data-click="confirmsurvey" class="confirm" value="Submit"
+                               id="accountsurveysubmit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="fullpage">
         <div data-index='1' data-name="Welcome" class="section intro-section">
             <div class="links">
                 <span>CAVD DataSpace Members:</span>
                 <a href="#" class="create-account-modal-trigger">Create Account</a>
-                <a href="#" class="signin-modal-trigger">Sign In</a>
+                <a href="#" class="signin-modal-trigger front-page-button">Sign In</a>
+            </div>
+            <div class="links sublink sign-in1">
+                <span>Don't have an account?</span>
+                <a href="#" class="register-modal-trigger front-page-button">Register Here</a>
             </div>
             <div class="welcome">
                 <div class="title">
@@ -453,7 +638,7 @@
                         <a href="http://www.gatesfoundation.org/" target="_blank">The Bill & Melinda Gates Foundation</a>,
                         has funded the program to date.
                         <br>
-                        The DataSpace is currently available to CAVD members.
+                        The DataSpace is open to the public.
                     </p>
                 </div>
                 <div class="links">
@@ -499,7 +684,11 @@
                     <span>CAVD DataSpace Members:</span>
                     <a href="#" class="create-account-modal-trigger">Create Account</a>
                     <p></p>
-                    <a href="#" class="signin-modal-trigger">Sign In</a>
+                    <a href="#" class="signin-modal-trigger front-page-button">Sign In</a>
+                </div>
+                <div class="links sublink sign-in">
+                    <span>Don't have an account?</span>
+                    <a href="#" class="register-modal-trigger front-page-button">Register Here</a>
                 </div>
             </div>
         </div>

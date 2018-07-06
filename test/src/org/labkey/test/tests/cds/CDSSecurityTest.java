@@ -680,7 +680,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         assertElementNotVisible(Locator.css("div.links > a.create-account-modal-trigger"));
 
         log("Validate using the 'Sign-in Help' button.");
-        click(Locator.xpath("(//a[@class='signin-modal-trigger'][text()='Sign In'])[2]"));
+        click(Locator.xpath("(//a[contains(@class, 'signin-modal-trigger')][text()='Sign In'])[2]"));
         waitForElementText(Locator.css("h1"), "CAVD DataSpace member sign-in", 15000);
         setFormElement(Locator.css("input[name='email']"), _newUserAccounts[3]);
         setFormElement(Locator.css("input[name='password']"), "P@$$w0rd");
