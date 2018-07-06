@@ -52,6 +52,7 @@ import org.labkey.api.query.QueryForm;
 import org.labkey.api.reader.Readers;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
+import org.labkey.api.security.AuthenticationManager;
 import org.labkey.api.security.CSRF;
 import org.labkey.api.security.Group;
 import org.labkey.api.security.IgnoresTermsOfUse;
@@ -68,11 +69,13 @@ import org.labkey.api.util.CSRFUtil;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.util.Path;
 import org.labkey.api.util.URLHelper;
+import org.labkey.api.view.ActionURL;
 import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
+import org.labkey.api.view.RedirectException;
 import org.labkey.api.view.VBox;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.api.webdav.WebdavResource;
@@ -219,6 +222,18 @@ public class CDSController extends SpringActionController
             HttpView template;
             if (getUser().isGuest())
             {
+                template = new FrontPageTemplate(defaultPageConfig());
+            }
+            else if (AuthenticationManager.isRegistrationEnabled() && (CDSManager.get().isNeedSurvey(getUser()) || getUser().getLastLogin() == null)) // on first log in, flag user as need survey
+            {
+                if (getUser().getLastLogin() == null)
+                    CDSManager.get().setNeedSurvey(getUser(), true);
+                String surveyParam = getViewContext().getActionURL().getParameter("survey");
+                if (surveyParam == null || !"true".equals(surveyParam))
+                {
+                    ActionURL redirect = getViewContext().cloneActionURL().addParameter("survey", "true");
+                    throw new RedirectException(redirect);
+                }
                 template = new FrontPageTemplate(defaultPageConfig());
             }
             else
@@ -996,5 +1011,88 @@ public class CDSController extends SpringActionController
         }
     }
 
+    @RequiresPermission(ReadPermission.class)
+    public class UpdateCDSUserInfoAction extends ApiAction<CDSUserInfoForm>
+    {
+        @Override
+        public Object execute(CDSUserInfoForm form, BindException errors) throws Exception
+        {
+            ApiSimpleResponse response = new ApiSimpleResponse();
 
+            CDSManager.get().updateSurvey(getUser(), form.getFirstName(), form.getLastName(), form.getInstitution(),
+                    form.getRole(), form.getNetwork(), form.getResearchArea());
+            response.put("success", true);
+            return response;
+        }
+    }
+
+    public static class CDSUserInfoForm
+    {
+        private String _firstName;
+        private String _lastName;
+        private String _institution;
+        private String _role;
+        private String _network;
+        private String _researchArea;
+
+        public String getFirstName()
+        {
+            return _firstName;
+        }
+
+        public void setFirstName(String firstName)
+        {
+            _firstName = firstName;
+        }
+
+        public String getLastName()
+        {
+            return _lastName;
+        }
+
+        public void setLastName(String lastName)
+        {
+            _lastName = lastName;
+        }
+
+        public String getInstitution()
+        {
+            return _institution;
+        }
+
+        public void setInstitution(String institution)
+        {
+            _institution = institution;
+        }
+
+        public String getRole()
+        {
+            return _role;
+        }
+
+        public void setRole(String role)
+        {
+            _role = role;
+        }
+
+        public String getNetwork()
+        {
+            return _network;
+        }
+
+        public void setNetwork(String network)
+        {
+            _network = network;
+        }
+
+        public String getResearchArea()
+        {
+            return _researchArea;
+        }
+
+        public void setResearchArea(String researchArea)
+        {
+            _researchArea = researchArea;
+        }
+    }
 }
