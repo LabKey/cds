@@ -339,7 +339,8 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
                 throw new PipelineJobException("Unable to find update service for cds.SubjectProductMap in " + container.getPath());
 
             // Insert Subject Product Mapping
-            SQLFragment subjectProductSql = new SQLFragment("SELECT * FROM ").append(subjectProductSource).append(" WHERE prot = ?");
+            String columnsStr = "product_id, participantid, insert_name, clade_name, prot, projectContainer";
+            SQLFragment subjectProductSql = new SQLFragment("SELECT " + columnsStr + "  FROM ").append(subjectProductSource).append(" WHERE prot = ?");
             subjectProductSql.add(container.getName());
 
             Map<String, Object>[] insertRows = new SqlSelector(subjectProductSource.getSchema(), subjectProductSql).getMapArray();
@@ -385,7 +386,8 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
                 throw new PipelineJobException("Unable to find update service for cds.StudyPartGroupArmProduct in " + container.getPath());
 
             // Insert Subject Product Mapping
-            SQLFragment studyPartSql = new SQLFragment("SELECT * FROM ").append(studyPartGroupSource).append(" WHERE prot = ?");
+            String columnsStr = "prot, study_part, study_group, study_arm, product_id, projectContainer";
+            SQLFragment studyPartSql = new SQLFragment("SELECT " + columnsStr + " FROM ").append(studyPartGroupSource).append(" WHERE prot = ?");
             studyPartSql.add(container.getName());
 
             Map<String, Object>[] insertRows = new SqlSelector(studyPartGroupSource.getSchema(), studyPartSql).getMapArray();

@@ -523,8 +523,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             'X-LABKEY-CSRF': LABKEY.CSRF
           }
         }).success(function() {
-
-          $('.' + modalCss  +' .notifications p').html('Reset successful. Please check your email.');
+          $('.' + modalCss  +' .notifications p').html('Password reset was attempted. If an active account with this email address exists on the server then you will receive an email message with password reset instructions.');
         }).error(function() {
           $('.' + modalCss + ' .notifications p').html('Reset password failed.');
         });
