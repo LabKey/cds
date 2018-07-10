@@ -24,7 +24,7 @@ Ext.define('Connector.store.Explorer', {
     },
 
     shouldCollapseDescendantsWithSameValue: function() {
-        return true; //
+        return true;
     }
 
 });
