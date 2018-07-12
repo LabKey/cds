@@ -1116,6 +1116,10 @@ Ext.define('Connector.controller.Query', {
 
     prepareMAbReportQueries: function(config) {
         MabQueryUtils.prepareMAbReportQueries(config)
+    },
+
+    prepareMAbExportQueries: function(config) {
+        MabQueryUtils.prepareMAbExportQueries(config)
     }
 
 });

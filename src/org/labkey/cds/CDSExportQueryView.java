@@ -57,7 +57,6 @@ import java.util.zip.ZipOutputStream;
 
 public class CDSExportQueryView extends QueryView
 {
-    private static final String FILE_NAME_PREFIX = "DataSpace Data Grid";
     private static final ExcelWriter.ExcelDocumentType docType = ExcelWriter.ExcelDocumentType.xlsx;
 
     private static final String METADATA_SHEET = "Metadata";
@@ -66,7 +65,7 @@ public class CDSExportQueryView extends QueryView
     private static final String VARIABLES_SHEET = "Variable definitions";
 
     public static final String FILTER_DELIMITER = "|||";
-    private static final String FILTERS_HEADING = "Subject filters applied to exported data:";
+
     private static final String FILTERS_FOOTER = "For a list of studies and assays included in this data file, please refer to the Studies and Assays tabs.";
     private static final String FILTERS_FOOTER_TXT = "For a list of studies and assays included in the export, please refer to Studies and Assays files.";
 
@@ -202,12 +201,17 @@ public class CDSExportQueryView extends QueryView
         return createResults(exportableVariables, variableColumns);
     }
 
+    protected String getFileNamePrefix()
+    {
+        return "CDS Export";
+    }
+
     private ExcelWriter getExcelWriter() throws IOException
     {
         ColumnHeaderType headerType = ColumnHeaderType.Caption;
 
         ExcelWriter ew = getCDSExcelWriter();
-        ew.setFilenamePrefix(FILE_NAME_PREFIX);
+        ew.setFilenamePrefix(getFileNamePrefix());
         ew.setCaptionType(headerType);
         ew.setShowInsertableColumnsOnly(false, null);
         ew.setSheetName(_dataTabNames.get(0)); // the 1st data source sheet
@@ -270,6 +274,11 @@ public class CDSExportQueryView extends QueryView
 
         ew.getWorkbook().setActiveSheet(0);
         return ew;
+    }
+
+    protected String getFilterHeaderString()
+    {
+        return "Filters";
     }
 
     private ExcelWriter getCDSExcelWriter() throws IOException
@@ -373,7 +382,7 @@ public class CDSExportQueryView extends QueryView
                 {
                     Row rowObject = getRow(sheet, currentRow);
                     Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    titleCell.setCellValue(FILTERS_HEADING);
+                    titleCell.setCellValue(getFilterHeaderString());
                     titleCell.setCellStyle(boldStyle);
                     currentRow++;
 
@@ -698,7 +707,7 @@ public class CDSExportQueryView extends QueryView
     public void writeCSVToResponse(HttpServletResponse response) throws IOException
     {
         response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + FILE_NAME_PREFIX + "_" + FileUtil.getTimestamp() + ".zip\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + getFileNamePrefix() + "_" + FileUtil.getTimestamp() + ".zip\"");
 
         try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
         {
@@ -730,7 +739,7 @@ public class CDSExportQueryView extends QueryView
         builder.append("\t").append(date.toString()).append("\n");
 
         // filters
-        builder.append("\n" + FILTERS_HEADING + "\n");
+        builder.append("\n" + getFileNamePrefix() + "\n");
         String previousCategory = "", currentCategory, currentFilter;
         for (String filter : _filterStrings)
         {

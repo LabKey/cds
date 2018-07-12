@@ -972,8 +972,8 @@ Ext.define('Connector.view.Grid', {
                                     showEmpty: false,
                                     success: function (results) {
                                         exportParams.studyassays = me.loadExportableStudyAssays(results, gridAssays, assayIdentifierTypes);
-
-                                        var exportUrl = LABKEY.ActionURL.buildURL('cds', isExcel ? 'exportRowsXLSX' : 'exportCSV');
+                                        exportParams.isExcel = isExcel;
+                                        var exportUrl = LABKEY.ActionURL.buildURL('cds', 'exportGrid');
                                         Ext.Ajax.request({
                                             url: exportUrl,
                                             method: 'POST',

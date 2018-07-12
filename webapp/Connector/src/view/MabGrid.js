@@ -52,7 +52,7 @@ Ext.define('Connector.view.MabGrid', {
     constructor : function(config)
     {
         this.callParent([config]);
-        this.addEvents('updateMabFilter', 'updateMabSelection');
+        this.addEvents('updateMabFilter', 'updateMabSelection', 'requestmabexport');
     },
 
     initComponent : function()
@@ -98,8 +98,8 @@ Ext.define('Connector.view.MabGrid', {
     getGridHeader: function() {
         if (!this.gridHeader) {
             var buttons = [
-                // this.getExportCSVButton(),
-                // this.getExportExcelButton()
+                this.getExportCSVButton(),
+                this.getExportExcelButton()
             ];
             buttons = buttons.concat(this.getRReportButtons());
 
@@ -640,14 +640,40 @@ Ext.define('Connector.view.MabGrid', {
     },
 
     requestExport : function(isExcel) {
-        if (isExcel)
-            this.getGrid().hide();
-        else
-            this.getGrid().show();
-    },
+        // dynamic list of variables, use exclude?
+        Connector.getQueryService().prepareMAbExportQueries({
+            exportParams: {
+                isExcel: isExcel,
+                'X-LABKEY-CSRF': LABKEY.CSRF
+            },
+            isExcel: isExcel,
+            success: function(config) {
+                var exportParams = config.exportParams;
+                var exportUrl = LABKEY.ActionURL.buildURL('cds', 'exportMAbGrid');
+                var newForm = document.createElement('form');
+                document.body.appendChild(newForm);
+                Ext.Ajax.request({
+                    url: exportUrl,
+                    method: 'POST',
+                    form: newForm,
+                    isUpload: true,
+                    params: exportParams,
+                    callback: function (options, success/*, response*/) {
+                        document.body.removeChild(newForm);
 
-    onExport : function(isExcel) {
-        //
+                        if (!success) {
+                            Ext.Msg.alert('Error', 'Unable to export.');
+                        }
+                    }
+                });
+                this.fireEvent('requestmabexport', this, exportParams);
+            },
+            failure: function() {
+                Ext.Msg.alert('Error', "Unable to export.");
+            },
+            scope: this
+        });
+
     },
 
     showRReport: function(reportId, reportLabel) {

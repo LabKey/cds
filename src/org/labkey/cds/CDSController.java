@@ -48,7 +48,9 @@ import org.labkey.api.data.TSVMapWriter;
 import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
+import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryForm;
+import org.labkey.api.query.QueryService;
 import org.labkey.api.reader.Readers;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
@@ -438,13 +440,30 @@ public class CDSController extends SpringActionController
 
     @RequiresPermission(ReadPermission.class)
     @Action(ActionType.Export.class)
-    public class ExportRowsXLSXAction extends SimpleViewAction<ExportForm>
+    public class ExportGridAction extends SimpleViewAction<ExportForm>
     {
         @Override
         public ModelAndView getView(ExportForm form, BindException errors) throws Exception
         {
-            CDSExportQueryView view = new CDSExportQueryView(form, errors);
-            view.writeExcelToResponse(getViewContext().getResponse());
+            CDSExportQueryView view = new CDSExportQueryView(form, errors)
+            {
+                @Override
+                protected String getFileNamePrefix()
+                {
+                    return "DataSpace Data Grid";
+                }
+
+                @Override
+                protected String getFilterHeaderString()
+                {
+                    return "Subject filters applied to exported data:";
+                }
+
+            };
+            if (form.isExcel())
+                view.writeExcelToResponse(getViewContext().getResponse());
+            else
+                view.writeCSVToResponse(getViewContext().getResponse());
             return null;
         }
 
@@ -457,13 +476,29 @@ public class CDSController extends SpringActionController
 
     @RequiresPermission(ReadPermission.class)
     @Action(ActionType.Export.class)
-    public class exportCSVAction extends SimpleViewAction<ExportForm>
+    public class ExportMAbGridAction extends SimpleViewAction<ExportForm>
     {
         @Override
         public ModelAndView getView(ExportForm form, BindException errors) throws Exception
         {
-            CDSExportQueryView view = new CDSExportQueryView(form, errors);
-            view.writeCSVToResponse(getViewContext().getResponse());
+            CDSExportQueryView view = new CDSExportQueryView(form, errors)
+            {
+                @Override
+                protected String getFileNamePrefix()
+                {
+                    return "DataSpace MAb grid";
+                }
+
+                @Override
+                protected String getFilterHeaderString()
+                {
+                    return "Filters applied to exported data:";
+                }
+            };
+            if (form.isExcel())
+                view.writeExcelToResponse(getViewContext().getResponse());
+            else
+                view.writeCSVToResponse(getViewContext().getResponse());
             return null;
         }
 
@@ -547,6 +582,7 @@ public class CDSController extends SpringActionController
 
     public static class ExportForm extends CDSExportQueryForm
     {
+        private boolean _isExcel;
         private String[] _filterStrings;
         private Set<String> _studies = new HashSet<>();
         private Set<String> _assays = new HashSet<>();
@@ -558,6 +594,7 @@ public class CDSController extends SpringActionController
         private String[] _dataTabNames;
         private String[] _schemaNames;
         private String[] _queryNames;
+        private String[] _tableSqls;
 
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
 
@@ -565,11 +602,14 @@ public class CDSController extends SpringActionController
         {
             BindException errors = super.doBindParameters(in);
 
+            _isExcel = Boolean.valueOf(getValue("isExcel", in));
+
             String[] columnNames = getValues("columnNames", in);
             String[] columnAliases = getValues("columnAliases", in);
             _dataTabNames = getValues("dataTabNames", in);
             _schemaNames = getValues("schemaNames", in);
-            _queryNames = getValues("queryNames", in);
+            _queryNames = getValues("queryNames", in); // use either queryNames or tableSqls
+            _tableSqls = getValues("tableSqls", in);
 
             _filterStrings = getValues("filterStrings", in);
             _studyassays = getValues("studyassays", in);
@@ -580,16 +620,32 @@ public class CDSController extends SpringActionController
 
             if (_studyassays != null && _studyassays.length > 0)
             {
+                boolean overrideStudies = false;
+                if (_studies.isEmpty())
+                    overrideStudies = true;
                 for (String studyAssay : _studyassays)
                 {
                     String[] parts = studyAssay.split(Pattern.quote(CDSExportQueryView.FILTER_DELIMITER));
                     if (parts.length < 2)
                         continue;
                     _assays.add(parts[1]);
+                    if (overrideStudies)
+                        _studies.add(parts[0]);
                 }
             }
 
-            if (_dataTabNames.length == _schemaNames.length && _schemaNames.length == _queryNames.length)
+            if ((_queryNames == null || _queryNames.length == 0) && (_tableSqls != null && _tableSqls.length > 0))
+            {
+                String[] queryNames = new String[_tableSqls.length];
+                for (int i = 0; i < _tableSqls.length; i++)
+                {
+                    QueryDefinition def = QueryService.get().saveSessionQuery(getViewContext(), getContainer(), _schemaNames[i], _tableSqls[i]);
+                    queryNames[i] = def.getName();
+                }
+                _queryNames = queryNames;
+            }
+
+            if (_queryNames != null && _dataTabNames.length == _schemaNames.length && _schemaNames.length == _queryNames.length)
             {
                 for (int i = 0; i < _dataTabNames.length; i++)
                 {
@@ -687,6 +743,15 @@ public class CDSController extends SpringActionController
             _tabQueryForms = tabQueryForms;
         }
 
+        public boolean isExcel()
+        {
+            return _isExcel;
+        }
+
+        public String[] getTableSqls()
+        {
+            return _tableSqls;
+        }
     }
 
     @RequiresSiteAdmin
