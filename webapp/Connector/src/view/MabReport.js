@@ -18,7 +18,7 @@ Ext.define('Connector.view.MabReport', {
             renderTpl: new Ext.XTemplate(
                     '<div class="title-and-back-panel">',
                     '<div class="iarrow">&nbsp;</div>',
-                    '<div class="breadcrumb">Monoclonal Antibodies / </div>',
+                    '<div class="breadcrumb">Monoclonal antibodies / </div>',
                     '<div class="studyname">{title:htmlEncode}</div>',
                     '</div>'
             ),

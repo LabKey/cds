@@ -572,7 +572,7 @@ Ext.define('Connector.utility.MabQuery', {
             }
         });
         var sortedMAbMeasures = mabMeasures.sort(function(a, b) {
-            return a.get('name') - b.get('name');
+            return a.get('label').localeCompare(b.get('label'));
         });
         var orderedColumns = this.BASE_EXPORT_COLUMNS.slice(0); //clone
         var orderedColumnLabels = this.BASE_EXPORT_COLUMN_LABLES.slice(0);

@@ -695,6 +695,7 @@ public class CDSExportQueryView extends QueryView
             DataRegion rgn = view.getDataRegion();
             rgn.prepareDisplayColumns(view.getViewContext().getContainer());
             rgn.setAllowAsync(false);
+            prepareQuerySettings(queryView.getSettings());
 
             try
             {
