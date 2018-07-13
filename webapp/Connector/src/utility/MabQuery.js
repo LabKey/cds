@@ -26,6 +26,8 @@ Ext.define('Connector.utility.MabQuery', {
 
     MAB_DATASET_WITH_MIX_META: 'study.NAbMAbWithMixMeta', // user defined query
 
+    MAB_CHARACTERISTICS: "Mab characteristics",
+
     MAB_MIX_ID: 'mab_mix_id',
 
     MAB_MIX_NAME_STD: 'mab_mix_name_std',
@@ -445,8 +447,7 @@ Ext.define('Connector.utility.MabQuery', {
         var WHERE = columnName + " > 0 AND " + columnName + " IS NOT NULL ", rangeStr = '';
         if (filter) {
             var f = filter.gridFilter[0];
-            var value = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-            var ranges = value.split(';'), rangeFilters = [];
+            var ranges = this._getProcessedIC50Ranges(f), rangeFilters = [];
             Ext.each(ranges, function(range){
                 var filters = this.IC50Ranges[range];
                 if (!filters)
@@ -473,15 +474,29 @@ Ext.define('Connector.utility.MabQuery', {
         return WHERE;
     },
 
+    _getProcessedIC50Ranges: function(f)
+    {
+        var value = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+        var ranges = value.split(';');
+        if (f.getFilterType().getURLSuffix() === 'notin')
+        {
+            var reversedRanges = [];
+            Ext.iterate(this.IC50Ranges, function(key, val){
+               if (ranges.indexOf(key) === -1)
+                   reversedRanges.push(key);
+            });
+            return reversedRanges;
+        }
+        return ranges;
+    },
+
     prepareMAbExportQueries: function(config) {
         var exportParams = config.exportParams ? config.exportParams : {};
-        //TODO prep filter strings
-         // mab characteristics filter
-         // nab mab assay filter
-         // mab selection
         var exportColumns = this.getNABMAbExportColumns(config.excludedColumns);
         exportParams.columnNames = exportColumns.columnNames;
         exportParams.columnAliases = exportColumns.columnAliases;
+        exportParams.variables = exportColumns.variables;
+        exportParams.filterStrings = this.getExportableFilters();
         exportParams.dataTabNames = ['Study and MAbs', 'MAbs', 'NAB MAB'];
         exportParams.schemaNames = ['study', 'study', 'study'];
         exportParams.tableSqls = [this.getStudyAndMAbExportSql(), this.getMAbsExportSql(), this.getNAbMAbExportSql()];
@@ -561,16 +576,120 @@ Ext.define('Connector.utility.MabQuery', {
         });
         var orderedColumns = this.BASE_EXPORT_COLUMNS.slice(0); //clone
         var orderedColumnLabels = this.BASE_EXPORT_COLUMN_LABLES.slice(0);
+
+        var datasetLabel = sortedMAbMeasures[0].get("queryLabel"), variables = [];
         Ext.each(sortedMAbMeasures, function(measure) {
+            var measureLabel = measure.get("label"), measureDescription = measure.get("description");
             if (orderedColumns.indexOf(measure.get('name')) === -1) {
                 orderedColumns.push(measure.get('name'));
-                orderedColumnLabels.push(measure.get("label"));
+                orderedColumnLabels.push(measureLabel);
             }
+            variables.push(datasetLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measureLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measureDescription);
         });
         return {
             columnNames : orderedColumns,
-            columnAliases: orderedColumnLabels
+            columnAliases: orderedColumnLabels,
+            variables: variables
         }
+    },
+
+    getNABMAbDatasetLabel: function() {
+        var label = "NAB MAb";
+        Ext.each(Connector.getQueryService().MEASURE_STORE.data.items, function(measure) {
+            if (measure.get("queryName") === "NABMAb" && !measure.get("hidden")) {
+                label = measure.get('queryLabel');
+            }
+        });
+        return label;
+    },
+
+    getExportableFilters: function() {
+        var assayFilters = [], metaFilters = [], ic50Filter, filterStrs = [];
+        var stateFilters = Connector.getState().getMabFilters(true);
+        Ext.each(stateFilters, function(filter)
+        {
+            var f = filter.gridFilter[0], columnName = f.getColumnName();
+            if (this.ASSAY_FILTER_COLUMNS.indexOf(columnName) > -1)
+                assayFilters.push(filter);
+            else if (columnName === this.IC50_GROUP_COLUMN)
+                ic50Filter = filter;
+            else
+                metaFilters.push(filter);
+        }, this);
+
+        Ext.each(metaFilters, function(filter) {
+            filterStrs.push(this._prepareExportFilterStr(this.MAB_CHARACTERISTICS, this._getExportedFilterValuesStr(filter)));
+        }, this);
+
+        var mAbDatasetLabel = this.getNABMAbDatasetLabel();
+        Ext.each(assayFilters, function(filter) {
+            filterStrs.push(this._prepareExportFilterStr(mAbDatasetLabel, this._getExportedFilterValuesStr(filter)));
+        }, this);
+
+        if (ic50Filter) {
+            var filterSubs = this.getMAbIC50FilterStr(ic50Filter);
+            Ext.each(filterSubs, function (sub) {
+                filterStrs.push(this._prepareExportFilterStr(mAbDatasetLabel, sub));
+            }, this)
+        }
+
+        var selectedMabStr = this.getMAbSelectedFilterStr();
+        if (selectedMabStr)
+            filterStrs.push(this._prepareExportFilterStr("Selected MAb/Mixture(s)", selectedMabStr));
+
+        return filterStrs;
+    },
+
+    _prepareExportFilterStr: function(title, content)
+    {
+        return title + ChartUtils.ANTIGEN_LEVEL_DELIMITER + content;
+    },
+
+    getMAbIC50FilterStr: function(filter) {
+        var rangeFilterStrs = [];
+        if (filter) {
+            var f = filter.gridFilter[0], columnName = f.getColumnName();
+            var ranges = this._getProcessedIC50Ranges(f);
+
+            Ext.each(ranges, function(range){
+                var filters = this.IC50Ranges[range];
+                if (!filters)
+                    return;
+                var rangeFilter = '', AND = '';
+                if (filters[0]) {
+                    rangeFilter += filters[0];
+                    AND = ' AND ';
+                }
+
+                if (filters[1]) {
+                    rangeFilter += AND;
+                    rangeFilter += filters[1];
+                }
+
+                rangeFilterStrs.push(Connector.view.MabGrid.ColumnMap[columnName].filterLabel + ': ' + rangeFilter);
+            }, this);
+        }
+        return rangeFilterStrs;
+    },
+
+    getMAbSelectedFilterStr: function() {
+        var selected = Connector.getState().getSelectedMAbs(), filterStr;
+        if (selected && selected.length > 0) {
+            filterStr = Connector.view.MabGrid.ColumnMap['mab_mix_name_std'].filterLabel + ": " + selected.join(', ');
+        }
+        return filterStr;
+    },
+
+    _getExportedFilterValuesStr: function(filter) {
+        var f = filter.gridFilter[0], op = '';
+        var valueStr = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+        if (f.getColumnName() === this.VIRUS_FILTER_COLUMN)
+            valueStr = valueStr.replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, ' ');
+        var columnName = Connector.view.MabGrid.ColumnMap[f.getColumnName()].filterLabel;
+        if (f.getFilterType().getURLSuffix() === 'notin') {
+            op = ' - exclude';
+        }
+        return columnName + op + ": " + valueStr;
     }
 
 });

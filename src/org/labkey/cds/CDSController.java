@@ -494,6 +494,25 @@ public class CDSController extends SpringActionController
                 {
                     return "Filters applied to exported data:";
                 }
+
+                @Override
+                protected String getStudyWhereField()
+                {
+                    return STUDY_NAME;
+                }
+
+                @Override
+                protected boolean isValidStudyAssayPair(List<String> studyAssayStrs, String studyFolder, String studyLabel, String assayIdentifier)
+                {
+                    return studyAssayStrs.contains(studyFolder + FILTER_DELIMITER + assayIdentifier);
+                }
+
+                @Override
+                protected boolean hasExtraExportInfo()
+                {
+                    return true;
+                }
+
             };
             if (form.isExcel())
                 view.writeExcelToResponse(getViewContext().getResponse());
@@ -596,6 +615,9 @@ public class CDSController extends SpringActionController
         private String[] _queryNames;
         private String[] _tableSqls;
 
+        private String _exportInfoTitle;
+        private String _exportInfoContent;
+
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
 
         protected BindException doBindParameters(PropertyValues in)
@@ -603,6 +625,8 @@ public class CDSController extends SpringActionController
             BindException errors = super.doBindParameters(in);
 
             _isExcel = Boolean.valueOf(getValue("isExcel", in));
+            _exportInfoTitle = getValue("exportInfoTitle", in);
+            _exportInfoContent = getValue("exportInfoContent", in);
 
             String[] columnNames = getValues("columnNames", in);
             String[] columnAliases = getValues("columnAliases", in);
@@ -751,6 +775,16 @@ public class CDSController extends SpringActionController
         public String[] getTableSqls()
         {
             return _tableSqls;
+        }
+
+        public String getExportInfoTitle()
+        {
+            return _exportInfoTitle;
+        }
+
+        public String getExportInfoContent()
+        {
+            return _exportInfoContent;
         }
     }
 
