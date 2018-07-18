@@ -152,6 +152,7 @@
                 <div class="title">
                     <h1>Sign-in Help</h1>
                     <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
+                    <br><span class="help-info">Don't have an account? Click <a class="register-links" onclick="return reloadRegisterPage();">here</a> to register</span>
                 </div>
                 <div class="notifications">
                     <p></p>
@@ -189,7 +190,7 @@
                     <div class="credentials">
                         <p class="section-header">Network members</p>
                         <span class="help-info" style="display: block">
-                            If you are a CAVD member or a member of an invited network or research organization, you may be pre-registered with DataSpace account which grants you access to data and information not yet available to public members. Go to
+                            If you are a CAVD member or a member of an invited network or research organization, you may be pre-registered with a DataSpace account which grants you access to data and information not yet available to public members. Go to
                             <a href="#" data-click="help-register" class="help-register register-links">Sign-in Help</a> to set or reset your password.
                         </span>
                         <br>
@@ -218,6 +219,7 @@
                 <div class="title">
                     <h1>Sign-in Help</h1>
                     <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
+                    <br><span class="help-info">Don't have an account? Click <a class="register-links" data-click="help-register">here</a> to register</span>
                 </div>
                 <div class="notifications">
                     <p></p>
