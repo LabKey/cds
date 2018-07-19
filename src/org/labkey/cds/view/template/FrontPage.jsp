@@ -680,7 +680,7 @@
                         </div>
                     </div>
                     
-                    <a href="https://twitter.com/CAVDDataSpace" class="twitter">Twitter</a>
+                    <a href="https://twitter.com/CAVDDataSpace" class="twitter contact" target="_blank">Twitter</a>
                 </div>
                 <div class="links sign-in">
                     <span>CAVD DataSpace Members:</span>
