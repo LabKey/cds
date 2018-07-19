@@ -311,6 +311,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             kaptchaText: document.getElementById('kaptchaText').value
           }
         }).success(function() {
+          $('.register-account-modal .modal .notifications p').html('');
           $('.register-account-modal #registeraccountform').html('Thank you for signing up! A verification email has been sent to ' + email.value +
           '.  Please check your inbox to confirm your email address and complete your account setup. <br><br><br>');
         }).error(function(e) {
@@ -364,13 +365,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             'X-LABKEY-CSRF': LABKEY.CSRF
           }
         }).success(function() {
-          $('.create-new-password-modal .links input').prop("disabled",true);
-          $('.create-new-password-modal .notifications p').html('Reset password successful.');
-
-          setTimeout(function(){
-            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?login=true");
-          },3000);
-
+            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?"); // set password should log user in automatically
         }).error(function() {
           $('.create-new-password-modal .notifications p').html('Change password failed.');
         });
@@ -400,12 +395,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             'X-LABKEY-CSRF': LABKEY.CSRF
           }
         }).success(function() {
-          $('.create-account-modal .links input').prop("disabled",true);
-          $('.create-account-modal .notifications p').html('Thanks for creating your account. This page will refresh momentarily...');
-          setTimeout(function(){
-            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?login=true");
-          },3000);
-
+            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?"); // set password should log user in automatically
         }).error(function(e) {
           var errorMsg = 'Create account failed. ';
           if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
