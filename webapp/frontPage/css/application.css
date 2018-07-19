@@ -348,6 +348,7 @@ div#fp-nav ul li a.active span { background-color: #ed365e; }
 .section-header {font-weight: bold; color: #2d2d2d;}
 
 a.register-links {text-decoration: none; color: #ed365e;}
+a.register-links:hover {cursor: pointer;}
 
 a.register-links-error {text-decoration: underline; color: #ed365e;}
 a.register-links-error:hover {cursor: pointer;}
