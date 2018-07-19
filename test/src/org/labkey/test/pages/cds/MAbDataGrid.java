@@ -313,7 +313,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         public static Locator.XPathLocator headerCheckboxLoc = Locator.tagWithClass("div", "x-column-header-checkbox");
         public static Locator.XPathLocator reportBtn = Locator.tagWithClass("a", "mabgridcolumnsbtn");
         public static Locator.XPathLocator reportHeader = Locator.tagWithClass("div", "title-and-back-panel")
-                .withChild(Locator.tagWithClass("div", "breadcrumb").withText("Monoclonal Antibodies /"));
+                .withChild(Locator.tagWithClass("div", "breadcrumb").withText("Monoclonal antibodies /"));
         public static Locator.XPathLocator reportOutput = Locator.tagWithClass("table", "labkey-output");
 
         public static Locator.XPathLocator getRowLocByMabName(String mAbName)
