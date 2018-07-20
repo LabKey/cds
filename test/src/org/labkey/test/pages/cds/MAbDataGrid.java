@@ -11,6 +11,8 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +23,8 @@ import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_IC50_REPORT;
 
 public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 {
+    public static final String NABMAB_DATASET_NAME = "Neutralization Antibody - Monoclonal Antibodies";
+
     public static final String MAB_COL = "MAb/Mixture";
     public static final String SPECIES_COL = "Donor Species";
     public static final String ISOTYPE_COL = "Isotype";
@@ -30,6 +34,16 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public static final String TIERS_COL = "Tiers";
     public static final String GEOMETRIC_MEAN_IC50_COL = "Geometric mean Curve IC50";
     public static final String STUDIES_COL = "Studies";
+
+    public static final String GRID_TITLE_STUDY_AND_MABS = "Study and MAbs";
+    public static final List<String> STUDY_AND_MABS_COLUMNS = Arrays.asList("Mab Mix Id", "Mab Mix Label", "Mab Mix Name Std");
+    public static final String GRID_TITLE_MABS_META = "MAbs";
+    public static final List<String> MABS_COLUMNS = Arrays.asList("Mab Mix Id", "Mab Mix Label", "Mab Mix Name Std", "Mab Id", "Mab Name Std", "Mab Lanl Id");
+    public static final String GRID_TITLE_NAB_MAB_ASSAY = "NAB MAB";
+    public static final List<String> NABMAB_ASSAY_COLUMNS = Arrays.asList("Study", "Mab Mix Id", "Mab Mix Label", "Mab Mix Name Std", "Mab Name Source", "Assay identifier", "Curve id", "Data summary level");
+
+    public static final List<String> NABMAB_ASSAY_VARIABLES = Arrays.asList("Assay identifier",
+            "Curve id", "Data summary level", "Fit Asymmetry", "Fit Error", "Fit Inflection", "Fit Max", "Fit Min", "Fit Slope", "Initial Concentration", "Lab ID", "MAb concentration", "MAb concentration units");
 
     public static final List<String> ColumnLabels = Arrays.asList(MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL,
             VIRUSES_COL, CLADES_COL, TIERS_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL);
@@ -208,6 +222,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         Locator.XPathLocator checkbox = Locators.headerCheckboxLoc;
         Locator.XPathLocator checkedLoc = checkbox.withClass("x-grid-hd-checker-on");
+        _webDriverWrapper.click(checkbox);
         if(_webDriverWrapper.isElementPresent(checkedLoc))
             _webDriverWrapper.click(checkbox);
     }
@@ -279,6 +294,16 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public Locator.XPathLocator getReportImageOut()
     {
         return Locators.reportImgOutput();
+    }
+
+    public void verifyCDSExcel(CDSExport expected, boolean countOnly)
+    {
+        _gridHelper.verifyCDSExcel(expected, countOnly);
+    }
+
+    public void verifyCDSCSV(CDSExport expected) throws IOException
+    {
+        _gridHelper.verifyCDSCSV(expected);
     }
 
     @Override
