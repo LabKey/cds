@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-SELECT *,
+SELECT prot,
+    study_part,
+    study_group,
+    study_arm,
+    product_id,
     container AS projectContainer
 FROM cds.import_studypartgrouparmproduct

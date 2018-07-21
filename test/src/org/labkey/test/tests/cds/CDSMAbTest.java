@@ -5,12 +5,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
+import org.labkey.api.util.Pair;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.AntigenFilterPanel;
+import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.MAbDataGrid;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -248,6 +251,115 @@ public class CDSMAbTest extends CDSReadOnlyTest
         {
             Assert.assertTrue("Report content is not as expected", reportContent.contains(expected));
         }
+    }
+
+    @Test
+    public void verifyGridExport() throws IOException
+    {
+        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
+        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        grid.clearAllFilters();
+        grid.clearAllSelections();
+
+        log("Export all data without filter or selection");
+        CDSExport expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 57),
+                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 57),
+                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 492*8)));
+        updateExpectedMAbExport(expected);
+        expected.setStudyNetworks(Arrays.asList("Q", "ROGER", "ROGER", "YOYO", "ZED", "ZED", "ZED", "ZED", "ZED"));
+        expected.setStudies(Arrays.asList("QED 2", "RED 4", "RED 5", "YOYO 55", "ZAP 133", "ZAP 128", "ZAP 117", "ZAP 118", "ZAP 119"));
+        expected.setAssayProvenances(Arrays.asList("LabKey dataset", "VISC analysis dataset", "VISC analysis dataset", "VISC analysis dataset"));
+
+        grid.verifyCDSExcel(expected, false);
+        grid.verifyCDSCSV(expected);
+
+        log("Export selected mab data without filter");
+        grid.selectMAbs("2F5", "AB-000402-1");
+        expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 3),
+                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 3),
+                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 30*8)));
+        updateExpectedMAbExport(expected);
+        expected.setStudyNetworks(Arrays.asList("ROGER", "ZED"));
+        expected.setStudies(Arrays.asList("RED 5", "ZAP 117"));
+        expected.setAssayProvenances(Arrays.asList("VISC analysis dataset", "LabKey dataset"));
+        expected.setFilterTitles(Arrays.asList("Selected MAb/Mixture(s)"));
+        expected.setFilterValues(Arrays.asList("Mab Mix Name Std: 2F5, AB-000402-1"));
+        grid.verifyCDSExcel(expected, false);
+        grid.verifyCDSCSV(expected);
+
+        log("Export mab data with filters and without selection");
+        grid.clearAllSelections();
+        log("Create a set of inclusive filters");
+        grid.setFacet(MAB_COL,true,"2F5", "b12", "J3", "mAb 120");
+        grid.setFacet(SPECIES_COL,true,"[blank]", "human");
+        grid.setFacet(STUDIES_COL,true,"q2", "r4", "z117");
+        log("Create exclusive filters for IC50 and virus");
+        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,false,"< 1");
+        AntigenFilterPanel virusPanel = grid.openVirusPanel(null);
+        String virusOneExclude = "virus-1B-A-Q23.17";
+        String virusTwoExclude = "virus-1A-B-MN.3";
+        virusPanel.checkVirus(virusOneExclude, false);
+        virusPanel.checkVirus(virusTwoExclude, false);
+        grid.applyFilter();
+
+        expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 5),
+                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 5),
+                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 39*8)));
+        updateExpectedMAbExport(expected);
+        expected.setStudyNetworks(Arrays.asList("ROGER", "ZED"));
+        expected.setStudies(Arrays.asList("RED 4", "ZAP 117"));
+        expected.setAssayProvenances(Arrays.asList("VISC analysis dataset", "LabKey dataset"));
+        expected.setFilterTitles(Arrays.asList("Mab characteristics", "", "", "", "Neutralization Antibody - Monoclonal Antibodies"));
+        expected.setFilterValues(Arrays.asList("Mab Donor Species: [blank];human",
+                "Mab Mix Name Std: 2F5;b12;J3;mAb 120",
+                "",
+                "",
+                "Neutralization tier + Clade + Virus - exclude: 1A B MN.3;1B A Q23.17",
+                "Study: q2;r4;z117",
+                "Titer Curve IC50: < 0.1",
+                "Titer Curve IC50: > 50",
+                "Titer Curve IC50: >= 1 AND < 10",
+                "Titer Curve IC50: >= 10 AND <= 50"));
+        grid.verifyCDSExcel(expected, false);
+        grid.verifyCDSCSV(expected);
+
+        log("Export selected mab data with filters");
+        grid.selectMAbs("2F5");
+        expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 2),
+                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 2),
+                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 21*8)));
+        updateExpectedMAbExport(expected);
+        expected.setStudyNetworks(Arrays.asList("ZED"));
+        expected.setStudies(Arrays.asList("ZAP 117"));
+        expected.setAssayProvenances(Arrays.asList("LabKey dataset"));
+        expected.setFilterTitles(Arrays.asList("Mab characteristics", "", "", "", "Neutralization Antibody - Monoclonal Antibodies",
+                "",  "",  "",  "",  "",  "",  "",  "Selected MAb/Mixture(s)"));
+        expected.setFilterValues(Arrays.asList("Mab Donor Species: [blank];human",
+                "Mab Mix Name Std: 2F5;b12;J3;mAb 120",
+                "",
+                "",
+                "Neutralization tier + Clade + Virus - exclude: 1A B MN.3;1B A Q23.17",
+                "Study: q2;r4;z117",
+                "Titer Curve IC50: < 0.1",
+                "Titer Curve IC50: > 50",
+                "Titer Curve IC50: >= 1 AND < 10",
+                "Titer Curve IC50: >= 10 AND <= 50",
+                "",
+                "",
+                "Mab Mix Name Std: 2F5"));
+        grid.verifyCDSExcel(expected, false);
+        grid.verifyCDSCSV(expected);
+    }
+
+    // set static export info
+    private void updateExpectedMAbExport(CDSExport expectedExport)
+    {
+        expectedExport.setDataTabHeaders(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, STUDY_AND_MABS_COLUMNS),
+                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, MABS_COLUMNS),
+                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, NABMAB_ASSAY_COLUMNS)));
+        expectedExport.setFieldLabels(NABMAB_ASSAY_VARIABLES);
+        expectedExport.setAssays(Arrays.asList(NABMAB_DATASET_NAME));
+        expectedExport.setMAb(true);
     }
 
     private WebElement getGridEl()
