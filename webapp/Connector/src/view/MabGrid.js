@@ -589,7 +589,7 @@ Ext.define('Connector.view.MabGrid', {
         Ext.defer(function() {
             if (this.getModel().isActive())
             {
-                if (this.grid)
+                if (this.grid && !this.grid.isHidden())
                 {
                     var size = this.getWidthHeight();
                     this.getGrid().setSize(size.width, size.height);
@@ -720,12 +720,10 @@ Ext.define('Connector.view.MabGrid', {
         if (show) {
             this.getGridHeader().show();
             this.getGrid().show();
-            this.removeCls('auto-scroll-y');
         }
         else {
             this.getGridHeader().hide();
             this.getGrid().hide();
-            this.addCls('auto-scroll-y');
         }
     }
 });
