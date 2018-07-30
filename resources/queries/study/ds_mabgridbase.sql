@@ -8,7 +8,7 @@ select
   tier_clade_virus,
   titer_curve_ic50,
 
-  CASE WHEN titer_curve_ic50 < 0.1
+  CASE WHEN titer_curve_ic50 < 0.1 OR titer_curve_ic50 = '-Infinity'
     THEN 'G0.1'
   WHEN titer_curve_ic50 >= -0.1 AND titer_curve_ic50 < 1
     THEN 'G1'
@@ -28,5 +28,4 @@ select
   MixMeta.mab_mix_name_std
 FROM study.NABMAb as MAB
   LEFT JOIN cds.MAbMixMetadata as MixMeta on (MixMeta.mab_mix_id = MAB.mab_mix_id)
-where MAB.specimen_concentration_id = 8
-AND MAB.titer_curve_ic50 > 0 AND MAB.titer_curve_ic50 IS NOT NULL;
+where MAB.specimen_concentration_id = 8;

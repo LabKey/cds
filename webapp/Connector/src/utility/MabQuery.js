@@ -115,7 +115,19 @@ Ext.define('Connector.utility.MabQuery', {
         if (this.logging) {
             console.log(this._generateMAbSql(true));
         }
-        this._executeSql(config, this._generateMAbSql());
+        LABKEY.Query.executeSql({
+            schemaName: 'cds',
+            sql: this._generateMAbSql(),
+            success: function (response) {
+                config.countsData = response;
+                if (this.logging) {
+                    console.log(this._generateGeoMeanIC50Sql(true));
+                }
+                this._executeSql(config, this._generateGeoMeanIC50Sql());
+            },
+            failure: config.failure,
+            scope: this
+        });
     },
 
     getMabViruses: function(config) {
@@ -233,9 +245,19 @@ Ext.define('Connector.utility.MabQuery', {
         Ext.each(this.COUNT_COLUMNS, function(col) {
             SELECT.push('COUNT(DISTINCT ' + col + ") as " + col + 'Count, ' + sep);
         }, this);
+
+        var WHERE = this._getMabStateFilterWhere(false, forDebugging);
+        return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getAssayGroupBy();
+    },
+
+    _generateGeoMeanIC50Sql: function(forDebugging)
+    {
+        var SELECT = ['SELECT '], sep = "\n\t";
+        SELECT.push(this.MAB_MIX_NAME_STD + ', ' + sep);
         SELECT.push('exp(AVG(log(' + this.IC50_COLUMN + '))) as IC50geomean');
 
         var WHERE = this._getMabStateFilterWhere(false, forDebugging);
+        WHERE.push("titer_curve_ic50 > 0 AND titer_curve_ic50 < 1E300 AND titer_curve_ic50 IS NOT NULL");
         return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getAssayGroupBy();
     },
 
@@ -444,7 +466,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     getDatasetIC50Where: function(filter) {
         var columnName = this.MAB_Dataset_ALIAS + "." + this. IC50_COLUMN;
-        var WHERE = columnName + " > 0 AND " + columnName + " IS NOT NULL ", rangeStr = '';
+        var WHERE = '', rangeStr = '';
         if (filter) {
             var f = filter.gridFilter[0];
             var ranges = this._getProcessedIC50Ranges(f), rangeFilters = [];
@@ -468,7 +490,7 @@ Ext.define('Connector.utility.MabQuery', {
 
             if (rangeFilters.length > 0)
                 rangeStr = rangeFilters.join(' OR ');
-            return WHERE + ' AND (' + rangeStr + ')';
+            WHERE = ' (' + rangeStr + ')';
         }
 
         return WHERE;
