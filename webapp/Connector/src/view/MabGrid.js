@@ -278,10 +278,13 @@ Ext.define('Connector.view.MabGrid', {
             }
             this.grid = Ext.create('Ext.grid.Panel', {
                 store: this.gridStore,
+                selType: 'checkboxmodel',
                 selModel: {
-                    selType: 'checkboxmodel',
-                    showHeaderCheckbox: true
+                    checkSelector: 'td.x-grid-cell-row-checker'
                 },
+                multiSelect: true,
+                headerWidth: 35,
+
                 columns: this.getGridColumnsConfig(),
                 cls: 'connector-grid mab-connector-grid',
                 border: false,
