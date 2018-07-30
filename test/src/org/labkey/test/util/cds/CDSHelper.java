@@ -1579,7 +1579,7 @@ public class CDSHelper
         SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest with assay data in DataSpace.")),
         PLOT("Plot data", Locator.tagWithClass("a", "colorbtn")),
         GRID("View data grid", DataGridVariableSelector.titleLocator),
-        MABGRID("Monoclonal Antibodies", Locator.tagWithClass("div", "mab-connector-grid"));
+        MABGRID("Monoclonal antibodies", Locator.tagWithClass("div", "mab-connector-grid"));
 
         private String _linkText;
         private Locator.XPathLocator _expectedElement;

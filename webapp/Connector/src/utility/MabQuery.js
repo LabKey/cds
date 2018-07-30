@@ -436,8 +436,7 @@ Ext.define('Connector.utility.MabQuery', {
         var WHERE = columnName + " > 0 AND " + columnName + " IS NOT NULL ", rangeStr = '';
         if (filter) {
             var f = filter.gridFilter[0];
-            var value = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-            var ranges = value.split(';'), rangeFilters = [];
+            var ranges = this._getProcessedIC50Ranges(f), rangeFilters = [];
             Ext.each(ranges, function(range){
                 var filters = this.IC50Ranges[range];
                 if (!filters)
@@ -462,6 +461,22 @@ Ext.define('Connector.utility.MabQuery', {
         }
 
         return WHERE;
+    },
+
+    _getProcessedIC50Ranges: function(f)
+    {
+        var value = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+        var ranges = value.split(';');
+        if (f.getFilterType().getURLSuffix() === 'notin')
+        {
+            var reversedRanges = [];
+            Ext.iterate(this.IC50Ranges, function(key, val){
+                if (ranges.indexOf(key) === -1)
+                    reversedRanges.push(key);
+            });
+            return reversedRanges;
+        }
+        return ranges;
     }
 
 });

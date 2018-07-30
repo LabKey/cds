@@ -72,7 +72,7 @@ Ext.define('Connector.view.Main', {
                         label: 'View data grid',
                         controller: 'data'
                     },{
-                        label: 'Monoclonal Antibodies',
+                        label: 'Monoclonal antibodies',
                         controller: 'mabgrid'
                     }]
                 }
