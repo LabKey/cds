@@ -553,7 +553,7 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     getStudyAndMAbExportSql: function(forDebugging) {
-        var SELECT = 'SELECT DISTINCT prot as Study, mab_mix_id,  mab_mix_label, mab_mix_name_std ';
+        var SELECT = 'SELECT DISTINCT prot, mab_mix_id,  mab_mix_label, mab_mix_name_std ';
         var WHERE = this._getDatasetMabStateFilterWhere(false, forDebugging, true, true);
         return SELECT + "\n" + this._getDatasetWithMetaFrom() + this._buildWhere(WHERE);
     },
