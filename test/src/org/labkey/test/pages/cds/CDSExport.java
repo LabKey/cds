@@ -29,6 +29,9 @@ public class CDSExport
     public static final List<List<String>> TOCS = Arrays.asList(Arrays.asList(TOC_TITLE), TOC_1, TOC_2, TOC_3);
 
     public static final int FILTER_START_ROW = 12;
+    public static final int MAB_FILTER_START_ROW = 16;
+
+    private boolean isMAb = false;
 
     private List<String> filterTitles;
 
@@ -173,5 +176,20 @@ public class CDSExport
     public void setDataTabHeaders(List<Pair<String, List<String>>> dataTabHeaders)
     {
         this.dataTabHeaders = dataTabHeaders;
+    }
+
+    public boolean isMAb()
+    {
+        return isMAb;
+    }
+
+    public void setMAb(boolean MAb)
+    {
+        isMAb = MAb;
+    }
+
+    public int getFilterStartRow()
+    {
+        return isMAb ? MAB_FILTER_START_ROW : FILTER_START_ROW;
     }
 }

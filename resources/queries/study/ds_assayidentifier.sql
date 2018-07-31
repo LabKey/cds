@@ -38,3 +38,10 @@ SELECT
   DISTINCT ds.assay_identifier as assay_identifier,
   'NAb' as dataset_name
 from study.NAb as ds
+
+UNION
+
+SELECT
+  DISTINCT ds.assay_identifier as assay_identifier,
+           'NABMAb' as dataset_name
+from study.NABMAb as ds
