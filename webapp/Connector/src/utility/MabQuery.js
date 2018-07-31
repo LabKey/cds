@@ -446,7 +446,8 @@ Ext.define('Connector.utility.MabQuery', {
             WHERE.push(this._getDatasetAssayDimensionalFilter(filter, forDebugging));
         }, this);
 
-        WHERE.push(this.getDatasetIC50Where(ic50Filter));
+        if (ic50Filter)
+            WHERE.push(this.getDatasetIC50Where(ic50Filter));
 
         WHERE.push(this._getDatasetMabMixMetadataWhere(metaFilters, forDebugging, includeSelection, isExport));
 
