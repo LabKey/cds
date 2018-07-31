@@ -44,6 +44,7 @@ public class AntigenFilterPanel
     public boolean isVirusChecked(String testValue)
     {
         Locator.XPathLocator virusLoc = getCellLoc(testValue, 2);
+        _test.waitForElement(virusLoc);
         Locator.XPathLocator disabledVirusLoc = virusLoc.append(Locator.tagWithClass("table", "x-form-cb-checked"));
         return _test.isElementPresent(disabledVirusLoc);
     }

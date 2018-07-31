@@ -571,17 +571,22 @@ public class DataGrid
             }
             else if ("Studies.csv".equals(filename))
             {
-                verifyExportedCSVContent(file, expected.getStudyNetworks());
-                verifyExportedCSVContent(file, expected.getStudies());
+                if (expected.getStudyNetworks() != null)
+                    verifyExportedCSVContent(file, expected.getStudyNetworks());
+                if (expected.getStudies() != null)
+                    verifyExportedCSVContent(file, expected.getStudies());
             }
             else if ("Assays.csv".equals(filename))
             {
-                verifyExportedCSVContent(file, expected.getAssays());
-                verifyExportedCSVContent(file, expected.getAssayProvenances());
+                if (expected.getAssays() != null)
+                    verifyExportedCSVContent(file, expected.getAssays());
+                if (expected.getAssayProvenances() != null)
+                    verifyExportedCSVContent(file, expected.getAssayProvenances());
             }
             else if ("Variable definitions.csv".equals(filename))
             {
-                verifyExportedCSVContent(file, expected.getFieldLabels());
+                if (expected.getFieldLabels() != null)
+                    verifyExportedCSVContent(file, expected.getFieldLabels());
             }
             else
             {
