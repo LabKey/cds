@@ -146,6 +146,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
     private void verifyGridCountAndFilteredColumns(MAbDataGrid grid, int rowCount, List<String> filteredColumns)
     {
+        sleep(2000); // wait for grid to update
         Assert.assertEquals("Number of mab/mabmix rows is not as expected", rowCount, grid.getMabCounts());
         Assert.assertEquals("Columns with filtered icons aren't as expected", filteredColumns, grid.getFilteredColumns());
     }

@@ -17,6 +17,7 @@ public class AntigenFilterPanel
     public void checkAll(boolean check)
     {
         Locator.XPathLocator label = Locator.tagWithAttribute("label", "test-data-value", "neutralization_tier-all");
+        _test.waitForElement(label);
         WebElement checkboxContainer = label.parent("td").findElement(_test.getDriver());
         new Checkbox.CheckboxFinder().find(checkboxContainer).set(check);
     }
