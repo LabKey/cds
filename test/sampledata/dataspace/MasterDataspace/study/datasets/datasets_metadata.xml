@@ -1193,14 +1193,14 @@
       </column>
       <column columnName="prot">
         <datatype>varchar</datatype>
-        <columnTitle>Study Protocol</columnTitle>
+        <columnTitle>Study</columnTitle>
         <description>Unique ID assigned to the study by the network indicating the main study (e.g. CAVD 583)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="mab_mix_id">
         <datatype>varchar</datatype>
-        <columnTitle>mAb Mix Id</columnTitle>
+        <columnTitle>Mab Mix Id</columnTitle>
         <description>Unique ID assigned to an individual mAb or mixture of mAbs. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <fk>
@@ -1212,7 +1212,7 @@
       </column>
       <column columnName="mab_name_source">
         <datatype>varchar</datatype>
-        <columnTitle>mAb name source</columnTitle>
+        <columnTitle>Mab name source</columnTitle>
         <description>Unique ID assigned to the mAb (often recoded) being tested in a given study. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>false</dimension>
@@ -1318,14 +1318,14 @@
       </column>
       <column columnName="mab_concentration">
         <datatype>double</datatype>
-        <columnTitle>MAb concentration</columnTitle>
+        <columnTitle>Mab concentration</columnTitle>
         <description>The concentration of the specimen (mab) being tested in a given well on a plate. The initial concentration of each specimen is reduced by the dilution factor (3). Typically, a total of 8 concentrations are tested for each specimen (mab). </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="mab_concentration_units">
         <datatype>varchar</datatype>
-        <columnTitle>MAb concentration units</columnTitle>
+        <columnTitle>Mab concentration units</columnTitle>
         <description>The units in which the concentration is measured (ug/mL)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>false</dimension>

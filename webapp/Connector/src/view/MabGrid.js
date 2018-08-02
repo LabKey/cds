@@ -651,6 +651,7 @@ Ext.define('Connector.view.MabGrid', {
         Connector.getQueryService().prepareMAbExportQueries({
             exportParams: {
                 isExcel: isExcel,
+                excludedColumns: ['study_nabmab_subjectvisit_visit'],
                 exportInfoTitle: 'Data summary level exported:',
                 exportInfoContent: 'Neutralization curve details and titers by virus and mAb concentration', // future work to allow multiple export options
                 'X-LABKEY-CSRF': LABKEY.CSRF

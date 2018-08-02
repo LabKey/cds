@@ -61,6 +61,11 @@ Ext.define('Connector.utility.MabQuery', {
     BASE_EXPORT_COLUMN_LABLES : ['Study', 'Mab Mix Id', 'Mab Mix Label', 'Mab Mix Name Std', 'Mab Name Source', 'Mab Id', 'Mab Name Std',
         'Mab Lanl Id', 'Mab Hxb2 Location', 'Mab Ab Binding Type', 'Mab Isotype', 'Mab Donor Id', 'Mab Donor Species', 'Mab Donor Clade'],
 
+    MAB_META_VARIABLES: [
+        {field: 'mab_mix_label', label: 'Mab Label', description: 'A label (MAb name) assigned to an individual mAb or a mixture of mAbs to distinquish them from MAbs/mixtures with the same standardized name, e.g. when mAbs with the same standardized name are compared within a study.'},
+        {field: 'mab_mix_name_std', label: 'Mab Mix Name Std', description: 'A standardized name assigned to an individual mAb or a mixture of mAbs. '}
+    ],
+
     logging: false,
 
     constructor: function (config) {
@@ -492,7 +497,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     prepareMAbExportQueries: function(config) {
         var exportParams = config.exportParams ? config.exportParams : {};
-        var exportColumns = this.getNABMAbExportColumns(config.excludedColumns);
+        var exportColumns = this.getNABMAbExportColumns(exportParams.excludedColumns);
         exportParams.columnNames = exportColumns.columnNames;
         exportParams.columnAliases = exportColumns.columnAliases;
         exportParams.variables = exportColumns.variables;
@@ -567,7 +572,7 @@ Ext.define('Connector.utility.MabQuery', {
         var allMeasures = Connector.getQueryService().MEASURE_STORE.data.items, mabMeasures = [];
         Ext.each(allMeasures, function(measure) {
             if (measure.get("queryName") === "NABMAb" && !measure.get("hidden")) {
-                if (!excludedColumns || excludedColumns.indexOf(measure.get('name')) === -1)
+                if (!excludedColumns || excludedColumns.indexOf(measure.get('lowerAlias')) === -1)
                     mabMeasures.push(measure);
             }
         });
@@ -586,6 +591,10 @@ Ext.define('Connector.utility.MabQuery', {
             }
             variables.push(datasetLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measureLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + measureDescription);
         });
+        Ext.each(this.MAB_META_VARIABLES, function(metaVariable){
+            variables.push(datasetLabel + ChartUtils.ANTIGEN_LEVEL_DELIMITER + metaVariable.label + ChartUtils.ANTIGEN_LEVEL_DELIMITER + metaVariable.description);
+        }, this);
+        variables = variables.sort();
         return {
             columnNames : orderedColumns,
             columnAliases: orderedColumnLabels,
