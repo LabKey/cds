@@ -28,3 +28,5 @@ z100	NA	E	E	219
 r3	NA	1	1C	223
 r3	NA	2	2C	223
 r3	NA	3	3C	223
+r4	NA	Group 2	T2	223
+r4	NA	Group 3	T3	223
