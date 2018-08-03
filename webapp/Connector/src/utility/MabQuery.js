@@ -58,12 +58,12 @@ Ext.define('Connector.utility.MabQuery', {
 
     BASE_EXPORT_COLUMNS : ['prot', 'mab_mix_id', 'mab_mix_label', 'mab_mix_name_std', 'mab_name_source', 'mab_id', 'mab_name_std',
         'mab_lanlid', 'mab_hxb2_location', 'mab_ab_binding_type', 'mab_isotype', 'mab_donorid', 'mab_donor_species', 'mab_donor_clade'],
-    BASE_EXPORT_COLUMN_LABLES : ['Study', 'Mab Mix Id', 'Mab Mix Label', 'Mab Mix Name Std', 'Mab Name Source', 'Mab Id', 'Mab Name Std',
-        'Mab Lanl Id', 'Mab Hxb2 Location', 'Mab Ab Binding Type', 'Mab Isotype', 'Mab Donor Id', 'Mab Donor Species', 'Mab Donor Clade'],
+    BASE_EXPORT_COLUMN_LABLES : ['Study', 'Mab mix id', 'Mab mix label', 'Mab mix name std', 'Mab name source', 'Mab id', 'Mab name std',
+        'Mab Lanl id', 'Mab Hxb2 location', 'Mab Ab binding type', 'Mab isotype', 'Mab donor id', 'Mab donor species', 'Mab donor clade'],
 
     MAB_META_VARIABLES: [
-        {field: 'mab_mix_label', label: 'Mab Label', description: 'A label (MAb name) assigned to an individual mAb or a mixture of mAbs to distinquish them from MAbs/mixtures with the same standardized name, e.g. when mAbs with the same standardized name are compared within a study.'},
-        {field: 'mab_mix_name_std', label: 'Mab Mix Name Std', description: 'A standardized name assigned to an individual mAb or a mixture of mAbs. '}
+        {field: 'mab_mix_label', label: 'Mab mix label', description: 'A label (MAb name) assigned to an individual mAb or a mixture of mAbs to distinquish them from MAbs/mixtures with the same standardized name, e.g. when mAbs with the same standardized name are compared within a study.'},
+        {field: 'mab_mix_name_std', label: 'Mab mix name std', description: 'A standardized name assigned to an individual mAb or a mixture of mAbs. '}
     ],
 
     logging: false,
