@@ -128,20 +128,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Model.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Faceted.js"></script>
 
-    <!-- App API Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Application.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/State.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/HttpInterceptor.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Messaging.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/View.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Route.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Filter.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Selection.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorerImpl.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/LoadingMask.js"></script>
-
     <!-- Ext Widget Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4DefaultFilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4GridPanel.js"></script>
@@ -286,6 +272,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/HttpInterceptor.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Messaging.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Analytics.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>

@@ -491,7 +491,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
 
         if (Ext.isString(groupFilters))
         {
-            Ext.each(LABKEY.app.model.Filter.fromJSON(groupFilters), function(filter)
+            Ext.each(Connector.model.Filter.fromJSON(groupFilters), function(filter)
             {
                 filters.push(Ext.create('Connector.model.Filter', filter));
             });

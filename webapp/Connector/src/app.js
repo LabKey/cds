@@ -11,9 +11,8 @@ Ext.override(Ext.window.Window, {
     shadow: false
 });
 
-LABKEY.app.view.Selection.supportMemberClose = false;
-LABKEY.app.model.Filter.dynamicOperatorTypes = true;
-LABKEY.app.model.Filter.USE_MODEL = true;
+Connector.view.Selection.supportMemberClose = false;
+Connector.model.Filter.dynamicOperatorTypes = true;
 
 Ext.application({
     name: 'Connector',
