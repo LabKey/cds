@@ -243,6 +243,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/store/AssayDistinctValue.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/store/MabStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/VisitTag.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/StudyVisitTag.js"></script>
@@ -269,6 +270,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/MabReport.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/MabGrid.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/MabStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Chart.js"></script>

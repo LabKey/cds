@@ -88,7 +88,7 @@ Ext.define('Connector.controller.FilterStatus', {
             maskplotrecords: this.onMaskPlotRecords,
             unmaskplotrecords: this.onUnmaskPlotRecords,
             updateplotrecord: this.onUpdatePlotRecord
-    });
+        });
 
         this.callParent();
     },
@@ -116,14 +116,11 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     onDetailSelect : function(view, detail) {
-        if (detail.get('activeCountLink') === true && detail.get('count') != -1)
-        {
-            if (Ext.isString(detail.get('activeCountEvent')))
-            {
+        if (detail.get('activeCountLink') === true && detail.get('count') !== -1) {
+            if (Ext.isString(detail.get('activeCountEvent'))) {
                 this.application.fireEvent(detail.get('activeCountEvent'), detail);
             }
-            else
-            {
+            else {
                 this.showFilterEditor(detail);
             }
         }
@@ -275,7 +272,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
         var v; // the view instance to be created
 
-        if (xtype == 'filterstatus') {
+        if (xtype === 'filterstatus') {
             v = this.createFilterStatus();
         }
 
@@ -303,18 +300,15 @@ Ext.define('Connector.controller.FilterStatus', {
         }
     },
 
-    onMaskPlotRecords : function()
-    {
+    onMaskPlotRecords : function() {
         this.getStore('FilterStatus').fireEvent('showplotmask');
     },
 
-    onUnmaskPlotRecords : function()
-    {
+    onUnmaskPlotRecords : function() {
         this.getStore('FilterStatus').fireEvent('hideplotmask');
     },
 
-    onUpdatePlotRecord : function(view, label, forSubcount, countValue, measureSet, membersWithData)
-    {
+    onUpdatePlotRecord : function(view, label, forSubcount, countValue, measureSet, membersWithData) {
         this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, countValue, measureSet, membersWithData);
     }
 });

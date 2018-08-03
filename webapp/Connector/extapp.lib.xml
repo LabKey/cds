@@ -77,6 +77,7 @@
         <script path="Connector/src/store/AssayDistinctValue.js"/>
         <script path="Connector/src/store/Explorer.js"/>
         <script path="Connector/src/store/FilterStatus.js"/>
+        <script path="Connector/src/store/MabStatus.js"/>
         <script path="Connector/src/store/Summary.js"/>
         <script path="Connector/src/store/VisitTag.js"/>
         <script path="Connector/src/store/StudyVisitTag.js"/>
@@ -103,6 +104,7 @@
         <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/MabReport.js"/>
         <script path="Connector/src/view/MabGrid.js"/>
+        <script path="Connector/src/view/MabStatus.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/StudyAxis.js"/>
         <script path="Connector/src/view/Chart.js"/>
