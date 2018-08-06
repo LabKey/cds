@@ -8,7 +8,7 @@ select
   tier_clade_virus,
   titer_curve_ic50,
 
-  CASE WHEN titer_curve_ic50 < 0.1 OR titer_curve_ic50 = '-Infinity'
+  CASE WHEN titer_curve_ic50 < 0.1 OR titer_curve_ic50 = CAST('-Infinity' AS DOUBLE)
     THEN 'G0.1'
   WHEN titer_curve_ic50 >= -0.1 AND titer_curve_ic50 < 1
     THEN 'G1'
