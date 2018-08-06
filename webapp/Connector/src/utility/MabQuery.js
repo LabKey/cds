@@ -257,7 +257,7 @@ Ext.define('Connector.utility.MabQuery', {
         SELECT.push('exp(AVG(log(' + this.IC50_COLUMN + '))) as IC50geomean');
 
         var WHERE = this._getMabStateFilterWhere(false, forDebugging);
-        WHERE.push("titer_curve_ic50 > 0 AND titer_curve_ic50 < 1E300 AND titer_curve_ic50 IS NOT NULL");
+        WHERE.push("titer_curve_ic50 > 0 AND titer_curve_ic50 != CAST('Infinity' AS DOUBLE) AND titer_curve_ic50 != CAST('-Infinity' AS DOUBLE) AND titer_curve_ic50 IS NOT NULL");
         return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getAssayGroupBy();
     },
 
