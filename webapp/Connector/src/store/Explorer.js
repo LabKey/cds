@@ -694,7 +694,7 @@ Ext.define('LABKEY.app.util.OlapExplorerTree', {
                 hasDiff = true;
             }
             else {
-                if (node.record.data.uniqueName !== node.childrenNodes[0].record.data.uniqueName) {
+                if (node.record.data.name !== node.childrenNodes[0].record.data.name) {
                     hasDiff = true;
                 }
                 else {
