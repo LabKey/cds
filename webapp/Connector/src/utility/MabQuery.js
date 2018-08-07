@@ -489,9 +489,10 @@ Ext.define('Connector.utility.MabQuery', {
                 rangeFilters.push('(' + rangeFilter + ')');
             }, this);
 
-            if (rangeFilters.length > 0)
+            if (rangeFilters.length > 0) {
                 rangeStr = rangeFilters.join(' OR ');
-            WHERE = ' (' + rangeStr + ')';
+                WHERE = ' (' + rangeStr + ')';
+            }
         }
 
         return WHERE;

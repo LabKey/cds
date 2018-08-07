@@ -528,6 +528,8 @@ public class DataGrid
 
     private void verifyExportedCSVContent(File export, List<String> expectedContent)
     {
+        if (expectedContent == null)
+            return;
         String exportedContent = TestFileUtils.getFileContents(export);
         for (String expectedFragment : expectedContent)
         {
@@ -564,29 +566,22 @@ public class DataGrid
             if ("Metadata.txt".equals(filename))
             {
                 CDSExport.TOCS.forEach(expectedContent -> verifyExportedCSVContent(file, expectedContent));
-                if (expected.getFilterTitles() != null)
-                    verifyExportedCSVContent(file, expected.getFilterTitles());
-                if (expected.getFilterValues() != null)
-                    verifyExportedCSVContent(file, expected.getFilterValues());
+                verifyExportedCSVContent(file, expected.getFilterTitles());
+                verifyExportedCSVContent(file, expected.getFilterValues());
             }
             else if ("Studies.csv".equals(filename))
             {
-                if (expected.getStudyNetworks() != null)
-                    verifyExportedCSVContent(file, expected.getStudyNetworks());
-                if (expected.getStudies() != null)
-                    verifyExportedCSVContent(file, expected.getStudies());
+                verifyExportedCSVContent(file, expected.getStudyNetworks());
+                verifyExportedCSVContent(file, expected.getStudies());
             }
             else if ("Assays.csv".equals(filename))
             {
-                if (expected.getAssays() != null)
-                    verifyExportedCSVContent(file, expected.getAssays());
-                if (expected.getAssayProvenances() != null)
-                    verifyExportedCSVContent(file, expected.getAssayProvenances());
+                verifyExportedCSVContent(file, expected.getAssays());
+                verifyExportedCSVContent(file, expected.getAssayProvenances());
             }
             else if ("Variable definitions.csv".equals(filename))
             {
-                if (expected.getFieldLabels() != null)
-                    verifyExportedCSVContent(file, expected.getFieldLabels());
+                verifyExportedCSVContent(file, expected.getFieldLabels());
             }
             else
             {
