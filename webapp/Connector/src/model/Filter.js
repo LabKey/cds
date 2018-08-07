@@ -452,23 +452,27 @@ Ext.define('Connector.model.Filter', {
             return endLabel;
         },
 
-        getGridLabel : function(gf) {
-            if (gf.getFilterType().getURLSuffix() === 'dategte' || gf.getFilterType().getURLSuffix() === 'datelte') {
-                return Connector.model.Filter.getShortFilter(gf.getFilterType().getDisplayText()) + ' ' + ChartUtils.tickFormat.date(gf.getValue());
-            }
+        getGridLabel : function(data) {
 
             var filterLabel = function(gf) {
                 if (gf) {
-                    if (!Ext.isFunction(gf.getFilterType))
-                    {
+                    if (!Ext.isFunction(gf.getFilterType)) {
                         console.warn('invalid label being processed');
                         return Connector.model.Filter.emptyLabelText;
                     }
+
                     var value = gf.getValue();
                     if (value === undefined || value === null) {
                         value = '';
                     }
-                    return Connector.model.Filter.getShortFilter(gf.getFilterType().getDisplayText()) + ' ' + Ext.htmlEncode(value);
+
+                    var label = Connector.model.Filter.getShortFilter(gf.getFilterType().getDisplayText());
+
+                    if (gf.getFilterType().getURLSuffix() === 'dategte' || gf.getFilterType().getURLSuffix() === 'datelte') {
+                        return label + ' ' + ChartUtils.tickFormat.date(gf.getValue());
+                    }
+
+                    return label + ' ' + Ext.htmlEncode(value);
                 }
                 return Connector.model.Filter.emptyLabelText;
             };
