@@ -73,6 +73,18 @@
         <!-- Factories -->
         <script path="Connector/src/factory/Module.js"/>
 
+        <!-- Utilities -->
+        <script path="Connector/src/utility/Animation.js"/>
+        <script path="Connector/src/utility/Statistics.js"/>
+        <script path="Connector/src/utility/StoreCache.js"/>
+        <script path="Connector/src/utility/Chart.js"/>
+        <script path="Connector/src/utility/HelpRouter.js"/>
+        <script path="Connector/src/utility/Query.js"/>
+        <script path="Connector/src/utility/MabQuery.js"/>
+        <script path="Connector/src/utility/HashURL.js"/>
+        <script path="Connector/src/utility/FileExtension.js"/>
+        <script path="Connector/src/utility/PlotTooltip.js"/>
+
         <!-- Application Stores -->
         <script path="Connector/src/store/AssayDistinctValue.js"/>
         <script path="Connector/src/store/Explorer.js"/>
@@ -135,17 +147,6 @@
         <script path="Connector/src/controller/Router.js"/>
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>
-
-        <script path="Connector/src/utility/Animation.js"/>
-        <script path="Connector/src/utility/Statistics.js"/>
-        <script path="Connector/src/utility/StoreCache.js"/>
-        <script path="Connector/src/utility/Chart.js"/>
-        <script path="Connector/src/utility/HelpRouter.js"/>
-        <script path="Connector/src/utility/Query.js"/>
-        <script path="Connector/src/utility/MabQuery.js"/>
-        <script path="Connector/src/utility/HashURL.js"/>
-        <script path="Connector/src/utility/FileExtension.js"/>
-        <script path="Connector/src/utility/PlotTooltip.js"/>
 
         <script path="Connector/src/app/model/AssayAntigen.js"/>
         <script path="Connector/src/app/model/Assay.js"/>

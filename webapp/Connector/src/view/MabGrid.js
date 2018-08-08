@@ -30,19 +30,19 @@ Ext.define('Connector.view.MabGrid', {
     statics: {
         getDefaultSort : function () {
             return [{
-                property: 'mab_mix_name_std',
+                property: MabQueryUtils.MAB_MIX_NAME_STD,
                 direction: 'ASC'
             }];
         },
 
         ColumnMap : {
-            'mab_mix_name_std' : {colInd: [1], filterLabel: 'Mab Mix Name Std'},
-            'mab_donor_species' : {colInd: [2], filterLabel: 'Mab Donor Species'},
-            'mab_isotype' : {colInd: [3], filterLabel: 'Mab Isotype'},
-            'mab_hxb2_location' : {colInd: [4], filterLabel: 'Mab Hxb2 Location'},
-            'tier_clade_virus' : {colInd: [5, 6, 7], filterLabel: 'Neutralization tier + Clade + Virus'},
-            'titer_curve_ic50_group' : {colInd: [8], filterLabel: 'Titer Curve IC50'},
-            'study' : {colInd: [9], filterLabel: 'Study'}
+            [MabQueryUtils.MAB_MIX_NAME_STD]: {colInd: [1], filterLabel: 'Mab Mix Name Std'},
+            'mab_donor_species': {colInd: [2], filterLabel: 'Mab Donor Species'},
+            'mab_isotype': {colInd: [3], filterLabel: 'Mab Isotype'},
+            'mab_hxb2_location': {colInd: [4], filterLabel: 'Mab Hxb2 Location'},
+            [MabQueryUtils.VIRUS_FILTER_COLUMN] : {colInd: [5, 6, 7], filterLabel: 'Neutralization tier + Clade + Virus'},
+            [MabQueryUtils.IC50_GROUP_COLUMN] : {colInd: [8], filterLabel: 'Titer Curve IC50'},
+            'study': {colInd: [9], filterLabel: 'Study'}
         },
 
         MAbReportID_PROP_PREFIX: "MAbReportID",
@@ -51,7 +51,7 @@ Ext.define('Connector.view.MabGrid', {
 
     constructor : function(config) {
         this.callParent([config]);
-        this.addEvents('updateMabFilter', 'updateMabSelection', 'requestmabexport');
+        this.addEvents('updateMabSelection', 'requestmabexport');
     },
 
     initComponent : function() {
@@ -63,7 +63,6 @@ Ext.define('Connector.view.MabGrid', {
         this.add(this.getGridHeader());
         var model = this.getModel();
 
-        this.on('updateMabFilter', this.onMabGridFilterChange, this);
         this.on('updateMabSelection', this.onMabSelectionChange, this);
         this.on('boxready', model.onViewReady, model, {single: true});
 
@@ -180,14 +179,14 @@ Ext.define('Connector.view.MabGrid', {
     getGridColumnsConfig : function() {
         var ind = 1;
         return [
-            this._getMabMixColumnConfig('MAb/Mixture', 'mab_mix_name_std', ind++),
+            this._getMabMixColumnConfig('MAb/Mixture', MabQueryUtils.MAB_MIX_NAME_STD, ind++),
             this._getMetaColumnConfig('Donor Species', 'mab_donor_species', ind++),
             this._getMetaColumnConfig('Isotype', 'mab_isotype', ind++),
             this._getMetaColumnConfig('HXB2 Location', 'mab_hxb2_location', ind++),
             this._getVirusColumnConfig('Viruses', 'virusCount', ind++),
             this._getVirusColumnConfig('Clades', 'cladeCount', ind++),
             this._getVirusColumnConfig('Tiers', 'neutralization_tierCount', ind++),
-            this._getIC50MeanColumnConfig('Geometric mean Curve IC50', 'IC50geomean', ind++, 'titer_curve_ic50_group'),
+            this._getIC50MeanColumnConfig('Geometric mean Curve IC50', 'IC50geomean', ind++, MabQueryUtils.IC50_GROUP_COLUMN),
             this._getCountColumnConfig('Studies', 'studyCount', ind, 'study')
         ];
     },
@@ -228,9 +227,9 @@ Ext.define('Connector.view.MabGrid', {
         return Ext.apply(this._getBaseColumnConfig(title, dataIndex, colInd), {
             width: this.countColumnWidth,
             filterConfig: {
+                fieldName: MabQueryUtils.VIRUS_FILTER_COLUMN,
                 isMeta: false,
-                isVirus: true,
-                fieldName: 'tier_clade_virus'
+                isVirus: true
             }
         });
     },
@@ -385,9 +384,11 @@ Ext.define('Connector.view.MabGrid', {
             mabModel: this.getModel(),
             activeValues: activeValues,
             listeners: {
-                mabfilter: function (columnName, filter)
-                {
-                    this.fireEvent('updateMabFilter', columnName, filter);
+                clearmabfilter: function(window, columnName) {
+                    this.onMabGridFilterChange(columnName);
+                },
+                mabfilter: function(window, columnName, filter) {
+                    this.onMabGridFilterChange(columnName, filter);
                 },
                 scope: this
             },
@@ -443,7 +444,7 @@ Ext.define('Connector.view.MabGrid', {
             items: ['->',
                 {
                     itemId: 'docancel',
-                    text : 'Cancel',
+                    text: 'Cancel',
                     cls: 'filter-btn',
                     handler : function() {
                         this.virusFilterPanel.close();
@@ -455,8 +456,7 @@ Ext.define('Connector.view.MabGrid', {
                     text: 'Done',
                     cls: 'filter-btn',
                     handler: function() {
-                        var filter = filterPanel.constructFilter();
-                        this.fireEvent('updateMabFilter', 'tier_clade_virus', filter);
+                        this.onMabGridFilterChange(MabQueryUtils.VIRUS_FILTER_COLUMN, filterPanel.constructFilter());
                         this.virusFilterPanel.close();
                     },
                     scope: this
@@ -473,15 +473,16 @@ Ext.define('Connector.view.MabGrid', {
     },
 
     onMabGridFilterChange : function(columnName, filter) {
-        if (filter === null) {
-            Connector.getState().removeMabFilter(columnName);
-        }
-        else {
+        if (filter) {
             Connector.getState().updateMabFilter(columnName, {
                 gridFilter: [filter],
                 filterSource: 'GETDATA'
             });
         }
+        else {
+            Connector.getState().removeMabFilter(columnName);
+        }
+
         this.getModel().updateData();
     },
 
@@ -497,7 +498,7 @@ Ext.define('Connector.view.MabGrid', {
 
         Ext.each(Connector.getState().getSelectedMAbs(), function(val) {
             recIdx = store.findBy(function(rec) {
-                return rec.get('mab_mix_name_std') === val;
+                return rec.get(MabQueryUtils.MAB_MIX_NAME_STD) === val;
             });
 
             if (recIdx !== -1) {
@@ -512,7 +513,7 @@ Ext.define('Connector.view.MabGrid', {
     onMabSelectionChange : function(mAbSelections) {
         var mAbs = [];
         Ext.each(mAbSelections, function(selection) {
-            mAbs.push(selection.get('mab_mix_name_std'));
+            mAbs.push(selection.get(MabQueryUtils.MAB_MIX_NAME_STD));
         });
         Connector.getState().updateSelectedMAbs(mAbs);
     },
