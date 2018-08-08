@@ -308,26 +308,32 @@ Ext.define('Connector.model.Grid', {
      * @param dataSource
      * @returns {Array}
      */
-    getDataSourceMeasures: function (measures, dataSource)
+    getDataSourceMeasures : function(measures, dataSource)
     {
         var measureGroups = Connector.grid.Panel.groupColumns(measures, true);
         var sourceMeasures = [];
-        Ext.each(measureGroups, function (group) {
+        Ext.each(measureGroups, function(group) {
             var include = false;
-            if (dataSource === QueryUtils.DATA_SOURCE_STUDY_AND_TIME || dataSource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS)
-            {
-                if (group.text === dataSource || group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TREATMENT)
+            if (dataSource === QueryUtils.DATA_SOURCE_STUDY_AND_TIME ||
+                dataSource === QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS) {
+
+                if (group.text === dataSource || group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TREATMENT) {
                     include = true;
+                }
             }
-            else
-            {
-                if (group.text === dataSource || group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TIME || group.text === QueryUtils.DATA_SOURCE_ADDED_TIME_PIONT)
+            else {
+                if (group.text === dataSource ||
+                    group.text === QueryUtils.DATA_SOURCE_STUDY_AND_TIME ||
+                    group.text === QueryUtils.DATA_SOURCE_ADDED_TIME_POINT) {
                     include = true;
+                }
             }
 
-            if (include)
+            if (include) {
                 sourceMeasures = sourceMeasures.concat(group.columns);
+            }
         });
+
         return sourceMeasures;
     },
 
@@ -342,7 +348,7 @@ Ext.define('Connector.model.Grid', {
 
     getSources: function ()
     {
-        var excludes = [QueryUtils.DATA_SOURCE_ADDED_TIME_PIONT, QueryUtils.DATA_SOURCE_STUDY_AND_TREATMENT];
+        var excludes = [QueryUtils.DATA_SOURCE_ADDED_TIME_POINT, QueryUtils.DATA_SOURCE_STUDY_AND_TREATMENT];
         var allMeasures = this.getAllWrappedMeasures(false);
         var groups = Connector.grid.Panel.groupColumns(allMeasures, true);
         var sources = [];

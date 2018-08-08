@@ -65,7 +65,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     constructor: function (config) {
         this.callParent([config]);
-        if (Ext.isDefined(LABKEY.ActionURL.getParameters()['logQuery'])) {
+        if (Ext.isDefined(LABKEY.ActionURL.getParameter('logQuery'))) {
             this.logging = true;
         }
     },

@@ -43,7 +43,7 @@ Ext.define('Connector.grid.Panel', {
         {
             var defaultGroup = QueryUtils.DATA_SOURCE_STUDY_AND_TIME,
                     subjectCharacteristicsGroup = QueryUtils.DATA_SOURCE_SUBJECT_CHARACTERISTICS,
-                    addedTimeGroup = QueryUtils.DATA_SOURCE_ADDED_TIME_PIONT,
+                    addedTimeGroup = QueryUtils.DATA_SOURCE_ADDED_TIME_POINT,
                     queryService = Connector.getQueryService(),
                     defaultColumns = queryService.getDefaultGridAliases(false, true),
                     definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
