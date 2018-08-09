@@ -295,6 +295,8 @@ Ext.define('Connector.controller.State', {
         if (!skipState) {
             this.updateState();
         }
+
+        this.fireEvent('mabfilterchange');
     },
 
     removeMabFilter : function(columnName, skipState) {
@@ -306,12 +308,7 @@ Ext.define('Connector.controller.State', {
             }
         });
 
-        if (Ext.isEmpty(filterSet)) {
-            this.clearMabFilters(skipState);
-        }
-        else {
-            this.setMabFilters(filterSet, skipState);
-        }
+        this.setMabFilters(filterSet, skipState);
     },
 
     updateMabFilter : function(columnName, newFilter, skipState) {
@@ -332,11 +329,8 @@ Ext.define('Connector.controller.State', {
         this.setMabFilters(filterSet, skipState);
     },
 
-    clearMabFilters: function(skipState) {
-        this.mabfilters = [];
-        if (!skipState) {
-            this.updateState();
-        }
+    clearMabFilters : function(skipState) {
+        this.setMabFilters([], skipState);
     },
 
     getSelectedMAbs : function() {

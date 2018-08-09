@@ -130,5 +130,4 @@ Ext.define('Connector.panel.MabVirusSelection', {
         }
         return value;
     }
-
 });

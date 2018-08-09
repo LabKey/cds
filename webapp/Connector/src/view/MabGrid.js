@@ -35,13 +35,13 @@ Ext.define('Connector.view.MabGrid', {
             }];
         },
 
-        ColumnMap : {
-            [MabQueryUtils.MAB_MIX_NAME_STD]: {colInd: [1], filterLabel: 'Mab Mix Name Std'},
+        ColumnMap: {
+            'mab_mix_name_std': {colInd: [1], filterLabel: 'Mab Mix Name Std'},
             'mab_donor_species': {colInd: [2], filterLabel: 'Mab Donor Species'},
             'mab_isotype': {colInd: [3], filterLabel: 'Mab Isotype'},
             'mab_hxb2_location': {colInd: [4], filterLabel: 'Mab Hxb2 Location'},
-            [MabQueryUtils.VIRUS_FILTER_COLUMN] : {colInd: [5, 6, 7], filterLabel: 'Neutralization tier + Clade + Virus'},
-            [MabQueryUtils.IC50_GROUP_COLUMN] : {colInd: [8], filterLabel: 'Titer Curve IC50'},
+            'tier_clade_virus': {colInd: [5, 6, 7], filterLabel: 'Neutralization tier + Clade + Virus'},
+            'titer_curve_ic50_group': {colInd: [8], filterLabel: 'Titer Curve IC50'},
             'study': {colInd: [9], filterLabel: 'Study'}
         },
 

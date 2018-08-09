@@ -11,8 +11,6 @@ Ext.define('Connector.store.MabStatus', {
 
     model: 'Connector.model.Detail',
 
-    // autoLoad: true,
-
     constructor(config) {
         this.fetchCount = 0;
         this.loadCount = 0;
@@ -28,6 +26,7 @@ Ext.define('Connector.store.MabStatus', {
 
         for (var q in queries) {
             if (queries.hasOwnProperty(q)) {
+                console.log(q, queries[q]);
                 LABKEY.Query.executeSql({
                     schemaName: 'cds',
                     sql: queries[q],
@@ -42,35 +41,48 @@ Ext.define('Connector.store.MabStatus', {
     },
 
     load : function() {
+        Connector.getState().onReady(function(state) {
 
-        this.executeAll({
-            gridBase: `
-                SELECT 
-                COUNT(DISTINCT mab_mix_id) as mabCount,
-                COUNT(DISTINCT mab_mix_name_std) as mixCount,
-                COUNT(DISTINCT study) as studyCount,
-                COUNT(DISTINCT virus) as virusCount
-                FROM cds.mAbGridBase
-            `,
-            mabVirus: `
-                SELECT
-                COUNT(*) as mabVirusCount
-                FROM (
+            // listen to state for mab filter changes
+            if (!this.filterListener) {
+                this.filterListener = true;
+                state.on('mabfilterchange', this.load.bind(this));
+            }
+
+            Connector.getQueryService().onQueryReady(function() {
+                var gridBaseWhere = MabQueryUtils._buildWhere(MabQueryUtils._getMabStateFilterWhere(false, false));
+
+                this.executeAll({
+                    gridBase: `
+                    SELECT 
+                    COUNT(DISTINCT mab_mix_id) as mabCount,
+                    COUNT(DISTINCT mab_mix_name_std) as mixCount,
+                    COUNT(DISTINCT study) as studyCount,
+                    COUNT(DISTINCT virus) as virusCount
+                    ${MabQueryUtils._getAssayFrom()}
+                    ${gridBaseWhere}
+                `,
+                    mabVirus: `
                     SELECT
-                    mab_mix_name_std, 
-                    virus,
                     COUNT(*) as mabVirusCount
-                    FROM cds.mAbGridBase
-                    GROUP BY mab_mix_name_std, virus
-                )
-            `,
-            metaGridBase: `
-                SELECT 
-                COUNT(DISTINCT mab_mix_name_std) as mixCount,
-                COUNT(DISTINCT mab_donor_species) as donorSpeciesCount
-                FROM cds.mAbMetaGridBase
-            `,
-        }, this.onLoadCounts.bind(this));
+                    FROM (
+                        SELECT
+                        mab_mix_name_std, 
+                        virus,
+                        COUNT(*) as mabVirusCount
+                        ${MabQueryUtils._getAssayFrom()}
+                        ${gridBaseWhere}
+                        GROUP BY mab_mix_name_std, virus
+                    )
+                `, // TODO: Still require the filter mechanism for "metaGridBase"
+                    metaGridBase: `
+                    SELECT 
+                    COUNT(DISTINCT mab_donor_species) as donorSpeciesCount
+                    ${MabQueryUtils._getMabMixMetaFrom()}
+                `,
+                }, this.onLoadCounts.bind(this));
+            }, this);
+        }, this);
     },
 
     onExecute : function(props, data) {
