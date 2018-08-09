@@ -60,7 +60,7 @@ Ext.define('Connector.view.InfoPane', {
             }
 
             var filterType = '';
-            if (filter.get('operator') == 'AND')
+            if (filter.get('operator') === 'AND')
                 filterType = "Subjects related to all: ";
             else
                 filterType = "Subjects related to any: ";
@@ -83,7 +83,7 @@ Ext.define('Connector.view.InfoPane', {
         {
             var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
             var member = arrayName[arrayName.length-1];
-            if (member == '#null') {
+            if (member === '#null') {
                 member = 'Unknown';
             }
             return member;
@@ -99,7 +99,7 @@ Ext.define('Connector.view.InfoPane', {
         var model = this.getModel();
 
         // If the model does not provide a title, use the panes default displayTitle
-        if (Ext.isString(model.get('title')) && model.get('title').length == 0) {
+        if (Ext.isString(model.get('title')) && model.get('title').length === 0) {
             model.set('title', this.displayTitle);
         }
 
@@ -154,7 +154,7 @@ Ext.define('Connector.view.InfoPane', {
                 ],
                 listeners :{
                     render: function(cmp) {
-                        cmp.getEl().on('click', function(){
+                        cmp.getEl().on('click', function() {
                             Ext.getCmp(btnId).showMenu();
                         });
                     }
@@ -319,7 +319,7 @@ Ext.define('Connector.view.InfoPane', {
                         '{name:this.renderHeader}', // 'name' is actually the value of the groupField
                         {
                             renderHeader: function(v) {
-                                if (isSelectionMode){
+                                if (isSelectionMode) {
                                     return v ? 'Has data in current selection' : 'No data in current selection';
                                 }
                                 else {

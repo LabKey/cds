@@ -112,9 +112,6 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     getData: function (config) {
-        if (this.logging) {
-            console.log(this._generateMAbSql(true));
-        }
         LABKEY.Query.executeSql({
             schemaName: 'cds',
             sql: this._generateMAbSql(),
@@ -130,14 +127,11 @@ Ext.define('Connector.utility.MabQuery', {
         });
     },
 
-    getMabViruses: function(config) {
-        if (this.logging) {
-            console.log(this._generateVirusCountSql(config, true));
-        }
-        this._executeSql(config, this._generateVirusCountSql(config));
+    getMabViruses : function(config) {
+        this._executeSql(config, this._generateVirusCountSql(config, this.logging));
     },
 
-    _generateVirusCountSql: function(config, forDebugging) {
+    _generateVirusCountSql : function(config, forDebugging) {
         return '(' + this._generateActiveVirusCountSql(forDebugging) + ')\n\t UNION \n\t(' + this._generateAllVirusCountSql() + ')';
     },
 
@@ -159,12 +153,11 @@ Ext.define('Connector.utility.MabQuery', {
         }, this);
         SELECT.push('0 as subjectCount ' + sep);
 
-        var WHERE = [];
-        return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getVirusGroupBy();
+        return SELECT.join('') + "\n" + this._getAssayFrom() + this._getVirusGroupBy();
     },
 
     _getVirusGroupBy: function() {
-        return  "\n\t" + 'GROUP BY ' + this.VIRUS_COLUMNS.toString() + "\n\t";
+        return "\n\t" + 'GROUP BY ' + this.VIRUS_COLUMNS.toString() + "\n\t";
     },
 
     _generateMabMetaUniqueValuesSql : function(config, forDebugging) {
@@ -211,11 +204,13 @@ Ext.define('Connector.utility.MabQuery', {
         ].join('\n\t');
     },
 
-    _getMabStateFilterWhere: function(excludeVirus, forDebugging, includeSelection, isExport) {
-        var assayFilters = [], metaFilters = [], ic50Filter, WHERE = [];
-        var stateFilters = Connector.getState().getMabFilters(true);
-        Ext.each(stateFilters, function(filter)
-        {
+    _getMabStateFilterWhere : function(excludeVirus, forDebugging, includeSelection, isExport) {
+        var assayFilters = [],
+            metaFilters = [],
+            ic50Filter,
+            WHERE = [];
+
+        Ext.each(Connector.getState().getMabFilters(true), function(filter) {
             var f = filter.gridFilter[0], columnName = f.getColumnName();
             if (this.ASSAY_FILTER_COLUMNS.indexOf(columnName) > -1) {
                 if (!(excludeVirus && this.VIRUS_FILTER_COLUMN === columnName))
@@ -231,11 +226,13 @@ Ext.define('Connector.utility.MabQuery', {
             WHERE.push(this._getAssayDimensionalFilter(filter, forDebugging));
         }, this);
 
-        if (ic50Filter)
+        if (ic50Filter) {
             WHERE.push(this._getAssayDimensionalFilter(ic50Filter, forDebugging));
+        }
 
-        if ((metaFilters && metaFilters.length > 0) || includeSelection)
+        if ((metaFilters && metaFilters.length > 0) || includeSelection) {
             WHERE.push(this._getMabMixMetadataWhere(metaFilters, forDebugging, includeSelection, isExport));
+        }
 
         return WHERE;
     },
@@ -248,14 +245,14 @@ Ext.define('Connector.utility.MabQuery', {
         return  "\n\t" + 'GROUP BY ' + this.MAB_MIX_NAME_STD + " \n\t";
     },
 
-    _generateMAbSql : function(forDebugging) {
+    _generateMAbSql : function() {
         var SELECT = ['SELECT '], sep = "\n\t";
         SELECT.push(this.MAB_MIX_NAME_STD + ', ' + sep);
         Ext.each(this.COUNT_COLUMNS, function(col) {
             SELECT.push('COUNT(DISTINCT ' + col + ") as " + col + 'Count, ' + sep);
         }, this);
 
-        var WHERE = this._getMabStateFilterWhere(false, forDebugging);
+        var WHERE = this._getMabStateFilterWhere(false, this.logging);
         return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getAssayGroupBy();
     },
 
@@ -329,7 +326,7 @@ Ext.define('Connector.utility.MabQuery', {
         else if (noEmptyWhere)
             return noEmptyWhere;
 
-        return ''
+        return '';
     },
 
     _getGridBaseDatasetColumnName : function(f)
@@ -479,7 +476,7 @@ Ext.define('Connector.utility.MabQuery', {
         if (filter) {
             var f = filter.gridFilter[0];
             var ranges = this._getProcessedIC50Ranges(f), rangeFilters = [];
-            Ext.each(ranges, function(range){
+            Ext.each(ranges, function(range) {
                 var filters = this.IC50Ranges[range];
                 if (!filters)
                     return;
@@ -681,7 +678,7 @@ Ext.define('Connector.utility.MabQuery', {
             var f = filter.gridFilter[0], columnName = f.getColumnName();
             var ranges = this._getProcessedIC50Ranges(f);
 
-            Ext.each(ranges, function(range){
+            Ext.each(ranges, function(range) {
                 var filters = this.IC50Ranges[range];
                 if (!filters)
                     return;

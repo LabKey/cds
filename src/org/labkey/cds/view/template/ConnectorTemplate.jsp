@@ -190,7 +190,9 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/MabDetail.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/MabGrid.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/MabPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/MabSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/RSSItem.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
@@ -275,6 +277,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/HomeHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/HeaderDataView.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/MabPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Page.js"></script>

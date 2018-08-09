@@ -30,7 +30,7 @@ Ext.define('Connector.view.MabGrid', {
     statics: {
         getDefaultSort : function () {
             return [{
-                property: MabQueryUtils.MAB_MIX_NAME_STD,
+                property: 'mab_mix_name_std',
                 direction: 'ASC'
             }];
         },

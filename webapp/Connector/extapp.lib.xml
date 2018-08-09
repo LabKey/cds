@@ -24,7 +24,9 @@
         <script path="Connector/src/model/Summary.js"/>
         <script path="Connector/src/model/Group.js"/>
         <script path="Connector/src/model/Grid.js"/>
+        <script path="Connector/src/model/MabDetail.js"/>
         <script path="Connector/src/model/MabGrid.js"/>
+        <script path="Connector/src/model/MabPane.js"/>
         <script path="Connector/src/model/MabSummary.js"/>
         <script path="Connector/src/model/RSSItem.js"/>
         <script path="Connector/src/model/Variable.js"/>
@@ -110,6 +112,7 @@
         <script path="Connector/src/view/HeaderDataView.js"/>
         <script path="Connector/src/view/Learn.js"/>
         <script path="Connector/src/view/Main.js"/>
+        <script path="Connector/src/view/MabPane.js"/>
         <script path="Connector/src/view/Navigation.js"/>
         <script path="Connector/src/view/Page.js"/>
         <script path="Connector/src/view/PageHeader.js"/>

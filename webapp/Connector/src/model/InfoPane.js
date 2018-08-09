@@ -149,16 +149,16 @@ Ext.define('Connector.model.InfoPane', {
      * @param {boolean} [deferToFilters=true]
      */
     configure : function(dimName, hierName, lvlName, deferToFilters) {
-        Connector.getState().onMDXReady(function(mdx){
+        Connector.getState().onMDXReady(function(mdx) {
             this._configureSelection();
             this.filterMemberMap = {};
 
             var _deferToFilters = Ext.isBoolean(deferToFilters) ? deferToFilters : true;
 
-            if (!this.isSelectionBased() && _deferToFilters){
-                if (lvlName){
+            if (!this.isSelectionBased() && _deferToFilters) {
+                if (lvlName) {
                     var lvl = mdx.getLevel(lvlName);
-                    if (lvl && lvl.hierarchy && lvl.hierarchy.displayLevels){
+                    if (lvl && lvl.hierarchy && lvl.hierarchy.displayLevels) {
                         this._configureFilter(null, lvlName);
                     }
                     else{
@@ -170,7 +170,7 @@ Ext.define('Connector.model.InfoPane', {
                 }
             }
 
-            if (this.isFilterBased()){
+            if (this.isFilterBased()) {
                 var filter = this.get('filter'),
                     members = filter.get('members');
 
@@ -178,7 +178,7 @@ Ext.define('Connector.model.InfoPane', {
                 hierName = filter.get('hierarchy');
                 lvlName = filter.get('level');
 
-                Ext.each(members, function (member){
+                Ext.each(members, function (member) {
                     this.filterMemberMap[member.uniqueName] = true;
                 }, this);
             }

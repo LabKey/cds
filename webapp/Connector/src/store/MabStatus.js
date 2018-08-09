@@ -9,7 +9,7 @@ Ext.define('Connector.store.MabStatus', {
 
     alias: 'store.mabstatus',
 
-    model: 'Connector.model.Detail',
+    model: 'Connector.model.MabDetail',
 
     constructor(config) {
         this.fetchCount = 0;
@@ -17,6 +17,15 @@ Ext.define('Connector.store.MabStatus', {
         this.results = {};
 
         this.callParent([config]);
+    },
+
+    createModel : function(config) {
+        return Ext.create(this.model, Ext.applyIf(config, {
+            activeCountLink: true,
+            modelClass: 'Connector.model.MabPane',
+            subcount: -1,
+            viewClass: 'Connector.view.MabPane'
+        }));
     },
 
     executeAll : function(queries) {
@@ -106,52 +115,42 @@ Ext.define('Connector.store.MabStatus', {
         var mabVirusRow = results.mabVirus.rows[0];
 
         var rows = [
-            Ext.create('Connector.model.Detail', {
+            this.createModel({
                 count: gridBaseRow.mixCount,
                 highlight: true,
                 name: 'mixCount',
                 label: 'MAbs/Mixtures',
-                subcount: -1,
                 value: gridBaseRow.mixCount
             }),
-            Ext.create('Connector.model.Detail', {
+            this.createModel({
                 count: gridBaseRow.mabCount,
-                highlight: false,
                 name: 'mabCount',
                 label: 'MAbs',
-                subcount: -1,
                 value: gridBaseRow.mabCount
             }),
-            Ext.create('Connector.model.Detail', {
+            this.createModel({
                 count: metaGridBaseRow.donorSpeciesCount,
-                highlight: false,
                 name: 'donorCount',
                 label: 'Donor species',
-                subcount: -1,
                 value: metaGridBaseRow.donorSpeciesCount
             }),
-            Ext.create('Connector.model.Detail', {
+            this.createModel({
                 count: gridBaseRow.studyCount,
                 highlight: true,
                 name: 'studyCount',
                 label: 'Studies',
-                subcount: -1,
-                value: gridBaseRow.studyCount
+                value: gridBaseRow.studyCount,
             }),
-            Ext.create('Connector.model.Detail', {
+            this.createModel({
                 count: mabVirusRow.mabVirusCount,
-                highlight: false,
                 name: 'mabVirusCount',
                 label: 'MAb-virus pairs',
-                subcount: -1,
                 value: mabVirusRow.mabVirusCount
             }),
-            Ext.create('Connector.model.Detail', {
+            this.createModel({
                 count: gridBaseRow.virusCount,
-                highlight: false,
                 name: 'virusCount',
                 label: 'Viruses',
-                subcount: -1,
                 value: gridBaseRow.virusCount
             })
         ];
