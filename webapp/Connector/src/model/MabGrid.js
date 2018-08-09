@@ -16,9 +16,9 @@ Ext.define('Connector.model.MabGrid', {
     statics: {
         ic50Ranges : [
             {value: 'G0.1', displayValue: '< 0.1'},
-            {value: 'G1', displayValue: '< 1'},
-            {value: 'G10', displayValue: '< 10'},
-            {value: 'G50', displayValue: '<= 50'},
+            {value: 'G1', displayValue: '>= 0.1 to < 1'},
+            {value: 'G10', displayValue: '>= 1 to < 10'},
+            {value: 'G50', displayValue: '>= 10 to <= 50'},
             {value: 'G50+', displayValue: '> 50'}
         ]
     },
