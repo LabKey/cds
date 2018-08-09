@@ -114,8 +114,15 @@ Ext.define('Connector.model.MabGrid', {
         Connector.getQueryService().getMabActiveFieldValues(config);
     },
 
-    onMAbData : function(response) {
-        var rows = response.rows;
+    onMAbData: function(geoMeanResponse, config)
+    {
+        var geoMeanRows = geoMeanResponse.rows, geoMeanMap = {};
+        Ext.each(geoMeanRows, function(row) {
+            var mabName = row.mab_mix_name_std;
+            geoMeanMap[row.mab_mix_name_std] = parseFloat(row.IC50geomean.toFixed(5));
+        }, this);
+
+        var rows = config.countsData.rows;
         var mabRows = [];
         Ext.each(rows, function(row) {
             var mabName = row.mab_mix_name_std;
@@ -124,7 +131,7 @@ Ext.define('Connector.model.MabGrid', {
                 row.mab_donor_species = metaObj.mab_donor_species;
                 row.mab_hxb2_location = metaObj.mab_hxb2_location;
                 row.mab_isotype = metaObj.mab_isotype;
-                row.IC50geomean = parseFloat(row.IC50geomean.toFixed(5));
+                row.IC50geomean = geoMeanMap[mabName];
                 mabRows.push(row);
             }
         }, this);
