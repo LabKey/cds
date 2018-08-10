@@ -27,11 +27,19 @@ Ext.define('Connector.view.InfoPane', {
 
     autoScroll: true,
 
+    columnHeaderText: 'All',
+
+    hideHeaders: false,
+
     showTitle: true,
+
+    showSelection: true,
 
     showSort: true,
 
     isShowOperator: true,
+
+    groupTitle: 'active filters',
 
     displayTitle: '',
 
@@ -212,8 +220,7 @@ Ext.define('Connector.view.InfoPane', {
             });
         }
 
-        var contents = this.getMiddleContent(model);
-        Ext.each(contents, function(content) {
+        Ext.each(this.getMiddleContent(model), function(content) {
             middleContent.items.push(content);
         }, this);
 
@@ -273,27 +280,28 @@ Ext.define('Connector.view.InfoPane', {
         return this.infoSortDropDownButton;
     },
 
+    inSelectionMode : function() {
+        return Connector.getState().getSelections().length > 0;
+    },
+
     getMiddleContent : function(model) {
-        var isSelectionMode = Connector.getState().getSelections().length > 0;
-        var memberGrid = Ext.create('Ext.grid.Panel', {
+        var me = this;
+        var isSelectionMode = this.inSelectionMode();
+
+        var gridConfig = {
             xtype: 'grid',
             itemId: 'membergrid',
             store: this.getMemberStore(),
             viewConfig : { stripeRows : false },
 
-            /* Selection configuration */
-            selType: 'checkboxmodel',
-            selModel: {
-                checkSelector: 'td.x-grid-cell-row-checker'
-            },
-            multiSelect: true,
+            hideHeaders: this.hideHeaders,
 
             /* Column configuration */
             enableColumnHide: false,
             enableColumnResize: false,
             columns: [{
                 xtype: 'templatecolumn',
-                header: 'All',
+                header: this.columnHeaderText,
                 dataIndex: 'name',
                 flex: 1,
                 sortable: false,
@@ -316,17 +324,16 @@ Ext.define('Connector.view.InfoPane', {
                 ftype: 'grouping',
                 collapsible: false,
                 groupHeaderTpl: new Ext.XTemplate(
-                        '{name:this.renderHeader}', // 'name' is actually the value of the groupField
-                        {
-                            renderHeader: function(v) {
-                                if (isSelectionMode) {
-                                    return v ? 'Has data in current selection' : 'No data in current selection';
-                                }
-                                else {
-                                    return v ? 'Has data in active filters' : 'No data in active filters';
-                                }
+                    '{name:this.renderHeader}', // 'name' is actually the value of the groupField
+                    {
+                        renderHeader: function(v) {
+                            if (isSelectionMode) {
+                                return v ? 'Has data in current selection' : 'No data in current selection';
                             }
+
+                            return v ? 'Has data in ' + me.groupTitle : 'No data in ' + me.groupTitle;
                         }
+                    }
                 )
             }],
 
@@ -349,7 +356,9 @@ Ext.define('Connector.view.InfoPane', {
                     keys.sort();
                     this.mutated = !Ext.Array.equals(this.initialKeys, keys);
 
-                    this.filterBtn.setDisabled(selections.length == 0);
+                    if (this.filterBtn) {
+                        this.filterBtn.setDisabled(selections.length === 0);
+                    }
                 },
                 selectioncomplete: function() {
 
@@ -364,7 +373,20 @@ Ext.define('Connector.view.InfoPane', {
                 },
                 scope: this
             }
-        });
+        };
+
+        if (this.showSelection) {
+            gridConfig = Ext.apply(gridConfig, {
+                /* Selection configuration */
+                selType: 'checkboxmodel',
+                selModel: {
+                    checkSelector: 'td.x-grid-cell-row-checker'
+                },
+                multiSelect: true
+            });
+        }
+
+        var memberGrid = Ext.create('Ext.grid.Panel', gridConfig);
 
         // plugin to handle loading mask for this grid
         memberGrid.addPlugin({
@@ -496,7 +518,7 @@ Ext.define('Connector.view.InfoPane', {
 
         if (members.length > 0) {
 
-            if (members.length == storeCount) {
+            if (members.length === storeCount) {
                 sm.selectAll(true);
             }
             else {
@@ -510,7 +532,6 @@ Ext.define('Connector.view.InfoPane', {
         // Configure default operator
         //
         var model = this.getModel();
-        var hierarchy = model.get('hierarchy');
 
         if (model.isShowOperator()) {
             if (model.isREQ()) {
@@ -541,9 +562,7 @@ Ext.define('Connector.view.InfoPane', {
     setMenuContent : function(menu, model) {
         menu.removeAll();
 
-        var items = model.get('hierarchyItems');
-
-        Ext.each(items, function(item) {
+        Ext.each(model.get('hierarchyItems'), function(item) {
             menu.add(item);
         });
     },

@@ -35,7 +35,6 @@ Ext.define('Connector.store.MabStatus', {
 
         for (var q in queries) {
             if (queries.hasOwnProperty(q)) {
-                console.log(q, queries[q]);
                 LABKEY.Query.executeSql({
                     schemaName: 'cds',
                     sql: queries[q],
@@ -59,36 +58,11 @@ Ext.define('Connector.store.MabStatus', {
             }
 
             Connector.getQueryService().onQueryReady(function() {
-                var gridBaseWhere = MabQueryUtils._buildWhere(MabQueryUtils._getMabStateFilterWhere(false, false));
-
                 this.executeAll({
-                    gridBase: `
-                    SELECT 
-                    COUNT(DISTINCT mab_mix_id) as mabCount,
-                    COUNT(DISTINCT mab_mix_name_std) as mixCount,
-                    COUNT(DISTINCT study) as studyCount,
-                    COUNT(DISTINCT virus) as virusCount
-                    ${MabQueryUtils._getAssayFrom()}
-                    ${gridBaseWhere}
-                `,
-                    mabVirus: `
-                    SELECT
-                    COUNT(*) as mabVirusCount
-                    FROM (
-                        SELECT
-                        mab_mix_name_std, 
-                        virus,
-                        COUNT(*) as mabVirusCount
-                        ${MabQueryUtils._getAssayFrom()}
-                        ${gridBaseWhere}
-                        GROUP BY mab_mix_name_std, virus
-                    )
-                `, // TODO: Still require the filter mechanism for "metaGridBase"
-                    metaGridBase: `
-                    SELECT 
-                    COUNT(DISTINCT mab_donor_species) as donorSpeciesCount
-                    ${MabQueryUtils._getMabMixMetaFrom()}
-                `,
+                    gridBase: MabQueryUtils.getBaseCountSQL(true),
+                    mabCount: MabQueryUtils.getMabCountSQL(true),
+                    mabVirus: MabQueryUtils.getMAbVirusPairCountSQL(true),
+                    metaGridBase: MabQueryUtils.getMetaCountSQL(true),
                 }, this.onLoadCounts.bind(this));
             }, this);
         }, this);
@@ -112,43 +86,71 @@ Ext.define('Connector.store.MabStatus', {
     onLoadCounts : function(results) {
         var gridBaseRow = results.gridBase.rows[0];
         var metaGridBaseRow = results.metaGridBase.rows[0];
+        var mabCountRow = results.mabCount.rows[0];
         var mabVirusRow = results.mabVirus.rows[0];
 
+        // Display order based on insertion order
         var rows = [
             this.createModel({
                 count: gridBaseRow.mixCount,
+                filterConfig: {
+                    fieldName: 'mab_mix_name_std',
+                    isMeta: false
+                },
                 highlight: true,
                 name: 'mixCount',
                 label: 'MAbs/Mixtures',
                 value: gridBaseRow.mixCount
             }),
             this.createModel({
-                count: gridBaseRow.mabCount,
+                count: mabCountRow.mabCount,
+                filterConfig: {
+                    fieldName: 'mab_name_std',
+                    isMeta: false,
+                    sql: MabQueryUtils.getMabValuesSQL.bind(MabQueryUtils)
+                },
                 name: 'mabCount',
                 label: 'MAbs',
-                value: gridBaseRow.mabCount
+                value: mabCountRow.mabCount
             }),
             this.createModel({
                 count: metaGridBaseRow.donorSpeciesCount,
+                filterConfig: {
+                    fieldName: 'mab_donor_species',
+                    isMeta: true
+                },
                 name: 'donorCount',
                 label: 'Donor species',
                 value: metaGridBaseRow.donorSpeciesCount
             }),
             this.createModel({
                 count: gridBaseRow.studyCount,
+                filterConfig: {
+                    fieldName: 'study.label',
+                    isMeta: false
+                },
                 highlight: true,
                 name: 'studyCount',
                 label: 'Studies',
                 value: gridBaseRow.studyCount,
             }),
             this.createModel({
-                count: mabVirusRow.mabVirusCount,
-                name: 'mabVirusCount',
+                count: mabVirusRow[MabQueryUtils.MAB_VIRUS_PAIRS_COUNT_COLUMN],
+                filterConfig: {
+                    fieldName: MabQueryUtils.MAB_VIRUS_PAIRS_COLUMN,
+                    isMeta: false,
+                    sql: MabQueryUtils.getMAbVirusPairValuesSQL.bind(MabQueryUtils)
+                },
+                name: MabQueryUtils.MAB_VIRUS_PAIRS_COUNT_COLUMN,
                 label: 'MAb-virus pairs',
-                value: mabVirusRow.mabVirusCount
+                value: mabVirusRow[MabQueryUtils.MAB_VIRUS_PAIRS_COUNT_COLUMN]
             }),
             this.createModel({
                 count: gridBaseRow.virusCount,
+                filterConfig: {
+                    fieldName: 'virus',
+                    isMeta: false
+                },
                 name: 'virusCount',
                 label: 'Viruses',
                 value: gridBaseRow.virusCount

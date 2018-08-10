@@ -161,11 +161,11 @@ Ext.define('Connector.model.InfoPane', {
                     if (lvl && lvl.hierarchy && lvl.hierarchy.displayLevels) {
                         this._configureFilter(null, lvlName);
                     }
-                    else{
+                    else {
                         this._configureFilter(hierName);
                     }
                 }
-                else{
+                else {
                     this._configureFilter(hierName);
                 }
             }
@@ -224,6 +224,7 @@ Ext.define('Connector.model.InfoPane', {
 
         this.set('filter', activeFilter); // undefined is OK
     },
+
     setDimensionHierarchy : function(dimName, hierName, lvlName) {
 
         var state = Connector.getState();
@@ -450,7 +451,7 @@ Ext.define('Connector.model.InfoPane', {
                 return selfName;
             }
             var parentSplit = splits[splits.length - 2];
-            if (parentSplit.indexOf('[') == 0) {
+            if (parentSplit.indexOf('[') === 0) {
                 parentSplit.replace('[', '');
             }
             return parentSplit + ' - ' + selfName;
@@ -531,8 +532,7 @@ Ext.define('Connector.model.InfoPane', {
         this.setReady();
     },
 
-    setReady : function()
-    {
+    setReady : function() {
         this._ready = true;
         this.fireEvent('ready', this);
     },

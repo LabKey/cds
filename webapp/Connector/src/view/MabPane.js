@@ -7,14 +7,17 @@ Ext.define('Connector.view.MabPane', {
 
     extend: 'Connector.view.InfoPane',
 
-    showSort: false,
+    columnHeaderText: undefined,
 
-    getMiddleContent : function(model) {
-        return [{
-            xtype: 'box',
-            html: 'This will display Mab count details'
-        }];
-    },
+    groupTitle: 'MAb grid',
+
+    hideHeaders: true,
+
+    isShowOperator: false,
+
+    showSelection: false,
+
+    showSort: false,
 
     getToolbarConfig : function(model) {
         return {
@@ -30,5 +33,9 @@ Ext.define('Connector.view.MabPane', {
                 }
             ]
         }
+    },
+
+    inSelectionMode : function() {
+        return false;
     }
 });

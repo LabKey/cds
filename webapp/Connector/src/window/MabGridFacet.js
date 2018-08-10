@@ -101,7 +101,7 @@ Ext.define('Connector.window.MabGridFacet', {
         this.add(this.facetGrid);
     },
 
-    _getFilterValues: function() {
+    _getFilterValues : function() {
         var fieldName = this.filterConfig.fieldName;
         var filter = this.mabModel.getFieldStateFilter(fieldName);
 
@@ -159,6 +159,14 @@ Ext.define('Connector.grid.MabGridFacet', {
 
     resetSearch: true,
 
+    initComponent : function() {
+        Ext.applyIf(this, {
+            activeValues: []
+        });
+
+        this.callParent();
+    },
+
     getFilteredValues : function() {
         return this.activeValues;
     },
@@ -167,23 +175,22 @@ Ext.define('Connector.grid.MabGridFacet', {
         return 'mab-col-' + this.columnField;
     },
 
-    getAllValues : function() {
-        return this.allValues;
-    },
-
     filterFacetOptions : function(value, previousValue) {
         var facetStore = this.getLookupStore();
         var regex = new RegExp(LABKEY.Utils.escapeRe(value), 'i');
 
         facetStore.clearFilter(false);
 
-        if (value !== '')
-            facetStore.filterBy(function(record){
+        if (value !== '') {
+            facetStore.filterBy(function(record) {
                 return regex.test(record.get('displayValue'));
             });
+        }
+
         if (value === '' || (previousValue && previousValue.indexOf(value) === 0)) {
-            if (this.useSearch && this.latestSelections.length > 0)
+            if (this.useSearch && this.latestSelections.length > 0) {
                 this.updateSelectionOnSearch();
+            }
         }
     },
 
@@ -195,7 +202,7 @@ Ext.define('Connector.grid.MabGridFacet', {
     },
 
     filterStore : function(facetStore, regex) {
-        facetStore.filterBy(function(record){
+        facetStore.filterBy(function(record) {
             return regex.test(record.get('displayValue'));
         });
     },

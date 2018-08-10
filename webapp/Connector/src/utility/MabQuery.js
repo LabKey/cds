@@ -32,6 +32,10 @@ Ext.define('Connector.utility.MabQuery', {
 
     MAB_MIX_NAME_STD: 'mab_mix_name_std',
 
+    MAB_VIRUS_PAIRS_COLUMN: 'mab_virus_pairs',
+
+    MAB_VIRUS_PAIRS_COUNT_COLUMN: 'mab_virus_pairs_count',
+
     COUNT_COLUMNS: ['study', 'virus', 'clade', 'neutralization_tier'],
 
     ASSAY_KEY_COLUMNS: ['mab_mix_id', 'study', 'virus', 'target_cell', 'lab_code', 'summary_level', 'curve_id'],
@@ -94,24 +98,37 @@ Ext.define('Connector.utility.MabQuery', {
         });
     },
 
-    getMabUniqueValues: function(config) {
-        var sql = null;
-        if (config.isMeta)
-            sql = this._generateMabMetaUniqueValuesSql(config);
-        else
-            sql = this._generateMabAssayUniqueValuesSql(config);
+    getMabUniqueValues : function(config) {
+        var sql;
 
-        if (this.logging) {
+        if (Ext.isFunction(config.sql)) {
+            sql = config.sql(config.useFilter === true);
+
+            if (this.logging) {
+                console.log(config.sql(config.useFilter === true));
+            }
+        }
+        else {
             if (config.isMeta)
-                console.log(this._generateMabMetaUniqueValuesSql(config, true));
+                sql = this._generateMabMetaUniqueValuesSql(config);
             else
-                console.log(this._generateMabAssayUniqueValuesSql(config, true));
+                sql = this._generateMabAssayUniqueValuesSql(config);
+
+            if (this.logging) {
+                if (config.isMeta)
+                    console.log(this._generateMabMetaUniqueValuesSql(config, true));
+                else
+                    console.log(this._generateMabAssayUniqueValuesSql(config, true));
+            }
         }
 
         this._executeSql(config, sql);
     },
 
     getData: function (config) {
+        if (this.logging) {
+            console.log(this._generateMAbSql(true));
+        }
         LABKEY.Query.executeSql({
             schemaName: 'cds',
             sql: this._generateMAbSql(),
@@ -128,7 +145,10 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     getMabViruses : function(config) {
-        this._executeSql(config, this._generateVirusCountSql(config, this.logging));
+        if (this.logging) {
+            console.log(this._generateVirusCountSql(config, true));
+        }
+        this._executeSql(config, this._generateVirusCountSql(config));
     },
 
     _generateVirusCountSql : function(config, forDebugging) {
@@ -187,6 +207,10 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     _buildWhere : function(WHERE) {
+        if (Ext.isString(WHERE)) {
+            WHERE = [WHERE];
+        }
+
         return (WHERE.length === 0 ? "" : "\nWHERE ") + WHERE.join("\n\tAND ");
     },
 
@@ -245,14 +269,14 @@ Ext.define('Connector.utility.MabQuery', {
         return  "\n\t" + 'GROUP BY ' + this.MAB_MIX_NAME_STD + " \n\t";
     },
 
-    _generateMAbSql : function() {
+    _generateMAbSql : function(forDebugging) {
         var SELECT = ['SELECT '], sep = "\n\t";
         SELECT.push(this.MAB_MIX_NAME_STD + ', ' + sep);
         Ext.each(this.COUNT_COLUMNS, function(col) {
             SELECT.push('COUNT(DISTINCT ' + col + ") as " + col + 'Count, ' + sep);
         }, this);
 
-        var WHERE = this._getMabStateFilterWhere(false, this.logging);
+        var WHERE = this._getMabStateFilterWhere(false, forDebugging);
         return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getAssayGroupBy();
     },
 
@@ -717,5 +741,68 @@ Ext.define('Connector.utility.MabQuery', {
             op = ' - exclude';
         }
         return columnName + op + ": " + valueStr;
+    },
+
+    getBaseCountSQL : function(useFilter) {
+        return [
+            'SELECT',
+            [
+                'COUNT(DISTINCT mab_mix_name_std) as mixCount',
+                'COUNT(DISTINCT study) as studyCount',
+                'COUNT(DISTINCT virus) as virusCount'
+            ].join(', '),
+            this._getAssayFrom(),
+            (useFilter ? this._buildWhere(this._getMabStateFilterWhere(false, this.logging)) : '')
+        ].join('\n');
+    },
+
+    getMetaCountSQL : function(useFilter) {
+        return [
+            'SELECT COUNT(DISTINCT mab_donor_species) as donorSpeciesCount',
+            this._getMabMixMetaFrom(),
+            (useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(this.logging, false, false)) : '')
+        ].join('\n');
+    },
+
+    getMabCountSQL : function(useFilter) {
+        return [
+            'SELECT COUNT(DISTINCT mab_id) as mabCount',
+            this._getMabMixMAbMetaFrom(),
+            useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(this.logging, false, false)) : ''
+        ].join('\n');
+    },
+
+    getMabValuesSQL : function(useFilter) {
+        return [
+            'SELECT DISTINCT mab_name_std',
+            this._getMabMixMAbMetaFrom(),
+            useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(this.logging, false, false)) : ''
+        ].join('\n');
+    },
+
+    getMAbVirusPairFrom : function(useFilter) {
+        return [
+            'FROM (SELECT ',
+            [this.MAB_MIX_NAME_STD, 'virus', 'COUNT(*) as mabVirusCount'].join(', '),
+            this._getAssayFrom(),
+            (useFilter ? this._buildWhere(this._getMabStateFilterWhere(false, this.logging)) : ''),
+            'GROUP BY ',
+            [this.MAB_MIX_NAME_STD, 'virus'].join(', '),
+            ')'
+        ].join('\n');
+    },
+
+    getMAbVirusPairCountSQL : function(useFilter) {
+        return [
+            'SELECT COUNT(*) as ' + this.MAB_VIRUS_PAIRS_COUNT_COLUMN,
+            this.getMAbVirusPairFrom(useFilter)
+        ].join('\n');
+    },
+
+    getMAbVirusPairValuesSQL : function(useFilter) {
+        return [
+            'SELECT mab_mix_name_std || \' - \' || virus as ' + this.MAB_VIRUS_PAIRS_COLUMN,
+            this.getMAbVirusPairFrom(useFilter)
+        ].join('\n');
     }
 });

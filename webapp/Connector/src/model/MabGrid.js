@@ -96,8 +96,9 @@ Ext.define('Connector.model.MabGrid', {
     },
 
     getUniqueFieldValues : function(field) {
-        if (field === 'titer_curve_ic50_group')
+        if (field === MabQueryUtils.IC50_GROUP_COLUMN) {
             return Connector.model.MabGrid.ic50Ranges;
+        }
 
         var key = field + '_values';
         if (this[key]) {
@@ -114,17 +115,14 @@ Ext.define('Connector.model.MabGrid', {
         Connector.getQueryService().getMabActiveFieldValues(config);
     },
 
-    onMAbData: function(geoMeanResponse, config)
-    {
-        var geoMeanRows = geoMeanResponse.rows, geoMeanMap = {};
-        Ext.each(geoMeanRows, function(row) {
-            var mabName = row.mab_mix_name_std;
+    onMAbData : function(geoMeanResponse, config) {
+        var geoMeanMap = {};
+        Ext.each(geoMeanResponse.rows, function(row) {
             geoMeanMap[row.mab_mix_name_std] = parseFloat(row.IC50geomean.toFixed(5));
         }, this);
 
-        var rows = config.countsData.rows;
         var mabRows = [];
-        Ext.each(rows, function(row) {
+        Ext.each(config.countsData.rows, function(row) {
             var mabName = row.mab_mix_name_std;
             var metaObj = this.mabMetaMap[mabName];
             if (metaObj) {
@@ -169,7 +167,7 @@ Ext.define('Connector.model.MabGrid', {
         return this.get('filterArray');
     },
 
-    getFieldStateFilter: function(fieldName) {
+    getFieldStateFilter : function(fieldName) {
         var allFilters = Connector.getState().getMabFilters(true);
         var targetFilter = null;
         Ext.each(allFilters, function(filter) {

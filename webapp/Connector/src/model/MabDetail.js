@@ -10,6 +10,7 @@ Ext.define('Connector.model.MabDetail', {
     idProperty: 'label',
 
     fields: [
+        {name: 'filterConfig', defaultValue: undefined},
         {name: 'name'},
         {name: 'label'},
         {name: 'value'},
@@ -20,6 +21,5 @@ Ext.define('Connector.model.MabDetail', {
         {name: 'activeCountLink', type: 'boolean'},
         {name: 'viewClass', defaultValue: undefined}, // alternate class name for the info pane to display on click (must extend Connector.view.InfoPane)
         {name: 'modelClass', defaultValue: undefined}, // alternate class name for the info pane model (must extend Connector.model.InfoPane)
-
     ]
 });
