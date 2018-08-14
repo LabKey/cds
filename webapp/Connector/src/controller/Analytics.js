@@ -114,6 +114,20 @@ Ext.define('Connector.controller.Analytics', {
             },
             usergridfilter: this.filterEvent
         });
+
+        this.control('mabdatagrid', {
+            requestmabexport: function(view, exportParams) {
+                var columns = exportParams.columnNames;
+
+                if (columns && columns.length > 0) {
+                    this.trackEvent('MAb Grid', 'Export', 'Column count', columns.length);
+
+                    for (var i = 0; i < columns.length; i++) {
+                        this.trackEvent('MAb Grid', 'Export column', columns[i]);
+                    }
+                }
+            }
+        });
     },
 
     _bindState : function() {

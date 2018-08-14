@@ -411,7 +411,7 @@ public class DataGrid
     @LogMethod
     private void verifyFilters(Sheet sheet, CDSExport excel)
     {
-        int startingRow = CDSExport.FILTER_START_ROW;
+        int startingRow = excel.getFilterStartRow();
         List<String> filterTitles = excel.getFilterTitles();
         List<String> filterValues = excel.getFilterValues();
         String cellValue;
@@ -423,7 +423,7 @@ public class DataGrid
                 cellValue = sheet.getRow(i + startingRow).getCell(1).getStringCellValue();
                 Assert.assertEquals("Filter title is not as expected", filterTitles.get(i), cellValue);
             }
-        startingRow = CDSExport.FILTER_START_ROW + 1;
+        startingRow = excel.getFilterStartRow() + 1;
         if (filterValues != null)
             for (int i = 0; i < filterValues.size(); i++)
             {
@@ -528,6 +528,8 @@ public class DataGrid
 
     private void verifyExportedCSVContent(File export, List<String> expectedContent)
     {
+        if (expectedContent == null)
+            return;
         String exportedContent = TestFileUtils.getFileContents(export);
         for (String expectedFragment : expectedContent)
         {

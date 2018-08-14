@@ -608,16 +608,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Validate behavior with the user who does not have permissions to CDS.");
         getDriver().navigate().to(welcomeUrls[1]);
         handleCreateAccount("P@$$w0rd", true);
-        waitForTextToDisappear("Thanks for creating your account.");
-        sleep(5000);
-        assertTrue("Login dialog should have been shown again with a blank password. I did not find an empty password field.", getFormElement(Locator.css("input[name='password']")).trim().length() == 0);
 
-        // This sleep is unfortunate. I thought that the delay in the following waitForElementText would be enough, but it's not.
-        sleep(5000);
-
-        waitForElementText(Locator.css("h1"), "CAVD DataSpace member sign-in", 15000);
-        handleSimpleLogin(_newUserAccounts[1], "P@$$w0rd");
-        sleep(5000);
         waitForElement(Locator.css("td.x-form-display-field-body[role='presentation']"), 15000);
 
         log("Click the ok button on the 'Forbidden' dialog to dismiss and continue.");
@@ -657,14 +648,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Now accept the Terms Of Use and try to create password again.");
         checkCheckbox(Locator.css("input[id='tos-create-account']"));
         click(Locator.css("input[id='createaccountsubmit']"));
-        waitForText("Thanks for creating your account.");
-        waitForTextToDisappear("Thanks for creating your account.");
 
-        // Another unfortunate sleep. Again I thought that the delay in the following waitForElementText would be enough, but it's not.
-        sleep(5000);
-
-        waitForElementText(Locator.css("h1"), "CAVD DataSpace member sign-in", 15000);
-        handleSimpleLogin(_newUserAccounts[0], "P@$$w0rd");
         sleep(5000);
         log("Validate we are on the CDS home page.");
         assertTextPresent("Welcome to the CAVD DataSpace.");

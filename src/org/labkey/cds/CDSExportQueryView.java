@@ -57,7 +57,6 @@ import java.util.zip.ZipOutputStream;
 
 public class CDSExportQueryView extends QueryView
 {
-    private static final String FILE_NAME_PREFIX = "DataSpace Data Grid";
     private static final ExcelWriter.ExcelDocumentType docType = ExcelWriter.ExcelDocumentType.xlsx;
 
     private static final String METADATA_SHEET = "Metadata";
@@ -66,7 +65,7 @@ public class CDSExportQueryView extends QueryView
     private static final String VARIABLES_SHEET = "Variable definitions";
 
     public static final String FILTER_DELIMITER = "|||";
-    private static final String FILTERS_HEADING = "Subject filters applied to exported data:";
+
     private static final String FILTERS_FOOTER = "For a list of studies and assays included in this data file, please refer to the Studies and Assays tabs.";
     private static final String FILTERS_FOOTER_TXT = "For a list of studies and assays included in the export, please refer to Studies and Assays files.";
 
@@ -114,6 +113,9 @@ public class CDSExportQueryView extends QueryView
     private Map<String, CDSController.CDSExportQueryForm> _tabQueryForms;
     private List<String> _dataTabNames;
 
+    private final String _exportInfoTitle;
+    private final String _exportInfoContent;
+
     public CDSExportQueryView(CDSController.ExportForm form, org.springframework.validation.Errors errors)
     {
         super(form, errors);
@@ -126,6 +128,8 @@ public class CDSExportQueryView extends QueryView
         _variableStrs = getFormValues(form.getVariables(), false);
         _tabQueryForms = form.getTabQueryForms();
         _dataTabNames = getFormValues(form.getDataTabNames(), false);
+        _exportInfoTitle = form.getExportInfoTitle();
+        _exportInfoContent = form.getExportInfoContent();
     }
 
     private List<String> getFormValues(String[] formValues, boolean sort)
@@ -202,12 +206,17 @@ public class CDSExportQueryView extends QueryView
         return createResults(exportableVariables, variableColumns);
     }
 
+    protected String getFileNamePrefix()
+    {
+        return "CDS Export";
+    }
+
     private ExcelWriter getExcelWriter() throws IOException
     {
         ColumnHeaderType headerType = ColumnHeaderType.Caption;
 
         ExcelWriter ew = getCDSExcelWriter();
-        ew.setFilenamePrefix(FILE_NAME_PREFIX);
+        ew.setFilenamePrefix(getFileNamePrefix());
         ew.setCaptionType(headerType);
         ew.setShowInsertableColumnsOnly(false, null);
         ew.setSheetName(_dataTabNames.get(0)); // the 1st data source sheet
@@ -272,6 +281,16 @@ public class CDSExportQueryView extends QueryView
         return ew;
     }
 
+    protected String getFilterHeaderString()
+    {
+        return "Filters";
+    }
+
+    protected boolean hasExtraExportInfo()
+    {
+        return false;
+    }
+
     private ExcelWriter getCDSExcelWriter() throws IOException
     {
         QueryView queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
@@ -314,6 +333,8 @@ public class CDSExportQueryView extends QueryView
 
                     int currentRow = writeTOC(sheet, 0);
                     currentRow = writeExportDate(sheet, currentRow);
+                    if (hasExtraExportInfo())
+                        currentRow = writeExportInfo(sheet, currentRow);
                     writeFilterSection(ctx, sheet, visibleColumns, currentRow);
                 }
 
@@ -369,11 +390,25 @@ public class CDSExportQueryView extends QueryView
                     return currentRow + 3;
                 }
 
+                private int writeExportInfo(Sheet sheet, int currentRow)
+                {
+                    Row rowObject = getRow(sheet, currentRow);
+                    Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    titleCell.setCellValue(_exportInfoTitle);
+                    titleCell.setCellStyle(boldStyle);
+
+                    rowObject = getRow(sheet, ++currentRow);
+                    Cell valueCell = rowObject.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    valueCell.setCellValue(_exportInfoContent);
+
+                    return currentRow + 3;
+                }
+
                 private int writeFilterSection(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns, int currentRow)
                 {
                     Row rowObject = getRow(sheet, currentRow);
                     Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    titleCell.setCellValue(FILTERS_HEADING);
+                    titleCell.setCellValue(getFilterHeaderString());
                     titleCell.setCellStyle(boldStyle);
                     currentRow++;
 
@@ -472,14 +507,18 @@ public class CDSExportQueryView extends QueryView
 
     private List<ColumnInfo> getColumns(List<String> columnNames)
     {
-        return columnNames.stream().map(column -> new ColumnInfo(column, JdbcType.VARCHAR)).collect(Collectors.toList());
+        return columnNames.stream().map(column -> {
+            ColumnInfo columnInfo = new ColumnInfo(column, JdbcType.VARCHAR);
+            columnInfo.setInputRows(1); // force single row to avoid text wrap
+            return columnInfo;
+        }).collect(Collectors.toList());
     }
 
     public List<Map<String, Object>> getStudies(String[] studyNames)
     {
         List<Map<String, Object>> studies = new ArrayList<>();
         SimpleFilter filter = new SimpleFilter();
-        filter.addCondition(FieldKey.fromParts(LABEL), Arrays.asList(studyNames), CompareType.IN);
+        filter.addCondition(FieldKey.fromParts(getStudyWhereField()), Arrays.asList(studyNames), CompareType.IN);
         SchemaTableInfo table = CDSSchema.getInstance().getSchema().getTable("study");
 
         try (Results results = new TableSelector(table, getDBColumns(table, STUDY_DB_COLUMNS), filter, null).getResults())
@@ -494,6 +533,11 @@ public class CDSExportQueryView extends QueryView
             return studies;
         }
         return studies;
+    }
+
+    protected String getStudyWhereField()
+    {
+        return LABEL;
     }
 
     public List<List<String>> getExportableStudies(String[] studyNames, Container container)
@@ -586,7 +630,7 @@ public class CDSExportQueryView extends QueryView
             String studyFolder = (String) studyAssay.get(PROT);
             String studyLabel = studyFolders.get(studyFolder);
             String assayIdentifier = (String) studyAssay.get(ASSAY_IDENTIFIER);
-            if (!studyAssayStrs.contains(studyLabel + FILTER_DELIMITER + assayIdentifier))
+            if (!isValidStudyAssayPair(studyAssayStrs, studyFolder, studyLabel, assayIdentifier))
                 continue;
 
             List<String> studyAssayValues = new ArrayList<>();
@@ -599,6 +643,11 @@ public class CDSExportQueryView extends QueryView
         // sort by assay name
         allStudyAssays.sort(Comparator.comparing(studyassay -> studyassay.get(1)));
         return allStudyAssays;
+    }
+
+    protected boolean isValidStudyAssayPair(List<String> studyAssayStrs, String studyFolder, String studyLabel, String assayIdentifier)
+    {
+        return studyAssayStrs.contains(studyLabel + FILTER_DELIMITER + assayIdentifier);
     }
 
     public List<ColumnInfo> getDBColumns(TableInfo table, List<String> columnNames)
@@ -646,6 +695,7 @@ public class CDSExportQueryView extends QueryView
             DataRegion rgn = view.getDataRegion();
             rgn.prepareDisplayColumns(view.getViewContext().getContainer());
             rgn.setAllowAsync(false);
+            prepareQuerySettings(queryView.getSettings());
 
             try
             {
@@ -698,7 +748,7 @@ public class CDSExportQueryView extends QueryView
     public void writeCSVToResponse(HttpServletResponse response) throws IOException
     {
         response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + FILE_NAME_PREFIX + "_" + FileUtil.getTimestamp() + ".zip\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + getFileNamePrefix() + "_" + FileUtil.getTimestamp() + ".zip\"");
 
         try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
         {
@@ -729,8 +779,14 @@ public class CDSExportQueryView extends QueryView
         Date date = new Date();
         builder.append("\t").append(date.toString()).append("\n");
 
+        if (hasExtraExportInfo())
+        {
+            builder.append("\n" + _exportInfoTitle + ": \n");
+            builder.append("\t").append(_exportInfoContent).append("\n");
+        }
+
         // filters
-        builder.append("\n" + FILTERS_HEADING + "\n");
+        builder.append("\n" + getFilterHeaderString() + "\n");
         String previousCategory = "", currentCategory, currentFilter;
         for (String filter : _filterStrings)
         {

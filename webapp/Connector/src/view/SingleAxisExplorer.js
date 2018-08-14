@@ -264,7 +264,7 @@ Ext.define('Connector.view.ExplorerHeaderDataView', {
 
 Ext.define('Connector.view.SingleAxisExplorerView', {
 
-    extend : 'LABKEY.app.view.OlapExplorer',
+    extend : 'LABKEY.app.view.OlapExplorerImpl',
 
     alias : 'widget.singleaxisview',
 

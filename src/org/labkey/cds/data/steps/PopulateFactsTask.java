@@ -43,25 +43,6 @@ public class PopulateFactsTask extends AbstractPopulateTask
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
-        DefaultSchema projectSchema = DefaultSchema.get(user, project);
-
-        QuerySchema targetSchema = projectSchema.getSchema(TARGET_SCHEMA);
-
-        if (null == targetSchema)
-        {
-            throw new PipelineJobException("Unable to find target schema: \"" + TARGET_SCHEMA + "\".");
-        }
-
-        TableInfo targetTable = targetSchema.getTable(TARGET_QUERY);
-
-        if (null == targetTable)
-        {
-            throw new PipelineJobException("Unable to find target table: \"" + TARGET_QUERY + "\".");
-        }
-
-        // Get a new TableInfo with the default container filter
-        targetTable = targetSchema.getTable(TARGET_QUERY);
-
         SQLFragment sql;
         Map<String, Object>[] rows;
         BatchValidationException errors = new BatchValidationException();
@@ -86,10 +67,27 @@ public class PopulateFactsTask extends AbstractPopulateTask
                 throw new PipelineJobException("Unable to find source table: \"" + SOURCE_QUERY + "\".");
             }
 
+            QuerySchema targetSchema = childSchema.getSchema(TARGET_SCHEMA);
+
+            if (null == targetSchema)
+            {
+                throw new PipelineJobException("Unable to find target schema: \"" + TARGET_SCHEMA + "\".");
+            }
+
             if (sourceTable instanceof ContainerFilterable)
             {
                 ((ContainerFilterable) sourceTable).setContainerFilter(ContainerFilter.CURRENT);
             }
+
+            TableInfo targetTable = targetSchema.getTable(TARGET_QUERY);
+
+            if (null == targetTable)
+            {
+                throw new PipelineJobException("Unable to find target table: \"" + TARGET_QUERY + "\".");
+            }
+
+            // Get a new TableInfo with the default container filter
+            targetTable = targetSchema.getTable(TARGET_QUERY);
 
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
             rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();

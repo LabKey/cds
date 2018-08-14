@@ -50,25 +50,6 @@ public class PopulateGridBaseTask extends AbstractPopulateTask
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
-        DefaultSchema projectSchema = DefaultSchema.get(user, project);
-
-        QuerySchema targetSchema = projectSchema.getSchema(settings.get(TARGET_SCHEMA));
-
-        if (null == targetSchema)
-        {
-            throw new PipelineJobException("Unable to find target schema: \"" + settings.get(TARGET_SCHEMA) + "\".");
-        }
-
-        TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
-
-        if (null == targetTable)
-        {
-            throw new PipelineJobException("Unable to find target table: \"" + settings.get(TARGET_QUERY) + "\".");
-        }
-
-        // Get a new TableInfo with the default container filter
-        targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
-
         SQLFragment sql;
         Map<String, Object>[] rows;
         BatchValidationException errors = new BatchValidationException();
@@ -79,6 +60,25 @@ public class PopulateGridBaseTask extends AbstractPopulateTask
         // Insert all the rows
         for (Container container : project.getChildren())
         {
+            DefaultSchema containerSchema = DefaultSchema.get(user, container);
+
+            QuerySchema targetSchema = containerSchema.getSchema(settings.get(TARGET_SCHEMA));
+
+            if (null == targetSchema)
+            {
+                throw new PipelineJobException("Unable to find target schema: \"" + settings.get(TARGET_SCHEMA) + "\".");
+            }
+
+            TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
+
+            if (null == targetTable)
+            {
+                throw new PipelineJobException("Unable to find target table: \"" + settings.get(TARGET_QUERY) + "\".");
+            }
+
+            // Get a new TableInfo with the default container filter
+            targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
+
             DefaultSchema childSchema = DefaultSchema.get(user, container);
 
             QuerySchema sourceSchema = childSchema.getSchema(settings.get(SOURCE_SCHEMA));

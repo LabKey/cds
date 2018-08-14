@@ -36,13 +36,13 @@ Ext.define('Connector.view.MabGrid', {
         },
 
         ColumnMap : {
-            'mab_mix_name_std' : [1],
-            'mab_donor_species' : [2],
-            'mab_isotype' : [3],
-            'mab_hxb2_location' : [4],
-            'tier_clade_virus' : [5, 6, 7],
-            'titer_curve_ic50_group' : [8],
-            'study' : [9]
+            'mab_mix_name_std' : {colInd: [1], filterLabel: 'Mab Mix Name Std'},
+            'mab_donor_species' : {colInd: [2], filterLabel: 'Mab Donor Species'},
+            'mab_isotype' : {colInd: [3], filterLabel: 'Mab Isotype'},
+            'mab_hxb2_location' : {colInd: [4], filterLabel: 'Mab Hxb2 Location'},
+            'tier_clade_virus' : {colInd: [5, 6, 7], filterLabel: 'Neutralization tier + Clade + Virus'},
+            'titer_curve_ic50_group' : {colInd: [8], filterLabel: 'Titer Curve IC50'},
+            'study' : {colInd: [9], filterLabel: 'Study'}
         },
 
         MAbReportID_PROP_PREFIX: "MAbReportID",
@@ -52,7 +52,7 @@ Ext.define('Connector.view.MabGrid', {
     constructor : function(config)
     {
         this.callParent([config]);
-        this.addEvents('updateMabFilter', 'updateMabSelection');
+        this.addEvents('updateMabFilter', 'updateMabSelection', 'requestmabexport');
     },
 
     initComponent : function()
@@ -98,8 +98,8 @@ Ext.define('Connector.view.MabGrid', {
     getGridHeader: function() {
         if (!this.gridHeader) {
             var buttons = [
-                // this.getExportCSVButton(),
-                // this.getExportExcelButton()
+                this.getExportCSVButton(),
+                this.getExportExcelButton()
             ];
             buttons = buttons.concat(this.getRReportButtons());
 
@@ -554,7 +554,7 @@ Ext.define('Connector.view.MabGrid', {
         {
             var f = filter.gridFilter[0];
             var fieldName = f.getColumnName();
-            var colIndexes = Connector.view.MabGrid.ColumnMap[fieldName];
+            var colIndexes = Connector.view.MabGrid.ColumnMap[fieldName].colInd;
             if (colIndexes && Ext.isArray(colIndexes)) {
                 Ext.each(colIndexes, function(colIndex) {
                     var col = grid.headerCt.getHeaderAtIndex(colIndex);
@@ -589,7 +589,7 @@ Ext.define('Connector.view.MabGrid', {
         Ext.defer(function() {
             if (this.getModel().isActive())
             {
-                if (this.grid)
+                if (this.grid && !this.grid.isHidden())
                 {
                     var size = this.getWidthHeight();
                     this.getGrid().setSize(size.width, size.height);
@@ -640,14 +640,46 @@ Ext.define('Connector.view.MabGrid', {
     },
 
     requestExport : function(isExcel) {
-        if (isExcel)
-            this.getGrid().hide();
-        else
-            this.getGrid().show();
-    },
+        if (!this.getGrid() || !this.getGrid().store || this.getGrid().store.getCount() === 0)
+        {
+            Ext.Msg.alert('Error', "No MAb/Mixture available for export with current grid filters.");
+            return false;
+        }
+        Connector.getQueryService().prepareMAbExportQueries({
+            exportParams: {
+                isExcel: isExcel,
+                exportInfoTitle: 'Data summary level exported:',
+                exportInfoContent: 'Neutralization curve details and titers by virus and mAb concentration', // future work to allow multiple export options
+                'X-LABKEY-CSRF': LABKEY.CSRF
+            },
+            isExcel: isExcel,
+            success: function(config) {
+                var exportParams = config.exportParams;
+                var exportUrl = LABKEY.ActionURL.buildURL('cds', 'exportMAbGrid');
+                var newForm = document.createElement('form');
+                document.body.appendChild(newForm);
+                Ext.Ajax.request({
+                    url: exportUrl,
+                    method: 'POST',
+                    form: newForm,
+                    isUpload: true,
+                    params: exportParams,
+                    callback: function (options, success/*, response*/) {
+                        document.body.removeChild(newForm);
 
-    onExport : function(isExcel) {
-        //
+                        if (!success) {
+                            Ext.Msg.alert('Error', 'Unable to export.');
+                        }
+                    }
+                });
+                this.fireEvent('requestmabexport', this, exportParams);
+            },
+            failure: function() {
+                Ext.Msg.alert('Error', "Unable to export.");
+            },
+            scope: this
+        });
+
     },
 
     showRReport: function(reportId, reportLabel) {
@@ -688,12 +720,10 @@ Ext.define('Connector.view.MabGrid', {
         if (show) {
             this.getGridHeader().show();
             this.getGrid().show();
-            this.removeCls('auto-scroll-y');
         }
         else {
             this.getGridHeader().hide();
             this.getGrid().hide();
-            this.addCls('auto-scroll-y');
         }
     }
 });
