@@ -238,8 +238,6 @@ Ext.define('Connector.controller.Connector', {
         callback.call(this);
     },
 
-    showNotFound : function(controller, view, viewContext, title) { },
-
     lastSignedIn : null,
 
     routeView : function(newHash, oldHash) {

@@ -3,12 +3,6 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('LABKEY.app.constant', {
-    singleton: true,
-    STATE_FILTER: 'statefilter',
-    SELECTION_FILTER: 'stateSelectionFilter'
-});
-
 Ext.define('Connector.controller.State', {
 
     extend: 'Ext.app.Controller',
@@ -125,7 +119,7 @@ Ext.define('Connector.controller.State', {
 
     loadState: function(idx) {
         if (!idx) {
-            idx = this.state.getCount()-1; // load most recent state
+            idx = this.state.getCount() - 1; // load most recent state
         }
 
         if (idx >= 0) {
@@ -137,14 +131,6 @@ Ext.define('Connector.controller.State', {
             if (s.selectedMAbs && s.selectedMAbs.length > 0) {
                 this.updateSelectedMAbs(s.selectedMAbs, true);
             }
-        }
-
-        if (!idx) {
-            idx = this.state.getCount()-1; // load most recent state
-        }
-
-        if (idx >= 0) {
-            var s = this.state.getAt(idx).data;
 
             // Apply state
             Ext.apply(this, s.viewState);
@@ -176,12 +162,11 @@ Ext.define('Connector.controller.State', {
         this.checkReady();
     },
 
-    /**
-     * Can be overridden to allow for other services to block on state being ready.
-     * When actually ready, call this.fireReady().
-     */
     checkReady : function() {
-        this.fireReady();
+        Connector.getService('Query').onQueryReady(function() {
+            this.fireReady();
+            this.helpTest();
+        }, this);
     },
 
     fireReady : function() {
@@ -356,13 +341,6 @@ Ext.define('Connector.controller.State', {
         }]);
     },
 
-    checkReady : function() {
-        Connector.getService('Query').onQueryReady(function() {
-            this.fireReady();
-            this.helpTest();
-        }, this);
-    },
-
     // Helper to let the test know that everything should be loaded
     helpTest : function() {
         Ext.getBody().addCls('appready');
@@ -424,11 +402,11 @@ Ext.define('Connector.controller.State', {
 
             var sels = this.generateFilterSet(mdx, this.filters.concat(this.selections), this.subjectName);
 
-            if (sels.length == 0) {
-                mdx.clearNamedFilter(LABKEY.app.constant.SELECTION_FILTER);
+            if (sels.length === 0) {
+                mdx.clearNamedFilter(Connector.constant.State.SELECTION_FILTER);
             }
             else {
-                mdx.setNamedFilter(LABKEY.app.constant.SELECTION_FILTER, sels);
+                mdx.setNamedFilter(Connector.constant.State.SELECTION_FILTER, sels);
             }
 
             if (!skipState)
@@ -482,7 +460,7 @@ Ext.define('Connector.controller.State', {
 
     moveSelectionToFilter : function() {
         var selections = this.selections;
-        this.clearSelections(true);
+        this.clearSelections(true, true);
         this.addFilters(selections);
         this.fireEvent('selectionToFilter', selections);
     },
@@ -543,12 +521,13 @@ Ext.define('Connector.controller.State', {
     /**
      * Clears the selection.
      * @param {boolean} [skipState=false]
+     * @param {boolean} [isMoveToFilter=false]
      */
-    clearSelections : function(skipState) {
+    clearSelections : function(skipState, isMoveToFilter) {
         var _skip = skipState === true;
         if (this.selections.length > 0) {
             this.selections = [];
-            this.requestSelectionUpdate(_skip, false);
+            this.requestSelectionUpdate(_skip, false, isMoveToFilter);
         }
     },
 
@@ -660,10 +639,10 @@ Ext.define('Connector.controller.State', {
 
                 if (proceed) {
                     if (olapFilters.length === 0) {
-                        mdx.clearNamedFilter(LABKEY.app.constant.STATE_FILTER);
+                        mdx.clearNamedFilter(Connector.constant.State.STATE_FILTER);
                     }
                     else {
-                        mdx.setNamedFilter(LABKEY.app.constant.STATE_FILTER, olapFilters);
+                        mdx.setNamedFilter(Connector.constant.State.STATE_FILTER, olapFilters);
                     }
 
                     if (!skipState) {
@@ -980,26 +959,6 @@ Ext.define('Connector.controller.State', {
                 this.updateMDXFilter();
             }
         }, this);
-    },
-
-    // Override to pass in isMoveToFilter param to clearSelections
-    moveSelectionToFilter : function() {
-        var selections = this.selections;
-        this.clearSelections(true, true);
-        this.addFilters(selections);
-    },
-
-    /**
-     * Override
-     * @param {boolean} [skipState=false]
-     * @param {boolean} [isMoveToFilter=false]
-     */
-    clearSelections : function(skipState, isMoveToFilter) {
-        var _skip = skipState === true;
-        if (this.selections.length > 0) {
-            this.selections = [];
-            this.requestSelectionUpdate(_skip, false, isMoveToFilter);
-        }
     },
 
     /**

@@ -153,7 +153,7 @@ Ext.define('Connector.model.Filter', {
         // Data Filter Provider
         dfProvider: undefined,
 
-        dynamicOperatorTypes: false,
+        dynamicOperatorTypes: true,
 
         emptyLabelText: 'Unknown',
 
@@ -380,7 +380,7 @@ Ext.define('Connector.model.Filter', {
             };
 
             config.mdx.queryParticipantList({
-                useNamedFilters : [LABKEY.app.constant.STATE_FILTER],
+                useNamedFilters : [Connector.constant.State.STATE_FILTER],
                 success : function(cs) {
                     // add the fetched participant ids to our json data
                     requestConfig.jsonData.participantIds = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions), 'name');
@@ -657,10 +657,6 @@ Ext.define('Connector.model.Filter', {
             }
 
             return filter;
-        },
-
-        getOlapFilters : function(mdx, datas, subjectName) {
-            throw 'Connector.model.Filter.getOlapFilters support is not yet implemented';
         },
 
         getShortFilter : function(displayText) {

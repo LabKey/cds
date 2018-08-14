@@ -11,9 +11,6 @@ Ext.override(Ext.window.Window, {
     shadow: false
 });
 
-Connector.view.Selection.supportMemberClose = false;
-Connector.model.Filter.dynamicOperatorTypes = true;
-
 Ext.application({
     name: 'Connector',
     extend: 'Connector.Application',

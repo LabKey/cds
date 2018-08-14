@@ -949,7 +949,7 @@ Ext.define('Connector.view.Grid', {
                         level: '[Study.Treatment].[Treatment]',
                         members: 'members'
                     }],
-                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                    useNamedFilters: [Connector.constant.State.STATE_FILTER],
                     showEmpty: false,
                     success: function (results) {
                         exportParams.studies = me.loadExportableStudies(results);
@@ -968,7 +968,7 @@ Ext.define('Connector.view.Grid', {
                                         level: '[Assay.Study].[Study]',
                                         members: 'members'
                                     }],
-                                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                                    useNamedFilters: [Connector.constant.State.STATE_FILTER],
                                     showEmpty: false,
                                     success: function (results) {
                                         exportParams.studyassays = me.loadExportableStudyAssays(results, gridAssays, assayIdentifierTypes);

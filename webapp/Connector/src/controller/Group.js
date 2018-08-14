@@ -287,7 +287,7 @@ Ext.define('Connector.controller.Group', {
                     // Retrieve the listing of participants matching the current filters
                     //
                     mdx.queryParticipantList({
-                        useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                        useNamedFilters: [Connector.constant.State.STATE_FILTER],
                         success: function(cs) {
 
                             var updateSuccess = function(response) {

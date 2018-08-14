@@ -160,6 +160,11 @@
     <!-- Connector Application -->
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
 
+    <!-- Constant singletons -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/ModuleViewsLookup.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/State.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
+
     <!-- Application Models -->
     <script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/ColumnInfo.js"></script>
@@ -217,10 +222,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/Messaging.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/DocumentValidation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/LoadingMask.js"></script>
-
-    <!-- Constant singletons -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/constant/ModuleViewsLookup.js"></script>
 
     <!-- Factories -->
     <script type="text/javascript" src="<%=text(srcPath)%>/factory/Module.js"></script>

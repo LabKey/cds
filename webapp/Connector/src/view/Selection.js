@@ -272,7 +272,7 @@ Ext.define('Connector.view.Selection', {
 
     statics: {
 
-        supportMemberClose: true,
+        supportMemberClose: false,
 
         hookButtons : function(v) {
 

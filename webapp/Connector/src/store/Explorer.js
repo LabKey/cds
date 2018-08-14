@@ -35,7 +35,7 @@ Ext.define('Connector.store.Explorer', {
          */
         nodeSorters: {
             /**
-             * A valid Array.sort() function that sorts an array of LABKEY.app.model.OlapExplorer instances
+             * A valid Array.sort() function that sorts an array of Connector.model.Explorer instances
              * alphanumerically according to the 'label' field.
              * @param recA
              * @param recB
@@ -46,7 +46,7 @@ Ext.define('Connector.store.Explorer', {
             },
 
             /**
-             * An valid Array.sort() function that sorts an array of LABKEY.app.model.OlapExplorer instances
+             * An valid Array.sort() function that sorts an array of Connector.model.Explorer instances
              * alphanumerically according to the 'label' field. The 'Range' feature is meant to split on values that
              * are indicative of a range (e.g. 10-20, 32.1-98.2). In these cases, the sort will only occur on the value
              * before the '-' character.
@@ -59,7 +59,7 @@ Ext.define('Connector.store.Explorer', {
             },
 
             /**
-             * A valid Array.sort() function that sorts an array of LABKEY.app.model.OlapExplorer instances
+             * A valid Array.sort() function that sorts an array of Connector.model.Explorer instances
              * using natural sort according to the instance's 'label' field.
              * @param recA
              * @param recB
@@ -443,8 +443,8 @@ Ext.define('Connector.store.Explorer', {
         // use (All) as root
         var rootPosition = pos[0][0];
         var nodeName = rootPosition.uniqueName.replace(rootPosition.name, '').replace('.[]', '');
-        var rootNode = Ext.create('LABKEY.app.util.OlapExplorerNode', {data: {uniqueName: nodeName, lvlDepth: 0}});
-        this.allRecordTree = Ext.create('LABKEY.app.util.OlapExplorerTree', rootNode);
+        var rootNode = Ext.create('Connector.store.util.OlapExplorerNode', {data: {uniqueName: nodeName, lvlDepth: 0}});
+        this.allRecordTree = Ext.create('Connector.store.util.OlapExplorerTree', rootNode);
 
         var groupOnly = true;
 
@@ -603,9 +603,8 @@ Ext.define('Connector.store.Explorer', {
 
     /**
      * Determine if a member should be included or filtered out. False return value will skip the member.
-     * @param hierarchyUniqName
-     * @param levelUniquName
-     * @param memberName
+     * @param hierarchy
+     * @param subPosition
      * @returns {boolean}
      */
     shouldIncludeMember : function(hierarchy, subPosition) {
@@ -614,18 +613,18 @@ Ext.define('Connector.store.Explorer', {
     }
 });
 
-Ext.define('LABKEY.app.util.OlapExplorerTree', {
+Ext.define('Connector.store.util.OlapExplorerTree', {
 
     root: null,
 
-    constructor: function(root) {
+    constructor : function(root) {
         if (root) {
             this.root = root;
         }
     },
 
-    add: function(data, sortFn) {
-        var child = new LABKEY.app.util.OlapExplorerNode(data),
+    add : function(data, sortFn) {
+        var child = new Connector.store.util.OlapExplorerNode(data),
                 parent = this.findNode(this.root, child, function(node, newChild){
                     return node.isDirectParentOf(newChild);
                 });
@@ -641,7 +640,7 @@ Ext.define('LABKEY.app.util.OlapExplorerTree', {
         }
     },
 
-    findNode: function(currentNode, uniqueName, matchFn) {
+    findNode : function(currentNode, uniqueName, matchFn) {
         if (matchFn.call(this, currentNode, uniqueName))
             return currentNode;
         for (var i = 0, length = currentNode.childrenNodes.length; i < length; i++) {
@@ -653,7 +652,7 @@ Ext.define('LABKEY.app.util.OlapExplorerTree', {
         return null;
     },
 
-    getAllRecords: function() {
+    getAllRecords : function() {
         return this.preOrderTraversal(this.root, [], true);
     },
 
@@ -661,11 +660,11 @@ Ext.define('LABKEY.app.util.OlapExplorerTree', {
      * collapseSameDescendants: true to trim node whose all descendants have the same value as current node
      * Determine if a node is a leaf node
      */
-    updateLeafNodes: function(collapseSameDescendants) {
+    updateLeafNodes : function(collapseSameDescendants) {
         this.updateLeafNodesInfo(this.root, collapseSameDescendants);
     },
 
-    updateLeafNodesInfo: function(parentNode, prune) {
+    updateLeafNodesInfo : function(parentNode, prune) {
         for (var i = 0, length = parentNode.childrenNodes.length; i < length; i++) {
             var curNode = parentNode.childrenNodes[i];
             if (curNode.childrenNodes.length === 0) {
@@ -687,7 +686,7 @@ Ext.define('LABKEY.app.util.OlapExplorerTree', {
     },
 
     // check if node has any offspring with different value than current node
-    hasDifferentDescendantValues: function(node) {
+    hasDifferentDescendantValues : function(node) {
         var hasDiff = false;
         while (node.childrenNodes.length > 0 && !hasDiff) {
             if (node.childrenNodes.length > 1) {
@@ -705,7 +704,7 @@ Ext.define('LABKEY.app.util.OlapExplorerTree', {
         return hasDiff;
     },
 
-    preOrderTraversal: function(currentNode, results, isRoot) {
+    preOrderTraversal : function(currentNode, results, isRoot) {
         if (!isRoot) {
             results.push(currentNode);
         }
@@ -714,13 +713,14 @@ Ext.define('LABKEY.app.util.OlapExplorerTree', {
         }
         return results;
     },
+
     /**
      * Get all descendant groups for a ancestor, excluding the line that's directly related to the disownedDescendant
      * @param {string} ancestor The uniqueName of the ancestor node
      * @param {string} disownedDescendant The uniqueName of the descendant node whose line will be pruned
      * @returns {string[]} an array of uniqueNames/members after the pruning
      */
-    dissolve: function(ancestor, disownedDescendant) {
+    dissolve : function(ancestor, disownedDescendant) {
         var ancestorNode = this.findNode(this.root, ancestor, function(node, uniqueName){
             return node.record.data.uniqueName === uniqueName;
         });
@@ -730,7 +730,8 @@ Ext.define('LABKEY.app.util.OlapExplorerTree', {
             console.log('Ancestor node not found.');
         }
     },
-    getDescendantGroups: function(currentNode, disownedDescendant, results, isRoot) {
+
+    getDescendantGroups : function(currentNode, disownedDescendant, results, isRoot) {
         if (disownedDescendant === currentNode.record.data.uniqueName) {
             return results;
         }
@@ -750,12 +751,12 @@ Ext.define('LABKEY.app.util.OlapExplorerTree', {
     }
 });
 
-Ext.define('LABKEY.app.util.OlapExplorerNode', {
+Ext.define('Connector.store.util.OlapExplorerNode', {
     record: null,
     parent: null,
     childrenNodes: [],
 
-    constructor: function(data) {
+    constructor : function(data) {
         if (data) {
             this.record = data;
             this.parent = null;
