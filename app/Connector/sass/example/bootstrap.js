@@ -6,7 +6,6 @@
  */
 Ext.Loader.addClassPathMappings({
   "Animation": "../../../../webapp/Connector/src/utility/Animation.js",
-  "AssayAdded": "../../../../webapp/Connector/src/app/view/module/StudyAssays.js",
   "Connector.Application": "../../../../webapp/Connector/src/Application.js",
   "Connector.Filter": "../../../../webapp/Connector/src/model/Filter.js",
   "Connector.app.model.Assay": "../../../../webapp/Connector/src/app/model/Assay.js",
@@ -19,6 +18,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.app.store.Assay": "../../../../webapp/Connector/src/app/store/Assay.js",
   "Connector.app.store.AssayAntigen": "../../../../webapp/Connector/src/app/store/AssayAntigen.js",
   "Connector.app.store.Labs": "../../../../webapp/Connector/src/app/store/Labs.js",
+  "Connector.app.store.PermissionedStudy": "../../../../webapp/Connector/src/app/store/PermissionedStudy.js",
   "Connector.app.store.Report": "../../../../webapp/Connector/src/app/store/Report.js",
   "Connector.app.store.Study": "../../../../webapp/Connector/src/app/store/Study.js",
   "Connector.app.store.StudyProducts": "../../../../webapp/Connector/src/app/store/StudyProducts.js",
@@ -39,14 +39,15 @@ Ext.Loader.addClassPathMappings({
   "Connector.component.AdvancedOptionBase": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionDimension": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionScale": "../../../../webapp/Connector/src/component/AdvancedOption.js",
-  "Connector.component.AdvancedOptionContinuous": "../../../../webapp/Connector/src/component/AdvancedOption.js",
-  "Connector.component.AdvancedOptionTime": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionTimeAlignedBy": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionTimeAxisType": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.DropDown": "../../../../webapp/Connector/src/component/DropDown.js",
   "Connector.component.GridPager": "../../../../webapp/Connector/src/component/GridPager.js",
   "Connector.component.News": "../../../../webapp/Connector/src/component/News.js",
   "Connector.component.Started": "../../../../webapp/Connector/src/component/Started.js",
   "Connector.constant.ModuleViewsLookup": "../../../../webapp/Connector/src/constant/ModuleViewsLookup.js",
   "Connector.constant.Templates": "../../../../webapp/Connector/src/constant/Templates.js",
+  "Connector.controller.AbstractGridController": "../../../../webapp/Connector/src/controller/AbstractGridController.js",
   "Connector.controller.AbstractViewController": "../../../../webapp/Connector/src/controller/AbstractViewController.js",
   "Connector.controller.Analytics": "../../../../webapp/Connector/src/controller/Analytics.js",
   "Connector.controller.Chart": "../../../../webapp/Connector/src/controller/Chart.js",
@@ -57,10 +58,11 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.FilterStatus": "../../../../webapp/Connector/src/controller/FilterStatus.js",
   "Connector.controller.Group": "../../../../webapp/Connector/src/controller/Group.js",
   "Connector.controller.Home": "../../../../webapp/Connector/src/controller/Home.js",
-  "Connector.controller.HttpInterceptor": "../../../../webapp/Connector/src/controller/Query.js",
+  "Connector.controller.HttpInterceptor": "../../../../webapp/Connector/src/controller/HttpInterceptor.js",
   "Connector.controller.Learn": "../../../../webapp/Connector/src/controller/Learn.js",
+  "Connector.controller.MabGrid": "../../../../webapp/Connector/src/controller/MabGrid.js",
   "Connector.controller.Main": "../../../../webapp/Connector/src/controller/Main.js",
-  "Connector.controller.Messaging": "../../../../webapp/Connector/src/controller/Query.js",
+  "Connector.controller.Messaging": "../../../../webapp/Connector/src/controller/Messaging.js",
   "Connector.controller.Navigation": "../../../../webapp/Connector/src/controller/Navigation.js",
   "Connector.controller.Query": "../../../../webapp/Connector/src/controller/Query.js",
   "Connector.controller.Router": "../../../../webapp/Connector/src/controller/Router.js",
@@ -68,6 +70,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Summary": "../../../../webapp/Connector/src/controller/Summary.js",
   "Connector.factory.Module": "../../../../webapp/Connector/src/factory/Module.js",
   "Connector.field.BooleanCombo": "../../../../webapp/Connector/src/window/Filter.js",
+  "Connector.grid.AbstractGroupedFacet": "../../../../webapp/Connector/src/window/AbstractGroupedFacet.js",
+  "Connector.grid.MabGridFacet": "../../../../webapp/Connector/src/window/MabGridFacet.js",
   "Connector.grid.Panel": "../../../../webapp/Connector/src/grid/Panel.js",
   "Connector.model.Antigen": "../../../../webapp/Connector/src/model/Antigen.js",
   "Connector.model.ChartData": "../../../../webapp/Connector/src/model/ChartData.js",
@@ -78,11 +82,15 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Filter": "../../../../webapp/Connector/src/model/Filter.js",
   "Connector.model.FilterGroup": "../../../../webapp/Connector/src/model/FilterGroup.js",
   "Connector.model.Grid": "../../../../webapp/Connector/src/model/Grid.js",
+  "Connector.model.GridHeaderDataView": "../../../../webapp/Connector/src/model/Grid.js",
   "Connector.model.Group": "../../../../webapp/Connector/src/model/Group.js",
   "Connector.model.Hierarchy": "../../../../webapp/Connector/src/model/Dimension.js",
   "Connector.model.InfoPane": "../../../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.InfoPaneMember": "../../../../webapp/Connector/src/model/InfoPaneMember.js",
+  "Connector.model.MabGrid": "../../../../webapp/Connector/src/model/MabGrid.js",
+  "Connector.model.MabSummary": "../../../../webapp/Connector/src/model/MabSummary.js",
   "Connector.model.Measure": "../../../../webapp/Connector/src/model/Measure.js",
+  "Connector.model.Message": "../../../../webapp/Connector/src/controller/Messaging.js",
   "Connector.model.RSSItem": "../../../../webapp/Connector/src/model/RSSItem.js",
   "Connector.model.Source": "../../../../webapp/Connector/src/model/Source.js",
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
@@ -92,6 +100,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.TimepointPane": "../../../../webapp/Connector/src/model/TimepointPane.js",
   "Connector.model.Variable": "../../../../webapp/Connector/src/model/Variable.js",
   "Connector.model.VisitTag": "../../../../webapp/Connector/src/model/VisitTag.js",
+  "Connector.panel.AbstractAntigenSelection": "../../../../webapp/Connector/src/component/AbstractAntigenSelection.js",
   "Connector.panel.AdvancedOptionBaseDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AdvancedOptionCheckboxDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AdvancedOptionRadioDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
@@ -102,6 +111,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.GroupList": "../../../../webapp/Connector/src/panel/GroupList.js",
   "Connector.panel.HelpCenter": "../../../../webapp/Connector/src/panel/HelpCenter.js",
   "Connector.panel.HelpCenterHeader": "../../../../webapp/Connector/src/panel/HelpCenter.js",
+  "Connector.panel.MabVirusSelection": "../../../../webapp/Connector/src/component/MabVirusSelection.js",
   "Connector.panel.Selection": "../../../../webapp/Connector/src/panel/Selection.js",
   "Connector.panel.Selector": "../../../../webapp/Connector/src/panel/Selector.js",
   "Connector.plugin.DocumentValidation": "../../../../webapp/Connector/src/plugin/DocumentValidation.js",
@@ -120,6 +130,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.utility.Chart": "../../../../webapp/Connector/src/utility/Chart.js",
   "Connector.utility.FileExtension": "../../../../webapp/Connector/src/utility/FileExtension.js",
   "Connector.utility.HashURL": "../../../../webapp/Connector/src/utility/HashURL.js",
+  "Connector.utility.MabQuery": "../../../../webapp/Connector/src/utility/MabQuery.js",
+  "Connector.utility.PlotTooltip": "../../../../webapp/Connector/src/utility/PlotTooltip.js",
   "Connector.utility.Query": "../../../../webapp/Connector/src/utility/Query.js",
   "Connector.view.AssayAntigen": "../../../../webapp/Connector/src/app/view/AssayAntigen.js",
   "Connector.view.Chart": "../../../../webapp/Connector/src/view/Chart.js",
@@ -127,6 +139,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.ExplorerHeaderDataView": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterStatus": "../../../../webapp/Connector/src/view/FilterStatus.js",
   "Connector.view.Grid": "../../../../webapp/Connector/src/view/Grid.js",
+  "Connector.view.GridHeaderDataView": "../../../../webapp/Connector/src/view/Grid.js",
   "Connector.view.GridPane": "../../../../webapp/Connector/src/view/GridPane.js",
   "Connector.view.GroupListView": "../../../../webapp/Connector/src/panel/GroupList.js",
   "Connector.view.GroupSave": "../../../../webapp/Connector/src/view/GroupSave.js",
@@ -134,14 +147,18 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSummary": "../../../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.GroupSummaryBody": "../../../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
+  "Connector.view.HeaderDataView": "../../../../webapp/Connector/src/view/HeaderDataView.js",
   "Connector.view.Home": "../../../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeHeader": "../../../../webapp/Connector/src/view/HomeHeader.js",
   "Connector.view.InfoPane": "../../../../webapp/Connector/src/view/InfoPane.js",
   "Connector.view.Learn": "../../../../webapp/Connector/src/view/Learn.js",
+  "Connector.view.Learn.SearchField": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.Learn.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnColumnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeaderDataView": "../../../../webapp/Connector/src/view/Learn.js",
+  "Connector.view.MabGrid": "../../../../webapp/Connector/src/view/MabGrid.js",
+  "Connector.view.MabReport": "../../../../webapp/Connector/src/view/MabReport.js",
   "Connector.view.Main": "../../../../webapp/Connector/src/view/Main.js",
   "Connector.view.Navigation": "../../../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NavigationView": "../../../../webapp/Connector/src/view/Navigation.js",
@@ -159,18 +176,12 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Viewport": "../../../../webapp/Connector/src/view/Viewport.js",
   "Connector.view.module.AssayAnalyteList": "../../../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
   "Connector.view.module.AssayHeader": "../../../../webapp/Connector/src/app/view/module/AssayHeader.js",
-  "Connector.view.module.AssayStudies": "../../../../webapp/Connector/src/app/view/module/AssayStudies.js",
   "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
   "Connector.view.module.ContactCDS": "../../../../webapp/Connector/src/app/view/module/ContactCDS.js",
   "Connector.view.module.DataAvailabilityModule": "../../../../webapp/Connector/src/app/view/module/DataAvailabilityModule.js",
   "Connector.view.module.HTML": "../../../../webapp/Connector/src/view/module/Text.js",
-  "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
-  "Connector.view.module.ProductManufacturing": "../../../../webapp/Connector/src/app/view/module/ProductManufacturing.js",
   "Connector.view.module.ProductOtherProducts": "../../../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
-  "Connector.view.module.ProductProvidedBy": "../../../../webapp/Connector/src/app/view/module/ProductProvidedBy.js",
-  "Connector.view.module.ProductStudies": "../../../../webapp/Connector/src/app/view/module/ProductStudies.js",
-  "Connector.view.module.StudyAssays": "../../../../webapp/Connector/src/app/view/module/StudyAssays.js",
   "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
   "Connector.view.module.StudyProducts": "../../../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.StudyPublications": "../../../../webapp/Connector/src/app/view/module/StudyPublications.js",
@@ -179,16 +190,19 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.VariableList": "../../../../webapp/Connector/src/app/view/module/VariableList.js",
   "Connector.window.AbstractFilter": "../../../../webapp/Connector/src/window/AbstractFilter.js",
+  "Connector.window.AbstractGroupedFacet": "../../../../webapp/Connector/src/window/AbstractGroupedFacet.js",
   "Connector.window.Facet": "../../../../webapp/Connector/src/window/Facet.js",
   "Connector.window.Filter": "../../../../webapp/Connector/src/window/Filter.js",
   "Connector.window.LearnFacet": "../../../../webapp/Connector/src/window/LearnFacet.js",
+  "Connector.window.MabGridFacet": "../../../../webapp/Connector/src/window/MabGridFacet.js",
   "Connector.window.SystemMessage": "../../../../webapp/Connector/src/window/SystemMessage.js",
+  "DataAdded": "../../../../webapp/Connector/src/app/view/module/DataAvailabilityModule.js",
   "Ext": "../../ext/src",
   "Ext.Msg": "../../ext/src/window/MessageBox.js",
   "Ext.rtl.EventObjectImpl": "../../ext/src/rtl/EventObject.js",
   "HelpRouter": "../../../../webapp/Connector/src/utility/HelpRouter.js",
   "LABKEY": "../../../../../../internal/webapp",
-  "LABKEY.app.constant": "../../../../../../internal/webapp/app/State.js",
+  "LABKEY.app.constant": "../../../../webapp/Connector/src/controller/State.js",
   "LABKEY.app.controller.AbstractViewController": "../../../../../../internal/webapp/app/AbstractViewController.js",
   "LABKEY.app.controller.HttpInterceptor": "../../../../../../internal/webapp/app/HttpInterceptor.js",
   "LABKEY.app.controller.Messaging": "../../../../../../internal/webapp/app/Messaging.js",
@@ -198,25 +212,23 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.model.Filter": "../../../../../../internal/webapp/app/Filter.js",
   "LABKEY.app.model.Message": "../../../../../../internal/webapp/app/Messaging.js",
   "LABKEY.app.model.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
-  "LABKEY.app.model.OlapExplorer2": "../../../../../../internal/webapp/app/OlapExplorer2.js",
+  "LABKEY.app.model.OlapExplorerImpl": "../../../../../../internal/webapp/app/OlapExplorerImpl.js",
   "LABKEY.app.model.State": "../../../../../../internal/webapp/app/State.js",
   "LABKEY.app.panel.FilterDialog": "../../../../../../internal/webapp/app/FilterDialog.js",
   "LABKEY.app.panel.MeasurePicker": "../../../../../../internal/webapp/app/MeasurePicker.js",
   "LABKEY.app.plugin.LoadingMask": "../../../../../../internal/webapp/app/LoadingMask.js",
   "LABKEY.app.store.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
-  "LABKEY.app.store.OlapExplorer2": "../../../../../../internal/webapp/app/OlapExplorer2.js",
-  "LABKEY.app.util.OlapExplorerNode": "../../../../../../internal/webapp/app/OlapExplorer2.js",
-  "LABKEY.app.util.OlapExplorerTree": "../../../../../../internal/webapp/app/OlapExplorer2.js",
+  "LABKEY.app.store.OlapExplorerImpl": "../../../../../../internal/webapp/app/OlapExplorerImpl.js",
+  "LABKEY.app.util.OlapExplorerNode": "../../../../webapp/Connector/src/store/Explorer.js",
+  "LABKEY.app.util.OlapExplorerTree": "../../../../webapp/Connector/src/store/Explorer.js",
   "LABKEY.app.view.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
-  "LABKEY.app.view.OlapExplorer2": "../../../../../../internal/webapp/app/OlapExplorer2.js",
+  "LABKEY.app.view.OlapExplorerImpl": "../../../../../../internal/webapp/app/OlapExplorerImpl.js",
   "LABKEY.app.view.Selection": "../../../../../../internal/webapp/app/Selection.js",
   "Statistics": "../../../../webapp/Connector/src/utility/Statistics.js",
-  "StoreCache": "../../../../webapp/Connector/src/utility/StoreCache.js",
-  "StudyAdded": "../../../../webapp/Connector/src/app/view/module/AssayStudies.js"
+  "StoreCache": "../../../../webapp/Connector/src/utility/StoreCache.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
   "Animation": [],
-  "AssayAdded": [],
   "Connector.Application": [],
   "Connector.Filter": [],
   "Connector.app.model.Assay": [],
@@ -229,6 +241,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.app.store.Assay": [],
   "Connector.app.store.AssayAntigen": [],
   "Connector.app.store.Labs": [],
+  "Connector.app.store.PermissionedStudy": [],
   "Connector.app.store.Report": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
@@ -249,14 +262,15 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.component.AdvancedOptionBase": [],
   "Connector.component.AdvancedOptionDimension": [],
   "Connector.component.AdvancedOptionScale": [],
-  "Connector.component.AdvancedOptionContinuous": [],
-  "Connector.component.AdvancedOptionTime": [],
+  "Connector.component.AdvancedOptionTimeAlignedBy": [],
+  "Connector.component.AdvancedOptionTimeAxisType": [],
   "Connector.component.DropDown": [],
   "Connector.component.GridPager": [],
   "Connector.component.News": [],
   "Connector.component.Started": [],
   "Connector.constant.ModuleViewsLookup": [],
   "Connector.constant.Templates": [],
+  "Connector.controller.AbstractGridController": [],
   "Connector.controller.AbstractViewController": [],
   "Connector.controller.Analytics": [],
   "Connector.controller.Chart": [],
@@ -269,6 +283,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Home": [],
   "Connector.controller.HttpInterceptor": [],
   "Connector.controller.Learn": [],
+  "Connector.controller.MabGrid": [],
   "Connector.controller.Main": [],
   "Connector.controller.Messaging": [],
   "Connector.controller.Navigation": [],
@@ -278,6 +293,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Summary": [],
   "Connector.factory.Module": [],
   "Connector.field.BooleanCombo": [],
+  "Connector.grid.AbstractGroupedFacet": [],
+  "Connector.grid.MabGridFacet": [],
   "Connector.grid.Panel": [],
   "Connector.model.Antigen": [],
   "Connector.model.ChartData": [],
@@ -288,11 +305,15 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
   "Connector.model.Grid": [],
+  "Connector.model.GridHeaderDataView": [],
   "Connector.model.Group": [],
   "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
   "Connector.model.InfoPaneMember": [],
+  "Connector.model.MabGrid": [],
+  "Connector.model.MabSummary": [],
   "Connector.model.Measure": [],
+  "Connector.model.Message": [],
   "Connector.model.RSSItem": [],
   "Connector.model.Source": [],
   "Connector.model.State": [],
@@ -302,6 +323,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.TimepointPane": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
+  "Connector.panel.AbstractAntigenSelection": [],
   "Connector.panel.AdvancedOptionBaseDropdown": [],
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
@@ -312,6 +334,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.GroupList": [],
   "Connector.panel.HelpCenter": [],
   "Connector.panel.HelpCenterHeader": [],
+  "Connector.panel.MabVirusSelection": [],
   "Connector.panel.Selection": [],
   "Connector.panel.Selector": [],
   "Connector.plugin.DocumentValidation": [],
@@ -332,6 +355,12 @@ Ext.ClassManager.addNameAlternateMappings({
   ],
   "Connector.utility.FileExtension": [],
   "Connector.utility.HashURL": [],
+  "Connector.utility.MabQuery": [
+    "MabQueryUtils"
+  ],
+  "Connector.utility.PlotTooltip": [
+    "PlotTooltipUtils"
+  ],
   "Connector.utility.Query": [
     "QueryUtils"
   ],
@@ -341,6 +370,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.ExplorerHeaderDataView": [],
   "Connector.view.FilterStatus": [],
   "Connector.view.Grid": [],
+  "Connector.view.GridHeaderDataView": [],
   "Connector.view.GridPane": [],
   "Connector.view.GroupListView": [],
   "Connector.view.GroupSave": [],
@@ -348,14 +378,18 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSummary": [],
   "Connector.view.GroupSummaryBody": [],
   "Connector.view.Header": [],
+  "Connector.view.HeaderDataView": [],
   "Connector.view.Home": [],
   "Connector.view.HomeHeader": [],
   "Connector.view.InfoPane": [],
   "Connector.view.Learn": [],
+  "Connector.view.Learn.SearchField": [],
   "Connector.view.Learn.plugin.HeaderLock": [],
   "Connector.view.LearnColumnHeader": [],
   "Connector.view.LearnHeader": [],
   "Connector.view.LearnHeaderDataView": [],
+  "Connector.view.MabGrid": [],
+  "Connector.view.MabReport": [],
   "Connector.view.Main": [],
   "Connector.view.Navigation": [],
   "Connector.view.NavigationView": [],
@@ -373,18 +407,12 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Viewport": [],
   "Connector.view.module.AssayAnalyteList": [],
   "Connector.view.module.AssayHeader": [],
-  "Connector.view.module.AssayStudies": [],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.ContactCDS": [],
   "Connector.view.module.DataAvailabilityModule": [],
   "Connector.view.module.HTML": [],
-  "Connector.view.module.Person": [],
   "Connector.view.module.ProductHeader": [],
-  "Connector.view.module.ProductManufacturing": [],
   "Connector.view.module.ProductOtherProducts": [],
-  "Connector.view.module.ProductProvidedBy": [],
-  "Connector.view.module.ProductStudies": [],
-  "Connector.view.module.StudyAssays": [],
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.StudyProducts": [],
   "Connector.view.module.StudyPublications": [],
@@ -393,10 +421,13 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.Text": [],
   "Connector.view.module.VariableList": [],
   "Connector.window.AbstractFilter": [],
+  "Connector.window.AbstractGroupedFacet": [],
   "Connector.window.Facet": [],
   "Connector.window.Filter": [],
   "Connector.window.LearnFacet": [],
+  "Connector.window.MabGridFacet": [],
   "Connector.window.SystemMessage": [],
+  "DataAdded": [],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
   "Ext.AbstractPlugin": [],
@@ -1225,7 +1256,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.Message": [],
   "LABKEY.app.model.OlapExplorer": [],
-  "LABKEY.app.model.OlapExplorer2": [],
+  "LABKEY.app.model.OlapExplorerImpl": [],
   "LABKEY.app.model.State": [],
   "LABKEY.app.panel.FilterDialog": [],
   "LABKEY.app.panel.MeasurePicker": [],
@@ -1233,21 +1264,19 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.store.OlapExplorer": [
     "LABKEY.olapStore"
   ],
-  "LABKEY.app.store.OlapExplorer2": [
-    "LABKEY.olapStore2"
+  "LABKEY.app.store.OlapExplorerImpl": [
+    "LABKEY.olapStoreImpl"
   ],
   "LABKEY.app.util.OlapExplorerNode": [],
   "LABKEY.app.util.OlapExplorerTree": [],
   "LABKEY.app.view.OlapExplorer": [],
-  "LABKEY.app.view.OlapExplorer2": [],
+  "LABKEY.app.view.OlapExplorerImpl": [],
   "LABKEY.app.view.Selection": [],
   "Statistics": [],
-  "StoreCache": [],
-  "StudyAdded": []
+  "StoreCache": []
 });
 Ext.ClassManager.addNameAliasMappings({
   "Animation": [],
-  "AssayAdded": [],
   "Connector.Application": [],
   "Connector.Filter": [],
   "Connector.app.model.Assay": [],
@@ -1260,6 +1289,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.app.store.Assay": [],
   "Connector.app.store.AssayAntigen": [],
   "Connector.app.store.Labs": [],
+  "Connector.app.store.PermissionedStudy": [],
   "Connector.app.store.Report": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
@@ -1290,8 +1320,8 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.advancedoptiondimension"
   ],
   "Connector.component.AdvancedOptionScale": [],
-  "Connector.component.AdvancedOptionContinuous": [],
-  "Connector.component.AdvancedOptionTime": [],
+  "Connector.component.AdvancedOptionTimeAlignedBy": [],
+  "Connector.component.AdvancedOptionTimeAxisType": [],
   "Connector.component.DropDown": [
     "widget.dropdown"
   ],
@@ -1306,6 +1336,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.constant.ModuleViewsLookup": [],
   "Connector.constant.Templates": [],
+  "Connector.controller.AbstractGridController": [],
   "Connector.controller.AbstractViewController": [],
   "Connector.controller.Analytics": [],
   "Connector.controller.Chart": [],
@@ -1318,6 +1349,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Home": [],
   "Connector.controller.HttpInterceptor": [],
   "Connector.controller.Learn": [],
+  "Connector.controller.MabGrid": [],
   "Connector.controller.Main": [],
   "Connector.controller.Messaging": [],
   "Connector.controller.Navigation": [],
@@ -1329,6 +1361,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.field.BooleanCombo": [
     "widget.labkey-booleantextfield"
   ],
+  "Connector.grid.AbstractGroupedFacet": [],
+  "Connector.grid.MabGridFacet": [],
   "Connector.grid.Panel": [
     "widget.connector-gridpanel"
   ],
@@ -1341,11 +1375,15 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
   "Connector.model.Grid": [],
+  "Connector.model.GridHeaderDataView": [],
   "Connector.model.Group": [],
   "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
   "Connector.model.InfoPaneMember": [],
+  "Connector.model.MabGrid": [],
+  "Connector.model.MabSummary": [],
   "Connector.model.Measure": [],
+  "Connector.model.Message": [],
   "Connector.model.RSSItem": [],
   "Connector.model.Source": [],
   "Connector.model.State": [],
@@ -1355,6 +1393,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.TimepointPane": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
+  "Connector.panel.AbstractAntigenSelection": [],
   "Connector.panel.AdvancedOptionBaseDropdown": [],
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
@@ -1373,6 +1412,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.helpcenter"
   ],
   "Connector.panel.HelpCenterHeader": [],
+  "Connector.panel.MabVirusSelection": [],
   "Connector.panel.Selection": [
     "widget.selectionpanel"
   ],
@@ -1411,6 +1451,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.utility.Chart": [],
   "Connector.utility.FileExtension": [],
   "Connector.utility.HashURL": [],
+  "Connector.utility.MabQuery": [],
+  "Connector.utility.PlotTooltip": [],
   "Connector.utility.Query": [],
   "Connector.view.AssayAntigen": [
     "widget.app.view.assayantigengrid"
@@ -1430,6 +1472,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Grid": [
     "widget.groupdatagrid"
   ],
+  "Connector.view.GridHeaderDataView": [
+    "widget.gridheaderdataview"
+  ],
   "Connector.view.GridPane": [],
   "Connector.view.GroupListView": [
     "widget.grouplistview"
@@ -1447,6 +1492,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Header": [
     "widget.connectorheader"
   ],
+  "Connector.view.HeaderDataView": [
+    "widget.headerdataview"
+  ],
   "Connector.view.Home": [
     "widget.home"
   ],
@@ -1459,6 +1507,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Learn": [
     "widget.learn"
   ],
+  "Connector.view.Learn.SearchField": [
+    "widget.learn-search"
+  ],
   "Connector.view.Learn.plugin.HeaderLock": [
     "plugin.learnheaderlock"
   ],
@@ -1468,6 +1519,12 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.LearnHeaderDataView": [
     "widget.learnheaderdataview"
+  ],
+  "Connector.view.MabGrid": [
+    "widget.mabdatagrid"
+  ],
+  "Connector.view.MabReport": [
+    "widget.mabreportview"
   ],
   "Connector.view.Main": [
     "widget.app-main"
@@ -1508,9 +1565,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.AssayHeader": [
     "widget.app.module.assayheader"
   ],
-  "Connector.view.module.AssayStudies": [
-    "widget.app.module.assaystudies"
-  ],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.ContactCDS": [
     "widget.app.module.contactcds"
@@ -1521,26 +1575,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.HTML": [
     "widget.module.html"
   ],
-  "Connector.view.module.Person": [
-    "widget.module.person"
-  ],
   "Connector.view.module.ProductHeader": [
     "widget.app.module.productheader"
   ],
-  "Connector.view.module.ProductManufacturing": [
-    "widget.app.module.productmanufacturing"
-  ],
   "Connector.view.module.ProductOtherProducts": [
     "widget.app.module.productotherproducts"
-  ],
-  "Connector.view.module.ProductProvidedBy": [
-    "widget.app.module.productprovidedby"
-  ],
-  "Connector.view.module.ProductStudies": [
-    "widget.app.module.productstudies"
-  ],
-  "Connector.view.module.StudyAssays": [
-    "widget.app.module.studyassays"
   ],
   "Connector.view.module.StudyHeader": [
     "widget.app.module.studyheader"
@@ -1564,6 +1603,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.app.module.variablelist"
   ],
   "Connector.window.AbstractFilter": [],
+  "Connector.window.AbstractGroupedFacet": [],
   "Connector.window.Facet": [
     "widget.columnfacetwin"
   ],
@@ -1571,7 +1611,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.columnfilterwin"
   ],
   "Connector.window.LearnFacet": [],
+  "Connector.window.MabGridFacet": [],
   "Connector.window.SystemMessage": [],
+  "DataAdded": [],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
   "Ext.AbstractPlugin": [],
@@ -2568,25 +2610,24 @@ Ext.ClassManager.addNameAliasMappings({
   "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.Message": [],
   "LABKEY.app.model.OlapExplorer": [],
-  "LABKEY.app.model.OlapExplorer2": [],
+  "LABKEY.app.model.OlapExplorerImpl": [],
   "LABKEY.app.model.State": [],
   "LABKEY.app.panel.FilterDialog": [],
   "LABKEY.app.panel.MeasurePicker": [],
   "LABKEY.app.plugin.LoadingMask": [],
   "LABKEY.app.store.OlapExplorer": [],
-  "LABKEY.app.store.OlapExplorer2": [],
+  "LABKEY.app.store.OlapExplorerImpl": [],
   "LABKEY.app.util.OlapExplorerNode": [],
   "LABKEY.app.util.OlapExplorerTree": [],
   "LABKEY.app.view.OlapExplorer": [
     "widget.olapexplorerview"
   ],
-  "LABKEY.app.view.OlapExplorer2": [
-    "widget.olapexplorerview2"
+  "LABKEY.app.view.OlapExplorerImpl": [
+    "widget.olapexplorerviewImpl"
   ],
   "LABKEY.app.view.Selection": [],
   "Statistics": [],
-  "StoreCache": [],
-  "StudyAdded": []
+  "StoreCache": []
 });
 Ext.setVersion("connector-theme", "1.0.0");
 Ext.setVersion("ext-theme-base", "4.2.1");

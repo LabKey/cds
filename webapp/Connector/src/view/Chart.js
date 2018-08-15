@@ -903,7 +903,7 @@ Ext.define('Connector.view.Chart', {
                             {
                                 return -1;
                             }
-                            return LABKEY.app.model.Filter.sorters.natural(a, b);
+                            return Connector.model.Filter.sorters.natural(a, b);
                         }
                     };
                     if (studyAxisInfo) {
@@ -2034,7 +2034,7 @@ Ext.define('Connector.view.Chart', {
             Connector.getState().addSelection({
                 gridFilter: sqlFilters,
                 members: Ext.Object.getKeys(this.brushedSubjects),
-                operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                operator: Connector.model.Filter.OperatorTypes.OR,
                 filterSource: 'GETDATA',
                 isAggregated: true
             }, true, false, true);
@@ -2047,7 +2047,7 @@ Ext.define('Connector.view.Chart', {
                 plotMeasures: [null, null],
                 isPlot: true,
                 isGrid: true,
-                operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                operator: Connector.model.Filter.OperatorTypes.OR,
                 filterSource: 'GETDATA',
                 isWhereFilter: true,
                 showInverseFilter: allowInverseFilter === true
@@ -3611,7 +3611,7 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
-        var groupKeys = Object.keys(groupTags).sort(LABKEY.app.model.Filter.sorters.natural),
+        var groupKeys = Object.keys(groupTags).sort(Connector.model.Filter.sorters.natural),
             isAggregate = groupKeys.length > 1,
             tplGroups = [];
 
@@ -3784,7 +3784,7 @@ Ext.define('Connector.view.Chart', {
             plotMeasures: [this._getAxisWrappedMeasure(this.activeMeasures.x), this._getAxisWrappedMeasure(this.activeMeasures.y)],
             isPlot: true,
             isGrid: true,
-            operator: LABKEY.app.model.Filter.OperatorTypes.AND,
+            operator: Connector.model.Filter.OperatorTypes.AND,
             filterSource: 'GETDATA',
             isWhereFilter: true,
             showInverseFilter: false,

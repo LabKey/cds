@@ -6,7 +6,7 @@
 Ext.define('Connector.Application', {
     name: 'Connector',
 
-    extend: 'LABKEY.app.Application',
+    extend: 'Ext.app.Application',
 
     requires: [
         'Connector.app.model.Assay',
@@ -49,6 +49,8 @@ Ext.define('Connector.Application', {
     ],
 
     defaultController: 'Home',
+
+    defaultLoginController: undefined,
 
     views: [],
 
@@ -105,6 +107,17 @@ Ext.define('Connector.Application', {
             ns.setProperty = Ext.bind(this.setProperty, this);
             ns.clearProperties = Ext.bind(this.clearProperties, this);
         }
+    },
+
+    getService : function(name) {
+        // For now, just ask controllers who have the 'isService' flag.
+        var service = this.getController(name);
+
+        if (service && service.isService === true) {
+            return service;
+        }
+
+        return undefined;
     },
 
     getState : function() {
@@ -201,5 +214,9 @@ Ext.define('Connector.Application', {
             },
             scope: this
         });
+    },
+
+    resolveDefaultController : function() {
+        return this.defaultController;
     }
 });

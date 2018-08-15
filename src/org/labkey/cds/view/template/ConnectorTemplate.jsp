@@ -128,20 +128,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Model.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Faceted.js"></script>
 
-    <!-- App API Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Application.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/State.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/HttpInterceptor.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Messaging.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/View.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Route.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Filter.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Selection.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorerImpl.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/LoadingMask.js"></script>
-
     <!-- Ext Widget Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4DefaultFilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4GridPanel.js"></script>
@@ -173,6 +159,11 @@
 
     <!-- Connector Application -->
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
+
+    <!-- Constant singletons -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/ModuleViewsLookup.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/State.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
 
     <!-- Application Models -->
     <script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>
@@ -232,10 +223,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/DocumentValidation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/LoadingMask.js"></script>
 
-    <!-- Constant singletons -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/constant/ModuleViewsLookup.js"></script>
-
     <!-- Factories -->
     <script type="text/javascript" src="<%=text(srcPath)%>/factory/Module.js"></script>
 
@@ -286,6 +273,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/HttpInterceptor.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Messaging.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Analytics.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>

@@ -8,6 +8,11 @@
         <!-- Connector Application -->
         <script path="Connector/src/types/Filter.js"/>
 
+        <!-- Constant singletons -->
+        <script path="Connector/src/constant/ModuleViewsLookup.js"/>
+        <script path="Connector/src/constant/State.js"/>
+        <script path="Connector/src/constant/Templates.js"/>
+
         <!-- Application Models -->
         <script path="Connector/src/model/State.js"/>
         <script path="Connector/src/model/ColumnInfo.js"/>
@@ -66,10 +71,6 @@
         <script path="Connector/src/plugin/DocumentValidation.js"/>
         <script path="Connector/src/plugin/LoadingMask.js"/>
 
-        <!-- Constant singletons -->
-        <script path="Connector/src/constant/Templates.js"/>
-        <script path="Connector/src/constant/ModuleViewsLookup.js"/>
-
         <!-- Factories -->
         <script path="Connector/src/factory/Module.js"/>
 
@@ -119,6 +120,8 @@
         <script path="Connector/src/controller/Chart.js"/>
         <script path="Connector/src/controller/Connector.js"/>
         <script path="Connector/src/controller/Query.js"/>
+        <script path="Connector/src/controller/HttpInterceptor.js"/>
+        <script path="Connector/src/controller/Messaging.js"/>
         <script path="Connector/src/controller/Filter.js"/>
         <script path="Connector/src/controller/Analytics.js"/>
         <script path="Connector/src/controller/Explorer.js"/>

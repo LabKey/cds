@@ -702,7 +702,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     * Get a LABKEY.Query.Visualization.getData configuration back based on the LABKEY.app.model.Filter given.
+     * Get a LABKEY.Query.Visualization.getData configuration back based on the Connector.model.Filter given.
      * @param {LABKEY.query.olap.MDX} mdx - The object which will be added as a COUNT/WHERE filter.
      * @param {Connector.model.Filter} filters - or an appFilterData
      * @param {String} subjectName - or an appFilterData
@@ -1074,60 +1074,41 @@ Ext.define('Connector.controller.Query', {
             if (_count)
                 levelList.push(def.uniqueName);
         });
-
     },
 
-    getMabData : function(success, failure, scope)
-    {
-        var config = {
+    getMabData : function(success, failure, scope) {
+        MabQueryUtils.getData({
             success: success,
             failure: failure,
             scope: scope
-        };
-
-        MabQueryUtils.getData(config);
+        });
     },
 
-    getMabMetaData : function(success, failure, scope)
-    {
-        var config = {
+    getMabMetaData : function(success, failure, scope) {
+        MabQueryUtils.getMetaData({
             success: success,
             failure: failure,
             scope: scope
-        };
-
-        MabQueryUtils.getMetaData(config);
+        });
     },
 
-    getMabAllFieldValues: function(config)
-    {
+    getMabAllFieldValues : function(config) {
         MabQueryUtils.getMabUniqueValues(config);
     },
 
-    getMabActiveFieldValues: function(config)
-    {
+    getMabActiveFieldValues : function(config) {
         MabQueryUtils.getMabUniqueValues(config);
     },
 
-    getMabViruses: function(config)
-    {
+    getMabViruses : function(config) {
         MabQueryUtils.getMabViruses(config);
     },
 
-    prepareMAbReportQueries: function(config) {
+    prepareMAbReportQueries : function(config) {
         MabQueryUtils.prepareMAbReportQueries(config)
     },
 
-    prepareMAbExportQueries: function(config) {
+    prepareMAbExportQueries : function(config) {
         MabQueryUtils.prepareMAbExportQueries(config)
     }
-
-});
-
-Ext.define('Connector.controller.HttpInterceptor', {
-    extend: 'LABKEY.app.controller.HttpInterceptor'
-});
-
-Ext.define('Connector.controller.Messaging', {
-    extend: 'LABKEY.app.controller.Messaging'
 });

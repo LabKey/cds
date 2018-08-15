@@ -99,7 +99,7 @@ Ext.define('Connector.store.Summary', {
                     operator: 'UNION',
                     arguments: rows
                 }],
-                useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                useNamedFilters: [Connector.constant.State.STATE_FILTER],
                 success: function(results) {
                     this.loadResults(mdx, results, configs);
                 },
