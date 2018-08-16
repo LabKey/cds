@@ -55,7 +55,7 @@ Ext.define('Connector.app.store.Assay', {
         if (Ext.isDefined(this.assayData) && Ext.isDefined(this.assayStudies) && Ext.isDefined(this.accessibleStudies)) {
 
             this.assayData.sort(function(assayA, assayB) {
-                return LABKEY.app.model.Filter.sorters.natural(assayA.assay_short_name, assayB.assay_short_name);
+                return Connector.model.Filter.sorters.natural(assayA.assay_short_name, assayB.assay_short_name);
             });
 
             var assays = [];

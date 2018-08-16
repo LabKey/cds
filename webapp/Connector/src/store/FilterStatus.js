@@ -160,7 +160,7 @@ Ext.define('Connector.store.FilterStatus', {
                     operator: 'UNION',
                     arguments: rows
                 }],
-                useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                useNamedFilters: [Connector.constant.State.STATE_FILTER],
                 success: handleCounts,
                 scope: this
             });
@@ -173,7 +173,7 @@ Ext.define('Connector.store.FilterStatus', {
                         operator: 'UNION',
                         arguments: selConfigs
                     }],
-                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER, LABKEY.app.constant.SELECTION_FILTER],
+                    useNamedFilters: [Connector.constant.State.STATE_FILTER, Connector.constant.State.SELECTION_FILTER],
                     success: handleSelections,
                     scope: this
                 });

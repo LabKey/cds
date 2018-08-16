@@ -89,7 +89,7 @@ Ext.define('Connector.view.InfoPane', {
 
         getMemberStr: function(uniqueName)
         {
-            var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
+            var arrayName = Connector.view.Selection.uniqueNameAsArray(uniqueName);
             var member = arrayName[arrayName.length-1];
             if (member === '#null') {
                 member = 'Unknown';
@@ -204,12 +204,12 @@ Ext.define('Connector.view.InfoPane', {
                     {
                         boxLabel: 'Subjects related to any (OR)',
                         name: 'operator',
-                        inputValue: LABKEY.app.model.Filter.OperatorTypes.OR,
+                        inputValue: Connector.model.Filter.OperatorTypes.OR,
                         checked: model.isOR()
                     },{
                         boxLabel: 'Subjects related to all (AND)',
                         name: 'operator',
-                        inputValue: LABKEY.app.model.Filter.OperatorTypes.AND,
+                        inputValue: Connector.model.Filter.OperatorTypes.AND,
                         checked: model.isAND()
                     }
                 ],

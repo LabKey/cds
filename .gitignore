@@ -3,3 +3,16 @@ vcs.properties
 .DS_Store
 webapp/temp
 CDS.iml
+
+# test logs
+test/sampledata/dataspace/*.log
+
+# generated theme artifacts
+app/Connector/bootstrap.css
+app/Connector/bootstrap.js
+app/Connector/bootstrap.json
+app/Connector/sass/example
+webapp/connector-theme
+webapp/production/Connector/app.js
+webapp/production/Connector/index.html
+webapp/production/Connector/resources/Readme.md
