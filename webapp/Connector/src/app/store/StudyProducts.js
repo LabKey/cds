@@ -216,7 +216,7 @@ Ext.define('Connector.app.store.StudyProducts', {
             }, this);
 
             products.sort(function(productA, productB) {
-                return LABKEY.app.model.Filter.sorters.natural(productA.product_name, productB.product_name);
+                return Connector.model.Filter.sorters.natural(productA.product_name, productB.product_name);
             });
 
             this.productData = undefined;
