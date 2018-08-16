@@ -37,6 +37,10 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
 
     filterValues: undefined,
 
+    groupInText: 'In current selection',
+
+    groupOutText: 'Not in current selection',
+
     isFilterNegated: false,
 
     latestSelections: undefined,
@@ -152,8 +156,8 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
                             '{name:this.renderHeader}', // 'name' is actually the value of the groupField
                             {
                                 renderHeader: function(v) {
-                                    return v ? 'In current selection' : 'Not in current selection';
-                                }
+                                    return v ? this.groupInText : this.groupOutText;
+                                }.bind(this),
                             }
                         )
                     }

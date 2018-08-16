@@ -157,6 +157,10 @@ Ext.define('Connector.grid.MabGridFacet', {
 
     extend: 'Connector.grid.AbstractGroupedFacet',
 
+    groupInText: 'In current MAb grid',
+
+    groupOutText: 'Not in current MAb grid',
+
     resetSearch: true,
 
     initComponent : function() {
