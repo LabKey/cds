@@ -237,6 +237,7 @@ Ext.define('Connector.view.InfoPane', {
         var state = Connector.getState();
         state.on('selectionchange', function() { this.hide(); }, this, {single: true});
         state.on('filterchange', function() { this.hide(); }, this, {single: true});
+        state.on('mabfilterchange', function() { this.hide(); }, this, {single: true});
     },
 
     getInfoSortDropDownButton: function(btnId) {
