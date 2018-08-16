@@ -99,7 +99,7 @@ Ext.define('Connector.model.MabPane', {
         if (name) {
             var lname = name.toLowerCase();
             for (var i = 0; i < active.length; i++) {
-                if (active[i][fieldKey].toLowerCase() === lname) {
+                if (active[i][fieldKey] && active[i][fieldKey].toLowerCase() === lname) {
                     return true;
                 }
             }
