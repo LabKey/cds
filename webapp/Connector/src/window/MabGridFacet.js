@@ -136,11 +136,21 @@ Ext.define('Connector.window.MabGridFacet', {
     },
 
     constructFilter : function(selected, unselected) {
-        if (selected.length > 0) {
-            var filterType = selected.length > unselected.length ? LABKEY.Filter.Types.NOT_IN : LABKEY.Filter.Types.IN;
+        var filter = null;
 
-            return LABKEY.Filter.create(this.filterConfig.fieldName, this.delimitValues(selected), filterType);
+        if (selected.length > 0) {
+
+            var columnName = this.filterConfig.fieldName;
+
+            if (selected.length > unselected.length) {
+                filter = LABKEY.Filter.create(columnName, this.delimitValues(unselected), LABKEY.Filter.Types.NOT_IN);
+            }
+            else {
+                filter = LABKEY.Filter.create(columnName, this.delimitValues(selected), LABKEY.Filter.Types.IN);
+            }
         }
+
+        return filter;
     },
 
     delimitValues : function (valueArray) {
