@@ -177,8 +177,8 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void applyFilter()
     {
-        List<WebElement> buttons = CDSHelper.Locators.cdsButtonLocator("Done").findElements(_webDriverWrapper.getDriver());
-        final WebElement button = buttons.get(0);
+        List<WebElement> buttons = CDSHelper.Locators.cdsButtonLocator("Filter").findElements(_webDriverWrapper.getDriver());
+        final WebElement button = buttons.get(1);
 
         _gridHelper.applyAndWaitForGrid(() -> {
             button.click();
