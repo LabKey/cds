@@ -112,14 +112,19 @@ Ext.define('Connector.panel.MabVirusSelection', {
     },
 
     constructFilter : function () {
-        var selected = this.getSelectedValues(),
-            unselected = Ext.Array.difference(this.allValues, selected);
-
+        var filter = null, selected = this.getSelectedValues();
+        var unselected = Ext.Array.difference(this.allValues, selected);
         if (selected.length > 0 && unselected.length > 0) {
-            var filterType = selected.length > unselected.length ? LABKEY.Filter.Types.NOT_IN : LABKEY.Filter.Types.IN;
 
-            return LABKEY.Filter.create(this.filterFieldName, this.delimitValues(selected), filterType);
+            if (selected.length > unselected.length) {
+                filter = LABKEY.Filter.create(this.filterFieldName, this.delimitValues(unselected), LABKEY.Filter.Types.NOT_IN);
+            }
+            else {
+                filter = LABKEY.Filter.create(this.filterFieldName, this.delimitValues(selected), LABKEY.Filter.Types.IN);
+            }
         }
+
+        return filter;
     },
 
     delimitValues : function (valueArray) {
