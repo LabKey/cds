@@ -11,7 +11,7 @@ Ext.define('Connector.store.MabStatus', {
 
     model: 'Connector.model.MabDetail',
 
-    constructor(config) {
+    constructor : function(config) {
         this.fetchCount = 0;
         this.loadCount = 0;
         this.results = {};
