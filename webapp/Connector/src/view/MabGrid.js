@@ -55,6 +55,7 @@ Ext.define('Connector.view.MabGrid', {
     },
 
     initComponent : function() {
+        this.allowReporting = false;
         this.sorters = [];
 
         this.gridSorters = {}; // hold on to client side sorts for each grid
@@ -108,7 +109,7 @@ Ext.define('Connector.view.MabGrid', {
                     buttons: [
                         this.getExportCSVButton(),
                         this.getExportExcelButton()
-                    ].concat(this.getRReportButtons())
+                    ].concat(this.getReportButtons())
                 }]
             });
         }
@@ -155,25 +156,73 @@ Ext.define('Connector.view.MabGrid', {
         return this.exportExcelButton;
     },
 
-    getRReportButtons: function() {
-        var reports = [];
-        for (var i = 1 ; i < 3; i++) {
-            var reportId = LABKEY.getModuleProperty('cds', Connector.view.MabGrid.MAbReportID_PROP_PREFIX + i);
-            var reportLabel = LABKEY.getModuleProperty('cds', Connector.view.MabGrid.MAbReportLabel_PROP_PREFIX + i);
-            if (reportId && reportLabel) {
-                reports.push(Ext.create('Ext.button.Button', {
-                    cls: 'mabgridcolumnsbtn',
-                    text: reportLabel,
-                    handler: (function(id, label) {
-                        return function() {
-                            this.showRReport(id, label);
+    getReportButtons : function() {
+        if (this.reportButtons === undefined) {
+            var items = [];
+            this.reportButtons = [];
+
+            for (var i = 1; i < 3; i++) {
+                var reportId = LABKEY.getModuleProperty('cds', Connector.view.MabGrid.MAbReportID_PROP_PREFIX + i);
+                var reportLabel = LABKEY.getModuleProperty('cds', Connector.view.MabGrid.MAbReportLabel_PROP_PREFIX + i);
+
+                if (reportId && reportLabel) {
+                    items.push({
+                        xtype: 'button',
+                        cls: 'mabgridcolumnsbtn',
+                        handler: (function(id, label) {
+                            return function() {
+                                this.showRReport(id, label);
+                            }
+                        })(reportId, reportLabel),
+                        text: reportLabel,
+                        scope: this
+                    });
+                }
+            }
+
+            if (items.length) {
+                this.reportButtons.push({
+                    xtype: 'container',
+                    disabled: !this.allowReporting,
+                    disabledCls: 'vardisable',
+                    maskOnDisable: false,
+                    items: items,
+                    listeners: {
+                        afterrender: {
+                            fn: function(ct) {
+                                this.reportButtonContainer = ct;
+
+                                ct.getEl().on({
+                                    mouseenter: function() {
+                                        if (!this.allowReporting) {
+                                            ChartUtils.showCallout({
+                                                target: ct.getEl().dom,
+                                                placement: 'bottom',
+                                                title: 'Enable reporting',
+                                                xOffset: -65,
+                                                arrowOffset: 100,
+                                                content: [
+                                                    'Select data in the MAb grid, via the check box on each row,',
+                                                    'that you\'d like to see in a report.'
+                                                ].join(' ')
+                                            }, 'hidereportdatamsg', this);
+                                        }
+                                    },
+                                    mouseleave: function() {
+                                        this.fireEvent('hidereportdatamsg');
+                                    },
+                                    scope: this
+                                });
+                            },
+                            scope: this,
+                            single: true
                         }
-                    })(reportId, reportLabel),
-                    scope: this
-                }))
+                    }
+                });
             }
         }
-        return reports;
+
+        return this.reportButtons;
     },
 
     getGridColumnsConfig : function() {
@@ -504,10 +553,18 @@ Ext.define('Connector.view.MabGrid', {
             if (recIdx !== -1) {
                 records.push(store.getAt(recIdx));
             }
-
         }, this);
 
         this.getGrid().getSelectionModel().select(records, false, true);
+
+        this.updateReportButtons(records.length);
+    },
+
+    updateReportButtons : function(selectionCount) {
+        this.allowReporting = selectionCount !== 0;
+        if (this.reportButtonContainer) {
+            this.reportButtonContainer.setDisabled(!this.allowReporting);
+        }
     },
 
     onMabSelectionChange : function(mAbSelections) {
@@ -516,6 +573,8 @@ Ext.define('Connector.view.MabGrid', {
             mAbs.push(selection.get(MabQueryUtils.MAB_MIX_NAME_STD));
         });
         Connector.getState().updateSelectedMAbs(mAbs);
+
+        this.updateReportButtons(mAbs.length);
     },
 
     /**
