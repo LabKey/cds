@@ -62,7 +62,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         log("Verify subject based info pane presence for mAb and other tabs");
         Locator.XPathLocator subjectInfoPane = CDSHelper.Locators.subjectInfoPaneHeader().notHidden();
-        assertElementNotPresent(subjectInfoPane);
+        assertElementVisible(subjectInfoPane);
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
         assertElementPresent(subjectInfoPane);
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
@@ -205,9 +205,8 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         log("Verify error message for view reports when no selection is made");
         click(grid.getDilutionReportBtn());
-        waitForElementToBeVisible(Locator.tagWithClassContaining("div", "x-message-box"));
-        assertTextPresent("No MAb/Mixture has been selected.");
-        click(Locator.xpath("//span[text()='OK']/ancestor::a[contains(@class, 'x-btn')]"));
+        waitForElementToBeVisible(Locator.tagWithClassContaining("div", "hopscotch-bubble"));
+        assertTextPresent("Select data in the MAb grid, via the check box on each row, that you'd like to see in a report.");
 
         log("Set an initial set of filters for grid");
         grid.setFacet(MAB_COL,false,"2F5", "A14");
