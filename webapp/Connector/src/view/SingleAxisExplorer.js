@@ -614,7 +614,9 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         //
         // Bind groups toggles
         //
-        var groups = this.store.query('isGroup', true).getRange(); // assumed to be in order of index
+        var groups = this.store.queryBy(function(record, id) {
+            return (record.get('isGroup') && !record.get('isLeafNode'))
+        }).getRange(); // assumed to be in order of index
         if (groups.length > 0) {
             var expandos = Ext.query('.saecollapse'), bar;
             Ext.each(groups, function(group, idx) {
