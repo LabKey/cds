@@ -566,10 +566,8 @@ public class DataGrid
             if ("Metadata.txt".equals(filename))
             {
                 CDSExport.TOCS.forEach(expectedContent -> verifyExportedCSVContent(file, expectedContent));
-                if (expected.getFilterTitles() != null)
-                    verifyExportedCSVContent(file, expected.getFilterTitles());
-                if (expected.getFilterValues() != null)
-                    verifyExportedCSVContent(file, expected.getFilterValues());
+                verifyExportedCSVContent(file, expected.getFilterTitles());
+                verifyExportedCSVContent(file, expected.getFilterValues());
             }
             else if ("Studies.csv".equals(filename))
             {
