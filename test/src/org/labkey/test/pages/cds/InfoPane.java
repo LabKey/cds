@@ -35,9 +35,18 @@ public class InfoPane
     private final static String cssAntigensInYCount = "div.detailstatuslist ul.detailstatus div.info_AntigensInY li span:nth-child(4)";
     private final static String cssActiveFilter = "div.activefilter";
 
+    // mAb Info Pane
+    private final static String cssMabMixtureCounts = "div.detailstatuslist ul.detailstatus div.info_mixCount li span:nth-child(4)";
+    private final static String cssMabCounts = "div.detailstatuslist ul.detailstatus div.info_mabCount li span:nth-child(4)";
+    private final static String cssMabDonorCounts = "div.detailstatuslist ul.detailstatus div.info_donorCount li span:nth-child(4)";
+    private final static String cssMabStudiesCount = "div.detailstatuslist ul.detailstatus div.info_studyCount li span:nth-child(4)";
+    private final static String cssMabVirusPairCount = "div.detailstatuslist ul.detailstatus div.info_mab_virus_pairs_count li span:nth-child(4)";
+    private final static String cssMabVirusCount = "div.detailstatuslist ul.detailstatus div.info_virusCount li span:nth-child(4)";
+
     private final static String cssMeasuresGrid = "div.measuresgrid";
     private final static String cssFilterAction = "a.filterinfoaction";
     private final static String cssFilterCancel = "a.filterinfocancel";
+    private final static String cssClose = "a.infoplotcancel";
 
     protected BaseWebDriverTest _test;
     protected CDSHelper _cds;
@@ -56,6 +65,10 @@ public class InfoPane
     public void clickCancel()
     {
         _test.click(Locator.css(cssFilterCancel));
+    }
+
+    public void clickClose() {
+        _test.click(Locator.css(cssClose));
     }
 
     public void clickActiveFilter(String text)
@@ -238,4 +251,88 @@ public class InfoPane
         _test.click(Locator.css(cssAntigensInYCount));
     }
 
+    public int getMabMixturesCount() {
+        return Integer.parseInt(_tryToGetCounts(_test, cssMabMixtureCounts));
+    }
+
+    public String getMabMixturesList()
+    {
+        return getMabListText();
+    }
+
+    public void clickMabMixturesCount() {
+        _test.click(Locator.css(cssMabMixtureCounts));
+    }
+
+    public int getMabCount() {
+        return Integer.parseInt(_tryToGetCounts(_test, cssMabCounts));
+    }
+
+    public void clickMabCount() {
+        _test.click(Locator.css(cssMabCounts));
+    }
+
+    public String getMabList()
+    {
+        return getMabListText();
+    }
+
+    public int getMabDonorCounts() {
+        return Integer.parseInt(_tryToGetCounts(_test, cssMabDonorCounts));
+    }
+
+    public void clickMabDonorCounts() {
+        _test.click(Locator.css(cssMabDonorCounts));
+    }
+
+    public String getMabDonorList()
+    {
+        return getMabListText();
+    }
+
+    public int getMabStudiesCount() {
+        return Integer.parseInt(_tryToGetCounts(_test, cssMabStudiesCount));
+    }
+
+    public void clickMabStudiesCount() {
+        _test.click(Locator.css(cssMabStudiesCount));
+    }
+
+    public String getMabStudiesList()
+    {
+        return getMabListText();
+    }
+
+    public int getMabVirusPairCount() {
+        return Integer.parseInt(_tryToGetCounts(_test, cssMabVirusPairCount));
+    }
+
+    public void clickMabVirusPairCount() {
+        _test.click(Locator.css(cssMabVirusPairCount));
+    }
+
+    public String getMabVirusPairList()
+    {
+        return getMabListText();
+    }
+
+    public int getMabVirusCount() {
+        return Integer.parseInt(_tryToGetCounts(_test, cssMabVirusCount));
+    }
+
+    public void clickMabVirusCount() {
+        _test.click(Locator.css(cssMabVirusCount));
+    }
+
+    public String getMabVirusList()
+    {
+        return getMabListText();
+    }
+
+    private String getMabListText()
+    {
+        _test.waitForElementToBeVisible(Locator.css(cssMeasuresGrid));
+        _test.sleep(500);
+        return _test.getText(Locator.css(cssMeasuresGrid));
+    }
 }

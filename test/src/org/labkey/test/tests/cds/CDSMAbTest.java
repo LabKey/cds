@@ -9,6 +9,7 @@ import org.labkey.api.util.Pair;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.AntigenFilterPanel;
 import org.labkey.test.pages.cds.CDSExport;
+import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.MAbDataGrid;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
@@ -370,6 +371,121 @@ public class CDSMAbTest extends CDSReadOnlyTest
     private WebElement getGridEl()
     {
         return Locator.tagWithClass("div", "mab-connector-grid").findElement(getDriver());
+    }
+
+    @Test
+    public void verifyInfoPane() {
+
+        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
+        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        grid.clearAllFilters();
+        grid.clearAllSelections();
+
+        log("Validate that the counts are as expected.");
+        InfoPane ip = new InfoPane(this);
+        ip.waitForSpinners();
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 171, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 171, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 1418, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 159, ip.getMabVirusCount());
+
+        log("Validate that clicking an item in the info pane gives the appropriate list of items.");
+        // For most of these just check that the first few entries are present.
+
+        ip.clickMabMixturesCount();
+        String listText = ip.getMabMixturesList();
+        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items.", listText.contains("Has data in MAb grid\n2F5\n3.00E+03\n4.00E+10\nA14\nAB-000402-1"));
+        ip.clickClose();
+
+        ip.clickMabCount();
+        listText = ip.getMabList();
+        Assert.assertTrue("List for MAbs did not contain the expected items.", listText.contains("Has data in MAb grid\n2F5\n3.00E+03\n4.00E+10\nA14\nAB-000402-1"));
+        ip.clickClose();
+
+        ip.clickMabDonorCounts();
+        listText = ip.getMabDonorList();
+        Assert.assertEquals("List for Donor Species did not contain the expected items.", "Has data in MAb grid\nhuman\nllama\nmouse", listText);
+        ip.clickClose();
+
+        ip.clickMabStudiesCount();
+        listText = ip.getMabStudiesList();
+        Assert.assertEquals("List for Studies did not contain the expected items.", "Has data in MAb grid\nQED 2\nRED 4\nRED 5\nYOYO 55\nZAP 117\nZAP 118\nZAP 119\nZAP 128\nZAP 133\nZAP 135", listText);
+        ip.clickClose();
+
+        ip.clickMabVirusPairCount();
+        listText = ip.getMabVirusPairList();
+        Assert.assertTrue("List for MAb-Virus Pairs did not contain the expected items.", listText.contains("Has data in MAb grid\n2F5 - 246-F3_C10_2\n2F5 - 25710-2.43\n2F5 - 398-F1-F6_20\n2F5 - BJOX002000.03.2\n2F5 - CH119.10"));
+        ip.clickClose();
+
+        ip.clickMabVirusCount();
+        listText = ip.getMabVirusList();
+        Assert.assertTrue("List for Viruses did not contain the expected items.", listText.contains("Has data in MAb grid\n0013095-2.11\n001428-2.42\n0260.V5.C36\n0330.v4.c3\n0815.v3.c3\n1394C9_G1 (Rev-)"));
+        ip.clickClose();
+
+        log("Apply various filters and verify counts change.");
+        log("Verify mAb mix filter");
+        List<String> filteredColumns = new ArrayList<>();
+        grid.setFacet(MAB_COL,true,"4.00E+10", "A14");
+        filteredColumns.add(MAB_COL);
+
+        log("Validate that the counts are as expected after the filter is applied.");
+        ip = new InfoPane(this);
+        ip.waitForSpinners();
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 2, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 2, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 2, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 2, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 64, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 61, ip.getMabVirusCount());
+
+        log("Validate that clicking an item in the info pane shows correct information for the applied filter.");
+        // For most of these just check that the first few entries are present.
+
+        ip.clickMabMixturesCount();
+        listText = ip.getMabMixturesList();
+        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items.", listText.contains("Has data in MAb grid\n4.00E+10\nA14\nNo data in MAb grid\n2F5\n3.00E+03\nAB-000402-1"));
+        ip.clickClose();
+
+        ip.clickMabStudiesCount();
+        listText = ip.getMabStudiesList();
+        Assert.assertEquals("List for Studies did not contain the expected items.", "Has data in MAb grid\nZAP 117\nZAP 119\nNo data in MAb grid\nQED 2\nRED 4\nRED 5\nYOYO 55\nZAP 118\nZAP 128\nZAP 133\nZAP 135", listText);
+        ip.clickClose();
+
+        log("Verify virus filter has changed the list");
+        AntigenFilterPanel virusPanel = grid.openVirusPanel(null);
+
+        virusPanel.checkVirus("virus-all", false);
+        sleep(2000);
+        String testValueCheck = "virus-1A-B-MN.3";
+        virusPanel.checkVirus(testValueCheck, true);
+        testValueCheck = "virus-1A-B-SF162.LS";
+        virusPanel.checkVirus(testValueCheck, true);
+        testValueCheck = "virus-2-02_AG-928-28";
+        virusPanel.checkVirus(testValueCheck, true);
+        grid.applyFilter();
+
+        ip = new InfoPane(this);
+        ip.waitForSpinners();
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 2, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 2, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 2, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 2, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 3, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 3, ip.getMabVirusCount());
+
+        ip.clickMabVirusCount();
+        listText = ip.getMabVirusList();
+        Assert.assertTrue("List for Viruses did not contain the expected items.", listText.contains("Has data in MAb grid\n928-28\nMN.3\nSF162.LS\nNo data in MAb grid\n0013095-2.11\n001428-2.42\n0260.V5.C36\n0330.v4.c3\n0815.v3.c3\n1394C9_G1 (Rev-)"));
+        ip.clickClose();
+
+        grid.clearAllFilters();
+        grid.clearAllSelections();
+
     }
 
 }
