@@ -36,7 +36,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public static final String STUDIES_COL = "Studies";
 
     public static final String GRID_TITLE_STUDY_AND_MABS = "Study and MAbs";
-    public static final List<String> STUDY_AND_MABS_COLUMNS = Arrays.asList("Mab Mix Id", "Mab Mix Label", "Mab Mix Name Std");
+    public static final List<String> STUDY_AND_MABS_COLUMNS = Arrays.asList("Study", "Mab Mix Id", "Mab Mix Label", "Mab Mix Name Std");
     public static final String GRID_TITLE_MABS_META = "MAbs";
     public static final List<String> MABS_COLUMNS = Arrays.asList("Mab Mix Id", "Mab Mix Label", "Mab Mix Name Std", "Mab Id", "Mab Name Std", "Mab Lanl Id");
     public static final String GRID_TITLE_NAB_MAB_ASSAY = "NAB MAB";

@@ -528,6 +528,8 @@ public class DataGrid
 
     private void verifyExportedCSVContent(File export, List<String> expectedContent)
     {
+        if (expectedContent == null)
+            return;
         String exportedContent = TestFileUtils.getFileContents(export);
         for (String expectedFragment : expectedContent)
         {

@@ -949,7 +949,7 @@ Ext.define('Connector.view.Grid', {
                         level: '[Study.Treatment].[Treatment]',
                         members: 'members'
                     }],
-                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                    useNamedFilters: [Connector.constant.State.STATE_FILTER],
                     showEmpty: false,
                     success: function (results) {
                         exportParams.studies = me.loadExportableStudies(results);
@@ -968,7 +968,7 @@ Ext.define('Connector.view.Grid', {
                                         level: '[Assay.Study].[Study]',
                                         members: 'members'
                                     }],
-                                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                                    useNamedFilters: [Connector.constant.State.STATE_FILTER],
                                     showEmpty: false,
                                     success: function (results) {
                                         exportParams.studyassays = me.loadExportableStudyAssays(results, gridAssays, assayIdentifierTypes);
@@ -1040,7 +1040,7 @@ Ext.define('Connector.view.Grid', {
         var memberDefinitions = cellset.axes[1].positions, members = [];
         Ext.each(memberDefinitions, function(definition) {
             var def = definition[0];
-            members.push(LABKEY.app.model.Filter.getMemberLabel(def.name));
+            members.push(Connector.model.Filter.getMemberLabel(def.name));
         });
         return members;
     },
@@ -1052,7 +1052,7 @@ Ext.define('Connector.view.Grid', {
         var memberDefinitions = cellset.axes[1].positions, studyassays = [];
         Ext.each(memberDefinitions, function(definition) {
             var def = definition[0], uniqueName = def.uniqueName, parts = uniqueName.split("].[");
-            var assay = LABKEY.app.model.Filter.getMemberLabel(parts[1]), study = LABKEY.app.model.Filter.getMemberLabel(def.name);
+            var assay = Connector.model.Filter.getMemberLabel(parts[1]), study = Connector.model.Filter.getMemberLabel(def.name);
 
             // Issue 31333: Export cover sheet lists all assays regardless of columns chosen
             // Only include assays listed on data grid, which may be a smaller set compared with active assays in filters

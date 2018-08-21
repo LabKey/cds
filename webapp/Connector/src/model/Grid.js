@@ -999,7 +999,7 @@ Ext.define('Connector.model.Grid', {
             Connector.getFilterService().getTimeFilter(wrappedTimeMeasure, filterArray, function(timeFilter)
             {
                 filter = Ext.create('Connector.model.Filter', {
-                    operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                    operator: Connector.model.Filter.OperatorTypes.OR,
                     isTime: true,
                     isGrid: true,
                     isWhereFilter: true,
@@ -1017,7 +1017,7 @@ Ext.define('Connector.model.Grid', {
             filter = Ext.create('Connector.model.Filter', {
                 hierarchy: 'Subject',
                 gridFilter: filterArray,
-                operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                operator: Connector.model.Filter.OperatorTypes.OR,
                 isGrid: true,
                 filterSource: 'GETDATA',
                 isWhereFilter: true
