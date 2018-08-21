@@ -417,11 +417,13 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         ip.clickMabVirusPairCount();
         listText = ip.getMabVirusPairList();
+        log("MAb-Virus list: " + listText);
         Assert.assertTrue("List for MAb-Virus Pairs did not contain the expected items.", listText.contains("Has data in MAb grid\n2F5 - 246-F3_C10_2\n2F5 - 25710-2.43\n2F5 - 398-F1-F6_20\n2F5 - BJOX002000.03.2\n2F5 - CH119.10"));
         ip.clickClose();
 
         ip.clickMabVirusCount();
         listText = ip.getMabVirusList();
+        log("Viruses list: " + listText);
         Assert.assertTrue("List for Viruses did not contain the expected items.", listText.contains("Has data in MAb grid\n0013095-2.11\n001428-2.42\n0260.V5.C36\n0330.v4.c3\n0815.v3.c3\n1394C9_G1 (Rev-)"));
         ip.clickClose();
 

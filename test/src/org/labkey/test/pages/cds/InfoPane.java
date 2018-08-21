@@ -332,14 +332,15 @@ public class InfoPane
     private String getMabListText()
     {
         _test.waitForElementToBeVisible(Locator.css(cssMeasuresGrid));
-        int txtSize = 0;
+        int listSize = 0;
         int tries = 1;
 
         // Rather than just sleep see if the txt is changing (growing) if it is keep trying a couple of times or until it is no longer growing.
-        while((tries <= 10) && (txtSize != _test.getText(Locator.css(cssMeasuresGrid)).trim().length()))
+        while((tries <= 10) && (listSize != _test.getText(Locator.css(cssMeasuresGrid)).trim().length()))
         {
-            _test.sleep(500);
-            txtSize = _test.getText(Locator.css(cssMeasuresGrid)).trim().length();
+            _test.log("List Size: " + listSize + " tries: " + tries);
+            _test.sleep(1000);
+            listSize = _test.getText(Locator.css(cssMeasuresGrid)).trim().length();
             tries++;
         }
 
