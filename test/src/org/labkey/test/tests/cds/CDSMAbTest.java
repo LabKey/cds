@@ -260,7 +260,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
     }
 
     @Test
-    public void verifyGridExport() throws IOException
+    public void testMabGridExport() throws IOException
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
@@ -374,7 +374,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
     }
 
     @Test
-    public void verifyInfoPane() {
+    public void testMabInfoPane() {
 
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
