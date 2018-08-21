@@ -396,35 +396,39 @@ public class CDSMAbTest extends CDSReadOnlyTest
         // For most of these just check that the first few entries are present.
 
         ip.clickMabMixturesCount();
+        String expectedListItems = "Has data in MAb grid\n2F5\n3.00E+03\n4.00E+10\nA14\nAB-000402-1";
         String listText = ip.getMabMixturesList();
-        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items.", listText.contains("Has data in MAb grid\n2F5\n3.00E+03\n4.00E+10\nA14\nAB-000402-1"));
+        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
         ip.clickClose();
 
         ip.clickMabCount();
+        expectedListItems = "Has data in MAb grid\n2F5\n3.00E+03\n4.00E+10\nA14\nAB-000402-1";
         listText = ip.getMabList();
-        Assert.assertTrue("List for MAbs did not contain the expected items.", listText.contains("Has data in MAb grid\n2F5\n3.00E+03\n4.00E+10\nA14\nAB-000402-1"));
+        Assert.assertTrue("List for MAbs did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
         ip.clickClose();
 
         ip.clickMabDonorCounts();
+        expectedListItems = "Has data in MAb grid\nhuman\nllama\nmouse";
         listText = ip.getMabDonorList();
-        Assert.assertEquals("List for Donor Species did not contain the expected items.", "Has data in MAb grid\nhuman\nllama\nmouse", listText);
+        Assert.assertTrue("List for Donor Species did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
         ip.clickClose();
 
         ip.clickMabStudiesCount();
+        expectedListItems = "Has data in MAb grid\nQED 2\nRED 4\nRED 5\nYOYO 55\nZAP 117\nZAP 118\nZAP 119\nZAP 128\nZAP 133\nZAP 135";
         listText = ip.getMabStudiesList();
-        Assert.assertEquals("List for Studies did not contain the expected items.", "Has data in MAb grid\nQED 2\nRED 4\nRED 5\nYOYO 55\nZAP 117\nZAP 118\nZAP 119\nZAP 128\nZAP 133\nZAP 135", listText);
+        Assert.assertTrue("List for Studies did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
         ip.clickClose();
 
         ip.clickMabVirusPairCount();
+        expectedListItems = "Has data in MAb grid\n2F5 - 246-F3_C10_2\n2F5 - 25710-2.43\n2F5 - 398-F1-F6_20\n2F5 - BJOX002000.03.2\n2F5 - CH119.10";
         listText = ip.getMabVirusPairList();
-        log("MAb-Virus list: " + listText);
-        Assert.assertTrue("List for MAb-Virus Pairs did not contain the expected items.", listText.contains("Has data in MAb grid\n2F5 - 246-F3_C10_2\n2F5 - 25710-2.43\n2F5 - 398-F1-F6_20\n2F5 - BJOX002000.03.2\n2F5 - CH119.10"));
+        Assert.assertTrue("List for MAb-Virus Pairs did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
         ip.clickClose();
 
         ip.clickMabVirusCount();
+        expectedListItems = "Has data in MAb grid\n0013095-2.11\n001428-2.42\n0260.V5.C36\n0330.v4.c3\n0815.v3.c3\n1394C9_G1 (Rev-)";
         listText = ip.getMabVirusList();
-        log("Viruses list: " + listText);
-        Assert.assertTrue("List for Viruses did not contain the expected items.", listText.contains("Has data in MAb grid\n0013095-2.11\n001428-2.42\n0260.V5.C36\n0330.v4.c3\n0815.v3.c3\n1394C9_G1 (Rev-)"));
+        Assert.assertTrue("List for Viruses did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
         ip.clickClose();
 
         log("Apply various filters and verify counts change.");
@@ -448,13 +452,15 @@ public class CDSMAbTest extends CDSReadOnlyTest
         // For most of these just check that the first few entries are present.
 
         ip.clickMabMixturesCount();
+        expectedListItems = "Has data in MAb grid\n4.00E+10\nA14\nNo data in MAb grid\n2F5\n3.00E+03\nAB-000402-1";
         listText = ip.getMabMixturesList();
-        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items.", listText.contains("Has data in MAb grid\n4.00E+10\nA14\nNo data in MAb grid\n2F5\n3.00E+03\nAB-000402-1"));
+        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
         ip.clickClose();
 
         ip.clickMabStudiesCount();
+        expectedListItems = "Has data in MAb grid\nZAP 117\nZAP 119\nNo data in MAb grid\nQED 2\nRED 4\nRED 5\nYOYO 55\nZAP 118\nZAP 128\nZAP 133\nZAP 135";
         listText = ip.getMabStudiesList();
-        Assert.assertEquals("List for Studies did not contain the expected items.", "Has data in MAb grid\nZAP 117\nZAP 119\nNo data in MAb grid\nQED 2\nRED 4\nRED 5\nYOYO 55\nZAP 118\nZAP 128\nZAP 133\nZAP 135", listText);
+        Assert.assertTrue("List for Studies did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
         ip.clickClose();
 
         log("Verify virus filter has changed the list");
@@ -481,13 +487,58 @@ public class CDSMAbTest extends CDSReadOnlyTest
         Assert.assertEquals("Viruses count not as expected.", 3, ip.getMabVirusCount());
 
         ip.clickMabVirusCount();
+        expectedListItems = "Has data in MAb grid\n928-28\nMN.3\nSF162.LS\nNo data in MAb grid\n0013095-2.11\n001428-2.42\n0260.V5.C36\n0330.v4.c3\n0815.v3.c3\n1394C9_G1 (Rev-)";
         listText = ip.getMabVirusList();
-        Assert.assertTrue("List for Viruses did not contain the expected items.", listText.contains("Has data in MAb grid\n928-28\nMN.3\nSF162.LS\nNo data in MAb grid\n0013095-2.11\n001428-2.42\n0260.V5.C36\n0330.v4.c3\n0815.v3.c3\n1394C9_G1 (Rev-)"));
+        Assert.assertTrue("List for Viruses did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
         ip.clickClose();
 
         grid.clearAllFilters();
         grid.clearAllSelections();
 
+        log("Add a filter to the Geometric IC50 Curve.");
+
+        filteredColumns = new ArrayList<>();
+        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1", "< 1");
+        filteredColumns.add(GEOMETRIC_MEAN_IC50_COL);
+
+        log("Validate that the counts are as expected after the filter is applied.");
+        ip = new InfoPane(this);
+        ip.waitForSpinners();
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 169, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 169, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 622, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 147, ip.getMabVirusCount());
+
+        log("Go to the Find Subjects page");
+        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        ip = new InfoPane(this);
+        Assert.assertEquals("Going to 'Find Subjects' did not update info pane as expected. Subjects count is wrong: ", 8277, ip.getSubjectCount());
+
+        log("Go back to MAb tab and validate info pane still shows the filtered values.");
+        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
+        ip = new InfoPane(this);
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 169, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 169, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 622, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 147, ip.getMabVirusCount());
+
+        grid = new MAbDataGrid(getGridEl(), this, this);
+        grid.clearAllFilters();
+        grid.clearAllSelections();
+
+    }
+
+    private boolean doesListContainExpectedText(String listText, String expectedValues) {
+        String strFromUI = listText.replaceAll("[\\r\\n]", "");
+        String strExpected = expectedValues.replaceAll("[\\r\\n]", "");
+
+        return strFromUI.contains(strExpected);
     }
 
 }

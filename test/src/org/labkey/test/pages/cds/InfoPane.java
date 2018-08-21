@@ -335,14 +335,17 @@ public class InfoPane
         int listSize = 0;
         int tries = 1;
 
+        _test.log("Getting a MAb list.");
         // Rather than just sleep see if the txt is changing (growing) if it is keep trying a couple of times or until it is no longer growing.
         while((tries <= 10) && (listSize != _test.getText(Locator.css(cssMeasuresGrid)).trim().length()))
         {
             _test.log("List Size: " + listSize + " tries: " + tries);
             _test.sleep(1000);
             listSize = _test.getText(Locator.css(cssMeasuresGrid)).trim().length();
-            tries++;
+            tries = tries + 1;
         }
+
+        _test.log("List Size: " + listSize + " tries: " + tries);
 
         return _test.getText(Locator.css(cssMeasuresGrid)).trim();
     }
