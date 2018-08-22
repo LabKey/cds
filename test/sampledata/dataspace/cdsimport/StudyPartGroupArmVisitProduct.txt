@@ -74,5 +74,3 @@ q1	NA	B	B	0	186
 q1	NA	B	B	28	186
 q1	NA	B	B	140	188
 q1	NA	B	B	168	188
-r4	NA	Group 2	T2	0	223
-r4	NA	Group 3	T3	0	223
