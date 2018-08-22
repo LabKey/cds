@@ -535,8 +535,22 @@ public class CDSMAbTest extends CDSReadOnlyTest
     }
 
     private boolean doesListContainExpectedText(String listText, String expectedValues) {
-        String strFromUI = listText.replaceAll("[\\r\\n]", "");
-        String strExpected = expectedValues.replaceAll("[\\r\\n]", "");
+
+        String strFromUI = listText.replaceAll("\\r", "");
+        strFromUI = strFromUI.replaceAll("\\n", "");
+        String strExpected = expectedValues.replaceAll("\\r", "");
+        strExpected = strExpected.replaceAll("\\n", "");
+
+        log("doesListContainExpectedText expected: " + strExpected);
+
+        if(strFromUI.length() > strExpected.length())
+        {
+            log("doesListContainExpectedText  from UI: " + strFromUI.substring(0, strExpected.length()));
+        }
+        else
+        {
+            log("doesListContainExpectedText  from UI: " + strFromUI);
+        }
 
         return strFromUI.contains(strExpected);
     }
