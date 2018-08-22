@@ -332,7 +332,7 @@ public class InfoPane
     private String getMabListText()
     {
         _test.waitForElementToBeVisible(Locator.css(cssMeasuresGrid));
-        int listSize = 0;
+        int listSize = -1;
         int tries = 1;
 
         _test.log("Getting a MAb list.");
@@ -340,12 +340,12 @@ public class InfoPane
         while((tries <= 10) && (listSize != _test.getText(Locator.css(cssMeasuresGrid)).trim().length()))
         {
             _test.log("List Size: " + listSize + " tries: " + tries);
-            _test.sleep(1000);
+            _test.sleep(1500);
             listSize = _test.getText(Locator.css(cssMeasuresGrid)).trim().length();
             tries = tries + 1;
         }
 
-        _test.log("List Size: " + listSize + " tries: " + tries);
+        _test.log("Done List Size: " + listSize + " tries: " + tries);
 
         return _test.getText(Locator.css(cssMeasuresGrid)).trim();
     }

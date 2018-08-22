@@ -395,40 +395,111 @@ public class CDSMAbTest extends CDSReadOnlyTest
         log("Validate that clicking an item in the info pane gives the appropriate list of items.");
         // For most of these just check that the first few entries are present.
 
+        List<String> expectedHasDataInMAbGrid;
+        List<String> expectedNoDataInMAbGrid;
+
         ip.clickMabMixturesCount();
-        String expectedListItems = "Has data in MAb grid\n2F5\n3.00E+03\n4.00E+10\nA14\nAB-000402-1";
+        log("Check MAb/Mixtures list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("2F5");
+        expectedHasDataInMAbGrid.add("3.00E+03");
+        expectedHasDataInMAbGrid.add("4.00E+10");
+        expectedHasDataInMAbGrid.add("A14");
+        expectedHasDataInMAbGrid.add("AB-000402-1");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
         String listText = ip.getMabMixturesList();
-        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
+        String missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         ip.clickMabCount();
-        expectedListItems = "Has data in MAb grid\n2F5\n3.00E+03\n4.00E+10\nA14\nAB-000402-1";
+        log("Check MAb list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("2F5");
+        expectedHasDataInMAbGrid.add("3.00E+03");
+        expectedHasDataInMAbGrid.add("4.00E+10");
+        expectedHasDataInMAbGrid.add("A14");
+        expectedHasDataInMAbGrid.add("AB-000402-1");
+
         listText = ip.getMabList();
-        Assert.assertTrue("List for MAbs did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, null);
+        Assert.assertTrue("List for MAbs did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         ip.clickMabDonorCounts();
-        expectedListItems = "Has data in MAb grid\nhuman\nllama\nmouse";
+        log("Check Donor list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("human");
+        expectedHasDataInMAbGrid.add("llama");
+        expectedHasDataInMAbGrid.add("mouse");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
         listText = ip.getMabDonorList();
-        Assert.assertTrue("List for Donor Species did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Donor Species did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         ip.clickMabStudiesCount();
-        expectedListItems = "Has data in MAb grid\nQED 2\nRED 4\nRED 5\nYOYO 55\nZAP 117\nZAP 118\nZAP 119\nZAP 128\nZAP 133\nZAP 135";
+        log("Check Studies list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("QED 2");
+        expectedHasDataInMAbGrid.add("RED 4");
+        expectedHasDataInMAbGrid.add("RED 5");
+        expectedHasDataInMAbGrid.add("YOYO 55");
+        expectedHasDataInMAbGrid.add("ZAP 117");
+        expectedHasDataInMAbGrid.add("ZAP 118");
+        expectedHasDataInMAbGrid.add("ZAP 119");
+        expectedHasDataInMAbGrid.add("ZAP 128");
+        expectedHasDataInMAbGrid.add("ZAP 133");
+        expectedHasDataInMAbGrid.add("ZAP 135");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
         listText = ip.getMabStudiesList();
-        Assert.assertTrue("List for Studies did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Studies did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         ip.clickMabVirusPairCount();
-        expectedListItems = "Has data in MAb grid\n2F5 - 246-F3_C10_2\n2F5 - 25710-2.43\n2F5 - 398-F1-F6_20\n2F5 - BJOX002000.03.2\n2F5 - CH119.10";
+        log("Check Virus Pair list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("2F5 - 246-F3_C10_2");
+        expectedHasDataInMAbGrid.add("2F5 - 25710-2.43");
+        expectedHasDataInMAbGrid.add("2F5 - 398-F1-F6_20");
+        expectedHasDataInMAbGrid.add("2F5 - BJOX002000.03.2");
+        expectedHasDataInMAbGrid.add("2F5 - CH119.10");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
         listText = ip.getMabVirusPairList();
-        Assert.assertTrue("List for MAb-Virus Pairs did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for MAb-Virus Pairs did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         ip.clickMabVirusCount();
-        expectedListItems = "Has data in MAb grid\n0013095-2.11\n001428-2.42\n0260.V5.C36\n0330.v4.c3\n0815.v3.c3\n1394C9_G1 (Rev-)";
+        log("Check Virus list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("0013095-2.11");
+        expectedHasDataInMAbGrid.add("001428-2.42");
+        expectedHasDataInMAbGrid.add("0260.V5.C36");
+        expectedHasDataInMAbGrid.add("0330.v4.c3");
+        expectedHasDataInMAbGrid.add("0815.v3.c3");
+        expectedHasDataInMAbGrid.add("1394C9_G1 (Rev-)");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
         listText = ip.getMabVirusList();
-        Assert.assertTrue("List for Viruses did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Viruses did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         log("Apply various filters and verify counts change.");
@@ -452,15 +523,42 @@ public class CDSMAbTest extends CDSReadOnlyTest
         // For most of these just check that the first few entries are present.
 
         ip.clickMabMixturesCount();
-        expectedListItems = "Has data in MAb grid\n4.00E+10\nA14\nNo data in MAb grid\n2F5\n3.00E+03\nAB-000402-1";
+        log("Check MAb/Mixtures list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("4.00E+10");
+        expectedHasDataInMAbGrid.add("A14");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+        expectedNoDataInMAbGrid.add("2F5");
+        expectedNoDataInMAbGrid.add("3.00E+03");
+        expectedNoDataInMAbGrid.add("AB-000402-1");
+
         listText = ip.getMabMixturesList();
-        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         ip.clickMabStudiesCount();
-        expectedListItems = "Has data in MAb grid\nZAP 117\nZAP 119\nNo data in MAb grid\nQED 2\nRED 4\nRED 5\nYOYO 55\nZAP 118\nZAP 128\nZAP 133\nZAP 135";
+        log("Check Studies list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("ZAP 117");
+        expectedHasDataInMAbGrid.add("ZAP 119");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+        expectedNoDataInMAbGrid.add("QED 2");
+        expectedNoDataInMAbGrid.add("RED 4");
+        expectedNoDataInMAbGrid.add("RED 5");
+        expectedNoDataInMAbGrid.add("YOYO 55");
+        expectedNoDataInMAbGrid.add("ZAP 118");
+        expectedNoDataInMAbGrid.add("ZAP 128");
+        expectedNoDataInMAbGrid.add("ZAP 133");
+        expectedNoDataInMAbGrid.add("ZAP 135");
+
         listText = ip.getMabStudiesList();
-        Assert.assertTrue("List for Studies did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Studies did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         log("Verify virus filter has changed the list");
@@ -487,9 +585,24 @@ public class CDSMAbTest extends CDSReadOnlyTest
         Assert.assertEquals("Viruses count not as expected.", 3, ip.getMabVirusCount());
 
         ip.clickMabVirusCount();
-        expectedListItems = "Has data in MAb grid\n928-28\nMN.3\nSF162.LS\nNo data in MAb grid\n0013095-2.11\n001428-2.42\n0260.V5.C36\n0330.v4.c3\n0815.v3.c3\n1394C9_G1 (Rev-)";
+        log("Check Virus list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("928-28");
+        expectedHasDataInMAbGrid.add("MN.3");
+        expectedHasDataInMAbGrid.add("SF162.LS");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+        expectedNoDataInMAbGrid.add("0013095-2.11");
+        expectedNoDataInMAbGrid.add("001428-2.42");
+        expectedNoDataInMAbGrid.add("0260.V5.C36");
+        expectedNoDataInMAbGrid.add("0330.v4.c3");
+        expectedNoDataInMAbGrid.add("0815.v3.c3");
+        expectedNoDataInMAbGrid.add("1394C9_G1 (Rev-)");
+
         listText = ip.getMabVirusList();
-        Assert.assertTrue("List for Viruses did not contain the expected items.", doesListContainExpectedText(listText, expectedListItems));
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Viruses did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         grid.clearAllFilters();
@@ -534,25 +647,103 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
     }
 
-    private boolean doesListContainExpectedText(String listText, String expectedValues) {
+    private void buildLists(List<String> hasData, List<String> noData, String rawUIText) {
 
-        String strFromUI = listText.replaceAll("\\r", "");
-        strFromUI = strFromUI.replaceAll("\\n", "");
-        String strExpected = expectedValues.replaceAll("\\r", "");
-        strExpected = strExpected.replaceAll("\\n", "");
+        String[] uiEntry = rawUIText.split("\n");
 
-        log("doesListContainExpectedText expected: " + strExpected);
+        sleep(2000);
+        boolean putInHasData = false;
 
-        if(strFromUI.length() > strExpected.length())
+        int i = 0;
+
+        while(i < uiEntry.length)
         {
-            log("doesListContainExpectedText  from UI: " + strFromUI.substring(0, strExpected.length()));
+            if(uiEntry[i].trim().equalsIgnoreCase("Has data in MAb grid"))
+            {
+                putInHasData = true;
+                i++;
+            }
+            else if (uiEntry[i].trim().equalsIgnoreCase("No data in MAb grid"))
+            {
+                putInHasData = false;
+                i++;
+            }
+
+            if(putInHasData)
+            {
+                hasData.add(uiEntry[i]);
+            }
+            else
+            {
+                noData.add(uiEntry[i]);
+            }
+
+            i++;
+        }
+
+    }
+
+    private String doesListContainExpectedText(String listText, List<String> expectedHasData, List<String> expectedNoData) {
+
+        StringBuilder sb = new StringBuilder();
+
+        log("Raw UI text size: " + listText.length());
+
+        List<String> hasDataInMAbGrid = new ArrayList<>();
+        List<String> noDataInMAbGrid = new ArrayList<>();
+
+        buildLists(hasDataInMAbGrid, noDataInMAbGrid, listText);
+
+        log("hasDataInMAbGrid.size(): " + hasDataInMAbGrid.size() + " expectedHasData.size(): " +
+                ((expectedHasData != null) ? expectedHasData.size() : 0) + " noDataInMAbGrid.size(): " + noDataInMAbGrid.size() +
+                " expectedNoData.size(): " + ((expectedNoData != null) ? expectedNoData.size() : 0));
+
+        if(null != expectedHasData)
+        {
+
+            if((expectedHasData.size() == 0) && (hasDataInMAbGrid.size() != 0))
+            {
+                sb.append("UI shows values in 'Has data in MAb grid', wasn't expecting any.\n");
+            }
+            else
+            {
+                for (String expected : expectedHasData)
+                {
+                    if (!hasDataInMAbGrid.contains(expected))
+                        sb.append("Did not find '" + expected + "' in 'Has data in MAb grid'.\n");
+                }
+            }
+
         }
         else
         {
-            log("doesListContainExpectedText  from UI: " + strFromUI);
+            log("Expected Has Data is null so not going to check.");
         }
 
-        return strFromUI.contains(strExpected);
+        if(null != expectedNoData)
+        {
+
+            if((expectedNoData.size() == 0) && (noDataInMAbGrid.size() != 0))
+            {
+                sb.append("UI shows values in 'No data in MAb grid', wasn't expecting any.\n");
+            }
+            else
+            {
+                for (String expected : expectedNoData)
+                {
+                    if (!noDataInMAbGrid.contains(expected))
+                        sb.append("Did not find '" + expected + "' in 'No data in MAb grid'.\n");
+                }
+            }
+
+        }
+        else
+        {
+            log("Expected No Data is null so not going to check.");
+        }
+
+
+        return sb.toString();
     }
 
 }
