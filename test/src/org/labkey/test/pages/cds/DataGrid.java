@@ -40,8 +40,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.util.TestLogger.log;
 
 public class DataGrid
 {
@@ -552,8 +554,23 @@ public class DataGrid
     @LogMethod
     public void verifyCDSCSV(CDSExport expected) throws IOException
     {
-        File dir = TestFileUtils.getTestTempDir();
-        dir.mkdirs();
+        File dir = new File(TestFileUtils.getTestTempDir().getAbsolutePath() + "/" + UUID.randomUUID());
+
+        if(dir.exists())
+        {
+            log("Target directory (" + dir + ") for unzip already exists, going to delete it.");
+            if(dir.delete())
+                log("Successfully deleted the directory.");
+            else
+                log("Could not delete the directory.");
+        }
+        else
+        {
+            log("The target directory for unzip (" + dir + ") does not already exists.");
+        }
+
+        if(!dir.mkdirs())
+            log("Caution: mkdirs returned false for target directory. It is possible that unzip will fail.");
 
         File exportedZip = exportCSV();
 
