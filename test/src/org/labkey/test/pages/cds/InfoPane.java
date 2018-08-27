@@ -67,7 +67,8 @@ public class InfoPane
         _test.click(Locator.css(cssFilterCancel));
     }
 
-    public void clickClose() {
+    public void clickClose()
+    {
         _test.click(Locator.css(cssClose));
     }
 
@@ -93,7 +94,7 @@ public class InfoPane
             multiSelectKey = Keys.CONTROL;
 
         // Clear the current selection.
-        if(!_test.isElementPresent(Locator.css("div.x-column-header-checkbox.x-grid-hd-checker-on")))
+        if (!_test.isElementPresent(Locator.css("div.x-column-header-checkbox.x-grid-hd-checker-on")))
         {
             _test.click(Locator.css("div.x-column-header-checkbox"));
             _test.sleep(CDSHelper.CDS_WAIT);
@@ -104,7 +105,8 @@ public class InfoPane
         Actions builder = new Actions(_test.getDriver());
         builder.keyDown(multiSelectKey).build().perform();
 
-        for(String val : studiesFilter){
+        for (String val : studiesFilter)
+        {
             _test.click(Locator.xpath("//tr//div[@title='" + val + "']"));
             _test.sleep(500);
         }
@@ -135,14 +137,14 @@ public class InfoPane
         String text = _test.getText(Locator.css(cssPath)).replace(",", "");
 
         // If the text is empty let's try and wait in a semi-smart way.
-        if(text.trim().length() == 0)
+        if (text.trim().length() == 0)
         {
             _waitForSpinners(_test);
 
             // Try again.
             text = _test.getText(Locator.css(cssPath)).replace(",", "");
 
-            if(text.trim().length() == 0)
+            if (text.trim().length() == 0)
             {
 
                 // If it is still empty do one last long wait.
@@ -251,7 +253,8 @@ public class InfoPane
         _test.click(Locator.css(cssAntigensInYCount));
     }
 
-    public int getMabMixturesCount() {
+    public int getMabMixturesCount()
+    {
         return Integer.parseInt(_tryToGetCounts(_test, cssMabMixtureCounts));
     }
 
@@ -260,11 +263,13 @@ public class InfoPane
         return getMabListText();
     }
 
-    public void clickMabMixturesCount() {
+    public void clickMabMixturesCount()
+    {
         _test.click(Locator.css(cssMabMixtureCounts));
     }
 
-    public int getMabCount() {
+    public int getMabCount()
+    {
         return Integer.parseInt(_tryToGetCounts(_test, cssMabCounts));
     }
 
@@ -316,11 +321,13 @@ public class InfoPane
         return getMabListText();
     }
 
-    public int getMabVirusCount() {
+    public int getMabVirusCount()
+    {
         return Integer.parseInt(_tryToGetCounts(_test, cssMabVirusCount));
     }
 
-    public void clickMabVirusCount() {
+    public void clickMabVirusCount()
+    {
         _test.click(Locator.css(cssMabVirusCount));
     }
 

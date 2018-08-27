@@ -374,8 +374,8 @@ public class CDSMAbTest extends CDSReadOnlyTest
     }
 
     @Test
-    public void testMabInfoPane() {
-
+    public void testMabInfoPane()
+    {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
         grid.clearAllFilters();
@@ -504,9 +504,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         log("Apply various filters and verify counts change.");
         log("Verify mAb mix filter");
-        List<String> filteredColumns = new ArrayList<>();
         grid.setFacet(MAB_COL,true,"4.00E+10", "A14");
-        filteredColumns.add(MAB_COL);
 
         log("Validate that the counts are as expected after the filter is applied.");
         ip = new InfoPane(this);
@@ -609,10 +607,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
         grid.clearAllSelections();
 
         log("Add a filter to the Geometric IC50 Curve.");
-
-        filteredColumns = new ArrayList<>();
         grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1", "< 1");
-        filteredColumns.add(GEOMETRIC_MEAN_IC50_COL);
 
         log("Validate that the counts are as expected after the filter is applied.");
         ip = new InfoPane(this);
@@ -644,11 +639,10 @@ public class CDSMAbTest extends CDSReadOnlyTest
         grid = new MAbDataGrid(getGridEl(), this, this);
         grid.clearAllFilters();
         grid.clearAllSelections();
-
     }
 
-    private void buildLists(List<String> hasData, List<String> noData, String rawUIText) {
-
+    private void buildLists(List<String> hasData, List<String> noData, String rawUIText)
+    {
         String[] uiEntry = rawUIText.split("\n");
 
         sleep(2000);
@@ -656,9 +650,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         int i = 0;
 
-        while(i < uiEntry.length)
+        while (i < uiEntry.length)
         {
-            if(uiEntry[i].trim().equalsIgnoreCase("Has data in MAb grid"))
+            if (uiEntry[i].trim().equalsIgnoreCase("Has data in MAb grid"))
             {
                 putInHasData = true;
                 i++;
@@ -669,7 +663,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
                 i++;
             }
 
-            if(putInHasData)
+            if (putInHasData)
             {
                 hasData.add(uiEntry[i]);
             }
@@ -680,11 +674,10 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
             i++;
         }
-
     }
 
-    private String doesListContainExpectedText(String listText, List<String> expectedHasData, List<String> expectedNoData) {
-
+    private String doesListContainExpectedText(String listText, List<String> expectedHasData, List<String> expectedNoData)
+    {
         StringBuilder sb = new StringBuilder();
 
         log("Raw UI text size: " + listText.length());
@@ -698,10 +691,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
                 ((expectedHasData != null) ? expectedHasData.size() : 0) + " noDataInMAbGrid.size(): " + noDataInMAbGrid.size() +
                 " expectedNoData.size(): " + ((expectedNoData != null) ? expectedNoData.size() : 0));
 
-        if(null != expectedHasData)
+        if (null != expectedHasData)
         {
-
-            if((expectedHasData.size() == 0) && (hasDataInMAbGrid.size() != 0))
+            if ((expectedHasData.size() == 0) && (hasDataInMAbGrid.size() != 0))
             {
                 sb.append("UI shows values in 'Has data in MAb grid', wasn't expecting any.\n");
             }
@@ -713,17 +705,16 @@ public class CDSMAbTest extends CDSReadOnlyTest
                         sb.append("Did not find '" + expected + "' in 'Has data in MAb grid'.\n");
                 }
             }
-
         }
         else
         {
             log("Expected Has Data is null so not going to check.");
         }
 
-        if(null != expectedNoData)
+        if (null != expectedNoData)
         {
 
-            if((expectedNoData.size() == 0) && (noDataInMAbGrid.size() != 0))
+            if ((expectedNoData.size() == 0) && (noDataInMAbGrid.size() != 0))
             {
                 sb.append("UI shows values in 'No data in MAb grid', wasn't expecting any.\n");
             }
@@ -742,8 +733,6 @@ public class CDSMAbTest extends CDSReadOnlyTest
             log("Expected No Data is null so not going to check.");
         }
 
-
         return sb.toString();
     }
-
 }

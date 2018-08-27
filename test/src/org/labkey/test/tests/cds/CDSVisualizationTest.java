@@ -1830,12 +1830,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         ArrayList<String> legends = coloraxis.getLegendText();
         boolean hasMultiValue = false;
         boolean hasCD8Plus = false;
-        for(String legendText : legends)
+        for (String legendText : legends)
         {
             log(legendText);
-            if(legendText.toLowerCase().equals("multiple values"))
+            if (legendText.toLowerCase().equals("multiple values"))
                 hasMultiValue = true;
-            if(legendText.toLowerCase().equals("cd8+"))
+            if (legendText.toLowerCase().equals("cd8+"))
                 hasCD8Plus = true;
         }
 
@@ -1869,10 +1869,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Get the legend text.");
         legends = coloraxis.getLegendText();
         hasCD8Plus = false;
-        for(String legendText : legends)
+        for (String legendText : legends)
         {
             log(legendText);
-            if(legendText.toLowerCase().equals("cd8+"))
+            if (legendText.toLowerCase().equals("cd8+"))
                 hasCD8Plus = true;
         }
 
@@ -1898,7 +1898,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         refresh();
         sleep(2000);
 
-        if(hasYGutter)
+        if (hasYGutter)
         {
             mainPlotIndex = 2;
             manipulateGutterPlotBrushing(false, mainPlotIndex, subjectCountBefore, numOfOtherFilters);
@@ -1915,7 +1915,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Brush in main plot area and verify that we don't get a brush window in the gutters.");
 
-        if(hasMainPlotDataPoints)
+        if (hasMainPlotDataPoints)
         {
 
             // See what kind of data points we have in the main plot.
@@ -1952,7 +1952,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
             assertTrue("'undefined x value' gutter has a brush window and it should not.", heightWidth == 0);
         }
 
-        if(hasXGutter)
+        if (hasXGutter)
         {
             log("Verify no brush in 'undefined y value' gutter.");
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > rect.extent";
@@ -1975,7 +1975,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         CDSHelper cds = new CDSHelper(this);
         String cssPathBrushWindow;
 
-        if(isXGutter)
+        if (isXGutter)
         {
             brushPlot("div.bottomplot > svg > g:nth-child(4) > g.grid-line > path:nth-of-type(2)", -50, 0, false);
         }
@@ -1986,7 +1986,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Move the brush window in the 'undefined y value' gutter.");
 
-        if(isXGutter)
+        if (isXGutter)
         {
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > rect.extent";
             cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), -100, 0);
@@ -2003,7 +2003,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Move the brush window in the main plot.");
 
         cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") > g.brush > rect.extent";
-        if(isXGutter)
+        if (isXGutter)
         {
             cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), 100, 0);
         }
@@ -2016,7 +2016,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Change the brush window size using the 'handles'.");
 
-        if(isXGutter)
+        if (isXGutter)
         {
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > g:nth-of-type(1)";
             cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), -100, 0);
@@ -2029,7 +2029,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         sleep(500);
 
-        if(isXGutter)
+        if (isXGutter)
         {
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > g:nth-of-type(2)";
             cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), -100, 0);
@@ -2042,7 +2042,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Move the brush window back to starting point.");
 
-        if(isXGutter)
+        if (isXGutter)
         {
             cssPathBrushWindow = "div.bottomplot > svg > g.brush > rect.extent";
             cds.dragAndDropFromElement(Locator.css(cssPathBrushWindow), 100, 0);
@@ -2085,7 +2085,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.dragAndDropFromElement(plotElement, xOffSet, yOffSet);
         sleep(CDSHelper.CDS_WAIT);
 
-        if(applyFilter)
+        if (applyFilter)
         {
             assertElementVisible(Locator.linkContainingText("Filter"));
             applyBrushAsFilter(subjectCountBefore);
@@ -2109,7 +2109,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.dragAndDropFromElement(Locator.css(cssPathToPlot), xOffset, yOffset);
         sleep(CDSHelper.CDS_WAIT);
 
-        if(applyFilter)
+        if (applyFilter)
         {
             assertElementVisible(Locator.linkContainingText("Filter"));
             applyBrushAsFilter(subjectCountBefore);

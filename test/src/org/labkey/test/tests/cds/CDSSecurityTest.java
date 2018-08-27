@@ -84,7 +84,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     @Test
     public void testUserPermissions()
     {
-
         ensureAdminMode();
         Ext4Helper.resetCssPrefix();
 
@@ -270,7 +269,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     private void validateToolTipText(String toolTipText, String... expectedText)
     {
-        for(String expected : expectedText)
+        for (String expected : expectedText)
         {
             Assert.assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
         }
@@ -416,7 +415,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     @Test
     public void testSiteUserGroups() throws IOException, CommandException
     {
-
         StringBuilder errorMessage = new StringBuilder();
         boolean allGood = true;
         ApiPermissionsHelper _apiPermissionHelper = new ApiPermissionsHelper(this);
@@ -424,26 +422,30 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         goToHome();
 
         log("For each of the expected groups validate that the containers and access are as expected.");
-        for(String groupName : CDSHelper.siteGroupRoles.keySet()) {
-
+        for (String groupName : CDSHelper.siteGroupRoles.keySet())
+        {
             log("Checking group: '" + groupName + "'.");
 
             // Get a map of the containers and associated access for this group.
             Map<String, String> containerAccess = getContainerListAndPermissionFromPermissionView(_apiPermissionHelper.getGroupId(groupName));
 
             log("Validate that the list of expected studies/containers are present and with the expected permissions.");
-            for(String study : CDSHelper.siteGroupStudies.get(groupName)) {
+            for (String study : CDSHelper.siteGroupStudies.get(groupName))
+            {
                 // Validate that the container is in the key set for the map of containers & access.
-                if(containerAccess.keySet().contains(study)) {
+                if (containerAccess.keySet().contains(study))
+                {
                     // Now check that the permission for the container is as expected.
-                    if(!containerAccess.get(study).toLowerCase().equals(CDSHelper.siteGroupRoles.get(groupName).toLowerCase())){
+                    if (!containerAccess.get(study).toLowerCase().equals(CDSHelper.siteGroupRoles.get(groupName).toLowerCase()))
+                    {
                         allGood = false;
                         errorMessage.append("For group '" + groupName + "' container/study '" + study +"' was listed but permission was listed as '" + containerAccess.get(study) + "' expected '" + CDSHelper.siteGroupRoles.get(groupName) + "'.\n");
                     }
                     // Since the container was in the key set (as expected) remove it from the map.
                     containerAccess.remove(study);
                 }
-                else {
+                else
+                {
                     allGood = false;
                     errorMessage.append("For group '" + groupName + "' container/study '" + study +"' was not listed.\n");
                 }
@@ -451,11 +453,11 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
             // If there is anything left in the map of containers and access it means there was a container that this group has access to that wasn't expected.
             log("Validate that there are no extra studies/containers listed for the group.");
-            if(containerAccess.size() > 0 && !groupName.equalsIgnoreCase(CDSHelper.GROUP_DATA_IMPORT))
+            if (containerAccess.size() > 0 && !groupName.equalsIgnoreCase(CDSHelper.GROUP_DATA_IMPORT))
             {
                 log("Found entries in the list that should not be there!");
                 allGood = false;
-                for(String extraStudy : containerAccess.keySet())
+                for (String extraStudy : containerAccess.keySet())
                 {
                     errorMessage.append("For group '" + groupName + "' found extra container/study '" + extraStudy +"'.\n");
                 }
@@ -480,16 +482,19 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log("Validate that the list of expected studies/containers have been updated with the inherited permissions.");
         // Basically the same loop as above.
-        for(String study : inheritedStudyList) {
+        for (String study : inheritedStudyList)
+        {
             // Validate that the container is in the key set for the map of containers & access.
-            if(containerAccess.keySet().contains(study)) {
-
+            if (containerAccess.keySet().contains(study))
+            {
                 // Special case the inherited studies.
                 String expectedAccess;
-                if((study.toLowerCase().equals(CDSHelper.PROT_Z120.toLowerCase())) || (study.toLowerCase().equals(CDSHelper.PROT_Z121.toLowerCase()))){
+                if ((study.toLowerCase().equals(CDSHelper.PROT_Z120.toLowerCase())) || (study.toLowerCase().equals(CDSHelper.PROT_Z121.toLowerCase())))
+                {
                     expectedAccess = "Reader*";
                 }
-                else {
+                else
+                {
                     expectedAccess = CDSHelper.siteGroupRoles.get(CDSHelper.GROUP_DATA_IMPORT);
                 }
 
@@ -502,7 +507,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
                 containerAccess.remove(study);
 
             }
-            else {
+            else
+            {
                 allGood = false;
                 errorMessage.append("For special case of inherited permissions group '" + CDSHelper.GROUP_DATA_IMPORT + "' container/study '" + study +"' was not listed.\n");
             }
@@ -510,11 +516,11 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         }
 
         log("For the special case of inherited permissions validate that there are no extra studies/containers listed for the group.");
-        if(containerAccess.size() > 0)
+        if (containerAccess.size() > 0)
         {
             log("Found entries in the list that should not be there!");
             allGood = false;
-            for(String extraStudy : containerAccess.keySet())
+            for (String extraStudy : containerAccess.keySet())
             {
                 errorMessage.append("For special case of inherited permissions group '" + CDSHelper.GROUP_DATA_IMPORT + "' found extra container/study '" + extraStudy +"' was not listed.");
             }
@@ -539,10 +545,10 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Get the list of containers and the associated permissions for this group.");
         Map<String, String> containerAccess = new HashMap<>();
         List<WebElement> containerElements = Locator.findElements(getDriver(), Locator.xpath(CONTAINER_CELL_XPATH));
-        for(WebElement we : containerElements) {
-            if(!we.getText().toLowerCase().equals(getProjectName().toLowerCase())) {
+        for (WebElement we : containerElements)
+        {
+            if (!we.getText().toLowerCase().equals(getProjectName().toLowerCase()))
                 containerAccess.put(we.getText(), Locator.xpath(PERMISSION_CELL_XPATH.replace("$", we.getText())).findElement(getDriver()).getText());
-            }
         }
 
         return containerAccess;
@@ -589,7 +595,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         welcomeUrls = getWelcomeLinks();
 
-        for(int i=0; i < welcomeUrls.length; i++)
+        for (int i=0; i < welcomeUrls.length; i++)
         {
             log("Email: " + _newUserAccounts[i] + " welcome url: " + welcomeUrls[i]);
         }
@@ -879,7 +885,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         EmailRecordTable emailRecordTable = new EmailRecordTable(this);
 
-        for(int index = 0; index < _newUserAccounts.length; index++)
+        for (int index = 0; index < _newUserAccounts.length; index++)
         {
             emailRecordTable.clickSubject(_newUserAccounts[index] + msgSubject);
             usrEmail = _newUserAccounts[index].substring(0, _newUserAccounts[index].indexOf("@"));
@@ -894,7 +900,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     {
         setFormElement(Locator.css("input[name='password']"), password);
         setFormElement(Locator.css("input[name='reenter-password']"), password);
-        if(agreeToTOS)
+        if (agreeToTOS)
         {
             checkCheckbox(Locator.css("input[id='tos-create-account']"));
         }
@@ -927,7 +933,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         _ext4Helper.clickTabContainingText("Project Groups");
 
-        for(String group : _permGroups)
+        for (String group : _permGroups)
         {
             log("Looking for text: " + group);
             if (isTextPresent(group))

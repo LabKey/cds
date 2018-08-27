@@ -123,7 +123,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         Locator.XPathLocator checkbox = Locators.filterCheckAllLoc;
         Locator.XPathLocator checkedLoc = checkbox.append(Locator.tagWithClass("div", "x-grid-hd-checker-on"));
-        if((check && !_webDriverWrapper.isElementPresent(checkedLoc))
+        if ((check && !_webDriverWrapper.isElementPresent(checkedLoc))
             || (!check && _webDriverWrapper.isElementPresent(checkedLoc)))
             _webDriverWrapper.click(checkbox.append(Locator.tagWithClass("div", "x-column-header-checkbox")));
     }
@@ -239,7 +239,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         Locator.XPathLocator checkbox = Locators.headerCheckboxLoc;
         Locator.XPathLocator checkedLoc = checkbox.withClass("x-grid-hd-checker-on");
         _webDriverWrapper.click(checkbox);
-        if(_webDriverWrapper.isElementPresent(checkedLoc))
+        if (_webDriverWrapper.isElementPresent(checkedLoc))
             _webDriverWrapper.click(checkbox);
     }
 

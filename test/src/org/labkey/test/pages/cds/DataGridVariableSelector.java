@@ -63,24 +63,21 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
 
     public void openSelectorWindow()
     {
-//        if (!_test.isElementPresent(window()) || !_test.isElementVisible(window()))
-//        {
-//            _test.click(getOpenButton());
-//            _test.waitForElement(window());
-//        }
         super.openSelectorWindow(XPATH, "choose columns");
     }
 
-    public void pickSource(String source){
+    public void pickSource(String source)
+    {
         // If not currently on the source page, move there.
-        if(_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + getPickerClass() + "')]//span[contains(@class, 'back-action')]")))
+        if (_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + getPickerClass() + "')]//span[contains(@class, 'back-action')]")))
         {
             backToSource();
         }
         super.pickSource(XPATH, source);
     }
 
-    public void backToSource(){
+    public void backToSource()
+    {
         _test.click(Locator.xpath("//div[contains(@class, '" + getPickerClass() + "')]//span[contains(@class, 'back-action')]"));
         _test.sleep(750);
     }
@@ -95,7 +92,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     {
         _test.waitForElement(titleLocator); // make sure we are looking at grid
 
-        if((!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))) || (!_test.isElementVisible(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))))
+        if ((!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))) || (!_test.isElementVisible(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))))
         {
             openSelectorWindow();
         }
@@ -141,7 +138,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     {
         _test.waitForElement(titleLocator); // make sure we are looking at grid
 
-        if((!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))) || (!_test.isElementVisible(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))))
+        if ((!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))) || (!_test.isElementVisible(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))))
         {
             openSelectorWindow();
         }

@@ -122,7 +122,7 @@ public class CDSInitializer
         setupStudyDocumentProject();
 
         // Create the Site groups. ETL won't import if these are not present.
-        for(String groupName : CDSHelper.siteGroupRoles.keySet())
+        for (String groupName : CDSHelper.siteGroupRoles.keySet())
         {
             _apiPermissionsHelper.createGlobalPermissionsGroup(groupName);
         }

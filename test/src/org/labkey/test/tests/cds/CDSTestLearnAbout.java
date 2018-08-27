@@ -719,7 +719,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 .findElements(getDriver());
 
         List<String> studiesFiltered =  Arrays.asList(studiesToFilter);
-        for(WebElement studyTitlesOnPage : studyTitlesAfterFilter)
+        for (WebElement studyTitlesOnPage : studyTitlesAfterFilter)
         {
             scrollIntoView(studyTitlesOnPage);
             assertTrue(studiesFiltered.contains(studyTitlesOnPage.getText()));
@@ -814,7 +814,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
         waitForElement(Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Antigen"));
-        for(int i = 0; i < CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA.length; i++)
+        for (int i = 0; i < CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA.length; i++)
         {
             // Use this as the conditional test that the page has loaded, and wait for it to load as well.
             waitForElement(Locator.xpath("//div[@class='detail-description']//h2[text()='" + CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[i] + "']"), 1000, true);
@@ -840,7 +840,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue("Expected number of antigens after filtering: " + antigensToFilter.length + ", actual number: " + antigensAfterFilter.size(),
                 antigensAfterFilter.size() == antigensToFilter.length);
         List<String> studiesFiltered =  Arrays.asList(antigensToFilter);
-        for(WebElement antigenTitlesOnPage : antigensAfterFilter)
+        for (WebElement antigenTitlesOnPage : antigensAfterFilter)
         {
             scrollIntoView(antigenTitlesOnPage);
             assertTrue("Antigen " + antigenTitlesOnPage.getText() + " is not present", studiesFiltered.contains(antigenTitlesOnPage.getText()));
@@ -1300,7 +1300,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private void validateToolTipText(String toolTipText, String... expectedText)
     {
-        for(String expected : expectedText)
+        for (String expected : expectedText)
         {
             assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
         }
@@ -1328,7 +1328,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         Actions builder = new Actions(getDriver());
 
-        for(int i = -10; i <= elWidth && i <= elHeight && !bubblePresent; i++)
+        for (int i = -10; i <= elWidth && i <= elHeight && !bubblePresent; i++)
         {
             sleep(250); // Wait a moment.
             builder.moveToElement(el, i, i).build().perform();

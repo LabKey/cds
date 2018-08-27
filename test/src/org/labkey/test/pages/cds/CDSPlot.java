@@ -43,7 +43,6 @@ import static org.junit.Assert.fail;
 
 public class CDSPlot
 {
-
     public static final String MOUSEOVER_FILL = "#41C49F";
     public static final String MOUSEOVER_STROKE = "#00EAFF";
     public static final String BRUSHED_FILL = "#14C9CC";
@@ -134,7 +133,7 @@ public class CDSPlot
     {
         int points = 0;
 
-        if(hasXGutter())
+        if (hasXGutter())
         {
             points = _test.getElementCount(Locator.css("div.bottomplot svg g a.point"));
         }
@@ -146,7 +145,7 @@ public class CDSPlot
     {
         int points = 0;
 
-        if(hasYGutter())
+        if (hasYGutter())
         {
             points = _test.getElementCount(Locator.css("div.plot svg g a.point"));
         }
@@ -169,8 +168,8 @@ public class CDSPlot
         return hasGutter("div.bottomplot svg");
     }
 
-    public boolean hasGutter(String cssPath){
-
+    public boolean hasGutter(String cssPath)
+    {
         boolean hasElement;
 
         try
@@ -178,7 +177,8 @@ public class CDSPlot
             _test.waitForElement(Locator.css(cssPath), 3000);
             hasElement = Locator.css(cssPath).findElement(_test.getDriver()).isDisplayed();
         }
-        catch(org.openqa.selenium.NoSuchElementException ex){
+        catch (org.openqa.selenium.NoSuchElementException ex)
+        {
             hasElement = false;
         }
 
@@ -201,10 +201,9 @@ public class CDSPlot
         int mainPlotIndex;
         String cssMainPlotWindow;
         List<WebElement> axisElements;
-        WebElement mainPlot;
         boolean isPresent;
 
-        if(hasYGutter())
+        if (hasYGutter())
         {
             mainPlotIndex = 2;
         }
@@ -244,7 +243,6 @@ public class CDSPlot
 
                 int nonvacCount = 0, nonvacCountNoData = 0, vacCount = 0, vacCountNoData = 0, chalCount = 0, chalCountNoData = 0;
                 List<WebElement> visits;
-                WebElement preEnrollment;
 
                 _test.log("Study Name: '" + study.getText() + "' ID: " + studyId);
                 visits = Locator.css("image.visit-tag").findElements(study);
@@ -333,10 +331,10 @@ public class CDSPlot
                 assertTrue("Item not found in tool tip. Expected: '" + strTemp + "' (" + condensedExpected + "), actual: '" + actualToolTipText + "' (" + condensedActual + ").", condensedActual.contains(condensedExpected));
             }
         }
-        catch(NoSuchElementException nse)
+        catch (NoSuchElementException nse)
         {
             Capabilities cap = ((RemoteWebDriver) _test.getWrappedDriver()).getCapabilities();
-            if(cap.getBrowserName().toLowerCase().equals("firefox"))
+            if (cap.getBrowserName().toLowerCase().equals("firefox"))
             {
                 _test.log("!!!!Popups (hopscotch) are very unreliable for test automation on Firefox. Ignoring the 'NoSuchElementException'!!!!");
             }
@@ -377,7 +375,7 @@ public class CDSPlot
         catch(NoSuchElementException nse)
         {
             Capabilities cap = ((RemoteWebDriver) _test.getWrappedDriver()).getCapabilities();
-            if(cap.getBrowserName().toLowerCase().equals("firefox"))
+            if (cap.getBrowserName().toLowerCase().equals("firefox"))
             {
                 _test.log("!!!!Popups (hopscotch) are very unreliable for test automation on Firefox. Ignoring the 'NoSuchElementException'!!!!");
             }
@@ -413,10 +411,10 @@ public class CDSPlot
         List<WebElement> allImages = Locator.css(cssPath).findElements(_test.getDriver());
         List<WebElement> imgWithData = new ArrayList<>();
         String href;
-        for(WebElement img : allImages)
+        for (WebElement img : allImages)
         {
             href = img.getAttribute("href");
-            if(href.contains(imageValue))
+            if (href.contains(imageValue))
             {
                 imgWithData.add(img);
             }
