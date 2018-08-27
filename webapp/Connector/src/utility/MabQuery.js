@@ -67,18 +67,25 @@ Ext.define('Connector.utility.MabQuery', {
 
     logging: false,
 
-    constructor: function (config) {
+    constructor: function(config) {
         this.callParent([config]);
         if (Ext.isDefined(LABKEY.ActionURL.getParameter('logQuery'))) {
             this.logging = true;
         }
     },
 
-    getMetaData: function (config) {
+    log : function(message) {
+        if (this.logging) {
+            console.log(message);
+        }
+        return message;
+    },
+
+    getMetaData : function(config) {
         LABKEY.Query.selectRows({
             schemaName: 'cds',
             queryName: 'mAbMetaGridBase',
-            success: function (response) {
+            success: function(response) {
                 config.success.call(config.scope, response);
             },
             failure: config.failure,
@@ -86,11 +93,11 @@ Ext.define('Connector.utility.MabQuery', {
         });
     },
 
-    _executeSql: function(config, sql) {
+    _executeSql : function(config, sql) {
         LABKEY.Query.executeSql({
             schemaName: 'cds',
-            sql: sql,
-            success: function (response) {
+            sql: this.log(sql),
+            success: function(response) {
                 config.success.call(config.scope, response, config);
             },
             failure: config.failure,
@@ -103,70 +110,48 @@ Ext.define('Connector.utility.MabQuery', {
 
         if (Ext.isFunction(config.sql)) {
             sql = config.sql(config.useFilter === true);
-
-            if (this.logging) {
-                console.log(config.sql(config.useFilter === true));
-            }
         }
         else {
             if (config.isMeta)
                 sql = this._generateMabMetaUniqueValuesSql(config);
             else
                 sql = this._generateMabAssayUniqueValuesSql(config);
-
-            if (this.logging) {
-                if (config.isMeta)
-                    console.log(this._generateMabMetaUniqueValuesSql(config, true));
-                else
-                    console.log(this._generateMabAssayUniqueValuesSql(config, true));
-            }
         }
 
         this._executeSql(config, sql);
     },
 
-    getData: function (config) {
-        if (this.logging) {
-            console.log(this._generateMAbSql(true));
-        }
-        LABKEY.Query.executeSql({
-            schemaName: 'cds',
-            sql: this._generateMAbSql(),
-            success: function (response) {
+    getData : function(config) {
+        this._executeSql({
+            success: function(response) {
                 config.countsData = response;
-                if (this.logging) {
-                    console.log(this._generateGeoMeanIC50Sql(true));
-                }
                 this._executeSql(config, this._generateGeoMeanIC50Sql());
             },
             failure: config.failure,
             scope: this
-        });
+        }, this._generateMAbSql());
     },
 
     getMabViruses : function(config) {
-        if (this.logging) {
-            console.log(this._generateVirusCountSql(config, true));
-        }
-        this._executeSql(config, this._generateVirusCountSql(config));
+        this._executeSql(config, this._generateVirusCountSql());
     },
 
-    _generateVirusCountSql : function(config, forDebugging) {
-        return '(' + this._generateActiveVirusCountSql(forDebugging) + ')\n\t UNION \n\t(' + this._generateAllVirusCountSql() + ')';
+    _generateVirusCountSql : function() {
+        return '(' + this._generateActiveVirusCountSql() + ')\n\t UNION \n\t(' + this._generateAllVirusCountSql() + ')';
     },
 
-    _generateActiveVirusCountSql: function(forDebugging) {
+    _generateActiveVirusCountSql : function() {
         var SELECT = ['SELECT '], sep = "\n\t";
         Ext.each(this.VIRUS_COLUMNS, function(col) {
             SELECT.push(col + ',' + sep);
         }, this);
         SELECT.push('COUNT(DISTINCT ' + this.MAB_MIX_ID + ') as subjectCount ' + sep);
 
-        var WHERE = this._getMabStateFilterWhere(true, forDebugging);
+        var WHERE = this._getMabStateFilterWhere(true);
         return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getVirusGroupBy();
     },
 
-    _generateAllVirusCountSql: function() {
+    _generateAllVirusCountSql : function() {
         var SELECT = ['SELECT '], sep = "\n\t";
         Ext.each(this.VIRUS_COLUMNS, function(col) {
             SELECT.push(col + ',' + sep);
@@ -176,14 +161,14 @@ Ext.define('Connector.utility.MabQuery', {
         return SELECT.join('') + "\n" + this._getAssayFrom() + this._getVirusGroupBy();
     },
 
-    _getVirusGroupBy: function() {
+    _getVirusGroupBy : function() {
         return "\n\t" + 'GROUP BY ' + this.VIRUS_COLUMNS.toString() + "\n\t";
     },
 
-    _generateMabMetaUniqueValuesSql : function(config, forDebugging) {
+    _generateMabMetaUniqueValuesSql : function(config) {
         var WHERE = [];
         if (config.useFilter) {
-            WHERE.push(this._getActiveMabMixIdWhere(forDebugging));
+            WHERE.push(this._getActiveMabMixIdWhere());
         }
 
         return [
@@ -194,11 +179,11 @@ Ext.define('Connector.utility.MabQuery', {
         ].join('\n\t');
     },
 
-    _getActiveMabMixIdWhere: function(forDebugging, includeSelection, isExport) {
+    _getActiveMabMixIdWhere : function(includeSelection, isExport) {
         var sub = this._generateMabAssayUniqueValuesSql({
             useFilter: true,
             fieldName: this.MAB_MIX_ID
-        }, forDebugging, includeSelection, isExport);
+        }, includeSelection, isExport);
         return this.MAB_MIX_ID + ' IN (' + sub + ') ';
     },
 
@@ -214,10 +199,10 @@ Ext.define('Connector.utility.MabQuery', {
         return (WHERE.length === 0 ? "" : "\nWHERE ") + WHERE.join("\n\tAND ");
     },
 
-    _generateMabAssayUniqueValuesSql : function(config, forDebugging, includeSelection, isExport) {
+    _generateMabAssayUniqueValuesSql : function(config, includeSelection, isExport) {
         var WHERE = [];
         if (config.useFilter) {
-            WHERE = this._getMabStateFilterWhere(false, forDebugging, includeSelection, isExport)
+            WHERE = this._getMabStateFilterWhere(false, includeSelection, isExport)
         }
 
         return [
@@ -228,7 +213,7 @@ Ext.define('Connector.utility.MabQuery', {
         ].join('\n\t');
     },
 
-    _getMabStateFilterWhere : function(excludeVirus, forDebugging, includeSelection, isExport) {
+    _getMabStateFilterWhere : function(excludeVirus, includeSelection, isExport) {
         var assayFilters = [],
             metaFilters = [],
             ic50Filter,
@@ -247,15 +232,15 @@ Ext.define('Connector.utility.MabQuery', {
         }, this);
 
         Ext.each(assayFilters, function(filter) {
-            WHERE.push(this._getAssayDimensionalFilter(filter, forDebugging));
+            WHERE.push(this._getAssayDimensionalFilter(filter));
         }, this);
 
         if (ic50Filter) {
-            WHERE.push(this._getAssayDimensionalFilter(ic50Filter, forDebugging));
+            WHERE.push(this._getAssayDimensionalFilter(ic50Filter));
         }
 
         if ((metaFilters && metaFilters.length > 0) || includeSelection) {
-            WHERE.push(this._getMabMixMetadataWhere(metaFilters, forDebugging, includeSelection, isExport));
+            WHERE.push(this._getMabMixMetadataWhere(metaFilters, includeSelection, isExport));
         }
 
         return WHERE;
@@ -265,54 +250,51 @@ Ext.define('Connector.utility.MabQuery', {
         return this._buildFrom(this.MAB_GRID_BASE, this.MAB_GRID_BASE_ALIAS);
     },
 
-    _getAssayGroupBy: function() {
+    _getAssayGroupBy : function() {
         return  "\n\t" + 'GROUP BY ' + this.MAB_MIX_NAME_STD + " \n\t";
     },
 
-    _generateMAbSql : function(forDebugging) {
+    _generateMAbSql : function() {
         var SELECT = ['SELECT '], sep = "\n\t";
         SELECT.push(this.MAB_MIX_NAME_STD + ', ' + sep);
         Ext.each(this.COUNT_COLUMNS, function(col) {
             SELECT.push('COUNT(DISTINCT ' + col + ") as " + col + 'Count, ' + sep);
         }, this);
 
-        var WHERE = this._getMabStateFilterWhere(false, forDebugging);
+        var WHERE = this._getMabStateFilterWhere(false);
         return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getAssayGroupBy();
     },
 
-    _generateGeoMeanIC50Sql: function(forDebugging)
-    {
+    _generateGeoMeanIC50Sql : function() {
         var SELECT = ['SELECT '], sep = "\n\t";
         SELECT.push(this.MAB_MIX_NAME_STD + ', ' + sep);
         SELECT.push('exp(AVG(log(' + this.IC50_COLUMN + '))) as IC50geomean');
 
-        var WHERE = this._getMabStateFilterWhere(false, forDebugging);
+        var WHERE = this._getMabStateFilterWhere(false);
         WHERE.push("titer_curve_ic50 > 0 AND titer_curve_ic50 != CAST('Infinity' AS DOUBLE) AND titer_curve_ic50 != CAST('-Infinity' AS DOUBLE) AND titer_curve_ic50 IS NOT NULL");
         return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE) + this._getAssayGroupBy();
     },
 
-    _getAssayDimensionalFilter: function(filter, forDebugging)
-    {
-        return this._getFilterWhereSub(this.MAB_GRID_BASE_ALIAS, filter, forDebugging);
+    _getAssayDimensionalFilter : function(filter) {
+        return this._getFilterWhereSub(this.MAB_GRID_BASE_ALIAS, filter);
     },
 
-    _getMabMixMetadataWhere: function(metaFilters, forDebugging, includeSelection, isExport)
-    {
+    _getMabMixMetadataWhere : function(metaFilters, includeSelection, isExport) {
         var outer = this.MAB_GRID_BASE_ALIAS + '.' + this.MAB_MIX_ID + " IN ";
-        return outer + '(' + this._getMabMixMetadataFilter(metaFilters, forDebugging, includeSelection, isExport) + ')';
+        return outer + '(' + this._getMabMixMetadataFilter(metaFilters, includeSelection, isExport) + ')';
     },
 
-    _getMabMixMetadataFilter : function(metaFilters, forDebugging, includeSelection, isExport) {
+    _getMabMixMetadataFilter : function(metaFilters, includeSelection, isExport) {
         var sep = "\n\t";
         var SELECT = 'SELECT ' + this.MAB_META_GRID_BASE_ALIAS + '.' + this.MAB_MIX_ID + sep;
         var FROM = this._getMabMixMetaFrom();
         var WHERE = [];
         Ext.each(metaFilters, function(filter) {
-            WHERE.push(this._getMetadataSubWhere(filter, forDebugging))
+            WHERE.push(this._getMetadataSubWhere(filter))
         }, this);
 
         if (includeSelection) {
-            WHERE.push(this._generateMabSelectionFilterWhere(forDebugging, isExport));
+            WHERE.push(this._generateMabSelectionFilterWhere(isExport));
         }
 
         return SELECT + sep + FROM + sep + this._buildWhere(WHERE);
@@ -322,11 +304,11 @@ Ext.define('Connector.utility.MabQuery', {
         return this._buildFrom(this.MAB_META_GRID_BASE, this.MAB_META_GRID_BASE_ALIAS);
     },
 
-    _getMetadataSubWhere : function(filter, forDebugging) {
-        return this._getFilterWhereSub(this.MAB_META_GRID_BASE_ALIAS, filter, forDebugging);
+    _getMetadataSubWhere : function(filter) {
+        return this._getFilterWhereSub(this.MAB_META_GRID_BASE_ALIAS, filter);
     },
 
-    _getFilterWhereSub: function(tableAliasName, filter, forDebugging, isDataset) {
+    _getFilterWhereSub : function(tableAliasName, filter, isDataset) {
         var f = filter.gridFilter[0];
         var v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
         var values = v.split(';'), noEmptyWhere, emptyWhere;
@@ -341,7 +323,7 @@ Ext.define('Connector.utility.MabQuery', {
         }
 
         if (values.length > 0)
-            noEmptyWhere = tableAliasName + '.' + columnName + this._getFilterOp(f) + QueryUtils._toSqlValuesList(values, LABKEY.Query.sqlStringLiteral, forDebugging);
+            noEmptyWhere = tableAliasName + '.' + columnName + this._getFilterOp(f) + QueryUtils._toSqlValuesList(values, LABKEY.Query.sqlStringLiteral, this.logging);
 
         if (emptyWhere && noEmptyWhere)
             return '(' + noEmptyWhere + ' OR ' + emptyWhere + ')';
@@ -353,42 +335,33 @@ Ext.define('Connector.utility.MabQuery', {
         return '';
     },
 
-    _getGridBaseDatasetColumnName : function(f)
-    {
+    _getGridBaseDatasetColumnName : function(f) {
         var name = f.getColumnName();
         return name === 'study' ? 'prot' : name;
     },
 
-    _getFilterOp: function(f) {
+    _getFilterOp : function(f) {
         return (f.getFilterType().getURLSuffix() === 'notin' ? ' NOT' : '') + ' IN ';
     },
 
-    _getNULLFilterOp: function(f) {
+    _getNULLFilterOp : function(f) {
         return f.getFilterType().getURLSuffix() === 'notin' ? '  IS NOT NULL ' : ' IS NULL ';
     },
 
-    prepareMAbReportQueries: function (config) {
+    prepareMAbReportQueries : function(config) {
         this.getSelectedUniqueKeysQuery(config);
     },
 
-    getSelectedUniqueKeysQuery: function(config) {
-        var sql = this._generateSelectedUniqueKeysSql();
-
-        if (this.logging)
-            console.log(this._generateSelectedUniqueKeysSql(true));
-
+    getSelectedUniqueKeysQuery : function(config) {
         LABKEY.Query.executeSql({
             schemaName: 'cds',
-            sql: sql,
+            sql: this.log(this._generateSelectedUniqueKeysSql()),
             saveInSession: true,
-            success: function (response) {
-                if (this.logging)
-                {
-                    console.log('Selected MAb unique keys query:', window.location.origin + LABKEY.ActionURL.buildURL('query', 'executeQuery', undefined, {
-                        schemaName: 'cds',
-                        queryName: response.queryName
-                    }));
-                }
+            success: function(response) {
+                this.log('Selected MAb unique keys query: ' + window.location.origin + LABKEY.ActionURL.buildURL('query', 'executeQuery', undefined, {
+                    schemaName: 'cds',
+                    queryName: response.queryName
+                }));
                 config.filteredKeysQuery = response.queryName;
                 this.getSelectedDatasetQuery.call(this, config);
             },
@@ -397,24 +370,16 @@ Ext.define('Connector.utility.MabQuery', {
         });
     },
 
-    getSelectedDatasetQuery: function(config) {
-        var sql = this._generateSelectedDatasetSql(config);
-
-        if (this.logging)
-            console.log(this._generateSelectedDatasetSql(config, true));
-
+    getSelectedDatasetQuery : function(config) {
         LABKEY.Query.executeSql({
             schemaName: 'cds',
-            sql: sql,
+            sql: this.log(this._generateSelectedDatasetSql()),
             saveInSession: true,
-            success: function (response) {
-                if (this.logging)
-                {
-                    console.log('Selected MAb dataset query:', window.location.origin + LABKEY.ActionURL.buildURL('query', 'executeQuery', undefined, {
-                        schemaName: 'cds',
-                        queryName: response.queryName
-                    }));
-                }
+            success: function(response) {
+                this.log('Selected MAb dataset query: ' + window.location.origin + LABKEY.ActionURL.buildURL('query', 'executeQuery', undefined, {
+                    schemaName: 'cds',
+                    queryName: response.queryName
+                }));
                 config.filteredDatasetQuery = response.queryName;
                 config.success.call(config.scope, config);
             },
@@ -423,21 +388,21 @@ Ext.define('Connector.utility.MabQuery', {
         });
     },
 
-    _generateSelectedUniqueKeysSql: function(forDebugging) {
+    _generateSelectedUniqueKeysSql : function() {
         var SELECT = ['SELECT DISTINCT '];
         Ext.each(this.ASSAY_KEY_COLUMNS, function(col) {
             SELECT.push(col + ", ");
         }, this);
 
-        var WHERE = this._getMabStateFilterWhere(false, forDebugging, true);
+        var WHERE = this._getMabStateFilterWhere(false, true);
         return SELECT.join('') + "\n" + this._getAssayFrom() + this._buildWhere(WHERE);
     },
 
-    _generateMabSelectionFilterWhere: function(forDebugging, isExport) {
+    _generateMabSelectionFilterWhere : function(isExport) {
         var selected = Connector.getState().getSelectedMAbs(), where = '';
         if (selected && selected.length > 0) {
             where = this.MAB_META_GRID_BASE_ALIAS + '.' + this.MAB_MIX_NAME_STD + ' IN '
-                    + QueryUtils._toSqlValuesList(selected, LABKEY.Query.sqlStringLiteral, forDebugging);
+                    + QueryUtils._toSqlValuesList(selected, LABKEY.Query.sqlStringLiteral, this.logging);
         }
         else {
             where = isExport ? ' 1 = 1 ' : ' 1 = 0';
@@ -445,21 +410,22 @@ Ext.define('Connector.utility.MabQuery', {
         return where;
     },
 
-    _generateSelectedDatasetSql: function(forDebugging) {
-        var SELECT = 'SELECT * ';
-        var WHERE = this._getDatasetMabStateFilterWhere(false, forDebugging, true, false);
-        return SELECT + "\n" + this._getDatasetAssayFrom() + this._buildWhere(WHERE);
+    _generateSelectedDatasetSql : function() {
+        var WHERE = this._getDatasetMabStateFilterWhere(false, true, false);
+        return 'SELECT * \n' + this._getDatasetAssayFrom() + this._buildWhere(WHERE);
     },
 
     _getDatasetAssayFrom : function() {
         return this._buildFrom(this.MAB_Dataset, this.MAB_Dataset_ALIAS);
     },
 
-    _getDatasetMabStateFilterWhere: function(excludeVirus, forDebugging, includeSelection, isExport) {
-        var assayFilters = [], metaFilters = [], ic50Filter = null, WHERE = [];
-        var stateFilters = Connector.getState().getMabFilters(true);
-        Ext.each(stateFilters, function(filter)
-        {
+    _getDatasetMabStateFilterWhere : function(excludeVirus, includeSelection, isExport) {
+        var assayFilters = [],
+            metaFilters = [],
+            ic50Filter = null,
+            WHERE = [];
+
+        Ext.each(Connector.getState().getMabFilters(true), function(filter) {
             var f = filter.gridFilter[0], columnName = f.getColumnName();
             if (this.ASSAY_FILTER_COLUMNS.indexOf(columnName) > -1) {
                 if (!(excludeVirus && this.VIRUS_FILTER_COLUMN === columnName))
@@ -472,29 +438,28 @@ Ext.define('Connector.utility.MabQuery', {
         }, this);
 
         Ext.each(assayFilters, function(filter) {
-            WHERE.push(this._getDatasetAssayDimensionalFilter(filter, forDebugging));
+            WHERE.push(this._getDatasetAssayDimensionalFilter(filter));
         }, this);
 
-        if (ic50Filter)
+        if (ic50Filter) {
             WHERE.push(this.getDatasetIC50Where(ic50Filter));
+        }
 
-        WHERE.push(this._getDatasetMabMixMetadataWhere(metaFilters, forDebugging, includeSelection, isExport));
+        WHERE.push(this._getDatasetMabMixMetadataWhere(metaFilters, includeSelection, isExport));
 
         return WHERE;
     },
 
-    _getDatasetMabMixMetadataWhere: function(metaFilters, forDebugging, includeSelection, isExport)
-    {
+    _getDatasetMabMixMetadataWhere : function(metaFilters, includeSelection, isExport) {
         var outer = this.MAB_Dataset_ALIAS + '.' + this.MAB_MIX_ID + " IN ";
-        return outer + '(' + this._getMabMixMetadataFilter(metaFilters, forDebugging, includeSelection, isExport) + ')';
+        return outer + '(' + this._getMabMixMetadataFilter(metaFilters, includeSelection, isExport) + ')';
     },
 
-    _getDatasetAssayDimensionalFilter: function(filter, forDebugging)
-    {
-        return this._getFilterWhereSub(this.MAB_Dataset_ALIAS, filter, forDebugging, true);
+    _getDatasetAssayDimensionalFilter : function(filter) {
+        return this._getFilterWhereSub(this.MAB_Dataset_ALIAS, filter, true);
     },
 
-    getDatasetIC50Where: function(filter) {
+    getDatasetIC50Where : function(filter) {
         var columnName = this.MAB_Dataset_ALIAS + "." + this. IC50_COLUMN;
         var WHERE = '', rangeStr = '';
         if (filter) {
@@ -542,7 +507,7 @@ Ext.define('Connector.utility.MabQuery', {
         return ranges;
     },
 
-    prepareMAbExportQueries: function(config) {
+    prepareMAbExportQueries : function(config) {
         var exportParams = config.exportParams ? config.exportParams : {};
         var exportColumns = this.getNABMAbExportColumns(config.excludedColumns);
         exportParams.columnNames = exportColumns.columnNames;
@@ -554,12 +519,14 @@ Ext.define('Connector.utility.MabQuery', {
         exportParams.tableSqls = [this.getStudyAndMAbExportSql(), this.getMAbsExportSql(), this.getNAbMAbExportSql()];
         config.exportParams = exportParams;
 
-        var studyAssaysSql = this.getStudyAssaysExportSql();
+        for (var i = 0; i < exportParams.tableSqls.length; i++) {
+            this.log(exportParams.tableSqls[i]);
+        }
 
         LABKEY.Query.executeSql({
             schemaName: 'cds',
-            sql: studyAssaysSql,
-            success: function (response) {
+            sql: this.log(this.getStudyAssaysExportSql()),
+            success: function(response) {
                 var results = response.rows, studyassays = [];
                 if (results && results.length > 0) {
                     Ext.each(results, function(result) {
@@ -572,53 +539,43 @@ Ext.define('Connector.utility.MabQuery', {
             failure: config.failure,
             scope: this
         });
-
-        if (this.logging) {
-            console.log(this.getStudyAndMAbExportSql(true));
-            console.log(this.getMAbsExportSql(true));
-            console.log(this.getNAbMAbExportSql(true));
-            console.log(this.getStudyAssaysExportSql(true));
-        }
     },
 
-    getStudyAndMAbExportSql: function(forDebugging) {
+    getStudyAndMAbExportSql : function() {
         var SELECT = 'SELECT DISTINCT prot, mab_mix_id,  mab_mix_label, mab_mix_name_std ';
-        var WHERE = this._getDatasetMabStateFilterWhere(false, forDebugging, true, true);
+        var WHERE = this._getDatasetMabStateFilterWhere(false, true, true);
         return SELECT + "\n" + this._getDatasetWithMetaFrom() + this._buildWhere(WHERE);
     },
 
-    getMAbsExportSql: function(forDebugging) {
+    getMAbsExportSql : function() {
         var sep = "\n\t", WHERE = [], SELECT = 'SELECT * ';
-        WHERE.push(this._getActiveMabMixIdWhere(forDebugging, true, true));
-
-        return SELECT + sep + this._getMabMixMAbMetaFrom() + sep +
-                this._buildWhere(WHERE);
+        WHERE.push(this._getActiveMabMixIdWhere(true, true));
+        return SELECT + sep + this._getMabMixMAbMetaFrom() + sep + this._buildWhere(WHERE);
     },
 
-    _getMabMixMAbMetaFrom: function() {
+    _getMabMixMAbMetaFrom : function() {
         return this._buildFrom(this.MAB_MIX_MAB_FULL_META);
     },
 
-    getNAbMAbExportSql: function(forDebugging) {
-        var SELECT = 'SELECT * ';
-        var WHERE = this._getDatasetMabStateFilterWhere(false, forDebugging, true, true);
-        return SELECT + "\n" + this._getDatasetWithMetaFrom() + this._buildWhere(WHERE);
+    getNAbMAbExportSql : function() {
+        var WHERE = this._getDatasetMabStateFilterWhere(false, true, true);
+        return 'SELECT * \n' + this._getDatasetWithMetaFrom() + this._buildWhere(WHERE);
     },
 
-    _getDatasetWithMetaFrom: function() {
+    _getDatasetWithMetaFrom : function() {
         return this._buildFrom(this.MAB_DATASET_WITH_MIX_META, this.MAB_Dataset_ALIAS);
     },
 
-    getStudyAssaysExportSql: function(forDebugging) {
+    getStudyAssaysExportSql : function() {
         var SELECT = "SELECT DISTINCT prot || '|||' || assay_identifier AS studyassay";
-        var WHERE = this._getDatasetMabStateFilterWhere(false, forDebugging, true, true);
+        var WHERE = this._getDatasetMabStateFilterWhere(false, true, true);
         return SELECT + "\n" + this._getDatasetWithMetaFrom() + this._buildWhere(WHERE);
     },
 
-    getNABMAbExportColumns: function(excludedColumns) {
+    getNABMAbExportColumns : function(excludedColumns) {
         var allMeasures = Connector.getQueryService().MEASURE_STORE.data.items, mabMeasures = [];
         Ext.each(allMeasures, function(measure) {
-            if (measure.get("queryName") === "NABMAb" && !measure.get("hidden")) {
+            if (measure.get('queryName') === 'NABMAb' && !measure.get('hidden')) {
                 if (!excludedColumns || excludedColumns.indexOf(measure.get('name')) === -1)
                     mabMeasures.push(measure);
             }
@@ -629,9 +586,9 @@ Ext.define('Connector.utility.MabQuery', {
         var orderedColumns = this.BASE_EXPORT_COLUMNS.slice(0); //clone
         var orderedColumnLabels = this.BASE_EXPORT_COLUMN_LABLES.slice(0);
 
-        var datasetLabel = sortedMAbMeasures[0].get("queryLabel"), variables = [];
+        var datasetLabel = sortedMAbMeasures[0].get('queryLabel'), variables = [];
         Ext.each(sortedMAbMeasures, function(measure) {
-            var measureLabel = measure.get("label"), measureDescription = measure.get("description");
+            var measureLabel = measure.get('label'), measureDescription = measure.get('description');
             if (orderedColumns.indexOf(measure.get('name')) === -1) {
                 orderedColumns.push(measure.get('name'));
                 orderedColumnLabels.push(measureLabel);
@@ -680,7 +637,7 @@ Ext.define('Connector.utility.MabQuery', {
 
         if (ic50Filter) {
             var filterSubs = this.getMAbIC50FilterStr(ic50Filter);
-            Ext.each(filterSubs, function (sub) {
+            Ext.each(filterSubs, function(sub) {
                 filterStrs.push(this._prepareExportFilterStr(mAbDatasetLabel, sub));
             }, this)
         }
@@ -696,7 +653,7 @@ Ext.define('Connector.utility.MabQuery', {
         return title + ChartUtils.ANTIGEN_LEVEL_DELIMITER + content;
     },
 
-    getMAbIC50FilterStr: function(filter) {
+    getMAbIC50FilterStr : function(filter) {
         var rangeFilterStrs = [];
         if (filter) {
             var f = filter.gridFilter[0], columnName = f.getColumnName();
@@ -723,7 +680,7 @@ Ext.define('Connector.utility.MabQuery', {
         return rangeFilterStrs;
     },
 
-    getMAbSelectedFilterStr: function() {
+    getMAbSelectedFilterStr : function() {
         var selected = Connector.getState().getSelectedMAbs(), filterStr;
         if (selected && selected.length > 0) {
             filterStr = Connector.view.MabGrid.ColumnMap['mab_mix_name_std'].filterLabel + ": " + selected.join(', ');
@@ -731,7 +688,7 @@ Ext.define('Connector.utility.MabQuery', {
         return filterStr;
     },
 
-    _getExportedFilterValuesStr: function(filter) {
+    _getExportedFilterValuesStr : function(filter) {
         var f = filter.gridFilter[0], op = '';
         var valueStr = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
         if (f.getColumnName() === this.VIRUS_FILTER_COLUMN)
@@ -744,7 +701,7 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     getBaseCountSQL : function(useFilter) {
-        return [
+        return this.log([
             'SELECT',
             [
                 'COUNT(DISTINCT mab_mix_name_std) as mixCount',
@@ -752,32 +709,32 @@ Ext.define('Connector.utility.MabQuery', {
                 'COUNT(DISTINCT virus) as virusCount'
             ].join(', '),
             this._getAssayFrom(),
-            (useFilter ? this._buildWhere(this._getMabStateFilterWhere(false, this.logging)) : '')
-        ].join('\n');
+            (useFilter ? this._buildWhere(this._getMabStateFilterWhere(false)) : '')
+        ].join('\n'));
     },
 
     getMetaCountSQL : function(useFilter) {
-        return [
+        return this.log([
             'SELECT COUNT(DISTINCT mab_donor_species) as donorSpeciesCount',
             this._getMabMixMetaFrom(),
-            (useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(this.logging, false, false)) : '')
-        ].join('\n');
+            (useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(false, false)) : '')
+        ].join('\n'));
     },
 
     getMabCountSQL : function(useFilter) {
-        return [
+        return this.log([
             'SELECT COUNT(DISTINCT mab_id) as mabCount',
             this._getMabMixMAbMetaFrom(),
-            useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(this.logging, false, false)) : ''
-        ].join('\n');
+            useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(false, false)) : ''
+        ].join('\n'));
     },
 
     getMabValuesSQL : function(useFilter) {
-        return [
+        return this.log([
             'SELECT DISTINCT mab_name_std',
             this._getMabMixMAbMetaFrom(),
-            useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(this.logging, false, false)) : ''
-        ].join('\n');
+            useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(false, false)) : ''
+        ].join('\n'));
     },
 
     getMAbVirusPairFrom : function(useFilter) {
@@ -785,7 +742,7 @@ Ext.define('Connector.utility.MabQuery', {
             'FROM (SELECT ',
             [this.MAB_MIX_NAME_STD, 'virus', 'COUNT(*) as mabVirusCount'].join(', '),
             this._getAssayFrom(),
-            (useFilter ? this._buildWhere(this._getMabStateFilterWhere(false, this.logging)) : ''),
+            (useFilter ? this._buildWhere(this._getMabStateFilterWhere(false)) : ''),
             'GROUP BY ',
             [this.MAB_MIX_NAME_STD, 'virus'].join(', '),
             ')'
@@ -793,16 +750,16 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     getMAbVirusPairCountSQL : function(useFilter) {
-        return [
+        return this.log([
             'SELECT COUNT(*) as ' + this.MAB_VIRUS_PAIRS_COUNT_COLUMN,
             this.getMAbVirusPairFrom(useFilter)
-        ].join('\n');
+        ].join('\n'));
     },
 
     getMAbVirusPairValuesSQL : function(useFilter) {
-        return [
+        return this.log([
             'SELECT mab_mix_name_std || \' - \' || virus as ' + this.MAB_VIRUS_PAIRS_COLUMN,
             this.getMAbVirusPairFrom(useFilter)
-        ].join('\n');
+        ].join('\n'));
     }
 });

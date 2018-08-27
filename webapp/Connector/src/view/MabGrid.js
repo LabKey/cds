@@ -200,7 +200,7 @@ Ext.define('Connector.view.MabGrid', {
                                                 placement: 'bottom',
                                                 title: 'Enable reporting',
                                                 xOffset: -65,
-                                                arrowOffset: 100,
+                                                arrowOffset: 215,
                                                 content: [
                                                     'Select data in the MAb grid, via the check box on each row,',
                                                     'that you\'d like to see in a report.'
