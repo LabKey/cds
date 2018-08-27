@@ -311,10 +311,13 @@ Ext.define('Connector.view.MabGrid', {
             }
             this.grid = Ext.create('Ext.grid.Panel', {
                 store: this.gridStore,
+                selType: 'checkboxmodel',
                 selModel: {
-                    selType: 'checkboxmodel',
-                    showHeaderCheckbox: true
+                    checkSelector: 'td.x-grid-cell-row-checker'
                 },
+                multiSelect: true,
+                headerWidth: 35,
+
                 columns: this.getGridColumnsConfig(),
                 cls: 'connector-grid mab-connector-grid',
                 border: false,
@@ -674,6 +677,7 @@ Ext.define('Connector.view.MabGrid', {
         Connector.getQueryService().prepareMAbExportQueries({
             exportParams: {
                 isExcel: isExcel,
+                excludedColumns: ['study_nabmab_subjectvisit_visit'],
                 exportInfoTitle: 'Data summary level exported:',
                 exportInfoContent: 'Neutralization curve details and titers by virus and mAb concentration', // future work to allow multiple export options
                 'X-LABKEY-CSRF': LABKEY.CSRF

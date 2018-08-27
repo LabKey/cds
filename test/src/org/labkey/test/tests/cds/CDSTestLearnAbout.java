@@ -421,7 +421,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify Variables page");
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         sleep(CDSHelper.CDS_WAIT);
-        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Fit Asymmetry"));
+        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Fit asymmetry"));
 
         log("Verify Antigens page");
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
