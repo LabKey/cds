@@ -9,6 +9,7 @@ import org.labkey.api.util.Pair;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.AntigenFilterPanel;
 import org.labkey.test.pages.cds.CDSExport;
+import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.MAbDataGrid;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
@@ -62,7 +63,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         log("Verify subject based info pane presence for mAb and other tabs");
         Locator.XPathLocator subjectInfoPane = CDSHelper.Locators.subjectInfoPaneHeader().notHidden();
-        assertElementNotPresent(subjectInfoPane);
+        assertElementVisible(subjectInfoPane);
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
         assertElementPresent(subjectInfoPane);
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
@@ -205,9 +206,8 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         log("Verify error message for view reports when no selection is made");
         click(grid.getDilutionReportBtn());
-        waitForElementToBeVisible(Locator.tagWithClassContaining("div", "x-message-box"));
-        assertTextPresent("No MAb/Mixture has been selected.");
-        click(Locator.xpath("//span[text()='OK']/ancestor::a[contains(@class, 'x-btn')]"));
+        waitForElementToBeVisible(Locator.tagWithClassContaining("div", "hopscotch-bubble"));
+        assertTextPresent("Select data in the MAb grid, via the check box on each row, that you'd like to see in a report.");
 
         log("Set an initial set of filters for grid");
         grid.setFacet(MAB_COL,false,"2F5", "A14");
@@ -260,7 +260,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
     }
 
     @Test
-    public void verifyGridExport() throws IOException
+    public void testMabGridExport() throws IOException
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
@@ -373,4 +373,366 @@ public class CDSMAbTest extends CDSReadOnlyTest
         return Locator.tagWithClass("div", "mab-connector-grid").findElement(getDriver());
     }
 
+    @Test
+    public void testMabInfoPane()
+    {
+        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
+        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        grid.clearAllFilters();
+        grid.clearAllSelections();
+
+        log("Validate that the counts are as expected.");
+        InfoPane ip = new InfoPane(this);
+        ip.waitForSpinners();
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 171, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 171, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 1418, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 159, ip.getMabVirusCount());
+
+        log("Validate that clicking an item in the info pane gives the appropriate list of items.");
+        // For most of these just check that the first few entries are present.
+
+        List<String> expectedHasDataInMAbGrid;
+        List<String> expectedNoDataInMAbGrid;
+
+        ip.clickMabMixturesCount();
+        log("Check MAb/Mixtures list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("2F5");
+        expectedHasDataInMAbGrid.add("3.00E+03");
+        expectedHasDataInMAbGrid.add("4.00E+10");
+        expectedHasDataInMAbGrid.add("A14");
+        expectedHasDataInMAbGrid.add("AB-000402-1");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
+        String listText = ip.getMabMixturesList();
+        String missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        ip.clickMabCount();
+        log("Check MAb list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("2F5");
+        expectedHasDataInMAbGrid.add("3.00E+03");
+        expectedHasDataInMAbGrid.add("4.00E+10");
+        expectedHasDataInMAbGrid.add("A14");
+        expectedHasDataInMAbGrid.add("AB-000402-1");
+
+        listText = ip.getMabList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, null);
+        Assert.assertTrue("List for MAbs did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        ip.clickMabDonorCounts();
+        log("Check Donor list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("human");
+        expectedHasDataInMAbGrid.add("llama");
+        expectedHasDataInMAbGrid.add("mouse");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
+        listText = ip.getMabDonorList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Donor Species did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        ip.clickMabStudiesCount();
+        log("Check Studies list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("QED 2");
+        expectedHasDataInMAbGrid.add("RED 4");
+        expectedHasDataInMAbGrid.add("RED 5");
+        expectedHasDataInMAbGrid.add("YOYO 55");
+        expectedHasDataInMAbGrid.add("ZAP 117");
+        expectedHasDataInMAbGrid.add("ZAP 118");
+        expectedHasDataInMAbGrid.add("ZAP 119");
+        expectedHasDataInMAbGrid.add("ZAP 128");
+        expectedHasDataInMAbGrid.add("ZAP 133");
+        expectedHasDataInMAbGrid.add("ZAP 135");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
+        listText = ip.getMabStudiesList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Studies did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        ip.clickMabVirusPairCount();
+        log("Check Virus Pair list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("2F5 - 246-F3_C10_2");
+        expectedHasDataInMAbGrid.add("2F5 - 25710-2.43");
+        expectedHasDataInMAbGrid.add("2F5 - 398-F1-F6_20");
+        expectedHasDataInMAbGrid.add("2F5 - BJOX002000.03.2");
+        expectedHasDataInMAbGrid.add("2F5 - CH119.10");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
+        listText = ip.getMabVirusPairList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for MAb-Virus Pairs did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        ip.clickMabVirusCount();
+        log("Check Virus list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("0013095-2.11");
+        expectedHasDataInMAbGrid.add("001428-2.42");
+        expectedHasDataInMAbGrid.add("0260.V5.C36");
+        expectedHasDataInMAbGrid.add("0330.v4.c3");
+        expectedHasDataInMAbGrid.add("0815.v3.c3");
+        expectedHasDataInMAbGrid.add("1394C9_G1 (Rev-)");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+
+        listText = ip.getMabVirusList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Viruses did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        log("Apply various filters and verify counts change.");
+        log("Verify mAb mix filter");
+        grid.setFacet(MAB_COL,true,"4.00E+10", "A14");
+
+        log("Validate that the counts are as expected after the filter is applied.");
+        ip = new InfoPane(this);
+        ip.waitForSpinners();
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 2, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 2, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 2, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 2, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 64, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 61, ip.getMabVirusCount());
+
+        log("Validate that clicking an item in the info pane shows correct information for the applied filter.");
+        // For most of these just check that the first few entries are present.
+
+        ip.clickMabMixturesCount();
+        log("Check MAb/Mixtures list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("4.00E+10");
+        expectedHasDataInMAbGrid.add("A14");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+        expectedNoDataInMAbGrid.add("2F5");
+        expectedNoDataInMAbGrid.add("3.00E+03");
+        expectedNoDataInMAbGrid.add("AB-000402-1");
+
+        listText = ip.getMabMixturesList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for MAbs/Mixtures did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        ip.clickMabStudiesCount();
+        log("Check Studies list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("ZAP 117");
+        expectedHasDataInMAbGrid.add("ZAP 119");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+        expectedNoDataInMAbGrid.add("QED 2");
+        expectedNoDataInMAbGrid.add("RED 4");
+        expectedNoDataInMAbGrid.add("RED 5");
+        expectedNoDataInMAbGrid.add("YOYO 55");
+        expectedNoDataInMAbGrid.add("ZAP 118");
+        expectedNoDataInMAbGrid.add("ZAP 128");
+        expectedNoDataInMAbGrid.add("ZAP 133");
+        expectedNoDataInMAbGrid.add("ZAP 135");
+
+        listText = ip.getMabStudiesList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Studies did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        log("Verify virus filter has changed the list");
+        AntigenFilterPanel virusPanel = grid.openVirusPanel(null);
+
+        virusPanel.checkVirus("virus-all", false);
+        sleep(2000);
+        String testValueCheck = "virus-1A-B-MN.3";
+        virusPanel.checkVirus(testValueCheck, true);
+        testValueCheck = "virus-1A-B-SF162.LS";
+        virusPanel.checkVirus(testValueCheck, true);
+        testValueCheck = "virus-2-02_AG-928-28";
+        virusPanel.checkVirus(testValueCheck, true);
+        grid.applyFilter();
+
+        ip = new InfoPane(this);
+        ip.waitForSpinners();
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 2, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 2, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 2, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 2, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 3, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 3, ip.getMabVirusCount());
+
+        ip.clickMabVirusCount();
+        log("Check Virus list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("928-28");
+        expectedHasDataInMAbGrid.add("MN.3");
+        expectedHasDataInMAbGrid.add("SF162.LS");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+        expectedNoDataInMAbGrid.add("0013095-2.11");
+        expectedNoDataInMAbGrid.add("001428-2.42");
+        expectedNoDataInMAbGrid.add("0260.V5.C36");
+        expectedNoDataInMAbGrid.add("0330.v4.c3");
+        expectedNoDataInMAbGrid.add("0815.v3.c3");
+        expectedNoDataInMAbGrid.add("1394C9_G1 (Rev-)");
+
+        listText = ip.getMabVirusList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Viruses did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        grid.clearAllFilters();
+        grid.clearAllSelections();
+
+        log("Add a filter to the Geometric IC50 Curve.");
+        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1", "< 1");
+
+        log("Validate that the counts are as expected after the filter is applied.");
+        ip = new InfoPane(this);
+        ip.waitForSpinners();
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 169, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 169, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 622, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 147, ip.getMabVirusCount());
+
+        log("Go to the Find Subjects page");
+        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        ip = new InfoPane(this);
+        Assert.assertEquals("Going to 'Find Subjects' did not update info pane as expected. Subjects count is wrong: ", 8277, ip.getSubjectCount());
+
+        log("Go back to MAb tab and validate info pane still shows the filtered values.");
+        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
+        ip = new InfoPane(this);
+
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 169, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 169, ip.getMabCount());
+        Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
+        Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 622, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 147, ip.getMabVirusCount());
+
+        grid = new MAbDataGrid(getGridEl(), this, this);
+        grid.clearAllFilters();
+        grid.clearAllSelections();
+    }
+
+    private void buildLists(List<String> hasData, List<String> noData, String rawUIText)
+    {
+        String[] uiEntry = rawUIText.split("\n");
+
+        sleep(2000);
+        boolean putInHasData = false;
+
+        int i = 0;
+
+        while (i < uiEntry.length)
+        {
+            if (uiEntry[i].trim().equalsIgnoreCase("Has data in MAb grid"))
+            {
+                putInHasData = true;
+                i++;
+            }
+            else if (uiEntry[i].trim().equalsIgnoreCase("No data in MAb grid"))
+            {
+                putInHasData = false;
+                i++;
+            }
+
+            if (putInHasData)
+            {
+                hasData.add(uiEntry[i]);
+            }
+            else
+            {
+                noData.add(uiEntry[i]);
+            }
+
+            i++;
+        }
+    }
+
+    private String doesListContainExpectedText(String listText, List<String> expectedHasData, List<String> expectedNoData)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        log("Raw UI text size: " + listText.length());
+
+        List<String> hasDataInMAbGrid = new ArrayList<>();
+        List<String> noDataInMAbGrid = new ArrayList<>();
+
+        buildLists(hasDataInMAbGrid, noDataInMAbGrid, listText);
+
+        log("hasDataInMAbGrid.size(): " + hasDataInMAbGrid.size() + " expectedHasData.size(): " +
+                ((expectedHasData != null) ? expectedHasData.size() : 0) + " noDataInMAbGrid.size(): " + noDataInMAbGrid.size() +
+                " expectedNoData.size(): " + ((expectedNoData != null) ? expectedNoData.size() : 0));
+
+        if (null != expectedHasData)
+        {
+            if ((expectedHasData.size() == 0) && (hasDataInMAbGrid.size() != 0))
+            {
+                sb.append("UI shows values in 'Has data in MAb grid', wasn't expecting any.\n");
+            }
+            else
+            {
+                for (String expected : expectedHasData)
+                {
+                    if (!hasDataInMAbGrid.contains(expected))
+                        sb.append("Did not find '" + expected + "' in 'Has data in MAb grid'.\n");
+                }
+            }
+        }
+        else
+        {
+            log("Expected Has Data is null so not going to check.");
+        }
+
+        if (null != expectedNoData)
+        {
+
+            if ((expectedNoData.size() == 0) && (noDataInMAbGrid.size() != 0))
+            {
+                sb.append("UI shows values in 'No data in MAb grid', wasn't expecting any.\n");
+            }
+            else
+            {
+                for (String expected : expectedNoData)
+                {
+                    if (!noDataInMAbGrid.contains(expected))
+                        sb.append("Did not find '" + expected + "' in 'No data in MAb grid'.\n");
+                }
+            }
+
+        }
+        else
+        {
+            log("Expected No Data is null so not going to check.");
+        }
+
+        return sb.toString();
+    }
 }

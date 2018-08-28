@@ -84,8 +84,7 @@ Ext.define('Connector.view.Grid', {
                     text: 'View data grid',
                     buttons: [
                         this.getExportCSVButton(),
-                        this.getExportExcelButton(),
-                        this.getCitationsButton()
+                        this.getExportExcelButton()
                     ]
                 }]
             }, {
@@ -216,22 +215,6 @@ Ext.define('Connector.view.Grid', {
         }
 
         return this.exportExcelButton;
-    },
-
-    getCitationsButton : function() {
-        if (!this.citationsButton) {
-            this.citationsButton = Ext.create('Ext.button.Button', {
-                cls: 'gridcitationsbtn',
-                text: 'citations',
-                ui: 'rounded-inverted-accent-text',
-                margin: '0 15 0 0',
-                disabled: true,
-                handler: function() {},
-                scope: this
-            });
-        }
-
-        return this.citationsButton;
     },
 
     getSelectColumnsButton : function() {

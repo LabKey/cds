@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Ext.define('Connector.view.FilterStatus', {
-    extend : 'Ext.panel.Panel',
+    extend: 'Ext.panel.Panel',
 
-    alias  : 'widget.filterstatus',
+    alias: 'widget.filterstatus',
 
     plugins: ['messaging'],
 
@@ -191,7 +191,7 @@ Ext.define('Connector.view.FilterStatus', {
         var filterContent = this.getFilterContent();
         var emptyText = this.getEmptyText();
 
-        if (filters.length == 0 && selections.length == 0) {
+        if (filters.length === 0 && selections.length === 0) {
             headerText.replaceCls('section-title-filtered', 'section-title');
             emptyText.show();
             filterContent.hide();

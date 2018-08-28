@@ -14,8 +14,6 @@ Ext.define('Connector.controller.State', {
 
     subjectName: 'Subject',
 
-    appVersion: '0.5',
-
     supportColumnServices: true,
 
     /**
@@ -355,7 +353,7 @@ Ext.define('Connector.controller.State', {
                 }
 
                 Ext.each(selected, function(selection) {
-                    if (selection.$className == 'Connector.model.Measure') {
+                    if (selection.$className === 'Connector.model.Measure') {
                         this.addSessionColumn(selection.raw);
                     }
                     else if (Ext.isObject(selection)) {
@@ -1067,11 +1065,13 @@ Ext.define('Connector.controller.State', {
     },
 
     getMabFilters : function(flat) {
-        if (!this.mabfilters)
+        if (!this.mabfilters) {
             return [];
+        }
 
-        if (!flat)
+        if (!flat) {
             return this.mabfilters;
+        }
 
         var flatMabFilters = [];
         for (var f=0; f < this.mabfilters.length; f++) {
@@ -1083,67 +1083,55 @@ Ext.define('Connector.controller.State', {
 
     setMabFilters : function(mabfilters, skipState) {
         this.mabfilters = this._getFilterSet(mabfilters);
-        if (!skipState)
+        if (!skipState) {
             this.updateState();
+        }
+
+        this.fireEvent('mabfilterchange');
     },
 
-    removeMabFilter : function(columnName, skipState)
-    {
+    removeMabFilter : function(columnName, skipState) {
         var filterSet = [];
 
-        Ext.each(this.getMabFilters(true), function(filter)
-        {
-            if (columnName !== filter.gridFilter[0].getColumnName())
-            {
+        Ext.each(this.getMabFilters(true), function(filter) {
+            if (columnName !== filter.gridFilter[0].getColumnName()) {
                 filterSet.push(filter);
             }
         });
-
-        if (Ext.isEmpty(filterSet))
-        {
-            this.clearMabFilters(skipState);
-        }
-        else
-        {
-            this.setMabFilters(filterSet, skipState);
-        }
-    },
-
-    updateMabFilter: function(columnName, newFilter, skipState)
-    {
-        var filterSet = [], updated = false;
-        Ext.each(this.getMabFilters(true), function(filter)
-        {
-            if (columnName === filter.gridFilter[0].getColumnName()) {
-                updated = true;
-                filterSet.push(newFilter);
-            }
-            else
-                filterSet.push(filter);
-        });
-        if (!updated)
-            filterSet.push(newFilter);
 
         this.setMabFilters(filterSet, skipState);
     },
 
-    clearMabFilters: function(skipState)
-    {
-        this.mabfilters = [];
-        if (!skipState)
-            this.updateState();
+    updateMabFilter : function(columnName, newFilter, skipState) {
+        var filterSet = [], updated = false;
+        Ext.each(this.getMabFilters(true), function(filter) {
+            if (columnName === filter.gridFilter[0].getColumnName()) {
+                updated = true;
+                filterSet.push(newFilter);
+            }
+            else {
+                filterSet.push(filter);
+            }
+        });
+        if (!updated) {
+            filterSet.push(newFilter);
+        }
+
+        this.setMabFilters(filterSet, skipState);
     },
 
-    getSelectedMAbs: function()
-    {
+    clearMabFilters : function(skipState) {
+        this.setMabFilters([], skipState);
+    },
+
+    getSelectedMAbs : function() {
         return this.selectedMAbs;
     },
 
-    updateSelectedMAbs: function(mAbs, skipState)
-    {
+    updateSelectedMAbs : function(mAbs, skipState) {
         this.selectedMAbs = mAbs;
-        if (!skipState)
+        if (!skipState) {
             this.updateState();
+        }
     }
-
 });

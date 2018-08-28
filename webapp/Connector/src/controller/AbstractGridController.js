@@ -28,26 +28,23 @@ Ext.define('Connector.controller.AbstractGridController', {
 
             var vm = this.getViewManager();
 
-            vm.on('beforechangeview', function(controller, view, currentContext)
-            {
+            vm.on('beforechangeview', function(controller, view, currentContext) {
                 // If a chart view is being activated, ensure it is not
                 // a view of plotType so to not deactivate the view unintentionally
-                if (controller == me.controllerName)
-                {
-                    if (Ext.isDefined(view) && view != me.viewXtype)
-                    {
+                if (controller === me.controllerName) {
+                    if (Ext.isDefined(view) && view !== me.viewXtype) {
+                        me.onViewDeactivate();
                         v.onDeactivate.call(v);
                     }
                 }
-                else if (currentContext.view == me.viewXtype)
-                {
+                else if (currentContext.view === me.viewXtype) {
+                    me.onViewDeactivate();
                     v.onDeactivate.call(v);
                 }
             });
-            vm.on('afterchangeview', function(c, view)
-            {
-                if (view == me.viewXtype)
-                {
+            vm.on('afterchangeview', function(c, view) {
+                if (view === me.viewXtype) {
+                    me.onViewActivate();
                     v.onActivate.call(v);
                 }
             });
@@ -66,5 +63,9 @@ Ext.define('Connector.controller.AbstractGridController', {
 
     getDefaultView : function() {
         return this.viewXtype;
-    }
+    },
+
+    onViewActivate : function() {},
+
+    onViewDeactivate : function() {},
 });

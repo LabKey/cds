@@ -158,7 +158,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         clickFolder(getProjectName());
 
         log("Create an couple of R Reports in the current folder.");
-        for(int i = 0; i < reports.length; i++)
+        for (int i = 0; i < reports.length; i++)
         {
             reports[i] = reports[i] + " " + date.getTime();
             cds.createReport(_rReportHelper, getProjectName() + "/query-begin.view?#sbh-qdp-%26CDS%26assay", REPORT_SCRIPT, reports[i], true);
@@ -229,7 +229,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         cds.viewLearnAboutPage("Reports");
 
-        for(int i = 0; i < reports.length - 1; i++)
+        for (int i = 0; i < reports.length - 1; i++)
         {
             log("Validate that report '" + reports[i] + "' is visible in the CDS grid.");
             assertTextPresent(reports[i]);
@@ -247,24 +247,28 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         log("Look at the data for the report as it appears in the grid.");
 
-        for(int i = 0; i < gridText.size(); i++)
+        for (int i = 0; i < gridText.size(); i++)
         {
             // This list may contain more than the reports created in this test. So specifically look for the reports created in this test.
-            if(gridText.get(i).contains(reports[0])){
+            if (gridText.get(i).contains(reports[0]))
+            {
                 assertTrue("Description for report '" + reports[0] + "' not as expected.", gridText.get(i).contains(descriptions[0]));
 //                Assert.assertTrue("Category for report '" + reports[0] + "' not as expected.", gridText.get(i).contains(categoryNames[0]));
                 reportCounts[0] = reportCounts[0] + 1;
             }
-            if(gridText.get(i).contains(reports[1])){
+            if (gridText.get(i).contains(reports[1]))
+            {
                 assertTrue("Description for report '" + reports[1] + "' not as expected.", gridText.get(i).contains(descriptions[1].replace("\n", " ")));
 //                Assert.assertTrue("Category for report '" + reports[1] + "' not as expected.", gridText.get(i).contains(categoryNames[0]));
                 reportCounts[1] = reportCounts[1] + 1;
             }
-            if(gridText.get(i).contains(reports[2])){
+            if (gridText.get(i).contains(reports[2]))
+            {
 //                Assert.assertTrue("Category for report '" + reports[2] + "' not as expected.", gridText.get(i).contains(categoryNames[1]));
                 reportCounts[2] = reportCounts[2] + 1;
             }
-            if(gridText.get(i).contains(reports[3])){
+            if (gridText.get(i).contains(reports[3]))
+            {
                 assertTrue("Description for report '" + reports[3] + "' not as expected.", gridText.get(i).contains(descriptions[3]));
 //                Assert.assertTrue("Category for report '" + reports[3] + "' not as expected.", gridText.get(i).contains(categoryNames[1]));
                 reportCounts[3] = reportCounts[3] + 1;
@@ -272,12 +276,12 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         }
 
         log("Validate that the report was present the expected number of times.");
-        for(int i = 0; i < reportCounts.length - 1; i++)
+        for (int i = 0; i < reportCounts.length - 1; i++)
         {
             assertTrue("Expected to find report '" + reports[i] + "' 1 time, found it " + reportCounts[i] + " times.", reportCounts[i] == 1);
         }
 
-        for(int i = 0; i < reports.length - 1; i++)
+        for (int i = 0; i < reports.length - 1; i++)
         {
             log("Load the report '" + reports[i] + "' and check the detail page for it.");
             scrollIntoView(Locator.tagWithText("h2", reports[i]));
@@ -286,7 +290,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
             waitForElements(Locator.xpath("//table[@class='labkey-output']"), 3);
 
             assertElementPresent("Header did not change to report name.", Locator.xpath("//div[@class='studyname'][text()='" + reports[i] + "']"), 1);
-            if(i != 2)
+            if (i != 2)
             {
                 assertElementPresent("Did not find the expected description tag for this report.", Locator.xpath("//td[@class='learn-report-header-column']/h3[text()='Description']/following-sibling::p[text()='" + descriptions[i] + "']"), 1);
             }
@@ -322,10 +326,10 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         waitForElement(Locator.xpath(XPATH_TO_DIALOG + "//div[contains(@class, 'x4-toolbar')]//span[text()='New Category']"));
 
-        for(String category : categoryNames)
+        for (String category : categoryNames)
         {
             // If the category does not exists create it.
-            if(!isElementPresent(Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']")))
+            if (!isElementPresent(Locator.xpath(XPATH_TO_DIALOG + "//td[@role='gridcell']//div[text()='" + category + "']")))
             {
                 clickButton("New Category", 0);
                 WebElement newCategoryField = Locator.xpath("//input[contains(@id, 'textfield') and @name='label']").notHidden().waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
@@ -407,7 +411,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         public ReportProperties setSharedCheckbox(boolean checked)
         {
-            if(checked)
+            if (checked)
                 _ext4Helper.checkCheckbox(Locator.xpath(XPATH_CHECKBOX));
             else
                 _ext4Helper.checkCheckbox(Locator.xpath(XPATH_CHECKBOX));

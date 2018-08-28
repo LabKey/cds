@@ -123,7 +123,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         Locator.XPathLocator checkbox = Locators.filterCheckAllLoc;
         Locator.XPathLocator checkedLoc = checkbox.append(Locator.tagWithClass("div", "x-grid-hd-checker-on"));
-        if((check && !_webDriverWrapper.isElementPresent(checkedLoc))
+        if ((check && !_webDriverWrapper.isElementPresent(checkedLoc))
             || (!check && _webDriverWrapper.isElementPresent(checkedLoc)))
             _webDriverWrapper.click(checkbox.append(Locator.tagWithClass("div", "x-column-header-checkbox")));
     }
@@ -177,8 +177,24 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void applyFilter()
     {
-        List<WebElement> buttons = CDSHelper.Locators.cdsButtonLocator("Done").findElements(_webDriverWrapper.getDriver());
-        final WebElement button = buttons.get(0);
+        List<WebElement> buttons;
+
+        Locator virusFilter = Locator.xpath("//div[contains(@class, 'x-window-closable')]//div[@class='header']//div[text()='Viruses tested against MAbs']");
+        int index;
+
+        if ((_webDriverWrapper.isElementPresent(virusFilter)) &&(_webDriverWrapper.isElementVisible(virusFilter)))
+        {
+            // The filter being applied is the virus filter.
+            buttons = CDSHelper.Locators.cdsButtonLocator("Done").findElements(_webDriverWrapper.getDriver());
+            index = 0;
+        }
+        else
+        {
+            buttons = CDSHelper.Locators.cdsButtonLocator("Filter").findElements(_webDriverWrapper.getDriver());
+            index = 1;
+        }
+
+        final WebElement button = buttons.get(index);
 
         _gridHelper.applyAndWaitForGrid(() -> {
             button.click();
@@ -223,7 +239,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         Locator.XPathLocator checkbox = Locators.headerCheckboxLoc;
         Locator.XPathLocator checkedLoc = checkbox.withClass("x-grid-hd-checker-on");
         _webDriverWrapper.click(checkbox);
-        if(_webDriverWrapper.isElementPresent(checkedLoc))
+        if (_webDriverWrapper.isElementPresent(checkedLoc))
             _webDriverWrapper.click(checkbox);
     }
 
