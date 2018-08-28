@@ -40,8 +40,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.util.TestLogger.log;
 
 public class DataGrid
 {
@@ -173,7 +175,7 @@ public class DataGrid
         openFilterPanel(columnName);
         _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath("//div[contains(@class, 'x-window-filterwindow')]//div[contains(@class, 'x-toolbar-text')][text()='" + columnName + "']")));
 
-        if(clearFirst)
+        if (clearFirst)
         {
             String allXpath = "//div[contains(@class, 'x-window-filterwindow')]//div[contains(@class, 'x-column-header')]";
             _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(allXpath)));
@@ -181,7 +183,7 @@ public class DataGrid
             _test.click(Locator.xpath(allXpath));
         }
 
-        for(String val : values)
+        for (String val : values)
         {
             cellXpath = cellXpathContst.replaceAll("[*]", val);
             _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(cellXpath)));
@@ -552,8 +554,23 @@ public class DataGrid
     @LogMethod
     public void verifyCDSCSV(CDSExport expected) throws IOException
     {
-        File dir = TestFileUtils.getTestTempDir();
-        dir.mkdirs();
+        File dir = new File(TestFileUtils.getTestTempDir().getAbsolutePath() + "/" + UUID.randomUUID());
+
+        if (dir.exists())
+        {
+            log("Target directory (" + dir + ") for unzip already exists, going to delete it.");
+            if (dir.delete())
+                log("Successfully deleted the directory.");
+            else
+                log("Could not delete the directory.");
+        }
+        else
+        {
+            log("The target directory for unzip (" + dir + ") does not already exists.");
+        }
+
+        if (!dir.mkdirs())
+            log("Caution: mkdirs returned false for target directory. It is possible that unzip will fail.");
 
         File exportedZip = exportCSV();
 
@@ -623,35 +640,41 @@ public class DataGrid
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
-    public void goToLastPage() {
+    public void goToLastPage()
+    {
         _test.click(Locators.lastPage);
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
-    public void goToFirstPage() {
+    public void goToFirstPage()
+    {
         _test.click(Locators.firstPage);
     }
 
-    public void clickPreviousBtn() {
+    public void clickPreviousBtn()
+    {
         _test.click(Locators.previousBtn);
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
-    public void clickNextBtn() {
+    public void clickNextBtn()
+    {
         _test.click(Locators.nextBtn);
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
-    public void goToPreviousPage() {
+    public void goToPreviousPage()
+    {
         _test.click(Locators.previousPage);
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
-    public void goToNextPage() {
+    public void goToNextPage()
+    {
         _test.click(Locators.nextPage);
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();

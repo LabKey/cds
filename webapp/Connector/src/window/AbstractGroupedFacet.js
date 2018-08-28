@@ -19,7 +19,6 @@ Ext.define('Connector.window.AbstractGroupedFacet', {
 
     /* To avoid URL overflow, allow up to 100 selections per column */
     maxSelection: 100
-
 });
 
 Ext.define('Connector.grid.AbstractGroupedFacet', {
@@ -36,19 +35,25 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
 
     columnField: undefined,
 
-    filterValues: [],
+    filterValues: undefined,
+
+    groupInText: 'In current selection',
+
+    groupOutText: 'Not in current selection',
 
     isFilterNegated: false,
 
-    latestSelections: [],
+    latestSelections: undefined,
 
     initComponent : function() {
 
         this.gridReady = false;
 
-        if (!this.filterValues) {
-            this.filterValues = [];
-        }
+        Ext.applyIf(this, {
+            allValues: [],
+            filterValues: [],
+            latestSelections: []
+        });
 
         this.items = [this.getGrid()];
 
@@ -64,7 +69,7 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
         var selections = this.useSearch ? this.latestSelections : grid.getSelectionModel().getSelection();
 
         if (selections.length > 0 && selections.length !== count) {
-            Ext.each(selections, function(selection){
+            Ext.each(selections, function(selection) {
                 selected.push(selection.get('value'));
             });
             all = store.getRange()
@@ -148,16 +153,15 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
                         ftype: 'grouping',
                         collapsible: false,
                         groupHeaderTpl: new Ext.XTemplate(
-                                '{name:this.renderHeader}', // 'name' is actually the value of the groupField
-                                {
-                                    renderHeader: function(v) {
-                                        return v ? 'In current selection' : 'Not in current selection';
-                                    }
-                                }
+                            '{name:this.renderHeader}', // 'name' is actually the value of the groupField
+                            {
+                                renderHeader: function(v) {
+                                    return v ? this.groupInText : this.groupOutText;
+                                }.bind(this),
+                            }
                         )
                     }
                 ]
-
             };
 
             this.grid = Ext.create('Ext.grid.Panel', gridConfig);
@@ -167,13 +171,13 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
     },
 
     createColumnFilterStore: function() {
-        var storeId = this.getStoreId(), me = this;
+        var me = this;
         return Ext.create('Ext.data.ArrayStore', {
             fields: [
                 'value', 'displayValue', {name:'hasData', type: 'boolean', defaultValue: true}
             ],
             data: this.prepareValuesArray(),
-            storeId: storeId,
+            storeId: this.getStoreId(),
             groupField: 'hasData',
             groupDir: 'DESC',
             sorters: [{
@@ -186,14 +190,23 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
         });
     },
 
-    prepareValuesArray: function() {
+    prepareValuesArray : function() {
         var values = this.getAllValues();
         values = values.map(function(record) {
-            if (record != undefined && !Ext.isObject(record))
+            if (record != undefined && !Ext.isObject(record)) {
                 return [record, record, true];
+            }
             return [record.value, record.displayValue, true];
         });
         return values;
+    },
+
+    getAllValues : function() {
+        return this.allValues;
+    },
+
+    getFilteredValues : function() {
+        return this.filterValues;
     },
 
     getLookupStore : function() {
@@ -210,18 +223,18 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
         return this.createColumnFilterStore();
     },
 
-    getSortFn: function() {
-        if (this.valueType == 'number') {
-            return function(a, b){
+    getSortFn : function() {
+        if (this.valueType === 'number') {
+            return function(a, b) {
                 return a - b;
             }
         }
-        else if (this.valueType == 'date_display') {
-            return function(a, b){
+        else if (this.valueType === 'date_display') {
+            return function(a, b) {
                 return Ext.Date.parse(a, "M jS, Y").getTime() - Ext.Date.parse(b, "M jS, Y").getTime();
             }
         }
-        return function(a, b){
+        return function(a, b) {
             if (a == undefined)
                 return -1;
             else if (b == undefined)
@@ -253,7 +266,7 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
             // apply current filters
             var grid = this.getGrid();
 
-            if (this.filterValues.length == 0) {
+            if (this.filterValues.length === 0) {
                 grid.getSelectionModel().selectAll(true);
             }
             else {
@@ -263,8 +276,9 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
             if (this.useSearch)
                 this.latestSelections = grid.getSelectionModel().getSelection();
         }
-        if(Ext.isDefined(this.onSuccessfulLoad) && Ext.isFunction(this.onSuccessfulLoad))
+        if (Ext.isDefined(this.onSuccessfulLoad) && Ext.isFunction(this.onSuccessfulLoad)) {
             this.onSuccessfulLoad(this, this.scope);
+        }
     },
 
     setValue : function(values, negated) {
@@ -276,22 +290,20 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
             values = values.split(';');
         }
 
-        var store = this.getGrid().getStore();
-        this._checkAndLoadValues(store, values, negated);
-
+        this._checkAndLoadValues(this.getGrid().getStore(), values, negated);
     },
 
     _checkAndLoadValues : function(store, values, negated) {
         var records = [],
-                recIdx,
-                recordNotFound = false;
+            recIdx,
+            recordNotFound = false;
 
         Ext.each(values, function(val) {
-            recIdx = store.findBy(function(rec){
+            recIdx = store.findBy(function(rec) {
                 return rec.get('value') == val;
             });
 
-            if (recIdx != -1) {
+            if (recIdx !== -1) {
                 records.push(store.getAt(recIdx));
             }
             else {
@@ -325,5 +337,4 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
 
         this.getGrid().getSelectionModel().select(records, false, true);
     }
-
 });

@@ -693,7 +693,7 @@ Ext.define('Connector.store.util.OlapExplorerTree', {
                 hasDiff = true;
             }
             else {
-                if (node.record.data.name !== node.childrenNodes[0].record.data.name) {
+                if (node.record.data.value !== node.childrenNodes[0].record.data.value) {
                     hasDiff = true;
                 }
                 else {

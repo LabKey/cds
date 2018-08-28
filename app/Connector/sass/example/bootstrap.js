@@ -46,6 +46,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.component.News": "../../../../webapp/Connector/src/component/News.js",
   "Connector.component.Started": "../../../../webapp/Connector/src/component/Started.js",
   "Connector.constant.ModuleViewsLookup": "../../../../webapp/Connector/src/constant/ModuleViewsLookup.js",
+  "Connector.constant.State": "../../../../webapp/Connector/src/constant/State.js",
   "Connector.constant.Templates": "../../../../webapp/Connector/src/constant/Templates.js",
   "Connector.controller.AbstractGridController": "../../../../webapp/Connector/src/controller/AbstractGridController.js",
   "Connector.controller.AbstractViewController": "../../../../webapp/Connector/src/controller/AbstractViewController.js",
@@ -87,7 +88,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Hierarchy": "../../../../webapp/Connector/src/model/Dimension.js",
   "Connector.model.InfoPane": "../../../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.InfoPaneMember": "../../../../webapp/Connector/src/model/InfoPaneMember.js",
+  "Connector.model.MabDetail": "../../../../webapp/Connector/src/model/MabDetail.js",
   "Connector.model.MabGrid": "../../../../webapp/Connector/src/model/MabGrid.js",
+  "Connector.model.MabPane": "../../../../webapp/Connector/src/model/MabPane.js",
   "Connector.model.MabSummary": "../../../../webapp/Connector/src/model/MabSummary.js",
   "Connector.model.Measure": "../../../../webapp/Connector/src/model/Measure.js",
   "Connector.model.Message": "../../../../webapp/Connector/src/controller/Messaging.js",
@@ -121,11 +124,14 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.AssayDistinctValue": "../../../../webapp/Connector/src/store/AssayDistinctValue.js",
   "Connector.store.Explorer": "../../../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../../../webapp/Connector/src/store/FilterStatus.js",
+  "Connector.store.MabStatus": "../../../../webapp/Connector/src/store/MabStatus.js",
   "Connector.store.StudyVisitTag": "../../../../webapp/Connector/src/store/StudyVisitTag.js",
   "Connector.store.Summary": "../../../../webapp/Connector/src/store/Summary.js",
   "Connector.store.VisitTag": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.store.VisitTagMultiUse": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.store.VisitTagSingleUse": "../../../../webapp/Connector/src/store/VisitTag.js",
+  "Connector.store.util.OlapExplorerNode": "../../../../webapp/Connector/src/store/Explorer.js",
+  "Connector.store.util.OlapExplorerTree": "../../../../webapp/Connector/src/store/Explorer.js",
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
   "Connector.utility.Chart": "../../../../webapp/Connector/src/utility/Chart.js",
   "Connector.utility.FileExtension": "../../../../webapp/Connector/src/utility/FileExtension.js",
@@ -158,7 +164,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.LearnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeaderDataView": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.MabGrid": "../../../../webapp/Connector/src/view/MabGrid.js",
+  "Connector.view.MabPane": "../../../../webapp/Connector/src/view/MabPane.js",
   "Connector.view.MabReport": "../../../../webapp/Connector/src/view/MabReport.js",
+  "Connector.view.MabStatus": "../../../../webapp/Connector/src/view/MabStatus.js",
   "Connector.view.Main": "../../../../webapp/Connector/src/view/Main.js",
   "Connector.view.Navigation": "../../../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NavigationView": "../../../../webapp/Connector/src/view/Navigation.js",
@@ -202,7 +210,7 @@ Ext.Loader.addClassPathMappings({
   "Ext.rtl.EventObjectImpl": "../../ext/src/rtl/EventObject.js",
   "HelpRouter": "../../../../webapp/Connector/src/utility/HelpRouter.js",
   "LABKEY": "../../../../../../internal/webapp",
-  "LABKEY.app.constant": "../../../../webapp/Connector/src/controller/State.js",
+  "LABKEY.app.constant": "../../../../../../internal/webapp/app/State.js",
   "LABKEY.app.controller.AbstractViewController": "../../../../../../internal/webapp/app/AbstractViewController.js",
   "LABKEY.app.controller.HttpInterceptor": "../../../../../../internal/webapp/app/HttpInterceptor.js",
   "LABKEY.app.controller.Messaging": "../../../../../../internal/webapp/app/Messaging.js",
@@ -219,8 +227,8 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.plugin.LoadingMask": "../../../../../../internal/webapp/app/LoadingMask.js",
   "LABKEY.app.store.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.store.OlapExplorerImpl": "../../../../../../internal/webapp/app/OlapExplorerImpl.js",
-  "LABKEY.app.util.OlapExplorerNode": "../../../../webapp/Connector/src/store/Explorer.js",
-  "LABKEY.app.util.OlapExplorerTree": "../../../../webapp/Connector/src/store/Explorer.js",
+  "LABKEY.app.util.OlapExplorerNode": "../../../../../../internal/webapp/app/OlapExplorerImpl.js",
+  "LABKEY.app.util.OlapExplorerTree": "../../../../../../internal/webapp/app/OlapExplorerImpl.js",
   "LABKEY.app.view.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.view.OlapExplorerImpl": "../../../../../../internal/webapp/app/OlapExplorerImpl.js",
   "LABKEY.app.view.Selection": "../../../../../../internal/webapp/app/Selection.js",
@@ -269,6 +277,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.component.News": [],
   "Connector.component.Started": [],
   "Connector.constant.ModuleViewsLookup": [],
+  "Connector.constant.State": [],
   "Connector.constant.Templates": [],
   "Connector.controller.AbstractGridController": [],
   "Connector.controller.AbstractViewController": [],
@@ -310,7 +319,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
   "Connector.model.InfoPaneMember": [],
+  "Connector.model.MabDetail": [],
   "Connector.model.MabGrid": [],
+  "Connector.model.MabPane": [],
   "Connector.model.MabSummary": [],
   "Connector.model.Measure": [],
   "Connector.model.Message": [],
@@ -344,11 +355,14 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.AssayDistinctValue": [],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
+  "Connector.store.MabStatus": [],
   "Connector.store.StudyVisitTag": [],
   "Connector.store.Summary": [],
   "Connector.store.VisitTag": [],
   "Connector.store.VisitTagMultiUse": [],
   "Connector.store.VisitTagSingleUse": [],
+  "Connector.store.util.OlapExplorerNode": [],
+  "Connector.store.util.OlapExplorerTree": [],
   "Connector.types.Filter": [],
   "Connector.utility.Chart": [
     "ChartUtils"
@@ -389,7 +403,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.LearnHeader": [],
   "Connector.view.LearnHeaderDataView": [],
   "Connector.view.MabGrid": [],
+  "Connector.view.MabPane": [],
   "Connector.view.MabReport": [],
+  "Connector.view.MabStatus": [],
   "Connector.view.Main": [],
   "Connector.view.Navigation": [],
   "Connector.view.NavigationView": [],
@@ -1335,6 +1351,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.cds-started"
   ],
   "Connector.constant.ModuleViewsLookup": [],
+  "Connector.constant.State": [],
   "Connector.constant.Templates": [],
   "Connector.controller.AbstractGridController": [],
   "Connector.controller.AbstractViewController": [],
@@ -1380,7 +1397,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
   "Connector.model.InfoPaneMember": [],
+  "Connector.model.MabDetail": [],
   "Connector.model.MabGrid": [],
+  "Connector.model.MabPane": [],
   "Connector.model.MabSummary": [],
   "Connector.model.Measure": [],
   "Connector.model.Message": [],
@@ -1436,6 +1455,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
+  "Connector.store.MabStatus": [
+    "store.mabstatus"
+  ],
   "Connector.store.StudyVisitTag": [],
   "Connector.store.Summary": [
     "store.summary"
@@ -1447,6 +1469,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.store.VisitTagSingleUse": [
     "store.visittagsingle"
   ],
+  "Connector.store.util.OlapExplorerNode": [],
+  "Connector.store.util.OlapExplorerTree": [],
   "Connector.types.Filter": [],
   "Connector.utility.Chart": [],
   "Connector.utility.FileExtension": [],
@@ -1523,8 +1547,12 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.MabGrid": [
     "widget.mabdatagrid"
   ],
+  "Connector.view.MabPane": [],
   "Connector.view.MabReport": [
     "widget.mabreportview"
+  ],
+  "Connector.view.MabStatus": [
+    "widget.mabstatus"
   ],
   "Connector.view.Main": [
     "widget.app-main"

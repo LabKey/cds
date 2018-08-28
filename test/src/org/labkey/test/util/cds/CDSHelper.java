@@ -1447,7 +1447,7 @@ public class CDSHelper
 
         curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
 
-        if(!curValue.trim().toLowerCase().equals(path.trim().toLowerCase()))
+        if (!curValue.trim().toLowerCase().equals(path.trim().toLowerCase()))
         {
             _test.setFormElement(Locator.xpath(xpathValueTxtBox), path);
             changed = true;
@@ -1526,11 +1526,11 @@ public class CDSHelper
 
         elementCount = _test.getElementCount(((Locator.CssLocator) l1).append(" text"));
 
-        for(int i = 0; i < elementCount; i++)
+        for (int i = 0; i < elementCount; i++)
         {
             temp = _test.getText(((Locator.CssLocator) l1).append(" text").index(i));
             temp = temp.trim();
-            if(temp.length() > 0)
+            if (temp.length() > 0)
                 tickText.add(temp);
         }
 
@@ -1847,9 +1847,9 @@ public class CDSHelper
         final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Grant Affiliation:']/following-sibling::td//a";
         WebElement documentLinkElement = null;
 
-        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
+        for (WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
         {
-            if(we.isDisplayed())
+            if (we.isDisplayed())
             {
                 documentLinkElement = we;
                 break;
@@ -1864,9 +1864,9 @@ public class CDSHelper
         final String DOCUMENT_LINK_XPATH = "//td[@class='item-label'][text()='Documents:']/following-sibling::td//a";
         List<WebElement> documentLinkElements = null;
 
-        for(WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
+        for (WebElement we : Locator.xpath(DOCUMENT_LINK_XPATH).findElements(_test.getDriver()))
         {
-            if(we.isDisplayed())
+            if (we.isDisplayed())
             {
                 if (documentLinkElements == null)
                     documentLinkElements = new ArrayList<>();

@@ -180,7 +180,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         target: item,
                         placement: 'right',
                         content: options.status,
-                        width: 190
+                        width: 220
                     }, {}));
                 }, 200);
 

@@ -14,10 +14,10 @@ Ext.define('Connector.utility.Query', {
 
     DEMOGRAPHICS_ALIAS_PREFIX: 'study_Demographics_',
 
-    DATA_SOURCE_SUBJECT_CHARACTERISTICS : 'Subject characteristics',
-    DATA_SOURCE_STUDY_AND_TIME : 'Study and treatment',
+    DATA_SOURCE_SUBJECT_CHARACTERISTICS: 'Subject characteristics',
+    DATA_SOURCE_STUDY_AND_TIME: 'Study and treatment',
     DATA_SOURCE_STUDY_AND_TREATMENT: 'Study and treatment variables',
-    DATA_SOURCE_ADDED_TIME_PIONT : 'Time point',
+    DATA_SOURCE_ADDED_TIME_POINT: 'Time point',
 
     logging: false,
 
@@ -42,8 +42,7 @@ Ext.define('Connector.utility.Query', {
         this.DEMOGRAPHICS_STUDY_LABEL_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_label';
         this.DEMOGRAPHICS_STUDY_ARM_ALIAS = this.DEMOGRAPHICS_ALIAS_PREFIX + 'study_arm_summary';
 
-        if (Ext.isDefined(LABKEY.ActionURL.getParameters()['logQuery']))
-        {
+        if (Ext.isDefined(LABKEY.ActionURL.getParameter('logQuery'))) {
             this.logging = true;
         }
     },
@@ -145,10 +144,10 @@ Ext.define('Connector.utility.Query', {
     },
 
     _sqlLiteralFn : function(type) {
-        if (type == "VARCHAR" || type.indexOf("Text") == 0) {
+        if (type === "VARCHAR" || type.indexOf("Text") === 0) {
             return LABKEY.Query.sqlStringLiteral;
         }
-        else if (type == "DOUBLE") {
+        else if (type === "DOUBLE") {
             return this._toSqlNumber;
         }
 
@@ -263,12 +262,12 @@ Ext.define('Connector.utility.Query', {
         //Order by
         var orderSQL = '\nORDER BY ' + this.DEMOGRAPHICS_SUBJECT_ALIAS;
 
-        var termSql = SELECT.join('') + "\n" + FROM + (WHERE.length == 0 ? "" : "\nWHERE ") + WHERE.join("\n\tAND ");
+        var termSql = SELECT.join('') + "\n" + FROM + (WHERE.length === 0 ? "" : "\nWHERE ") + WHERE.join("\n\tAND ");
         var sql = 'SELECT * FROM (' + termSql + ') AS _0' + orderSQL;
 
         if (this.logging)
         {
-            var termSqlDebug = SELECT.join('') + "\n" + FROM + (WHERE_DEBUG.length == 0 ? "" : "\nWHERE ") + WHERE_DEBUG.join("\n\tAND ");
+            var termSqlDebug = SELECT.join('') + "\n" + FROM + (WHERE_DEBUG.length === 0 ? "" : "\nWHERE ") + WHERE_DEBUG.join("\n\tAND ");
             var sqlDebug = 'SELECT * FROM (' + termSqlDebug + ') AS _0' + orderSQL;
             console.log(sqlDebug);
         }
@@ -338,7 +337,7 @@ Ext.define('Connector.utility.Query', {
         }, this);
 
         // if we don't have any assay datasets, use GridBase as the root for the intersect SQL case or if it was requested
-        if (Object.keys(assayDatasets).length == 0 && (subjectVisitTableRequested || options.intersect))
+        if (Object.keys(assayDatasets).length === 0 && (subjectVisitTableRequested || options.intersect))
         {
             assayDatasets[this.SUBJECTVISIT_TABLE] = tables[this.SUBJECTVISIT_TABLE];
         }
