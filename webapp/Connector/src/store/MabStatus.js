@@ -30,6 +30,9 @@ Ext.define('Connector.store.MabStatus', {
 
     executeAll : function(queries) {
         this.fetchCount++;
+        this.loadCount = 0;
+        this.results = {};
+
         var fetchCount = this.fetchCount;
         var queryCount = Object.keys(queries).length;
 
@@ -69,17 +72,14 @@ Ext.define('Connector.store.MabStatus', {
     },
 
     onExecute : function(props, data) {
-        if (this.fetchCount !== props.fetchCount) {
-            this.loadCount = 0;
-            this.results = {};
-        }
+        if (this.fetchCount === props.fetchCount) {
+            this.loadCount++;
+            this.results[props.key] = data;
 
-        this.loadCount++;
-        this.results[props.key] = data;
-
-        if (this.loadCount === props.queryCount) {
-            this.loadCount = 0;
-            this.onLoadCounts(this.results);
+            if (this.loadCount === props.queryCount) {
+                this.loadCount = 0;
+                this.onLoadCounts(this.results);
+            }
         }
     },
 
