@@ -113,7 +113,7 @@ Ext.define('Connector.view.MabGrid', {
                 items: [{
                     xtype: 'actiontitle',
                     flex: 1,
-                    text: 'Explore monoclonal antibody (MAb) screening data',
+                    text: 'Explore monoclonal antibody (mAb) screening data',
                     buttons: buttons
                 }]
             });
