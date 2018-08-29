@@ -445,7 +445,7 @@ Ext.define('Connector.view.MabGrid', {
         return {
             xtype: 'box',
             html: '<div class="header">' +
-            '<div style="font-size: 13.5pt; font-weight: bold;">Viruses tested against MAbs</div>' +
+            '<div style="font-size: 13.5pt; font-weight: bold;">Viruses tested against mAbs</div>' +
             '</div>'
         }
     },
