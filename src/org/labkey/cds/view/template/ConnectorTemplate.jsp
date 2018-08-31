@@ -128,20 +128,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Model.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Faceted.js"></script>
 
-    <!-- App API Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Application.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/State.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/HttpInterceptor.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Messaging.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/View.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Route.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Filter.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/Selection.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorerImpl.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/LoadingMask.js"></script>
-
     <!-- Ext Widget Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4DefaultFilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4GridPanel.js"></script>
@@ -174,6 +160,11 @@
     <!-- Connector Application -->
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
 
+    <!-- Constant singletons -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/ModuleViewsLookup.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/State.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
+
     <!-- Application Models -->
     <script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/ColumnInfo.js"></script>
@@ -190,7 +181,9 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/MabDetail.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/MabGrid.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/MabPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/MabSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/RSSItem.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
@@ -232,17 +225,26 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/DocumentValidation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/LoadingMask.js"></script>
 
-    <!-- Constant singletons -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/constant/ModuleViewsLookup.js"></script>
-
     <!-- Factories -->
     <script type="text/javascript" src="<%=text(srcPath)%>/factory/Module.js"></script>
+
+    <!-- Utilities -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Animation.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Statistics.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Chart.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/MabQuery.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/FileExtension.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/PlotTooltip.js"></script>
 
     <!-- Application Stores -->
     <script type="text/javascript" src="<%=text(srcPath)%>/store/AssayDistinctValue.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/store/MabStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/VisitTag.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/StudyVisitTag.js"></script>
@@ -262,6 +264,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/HomeHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/HeaderDataView.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/MabPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Page.js"></script>
@@ -269,6 +272,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/MabReport.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/MabGrid.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/MabStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Chart.js"></script>
@@ -286,6 +290,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/HttpInterceptor.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Messaging.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Analytics.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
@@ -300,17 +306,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Router.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
-
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Animation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Statistics.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Chart.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/MabQuery.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/FileExtension.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/PlotTooltip.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/AssayAntigen.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>

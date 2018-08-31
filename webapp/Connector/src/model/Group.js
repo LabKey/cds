@@ -16,7 +16,7 @@ Ext.define('Connector.model.Group', {
             var raw = partial.raw.filters;
             var containsPlot = false;
             if (Ext.isString(raw)) {
-                var filterArray = LABKEY.app.model.Filter.fromJSON(raw);
+                var filterArray = Connector.model.Filter.fromJSON(raw);
                 if (Ext.isArray(filterArray)) {
                     Ext.each(filterArray, function(filter) {
                         if (filter.isPlot === true) {

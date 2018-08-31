@@ -7,7 +7,7 @@ Ext.define('Connector.controller.MabGrid', {
 
     extend : 'Connector.controller.AbstractGridController',
 
-    views: ['MabGrid'],
+    views: ['DetailStatus', 'MabGrid'],
 
     controllerName: 'mabgrid',
 
@@ -17,5 +17,15 @@ Ext.define('Connector.controller.MabGrid', {
 
     modelClazz: 'Connector.model.MabGrid',
 
-    viewTitle: 'MAb Grid'
+    viewTitle: 'MAb Grid',
+
+    dataSource: undefined,
+
+    onViewActivate : function() {
+        Connector.getService('FilterStatus').activateContainer('mabstatuscontainer');
+    },
+
+    onViewDeactivate : function() {
+        Connector.getService('FilterStatus').activateContainer('filterstatuscontainer');
+    }
 });

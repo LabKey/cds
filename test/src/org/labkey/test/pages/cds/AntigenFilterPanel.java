@@ -17,6 +17,7 @@ public class AntigenFilterPanel
     public void checkAll(boolean check)
     {
         Locator.XPathLocator label = Locator.tagWithAttribute("label", "test-data-value", "neutralization_tier-all");
+        _test.waitForElement(label);
         WebElement checkboxContainer = label.parent("td").findElement(_test.getDriver());
         new Checkbox.CheckboxFinder().find(checkboxContainer).set(check);
     }
@@ -44,6 +45,7 @@ public class AntigenFilterPanel
     public boolean isVirusChecked(String testValue)
     {
         Locator.XPathLocator virusLoc = getCellLoc(testValue, 2);
+        _test.waitForElement(virusLoc);
         Locator.XPathLocator disabledVirusLoc = virusLoc.append(Locator.tagWithClass("table", "x-form-cb-checked"));
         return _test.isElementPresent(disabledVirusLoc);
     }

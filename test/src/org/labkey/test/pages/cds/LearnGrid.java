@@ -242,7 +242,7 @@ public class LearnGrid
 
         cellCountLocked = cellWebElement.findElements(By.tagName("td")).size();
 
-        if(cellIndex < cellCountLocked)
+        if (cellIndex < cellCountLocked)
         {
             return cellWebElement.findElements(By.tagName("td")).get(cellIndex);
         }
@@ -266,7 +266,7 @@ public class LearnGrid
     {
         List<String> gridText = new ArrayList<>();
 
-        for(int i=0; i < getRowCount(); i++)
+        for (int i=0; i < getRowCount(); i++)
         {
             gridText.add(getRowText(i));
         }
@@ -286,9 +286,9 @@ public class LearnGrid
         String[] columns = getColumnNames();
         int index = -1;
 
-        for(int i = 0; i < columns.length; i++)
+        for (int i = 0; i < columns.length; i++)
         {
-            if(columns[i].trim().toLowerCase().equals(columnName.trim().toLowerCase()))
+            if (columns[i].trim().toLowerCase().equals(columnName.trim().toLowerCase()))
             {
                 index = i;
                 break;

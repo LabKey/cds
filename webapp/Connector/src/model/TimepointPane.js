@@ -32,8 +32,8 @@ Ext.define('Connector.model.TimepointPane', {
     },
 
     /* Override */
-    configure : function(dimName, hierName, lvlName, deferToFilters) {
-        var emptyInterval = !Ext.isDefined(hierName) || hierName == '',
+    configure : function(dimName, hierName) {
+        var emptyInterval = !Ext.isDefined(hierName) || hierName === '',
             intervalAlias,
             timeMeasure;
 
@@ -54,8 +54,7 @@ Ext.define('Connector.model.TimepointPane', {
             }
         }
 
-        if (this.get('hierarchyItems').length == 0)
-        {
+        if (this.get('hierarchyItems').length === 0) {
             this.populateSortBy();
         }
         intervalAlias = this.setSortByLabel(hierName);
@@ -111,10 +110,10 @@ Ext.define('Connector.model.TimepointPane', {
                     if (types[key].length > 0)
                     {
                         modelDatas.push({
-                            name: intervalName + ' ' + interval + ' - (' + types[key].length + ' stud' + (types[key].length == 1 ? 'y' : 'ies') + ')',
+                            name: intervalName + ' ' + interval + ' - (' + types[key].length + ' stud' + (types[key].length === 1 ? 'y' : 'ies') + ')',
                             uniqueName: types[key],
-                            count: key == 'hasDataSelected' || key == 'hasDataUnselected' ? 1 : 0,
-                            selected: key == 'hasDataSelected' || key == 'noDataSelected'
+                            count: key === 'hasDataSelected' || key === 'hasDataUnselected' ? 1 : 0,
+                            selected: key === 'hasDataSelected' || key === 'noDataSelected'
                         });
                     }
                 });
@@ -136,7 +135,7 @@ Ext.define('Connector.model.TimepointPane', {
         // set the 'sorted by' choices based on the timeAliases
         Ext.iterate(queryService.getTimeAliases(), function(alias, value)
         {
-            if (value == 1) {
+            if (value === 1) {
                 timeLabel = queryService.getMeasure(alias).label;
                 items.push({
                     text: timeLabel,
@@ -150,7 +149,7 @@ Ext.define('Connector.model.TimepointPane', {
 
     setSortByLabel : function(intervalAlias)
     {
-        var emptyInterval = !Ext.isDefined(intervalAlias) || intervalAlias == '',
+        var emptyInterval = !Ext.isDefined(intervalAlias) || intervalAlias === '',
             selectedLabel,
             selectedAlias;
 

@@ -62,7 +62,7 @@ public class AssayDetailsPage
     public void assertAssayInfoPage()
     {
         _test.waitForElement(Locator.css("div.assaytitle").withText(_name));
-        if(_contributorImg.equals(_pocImg))
+        if (_contributorImg.equals(_pocImg))
         {
             Locator.XPathLocator imgLoc = Locator.xpath("//img[@src='/labkey/cds/images/pictures/"+ _pocImg +"']");
             _test.waitForElement(imgLoc);

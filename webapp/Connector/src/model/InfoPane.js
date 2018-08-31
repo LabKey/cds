@@ -15,7 +15,7 @@ Ext.define('Connector.model.InfoPane', {
         {name: 'hierarchyLabel'},
         {name: 'hierarchyItems', defaultValue: []}, // generated array of labels
         {name: 'selectedItems', defaultValue: []},
-        {name: 'operatorType', defaultValue: LABKEY.app.model.Filter.OperatorTypes.AND},
+        {name: 'operatorType', defaultValue: Connector.model.Filter.OperatorTypes.AND},
         {name: 'title'}
     ],
 
@@ -149,28 +149,28 @@ Ext.define('Connector.model.InfoPane', {
      * @param {boolean} [deferToFilters=true]
      */
     configure : function(dimName, hierName, lvlName, deferToFilters) {
-        Connector.getState().onMDXReady(function(mdx){
+        Connector.getState().onMDXReady(function(mdx) {
             this._configureSelection();
             this.filterMemberMap = {};
 
             var _deferToFilters = Ext.isBoolean(deferToFilters) ? deferToFilters : true;
 
-            if (!this.isSelectionBased() && _deferToFilters){
-                if (lvlName){
+            if (!this.isSelectionBased() && _deferToFilters) {
+                if (lvlName) {
                     var lvl = mdx.getLevel(lvlName);
-                    if (lvl && lvl.hierarchy && lvl.hierarchy.displayLevels){
+                    if (lvl && lvl.hierarchy && lvl.hierarchy.displayLevels) {
                         this._configureFilter(null, lvlName);
                     }
-                    else{
+                    else {
                         this._configureFilter(hierName);
                     }
                 }
-                else{
+                else {
                     this._configureFilter(hierName);
                 }
             }
 
-            if (this.isFilterBased()){
+            if (this.isFilterBased()) {
                 var filter = this.get('filter'),
                     members = filter.get('members');
 
@@ -178,7 +178,7 @@ Ext.define('Connector.model.InfoPane', {
                 hierName = filter.get('hierarchy');
                 lvlName = filter.get('level');
 
-                Ext.each(members, function (member){
+                Ext.each(members, function (member) {
                     this.filterMemberMap[member.uniqueName] = true;
                 }, this);
             }
@@ -224,6 +224,7 @@ Ext.define('Connector.model.InfoPane', {
 
         this.set('filter', activeFilter); // undefined is OK
     },
+
     setDimensionHierarchy : function(dimName, hierName, lvlName) {
 
         var state = Connector.getState();
@@ -322,7 +323,7 @@ Ext.define('Connector.model.InfoPane', {
                         level: lvl.getUniqueName(),
                         member: 'members'
                     }],
-                    useNamedFilters: [LABKEY.app.constant.SELECTION_FILTER],
+                    useNamedFilters: [Connector.constant.State.SELECTION_FILTER],
                     showEmpty: true,
                     success: function(cellset) {
                         Connector.getQueryService().getUserLevelMember(this.getBoundProcessMembers(hierarchyUniqName, levelUniqName, cellset, mdx), this, hierarchyUniqName, levelUniqName);
@@ -337,7 +338,7 @@ Ext.define('Connector.model.InfoPane', {
                         level: lvl.getUniqueName(),
                         member: 'members'
                     }],
-                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                    useNamedFilters: [Connector.constant.State.STATE_FILTER],
                     showEmpty: true,
                     success: function(cellset) {
                         Connector.getQueryService().getUserLevelMember(this.getBoundProcessMembers(hierarchyUniqName, levelUniqName, cellset, mdx), this, hierarchyUniqName, levelUniqName);
@@ -450,7 +451,7 @@ Ext.define('Connector.model.InfoPane', {
                 return selfName;
             }
             var parentSplit = splits[splits.length - 2];
-            if (parentSplit.indexOf('[') == 0) {
+            if (parentSplit.indexOf('[') === 0) {
                 parentSplit.replace('[', '');
             }
             return parentSplit + ' - ' + selfName;
@@ -480,7 +481,7 @@ Ext.define('Connector.model.InfoPane', {
 
             var def = definition[0],
                     _count = counts[idx][0].value,
-                    _name = LABKEY.app.model.Filter.getMemberLabel(def.name),
+                    _name = Connector.model.Filter.getMemberLabel(def.name),
                     _prop = '',
                     _hasDetails;
 
@@ -531,8 +532,7 @@ Ext.define('Connector.model.InfoPane', {
         this.setReady();
     },
 
-    setReady : function()
-    {
+    setReady : function() {
         this._ready = true;
         this.fireEvent('ready', this);
     },

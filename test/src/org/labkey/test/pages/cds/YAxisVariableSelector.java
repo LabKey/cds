@@ -18,9 +18,6 @@ package org.labkey.test.pages.cds;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
-import org.labkey.test.util.LabKeyExpectedConditions;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.Map;
 
@@ -82,7 +79,7 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     public void pickSource(String source)
     {
         // If not currently on the source page, move there.
-        if(!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")))
+        if (!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")))
         {
             backToSource();
         }
@@ -134,7 +131,10 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
         return super.openAntigenPanel(XPATHID);
     }
 
-    public void setIsotype(String... value) { super.setAssayDimension(XPATHID, AssayDimensions.Isotype, value);}
+    public void setIsotype(String... value)
+    {
+        super.setAssayDimension(XPATHID, AssayDimensions.Isotype, value);
+    }
 
     public void setVirusName(String... test_data_value)
     {

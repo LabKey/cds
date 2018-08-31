@@ -181,7 +181,7 @@ Ext.define('Connector.controller.Group', {
                 };
 
 
-                LABKEY.app.model.Filter.doGroupSave({
+                Connector.model.Filter.doGroupSave({
                     mdx : mdx,
                     success : saveSuccess,
                     failure : saveFailure,
@@ -287,7 +287,7 @@ Ext.define('Connector.controller.Group', {
                     // Retrieve the listing of participants matching the current filters
                     //
                     mdx.queryParticipantList({
-                        useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                        useNamedFilters: [Connector.constant.State.STATE_FILTER],
                         success: function(cs) {
 
                             var updateSuccess = function(response) {
@@ -322,7 +322,7 @@ Ext.define('Connector.controller.Group', {
                             {
                                 groupData.categoryOwnerId = LABKEY.user.id;
                             }
-                            groupData.filters = LABKEY.app.model.Filter.toJSON(state.getFilters(), true);
+                            groupData.filters = Connector.model.Filter.toJSON(state.getFilters(), true);
 
                             LABKEY.Ajax.request({
                                 url: LABKEY.ActionURL.buildURL("participant-group", "saveParticipantGroup.api", null),

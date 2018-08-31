@@ -97,10 +97,10 @@ Ext.define('Connector.controller.Explorer', {
 
     createView : function(xtype, context) {
 
-        if (xtype == 'singleaxis') {
+        if (xtype === 'singleaxis') {
             var state = Connector.getState();
             var s = this.getStore('Explorer');
-            s.olapProvider = state; // required by LABKEY.app.store.OlapExplorer. Blargh
+            s.olapProvider = state; // required by Connector.store.Explorer. Blargh
 
             var v = Ext.create('Connector.view.SingleAxisExplorer', {
                 flex : 3,

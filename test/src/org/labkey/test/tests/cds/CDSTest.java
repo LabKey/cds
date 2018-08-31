@@ -106,7 +106,8 @@ public class CDSTest extends CDSReadOnlyTest
         Locator.XPathLocator hiddenShowBarLink = Locator.xpath("//a[contains(@class, 'started-show')][contains(@style, 'display: none')]");
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         // if it's already hidden, click to show
-        if (!isElementPresent(hiddenShowBarLink)) {
+        if (!isElementPresent(hiddenShowBarLink))
+        {
             click(Locator.linkContainingText("Show tips for getting started "));
             sleep(500);
         }

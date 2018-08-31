@@ -281,7 +281,7 @@ Ext.define('Connector.app.store.Study', {
                 }, this).sort(function(relA, relB){
                     if(relA.sortIndex !== relB.sortIndex)
                         return relA.sortIndex - relB.sortIndex;
-                    return LABKEY.app.model.Filter.sorters.natural(relA.rel_prot, relB.rel_prot);
+                    return Connector.model.Filter.sorters.natural(relA.rel_prot, relB.rel_prot);
                 });
 
                 study.products = products;
@@ -308,7 +308,7 @@ Ext.define('Connector.app.store.Study', {
             }, this);
 
             studies.sort(function(studyA, studyB) {
-                return LABKEY.app.model.Filter.sorters.natural(studyA.label, studyB.label);
+                return Connector.model.Filter.sorters.natural(studyA.label, studyB.label);
             });
 
             this.studyData = undefined;

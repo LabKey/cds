@@ -167,7 +167,7 @@ public class CDSAsserts
 
     public void verifyLearnAboutPage(List<String> axisItems, boolean validateItemCount)
     {
-        if(validateItemCount)
+        if (validateItemCount)
         {
             _test.waitForElement(Locator.tagWithClass("div", "detail-row").append("/td/div/div/h2"));
             int elemCount = _test.getElementCount(Locator.xpath("//div[not(contains(@style, 'display: none'))]/div[contains(@class, 'detail-row')]/td/div/div/div/h2"));
@@ -203,27 +203,27 @@ public class CDSAsserts
 
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int speciesCount, int productCount, int treatmentCount)
     {
-        if(subjectCount > -1)
+        if (subjectCount > -1)
         {
             _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(subjectCount, "Subject"));
         }
 
-        if(studyCount > -1)
+        if (studyCount > -1)
         {
             _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(studyCount, "Stud"));
         }
 
-        if(speciesCount > -1)
+        if (speciesCount > -1)
         {
             _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(speciesCount, "Species"));
         }
 
-        if(productCount > -1)
+        if (productCount > -1)
         {
             _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(productCount, "Product"));
         }
 
-        if(treatmentCount > -1)
+        if (treatmentCount > -1)
         {
             _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(treatmentCount, "Treatment"));
         }

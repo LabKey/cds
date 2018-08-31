@@ -16,10 +16,9 @@ Ext.define('Connector.window.MabGridFacet', {
     /* To avoid URL overflow, allow up to 100 selections per column */
     maxSelection: 100,
 
-    initComponent : function()
-    {
+    initComponent : function() {
         this.callParent();
-        this.addEvents('mabfiltersearchchanged');
+        this.addEvents('clearmabfilter', 'mabfilter', 'mabfiltersearchchanged');
         this.createFacetGrid();
         this.on('mabfiltersearchchanged', this.facetGrid.filterFacetOptions, this.facetGrid);
     },
@@ -102,9 +101,10 @@ Ext.define('Connector.window.MabGridFacet', {
         this.add(this.facetGrid);
     },
 
-    _getFilterValues: function() {
+    _getFilterValues : function() {
         var fieldName = this.filterConfig.fieldName;
         var filter = this.mabModel.getFieldStateFilter(fieldName);
+
         if (filter) {
             var value = Ext.isArray(filter.getValue()) ? filter.getValue()[0] : filter.getValue();
             return {
@@ -112,31 +112,30 @@ Ext.define('Connector.window.MabGridFacet', {
                 isFilterNegated: filter.getFilterType().getURLSuffix() === 'notin'
             }
         }
-        else {
-            return {
-                filterValues: [],
-                isFilterNegated: false
-            }
+
+        return {
+            filterValues: [],
+            isFilterNegated: false
         }
     },
 
-    onAfterRender : function() {
-        this.callParent(arguments);
-        this.getButton('doclear').hide();
-        this.getButton('dofilter').setText('Done');
-    },
+    applyFiltersAndColumns : function() {
+        var view = this.getComponent('faceted-mab-' + this.filterConfig.fieldName),
+            facetValues = view.getFacetValues(),
+            selected = facetValues.selected,
+            unselected = facetValues.unselected,
+            filter = this.constructFilter(selected, unselected);
 
-    applyFiltersAndColumns : function()
-    {
-        var view = this.getComponent('faceted-mab-' + this.filterConfig.fieldName);
-        var facetValues = view.getFacetValues();
-        var selected = facetValues.selected, unselected = facetValues.unselected;
-        var filter = this.constructFilter(selected, unselected);
-        this.fireEvent('mabfilter', this.filterConfig.fieldName, filter);
+        this.fireEvent('mabfilter', this, this.filterConfig.fieldName, filter);
         this.close();
     },
 
-    constructFilter: function (selected, unselected) {
+    onClear : function() {
+        this.fireEvent('clearmabfilter', this, this.filterConfig.fieldName);
+        this.close();
+    },
+
+    constructFilter : function(selected, unselected) {
         var filter = null;
 
         if (selected.length > 0) {
@@ -154,7 +153,7 @@ Ext.define('Connector.window.MabGridFacet', {
         return filter;
     },
 
-    delimitValues: function (valueArray) {
+    delimitValues : function (valueArray) {
         var value = '', sep = '';
         for (var s = 0; s < valueArray.length; s++) {
             value += sep + valueArray[s];
@@ -164,59 +163,65 @@ Ext.define('Connector.window.MabGridFacet', {
     }
 });
 
-
 Ext.define('Connector.grid.MabGridFacet', {
 
     extend: 'Connector.grid.AbstractGroupedFacet',
 
+    groupInText: 'In current MAb grid',
+
+    groupOutText: 'Not in current MAb grid',
+
     resetSearch: true,
 
-    getFilteredValues: function() {
+    initComponent : function() {
+        Ext.applyIf(this, {
+            activeValues: []
+        });
+
+        this.callParent();
+    },
+
+    getFilteredValues : function() {
         return this.activeValues;
     },
 
-    getStoreId: function()
-    {
+    getStoreId : function() {
         return 'mab-col-' + this.columnField;
     },
 
-    getAllValues: function() {
-        return this.allValues;
-    },
-
-    filterFacetOptions: function(value, previousValue) {
+    filterFacetOptions : function(value, previousValue) {
         var facetStore = this.getLookupStore();
         var regex = new RegExp(LABKEY.Utils.escapeRe(value), 'i');
 
         facetStore.clearFilter(false);
 
-        if (value !== '')
-            facetStore.filterBy(function(record){
+        if (value !== '') {
+            facetStore.filterBy(function(record) {
                 return regex.test(record.get('displayValue'));
             });
+        }
+
         if (value === '' || (previousValue && previousValue.indexOf(value) === 0)) {
-            if (this.useSearch && this.latestSelections.length > 0)
+            if (this.useSearch && this.latestSelections.length > 0) {
                 this.updateSelectionOnSearch();
+            }
         }
     },
 
-    updateStoreFiltering : function(facetStore, regex)
-    {
+    updateStoreFiltering : function(facetStore, regex) {
         if (!this.updateStoreFilteringTask) {
             this.updateStoreFilteringTask = new Ext.util.DelayedTask(this.filterStore, this);
         }
         this.updateStoreFilteringTask.delay(200, null, this, [facetStore, regex]);
     },
 
-    filterStore: function(facetStore, regex)
-    {
-        facetStore.filterBy(function(record){
+    filterStore : function(facetStore, regex) {
+        facetStore.filterBy(function(record) {
             return regex.test(record.get('displayValue'));
         });
     },
 
-    updateSelectionOnSearch : function()
-    {
+    updateSelectionOnSearch : function() {
         if (!this.updateSelectionTask) {
             this.updateSelectionTask = new Ext.util.DelayedTask(function () {
                 var selModel = this.getGrid().getSelectionModel(), store = selModel.store, selections = [];
@@ -230,5 +235,4 @@ Ext.define('Connector.grid.MabGridFacet', {
         }
         this.updateSelectionTask.delay(600, null, this);
     }
-
 });

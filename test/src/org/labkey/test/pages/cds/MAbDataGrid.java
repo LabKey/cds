@@ -36,14 +36,14 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public static final String STUDIES_COL = "Studies";
 
     public static final String GRID_TITLE_STUDY_AND_MABS = "Study and MAbs";
-    public static final List<String> STUDY_AND_MABS_COLUMNS = Arrays.asList("Study", "Mab Mix Id", "Mab Mix Label", "Mab Mix Name Std");
+    public static final List<String> STUDY_AND_MABS_COLUMNS = Arrays.asList("Study", "Mab mix id", "Mab mix label", "Mab mix name std");
     public static final String GRID_TITLE_MABS_META = "MAbs";
-    public static final List<String> MABS_COLUMNS = Arrays.asList("Mab Mix Id", "Mab Mix Label", "Mab Mix Name Std", "Mab Id", "Mab Name Std", "Mab Lanl Id");
+    public static final List<String> MABS_COLUMNS = Arrays.asList("Mab mix id", "Mab mix label", "Mab mix name std", "Mab id", "Mab name std", "Mab Lanl id");
     public static final String GRID_TITLE_NAB_MAB_ASSAY = "NAB MAB";
-    public static final List<String> NABMAB_ASSAY_COLUMNS = Arrays.asList("Study", "Mab Mix Id", "Mab Mix Label", "Mab Mix Name Std", "Mab Name Source", "Assay identifier", "Curve id", "Data summary level");
+    public static final List<String> NABMAB_ASSAY_COLUMNS = Arrays.asList("Study", "Mab mix id", "Mab mix label", "Mab mix name std", "Mab name source", "Assay identifier", "Curve id", "Data summary level");
 
     public static final List<String> NABMAB_ASSAY_VARIABLES = Arrays.asList("Assay identifier",
-            "Curve id", "Data summary level", "Fit Asymmetry", "Fit Error", "Fit Inflection", "Fit Max", "Fit Min", "Fit Slope", "Initial Concentration", "Lab ID", "MAb concentration", "MAb concentration units");
+            "Curve id", "Data summary level", "Fit asymmetry", "Fit error", "Fit inflection", "Fit max", "Fit min", "Fit slope", "Initial concentration", "Lab ID", "Mab concentration units", "Mab concentration");
 
     public static final List<String> ColumnLabels = Arrays.asList(MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL,
             VIRUSES_COL, CLADES_COL, TIERS_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL);
@@ -123,7 +123,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         Locator.XPathLocator checkbox = Locators.filterCheckAllLoc;
         Locator.XPathLocator checkedLoc = checkbox.append(Locator.tagWithClass("div", "x-grid-hd-checker-on"));
-        if((check && !_webDriverWrapper.isElementPresent(checkedLoc))
+        if ((check && !_webDriverWrapper.isElementPresent(checkedLoc))
             || (!check && _webDriverWrapper.isElementPresent(checkedLoc)))
             _webDriverWrapper.click(checkbox.append(Locator.tagWithClass("div", "x-column-header-checkbox")));
     }
@@ -177,8 +177,24 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void applyFilter()
     {
-        List<WebElement> buttons = CDSHelper.Locators.cdsButtonLocator("Done").findElements(_webDriverWrapper.getDriver());
-        final WebElement button = buttons.get(0);
+        List<WebElement> buttons;
+
+        Locator virusFilter = Locator.xpath("//div[contains(@class, 'x-window-closable')]//div[@class='header']//div[text()='Viruses tested against MAbs']");
+        int index;
+
+        if ((_webDriverWrapper.isElementPresent(virusFilter)) &&(_webDriverWrapper.isElementVisible(virusFilter)))
+        {
+            // The filter being applied is the virus filter.
+            buttons = CDSHelper.Locators.cdsButtonLocator("Done").findElements(_webDriverWrapper.getDriver());
+            index = 0;
+        }
+        else
+        {
+            buttons = CDSHelper.Locators.cdsButtonLocator("Filter").findElements(_webDriverWrapper.getDriver());
+            index = 1;
+        }
+
+        final WebElement button = buttons.get(index);
 
         _gridHelper.applyAndWaitForGrid(() -> {
             button.click();
@@ -223,7 +239,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         Locator.XPathLocator checkbox = Locators.headerCheckboxLoc;
         Locator.XPathLocator checkedLoc = checkbox.withClass("x-grid-hd-checker-on");
         _webDriverWrapper.click(checkbox);
-        if(_webDriverWrapper.isElementPresent(checkedLoc))
+        if (_webDriverWrapper.isElementPresent(checkedLoc))
             _webDriverWrapper.click(checkbox);
     }
 
