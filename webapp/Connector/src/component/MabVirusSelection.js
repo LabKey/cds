@@ -23,18 +23,18 @@ Ext.define('Connector.panel.MabVirusSelection', {
         this.loadDistinctValuesStore();
     },
 
-    getFields: function() {
-        return  this.virusFields;
+    getFields : function() {
+        return this.virusFields;
     },
 
-    createFieldColumnHeaders: function(checkboxItems) {
+    createFieldColumnHeaders : function(checkboxItems) {
         // add a column header for each hierarchical measure and the subject counts
         Ext.each(this.fieldLabels, function(label) {
             checkboxItems.push(this.createColumnHeaderCmp(label, null, this.measureColumnWidth));
         }, this);
     },
 
-    createAllCheckboxes: function(checkboxItems) {
+    createAllCheckboxes : function(checkboxItems) {
         // add 'All' checkbox for each hierarchical measure
         Ext.each(this.virusFields, function(field) {
             checkboxItems.push(this.createAllCheckboxCmp(field, field));
@@ -74,7 +74,7 @@ Ext.define('Connector.panel.MabVirusSelection', {
         });
     },
 
-    initSelectionFromState: function() {
+    initSelectionFromState : function() {
         if (!this.initSelection) {
             this.allValues = this.mabModel.getUniqueFieldValues(this.filterFieldName);
             var filter = this.mabModel.getFieldStateFilter(this.filterFieldName);
@@ -101,7 +101,7 @@ Ext.define('Connector.panel.MabVirusSelection', {
         return key;
     },
 
-    onSelectionChange: function() {
+    onSelectionChange : function() {
         // do nothing
     },
 
@@ -109,11 +109,11 @@ Ext.define('Connector.panel.MabVirusSelection', {
         return this.virusFields.length + 1;
     },
 
-    getConcatFieldValues: function() {
+    getConcatFieldValues : function() {
         return this.getValues()['virus-check'];
     },
 
-    constructFilter: function () {
+    constructFilter : function () {
         var filter = null, selected = this.getSelectedValues();
         var unselected = Ext.Array.difference(this.allValues, selected);
         if (selected.length > 0 && unselected.length > 0) {
@@ -129,7 +129,7 @@ Ext.define('Connector.panel.MabVirusSelection', {
         return filter;
     },
 
-    delimitValues: function (valueArray) {
+    delimitValues : function (valueArray) {
         var value = '', sep = '';
         for (var s = 0; s < valueArray.length; s++) {
             value += sep + valueArray[s];
@@ -137,5 +137,4 @@ Ext.define('Connector.panel.MabVirusSelection', {
         }
         return value;
     }
-
 });

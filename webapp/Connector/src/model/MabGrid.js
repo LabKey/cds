@@ -14,7 +14,7 @@ Ext.define('Connector.model.MabGrid', {
     ],
 
     statics: {
-        ic50Ranges : [
+        ic50Ranges: [
             {value: 'G0.1', displayValue: '< 0.1'},
             {value: 'G1', displayValue: '< 1'},
             {value: 'G10', displayValue: '< 10'},
@@ -23,8 +23,7 @@ Ext.define('Connector.model.MabGrid', {
         ]
     },
 
-    constructor : function(config)
-    {
+    constructor : function(config) {
         this.callParent([config]);
 
         this.stateReady = false;
@@ -35,8 +34,7 @@ Ext.define('Connector.model.MabGrid', {
             Connector.getQueryService().getMabData(this.onMAbData, this.onFailure, this);
         }, this);
 
-        Connector.getState().onReady(function ()
-        {
+        Connector.getState().onReady(function() {
             this.stateReady = true;
             this._init();
         }, this);
@@ -44,21 +42,18 @@ Ext.define('Connector.model.MabGrid', {
         this.addEvents('mabdataloaded', 'initmabgrid');
     },
 
-    updateData : function()
-    {
+    updateData : function() {
         this.queryTask.delay(50, null, this);
     },
 
-    loadMetaData: function()
-    {
+    loadMetaData : function() {
         Connector.getQueryService().getMabMetaData(this.processMetaMap, this.onFailure, this);
     },
 
-    processMetaMap: function(response)
-    {
+    processMetaMap : function(response) {
         var rows = response.rows, NO_VALUE = '[blank]';
         var mabMap = {}, nameMap = {}, speciesMap = {}, locationMap = {}, isotypeMap = {};
-        Ext.each(rows, function(row){
+        Ext.each(rows, function(row) {
             var name = row.mab_mix_name_std;
             nameMap[name] = true;
             speciesMap[row.mab_donor_species ? row.mab_donor_species : NO_VALUE] = true;
@@ -81,7 +76,7 @@ Ext.define('Connector.model.MabGrid', {
         });
 
         var mabMapProcessed = {};
-        Ext.iterate(mabMap, function(key, val){
+        Ext.iterate(mabMap, function(key, val) {
             val.mab_donor_species.sort();
             val.mab_hxb2_location.sort();
             val.mab_isotype.sort();
@@ -100,9 +95,10 @@ Ext.define('Connector.model.MabGrid', {
         this.updateData();
     },
 
-    getUniqueFieldValues: function(field) {
-        if (field === 'titer_curve_ic50_group')
+    getUniqueFieldValues : function(field) {
+        if (field === MabQueryUtils.IC50_GROUP_COLUMN) {
             return Connector.model.MabGrid.ic50Ranges;
+        }
 
         var key = field + '_values';
         if (this[key]) {
@@ -111,36 +107,37 @@ Ext.define('Connector.model.MabGrid', {
         return [];
     },
 
-    getAllFacetValues: function(config) {
+    getAllFacetValues : function(config) {
         Connector.getQueryService().getMabAllFieldValues(config);
     },
 
-    getActiveFacetValues: function(config) {
+    getActiveFacetValues : function(config) {
         Connector.getQueryService().getMabActiveFieldValues(config);
     },
 
-    onMAbData: function(response)
-    {
-        var rows = response.rows;
+    onMAbData : function(geoMeanResponse, config) {
+        var geoMeanMap = {};
+        Ext.each(geoMeanResponse.rows, function(row) {
+            geoMeanMap[row.mab_mix_name_std] = parseFloat(row.IC50geomean.toFixed(5));
+        }, this);
+
         var mabRows = [];
-        Ext.each(rows, function(row) {
+        Ext.each(config.countsData.rows, function(row) {
             var mabName = row.mab_mix_name_std;
             var metaObj = this.mabMetaMap[mabName];
             if (metaObj) {
                 row.mab_donor_species = metaObj.mab_donor_species;
                 row.mab_hxb2_location = metaObj.mab_hxb2_location;
                 row.mab_isotype = metaObj.mab_isotype;
-                row.IC50geomean = parseFloat(row.IC50geomean.toFixed(5));
+                row.IC50geomean = geoMeanMap[mabName];
                 mabRows.push(row);
             }
         }, this);
         this.getGridStore().loadRawData(mabRows);
     },
 
-    getGridStore: function(sorters)
-    {
-        if (!this.gridStore)
-        {
+    getGridStore : function(sorters) {
+        if (!this.gridStore) {
             this.gridStore = Ext.create('Ext.data.Store', {
                 model: 'Connector.model.MabSummary',
                 sorters: sorters ? sorters : Connector.view.MabGrid.getDefaultSort(),
@@ -152,15 +149,13 @@ Ext.define('Connector.model.MabGrid', {
                 }
             });
         }
+
         return this.gridStore;
     },
 
-    _init : function()
-    {
-        if (!this._ready && this.viewReady && this.stateReady)
-        {
-            Connector.getQueryService().onQueryReady(function(service)
-            {
+    _init : function() {
+        if (!this._ready && this.viewReady && this.stateReady) {
+            Connector.getQueryService().onQueryReady(function() {
                 this._ready = true;
                 this.loadMetaData();
                 this.fireEvent('initmabgrid', this);
@@ -168,12 +163,11 @@ Ext.define('Connector.model.MabGrid', {
         }
     },
 
-    getFilterArray : function()
-    {
+    getFilterArray : function() {
         return this.get('filterArray');
     },
 
-    getFieldStateFilter: function(fieldName) {
+    getFieldStateFilter : function(fieldName) {
         var allFilters = Connector.getState().getMabFilters(true);
         var targetFilter = null;
         Ext.each(allFilters, function(filter) {
@@ -186,27 +180,22 @@ Ext.define('Connector.model.MabGrid', {
         return targetFilter;
     },
 
-    onViewReady : function(view)
-    {
+    onViewReady : function(view) {
         this.viewReady = true;
         this._init();
     },
 
-    setActive : function(active)
-    {
+    setActive : function(active) {
         this.set('active', active);
     },
 
-    isActive : function()
-    {
+    isActive : function() {
         return this.get('active') === true;
     },
 
-    hasMAbSelected: function()
-    {
+    hasMAbSelected : function() {
         var selection = Connector.getState().getSelectedMAbs();
         return selection && selection.length > 0;
     }
-
 });
 

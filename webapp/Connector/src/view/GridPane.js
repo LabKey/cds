@@ -149,7 +149,7 @@ Ext.define('Connector.view.GridPane', {
                             // the query service can lookup a measure, but only the base of a lookup
                             var label = Ext.isString(measure.label) ? measure.label : '';
                             if (gf.getColumnName().indexOf('/') > -1) {
-                                label = LABKEY.app.model.Filter.getGridFilterLabel(gf);
+                                label = Connector.model.Filter.getGridFilterLabel(gf);
                             }
 
                             // issue 21879: split Equals One Of filter values into new lines

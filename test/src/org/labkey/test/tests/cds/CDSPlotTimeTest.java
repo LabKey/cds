@@ -348,7 +348,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         assertTrue("No glyphs in the time axis had a value indicating they had data.", weList.size() > 0);
         int totalCount = 0, highlightCount;
 
-        for(WebElement we : weList)
+        for (WebElement we : weList)
         {
             // Hover over the element.
             builder = new Actions(getDriver());
@@ -873,9 +873,9 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         int hCount = 0;
         cssPath = "div.bottomplot > svg > g:nth-child(2) > image";
         List<WebElement> wes = Locator.css(cssPath).findElements(getDriver());
-        for(WebElement we : wes)
+        for (WebElement we : wes)
         {
-            if(we.getAttribute("href").toLowerCase().contains("challenge_normal.svg"))
+            if (we.getAttribute("href").toLowerCase().contains("challenge_normal.svg"))
             {
                 we.click();
                 hCount = cdsPlot.getPointCountByColor(CDSHelper.PLOT_POINT_HIGHLIGHT_COLOR);

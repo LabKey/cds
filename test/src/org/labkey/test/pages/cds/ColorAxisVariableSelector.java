@@ -73,16 +73,18 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
         super.openSelectorWindow(XPATHID, "color");
     }
 
-    public void pickSource(String source){
+    public void pickSource(String source)
+    {
         // If not currently on the source page, move there.
-        if(_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//span[contains(@class, 'back-action')]")))
+        if (_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//span[contains(@class, 'back-action')]")))
         {
             backToSource();
         }
         super.pickSource(XPATHID, source);
     }
 
-    public void backToSource(){
+    public void backToSource()
+    {
         _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//span[contains(@class, 'back-action')]"));
         _test.sleep(750);
     }
@@ -124,7 +126,7 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
         showLegend();
 
         List<WebElement> legends = Locator.css("div.hopscotch-bubble svg text.legend-text").findElements(_test.getDriver());
-        for(WebElement we : legends)
+        for (WebElement we : legends)
         {
             legendText.add(we.getText());
         }

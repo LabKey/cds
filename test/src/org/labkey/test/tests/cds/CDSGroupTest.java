@@ -347,7 +347,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
         _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
 
         //Arbitrary amount of studies to run through
-        for(int itr = 0; itr < 5; itr++)
+        for (int itr = 0; itr < 5; itr++)
         {
             String studyName = CDSHelper.PROTS[itr];
             goToProjectHome(rootContainer + "/" + studyName);

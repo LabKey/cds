@@ -1,12 +1,101 @@
 /*
- * Copyright (c) 2014-2017 LabKey Corporation
+ * Copyright (c) 2014-2018 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Ext.define('Connector.model.Filter', {
-    extend: 'LABKEY.app.model.Filter',
+    extend: 'Ext.data.Model',
 
     fields: [
+        {name : 'hierarchy'},
+        {name : 'level'},
+        {name : 'members', defaultValue: []},
+        {name : 'membersName'},
+        {name : 'perspective'},
+        {name : 'operator'},
+        {name : 'isGrid', type: 'boolean', defaultValue: false},
+        {name : 'isPlot', type: 'boolean', defaultValue: false},
+        {name : 'ranges', defaultValue: []},
+
+        // array of LABKEY.Filter instances
+        {name : 'gridFilter', defaultValue: [], convert: function(raw) {
+            var filters = [];
+            if (Ext.isArray(raw)) {
+                Ext.each(raw, function(r) {
+                    if (Ext.isString(r)) {
+                        if (r === "_null") {
+                            filters.push(null);
+                        }
+                        else {
+                            var build = LABKEY.Filter.getFiltersFromUrl(r, 'query');
+                            if (Ext.isArray(build)) {
+                                filters.push(build[0]); // assume single filters
+                            }
+                        }
+                    }
+                    else if (Ext.isDefined(r)) {
+                        filters.push(r);
+                    }
+                });
+            }
+            else if (Ext.isDefined(raw)) {
+                filters.push(raw);
+            }
+            return filters;
+        }},
+
+        // array of measures
+        {name : 'plotMeasures', defaultValue: [null, null, null], convert: function(o) {
+            var arr = [null, null, null];
+
+            if (Ext.isArray(o)) {
+                if (o.length === 1) {
+                    arr[1] = o[0]; // If there's only 1 element then it's the y measure.
+                }
+                else if (o.length === 2) {
+                    arr[0] = o[0];
+                    arr[1] = o[1];
+                }
+                else if (o.length === 3) {
+                    arr = o;
+                }
+                else {
+                    console.warn('You provided an invalid value for plotMeasures.');
+                }
+            }
+
+
+            Ext.each(arr, function (measure) {
+                if (measure && !Ext.isEmpty(measure.filterArray)) {
+                    var filters = [];
+                    Ext.each(measure.filterArray, function (filter) {
+                        if (Ext.isString(filter)) {
+                            if (filter === "_null") {
+                                filters.push(null);
+                            }
+                            else {
+                                var build = LABKEY.Filter.getFiltersFromUrl(filter, 'query');
+                                if (Ext.isArray(build)) {
+                                    filters.push(build[0]); // assume single filters
+                                }
+                            }
+                        }
+                        else if (Ext.isDefined(filter)) {
+                            filters.push(filter);
+                        }
+                    });
+                    measure.filterArray = filters;
+                }
+            });
+
+
+            return arr;
+        }},
+
+        {name : 'isWhereFilter', type: 'boolean', defaultValue: false},
+        {name : 'showInverseFilter', type: 'boolean', defaultValue: false},
+        {name : 'filterSource', defaultValue: 'OLAP'}, // OLAP or GETDATA
+
         /**
          * Calculated field that is updated whenever the filter is modified (including creation).
          * Can be accessed using filter.getDataFilters()
@@ -61,14 +150,538 @@ Ext.define('Connector.model.Filter', {
     ],
 
     statics: {
+        // Data Filter Provider
+        dfProvider: undefined,
+
+        dynamicOperatorTypes: true,
+
+        emptyLabelText: 'Unknown',
+
         loaded: false,
-        subjectMap: {},
-        getSubjectUniqueName : function(subjectID) {
-            return '[Subject].[' + Connector.model.Filter.getContainer(subjectID) + '].[' + subjectID + ']';
+
+        Operators: {
+            UNION: 'UNION',
+            INTERSECT: 'INTERSECT',
+            EXCEPT : 'EXCEPT'
         },
+
+        OperatorTypes: {
+            AND: 'AND',
+            REQ_AND: 'REQ_AND',
+            OR: 'OR',
+            REQ_OR: 'REQ_OR'
+        },
+
+        sorters: {
+            // 0 == 'auto / no special treatment', 1 == 'first', 2 == 'last',
+            SORT_EMPTY_TYPE: {
+                AUTO: 0,
+                FIRST: 1,
+                LAST: 2
+            },
+
+            SORT_EMPTY: 0,
+
+            _reA: /[^a-zA-Z]/g,
+
+            _reN: /[^0-9]/g,
+
+            /**
+             * A valid Array.sort() function that sorts an Array of strings alphanumerically. This sort is case-insensitive
+             * and only permits valid instances of string (not undefined, null, etc).
+             * @param a
+             * @param b
+             * @returns {number}
+             */
+            alphaNum : function(a, b) {
+                a = a.toLowerCase(); b = b.toLowerCase();
+
+                var _empty = Connector.model.Filter.sorters.handleEmptySort(a, b);
+                if (_empty !== undefined) {
+                    return _empty;
+                }
+
+                var aA = a.replace(Connector.model.Filter.sorters._reA, "");
+                var bA = b.replace(Connector.model.Filter.sorters._reA, "");
+                if (aA === bA) {
+                    var aN = parseInt(a.replace(Connector.model.Filter.sorters._reN, ""), 10);
+                    var bN = parseInt(b.replace(Connector.model.Filter.sorters._reN, ""), 10);
+                    return aN === bN ? 0 : aN > bN ? 1 : -1;
+                }
+                return aA > bA ? 1 : -1;
+            },
+
+            natural : function (aso, bso) {
+                // http://stackoverflow.com/questions/19247495/alphanumeric-sorting-an-array-in-javascript
+                var a, b, a1, b1, i= 0, n, L,
+                        rx=/(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g;
+                if (aso === bso) return 0;
+                a = aso.toLowerCase().match(rx);
+                b = bso.toLowerCase().match(rx);
+
+                var _empty = Connector.model.Filter.sorters.handleEmptySort(a, b);
+                if (_empty !== undefined) {
+                    return _empty;
+                }
+
+                L = a.length;
+                while (i < L) {
+                    if (!b[i]) return 1;
+                    a1 = a[i]; b1 = b[i++];
+                    if (a1 !== b1) {
+                        n = a1 - b1;
+                        if (!isNaN(n)) return n;
+                        return a1 > b1 ? 1 : -1;
+                    }
+                }
+                return b[i] ? -1 : 0;
+            },
+
+            handleEmptySort : function(a, b) {
+                if (Connector.model.Filter.sorters.SORT_EMPTY !== 0 && (a === 'null' || b === 'null')) {
+                    var aEmpty = a === 'null';
+                    var bEmpty = b === 'null';
+
+                    // both are empty
+                    if (aEmpty && bEmpty) {
+                        return 0;
+                    }
+
+                    if (Connector.model.Filter.sorters.SORT_EMPTY === 1 /* first */) {
+                        return aEmpty ? -1 : 1;
+                    }
+                    else if (Connector.model.Filter.sorters.SORT_EMPTY === 2 /* last */) {
+                        return aEmpty ? 1 : -1;
+                    }
+                }
+                // return undefined;
+            },
+
+            resolveSortStrategy : function(sortStrategy) {
+                switch (sortStrategy) {
+                    case 'ALPHANUM':
+                        return Connector.model.Filter.sorters.alphaNum;
+                    case 'ALPHANUM-RANGE':
+                        return function(a, b) {
+                            return Connector.model.Filter.sorters.alphaNum(a.split('-')[0], b.split('-')[0]);
+                        };
+                    case 'NATURAL':
+                        return Connector.model.Filter.sorters.natural;
+                    case 'SERVER':
+                    default:
+                        return false;
+                }
+            }
+        },
+
+        subjectMap: {},
+
+        _buildGetDataFilter : function(filter, data) {
+            var M = Connector.model.Filter;
+            return  M.dfProvider.fn.call(M.dfProvider.scope, filter, data);
+        },
+
+        addFilterArguments: function(filter, level, hierarchy, members) {
+            Ext.each(members, function (member) {
+                filter.arguments.push({
+                    level: level,
+                    membersQuery: {
+                        hierarchy: hierarchy,
+                        members: [member]
+                    }
+                });
+            });
+        },
+
+        convertOperator : function(operator) {
+            var TYPES = Connector.model.Filter.OperatorTypes;
+            var OPS = Connector.model.Filter.Operators;
+
+            switch (operator) {
+                case OPS.UNION:
+                    return TYPES.OR;
+                case OPS.INTERSECT:
+                    return TYPES.AND;
+            }
+
+            console.error('invalid operator:', operator);
+        },
+
+        convertOperatorType : function(type) {
+
+            if (!type || (Ext.isString(type) && type.length === 0)) {
+                return Connector.model.Filter.Operators.INTERSECT;
+            }
+
+            var TYPES = Connector.model.Filter.OperatorTypes;
+            var OPS = Connector.model.Filter.Operators;
+
+            switch (type) {
+                case TYPES.AND:
+                    return OPS.INTERSECT;
+                case TYPES.REQ_AND:
+                    return OPS.INTERSECT;
+                case TYPES.OR:
+                    return OPS.UNION;
+                case TYPES.REQ_OR:
+                    return OPS.UNION;
+            }
+
+            console.error('invalid operator type:', type);
+        },
+
+        /**
+         * Save a participant group/filter.
+         *
+         * @param config, an object which takes the following configuration properties.
+         * @param {Object} [config.mdx] mdx object against which participants are queried
+         * @param {Function} [config.failure] Optional. Function called when the save action fails. If not specified
+         *        then a default function will be provided
+         * @param {Function} [config.success] Function called when the save action is successful
+         * @param {Object} [config.group] group definition. The group object should have the following fields
+         *         label - name of the group
+         *         participantIds - array of participant Ids
+         *         description - optional description for the group
+         *         filters - array of Connector.model.Filter instances to apply
+         *         isLive - boolean, true if this is a query or false if just a group of participant ids.
+         *         isOwnerShared - boolean, true if owner ID should be set to value that means shared (-1 currently,
+         *                          see ParticipantCategory.java -> OWNER_SHARED)
+         */
+        doGroupSave : function(config) {
+            if (!config)
+                throw "You must specify a config object";
+
+            if (!config.mdx || !config.group || !config.success)
+                throw "You must specify mdx, group, and success members in the config";
+
+            var group = config.group;
+            var ownerId = LABKEY.user.id;
+            if (config.group.isOwnerShared) {
+                ownerId = -1;  // shared owner ID, see ParticipantCategory.java -> OWNER_SHARED
+            }
+
+            // setup config for save call
+            var requestConfig = {
+                url: LABKEY.ActionURL.buildURL('participant-group', 'createParticipantCategory'),
+                method: 'POST',
+                headers:{'X-LABKEY-CSRF': LABKEY.CSRF},
+                success: config.success,
+                failure: config.failure || Connector.model.Filter.getErrorCallback(),
+                jsonData: {
+                    label: config.group.label,
+                    participantIds: [],
+                    description: config.group.description,
+                    ownerId: ownerId,
+                    type: 'list',
+                    visibility: config.group.visibility,
+                    filters: Connector.model.Filter.toJSON(config.group.filters, config.group.isLive)
+                },
+                headers: {"Content-Type": 'application/json'}
+            };
+
+            config.mdx.queryParticipantList({
+                useNamedFilters : [Connector.constant.State.STATE_FILTER],
+                success : function(cs) {
+                    // add the fetched participant ids to our json data
+                    requestConfig.jsonData.participantIds = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions), 'name');
+                    Ext.Ajax.request(requestConfig);
+                }
+            });
+        },
+
+        fromJSON : function(jsonFilter) {
+            return Ext.decode(jsonFilter).filters;
+        },
+
         getContainer : function(subjectID) {
             return Connector.model.Filter.subjectMap[subjectID];
         },
+
+        getErrorCallback : function () {
+            return function(response) {
+                var json = Ext.decode(response.responseText);
+                if (json.exception) {
+                    if (json.exception.indexOf('There is already a group named') > -1 ||
+                            json.exception.indexOf('duplicate key value violates') > -1) {
+                        // custom error response for invalid name
+                        Ext.Msg.alert("Error", json.exception);
+                    }
+                    else {
+                        Ext.Msg.alert("Error", json.exception);
+                    }
+                }
+                else {
+                    Ext.Msg.alert('Failed to Save', response.responseText);
+                }
+            }
+        },
+
+        getFilterValuesAsArray : function(gf) {
+            var values = [];
+            Ext.each(gf.getValue(), function(value) {
+                Ext.each(value.split(';'), function(v) {
+                    values.push(Ext.htmlEncode(v == '' ? ChartUtils.emptyTxt : v));
+                });
+            });
+
+            return values;
+        },
+
+        getGridFilterLabel : function(gf) {
+            var endLabel = "";
+
+            if (Ext.isFunction(gf.getColumnName)) {
+                var splitLabel = gf.getColumnName().split('/');
+                var first = splitLabel[0].split('_');
+                var real = first[first.length-1];
+
+                if (splitLabel.length > 1) {
+                    // we're dealing with a presumed lookup filter
+                    endLabel = real + '/' + splitLabel[splitLabel.length-1];
+                }
+                else {
+                    // Just a normal column
+                    endLabel = real;
+                }
+            }
+            else {
+                console.warn('invalid filter object being processed.');
+                endLabel = Connector.model.Filter.emptyLabelText;
+            }
+
+            return endLabel;
+        },
+
+        getGridLabel : function(data) {
+
+            var filterLabel = function(gf) {
+                if (gf) {
+                    if (!Ext.isFunction(gf.getFilterType)) {
+                        console.warn('invalid label being processed');
+                        return Connector.model.Filter.emptyLabelText;
+                    }
+
+                    var value = gf.getValue();
+                    if (value === undefined || value === null) {
+                        value = '';
+                    }
+
+                    var label = Connector.model.Filter.getShortFilter(gf.getFilterType().getDisplayText());
+
+                    if (gf.getFilterType().getURLSuffix() === 'dategte' || gf.getFilterType().getURLSuffix() === 'datelte') {
+                        return label + ' ' + ChartUtils.tickFormat.date(gf.getValue());
+                    }
+
+                    return label + ' ' + Ext.htmlEncode(value);
+                }
+                return Connector.model.Filter.emptyLabelText;
+            };
+
+            if (data['gridFilter']) {
+                var label = '';
+                var sep = '';
+                Ext.each(data.gridFilter, function(gf) {
+                    label += sep + filterLabel(gf);
+                    sep = ', ';
+                });
+                return label;
+            }
+
+            return filterLabel(data);
+        },
+
+        getIncludeExcludeMap : function(members) {
+            var membersMap = {
+                excluded: [],
+                included: []
+            };
+
+            for (var m = 0; m < members.length; m++) {
+                if (members[m].isNegated) {
+                    membersMap.excluded.push(members[m]);
+                }
+                else {
+                    membersMap.included.push(members[m]);
+                }
+            }
+
+            return membersMap;
+        },
+
+        getMemberLabel : function(member) {
+            var label = member;
+            if (!Ext.isString(label) || label.length === 0 || label === "#null") {
+                label = Connector.model.Filter.emptyLabelText;
+            }
+            return label;
+        },
+
+        getOlapFilter : function(mdx, model, subjectName, modelName) {
+            if (!Ext.isDefined(mdx) || mdx.$className !== 'LABKEY.query.olap.MDX') {
+                console.error('must provide mdx to getOlapFilter');
+            }
+
+            var M = Connector.model.Filter,
+                    data = model.data;
+
+            if (!modelName) {
+                modelName = this.$className;
+            }
+
+            var filter = {
+                filterType: data.isWhereFilter === true ? 'WHERE' : 'COUNT'
+            };
+
+            if (data.filterSource === 'GETDATA') {
+
+                if (Ext.isDefined(M.dfProvider)) {
+                    // TODO: Figure out how this works with perspectives, maybe it doesn't care at all?
+                    filter = M._buildGetDataFilter(filter, model);
+                }
+                else {
+                    console.error('Failed to register a data filter provider. See Connector.model.Filter.registerDataFilterProvider()');
+                }
+            }
+            else {
+
+                filter.operator = M.lookupOperator(data);
+                filter.arguments = [];
+
+                if (data.perspective) {
+
+                    filter.perspective = data.perspective;
+
+                    //
+                    // The target hierarchy is
+                    //
+                    if (data.hierarchy == subjectName) {
+                        filter.arguments.push({
+                            hierarchy: subjectName,
+                            members: data.members
+                        });
+                    }
+                    else {
+                        var membersMap = this.getIncludeExcludeMap(data.members);
+                        // if we have nothing excluded, simply add a filter argument for each included member
+                        if (membersMap['excluded'].length === 0) {
+                            this.addFilterArguments(filter, mdx.perspectives[data.perspective].level, data.hierarchy, membersMap['included']);
+                        }
+                        // if we have only excluded members, we need to add a "members.members" argument first
+                        else if (membersMap['included'].length === 0) {
+                            if (filter.operator === Connector.model.Filter.Operators.INTERSECT) {
+                                filter.operator = Connector.model.Filter.Operators.EXCEPT;
+                                // first include all of the members
+                                filter.arguments.push({
+                                    level: mdx.perspectives[data.perspective].level,
+                                    members: "members"
+                                });
+                                // then exclude the selected members
+                                this.addFilterArguments(filter, mdx.perspectives[data.perspective].level, data.hierarchy, membersMap['excluded']);
+                            }
+                            else {
+                                // get a set for each excluded member and union those sets together.
+                                for (var m = 0; m < membersMap['excluded'].length; m++) {
+                                    filter.arguments.push(
+                                            this.getOlapFilter(mdx, Ext.create(modelName, {
+                                                hierarchy: data.hierarchy,
+                                                level: data.level,
+                                                members: [membersMap['excluded'][m]],
+                                                membersName: data.membersName,
+                                                perspective: data.perspective
+                                            }), subjectName, modelName)
+                                    );
+                                }
+                            }
+                        }
+                        else { // have both included and excluded
+                            if (filter.operator === Connector.model.Filter.Operators.INTERSECT) {
+                                filter.operator = Connector.model.Filter.Operators.EXCEPT;
+                                // get the filter for the included members.  This will be the set to exclude members from
+                                filter.arguments.push(
+                                        this.getOlapFilter(mdx, Ext.create(modelName, {
+                                            hierarchy: data.hierarchy,
+                                            level: data.level,
+                                            members: membersMap['included'],
+                                            membersName: data.membersName,
+                                            perspective: data.perspective
+                                        }), subjectName, modelName)
+                                );
+                                this.addFilterArguments(filter, mdx.perspectives[data.perspective].level, data.hierarchy, membersMap['excluded']);
+                            }
+                            else {
+                                // add the filter arguments for all included members
+                                this.addFilterArguments(filter, mdx.perspectives[data.perspective].level, data.hierarchy, membersMap['included']);
+                                // for each excluded member, get an except query
+                                for (var m = 0; m < membersMap['excluded'].length; m++) {
+                                    filter.arguments.push(
+                                            this.getOlapFilter(mdx, Ext.create(modelName, {
+                                                hierarchy: data.hierarchy,
+                                                level: data.level,
+                                                members: [membersMap['excluded'][m]],
+                                                membersName: data.membersName,
+                                                perspective: data.perspective
+                                            }), subjectName, modelName)
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (M.usesMemberName(data, subjectName)) {
+
+                        var m = data.members;
+                        if (data.membersName && data.membersName.length > 0) {
+                            m = { namedSet: data.membersName };
+                        }
+
+                        filter.arguments.push({
+                            hierarchy: subjectName,
+                            members: m
+                        });
+                    }
+                    else {
+                        // CONSIDER: If we need to implement negation of individual subjects, this loop will need to change,
+                        // but it seems that we might be able to get rid of this code.
+                        for (var m=0; m < data.members.length; m++) {
+                            filter.arguments.push({
+                                hierarchy: subjectName,
+                                membersQuery: {
+                                    hierarchy: data.hierarchy,
+                                    members: [data.members[m]]
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            return filter;
+        },
+
+        getShortFilter : function(displayText) {
+            switch (displayText) {
+                case "Does Not Equal":
+                    return '&#8800;';
+                case "Equals":
+                    return '=';
+                case "Is Greater Than":
+                    return '>';
+                case "Is Less Than":
+                    return '<';
+                case "Is Greater Than or Equal To":
+                    return '&#8805;';
+                case "Is Less Than or Equal To":
+                    return '&#8804;';
+                default:
+                    return displayText;
+            }
+        },
+
+        getSubjectUniqueName : function(subjectID) {
+            return '[Subject].[' + Connector.model.Filter.getContainer(subjectID) + '].[' + subjectID + ']';
+        },
+
         loadSubjectContainer : function(mdx) {
 
             if (!Connector.model.Filter.loaded) {
@@ -86,7 +699,7 @@ Ext.define('Connector.model.Filter', {
                     }
                     else {
                         var uniqueName = member.uniqueName.split('].'),
-                            containerID = uniqueName[1].replace('[', '');
+                                containerID = uniqueName[1].replace('[', '');
 
                         Connector.model.Filter.subjectMap[member.name] = containerID;
                     }
@@ -96,22 +709,68 @@ Ext.define('Connector.model.Filter', {
             }
         },
 
-        getGridLabel : function(gf) {
-            if (gf.getFilterType().getURLSuffix() === 'dategte' || gf.getFilterType().getURLSuffix() === 'datelte') {
-                return LABKEY.app.model.Filter.getShortFilter(gf.getFilterType().getDisplayText()) + ' ' + ChartUtils.tickFormat.date(gf.getValue());
+        lookupOperator : function(data) {
+
+            if (Connector.model.Filter.dynamicOperatorTypes) {
+                return Connector.model.Filter.convertOperatorType(data.operator);
             }
-            return LABKEY.app.model.Filter.getGridLabel(gf);
+            else {
+                // Backwards compatible
+                if (data.operator) {
+                    return data.operator;
+                }
+            }
+
+            return Connector.model.Filter.Operators.INTERSECT;
         },
 
-        getFilterValuesAsArray : function(gf) {
-            var values = [];
-            Ext.each(gf.getValue(), function(value) {
-                Ext.each(value.split(';'), function(v) {
-                    values.push(Ext.htmlEncode(v == '' ? ChartUtils.emptyTxt : v));
-                });
+        mergeRanges : function(filterA, filterB) {
+
+            // If filterA is a member list and the new filter is a range, drop the range from filterB and merge will be a member list
+            // if filterA is a range and the filterB is a member list, drop the range from filterA and merge will be a member list
+            // else concatenate the ranges filters
+
+            var numRangesA = filterA.getRanges().length,
+                numRangesB = filterB.getRanges().length;
+
+            // no ranges to merge
+            if (numRangesA === 0 && numRangesB === 0) {
+                return;
+            }
+
+            if (numRangesA === 0 && numRangesB > 0) {
+                filterB.set('ranges', []);
+            }
+            else if (numRangesA > 0 && numRangesB === 0) {
+                filterA.set('ranges', []);
+            }
+            else {
+                // They both contain ranges
+                filterA.set('ranges', filterA.getRanges().concat(filterB.getRanges()));
+            }
+        },
+
+        /**
+         *
+         * @param {Array} filters Array of Connector.model.Filter instances to encode
+         * @param {boolean} isLive
+         * @returns {*}
+         */
+        toJSON : function(filters, isLive) {
+
+            var jsonFilters = [];
+            Ext.each(filters, function(f) {
+                jsonFilters.push(f.jsonify());
             });
 
-            return values;
+            return Ext.encode({
+                isLive : isLive,
+                filters : jsonFilters
+            });
+        },
+
+        usesMemberName : function(data, subjectName) {
+            return data.hierarchy == subjectName;
         }
     },
 
@@ -224,18 +883,14 @@ Ext.define('Connector.model.Filter', {
      * @returns {boolean}
      * @private
      */
-    _canMergeTimeFilters : function(data, fdata)
-    {
+    _canMergeTimeFilters : function(data, fdata) {
         var _merge = false,
             dTimeMeasure = data.timeMeasure,
             fTimeMeasure = fdata.timeMeasure;
 
-        if (data.isPlot === fdata.isPlot && dTimeMeasure.measure.alias === fTimeMeasure.measure.alias)
-        {
-            if (dTimeMeasure.dateOptions.interval === fTimeMeasure.dateOptions.interval)
-            {
-                if (dTimeMeasure.dateOptions.zeroDayVisitTag === fTimeMeasure.dateOptions.zeroDayVisitTag)
-                {
+        if (data.isPlot === fdata.isPlot && dTimeMeasure.measure.alias === fTimeMeasure.measure.alias) {
+            if (dTimeMeasure.dateOptions.interval === fTimeMeasure.dateOptions.interval) {
+                if (dTimeMeasure.dateOptions.zeroDayVisitTag === fTimeMeasure.dateOptions.zeroDayVisitTag) {
                     _merge = true;
                 }
             }
@@ -249,39 +904,30 @@ Ext.define('Connector.model.Filter', {
      * in advance of calling merge() to be safe.
      * @param f
      */
-    canMerge : function(f)
-    {
+    canMerge : function(f) {
         var data = this.data,
             fdata = f.data,
             _merge = false;
 
-        if (data.isAggregated && fdata.isAggregated)
-        {
+        if (data.isAggregated && fdata.isAggregated) {
             _merge = this._canMergeGridFilters(data, fdata);
         }
-        else if (data.isTime || fdata.isTime)
-        {
-            if (data.isTime && fdata.isTime)
-            {
+        else if (data.isTime || fdata.isTime) {
+            if (data.isTime && fdata.isTime) {
                 _merge = this._canMergeTimeFilters(data, fdata);
             }
         }
-        else if (data.isPlot || fdata.isPlot || data.isGrid || fdata.isGrid)
-        {
-            if (data.isPlot === fdata.isPlot && data.isGrid === fdata.isGrid)
-            {
+        else if (data.isPlot || fdata.isPlot || data.isGrid || fdata.isGrid) {
+            if (data.isPlot === fdata.isPlot && data.isGrid === fdata.isGrid) {
                 var _mergeMeasures = true;
 
-                if (data.isPlot)
-                {
+                if (data.isPlot) {
                     _mergeMeasures = this._canMergePlotMeasures(data, fdata);
-                    if (_mergeMeasures)
-                    {
+                    if (_mergeMeasures) {
                         _mergeMeasures = this._canMergeGridFilters(data, fdata);
                     }
                 }
-                else
-                {
+                else {
                     // isGrid
                     _mergeMeasures = this._canMergeGridFilters(data, fdata);
                 }
@@ -290,33 +936,28 @@ Ext.define('Connector.model.Filter', {
             }
             // else they don't match
         }
-        else if (data.hierarchy && fdata.hierarchy && data.hierarchy === fdata.hierarchy)
-        {
+        else if (data.hierarchy && fdata.hierarchy && data.hierarchy === fdata.hierarchy) {
             _merge = true;
         }
 
         return _merge;
     },
 
-    merge : function(f)
-    {
+    merge : function(f) {
 
         var update = {
             members: this._mergeMembers(this.get('members'), f.get('members'))
         };
 
-        if (this.isAggregated() || this.isPlot() || this.isTime())
-        {
+        if (this.isAggregated() || this.isPlot() || this.isTime()) {
             update.gridFilter = this._mergeGridFilters(this.get('gridFilter'), f.get('gridFilter'));
         }
 
-        if (this.isTime())
-        {
+        if (this.isTime()) {
             update.timeFilters = this._mergeGridFilters(this.get('timeFilters'), f.get('timeFilters'));
         }
 
-        if (this.get('isStudyAxis') && f.get('isStudyAxis'))
-        {
+        if (this.get('isStudyAxis') && f.get('isStudyAxis')) {
             update.filterDisplayString = this.get('filterDisplayString') + '<br/><br/>AND<br/><br/>' + f.get('filterDisplayString');
         }
 
@@ -325,30 +966,34 @@ Ext.define('Connector.model.Filter', {
         return this;
     },
 
-    _mergeMembers : function(aMembers, bMembers)
-    {
-        if (this.isAggregated())
-        {
+    _mergeMembers : function(aMembers, bMembers) {
+        if (this.isAggregated()) {
             return bMembers;
         }
 
-        return this.callParent(arguments);
+        var _members = Ext.Array.clone(aMembers);
+        for (var i=0; i < bMembers.length; i++) {
+            if (!this._hasMember(_members, bMembers[i])) {
+                _members.push(bMembers[i]);
+            }
+        }
+        return _members;
     },
 
-    getLevel : function()
-    {
+    getLevel : function() {
         return this.get('level');
     },
 
-    getDataFilters : function()
-    {
+    getDataFilters : function() {
         return this.get('dataFilter');
     },
 
-    getMeasureSet : function(axis)
-    {
-        if (axis)
-        {
+    getGridLabel : function() {
+        return Connector.model.Filter.getGridLabel(this.data);
+    },
+
+    getMeasureSet : function(axis) {
+        if (axis) {
             if (axis.toLowerCase() === 'x')
                 return Ext.clone(this.get('xMeasureSet'));
             else if (axis.toLowerCase() === 'y')
@@ -356,14 +1001,11 @@ Ext.define('Connector.model.Filter', {
             else
                 throw 'Invalid axis requested. "' + axis + '"';
         }
-        else
-        {
-            return Ext.clone(this.get('measureSet'));
-        }
+
+        return Ext.clone(this.get('measureSet'));
     },
 
-    getTimeFilters : function()
-    {
+    getTimeFilters : function() {
         return this.get('timeFilters')
     },
 
@@ -406,6 +1048,18 @@ Ext.define('Connector.model.Filter', {
         }, this);
 
         return matchingMeasures;
+    },
+
+    /**
+     * Returns abbreviated display value. (E.g. 'Equals' returns '=');
+     * @param displayText - display text from LABKEY.Filter.getFilterType().getDisplayText()
+     */
+    getShortFilter : function(displayText) {
+        return Connector.model.Filter.getShortFilter(displayText);
+    },
+
+    getValue : function(key) {
+        return this.data[key];
     },
 
     /**
@@ -1029,7 +1683,7 @@ Ext.define('Connector.model.Filter', {
         {
             filter = LABKEY.Filter.create(alias, values.join(';'), LABKEY.Filter.Types.IN);
         }
-        else if (values.length == 1)
+        else if (values.length === 1)
         {
             filter = LABKEY.Filter.create(alias, values[0]);
         }
@@ -1163,28 +1817,142 @@ Ext.define('Connector.model.Filter', {
         filterMap[Connector.Filter.COMPOUND_ALIAS] = compounds;
     },
 
-    jsonify : function()
-    {
-        var jsonable = this.callParent();
+    _hasMember : function(memberArray, newMember) {
+        // issue 19999: don't push duplicate member if re-selecting
+        for (var k = 0; k < memberArray.length; k++) {
+            if (!memberArray[k].hasOwnProperty('uniqueName') || !newMember.hasOwnProperty('uniqueName'))
+                continue;
 
-        if (Ext.isArray(this.getTimeFilters()))
-        {
+            if (memberArray[k].uniqueName == newMember.uniqueName)
+                return true;
+        }
+
+        return false;
+    },
+
+    _mergeGridFilters : function(aGridFilters, bGridFilters) {
+        var _measures = Ext.Array.clone(aGridFilters);
+
+        for (var i=0; i < bGridFilters.length; i++) {
+            _measures[i] = Ext.clone(bGridFilters[i]);
+        }
+
+        return _measures;
+    },
+
+    /**
+     * Complex comparator that says two filters are equal if and only if they match on the following:
+     * - isGrid, isPlot, hierarchy, member length, and member set (member order insensitive)
+     * @param f - Filter to compare this object against.
+     */
+    isEqual : function(f) {
+        var eq = false;
+
+        if (Ext.isDefined(f) && Ext.isDefined(f.data)) {
+            var d = this.data;
+            var fd = f.data;
+
+            eq = (d.isGrid == fd.isGrid) &&
+                    (d.isPlot == fd.isPlot) && (d.hierarchy == fd.hierarchy) &&
+                    (d.members.length == fd.members.length) && (d.operator == fd.operator);
+
+            if (eq) {
+                // member set equivalency
+                var keys = {}, m, uniqueName;
+                for (m=0; m < d.members.length; m++) {
+                    uniqueName = d.members[m].uniqueName;
+                    keys[uniqueName] = true;
+                }
+
+                for (m=0; m < fd.members.length; m++) {
+                    uniqueName = fd.members[m].uniqueName;
+                    if (!Ext.isDefined(keys[uniqueName])) {
+                        eq = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return eq;
+    },
+
+    /**
+     * This method should be called before attempting to write a filter model to JSON.
+     * This is due to the fact that some properties do not represent themselves properly using
+     * JSON.stringify and they have to be manually curated.
+     * @returns {Object}
+     */
+    jsonify : function() {
+        var jsonable = Ext.clone(this.data);
+        if (Ext.isArray(jsonable.gridFilter)) {
+            var jsonGridFilters = [];
+            Ext.each(jsonable.gridFilter, function(filter) {
+                if (Ext.isDefined(filter)) {
+                    if (filter === null) {
+                        jsonGridFilters.push("_null");
+                    }
+                    else if (Ext.isString(filter)) {
+                        jsonGridFilters.push(filter);
+                    }
+                    else {
+                        var composed = filter.getURLParameterName() + '=' + filter.getURLParameterValue();
+                        jsonGridFilters.push(composed);
+                    }
+                }
+            });
+            jsonable.gridFilter = jsonGridFilters;
+        }
+
+        if (Ext.isArray(jsonable.plotMeasures)) {
+            Ext.each(jsonable.plotMeasures, function(measure) {
+                if (Ext.isDefined(measure)) {
+                    if (measure === null || Ext.isString(measure)) {
+                        return;
+                    }
+                    else {
+                        if (measure && Ext.isArray(measure.filterArray)) {
+                            var jsonFilters = [];
+                            Ext.each(measure.filterArray, function (filter) {
+                                if (Ext.isDefined(filter)) {
+                                    if (filter === null) {
+                                        jsonFilters.push("_null");
+                                    }
+                                    else if (Ext.isString(filter)) {
+                                        jsonFilters.push(filter);
+                                    }
+                                    else {
+                                        var composed = filter.getURLParameterName() + '=' + filter.getURLParameterValue();
+                                        jsonFilters.push(composed);
+                                    }
+                                }
+                            });
+                            measure.filterArray = jsonFilters;
+                        }
+                    }
+                }
+            });
+        }
+
+
+        if (Ext.isArray(this.getTimeFilters())) {
             jsonable.timeFilters = this._convertToJsonFilters(this.getTimeFilters(), false);
         }
 
-        if (Ext.isArray(this.get('gridFilter')))
-        {
+        if (Ext.isArray(this.get('gridFilter'))) {
             jsonable.gridFilter = this._convertToJsonFilters(this.get('gridFilter'), true);
         }
 
-        if (Ext.isArray(this.get('studyAxisFilter')))
-        {
+        if (Ext.isArray(this.get('studyAxisFilter'))) {
             jsonable.studyAxisFilter = this._convertToJsonFilters(this.get('studyAxisFilter'), true);
         }
 
+        // remove properties that do not persist across refresh
         delete jsonable.studyAxisFilter;
         delete jsonable.dataFilter;
+        delete jsonable.id;
         delete jsonable.measureSet;
+        delete jsonable.membersName;
         delete jsonable.xMeasure;
         delete jsonable.yMeasure;
         delete jsonable.xSource;
@@ -1193,25 +1961,19 @@ Ext.define('Connector.model.Filter', {
         return jsonable;
     },
 
-    _convertToJsonFilters : function(origFilters, encodeValue)
-    {
+    _convertToJsonFilters : function(origFilters, encodeValue) {
         var jsonFilters = [];
-        Ext.each(origFilters, function(filter)
-        {
-            if (filter)
-            {
-                if (Ext.isString(filter))
-                {
+        Ext.each(origFilters, function(filter) {
+            if (filter) {
+                if (Ext.isString(filter)) {
                     jsonFilters.push(filter);
                 }
-                else
-                {
+                else {
                     jsonFilters.push(filter.getURLParameterName() + '='
                             + (encodeValue ? encodeURIComponent(filter.getURLParameterValue()) : filter.getURLParameterValue()));
                 }
             }
-            else
-            {
+            else {
                 jsonFilters.push(null);
             }
         });
@@ -1237,7 +1999,7 @@ Ext.define('Connector.model.Filter', {
 
         if (this.isTime())
         {
-            if (newFilters.length == 0)
+            if (newFilters.length === 0)
             {
                 remove = true;
                 callback.call(scope, this, remove);
@@ -1365,36 +2127,27 @@ Ext.define('Connector.model.Filter', {
         callback.call(scope, this, remove);
     },
 
-    _replacePlotMeasures : function(sourceMeasure, oldFilters, newFilters)
-    {
+    _replacePlotMeasures : function(sourceMeasure, oldFilters, newFilters) {
         var remove = false;
 
-        Ext.each(this.get('plotMeasures'), function(plotMeasure, i)
-        {
-            if (plotMeasure && i < 2) // only examine x, y
-            {
-                if (plotMeasure.measure.options.dimensions[sourceMeasure.alias])
-                {
-                    if (Ext.isEmpty(newFilters))
-                    {
+        Ext.each(this.get('plotMeasures'), function(plotMeasure, i) {
+            if (plotMeasure && i < 2) { // only examine x, y
+                if (plotMeasure.measure.options.dimensions[sourceMeasure.alias]) {
+                    if (Ext.isEmpty(newFilters)) {
                         remove = true;
                     }
-                    else if (newFilters.length == 1)
-                    {
+                    else if (newFilters.length === 1) {
                         var value = newFilters[0].getValue();
-                        if (newFilters[0].getFilterType() === LABKEY.Filter.Types.IN)
-                        {
+                        if (newFilters[0].getFilterType() === LABKEY.Filter.Types.IN) {
                             value = value.split(';');
                         }
-                        else
-                        {
+                        else {
                             value = [value];
                         }
 
                         plotMeasure.measure.options.dimensions[sourceMeasure.alias] = value;
                     }
-                    else
-                    {
+                    else {
                         throw this.$className + '.replace() does not support multiple filters for a measure.option.dimension.';
                     }
 
@@ -1408,7 +2161,7 @@ Ext.define('Connector.model.Filter', {
         return remove;
     },
 
-    hasMultiLevelMembers: function() {
+    hasMultiLevelMembers : function() {
         var level = 0;
         var hasMultiLevel = false;
         var members = this.get('members');
@@ -1426,6 +2179,56 @@ Ext.define('Connector.model.Filter', {
             });
         }
         return hasMultiLevel;
+    },
+
+    isGrid : function() {
+        return this.get('isGrid');
+    },
+
+    isPlot : function() {
+        return this.get('isPlot');
+    },
+
+    isWhereFilter : function() {
+        return this.get('isWhereFilter');
+    },
+
+    usesCaching : function(subjectName) {
+        return Connector.model.Filter.usesMemberName(this.data, subjectName);
+    },
+
+    getOlapFilter : function(mdx, subjectName, modelName) {
+        return Connector.model.Filter.getOlapFilter(mdx, this, subjectName, modelName);
+    },
+
+    getHierarchy : function() {
+        return this.get('hierarchy');
+    },
+
+    getRanges : function() {
+        return this.get('ranges');
+    },
+
+    getMembers : function() {
+        return this.get('members');
+    },
+
+    removeMember : function(memberUniqueName) {
+
+        // Allow for removal of the entire filter if a unique name is not provided
+        var newMembers = [];
+        if (memberUniqueName) {
+            var dataUniqueName;
+
+            for (var m=0; m < this.data.members.length; m++) {
+                dataUniqueName = this.data.members[m].uniqueName;
+                if (memberUniqueName !== dataUniqueName)
+                {
+                    newMembers.push(this.data.members[m]);
+                }
+            }
+        }
+        return newMembers;
     }
 });
 

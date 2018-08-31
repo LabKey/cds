@@ -9,15 +9,26 @@ Ext.define('Connector.controller.FilterStatus', {
 
     requires: ['Ext.panel.Panel'],
 
-    stores: ['FilterStatus'],
+    stores: ['FilterStatus', 'MabStatus'],
 
-    views: ['DetailStatus', 'FilterStatus', 'InfoPane', 'PlotPane'],
+    views: ['DetailStatus', 'FilterStatus', 'InfoPane', 'MabPane', 'MabStatus', 'PlotPane'],
+
+    isService: true,
+
+    activeContainer: 'filterstatuscontainer',
+
+    containers: {},
+
+    hasActivePane: false,
 
     init : function() {
 
         this.control('app-main > #eastview > #navfilter', {
             afterrender : function(navfilter) {
-                var container = Ext.create('Ext.container.Container', {
+                this._registerContainers('filterstatuscontainer', 'mabstatuscontainer');
+
+                navfilter.add({
+                    xtype: 'container',
                     itemId: 'filterstatuscontainer',
                     style: 'overflow-y: auto; overflow-x: hidden;',
                     flex: 1,
@@ -25,8 +36,17 @@ Ext.define('Connector.controller.FilterStatus', {
                         this.createFilterStatus(),
                         this.createDetail()
                     ]
+                },{
+                    xtype: 'container',
+                    itemId: 'mabstatuscontainer',
+                    hidden: true, // will display on view activation
+                    style: 'overflow-y: auto; overflow-x: hidden;',
+                    flex: 1,
+                    items: [
+                        this.createMabStatus(),
+                        this.createMabDetail()
+                    ]
                 });
-                navfilter.add(container);
             }
         });
 
@@ -80,7 +100,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
         this.control('selectionview', {
             itemselect : function(view, filter) {
-                this.showFilterEditor(filter);
+                this.showPane(filter);
             }
         });
 
@@ -88,7 +108,7 @@ Ext.define('Connector.controller.FilterStatus', {
             maskplotrecords: this.onMaskPlotRecords,
             unmaskplotrecords: this.onUnmaskPlotRecords,
             updateplotrecord: this.onUpdatePlotRecord
-    });
+        });
 
         this.callParent();
     },
@@ -115,21 +135,22 @@ Ext.define('Connector.controller.FilterStatus', {
         return view;
     },
 
-    onDetailSelect : function(view, detail) {
-        if (detail.get('activeCountLink') === true && detail.get('count') != -1)
-        {
-            if (Ext.isString(detail.get('activeCountEvent')))
-            {
-                this.application.fireEvent(detail.get('activeCountEvent'), detail);
-            }
-            else
-            {
-                this.showFilterEditor(detail);
+    activateContainer : function(id) {
+        this.activeContainer = id;
+
+        if (!this.hasActivePane) {
+
+            this.hideContainers();
+
+            var status = Ext.ComponentQuery.query('#' + id);
+
+            if (status && status.length > 0) {
+                status[0].show();
             }
         }
     },
 
-    showFilterEditor : function(filterOrDetail) {
+    activatePane : function(pane) {
 
         var parent = Ext.ComponentQuery.query('app-main > #eastview > #navfilter');
         if (Ext.isArray(parent)) {
@@ -138,104 +159,136 @@ Ext.define('Connector.controller.FilterStatus', {
 
         if (parent) {
 
-            //
-            // configure info pane view
-            //
+            this.hasActivePane = true;
 
-            var viewClazz = 'Connector.view.InfoPane',
-                modelClazz = 'Connector.model.InfoPane',
-                config = {
-                    dimension: filterOrDetail.get('dimension'),
-                    hierarchy: filterOrDetail.get('hierarchy'),
-                    level: filterOrDetail.get('level'),
-                    measureSet: filterOrDetail.get('measureSet'),
-                    membersWithData: filterOrDetail.get('membersWithData')
-                },
-                storeRecord;
+            this.hideContainers();
 
-            if (filterOrDetail.$className === 'Connector.model.Filter')
-            {
-                if (filterOrDetail.isTime() && !filterOrDetail.isPlot())
-                {
-                    // Time point filter, not study axis plot time range filter
-
-                    viewClazz = 'Connector.view.TimepointPane';
-                    modelClazz = 'Connector.model.TimepointPane';
-
-                    // we will want to get the Time point info pane members from the store record,
-                    // so we will need to include the measureSet and membersWithData
-                    storeRecord = this.getStore('FilterStatus').getById('Time points');
-                    if (storeRecord != null)
-                    {
-                        config.measureSet = storeRecord.get('measureSet');
-                        config.membersWithData = storeRecord.get('membersWithData');
-                    }
-
-                    // if we don't have the defined measuresSet or this is an alignment column,
-                    // we don't want to show the TimepointPane since we won't know how to get the distinct timepoint members
-                    var filterTimeMeasure = filterOrDetail.get('timeMeasure') || filterOrDetail.timeMeasure;
-                    if (!Ext.isArray(config.measureSet) || (filterTimeMeasure.dateOptions && filterTimeMeasure.dateOptions.zeroDayVisitTag))
-                    {
-                        return;
-                    }
-                }
-                else if (filterOrDetail.isGrid() || filterOrDetail.isAggregated())
-                {
-                    viewClazz = 'Connector.view.GridPane';
-                }
-                else if (filterOrDetail.isPlot())
-                {
-                    viewClazz = 'Connector.view.PlotPane';
-                }
-
-                config.filter = filterOrDetail;
-            }
-            else if (Ext.isString(filterOrDetail.get('viewClass')))
-            {
-                viewClazz = filterOrDetail.get('viewClass');
-            }
-
-            // allow the detail model object to define an alternate model class
-            if (Ext.isString(filterOrDetail.get('modelClass')))
-            {
-                modelClazz = filterOrDetail.get('modelClass');
-            }
-
-            //
-            // prepare layout
-            //
-            var statusContainer = parent.getComponent('filterstatuscontainer');
-            if (statusContainer) {
-                statusContainer.hide();
-            }
-
-            var infoPane = Ext.create(viewClazz, {
-                model: Ext.create(modelClazz, config),
-                listeners: {
-                    hide: {
-                        fn: this.resetInfoPane,
-                        scope: this,
-                        single: true
-                    }
-                }
-            });
-
-            parent.add(infoPane);
+            parent.add(pane);
         }
     },
 
-    resetInfoPane : function(infoPane) {
+    createMabDetail : function() {
+        var store = this.getStore('MabStatus');
+        store.load();
 
-        if (infoPane) {
-            infoPane.hide();
-            if (infoPane.up())
-                infoPane.up().remove(infoPane);
+        return Ext.create('Connector.view.DetailStatus', {
+            store: store
+        });
+    },
+
+    createMabStatus : function() {
+        var view = Ext.create('Connector.view.MabStatus', { });
+
+        this.getViewManager().register(view);
+
+        return view;
+    },
+
+    hideContainers : function() {
+
+        var parent = Ext.ComponentQuery.query('app-main > #eastview > #navfilter');
+        if (Ext.isArray(parent)) {
+            parent = parent[0];
         }
 
-        var parent = Ext.ComponentQuery.query('app-main > #eastview > #navfilter > #filterstatuscontainer');
-        if (parent && parent.length > 0) {
-            parent[0].show();
+        if (parent) {
+            Ext.iterate(this.containers, function(itemId) {
+                var cmp = parent.getComponent(itemId);
+                if (cmp) {
+                    cmp.hide();
+                }
+            });
         }
+    },
+
+    onDetailSelect : function(view, detail) {
+        if (detail.get('activeCountLink') === true && detail.get('count') !== -1) {
+            if (Ext.isString(detail.get('activeCountEvent'))) {
+                this.application.fireEvent(detail.get('activeCountEvent'), detail);
+            }
+            else {
+                this.showPane(detail);
+            }
+        }
+    },
+
+    showPane : function(filterOrDetail) {
+
+        //
+        // configure info pane view
+        //
+
+        var viewClazz = 'Connector.view.InfoPane',
+            modelClazz = 'Connector.model.InfoPane',
+            config = filterOrDetail.getData(),
+            storeRecord;
+
+        if (filterOrDetail.$className === 'Connector.model.Filter') {
+            if (filterOrDetail.isTime() && !filterOrDetail.isPlot()) {
+                // Time point filter, not study axis plot time range filter
+
+                viewClazz = 'Connector.view.TimepointPane';
+                modelClazz = 'Connector.model.TimepointPane';
+
+                // we will want to get the Time point info pane members from the store record,
+                // so we will need to include the measureSet and membersWithData
+                storeRecord = this.getStore('FilterStatus').getById('Time points');
+                if (storeRecord != null) {
+                    config.measureSet = storeRecord.get('measureSet');
+                    config.membersWithData = storeRecord.get('membersWithData');
+                }
+
+                // if we don't have the defined measuresSet or this is an alignment column,
+                // we don't want to show the TimepointPane since we won't know how to get the distinct timepoint members
+                var filterTimeMeasure = filterOrDetail.get('timeMeasure') || filterOrDetail.timeMeasure;
+                if (!Ext.isArray(config.measureSet) || (filterTimeMeasure.dateOptions && filterTimeMeasure.dateOptions.zeroDayVisitTag)) {
+                    return;
+                }
+            }
+            else if (filterOrDetail.isGrid() || filterOrDetail.isAggregated()) {
+                viewClazz = 'Connector.view.GridPane';
+            }
+            else if (filterOrDetail.isPlot()) {
+                viewClazz = 'Connector.view.PlotPane';
+            }
+
+            config.filter = filterOrDetail;
+        }
+        else if (Ext.isString(filterOrDetail.get('viewClass'))) {
+            viewClazz = filterOrDetail.get('viewClass');
+        }
+
+        // allow the detail model object to define an alternate model class
+        if (Ext.isString(filterOrDetail.get('modelClass'))) {
+            modelClazz = filterOrDetail.get('modelClass');
+        }
+
+        var infoPane = Ext.create(viewClazz, {
+            model: Ext.create(modelClazz, config),
+            listeners: {
+                hide: {
+                    fn: this.onClosePane,
+                    scope: this,
+                    single: true
+                }
+            }
+        });
+
+        this.activatePane(infoPane);
+    },
+
+    onClosePane : function(pane) {
+
+        if (pane) {
+            pane.hide();
+            if (pane.up()) {
+                pane.up().remove(pane);
+            }
+        }
+
+        this.hasActivePane = false;
+
+        this.activateContainer(this.activeContainer);
     },
 
     createFilterStatus : function() {
@@ -275,7 +328,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
         var v; // the view instance to be created
 
-        if (xtype == 'filterstatus') {
+        if (xtype === 'filterstatus') {
             v = this.createFilterStatus();
         }
 
@@ -303,18 +356,21 @@ Ext.define('Connector.controller.FilterStatus', {
         }
     },
 
-    onMaskPlotRecords : function()
-    {
+    onMaskPlotRecords : function() {
         this.getStore('FilterStatus').fireEvent('showplotmask');
     },
 
-    onUnmaskPlotRecords : function()
-    {
+    onUnmaskPlotRecords : function() {
         this.getStore('FilterStatus').fireEvent('hideplotmask');
     },
 
-    onUpdatePlotRecord : function(view, label, forSubcount, countValue, measureSet, membersWithData)
-    {
+    onUpdatePlotRecord : function(view, label, forSubcount, countValue, measureSet, membersWithData) {
         this.getStore('FilterStatus').updatePlotRecordCount(label, forSubcount, countValue, measureSet, membersWithData);
+    },
+
+    _registerContainers : function() {
+        for (var i=0; i < arguments.length; i++) {
+            this.containers[arguments[i]] = true;
+        }
     }
 });

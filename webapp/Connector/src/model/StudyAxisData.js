@@ -392,7 +392,7 @@ Ext.define('Connector.model.StudyAxisData', {
 
     _naturalSortHelper : function(a, b)
     {
-        return LABKEY.app.model.Filter.sorters.natural(a.name, b.name);
+        return Connector.model.Filter.sorters.natural(a.name, b.name);
     },
 
     convertInterval : function(d, interval)

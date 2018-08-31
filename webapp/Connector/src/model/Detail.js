@@ -5,11 +5,11 @@
  */
 Ext.define('Connector.model.Detail', {
 
-    extend : 'Ext.data.Model',
+    extend: 'Ext.data.Model',
 
-    idProperty : 'label',
+    idProperty: 'label',
 
-    fields : [
+    fields: [
         {name: 'name'},
         {name: 'label'},
         {name: 'value'},

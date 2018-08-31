@@ -26,7 +26,7 @@ Ext.define('Connector.model.ChartData', {
     statics: {
         isContinuousMeasure : function(measure) {
             if (measure.options['timeAxisType'] !== undefined) {
-                return measure.options['timeAxisType'] == 'Continuous'
+                return measure.options['timeAxisType'] === 'Continuous';
             }
 
             var type = measure.type;
@@ -38,7 +38,7 @@ Ext.define('Connector.model.ChartData', {
         this.callParent([config]);
 
         // URL option to show gutter plots that are hidden because of 1D or 2D plot selection filter
-        this.SHOW_GUTTER_PLOTS = Ext.isDefined(LABKEY.ActionURL.getParameters()['showGutters']);
+        this.SHOW_GUTTER_PLOTS = Ext.isDefined(LABKEY.ActionURL.getParameter('showGutters'));
 
         this.processMeasureStore();
     },
@@ -133,9 +133,8 @@ Ext.define('Connector.model.ChartData', {
         return this.get('usesMedian');
     },
 
-    isLogScale : function(axis)
-    {
-        return this.getPlotScales()[axis] == 'log';
+    isLogScale : function(axis) {
+        return this.getPlotScales()[axis] === 'log';
     },
 
     getAliasFromMeasure : function(measure) {
@@ -245,14 +244,12 @@ Ext.define('Connector.model.ChartData', {
             studyContainers = {},
             axisMeasureStore = LABKEY.Query.AxisMeasureStore.create(),
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
-            invalidLogPlotRowCount = 0,
             xDomain = [null,null], yDomain = [null,null],
             xVal, yVal, colorVal = null,
             distinctXVals = {},
             hasNegOrZeroX = false, hasNegOrZeroY = false,
             yMeasureFilter = {}, xMeasureFilter = {}, zMeasureFilter = {},
             excludeAliases = [],
-            excludeColorAliases = [],
             mainCount = 0,
             nonAggregated,
             isSameXYZ = false,
@@ -398,13 +395,6 @@ Ext.define('Connector.model.ChartData', {
             {
                 distinctXVals[xVal] = true;
             }
-
-            // check that the plot value are valid on a log scale
-            //if (!this.isValidPlotValue('y', ya, yVal) || !this.isValidPlotValue('x', xa, xVal))
-            //{
-            //    //invalidLogPlotRowCount++;
-            //    //continue;
-            //}
 
             // update x-axis and y-axis domain min and max values
             if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date")
@@ -552,7 +542,7 @@ Ext.define('Connector.model.ChartData', {
                 logNonPositiveY: logGutterYCount > 0,
                 logNonPositiveBoth: logGutterBothCount > 0,
                 totalCount: mainCount + undefinedXRows.length + undefinedYRows.length,
-                invalidLogPlotRowCount: invalidLogPlotRowCount,
+                invalidLogPlotRowCount: 0,
                 minPositiveX: minPositiveX === Number.MAX_VALUE ? 0.0001 : minPositiveX,
                 minPositiveY: minPositiveY === Number.MAX_VALUE ? 0.0001 : minPositiveY,
                 hasDimensionalAggregators: getAllDimensions ? true : false
@@ -581,7 +571,7 @@ Ext.define('Connector.model.ChartData', {
         // issue 24074: set the min to 1 instead of 0 if log scale
         var min = this.isLogScale(axis) && !hasNegVal ? 1 : 0;
 
-        if (type == 'TIMESTAMP') {
+        if (type === 'TIMESTAMP') {
             // if the min and max dates are the same, +/- 3
             if (axisDomain[0] != null && axisDomain[0] == axisDomain[1]) {
                 axisDomain[0] = new Date(axisDomain[0].getFullYear(),axisDomain[0].getMonth(),axisDomain[0].getDate() - 3);

@@ -118,9 +118,11 @@ Ext.define('Connector.app.store.StudyProducts', {
     onLoadAssays : function(assayData) {
         this.studyAssayMap = {};
         Ext.each(assayData.rows, function(studyAssay){
-            if (!this.studyAssayMap[studyAssay.prot])
-                this.studyAssayMap[studyAssay.prot] = [];
-            this.studyAssayMap[studyAssay.prot].push(studyAssay);
+            if (studyAssay.has_data) {
+                if (!this.studyAssayMap[studyAssay.prot])
+                    this.studyAssayMap[studyAssay.prot] = [];
+                this.studyAssayMap[studyAssay.prot].push(studyAssay);
+            }
         }, this);
         this._onLoadComplete();
     },
@@ -167,9 +169,10 @@ Ext.define('Connector.app.store.StudyProducts', {
                         var hasAccess = this.accessibleStudies[studyName] === true;
                         var assays = this.studyAssayMap[studyName];
                         if (assays) {
-                            dataStatus = assays.length + ' Assay' + (assays.length > 1 ? 's' : '') + ' Available';
-                            if (!hasAccess)
-                                dataStatus = '0/' + dataStatus;
+                            var dataStatus = '<p class="data-availability-tooltip-header">Assays ' + (hasAccess ? 'with' : 'without') + ' data accessible</p>';
+                            Ext.each(assays, function(assay){
+                                dataStatus += assay.assay_short_name + '<br>';
+                            });
                         }
                         var study = {
                             data_label: this.studyData[s].study_label ? this.studyData[s].study_label : '',
@@ -216,7 +219,7 @@ Ext.define('Connector.app.store.StudyProducts', {
             }, this);
 
             products.sort(function(productA, productB) {
-                return LABKEY.app.model.Filter.sorters.natural(productA.product_name, productB.product_name);
+                return Connector.model.Filter.sorters.natural(productA.product_name, productB.product_name);
             });
 
             this.productData = undefined;
