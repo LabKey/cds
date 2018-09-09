@@ -700,12 +700,17 @@ public class CDSExportQueryView extends QueryView
             try
             {
                 Results rs = rgn.getResultSet(view.getRenderContext());
-                TSVGridWriter tsv = new TSVGridWriter(rs, getExportColumns(rgn.getDisplayColumns()));
-                tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
-                File tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
-                tmpFile.deleteOnExit();
-                tsv.write(tmpFile);
-                logAuditEvent("Exported to CSV", tsv.getDataRowCount());
+
+                final File tmpFile;
+
+                try (TSVGridWriter tsv = new TSVGridWriter(rs, getExportColumns(rgn.getDisplayColumns())))
+                {
+                    tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
+                    tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
+                    tmpFile.deleteOnExit();
+                    tsv.write(tmpFile);
+                    logAuditEvent("Exported to CSV", tsv.getDataRowCount());
+                }
 
                 copyFileToZip(tmpFile, out);
             }
@@ -718,12 +723,15 @@ public class CDSExportQueryView extends QueryView
 
     private void writeGridCSV(String tabName, Results results, ZipOutputStream out) throws IOException
     {
-        TSVGridWriter tsv = null;
-        tsv = new TSVGridWriter(results);
-        tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
-        File tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
-        tmpFile.deleteOnExit();
-        tsv.write(tmpFile);
+        final File tmpFile;
+
+        try (TSVGridWriter tsv = new TSVGridWriter(results))
+        {
+            tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
+            tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
+            tmpFile.deleteOnExit();
+            tsv.write(tmpFile);
+        }
 
         ZipEntry entry = new ZipEntry(tabName + ".csv");
         out.putNextEntry(entry);
