@@ -15,17 +15,17 @@
  */
 package org.labkey.test.util.cds;
 
+import org.labkey.remoteapi.CommandException;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.ModulePropertyValue;
 import org.labkey.test.TestFileUtils;
-import org.labkey.test.etl.ETLHelper;
+import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PortalHelper;
-import org.labkey.test.util.ApiPermissionsHelper;
-import org.labkey.remoteapi.CommandException;
 import org.labkey.test.util.RReportHelper;
+import org.labkey.test.util.di.DataIntegrationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class CDSInitializer
     private final BaseWebDriverTest _test;
     private final CDSHelper _cds;
     private final String _project;
-    public ETLHelper _etlHelper;
+    public DataIntegrationHelper _etlHelper;
     private final ApiPermissionsHelper _apiPermissionsHelper;
     private RReportHelper _rReportHelper;
 
@@ -93,7 +93,7 @@ public class CDSInitializer
         _test = test;
         _cds = new CDSHelper(_test);
         _project = projectName;
-        _etlHelper = new ETLHelper(_test, _project);
+        _etlHelper = new DataIntegrationHelper(_project);
         _apiPermissionsHelper = new ApiPermissionsHelper(_test);
         _rReportHelper  = new RReportHelper(test);
     }
@@ -144,7 +144,7 @@ public class CDSInitializer
         // TODO: Catch any RemoteAPI Command Exceptions
 
         // run initial ETL to populate CDS import tables
-        _etlHelper.getDiHelper().runTransformAndWait("{CDS}/CDSImport", WAIT_ON_IMPORT);
+        _etlHelper.runTransformAndWait("{CDS}/CDSImport", WAIT_ON_IMPORT);
 
         // During automation runs set will fail sometimes because of a NPE in Container.hasWorkbookChildren(416).
         // We think this happens because the tests run quicker than human interaction would.
@@ -152,7 +152,7 @@ public class CDSInitializer
 
         try{
             // populate the app
-            _etlHelper.getDiHelper().runTransformAndWait("{CDS}/LoadApplication", WAIT_ON_LOADAPP);
+            _etlHelper.runTransformAndWait("{CDS}/LoadApplication", WAIT_ON_LOADAPP);
         }
         catch(CommandException ce)
         {
