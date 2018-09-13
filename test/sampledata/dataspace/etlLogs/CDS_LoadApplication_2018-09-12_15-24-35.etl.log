@@ -1,0 +1,477 @@
+12 Sep 2018 15:24:36,358 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#ClearMappingTables' at location 'webserver'
+12 Sep 2018 15:24:36,360 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:24:36,362 INFO : Running taskref task org.labkey.cds.data.steps.ClearMappingTask
+12 Sep 2018 15:24:36,363 INFO : Clearing mapping tables
+12 Sep 2018 15:24:36,377 INFO : Clearing mapping tables took 0.013s.
+12 Sep 2018 15:24:36,378 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#ClearMappingTables'
+12 Sep 2018 15:24:36,401 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateStudies' at location 'webserver'
+12 Sep 2018 15:24:36,403 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:24:36,404 INFO : Running taskref task org.labkey.cds.data.steps.PopulateStudiesTask
+12 Sep 2018 15:24:36,416 INFO : Deleted 0 studies in 0s.
+12 Sep 2018 15:24:36,418 INFO : Creating container for study (r2)
+12 Sep 2018 15:24:38,155 INFO : Creating container for study (z101)
+12 Sep 2018 15:24:40,160 INFO : Creating container for study (r3)
+12 Sep 2018 15:24:41,732 INFO : Creating container for study (z102)
+12 Sep 2018 15:24:43,556 INFO : Creating container for study (r4)
+12 Sep 2018 15:24:45,127 INFO : Creating container for study (z103)
+12 Sep 2018 15:24:46,978 INFO : Creating container for study (r5)
+12 Sep 2018 15:24:48,567 INFO : Creating container for study (z104)
+12 Sep 2018 15:24:50,362 INFO : Creating container for study (r6)
+12 Sep 2018 15:24:51,931 INFO : Creating container for study (z105)
+12 Sep 2018 15:24:53,744 INFO : Creating container for study (r7)
+12 Sep 2018 15:24:55,337 INFO : Creating container for study (z106)
+12 Sep 2018 15:24:57,169 INFO : Creating container for study (r8)
+12 Sep 2018 15:24:58,724 INFO : Creating container for study (z107)
+12 Sep 2018 15:25:00,545 INFO : Creating container for study (r9)
+12 Sep 2018 15:25:02,147 INFO : Creating container for study (z108)
+12 Sep 2018 15:25:03,970 INFO : Creating container for study (z140)
+12 Sep 2018 15:25:05,589 INFO : Creating container for study (z100)
+12 Sep 2018 15:25:07,398 INFO : Creating container for study (z134)
+12 Sep 2018 15:25:09,062 INFO : Creating container for study (z135)
+12 Sep 2018 15:25:10,904 INFO : Creating container for study (z136)
+12 Sep 2018 15:25:12,490 INFO : Creating container for study (z137)
+12 Sep 2018 15:25:14,278 INFO : Creating container for study (z138)
+12 Sep 2018 15:25:15,895 INFO : Creating container for study (z139)
+12 Sep 2018 15:25:17,699 INFO : Creating container for study (z130)
+12 Sep 2018 15:25:19,303 INFO : Creating container for study (z131)
+12 Sep 2018 15:25:20,958 INFO : Creating container for study (z132)
+12 Sep 2018 15:25:22,929 INFO : Creating container for study (z133)
+12 Sep 2018 15:25:24,851 INFO : Creating container for study (z123)
+12 Sep 2018 15:25:26,705 INFO : Creating container for study (z124)
+12 Sep 2018 15:25:28,237 INFO : Creating container for study (z125)
+12 Sep 2018 15:25:30,142 INFO : Creating container for study (z126)
+12 Sep 2018 15:25:31,757 INFO : Creating container for study (z127)
+12 Sep 2018 15:25:33,549 INFO : Creating container for study (z128)
+12 Sep 2018 15:25:35,167 INFO : Creating container for study (z129)
+12 Sep 2018 15:25:36,992 INFO : Creating container for study (z120)
+12 Sep 2018 15:25:38,566 INFO : Creating container for study (z121)
+12 Sep 2018 15:25:40,402 INFO : Creating container for study (z122)
+12 Sep 2018 15:25:42,016 INFO : Creating container for study (y55)
+12 Sep 2018 15:25:43,601 INFO : Creating container for study (q1)
+12 Sep 2018 15:25:45,372 INFO : Creating container for study (z112)
+12 Sep 2018 15:25:46,978 INFO : Creating container for study (q2)
+12 Sep 2018 15:25:48,750 INFO : Creating container for study (z113)
+12 Sep 2018 15:25:50,379 INFO : Creating container for study (q3)
+12 Sep 2018 15:25:52,199 INFO : Creating container for study (z114)
+12 Sep 2018 15:25:53,814 INFO : Creating container for study (q4)
+12 Sep 2018 15:25:55,626 INFO : Creating container for study (z115)
+12 Sep 2018 15:25:57,485 INFO : Creating container for study (z116)
+12 Sep 2018 15:25:59,120 INFO : Creating container for study (z117)
+12 Sep 2018 15:26:00,742 INFO : Creating container for study (z118)
+12 Sep 2018 15:26:02,596 INFO : Creating container for study (z119)
+12 Sep 2018 15:26:04,200 INFO : Creating container for study (z110)
+12 Sep 2018 15:26:06,066 INFO : Creating container for study (z111)
+12 Sep 2018 15:26:07,665 INFO : Creating container for study (z109)
+12 Sep 2018 15:26:09,509 INFO : Creating container for study (r1)
+12 Sep 2018 15:26:11,195 INFO : Created 55 studies in 1m34.777s.
+12 Sep 2018 15:26:14,440 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateStudies'
+12 Sep 2018 15:26:14,457 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateVisits' at location 'webserver'
+12 Sep 2018 15:26:14,458 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:14,460 INFO : Running taskref task org.labkey.cds.data.steps.PopulateStudyVisitTask
+12 Sep 2018 15:26:14,461 INFO : Starting visit management.
+12 Sep 2018 15:26:17,733 INFO : Visit management took 3.271s.
+12 Sep 2018 15:26:17,734 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateVisits'
+12 Sep 2018 15:26:17,750 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateLab' at location 'webserver'
+12 Sep 2018 15:26:17,751 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:17,756 INFO : Copying data from cds.ds_lab to cds.lab
+12 Sep 2018 15:26:17,823 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:17,829 INFO : Target option: truncate
+12 Sep 2018 15:26:17,832 INFO : Deleted 0 rows from cds.lab
+12 Sep 2018 15:26:17,872 INFO : Copied 6 rows in 0.117s
+12 Sep 2018 15:26:17,874 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateLab'
+12 Sep 2018 15:26:17,892 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateMAbMetadata' at location 'webserver'
+12 Sep 2018 15:26:17,894 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:17,895 INFO : Copying data from cds.import_MAbMetadata to cds.MAbMetadata
+12 Sep 2018 15:26:17,897 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:17,898 INFO : Target option: truncate
+12 Sep 2018 15:26:17,900 INFO : Deleted 0 rows from cds.MAbMetadata
+12 Sep 2018 15:26:17,983 INFO : Copied 225 rows in 0.088s
+12 Sep 2018 15:26:17,984 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateMAbMetadata'
+12 Sep 2018 15:26:18,003 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateMAbMixMetadata' at location 'webserver'
+12 Sep 2018 15:26:18,004 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:18,006 INFO : Copying data from cds.import_MAbMixMetadata to cds.MAbMixMetadata
+12 Sep 2018 15:26:18,008 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:18,010 INFO : Target option: truncate
+12 Sep 2018 15:26:18,012 INFO : Deleted 0 rows from cds.MAbMixMetadata
+12 Sep 2018 15:26:18,096 INFO : Copied 269 rows in 0.090s
+12 Sep 2018 15:26:18,097 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateMAbMixMetadata'
+12 Sep 2018 15:26:18,114 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateMAbMix' at location 'webserver'
+12 Sep 2018 15:26:18,116 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:18,118 INFO : Copying data from cds.import_MAbMix to cds.MAbMix
+12 Sep 2018 15:26:18,119 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:18,120 INFO : Target option: truncate
+12 Sep 2018 15:26:18,122 INFO : Deleted 0 rows from cds.MAbMix
+12 Sep 2018 15:26:18,206 INFO : Copied 312 rows in 0.089s
+12 Sep 2018 15:26:18,207 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateMAbMix'
+12 Sep 2018 15:26:18,228 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateMAbMetaGridBase' at location 'webserver'
+12 Sep 2018 15:26:18,230 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:18,232 INFO : Copying data from cds.ds_mabmetasummary to cds.mAbMetaGridBase
+12 Sep 2018 15:26:18,315 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:18,316 INFO : Target option: truncate
+12 Sep 2018 15:26:18,318 INFO : Deleted 0 rows from cds.mAbMetaGridBase
+12 Sep 2018 15:26:18,441 INFO : Copied 312 rows in 0.209s
+12 Sep 2018 15:26:18,442 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateMAbMetaGridBase'
+12 Sep 2018 15:26:18,461 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateDemographics' at location 'webserver'
+12 Sep 2018 15:26:18,463 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:18,464 INFO : Running taskref task org.labkey.cds.data.steps.PopulateDatasetTask
+12 Sep 2018 15:26:18,496 INFO : Inserting 5 rows into "Demographics" dataset. (q1)
+12 Sep 2018 15:26:18,611 INFO : Insert took 0.107s.
+12 Sep 2018 15:26:18,627 INFO : Inserting 84 rows into "Demographics" dataset. (q2)
+12 Sep 2018 15:26:18,922 INFO : Insert took 0.294s.
+12 Sep 2018 15:26:18,937 INFO : Inserting 30 rows into "Demographics" dataset. (q3)
+12 Sep 2018 15:26:19,088 INFO : Insert took 0.150s.
+12 Sep 2018 15:26:19,103 INFO : Inserting 100 rows into "Demographics" dataset. (q4)
+12 Sep 2018 15:26:19,210 INFO : Insert took 0.106s.
+12 Sep 2018 15:26:19,223 INFO : Inserting 110 rows into "Demographics" dataset. (r1)
+12 Sep 2018 15:26:19,325 INFO : Insert took 0.101s.
+12 Sep 2018 15:26:19,337 INFO : Inserting 48 rows into "Demographics" dataset. (r2)
+12 Sep 2018 15:26:19,425 INFO : Insert took 0.087s.
+12 Sep 2018 15:26:19,436 INFO : Inserting 3 rows into "Demographics" dataset. (r3)
+12 Sep 2018 15:26:19,504 INFO : Insert took 0.067s.
+12 Sep 2018 15:26:19,518 INFO : Inserting 90 rows into "Demographics" dataset. (r4)
+12 Sep 2018 15:26:19,627 INFO : Insert took 0.108s.
+12 Sep 2018 15:26:19,641 INFO : Inserting 120 rows into "Demographics" dataset. (r5)
+12 Sep 2018 15:26:19,764 INFO : Insert took 0.122s.
+12 Sep 2018 15:26:19,787 INFO : Inserting 35 rows into "Demographics" dataset. (r6)
+12 Sep 2018 15:26:19,866 INFO : Insert took 0.078s.
+12 Sep 2018 15:26:19,878 INFO : Inserting 17 rows into "Demographics" dataset. (r7)
+12 Sep 2018 15:26:19,954 INFO : Insert took 0.076s.
+12 Sep 2018 15:26:19,966 INFO : Inserting 17 rows into "Demographics" dataset. (r8)
+12 Sep 2018 15:26:20,042 INFO : Insert took 0.075s.
+12 Sep 2018 15:26:20,054 INFO : Inserting 48 rows into "Demographics" dataset. (r9)
+12 Sep 2018 15:26:20,150 INFO : Insert took 0.095s.
+12 Sep 2018 15:26:20,162 INFO : Inserting 96 rows into "Demographics" dataset. (y55)
+12 Sep 2018 15:26:20,270 INFO : Insert took 0.107s.
+12 Sep 2018 15:26:20,292 INFO : Inserting 174 rows into "Demographics" dataset. (z101)
+12 Sep 2018 15:26:20,398 INFO : Insert took 0.105s.
+12 Sep 2018 15:26:20,411 INFO : Inserting 70 rows into "Demographics" dataset. (z102)
+12 Sep 2018 15:26:20,499 INFO : Insert took 0.087s.
+12 Sep 2018 15:26:20,512 INFO : Inserting 42 rows into "Demographics" dataset. (z103)
+12 Sep 2018 15:26:20,594 INFO : Insert took 0.081s.
+12 Sep 2018 15:26:20,607 INFO : Inserting 180 rows into "Demographics" dataset. (z104)
+12 Sep 2018 15:26:20,722 INFO : Insert took 0.115s.
+12 Sep 2018 15:26:20,734 INFO : Inserting 48 rows into "Demographics" dataset. (z105)
+12 Sep 2018 15:26:20,812 INFO : Insert took 0.078s.
+12 Sep 2018 15:26:20,825 INFO : Inserting 150 rows into "Demographics" dataset. (z106)
+12 Sep 2018 15:26:20,930 INFO : Insert took 0.104s.
+12 Sep 2018 15:26:20,943 INFO : Inserting 96 rows into "Demographics" dataset. (z107)
+12 Sep 2018 15:26:21,047 INFO : Insert took 0.103s.
+12 Sep 2018 15:26:21,059 INFO : Inserting 70 rows into "Demographics" dataset. (z108)
+12 Sep 2018 15:26:21,145 INFO : Insert took 0.085s.
+12 Sep 2018 15:26:21,157 INFO : Inserting 84 rows into "Demographics" dataset. (z109)
+12 Sep 2018 15:26:21,275 INFO : Insert took 0.117s.
+12 Sep 2018 15:26:21,287 INFO : Inserting 144 rows into "Demographics" dataset. (z110)
+12 Sep 2018 15:26:21,414 INFO : Insert took 0.126s.
+12 Sep 2018 15:26:21,425 INFO : Inserting 120 rows into "Demographics" dataset. (z111)
+12 Sep 2018 15:26:21,522 INFO : Insert took 0.096s.
+12 Sep 2018 15:26:21,536 INFO : Inserting 84 rows into "Demographics" dataset. (z112)
+12 Sep 2018 15:26:21,623 INFO : Insert took 0.086s.
+12 Sep 2018 15:26:21,634 INFO : Inserting 120 rows into "Demographics" dataset. (z113)
+12 Sep 2018 15:26:21,736 INFO : Insert took 0.101s.
+12 Sep 2018 15:26:21,746 INFO : Inserting 36 rows into "Demographics" dataset. (z114)
+12 Sep 2018 15:26:21,829 INFO : Insert took 0.082s.
+12 Sep 2018 15:26:21,841 INFO : Inserting 66 rows into "Demographics" dataset. (z115)
+12 Sep 2018 15:26:21,941 INFO : Insert took 0.099s.
+12 Sep 2018 15:26:21,954 INFO : Inserting 192 rows into "Demographics" dataset. (z116)
+12 Sep 2018 15:26:22,100 INFO : Insert took 0.144s.
+12 Sep 2018 15:26:22,111 INFO : Inserting 80 rows into "Demographics" dataset. (z117)
+12 Sep 2018 15:26:22,200 INFO : Insert took 0.088s.
+12 Sep 2018 15:26:22,213 INFO : Inserting 48 rows into "Demographics" dataset. (z118)
+12 Sep 2018 15:26:22,296 INFO : Insert took 0.081s.
+12 Sep 2018 15:26:22,320 INFO : Inserting 8 rows into "Demographics" dataset. (z119)
+12 Sep 2018 15:26:22,405 INFO : Insert took 0.085s.
+12 Sep 2018 15:26:22,419 INFO : Inserting 180 rows into "Demographics" dataset. (z120)
+12 Sep 2018 15:26:22,553 INFO : Insert took 0.133s.
+12 Sep 2018 15:26:22,567 INFO : Inserting 90 rows into "Demographics" dataset. (z121)
+12 Sep 2018 15:26:22,666 INFO : Insert took 0.099s.
+12 Sep 2018 15:26:22,681 INFO : Inserting 184 rows into "Demographics" dataset. (z122)
+12 Sep 2018 15:26:22,805 INFO : Insert took 0.122s.
+12 Sep 2018 15:26:22,822 INFO : Inserting 100 rows into "Demographics" dataset. (z123)
+12 Sep 2018 15:26:22,927 INFO : Insert took 0.104s.
+12 Sep 2018 15:26:22,937 INFO : Inserting 36 rows into "Demographics" dataset. (z124)
+12 Sep 2018 15:26:23,014 INFO : Insert took 0.076s.
+12 Sep 2018 15:26:23,027 INFO : Inserting 60 rows into "Demographics" dataset. (z125)
+12 Sep 2018 15:26:23,172 INFO : Insert took 0.144s.
+12 Sep 2018 15:26:23,197 INFO : Inserting 143 rows into "Demographics" dataset. (z127)
+12 Sep 2018 15:26:23,319 INFO : Insert took 0.121s.
+12 Sep 2018 15:26:23,335 INFO : Inserting 48 rows into "Demographics" dataset. (z128)
+12 Sep 2018 15:26:23,450 INFO : Insert took 0.114s.
+12 Sep 2018 15:26:23,463 INFO : Inserting 100 rows into "Demographics" dataset. (z129)
+12 Sep 2018 15:26:23,596 INFO : Insert took 0.132s.
+12 Sep 2018 15:26:23,610 INFO : Inserting 159 rows into "Demographics" dataset. (z130)
+12 Sep 2018 15:26:23,718 INFO : Insert took 0.107s.
+12 Sep 2018 15:26:23,729 INFO : Inserting 60 rows into "Demographics" dataset. (z131)
+12 Sep 2018 15:26:23,853 INFO : Insert took 0.123s.
+12 Sep 2018 15:26:23,868 INFO : Inserting 41 rows into "Demographics" dataset. (z132)
+12 Sep 2018 15:26:23,950 INFO : Insert took 0.081s.
+12 Sep 2018 15:26:23,964 INFO : Inserting 330 rows into "Demographics" dataset. (z133)
+12 Sep 2018 15:26:24,123 INFO : Insert took 0.159s.
+12 Sep 2018 15:26:24,140 INFO : Inserting 480 rows into "Demographics" dataset. (z134)
+12 Sep 2018 15:26:24,365 INFO : Insert took 0.224s.
+12 Sep 2018 15:26:24,380 INFO : Inserting 299 rows into "Demographics" dataset. (z135)
+12 Sep 2018 15:26:24,521 INFO : Insert took 0.139s.
+12 Sep 2018 15:26:24,536 INFO : Inserting 801 rows into "Demographics" dataset. (z136)
+12 Sep 2018 15:26:24,799 INFO : Insert took 0.262s.
+12 Sep 2018 15:26:24,825 INFO : Inserting 47 rows into "Demographics" dataset. (z138)
+12 Sep 2018 15:26:24,935 INFO : Insert took 0.109s.
+12 Sep 2018 15:26:24,972 INFO : Inserting 2504 rows into "Demographics" dataset. (z139)
+12 Sep 2018 15:26:25,774 INFO : Insert took 0.801s.
+12 Sep 2018 15:26:25,782 INFO : PopulateDatasetTask for Dataset "Demographics" took 7.302s. Inserted 8277 rows.
+12 Sep 2018 15:26:25,782 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateDemographics'
+12 Sep 2018 15:26:25,802 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateMAb' at location 'webserver'
+12 Sep 2018 15:26:25,803 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:25,804 INFO : Running taskref task org.labkey.cds.data.steps.PopulateDatasetTask
+12 Sep 2018 15:26:25,865 INFO : Inserting 736 rows into "NABMAb" dataset. (q2)
+12 Sep 2018 15:26:26,005 INFO : Insert took 0.138s.
+12 Sep 2018 15:26:26,093 INFO : Inserting 1152 rows into "NABMAb" dataset. (r4)
+12 Sep 2018 15:26:26,246 INFO : Insert took 0.152s.
+12 Sep 2018 15:26:26,301 INFO : Inserting 3008 rows into "NABMAb" dataset. (r5)
+12 Sep 2018 15:26:26,688 INFO : Insert took 0.387s.
+12 Sep 2018 15:26:26,733 INFO : Inserting 512 rows into "NABMAb" dataset. (y55)
+12 Sep 2018 15:26:26,816 INFO : Insert took 0.082s.
+12 Sep 2018 15:26:26,965 INFO : Inserting 960 rows into "NABMAb" dataset. (z117)
+12 Sep 2018 15:26:27,094 INFO : Insert took 0.128s.
+12 Sep 2018 15:26:27,115 INFO : Inserting 944 rows into "NABMAb" dataset. (z118)
+12 Sep 2018 15:26:27,358 INFO : Insert took 0.242s.
+12 Sep 2018 15:26:27,386 INFO : Inserting 1472 rows into "NABMAb" dataset. (z119)
+12 Sep 2018 15:26:27,551 INFO : Insert took 0.164s.
+12 Sep 2018 15:26:27,627 INFO : Inserting 2120 rows into "NABMAb" dataset. (z128)
+12 Sep 2018 15:26:27,905 INFO : Insert took 0.277s.
+12 Sep 2018 15:26:27,963 INFO : Inserting 960 rows into "NABMAb" dataset. (z133)
+12 Sep 2018 15:26:28,097 INFO : Insert took 0.133s.
+12 Sep 2018 15:26:28,120 INFO : Inserting 560 rows into "NABMAb" dataset. (z135)
+12 Sep 2018 15:26:28,216 INFO : Insert took 0.095s.
+12 Sep 2018 15:26:28,254 INFO : PopulateDatasetTask for Dataset "NABMAb" took 2.436s. Inserted 12424 rows.
+12 Sep 2018 15:26:28,254 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateMAb'
+12 Sep 2018 15:26:28,290 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateMAbGridBase' at location 'webserver'
+12 Sep 2018 15:26:28,291 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:28,292 INFO : Running taskref task org.labkey.cds.data.steps.PopulateGridBaseTask
+12 Sep 2018 15:26:29,373 INFO : Populating mAbGridBase took 1.080s.
+12 Sep 2018 15:26:29,375 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateMAbGridBase'
+12 Sep 2018 15:26:29,394 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateICS' at location 'webserver'
+12 Sep 2018 15:26:29,395 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:29,396 INFO : Running taskref task org.labkey.cds.data.steps.PopulateDatasetTask
+12 Sep 2018 15:26:29,486 INFO : Inserting 1450 rows into "ICS" dataset. (r4)
+12 Sep 2018 15:26:29,680 INFO : Insert took 0.193s.
+12 Sep 2018 15:26:29,703 INFO : Inserting 2012 rows into "ICS" dataset. (r5)
+12 Sep 2018 15:26:29,937 INFO : Insert took 0.233s.
+12 Sep 2018 15:26:29,952 INFO : Inserting 780 rows into "ICS" dataset. (r6)
+12 Sep 2018 15:26:30,051 INFO : Insert took 0.098s.
+12 Sep 2018 15:26:30,116 INFO : Inserting 1170 rows into "ICS" dataset. (z102)
+12 Sep 2018 15:26:30,250 INFO : Insert took 0.133s.
+12 Sep 2018 15:26:30,281 INFO : Inserting 744 rows into "ICS" dataset. (z105)
+12 Sep 2018 15:26:30,373 INFO : Insert took 0.091s.
+12 Sep 2018 15:26:30,410 INFO : Inserting 4429 rows into "ICS" dataset. (z106)
+12 Sep 2018 15:26:30,825 INFO : Insert took 0.414s.
+12 Sep 2018 15:26:30,911 INFO : Inserting 3338 rows into "ICS" dataset. (z113)
+12 Sep 2018 15:26:31,274 INFO : Insert took 0.362s.
+12 Sep 2018 15:26:31,334 INFO : Inserting 6991 rows into "ICS" dataset. (z115)
+12 Sep 2018 15:26:31,971 INFO : Insert took 0.636s.
+12 Sep 2018 15:26:31,996 INFO : Inserting 2656 rows into "ICS" dataset. (z116)
+12 Sep 2018 15:26:32,386 INFO : Insert took 0.389s.
+12 Sep 2018 15:26:32,407 INFO : Inserting 755 rows into "ICS" dataset. (z117)
+12 Sep 2018 15:26:32,561 INFO : Insert took 0.152s.
+12 Sep 2018 15:26:32,587 INFO : Inserting 1452 rows into "ICS" dataset. (z118)
+12 Sep 2018 15:26:32,801 INFO : Insert took 0.213s.
+12 Sep 2018 15:26:32,864 INFO : Inserting 90 rows into "ICS" dataset. (z124)
+12 Sep 2018 15:26:32,918 INFO : Insert took 0.052s.
+12 Sep 2018 15:26:33,049 INFO : Inserting 2968 rows into "ICS" dataset. (z134)
+12 Sep 2018 15:26:33,389 INFO : Insert took 0.340s.
+12 Sep 2018 15:26:33,419 INFO : Inserting 2020 rows into "ICS" dataset. (z136)
+12 Sep 2018 15:26:33,728 INFO : Insert took 0.308s.
+12 Sep 2018 15:26:33,761 INFO : PopulateDatasetTask for Dataset "ICS" took 4.355s. Inserted 30855 rows.
+12 Sep 2018 15:26:33,762 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateICS'
+12 Sep 2018 15:26:33,783 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateNAB' at location 'webserver'
+12 Sep 2018 15:26:33,784 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:33,785 INFO : Running taskref task org.labkey.cds.data.steps.PopulateDatasetTask
+12 Sep 2018 15:26:33,820 INFO : Inserting 1075 rows into "NAb" dataset. (q2)
+12 Sep 2018 15:26:33,930 INFO : Insert took 0.109s.
+12 Sep 2018 15:26:34,029 INFO : Inserting 3698 rows into "NAb" dataset. (y55)
+12 Sep 2018 15:26:34,425 INFO : Insert took 0.395s.
+12 Sep 2018 15:26:34,540 INFO : Inserting 700 rows into "NAb" dataset. (z117)
+12 Sep 2018 15:26:34,632 INFO : Insert took 0.091s.
+12 Sep 2018 15:26:34,642 INFO : Inserting 450 rows into "NAb" dataset. (z118)
+12 Sep 2018 15:26:34,707 INFO : Insert took 0.064s.
+12 Sep 2018 15:26:34,716 INFO : Inserting 96 rows into "NAb" dataset. (z119)
+12 Sep 2018 15:26:34,751 INFO : Insert took 0.034s.
+12 Sep 2018 15:26:34,761 INFO : Inserting 569 rows into "NAb" dataset. (z120)
+12 Sep 2018 15:26:34,844 INFO : Insert took 0.082s.
+12 Sep 2018 15:26:34,895 INFO : Inserting 388 rows into "NAb" dataset. (z128)
+12 Sep 2018 15:26:34,960 INFO : Insert took 0.064s.
+12 Sep 2018 15:26:34,974 INFO : Inserting 1146 rows into "NAb" dataset. (z129)
+12 Sep 2018 15:26:35,109 INFO : Insert took 0.134s.
+12 Sep 2018 15:26:35,143 INFO : Inserting 1155 rows into "NAb" dataset. (z133)
+12 Sep 2018 15:26:35,349 INFO : Insert took 0.204s.
+12 Sep 2018 15:26:35,367 INFO : Inserting 60 rows into "NAb" dataset. (z134)
+12 Sep 2018 15:26:35,441 INFO : Insert took 0.072s.
+12 Sep 2018 15:26:35,455 INFO : Inserting 1196 rows into "NAb" dataset. (z135)
+12 Sep 2018 15:26:35,613 INFO : Insert took 0.157s.
+12 Sep 2018 15:26:35,639 INFO : Inserting 250 rows into "NAb" dataset. (z139)
+12 Sep 2018 15:26:35,818 INFO : Insert took 0.178s.
+12 Sep 2018 15:26:35,825 INFO : PopulateDatasetTask for Dataset "NAb" took 2.030s. Inserted 10783 rows.
+12 Sep 2018 15:26:35,826 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateNAB'
+12 Sep 2018 15:26:35,844 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateELISpot' at location 'webserver'
+12 Sep 2018 15:26:35,845 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:35,846 INFO : Running taskref task org.labkey.cds.data.steps.PopulateDatasetTask
+12 Sep 2018 15:26:35,919 INFO : Inserting 1493 rows into "ELISPOT" dataset. (r4)
+12 Sep 2018 15:26:36,067 INFO : Insert took 0.147s.
+12 Sep 2018 15:26:36,169 INFO : Inserting 718 rows into "ELISPOT" dataset. (z110)
+12 Sep 2018 15:26:36,280 INFO : Insert took 0.110s.
+12 Sep 2018 15:26:36,289 INFO : Inserting 298 rows into "ELISPOT" dataset. (z111)
+12 Sep 2018 15:26:36,355 INFO : Insert took 0.065s.
+12 Sep 2018 15:26:36,506 INFO : Inserting 1447 rows into "ELISPOT" dataset. (z134)
+12 Sep 2018 15:26:36,677 INFO : Insert took 0.169s.
+12 Sep 2018 15:26:36,711 INFO : PopulateDatasetTask for Dataset "ELISPOT" took 0.856s. Inserted 3956 rows.
+12 Sep 2018 15:26:36,712 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateELISpot'
+12 Sep 2018 15:26:36,733 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateBAMA' at location 'webserver'
+12 Sep 2018 15:26:36,734 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:36,735 INFO : Running taskref task org.labkey.cds.data.steps.PopulateDatasetTask
+12 Sep 2018 15:26:36,918 INFO : Inserting 1050 rows into "BAMA" dataset. (z117)
+12 Sep 2018 15:26:37,031 INFO : Insert took 0.112s.
+12 Sep 2018 15:26:37,153 INFO : PopulateDatasetTask for Dataset "BAMA" took 0.410s. Inserted 1050 rows.
+12 Sep 2018 15:26:37,154 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateBAMA'
+12 Sep 2018 15:26:37,177 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateAssay' at location 'webserver'
+12 Sep 2018 15:26:37,178 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:37,179 INFO : Running taskref task org.labkey.cds.data.steps.PopulateAssayTask
+12 Sep 2018 15:26:37,180 INFO : Starting populate assays.
+12 Sep 2018 15:26:37,444 INFO : Inserted 6 rows in cds.assay.
+12 Sep 2018 15:26:37,446 INFO : Populate assays took 0.265s.
+12 Sep 2018 15:26:37,447 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateAssay'
+12 Sep 2018 15:26:37,465 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateStudyAssay' at location 'webserver'
+12 Sep 2018 15:26:37,466 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:37,467 INFO : Running taskref task org.labkey.cds.data.steps.ContainerSensitivePopulateTask
+12 Sep 2018 15:26:37,868 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateStudyAssay'
+12 Sep 2018 15:26:37,888 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateRelationship' at location 'webserver'
+12 Sep 2018 15:26:37,889 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:37,890 INFO : Running taskref task org.labkey.cds.data.steps.PopulateRelationshipTask
+12 Sep 2018 15:26:37,912 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,914 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,917 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,920 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,923 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,927 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,928 WARN : Study 'r5' is defined as related to itself.
+12 Sep 2018 15:26:37,934 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,938 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,941 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,954 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,956 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,962 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,965 WARN : ERROR: insert or update on table "studyrelationship" violates foreign key constraint "fk_study_relationship_prot"
+  Detail: Key (container, prot)=(15c47d14-9908-1036-be48-2a4fc0866270, q1) is not present in table "study".
+12 Sep 2018 15:26:37,988 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateRelationship'
+12 Sep 2018 15:26:38,009 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateICSAntigen' at location 'webserver'
+12 Sep 2018 15:26:38,010 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:38,012 INFO : Copying data from cds.ds_icsantigen to cds.ICSAntigen
+12 Sep 2018 15:26:38,136 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:38,137 INFO : Target option: truncate
+12 Sep 2018 15:26:38,139 INFO : Deleted 0 rows from cds.ICSAntigen
+12 Sep 2018 15:26:38,162 INFO : Copied 11 rows in 0.149s
+12 Sep 2018 15:26:38,163 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateICSAntigen'
+12 Sep 2018 15:26:38,186 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateNAbAntigen' at location 'webserver'
+12 Sep 2018 15:26:38,188 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:38,190 INFO : Copying data from cds.ds_nabantigen to cds.NAbAntigen
+12 Sep 2018 15:26:38,264 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:38,266 INFO : Target option: truncate
+12 Sep 2018 15:26:38,267 INFO : Deleted 0 rows from cds.NAbAntigen
+12 Sep 2018 15:26:38,307 INFO : Copied 215 rows in 0.118s
+12 Sep 2018 15:26:38,309 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateNAbAntigen'
+12 Sep 2018 15:26:38,330 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateELISpotAntigen' at location 'webserver'
+12 Sep 2018 15:26:38,331 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:38,333 INFO : Copying data from cds.ds_elispotantigen to cds.ELISpotantigen
+12 Sep 2018 15:26:38,399 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:38,400 INFO : Target option: truncate
+12 Sep 2018 15:26:38,402 INFO : Deleted 0 rows from cds.ELISpotantigen
+12 Sep 2018 15:26:38,423 INFO : Copied 20 rows in 0.090s
+12 Sep 2018 15:26:38,424 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateELISpotAntigen'
+12 Sep 2018 15:26:38,447 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateBAMAAntigen' at location 'webserver'
+12 Sep 2018 15:26:38,448 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:38,451 INFO : Copying data from cds.ds_bamaantigen to cds.BAMAAntigen
+12 Sep 2018 15:26:38,530 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:38,531 INFO : Target option: truncate
+12 Sep 2018 15:26:38,533 INFO : Deleted 0 rows from cds.BAMAAntigen
+12 Sep 2018 15:26:38,553 INFO : Copied 9 rows in 0.103s
+12 Sep 2018 15:26:38,554 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateBAMAAntigen'
+12 Sep 2018 15:26:38,575 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#product' at location 'webserver'
+12 Sep 2018 15:26:38,576 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:26:38,578 INFO : Copying data from cds.ds_product to cds.product
+12 Sep 2018 15:26:38,643 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:26:38,644 INFO : Target option: truncate
+12 Sep 2018 15:26:38,646 INFO : Deleted 0 rows from cds.product
+12 Sep 2018 15:26:38,683 INFO : Copied 90 rows in 0.106s
+12 Sep 2018 15:26:38,684 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#product'
+12 Sep 2018 15:26:38,703 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateStudyProduct' at location 'webserver'
+12 Sep 2018 15:26:38,704 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:38,705 INFO : Running taskref task org.labkey.cds.data.steps.ContainerSensitivePopulateTask
+12 Sep 2018 15:26:38,951 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateStudyProduct'
+12 Sep 2018 15:26:38,974 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateTreatmentArms' at location 'webserver'
+12 Sep 2018 15:26:38,975 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:38,976 INFO : Running taskref task org.labkey.cds.data.steps.PopulateTreatmentArmTask
+12 Sep 2018 15:26:38,976 INFO : Starting populate treatment arms.
+12 Sep 2018 15:26:41,445 INFO : Populate treatment arms took 2.468s.
+12 Sep 2018 15:26:49,223 INFO : Populate visit tags took 7.777s.
+12 Sep 2018 15:26:49,877 INFO : Populate SubjectProductMap took 0.652s.
+12 Sep 2018 15:26:50,281 INFO : Populate StudyPartGroupArmProduct took 0.403s.
+12 Sep 2018 15:26:50,282 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateTreatmentArms'
+12 Sep 2018 15:26:50,302 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateGridBase' at location 'webserver'
+12 Sep 2018 15:26:50,303 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:26:50,304 INFO : Running taskref task org.labkey.cds.data.steps.PopulateGridBaseTask
+12 Sep 2018 15:27:02,965 INFO : Populating GridBase took 12.661s.
+12 Sep 2018 15:27:02,966 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateGridBase'
+12 Sep 2018 15:27:02,987 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateFacts' at location 'webserver'
+12 Sep 2018 15:27:02,989 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:27:02,989 INFO : Running taskref task org.labkey.cds.data.steps.PopulateFactsTask
+12 Sep 2018 15:27:05,054 INFO : Populating Facts took 2.064s.
+12 Sep 2018 15:27:05,056 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateFacts'
+12 Sep 2018 15:27:05,077 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateProperties' at location 'webserver'
+12 Sep 2018 15:27:05,078 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:27:05,080 INFO : Copying data from cds.ds_properties to cds.properties
+12 Sep 2018 15:27:05,178 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:27:05,179 INFO : Target option: truncate
+12 Sep 2018 15:27:05,181 INFO : Deleted 0 rows from cds.properties
+12 Sep 2018 15:27:05,250 INFO : Copied 1 row in 0.170s
+12 Sep 2018 15:27:05,251 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateProperties'
+12 Sep 2018 15:27:05,276 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#document' at location 'webserver'
+12 Sep 2018 15:27:05,277 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:27:05,279 INFO : Copying data from cds.ds_document to cds.document
+12 Sep 2018 15:27:05,352 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:27:05,354 INFO : Target option: truncate
+12 Sep 2018 15:27:05,355 INFO : Deleted 0 rows from cds.document
+12 Sep 2018 15:27:05,394 INFO : Copied 170 rows in 0.115s
+12 Sep 2018 15:27:05,395 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#document'
+12 Sep 2018 15:27:05,420 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateStudyDocument' at location 'webserver'
+12 Sep 2018 15:27:05,421 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:27:05,422 INFO : Running taskref task org.labkey.cds.data.steps.ContainerSensitivePopulateTask
+12 Sep 2018 15:27:05,545 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateStudyDocument'
+12 Sep 2018 15:27:05,567 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulatePublication' at location 'webserver'
+12 Sep 2018 15:27:05,568 DEBUG: SimpleQueryTransformStep.doWork called
+12 Sep 2018 15:27:05,571 INFO : Copying data from cds.ds_publication to cds.publication
+12 Sep 2018 15:27:05,643 INFO : SelectAllFilterStrategy: no filter
+12 Sep 2018 15:27:05,644 INFO : Target option: truncate
+12 Sep 2018 15:27:05,646 INFO : Deleted 0 rows from cds.publication
+12 Sep 2018 15:27:05,666 INFO : Copied 9 rows in 0.095s
+12 Sep 2018 15:27:05,667 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulatePublication'
+12 Sep 2018 15:27:05,689 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#PopulateStudyPublication' at location 'webserver'
+12 Sep 2018 15:27:05,690 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:27:05,691 INFO : Running taskref task org.labkey.cds.data.steps.ContainerSensitivePopulateTask
+12 Sep 2018 15:27:05,747 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#PopulateStudyPublication'
+12 Sep 2018 15:27:05,769 INFO : Starting to run task 'CDS:task:{CDS}/LoadApplication#ClearAndWarmCube' at location 'webserver'
+12 Sep 2018 15:27:05,770 DEBUG: TaskRefTransformStep.doWork called
+12 Sep 2018 15:27:05,771 INFO : Running taskref task org.labkey.cds.data.steps.ClearAndWarmCube
+12 Sep 2018 15:27:05,773 INFO : Successfully completed task 'CDS:task:{CDS}/LoadApplication#ClearAndWarmCube'
+12 Sep 2018 15:27:05,794 INFO : Starting to run task 'org.labkey.api.exp.pipeline.XarGeneratorId:expGen' at location 'webserver'
+12 Sep 2018 15:27:05,795 INFO : Checking files referenced by experiment run
+12 Sep 2018 15:27:05,796 DEBUG: File check complete
+12 Sep 2018 15:27:06,319 INFO : Successfully completed task 'org.labkey.api.exp.pipeline.XarGeneratorId:expGen'
