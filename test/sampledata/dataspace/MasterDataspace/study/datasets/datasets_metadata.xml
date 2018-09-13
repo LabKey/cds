@@ -61,12 +61,14 @@
       <column columnName="race">
         <datatype>varchar</datatype>
         <columnTitle>Race</columnTitle>
+        <description>Subject classification by self-report for race categories as defined by NIH OMB standards.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="ethnicity">
         <datatype>varchar</datatype>
         <columnTitle>Hispanic</columnTitle>
+        <description>Subject classification by self-report for ethnicity categories as defined by NIH OMB standards.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -101,7 +103,7 @@
         <datatype>integer</datatype>
         <columnTitle>Age Group (Decade)</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
-        <isHidden>true</isHidden>
+        <dimension>true</dimension>
       </column>
       <column columnName="age_enrollment">
         <datatype>integer</datatype>
@@ -489,8 +491,7 @@
         <columnTitle>Functionality score</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>
-          A calculated score that summarizes a subject’s entire Ag-specific polyfunctional profile into a single numerical value.
-          The functionality score is the proportion of Ag-specific subsets detected among all possible ones.
+          A calculated score that summarizes a subject’s entire Ag-specific polyfunctional profile into a single numerical value. The functionality score is the proportion of Ag-specific subsets detected among all possible ones.
         </description>
         <measure>true</measure>
       </column>
@@ -499,8 +500,7 @@
         <columnTitle>Polyfunctionality score</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>
-          A calculated score that summarizes a subject’s entire Ag-specific polyfunctional profile into a single
-          numerical value, weighing the different subsets by their degree of functionality
+          A calculated score that summarizes a subject’s entire Ag-specific polyfunctional profile into a single numerical value, weighing the different subsets by their degree of functionality
         </description>
         <measure>true</measure>
       </column>

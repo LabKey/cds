@@ -30,7 +30,9 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ICS_specimen_type',
                         'study_ICS_lab_code',
                         'study_ICS_antigen',
-                        'study_ICS_pooled_info'
+                        'study_ICS_pooled_info',
+                        'study_ICS_functionality_score',
+                        'study_ICS_polyfunctionality_score'
                     ],
                     defaultScale: 'LOG'
                 },
@@ -106,7 +108,9 @@ Ext.define('Connector.measure.Configuration', {
                         'study_Demographics_circumcised_enrollment',
                         'study_Demographics_bmi_enrollment',
                         'study_Demographics_agegroup_range',
-                        'study_Demographics_age_enrollment'
+                        'study_Demographics_age_enrollment',
+                        'study_Demographics_genderidentity',
+                        'study_Demographics_studycohort'
                     ]
                 },
                 'StudyTreatmentVariables': {
@@ -577,10 +581,6 @@ Ext.define('Connector.measure.Configuration', {
                 'study_Demographics_species': {
                     isRecommendedVariable: true
                 },
-                'study_Demographics_sexatbirth': {
-                    isRecommendedVariable: true,
-                    hidden: true
-                },
                 'study_Demographics_age_enrollment': {
                     isRecommendedVariable: true,
                     hidden: true
@@ -702,22 +702,7 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_visit_day': {
                     hidden: true
                 },
-                'study_Demographics_agegroup_range': {
-                    hidden: true
-                },
                 'study_Demographics_bmi_enrollment': {
-                    hidden: true
-                },
-                'study_Demographics_circumcised_enrollment': {
-                    hidden: true
-                },
-                'study_Demographics_country_enrollment': {
-                    hidden: true
-                },
-                'study_Demographics_ethnicity': {
-                    hidden: true
-                },
-                'study_Demographics_race': {
                     hidden: true
                 },
                 'study_Demographics_study_arm': {

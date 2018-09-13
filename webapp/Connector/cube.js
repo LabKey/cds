@@ -129,6 +129,38 @@ Ext4.define('Connector.cube.Configuration', {
                         countSingular: 'Decade by Age',
                         countPlural: 'Decades by Age'
                     }]
+                },{
+                    uniqueName: '[Subject.Circumcised]',
+                    label: 'Circumcised at enrollment',
+                    levels: [{
+                        uniqueName: '[Subject.Circumcised].[Circumcised]',
+                        countSingular: 'Circumcision category',
+                        countPlural: 'Circumcision categories'
+                    }]
+                },{
+                    uniqueName: '[Subject.BMI]',
+                    label: 'BMI at enrollment',
+                    levels: [{
+                        uniqueName: '[Subject.BMI].[BMI]',
+                        countSingular: 'BMI range',
+                        countPlural: 'BMI ranges'
+                    }]
+                },{
+                    uniqueName: '[Subject.GenderIdentity]',
+                    label: 'Gender identity',
+                    levels: [{
+                        uniqueName: '[Subject.GenderIdentity].[GenderIdentity]',
+                        countSingular: 'Gender identity',
+                        countPlural: 'Gender identities'
+                    }]
+                },{
+                    uniqueName: '[Subject.Cohort]',
+                    label: 'Study cohort',
+                    levels: [{
+                        uniqueName: '[Subject.Cohort].[Cohort]',
+                        countSingular: 'Study cohort',
+                        countPlural: 'Study cohorts'
+                    }]
                 }]
             },{
                 uniqueName: '[Study]',
