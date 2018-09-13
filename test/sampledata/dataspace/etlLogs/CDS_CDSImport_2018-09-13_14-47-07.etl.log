@@ -1,0 +1,471 @@
+13 Sep 2018 14:47:08,455 INFO : Starting to run task 'CDS:task:{CDS}/CDSImport#CDSImport' at location 'webserver'
+13 Sep 2018 14:47:08,458 DEBUG: TaskRefTransformStep.doWork called
+13 Sep 2018 14:47:08,460 INFO : Running taskref task org.labkey.cds.data.steps.CDSImportTask
+13 Sep 2018 14:47:08,462 INFO : Initiating truncate for supplied copy configurations.
+13 Sep 2018 14:47:08,463 INFO : Truncating cds.import_NABMAb, cds.import_BAMA, cds.import_NAB, cds.import_ELS_IFNg, cds.import_ICS, cds.import_BAMAAntigen, cds.import_NAbAntigen, cds.import_ELISpotAntigen, cds.import_ICSAntigen, cds.import_StudyPublication, cds.import_StudyDocument, cds.import_StudyPartGroupArmSubject, cds.import_StudyAssay, cds.import_StudyProduct, cds.import_MAbMix, cds.import_StudyRelationship, cds.import_StudyRelationshipOrder, cds.import_ProductInsert, cds.import_StudyPartGroupArmVisitProduct, cds.import_StudyPartGroupArmVisit, cds.import_StudyPartGroupArmProduct, cds.import_StudyPartGroupArm, cds.import_MAbMixMetadata, cds.import_MAbMetadata, cds.import_Publication, cds.import_Document, cds.import_StudySubject, cds.import_Lab, cds.import_Assay, cds.import_Product, cds.import_StudyGroups, cds.import_Study
+13 Sep 2018 14:47:09,469 INFO : Truncated tables in 1.005s.
+13 Sep 2018 14:47:09,475 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_Study
+13 Sep 2018 14:47:09,682 INFO : Copied 55 rows in 0.211s.
+13 Sep 2018 14:47:09,687 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyGroups
+13 Sep 2018 14:47:09,697 INFO : Copied 56 rows in 0.014s.
+13 Sep 2018 14:47:09,703 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_Product
+13 Sep 2018 14:47:09,721 INFO : Copied 90 rows in 0.022s.
+13 Sep 2018 14:47:09,726 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_Assay
+13 Sep 2018 14:47:09,764 INFO : Copied 6 rows in 0.041s.
+13 Sep 2018 14:47:09,768 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_Lab
+13 Sep 2018 14:47:09,773 INFO : Copied 6 rows in 0.007s.
+13 Sep 2018 14:47:09,777 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudySubject
+13 Sep 2018 14:47:10,331 INFO : Copied 8277 rows in 0.556s.
+13 Sep 2018 14:47:10,336 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_Document
+13 Sep 2018 14:47:10,363 INFO : Copied 170 rows in 0.031s.
+13 Sep 2018 14:47:10,368 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_Publication
+13 Sep 2018 14:47:10,378 INFO : Copied 9 rows in 0.013s.
+13 Sep 2018 14:47:10,383 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_MAbMetadata
+13 Sep 2018 14:47:10,396 INFO : Copied 225 rows in 0.016s.
+13 Sep 2018 14:47:10,401 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_MAbMixMetadata
+13 Sep 2018 14:47:10,462 INFO : Copied 269 rows in 0.065s.
+13 Sep 2018 14:47:10,467 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArm
+13 Sep 2018 14:47:10,490 INFO : Copied 286 rows in 0.026s.
+13 Sep 2018 14:47:10,495 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArmProduct
+13 Sep 2018 14:47:10,503 INFO : Copied 29 rows in 0.012s.
+13 Sep 2018 14:47:10,508 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArmVisit
+13 Sep 2018 14:47:10,742 INFO : Copied 3712 rows in 0.238s.
+13 Sep 2018 14:47:10,746 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArmVisitProduct
+13 Sep 2018 14:47:10,780 INFO : Copied 75 rows in 0.037s.
+13 Sep 2018 14:47:10,784 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_ProductInsert
+13 Sep 2018 14:47:10,794 INFO : Copied 36 rows in 0.013s.
+13 Sep 2018 14:47:10,798 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyRelationshipOrder
+13 Sep 2018 14:47:10,801 INFO : Copied 5 rows in 0.006s.
+13 Sep 2018 14:47:10,806 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyRelationship
+13 Sep 2018 14:47:10,811 INFO : Copied 24 rows in 0.009s.
+13 Sep 2018 14:47:10,816 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_MAbMix
+13 Sep 2018 14:47:11,013 INFO : Copied 312 rows in 0.200s.
+13 Sep 2018 14:47:11,018 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyProduct
+13 Sep 2018 14:47:11,024 INFO : Copied 99 rows in 0.009s.
+13 Sep 2018 14:47:11,028 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyAssay
+13 Sep 2018 14:47:11,035 INFO : Copied 52 rows in 0.010s.
+13 Sep 2018 14:47:11,036 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArmSubject
+13 Sep 2018 14:47:11,380 INFO : Copied 6924 rows in 0.344s.
+13 Sep 2018 14:47:11,384 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyDocument
+13 Sep 2018 14:47:11,391 INFO : Copied 123 rows in 0.010s.
+13 Sep 2018 14:47:11,395 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPublication
+13 Sep 2018 14:47:11,399 INFO : Copied 13 rows in 0.007s.
+13 Sep 2018 14:47:11,403 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_ICSAntigen
+13 Sep 2018 14:47:11,408 INFO : Copied 11 rows in 0.008s.
+13 Sep 2018 14:47:11,412 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_ELISpotAntigen
+13 Sep 2018 14:47:11,417 INFO : Copied 20 rows in 0.008s.
+13 Sep 2018 14:47:11,421 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_NAbAntigen
+13 Sep 2018 14:47:11,461 INFO : Copied 215 rows in 0.043s.
+13 Sep 2018 14:47:11,467 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_BAMAAntigen
+13 Sep 2018 14:47:11,472 INFO : Copied 9 rows in 0.010s.
+13 Sep 2018 14:47:11,478 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_ICS
+13 Sep 2018 14:47:13,548 INFO : Copied 30855 rows in 2.075s.
+13 Sep 2018 14:47:13,552 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_ELS_IFNg
+13 Sep 2018 14:47:13,854 INFO : Copied 3956 rows in 0.305s.
+13 Sep 2018 14:47:13,859 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_NAB
+13 Sep 2018 14:47:14,651 INFO : Copied 10783 rows in 0.796s.
+13 Sep 2018 14:47:14,657 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_BAMA
+13 Sep 2018 14:47:14,782 INFO : Copied 1050 rows in 0.130s.
+13 Sep 2018 14:47:14,787 INFO : Copying data from C:\dev\labkey\18.2\server\optionalModules\cds\test\sampledata\dataspace\cdsimport to cds.import_NABMAb
+13 Sep 2018 14:47:16,014 INFO : Copied 12424 rows in 1.230s.
+13 Sep 2018 14:47:16,015 INFO : Successfully completed task 'CDS:task:{CDS}/CDSImport#CDSImport'
+13 Sep 2018 14:47:16,030 INFO : Starting to run task 'CDS:task:{CDS}/CDSImport#CDSValidate' at location 'webserver'
+13 Sep 2018 14:47:16,031 DEBUG: TaskRefTransformStep.doWork called
+13 Sep 2018 14:47:16,032 INFO : Running taskref task org.labkey.cds.data.steps.CDSValidateTask
+13 Sep 2018 14:47:16,033 INFO : Validating Subjects in Datasets
+13 Sep 2018 14:47:16,130 INFO : Validating Visit Tag Assignments
+13 Sep 2018 14:47:16,150 INFO : Validating Visits In Datasets
+13 Sep 2018 14:47:16,228 WARN : Validation Failed!
+	Study day 210 is not on the schedule for Subject z124-001 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-002 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-003 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-004 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-005 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-006 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-007 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-008 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-009 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-010 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-011 in assay ICS
+	Study day 210 is not on the schedule for Subject z124-014 in assay ICS
+	Study day 182 is not on the schedule for Subject z135-001 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-003 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-005 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-006 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-008 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-009 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-010 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-011 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-013 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-015 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-020 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-023 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-028 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-029 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-030 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-036 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-037 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-038 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-044 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-045 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-046 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-048 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-051 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-052 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-055 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-056 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-058 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-060 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-062 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-065 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-068 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-069 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-075 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-078 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-084 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-086 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-090 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-095 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-097 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-101 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-103 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-107 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-108 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-111 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-112 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-113 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-116 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-119 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-120 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-127 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-128 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-130 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-134 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-135 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-137 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-139 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-147 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-148 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-149 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-150 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-152 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-161 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-163 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-165 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-166 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-172 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-173 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-180 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-183 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-184 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-185 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-186 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-188 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-189 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-194 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-197 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-199 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-200 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-201 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-202 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-205 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-206 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-209 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-210 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-214 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-215 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-217 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-222 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-223 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-226 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-228 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-232 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-233 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-236 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-239 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-241 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-244 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-247 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-249 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-251 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-252 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-254 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-255 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-264 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-266 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-269 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-270 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-273 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-274 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-276 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-277 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-279 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-283 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-284 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-288 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-292 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-293 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-294 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-296 in assay NAB
+	Study day 182 is not on the schedule for Subject z135-299 in assay NAB
+	Study day 56 is not on the schedule for Subject z136-01408 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-01484 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-01495 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-01635 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-01665 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-01752 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-01822 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-01918 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-01926 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-01973 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02240 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02265 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02290 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02383 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02539 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02552 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02557 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02564 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02602 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02672 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02687 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02733 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02773 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02909 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02935 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02949 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-02969 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03035 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03153 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03199 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03200 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03257 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03543 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03559 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03560 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03620 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03818 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-03887 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04217 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04225 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04250 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04278 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04329 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04461 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04546 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04637 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04654 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04660 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04734 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-04985 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05050 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05055 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05108 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05130 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05290 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05451 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05470 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05496 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05677 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05862 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05866 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05894 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05904 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05958 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05964 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-05973 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06040 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06097 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06115 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06120 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06147 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06149 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06150 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06176 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06310 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06535 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06569 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06620 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06622 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06667 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06679 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06750 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06834 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06839 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06903 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-06990 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07001 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07038 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07162 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07223 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07226 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07227 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07317 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07359 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07464 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07490 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07525 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07658 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07672 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07717 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07723 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07896 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07913 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-07971 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08115 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08247 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08255 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08264 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08322 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08323 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08369 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08418 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08444 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08472 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08562 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08609 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08705 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08720 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08875 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-08968 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09003 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09008 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09127 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09147 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09177 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09180 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09203 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09215 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09283 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09289 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09400 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09414 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09449 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09469 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09508 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09511 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09586 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09589 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09619 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09634 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09658 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09752 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09779 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09787 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09830 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09904 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09907 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-09989 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10071 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10198 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10230 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10248 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10348 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10388 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10413 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10455 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10485 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10540 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10553 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10575 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10577 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10617 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10726 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10949 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-10988 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11038 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11043 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11070 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11125 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11161 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11214 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11270 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11297 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11388 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11462 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11474 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11622 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11626 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11686 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11943 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11970 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-11989 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12109 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12117 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12121 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12123 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12250 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12263 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12305 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12395 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12566 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12617 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12633 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12737 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12806 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12810 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12868 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12869 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-12896 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13012 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13018 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13082 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13203 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13219 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13249 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13282 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13296 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13306 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13320 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13402 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13456 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13479 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13550 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13573 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13580 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13583 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13640 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13765 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13772 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13815 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13816 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13936 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13948 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-13956 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14043 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14064 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14065 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14102 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14303 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14633 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14719 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14771 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14774 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-14992 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15090 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15101 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15107 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15154 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15166 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15230 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15344 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15383 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15457 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15473 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15545 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15546 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15592 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15608 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15676 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15703 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15792 in assay ICS
+	Study day 56 is not on the schedule for Subject z136-15859 in assay ICS
+13 Sep 2018 14:47:16,229 INFO : Validating Subjects in Assays
+13 Sep 2018 14:47:16,290 INFO : Validating Study Products Pairs
+13 Sep 2018 14:47:16,328 INFO : Successfully completed task 'CDS:task:{CDS}/CDSImport#CDSValidate'
+13 Sep 2018 14:47:16,344 INFO : Starting to run task 'org.labkey.api.exp.pipeline.XarGeneratorId:expGen' at location 'webserver'
+13 Sep 2018 14:47:16,348 INFO : Checking files referenced by experiment run
+13 Sep 2018 14:47:16,349 DEBUG: File check complete
+13 Sep 2018 14:47:16,353 DEBUG: Checking urn:lsid:labkey.com:Protocol.Folder-6:CDS%3Apipeline%3A%7BCDS%7D%2FCDSImport to see if it is a match
+13 Sep 2018 14:47:16,437 DEBUG: Protocols match
+13 Sep 2018 14:47:16,685 INFO : Successfully completed task 'org.labkey.api.exp.pipeline.XarGeneratorId:expGen'
