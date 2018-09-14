@@ -105,7 +105,7 @@ Ext.define('Connector.view.MabGrid', {
                 items: [{
                     xtype: 'actiontitle',
                     flex: 1,
-                    text: 'Explore monoclonal antibody (MAb) screening data',
+                    text: 'Explore monoclonal antibody (mAb) screening data',
                     buttons: [
                         this.getExportCSVButton(),
                         this.getExportExcelButton()
@@ -482,7 +482,7 @@ Ext.define('Connector.view.MabGrid', {
         return {
             xtype: 'box',
             html: '<div class="header">' +
-            '<div style="font-size: 13.5pt; font-weight: bold;">Viruses tested against MAbs</div>' +
+            '<div style="font-size: 13.5pt; font-weight: bold;">Viruses tested against mAbs</div>' +
             '</div>'
         }
     },

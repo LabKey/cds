@@ -179,7 +179,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         List<WebElement> buttons;
 
-        Locator virusFilter = Locator.xpath("//div[contains(@class, 'x-window-closable')]//div[@class='header']//div[text()='Viruses tested against MAbs']");
+        Locator virusFilter = Locator.xpath("//div[contains(@class, 'x-window-closable')]//div[@class='header']//div[text()='Viruses tested against mAbs']");
         int index;
 
         if ((_webDriverWrapper.isElementPresent(virusFilter)) &&(_webDriverWrapper.isElementVisible(virusFilter)))
