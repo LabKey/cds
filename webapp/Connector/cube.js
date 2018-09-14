@@ -139,11 +139,11 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 },{
                     uniqueName: '[Subject.BMI]',
-                    label: 'BMI at enrollment',
+                    label: 'BMI category',
                     levels: [{
                         uniqueName: '[Subject.BMI].[BMI]',
-                        countSingular: 'BMI range',
-                        countPlural: 'BMI ranges'
+                        countSingular: 'BMI category',
+                        countPlural: 'BMI categories'
                     }]
                 },{
                     uniqueName: '[Subject.GenderIdentity]',

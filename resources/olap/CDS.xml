@@ -60,7 +60,7 @@
             </Hierarchy>
             <Hierarchy name="BMI" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="BMI" visible="true" column="bmi_enrollment" type="String" uniqueMembers="true" />
+                <Level name="BMI" visible="true" column="bmi_category" type="String" uniqueMembers="true" />
             </Hierarchy>
             <Hierarchy name="GenderIdentity" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>

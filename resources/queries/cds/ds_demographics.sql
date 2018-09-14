@@ -34,6 +34,16 @@ SELECT
   CAST(ROUND(10 * Floor(dd.subject_age_enrollment_years / 10.0)) AS VARCHAR) || '-' || CAST(ROUND((10 * Floor(dd.subject_age_enrollment_years / 10.0)) + 9) AS VARCHAR) AS agegroup_range,
   CAST(ROUND(10 * Floor(dd.subject_age_enrollment_years / 10.0)) AS INTEGER) AS agegroup_enrollment,
   dd.subject_age_enrollment_years AS age_enrollment,
+
+  dd.subject_bmi_enrollment AS bmi_enrollment,
+  (CASE WHEN dd.subject_bmi_enrollment IS NULL THEN NULL
+    WHEN dd.subject_bmi_enrollment < 18.5 THEN 'Underweight'
+    WHEN dd.subject_bmi_enrollment < 24.9 THEN 'Normal Weight'
+    WHEN dd.subject_bmi_enrollment < 29.9 THEN 'Overweight'
+  ELSE 'Obese'
+  END)
+   AS bmi_category,
+
   -- import_demographics.subject_bmi_enrollment AS bmi,
 
   -- STUDY RELATED
