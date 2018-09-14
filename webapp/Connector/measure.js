@@ -30,9 +30,7 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ICS_specimen_type',
                         'study_ICS_lab_code',
                         'study_ICS_antigen',
-                        'study_ICS_pooled_info',
-                        'study_ICS_functionality_score',
-                        'study_ICS_polyfunctionality_score'
+                        'study_ICS_pooled_info'
                     ],
                     defaultScale: 'LOG'
                 },
