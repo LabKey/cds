@@ -1797,9 +1797,8 @@ public class CDSHelper
     public void dragAndDropFromElement(Locator el, int xOffset, int yOffset)
     {
         WebElement wel = el.findElement(_test.getDriver());
-        _test.mouseOver(wel);
         Actions builder = new Actions(_test.getDriver());
-        builder.clickAndHold().moveByOffset(xOffset + 1, yOffset + 1).release().build().perform();
+        builder.moveToElement(wel).clickAndHold().moveByOffset(xOffset + 1, yOffset + 1).release().build().perform();
     }
 
     public void validateDocLink(WebElement documentLink, String expectedFileName)
