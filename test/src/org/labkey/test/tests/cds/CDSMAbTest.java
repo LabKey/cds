@@ -300,7 +300,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
         grid.setFacet(SPECIES_COL,true,"[blank]", "human");
         grid.setFacet(STUDIES_COL,true,"q2", "r4", "z117");
         log("Create exclusive filters for IC50 and virus");
-        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,false,"< 1");
+        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,false,">= 0.1 to < 1");
         AntigenFilterPanel virusPanel = grid.openVirusPanel(null);
         String virusOneExclude = "virus-1B-A-Q23.17";
         String virusTwoExclude = "virus-1A-B-MN.3";
@@ -607,7 +607,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
         grid.clearAllSelections();
 
         log("Add a filter to the Geometric IC50 Curve.");
-        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1", "< 1");
+        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1", ">= 0.1 to < 1");
 
         log("Validate that the counts are as expected after the filter is applied.");
         ip = new InfoPane(this);
