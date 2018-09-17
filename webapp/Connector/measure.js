@@ -104,6 +104,7 @@ Ext.define('Connector.measure.Configuration', {
                         'study_Demographics_ethnicity',
                         'study_Demographics_country_enrollment',
                         'study_Demographics_circumcised_enrollment',
+                        'study_Demographics_bmi_enrollment',
                         'study_Demographics_bmi_category',
                         'study_Demographics_agegroup_range',
                         'study_Demographics_age_enrollment',

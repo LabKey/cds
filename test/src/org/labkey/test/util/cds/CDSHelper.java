@@ -425,7 +425,10 @@ public class CDSHelper
     public static final String DEMO_SPECIES = "Species";
     public static final String DEMO_SUBSPECIES = "Subspecies";
     public static final String DEMO_STUDY_NAME = "Study Name";
+    public static final String DEMO_BMI_GROUP = "BMI Category";
+    public static final String DEMO_GENDER_IDENTITY = "Gender identity";
     public static final String DEMO_STUDY = "Study";
+    public static final String DEMO_STUDY_COHORT = "Study cohort";
     public static final String DEMO_TREAT_SUMM = "Treatment Summary";
     public static final String DEMO_DATE_SUBJ_ENR = "Date First Subject Enrolled";
     public static final String DEMO_DATE_FUP_COMP = "Date Follow-up Complete";
