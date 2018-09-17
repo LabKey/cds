@@ -63,7 +63,7 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',
                 summaryTargetLevel: '[Subject.Species].[Species]',
-                findSubjectSummaryLevel: '[Subject.Race].[Race]',
+                findSubjectSummaryLevel: '[Subject.Species].[Species]',
                 priority: 0,
                 defaultOperator: 'OR',
                 showOperator: false,
@@ -128,6 +128,38 @@ Ext4.define('Connector.cube.Configuration', {
                         uniqueName: '[Subject.Age].[Age]',
                         countSingular: 'Decade by Age',
                         countPlural: 'Decades by Age'
+                    }]
+                },{
+                    uniqueName: '[Subject.Circumcised]',
+                    label: 'Circumcised at enrollment',
+                    levels: [{
+                        uniqueName: '[Subject.Circumcised].[Circumcised]',
+                        countSingular: 'Circumcision category',
+                        countPlural: 'Circumcision categories'
+                    }]
+                },{
+                    uniqueName: '[Subject.BMI]',
+                    label: 'BMI category',
+                    levels: [{
+                        uniqueName: '[Subject.BMI].[BMI]',
+                        countSingular: 'BMI category',
+                        countPlural: 'BMI categories'
+                    }]
+                },{
+                    uniqueName: '[Subject.GenderIdentity]',
+                    label: 'Gender identity',
+                    levels: [{
+                        uniqueName: '[Subject.GenderIdentity].[GenderIdentity]',
+                        countSingular: 'Gender identity',
+                        countPlural: 'Gender identities'
+                    }]
+                },{
+                    uniqueName: '[Subject.Cohort]',
+                    label: 'Study cohort',
+                    levels: [{
+                        uniqueName: '[Subject.Cohort].[Cohort]',
+                        countSingular: 'Study cohort',
+                        countPlural: 'Study cohorts'
                     }]
                 }]
             },{

@@ -54,6 +54,23 @@
                 <Level name="Species" visible="true" column="species" type="String" uniqueMembers="true" />
             </Hierarchy>
 
+            <Hierarchy name="Circumcised" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Circumcised" visible="true" column="circumcised_enrollment" type="String" uniqueMembers="true" />
+            </Hierarchy>
+            <Hierarchy name="BMI" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="BMI" visible="true" column="bmi_category" type="String" uniqueMembers="true" />
+            </Hierarchy>
+            <Hierarchy name="GenderIdentity" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="GenderIdentity" visible="true" column="genderidentity" type="String" uniqueMembers="true" />
+            </Hierarchy>
+            <Hierarchy name="Cohort" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Cohort" visible="true" column="studycohort" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
         </Dimension>
 
         <Dimension name="Study" visible="true" highCardinality="false" foreignKey="participantid">

@@ -57,5 +57,7 @@ pctpos_neg,
 control,
 pooled_info,
 response_method,
+functionality_score,
+polyfunctionality_score
 
 FROM cds.import_ics;

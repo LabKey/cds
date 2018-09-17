@@ -110,6 +110,8 @@
             <column columnName="subject_species"/>
             <column columnName="subject_subspecies"/>
             <column columnName="subject_sex_at_birth"/>
+            <column columnName="subject_gender_identity"/>
+            <column columnName="subject_study_cohort"/>
             <column columnName="subject_age_enrollment_years"/>
             <column columnName="subject_race_nih"/>
             <column columnName="subject_hispanic"/>
@@ -479,6 +481,8 @@
             <column columnName="response_method"/>
             <column columnName="control"/>
             <column columnName="pooled_info"/>
+            <column columnName="functionality_score"/>
+            <column columnName="polyfunctionality_score"/>
             <column columnName="container"/>
         </columns>
     </table>
