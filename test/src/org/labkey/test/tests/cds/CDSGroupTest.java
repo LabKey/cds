@@ -19,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
-import org.labkey.test.etl.ETLHelper;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
@@ -27,6 +26,7 @@ import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
+import org.labkey.test.util.di.DataIntegrationHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -537,8 +537,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
         goToProjectHome();
 
         log("Run the 'LoadApplication' ETL for CDS to load the updated study.");
-        ETLHelper _etlHelper = new ETLHelper(this, getProjectName());
-        _etlHelper.getDiHelper().runTransformAndWait("{CDS}/LoadApplication", 15 * 60 * 1000);
+        new DataIntegrationHelper(getProjectName()).runTransformAndWait("{CDS}/LoadApplication", 15 * 60 * 1000);
 
         goToProjectHome();
         Ext4Helper.setCssPrefix("x-");
