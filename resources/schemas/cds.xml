@@ -291,6 +291,9 @@
             <column columnName="mab_mix_id"/>
             <column columnName="mab_mix_name_std"/>
             <column columnName="mab_mix_label"/>
+            <column columnName="mab_mix_type"/>
+            <column columnName="mab_mix_name_other"/>
+            <column columnName="mab_mix_lanlid"/>
         </columns>
     </table>
     <table tableName="import_MAbMix" tableDbType="TABLE">
@@ -621,6 +624,9 @@
             <column columnName="mab_mix_id"/>
             <column columnName="mab_mix_name_std"/>
             <column columnName="mab_mix_label"/>
+            <column columnName="mab_mix_type"/>
+            <column columnName="mab_mix_name_other"/>
+            <column columnName="mab_mix_lanlid"/>
         </columns>
     </table>
     <table tableName="MAbMix" tableDbType="TABLE">
@@ -1015,6 +1021,7 @@
         <columns>
             <column columnName="mab_mix_id"/>
             <column columnName="mab_mix_name_std"/>
+            <column columnName="mab_mix_type"/>
             <column columnName="mab_id"/>
             <column columnName="mab_hxb2_location"/>
             <column columnName="mab_isotype"/>

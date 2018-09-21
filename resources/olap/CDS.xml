@@ -199,5 +199,9 @@
         <!--A fake dimension so that Report can show up in Learn about-->
         <Dimension name="Report" visible="true" highCardinality="false">
         </Dimension>
+
+        <!--A fake dimension so that mAbs can show up in Learn about-->
+        <Dimension name="MAb" visible="true" highCardinality="false">
+        </Dimension>
     </Cube>
 </Schema>

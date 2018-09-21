@@ -42,7 +42,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                             '<td>',
                                 '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallGreyX.png"/>',
                             '</td>',
-                        '<td> Data not added </td>',
+                            '<td> Data not added </td>',
                         '</tr>',
                     '</table>',
                     '</tpl>'
@@ -78,7 +78,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
             }, {
                 xtype: 'templatecolumn',
                 header: 'All',
-                width: 250,
+                width: '90%',
                 sortable: false,
                 menuDisabled: true,
                 tpl: this.getDataAddedTemplate()
@@ -137,12 +137,20 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
     getDataAddedTemplate : function() {
         var me = this;
         return new Ext4.XTemplate(
+                '<tpl>',
+                '<table><tr><td>',
                 '<tpl if="data_label">', //determines if we have a learn about page to back the assay
                 '<a href="#learn/learn/',
                 '{[this.getDataLink()]}',
                 '/{[encodeURIComponent(values.data_link_id)]}">{data_label:htmlEncode}</a>',
                 '<tpl else>',
                 '<span>{data_id:htmlEncode}</span>',
+                '</tpl>',
+                '</td><td class="data-availability-alt-label">',
+                '<tpl if="alt_label">', //determines if we have a learn about page to back the assay
+                '<span>Labeled as {alt_label:htmlEncode}</span>',
+                '</tpl>',
+                '</td></tr></table>',
                 '</tpl>',
                 {
                     getDataLink: function()
@@ -200,6 +208,7 @@ Ext.define("DataAdded", {
     fields: [
         {name: 'data_link_id'},
         {name: 'data_label'},
+        {name: 'alt_label'},
         {name: 'has_data'},
         {name: 'has_access'},
         {name: 'data_id'},

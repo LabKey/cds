@@ -198,6 +198,10 @@
                 </settings>
             </taskref>
         </transform>
+        <transform id="PopulateStudyMab" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="ds_studymab"/>
+            <destination schemaName="cds" queryName="studymab" targetOption="truncate"/>
+        </transform>
         <!--Should occur last-->
         <transform id="ClearAndWarmCube" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">

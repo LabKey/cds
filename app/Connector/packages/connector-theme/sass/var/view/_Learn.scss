@@ -376,10 +376,21 @@ img.detail-has-data-small {
   }
 }
 
+.data-availability-alt-label {
+  padding-left: 2em;
+  white-space: normal;
+}
+
 .data-availability-tooltip-header {
   font-weight: bold;
   padding-bottom: 5px;
   color: black;
+}
+
+.show-hide-mabs-toggle {
+  padding-bottom: 2em;
+  color: $action-red;
+  cursor: pointer;
 }
 
 .learngrid {
@@ -671,7 +682,11 @@ img.detail-has-data-small {
     &.item-label {
       color: $secondary-text-color;
       padding-right: 1em;
-      width: 130px;
+      width: 135px;
+    }
+
+    &.sub-label {
+      padding-left: 2em;
     }
   }
 }
