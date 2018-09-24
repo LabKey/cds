@@ -24,7 +24,7 @@ Ext.define('Connector.view.MabStatus', {
     getEmptyText : function() {
         if (!this.emptyText) {
             this.emptyText = Ext.create('Ext.Component', {
-                tpl: new Ext.XTemplate('<div class="emptytext">From the MAb grid</div>'),
+                tpl: new Ext.XTemplate('<div class="emptytext">From the mAb grid</div>'),
                 data: {}
             });
         }

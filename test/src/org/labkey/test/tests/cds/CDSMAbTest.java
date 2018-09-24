@@ -652,12 +652,12 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         while (i < uiEntry.length)
         {
-            if (uiEntry[i].trim().equalsIgnoreCase("Has data in MAb grid"))
+            if (uiEntry[i].trim().equalsIgnoreCase("Has data in mAb grid"))
             {
                 putInHasData = true;
                 i++;
             }
-            else if (uiEntry[i].trim().equalsIgnoreCase("No data in MAb grid"))
+            else if (uiEntry[i].trim().equalsIgnoreCase("No data in mAb grid"))
             {
                 putInHasData = false;
                 i++;
@@ -695,14 +695,14 @@ public class CDSMAbTest extends CDSReadOnlyTest
         {
             if ((expectedHasData.size() == 0) && (hasDataInMAbGrid.size() != 0))
             {
-                sb.append("UI shows values in 'Has data in MAb grid', wasn't expecting any.\n");
+                sb.append("UI shows values in 'Has data in mAb grid', wasn't expecting any.\n");
             }
             else
             {
                 for (String expected : expectedHasData)
                 {
                     if (!hasDataInMAbGrid.contains(expected))
-                        sb.append("Did not find '" + expected + "' in 'Has data in MAb grid'.\n");
+                        sb.append("Did not find '" + expected + "' in 'Has data in mAb grid'.\n");
                 }
             }
         }
@@ -716,14 +716,14 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
             if ((expectedNoData.size() == 0) && (noDataInMAbGrid.size() != 0))
             {
-                sb.append("UI shows values in 'No data in MAb grid', wasn't expecting any.\n");
+                sb.append("UI shows values in 'No data in mAb grid', wasn't expecting any.\n");
             }
             else
             {
                 for (String expected : expectedNoData)
                 {
                     if (!noDataInMAbGrid.contains(expected))
-                        sb.append("Did not find '" + expected + "' in 'No data in MAb grid'.\n");
+                        sb.append("Did not find '" + expected + "' in 'No data in mAb grid'.\n");
                 }
             }
 
