@@ -3,4 +3,4 @@ SELECT mabwithstudy.prot, mabwithstudy.mab_mix_name_std, mabwithstudy.mab_label 
 FROM cds.learn_mab_mix_forstudies mabwithstudy
 LEFT JOIN cds.learn_studiesforassays studyassay
   ON mabwithstudy.prot = studyassay.prot
-     AND studyassay.assay_identifier = (SELECT DISTINCT assay_identifier FROM study.NABMAb)
+     AND studyassay.assay_identifier = 'NAB MAB'
