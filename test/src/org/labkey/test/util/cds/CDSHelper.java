@@ -716,7 +716,7 @@ public class CDSHelper
     //Helper function for data availability tests
     public Locator.XPathLocator getDataRowXPath(String rowText)
     {
-        return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
+        return Locator.tagWithAttribute("tr", "role", "row").containing(rowText);
     }
 
     public Locator.XPathLocator hasDataDetailIconXPath(String rowText)
