@@ -3611,7 +3611,7 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
-        var groupKeys = Object.keys(groupTags).sort(Connector.model.Filter.sorters.natural),
+        var groupKeys = Ext.Object.getKeys(groupTags).sort(Connector.model.Filter.sorters.natural),
             isAggregate = groupKeys.length > 1,
             tplGroups = [];
 

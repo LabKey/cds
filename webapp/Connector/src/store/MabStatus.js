@@ -34,7 +34,7 @@ Ext.define('Connector.store.MabStatus', {
         this.results = {};
 
         var fetchCount = this.fetchCount;
-        var queryCount = Object.keys(queries).length;
+        var queryCount = Ext.Object.getKeys(queries).length;
 
         for (var q in queries) {
             if (queries.hasOwnProperty(q)) {

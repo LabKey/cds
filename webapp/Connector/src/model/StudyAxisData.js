@@ -303,11 +303,11 @@ Ext.define('Connector.model.StudyAxisData', {
         }, this);
 
         // Convert study map, group map and visit maps into arrays.
-        studyKeys = Object.keys(studyMap);
+        studyKeys = Ext.Object.getKeys(studyMap);
         for (i = 0; i < studyKeys.length; i++)
         {
             study = studyMap[studyKeys[i]];
-            groupKeys = Object.keys(study.groups);
+            groupKeys = Ext.Object.getKeys(study.groups);
             groups = [];
             for (j = 0; j < groupKeys.length; j++)
             {
@@ -318,7 +318,7 @@ Ext.define('Connector.model.StudyAxisData', {
                     console.warn('"' + group.study + ': ' + group.name + '" does not have a tag for the current alignment.');
                 }
 
-                visitKeys = Object.keys(group.visits).sort();
+                visitKeys = Ext.Object.getKeys(group.visits).sort();
                 groupVisits = [];
                 for (k = 0; k < visitKeys.length; k++)
                 {

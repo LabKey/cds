@@ -127,9 +127,9 @@ Ext.define('Connector.app.store.MAb', {
                 mixRec.hxb2Locs_str = hxb2Locs.join(', ');
                 mixRec.mabnames_str = mabnames.join(', ');
 
-                mabs = Object.values(mabIdMap);
+                mabs = Ext.Object.getValues(mabIdMap);
                 mabs.sort(function(a, b) {
-                    return a.mabName - b.mabName;
+                    return Connector.model.Filter.sorters.natural(a.mabName, b.mabName);
                 });
                 mixRec.mabs = mabs;
 

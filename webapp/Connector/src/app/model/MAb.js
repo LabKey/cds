@@ -21,21 +21,13 @@ Ext.define('Connector.app.model.MAb', {
 
         {name: 'has_data'},
 
-        {name: 'mabs', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
+        {name: 'mabs', convert : Connector.model.Filter.asArray},
         {name: 'donors_str'},
-        {name: 'donors', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
+        {name: 'donors', convert : Connector.model.Filter.asArray},
         {name: 'isotypes_str'},
-        {name: 'isotypes', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
+        {name: 'isotypes', convert : Connector.model.Filter.asArray},
         {name: 'hxb2Locs_str'},
-        {name: 'hxb2Locs', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
+        {name: 'hxb2Locs', convert : Connector.model.Filter.asArray},
 
         {name: 'mabnames_str'},
 
@@ -46,11 +38,7 @@ Ext.define('Connector.app.model.MAb', {
         {name: 'data_availability'},
         {name: 'data_accessible'},
         {name: 'studies_with_data_count'},
-        {name: 'studies', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
-        {name: 'studies_with_data', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }}
+        {name: 'studies', convert : Connector.model.Filter.asArray},
+        {name: 'studies_with_data', convert : Connector.model.Filter.asArray}
     ]
 });

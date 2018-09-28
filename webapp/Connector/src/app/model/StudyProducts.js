@@ -44,14 +44,8 @@ Ext.define('Connector.app.model.StudyProducts', {
         {name: 'data_availability'},
         {name: 'data_accessible'},
         {name: 'studies_with_data_count'},
-        {name: 'studies', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
-        {name: 'other_products', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
-        {name: 'studies_with_data', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }}
+        {name: 'studies', convert : Connector.model.Filter.asArray},
+        {name: 'other_products', convert : Connector.model.Filter.asArray},
+        {name: 'studies_with_data', convert : Connector.model.Filter.asArray}
     ]
 });

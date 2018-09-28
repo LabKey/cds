@@ -17,31 +17,16 @@ Ext.define('Connector.app.model.AssayAntigen', {
         {name: 'antigen_identifier'},
         {name: 'Container'},
         {name: 'antigen_name',sortType: 'asUCString'},
-        {name: 'antigen_description', convert : function(value) {
-                return Ext.isArray(value) ? value : [];
-            }
-        },
+        {name: 'antigen_description', convert : Connector.model.Filter.asArray},
         {name: 'antigen_control_value'},
         {name: 'antigen_type',sortType: 'asUCString'},
         {name: 'antigen_clade'},
-        {name: 'antigen_clades', convert : function(value) {
-                return Ext.isArray(value) ? value : [];
-            }
-        },
+        {name: 'antigen_clades', convert : Connector.model.Filter.asArray},
         {name: 'antigen_neutralization_tier'},
         {name: 'antigen_protein'},
-        {name: 'antigen_proteinAndPools', convert : function(value) {
-                return Ext.isArray(value) ? value : [];
-            }
-        },
-        {name: 'antigen_proteins', convert : function(value) {
-                return Ext.isArray(value) ? value : [];
-            }
-        },
-        {name: 'antigen_pools', convert : function(value) {
-                return Ext.isArray(value) ? value : [];
-            }
-        },
+        {name: 'antigen_proteinAndPools', convert : Connector.model.Filter.asArray},
+        {name: 'antigen_proteins', convert : Connector.model.Filter.asArray},
+        {name: 'antigen_pools', convert : Connector.model.Filter.asArray},
         {name: 'antigen_target_cell',sortType: 'asUCString'},
         {name: 'antigen_virus_type'}
     ]
