@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -47,6 +48,30 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private final String MISSING_SEARCH_STRING = "If this string ever appears something very odd happened.";
     private final Locator XPATH_RESULT_ROW_TITLE = LearnGrid.Locators.lockedRow;
     private final Locator XPATH_RESULT_ROW_DATA = LearnGrid.Locators.unlockedRow;
+
+    public static final String[] MAB_MIXTURES = {"1361", "2158", "2297", "1H9", "1.00E+09", "1NC9", "2F5", "3.00E+03", "3BNC60", "3BNC117", "4.00E+10",
+            "10E8.2", "10E8.2/iMab", "10E8.4", "10E8.4/iMab", "10E8.5", "10E8.5/iMab",
+            "17b", "19B", "19e", "1393A", "A12", "A14",
+            "Ab530039K", "Ab530039L", "Ab530057", "Ab530139K1", "Ab530139K2", "Ab530168", "Ab530204", "Ab530212", "Ab530238K", "Ab530239", "Ab530402.1",
+            "Ab530402.2", "AB-000402-1", "AB-000403-1", "AB-000404-1", "AB-000405-1", "AB-000406-1", "AB-000407-1", "AB-000408-1", "AB-000409-1",
+            "AB-000410-1", "AB-000411-1", "AB-000412-1", "AB-000413-1", "AB-000414-1", "AB-000415-1", "AB-000416-1", "AB-000417-1", "AB-000418-1",
+            "AB-000419-1", "AB-000420-1", "AB-000421-1", "AB-000422-1", "AB-000423-1", "AB-000424-1", "AB-000425-1", "AB-000426-1", "AB-000427-1",
+            "AB-000428-1", "AB-000429-1", "AB-000430-1", "AB-000431-1", "AB-000432-1", "AB-000433-1", "AB-000434-1", "AB-000435-1", "AB-000436-1",
+            "AB-000437-1", "AB-000438-1", "AB-000439-1", "AB-000440-1", "AB-000441-1", "AB-000442-1", "AB-000443-1", "AB-000444-1", "AB-000445-1",
+            "AB-000446-1", "AB-000447-1", "AB-000448-1", "AB-000449-1", "AB-000450-1", "AB-000451-1", "AB-000452-1", "AB-000453-1", "AB-000454-1",
+            "AB-000455-1", "AB-000456-1", "AB-000457-1", "AB-000458-1", "AB-000459-1", "AB-000460-1", "AB-000461-1", "AB-000462-1", "AB-000463-1",
+            "AB-000464-1", "AB-000465-1", "AB-000466-1", "AB-000467-1", "AB-000468-1", "AB-000469-1", "AB-000470-1", "AB-000471-1", "AB-000472-1",
+            "AB-000473-1", "AB-000474-1", "AB-000475-1", "AB-000476-1", "AB-000477-1", "AB-000478-1", "AB-000479-1", "AB-000480-1", "AB-000481-1",
+            "AB-000482-1", "AB-000483-1", "AB-000484-1", "AB-000485-1", "AB-000796-1", "AB-000797-1", "AB-000798-1", "AB-000799-1", "AB-000800-1",
+            "AB-000801-1", "AB-000802-1", "AB-000803-1", "AB-000804-1", "AB-000805-1", "AB-000806-1", "AB-000807-1", "AB-000808-1", "AB-000809-1",
+            "B9", "b12", "B21", "CH27", "CH28", "CH31", "CH38", "CH103", "DH511", "HIVIG", "iMab", "iMab/CCFV", "iMab/LM52", "iMab/SCFV", "J3",
+            "L9-i3", "L9-i4", "M785-U1", "mAb 1.1", "mAb 2.1", "mAb 3.1", "mAb 4.1", "mAb 5.1", "mAb 6.1", "mAb 7.1", "mAb 8.1", "mAb 9.1", "mAb 10.1",
+            "mAb 11.1", "mAb 28.1", "mAb 31.1", "mAb 33.1", "mAb 34.1", "mAb 37.1", "mAb 93", "mAb 94", "mAb 95", "mAb 96", "mAb 97", "mAb 98", "mAb 99",
+            "mAb 100", "mAb 101", "mAb 102", "mAb 103", "mAb 104", "mAb 105", "mAb 106", "mAb 107", "mAb 108", "mAb 109", "mAb 110", "mAb 111", "mAb 112",
+            "mAb 113", "mAb 114", "mAb 115", "mAb 116", "mAb 117", "mAb 118", "mAb 119", "mAb 120", "mAb 121", "mAb 122", "mAb 123", "mAb 124", "mAb 125",
+            "mAb 126", "mAb 127", "mAb 128", "MVN", "MVN/A12", "P16i", "PG9", "PGDM1400", "PGT121", "PGT121 + PGDM1400", "PGT121 + PGT145", "PGT123", "PGT125",
+            "PGT126", "PGT127", "PGT128", "PGT128 + 3BNC117 + PGDM1400", "PGT128/3BNC117 + PGDM1400", "PGT130", "PGT135", "PGT143", "PGT145", "PGT151", "PGT151/3BNC117",
+            "Pi", "RhiMab", "sCD4", "VRC01", "VRC01/CCFV", "VRC01/SCFV", "VRC07-523-LS", "VRC13", "VRC26.25"};
 
     public static final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
     public static final org.labkey.test.Locator.XPathLocator LEARN_ROW_TITLE_LOC = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2");
@@ -119,7 +144,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + unlockedParts[1] + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
-        click(DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies / "));
+        click(DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /"));
 
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']")));
     }
@@ -190,6 +215,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         validateToolTip(Locator.linkWithText("BAMA").findElement(getDriver()), "Status not available");
 
+        //TODO verify mabs
+
     }
 
     @Test
@@ -212,6 +239,140 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         List<String> studyProducts = Arrays.asList(CDSHelper.PRODUCTS);
         _asserts.verifyLearnAboutPage(studyProducts);
+    }
+
+    @Test
+    public void testLearnAboutMAbsSummaryPage()
+    {
+        cds.viewLearnAboutPage("mAbs");
+        waitForElement(Locators.pageSignal("learnAboutMabsLoaded"), 60000, false);
+        log("Signal should have fired. Now wait, at most, 60 seconds for an h2 element with the text '1361'");
+        waitForElement(Locator.xpath("//h2").withText("1361"), 60000);
+
+        log("Verify mAb listing in summary page");
+        List<String> mAbs = Arrays.asList(MAB_MIXTURES);
+        _asserts.verifyLearnAboutPage(mAbs);
+
+        log("Verify mAb summary page fields");
+        LearnGrid learnGrid = new LearnGrid(this);
+
+        verifyMAbSummaryRow(learnGrid, "2F5", "Individual mAb", "human", "IgG3?", "gp160");
+        verifyMAbSummaryRow(learnGrid, "PGT151/3BNC117", "Bispecific mAb", "human", "IgG", "gp160, Env");
+    }
+
+    private void verifyMAbSummaryRow(LearnGrid learnGrid, String mAbName, String type, String species, String isotype, String hxb2)
+    {
+        learnGrid.setSearch(mAbName);
+
+        Locator.XPathLocator fieldLoc = Locator.tagWithClass("div", "detail-black-text");
+
+        List<WebElement> rowItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        assertEquals("Search is not returning mAbs as expected", 1, rowItems.size());
+
+        assertTrue("Type not as expected", isElementVisible(fieldLoc.withText(type)));
+        assertTrue("Donor Species not as expected", isElementVisible(fieldLoc.withText(species)));
+        assertTrue("Isotype not as expected", isElementVisible(fieldLoc.withText(isotype)));
+        assertTrue("HXB2 Location not as expected", isElementVisible(fieldLoc.withText(hxb2)));
+    }
+
+    @Test
+    public void verifyLearnAboutMabDetails()
+    {
+        final String infoHeader = "Monoclonal Antibody Information";
+        final String dataHeader = "Data Availability";
+
+        final String labelStandardname = "Standard name";
+        final String labelAntibodyType = "Antibody type";
+        final String labelLanlid = "LANLID";
+        final String labelOthernames = "Other names";
+        final String labelIsotype = "Isotype";
+        final String labelHXB2 = "HXB2 Location";
+        final String labelBindingType = "Antibody binding type";
+        final String labelSpecies = "Species";
+        final String labelDonorId = "Donor ID";
+        final String labelDonarClade = "Donor clade";
+
+        cds.viewLearnAboutPage("mAbs");
+
+        String mAbName = "2F5";
+
+        log("Verify mAb details for " + mAbName);
+        LearnGrid learnGrid = new LearnGrid(this);
+
+        learnGrid.setSearch(mAbName);
+        goToDetail(mAbName, true);
+
+        Locator breadcrumb = DETAIL_PAGE_BREADCRUMB_LOC.withText("Monoclonal Antibodies /");
+        waitForElement(breadcrumb);
+
+        log("Verify mAb details section headers");
+        verifySectionHeaders(infoHeader, dataHeader, mAbName + " Details");
+
+        log("Verify external LANL link");
+        String lanlLinkLoc = "//a[contains(@href, 'https://www.hiv.lanl.gov/content/immunology/ab_search?results=Search&id=$')]";
+        assertElementPresent(Locator.xpath(lanlLinkLoc.replace("$", "815")));
+
+        log("Verify mAb detail field labels");
+        verifyDetailFieldLabels(labelStandardname, labelAntibodyType, labelLanlid, labelOthernames, labelIsotype,
+                labelHXB2, labelBindingType, labelSpecies);
+
+        log("Verify mab detail field values");
+        verifyDetailFieldValues(mAbName, "Individual mAb", "815", "2F5 (Polymun) (other)", "IgG3?", "gp160", "gp41 MPER", "human");
+
+        click(breadcrumb);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']")));
+
+
+        mAbName = "PGT128/3BNC117 + PGDM1400";
+        log("Verify mAb details for a 'Bispecific mAb mixture': " + mAbName);
+
+        learnGrid.setSearch(mAbName);
+        goToDetail(mAbName, false);
+
+        waitForElement(breadcrumb);
+
+        log("Verify mAb details section headers");
+
+        verifySectionHeaders(infoHeader, "3BNC117 Details", "PGDM1400 Details", "PGT128 Details");
+
+        log("Verify external LANL links for each mab in the mix");
+        assertElementPresent(Locator.xpath(lanlLinkLoc.replace("$", "2586")));
+        assertElementPresent(Locator.xpath(lanlLinkLoc.replace("$", "3201")));
+        assertElementPresent(Locator.xpath(lanlLinkLoc.replace("$", "2642")));
+
+        log("Verify mAb detail field labels");
+        verifyDetailFieldLabels(labelStandardname, labelAntibodyType, labelOthernames, labelIsotype,
+                labelHXB2, labelBindingType, labelLanlid, labelSpecies, labelDonorId, labelDonarClade);
+
+        log("Verify mab detail field values");
+        verifyDetailFieldValues(mAbName, "Bispecific mAb mixture", "PGT128/3BNC117 + PGDM1400 (other)",
+                "IgG", "gp160", "gp120 CD4BS", "2586", "human", "Patient 3", "B",
+                "Env", "gp120 V2", "3201", "Donor 84", "C",
+                "IgG1", "gp120 V3", "2642", "Donor 36", "CRF02_AG");
+    }
+
+    private void verifySectionHeaders(String... headers)
+    {
+        for (String header : headers)
+        {
+            Assert.assertTrue(header + " section header is not present", isElementPresent(Locator.tagWithText("h3", header)));
+        }
+    }
+
+    private void verifyDetailFieldLabels(String... labels)
+    {
+        for (String label : labels)
+        {
+            Assert.assertTrue(label + " label is not present", isElementPresent(Locator.tagWithClass("td", "item-label").withText(label + ":")));
+        }
+    }
+
+    private void verifyDetailFieldValues(String... values)
+    {
+        for (String value : values)
+        {
+            Assert.assertTrue(value + " field value is not present", isElementPresent(Locator.tagWithClass("td", "item-value").withText(value)));
+        }
     }
 
     @Test
@@ -262,7 +423,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + productClass + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
-        click(DETAIL_PAGE_BREADCRUMB_LOC.withText("Products / "));
+        click(DETAIL_PAGE_BREADCRUMB_LOC.withText("Products /"));
 
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']")));
     }
@@ -696,11 +857,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Testing data availability module in mAbs");
         cds.viewLearnAboutPage("mAbs");
-        LearnGrid learnGrid = new LearnGrid(this);
-        learnGrid.sort("Data Added");
-        learnGrid.sort("Data Added"); // sort twice to sort desc
-
         String mAbName = "2F5";
+
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(mAbName);
+
         Locator.XPathLocator mabRowLoc = LEARN_HAS_DATA_ROW_TITLE_LOC.withText(mAbName);
         log("Verify mAb data availability on summary page");
         assertElementPresent(mabRowLoc);
@@ -708,10 +869,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         goToDetail(mAbName, true);
 
-        //TODO
-        // verify detailed data avail
+        refresh();
+        waitForText("Data Availability");
 
-        // verify labeled as
+        assertTrue(isElementPresent(cds.hasDataDetailIconXPath("ZAP 117")));
+
+        Locator labeledAsLoc = cds.getDataRowXPath("ZAP 117").append(Locator.tagWithClass("td", "data-availability-alt-label")
+                .withText("Labeled as 2F5 (PlantForm); 2F5 (Polymun) (IAM 2F5, IAM-41-2F5, IAM2F5, c2F5)"));
+
+        assertElementPresent(labeledAsLoc);
     }
 
     @Test
