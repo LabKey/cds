@@ -305,7 +305,9 @@ Ext.define('Connector.app.store.Study', {
                         link: null,
                         label: mab.mab_label == null || mab.mab_label.length == 0 ? null : mab.mab_label
                     };
-                }, this);
+                }, this).sort(function(a, b) {
+                    return Connector.model.Filter.sorters.natural(a.name, b.name);
+                });
 
                 study.products = products;
                 study.product_names = productNames;

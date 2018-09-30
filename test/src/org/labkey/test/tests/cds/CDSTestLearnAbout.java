@@ -215,8 +215,47 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         validateToolTip(Locator.linkWithText("BAMA").findElement(getDriver()), "Status not available");
 
-        //TODO verify mabs
+    }
 
+    @Test
+    public void verifyStudyDetailsMabListing()
+    {
+        cds.viewLearnAboutPage("Studies");
+        String studyName = "RED 4";
+
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(studyName);
+        goToDetail(studyName, true);
+        Locator breadcrumb = DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /");
+        waitForElement(breadcrumb);
+
+        log("Verify mAb listing section");
+        assertElementPresent(Locator.tagWithText("h3", "Monoclonal Antibodies"));
+
+        Locator.XPathLocator mabListToggle = Locator.tagWithClass("div", "show-hide-mabs-toggle");
+        log("Verify mAb listing is collapsed by default");
+        assertElementPresent(mabListToggle.withText("+ SHOW ALL 36"));
+        verifyDetailFieldLabels(false, "mAb 93", "mAb 94", "mAb 95", "mAb 96", "mAb 97", "mAb 98",
+                "mAb 99", "mAb 100", "mAb 101", "mAb 102");
+        assertElementNotPresent(Locator.linkWithText("mAb 103"));
+
+        log("Verify mAb list expand");
+        scrollIntoView(mabListToggle);
+        click(mabListToggle);
+        waitForElement(mabListToggle.withText("- SHOW LESS"));
+        verifyDetailFieldLabels(false, "mAb 93", "mAb 94", "mAb 95", "mAb 96", "mAb 97", "mAb 98",
+                "mAb 99", "mAb 100", "mAb 101", "mAb 102",
+                "mAb 113", "mAb 114", "mAb 115", "mAb 116",
+                "mAb 117", "mAb 118", "mAb 119", "mAb 120");
+
+        log("Verify mAb list collapse");
+        scrollIntoView(mabListToggle);
+        click(mabListToggle);
+        waitForElement(mabListToggle.withText("+ SHOW ALL 36"));
+
+        log("Verify mAb link");
+        click(Locator.linkWithText("mAb 93"));
+        waitForElement(Locator.tagWithText("h3", "mAb 93 Details"));
     }
 
     @Test
@@ -359,12 +398,17 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         }
     }
 
-    private void verifyDetailFieldLabels(String... labels)
+    private void verifyDetailFieldLabels(boolean useDivider, String... labels)
     {
         for (String label : labels)
         {
-            Assert.assertTrue(label + " label is not present", isElementPresent(Locator.tagWithClass("td", "item-label").withText(label + ":")));
+            Assert.assertTrue(label + " label is not present", isElementPresent(Locator.tagWithClass("td", "item-label").withText(label + (useDivider ? ":" : ""))));
         }
+    }
+
+    private void verifyDetailFieldLabels(String... labels)
+    {
+        verifyDetailFieldLabels(true, labels);
     }
 
     private void verifyDetailFieldValues(String... values)
@@ -1249,6 +1293,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Now validate that link to the documents works as expected.");
         click(Locator.linkWithText("QED 3"));
+        sleep(1000);
         assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 3"));
         log("Verify that the related study links for this study are as expected.");
         expectedStudiesText = "QED 1 (Ancillary study)";
@@ -1258,6 +1303,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Click the related study and make sure we navigate back to the original study.");
         click(Locator.linkWithText("QED 1"));
+        sleep(1000);
         assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 1"));
 
         cds.viewLearnAboutPage("Studies");
