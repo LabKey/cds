@@ -371,6 +371,11 @@ Ext4.define('Connector.cube.Configuration', {
                         staticData: {
                             title: "Reports"
                         }
+                    }, {
+                        type: 'studymabs',
+                        staticData: {
+                            title: 'Monoclonal Antibodies'
+                        }
                     }]]
                 }]
             },{
@@ -607,6 +612,40 @@ Ext4.define('Connector.cube.Configuration', {
                 }],
                 itemDetail: [{
                     view: 'Connector.app.view.ReportModuleContainer'
+                }]
+            }, {
+                uniqueName: '[MAb]',
+                priority: 2,
+                singularName: 'mAb',
+                pluralName: 'mAbs',
+                hidden: false,
+                supportsSummary: false,
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.MAb',
+                detailModel: 'Connector.app.model.MAb',
+                detailView: 'Connector.app.view.MAb',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    upText: 'Monoclonal Antibodies',
+                    label: 'Overview'
+                }],
+                itemDetail: [{
+                    view: 'Connector.app.view.ModuleContainer',
+                    isIdString: true,
+                    modules: [[{
+                        type: 'mabdetails',
+                        staticData: {
+                            title: 'Monoclonal Antibody Information'
+                        }
+                    }],[{
+                        type: 'dataavailability',
+                        staticData: {
+                            title: 'Data Availability',
+                            dataField: 'studies',
+                            dataLink: 'Study'
+                        }
+                    }]]
                 }]
             }]
         },

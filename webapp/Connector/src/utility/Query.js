@@ -337,13 +337,13 @@ Ext.define('Connector.utility.Query', {
         }, this);
 
         // if we don't have any assay datasets, use GridBase as the root for the intersect SQL case or if it was requested
-        if (Object.keys(assayDatasets).length === 0 && (subjectVisitTableRequested || options.intersect))
+        if (Ext.Object.getKeys(assayDatasets).length === 0 && (subjectVisitTableRequested || options.intersect))
         {
             assayDatasets[this.SUBJECTVISIT_TABLE] = tables[this.SUBJECTVISIT_TABLE];
         }
 
         // if we have at least one assayDatasets value, use that instead of the full datasets map
-        if (Object.keys(assayDatasets).length > 0)
+        if (Ext.Object.getKeys(assayDatasets).length > 0)
         {
             datasets = assayDatasets;
         }
@@ -473,7 +473,7 @@ Ext.define('Connector.utility.Query', {
             debugUnionSQL = '',
             union = '',
             term,
-            hasMultiple = Object.keys(datasets).length > 1,
+            hasMultiple = Ext.Object.getKeys(datasets).length > 1,
             setOperator = options.intersect ? "\nINTERSECT\n" : "\nUNION ALL\n",
             orderSQL = '',
             wildcardSQL,

@@ -360,8 +360,8 @@ Ext.define('Connector.model.ChartData', {
         var hasSameDimensions = false;
         if (this.isSameSource(xa, ya) && x && y) {
             var intersectDimensions = Ext.Array.intersect(
-                    Object.keys(x.options.dimensions),
-                    Object.keys(y.options.dimensions)
+                    Ext.Object.getKeys(x.options.dimensions),
+                    Ext.Object.getKeys(y.options.dimensions)
             );
             hasSameDimensions = intersectDimensions.length > 0;
         }
@@ -517,9 +517,9 @@ Ext.define('Connector.model.ChartData', {
             mainPlotRows.push(entry);
         }
 
-        if (Object.keys(distinctXVals).length > 0)
+        if (Ext.Object.getKeys(distinctXVals).length > 0)
         {
-            xa.discreteValueCount = Object.keys(distinctXVals).length;
+            xa.discreteValueCount = Ext.Object.getKeys(distinctXVals).length;
         }
 
         // for continuous axis with data, always start the plot at the origin (could be negative as well)

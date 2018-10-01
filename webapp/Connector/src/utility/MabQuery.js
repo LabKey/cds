@@ -722,7 +722,15 @@ Ext.define('Connector.utility.MabQuery', {
         ].join('\n'));
     },
 
-    getMetaCountSQL : function(useFilter) {
+    getMixTypeCountSQL : function(useFilter) {
+        return this.log([
+            'SELECT COUNT(DISTINCT mab_mix_type) as mixTypeCount',
+            this._getMabMixMetaFrom(),
+            (useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(false, false)) : '')
+        ].join('\n'));
+    },
+
+    getDonorSpeciesCountSQL : function(useFilter) {
         return this.log([
             'SELECT COUNT(DISTINCT mab_donor_species) as donorSpeciesCount',
             this._getMabMixMetaFrom(),

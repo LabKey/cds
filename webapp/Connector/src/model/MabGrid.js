@@ -87,10 +87,10 @@ Ext.define('Connector.model.MabGrid', {
             };
         });
 
-        this['mab_mix_name_std_values'] = Object.keys(nameMap);
-        this['mab_donor_species_values'] = Object.keys(speciesMap);
-        this['mab_hxb2_location_values'] = Object.keys(locationMap);
-        this['mab_isotype_values'] = Object.keys(isotypeMap);
+        this['mab_mix_name_std_values'] = Ext.Object.getKeys(nameMap);
+        this['mab_donor_species_values'] = Ext.Object.getKeys(speciesMap);
+        this['mab_hxb2_location_values'] = Ext.Object.getKeys(locationMap);
+        this['mab_isotype_values'] = Ext.Object.getKeys(isotypeMap);
         this.mabMetaMap = mabMapProcessed;
         this.updateData();
     },

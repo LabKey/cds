@@ -5,6 +5,9 @@ SELECT
 --  mix meta
   mab_mix_label,
   mab_mix_name_std,
+  mab_mix_type,
+  mab_mix_name_other,
+  mab_mix_lanlid,
 --  mab meta
   mab_name_std,
   mab_lanlid,

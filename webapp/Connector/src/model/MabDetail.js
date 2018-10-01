@@ -13,6 +13,7 @@ Ext.define('Connector.model.MabDetail', {
         {name: 'filterConfig', defaultValue: undefined},
         {name: 'name'},
         {name: 'label'},
+        {name: 'learnProp'},
         {name: 'value'},
         {name: 'count', type: 'int'},
         {name: 'subcount', type: 'int'}, // a value of -1 determines that the subcount is not provided
@@ -20,6 +21,6 @@ Ext.define('Connector.model.MabDetail', {
         {name: 'highlight', type: 'boolean'},
         {name: 'activeCountLink', type: 'boolean'},
         {name: 'viewClass', defaultValue: undefined}, // alternate class name for the info pane to display on click (must extend Connector.view.InfoPane)
-        {name: 'modelClass', defaultValue: undefined}, // alternate class name for the info pane model (must extend Connector.model.InfoPane)
+        {name: 'modelClass', defaultValue: undefined} // alternate class name for the info pane model (must extend Connector.model.InfoPane)
     ]
 });

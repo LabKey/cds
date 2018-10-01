@@ -63,7 +63,7 @@ Ext.define('Connector.panel.MabVirusSelection', {
                     if (!allRows[key] || allRows[key].subjectCount === 0)
                         allRows[key] = row;
                 }, this);
-                var validRows = Object.keys(allRows).map(function(key){return allRows[key]});
+                var validRows = Ext.Object.getKeys(allRows).map(function(key){return allRows[key]});
                 validRows.sort(function(a, b){
                     return a.key - b.key;
                 });

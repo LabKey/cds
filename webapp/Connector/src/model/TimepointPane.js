@@ -105,7 +105,7 @@ Ext.define('Connector.model.TimepointPane', {
             // convert and load the interval visitRowId data into the memberStore
             Ext.iterate(intervalMap, function(interval, types)
             {
-                Ext.each(Object.keys(types), function(key)
+                Ext.each(Ext.Object.getKeys(types), function(key)
                 {
                     if (types[key].length > 0)
                     {

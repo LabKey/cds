@@ -18,7 +18,7 @@ Ext.define('Connector.utility.PlotTooltip', {
             var participantSeq = row[QueryUtils.SUBJECT_SEQNUM_ALIAS];
             participantSeqContainerMap[participantSeq] = row[QueryUtils.CONTAINER_ALIAS];
         });
-        var participantSeqs = Object.keys(participantSeqContainerMap);
+        var participantSeqs = Ext.Object.getKeys(participantSeqContainerMap);
 
         // in the case when a bin contains > 200 participant, skip querying studies for better perf
         if (participantSeqs.length < 200)
@@ -220,7 +220,7 @@ Ext.define('Connector.utility.PlotTooltip', {
 
                             for (var level in dimensionVals) {
                                 if (dimensionVals[level]) {
-                                    var levelValues = Object.keys(dimensionVals[level]);
+                                    var levelValues = Ext.Object.getKeys(dimensionVals[level]);
                                     if (levelValues && levelValues.length > 0)
                                         content += this.buildSingleDimensionTooltip(level, levelValues);
                                 }
@@ -303,7 +303,7 @@ Ext.define('Connector.utility.PlotTooltip', {
 
         }, this);
 
-        var xVals = Object.keys(xValsSet), yVals = Object.keys(yValsSet), subjects = Object.keys(subjectsSet), studies = plotData.studyLabels;
+        var xVals = Ext.Object.getKeys(xValsSet), yVals = Ext.Object.getKeys(yValsSet), subjects = Ext.Object.getKeys(subjectsSet), studies = plotData.studyLabels;
 
         this.updateBinHierarchicalDimensionValues(xDimensionVals, xHierarchicalDimensionInfo);
         this.updateBinHierarchicalDimensionValues(yDimensionVals, yHierarchicalDimensionInfo);
@@ -402,7 +402,7 @@ Ext.define('Connector.utility.PlotTooltip', {
         if (dimensionVals && hierarchicalDimensionInfo) {
             for (var dim in dimensionVals) {
                 if (dimensionVals[dim] && hierarchicalDimensionInfo[dim]) {
-                    var currentDimVals = Object.keys(dimensionVals[dim]);
+                    var currentDimVals = Ext.Object.getKeys(dimensionVals[dim]);
                     if (currentDimVals.length != 0) {
                         var levelDimensions = hierarchicalDimensionInfo[dim];
                         Ext.each(currentDimVals, function(fullStr){
@@ -438,12 +438,12 @@ Ext.define('Connector.utility.PlotTooltip', {
         if (dimensionVals) {
             Ext.each(dimensions, function(dim) {
                 if (dimensionVals[dim]) {
-                    var dimVals = Object.keys(dimensionVals[dim]);
+                    var dimVals = Ext.Object.getKeys(dimensionVals[dim]);
                     if (dimVals.length > 0) {
                         if (Ext.isArray(hierarchicalDimensionInfo[dim]) && hierarchicalDimensionInfo[dim].length > 0) {
                             Ext.each(hierarchicalDimensionInfo[dim], function(level) {
                                 if (dimensionVals[level]) {
-                                    var levelVals = Object.keys(dimensionVals[level]);
+                                    var levelVals = Ext.Object.getKeys(dimensionVals[level]);
                                     if (levelVals && levelVals.length > 0)
                                         content += this.buildSingleDimensionTooltip(level, levelVals);
                                 }

@@ -387,6 +387,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         Assert.assertEquals("MAbs/Mixtures count not as expected.", 171, ip.getMabMixturesCount());
         Assert.assertEquals("MAbs count not as expected.", 171, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 1, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
         Assert.assertEquals("MAb-Virus Pairs count not as expected.", 1418, ip.getMabVirusPairCount());
@@ -428,6 +429,22 @@ public class CDSMAbTest extends CDSReadOnlyTest
         listText = ip.getMabList();
         missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, null);
         Assert.assertTrue("List for MAbs did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        ip.clickMabMixTypeCounts();
+        log("Check Mixture Type list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("Individual mAb");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+        expectedNoDataInMAbGrid.add("Bispecific mAb");
+        expectedNoDataInMAbGrid.add("Bispecific mAb mixture");
+        expectedNoDataInMAbGrid.add("MAb mixture");
+
+        listText = ip.getMabMixTypeList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Mixture Types did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         ip.clickMabDonorCounts();
@@ -512,6 +529,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         Assert.assertEquals("MAbs/Mixtures count not as expected.", 2, ip.getMabMixturesCount());
         Assert.assertEquals("MAbs count not as expected.", 2, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 1, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 2, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 2, ip.getMabStudiesCount());
         Assert.assertEquals("MAb-Virus Pairs count not as expected.", 64, ip.getMabVirusPairCount());
@@ -577,6 +595,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         Assert.assertEquals("MAbs/Mixtures count not as expected.", 2, ip.getMabMixturesCount());
         Assert.assertEquals("MAbs count not as expected.", 2, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 1, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 2, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 2, ip.getMabStudiesCount());
         Assert.assertEquals("MAb-Virus Pairs count not as expected.", 3, ip.getMabVirusPairCount());
@@ -615,6 +634,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         Assert.assertEquals("MAbs/Mixtures count not as expected.", 169, ip.getMabMixturesCount());
         Assert.assertEquals("MAbs count not as expected.", 169, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 1, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
         Assert.assertEquals("MAb-Virus Pairs count not as expected.", 622, ip.getMabVirusPairCount());
@@ -631,6 +651,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         Assert.assertEquals("MAbs/Mixtures count not as expected.", 169, ip.getMabMixturesCount());
         Assert.assertEquals("MAbs count not as expected.", 169, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 1, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
         Assert.assertEquals("MAb-Virus Pairs count not as expected.", 622, ip.getMabVirusPairCount());
