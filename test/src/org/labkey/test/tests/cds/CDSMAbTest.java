@@ -268,9 +268,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
         grid.clearAllSelections();
 
         log("Export all data without filter or selection");
-        CDSExport expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 176),
-                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 174),
-                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 1553*8)));
+        CDSExport expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 178),
+                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 179),
+                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 1691*8)));
         updateExpectedMAbExport(expected);
         expected.setStudyNetworks(Arrays.asList("Q", "ROGER", "ROGER", "YOYO", "ZED", "ZED", "ZED", "ZED", "ZED"));
         expected.setStudies(Arrays.asList("QED 2", "RED 4", "RED 5", "YOYO 55", "ZAP 117", "ZAP 118", "ZAP 119", "ZAP 128", "ZAP 133"));
@@ -321,7 +321,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
                 "",
                 "",
                 "Neutralization tier + Clade + Virus - exclude: 1A B MN.3;1B A Q23.17",
-                "Study: q2;r4;z117",
+                "Study: QED 2;RED 4;ZAP 117",
                 "Titer Curve IC50: < 0.1",
                 "Titer Curve IC50: > 50",
                 "Titer Curve IC50: >= 1 AND < 10",
@@ -345,7 +345,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
                 "",
                 "",
                 "Neutralization tier + Clade + Virus - exclude: 1A B MN.3;1B A Q23.17",
-                "Study: q2;r4;z117",
+                "Study: QED 2;RED 4;ZAP 117",
                 "Titer Curve IC50: < 0.1",
                 "Titer Curve IC50: > 50",
                 "Titer Curve IC50: >= 1 AND < 10",
