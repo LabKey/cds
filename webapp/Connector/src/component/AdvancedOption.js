@@ -386,7 +386,7 @@ Ext.define('Connector.component.AdvancedOptionScale', {
             ]
         });
 
-        this.setValue(this.value || this.measure.get('defaultScale'), false);
+        this.setValue(this.measure.get('defaultScale') || this.value, false);
 
         this.callParent();
     },

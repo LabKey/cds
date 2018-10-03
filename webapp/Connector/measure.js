@@ -557,6 +557,12 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_response_call': {
                     isRecommendedVariable: true
                 },
+                'study_ICS_functionality_score': {
+                    defaultScale: 'LINEAR'
+                },
+                'study_ICS_polyfunctionality_score': {
+                    defaultScale: 'LINEAR'
+                },
                 'study_NAb_titer_ID50': {
                     sortOrder: -1,
                     isRecommendedVariable: true
