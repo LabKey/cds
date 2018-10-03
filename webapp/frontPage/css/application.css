@@ -362,8 +362,10 @@ a.register-links-error:hover {cursor: pointer;}
 .account-survey-modal td.label {width: 40%; font-weight: bold;}
 .account-survey-modal td label {color: #2d2d2d;}
 
+.front-page-popup-container .form .survey-form {height: 32.5em; overflow-y: scroll; padding-right: 1em;}
+
 .front-page-popup-container .form .survey-form input {width:100%; padding: 0.3em;}
 
 .front-page-popup-container .form .survey-form input[type=checkbox] {width: auto;}
 
-.front-page-popup-container .form .survey-form input#accountothernetwork {width:93%; margin-left: 2em;}
+.front-page-popup-container .form .survey-form input#accountothernetwork, .front-page-popup-container .form .survey-form input#accountotherreferrer {width:93%; margin-left: 2em;}

@@ -432,6 +432,15 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         if (otherNetwork && otherNetwork.value)
           networks.push('Other: ' + otherNetwork.value);
 
+        var referrers = [];
+        $(".survey-form input:checkbox[name=referrer]:checked").each(function(){
+          referrers.push($(this).val());
+        });
+
+        var otherReferrer = document.getElementById('accountotherreferrer');
+        if (otherReferrer && otherReferrer.value)
+          referrers.push('Others: ' + otherReferrer.value);
+
         var researchArea = document.getElementById('accountarea');
 
           $.ajax({
@@ -443,6 +452,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             institution: institution.value,
             role: role.value,
             network: networks.join(", "),
+            referrer: referrers.join(", "),
             researchArea: researchArea.value,
             'X-LABKEY-CSRF': LABKEY.CSRF
           }
