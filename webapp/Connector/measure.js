@@ -563,6 +563,9 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_polyfunctionality_score': {
                     defaultScale: 'LINEAR'
                 },
+                'study_ICS_study_prot': {
+                    hidden: true
+                },
                 'study_NAb_titer_ID50': {
                     sortOrder: -1,
                     isRecommendedVariable: true
@@ -571,17 +574,26 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true,
                     isMeasure: false
                 },
+                'study_NAb_study_prot': {
+                    hidden: true
+                },
                 'study_BAMA_mfi_delta': {
                     isRecommendedVariable: true
                 },
                 'study_BAMA_response_call': {
                     isRecommendedVariable: true
                 },
+                'study_BAMA_study_prot': {
+                    hidden: true
+                },
                 'study_ELISPOT_mean_sfc': {
                     isRecommendedVariable: true
                 },
                 'study_ELISPOT_response_call': {
                     isRecommendedVariable: true
+                },
+                'study_ELISPOT_study_prot': {
+                    hidden: true
                 },
                 'study_Demographics_species': {
                     isRecommendedVariable: true
