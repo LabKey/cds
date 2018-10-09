@@ -1119,7 +1119,7 @@ public class CDSController extends SpringActionController
             ApiSimpleResponse response = new ApiSimpleResponse();
 
             CDSManager.get().updateSurvey(getUser(), form.getFirstName(), form.getLastName(), form.getInstitution(),
-                    form.getRole(), form.getNetwork(), form.getResearchArea());
+                    form.getRole(), form.getNetwork(), form.getResearchArea(), form.getReferrer());
             response.put("success", true);
             return response;
         }
@@ -1132,6 +1132,7 @@ public class CDSController extends SpringActionController
         private String _institution;
         private String _role;
         private String _network;
+        private String _referrer;
         private String _researchArea;
 
         public String getFirstName()
@@ -1193,5 +1194,16 @@ public class CDSController extends SpringActionController
         {
             _researchArea = researchArea;
         }
+
+        public String getReferrer()
+        {
+            return _referrer;
+        }
+
+        public void setReferrer(String referrer)
+        {
+            _referrer = referrer;
+        }
+
     }
 }
