@@ -301,7 +301,7 @@ public class CDSManager
         updateUserSingleInfo(user.getEntityId(), propsMap, "NeedSurvey", needSurvey);
     }
 
-    public void updateSurvey(User user, String firstName, String lastName, String institution, String role, String network, String researchArea) throws SQLException, QueryUpdateServiceException, BatchValidationException, InvalidKeyException, ValidationException
+    public void updateSurvey(User user, String firstName, String lastName, String institution, String role, String network, String researchArea, String referrer) throws SQLException, QueryUpdateServiceException, BatchValidationException, InvalidKeyException, ValidationException
     {
         //TODO simplify code once "Issue 34721: UsersTable permission handling improvement" is fixed
         updateUserName(user, firstName, lastName);
@@ -314,7 +314,7 @@ public class CDSManager
         for (DomainProperty dp : domain.getProperties())
             propsMap.put(dp.getName(), dp);
 
-        updateUserInfo(propsMap, user.getEntityId(), institution, role, network, researchArea);
+        updateUserInfo(propsMap, user.getEntityId(), institution, role, network, researchArea, referrer);
     }
 
     public void updateUserName(User user, String firstName, String lastName)
@@ -328,7 +328,7 @@ public class CDSManager
         new SqlExecutor(QueryService.get().getUserSchema(user, getUserTableContainer(), "core").getDbSchema()).execute(sql);
     }
 
-    public synchronized void updateUserInfo(Map<String, DomainProperty> propMap, String userEntityId, String institution, String role, String network, String researchArea) throws ValidationException
+    public synchronized void updateUserInfo(Map<String, DomainProperty> propMap, String userEntityId, String institution, String role, String network, String researchArea, String referrer) throws ValidationException
     {
         if (userEntityId == null)
             return;
@@ -342,6 +342,7 @@ public class CDSManager
             updateUserSingleInfo(userEntityId, propMap, "Role", role);
             updateUserSingleInfo(userEntityId, propMap, "Network", network);
             updateUserSingleInfo(userEntityId, propMap, "ResearchArea", researchArea);
+            updateUserSingleInfo(userEntityId, propMap, "Referrer", referrer);
 
             transaction.commit();
         }

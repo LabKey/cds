@@ -34,12 +34,8 @@ Ext.define('Connector.app.model.Assay', {
         {name: 'data_accessible'},
         {name: 'study_count'}, //generated when the assay store is loaded.
         {name: 'studies_with_data_count'},
-        {name: 'studies', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
-        {name: 'studies_with_data', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
+        {name: 'studies', convert : Connector.model.Filter.asArray},
+        {name: 'studies_with_data', convert : Connector.model.Filter.asArray},
         {name: 'antigen_store'},
         {name: 'variable_store'}
     ]

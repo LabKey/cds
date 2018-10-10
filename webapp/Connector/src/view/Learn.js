@@ -445,8 +445,9 @@ Ext.define('Connector.view.Learn', {
             if (Ext.isDefined(id) && dimension.itemDetail) {
                 store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
 
+                var isIdString = dimension.itemDetail[0].isIdString;
                 // coerce the id's type, this 'id' is possibly coming from the URL context
-                if (Ext.isNumber(parseInt(id))) {
+                if (!isIdString && Ext.isNumber(parseInt(id))) {
                     _id = parseInt(id);
                 }
 
@@ -643,7 +644,8 @@ Ext.define('Connector.view.Learn', {
         'Study' : 'Study',
         'Lab' : 'Labs',
         'Study product' : 'StudyProducts',
-        'Report' : 'Report'
+        'Report' : 'Report',
+        'mAb': 'MAb'
     },
 
     searchFieldsByTab : function(name) {

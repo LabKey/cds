@@ -34,7 +34,7 @@ Ext.define('Connector.store.MabStatus', {
         this.results = {};
 
         var fetchCount = this.fetchCount;
-        var queryCount = Object.keys(queries).length;
+        var queryCount = Ext.Object.getKeys(queries).length;
 
         for (var q in queries) {
             if (queries.hasOwnProperty(q)) {
@@ -63,9 +63,10 @@ Ext.define('Connector.store.MabStatus', {
             Connector.getQueryService().onQueryReady(function() {
                 this.executeAll({
                     gridBase: MabQueryUtils.getBaseCountSQL(true),
+                    mixType: MabQueryUtils.getMixTypeCountSQL(true),
                     mabCount: MabQueryUtils.getMabCountSQL(true),
                     mabVirus: MabQueryUtils.getMAbVirusPairCountSQL(true),
-                    metaGridBase: MabQueryUtils.getMetaCountSQL(true),
+                    mixDonorSpecies: MabQueryUtils.getDonorSpeciesCountSQL(true)
                 }, this.onLoadCounts.bind(this));
             }, this);
         }, this);
@@ -85,7 +86,8 @@ Ext.define('Connector.store.MabStatus', {
 
     onLoadCounts : function(results) {
         var gridBaseRow = results.gridBase.rows[0];
-        var metaGridBaseRow = results.metaGridBase.rows[0];
+        var mixTypeBaseRow = results.mixType.rows[0];
+        var donorSpeciesBaseRow = results.mixDonorSpecies.rows[0];
         var mabCountRow = results.mabCount.rows[0];
         var mabVirusRow = results.mabVirus.rows[0];
 
@@ -97,6 +99,7 @@ Ext.define('Connector.store.MabStatus', {
                     fieldName: 'mab_mix_name_std',
                     isMeta: false
                 },
+                dimension: 'MAb',
                 highlight: true,
                 name: 'mixCount',
                 label: 'MAbs/Mixtures',
@@ -114,14 +117,24 @@ Ext.define('Connector.store.MabStatus', {
                 value: mabCountRow.mabCount
             }),
             this.createModel({
-                count: metaGridBaseRow.donorSpeciesCount,
+                count: mixTypeBaseRow.mixTypeCount,
+                filterConfig: {
+                    fieldName: 'mab_mix_type',
+                    isMeta: true
+                },
+                name: 'typeCount',
+                label: 'Mixture types',
+                value: mixTypeBaseRow.mixTypeCount
+            }),
+            this.createModel({
+                count: donorSpeciesBaseRow.donorSpeciesCount,
                 filterConfig: {
                     fieldName: 'mab_donor_species',
                     isMeta: true
                 },
                 name: 'donorCount',
                 label: 'Donor species',
-                value: metaGridBaseRow.donorSpeciesCount
+                value: donorSpeciesBaseRow.donorSpeciesCount
             }),
             this.createModel({
                 count: gridBaseRow.studyCount,
@@ -129,10 +142,12 @@ Ext.define('Connector.store.MabStatus', {
                     fieldName: 'study.label',
                     isMeta: false
                 },
+                dimension: 'Study',
+                learnProp: 'label',
                 highlight: true,
                 name: 'studyCount',
                 label: 'Studies',
-                value: gridBaseRow.studyCount,
+                value: gridBaseRow.studyCount
             }),
             this.createModel({
                 count: mabVirusRow[MabQueryUtils.MAB_VIRUS_PAIRS_COUNT_COLUMN],

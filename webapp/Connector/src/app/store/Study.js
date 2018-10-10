@@ -27,6 +27,7 @@ Ext.define('Connector.app.store.Study', {
         this.documentData = undefined;
         this.publicationData = undefined;
         this.relationshipData = undefined;
+        this.mabMixData = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
@@ -73,6 +74,12 @@ Ext.define('Connector.app.store.Study', {
             scope: this,
             sort: 'rel_sort_order'
         });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_mab_mix_forstudies',
+            success: this.onLoadMabs,
+            scope: this
+        });
     },
 
     onLoadStudies : function(studyData) {
@@ -110,10 +117,15 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadMabs : function(mabMixData) {
+        this.mabMixData = mabMixData.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
-                && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)) {
+                && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies) && Ext.isDefined(this.mabMixData)) {
             var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                 return relOrder.relationship;
@@ -284,6 +296,19 @@ Ext.define('Connector.app.store.Study', {
                     return Connector.model.Filter.sorters.natural(relA.rel_prot, relB.rel_prot);
                 });
 
+
+                var mabs = this.mabMixData.filter(function(mab) {
+                    return mab.prot === study.study_name;
+                }).map(function(mab) {
+                    return {
+                        name: mab.mab_mix_name_std,
+                        link: null,
+                        label: mab.mab_label == null || mab.mab_label.length == 0 ? null : mab.mab_label
+                    };
+                }, this).sort(function(a, b) {
+                    return Connector.model.Filter.sorters.natural(a.name, b.name);
+                });
+
                 study.products = products;
                 study.product_names = productNames;
                 study.product_classes = productClasses;
@@ -292,6 +317,7 @@ Ext.define('Connector.app.store.Study', {
                 study.assays_added_count = assaysAdded.length;
                 study.publications = publications;
                 study.relationships = relationships;
+                study.monoclonal_antibodies = mabs;
                 study.protocol_docs_and_study_plans = documents.filter(function (doc) {
                     return doc.label && doc.docType === 'Study plan or protocol';
                 });

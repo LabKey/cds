@@ -38,6 +38,7 @@ public class InfoPane
     // mAb Info Pane
     private final static String cssMabMixtureCounts = "div.detailstatuslist ul.detailstatus div.info_mixCount li span:nth-child(4)";
     private final static String cssMabCounts = "div.detailstatuslist ul.detailstatus div.info_mabCount li span:nth-child(4)";
+    private final static String cssMabMixTypeCounts = "div.detailstatuslist ul.detailstatus div.info_typeCount li span:nth-child(4)";
     private final static String cssMabDonorCounts = "div.detailstatuslist ul.detailstatus div.info_donorCount li span:nth-child(4)";
     private final static String cssMabStudiesCount = "div.detailstatuslist ul.detailstatus div.info_studyCount li span:nth-child(4)";
     private final static String cssMabVirusPairCount = "div.detailstatuslist ul.detailstatus div.info_mab_virus_pairs_count li span:nth-child(4)";
@@ -278,6 +279,19 @@ public class InfoPane
     }
 
     public String getMabList()
+    {
+        return getMabListText();
+    }
+
+    public int getMabMixTypeCounts() {
+        return Integer.parseInt(_tryToGetCounts(_test, cssMabMixTypeCounts));
+    }
+
+    public void clickMabMixTypeCounts() {
+        _test.click(Locator.css(cssMabMixTypeCounts));
+    }
+
+    public String getMabMixTypeList()
     {
         return getMabListText();
     }

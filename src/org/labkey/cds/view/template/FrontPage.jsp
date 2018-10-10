@@ -391,49 +391,93 @@
                                     <td><input placeholder="Title/Role" type="text" id="accountrole" required></td>
                                 </tr>
                                 <tr>
+                                    <td class="label"><label for="accountarea">Research areas of interest</label></td>
+                                    <td><input placeholder="Research areas of interest" type="text" id="accountarea"
+                                               required></td>
+                                </tr>
+                                <tr>
                                     <td class="label"><label>Network Affiliations (past or present)</label></td>
                                     <td>
                                         <label>Mark all that apply</label>
                                         <div class="checkbox checkboxgroup">
-                                            <input type="checkbox" id="tos-checkbox1" name="network" value="HIV Vaccine Trials Network (HVTN)">
-                                            <label for="tos-checkbox1">HIV Vaccine Trials Network (HVTN)</label>
+                                            <input type="checkbox" id="net-checkbox9" name="network" value="HIV Vaccine Trials Network (HVTN)">
+                                            <label for="net-checkbox9">Collaboration for AIDS Vaccine Discovery (CAVD)</label>
                                         </div>
                                         <div class="checkbox checkboxgroup">
-                                            <input type="checkbox" id="tos-checkbox2" name="network" value="International AIDS Vaccine Initiative (IAVI)">
-                                            <label for="tos-checkbox2">International AIDS Vaccine Initiative (IAVI)</label>
+                                            <input type="checkbox" id="net-checkbox1" name="network" value="HIV Vaccine Trials Network (HVTN)">
+                                            <label for="net-checkbox1">HIV Vaccine Trials Network (HVTN)</label>
                                         </div>
                                         <div class="checkbox checkboxgroup">
-                                            <input type="checkbox" id="tos-checkbox3" name="network" value="Military HIV Research Program (MHRP)">
-                                            <label for="tos-checkbox3">Military HIV Research Program (MHRP)</label>
+                                            <input type="checkbox" id="net-checkbox2" name="network" value="International AIDS Vaccine Initiative (IAVI)">
+                                            <label for="net-checkbox2">International AIDS Vaccine Initiative (IAVI)</label>
                                         </div>
                                         <div class="checkbox checkboxgroup">
-                                            <input type="checkbox" id="tos-checkbox4" name="network" value="European AIDS Vaccine Initiative (EAVI)">
-                                            <label for="tos-checkbox4">European AIDS Vaccine Initiative (EAVI)</label>
+                                            <input type="checkbox" id="net-checkbox3" name="network" value="Military HIV Research Program (MHRP)">
+                                            <label for="net-checkbox3">Military HIV Research Program (MHRP)</label>
                                         </div>
                                         <div class="checkbox checkboxgroup">
-                                            <input type="checkbox" id="tos-checkbox5" name="network" value="Center for HIV/AIDS Vaccine Immunology (CHAVI)">
-                                            <label for="tos-checkbox5">Center for HIV/AIDS Vaccine Immunology (CHAVI)</label>
+                                            <input type="checkbox" id="net-checkbox4" name="network" value="European AIDS Vaccine Initiative (EAVI)">
+                                            <label for="net-checkbox4">European AIDS Vaccine Initiative (EAVI)</label>
                                         </div>
                                         <div class="checkbox checkboxgroup">
-                                            <input type="checkbox" id="tos-checkbox6" name="network" value="National Institutes of Health (NIH)">
-                                            <label for="tos-checkbox6">National Institutes of Health (NIH)</label>
+                                            <input type="checkbox" id="net-checkbox5" name="network" value="Center for HIV/AIDS Vaccine Immunology (CHAVI)">
+                                            <label for="net-checkbox5">Center for HIV/AIDS Vaccine Immunology (CHAVI)</label>
                                         </div>
                                         <div class="checkbox checkboxgroup">
-                                            <input type="checkbox" id="tos-checkbox7" name="network" value="NIH Vaccine Research Center (VRC)">
-                                            <label for="tos-checkbox7">NIH Vaccine Research Center (VRC)</label>
+                                            <input type="checkbox" id="net-checkbox6" name="network" value="National Institutes of Health (NIH)">
+                                            <label for="net-checkbox6">National Institutes of Health (NIH)</label>
                                         </div>
                                         <div class="checkbox checkboxgroup">
-                                            <input type="checkbox" id="tos-checkbox8">
-                                            <label for="tos-checkbox8">Other, specify</label>
+                                            <input type="checkbox" id="net-checkbox7" name="network" value="NIH Vaccine Research Center (VRC)">
+                                            <label for="net-checkbox7">NIH Vaccine Research Center (VRC)</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="net-checkbox8">
+                                            <label for="net-checkbox8">Other, specify</label>
                                             <input placeholder="Other network affiliations" type="text"
                                                    id="accountothernetwork">
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="label"><label for="accountarea">Research areas of interest</label></td>
-                                    <td><input placeholder="Research areas of interest" type="text" id="accountarea"
-                                               required></td>
+                                    <td class="label"><label>How did you hear about the DataSpace?</label></td>
+                                    <td>
+                                        <label>Mark all that apply</label>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="ref-checkbox1" name="referrer" value="Conference">
+                                            <label for="ref-checkbox1">Conference</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="ref-checkbox2" name="referrer" value="Class or professor reference">
+                                            <label for="ref-checkbox2">Class or professor reference</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="ref-checkbox3" name="referrer" value="Google search">
+                                            <label for="ref-checkbox3">Google search</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="ref-checkbox4" name="referrer" value="Referred by a colleague">
+                                            <label for="ref-checkbox4">Referred by a colleague</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="ref-checkbox5" name="referrer" value="Newsletter">
+                                            <label for="ref-checkbox5">Newsletter</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="ref-checkbox6" name="referrer" value="Publication">
+                                            <label for="ref-checkbox6">Publication</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="ref-checkbox7" name="referrer" value="Twitter">
+                                            <label for="ref-checkbox7">Twitter</label>
+                                        </div>
+                                        <div class="checkbox checkboxgroup">
+                                            <input type="checkbox" id="ref-checkbox8">
+                                            <label for="ref-checkbox8">Others, specify</label>
+                                            <input placeholder="How did you hear about us?" type="text"
+                                                   id="accountotherreferrer">
+                                        </div>
+                                    </td>
                                 </tr>
                             </table>
                         </div>

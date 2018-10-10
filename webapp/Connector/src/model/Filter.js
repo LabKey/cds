@@ -186,6 +186,10 @@ Ext.define('Connector.model.Filter', {
 
             _reN: /[^0-9]/g,
 
+            asArray: function(value) {
+                return Ext.isArray(value) ? value : [];
+            },
+
             /**
              * A valid Array.sort() function that sorts an Array of strings alphanumerically. This sort is case-insensitive
              * and only permits valid instances of string (not undefined, null, etc).

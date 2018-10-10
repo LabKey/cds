@@ -3611,7 +3611,7 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
-        var groupKeys = Object.keys(groupTags).sort(Connector.model.Filter.sorters.natural),
+        var groupKeys = Ext.Object.getKeys(groupTags).sort(Connector.model.Filter.sorters.natural),
             isAggregate = groupKeys.length > 1,
             tplGroups = [];
 
@@ -3640,6 +3640,7 @@ Ext.define('Connector.view.Chart', {
             bubbleWidth: bubbleWidth,
             xOffset: -(bubbleWidth / 2),          // the non-vaccination icon is slightly smaller
             arrowOffset: (bubbleWidth / 2) - 10 - ((data.isVaccination || data.isChallenge) ? 4 : 0),
+            arrowWidth: 21,
             target: visitTagEl,
             placement: 'top',
             title: title,

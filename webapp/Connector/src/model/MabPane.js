@@ -9,6 +9,7 @@ Ext.define('Connector.model.MabPane', {
 
     fields: [
         {name: 'filterConfig'},
+        {name: 'learnProp'},
         {name: 'title', convert: function(title, record) {
             if (!title && record.raw.label) {
                 return record.raw.label;
@@ -30,7 +31,9 @@ Ext.define('Connector.model.MabPane', {
             if (Ext.isArray(all) && Ext.isArray(active)) {
                 var raw = [];
                 var filterConfig = this.getFilterConfig();
-
+                var dimension = this.get('dimension');
+                var prop = this.get('learnProp');
+                var hasDetails = dimension != null;
                 var fieldKey = filterConfig.fieldName;
                 var fieldKeyParts = fieldKey.split('.');
                 if (fieldKeyParts.length > 1) {
@@ -41,10 +44,17 @@ Ext.define('Connector.model.MabPane', {
                     var name = row[fieldKey];
 
                     if (name) {
-                        raw.push({
+                        var rec = {
                             count: this.isActive(name, fieldKey, active) ? 1 : 0,
                             name: name
-                        });
+                        };
+                        if (hasDetails) {
+                            Ext.apply(rec, {
+                                hasDetails: true,
+                                detailLink: Connector.getService('Learn').getURL(dimension, name, prop)
+                            })
+                        }
+                        raw.push(rec);
                     }
                 }, this);
 

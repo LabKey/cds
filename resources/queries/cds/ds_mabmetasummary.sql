@@ -1,6 +1,7 @@
 SELECT
   mixmeta.mab_mix_name_std,
   mixmeta.mab_mix_id,
+  mixmeta.mab_mix_type,
   mix.mab_id,
   mixmeta.container,
   mabmeta.mab_hxb2_location,

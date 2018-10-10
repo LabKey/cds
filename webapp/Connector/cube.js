@@ -63,7 +63,7 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',
                 summaryTargetLevel: '[Subject.Species].[Species]',
-                findSubjectSummaryLevel: '[Subject.Race].[Race]',
+                findSubjectSummaryLevel: '[Subject.Species].[Species]',
                 priority: 0,
                 defaultOperator: 'OR',
                 showOperator: false,
@@ -128,6 +128,38 @@ Ext4.define('Connector.cube.Configuration', {
                         uniqueName: '[Subject.Age].[Age]',
                         countSingular: 'Decade by Age',
                         countPlural: 'Decades by Age'
+                    }]
+                },{
+                    uniqueName: '[Subject.Circumcised]',
+                    label: 'Circumcised at enrollment',
+                    levels: [{
+                        uniqueName: '[Subject.Circumcised].[Circumcised]',
+                        countSingular: 'Circumcision category',
+                        countPlural: 'Circumcision categories'
+                    }]
+                },{
+                    uniqueName: '[Subject.BMI]',
+                    label: 'BMI category',
+                    levels: [{
+                        uniqueName: '[Subject.BMI].[BMI]',
+                        countSingular: 'BMI category',
+                        countPlural: 'BMI categories'
+                    }]
+                },{
+                    uniqueName: '[Subject.GenderIdentity]',
+                    label: 'Gender identity',
+                    levels: [{
+                        uniqueName: '[Subject.GenderIdentity].[GenderIdentity]',
+                        countSingular: 'Gender identity',
+                        countPlural: 'Gender identities'
+                    }]
+                },{
+                    uniqueName: '[Subject.Cohort]',
+                    label: 'Study cohort',
+                    levels: [{
+                        uniqueName: '[Subject.Cohort].[Cohort]',
+                        countSingular: 'Study cohort',
+                        countPlural: 'Study cohorts'
                     }]
                 }]
             },{
@@ -338,6 +370,11 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'studyreports',
                         staticData: {
                             title: "Reports"
+                        }
+                    }, {
+                        type: 'studymabs',
+                        staticData: {
+                            title: 'Monoclonal Antibodies'
                         }
                     }]]
                 }]
@@ -575,6 +612,40 @@ Ext4.define('Connector.cube.Configuration', {
                 }],
                 itemDetail: [{
                     view: 'Connector.app.view.ReportModuleContainer'
+                }]
+            }, {
+                uniqueName: '[MAb]',
+                priority: 2,
+                singularName: 'mAb',
+                pluralName: 'mAbs',
+                hidden: false,
+                supportsSummary: false,
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.MAb',
+                detailModel: 'Connector.app.model.MAb',
+                detailView: 'Connector.app.view.MAb',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    upText: 'Monoclonal Antibodies',
+                    label: 'Overview'
+                }],
+                itemDetail: [{
+                    view: 'Connector.app.view.ModuleContainer',
+                    isIdString: true,
+                    modules: [[{
+                        type: 'mabdetails',
+                        staticData: {
+                            title: 'Monoclonal Antibody Information'
+                        }
+                    }],[{
+                        type: 'dataavailability',
+                        staticData: {
+                            title: 'Data Availability',
+                            dataField: 'studies',
+                            dataLink: 'Study'
+                        }
+                    }]]
                 }]
             }]
         },

@@ -818,13 +818,13 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Verify Find subject counts on summary page");
         if (!hasAccessToQ1Q2R4)
         {
-            _asserts.assertCDSPortalRow("Subject characteristics", "10 subject characteristics", "1 species", "6 decades by age", "3 ethnicities", "33 countries", "2 sexes", "10 races");
+            _asserts.assertCDSPortalRow("Subject characteristics", "1 subject characteristics", "1 species", "6 decades by age", "3 ethnicities", "33 countries", "2 sexes", "10 races", "2 gender identities", "3 circumcision categories", "5 bmi categories", "1 study cohort");
             _asserts.assertCDSPortalRow("Products", "1 products", "1 product", "1 class", "1 developer", "1 type");
             _asserts.assertCDSPortalRow("Studies", "2 studies", "1 network", "1 study type", "5 coded labels", "6 treatments", "2 pi", "2 strategy");
         }
         else
         {
-            _asserts.assertCDSPortalRow("Subject characteristics", "10 subject characteristics", "1 species", "6 decades by age", "3 ethnicities", "42 countries", "2 sexes", "10 races");
+            _asserts.assertCDSPortalRow("Subject characteristics", "1 subject characteristics", "1 species", "6 decades by age", "3 ethnicities", "42 countries", "2 sexes", "10 races", "2 gender identities", "4 circumcision categories", "5 bmi categories", "2 study cohorts");
             _asserts.assertCDSPortalRow("Products", "3 products", "3 products", "3 classes", "3 developers", "2 types");
             _asserts.assertCDSPortalRow("Studies", "5 studies", "3 networks", "2 study types", "13 coded labels", "16 treatments", "5 pi", "4 strategy");
         }
