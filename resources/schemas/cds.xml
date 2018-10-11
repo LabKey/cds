@@ -1029,4 +1029,11 @@
             <column columnName="Container"/>
         </columns>
     </table>
+    <table tableName="studymAb" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="mab_mix_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
 </tables>
