@@ -283,7 +283,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutMAbsSummaryPage()
     {
-        cds.viewLearnAboutPage("mAbs");
+        cds.viewLearnAboutPage("MAbs");
         waitForElement(Locators.pageSignal("learnAboutMabsLoaded"), 60000, false);
         log("Signal should have fired. Now wait, at most, 60 seconds for an h2 element with the text '1361'");
         waitForElement(Locator.xpath("//h2").withText("1361"), 60000);
@@ -331,7 +331,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String labelDonorId = "Donor ID";
         final String labelDonarClade = "Donor clade";
 
-        cds.viewLearnAboutPage("mAbs");
+        cds.viewLearnAboutPage("MAbs");
 
         String mAbName = "2F5";
 
@@ -900,7 +900,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue(isElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_PRODUCT[1])));
 
         log("Testing data availability module in mAbs");
-        cds.viewLearnAboutPage("mAbs");
+        cds.viewLearnAboutPage("MAbs");
         String mAbName = "2F5";
 
         LearnGrid learnGrid = new LearnGrid(this);

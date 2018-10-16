@@ -63,6 +63,7 @@ import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.RequiresSiteAdmin;
 import org.labkey.api.security.RoleAssignment;
 import org.labkey.api.security.SecurityManager;
+import org.labkey.api.security.User;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
@@ -128,6 +129,9 @@ public class CDSController extends SpringActionController
     private static final Logger LOG = Logger.getLogger(CDSController.class);
 
     private static final DefaultActionResolver _actionResolver = new DefaultActionResolver(CDSController.class);
+
+    public static final List<String> NON_ANALYTICS_GROUPS = Arrays.asList("Artefact", "Data Import", "DataSpace Ops", "FHCRC Approved",
+            "LabKey", "LabKey Approved");
 
     public CDSController()
     {
@@ -241,19 +245,24 @@ public class CDSController extends SpringActionController
             else
             {
                 AppModel model = new AppModel();
-
-                // Support analytics for white-list users (i.e. if they are in the ANALYTICS_USER_GROUP)
+                User user = getUser();
+                // Determine if user should be included for analytics (i.e. if they are not in NON_ANALYTICS_GROUPS)
                 if (!getUser().isImpersonated()) // 27915
                 {
-                    List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
-                    for (Group group : groups)
+                    boolean isAnalytics = !user.isInSiteAdminGroup() && !user.isDeveloper();
+                    if (isAnalytics)
                     {
-                        if (SecurityManager.getDisambiguatedGroupName(group).equalsIgnoreCase(ANALYTICS_USER_GROUP))
+                        List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
+                        for (Group group : groups)
                         {
-                            model.setIsAnalyticsUser(true);
-                            break;
+                            if (NON_ANALYTICS_GROUPS.contains(SecurityManager.getDisambiguatedGroupName(group)))
+                            {
+                                isAnalytics = false;
+                                break;
+                            }
                         }
                     }
+                    model.setIsAnalyticsUser(isAnalytics);
                 }
 
                 model.setUserProperties(new JSONObject(CDSManager.get().getActiveUserProperties(getUser(), getContainer())));
