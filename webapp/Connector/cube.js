@@ -616,8 +616,8 @@ Ext4.define('Connector.cube.Configuration', {
             }, {
                 uniqueName: '[MAb]',
                 priority: 2,
-                singularName: 'mAb',
-                pluralName: 'mAbs',
+                singularName: 'MAb',
+                pluralName: 'MAbs',
                 hidden: false,
                 supportsSummary: false,
                 supportsDetails: true,
