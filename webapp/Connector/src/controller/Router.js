@@ -221,7 +221,7 @@ Ext.define('Connector.controller.Router', {
                 url: LABKEY.ActionURL.buildURL('cds', 'properties.api'),
                 method: 'GET',
                 success: function(response) {
-                    console.log("keep live");
+                    // do nothing
                 },
                 scope: this
             });
