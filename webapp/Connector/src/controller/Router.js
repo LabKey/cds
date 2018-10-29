@@ -145,7 +145,7 @@ Ext.define('Connector.controller.Router', {
         }
 
         // How long (in ms) the user has before inactivity logs them out.
-        var TIMEOUT = timeout ||  15 * 60 * 1000, // 15 minutes
+        var TIMEOUT = timeout ||  60 * 60 * 1000, // 60 minutes
         // How much time (in ms) to give the user advanced warning.
                 TIMEOUT_WARN = timeout || 2 * 60 * 1000, // 2 minutes
 
@@ -176,6 +176,8 @@ Ext.define('Connector.controller.Router', {
         var showBanner = function() {
             updateTick();
             tickTask.start();
+            // stop session keep live task once countdown banner is displayed
+            keepSessionLiveTask.stop();
             getBanner().slideIn('t', {duration: BANNER_ANIMATE });
         };
 
@@ -185,6 +187,8 @@ Ext.define('Connector.controller.Router', {
             var banner = getBanner();
             if (banner.isVisible()) {
                 banner.hide();
+                keepSessionLive(); // kick off keeplive immediately
+                keepSessionLiveTask.start(); // restart keeplive task
             }
         };
 
@@ -211,6 +215,24 @@ Ext.define('Connector.controller.Router', {
             hideBanner();
         };
 
+        var keepSessionLive = function() {
+            // contact server to keep session live
+            Ext.Ajax.request({
+                url: LABKEY.ActionURL.buildURL('cds', 'properties.api'),
+                method: 'GET',
+                success: function(response) {
+                    // do nothing
+                },
+                scope: this
+            });
+        };
+
+        // run keepSessionLive every 10 minutes to prevent Tomcat session timeout prior to CDS client timeout
+        var keepSessionLiveTask = new Ext.util.TaskRunner().newTask({
+            run: keepSessionLive,
+            interval: 10*60*1000
+        });
+
         Connector.getState().onReady(function() {
 
             // initialize elements
@@ -221,6 +243,9 @@ Ext.define('Connector.controller.Router', {
 
             // kickoff the timers
             anyClick();
+
+            // start session keep live task
+            keepSessionLiveTask.start();
         });
     },
 
