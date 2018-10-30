@@ -15,6 +15,7 @@
  */
 package org.labkey.cds.data.steps;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.labkey.api.data.Container;
@@ -32,6 +33,10 @@ abstract public class AbstractPopulateTask extends TaskRefTaskImpl
 {
     Container project;
     User user;
+
+    //Infinite recursion (StackOverflowError) (through reference chain: java.util.ArrayList[1]->org.labkey.di.steps.TaskRefTransformStepMeta["taskInstance"]->org.labkey.cds.data.steps.CDSValidateTask["job"]
+    //->org.labkey.di.pipeline.TransformPipelineJob["_etlDescriptor"]->org.labkey.di.pipeline.TransformDescriptor["_stepMetaDatas"]->java.util.ArrayList[1]->org.labkey.di.steps.TaskRefTransformStepMeta["taskInstance"]
+    @JsonIgnore
     PipelineJob job;
 
     @Override
