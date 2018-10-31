@@ -310,6 +310,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         //testing ICS variables page
         waitAndClick(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
+        sleep(1000);  // Don't know why but the wait in waitAndClick is returning before the element is really there.
         waitAndClick(Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2").containing(assays.get(1)));
         waitForElement(Locator.tagWithClass("div", "breadcrumb").containing("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
@@ -640,7 +641,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Testing data availability module in Studies");
         cds.viewLearnAboutPage("Studies");
 
-        Locator element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + STUDY + "')]");
+        Locator element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + STUDY + "')]/parent::div");
         assertElementPresent(element);
         scrollIntoView(element);
         mouseOver(element);
@@ -988,8 +989,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Check the links for " + studyName);
         studyXPath = STUDY_XPATH_TEMPLATE.replace("$", studyName);
-        studyElement = Locator.xpath(studyXPath);
+        studyElement = Locator.xpath(studyXPath).append("/parent::div");
         scrollIntoView(studyElement);
+        mouseOver(studyElement);
         click(studyElement);
         sleep(1000);
         waitForText(STUDY_INFO_TEXT_TRIGGER);
@@ -1317,6 +1319,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = getToolTipText();
 
         validateToolTipText(toolTipText, toolTipExpected);
+
+        // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.
+        mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));
+        waitForElementToDisappear(Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content"));
 
     }
 
