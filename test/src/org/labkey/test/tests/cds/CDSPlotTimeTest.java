@@ -821,7 +821,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         cds.assertPlotTickText(1, pattern);
 
         log("Apply the time axis as a filter.");
-        cdsPlot.selectXAxes(false, "5", "8", "6", "11", "17");
+        cdsPlot.selectXAxes("5", "8", "6", "11", "17");
         waitForElement(CDSPlot.Locators.filterDataButton);
         assertElementPresent(CDSPlot.Locators.removeButton);
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));

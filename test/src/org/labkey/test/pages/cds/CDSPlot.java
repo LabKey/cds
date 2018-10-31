@@ -56,18 +56,18 @@ public class CDSPlot
         _test = test;
     }
 
-    public void selectXAxes(boolean useShiftForMultiSelect, String... axes)
+    public void selectXAxes(String... axes)
     {
         if (axes == null || axes.length == 0)
             throw new IllegalArgumentException("Please specify axes to select.");
 
         Keys multiSelectKey;
-        if (useShiftForMultiSelect)
-            multiSelectKey = Keys.SHIFT;
+        if(SystemUtils.IS_OS_WINDOWS)
+            multiSelectKey = Keys.CONTROL;
         else if (SystemUtils.IS_OS_MAC)
             multiSelectKey = Keys.COMMAND;
         else
-            multiSelectKey = Keys.CONTROL;
+            multiSelectKey = Keys.SHIFT;
 
         _test.click(Locators.plotTick.withText(axes[0]));
         _test.waitForElement(Locator.xpath("//div[contains(@class, 'selectionpanel')]//div[contains(@class, 'activefilter')]//div[contains(@class, 'selitem')]//div[contains(text(), '" + axes[0] + "')]"));
@@ -75,20 +75,27 @@ public class CDSPlot
         if (axes.length > 1)
         {
             Actions builder = new Actions(_test.getDriver());
-            builder.keyDown(multiSelectKey).build().perform();
 
             for (int i = 1; i < axes.length; i++)
             {
-                _test.click(Locators.plotTick.withText(axes[i]));
+                builder.keyDown(multiSelectKey).click(Locators.plotTick.withText(axes[i]).findElement(_test.getWrappedDriver())).keyUp(multiSelectKey).build().perform();
                 _test.waitForElement(Locator.xpath("//div[contains(@class, 'selectionpanel')]//div[contains(@class, 'activefilter')]//div[contains(@class, 'selitem')]//div[contains(text(), '" + axes[i] + "')]"));
             }
-            builder.keyUp(multiSelectKey).build().perform();
         }
     }
 
     public int getPointCountByColor(String colorCode)
     {
-        return _test.getElementCount(Locator.css("svg g a.point path[fill='" + colorCode + "']"));
+        try
+        {
+            _test.waitForElement(Locator.css("svg g a.point path[fill='" + colorCode + "']"), 15000, true);
+        }
+        catch(NoSuchElementException nse)
+        {
+            return 0;
+        }
+
+        return Locator.css("svg g a.point path[fill='" + colorCode + "']").findElements(_test.getWrappedDriver()).size();
     }
 
     public int getPointCountByGlyph(String glyphyCode)

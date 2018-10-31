@@ -751,7 +751,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertEquals("Point counts not as expected", 3627, cdsPlot.getPointCount());
 
         log("Verify multi-select of categories.");
-        cdsPlot.selectXAxes(false, "White", "Multiracial", "Native Hawaiian/Paci", "Native American/Alas. Other");
+        cdsPlot.selectXAxes("White", "Multiracial", "Native Hawaiian/Paci", "Native American/Alas. Other");
         sleep(3000); // Let the animation end.
 
         log("Ensure correct number of points are highlighted.");
@@ -1653,7 +1653,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         coloraxis.confirmSelection();
 
         // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg " + CDSHelper.PlotPoints.GLYPH.getTag()))/4;
+        pointToClick = Locator.css("div:not(.thumbnail) > svg " + CDSHelper.PlotPoints.GLYPH.getTag()).findElements(getWrappedDriver()).size()/4;
         brushPlot("div:not(.thumbnail) > svg", pointToClick, CDSHelper.PlotPoints.GLYPH, 0, -50, true);
 
         // Clear the filter.
