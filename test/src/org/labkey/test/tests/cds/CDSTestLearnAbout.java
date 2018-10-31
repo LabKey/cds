@@ -311,7 +311,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue("Type not as expected", isElementVisible(fieldLoc.withText(type)));
         assertTrue("Donor Species not as expected", isElementVisible(fieldLoc.withText(species)));
         assertTrue("Isotype not as expected", isElementVisible(fieldLoc.withText(isotype)));
-        assertTrue("HXB2 Location not as expected", isElementVisible(fieldLoc.withText(hxb2)) || isElementVisible(fieldLoc.withText(altHxb2)));
+        assertTrue("HXB2 Location not as expected", isElementPresent(fieldLoc.withText(hxb2)) || isElementPresent(fieldLoc.withText(altHxb2)));
     }
 
     @Test
