@@ -59,6 +59,9 @@ public class CDSPlot
 
     private void scrollElement(String tickText, int maxScroll)
     {
+        if (maxScroll == 0)
+            return;
+
         // If the x position is larger than the maxScroll value scroll the difference.
         // I'm sure this math is flawed, but it should be good enough to get the element visible.
 
@@ -73,31 +76,41 @@ public class CDSPlot
             jse.executeScript("document.querySelector('div.plot-scroll').scrollLeft = " + (x - maxScroll) + ";");
         }
 
-
     }
 
     private int getMaxXScrollValue()
     {
+        int maxScroll;
         // Some of the x axes may be under the right hand pane. If they are they need to be scrolled into view.
         // We will need to get the maxScroll value to see if elements will need to be scrolled into view.
 
-        // First find the width of the client area.
-        String strWidth = Locators.plotScrollContainer.findElement(_test.getWrappedDriver()).getAttribute("clientWidth");
-        int width = Integer.parseInt(strWidth);
+        // If there is no scroll bar nothing to worry about.
+        if(!_test.isElementPresent(Locators.plotScrollContainer))
+        {
+            maxScroll = 0;
+        }
+        else if (!_test.isElementVisible(Locators.plotScrollContainer))
+            maxScroll = 0;
+        else
+        {
+            // First find the width of the client area.
+            String strWidth = Locators.plotScrollContainer.findElement(_test.getWrappedDriver()).getAttribute("clientWidth");
+            int width = Integer.parseInt(strWidth);
 
-        // Now scroll to that width, this should be larger than the scroll bar can go.
-        JavascriptExecutor jse = (JavascriptExecutor) _test.getWrappedDriver();
-        jse.executeScript("document.querySelector('div.plot-scroll').scrollLeft = " + width + ";");
+            // Now scroll to that width, this should be larger than the scroll bar can go.
+            JavascriptExecutor jse = (JavascriptExecutor) _test.getWrappedDriver();
+            jse.executeScript("document.querySelector('div.plot-scroll').scrollLeft = " + width + ";");
 
-        // The scrollLeft attribute will now have it's maximum scroll value.
-        String strMaxScroll = Locators.plotScrollContainer.findElement(_test.getWrappedDriver()).getAttribute("scrollLeft");
-        int maxScroll = Integer.parseInt(strMaxScroll);
+            // The scrollLeft attribute will now have it's maximum scroll value.
+            String strMaxScroll = Locators.plotScrollContainer.findElement(_test.getWrappedDriver()).getAttribute("scrollLeft");
+            maxScroll = Integer.parseInt(strMaxScroll);
 
-        // Scroll back to the left so everything looks ok.
-        jse.executeScript("document.querySelector('div.plot-scroll').scrollLeft = 0;");
+            // Scroll back to the left so everything looks ok.
+            jse.executeScript("document.querySelector('div.plot-scroll').scrollLeft = 0;");
+
+        }
 
         return maxScroll;
-
     }
 
     public void selectXAxes(String... axes)
