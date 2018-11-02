@@ -839,6 +839,10 @@ public class CDSHelper
             });
         }
 
+        // verify group save messaging
+        //ISSUE 19997
+        _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
+
         return true;
     }
 
@@ -973,8 +977,11 @@ public class CDSHelper
     private void clickBar(String barLabel)
     {
         WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT); // becomes stale after filter is applied
-        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locators.barLabel.withText(barLabel)));
-        _test.clickAt(Locators.barLabel.withText(barLabel), 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
+        _test.waitForElementToBeVisible(Locators.barLabel.withText(barLabel));
+        WebElement barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
+        Actions builder = new Actions(_test.getDriver());
+        builder.moveToElement(barLabelElement, 1, 1).click(barLabelElement).build().perform();
+
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
         _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
         waitForFilterAnimation();
@@ -1233,6 +1240,7 @@ public class CDSHelper
 
     public void deleteGroupFromSummaryPage(String name)
     {
+        _test.sleep(500);
         Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing));
         _test.click(groupListing);

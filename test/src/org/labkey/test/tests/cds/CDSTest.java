@@ -155,9 +155,9 @@ public class CDSTest extends CDSReadOnlyTest
         infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_video')]"));
         waitForElement(Locator.xpath("id('started-video-frame')"));
-        sleep(500);
         infoPane.waitForSpinners();
-        clickAt(Locator.css("div.x-mask"), 10, 10, 0);
+        waitForElement(Locator.tagWithId("div", "started-video-frame"));
+        clickAt(Locator.xpath("//img[contains(@src, 'logo.png')]"), 10, 10, 0);
         //
         // Validate News feed
         //
@@ -217,12 +217,13 @@ public class CDSTest extends CDSReadOnlyTest
 
         // remove just the plot filter
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        int plotFilterCount = Locator.css("div.groupicon img").findElements(getWrappedDriver()).size();
         cds.clearFilter(0);
         cds.saveOverGroup(HOME_PAGE_GROUP);
         waitForText(saveLabel);
         _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155); // TODO Test data dependent.
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForElementToDisappear(Locator.css("div.groupicon img"));
+        waitForElements(Locator.css("div.groupicon img"), plotFilterCount - 1);
     }
 
     @Test

@@ -113,10 +113,6 @@ public class CDSGroupTest extends CDSReadOnlyTest
         cds.useSelectionAsSubjectFilter();
         cds.saveGroup(STUDY_GROUP, studyGroupDesc);
 
-        // verify group save messaging
-        //ISSUE 19997
-        waitForText("Group \"Study Group...\" saved.");
-
         // verify filter is still applied
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
