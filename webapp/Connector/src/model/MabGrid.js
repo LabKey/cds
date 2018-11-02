@@ -16,9 +16,9 @@ Ext.define('Connector.model.MabGrid', {
     statics: {
         ic50Ranges: [
             {value: 'G0.1', displayValue: '< 0.1'},
-            {value: 'G1', displayValue: '< 1'},
-            {value: 'G10', displayValue: '< 10'},
-            {value: 'G50', displayValue: '<= 50'},
+            {value: 'G1', displayValue: '>= 0.1 to < 1'},
+            {value: 'G10', displayValue: '>= 1 to < 10'},
+            {value: 'G50', displayValue: '>= 10 to <= 50'},
             {value: 'G50+', displayValue: '> 50'}
         ]
     },
@@ -67,11 +67,11 @@ Ext.define('Connector.model.MabGrid', {
                 }
             }
             var mab = mabMap[name];
-            if (mab.mab_donor_species.indexOf(row.mab_donor_species) === -1)
+            if (row.mab_donor_species && mab.mab_donor_species.indexOf(row.mab_donor_species) === -1)
                 mab.mab_donor_species.push(row.mab_donor_species);
-            if (mab.mab_hxb2_location.indexOf(row.mab_hxb2_location) === -1)
+            if (row.mab_hxb2_locatio && mab.mab_hxb2_location.indexOf(row.mab_hxb2_location) === -1)
                 mab.mab_hxb2_location.push(row.mab_hxb2_location);
-            if (mab.mab_isotype.indexOf(row.mab_isotype) === -1)
+            if (row.mab_isotype && mab.mab_isotype.indexOf(row.mab_isotype) === -1)
                 mab.mab_isotype.push(row.mab_isotype);
         });
 
@@ -81,16 +81,16 @@ Ext.define('Connector.model.MabGrid', {
             val.mab_hxb2_location.sort();
             val.mab_isotype.sort();
             mabMapProcessed[key] = {
-                mab_donor_species: val.mab_donor_species.toString(),
-                mab_hxb2_location: val.mab_hxb2_location.toString(),
-                mab_isotype: val.mab_isotype.toString()
+                mab_donor_species: val.mab_donor_species.join(", "),
+                mab_hxb2_location: val.mab_hxb2_location.join(", "),
+                mab_isotype: val.mab_isotype.join(", ")
             };
         });
 
-        this['mab_mix_name_std_values'] = Object.keys(nameMap);
-        this['mab_donor_species_values'] = Object.keys(speciesMap);
-        this['mab_hxb2_location_values'] = Object.keys(locationMap);
-        this['mab_isotype_values'] = Object.keys(isotypeMap);
+        this['mab_mix_name_std_values'] = Ext.Object.getKeys(nameMap);
+        this['mab_donor_species_values'] = Ext.Object.getKeys(speciesMap);
+        this['mab_hxb2_location_values'] = Ext.Object.getKeys(locationMap);
+        this['mab_isotype_values'] = Ext.Object.getKeys(isotypeMap);
         this.mabMetaMap = mabMapProcessed;
         this.updateData();
     },
@@ -100,7 +100,8 @@ Ext.define('Connector.model.MabGrid', {
             return Connector.model.MabGrid.ic50Ranges;
         }
 
-        var key = field + '_values';
+        var fieldName = Connector.utility.MabQuery.getParsedFieldName(field, true);
+        var key = fieldName + '_values';
         if (this[key]) {
             return this[key];
         }

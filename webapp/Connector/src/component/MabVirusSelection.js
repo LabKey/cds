@@ -11,9 +11,11 @@ Ext.define('Connector.panel.MabVirusSelection', {
 
     filterFieldName: 'tier_clade_virus',
 
-    subjectNoun: 'Mab/Mix',
+    subjectNoun: 'MAb/Mix',
 
     virusFields: ['neutralization_tier', 'clade', 'virus'],
+
+    fieldLabels: ['Neutralization tier', 'Clade', 'Virus'],
 
     constructor : function(config) {
         this.callParent([config]);
@@ -27,8 +29,8 @@ Ext.define('Connector.panel.MabVirusSelection', {
 
     createFieldColumnHeaders : function(checkboxItems) {
         // add a column header for each hierarchical measure and the subject counts
-        Ext.each(this.virusFields, function(field) {
-            checkboxItems.push(this.createColumnHeaderCmp(field, null, this.measureColumnWidth));
+        Ext.each(this.fieldLabels, function(label) {
+            checkboxItems.push(this.createColumnHeaderCmp(label, null, this.measureColumnWidth));
         }, this);
     },
 
@@ -61,7 +63,7 @@ Ext.define('Connector.panel.MabVirusSelection', {
                     if (!allRows[key] || allRows[key].subjectCount === 0)
                         allRows[key] = row;
                 }, this);
-                var validRows = Object.keys(allRows).map(function(key){return allRows[key]});
+                var validRows = Ext.Object.getKeys(allRows).map(function(key){return allRows[key]});
                 validRows.sort(function(a, b){
                     return a.key - b.key;
                 });

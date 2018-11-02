@@ -90,41 +90,24 @@ Ext.define('Connector.app.model.Study', {
         }},
         {name: 'start_year'},
         {name: 'product_to_sort_on'},
-        {name: 'products', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
-        {name: 'product_classes', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
-        {name: 'product_names', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
-        {name: 'assays', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
+        {name: 'products', convert : Connector.model.Filter.asArray},
+        {name: 'product_classes', convert : Connector.model.Filter.asArray},
+        {name: 'product_names', convert : Connector.model.Filter.asArray},
+        {name: 'assays', convert : Connector.model.Filter.asArray},
         {name: 'groups_treatment_schema', defaultValue: undefined},
         {name: 'methods_assay_schema', defaultValue: undefined},
         {name: 'assays_added_count'},
-        {name: 'assays_added', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
+        {name: 'assays_added', convert : Connector.model.Filter.asArray},
         {name: 'atlas_link'},
         {name: 'cavd_link'},
 
-        {name: 'protocol_docs_and_study_plans', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
+        {name: 'protocol_docs_and_study_plans', convert : Connector.model.Filter.asArray},
         {name: 'protocol_docs_and_study_plans_has_permission'},
-        {name: 'data_listings_and_reports', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
+        {name: 'data_listings_and_reports', convert : Connector.model.Filter.asArray},
         {name: 'data_listings_and_reports_has_permission'},
-        {name: 'publications', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
-        {name: 'relationships', convert : function(value) {
-            return Ext.isArray(value) ? value : [];
-        }},
-        {name: 'clintrials_id'}
+        {name: 'publications', convert : Connector.model.Filter.asArray},
+        {name: 'relationships', convert : Connector.model.Filter.asArray},
+        {name: 'clintrials_id'},
+        {name: 'monoclonal_antibodies', convert : Connector.model.Filter.asArray}
     ]
 });

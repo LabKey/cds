@@ -11,10 +11,10 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -179,7 +179,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         List<WebElement> buttons;
 
-        Locator virusFilter = Locator.xpath("//div[contains(@class, 'x-window-closable')]//div[@class='header']//div[text()='Viruses tested against MAbs']");
+        Locator virusFilter = Locator.xpath("//div[contains(@class, 'x-window-closable')]//div[@class='header']//div[text()='Viruses tested against mAbs']");
         int index;
 
         if ((_webDriverWrapper.isElementPresent(virusFilter)) &&(_webDriverWrapper.isElementVisible(virusFilter)))
@@ -423,7 +423,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         protected List<WebElement> getColumnHeaders()
         {
             if (columnHeaders == null)
-                columnHeaders = ImmutableList.copyOf(Locators.columnHeader.findElements(mabGrid));
+                columnHeaders = Collections.unmodifiableList(Locators.columnHeader.findElements(mabGrid));
             return columnHeaders;
         }
     }

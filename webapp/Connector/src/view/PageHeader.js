@@ -65,6 +65,10 @@ Ext.define('Connector.view.PageHeader', {
 
         this.setTabHeader();
 
+        var upText = this.upText ? this.upText : (this.dimension ? this.dimension.pluralName : undefined);
+        if (this.dimension && this.dimension.itemDetailTabs && this.dimension.itemDetailTabs[0] && this.dimension.itemDetailTabs[0].upText)
+            upText = this.dimension.itemDetailTabs[0].upText;
+
         var titleAndBack = {
             xtype: 'box',
             cls: 'inline',
@@ -78,7 +82,7 @@ Ext.define('Connector.view.PageHeader', {
             ),
             renderData: {
                 title: this.title,
-                upText: this.upText ? this.upText : (this.dimension ? this.dimension.pluralName : undefined)
+                upText: upText
             },
             renderSelectors: {
                 upEl: 'div.learn-up'

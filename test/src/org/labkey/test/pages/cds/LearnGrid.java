@@ -74,7 +74,7 @@ public class LearnGrid
                 .findFirst().get();
 
         _test.setFormElement(searchBox, searchQuery);
-        _test.sleep(CDSHelper.CDS_WAIT);
+        _test.sleep(CDSHelper.CDS_WAIT_LEARN);
 
         return this;
     }

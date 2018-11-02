@@ -63,6 +63,7 @@ import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.RequiresSiteAdmin;
 import org.labkey.api.security.RoleAssignment;
 import org.labkey.api.security.SecurityManager;
+import org.labkey.api.security.User;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
@@ -128,6 +129,9 @@ public class CDSController extends SpringActionController
     private static final Logger LOG = Logger.getLogger(CDSController.class);
 
     private static final DefaultActionResolver _actionResolver = new DefaultActionResolver(CDSController.class);
+
+    public static final List<String> NON_ANALYTICS_GROUPS = Arrays.asList("Artefact", "Data Import", "DataSpace Ops", "FHCRC Approved",
+            "LabKey", "LabKey Approved");
 
     public CDSController()
     {
@@ -241,19 +245,24 @@ public class CDSController extends SpringActionController
             else
             {
                 AppModel model = new AppModel();
-
-                // Support analytics for white-list users (i.e. if they are in the ANALYTICS_USER_GROUP)
+                User user = getUser();
+                // Determine if user should be included for analytics (i.e. if they are not in NON_ANALYTICS_GROUPS)
                 if (!getUser().isImpersonated()) // 27915
                 {
-                    List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
-                    for (Group group : groups)
+                    boolean isAnalytics = !user.isInSiteAdminGroup() && !user.isDeveloper();
+                    if (isAnalytics)
                     {
-                        if (SecurityManager.getDisambiguatedGroupName(group).equalsIgnoreCase(ANALYTICS_USER_GROUP))
+                        List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
+                        for (Group group : groups)
                         {
-                            model.setIsAnalyticsUser(true);
-                            break;
+                            if (NON_ANALYTICS_GROUPS.contains(SecurityManager.getDisambiguatedGroupName(group)))
+                            {
+                                isAnalytics = false;
+                                break;
+                            }
                         }
                     }
+                    model.setIsAnalyticsUser(isAnalytics);
                 }
 
                 model.setUserProperties(new JSONObject(CDSManager.get().getActiveUserProperties(getUser(), getContainer())));
@@ -1119,7 +1128,7 @@ public class CDSController extends SpringActionController
             ApiSimpleResponse response = new ApiSimpleResponse();
 
             CDSManager.get().updateSurvey(getUser(), form.getFirstName(), form.getLastName(), form.getInstitution(),
-                    form.getRole(), form.getNetwork(), form.getResearchArea());
+                    form.getRole(), form.getNetwork(), form.getResearchArea(), form.getReferrer());
             response.put("success", true);
             return response;
         }
@@ -1132,6 +1141,7 @@ public class CDSController extends SpringActionController
         private String _institution;
         private String _role;
         private String _network;
+        private String _referrer;
         private String _researchArea;
 
         public String getFirstName()
@@ -1193,5 +1203,16 @@ public class CDSController extends SpringActionController
         {
             _researchArea = researchArea;
         }
+
+        public String getReferrer()
+        {
+            return _referrer;
+        }
+
+        public void setReferrer(String referrer)
+        {
+            _referrer = referrer;
+        }
+
     }
 }

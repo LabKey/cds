@@ -110,6 +110,8 @@
             <column columnName="subject_species"/>
             <column columnName="subject_subspecies"/>
             <column columnName="subject_sex_at_birth"/>
+            <column columnName="subject_gender_identity"/>
+            <column columnName="subject_study_cohort"/>
             <column columnName="subject_age_enrollment_years"/>
             <column columnName="subject_race_nih"/>
             <column columnName="subject_hispanic"/>
@@ -289,6 +291,9 @@
             <column columnName="mab_mix_id"/>
             <column columnName="mab_mix_name_std"/>
             <column columnName="mab_mix_label"/>
+            <column columnName="mab_mix_type"/>
+            <column columnName="mab_mix_name_other"/>
+            <column columnName="mab_mix_lanlid"/>
         </columns>
     </table>
     <table tableName="import_MAbMix" tableDbType="TABLE">
@@ -479,6 +484,8 @@
             <column columnName="response_method"/>
             <column columnName="control"/>
             <column columnName="pooled_info"/>
+            <column columnName="functionality_score"/>
+            <column columnName="polyfunctionality_score"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -617,6 +624,9 @@
             <column columnName="mab_mix_id"/>
             <column columnName="mab_mix_name_std"/>
             <column columnName="mab_mix_label"/>
+            <column columnName="mab_mix_type"/>
+            <column columnName="mab_mix_name_other"/>
+            <column columnName="mab_mix_lanlid"/>
         </columns>
     </table>
     <table tableName="MAbMix" tableDbType="TABLE">
@@ -1011,11 +1021,19 @@
         <columns>
             <column columnName="mab_mix_id"/>
             <column columnName="mab_mix_name_std"/>
+            <column columnName="mab_mix_type"/>
             <column columnName="mab_id"/>
             <column columnName="mab_hxb2_location"/>
             <column columnName="mab_isotype"/>
             <column columnName="mab_donor_species"/>
             <column columnName="Container"/>
+        </columns>
+    </table>
+    <table tableName="studymAb" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="mab_mix_id"/>
+            <column columnName="container"/>
         </columns>
     </table>
 </tables>

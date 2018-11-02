@@ -44,15 +44,31 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="genderidentity">
+        <datatype>varchar</datatype>
+        <columnTitle>Gender identity</columnTitle>
+        <description>Subject classification by self report of the gender with which the subject identifies.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="studycohort">
+        <datatype>varchar</datatype>
+        <columnTitle>Study cohort</columnTitle>
+        <description>Subject classification indicating a cohort or group of subjects with shared characteristics.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
       <column columnName="race">
         <datatype>varchar</datatype>
         <columnTitle>Race</columnTitle>
+        <description>Subject classification by self-report for race categories as defined by NIH OMB standards.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="ethnicity">
         <datatype>varchar</datatype>
         <columnTitle>Hispanic</columnTitle>
+        <description>Subject classification by self-report for ethnicity categories as defined by NIH OMB standards.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -76,6 +92,12 @@
         <description>Subject Body Mass Index (BMI) at enrollment. BMI is defined as the body mass divided by the square of the body height represented in kg/m2.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
+      <column columnName="bmi_category">
+        <datatype>varchar</datatype>
+        <columnTitle>BMI Category</columnTitle>
+        <description>Subject BMI category at enrollment. Underweight: &lt; 18.5; 18.5 – 24.9: Normal Weight; 25.0 – 29.9: Overweight; >= 30.0: Obese.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#String</rangeURI>
+      </column>
       <column columnName="agegroup_range">
         <datatype>varchar</datatype>
         <columnTitle>Age Group at Enrollment</columnTitle>
@@ -87,7 +109,7 @@
         <datatype>integer</datatype>
         <columnTitle>Age Group (Decade)</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
-        <isHidden>true</isHidden>
+        <dimension>true</dimension>
       </column>
       <column columnName="age_enrollment">
         <datatype>integer</datatype>
@@ -469,6 +491,24 @@
         <description>Indicates which antigens were inlcuded in the aggregated magnitudes and response calls.</description>
         <measure>false</measure>
         <dimension>true</dimension>
+      </column>
+      <column columnName="functionality_score">
+        <datatype>double</datatype>
+        <columnTitle>Functionality score</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>
+          A calculated score that summarizes a subject’s entire Ag-specific polyfunctional profile into a single numerical value. The functionality score is the proportion of Ag-specific subsets detected among all possible ones.
+        </description>
+        <measure>true</measure>
+      </column>
+      <column columnName="polyfunctionality_score">
+        <datatype>double</datatype>
+        <columnTitle>Polyfunctionality score</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>
+          A calculated score that summarizes a subject’s entire Ag-specific polyfunctional profile into a single numerical value, weighing the different subsets by their degree of functionality
+        </description>
+        <measure>true</measure>
       </column>
     </columns>
     <tableTitle>Intracellular Cytokine Staining</tableTitle>

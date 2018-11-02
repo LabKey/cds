@@ -615,8 +615,8 @@ Ext.define('Connector.utility.Chart', {
         }
 
         intersectAliases = Ext.Array.intersect(
-            Object.keys(measure1.options.dimensions),
-            Object.keys(measure2.options.dimensions)
+                Ext.Object.getKeys(measure1.options.dimensions),
+                Ext.Object.getKeys(measure2.options.dimensions)
         );
 
         Ext.each(intersectAliases, function(alias)

@@ -119,6 +119,16 @@ Ext.define('Connector.window.MabGridFacet', {
         }
     },
 
+    //override, don't bind enter key
+    onAfterRender : function() {
+        new Ext.util.KeyMap(this.el, [{
+                key  : Ext.EventObject.ESC,
+                fn   : this.close,
+                scope: this
+            }
+        ]);
+    },
+
     applyFiltersAndColumns : function() {
         var view = this.getComponent('faceted-mab-' + this.filterConfig.fieldName),
             facetValues = view.getFacetValues(),
@@ -167,9 +177,9 @@ Ext.define('Connector.grid.MabGridFacet', {
 
     extend: 'Connector.grid.AbstractGroupedFacet',
 
-    groupInText: 'In current MAb grid',
+    groupInText: 'In current mAb grid',
 
-    groupOutText: 'Not in current MAb grid',
+    groupOutText: 'Not in current mAb grid',
 
     resetSearch: true,
 

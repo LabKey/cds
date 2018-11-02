@@ -9,7 +9,7 @@ Ext.define('Connector.view.MabPane', {
 
     columnHeaderText: undefined,
 
-    groupTitle: 'MAb grid',
+    groupTitle: 'mAb grid',
 
     hideHeaders: true,
 

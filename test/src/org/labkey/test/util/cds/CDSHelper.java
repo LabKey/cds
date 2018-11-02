@@ -425,7 +425,10 @@ public class CDSHelper
     public static final String DEMO_SPECIES = "Species";
     public static final String DEMO_SUBSPECIES = "Subspecies";
     public static final String DEMO_STUDY_NAME = "Study Name";
+    public static final String DEMO_BMI_GROUP = "BMI Category";
+    public static final String DEMO_GENDER_IDENTITY = "Gender identity";
     public static final String DEMO_STUDY = "Study";
+    public static final String DEMO_STUDY_COHORT = "Study cohort";
     public static final String DEMO_TREAT_SUMM = "Treatment Summary";
     public static final String DEMO_DATE_SUBJ_ENR = "Date First Subject Enrolled";
     public static final String DEMO_DATE_FUP_COMP = "Date Follow-up Complete";
@@ -713,7 +716,7 @@ public class CDSHelper
     //Helper function for data availability tests
     public Locator.XPathLocator getDataRowXPath(String rowText)
     {
-        return Locator.xpath("//tr[contains(@class,'x-grid-data-row')]/td/div/a[contains(text(), '" + rowText + "')]").parent().parent().parent();
+        return Locator.tagWithAttribute("tr", "role", "row").containing(rowText);
     }
 
     public Locator.XPathLocator hasDataDetailIconXPath(String rowText)

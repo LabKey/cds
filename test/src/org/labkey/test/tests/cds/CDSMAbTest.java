@@ -70,7 +70,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         log("Verify mAb summary grid content");
         grid.clearAllFilters();
-        Assert.assertEquals("Number of mab/mabmix rows is not as expected", 171, grid.getMabCounts());
+        Assert.assertEquals("Number of mab/mabmix rows is not as expected", 173, grid.getMabCounts());
         Assert.assertEquals("Geometric mean value for '2F5' is not as expected", "1.50595", grid.getMabCellValue("2F5", GEOMETRIC_MEAN_IC50_COL));
     }
 
@@ -85,32 +85,32 @@ public class CDSMAbTest extends CDSReadOnlyTest
         List<String> filteredColumns = new ArrayList<>();
         grid.setFacet(MAB_COL,false,"2F5", "A14");
         filteredColumns.add(MAB_COL);
-        verifyGridCountAndFilteredColumns(grid, 169, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 171, filteredColumns);
 
         log("Verify mAb mix metadata filters");
         grid.setFacet(SPECIES_COL,false,"llama");
         filteredColumns.add(SPECIES_COL);
-        verifyGridCountAndFilteredColumns(grid, 166, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 168, filteredColumns);
 
         grid.setFacet(ISOTYPE_COL,true,"[blank]", "IgG3?");
         filteredColumns.add(ISOTYPE_COL);
-        verifyGridCountAndFilteredColumns(grid, 152, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 153, filteredColumns);
 
         grid.setFacet(HXB2_COL,true,"[blank]");
         filteredColumns.add(HXB2_COL);
-        verifyGridCountAndFilteredColumns(grid, 151, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 152, filteredColumns);
 
         log("Verify IC50 filter updates geometric mean values");
         Assert.assertEquals("Geometric mean value for 'AB-000402-1' is not as expected prior to filtering", "0.03724", grid.getMabCellValue("AB-000402-1", GEOMETRIC_MEAN_IC50_COL));
         grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1");
         filteredColumns.add(GEOMETRIC_MEAN_IC50_COL);
-        verifyGridCountAndFilteredColumns(grid, 145, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 146, filteredColumns);
         Assert.assertEquals("Geometric mean value for 'AB-000402-1' is not as expected after filtering", "0.02393", grid.getMabCellValue("AB-000402-1", GEOMETRIC_MEAN_IC50_COL));
 
         log("Verify study filter");
-        grid.setFacet(STUDIES_COL,true,"z118", "z128");
+        grid.setFacet(STUDIES_COL,true,"ZAP 118", "ZAP 128");
         filteredColumns.add(STUDIES_COL);
-        verifyGridCountAndFilteredColumns(grid, 15, filteredColumns);
+        verifyGridCountAndFilteredColumns(grid, 16, filteredColumns);
 
         log("Verify virus filter panel reflects active filter counts");
         AntigenFilterPanel virusPanel = grid.openVirusPanel(null);
@@ -142,7 +142,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         log("Verify removing filters");
         grid.clearAllFilters();
-        verifyGridCountAndFilteredColumns(grid, 171, new ArrayList<>());
+        verifyGridCountAndFilteredColumns(grid, 173, new ArrayList<>());
     }
 
     private void verifyGridCountAndFilteredColumns(MAbDataGrid grid, int rowCount, List<String> filteredColumns)
@@ -268,9 +268,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
         grid.clearAllSelections();
 
         log("Export all data without filter or selection");
-        CDSExport expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 176),
-                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 174),
-                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 1553*8)));
+        CDSExport expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 178),
+                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 179),
+                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 1691*8)));
         updateExpectedMAbExport(expected);
         expected.setStudyNetworks(Arrays.asList("Q", "ROGER", "ROGER", "YOYO", "ZED", "ZED", "ZED", "ZED", "ZED"));
         expected.setStudies(Arrays.asList("QED 2", "RED 4", "RED 5", "YOYO 55", "ZAP 117", "ZAP 118", "ZAP 119", "ZAP 128", "ZAP 133"));
@@ -298,9 +298,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
         log("Create a set of inclusive filters");
         grid.setFacet(MAB_COL,true,"2F5", "b12", "J3", "mAb 120");
         grid.setFacet(SPECIES_COL,true,"[blank]", "human");
-        grid.setFacet(STUDIES_COL,true,"q2", "r4", "z117");
+        grid.setFacet(STUDIES_COL,true,"QED 2", "RED 4", "ZAP 117");
         log("Create exclusive filters for IC50 and virus");
-        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,false,"< 1");
+        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,false,">= 0.1 to < 1");
         AntigenFilterPanel virusPanel = grid.openVirusPanel(null);
         String virusOneExclude = "virus-1B-A-Q23.17";
         String virusTwoExclude = "virus-1A-B-MN.3";
@@ -321,7 +321,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
                 "",
                 "",
                 "Neutralization tier + Clade + Virus - exclude: 1A B MN.3;1B A Q23.17",
-                "Study: q2;r4;z117",
+                "Study: QED 2;RED 4;ZAP 117",
                 "Titer Curve IC50: < 0.1",
                 "Titer Curve IC50: > 50",
                 "Titer Curve IC50: >= 1 AND < 10",
@@ -345,7 +345,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
                 "",
                 "",
                 "Neutralization tier + Clade + Virus - exclude: 1A B MN.3;1B A Q23.17",
-                "Study: q2;r4;z117",
+                "Study: QED 2;RED 4;ZAP 117",
                 "Titer Curve IC50: < 0.1",
                 "Titer Curve IC50: > 50",
                 "Titer Curve IC50: >= 1 AND < 10",
@@ -385,12 +385,13 @@ public class CDSMAbTest extends CDSReadOnlyTest
         InfoPane ip = new InfoPane(this);
         ip.waitForSpinners();
 
-        Assert.assertEquals("MAbs/Mixtures count not as expected.", 171, ip.getMabMixturesCount());
-        Assert.assertEquals("MAbs count not as expected.", 171, ip.getMabCount());
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 173, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 176, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 3, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
-        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 1418, ip.getMabVirusPairCount());
-        Assert.assertEquals("Viruses count not as expected.", 159, ip.getMabVirusCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 1556, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 164, ip.getMabVirusCount());
 
         log("Validate that clicking an item in the info pane gives the appropriate list of items.");
         // For most of these just check that the first few entries are present.
@@ -428,6 +429,22 @@ public class CDSMAbTest extends CDSReadOnlyTest
         listText = ip.getMabList();
         missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, null);
         Assert.assertTrue("List for MAbs did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        ip.clickMabMixTypeCounts();
+        log("Check Mixture Type list.");
+
+        expectedHasDataInMAbGrid = new ArrayList<>();
+        expectedHasDataInMAbGrid.add("Individual mAb");
+        expectedHasDataInMAbGrid.add("Bispecific mAb");
+        expectedHasDataInMAbGrid.add("Bispecific mAb mixture");
+
+        expectedNoDataInMAbGrid = new ArrayList<>();
+        expectedNoDataInMAbGrid.add("MAb mixture");
+
+        listText = ip.getMabMixTypeList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("List for Mixture Types did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
         ip.clickMabDonorCounts();
@@ -512,6 +529,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         Assert.assertEquals("MAbs/Mixtures count not as expected.", 2, ip.getMabMixturesCount());
         Assert.assertEquals("MAbs count not as expected.", 2, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 1, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 2, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 2, ip.getMabStudiesCount());
         Assert.assertEquals("MAb-Virus Pairs count not as expected.", 64, ip.getMabVirusPairCount());
@@ -577,6 +595,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         Assert.assertEquals("MAbs/Mixtures count not as expected.", 2, ip.getMabMixturesCount());
         Assert.assertEquals("MAbs count not as expected.", 2, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 1, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 2, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 2, ip.getMabStudiesCount());
         Assert.assertEquals("MAb-Virus Pairs count not as expected.", 3, ip.getMabVirusPairCount());
@@ -607,18 +626,19 @@ public class CDSMAbTest extends CDSReadOnlyTest
         grid.clearAllSelections();
 
         log("Add a filter to the Geometric IC50 Curve.");
-        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1", "< 1");
+        grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1", ">= 0.1 to < 1");
 
         log("Validate that the counts are as expected after the filter is applied.");
         ip = new InfoPane(this);
         ip.waitForSpinners();
 
-        Assert.assertEquals("MAbs/Mixtures count not as expected.", 169, ip.getMabMixturesCount());
-        Assert.assertEquals("MAbs count not as expected.", 169, ip.getMabCount());
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 171, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 174, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 3, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
-        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 622, ip.getMabVirusPairCount());
-        Assert.assertEquals("Viruses count not as expected.", 147, ip.getMabVirusCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 748, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 155, ip.getMabVirusCount());
 
         log("Go to the Find Subjects page");
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
@@ -629,12 +649,13 @@ public class CDSMAbTest extends CDSReadOnlyTest
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         ip = new InfoPane(this);
 
-        Assert.assertEquals("MAbs/Mixtures count not as expected.", 169, ip.getMabMixturesCount());
-        Assert.assertEquals("MAbs count not as expected.", 169, ip.getMabCount());
+        Assert.assertEquals("MAbs/Mixtures count not as expected.", 171, ip.getMabMixturesCount());
+        Assert.assertEquals("MAbs count not as expected.", 174, ip.getMabCount());
+        Assert.assertEquals("MAb mix type count not as expected.", 3, ip.getMabMixTypeCounts());
         Assert.assertEquals("Donor Species count not as expected.", 3, ip.getMabDonorCounts());
         Assert.assertEquals("Studies count not as expected.", 10, ip.getMabStudiesCount());
-        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 622, ip.getMabVirusPairCount());
-        Assert.assertEquals("Viruses count not as expected.", 147, ip.getMabVirusCount());
+        Assert.assertEquals("MAb-Virus Pairs count not as expected.", 748, ip.getMabVirusPairCount());
+        Assert.assertEquals("Viruses count not as expected.", 155, ip.getMabVirusCount());
 
         grid = new MAbDataGrid(getGridEl(), this, this);
         grid.clearAllFilters();
@@ -652,12 +673,12 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         while (i < uiEntry.length)
         {
-            if (uiEntry[i].trim().equalsIgnoreCase("Has data in MAb grid"))
+            if (uiEntry[i].trim().equalsIgnoreCase("Has data in mAb grid"))
             {
                 putInHasData = true;
                 i++;
             }
-            else if (uiEntry[i].trim().equalsIgnoreCase("No data in MAb grid"))
+            else if (uiEntry[i].trim().equalsIgnoreCase("No data in mAb grid"))
             {
                 putInHasData = false;
                 i++;
@@ -695,14 +716,14 @@ public class CDSMAbTest extends CDSReadOnlyTest
         {
             if ((expectedHasData.size() == 0) && (hasDataInMAbGrid.size() != 0))
             {
-                sb.append("UI shows values in 'Has data in MAb grid', wasn't expecting any.\n");
+                sb.append("UI shows values in 'Has data in mAb grid', wasn't expecting any.\n");
             }
             else
             {
                 for (String expected : expectedHasData)
                 {
                     if (!hasDataInMAbGrid.contains(expected))
-                        sb.append("Did not find '" + expected + "' in 'Has data in MAb grid'.\n");
+                        sb.append("Did not find '" + expected + "' in 'Has data in mAb grid'.\n");
                 }
             }
         }
@@ -716,14 +737,14 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
             if ((expectedNoData.size() == 0) && (noDataInMAbGrid.size() != 0))
             {
-                sb.append("UI shows values in 'No data in MAb grid', wasn't expecting any.\n");
+                sb.append("UI shows values in 'No data in mAb grid', wasn't expecting any.\n");
             }
             else
             {
                 for (String expected : expectedNoData)
                 {
                     if (!noDataInMAbGrid.contains(expected))
-                        sb.append("Did not find '" + expected + "' in 'No data in MAb grid'.\n");
+                        sb.append("Did not find '" + expected + "' in 'No data in mAb grid'.\n");
                 }
             }
 

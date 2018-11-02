@@ -215,7 +215,7 @@ Ext.define('Connector.controller.Analytics', {
                     }
                 }
 
-                var keys = Object.keys(values);
+                var keys = Ext.Object.getKeys(values);
                 for (i = 0; i < keys.length; i++) {
                     value = (filter.isPlot() ? 'Plot' : 'Grid') + ': ' + keys[i];
                     this.trackEvent('Filter', 'Add', value);

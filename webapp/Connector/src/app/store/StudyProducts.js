@@ -83,7 +83,7 @@ Ext.define('Connector.app.store.StudyProducts', {
         });
 
         Ext.iterate(armProductsMap, function(arm, productsObj) {
-            var products = Object.keys(productsObj);
+            var products = Ext.Object.getKeys(productsObj);
             for (var i = 0; i < products.length; i++) {
                 var currentProduct = products[i];
                 if (!allOtherProducts[currentProduct]) {
@@ -199,7 +199,7 @@ Ext.define('Connector.app.store.StudyProducts', {
                 product.studies_with_data_count = studiesWithData.length;
                 otherProducts = [];
                 if (this.productProduct && this.productProduct[product.product_id]) {
-                    var otherProductIds = Object.keys(this.productProduct[product.product_id]);
+                    var otherProductIds = Ext.Object.getKeys(this.productProduct[product.product_id]);
                     Ext.each(otherProductIds, function(id) {
                         otherProducts.push({
                             product_id: id,

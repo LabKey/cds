@@ -105,7 +105,7 @@ Ext.define('Connector.view.MabGrid', {
                 items: [{
                     xtype: 'actiontitle',
                     flex: 1,
-                    text: 'Explore monoclonal antibody (MAb) screening data',
+                    text: 'Explore monoclonal antibody (mAb) screening data',
                     buttons: [
                         this.getExportCSVButton(),
                         this.getExportExcelButton()
@@ -236,7 +236,7 @@ Ext.define('Connector.view.MabGrid', {
             this._getVirusColumnConfig('Clades', 'cladeCount', ind++),
             this._getVirusColumnConfig('Tiers', 'neutralization_tierCount', ind++),
             this._getIC50MeanColumnConfig('Geometric mean Curve IC50', 'IC50geomean', ind++, MabQueryUtils.IC50_GROUP_COLUMN),
-            this._getCountColumnConfig('Studies', 'studyCount', ind, 'study')
+            this._getCountColumnConfig('Studies', 'studyCount', ind, 'study.label')
         ];
     },
 
@@ -395,10 +395,11 @@ Ext.define('Connector.view.MabGrid', {
     getActiveFacetValues: function(response, config) {
         var filterConfig = config.filterConfig;
         if (response && response.rows) {
-            var key = filterConfig.fieldName + '_values';
+            var fieldName = Connector.utility.MabQuery.getParsedFieldName(filterConfig.fieldName, true);
+            var key = fieldName + '_values';
             var values = [];
             Ext.each(response.rows, function(row) {
-                values.push(row[filterConfig.fieldName] ? row[filterConfig.fieldName] : this.blankValue);
+                values.push(row[fieldName] ? row[fieldName] : this.blankValue);
             }, this);
             this.getModel()[key] = values;
         }
@@ -426,7 +427,8 @@ Ext.define('Connector.view.MabGrid', {
         var activeValues = [];
         if (response && response.rows) {
             Ext.each(response.rows, function(row) {
-                activeValues.push(row[filterConfig.fieldName] ? row[filterConfig.fieldName] : this.blankValue);
+                var fieldName = Connector.utility.MabQuery.getParsedFieldName(filterConfig.fieldName, true);
+                activeValues.push(row[fieldName] ? row[fieldName] : this.blankValue);
             }, this);
         }
         Ext.create('Connector.window.MabGridFacet', {
@@ -482,7 +484,7 @@ Ext.define('Connector.view.MabGrid', {
         return {
             xtype: 'box',
             html: '<div class="header">' +
-            '<div style="font-size: 13.5pt; font-weight: bold;">Viruses tested against MAbs</div>' +
+            '<div style="font-size: 13.5pt; font-weight: bold;">Viruses tested against mAbs</div>' +
             '</div>'
         }
     },
@@ -597,6 +599,8 @@ Ext.define('Connector.view.MabGrid', {
         Ext.each(Connector.getState().getMabFilters(true), function(filter) {
             var f = filter.gridFilter[0];
             var fieldName = f.getColumnName();
+            if (fieldName.indexOf('.') > -1)
+                fieldName = fieldName.split('.')[0];
             var colIndexes = Connector.view.MabGrid.ColumnMap[fieldName].colInd;
             if (colIndexes && Ext.isArray(colIndexes)) {
                 Ext.each(colIndexes, function(colIndex) {

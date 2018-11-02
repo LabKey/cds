@@ -36,11 +36,11 @@ Ext.define('Connector.utility.MabQuery', {
 
     MAB_VIRUS_PAIRS_COUNT_COLUMN: 'mab_virus_pairs_count',
 
-    COUNT_COLUMNS: ['study', 'virus', 'clade', 'neutralization_tier'],
+    COUNT_COLUMNS: ['study.label', 'virus', 'clade', 'neutralization_tier'],
 
     ASSAY_KEY_COLUMNS: ['mab_mix_id', 'study', 'virus', 'target_cell', 'lab_code', 'summary_level', 'curve_id'],
 
-    ASSAY_FILTER_COLUMNS: ['study', 'tier_clade_virus'],
+    ASSAY_FILTER_COLUMNS: ['study.label', 'tier_clade_virus'],
 
     IC50_COLUMN: 'titer_curve_ic50',
 
@@ -84,6 +84,12 @@ Ext.define('Connector.utility.MabQuery', {
             console.log(message);
         }
         return message;
+    },
+
+    getParsedFieldName: function(field, getFKField) {
+        if (field.indexOf('.') > -1)
+            return field.split('.')[getFKField ? 1 : 0];
+        return field;
     },
 
     getMetaData : function(config) {
@@ -263,7 +269,8 @@ Ext.define('Connector.utility.MabQuery', {
         var SELECT = ['SELECT '], sep = "\n\t";
         SELECT.push(this.MAB_MIX_NAME_STD + ', ' + sep);
         Ext.each(this.COUNT_COLUMNS, function(col) {
-            SELECT.push('COUNT(DISTINCT ' + col + ") as " + col + 'Count, ' + sep);
+            var fieldLabel = this.getParsedFieldName(col, false);
+            SELECT.push('COUNT(DISTINCT ' + col + ") as " + fieldLabel + 'Count, ' + sep);
         }, this);
 
         var WHERE = this._getMabStateFilterWhere(false);
@@ -319,6 +326,18 @@ Ext.define('Connector.utility.MabQuery', {
         var values = v.split(';'), noEmptyWhere, emptyWhere;
         var nullInd = values.indexOf(this.BLANK_VALUE);
         var columnName = isDataset ? this._getGridBaseDatasetColumnName(f) : f.getColumnName();
+
+        if (isDataset && columnName == 'prot' && this.studies) {
+            var convertedValues = [];
+            Ext.each(values, function(val) {
+                if (this.studies[val])
+                    convertedValues.push(this.studies[val]);
+                else
+                    convertedValues.push(val);
+            }, this);
+            values = convertedValues;
+        }
+
         if (nullInd > -1) {
             values.splice(nullInd, 1);
             emptyWhere = tableAliasName + '.' + columnName + this._getNULLFilterOp(f);
@@ -342,7 +361,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     _getGridBaseDatasetColumnName : function(f) {
         var name = f.getColumnName();
-        return name === 'study' ? 'prot' : name;
+        return name === 'study.label' ? 'prot' : name;
     },
 
     _getFilterOp : function(f) {
@@ -354,7 +373,30 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     prepareMAbReportQueries : function(config) {
-        this.getSelectedUniqueKeysQuery(config);
+        this.ensureStudyData(config, this.getSelectedUniqueKeysQuery);
+    },
+
+    // convert study label to prot for dataset query
+    ensureStudyData: function(config, cb) {
+        if (this.studies && Ext.Object.getKeys(this.studies).length > 0)
+            cb.call(this, config);
+        else {
+            LABKEY.Query.selectRows({
+                schemaName: 'cds.metadata',
+                queryName: 'study',
+                success: function(response) {
+                    var studyData = response.rows, studies = {};
+                    Ext.each(studyData, function(study) {
+                        studies[study.label] = study.study_name;
+                    });
+                    this.studies = studies;
+                    cb.call(this, config);
+                },
+                failure: config.failure,
+                scope: this
+            });
+        }
+
     },
 
     getSelectedUniqueKeysQuery : function(config) {
@@ -512,7 +554,12 @@ Ext.define('Connector.utility.MabQuery', {
         return ranges;
     },
 
-    prepareMAbExportQueries : function(config) {
+
+    prepareMAbExportQueries: function(config) {
+        this.ensureStudyData(config, this.getMAbExportQueries);
+    },
+
+    getMAbExportQueries : function(config) {
         var exportParams = config.exportParams ? config.exportParams : {};
         var exportColumns = this.getNABMAbExportColumns(exportParams.excludedColumns);
         exportParams.columnNames = exportColumns.columnNames;
@@ -702,7 +749,9 @@ Ext.define('Connector.utility.MabQuery', {
         var valueStr = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
         if (f.getColumnName() === this.VIRUS_FILTER_COLUMN)
             valueStr = valueStr.replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, ' ');
-        var columnName = Connector.view.MabGrid.ColumnMap[f.getColumnName()].filterLabel;
+
+        var fieldName = this.getParsedFieldName(f.getColumnName(), false);
+        var columnName = Connector.view.MabGrid.ColumnMap[fieldName].filterLabel;
         if (f.getFilterType().getURLSuffix() === 'notin') {
             op = ' - exclude';
         }
@@ -722,7 +771,15 @@ Ext.define('Connector.utility.MabQuery', {
         ].join('\n'));
     },
 
-    getMetaCountSQL : function(useFilter) {
+    getMixTypeCountSQL : function(useFilter) {
+        return this.log([
+            'SELECT COUNT(DISTINCT mab_mix_type) as mixTypeCount',
+            this._getMabMixMetaFrom(),
+            (useFilter ? this._buildWhere(this._getActiveMabMixIdWhere(false, false)) : '')
+        ].join('\n'));
+    },
+
+    getDonorSpeciesCountSQL : function(useFilter) {
         return this.log([
             'SELECT COUNT(DISTINCT mab_donor_species) as donorSpeciesCount',
             this._getMabMixMetaFrom(),

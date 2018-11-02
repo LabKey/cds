@@ -105,8 +105,11 @@ Ext.define('Connector.measure.Configuration', {
                         'study_Demographics_country_enrollment',
                         'study_Demographics_circumcised_enrollment',
                         'study_Demographics_bmi_enrollment',
+                        'study_Demographics_bmi_category',
                         'study_Demographics_agegroup_range',
-                        'study_Demographics_age_enrollment'
+                        'study_Demographics_age_enrollment',
+                        'study_Demographics_genderidentity',
+                        'study_Demographics_studycohort'
                     ]
                 },
                 'StudyTreatmentVariables': {
@@ -554,6 +557,15 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_response_call': {
                     isRecommendedVariable: true
                 },
+                'study_ICS_functionality_score': {
+                    defaultScale: 'LINEAR'
+                },
+                'study_ICS_polyfunctionality_score': {
+                    defaultScale: 'LINEAR'
+                },
+                'study_ICS_study_prot': {
+                    hidden: true
+                },
                 'study_NAb_titer_ID50': {
                     sortOrder: -1,
                     isRecommendedVariable: true
@@ -562,11 +574,17 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true,
                     isMeasure: false
                 },
+                'study_NAb_study_prot': {
+                    hidden: true
+                },
                 'study_BAMA_mfi_delta': {
                     isRecommendedVariable: true
                 },
                 'study_BAMA_response_call': {
                     isRecommendedVariable: true
+                },
+                'study_BAMA_study_prot': {
+                    hidden: true
                 },
                 'study_ELISPOT_mean_sfc': {
                     isRecommendedVariable: true
@@ -574,12 +592,11 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_response_call': {
                     isRecommendedVariable: true
                 },
+                'study_ELISPOT_study_prot': {
+                    hidden: true
+                },
                 'study_Demographics_species': {
                     isRecommendedVariable: true
-                },
-                'study_Demographics_sexatbirth': {
-                    isRecommendedVariable: true,
-                    hidden: true
                 },
                 'study_Demographics_age_enrollment': {
                     isRecommendedVariable: true,
@@ -702,22 +719,7 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_visit_day': {
                     hidden: true
                 },
-                'study_Demographics_agegroup_range': {
-                    hidden: true
-                },
                 'study_Demographics_bmi_enrollment': {
-                    hidden: true
-                },
-                'study_Demographics_circumcised_enrollment': {
-                    hidden: true
-                },
-                'study_Demographics_country_enrollment': {
-                    hidden: true
-                },
-                'study_Demographics_ethnicity': {
-                    hidden: true
-                },
-                'study_Demographics_race': {
                     hidden: true
                 },
                 'study_Demographics_study_arm': {
