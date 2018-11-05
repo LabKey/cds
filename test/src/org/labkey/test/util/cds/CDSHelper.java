@@ -674,7 +674,7 @@ public class CDSHelper
     public void enterApplication()
     {
         _test.refresh();
-        _test.sleep(2000);
+        BaseWebDriverTest.sleep(2000);
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"), 10000);
         _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");
@@ -697,7 +697,7 @@ public class CDSHelper
         });
 
         _test.refresh(); // TODO this is a temporary hack. There are some strange behaviors with the mask that only show up in automation.
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
     }
@@ -908,7 +908,7 @@ public class CDSHelper
 
     public void ensureGroupsDeleted(List<String> groups)
     {
-        Boolean isVisible;
+        boolean isVisible;
 
         List<String> deletable = new ArrayList<>();
         for (String group : groups)
@@ -976,13 +976,14 @@ public class CDSHelper
 
     private void clickBar(String barLabel)
     {
+        _test.mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
+        Actions builder = new Actions(_test.getDriver());
         WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT); // becomes stale after filter is applied
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         _test.waitForElementToBeVisible(Locators.barLabel.withText(barLabel));
         _test.scrollIntoView(Locators.barLabel.withText(barLabel));
         WebElement barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
-        Actions builder = new Actions(_test.getDriver());
-        builder.moveToElement(barLabelElement, 1, 1).click(barLabelElement).build().perform();
+        builder.moveToElement(barLabelElement, 2, 2).click(barLabelElement).build().perform();
 
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
         _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
@@ -1024,7 +1025,7 @@ public class CDSHelper
         String cssPathToPoint = cssPathToSvg + " " + elementTag + ":nth-of-type(" + pointIndex + ")";
 
         _test.mouseOver(Locator.css(cssPathToPoint));
-        _test.sleep(750);
+        BaseWebDriverTest.sleep(750);
         Actions builder = new Actions(_test.getDriver());
         builder.click().perform();
     }
@@ -1055,9 +1056,9 @@ public class CDSHelper
     public void goToSummary()
     {
         NavigationLink.SUMMARY.makeNavigationSelection(_test);
-        _test.sleep(1000);
+        BaseWebDriverTest.sleep(1000);
         _test._ext4Helper.waitForMaskToDisappear(60000);
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
     }
 
     public void clearFilter(int index)
@@ -1076,7 +1077,7 @@ public class CDSHelper
             return null;
         });
 
-        _test.sleep(100);
+        BaseWebDriverTest.sleep(100);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForText("Filter removed.");
     }
@@ -1107,7 +1108,7 @@ public class CDSHelper
             });
         }
 
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
@@ -1125,7 +1126,7 @@ public class CDSHelper
     {
         _test.click(Locators.cdsButtonLocator("Filter"));
         waitForClearSelection(); // wait for animation
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
@@ -1171,7 +1172,7 @@ public class CDSHelper
             _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
             return null;
         });
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
@@ -1182,7 +1183,7 @@ public class CDSHelper
             return null;
         });
 
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElementToDisappear(Locator.tagWithClass("div", "barchart").append(Locator.tagWithClass("span", "count").withText("0")));
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Show empty"));
@@ -1195,7 +1196,7 @@ public class CDSHelper
             return null;
         });
 
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Hide empty"));
     }
@@ -1214,7 +1215,7 @@ public class CDSHelper
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
 
-        _test.sleep(1000);
+        BaseWebDriverTest.sleep(1000);
         // Because of the way CDS hides parts of the UI the total number of these elements may vary.
         // So can't use the standard waitForElements, which expects an exact number of elements, so doing this slightly modified version.
         _test.waitFor(() -> 3 <= Locator.xpath("//table[@role='presentation']//tr[@role='row']").findElements(_test.getDriver()).size(), _test.WAIT_FOR_JAVASCRIPT);
@@ -1230,7 +1231,7 @@ public class CDSHelper
             WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
         }
-        _test.sleep(1000);
+        BaseWebDriverTest.sleep(1000);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
@@ -1242,7 +1243,7 @@ public class CDSHelper
 
     public void deleteGroupFromSummaryPage(String name)
     {
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing));
         _test.click(groupListing);
@@ -1252,14 +1253,14 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
         _test.waitForText(HOME_PAGE_HEADER);
         _test.waitForElementToDisappear(groupListing);
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void toggleExplorerBar(String largeBarText)
     {
         _test.click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p"));
-        _test.sleep(500);
+        BaseWebDriverTest.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
@@ -1372,14 +1373,7 @@ public class CDSHelper
 
         String classAttribute = tableParent.getAttribute("class");
 
-        if (classAttribute.contains("x-form-cb-checked"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return classAttribute.contains("x-form-cb-checked");
 
     }
 
@@ -1392,7 +1386,7 @@ public class CDSHelper
     {
         boolean changed, returnVal;
 
-        _test._ext4Helper.resetCssPrefix();
+        Ext4Helper.resetCssPrefix();
         _test.goToProjectHome();
         _test.goToFolderManagement();
         _test.waitForText(1000, "Module Properties");
@@ -1835,7 +1829,7 @@ public class CDSHelper
 
         _test.log("Now click on the pdf link.");
         documentLink.click();
-        _test.sleep(10000);
+        BaseWebDriverTest.sleep(10000);
         _test.switchToWindow(1);
 
         // Since this is a pdf file, it will be validated in the url, so replace any " " with %20.

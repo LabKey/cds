@@ -30,6 +30,7 @@ import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.cds.CDSAsserts;
+import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
@@ -711,6 +712,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertElementPresent(CDSPlot.Locators.plotPoint, 3627);
 
         log("Verify x axis categories are selectable as filters");
+        mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
+        sleep(500);
         mouseOver(CDSPlot.Locators.plotTick.withText("Asian"));
         waitForElement(Locator.css("svg g.axis g.tick-text a rect.highlight[fill='" + MOUSEOVER_FILL + "']"));
         assertEquals("Incorrect number of points highlighted after mousing over x axis category", 316, cdsPlot.getPointCountByColor(MOUSEOVER_FILL));

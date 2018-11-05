@@ -25,6 +25,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @Category({})
@@ -50,7 +51,7 @@ public class CDSHelpCenterTest extends CDSReadOnlyTest
 
         // verify See all link and Back action
         int seeAllCount = Locator.css(CDSHelpCenterUtil.HELP_SEE_ALL_CSS).findElements(getDriver()).size();
-        assertTrue("See all link count is incorrect", seeAllCount == 1);
+        assertEquals("See all link count is incorrect", 1, seeAllCount);
         List<WebElement> seeAlls = Locator.css(CDSHelpCenterUtil.HELP_SEE_ALL_CSS).findElements(getDriver());
         doShortWait();
         fireEvent(seeAlls.get(seeAlls.size() - 1), SeleniumEvent.mouseup);
@@ -91,11 +92,12 @@ public class CDSHelpCenterTest extends CDSReadOnlyTest
         doShortWait();
 
         // verify closing and re-opening help center
-        List<WebElement> logos = Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS).findElements(getDriver());
-        doShortWait();
+
         // click outside popup should close the popup
         // Unfortunately selenium won't let you click through the mask behind the help page, so you have to send the click to the mask.
-        clickAt(Locator.css("div.x-mask"), 10, 10, 0);
+        mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
+        doShortWait();
+        clickAt(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS), 10, 10, 0);
         doShortWait();
 
         openHelpCenter();

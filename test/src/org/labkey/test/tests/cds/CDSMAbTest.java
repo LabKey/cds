@@ -205,6 +205,7 @@ public class CDSMAbTest extends CDSReadOnlyTest
                 isElementPresent(grid.getDilutionReportBtn()) && isElementPresent(grid.getIC50ReportBtn()));
 
         log("Verify error message for view reports when no selection is made");
+        mouseOver(grid.getDilutionReportBtn());
         click(grid.getDilutionReportBtn());
         waitForElementToBeVisible(Locator.tagWithClassContaining("div", "hopscotch-bubble"));
         assertTextPresent("Select data in the MAb grid, via the check box on each row, that you'd like to see in a report.");
