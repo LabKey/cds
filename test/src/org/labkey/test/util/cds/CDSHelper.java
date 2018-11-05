@@ -977,6 +977,7 @@ public class CDSHelper
     private void clickBar(String barLabel)
     {
         WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT); // becomes stale after filter is applied
+        _test.sleep(500);
         _test.waitForElementToBeVisible(Locators.barLabel.withText(barLabel));
         _test.scrollIntoView(Locators.barLabel.withText(barLabel));
         WebElement barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());

@@ -196,6 +196,10 @@ public abstract class DataspaceVariableSelector
 
     public void cancelSelection()
     {
+        // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+        _test.mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));
+        _test.sleep(500);
+        _test.mouseOut();
         _test.click(window().append(" a.x-btn").withText("Cancel"));
         _test._ext4Helper.waitForMaskToDisappear();
     }
@@ -370,6 +374,10 @@ public abstract class DataspaceVariableSelector
                 for (String val : value)
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[text()='" + val + "']"));
 
+                // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+                _test.mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));
+                _test.sleep(500);
+                _test.mouseOut();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
@@ -454,6 +462,10 @@ public abstract class DataspaceVariableSelector
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
                 }
 
+                // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+                _test.mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));
+                _test.sleep(500);
+                _test.mouseOut();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
@@ -493,6 +505,10 @@ public abstract class DataspaceVariableSelector
                 for (String val : value)
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
 
+                // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+                _test.mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));
+                _test.sleep(500);
+                _test.mouseOut();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
