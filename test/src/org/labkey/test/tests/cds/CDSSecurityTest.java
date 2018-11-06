@@ -31,6 +31,7 @@ import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.io.IOException;
 import java.net.URL;
@@ -198,6 +199,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         final String NOT_ACCESSIBLE_ICON = "grayCheck.png";
         final String HAS_NO_DATA_ICON = "smallGreyX.png";
 
+        Actions builder = new Actions(getDriver());
+
         String dataIcon = hasAccessToQ2 ? ACCESSIBLE_ICON : NOT_ACCESSIBLE_ICON;
 
         log("Verify detailed Data Availability for QED 2");
@@ -206,7 +209,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         assertElementPresent(element);
         scrollIntoView(element);
         mouseOver(element);
-        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
+        sleep(1000);
         waitAndClick(element);
         waitForText("Data Availability");
         Assert.assertTrue("Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
@@ -216,11 +219,31 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         study = "RED 4";
         element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
-        scrollIntoView(element);
-        mouseOver(element);
-        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
-        waitAndClick(element);
-        waitForText("Data Availability");
+
+        boolean worked = false;
+        int count = 0;
+
+        while(!worked)
+        {
+            count++;
+            scrollIntoView(element, true);
+            builder.moveToElement(element.findElement(getDriver())).build().perform();
+            sleep(1000);
+            builder.click(element.findElement(getDriver())).build().perform();
+//        waitAndClick(element);
+            try
+            {
+                waitForText("Data Availability");
+                worked = true;
+            }
+            catch(AssertionError noText)
+            {
+                if(count > 5)
+                    throw noText;
+
+                worked = false;
+            }
+        }
 
         Assert.assertTrue("Data Availability status for ICS is not as expected", isElementPresent(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
         Assert.assertTrue("Data Availability status for IFNg ELISpot is not as expected", isElementPresent(cds.getDataRowXPath("IFNg ELISpot").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
@@ -401,7 +424,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
             if (isAdmin)
             {
-                waitAndClick(loc);
+                waitAndClick(1000, loc, 0);
                 waitForElementToDisappear(Locator.xpath("//tbody[starts-with(@id, 'treeview')]/tr[not(starts-with(@id, 'treeview'))]"));
                 waitForElement(Locator.xpath("//div[contains(./@class,'lk-qd-name')]/h2/a[contains(text(), '" + schemaName + "." + queryName + "')]"), 30000);
             }

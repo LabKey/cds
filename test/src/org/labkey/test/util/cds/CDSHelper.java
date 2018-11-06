@@ -1246,11 +1246,12 @@ public class CDSHelper
         BaseWebDriverTest.sleep(500);
         Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing));
-        _test.click(groupListing);
+        groupListing.findElement(_test.getWrappedDriver()).click();
+        BaseWebDriverTest.sleep(1000);
         _test.waitForElement(Locators.cdsButtonLocator("Delete"));
-        _test.click(Locators.cdsButtonLocator("Delete"));
+        Locators.cdsButtonLocator("Delete").findElement(_test.getWrappedDriver()).click();
         _test.waitForText("Are you sure you want to delete");
-        _test.click(Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
+        Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(_test.getWrappedDriver()).click();
         _test.waitForText(HOME_PAGE_HEADER);
         _test.waitForElementToDisappear(groupListing);
         BaseWebDriverTest.sleep(500);

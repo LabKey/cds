@@ -495,6 +495,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
+        waitForElementToBeVisible(LEARN_ROW_TITLE_LOC.containing(assays.get(0)));
         waitAndClick(LEARN_ROW_TITLE_LOC.containing(assays.get(0)));
         sleep(CDSHelper.CDS_WAIT);
         waitForElement(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
@@ -503,6 +504,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementVisible(Locator.linkWithHref("#learn/learn/Assay/" + CDSHelper.ASSAYS[0].replace(" ", "%20") + "/antigens"));
 
         //testing variables page
+        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Antigen vaccine match indicator"));
@@ -510,18 +512,26 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
 
         // testing NAb has virus link rather than antigen link.
+        waitForElementToBeVisible(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
         waitAndClick(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
+
+        waitForElementToBeVisible(LEARN_ROW_TITLE_LOC.containing(assays.get(3)));
         waitAndClick(LEARN_ROW_TITLE_LOC.containing(assays.get(3)));
+
         waitForElement(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.linkWithHref("#learn/learn/Assay/" + CDSHelper.ASSAYS[3].replace(" ", "%20") + "/antigens")));
         assertElementVisible(Locator.linkContainingText("Virus List"));
 
         //testing ICS variables page
+        waitForElementToBeVisible(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
         waitAndClick(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
+
+        waitForElementToBeVisible(LEARN_ROW_TITLE_LOC.containing(assays.get(1)));
         waitAndClick(LEARN_ROW_TITLE_LOC.containing(assays.get(1)));
-        waitForElement(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
-        waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
+
+        waitForElementToBeVisible(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
+        waitForElementToBeVisible(Locator.xpath("//h3[text()='Endpoint description']"));
 
         validateToolTip(Locator.linkWithText("RED 4").findElement(getDriver()), "not approved for sharing");
         validateToolTip(Locator.linkWithText("RED 6").findElement(getDriver()), "not approved for sharing");
@@ -628,11 +638,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue(isElementPresent(cds.noDataDetailIconXPath("RED 6")));
 
         log("Verify Variables page");
+        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Fit asymmetry"));
 
         log("Verify Antigens page");
+        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("X2160_C25"));
@@ -837,6 +849,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         scrollIntoView(element);
         mouseOver(element);
         waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
+        waitForElementToBeVisible(element);
         waitAndClick(element);
         sleep(1000);
     }
@@ -872,6 +885,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Testing data availability module in Assays");
         cds.viewLearnAboutPage("Assays");
         Locator loc = Locator.xpath("//h2[contains(text(), '" + CDSHelper.ICS + "')]");
+        waitForElementToBeVisible(loc);
         waitAndClick(loc);
 
         refresh(); //ensures only selecting elements on viewable page.
@@ -938,15 +952,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         scrollIntoView(sortedStudyTitles.get(sortedStudyTitles.size() - 1));
         String titleForLastElement = sortedStudyTitles.get(sortedStudyTitles.size() - 1).getText();
         learnGrid.sort("Name & Description");
-        assertTrue(LEARN_ROW_TITLE_LOC.findElements(getDriver())
-                .get(0).getText()
-                .equals(titleForLastElement));
+        assertEquals(titleForLastElement, LEARN_ROW_TITLE_LOC.findElements(getDriver())
+                .get(0).getText());
 
         log("Evaluating filtering...");
         String[] studiesToFilter = {CDSHelper.STUDIES[0], CDSHelper.STUDIES[7], CDSHelper.STUDIES[20]}; //Arbitrarily chosen
         int numRowsPreFilter = XPATH_RESULT_ROW_TITLE.findElements(getDriver()).size();
 
-        assertTrue("Facet options should all have data before filtering", LearnGrid.FacetGroups.hasData == learnGrid.getFacetGroupStatus("Name & Description"));
+        assertEquals("Facet options should all have data before filtering", LearnGrid.FacetGroups.hasData, learnGrid.getFacetGroupStatus("Name & Description"));
 
         learnGrid.setFacet("Name & Description", studiesToFilter);
         List<WebElement> studyTitlesAfterFilter = LEARN_ROW_TITLE_LOC.findElements(getDriver());
@@ -1038,12 +1051,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
+        waitForElementToBeVisible(LEARN_ROW_TITLE_LOC.containing(assays.get(0)));
         waitAndClick(LEARN_ROW_TITLE_LOC.containing(assays.get(0)));
         waitForElement(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
         waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_METHODOLOGY);
 
         log("testing BAMA antigens page...");
+        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
         waitForElement(Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Antigen"));
@@ -1082,10 +1097,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue("Not all antigens are present after clearing filter", learnGrid.getTitleRowCount() == CDSHelper.BAMA_ANTIGENS_NAME.length);
 
         log("testing ICS antigens page");
+        waitForElementToBeVisible(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
         waitAndClick(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
+        waitForElementToBeVisible(LEARN_ROW_TITLE_LOC.containing(assays.get(1)));
         waitAndClick(LEARN_ROW_TITLE_LOC.containing(assays.get(1)));
         waitForElement(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
 
+        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         Locator proteinPanelLoc = Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Protein Panel");
         waitForElement(proteinPanelLoc);
