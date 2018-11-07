@@ -15,12 +15,14 @@
  */
 package org.labkey.test.util.cds;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
+import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.html.BootstrapMenu;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
@@ -1580,6 +1582,49 @@ public class CDSHelper
         _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(animatingBar));
     }
 
+    public void clickHelper(WebElement element, Function<Void, Void> function)
+    {
+        final int RETRY_LIMIT = 5;
+        Actions builder = new Actions(_test.getDriver());
+        boolean worked = false;
+        int count = 0;
+
+        _test.log("Using the CDS click helper.");
+
+        while(!worked)
+        {
+            count++;
+
+            _test.log("CDS clickHelper attempt " + count + " to click the element.");
+
+            BaseWebDriverTest.sleep(500);
+            _test.scrollIntoView(element, true);
+            builder.moveToElement(element).build().perform();
+            builder.click(element).build().perform();
+
+            try
+            {
+                function.apply(null);
+                worked = true;
+            }
+            catch(AssertionError noText)
+            {
+                if (count > RETRY_LIMIT)
+                    throw noText;
+
+                worked = false;
+            }
+            catch (ElementNotFoundException enf)
+            {
+                if (count > RETRY_LIMIT)
+                    throw enf;
+
+                worked = false;
+            }
+        }
+
+    }
+
     public enum NavigationLink
     {
         HOME("Home", Locator.tagContainingText("h1", HOME_PAGE_HEADER)),
@@ -1811,16 +1856,12 @@ public class CDSHelper
 
     public void validateDocLink(WebElement documentLink, String expectedFileName)
     {
-        File docFile;
-        String foundDocumentName;
-
         // Since this will be a downloaded document, make sure the name is "cleaned up".
         expectedFileName = expectedFileName.replace("%20", " ").toLowerCase();
 
         _test.log("Now click on the document link.");
-        docFile = _test.clickAndWaitForDownload(documentLink);
-        foundDocumentName = docFile.getName();
-        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + expectedFileName + "' Found: '" + foundDocumentName.toLowerCase() + "'.", docFile.getName().toLowerCase().contains(expectedFileName));
+        File[] docFile = _test.clickAndWaitForDownload(documentLink, 1);
+        Assert.assertTrue("Downloaded document not of the expected name. Expected: '" + expectedFileName + "' Found: '" + docFile[0].getName().toLowerCase() + "'.", docFile[0].getName().toLowerCase().contains(expectedFileName));
 
     }
 
@@ -1829,23 +1870,33 @@ public class CDSHelper
         final String PLUGIN_XPATH = "//embed[@name='plugin']";
 
         _test.log("Now click on the pdf link.");
-        documentLink.click();
-        BaseWebDriverTest.sleep(10000);
-        _test.switchToWindow(1);
+        if(_test.getBrowserType() == WebDriverWrapper.BrowserType.CHROME)
+        {
 
-        // Since this is a pdf file, it will be validated in the url, so replace any " " with %20.
-        pdfFileName = pdfFileName.replace(" ", "%20").toLowerCase();
+            documentLink.click();
+            BaseWebDriverTest.sleep(10000);
+            _test.switchToWindow(1);
 
-        _test.log("Validate that the pdf document was loaded into the browser.");
-        _test.assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
-        Assert.assertTrue("The embedded element is not a pdf plugin", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
-        Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'. Found: '" + _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase() + "'.", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
+            // Since this is a pdf file, it will be validated in the url, so replace any " " with %20.
+            pdfFileName = pdfFileName.replace(" ", "%20").toLowerCase();
 
-        _test.log("Close this window.");
-        _test.getDriver().close();
+            _test.log("Validate that the pdf document was loaded into the browser.");
+            _test.assertElementPresent("Doesn't look like the embed elment is present.", Locator.xpath(PLUGIN_XPATH), 1);
+            Assert.assertTrue("The embedded element is not a pdf plugin", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "type").toLowerCase().contains("pdf"));
+            Assert.assertTrue("The source for the plugin is not the expected document. Expected: '" + pdfFileName + "'. Found: '" + _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase() + "'.", _test.getAttribute(Locator.xpath(PLUGIN_XPATH), "src").toLowerCase().contains(pdfFileName));
 
-        _test.log("Go back to the main window.");
-        _test.switchToMainWindow();
+            _test.log("Close this window.");
+            _test.getDriver().close();
+
+            _test.log("Go back to the main window.");
+            _test.switchToMainWindow();
+        }
+        else if(_test.getBrowserType() == WebDriverWrapper.BrowserType.FIREFOX)
+        {
+            File[] downloadedFiles = _test.clickAndWaitForDownload(documentLink, 1);
+            Assert.assertEquals("The pdf file downloaded does not have the expected name.", pdfFileName.toLowerCase(), downloadedFiles[0].getName().toLowerCase());
+        }
+
     }
 
     // Return the visible grant document link, null otherwise.

@@ -136,6 +136,13 @@ public class CDSTest extends CDSReadOnlyTest
         });
 
         log("Verify tile link");
+
+        if(isElementVisible(Locator.linkContainingText("Show tips for getting started")))
+        {
+            click(Locator.linkContainingText("Show tips for getting started"));
+            waitForElement(Locator.xpath("//div[contains(@class, 'home_text')]"));
+        }
+
         mouseOver(Locator.xpath("//div[contains(@class, 'home_text')]"));
         sleep(500);
         infoPane.waitForSpinners();
@@ -210,8 +217,7 @@ public class CDSTest extends CDSReadOnlyTest
         assertElementPresent(clippedLabel);
         cds.ensureNoFilter();
 
-        waitAndClick(clippedLabel);
-        waitForText("Your filters have been");
+        new CDSHelper(this).clickHelper(clippedLabel.findElement(getWrappedDriver()), voidFunc -> {waitForText("Your filters have been"); return null;});
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
         _asserts.assertFilterStatusCounts(139, 12, 1, 1, 42); // TODO Test data dependent.
 
