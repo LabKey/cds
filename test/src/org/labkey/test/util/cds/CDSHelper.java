@@ -851,9 +851,11 @@ public class CDSHelper
     public boolean updateSharedGroupDetails(String groupName, @Nullable String newName, @Nullable String newDescription,
                                          @Nullable Boolean newSharedStatus)
     {
+        Locator groupLabelLocator = Locator.xpath("//div[contains(@class, 'grouprow')]/div[contains(@class,'grouplabel')][@title='" + groupName + "']");
+
         goToAppHome();
-        _test.click(Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), 'Curated groups and plots')]" +
-                "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + groupName + "')]"));
+        _test.waitForElementToBeVisible(groupLabelLocator);
+        _test.click(groupLabelLocator);
         _test.waitForText("Edit details");
         _test.click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
         _test.waitForText("Shared group:");
@@ -947,13 +949,13 @@ public class CDSHelper
         selectBars(true, bars);
     }
 
-    public void selectBars(boolean isShift, String... bars)
+    public void selectBars(boolean multiSelect, String... bars)
     {
         if (bars == null || bars.length == 0)
             throw new IllegalArgumentException("Please specify bars to select.");
 
         Keys multiSelectKey;
-        if (isShift)
+        if (multiSelect)
             multiSelectKey = Keys.SHIFT;
         else if (SystemUtils.IS_OS_MAC)
             multiSelectKey = Keys.COMMAND;
@@ -978,18 +980,64 @@ public class CDSHelper
 
     private void clickBar(String barLabel)
     {
-        _test.mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
-        Actions builder = new Actions(_test.getDriver());
-        WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT); // becomes stale after filter is applied
-        BaseWebDriverTest.sleep(500);
-        _test.waitForElementToBeVisible(Locators.barLabel.withText(barLabel));
-        _test.scrollIntoView(Locators.barLabel.withText(barLabel));
-        WebElement barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
-        builder.moveToElement(barLabelElement, 2, 2).click(barLabelElement).build().perform();
 
+        _test.log("Going to click a bar with text '" + barLabel + "'.");
+
+        Actions builder = new Actions(_test.getDriver());
+
+        _test.mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
+
+        // Get a reference to the detail panel. After the bar is selected this reference will become stale. (and checked lated in the function).
+        WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT);
+
+        BaseWebDriverTest.sleep(500);
+
+        _test.waitForElementToBeVisible(Locators.barLabel.withText(barLabel));
+
+        WebElement barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
+        _test.scrollIntoView(barLabelElement);
+
+        String xPath = Locators.barLabel.withText(barLabel).toXpath();
+
+        builder.moveToElement(barLabelElement, 2, 2).build().perform();
+
+        boolean barSelected = false;
+        int tries = 0;
+
+        // Because the mouse moved over the bar the element changed so we need to get a reference to the new element.
+        barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
+
+        while (!barSelected)
+        {
+            tries++;
+            try{
+
+                builder.click(barLabelElement).build().perform();
+                _test.waitForElement(Locator.xpath(xPath + "/parent::div[contains(@class,'bar-selected')]"));
+                barSelected = true;
+            }
+            catch(org.openqa.selenium.NoSuchElementException nse)
+            {
+                _test.log("The click of the bar element did not work as expected, going to try again.");
+
+                if (tries > 5)
+                    throw nse;
+
+                barSelected = false;
+                BaseWebDriverTest.sleep(500);
+            }
+
+        }
+
+        // Wait for the filter with the same text as the bar to show up.
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
+
+        // Wait for the details count to refresh (element will go stale).
         _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
+
+        // And if there is any pending annimation wait for it.
         waitForFilterAnimation();
+
     }
 
     public void clickPointInPlot(String cssPathToSvg, int pointIndex)
@@ -1053,6 +1101,7 @@ public class CDSHelper
     {
         _test.click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
         _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
+        _test.sleep(1000);
     }
 
     public void goToSummary()

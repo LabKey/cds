@@ -64,6 +64,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     public void openSelectorWindow()
     {
         super.openSelectorWindow(XPATH, "choose columns");
+        _test.click(Locator.xpath("//span[@class='section-title']").notHidden());
     }
 
     public void pickSource(String source)

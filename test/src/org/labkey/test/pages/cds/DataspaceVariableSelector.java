@@ -103,6 +103,13 @@ public abstract class DataspaceVariableSelector
             _test.sleep(5000);
         }
         _test.click(window().append(" div.content-label").withText(source));
+
+        // Click the title (try to get rid of tool-tip bubble.
+        _test.click(Locator.xpath("//span[@class='section-title']").notHidden());
+
+        // Move the mouse to the LabKey icon (again trying to remove the tool tip).
+        _test.mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));
+
 //        _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(window().append(" div.content-label").withText(source)));
         _test.sleep(1000);
     }
