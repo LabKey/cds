@@ -15,7 +15,6 @@
  */
 package org.labkey.test.util.cds;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
@@ -36,6 +35,7 @@ import org.labkey.test.util.RReportHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -1656,17 +1656,10 @@ public class CDSHelper
                 function.apply(null);
                 worked = true;
             }
-            catch(AssertionError noText)
+            catch(AssertionError | NoSuchElementException ex)
             {
                 if (count > RETRY_LIMIT)
-                    throw noText;
-
-                worked = false;
-            }
-            catch (ElementNotFoundException enf)
-            {
-                if (count > RETRY_LIMIT)
-                    throw enf;
+                    throw ex;
 
                 worked = false;
             }
