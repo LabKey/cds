@@ -21,7 +21,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
@@ -51,7 +50,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSVisualizationTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
