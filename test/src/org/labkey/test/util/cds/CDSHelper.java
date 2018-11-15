@@ -616,6 +616,9 @@ public class CDSHelper
 
     }
 
+    // Static locator for the logo image (used as a target to move the mouse to).
+    public static final String LOGO_IMG_XPATH = "//img[contains(@src, 'logo.png')]";
+
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
     {
@@ -999,18 +1002,23 @@ public class CDSHelper
 
         String xPath = Locators.barLabel.withText(barLabel).toXpath();
 
-        builder.moveToElement(barLabelElement, 2, 2).build().perform();
-
         boolean barSelected = false;
         int tries = 0;
-
-        // Because the mouse moved over the bar the element changed so we need to get a reference to the new element.
-        barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
 
         while (!barSelected)
         {
             tries++;
             try{
+
+                WebElement logo = Locator.xpath(LOGO_IMG_XPATH).findElement(_test.getWrappedDriver());
+                builder.moveToElement(logo).build().perform();
+                _test.sleep(250);
+
+                // Because the mouse moved over the bar the element changed so we need to get a reference to the new element.
+                builder.moveToElement(barLabelElement, 2, 2).build().perform();
+                barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
+
+                _test.sleep(250);
 
                 builder.click(barLabelElement).build().perform();
                 _test.waitForElement(Locator.xpath(xPath + "/parent::div[contains(@class,'bar-selected')]"));

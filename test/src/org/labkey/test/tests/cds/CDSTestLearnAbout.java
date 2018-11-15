@@ -1523,7 +1523,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         validateToolTipText(toolTipText, toolTipExpected);
 
         // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.
-        mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));
+        mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
         waitForElementToDisappear(Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content"));
 
     }

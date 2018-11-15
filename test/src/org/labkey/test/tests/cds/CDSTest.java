@@ -164,7 +164,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(Locator.xpath("id('started-video-frame')"));
         infoPane.waitForSpinners();
         waitForElement(Locator.tagWithId("div", "started-video-frame"));
-        clickAt(Locator.xpath("//img[contains(@src, 'logo.png')]"), 10, 10, 0);
+        clickAt(Locator.xpath(CDSHelper.LOGO_IMG_XPATH), 10, 10, 0);
         //
         // Validate News feed
         //
