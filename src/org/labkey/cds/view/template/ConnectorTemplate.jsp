@@ -212,12 +212,12 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/window/MabGridFacet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/LearnFacet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/HelpCenter.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/panel/ToolsAndLinks.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/grid/Panel.js"></script>
 
     <!-- Application plugins -->
