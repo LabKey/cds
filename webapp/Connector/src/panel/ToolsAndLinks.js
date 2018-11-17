@@ -44,7 +44,7 @@ Ext.define('Connector.panel.ToolsAndLinks', {
                 items: [{
                     xtype: 'label',
                     margin: "0 0 0 5",
-                    text: 'Tools and links',
+                    text: 'Tools & links',
                     cls: 'toolslinks-title'
                 }]
             });
