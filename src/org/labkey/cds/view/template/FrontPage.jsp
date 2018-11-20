@@ -38,6 +38,20 @@
         .section.intro-section .video-container .video-placeholder {
             background-image: url(<%=text(frontPagePath)%>/img/intro.jpg);
         }
+
+        .twitter {
+            width: 3em !important;
+            margin: 0 !important;
+        }
+
+        .twitter-logo {
+            background-image: url(<%=text(frontPagePath)%>/img/Twitter.svg);
+            height: 24px;
+            width: 24px !important;
+            display: inline !important;
+            padding-right: 20px !important;
+            background-repeat: no-repeat;
+        }
     </style>
 
     <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/headerlogo.png">
@@ -723,8 +737,11 @@
                             <!--End mc_embed_signup-->
                         </div>
                     </div>
-                    
-                    <a href="https://twitter.com/CAVDDataSpace" class="twitter contact" target="_blank">Twitter</a>
+
+                    <a href="https://twitter.com/CAVDDataSpace" class="twitter" target="_blank">
+                        <span class="twitter-logo"></span>
+                    </a>
+
                 </div>
                 <div class="links sign-in">
                     <span>CAVD DataSpace Members:</span>

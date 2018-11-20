@@ -15,20 +15,9 @@ Ext.define('Connector.panel.HelpCenter', {
 
     statics: {
         displayWindow : function(animateTarget) {
-            var resizer = function() {
-                this.center();
-            };
-            var win = Ext.create('Ext.window.Window', {
+            var config = {
                 ui: 'axiswindow',
                 id: 'helppopup',
-                border: false,
-                modal: true,
-                resizable: false,
-                draggable: false,
-                header: false,
-                layout: {
-                    type: 'fit'
-                },
                 items: [{
                     xtype: 'helpcenter',
                     listeners: {
@@ -39,6 +28,24 @@ Ext.define('Connector.panel.HelpCenter', {
                         scope: this
                     }
                 }],
+            };
+            Connector.panel.HelpCenter.displayWikiWindow(animateTarget, config);
+        },
+        displayWikiWindow: function (animateTarget, config) {
+            var resizer = function () {
+                this.center();
+            };
+
+            var windowConfig = Ext.apply(config, {
+                ui: 'axiswindow',
+                border: false,
+                modal: true,
+                resizable: false,
+                draggable: false,
+                header: false,
+                layout: {
+                    type: 'fit'
+                },
                 width: 540,
                 height: 600,
                 listeners: {
@@ -47,6 +54,8 @@ Ext.define('Connector.panel.HelpCenter', {
                     }
                 }
             });
+
+            var win = Ext.create('Ext.window.Window', windowConfig);
             win.show(animateTarget);
 
             // when click outside popup, first hide so that animate works, then close so that layout is correct when re-created..

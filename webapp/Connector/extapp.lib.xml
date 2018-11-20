@@ -60,12 +60,12 @@
         <script path="Connector/src/window/MabGridFacet.js"/>
         <script path="Connector/src/window/LearnFacet.js"/>
         <script path="Connector/src/window/SystemMessage.js"/>
-        <script path="Connector/src/panel/Feedback.js"/>
         <script path="Connector/src/panel/FilterPanel.js"/>
         <script path="Connector/src/panel/Selection.js"/>
         <script path="Connector/src/panel/GroupList.js"/>
         <script path="Connector/src/panel/Selector.js"/>
         <script path="Connector/src/panel/HelpCenter.js"/>
+        <script path="Connector/src/panel/ToolsAndLinks.js"/>
         <script path="Connector/src/grid/Panel.js"/>
 
         <!-- Application plugins -->

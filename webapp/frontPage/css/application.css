@@ -307,6 +307,8 @@ div.video-header button.video-close:hover { background-color: #dd133f; }
 .section.goal-section .gif-description p, .section.about-section .gif-description p, .section.explore-section .gif-description p, .section.collab-section .gif-description p, .section.learn-section .gif-description p { margin: 0; font-size: 1.17em; font-family: "Arial"; font-weight: 100; color: #2d2d2d; line-height: 1.3em; }
 .section.goal-section a.circle, .section.about-section a.circle, .section.explore-section a.circle, .section.collab-section a.circle, .section.learn-section a.circle { margin: 6.5em auto 1.833em auto; }
 
+.about-container .links a, .about-container .links a span {display: inline;}
+
 @-webkit-keyframes $animation_name { 0% { opacity: 1; }
   100% { opacity: 0; } }
 @-moz-keyframes $animation_name { 0% { opacity: 1; }
