@@ -1028,7 +1028,72 @@ text.study-label {
     }
 }
 
+.toolslinks-panel {
+  .header {
+    padding: 14px 18px 14px 9px;
+    height: 60px !important;
+    .x-panel-body {
+      height: 32px !important;
+    }
+    .x-box-inner {
+      height: 32px !important;
+    }
 
+    .toolslinks-title {
+      font: 17px Georgia,serif;
+      position: absolute !important;
+      top: 4px !important;
+    }
+
+  }
+
+  .#{$connector-prefix}panel-body {
+    background-color: $heat-scale-6;
+  }
+
+  .#{$connector-prefix}form-textarea {
+    height: 390px;
+  }
+
+  .footer {
+    padding-right: 20px;
+  }
+
+  .toolslinks-body {
+    color: $gray-4;
+    padding: 10px 20px 10px 10px;
+    height: 532px !important;
+    .x-scroll-bar-y {
+      width: 0; /*CHANGE: replace width: 6px;*/
+    }
+    overflow-y: auto;
+    background-color: $heat-scale-6;
+    .x-form-focus {
+      border-color: $gray-4!important;
+      color: $black;
+    }
+
+    td {
+      vertical-align: text-top;
+      padding-right: 2em;
+      padding-bottom: 1em;
+    }
+
+    p {
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+
+    h3 {
+      margin-bottom: 20px;
+      margin-top: 20px;
+      font: 16px Georgia,serif;
+      color: black;
+    }
+
+  }
+
+}
   @import 'windows';
 
   @import 'grid/Panel';

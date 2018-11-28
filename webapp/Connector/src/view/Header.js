@@ -27,16 +27,24 @@ Ext.define("Connector.view.Header", {
         if (LABKEY.user.isSignedIn) {
             toolBarItems = [{
                 xtype: 'box',
-                itemId: 'feedback',
+                itemId: 'contact',
+                margin: '2 40 0 0',
+                autoEl: {
+                    cls: 'logout',
+                    html: '<a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information">Contact Us</a>'
+                }
+            },{
+                xtype: 'box',
+                itemId: 'links',
                 margin: '2 40 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
-                    html: 'Give feedback'
+                    html: 'Tools & links'
                 },
                 listeners: {
                     click: function(evt, el) {
-                        Connector.panel.Feedback.displayWindow(el);
+                        Connector.panel.ToolsAndLinks.displayWindow(el);
                     },
                     element: 'el',
                     scope: this

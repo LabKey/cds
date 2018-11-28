@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 LabKey Corporation
+ * Copyright (c) 2016-2018 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -295,11 +295,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify mAb summary page fields");
         LearnGrid learnGrid = new LearnGrid(this);
 
-        verifyMAbSummaryRow(learnGrid, "2F5", "Individual mAb", "human", "IgG3?", "gp160");
-        verifyMAbSummaryRow(learnGrid, "PGT151/3BNC117", "Bispecific mAb", "human", "IgG", "gp160, Env");
+        verifyMAbSummaryRow(learnGrid, "2F5", "Individual mAb", "human", "IgG3?", "gp160", "gp160");
+        verifyMAbSummaryRow(learnGrid, "PGT151/3BNC117", "Bispecific mAb", "human", "IgG", "gp160, Env", "Env, gp160");
     }
 
-    private void verifyMAbSummaryRow(LearnGrid learnGrid, String mAbName, String type, String species, String isotype, String hxb2)
+    private void verifyMAbSummaryRow(LearnGrid learnGrid, String mAbName, String type, String species, String isotype, String hxb2, String altHxb2)
     {
         learnGrid.setSearch(mAbName);
 
@@ -311,7 +311,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue("Type not as expected", isElementVisible(fieldLoc.withText(type)));
         assertTrue("Donor Species not as expected", isElementVisible(fieldLoc.withText(species)));
         assertTrue("Isotype not as expected", isElementVisible(fieldLoc.withText(isotype)));
-        assertTrue("HXB2 Location not as expected", isElementVisible(fieldLoc.withText(hxb2)));
+        assertTrue("HXB2 Location not as expected", isElementPresent(fieldLoc.withText(hxb2)) || isElementPresent(fieldLoc.withText(altHxb2)));
     }
 
     @Test
