@@ -82,6 +82,12 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
+        this.control('mabstatus', {
+            requestundo : function() {
+                Connector.getState().requestFilterUndo(true);
+            }
+        });
+
         this.control('filterstatus > container > #clear', {
             click : this.onFilterClear
         });
@@ -178,7 +184,9 @@ Ext.define('Connector.controller.FilterStatus', {
 
     createMabStatus : function() {
         var view = Ext.create('Connector.view.MabStatus', { });
-
+        var state = Connector.getState();
+        state.on('mabfilterchange', view.onMabFilterChange, view);
+        state.on('mabfilterclear', view.onFilterRemove, view);
         this.getViewManager().register(view);
 
         return view;

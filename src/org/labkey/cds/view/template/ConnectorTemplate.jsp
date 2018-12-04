@@ -239,6 +239,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/FileExtension.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/PlotTooltip.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/InfoPaneUtil.js"></script>
 
     <!-- Application Stores -->
     <script type="text/javascript" src="<%=text(srcPath)%>/store/AssayDistinctValue.js"></script>

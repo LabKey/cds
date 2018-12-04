@@ -160,8 +160,13 @@ Ext.define('Connector.model.MabGrid', {
                 this._ready = true;
                 this.loadMetaData();
                 this.fireEvent('initmabgrid', this);
+                Connector.getState().on('mabfilterchange', this.onMabFilterChange, this);
             }, this);
         }
+    },
+
+    onMabFilterChange: function() {
+        this.updateData();
     },
 
     getFilterArray : function() {

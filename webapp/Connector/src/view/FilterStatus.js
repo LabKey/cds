@@ -5,10 +5,11 @@
  */
 Ext.define('Connector.view.FilterStatus', {
     extend: 'Ext.panel.Panel',
+    mixins: {
+        undohelper: 'Connector.utility.InfoPaneUtil'
+    },
 
     alias: 'widget.filterstatus',
-
-    plugins: ['messaging'],
 
     ui: 'custom',
 
@@ -145,23 +146,6 @@ Ext.define('Connector.view.FilterStatus', {
         this.onFilterCount(filters)
     },
 
-    onFilterRemove : function() {
-        this.showUndoMessage();
-    },
-
-    showUndoMessage : function(msg) {
-        var id = Ext.id();
-        if (msg)
-            this.showMessage(msg + ' <a id="' + id + '">Undo</a>', true, true);
-        else
-            this.showMessage('Filter removed. <a id="' + id + '">Undo</a>', true, true);
-
-        var undo = Ext.get(id);
-        if (undo) {
-            undo.on('click', this.onUndo, this, {single: true});
-        }
-    },
-
     onSelectionChange : function(selections, opChange) {
         this.hideMessage(true);
         this.selections = selections;
@@ -207,23 +191,10 @@ Ext.define('Connector.view.FilterStatus', {
         }
     },
 
-    onUndo : function() {
-        this.fireEvent('requestundo');
-        this.hideMessage(true);
-    },
-
     onBeforeViewChange : function() {
         if (Connector.getState().hasSelections()) {
             this.undoMsg = "Selection applied as filter.";
             Connector.getState().moveSelectionToFilter();
-        }
-    },
-
-    onAfterViewChange : function() {
-        this.hideMessage(true);
-        if (this.undoMsg) {
-            this.showUndoMessage(this.undoMsg);
-            delete this.undoMsg;
         }
     }
 });

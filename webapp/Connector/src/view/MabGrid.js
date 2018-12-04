@@ -536,8 +536,6 @@ Ext.define('Connector.view.MabGrid', {
         else {
             Connector.getState().removeMabFilter(columnName);
         }
-
-        this.getModel().updateData();
     },
 
     onMabDataLoaded : function() {

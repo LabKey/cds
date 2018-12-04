@@ -83,6 +83,7 @@
         <script path="Connector/src/utility/Chart.js"/>
         <script path="Connector/src/utility/HelpRouter.js"/>
         <script path="Connector/src/utility/Query.js"/>
+        <script path="Connector/src/utility/InfoPaneUtil.js"/>
         <script path="Connector/src/utility/MabQuery.js"/>
         <script path="Connector/src/utility/HashURL.js"/>
         <script path="Connector/src/utility/FileExtension.js"/>

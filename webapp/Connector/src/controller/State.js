@@ -368,10 +368,13 @@ Ext.define('Connector.controller.State', {
         return 'Connector: ' + viewname;
     },
 
-    requestFilterUndo : function() {
+    requestFilterUndo : function(isMab) {
         var index = this.getPreviousState();
         if (index > -1) {
-            this.loadFilters(index);
+            if (isMab)
+                this.loadMabFilters(index);
+            else
+                this.loadFilters(index);
         }
         else {
             console.warn('FAILED TO UNDO. NOT ABLE TO FIND STATE');
@@ -739,6 +742,17 @@ Ext.define('Connector.controller.State', {
         }
         else {
             console.warn('Unable to find previous filters: ', stateIndex);
+        }
+    },
+
+    loadMabFilters : function(stateIndex) {
+        var previousState =  this.state.getAt(stateIndex);
+        if (Ext.isDefined(previousState)) {
+            var filters = previousState.get('mabfilters');
+            this.setMabFilters(filters);
+        }
+        else {
+            console.warn('Unable to find previous mab filters: ', stateIndex);
         }
     },
 
@@ -1120,8 +1134,10 @@ Ext.define('Connector.controller.State', {
         this.setMabFilters(filterSet, skipState);
     },
 
-    clearMabFilters : function(skipState) {
+    clearMabFilters : function(skipState, fireClearEvent) {
         this.setMabFilters([], skipState);
+        if (fireClearEvent)
+            this.fireEvent('mabfilterclear');
     },
 
     getSelectedMAbs : function() {
