@@ -31,6 +31,8 @@ Ext.define('Connector.view.GroupSave', {
 
     maxRecordsHeight: 13,
 
+    isMabGroup: false,
+
     constructor : function(config) {
 
         Ext.applyIf(config, {

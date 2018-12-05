@@ -2,12 +2,15 @@ package org.labkey.cds.query;
 
 import org.jetbrains.annotations.NotNull;
 import org.labkey.api.data.ColumnInfo;
+import org.labkey.api.data.CompareType;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.ContainerForeignKey;
 import org.labkey.api.data.DatabaseTableType;
 import org.labkey.api.data.SQLFragment;
+import org.labkey.api.data.SimpleFilter;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.data.TableSelector;
 import org.labkey.api.query.DefaultQueryUpdateService;
 import org.labkey.api.query.DuplicateKeyException;
 import org.labkey.api.query.FieldKey;
@@ -22,7 +25,7 @@ import org.labkey.api.security.User;
 import org.labkey.api.security.UserPrincipal;
 import org.labkey.api.security.permissions.Permission;
 import org.labkey.api.security.permissions.ReadPermission;
-import org.labkey.api.security.permissions.UpdatePermission;
+import org.labkey.api.study.permissions.SharedParticipantGroupPermission;
 import org.labkey.cds.CDSSchema;
 import org.labkey.cds.CDSUserSchema;
 
@@ -96,6 +99,7 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
         {
             validateUpdatePermission(user, container, row);
             validateShared(user, container, row);
+            validateDuplicateLabel(user, container, row, true);
             return super.insertRow(user, container, row);
         }
 
@@ -104,6 +108,7 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
         {
             validateUpdatePermission(user, container, row);
             validateShared(user, container, row);
+            validateDuplicateLabel(user, container, row, false);
             return super.updateRow(user, container, row, oldRow, allowOwner, retainCreation);
         }
 
@@ -127,16 +132,32 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
                     throw new QueryUpdateServiceException("User does not have permission to update a private mab group created by a different user");
                 else
                 {
-                    if (!container.hasPermission(user, UpdatePermission.class))
+                    if (!container.hasPermission(user, SharedParticipantGroupPermission.class))
                         throw new QueryUpdateServiceException("User does not have permission to update a shared mab group created by a different user");
                 }
+            }
+        }
+
+        protected void validateDuplicateLabel(User user, Container container, Map<String, Object> row, boolean isNew) throws ValidationException
+        {
+            SimpleFilter filter = SimpleFilter.createContainerFilter(container);
+            filter.addCondition(FieldKey.fromString("Label"), row.get("Label"));
+            if (!isNew)
+                filter.addCondition(FieldKey.fromString("RowId"), row.get("RowId"), CompareType.NEQ);
+
+            Map<String, Object>[] rows = new TableSelector(CDSSchema.getInstance().getTableInfoMabGroup(), filter, null).getMapArray();
+
+            for (Map<String, Object> existingRow : rows)
+            {
+                if (Boolean.TRUE.equals(existingRow.get("Shared")) || (int) existingRow.get("CreatedBy") == user.getUserId())
+                    throw new ValidationException("There is already a mab group named '" + row.get("Label") + "'. Please choose a unique name.");
             }
         }
 
         protected void validateShared(User user, Container container, Map<String, Object> row) throws ValidationException
         {
             Boolean shared = (Boolean) row.get("Shared");
-            if (shared != null && shared == Boolean.TRUE && !container.hasPermission(user, UpdatePermission.class))
+            if (shared != null && shared == Boolean.TRUE && !container.hasPermission(user, SharedParticipantGroupPermission.class))
                 throw new ValidationException("User does not have permission to share a mab group");
         }
 
