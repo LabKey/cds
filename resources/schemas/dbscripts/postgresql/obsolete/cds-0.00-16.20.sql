@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 LabKey Corporation
+ * Copyright (c) 2018 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,54 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* cds-15.263-15.27.sql */
 
--- Drop Original Tables
-DROP TABLE IF EXISTS cds.assaypublications CASCADE;
-DROP TABLE IF EXISTS cds.citableauthors CASCADE;
-DROP TABLE IF EXISTS cds.citations CASCADE;
-DROP TABLE IF EXISTS cds.datasources CASCADE;
-DROP TABLE IF EXISTS cds.studies CASCADE;
-DROP TABLE IF EXISTS cds.vaccinecomponents CASCADE;
+/* cds-0.00-15.30.sql */
 
-DROP TABLE IF EXISTS cds.assays CASCADE;
+CREATE SCHEMA cds;
 
-DROP TABLE IF EXISTS cds.people CASCADE;
 
-DROP TABLE IF EXISTS cds.antigens CASCADE;
-DROP TABLE IF EXISTS cds.citable CASCADE;
-DROP TABLE IF EXISTS cds.labs CASCADE;
-DROP TABLE IF EXISTS cds.vaccines CASCADE;
+CREATE TABLE cds.Feedback
+(
+    RowId SERIAL,
+    Container ENTITYID NOT NULL,
+    Created TIMESTAMP NOT NULL,
+    CreatedBy USERID NOT NULL,
+    Modified TIMESTAMP NOT NULL,
+    ModifiedBy USERID NOT NULL,
+    Description TEXT,
+    State TEXT,
 
--- Drop Mapping Tables
-DROP TABLE IF EXISTS cds.import_StudyProduct CASCADE;
-DROP TABLE IF EXISTS cds.import_StudySitePersonnel CASCADE;
+    CONSTRAINT pk_feedback PRIMARY KEY (Container, RowId)
+);
 
--- Drop Dataset Tables
-DROP TABLE IF EXISTS cds.import_ICS CASCADE;
-DROP TABLE IF EXISTS cds.import_NAb CASCADE;
-DROP TABLE IF EXISTS cds.import_ELS_IFNg CASCADE;
-DROP TABLE IF EXISTS cds.import_BAMA CASCADE;
-DROP TABLE IF EXISTS cds.import_StudySubject CASCADE;
 
--- Drop Dependent Tables
-DROP TABLE IF EXISTS cds.import_StudyPartGroupArmSubject CASCADE;
-DROP TABLE IF EXISTS cds.import_StudyPartGroupArmProduct CASCADE;
-DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisitTag CASCADE;
-DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisitProduct CASCADE;
-DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisit CASCADE;
-DROP TABLE IF EXISTS cds.import_ProductInsert CASCADE;
-DROP TABLE IF EXISTS cds.import_StudyPartGroupArm CASCADE;
-DROP TABLE IF EXISTS cds.import_StudySiteFunction CASCADE;
-DROP TABLE IF EXISTS cds.import_StudyPersonnel CASCADE;
+CREATE TABLE cds.Sites
+(
+	Id VARCHAR(250) NOT NULL,
+	PI VARCHAR(250),
+	Description TEXT,
+	Location TEXT,
+	Container ENTITYID NOT NULL,
+  Status VARCHAR(50),
+  AltName VARCHAR(250),
+  Network VARCHAR(250),
 
--- Drop Core Tables
-DROP TABLE IF EXISTS cds.import_Assay CASCADE;
-DROP TABLE IF EXISTS cds.import_Product CASCADE;
-DROP TABLE IF EXISTS cds.import_Lab CASCADE;
-DROP TABLE IF EXISTS cds.import_Site CASCADE;
-DROP TABLE IF EXISTS cds.import_Personnel CASCADE;
-DROP TABLE IF EXISTS cds.import_Study CASCADE;
+	CONSTRAINT pk_sites PRIMARY KEY (Container, Id)
+);
+
 
 CREATE TABLE cds.import_Study (
   prot VARCHAR(250) NOT NULL,
@@ -176,19 +163,9 @@ CREATE TABLE cds.import_StudyPartGroupArmVisit (
   study_arm_visit_label VARCHAR(250),
   study_arm_visit_detail_label VARCHAR(250),
   isvaccvis BOOLEAN DEFAULT FALSE,
+  ischallvis BOOLEAN DEFAULT FALSE,
 
   CONSTRAINT PK_import_StudyPartGroupArmVisit PRIMARY KEY (prot, study_part, study_arm, study_group, study_day)
-);
-
-CREATE TABLE cds.import_StudyPartGroupArmVisitTag (
-  prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
-  study_part VARCHAR(250) NOT NULL,
-  study_arm VARCHAR(250) NOT NULL,
-  study_group VARCHAR(250) NOT NULL,
-  study_day INTEGER NOT NULL,
-  study_visit_tag VARCHAR(250),
-
-  CONSTRAINT PK_import_StudyPartGroupArmVisitTag PRIMARY KEY (prot, study_part, study_group, study_arm, study_day, study_visit_tag)
 );
 
 CREATE TABLE cds.import_StudyPartGroupArmVisitProduct (
@@ -296,6 +273,8 @@ CREATE TABLE cds.import_StudyPartGroupArmSubject (
   CONSTRAINT PK_import_StudyPartGroupArmSubject PRIMARY KEY (prot, subject_id, study_part, study_group, study_arm)
 );
 
+ALTER TABLE cds.import_StudyPartGroupArmSubject ADD CONSTRAINT FK_ArmSubject_StudySubject FOREIGN KEY (prot, subject_id) REFERENCES cds.import_StudySubject (prot, subject_id) MATCH FULL;
+
 CREATE TABLE cds.import_ICS (
   -- KEYS
   row_id SERIAL,
@@ -362,12 +341,12 @@ CREATE TABLE cds.import_NAb (
   clade VARCHAR(250),
   vaccine_matched BOOLEAN,
   target_cell VARCHAR(250),
-  initial_dilution INTEGER,
+  initial_dilution NUMERIC(15,4),
 
   -- MEASURES
   nab_response BOOLEAN,
-  titer_ic50 INTEGER,
-  titer_ic80 INTEGER,
+  titer_ic50 NUMERIC(15,4),
+  titer_ic80 NUMERIC(15,4),
 
   CONSTRAINT PK_import_NAb PRIMARY KEY (row_id)
 );
@@ -404,9 +383,9 @@ CREATE TABLE cds.import_ELS_IFNg (
 
   -- MEASURES
   els_ifng_response BOOLEAN,
-  mean_sfc INTEGER,
-  mean_sfc_neg INTEGER,
-  mean_sfc_raw INTEGER,
+  mean_sfc NUMERIC(15,4),
+  mean_sfc_neg NUMERIC(15,4),
+  mean_sfc_raw NUMERIC(15,4),
 
   CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (row_id)
 );
@@ -452,25 +431,6 @@ CREATE TABLE cds.import_BAMA (
   CONSTRAINT PK_import_BAMA PRIMARY KEY (row_id)
 );
 
--- LEAF TABLES
-DROP TABLE IF EXISTS cds.Properties CASCADE;
-
--- MAPPING TABLES
-DROP TABLE IF EXISTS cds.VisitTagAlignment CASCADE;
-DROP TABLE IF EXISTS cds.VisitTagMap CASCADE;
-DROP TABLE IF EXISTS cds.TreatmentArmSubjectMap CASCADE;
-DROP TABLE IF EXISTS cds.StudyGroupVisitMap CASCADE;
-DROP TABLE IF EXISTS cds.SubjectProductMap CASCADE;
-DROP TABLE IF EXISTS cds.StudyProductMap CASCADE;
-
--- CORE TABLES
-DROP TABLE IF EXISTS cds.TreatmentArm CASCADE;
-DROP TABLE IF EXISTS cds.StudyGroup CASCADE;
-DROP TABLE IF EXISTS cds.Product CASCADE;
-DROP TABLE IF EXISTS cds.Assay CASCADE;
-DROP TABLE IF EXISTS cds.Lab CASCADE;
-DROP TABLE IF EXISTS cds.Facts CASCADE;
-DROP TABLE IF EXISTS cds.Study CASCADE;
 
 CREATE TABLE cds.Study (
   study_name VARCHAR(250) NOT NULL,
@@ -506,7 +466,10 @@ CREATE TABLE cds.Study (
 CREATE TABLE cds.Facts (
   participantid VARCHAR(32) NOT NULL,
   container ENTITYID NOT NULL, -- dataspace project
-  study ENTITYID
+  study ENTITYID,
+  treatment_arm VARCHAR(250),
+  study_label VARCHAR(250),
+  product_group VARCHAR(250)
 );
 
 CREATE TABLE cds.Lab (
@@ -532,6 +495,7 @@ CREATE TABLE cds.Assay (
   assay_method_description TEXT,
   assay_endpoint_description TEXT,
   assay_endpoint_statistical_analysis TEXT,
+  assay_type VARCHAR(250),
 
   CONSTRAINT PK_Assay PRIMARY KEY (assay_identifier)
 );
@@ -623,8 +587,11 @@ CREATE TABLE cds.VisitTagMap (
   study_group_id INTEGER NOT NULL REFERENCES cds.StudyGroup (row_id),
   single_use BOOLEAN DEFAULT FALSE,
   is_vaccination BOOLEAN DEFAULT FALSE,
+  is_challenge BOOLEAN DEFAULT FALSE,
+  arm_id VARCHAR(250) NOT NULL REFERENCES cds.TreatmentArm (arm_id),
+  detail_label VARCHAR(250),
 
-  CONSTRAINT PK_VisitTagMap PRIMARY KEY (visit_tag, visit_row_id, study_group_id, container)
+  CONSTRAINT PK_VisitTagMap PRIMARY KEY (visit_tag, visit_row_id, study_group_id, arm_id, container)
 );
 
 CREATE TABLE cds.VisitTagAlignment (
@@ -652,50 +619,12 @@ CREATE TABLE cds.Properties (
   studies INTEGER,
   subjects INTEGER,
   datacount INTEGER,
+  subjectlevelstudies INTEGER,
 
   CONSTRAINT PK_Properties PRIMARY KEY (RowId)
 );
 
-/* cds-15.27-15.28.sql */
-
-ALTER TABLE cds.assay ADD COLUMN assay_type VARCHAR(250);
-
-/* cds-15.28-15.285.sql */
-
-DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisitTag CASCADE;
-
-ALTER TABLE cds.import_StudyPartGroupArmVisit ADD COLUMN ischallvis BOOLEAN DEFAULT FALSE;
-
-ALTER TABLE cds.import_NAb DROP COLUMN titer_ic50;
-ALTER TABLE cds.import_NAb ADD COLUMN titer_ic50 NUMERIC(15,4);
-
-ALTER TABLE cds.import_NAb DROP COLUMN titer_ic80;
-ALTER TABLE cds.import_NAb ADD COLUMN titer_ic80 NUMERIC(15,4);
-
-ALTER TABLE cds.import_NAb DROP COLUMN initial_dilution;
-ALTER TABLE cds.import_NAb ADD COLUMN initial_dilution NUMERIC(15,4);
-
-ALTER TABLE cds.import_ELS_IFNg DROP COLUMN mean_sfc;
-ALTER TABLE cds.import_ELS_IFNg ADD COLUMN mean_sfc NUMERIC(15,4);
-
-ALTER TABLE cds.import_ELS_IFNg DROP COLUMN mean_sfc_neg;
-ALTER TABLE cds.import_ELS_IFNg ADD COLUMN mean_sfc_neg NUMERIC(15,4);
-
-ALTER TABLE cds.import_ELS_IFNg DROP COLUMN mean_sfc_raw;
-ALTER TABLE cds.import_ELS_IFNg ADD COLUMN mean_sfc_raw NUMERIC(15,4);
-
-ALTER TABLE cds.VisitTagMap ADD COLUMN is_challenge BOOLEAN DEFAULT FALSE;
-
-/* cds-15.285-15.286.sql */
-
-DELETE FROM cds.import_StudyPartGroupArmSubject;
-
-ALTER TABLE cds.import_StudyPartGroupArmSubject ADD CONSTRAINT FK_ArmSubject_StudySubject FOREIGN KEY (prot, subject_id) REFERENCES cds.import_StudySubject (prot, subject_id) MATCH FULL;
-
 /* cds-15.286-15.287.sql */
-
-/* Materialize the GridBase query */
-DROP TABLE IF EXISTS cds.GridBase;
 
 CREATE TABLE cds.GridBase (
   SubjectId VARCHAR(250),
@@ -713,19 +642,7 @@ CREATE TABLE cds.GridBase (
 CREATE INDEX IX_GridBase_Study ON cds.GridBase(Study);
 CREATE INDEX IX_GridBase_SubjectId ON cds.GridBase(SubjectId);
 
-/* Add Treatment Arm dimension columns to fact table */
-ALTER TABLE cds.Facts ADD COLUMN treatment_arm VARCHAR(250);
-ALTER TABLE cds.Facts ADD COLUMN study_label VARCHAR(250);
-ALTER TABLE cds.Facts ADD COLUMN product_group VARCHAR(250);
 
-/* Alter VisitTagMap to support vaccination, non-vaccination scenarios */
-DELETE FROM cds.VisitTagMap;
-
-ALTER TABLE cds.VisitTagMap ADD COLUMN arm_id VARCHAR(250) NOT NULL REFERENCES cds.TreatmentArm (arm_id);
-ALTER TABLE cds.VisitTagMap ADD COLUMN detail_label VARCHAR(250);
-
-ALTER TABLE cds.VisitTagMap DROP CONSTRAINT PK_VisitTagMap;
-ALTER TABLE cds.VisitTagMap ADD CONSTRAINT PK_VisitTagMap PRIMARY KEY (visit_tag, visit_row_id, study_group_id, arm_id, container);
 
 /* cds-15.287-15.288.sql */
 
@@ -847,6 +764,63 @@ CREATE TABLE cds.ELISpotAntigen (
   CONSTRAINT PK_ELISpotAntigen PRIMARY KEY (antigen_name, antigen_type)
 );
 
-/* cds-15.288-15.289.sql */
+/* cds-15.30-16.10.sql */
 
-ALTER TABLE cds.Properties ADD COLUMN subjectlevelstudies INTEGER;
+ALTER TABLE cds.GridBase ADD COLUMN ProtocolDay INT;
+
+ALTER TABLE cds.GridBase DROP COLUMN SubjectVisit;
+ALTER TABLE cds.GridBase ADD COLUMN VisitRowId INT;
+
+ALTER TABLE cds.import_Study ADD COLUMN study_primary_poc_name VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_primary_poc_email VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_grant_pi_name VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_grant_pi_email VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_grant_pm_name VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_grant_pm_email VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_investigator_name VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN study_investigator_email VARCHAR(250);
+ALTER TABLE cds.import_Study ADD COLUMN cavd_affiliation TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN treatment_schema_link TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN assay_schema_link TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN study_groups TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN study_conclusions TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN study_publications TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN study_executive_summary TEXT;
+ALTER TABLE cds.import_Study ADD COLUMN study_data_availability TEXT;
+
+ALTER TABLE cds.Study ADD COLUMN primary_poc_name VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN primary_poc_email VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN grant_pi_name VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN grant_pi_email VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN grant_pm_name VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN grant_pm_email VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN investigator_name VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN investigator_email VARCHAR(250);
+ALTER TABLE cds.Study ADD COLUMN cavd_affiliation TEXT;
+ALTER TABLE cds.Study ADD COLUMN treatment_schema_link TEXT;
+ALTER TABLE cds.Study ADD COLUMN assay_schema_link TEXT;
+ALTER TABLE cds.Study ADD COLUMN groups TEXT;
+ALTER TABLE cds.Study ADD COLUMN conclusions TEXT;
+ALTER TABLE cds.Study ADD COLUMN publications TEXT;
+ALTER TABLE cds.Study ADD COLUMN executive_summary TEXT;
+ALTER TABLE cds.Study ADD COLUMN data_availability TEXT;
+
+/* cds-16.10-16.20.sql */
+
+CREATE TABLE cds.import_StudyAssay (
+  prot VARCHAR(250) NOT NULL REFERENCES cds.import_study (prot),
+  assay_identifier VARCHAR(250) NOT NULL REFERENCES cds.import_assay (assay_identifier),
+
+  CONSTRAINT PK_import_StudyAssay PRIMARY KEY (prot, assay_identifier)
+);
+
+CREATE TABLE cds.StudyAssay (
+  prot VARCHAR(250) NOT NULL REFERENCES cds.Study (study_name),
+  container ENTITYID NOT NULL,
+  assay_identifier VARCHAR(250) NOT NULL REFERENCES  cds.Assay (assay_identifier),
+  has_data BOOLEAN,
+
+  CONSTRAINT PK_StudyAssay PRIMARY KEY (prot, assay_identifier)
+);
+
+ALTER TABLE cds.StudyProductMap ADD COLUMN has_data BOOLEAN;

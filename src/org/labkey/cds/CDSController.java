@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2017 LabKey Corporation
+ * Copyright (c) 2014-2018 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,6 @@ import org.labkey.api.reader.Readers;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.AuthenticationManager;
-import org.labkey.api.security.CSRF;
 import org.labkey.api.security.Group;
 import org.labkey.api.security.IgnoresTermsOfUse;
 import org.labkey.api.security.RequiresNoPermission;
@@ -798,7 +797,6 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresSiteAdmin
-    @CSRF
     public static class MailMergeAction extends SimpleViewAction<Object>
     {
         @Override
@@ -842,7 +840,7 @@ public class CDSController extends SpringActionController
         public String target;
     }
 
-    @RequiresPermission(AdminPermission.class) @CSRF
+    @RequiresPermission(AdminPermission.class)
     public static class CmsCopyAction extends FormViewAction<Object>
     {
         HttpView _success = null;

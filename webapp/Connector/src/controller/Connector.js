@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 LabKey Corporation
+ * Copyright (c) 2014-2018 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -416,7 +416,7 @@ Ext.define('Connector.controller.Connector', {
     },
 
     /**
-     * Resovles the transition functions that will be called to show the newViewXtype and hide the oldViewXtype.
+     * Resolves the transition functions that will be called to show the newViewXtype and hide the oldViewXtype.
      * @param {String} oldViewXtype
      * @param {String} newViewXtype
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 LabKey Corporation
+ * Copyright (c) 2016-2018 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests.cds;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -23,10 +24,19 @@ import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.util.cds.CDSHelpCenterUtil.CATNAP;
+import static org.labkey.test.util.cds.CDSHelpCenterUtil.CATNAP_DESCRIPTION;
+import static org.labkey.test.util.cds.CDSHelpCenterUtil.CAVD_TWITTER;
+import static org.labkey.test.util.cds.CDSHelpCenterUtil.DataSpaceR;
+import static org.labkey.test.util.cds.CDSHelpCenterUtil.DataSpaceR_DESCRIPTION;
+import static org.labkey.test.util.cds.CDSHelpCenterUtil.DataSpaceR_LINK;
+import static org.labkey.test.util.cds.CDSHelpCenterUtil.TOOLS_TITLE;
 
 @Category({})
 public class CDSHelpCenterTest extends CDSReadOnlyTest
@@ -35,21 +45,21 @@ public class CDSHelpCenterTest extends CDSReadOnlyTest
     private final CDSHelper cds = new CDSHelper(this);
 
     @Test
-    public void verifyHelpCenter()
+    public void verifyHelpCenterAndTools()
     {
         // set up wikis, enter app, open help popup
         helpCenter.setUpWikis();
         cds.enterApplication();
         openHelpCenter();
 
-        // verify home page and open individual wiki
+        log("verify home page and open individual wiki");
         verifyAtHomePage();
         mouseOverClick(Locator.linkWithText(CDSHelpCenterUtil.HELP_1_2_TITLE));
         assertTextPresent(CDSHelpCenterUtil.HELP_1_2_CONTENT_SUB);
         verifyAndClickBackButton();
         verifyAtHomePage();
 
-        // verify See all link and Back action
+        log("verify See all link and Back action");
         int seeAllCount = Locator.css(CDSHelpCenterUtil.HELP_SEE_ALL_CSS).findElements(getDriver()).size();
         assertEquals("See all link count is incorrect", 1, seeAllCount);
         List<WebElement> seeAlls = Locator.css(CDSHelpCenterUtil.HELP_SEE_ALL_CSS).findElements(getDriver());
@@ -63,7 +73,9 @@ public class CDSHelpCenterTest extends CDSReadOnlyTest
         verifyAndClickBackButton();
         verifyAtHomePage();
 
-        // verify search
+        Assert.assertFalse("'Tools & links' wiki should not be displayed in Help", isElementPresent(Locator.tagWithText("h3", TOOLS_TITLE)));
+
+        log("verify search");
         assertElementPresent(CDSHelpCenterUtil.HELP_SEARCH_INPUT);
         setFormElement(CDSHelpCenterUtil.HELP_SEARCH_INPUT, "cds");
         doShortWait();
@@ -74,7 +86,7 @@ public class CDSHelpCenterTest extends CDSReadOnlyTest
         assertTextPresent(CDSHelpCenterUtil.HELP_1_1_TITLE);
         verifyAndClickBackButton();
 
-        // verify search change
+        log("verify search change");
         doShortWait();
         searchResultCount = Locator.css(CDSHelpCenterUtil.HELP_SEARCH_RESULT_CSS).findElements(getDriver()).size();
         assertTrue("See result for key word cds is incorrect", searchResultCount > 6);
@@ -92,18 +104,63 @@ public class CDSHelpCenterTest extends CDSReadOnlyTest
         doShortWait();
 
         // verify closing and re-opening help center
+        log("verify closing and re-opening help center");
+        closePopup();
+        openHelpCenter();
+        verifyAtHomePage();
+        closePopup();
 
+        log("Verify 'Tools and links'");
+        openToolsAndLinks();
+        verifyToolsAndLinks();
+
+        log("Close and reopen 'Tools and links'");
+        closePopup();
+        openToolsAndLinks();
+    }
+
+    private void verifyToolsAndLinks()
+    {
+        Locator toolsLinksTitle = Locator.tagWithClass("label", "toolslinks-title").withText(TOOLS_TITLE);
+        assertTrue("'Tools & links' popup header is not as expected", isElementPresent(toolsLinksTitle));
+
+        List<String> linkNames = Arrays.asList(DataSpaceR, CATNAP, CAVD_TWITTER);
+        for (String linkName : linkNames)
+        {
+            assertTrue(linkName + " is not present", isElementPresent(Locator.tagWithText("a", linkName)));
+        }
+
+        assertElementPresent(Locator.tagWithText("td", DataSpaceR_DESCRIPTION));
+        assertElementPresent(Locator.tagWithText("td", CATNAP_DESCRIPTION));
+
+        Locator.XPathLocator dataspaceRHref = Locator.tagWithAttributeContaining("a", "href", DataSpaceR_LINK);
+        assertElementPresent(dataspaceRHref);
+        dataspaceRHref = dataspaceRHref.withAttribute("target", "_blank");
+        log("Verify target=\"_blank\" is automatically added for external links");
+        assertElementPresent(dataspaceRHref);
+    }
+
+    private void closePopup()
+    {
+        doShortWait();
         // click outside popup should close the popup
         // Unfortunately selenium won't let you click through the mask behind the help page, so you have to send the click to the mask.
         mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
         doShortWait();
         clickAt(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS), 10, 10, 0);
         doShortWait();
+        doShortWait();
+    }
 
-        openHelpCenter();
-        verifyAtHomePage();
-
-     }
+    private void openToolsAndLinks()
+    {
+        doShortWait();
+        assertElementNotPresent(CDSHelpCenterUtil.TOOLS_POPUP_XPATH);
+        assertElementPresent(Locator.linkWithText(CDSHelpCenterUtil.TOOLS_BUTTON_TEXT));
+        mouseOverClick(Locator.linkWithText(CDSHelpCenterUtil.TOOLS_BUTTON_TEXT));
+        longWait().until(ExpectedConditions.visibilityOfElementLocated(CDSHelpCenterUtil.TOOLS_POPUP_XPATH));
+        doShortWait();
+    }
 
     private void openHelpCenter()
     {

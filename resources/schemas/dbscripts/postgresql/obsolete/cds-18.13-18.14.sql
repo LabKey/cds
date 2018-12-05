@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-SELECT
-  meta.*,
-  labels.mab_label as mix_labels
-FROM cds.MAbMixMAbMeta meta
-LEFT JOIN cds.ds_mixlabels labels
-    ON meta.mab_mix_name_std = labels.mab_mix_name_std
+ALTER TABLE cds.import_NABMAb
+  RENAME COLUMN response_ic50 to nab_response_ic50;
+ALTER TABLE cds.import_NABMAb
+  RENAME COLUMN response_ic80 to nab_response_ic80;

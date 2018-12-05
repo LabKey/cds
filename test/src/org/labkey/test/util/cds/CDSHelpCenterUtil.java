@@ -128,6 +128,43 @@ public class CDSHelpCenterUtil
     public static final String HELP_SEARCH_RESULT_CSS = "p.searchresult";
     public static final String OUTSIDE_POPUP_LOGO_CSS = "div.logo";
 
+    public static final String TOOLS_TITLE = "Tools & links";
+    public static final String TOOLS_BUTTON_TEXT = "Tools & links";
+    public static final Locator.XPathLocator TOOLS_POPUP_XPATH = Locator.tag("div").withAttribute("id", "toolspopup");
+    public static final String TOOLS_LINKS_WIKI_NAME    = "_dataspace_tools";
+    public static final String TOOLS_LINKS_WIKI_TITLE   = "Tools & links";
+
+    public static final String DataSpaceR    = "DataSpaceR";
+    public static final String DataSpaceR_LINK    = "https://github.com/CAVDDataSpace/DataSpaceR";
+    public static final String DataSpaceR_DESCRIPTION    = "R package on Github that allows users to programmatically access data in DataSpace";
+    public static final String CATNAP    = "CATNAP";
+    public static final String CATNAP_DESCRIPTION    = "Provides analysis of data associated with HIV-1 neutralizing antibodies, including neutralization panel data, sequences and structures";
+    public static final String CAVD_TWITTER    = "CAVD DataSpace Twitter page";
+
+    public static final String TOOLS_LINKS_WIKI_CONTENT = "<h3>Tools</h3>\n" +
+            "<table>\n" +
+            "<tbody><tr>\n" +
+            "<td><a href=\"" + DataSpaceR_LINK + "\">" + DataSpaceR + "</a></td><td>" + DataSpaceR_DESCRIPTION + "</td>\n" +
+            "</tr>\n" +
+            "<tr>\n" +
+            "<td><a href=\"https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/main.comp\">" + CATNAP + "</a></td><td>" + CATNAP_DESCRIPTION + "</td>\n" +
+            "</tr>\n" +
+            "<tr>\n" +
+            "<td><a href=\"https://www.hiv.lanl.gov/content/sequence/COMBINABER/combinaber.html\">CombiNAber</a></td><td>Predicts the neutralization of combinations of antibodies</td>\n" +
+            "</tr>\n" +
+            "<tr>\n" +
+            "<td><a href=\"http://bnaber.org/\">bNAber</a></td><td>Compares and analyzes bNAb data</td>\n" +
+            "</tr>\n" +
+            "</tbody></table>\n" +
+            "\n" +
+            "<br>\n" +
+            "<h3>Links</h3>\n" +
+            "<div><a href=\"https://twitter.com/CAVDDataSpace\">" + CAVD_TWITTER + "</a></div>\n" +
+            "<br>\n" +
+            "<div><a href=\"https://www.cavd.org/Pages/default.aspx\">CAVD website and portal</a></div>\n" +
+            "<br>\n" +
+            "<div><a href=\"http://www.hvtn.org/en.html\">HVTN website and portal</a></div>\n" +
+            "<br>\n";
 
 
     private final BaseWebDriverTest _test;
@@ -168,6 +205,9 @@ public class CDSHelpCenterUtil
         createWikiPage(CATEGORY_4_NAME, CATEGORY_4_TITLE, HELP_EMPTY_CONTENT, null, null);
         createWikiPage(HELP_4_1_NAME, HELP_4_1_TITLE, HELP_4_1_CONTENT, CATEGORY_4_NAME, CATEGORY_4_TITLE);
 
+        // create Tools & links wiki
+        createWikiPage(TOOLS_LINKS_WIKI_NAME, TOOLS_LINKS_WIKI_TITLE, TOOLS_LINKS_WIKI_CONTENT, null, null, true);
+
         _test.goToProjectHome();
         _portalHelper.removeWebPart("Pages");
     }
@@ -176,6 +216,8 @@ public class CDSHelpCenterUtil
     {
         _test.goToProjectHome();
         _portalHelper.addWebPart("Wiki Table of Contents");
+
+        deleteWiki(TOOLS_LINKS_WIKI_TITLE);
 
         deleteWiki(HELP_4_1_TITLE);
         deleteWiki(CATEGORY_4_TITLE);
@@ -220,6 +262,11 @@ public class CDSHelpCenterUtil
 
     public void createWikiPage(String name, String title, String body, String parentName, String parentTitle)
     {
+        createWikiPage(name, title, body, parentName, parentTitle, false);
+    }
+
+    public void createWikiPage(String name, String title, String body, String parentName, String parentTitle, boolean skipIndex)
+    {
         WikiHelper wikiHelper = new WikiHelper(_test);
         wikiHelper.createNewWikiPage("HTML");
 
@@ -227,6 +274,10 @@ public class CDSHelpCenterUtil
         _test.setFormElement(Locator.name("title"), title);
         if (parentName != null && parentTitle != null)
             _test.selectOptionByText(Locator.name("parent"), parentTitle + " (" + parentName + ")");
+
+        if (skipIndex)
+            _test.uncheckCheckbox(Locator.checkboxByName("shouldIndex"));
+
         wikiHelper.setWikiBody(body);
         wikiHelper.saveWikiPage();
     }
