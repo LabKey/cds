@@ -29,6 +29,7 @@ import org.labkey.api.action.ApiSimpleResponse;
 import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
+import org.labkey.api.action.MutatingApiAction;
 import org.labkey.api.action.SimpleApiJsonForm;
 import org.labkey.api.action.SimpleErrorView;
 import org.labkey.api.action.SimpleViewAction;
@@ -1118,7 +1119,7 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresPermission(ReadPermission.class)
-    public class UpdateCDSUserInfoAction extends ApiAction<CDSUserInfoForm>
+    public class UpdateCDSUserInfoAction extends MutatingApiAction<CDSUserInfoForm>
     {
         @Override
         public Object execute(CDSUserInfoForm form, BindException errors) throws Exception
