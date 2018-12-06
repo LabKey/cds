@@ -59,6 +59,10 @@ Ext.define('Connector.controller.Group', {
             click : this.onGroupPlotView
         });
 
+        this.control('#groupmabview', {
+            click : this.onGroupMabView
+        });
+
         this.control('groupsummary', {
             requestgroupdelete: this.doGroupDeleteFromSummary
         });
@@ -96,6 +100,7 @@ Ext.define('Connector.controller.Group', {
             this.application.on('groupsaved', this.onGroupSaved, this);
             this.application.on('groupedit', this.onGroupEdit, this);
             this.application.on('mabgroupsaved', this.onMabGroupSaved, this);
+            this.application.on('mabgroupedited', this.onMabGroupEdited, this);
         }
         else if (xtype == 'groupsummary') {
 
@@ -152,39 +157,74 @@ Ext.define('Connector.controller.Group', {
     {
         var view = this.getViewManager().getViewInstance('groupsave');
 
-        if (view.isValid())
-        {
-            if (view.isMabGroup)
-                this.doMabGroupSave(view);
-            else
-                this.doSubjectGroupSave(view);
-        }
+        if (view.isMabGroup)
+            this.doMabGroupEdit(view, false);
+        else
+            this.doSubjectGroupSave(view);
     },
 
-    doMabGroupSave: function(view)
+    toJsonMabFilters : function(filters)
     {
-        var values = view.getValues(),
-                state = Connector.getState();
-        var group = {
-            Label: values['groupname'],
-            Description: values['groupdescription'],
-            Filters: state.getMabFilters(),
-            Type: 'mab',
-            Shared: typeof values['groupshared'] != "undefined"
-        };
-
-        LABKEY.Query.insertRows({
-            schemaName: 'cds',
-            queryName: 'mabgroup',
-            rows: [group],
-            scope: this,
-            success : function() {
-                Connector.getApplication().fireEvent('mabgroupsaved', values['groupname']);
-                view.reset();
-                Connector.model.Group.getGroupStore().refreshData();
-            },
-            failure: this.saveFailure
+        var jsonFilters = [];
+        Ext.each(filters, function(filter){
+            jsonFilters.push(filter.jsonify())
         });
+
+        return Ext.encode({
+            isLive : true,
+            filters : jsonFilters
+        });
+    },
+
+    doMabGroupEdit: function(view, isEditMode)
+    {
+        if (view.isValid()) {
+            var values = view.getValues(), state = Connector.getState();
+
+            if (isEditMode && !Ext.isDefined(values['groupid'])) {
+                Ext.Msg.alert('A group id must be provided!');
+            }
+            else {
+                var group = {
+                    Label: values['groupname'],
+                    Description: values['groupdescription'],
+                    Filters: this.toJsonMabFilters(state.getMabFilters()),
+                    Type: 'mab',
+                    Shared: typeof values['groupshared'] != "undefined"
+                };
+
+                if (isEditMode) {
+                    group.RowId = parseInt(values['groupid']);
+                    group.Container = LABKEY.container.id
+                }
+
+                var saveSuccess = function() {
+                    Connector.getApplication().fireEvent('mabgroupsaved', values['groupname']);
+                    view.reset();
+                    Connector.model.Group.getGroupStore().refreshData();
+                };
+
+                var editSuccess = function() {
+                    Connector.getApplication().fireEvent('mabgroupedited', values['groupname']);
+                    view.reset();
+                    Connector.model.Group.getGroupStore().refreshData();
+                };
+
+                var queryConfig = {
+                    schemaName: 'cds',
+                    queryName: 'mabgroup',
+                    rows: [group],
+                    scope: this,
+                    success : isEditMode ? editSuccess : saveSuccess,
+                    failure: this.saveFailure
+                };
+
+                if (isEditMode)
+                    LABKEY.Query.updateRows(queryConfig);
+                else
+                    LABKEY.Query.insertRows(queryConfig);
+            }
+        }
     },
 
     saveFailure : function(response) {
@@ -207,39 +247,50 @@ Ext.define('Connector.controller.Group', {
 
     doSubjectGroupSave: function(view)
     {
-        var values = view.getValues(),
-                state = Connector.getState();
+        if (view.isValid())
+        {
+            var values = view.getValues(),
+                    state = Connector.getState();
 
-        state.moveSelectionToFilter();
+            state.moveSelectionToFilter();
 
-        state.onMDXReady(function(mdx) {
+            state.onMDXReady(function(mdx) {
 
-            var saveSuccess = function(response) {
-                var group = Ext.decode(response.responseText);
-                Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
-                view.reset();
-                Connector.model.Group.getGroupStore().refreshData();
-            };
+                var saveSuccess = function(response) {
+                    var group = Ext.decode(response.responseText);
+                    Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
+                    view.reset();
+                    Connector.model.Group.getGroupStore().refreshData();
+                };
 
-            Connector.model.Filter.doGroupSave({
-                mdx : mdx,
-                success : saveSuccess,
-                failure : this.saveFailure,
-                group : {
-                    label: values['groupname'],
-                    description: values['groupdescription'],
-                    filters: state.getFilters(),
-                    isLive: true, // all groups are live
-                    isOwnerShared: typeof values['groupshared'] != "undefined"
-                }
-            });
-        }, this);
+                Connector.model.Filter.doGroupSave({
+                    mdx : mdx,
+                    success : saveSuccess,
+                    failure : this.saveFailure,
+                    group : {
+                        label: values['groupname'],
+                        description: values['groupdescription'],
+                        filters: state.getFilters(),
+                        isLive: true, // all groups are live
+                        isOwnerShared: typeof values['groupshared'] != "undefined"
+                    }
+                });
+            }, this);
+        }
     },
 
-    doGroupEdit : function()
+    doGroupEdit: function()
     {
         var view = this.getViewManager().getViewInstance('groupsave');
 
+        if (view.isMabGroup)
+            this.doMabGroupEdit(view, true);
+        else
+            this.doSubjectGroupEdit(view);
+    },
+
+    doSubjectGroupEdit : function(view)
+    {
         if (view.isValid()) {
             var values = view.getValues();
 
@@ -310,6 +361,9 @@ Ext.define('Connector.controller.Group', {
 
             if (targetGroup)
             {
+                if (targetGroup.get('type') === 'mab')
+                    return; //TODO
+
                 // Ensure that the filter set is up to date
                 var state = Connector.getState();
                 state.moveSelectionToFilter();
@@ -388,6 +442,10 @@ Ext.define('Connector.controller.Group', {
         this.getViewManager().changeView('chart');
     },
 
+    onGroupMabView: function() {
+        this.getViewManager().changeView('mabgrid');
+    },
+
     onMabGroupSave : function(cmp, event)
     {
         this.onGroupSave(cmp, event, true);
@@ -397,7 +455,14 @@ Ext.define('Connector.controller.Group', {
     {
         this.getViewManager().showView('groupsave');
         var groupSaveView = this.getViewManager().getViewInstance('groupsave');
-        groupSaveView.isMabGroup = isMab;
+        var isMabGroup = isMab || (cmp && cmp.group && cmp.group.get('type') === 'mab');
+        var hasMabModeChanged = isMabGroup !== groupSaveView.isMabGroup;
+        if (hasMabModeChanged)
+        {
+            groupSaveView.isMabGroup = isMabGroup;
+            groupSaveView.refresh();
+        }
+
 
         if (cmp && cmp.group)
         {
@@ -441,7 +506,12 @@ Ext.define('Connector.controller.Group', {
         this._groupEditSave(response.group.label);
     },
 
-    doGroupDelete : function(config) {
+    onMabGroupEdited: function(groupLabel)
+    {
+        this._groupEditSave(groupLabel, null, false, true);
+    },
+
+    doSubjectGroupDelete : function(config) {
         Ext.Ajax.request({
             url : LABKEY.ActionURL.buildURL('participant-group', 'deleteParticipantGroup.api', config.containerPath),
             method: 'POST',
@@ -452,18 +522,37 @@ Ext.define('Connector.controller.Group', {
         });
     },
 
-    doGroupDeleteFromSummary : function(id) {
-        this.doGroupDelete({
+    onDeleteSuccess: function() {
+        Connector.model.Group.getGroupStore().refreshData();
+        var editGroupView = this.getViewManager().getViewInstance('groupsave');
+        if (editGroupView)
+            editGroupView.refresh();
+
+        this.getViewManager().changeView('home');
+    },
+
+    doGroupDeleteFromSummary : function(id, isMab) {
+        if (isMab)
+        {
+            var group = {
+                RowId : id,
+                Container : LABKEY.container.id
+
+            };
+            LABKEY.Query.deleteRows({
+                schemaName: 'cds',
+                queryName: 'mabgroup',
+                rows: [group],
+                scope: this,
+                success: this.onDeleteSuccess,
+                failure: this.saveFailure
+            });
+            return;
+        }
+        this.doSubjectGroupDelete({
             id: id,
             scope: this,
-            success: function() {
-                Connector.model.Group.getGroupStore().refreshData();
-                var editGroupView = this.getViewManager().getViewInstance('groupsave');
-                if (editGroupView)
-                    editGroupView.refresh();
-
-                this.getViewManager().changeView('home');
-            },
+            success: this.onDeleteSuccess,
             failure: function(response) {
                 var json = Ext.decode(response.responseText);
                 Ext.Msg.alert('ERROR', json.exception ? json.exception : 'Delete group failed.');

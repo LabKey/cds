@@ -79,7 +79,7 @@ Ext.define('Connector.model.Group', {
                             }
                         }
                     }],
-                    refreshData: function() {
+                    refreshData: function(cb, cbScope) {
                         LABKEY.Query.selectRows({
                             schemaName: 'cds',
                             queryName: 'mabgroup',
@@ -107,6 +107,8 @@ Ext.define('Connector.model.Group', {
                                         var subjectGroups = Ext.JSON.decode(response.responseText).groups;
                                         var groups = mabGroups.concat(subjectGroups);
                                         this.loadRawData(groups);
+                                        if (cb)
+                                            cb.call(cbScope);
                                     },
                                     scope: this
                                 });
