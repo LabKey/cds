@@ -111,6 +111,7 @@ Ext.define('Connector.view.MabStatus', {
     },
 
     onMabFilterChange : function() {
+        this.hideMessage(true);
         var filterHeader = this.getComponent('mab-info-header');
 
         var titleText = filterHeader.query('#title-text')[0];

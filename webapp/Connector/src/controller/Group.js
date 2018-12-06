@@ -176,38 +176,61 @@ Ext.define('Connector.controller.Group', {
         });
     },
 
-    doMabGroupEdit: function(view, isEditMode)
+    doMabGroupEdit: function(view, isEditMode, isReplace)
     {
         if (view.isValid()) {
             var values = view.getValues(), state = Connector.getState();
+            var replaceFromGroup = view.getSelectedGroup();
 
             if (isEditMode && !Ext.isDefined(values['groupid'])) {
                 Ext.Msg.alert('A group id must be provided!');
             }
             else {
-                var group = {
-                    Label: values['groupname'],
-                    Description: values['groupdescription'],
-                    Filters: this.toJsonMabFilters(state.getMabFilters()),
-                    Type: 'mab',
-                    Shared: typeof values['groupshared'] != "undefined"
-                };
+                var group, groupname, me = this;
+                if (isReplace)
+                {
+                    replaceFromGroup.set('description', values['groupdescription']);
+                    replaceFromGroup.set('shared', typeof values['groupshared'] != "undefined");  // convert to boolean
 
-                if (isEditMode) {
-                    group.RowId = parseInt(values['groupid']);
-                    group.Container = LABKEY.container.id
+                    groupname = replaceFromGroup.get('label');
+                    group = {
+                        RowId : replaceFromGroup.get('id'),
+                        Container : LABKEY.container.id,
+                        Label: groupname,
+                        Description: replaceFromGroup.get('description'),
+                        Filters: this.toJsonMabFilters(state.getMabFilters()),
+                        Type: 'mab',
+                        Shared: replaceFromGroup.get('shared')
+                    };
+                }
+                else
+                {
+                    groupname = values['groupname'];
+                    group = {
+                        Label: groupname,
+                        Description: values['groupdescription'],
+                        Filters: this.toJsonMabFilters(state.getMabFilters()),
+                        Type: 'mab',
+                        Shared: typeof values['groupshared'] != "undefined"
+                    };
+
+                    if (isEditMode) {
+                        group.RowId = parseInt(values['groupid']);
+                        group.Container = LABKEY.container.id
+                    }
                 }
 
                 var saveSuccess = function() {
-                    Connector.getApplication().fireEvent('mabgroupsaved', values['groupname']);
+                    Connector.getApplication().fireEvent('mabgroupsaved', groupname);
                     view.reset();
                     Connector.model.Group.getGroupStore().refreshData();
                 };
 
                 var editSuccess = function() {
-                    Connector.getApplication().fireEvent('mabgroupedited', values['groupname']);
+                    Connector.getApplication().fireEvent('mabgroupedited', groupname);
                     view.reset();
                     Connector.model.Group.getGroupStore().refreshData();
+                    me.getViewManager().changeView('home');
                 };
 
                 var queryConfig = {
@@ -219,7 +242,7 @@ Ext.define('Connector.controller.Group', {
                     failure: this.saveFailure
                 };
 
-                if (isEditMode)
+                if (isEditMode || isReplace)
                     LABKEY.Query.updateRows(queryConfig);
                 else
                     LABKEY.Query.insertRows(queryConfig);
@@ -362,7 +385,10 @@ Ext.define('Connector.controller.Group', {
             if (targetGroup)
             {
                 if (targetGroup.get('type') === 'mab')
-                    return; //TODO
+                {
+                    this.doMabGroupEdit(view, false, true);
+                    return;
+                }
 
                 // Ensure that the filter set is up to date
                 var state = Connector.getState();
@@ -483,6 +509,9 @@ Ext.define('Connector.controller.Group', {
         this.getViewManager().hideView('groupsave');
 
         var fsview = isMab ? this.getViewManager().getViewInstance('mabstatus') : this.getViewManager().getViewInstance('filterstatus');
+        if (isMab && fsview.ownerCt && fsview.ownerCt.isHidden()) // not on mab grid page
+            fsview = this.getViewManager().getViewInstance('filterstatus');
+
         if (fsview)
         {
             fsview.showMessage('Group \"' + Ext.String.ellipsis(name, 15, true) + '\" saved.', true);
