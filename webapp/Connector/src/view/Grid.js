@@ -119,7 +119,8 @@ Ext.define('Connector.view.Grid', {
         this.on('resize', this.onViewResize, this);
 
         // destroy footer
-        this.on('destroy', this.onDestroy, this);
+        this.on('destroy', this.onDeactivate, this);
+        this.on('hide', this.onDeactivate, this);
 
         // plugin to handle loading mask for the grid
         this.addPlugin({

@@ -252,7 +252,7 @@ Ext.define('Connector.view.GroupSave', {
                         id: 'editgroupdescription',
                         itemId: 'groupdescription',
                         name: 'groupdescription',
-                        emptyText: 'no description provided',
+                        emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
@@ -388,7 +388,7 @@ Ext.define('Connector.view.GroupSave', {
                         id: 'updategroupdescription',
                         itemId: 'groupdescription',
                         name: 'groupdescription',
-                        emptyText: 'no description provided',
+                        emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
@@ -714,7 +714,7 @@ Ext.define('Connector.view.GroupSaveList', {
 
     trackOver: true,
 
-    emptyText: '<div class="emptytext"><span class="left-label">No groups defined</span>',
+    emptyText: '<div><span class="empty-group-label x-form-field x-form-empty-field">No groups defined</span>',
 
     overItemCls: 'save-label-over',
 
@@ -753,12 +753,12 @@ Ext.define('Connector.view.GroupSaveList', {
         });
     },
 
-    cloneGroupStore (source) {
+    cloneGroupStore: function(source) {
 
         var clone = Ext.create('Ext.data.Store', {
             model : 'Connector.model.Group'
         });
-        Ext.each (source.getRange (), function (record) {
+        Ext.each(source.getRange(), function(record) {
             clone.add(Ext.clone(record.copy()));
         });
         clone.refreshData = source.refreshData;
