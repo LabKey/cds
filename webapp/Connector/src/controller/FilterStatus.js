@@ -186,6 +186,7 @@ Ext.define('Connector.controller.FilterStatus', {
         var view = Ext.create('Connector.view.MabStatus', { });
         var state = Connector.getState();
         state.on('mabfilterchange', view.onMabFilterChange, view);
+        state.on('mabselectionchange', view.onMabSelectionChange, view);
         state.on('mabfilterclear', view.onFilterRemove, view);
         this.getViewManager().register(view);
         this.getViewManager().on('afterchangeview', view.onAfterViewChange, view);

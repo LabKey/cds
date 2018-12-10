@@ -278,7 +278,7 @@ public class CDSGroupTest extends CDSReadOnlyTest
 
         cds.saveGroup(GROUP_PLOT_TEST, "a plot", false, true);
         waitForText("Group \"Group Plot Test\" saved.");
-
+        sleep(1000);
         cds.clearFilters(true);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);

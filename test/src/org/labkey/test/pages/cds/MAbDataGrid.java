@@ -150,6 +150,25 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void clearAllFilters()
     {
+        Locator clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear");
+        if (_webDriverWrapper.isElementPresent(clearAllFilterBtn) && _webDriverWrapper.isElementVisible(clearAllFilterBtn))
+            _webDriverWrapper.click(clearAllFilterBtn);
+        _webDriverWrapper.waitForElementToDisappear(Locator.tagWithClass("div", "filtered-column"));
+    }
+
+    public boolean hasGridColumnFilters()
+    {
+        String[] uniqueFacetFilterColumns = {MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL, VIRUSES_COL};
+        for (String column : uniqueFacetFilterColumns)
+        {
+            if (_gridHelper.isColumnFiltered(column))
+                return true;
+        }
+        return false;
+    }
+
+    public void clearAllColumnFilters()
+    {
         String[] uniqueFacetFilterColumns = {MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL};
         for (String column : uniqueFacetFilterColumns)
         {

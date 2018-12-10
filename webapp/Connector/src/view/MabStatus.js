@@ -95,7 +95,7 @@ Ext.define('Connector.view.MabStatus', {
                 xtype: 'button',
                 text: 'clear',
                 ui: 'rounded-small',
-                cls: 'filter-hdr-btn filterclear',
+                cls: 'filter-hdr-btn mabfilterclear',
                 itemId: 'clearmab',
                 hidden: !this.hasMabFilters(),
                 handler: this.clearMabFilters
@@ -103,11 +103,15 @@ Ext.define('Connector.view.MabStatus', {
                 xtype: 'button',
                 text: 'save',
                 ui: 'rounded-inverted-accent-small',
-                cls: 'filter-hdr-btn filtersave',
+                cls: 'filter-hdr-btn mabfiltersave',
                 itemId: 'savegmabroup',
                 hidden: !this.hasMabFilters()
             }]
         }
+    },
+
+    onMabSelectionChange: function() {
+        this.hideMessage(true);
     },
 
     onMabFilterChange : function() {

@@ -1149,5 +1149,7 @@ Ext.define('Connector.controller.State', {
         if (!skipState) {
             this.updateState();
         }
+
+        this.fireEvent('mabselectionchange');
     }
 });

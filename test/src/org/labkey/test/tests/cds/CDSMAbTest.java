@@ -400,6 +400,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
         InfoPane ip = new InfoPane(this);
         ip.waitForSpinners();
 
+        log("Validate info pane header without filters.");
+        ip.verifyMabInfoFilteredState(false);
+
         Assert.assertEquals("MAbs/Mixtures count not as expected.", 173, ip.getMabMixturesCount());
         Assert.assertEquals("MAbs count not as expected.", 176, ip.getMabCount());
         Assert.assertEquals("MAb mix type count not as expected.", 3, ip.getMabMixTypeCounts());
@@ -637,8 +640,23 @@ public class CDSMAbTest extends CDSReadOnlyTest
         Assert.assertTrue("List for Viruses did not contain the expected items:\n" + missingValues, missingValues.isEmpty());
         ip.clickClose();
 
-        grid.clearAllFilters();
+        log("Verify 'clear' clears all filters");
         grid.clearAllSelections();
+        grid.clearAllFilters();
+        Assert.assertFalse("'Clear' didn't clear all filters", grid.hasGridColumnFilters());
+
+        log("Verify 'undo' clear");
+        click(Locator.linkWithText("Undo"));
+        waitForElement(Locator.tagWithClass("div", "filtered-column"));
+
+        ip.clickMabVirusCount();
+        log("Check Virus list.");
+        listText = ip.getMabVirusList();
+        missingValues = doesListContainExpectedText(listText, expectedHasDataInMAbGrid, expectedNoDataInMAbGrid);
+        Assert.assertTrue("'Undo' didn't reapply filters as expected:\n" + missingValues, missingValues.isEmpty());
+        ip.clickClose();
+
+        grid.clearAllFilters();
 
         log("Add a filter to the Geometric IC50 Curve.");
         grid.setFacet(GEOMETRIC_MEAN_IC50_COL,true,"< 0.1", ">= 0.1 to < 1");
