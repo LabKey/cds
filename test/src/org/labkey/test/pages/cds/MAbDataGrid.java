@@ -167,6 +167,11 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         return false;
     }
 
+    public boolean isColumnFiltered(String column)
+    {
+        return _gridHelper.isColumnFiltered(column);
+    }
+
     public void clearAllColumnFilters()
     {
         String[] uniqueFacetFilterColumns = {MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL};

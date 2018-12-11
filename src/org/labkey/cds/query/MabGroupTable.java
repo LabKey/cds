@@ -97,7 +97,7 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
         @Override
         protected Map<String, Object> insertRow(User user, Container container, Map<String, Object> row) throws DuplicateKeyException, ValidationException, QueryUpdateServiceException, SQLException
         {
-            validateUpdatePermission(user, container, row);
+            validateUpdatePermission(user, container, row, false);
             validateShared(user, container, row);
             validateDuplicateLabel(user, container, row, true);
             return super.insertRow(user, container, row);
@@ -106,7 +106,7 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
         @Override
         protected Map<String, Object> updateRow(User user, Container container, Map<String, Object> row, @NotNull Map<String, Object> oldRow, boolean allowOwner, boolean retainCreation) throws InvalidKeyException, ValidationException, QueryUpdateServiceException, SQLException
         {
-            validateUpdatePermission(user, container, row);
+            validateUpdatePermission(user, container, row, false);
             validateShared(user, container, row);
             validateDuplicateLabel(user, container, row, false);
             return super.updateRow(user, container, row, oldRow, allowOwner, retainCreation);
@@ -115,25 +115,47 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
         @Override
         protected Map<String, Object> deleteRow(User user, Container container, Map<String, Object> oldRowMap) throws QueryUpdateServiceException, SQLException, InvalidKeyException
         {
-            validateUpdatePermission(user, container, oldRowMap);
+            try
+            {
+                validateUpdatePermission(user, container, oldRowMap, true);
+            }
+            catch (ValidationException e)
+            {
+                throw new InvalidKeyException(e.getMessage());
+            }
             return super.deleteRow(user, container, oldRowMap);
         }
 
-        private void validateUpdatePermission(User user, Container container, Map<String, Object> row) throws QueryUpdateServiceException
+        private void validateUpdatePermission(User user, Container container, Map<String, Object> row, boolean isDelete) throws ValidationException
         {
             if (!container.hasPermission(user, ReadPermission.class))
-                throw new QueryUpdateServiceException("User does not have permission to mab group table");
+                throw new ValidationException("User does not have permission to mab group table");
 
-            Integer createdBy = (Integer) row.get("CreatedBy");
-            if (createdBy != null && createdBy > 0 && user.getUserId() != createdBy)
+            if (row.get("RowId") != null)
             {
-                boolean shared = (boolean) row.get("Shared");
-                if (!shared)
-                    throw new QueryUpdateServiceException("User does not have permission to update a private mab group created by a different user");
-                else
+                SimpleFilter filter = SimpleFilter.createContainerFilter(container);
+                filter.addCondition(FieldKey.fromString("RowId"), row.get("RowId"));
+
+                Map<String, Object>[] rows = new TableSelector(CDSSchema.getInstance().getTableInfoMabGroup(), filter, null).getMapArray();
+
+                if (rows.length > 0)
                 {
-                    if (!container.hasPermission(user, SharedParticipantGroupPermission.class))
-                        throw new QueryUpdateServiceException("User does not have permission to update a shared mab group created by a different user");
+                    String action = isDelete ? "delete" : "update";
+                    Map<String, Object> existingRow = rows[0];
+                    Integer createdBy = (Integer) existingRow.get("CreatedBy");
+                    if (createdBy != null && createdBy > 0 && user.getUserId() != createdBy)
+                    {
+                        boolean shared = (boolean) existingRow.get("Shared");
+                        if (!shared)
+                            throw new ValidationException("User does not have permission to " + action + " a private mab group created by a different user");
+                        else
+                        {
+                            if (!container.hasPermission(user, SharedParticipantGroupPermission.class))
+                                throw new ValidationException("User does not have permission to " + action + " a shared mab group created by a different user");
+                            if (row.get("Shared") == null || row.get("Shared") == Boolean.FALSE)
+                                throw new ValidationException("You must be the owner to unshare this mab group");
+                        }
+                    }
                 }
             }
         }

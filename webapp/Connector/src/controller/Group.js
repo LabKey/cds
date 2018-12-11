@@ -250,7 +250,7 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
-    saveFailure : function(response) {
+    saveFailure : function(response, isAlert) {
         var json = response.responseText ? Ext.decode(response.responseText) : response;
 
         if (json.exception) {
@@ -258,14 +258,26 @@ Ext.define('Connector.controller.Group', {
             if (json.exception.indexOf('There is already a group named') > -1 ||
                     json.exception.indexOf('duplicate key value violates') > -1) {
                 // custom error response for invalid name
-                view.showError('The name you have chosen is already in use; please choose a different name.');
+                if (isAlert)
+                    Ext.Msg.alert('ERROR', json.exception);
+                else
+                    view.showError('The name you have chosen is already in use; please choose a different name.');
             }
             else
-                view.showError(json.exception);
+            {
+                if (isAlert)
+                    Ext.Msg.alert('ERROR', json.exception);
+                else
+                    view.showError(json.exception);
+            }
         }
         else {
             Ext.Msg.alert('Failed to Save', response.responseText);
         }
+    },
+
+    saveFailureAlert: function(response) {
+        this.saveFailure(response, true);
     },
 
     doSubjectGroupSave: function(view)
@@ -339,7 +351,7 @@ Ext.define('Connector.controller.Group', {
                     Ext.each(errors, function(error) {
                         errorMsgs.push(error.message);
                     });
-                    Ext.Msg.alert('Failed to edit Group', errorMsgs);
+                    Ext.Msg.alert('ERROR', errorMsgs);
                 };
 
                 var groupData = {};
@@ -575,7 +587,7 @@ Ext.define('Connector.controller.Group', {
                 rows: [group],
                 scope: this,
                 success: this.onDeleteSuccess,
-                failure: this.saveFailure
+                failure: this.saveFailureAlert
             });
             return;
         }
