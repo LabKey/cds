@@ -1,0 +1,1 @@
+ALTER TABLE cds.mAbMetaGridBase ADD COLUMN mab_ab_binding_type VARCHAR(250);

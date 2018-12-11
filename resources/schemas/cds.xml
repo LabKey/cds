@@ -1024,6 +1024,7 @@
             <column columnName="mab_mix_type"/>
             <column columnName="mab_id"/>
             <column columnName="mab_hxb2_location"/>
+            <column columnName="mab_ab_binding_type"/>
             <column columnName="mab_isotype"/>
             <column columnName="mab_donor_species"/>
             <column columnName="Container"/>

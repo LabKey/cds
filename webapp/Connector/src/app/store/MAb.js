@@ -90,13 +90,14 @@ Ext.define('Connector.app.store.MAb', {
                     other_labels: metaMix.mix_labels
                 };
 
-                var donors = [], isotypes = [], hxb2Locs = [], mabnames = [], mabs, mabIdMap = {};
+                var donors = [], isotypes = [], hxb2Locs = [], abBindings = [], mabnames = [], mabs, mabIdMap = {};
 
                 // process mix and mab metadata
                 Ext.each(mixes, function(mix) {
                     var donorSpecies = mix.mab_donor_species;
                     var isotype = mix.mab_isotype;
                     var hxb2Loc = mix.mab_hxb2_location;
+                    var abBinding = mix.mab_ab_binding_type;
                     var mabName = mix.mab_name_std;
                     if (donorSpecies && donors.indexOf(donorSpecies) === -1)
                         donors.push(donorSpecies);
@@ -104,6 +105,8 @@ Ext.define('Connector.app.store.MAb', {
                         isotypes.push(isotype);
                     if (hxb2Loc && hxb2Locs.indexOf(hxb2Loc) === -1)
                         hxb2Locs.push(hxb2Loc);
+                    if (abBinding && abBindings.indexOf(abBinding) === -1)
+                        abBindings.push(abBinding);
                     if (mabName && mabnames.indexOf(mabName) === -1)
                         mabnames.push(mabName);
 
@@ -130,6 +133,8 @@ Ext.define('Connector.app.store.MAb', {
                 mixRec.isotypes_str = isotypes.join(', ');
                 mixRec.hxb2Locs = hxb2Locs;
                 mixRec.hxb2Locs_str = hxb2Locs.join(', ');
+                mixRec.abBindings = abBindings;
+                mixRec.abBindings_str = abBindings.join(', ');
                 mixRec.mabnames_str = mabnames.join(', ');
 
                 mabs = Ext.Object.getValues(mabIdMap);

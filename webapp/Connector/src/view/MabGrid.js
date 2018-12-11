@@ -40,9 +40,10 @@ Ext.define('Connector.view.MabGrid', {
             'mab_donor_species': {colInd: [2], filterLabel: 'Mab Donor Species'},
             'mab_isotype': {colInd: [3], filterLabel: 'Mab Isotype'},
             'mab_hxb2_location': {colInd: [4], filterLabel: 'Mab Hxb2 Location'},
-            'tier_clade_virus': {colInd: [5, 6, 7], filterLabel: 'Neutralization tier + Clade + Virus'},
-            'titer_curve_ic50_group': {colInd: [8], filterLabel: 'Titer Curve IC50'},
-            'study': {colInd: [9], filterLabel: 'Study'}
+            'mab_ab_binding_type': {colInd: [5], filterLabel: 'Antibody binding type'},
+            'tier_clade_virus': {colInd: [6, 7, 8], filterLabel: 'Neutralization tier + Clade + Virus'},
+            'titer_curve_ic50_group': {colInd: [9], filterLabel: 'Titer Curve IC50'},
+            'study': {colInd: [10], filterLabel: 'Study'}
         },
 
         MAbReportID_PROP_PREFIX: "MAbReportID",
@@ -232,6 +233,7 @@ Ext.define('Connector.view.MabGrid', {
             this._getMetaColumnConfig('Donor Species', 'mab_donor_species', ind++),
             this._getMetaColumnConfig('Isotype', 'mab_isotype', ind++),
             this._getMetaColumnConfig('HXB2 Location', 'mab_hxb2_location', ind++),
+            this._getMetaColumnConfig('Antibody binding type', 'mab_ab_binding_type', ind++),
             this._getVirusColumnConfig('Viruses', 'virusCount', ind++),
             this._getVirusColumnConfig('Clades', 'cladeCount', ind++),
             this._getVirusColumnConfig('Tiers', 'neutralization_tierCount', ind++),
