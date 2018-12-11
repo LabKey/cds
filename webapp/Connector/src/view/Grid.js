@@ -683,9 +683,11 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(),
             modelMap = {},
             columns,
-            columnModels = model.getActiveSheetMetadata().columnModel,
             applyChecker = false,
             queryService = Connector.getQueryService();
+        if (model.getActiveSheetMetadata() == null)
+            return;
+        var columnModels = model.getActiveSheetMetadata().columnModel;
 
         Ext.each(columnModels, function(columnModel) {
             modelMap[columnModel.dataIndex] = columnModel;
