@@ -69,7 +69,7 @@ Ext.define('Connector.model.MabGrid', {
             var mab = mabMap[name];
             if (row.mab_donor_species && mab.mab_donor_species.indexOf(row.mab_donor_species) === -1)
                 mab.mab_donor_species.push(row.mab_donor_species);
-            if (row.mab_hxb2_locatio && mab.mab_hxb2_location.indexOf(row.mab_hxb2_location) === -1)
+            if (row.mab_hxb2_location && mab.mab_hxb2_location.indexOf(row.mab_hxb2_location) === -1)
                 mab.mab_hxb2_location.push(row.mab_hxb2_location);
             if (row.mab_isotype && mab.mab_isotype.indexOf(row.mab_isotype) === -1)
                 mab.mab_isotype.push(row.mab_isotype);
