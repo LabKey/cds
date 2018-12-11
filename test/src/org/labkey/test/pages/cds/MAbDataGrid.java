@@ -299,7 +299,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         _webDriverWrapper.click(Locators.getMAbReportBtn(reportName));
         _webDriverWrapper.sleep(500);
         _webDriverWrapper.waitForElement(Locators.getMAbReportHeader(reportName));
-        _webDriverWrapper._ext4Helper.waitForMaskToDisappear();
+        _webDriverWrapper._ext4Helper.waitForMaskToDisappear(10000);
     }
 
     public void leaveReportView()

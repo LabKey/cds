@@ -18,6 +18,7 @@ package org.labkey.test.pages.cds;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.Map;
 
@@ -68,7 +69,9 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
             _test._ext4Helper.waitForMaskToDisappear(120000); // Wait 2 mins. The test have much lower performance on TC. Until we have a real performance test (consistent environment etc...) I would rather not fail function test for it.
             // There is a bug where the mouse can end up over a time axis data point which will generate a hopscotch bubble.
             // However that is not the bubble indicating median values. So moving mouse out of the way.
-            _test.mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));
+            _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+            _test.sleep(500);
+            _test.mouseOut();
             _test.waitForElementToDisappear(Locator.css("div.hopscotch-bubble.animated.hopscotch-callout.no-number"));
         }
         else // Opens y-axis dialog automatically
@@ -81,7 +84,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
     {
         // There is a bug where the mouse can end up over a time axis data point which will generate a hopscotch bubble.
         // However that is not the bubble indicating median values. So moving mouse out of the way.
-        _test.mouseOver(Locator.xpath("//img[contains(@src, 'logo.png')]"));
+        _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
         super.openSelectorWindow(XPATHID, "x-axis");
     }
 
@@ -107,11 +110,14 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
 
     public void setScale(Scale scale)
     {
+        _test.waitForElementToBeVisible(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']/following-sibling::div"));
         _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']/following-sibling::div"));
         _test.waitForElement(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[contains(text(), '" + scale.getScaleLabel() + "')]"), CDSHelper.CDS_WAIT * 2);
         _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[contains(text(), '" + scale.getScaleLabel() + "')]"));
-        // Do the next click to close the drop down.
-        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']"));
+
+        // Move the mouse so the drop down can close.
+        Actions builder = new Actions(_test.getDriver());
+        builder.moveToElement(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']").findElement(_test.getWrappedDriver()), 50, -50).build().perform();
 
     }
 

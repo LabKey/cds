@@ -21,7 +21,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
@@ -30,6 +29,7 @@ import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.cds.CDSAsserts;
+import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
@@ -50,7 +50,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSVisualizationTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
@@ -650,7 +649,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         actualTickCount = Locator.css(cssColorLegend).findElements(getDriver()).size();
 
-        assertEquals("Unexpected number of Vaccinne or Placebos in the color axis.", 3, actualTickCount);
+        assertEquals("Unexpected number of Vaccine or Placebos in the color axis.", 3, actualTickCount);
 
     }
 
@@ -711,6 +710,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertElementPresent(CDSPlot.Locators.plotPoint, 3627);
 
         log("Verify x axis categories are selectable as filters");
+        mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
+        sleep(500);
         mouseOver(CDSPlot.Locators.plotTick.withText("Asian"));
         waitForElement(Locator.css("svg g.axis g.tick-text a rect.highlight[fill='" + MOUSEOVER_FILL + "']"));
         assertEquals("Incorrect number of points highlighted after mousing over x axis category", 316, cdsPlot.getPointCountByColor(MOUSEOVER_FILL));
@@ -751,7 +752,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertEquals("Point counts not as expected", 3627, cdsPlot.getPointCount());
 
         log("Verify multi-select of categories.");
-        cdsPlot.selectXAxes(false, "White", "Multiracial", "Native Hawaiian/Paci", "Native American/Alas. Other");
+        cdsPlot.selectXAxes("White", "Multiracial", "Native Hawaiian/Paci", "Native American/Alas. Other");
         sleep(3000); // Let the animation end.
 
         log("Ensure correct number of points are highlighted.");
@@ -891,7 +892,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         for (String[] src : X_AXIS_SOURCES)
         {
             assertTrue(isElementVisible(xaxis.window().append(" div.content-label").withText(src[0])));
-            assertTrue(isElementVisible(xaxis.window().append(" div.content-count").withText(SubjectCounts.get(src[0])))); // TODO Bad test. It will pass if there is any tag wtih this count. Need to revisit.
+            assertTrue(isElementVisible(xaxis.window().append(" div.content-count").withText(SubjectCounts.get(src[0])))); // TODO Bad test. It will pass if there is any tag with this count. Need to revisit.
             log("Validating variables for " + src[0]);
             click(xaxis.window().append(" div.content-label").withText(src[0]));
             waitForElement(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
@@ -919,7 +920,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         for (String[] src : Y_AXIS_SOURCES)
         {
             assertTrue(isElementVisible(yaxis.window().append(" div.content-label").withText(src[0])));
-            assertTrue(isElementVisible(yaxis.window().append(" div.content-count").withText(SubjectCounts.get(src[0])))); // TODO Bad test. It will pass if there is any tag wtih this count. Need to revisit.
+            assertTrue(isElementVisible(yaxis.window().append(" div.content-count").withText(SubjectCounts.get(src[0])))); // TODO Bad test. It will pass if there is any tag with this count. Need to revisit.
             log("Validating variables for " + src[0]);
             click(yaxis.window().append(" div.content-label").withText(src[0]));
             waitForElement(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
@@ -947,7 +948,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         for (String[] src : COLOR_AXIS_SOURCES)
         {
             assertTrue(isElementVisible(coloraxis.window().append(" div.content-label").withText(src[0])));
-            assertTrue(isElementVisible(coloraxis.window().append(" div.content-count").withText(SubjectCounts.get(src[0])))); // TODO Bad test. It will pass if there is any tag wtih this count. Need to revisit.
+            assertTrue(isElementVisible(coloraxis.window().append(" div.content-count").withText(SubjectCounts.get(src[0])))); // TODO Bad test. It will pass if there is any tag with this count. Need to revisit.
             log("Validating variables for " + src[0]);
             click(coloraxis.window().append(" div.content-label").withText(src[0]));
             waitForElement(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
@@ -1002,7 +1003,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate Antigen panel does not show up on the color selector.");
         coloraxis.openSelectorWindow();
         coloraxis.pickSource(CDSHelper.BAMA);
-        assertElementNotPresent("Detail seletor present in color selector, it should not be there.", Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'advanced')]//fieldset//div[contains(@class, 'field-label')][text()='Antigen name:']"));
+        assertElementNotPresent("Detail selector present in color selector, it should not be there.", Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'advanced')]//fieldset//div[contains(@class, 'field-label')][text()='Antigen name:']"));
         coloraxis.cancelSelection();
 
     }
@@ -1653,7 +1654,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         coloraxis.confirmSelection();
 
         // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg " + CDSHelper.PlotPoints.GLYPH.getTag()))/4;
+        pointToClick = Locator.css("div:not(.thumbnail) > svg " + CDSHelper.PlotPoints.GLYPH.getTag()).findElements(getWrappedDriver()).size()/4;
         brushPlot("div:not(.thumbnail) > svg", pointToClick, CDSHelper.PlotPoints.GLYPH, 0, -50, true);
 
         // Clear the filter.

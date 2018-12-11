@@ -31,6 +31,7 @@ import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.io.IOException;
 import java.net.URL;
@@ -198,6 +199,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         final String NOT_ACCESSIBLE_ICON = "grayCheck.png";
         final String HAS_NO_DATA_ICON = "smallGreyX.png";
 
+        CDSHelper cdsHelper = new CDSHelper(this);
+
         String dataIcon = hasAccessToQ2 ? ACCESSIBLE_ICON : NOT_ACCESSIBLE_ICON;
 
         log("Verify detailed Data Availability for QED 2");
@@ -206,9 +209,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         assertElementPresent(element);
         scrollIntoView(element);
         mouseOver(element);
-        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
-        waitAndClick(element);
-        waitForText("Data Availability");
+        sleep(1000);
+        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Data Availability"); return null;});
         Assert.assertTrue("Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
 
         cds.viewLearnAboutPage("Studies");
@@ -216,11 +218,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         study = "RED 4";
         element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
-        scrollIntoView(element);
-        mouseOver(element);
-        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
-        waitAndClick(element);
-        waitForText("Data Availability");
+
+        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Data Availability"); return null;});
 
         Assert.assertTrue("Data Availability status for ICS is not as expected", isElementPresent(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
         Assert.assertTrue("Data Availability status for IFNg ELISpot is not as expected", isElementPresent(cds.getDataRowXPath("IFNg ELISpot").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
@@ -286,7 +285,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log("Verify users with no study permission can see study documents with public access only.");
         cds.viewLearnAboutPage("Studies");
-        validateStudyDocumentForR2(false);
+        validateStudyDocumentForR2("ADCC Data Summary", "cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf", false);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
@@ -302,7 +301,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log("Verify users with study permission can see all study documents.");
         cds.viewLearnAboutPage("Studies");
-        validateStudyDocumentForR2(true);
+        validateStudyDocumentForR2("ELISpot Results Summary", "cvd256_EV03 ELISpot data.pdf", true);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
@@ -310,7 +309,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         assertSignedInNotImpersonating();
     }
 
-    private void validateStudyDocumentForR2(boolean hasAccessToR2)
+    private void validateStudyDocumentForR2(String linkText, String documentName, boolean hasAccessToR2)
     {
         String study = "RED 2";
         setFormElement(Locator.xpath(XPATH_TEXTBOX), study);
@@ -324,9 +323,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         WebElement documentLink;
 
         log("Verify public Reports");
-        documentLink = CDSHelper.Locators.studyReportLink("ADCC Data Summary").findElementOrNull(getDriver());
+        documentLink = CDSHelper.Locators.studyReportLink(linkText).findElementOrNull(getDriver());
         Assert.assertTrue("Was not able to find link to the public report document for study '" + study + "'.", documentLink != null);
-        String documentName = "cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf";
         cds.validatePDFLink(documentLink, documentName);
 
         log("Verify restricted Reports");
@@ -392,6 +390,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     private void verifyRestrictedImportTable(boolean isAdmin)
     {
         final String schemaName = "CDS";
+        CDSHelper cdsHelper = new CDSHelper(this);
+
         for (String queryName : CDSHelper.IMPORT_TABLES_WITH_ADMIN_ACCESS)
         {
             goToProjectHome();
@@ -401,8 +401,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
             if (isAdmin)
             {
-                waitAndClick(loc);
-                waitForElementToDisappear(Locator.xpath("//tbody[starts-with(@id, 'treeview')]/tr[not(starts-with(@id, 'treeview'))]"));
+                cdsHelper.clickHelper(loc.findElement(getDriver()), voidFUnction -> {waitForElementToDisappear(Locator.xpath("//tbody[starts-with(@id, 'treeview')]/tr[not(starts-with(@id, 'treeview'))]")); return null;});
                 waitForElement(Locator.xpath("//div[contains(./@class,'lk-qd-name')]/h2/a[contains(text(), '" + schemaName + "." + queryName + "')]"), 30000);
             }
             else

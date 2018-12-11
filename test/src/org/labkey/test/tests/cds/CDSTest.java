@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 90)
+@BaseWebDriverTest.ClassTimeout(minutes = 120)
 public class CDSTest extends CDSReadOnlyTest
 {
 
@@ -136,6 +136,13 @@ public class CDSTest extends CDSReadOnlyTest
         });
 
         log("Verify tile link");
+
+        if(isElementVisible(Locator.linkContainingText("Show tips for getting started")))
+        {
+            click(Locator.linkContainingText("Show tips for getting started"));
+            waitForElement(Locator.xpath("//div[contains(@class, 'home_text')]"));
+        }
+
         mouseOver(Locator.xpath("//div[contains(@class, 'home_text')]"));
         sleep(500);
         infoPane.waitForSpinners();
@@ -155,9 +162,9 @@ public class CDSTest extends CDSReadOnlyTest
         infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_video')]"));
         waitForElement(Locator.xpath("id('started-video-frame')"));
-        sleep(500);
         infoPane.waitForSpinners();
-        clickAt(Locator.css("div.x-mask"), 10, 10, 0);
+        waitForElement(Locator.tagWithId("div", "started-video-frame"));
+        clickAt(Locator.xpath(CDSHelper.LOGO_IMG_XPATH), 10, 10, 0);
         //
         // Validate News feed
         //
@@ -210,19 +217,19 @@ public class CDSTest extends CDSReadOnlyTest
         assertElementPresent(clippedLabel);
         cds.ensureNoFilter();
 
-        waitAndClick(clippedLabel);
-        waitForText("Your filters have been");
+        new CDSHelper(this).clickHelper(clippedLabel.findElement(getWrappedDriver()), voidFunc -> {waitForText("Your filters have been"); return null;});
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
         _asserts.assertFilterStatusCounts(139, 12, 1, 1, 42); // TODO Test data dependent.
 
         // remove just the plot filter
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        int plotFilterCount = Locator.css("div.groupicon img").findElements(getWrappedDriver()).size();
         cds.clearFilter(0);
         cds.saveOverGroup(HOME_PAGE_GROUP);
         waitForText(saveLabel);
         _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155); // TODO Test data dependent.
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForElementToDisappear(Locator.css("div.groupicon img"));
+        waitForElements(Locator.css("div.groupicon img"), plotFilterCount - 1);
     }
 
     @Test

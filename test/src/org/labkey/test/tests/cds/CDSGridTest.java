@@ -637,8 +637,6 @@ public class CDSGridTest extends CDSReadOnlyTest
         log("Now add a new column to the mix.");
         gridColumnSelector.pickSource(CDSHelper.ICS);
         click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-grid-cell-inner')][text()='" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "']"));
-        // TODO Why doesn't this selector work?
-//        gridColumnSelector.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, false);
 
         log("Validate that Current columns are as expected and enabled or not as appropriate.");
         columns.put(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, true);
