@@ -855,10 +855,10 @@ public class CDSMAbTest extends CDSGroupBaseTest
         log("Verify mAb and subject groups listing");
         cds.goToAppHome();
         waitForElement(CDSHelper.Locators.getPrivateGroupLoc(subjectPrivateGroup));
+        waitForElement(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup));
         Assert.assertTrue(mabPrivateGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getPrivateGroupLoc(mabPrivateGroup)));
         Assert.assertTrue(subjectPublicGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getSharedGroupLoc(subjectPublicGroup)));
-        Assert.assertFalse(mabPublicGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getPrivateGroupLoc(mabPublicGroup)));
-        Assert.assertTrue(mabPublicGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup)));
+        Assert.assertFalse(mabPrivateGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getSharedGroupLoc(mabPrivateGroup)));
 
         log("Apply a saved mab group");
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
@@ -879,11 +879,12 @@ public class CDSMAbTest extends CDSGroupBaseTest
         click(mabGridLink);
 
         log("Verify mab grid filters after applying mAb group");
+        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         grid = new MAbDataGrid(getGridEl(), this, this);
         Assert.assertTrue(MAB_COL + " should have been filtered", grid.isColumnFiltered(MAB_COL));
         Assert.assertFalse(STUDIES_COL + " should not have been filtered", grid.isColumnFiltered(STUDIES_COL));
 
-        // replace a mab group
+        log("Replace a mab group");
         grid.clearAllFilters();
         sleep(5000);
         grid.setFacet(SPECIES_COL,false,"llama");
@@ -891,14 +892,27 @@ public class CDSMAbTest extends CDSGroupBaseTest
         waitForText("replace an existing group");
         click(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
 
+        log("Verify mab filter can only replace existing mab groups");
         Locator.XPathLocator listGroup = Locator.tagWithClass("div", "save-label");
-        Locator privateList = listGroup.withText(mabPrivateGroup);
-        Locator publicList = listGroup.withText(mabPublicGroup);
-
+        waitForElement(listGroup.withText(mabPrivateGroup));
+        waitForElement(listGroup.withText(mabPublicGroup));
         Locator badList = listGroup.withText(subjectPublicGroup);
-
-        Assert.assertTrue(isElementPresent(privateList) && isElementPresent(publicList));
         Assert.assertFalse("Subject fitler shouldn't be listed for mab replace", isElementPresent(badList));
+        waitAndClick(listGroup.withText(mabPublicGroup));
+        click(CDSHelper.Locators.cdsButtonLocator("Save", "groupupdatesave"));
+
+        log("Verify replaced mab group");
+        grid.clearAllFilters();
+        cds.goToAppHome();
+        sleep(2000);
+        click(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup));
+        sleep(2000);
+        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
+        grid = new MAbDataGrid(getGridEl(), this, this);
+
+        Assert.assertTrue(SPECIES_COL + " should have been filtered", grid.isColumnFiltered(SPECIES_COL));
+        Assert.assertFalse(MAB_COL + " should not have been filtered", grid.isColumnFiltered(MAB_COL));
+        Assert.assertFalse(STUDIES_COL + " should not have been filtered", grid.isColumnFiltered(STUDIES_COL));
     }
 
 }
