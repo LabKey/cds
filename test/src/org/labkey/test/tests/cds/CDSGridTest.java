@@ -289,7 +289,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         ));
         exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining", "", "", "", "Subject (Race)"));
         exported.setFilterValues(Arrays.asList("Data summary level: Protein Panel", "Functional marker name: IL2/ifngamma", "", "", "Subjects related to any: Asian"));
-        exported.setStudyNetworks(Arrays.asList("ROGER", "ROGER", "ROGER", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED"));
+        exported.setStudyNetworks(Arrays.asList("ROGER", "ROGER", "ROGER", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN"));
         exported.setStudies(Arrays.asList("RED 4", "RED 5", "RED 6", "ZAP 102", "ZAP 105", "ZAP 106", "ZAP 134",
                 "ZAP 136", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118"));
         exported.setAssays(Arrays.asList("Intracellular Cytokine Staining", "Intracellular Cytokine Staining", "Intracellular Cytokine Staining"));
@@ -331,7 +331,7 @@ public class CDSGridTest extends CDSReadOnlyTest
                 "",
                 "",
                 "Subjects related to any: Asian"));
-        exported.setStudyNetworks(Arrays.asList("ZED", "ZED"));
+        exported.setStudyNetworks(Arrays.asList("HVTN", "HVTN"));
         exported.setStudies(Arrays.asList("ZAP 134", "ZAP 117"));
         exported.setAssays(Arrays.asList("HIV Neutralizing Antibody",
                 "HIV Neutralizing Antibody",

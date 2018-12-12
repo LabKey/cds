@@ -1153,7 +1153,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         //test filtering on grant affiliation and network
         learnGrid.setWithOptionFacet("PI", "Grant Affiliation", "Gallo: Systemic, Mucosal & Passive Immunity");
         assertTrue(2 == learnGrid.getRowCount());
-        learnGrid.setWithOptionFacet("Name & Description", "Network", "Q");
+        learnGrid.setWithOptionFacet("Name & Description", "Network", "CAVD");
         assertTrue(1 == learnGrid.getRowCount());
         refresh();
         sleep(CDSHelper.CDS_WAIT_LEARN);
