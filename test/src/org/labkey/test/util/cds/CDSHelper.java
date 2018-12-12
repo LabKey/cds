@@ -799,7 +799,12 @@ public class CDSHelper
 
     public boolean saveGroup(String name, @Nullable String description, boolean shared, boolean skipWaitForBar)
     {
-        _test.click(Locators.cdsButtonLocator("save", "filtersave"));
+        return saveGroup(name, description, shared, skipWaitForBar, false);
+    }
+
+    public boolean saveGroup(String name, @Nullable String description, boolean shared, boolean skipWaitForBar, boolean isMab)
+    {
+        _test.click(Locators.cdsButtonLocator("save", isMab ? "mabfiltersave" : "filtersave"));
 
         if (_test.isElementVisible(Locators.cdsButtonLocator("create a new group")))
         {
@@ -842,13 +847,19 @@ public class CDSHelper
         return true;
     }
 
-    public boolean updateSharedGroupDetails(String groupName, @Nullable String newName, @Nullable String newDescription,
-                                         @Nullable Boolean newSharedStatus)
+    public void goToGroup(String groupName)
     {
         goToAppHome();
         _test.click(Locator.xpath("//*[contains(@class, 'section-title')][contains(text(), 'Curated groups and plots')]" +
                 "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" + groupName + "')]"));
         _test.waitForText("Edit details");
+
+    }
+
+    public boolean updateSharedGroupDetails(String groupName, @Nullable String newName, @Nullable String newDescription,
+                                         @Nullable Boolean newSharedStatus)
+    {
+        goToGroup(groupName);
         _test.click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
         _test.waitForText("Shared group:");
 
@@ -858,7 +869,9 @@ public class CDSHelper
         }
         if (newDescription != null)
         {
-            _test.setFormElement(Locator.xpath("//*[contains(@id, 'editgroupdescription-inputEl')]"), newDescription);
+            Locator desLoc = Locator.xpath("//*[contains(@id, 'editgroupdescription-inputEl')]");
+            _test.setFormElement(desLoc, "");
+            _test.setFormElement(desLoc, newDescription);
         }
         if (newSharedStatus != null)
         {
@@ -872,11 +885,12 @@ public class CDSHelper
                 _test._ext4Helper.uncheckCheckbox(sharedCheckboxLoc);
             }
         }
+        _test.sleep(1000);
         _test.click(Locators.cdsButtonLocator("Save").withClass("groupeditsave"));
 
         if (newSharedStatus != null && !newSharedStatus)
         {
-            _test.waitForText("Failed to edit Group");
+            _test.waitForText("ERROR");
             _test.click(Locators.cdsButtonLocator("OK"));
             _test.click(Locators.cdsButtonLocator("Cancel").withClass("groupcanceledit"));
             goToAppHome();

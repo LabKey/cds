@@ -113,7 +113,7 @@ Ext.define('Connector.view.GroupSummary', {
                 },
                 fn: function(id) {
                     if (id === 'yes') {
-                        this.fireEvent('requestgroupdelete', this.group.get('id'));
+                        this.fireEvent('requestgroupdelete', this.group.get('id'), this.group.get('type') === 'mab');
                     }
                 },
                 scope: this
@@ -191,37 +191,51 @@ Ext.define('Connector.view.GroupSummaryBody', {
             items: []
         });
 
-        var plotFilter;
-        if (this.group && this.group.get('containsPlot') === true)
+        var isMab = this.group && this.group.get('type') === 'mab';
+        if (isMab)
         {
-            Ext.each(this.getGroupFilters(this.group), function (filter) {
-                if (filter.isPlot() && !filter.isGrid()) {
-                    plotFilter = filter;
-                    return false;
-                }
-            });
-        }
-        if (plotFilter)
-        {
-            rightColumn.add({
-                xtype: 'box',
-                html: '<div class="module"><h3>In the plot</h3></div>'
-            });
-            rightColumn.add(Connector.view.PlotPane.plotFilterContent(plotFilter));
             rightColumn.add({
                 xtype: 'button',
-                text: 'View in Plot',
-                itemId: 'groupplotview',
+                text: 'View in MAb grid',
+                itemId: 'groupmabview',
                 style: 'margin-top: 20px'
 
             })
         }
         else
         {
-            rightColumn.add({
-                xtype: 'box',
-                html: '<div class="module"><h3>No plot saved for this group.</h3></div>'
-            });
+            var plotFilter;
+            if (this.group && this.group.get('containsPlot') === true)
+            {
+                Ext.each(this.getGroupFilters(this.group), function (filter) {
+                    if (filter.isPlot() && !filter.isGrid()) {
+                        plotFilter = filter;
+                        return false;
+                    }
+                });
+            }
+            if (plotFilter)
+            {
+                rightColumn.add({
+                    xtype: 'box',
+                    html: '<div class="module"><h3>In the plot</h3></div>'
+                });
+                rightColumn.add(Connector.view.PlotPane.plotFilterContent(plotFilter));
+                rightColumn.add({
+                    xtype: 'button',
+                    text: 'View in Plot',
+                    itemId: 'groupplotview',
+                    style: 'margin-top: 20px'
+
+                })
+            }
+            else
+            {
+                rightColumn.add({
+                    xtype: 'box',
+                    html: '<div class="module"><h3>No plot saved for this group.</h3></div>'
+                });
+            }
         }
 
         this.items.push(rightColumn);
@@ -280,10 +294,12 @@ Ext.define('Connector.view.GroupSummaryBody', {
     {
         if (!this._undo)
         {
+            var isMab = this.group && this.group.get('type') === 'mab';
+            var mabMsg = isMab ? 'MAb grid ' : '';
             this._undo = Ext.create('Ext.Component', {
                 margin: '0 0 20 0',
                 renderTpl: new Ext.XTemplate(
-                    'Group loaded. Your filters have been replaced. <a href="#" onclick="return false;" class="undogroup nav">Undo</a>'
+                    'Group loaded. Your ' + mabMsg + 'filters have been replaced. <a href="#" onclick="return false;" class="undogroup nav">Undo</a>'
                 ),
                 renderData: {},
                 renderSelectors: {
@@ -295,7 +311,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
                         {
                             cmp.undoLink.on('click', function()
                             {
-                                Connector.getState().requestFilterUndo();
+                                Connector.getState().requestFilterUndo(isMab);
                                 this.getUndoMsg().hide();
                                 this.getApplyMsg().show();
                                 return false;
@@ -315,11 +331,13 @@ Ext.define('Connector.view.GroupSummaryBody', {
     {
         if (!this._apply)
         {
+            var isMab = this.group && this.group.get('type') === 'mab';
+            var mabMsg = isMab ? 'MAb grid ' : '';
             this._apply = Ext.create('Ext.Component', {
                 hidden: true,
                 margin: '0 0 20 0',
                 renderTpl: new Ext.XTemplate(
-                    'This group has filters which can be applied as active filters. <a href="#" onclick="return false;" class="applygroup nav">Apply</a>'
+                    'This group has filters which can be applied as active ' + mabMsg + 'filters. <a href="#" onclick="return false;" class="applygroup nav">Apply</a>'
                 ),
                 renderData: {},
                 renderSelectors: {
@@ -376,6 +394,12 @@ Ext.define('Connector.view.GroupSummaryBody', {
             if (filters.length > 0) {
                 if (this.group.data.shared) // no access check needed for private groups
                     this.checkUserAccess();
+
+                if (this.group && this.group.get('type') === 'mab')
+                {
+                    Connector.getState().setMabFilters(filters);
+                    return;
+                }
                 Connector.getState().onMDXReady(function(mdx) {
                     var invalidMembers = [];
                     var validatedFilters = filters.filter(function(f) {

@@ -370,6 +370,7 @@ Ext.define('Connector.model.Filter', {
                 method: 'POST',
                 headers:{'X-LABKEY-CSRF': LABKEY.CSRF},
                 success: config.success,
+                scope: config.scope,
                 failure: config.failure || Connector.model.Filter.getErrorCallback(),
                 jsonData: {
                     label: config.group.label,

@@ -28,6 +28,7 @@ import org.labkey.api.query.SimpleUserSchema;
 import org.labkey.api.security.User;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.visualization.VisualizationProvider;
+import org.labkey.cds.query.MabGroupTable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,7 +76,22 @@ public class CDSUserSchema extends SimpleUserSchema
         if (SUBJECT_IMPORT_TABLES.contains(name.toLowerCase()) && !getContainer().hasPermission(getUser(), AdminPermission.class))
             return null;
 
+        if (name.equalsIgnoreCase(MabGroupTable.NAME))
+            return super.createWrappedTable(name, sourceTable);
+
         return new CDSSimpleTable(this, sourceTable).init();
+    }
+
+    @Override
+    @Nullable
+    public TableInfo createTable(String name)
+    {
+        if (name.equalsIgnoreCase(MabGroupTable.NAME))
+        {
+            return new MabGroupTable(getDbSchema().getTable(MabGroupTable.NAME), this);
+        }
+
+        return super.createTable(name);
     }
 
     static public void register(final Module module)

@@ -13,6 +13,8 @@ Ext.define('Connector.model.Group', {
         {name: 'description'},
         {name: 'filters'},
         {name: 'containsPlot', type: 'boolean', defaultValue: false, convert : function(value, partial) {
+            if (partial.raw.type === 'mab')
+                return value;
             var raw = partial.raw.filters;
             var containsPlot = false;
             if (Ext.isString(raw)) {
@@ -29,10 +31,12 @@ Ext.define('Connector.model.Group', {
         }},
         {name: 'categoryId'},
         {name: 'shared', type: 'boolean', defaultValue: false, convert : function(value, partial) {
+            if (partial.raw.type === 'mab')
+                return value;
             return partial.raw.category.shared;
         }},
         {name: 'type'},
-        {name: 'participantIds'}, // array
+        {name: 'participantIds', convert : Connector.model.Filter.asArray},
         {name: 'modified', type: 'DATE'}
     ],
 
@@ -43,7 +47,7 @@ Ext.define('Connector.model.Group', {
                 var storeConfig = {
                     pageSize : 100,
                     model    : 'Connector.model.Group',
-                    autoLoad : true,
+                    autoLoad : false,
                     sorters  : [{
                         sorterFn: function (group1, group2) {
                             var g1shared = group1.get('shared');
@@ -75,16 +79,42 @@ Ext.define('Connector.model.Group', {
                             }
                         }
                     }],
-
-                    proxy    : {
-                        type   : 'ajax',
-                        url: LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api', null, {
-                            includeParticipantIds: true
-                        }),
-                        reader : {
-                            type : 'json',
-                            root : 'groups'
-                        }
+                    refreshData: function(cb, cbScope) {
+                        LABKEY.Query.selectRows({
+                            schemaName: 'cds',
+                            queryName: 'mabgroup',
+                            success: function(mabGroupData) {
+                                var mabGroups = [];
+                                Ext.each(mabGroupData.rows, function(row) {
+                                    mabGroups.push({
+                                        id : row.RowId,
+                                        label: row.Label,
+                                        description: row.Description,
+                                        filters: row.Filters,
+                                        modified: row.Modified,
+                                        shared: row.Shared,
+                                        type: row.Type,
+                                        containsPlot: false
+                                    })
+                                }, this);
+                                Ext.Ajax.request({
+                                    url: LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api', null, {
+                                        includeParticipantIds: true,
+                                        type : 'participantGroup'
+                                    }),
+                                    success: function(response)
+                                    {
+                                        var subjectGroups = Ext.JSON.decode(response.responseText).groups;
+                                        var groups = mabGroups.concat(subjectGroups);
+                                        this.loadRawData(groups);
+                                        if (cb)
+                                            cb.call(cbScope);
+                                    },
+                                    scope: this
+                                });
+                            },
+                            scope: this
+                        });
                     },
                     listeners : {
                         load : function(s, recs) {
@@ -102,12 +132,8 @@ Ext.define('Connector.model.Group', {
                     }
                 };
 
-                var groupConfig = Ext.clone(storeConfig);
-                Ext.apply(groupConfig.proxy, {
-                    extraParams : { type : 'participantGroup'}
-                });
-
-                Connector.model.Group._groupStore = Ext.create('Ext.data.Store', groupConfig);
+                Connector.model.Group._groupStore = Ext.create('Ext.data.Store', storeConfig);
+                Connector.model.Group._groupStore.refreshData();
             }
 
             return Connector.model.Group._groupStore;
