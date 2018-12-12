@@ -490,7 +490,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_NETWORK);
         xaxis.confirmSelection();
-        expectedXYValues = "ROGER\nHVTN\n0\n2\n4\n6\n8\n10\n12\n14";
+        expectedXYValues = "HVTN\nROGER\n0\n2\n4\n6\n8\n10\n12\n14";
 
         log("Validating Network");
         cds.assertPlotTickText(expectedXYValues);
