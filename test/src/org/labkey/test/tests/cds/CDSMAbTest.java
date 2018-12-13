@@ -107,12 +107,17 @@ public class CDSMAbTest extends CDSGroupBaseTest
         filteredColumns.add(SPECIES_COL);
         verifyGridCountAndFilteredColumns(grid, 168, filteredColumns);
 
+        grid.setFacet(ANTIGEN_BINDING_COL,true,"[blank]", "gp41 MPER");
+        filteredColumns.add(ANTIGEN_BINDING_COL);
+        verifyGridCountAndFilteredColumns(grid, 154, filteredColumns);
+
+        int colIndex = 2;
         grid.setFacet(ISOTYPE_COL,true,"[blank]", "IgG3?");
-        filteredColumns.add(ISOTYPE_COL);
+        filteredColumns.add(colIndex++, ISOTYPE_COL);
         verifyGridCountAndFilteredColumns(grid, 153, filteredColumns);
 
         grid.setFacet(HXB2_COL,true,"[blank]");
-        filteredColumns.add(HXB2_COL);
+        filteredColumns.add(colIndex++, HXB2_COL);
         verifyGridCountAndFilteredColumns(grid, 152, filteredColumns);
 
         log("Verify IC50 filter updates geometric mean values");
@@ -143,7 +148,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         sleep(2000);
         virusPanel.checkVirus(testValueCheck, true);
         grid.applyFilter();
-        filteredColumns.addAll(4, Arrays.asList(VIRUSES_COL, CLADES_COL, TIERS_COL));
+        filteredColumns.addAll(++colIndex, Arrays.asList(VIRUSES_COL, CLADES_COL, TIERS_COL));
         log("Verify virus filter panel reflects active filter counts");
         verifyGridCountAndFilteredColumns(grid, 5, filteredColumns);
 
@@ -287,8 +292,8 @@ public class CDSMAbTest extends CDSGroupBaseTest
                 new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 179),
                 new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 1691*8)));
         updateExpectedMAbExport(expected);
-        expected.setStudyNetworks(Arrays.asList("Q", "ROGER", "ROGER", "YOYO", "ZED", "ZED", "ZED", "ZED", "ZED"));
-        expected.setStudies(Arrays.asList("QED 2", "RED 4", "RED 5", "YOYO 55", "ZAP 117", "ZAP 118", "ZAP 119", "ZAP 128", "ZAP 133"));
+        expected.setStudyNetworks(Arrays.asList("CAVD", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "ROGER", "ROGER", "YOYO"));
+        expected.setStudies(Arrays.asList("QED 2", "ZAP 117", "ZAP 118", "ZAP 119", "ZAP 128", "ZAP 133", "RED 4", "RED 5", "YOYO 55"));
         expected.setAssayProvenances(Arrays.asList("LabKey dataset", "VISC analysis dataset", "VISC analysis dataset", "VISC analysis dataset"));
 
 //        grid.verifyCDSExcel(expected, false); // skip verify excel as it exceeds memory limit
@@ -300,8 +305,8 @@ public class CDSMAbTest extends CDSGroupBaseTest
                 new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 3),
                 new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 56*8)));
         updateExpectedMAbExport(expected);
-        expected.setStudyNetworks(Arrays.asList("ROGER", "ZED"));
-        expected.setStudies(Arrays.asList("RED 5", "ZAP 117"));
+        expected.setStudyNetworks(Arrays.asList("HVTN", "ROGER"));
+        expected.setStudies(Arrays.asList("ZAP 117", "RED 5"));
         expected.setAssayProvenances(Arrays.asList("VISC analysis dataset", "LabKey dataset"));
         expected.setFilterTitles(Arrays.asList("Selected MAb/Mixture(s)"));
         expected.setFilterValues(Arrays.asList("Mab Mix Name Std: 2F5, AB-000402-1"));
@@ -327,8 +332,8 @@ public class CDSMAbTest extends CDSGroupBaseTest
                 new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 5),
                 new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 77*8)));
         updateExpectedMAbExport(expected);
-        expected.setStudyNetworks(Arrays.asList("ROGER", "ZED"));
-        expected.setStudies(Arrays.asList("RED 4", "ZAP 117"));
+        expected.setStudyNetworks(Arrays.asList("HVTN", "ROGER"));
+        expected.setStudies(Arrays.asList("ZAP 117", "RED 4"));
         expected.setAssayProvenances(Arrays.asList("VISC analysis dataset", "LabKey dataset"));
         expected.setFilterTitles(Arrays.asList("Mab characteristics", "", "", "", "Neutralization Antibody - Monoclonal Antibodies"));
         expected.setFilterValues(Arrays.asList("Mab Donor Species: [blank];human",
@@ -350,7 +355,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
                 new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 2),
                 new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 38*8)));
         updateExpectedMAbExport(expected);
-        expected.setStudyNetworks(Arrays.asList("ZED"));
+        expected.setStudyNetworks(Arrays.asList("HVTN"));
         expected.setStudies(Arrays.asList("ZAP 117"));
         expected.setAssayProvenances(Arrays.asList("LabKey dataset"));
         expected.setFilterTitles(Arrays.asList("Mab characteristics", "", "", "", "Neutralization Antibody - Monoclonal Antibodies",

@@ -16,6 +16,7 @@ Ext.define('Connector.model.MabSummary', {
         {name: 'mab_donor_species', sortType: 'asUCString'},
         {name: 'mab_isotype', sortType: 'asUCString'},
         {name: 'mab_hxb2_location', sortType: 'asUCString'},
+        {name: 'mab_ab_binding_type', sortType: 'asUCString'},
         {name: 'virusCount', sortType: 'asInt'},
         {name: 'cladeCount', sortType: 'asInt'},
         {name: 'neutralization_tierCount', sortType: 'asInt'},

@@ -20,7 +20,8 @@ Ext.define('Connector.app.view.MAb', {
             text: 'MAb/Mixture',
             xtype: 'templatecolumn',
             minWidth: 200,
-            flex: 2 / 7,
+            maxWidth: 300,
+            locked: true,
             locked: true,
             resizable: false,
             dataIndex: 'mab_mix_name_std',
@@ -38,7 +39,7 @@ Ext.define('Connector.app.view.MAb', {
             text: 'Data Added',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 15/100,
+            flex: 1/6,
             resizable: false,
             dataIndex: 'studies_with_data_count',
             filterConfigSet: [{
@@ -71,7 +72,7 @@ Ext.define('Connector.app.view.MAb', {
             text: 'Type',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 15/100,
+            flex: 1/6,
             resizable: false,
             dataIndex: 'mab_mix_type',
             filterConfigSet: [{
@@ -88,13 +89,13 @@ Ext.define('Connector.app.view.MAb', {
             text: 'Donor Species',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 15/100,
+            flex: 1/6,
             resizable: false,
             dataIndex: 'donors_str',
             filterConfigSet: [{
                 filterField: 'donors',
                 valueType: 'string',
-                title: 'Type'
+                title: 'Donor Species'
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',
@@ -105,13 +106,13 @@ Ext.define('Connector.app.view.MAb', {
             text: 'Isotype',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 15/100,
+            flex: 1/6,
             resizable: false,
             dataIndex: 'isotypes_str',
             filterConfigSet: [{
                 filterField: 'isotypes',
                 valueType: 'string',
-                title: 'Type'
+                title: 'Isotype'
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',
@@ -122,17 +123,34 @@ Ext.define('Connector.app.view.MAb', {
             text: 'HXB2 Location',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 15/100,
+            flex: 1/6,
             resizable: false,
             dataIndex: 'hxb2Locs_str',
             filterConfigSet: [{
                 filterField: 'hxb2Locs',
                 valueType: 'string',
-                title: 'Type'
+                title: 'HXB2 Location'
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',
                     '<div class="detail-black-text">{hxb2Locs_str}</div>',
+                    '</div>'
+            )
+        },{
+            text: 'Antibody binding type',
+            xtype: 'templatecolumn',
+            minWidth: 150,
+            flex: 1/6,
+            resizable: false,
+            dataIndex: 'abBindings_str',
+            filterConfigSet: [{
+                filterField: 'abBindings',
+                valueType: 'string',
+                title: 'Antibody binding type'
+            }],
+            tpl: new Ext.XTemplate(
+                    '<div class="detail-text">',
+                    '<div class="detail-black-text">{abBindings_str}</div>',
                     '</div>'
             )
         }
@@ -141,7 +159,7 @@ Ext.define('Connector.app.view.MAb', {
     statics: {
         searchFields: [
             'mab_mix_id', 'mab_mix_name_std', 'mab_mix_label', 'mab_mix_name_other', 'mab_mix_type', 'other_labels',
-            'donors_str', 'isotypes_str', 'hxb2Locs_str', 'mabnames_str'
+            'donors_str', 'isotypes_str', 'hxb2Locs_str', 'abBindings_str', 'mabnames_str'
         ]
     },
 
