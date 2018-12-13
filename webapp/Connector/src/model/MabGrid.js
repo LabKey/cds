@@ -83,7 +83,7 @@ Ext.define('Connector.model.MabGrid', {
         Ext.iterate(mabMap, function(key, val) {
             val.mab_donor_species.sort();
             val.mab_hxb2_location.sort();
-            val.mab_ab_binding_type.sort();//
+            val.mab_ab_binding_type.sort();
             val.mab_isotype.sort();
             mabMapProcessed[key] = {
                 mab_donor_species: val.mab_donor_species.join(", "),
