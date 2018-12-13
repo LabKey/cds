@@ -127,6 +127,8 @@ public class CDSManager
                     "VisitTagMap",
                     "StudyGroupVisitMap",
                     "StudyGroup",
+                    "studymab",
+                    "mabgroup",
                     "SubjectProductMap",
                     "StudyPartGroupArmProduct",
                     "StudyProductMap",

@@ -281,6 +281,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         _webDriverWrapper.click(checkbox);
         if (_webDriverWrapper.isElementPresent(checkedLoc))
             _webDriverWrapper.click(checkbox);
+        _webDriverWrapper.sleep(2000);
     }
 
     public void selectMAbs(String ...mabNames)
