@@ -66,7 +66,7 @@ public class CDSImportCopyConfig extends CopyConfig
     public int copyFrom(Container c, User u, DataIteratorContext context, DataIteratorBuilder from)
             throws IOException, BatchValidationException
     {
-        assert this.getTargetSchema().getParts().size()==1;
+        assert this.getTargetSchema().size()==1;
         context.setInsertOption(option);
         DbSchema targetSchema = DbSchema.get(this.getTargetSchema().getName());
         TableInfo targetTableInfo = targetSchema.getTable(getTargetQuery());
