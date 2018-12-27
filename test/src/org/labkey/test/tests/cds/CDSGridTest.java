@@ -21,6 +21,7 @@ import org.junit.experimental.categories.Category;
 import org.labkey.api.util.Pair;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.CDSExport;
+import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
@@ -42,6 +43,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.util.cds.CDSHelper.GRID_COL_SUBJECT_ID;
 import static org.labkey.test.util.cds.CDSHelper.GRID_TITLE_NAB;
 
 @Category({})
@@ -206,7 +208,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         //
         log("Verify grid paging with filtered dataset");
         grid.goToDataTab("NAb");
-        grid.sort(CDSHelper.GRID_COL_SUBJECT_ID);
+        grid.sort(GRID_COL_SUBJECT_ID);
         grid.clickNextBtn();
         grid.assertCurrentPage(2);
 
@@ -370,8 +372,44 @@ public class CDSGridTest extends CDSReadOnlyTest
     @Test
     public void verifyGridWithPlotAndFilters()
     {
-        log("Verify Grid with filters.");
+        log("Verify Grid with gridbase field filters.");
+        cds.openStatusInfoPane("Studies");
+        String studyMember = "RED 5";
+        cds.selectInfoPaneItem(studyMember, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(studyMember));
+
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        sleep(5000);
         DataGrid grid = new DataGrid(this);
+        assertTrue(GRID_COL_SUBJECT_ID + " column facet is not as expected", grid.isHasData(GRID_COL_SUBJECT_ID, "r5-120"));
+        assertTrue(GRID_COL_SUBJECT_ID + " column facet is not as expected", grid.isNoData(GRID_COL_SUBJECT_ID, "q1-001"));
+
+        log("Create a plot with Study on X axis.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        YAxisVariableSelector yAxis = new YAxisVariableSelector(this);
+        XAxisVariableSelector xAxis = new XAxisVariableSelector(this);
+
+        yAxis.openSelectorWindow();
+        yAxis.pickSource(CDSHelper.ICS);
+        yAxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yAxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xAxis.openSelectorWindow();
+        xAxis.pickSource(CDSHelper.TIME_POINTS);
+        xAxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        xAxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        CDSPlot cdsPlot = new CDSPlot(this);
+
+        assertTrue("Plot is not rendered as expected.", cdsPlot.hasStudyAxis());
+
+        cds.ensureNoFilter();
+        cds.ensureNoSelection();
+
+        log("Verify Grid with filters.");
         setUpGridStep1();
 
         log("Validate expected columns are present.");
