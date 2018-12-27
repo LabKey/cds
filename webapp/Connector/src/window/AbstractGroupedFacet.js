@@ -21,6 +21,165 @@ Ext.define('Connector.window.AbstractGroupedFacet', {
     maxSelection: 100
 });
 
+Ext.define('Connector.grid.GridGroupedFacet', {
+
+    extend: 'LABKEY.dataregion.filter.Faceted',
+
+    // query for all values, but truncate to short list for display AFTER grouping so that 'has data in current selection' is not empty
+    displaySize: 250, 
+    
+    // Override
+    getLookupStore : function() {
+
+        var model = this.getModel();
+        var storeId = [model.get('schemaName'), model.get('queryName'), model.get('fieldKey')].join('||');
+
+        // cache
+        if (this.useStoreCache === true) {
+            var store = Ext.StoreMgr.get(storeId);
+            if (store) {
+                this.storeReady = true;
+                return store;
+            }
+        }
+
+        var storeConfig = {
+            fields: [
+                'value', 'strValue', 'displayValue',
+                {name: 'hasData', type: 'boolean', defaultValue: true}
+            ],
+            storeId: storeId
+        };
+
+        if (this.useGrouping === true) {
+            storeConfig['groupField'] = 'hasData';
+        }
+
+        store = Ext.create('Ext.data.ArrayStore', storeConfig);
+
+        var baseConfig = {
+            method: 'POST',
+            schemaName: model.get('schemaName'),
+            queryName: model.get('queryName'),
+            dataRegionName: model.get('dataRegionName'),
+            viewName: model.get('viewName'),
+            column: model.get('fieldKey'),
+            container: model.get('container'),
+            parameters: model.get('parameters'),
+            maxRows: this.maxRows + 1
+        };
+
+        var onSuccess = function() {
+            if (Ext.isDefined(this.distinctValues) && Ext.isDefined(this.groupedValues)) {
+                var d = this.distinctValues;
+                var g = this.groupedValues;
+                var gmap = {};
+
+                if(Ext.isDefined(this.onOverValueLimit) && Ext.isFunction(this.onOverValueLimit) &&
+                        ((d.values.length > this.maxRows) || (g.values.length > this.maxRows))) {
+                    this.onOverValueLimit(this, this.scope);
+                    return;
+                }
+
+                if (g && g.values) {
+                    Ext.each(g.values, function(_g) {
+                        if (_g === null) {
+                            gmap[_g] = true;
+                        }
+                        else {
+                            gmap[_g.toString()] = true;
+                        }
+                    });
+                }
+
+                if (d && d.values) {
+                    var recs = [], hasDataRecs = [], v, i=0, hasBlank = false, hasBlankGrp = false, isString, formattedValue;
+                    for (; i < d.values.length; i++) {
+                        v = d.values[i];
+                        formattedValue = this.formatValue(v);
+                        isString = Ext.isString(formattedValue);
+
+                        if (formattedValue == null || (isString && formattedValue.length == 0) || (!isString && isNaN(formattedValue))) {
+                            hasBlank = true;
+                            hasBlankGrp = (gmap[null] === true);
+                        }
+                        else if (Ext.isDefined(v)) {
+                            var datas = [v, v.toString(), v.toString(), true];
+                            if (this.useGrouping === true) {
+                                if (gmap[v.toString()] !== true) {
+                                    datas[3] = false;
+                                }
+                            }
+                            recs.push(datas);
+                            if (datas[3])
+                                hasDataRecs.push(datas);
+                        }
+                    }
+
+                    if (hasDataRecs.length > this.displaySize) {
+                        recs = hasDataRecs;
+                    }
+                    else if (recs.length > this.displaySize) {
+                        recs.sort(function(a, b) {
+                            if (a[3] === b[3])
+                                return a[1].localeCompare(b[1]);
+                            else if (a[3])
+                                return -1;
+                            else
+                                return 1;
+                        });
+                    }
+
+
+                    if (hasBlank)
+                        recs.unshift(['', '', this.emptyDisplayValue, hasBlankGrp]);
+
+                    if (recs.length > this.displaySize)
+                        recs = Ext.Array.slice(recs, 0, this.displaySize);
+
+                    store.loadData(recs);
+                    store.group(store.groupField, 'DESC');
+                    store.isLoading = false;
+                    this.storeReady = true;
+                    this.onViewReady();
+                    this.distinctValues = undefined; this.groupedValues = undefined;
+                }
+            }
+        };
+
+        // Select Disinct Configuration
+        var config = Ext.apply({
+            success: function(d) {
+                this.distinctValues = d;
+                onSuccess.call(this);
+            },
+            scope: this
+        }, baseConfig);
+
+        if (this.useGrouping === true) {
+            var grpConfig = Ext.apply(Ext.clone(baseConfig), {
+                filterArray: this.groupFilters,
+                maxRows: this.maxGroup,
+                success: function(d) {
+                    this.groupedValues = d;
+                    onSuccess.call(this);
+                },
+                scope: this
+            });
+            LABKEY.Query.selectDistinctRows(grpConfig);
+        }
+        else {
+            this.groupedValues = true;
+        }
+
+        LABKEY.Query.selectDistinctRows(config);
+
+        return store;
+    }
+
+});
+
+
 Ext.define('Connector.grid.AbstractGroupedFacet', {
 
     extend: 'Ext.panel.Panel',

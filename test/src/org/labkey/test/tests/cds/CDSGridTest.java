@@ -715,7 +715,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         selectorTextClean = selectorTextClean.replaceAll("\\s+", "");
 
         expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen name\n  Antigens aggregated\n  Cell type\n  Data summary level\n  Functional marker name\n" +
-                "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer ID50\nStudy and treatment variables\n  Study Name\n" +
+                "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer ID50\nStudy and treatment variables\n  Study Name\n  Treatment Summary\n" +
                 "Subject characteristics\n  Race\n  Subject Id\nTime points\n  Study days";
         expectedTextClean = expectedText.toLowerCase().replaceAll("\\n", "");
         expectedTextClean = expectedTextClean.replaceAll("\\s+", "");
@@ -726,7 +726,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         selectorText = Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]").findElement(getDriver()).getText();
         selectorText = selectorText.trim();
 
-        assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.equals("Study and treatment variables\n  Study Name\nSubject characteristics\n" +
+        assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.equals("Study and treatment variables\n  Study Name\n  Treatment Summary\nSubject characteristics\n" +
                 "  Subject Id\nTime points\n  Study days"));
 
         gridColumnSelector.confirmSelection();
@@ -743,7 +743,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         columns.clear();
         columns.put(CDSHelper.DEMO_STUDY_NAME, false);
-        columns.put(CDSHelper.DEMO_TREAT_SUMM, true);
+        columns.put(CDSHelper.DEMO_TREAT_SUMM, false);
         columns.put(CDSHelper.DEMO_DATE_SUBJ_ENR, true);
         columns.put(CDSHelper.DEMO_DATE_FUP_COMP, true);
         columns.put(CDSHelper.DEMO_DATE_PUB, true);
