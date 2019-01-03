@@ -57,7 +57,7 @@ Ext.define('Connector.view.Selection', {
                         '<tpl if="members.length &gt; 0">',
                             '<div class="selitem">{[this.renderType(values)]}</div>',
                             '<div class="sel-list-item memberloc">{members:this.renderMembers}</div>',
-                            '<tpl if="members.length &gt; 1">',
+                            '<tpl if="members.length &gt; 1 && this.showOperator(values) === true">',
                                 '<select>',
                                     '<option value="' + Connector.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>Subjects related to all (AND)</option>',
                                     '<option value="' + Connector.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>Subjects related to any (OR)</option>',
@@ -110,6 +110,16 @@ Ext.define('Connector.view.Selection', {
                     var markup = op.indexOf('OR') > -1 ? 'selected="selected"' : '';
                     if (op.indexOf('REQ_AND') > -1) { markup += ' disabled'; }
                     return markup;
+                },
+
+                showOperator: function(values) {
+                    var lvl = values.level;
+                    var showOperator = false;
+                    Connector.getState().onMDXReady(function(mdx) {
+                        var level = mdx.getLevel(lvl);
+                        showOperator = level && level.showOperator;
+                    });
+                    return showOperator;
                 },
 
                 renderType : function(values) {

@@ -67,8 +67,10 @@ Ext.define('Connector.window.Facet', {
         Connector.getQueryService().getData(newMeasures, function(metadata) {
                 this.remove(loader);
 
-                var faceted = Ext.create('LABKEY.dataregion.filter.Faceted', {
+                var faceted = Ext.create('Connector.grid.GridGroupedFacet', {
                     itemId: 'faceted',
+                    maxRows: -1,
+                    maxGroup: -1,
                     border: false,
                     useGrouping: true,
                     useStoreCache: false,

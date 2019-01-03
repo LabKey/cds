@@ -336,9 +336,11 @@ public class CDSFiltersTest extends CDSReadOnlyTest
 
         log("Verify operator filtering");
         cds.goToSummary();
-        cds.clickBy("Studies");
-        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[4]);
-        _asserts.assertSelectionStatusCounts(115, 2, 1, 3, 5);  // or
+        cds.clickBy("Products");
+        final String PRODUCT1 = "benztropine mesylate";
+        final String PRODUCT2 = "MENTHOL";
+        cds.selectBars(PRODUCT1, PRODUCT2);
+        _asserts.assertSelectionStatusCounts(6, 2, 1, 3, 3);  // or
         assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
         mouseOver(Locator.css("option").withText("Subjects related to any (OR)"));
 
@@ -357,13 +359,13 @@ public class CDSFiltersTest extends CDSReadOnlyTest
 
         assertEquals("Combo box selection changed unexpectedly", "INTERSECT", selector.getAttribute("value"));
         selectOptionByValue(selector, "UNION");
-        _asserts.assertFilterStatusCounts(115, 2, 1, 3, 5);  // or
-        waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
+        _asserts.assertFilterStatusCounts(6, 2, 1, 3, 3);  // or
+        waitForElement(Locator.css("span.barlabel").withText(PRODUCT1));
         cds.goToSummary();
         cds.clickBy("Assays");
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(PRODUCT1));
         assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
-        _asserts.assertFilterStatusCounts(115, 2, 1, 3, 5);  // or
+        _asserts.assertFilterStatusCounts(6, 2, 1, 3, 3);  // or
         cds.clearFilters();
         _asserts.assertDefaultFilterStatusCounts();
 
