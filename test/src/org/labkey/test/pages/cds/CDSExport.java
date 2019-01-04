@@ -115,9 +115,9 @@ public class CDSExport
     {
         for (Pair<String, Integer> pair : this.dataTabCounts)
         {
-            if (pair.first.equals(dataTabName))
+            if (pair.getLeft().equals(dataTabName))
             {
-                return pair.second;
+                return pair.getRight();
             }
         }
         return null;
