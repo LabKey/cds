@@ -15,7 +15,7 @@
  */
 package org.labkey.test.pages.cds;
 
-import org.labkey.api.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.List;

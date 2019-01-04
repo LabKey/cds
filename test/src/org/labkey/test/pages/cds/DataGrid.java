@@ -16,12 +16,12 @@
 package org.labkey.test.pages.cds;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
-import org.labkey.api.util.Pair;
 import org.labkey.api.writer.ZipUtil;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
@@ -290,8 +290,8 @@ public class DataGrid
                 for (int i = 0; i < tabHeaders.size(); i++)
                 {
                     Pair<String, List<String>> tabHeader = tabHeaders.get(i);
-                    String tabName = tabHeader.first;
-                    List<String> expHeaders = tabHeader.second;
+                    String tabName = tabHeader.getLeft();
+                    List<String> expHeaders = tabHeader.getRight();
                     Sheet sheet = wb.getSheet(tabName);
                     verifyHeaderValues(sheet, expHeaders);
                 }
@@ -454,12 +454,12 @@ public class DataGrid
     {
         List<Pair<String, Integer>> dataTabCounts = expectedExcel.getDataTabCounts();
         List<String> missingDataFiles = new ArrayList<>();
-        dataTabCounts.forEach(pair -> missingDataFiles.add(pair.first));
+        dataTabCounts.forEach(pair -> missingDataFiles.add(pair.getLeft()));
         for (int i = 0; i < dataTabCounts.size(); i++)
         {
             Pair<String, Integer> dataTabCount = dataTabCounts.get(i);
-            String tab = dataTabCount.first;
-            int expCount = dataTabCount.second;
+            String tab = dataTabCount.getLeft();
+            int expCount = dataTabCount.getRight();
             int exportedCount = getExportRowCount(exported, i, tab);
             Assert.assertEquals("Wrong number of rows in export.", expCount, exportedCount);
         }
@@ -575,7 +575,7 @@ public class DataGrid
         File exportedZip = exportCSV();
 
         List<String> missingDataFiles = new ArrayList<>();
-        expected.getDataTabCounts().forEach(pair -> missingDataFiles.add(pair.first));
+        expected.getDataTabCounts().forEach(pair -> missingDataFiles.add(pair.getLeft()));
 
         for (File file : ZipUtil.unzipToDirectory(exportedZip, dir))
         {
@@ -604,8 +604,8 @@ public class DataGrid
             {
                 for (Pair<String, Integer> dataCount :expected.getDataTabCounts())
                 {
-                    String dataName = dataCount.first;
-                    int expCount = dataCount.second;
+                    String dataName = dataCount.getLeft();
+                    int expCount = dataCount.getRight();
                     if (filename.equals(dataName + ".csv"))
                     {
                         missingDataFiles.remove(dataName);
@@ -617,8 +617,8 @@ public class DataGrid
                 {
                     for (Pair<String, List<String>> header :expected.getDataTabHeaders())
                     {
-                        String dataName = header.first;
-                        List<String> expHeaders = header.second;
+                        String dataName = header.getLeft();
+                        List<String> expHeaders = header.getRight();
                         if (filename.equals(dataName + ".csv"))
                         {
                             verifyExportedCSVContent(file, expHeaders);

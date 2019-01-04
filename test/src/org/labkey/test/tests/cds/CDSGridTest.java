@@ -15,10 +15,10 @@
  */
 package org.labkey.test.tests.cds;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.api.util.Pair;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
@@ -29,7 +29,6 @@ import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
@@ -270,8 +269,8 @@ public class CDSGridTest extends CDSReadOnlyTest
         sleep(1000);
         DataGrid grid = new DataGrid(this);
         log("Export without filter or additional columns");
-        CDSExport exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 13860)));
-        exported.setDataTabHeaders(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
+        CDSExport exported = new CDSExport(Arrays.asList(Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 13860)));
+        exported.setDataTabHeaders(Arrays.asList(Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
                 Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days"))));
         exported.setAssays(Collections.emptyList());
         exported.setFieldLabels(Collections.emptyList());
@@ -279,12 +278,12 @@ public class CDSGridTest extends CDSReadOnlyTest
         grid.verifyCDSCSV(exported);
 
         setUpGridStep1();
-        exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 495),
-                new Pair<>(CDSHelper.TITLE_ICS, 658)));
+        exported = new CDSExport(Arrays.asList(Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 495),
+                Pair.of(CDSHelper.TITLE_ICS, 658)));
         exported.setDataTabHeaders(Arrays.asList(
-                new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
+                Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
                         Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days")),
-                new Pair<>(CDSHelper.GRID_TITLE_ICS,
+                Pair.of(CDSHelper.GRID_TITLE_ICS,
                         Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days", "Antigen name", "Antigens aggregated"))
         ));
         exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining", "", "", "", "Subject (Race)"));
@@ -301,16 +300,16 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         setUpGridStep2(false);
 
-        exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 7),
-                new Pair<>(CDSHelper.GRID_TITLE_DEMO, 2),
-                new Pair<>(CDSHelper.GRID_TITLE_ICS, 2),
-                new Pair<>(CDSHelper.GRID_TITLE_NAB, 13)));
+        exported = new CDSExport(Arrays.asList(Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 7),
+                Pair.of(CDSHelper.GRID_TITLE_DEMO, 2),
+                Pair.of(CDSHelper.GRID_TITLE_ICS, 2),
+                Pair.of(CDSHelper.GRID_TITLE_NAB, 13)));
         exported.setDataTabHeaders(Arrays.asList(
-                new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
+                Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
                         Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days")),
-                new Pair<>(CDSHelper.GRID_TITLE_DEMO,
+                Pair.of(CDSHelper.GRID_TITLE_DEMO,
                         Arrays.asList("Subject Id", "Study Name", "Treatment Summary", "Sex at birth")),
-                new Pair<>(CDSHelper.GRID_TITLE_ICS,
+                Pair.of(CDSHelper.GRID_TITLE_ICS,
                         Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days", "Antigen name", "Antigens aggregated"))
         ));
         exported.setFilterTitles(Arrays.asList("Demographics",

@@ -15,12 +15,12 @@
  */
 package org.labkey.test.tests.cds;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
-import org.labkey.api.util.Pair;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.AntigenFilterPanel;
 import org.labkey.test.pages.cds.CDSExport;
@@ -35,7 +35,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.labkey.test.pages.cds.MAbDataGrid.*;
+import static org.labkey.test.pages.cds.MAbDataGrid.CLADES_COL;
+import static org.labkey.test.pages.cds.MAbDataGrid.GEOMETRIC_MEAN_IC50_COL;
+import static org.labkey.test.pages.cds.MAbDataGrid.HXB2_COL;
+import static org.labkey.test.pages.cds.MAbDataGrid.ISOTYPE_COL;
+import static org.labkey.test.pages.cds.MAbDataGrid.MABS_COLUMNS;
+import static org.labkey.test.pages.cds.MAbDataGrid.MAB_COL;
+import static org.labkey.test.pages.cds.MAbDataGrid.NABMAB_ASSAY_COLUMNS;
+import static org.labkey.test.pages.cds.MAbDataGrid.NABMAB_ASSAY_VARIABLES;
+import static org.labkey.test.pages.cds.MAbDataGrid.NABMAB_DATASET_NAME;
+import static org.labkey.test.pages.cds.MAbDataGrid.SPECIES_COL;
+import static org.labkey.test.pages.cds.MAbDataGrid.STUDIES_COL;
+import static org.labkey.test.pages.cds.MAbDataGrid.STUDY_AND_MABS_COLUMNS;
+import static org.labkey.test.pages.cds.MAbDataGrid.TIERS_COL;
+import static org.labkey.test.pages.cds.MAbDataGrid.VIRUSES_COL;
 
 @Category({})
 public class CDSMAbTest extends CDSReadOnlyTest
@@ -284,9 +297,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
         grid.clearAllSelections();
 
         log("Export all data without filter or selection");
-        CDSExport expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 178),
-                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 179),
-                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 1691*8)));
+        CDSExport expected = new CDSExport(Arrays.asList(Pair.of(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 178),
+                Pair.of(MAbDataGrid.GRID_TITLE_MABS_META, 179),
+                Pair.of(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 1691*8)));
         updateExpectedMAbExport(expected);
         expected.setStudyNetworks(Arrays.asList("Q", "ROGER", "ROGER", "YOYO", "ZED", "ZED", "ZED", "ZED", "ZED"));
         expected.setStudies(Arrays.asList("QED 2", "RED 4", "RED 5", "YOYO 55", "ZAP 117", "ZAP 118", "ZAP 119", "ZAP 128", "ZAP 133"));
@@ -297,9 +310,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         log("Export selected mab data without filter");
         grid.selectMAbs("2F5", "AB-000402-1");
-        expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 3),
-                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 3),
-                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 56*8)));
+        expected = new CDSExport(Arrays.asList(Pair.of(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 3),
+                Pair.of(MAbDataGrid.GRID_TITLE_MABS_META, 3),
+                Pair.of(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 56*8)));
         updateExpectedMAbExport(expected);
         expected.setStudyNetworks(Arrays.asList("ROGER", "ZED"));
         expected.setStudies(Arrays.asList("RED 5", "ZAP 117"));
@@ -324,9 +337,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
         virusPanel.checkVirus(virusTwoExclude, false);
         grid.applyFilter();
 
-        expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 5),
-                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 5),
-                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 77*8)));
+        expected = new CDSExport(Arrays.asList(Pair.of(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 5),
+                Pair.of(MAbDataGrid.GRID_TITLE_MABS_META, 5),
+                Pair.of(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 77*8)));
         updateExpectedMAbExport(expected);
         expected.setStudyNetworks(Arrays.asList("ROGER", "ZED"));
         expected.setStudies(Arrays.asList("RED 4", "ZAP 117"));
@@ -347,9 +360,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
 
         log("Export selected mab data with filters");
         grid.selectMAbs("2F5");
-        expected = new CDSExport(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 2),
-                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, 2),
-                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 38*8)));
+        expected = new CDSExport(Arrays.asList(Pair.of(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, 2),
+                Pair.of(MAbDataGrid.GRID_TITLE_MABS_META, 2),
+                Pair.of(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, 38*8)));
         updateExpectedMAbExport(expected);
         expected.setStudyNetworks(Arrays.asList("ZED"));
         expected.setStudies(Arrays.asList("ZAP 117"));
@@ -376,9 +389,9 @@ public class CDSMAbTest extends CDSReadOnlyTest
     // set static export info
     private void updateExpectedMAbExport(CDSExport expectedExport)
     {
-        expectedExport.setDataTabHeaders(Arrays.asList(new Pair<>(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, STUDY_AND_MABS_COLUMNS),
-                new Pair<>(MAbDataGrid.GRID_TITLE_MABS_META, MABS_COLUMNS),
-                new Pair<>(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, NABMAB_ASSAY_COLUMNS)));
+        expectedExport.setDataTabHeaders(Arrays.asList(Pair.of(MAbDataGrid.GRID_TITLE_STUDY_AND_MABS, STUDY_AND_MABS_COLUMNS),
+                Pair.of(MAbDataGrid.GRID_TITLE_MABS_META, MABS_COLUMNS),
+                Pair.of(MAbDataGrid.GRID_TITLE_NAB_MAB_ASSAY, NABMAB_ASSAY_COLUMNS)));
         expectedExport.setFieldLabels(NABMAB_ASSAY_VARIABLES);
         expectedExport.setAssays(Arrays.asList(NABMAB_DATASET_NAME));
         expectedExport.setMAb(true);
