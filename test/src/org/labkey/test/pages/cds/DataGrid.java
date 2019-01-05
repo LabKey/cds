@@ -22,7 +22,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
-import org.labkey.api.writer.ZipUtil;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
@@ -577,7 +576,7 @@ public class DataGrid
         List<String> missingDataFiles = new ArrayList<>();
         expected.getDataTabCounts().forEach(pair -> missingDataFiles.add(pair.getLeft()));
 
-        for (File file : ZipUtil.unzipToDirectory(exportedZip, dir))
+        for (File file : TestFileUtils.unzipToDirectory(exportedZip, dir))
         {
             String filename = file.getName();
             if ("Metadata.txt".equals(filename))
