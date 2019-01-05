@@ -316,6 +316,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/VariableList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Report.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/MAb.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Publication.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/PermissionedStudy.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/AssayAntigen.js"></script>
@@ -326,6 +327,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/VariableList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Report.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/MAb.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Publication.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnGrid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnSummary.js"></script>
@@ -337,6 +339,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Report.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/MAb.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Publication.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ReportModuleContainer.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/DataAvailabilityModule.js"></script>
@@ -344,6 +347,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ContactCDS.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/MabDetails.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/PublicationDetails.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>

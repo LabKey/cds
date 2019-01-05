@@ -163,6 +163,7 @@
         <script path="Connector/src/app/model/VariableList.js"/>
         <script path="Connector/src/app/model/Report.js"/>
         <script path="Connector/src/app/model/MAb.js"/>
+        <script path="Connector/src/app/model/Publication.js"/>
 
         <script path="Connector/src/app/store/PermissionedStudy.js"/>
         <script path="Connector/src/app/store/AssayAntigen.js"/>
@@ -173,6 +174,7 @@
         <script path="Connector/src/app/store/VariableList.js"/>
         <script path="Connector/src/app/store/Report.js"/>
         <script path="Connector/src/app/store/MAb.js"/>
+        <script path="Connector/src/app/store/Publication.js"/>
 
         <script path="Connector/src/app/view/LearnGrid.js"/>
         <script path="Connector/src/app/view/LearnSummary.js"/>
@@ -184,6 +186,7 @@
         <script path="Connector/src/app/view/StudyProducts.js"/>
         <script path="Connector/src/app/view/Report.js"/>
         <script path="Connector/src/app/view/MAb.js"/>
+        <script path="Connector/src/app/view/Publication.js"/>
         <script path="Connector/src/app/view/ReportModuleContainer.js"/>
 
         <script path="Connector/src/app/view/module/DataAvailabilityModule.js"/>
@@ -191,6 +194,7 @@
         <script path="Connector/src/app/view/module/AssayHeader.js"/>
         <script path="Connector/src/app/view/module/ContactCDS.js"/>
         <script path="Connector/src/app/view/module/MabDetails.js"/>
+        <script path="Connector/src/app/view/module/PublicationDetails.js"/>
         <script path="Connector/src/app/view/module/ProductHeader.js"/>
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
