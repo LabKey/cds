@@ -19,8 +19,8 @@ Ext.define('Connector.app.view.Publication', {
         {
             text: 'publication',
             xtype: 'templatecolumn',
-            minWidth: 200,
-            maxWidth: 300,
+            tdCls: 'publication-title-col',
+            minWidth: 500,
             locked: true,
             resizable: false,
             dataIndex: 'title',
@@ -30,9 +30,10 @@ Ext.define('Connector.app.view.Publication', {
                 title: 'publication'
             }],
             tpl: new Ext.XTemplate(
-                    '<div class="detail-description detail-row-text">',
-                    '<h2>{title:htmlEncode}</h2>',
-                    '</div>')
+                    '<div class="detail-description">',
+                    '<p style="font: 16px Georgia,serif;">{title:htmlEncode}</p>',
+                    '</div>'
+                )
 
         },{
             text: 'Journal',
@@ -76,7 +77,7 @@ Ext.define('Connector.app.view.Publication', {
             resizable: false,
             dataIndex: 'date',
             filterConfigSet: [{
-                filterField: 'date',
+                filterField: 'year',
                 valueType: 'string',
                 title: 'Publication Date'
             }],

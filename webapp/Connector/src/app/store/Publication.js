@@ -73,14 +73,21 @@ Ext.define('Connector.app.store.Publication', {
                 return Connector.model.Filter.sorters.natural(date1Str, date2Str);
             });
 
-            // extract assay to study prot
-            Ext.each(this.assayData, function(study) {
-                //TODO
+            var studyAssays = {};
+            Ext.each(this.assayData, function(assay) {
+                var prot = assay.prot;
+                if (!studyAssays[prot])
+                    studyAssays[prot] = [];
+                studyAssays[prot] = assay;
             });
 
-            // extract publicationId study info
+            var productStudies = {};
             Ext.each(this.studyData, function(study) {
-                //TODO
+                var productId = study.id;
+                if (!productStudies[productId])
+                    productStudies[productId] = [];
+                study.assays = studyAssays[study.prot];
+                productStudies[productId].push(study);
             });
 
 
@@ -89,6 +96,19 @@ Ext.define('Connector.app.store.Publication', {
                 if (publication.date)
                 {
                     publication.year = publication.date.trim().split(/\s+/)[0];
+                }
+                publication.studies = productStudies[publication.id];
+                if (publication.studies)
+                {
+                    publication.studies.sort(function(a, b){
+                        return a.study_label.localeCompare(b.study_label);
+                    });
+                    publication.study_to_sort_on = publication.studies[0];
+                    var studyNames = [];
+                    Ext.each(publication.studies, function(study){
+                        studyNames.push(study.study_label);
+                    });
+                    publication.study_names = studyNames;
                 }
                 publications.push(publication);
             });
