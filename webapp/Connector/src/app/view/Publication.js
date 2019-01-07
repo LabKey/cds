@@ -23,15 +23,15 @@ Ext.define('Connector.app.view.Publication', {
             minWidth: 500,
             locked: true,
             resizable: false,
-            dataIndex: 'title',
+            dataIndex: 'publication_title',
             filterConfigSet: [{
-                filterField: 'title',
+                filterField: 'publication_title',
                 valueType: 'String',
                 title: 'publication'
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-description">',
-                    '<p style="font: 16px Georgia,serif;">{title:htmlEncode}</p>',
+                    '<p style="font: 16px Georgia,serif;">{publication_title:htmlEncode}</p>',
                     '</div>'
                 )
 

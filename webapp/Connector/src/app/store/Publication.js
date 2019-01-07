@@ -78,26 +78,53 @@ Ext.define('Connector.app.store.Publication', {
                 var prot = assay.prot;
                 if (!studyAssays[prot])
                     studyAssays[prot] = [];
-                studyAssays[prot] = assay;
+                studyAssays[prot].push(assay);
             });
 
             var productStudies = {};
             Ext.each(this.studyData, function(study) {
                 var productId = study.id;
+                delete study.id;
                 if (!productStudies[productId])
                     productStudies[productId] = [];
                 study.assays = studyAssays[study.prot];
+
+                study.data_label = study.study_label;
+                study.data_id = study.prot;
+                study.data_link_id = study.prot;
+                study.has_access = this.accessibleStudies[study.prot];
+                var dataStatus = 'Data not added';
+                if (study.assays)
+                {
+                    var hasDataAssays = [];
+                    Ext.each(study.assays, function(assay) {
+                        if (assay.has_data)
+                            hasDataAssays.push(assay.assay_short_name);
+                    });
+                    study.has_data = hasDataAssays.length > 0;
+                    if (study.has_data)
+                    {
+                        dataStatus = '<p class="data-availability-tooltip-header">Assays ' + (study.has_access ? 'with' : 'without') + ' data accessible</p>';
+                        Ext.each(hasDataAssays, function(assay){
+                            dataStatus += assay + '<br>';
+                        });
+                    }
+                }
+                study.data_status = dataStatus;
                 productStudies[productId].push(study);
-            });
+            }, this);
 
 
             var publications = [];
             Ext.each(this.publicationData, function(publication) {
+                publication.publication_id = publication.id;
+                delete publication.id;
+                publication.publication_title = publication.title;
                 if (publication.date)
                 {
                     publication.year = publication.date.trim().split(/\s+/)[0];
                 }
-                publication.studies = productStudies[publication.id];
+                publication.studies = productStudies[publication.publication_id];
                 if (publication.studies)
                 {
                     publication.studies.sort(function(a, b){

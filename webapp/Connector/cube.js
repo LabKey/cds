@@ -672,6 +672,22 @@ Ext4.define('Connector.cube.Configuration', {
                         staticData: {
                             title: 'Publication'
                         }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Title'
+                        },
+                        modelData: {
+                            text: 'publication_title'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Authors'
+                        },
+                        modelData: {
+                            text: 'author_all'
+                        }
                     }],[{
                         type: 'dataavailability',
                         staticData: {
