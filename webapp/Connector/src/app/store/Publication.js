@@ -70,7 +70,7 @@ Ext.define('Connector.app.store.Publication', {
             this.publicationData.sort(function(row1, row2) {
                 var date1Str = Connector.model.Filter.sorters.getPublicationDateSortStr(row1.date);
                 var date2Str = Connector.model.Filter.sorters.getPublicationDateSortStr(row2.date);
-                return Connector.model.Filter.sorters.natural(date1Str, date2Str);
+                return -1 * Connector.model.Filter.sorters.natural(date1Str, date2Str);
             });
 
             var studyAssays = {};
@@ -130,7 +130,7 @@ Ext.define('Connector.app.store.Publication', {
                     publication.studies.sort(function(a, b){
                         return a.study_label.localeCompare(b.study_label);
                     });
-                    publication.study_to_sort_on = publication.studies[0];
+                    publication.study_to_sort_on = publication.studies[0].study_label;
                     var studyNames = [];
                     Ext.each(publication.studies, function(study){
                         studyNames.push(study.study_label);

@@ -79,7 +79,7 @@ Ext.define('Connector.app.view.Publication', {
             filterConfigSet: [{
                 filterField: 'year',
                 valueType: 'string',
-                title: 'Publication Date'
+                title: 'Publication Year'
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',
@@ -136,7 +136,7 @@ Ext.define('Connector.app.view.Publication', {
 
     statics: {
         searchFields: [
-            'title', 'author_all', 'pmid', 'journal_short'
+            'publication_title', 'author_all', 'pmid', 'journal_short'
         ]
     }
 

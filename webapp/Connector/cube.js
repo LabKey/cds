@@ -596,7 +596,7 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             },{
                 uniqueName: '[Report]',
-                priority: 1,
+                priority: 2,
                 singularName: 'Report',
                 pluralName: 'Reports',
                 hidden: false,
@@ -649,7 +649,7 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             }, {
                 uniqueName: '[Publication]',
-                priority: 2,
+                priority: 1,
                 singularName: 'Publication',
                 pluralName: 'Publications',
                 hidden: false,
