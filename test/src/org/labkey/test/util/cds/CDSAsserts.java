@@ -197,6 +197,11 @@ public class CDSAsserts
         _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available products meet your selection criteria.']"));
     }
 
+    public void verifyEmptyLearnAboutPublicationsPage()
+    {
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available publications meet your selection criteria.']"));
+    }
+
     public void assertDefaultFilterStatusCounts()
     {
         assertFilterStatusCounts(8277, 51, 2, 4, 282); // TODO Test data dependent.

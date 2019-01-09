@@ -13,7 +13,7 @@ Ext.define('Connector.app.view.Publication', {
         cls: 'publicationlearngridlocked'
     },
 
-    itemPluralName: 'Publications',
+    itemPluralName: 'publications',
 
     columns: [
         {
@@ -99,7 +99,7 @@ Ext.define('Connector.app.view.Publication', {
                 title: 'Studies'
             }],
             tpl: new Ext.XTemplate(
-                    '<div class="detail-text study-summary-product">',
+                    '<div class="detail-text study-summary-product publication-study-list">',
                     '<ul>',
                     '<tpl if="studies.length &gt; 0">',
                     '<tpl for="studies">',
