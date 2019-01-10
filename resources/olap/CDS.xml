@@ -203,5 +203,9 @@
         <!--A fake dimension so that mAbs can show up in Learn about-->
         <Dimension name="MAb" visible="true" highCardinality="false">
         </Dimension>
+
+        <!--A fake dimension so that Publications can show up in Learn about-->
+        <Dimension name="Publication" visible="true" highCardinality="false">
+        </Dimension>
     </Cube>
 </Schema>

@@ -22,7 +22,6 @@ Ext.define('Connector.app.view.MAb', {
             minWidth: 200,
             maxWidth: 300,
             locked: true,
-            locked: true,
             resizable: false,
             dataIndex: 'mab_mix_name_std',
             filterConfigSet: [{

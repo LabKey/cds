@@ -490,6 +490,50 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     }
 
     @Test
+    public void testLearnAboutPublications()
+    {
+        log("Verify Publications listing page");
+        cds.viewLearnAboutPage("Publications");
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+        log(XPATH_RESULT_ROW_TITLE.toString());
+        List<WebElement> publicationLockedLists = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(getDriver());
+
+        final String expectedPublicationTitle = "Modification of the Association Between T-Cell Immune Responses and Human Immunodeficiency Virus " +
+                "Type 1 Infection Risk by Vaccine-Induced Antibody Responses in the HVTN 505 Trial";
+        final String expectedPublictionLabel = "Fong Y 2018 J Infect Dis";
+
+        log("size" + publicationLockedLists.size());
+        scrollIntoView(publicationLockedLists.get(1));
+        String secondPublicationTitle = publicationLockedLists.get(1).getText();
+        String[] secondPublicationUnlockedParts = freeColItems.get(1).getText().split("\n");
+
+        log("Validating the 2nd newest publication: publications should be ordered by date desc by default");
+        Assert.assertEquals("Publication title not as expected", expectedPublicationTitle, secondPublicationTitle);
+        Assert.assertEquals("Publication journal not as expected", "J Infect Dis", secondPublicationUnlockedParts[0]);
+        Assert.assertEquals("Publication author not as expected", "Fong Y", secondPublicationUnlockedParts[1]);
+        Assert.assertEquals("Publication journal not as expected", "2018 Mar 28", secondPublicationUnlockedParts[2]);
+
+        log ("Verify Publications detail page");
+        publicationLockedLists.get(1).click();
+        sleep(CDSHelper.CDS_WAIT);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + expectedPublictionLabel + "']")));
+        Assert.assertTrue("Detail page publication title not as expected", isElementVisible(Locator.tagWithClass("div", "module").append(Locator.tagWithText("p", expectedPublicationTitle))));
+        Assert.assertTrue("Publication info not as expected", isElementVisible(Locator.tagWithClass("div", "publication_item").withText("J Infect Dis. 2018 Mar 28;217(8):1280-1288.")));
+
+        log("Verify Publications search");
+        List<String> searchStrings = new ArrayList<>(Arrays.asList("Calmette-Guérin", "Korioth-Schmitz B", "3152265", "Clin Vaccine Immunol"));
+        cds.viewLearnAboutPage("Publications");
+        searchStrings.stream().forEach((searchString) -> validateSearchFor(searchString));
+        log("Searching for a string '" + MISSING_SEARCH_STRING + "' that should not be found.");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
+        sleep(CDSHelper.CDS_WAIT);
+        _asserts.verifyEmptyLearnAboutPublicationsPage();
+
+    }
+
+    @Test
     public void testLearnAboutAssays()
     {
         cds.viewLearnAboutPage("Assays");

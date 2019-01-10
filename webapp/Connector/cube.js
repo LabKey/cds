@@ -596,7 +596,7 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             },{
                 uniqueName: '[Report]',
-                priority: 1,
+                priority: 2,
                 singularName: 'Report',
                 pluralName: 'Reports',
                 hidden: false,
@@ -615,7 +615,7 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             }, {
                 uniqueName: '[MAb]',
-                priority: 2,
+                priority: 3,
                 singularName: 'MAb',
                 pluralName: 'MAbs',
                 hidden: false,
@@ -637,6 +637,56 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'mabdetails',
                         staticData: {
                             title: 'Monoclonal Antibody Information'
+                        }
+                    }],[{
+                        type: 'dataavailability',
+                        staticData: {
+                            title: 'Data Availability',
+                            dataField: 'studies',
+                            dataLink: 'Study'
+                        }
+                    }]]
+                }]
+            }, {
+                uniqueName: '[Publication]',
+                priority: 1,
+                singularName: 'Publication',
+                pluralName: 'Publications',
+                hidden: false,
+                supportsSummary: false,
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.Publication',
+                detailModel: 'Connector.app.model.Publication',
+                detailView: 'Connector.app.view.Publication',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    upText: 'Publication',
+                    label: 'Overview'
+                }],
+                itemDetail: [{
+                    view: 'Connector.app.view.ModuleContainer',
+                    isIdString: true,
+                    modules: [[{
+                        type: 'publicationdetails',
+                        staticData: {
+                            title: 'Publication'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Title'
+                        },
+                        modelData: {
+                            text: 'publication_title'
+                        }
+                    },{
+                        type: 'html',
+                        staticData: {
+                            title: 'Authors'
+                        },
+                        modelData: {
+                            text: 'author_all'
                         }
                     }],[{
                         type: 'dataavailability',
