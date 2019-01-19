@@ -8,7 +8,7 @@ dependencies
 
 // FIXME this will not work if not also building the modules below. Probably will need a
 // different approach to source code for these dependencies.
-tasks.compressClientLibs.dependsOn(project(":server:internal").tasks.processResources)
+tasks.compressClientLibs.dependsOn(project(BuildUtils.getInternalProjectPath(project.gradle)).tasks.processResources)
 tasks.compressClientLibs.dependsOn(project(":server:modules:query").tasks.processResources)
 tasks.compressClientLibs.dependsOn(project(":server:modules:core").tasks.processResources)
-tasks.compressClientLibs.dependsOn(project(":server:api").tasks.processResources)
+tasks.compressClientLibs.dependsOn(project(BuildUtils.getApiProjectPath(project.gradle)).tasks.processResources)
