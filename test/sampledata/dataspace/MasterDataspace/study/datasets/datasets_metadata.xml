@@ -1597,14 +1597,22 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>false</dimension>
       </column>
-      <!--<column columnName="hours_post_initial_infusion">-->
-        <!--<datatype>double</datatype>-->
-        <!--<columnTitle>Hours after initial infusion</columnTitle>-->
-        <!--<description>Study hours after initial infusion</description>-->
-        <!--<rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>-->
-        <!--<dimension>false</dimension>-->
-        <!--<measure>false</measure>-->
-      <!--</column>-->
+      <column columnName="hours_post_initial_infusion">
+        <datatype>double</datatype>
+        <columnTitle>Hours after initial infusion</columnTitle>
+        <description>Study hours after initial infusion</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <dimension>false</dimension>
+        <measure>false</measure>
+      </column>
+      <column columnName="hours_post_recent_infusion">
+        <datatype>double</datatype>
+        <columnTitle>Hours after most recent infusion</columnTitle>
+        <description>Study hours after most recent infusion</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <dimension>false</dimension>
+        <measure>false</measure>
+      </column>
       <column columnName="source_assay">
         <datatype>varchar</datatype>
         <columnTitle>Source assay</columnTitle>

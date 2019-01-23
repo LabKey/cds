@@ -58,5 +58,16 @@ FROM (
   container,
   lab_code,
   FROM study.BAMA
+
+  UNION
+
+  SELECT
+      DISTINCT participantid,
+               'PKMAB' AS assay_type,
+               assay_identifier,
+               container,
+               lab_code
+  FROM study.PKMAb
+
 ) AS DD
 INNER JOIN cds.study AS SS ON SS.container = DD.container

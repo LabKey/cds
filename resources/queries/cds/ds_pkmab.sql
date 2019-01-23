@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 SELECT
-       subject_id AS participantid,
-       CAST(study_day AS DOUBLE) AS sequencenum,
+       dd.subject_id AS participantid,
+       CAST(dd.study_day AS DOUBLE) AS sequencenum,
 
-       study_day AS visit_day,
-       prot AS study_prot,
-       prot,
+       dd.study_day AS visit_day,
+       dd.prot AS study_prot,
+       dd.prot,
 
        dd.visit_code,
        VT.visit_time_label,
+       VT.hours_post_initial_infusion,
+       VT.hours_post_recent_infusion,
        dd.source_assay,
 
        dd.assay_identifier,
@@ -39,38 +41,24 @@ SELECT
 FROM cds.import_PKMAb AS dd
 LEFT JOIN MAbMixMetadata mixmeta ON dd.mab_mix_id = mixmeta.mab_mix_id and dd.container = mixmeta.container
 LEFT JOIN (
-    SELECT * FROM
-    (SELECT IP.subject_id,
-            IP.prot || '-' || IQ.study_arm || '-' || IQ.study_group || '-' || IP.visit_code AS visit,
-            IP.visit_code,
-            recorded_visits.visit_time_label
-     FROM (SELECT DISTINCT subject_id, visit_code FROM import_pkmab) AS IP
-            LEFT JOIN import_studypartgrouparmsubject AS IQ
-              ON IP.subject_id = IQ.subject_id AND IP.container = IQ.container) AS recorded_visits
-        LEFT JOIN (SELECT prot || '-' || study_arm || '-' || study_group || '-' || visit_code AS visit
-                   FROM import_studypartgrouparmvisit) AS possible_visits
-        ON recorded_visits.visit = possible_visits.visit
-    ) AS VT ON VT.subject_id = dd.subject_id AND VT.visit_code = dd.visit_code;
--- LEFT JOIN (
---     (
---     SELECT DISTINCT
---                     MQ.subject_id,
---                     MQ.prot || '-' || IQ.study_arm || '-' || IQ.study_group || '-' || MQ.study_day || '-' || MQ.visit_code AS visit,
---                     MQ.study_day,
---                     MQ.visit_code,
---                     possible_visittimes.visit_time_label,
---                     possible_visittimes.hours_post_initial_infusion
---     FROM import_pkmab AS MQ
---            LEFT JOIN
---              import_studypartgrouparmsubject AS IQ
---              ON MQ.subject_id = IQ.subject_id AND MQ.container = IQ.container
---     ) AS recorded_visittimes
---         LEFT JOIN (
---                   SELECT DISTINCT
---                                   prot || '-' || study_arm || '-' || study_group || '-' || study_day || '-' || visit_code visit,
---                                   visit_time_label,
---                                   hours_post_initial_infusion
---                   FROM import_studypartgrouparmvisittime
---                   ) AS possible_visittimes
---         ON recorded_visittimes.visit=possible_visittimess.visit
---     ) AS VT ON dd.subject_id = VT.subject_id AND dd.visit_code = VT.visit_code
+          SELECT subjectvisit.subject_id,
+                 subjectvisit.visit_code,
+                 subjectvisit.container,
+                 visittime.visit_time_label,
+                 visittime.hours_post_initial_infusion,
+                 visittime.hours_post_recent_infusion
+          FROM
+               (SELECT DISTINCT subject_id, visit_code, container FROM import_pkmab) AS subjectvisit
+                 LEFT JOIN
+                   import_studypartgrouparmsubject AS subjectgroup
+                   ON subjectgroup.subject_id = subjectvisit.subject_id
+                        AND subjectgroup.container = subjectvisit.container
+                 LEFT JOIN
+                   import_studypartgrouparmvisittime AS visittime
+                   ON subjectgroup.prot = visittime.prot
+                        AND subjectgroup.study_arm = visittime.study_arm
+                        AND subjectgroup.study_group = visittime.study_group
+                        AND subjectvisit.visit_code = visittime.visit_code
+                        AND subjectgroup.container = visittime.container
+    ) AS VT ON dd.container = VT.container AND dd.subject_id = VT.subject_id AND dd.visit_code = VT.visit_code;
+
