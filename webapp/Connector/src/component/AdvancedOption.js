@@ -395,6 +395,39 @@ Ext.define('Connector.component.AdvancedOptionScale', {
         this.showDropdownPanel();
     }
 });
+Ext.define('Connector.component.AdvancedOptionTimePlotType', {
+
+    extend: 'Connector.component.AdvancedOptionBase',
+
+    fieldName: 'timePlotType',
+    fieldLabel: 'Plot type',
+
+    constructor : function(config) {
+        if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
+            console.error('Advanced option axis type field must be defined using a Measure record.');
+        }
+
+        this.callParent([config]);
+    },
+
+    initComponent : function() {
+        this.store = Ext.create('Ext.data.Store', {
+            fields: [this.storeValueField, this.storeLabelField],
+            data: [
+                {value: 'Scatter plot', label: 'Scatter plot'},
+                {value: 'Line plot', label: 'Line plot'}
+            ]
+        });
+
+        this.setValue(this.value, false);
+
+        this.callParent();
+    },
+
+    onDisplayFieldClick : function() {
+        this.showDropdownPanel();
+    }
+});
 
 Ext.define('Connector.component.AdvancedOptionTimeAxisType', {
 

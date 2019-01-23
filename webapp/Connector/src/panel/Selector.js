@@ -1065,6 +1065,12 @@ Ext.define('Connector.panel.Selector', {
                     value: this.initOptions ? this.initOptions['alignmentVisitTag'] : undefined
                 })
             );
+            this.getAdvancedPane().add(
+                    Ext.create('Connector.component.AdvancedOptionTimePlotType', {
+                        measure: this.activeMeasure,
+                        value: this.initOptions ? this.initOptions['timePlotType'] : 'Scatter plot'
+                    })
+            );
         }
     },
 

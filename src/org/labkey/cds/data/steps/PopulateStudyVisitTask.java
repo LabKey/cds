@@ -171,6 +171,8 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
                     logger.error(e.getMessage(), e);
                 }
             }
+
+            //TODO populate visit time
         }
 
         long finish = System.currentTimeMillis();

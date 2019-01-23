@@ -51,6 +51,14 @@ FULL JOIN (
   subject_id,
   assay_identifier
   FROM cds.import_bama
+
+  UNION
+
+  SELECT DISTINCT
+  prot,
+  subject_id,
+  assay_identifier
+  FROM cds.import_pkmab
 ) d --dataTable
 ON d.prot=md.prot AND d.assay_identifier=md.assay_identifier
 WHERE md.prot IS NULL AND md.assay_identifier IS NULL
