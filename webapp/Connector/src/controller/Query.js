@@ -241,9 +241,14 @@ Ext.define('Connector.controller.Query', {
     {
         if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias.toLowerCase())))
         {
+            if (measure.alias.toLowerCase().indexOf("cds_gridbase") === 0)
+            {
+                measure.alias = measure.alias.replace("CDS_GridBase", "cds_GridBase");
+                measure.schemaName = 'cds';
+            }
             var sourceKey = measure.schemaName + '|' + measure.queryName,
-                datas = this.getModelClone(measure, Connector.model.Measure.getFields()),
                 context = Connector.measure.Configuration.context;
+            var datas = this.getModelClone(measure, Connector.model.Measure.getFields());
 
             // overlay any source metadata
             datas = Ext.apply(datas, context.sources[sourceKey]);

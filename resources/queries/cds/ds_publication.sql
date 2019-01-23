@@ -24,4 +24,6 @@ SELECT
   publication_location AS location,
   publication_pmid AS pmid,
   publication_link AS link,
+  publication_author_first AS author_first,
+  publication_label AS publication_label
 FROM cds.import_Publication

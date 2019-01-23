@@ -178,7 +178,11 @@ Ext.define('Connector.controller.FilterStatus', {
         store.load();
 
         return Ext.create('Connector.view.DetailStatus', {
-            store: store
+            isMab: true,
+            store: store,
+            filterChange : function() {
+                // skip subject filter change
+            }
         });
     },
 

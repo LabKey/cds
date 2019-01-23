@@ -20,6 +20,7 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	studyrelationships: 'app.module.studyrelationships',
 	studymabs: 'app.module.studymabs',
     mabdetails: 'app.module.mabdetails',
+    publicationdetails: 'app.module.publicationdetails',
 	assayheader: 'app.module.assayheader',
     assayanalytelist: 'app.module.assayanalytelist',
 	variablelist: 'app.module.variablelist',

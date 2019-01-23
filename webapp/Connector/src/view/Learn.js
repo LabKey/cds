@@ -645,6 +645,7 @@ Ext.define('Connector.view.Learn', {
         'Lab' : 'Labs',
         'Study product' : 'StudyProducts',
         'Report' : 'Report',
+        'Publication' : 'Publication',
         'MAb': 'MAb'
     },
 

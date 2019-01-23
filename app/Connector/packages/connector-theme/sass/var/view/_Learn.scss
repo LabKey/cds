@@ -506,6 +506,17 @@ img.detail-has-data-small {
       white-space: normal;
     }
 
+    .x-grid-cell.publication-title-col {
+      padding: 24px 0px 4px 16px;
+    }
+
+    .publication-title-col {
+      .x-grid-cell-inner {
+        height: 96px;
+      }
+    }
+
+
     .detail-description {
 
       h2 {
@@ -671,6 +682,10 @@ img.detail-has-data-small {
     }
   }
 
+}
+
+.publication_item {
+  padding-bottom: 1em;
 }
 
 .learn-study-info {
