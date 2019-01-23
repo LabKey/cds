@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
@@ -629,7 +630,7 @@ public class CDSController extends SpringActionController
 
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
 
-        protected BindException doBindParameters(PropertyValues in)
+        protected @NotNull BindException doBindParameters(PropertyValues in)
         {
             BindException errors = super.doBindParameters(in);
 
