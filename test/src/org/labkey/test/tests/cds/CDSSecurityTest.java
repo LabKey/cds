@@ -210,7 +210,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         String studies = getText(Locator.tagWithClass("div", "learnmodulegrid"));
         validateText("Study list", studies, "QED 3", "QED 4", "RED 1", "RED 2",
-                "RED 3", "RED 4", "ZAP 101", "ZAP 102", "ZAP 103");
+                "RED 3", "RED 4", "xyz123", "ZAP 101", "ZAP 102", "ZAP 103");
 
         String tooltip = getStudyDetailDataAvailabilityTooltip("RED 4");
         validateText("RED 4 tooltip", tooltip, "Assays without data accessible", "IFNg ELISpot", "NABMAB", "ICS");
@@ -231,7 +231,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     private void validatePublicationStudyList()
     {
         setFormElement(Locator.xpath(XPATH_TEXTBOX), "fong y");
-        sleep(2000);
+        sleep(3000);
         String studyList = getText(Locator.tagWithClass("div", "publication-study-list"));
         Assert.assertEquals("Publication Studies listing is not as expected for 'Fong Y 2018 J Infect Dis'", "QED 3\nQED 4\nRED 1\nRED 2\nRED 3\n...", studyList);
     }
