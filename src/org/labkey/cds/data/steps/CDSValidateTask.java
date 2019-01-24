@@ -162,7 +162,5 @@ public class CDSValidateTask extends AbstractPopulateTask
             logger.warn(error);
         }
 
-        logger.info("Validate subject visit time for PK MAb");
-        // TODO
     }
 }
