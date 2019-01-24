@@ -63,7 +63,7 @@ Ext.define('Connector.view.MabStatus', {
     getHeaderData: function() {
         if (this.hasMabFilters())
             return {
-                title: 'Selected MAbs',
+                title: 'Filtered mAbs',
                 headerCls: 'mab-section-title-filtered'
             };
         return {
