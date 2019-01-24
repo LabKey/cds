@@ -159,7 +159,8 @@ Ext.define('Connector.component.AdvancedOptionBase', {
             if (storeCount == 0) {
                 this.hide();
             }
-            else if (this.fieldName.indexOf('_summary_level') > 0 && storeCount == 1) {
+            else if ((this.fieldName.indexOf('_summary_level') > 0 && this.fieldName.indexOf('study_PKMAb') === -1)
+                    && storeCount == 1) {
                 this.getDisplayField().addCls('display-option-only');
             }
             else {

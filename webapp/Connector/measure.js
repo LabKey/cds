@@ -73,7 +73,17 @@ Ext.define('Connector.measure.Configuration', {
                     ],
                     defaultScale: 'LOG'
                 },
-
+                'study|PKMAb': {
+                    category: 'Assays',
+                    dimensions: [
+                        'study_PKMAb_mab_mix_name_std',
+                         'study_PKMAb_summary_level',
+                        'study_PKMAb_source_assay',
+                        'study_PKMAb_specimen_type',
+                        'study_PKMAb_lab_code'
+                    ],
+                    defaultScale: 'LOG'
+                },
                 // New/virtual sources
                 'CurrentColumns': {
                     sortOrder: -100,
@@ -595,6 +605,12 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_study_prot': {
                     hidden: true
                 },
+                'study_PKMAb_mab_concentration': {
+                    isRecommendedVariable: true
+                },
+                'study_PKMAb_mab_mix_name_std': {
+                    isRecommendedVariable: true
+                },
                 'study_Demographics_species': {
                     isRecommendedVariable: true
                 },
@@ -719,6 +735,27 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_visit_day': {
                     hidden: true
                 },
+                'study_PKMAb_assay_identifier': {
+                    hidden: true
+                },
+                'study_PKMAb_hours_post_initial_infusion': {
+                    hidden: true
+                },
+                'study_PKMAb_hours_post_recent_infusion': {
+                    hidden: true
+                },
+                'study_PKMAb_study_prot': {
+                    hidden: true
+                },
+                'study_PKMAb_SubjectId': {
+                    hidden: true
+                },
+                'study_PKMAb_SubjectVisit_Visit': {
+                    hidden: true
+                },
+                'study_PKMAb_visit_day': {
+                    hidden: true
+                },
                 'study_Demographics_bmi_enrollment': {
                     hidden: true
                 },
@@ -738,9 +775,6 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_Demographics_subspecies': {
-                    hidden: true
-                },
-                'study_Demographics_SubjectId': {
                     hidden: true
                 },
                 'study_Demographics_SubjectVisit_Visit': {

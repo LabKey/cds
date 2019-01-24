@@ -60,6 +60,9 @@ Ext.define('Connector.view.AssayAntigen', {
         else if (assay_type === 'BAMA') {
             return this.getBAMAColumns();
         }
+        else if (assay_type === 'PKMAB') {
+            return [];
+        }
     },
 
     getCommonColumns: function(antigenNameLabel, flex)

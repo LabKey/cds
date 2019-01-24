@@ -24,6 +24,11 @@ Ext.define('Connector.app.store.AssayAntigen', {
         if (this.isAntigensLoaded)
             return;
         var assayType = this.assayType.toUpperCase();
+        if (assayType == 'PKMAB') { //TODO
+            this.loadRawData([]);
+            return;
+        }
+
         if (assayType === 'ICS' || assayType === 'ELISPOT') {
             LABKEY.Query.selectRows({
                 schemaName: 'cds',
