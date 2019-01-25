@@ -377,7 +377,7 @@ public class InfoPane
         Locator saveGroupBtn = CDSHelper.Locators.cdsButtonLocator("save", "mabfiltersave");
         Locator titleLoc = Locator.tagWithClass("h2", "section-title");
         Locator subtitleLoc = Locator.tagWithClass("div", "emptytext");
-        Locator filteredTitleLoc = titleLoc.withText("Selected MAbs");
+        Locator filteredTitleLoc = titleLoc.withText("Filtered mAbs");
         Locator filteredSubtitleLoc = subtitleLoc.withText("From the mAb grid");
         Locator allTitleLoc = titleLoc.withText("MAb Info");
         Locator allSubtitleLoc = subtitleLoc.withText("All mAbs");
