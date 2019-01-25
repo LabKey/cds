@@ -63,7 +63,7 @@ FROM (
 
   SELECT
       DISTINCT participantid,
-               'PKMAB' AS assay_type,
+               'PKMAb' AS assay_type,
                assay_identifier,
                container,
                lab_code

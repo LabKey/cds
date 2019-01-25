@@ -735,6 +735,21 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_visit_day': {
                     hidden: true
                 },
+                'study_PKMAb_visit_code': {
+                    hidden: true
+                },
+                'study_PKMAb_visit_time_label': {
+                    hidden: true
+                },
+                'study_PKMAb_mab_mix_id': {
+                    hidden: true
+                },
+                'study_PKMAb_mab_name_source': {
+                    hidden: true
+                },
+                'study_PKMAb_mab_concentration_units': {
+                    hidden: true
+                },
                 'study_PKMAb_assay_identifier': {
                     hidden: true
                 },

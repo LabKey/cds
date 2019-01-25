@@ -205,7 +205,7 @@ Ext.define('Connector.utility.PlotTooltip', {
                         }
                     }
                     if (values.length > 0) {
-                        if (hierarchicalDimensionInfo[dim]) {
+                        if (hierarchicalDimensionInfo && hierarchicalDimensionInfo[dim]) {
                             var levelDimensions = hierarchicalDimensionInfo[dim];
                             var dimensionVals = {};
                             Ext.each(values, function(fullStr){
