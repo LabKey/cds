@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.labkey.test.pages.cds.MAbDataGrid.ANTIGEN_BINDING_COL;
 import static org.labkey.test.pages.cds.MAbDataGrid.CLADES_COL;
 import static org.labkey.test.pages.cds.MAbDataGrid.GEOMETRIC_MEAN_IC50_COL;
 import static org.labkey.test.pages.cds.MAbDataGrid.HXB2_COL;
