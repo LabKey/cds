@@ -44,6 +44,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public static final String SPECIES_COL = "Donor Species";
     public static final String ISOTYPE_COL = "Isotype";
     public static final String HXB2_COL = "HXB2 Location";
+    public static final String ANTIGEN_BINDING_COL = "Antibody binding type";
     public static final String VIRUSES_COL = "Viruses";
     public static final String CLADES_COL = "Clades";
     public static final String TIERS_COL = "Tiers";
@@ -60,7 +61,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public static final List<String> NABMAB_ASSAY_VARIABLES = Arrays.asList("Assay identifier",
             "Curve id", "Data summary level", "Fit asymmetry", "Fit error", "Fit inflection", "Fit max", "Fit min", "Fit slope", "Initial concentration", "Lab ID", "Mab concentration units", "Mab concentration");
 
-    public static final List<String> ColumnLabels = Arrays.asList(MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL,
+    public static final List<String> ColumnLabels = Arrays.asList(MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL, ANTIGEN_BINDING_COL,
             VIRUSES_COL, CLADES_COL, TIERS_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL);
 
     private final List<String> _columnLabels = new ArrayList<>();
@@ -149,6 +150,30 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     }
 
     public void clearAllFilters()
+    {
+        Locator clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear");
+        if (_webDriverWrapper.isElementPresent(clearAllFilterBtn) && _webDriverWrapper.isElementVisible(clearAllFilterBtn))
+            _webDriverWrapper.click(clearAllFilterBtn);
+        _webDriverWrapper.waitForElementToDisappear(Locator.tagWithClass("div", "filtered-column"));
+    }
+
+    public boolean hasGridColumnFilters()
+    {
+        String[] uniqueFacetFilterColumns = {MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL, VIRUSES_COL};
+        for (String column : uniqueFacetFilterColumns)
+        {
+            if (_gridHelper.isColumnFiltered(column))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isColumnFiltered(String column)
+    {
+        return _gridHelper.isColumnFiltered(column);
+    }
+
+    public void clearAllColumnFilters()
     {
         String[] uniqueFacetFilterColumns = {MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL};
         for (String column : uniqueFacetFilterColumns)
@@ -256,6 +281,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         _webDriverWrapper.click(checkbox);
         if (_webDriverWrapper.isElementPresent(checkedLoc))
             _webDriverWrapper.click(checkbox);
+        _webDriverWrapper.sleep(2000);
     }
 
     public void selectMAbs(String ...mabNames)

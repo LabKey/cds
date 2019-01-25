@@ -82,6 +82,12 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
+        this.control('mabstatus', {
+            requestundo : function() {
+                Connector.getState().requestFilterUndo(true);
+            }
+        });
+
         this.control('filterstatus > container > #clear', {
             click : this.onFilterClear
         });
@@ -172,14 +178,22 @@ Ext.define('Connector.controller.FilterStatus', {
         store.load();
 
         return Ext.create('Connector.view.DetailStatus', {
-            store: store
+            isMab: true,
+            store: store,
+            filterChange : function() {
+                // skip subject filter change
+            }
         });
     },
 
     createMabStatus : function() {
         var view = Ext.create('Connector.view.MabStatus', { });
-
+        var state = Connector.getState();
+        state.on('mabfilterchange', view.onMabFilterChange, view);
+        state.on('mabselectionchange', view.onMabSelectionChange, view);
+        state.on('mabfilterclear', view.onFilterRemove, view);
         this.getViewManager().register(view);
+        this.getViewManager().on('afterchangeview', view.onAfterViewChange, view);
 
         return view;
     },

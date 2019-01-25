@@ -18,6 +18,8 @@ package org.labkey.cds;
 
 import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.DbSchemaType;
+import org.labkey.api.data.TableInfo;
+import org.labkey.cds.query.MabGroupTable;
 
 public class CDSSchema
 {
@@ -38,5 +40,10 @@ public class CDSSchema
     public DbSchema getSchema()
     {
         return DbSchema.get("cds", DbSchemaType.Module);
+    }
+
+    public TableInfo getTableInfoMabGroup()
+    {
+        return getSchema().getTable(MabGroupTable.NAME);
     }
 }

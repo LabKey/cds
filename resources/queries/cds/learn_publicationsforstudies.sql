@@ -17,7 +17,10 @@
 SELECT
   sp.prot,
   sp.publication_order,
+  s.label AS "study_label",
+  s.short_name AS "study_short_name",
   pub.*
 FROM cds.ds_studypublication sp
 LEFT JOIN publication pub
 ON pub.id=sp.publication_id
+LEFT JOIN cds.metadata.study s ON sp.prot=s.study_name

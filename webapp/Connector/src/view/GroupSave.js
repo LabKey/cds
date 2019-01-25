@@ -31,6 +31,8 @@ Ext.define('Connector.view.GroupSave', {
 
     maxRecordsHeight: 13,
 
+    isMabGroup: false,
+
     constructor : function(config) {
 
         Ext.applyIf(config, {
@@ -250,7 +252,7 @@ Ext.define('Connector.view.GroupSave', {
                         id: 'editgroupdescription',
                         itemId: 'groupdescription',
                         name: 'groupdescription',
-                        emptyText: 'no description provided',
+                        emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
@@ -386,7 +388,7 @@ Ext.define('Connector.view.GroupSave', {
                         id: 'updategroupdescription',
                         itemId: 'groupdescription',
                         name: 'groupdescription',
-                        emptyText: 'no description provided',
+                        emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
@@ -596,8 +598,10 @@ Ext.define('Connector.view.GroupSave', {
         if (this.grouplist)
         {
             this.grouplist.getSelectionModel().deselectAll();
+            this.grouplist.isMab = this.isMabGroup;
             var me = this;
-            this.grouplist.getStore().load(function toggleSave(records) {
+            this.grouplist.getStore().refreshData(function toggleSave() {
+                me.grouplist.filterGroups();
                 var group = me.grouplist.getStore().getAt(0);
                 if (group)
                 {
@@ -609,7 +613,7 @@ Ext.define('Connector.view.GroupSave', {
                 {
                     me.getGroupUpdateSaveBtn().setDisabled(true);
                 }
-            });
+            }, me);
         }
     },
 
@@ -710,7 +714,7 @@ Ext.define('Connector.view.GroupSaveList', {
 
     trackOver: true,
 
-    emptyText: '<div class="emptytext"><span class="left-label">No groups defined</span>',
+    emptyText: '<div><span class="empty-group-label x-form-field x-form-empty-field">No groups defined</span>',
 
     overItemCls: 'save-label-over',
 
@@ -730,9 +734,35 @@ Ext.define('Connector.view.GroupSaveList', {
         loadMask: false
     },
 
-    initComponent : function() {
-        this.store = Connector.model.Group.getGroupStore();
+    isMab: false,
 
+    initComponent : function() {
+
+        this.store = this.cloneGroupStore(Connector.model.Group.getGroupStore());
+        this.filterGroups();
         this.callParent();
+    },
+
+    filterGroups: function() {
+        var isMab = this.isMab;
+        this.store.filterBy(function(record) {
+            if (isMab)
+                return record.get('type') === 'mab';
+            else
+                return record.get('type') !== 'mab';
+        });
+    },
+
+    cloneGroupStore: function(source) {
+
+        var clone = Ext.create('Ext.data.Store', {
+            model : 'Connector.model.Group'
+        });
+        Ext.each(source.getRange(), function(record) {
+            clone.add(Ext.clone(record.copy()));
+        });
+        clone.refreshData = source.refreshData;
+
+        return clone;
     }
 });

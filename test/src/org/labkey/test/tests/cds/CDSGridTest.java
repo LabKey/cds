@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.CDSExport;
+import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
@@ -41,6 +42,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.util.cds.CDSHelper.GRID_COL_SUBJECT_ID;
 import static org.labkey.test.util.cds.CDSHelper.GRID_TITLE_NAB;
 
 @Category({})
@@ -205,7 +207,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         //
         log("Verify grid paging with filtered dataset");
         grid.goToDataTab("NAb");
-        grid.sort(CDSHelper.GRID_COL_SUBJECT_ID);
+        grid.sort(GRID_COL_SUBJECT_ID);
         grid.clickNextBtn();
         grid.assertCurrentPage(2);
 
@@ -288,9 +290,9 @@ public class CDSGridTest extends CDSReadOnlyTest
         ));
         exported.setFilterTitles(Arrays.asList("Intracellular Cytokine Staining", "", "", "", "Subject (Race)"));
         exported.setFilterValues(Arrays.asList("Data summary level: Protein Panel", "Functional marker name: IL2/ifngamma", "", "", "Subjects related to any: Asian"));
-        exported.setStudyNetworks(Arrays.asList("ROGER", "ROGER", "ROGER", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED", "ZED"));
-        exported.setStudies(Arrays.asList("RED 4", "RED 5", "RED 6", "ZAP 102", "ZAP 105", "ZAP 106", "ZAP 134",
-                "ZAP 136", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118"));
+        exported.setStudyNetworks(Arrays.asList("HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "HVTN", "ROGER", "ROGER", "ROGER"));
+        exported.setStudies(Arrays.asList("ZAP 102", "ZAP 105", "ZAP 106", "ZAP 134",
+                "ZAP 136", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118", "RED 4", "RED 5", "RED 6"));
         exported.setAssays(Arrays.asList("Intracellular Cytokine Staining", "Intracellular Cytokine Staining", "Intracellular Cytokine Staining"));
         exported.setAssayProvenances(Arrays.asList("VISC analysis dataset", "VISC analysis dataset", "LabKey dataset", "VISC analysis dataset", "VISC analysis dataset"));
         exported.setFieldLabels(Arrays.asList("Antigen name", "Antigens aggregated", "Cell type", "Data summary level", "Functional marker name", "Lab ID", "Magnitude (% cells) - Background subtracted",
@@ -330,7 +332,7 @@ public class CDSGridTest extends CDSReadOnlyTest
                 "",
                 "",
                 "Subjects related to any: Asian"));
-        exported.setStudyNetworks(Arrays.asList("ZED", "ZED"));
+        exported.setStudyNetworks(Arrays.asList("HVTN", "HVTN"));
         exported.setStudies(Arrays.asList("ZAP 134", "ZAP 117"));
         exported.setAssays(Arrays.asList("HIV Neutralizing Antibody",
                 "HIV Neutralizing Antibody",
@@ -369,8 +371,44 @@ public class CDSGridTest extends CDSReadOnlyTest
     @Test
     public void verifyGridWithPlotAndFilters()
     {
-        log("Verify Grid with filters.");
+        log("Verify Grid with gridbase field filters.");
+        cds.openStatusInfoPane("Studies");
+        String studyMember = "RED 5";
+        cds.selectInfoPaneItem(studyMember, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(studyMember));
+
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        sleep(5000);
         DataGrid grid = new DataGrid(this);
+        assertTrue(GRID_COL_SUBJECT_ID + " column facet is not as expected", grid.isHasData(GRID_COL_SUBJECT_ID, "r5-120"));
+        assertTrue(GRID_COL_SUBJECT_ID + " column facet is not as expected", grid.isNoData(GRID_COL_SUBJECT_ID, "q1-001"));
+
+        log("Create a plot with Study on X axis.");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        YAxisVariableSelector yAxis = new YAxisVariableSelector(this);
+        XAxisVariableSelector xAxis = new XAxisVariableSelector(this);
+
+        yAxis.openSelectorWindow();
+        yAxis.pickSource(CDSHelper.ICS);
+        yAxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yAxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xAxis.openSelectorWindow();
+        xAxis.pickSource(CDSHelper.TIME_POINTS);
+        xAxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        xAxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        CDSPlot cdsPlot = new CDSPlot(this);
+
+        assertTrue("Plot is not rendered as expected.", cdsPlot.hasStudyAxis());
+
+        cds.ensureNoFilter();
+        cds.ensureNoSelection();
+
+        log("Verify Grid with filters.");
         setUpGridStep1();
 
         log("Validate expected columns are present.");
@@ -712,7 +750,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         selectorTextClean = selectorTextClean.replaceAll("\\s+", "");
 
         expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen name\n  Antigens aggregated\n  Cell type\n  Data summary level\n  Functional marker name\n" +
-                "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer ID50\nStudy and treatment variables\n  Study Name\n" +
+                "  Lab ID\n  Peptide Pool\n  Protein\n  Protein panel\n  Specimen type\nNAb (Neutralizing antibody)\n  Titer ID50\nStudy and treatment variables\n  Study Name\n  Treatment Summary\n" +
                 "Subject characteristics\n  Race\n  Subject Id\nTime points\n  Study days";
         expectedTextClean = expectedText.toLowerCase().replaceAll("\\n", "");
         expectedTextClean = expectedTextClean.replaceAll("\\s+", "");
@@ -723,7 +761,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         selectorText = Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]").findElement(getDriver()).getText();
         selectorText = selectorText.trim();
 
-        assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.equals("Study and treatment variables\n  Study Name\nSubject characteristics\n" +
+        assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.equals("Study and treatment variables\n  Study Name\n  Treatment Summary\nSubject characteristics\n" +
                 "  Subject Id\nTime points\n  Study days"));
 
         gridColumnSelector.confirmSelection();
@@ -740,7 +778,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         columns.clear();
         columns.put(CDSHelper.DEMO_STUDY_NAME, false);
-        columns.put(CDSHelper.DEMO_TREAT_SUMM, true);
+        columns.put(CDSHelper.DEMO_TREAT_SUMM, false);
         columns.put(CDSHelper.DEMO_DATE_SUBJ_ENR, true);
         columns.put(CDSHelper.DEMO_DATE_FUP_COMP, true);
         columns.put(CDSHelper.DEMO_DATE_PUB, true);

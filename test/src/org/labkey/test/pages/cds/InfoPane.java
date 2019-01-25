@@ -16,6 +16,7 @@
 package org.labkey.test.pages.cds;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
@@ -369,5 +370,33 @@ public class InfoPane
         _test.log("Done List Size: " + listSize + " tries: " + tries);
 
         return _test.getText(Locator.css(cssMeasuresGrid)).trim();
+    }
+
+    public void verifyMabInfoFilteredState(boolean isFiltered)
+    {
+        Locator saveGroupBtn = CDSHelper.Locators.cdsButtonLocator("save", "mabfiltersave");
+        Locator titleLoc = Locator.tagWithClass("h2", "section-title");
+        Locator subtitleLoc = Locator.tagWithClass("div", "emptytext");
+        Locator filteredTitleLoc = titleLoc.withText("Filtered mAbs");
+        Locator filteredSubtitleLoc = subtitleLoc.withText("From the mAb grid");
+        Locator allTitleLoc = titleLoc.withText("MAb Info");
+        Locator allSubtitleLoc = subtitleLoc.withText("All mAbs");
+        String msg = "MAb info pane header is not as expected";
+
+        if (isFiltered)
+        {
+            Assert.assertTrue(msg,_test.isElementPresent(filteredTitleLoc)
+                    && _test.isElementPresent(filteredSubtitleLoc)
+                    && _test.isElementVisible(saveGroupBtn));
+            Assert.assertFalse(msg,_test.isElementPresent(allTitleLoc) || _test.isElementPresent(allSubtitleLoc));
+        }
+        else
+        {
+            Assert.assertFalse(msg,_test.isElementPresent(filteredTitleLoc)
+                    || _test.isElementPresent(filteredSubtitleLoc)
+                    || _test.isElementVisible(saveGroupBtn));
+            Assert.assertTrue(msg,_test.isElementPresent(allTitleLoc) && _test.isElementPresent(allSubtitleLoc));
+
+        }
     }
 }

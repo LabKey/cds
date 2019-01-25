@@ -48,6 +48,9 @@ public class DataGrid
 {
     protected BaseWebDriverTest _test;
 
+    public static final String FACET_HAS_DATA_HEADER = "Has data in current selection";
+    public static final String FACET_NO_DATA_HEADER = "No data in current selection";
+
     public DataGrid(BaseWebDriverTest test)
     {
         _test = test;
@@ -240,6 +243,48 @@ public class DataGrid
             _test.sleep(500);
             _test._ext4Helper.waitForMaskToDisappear();
         });
+    }
+
+    public boolean isHasData(String columnName, String value)
+    {
+        return isFacetContains(columnName, true, value);
+    }
+
+    public boolean isNoData(String columnName, String value)
+    {
+        return isFacetContains(columnName, false, value);
+    }
+
+   public boolean isFacetContains(String columnName, boolean hasData, String value)
+    {
+        openFilterPanel(columnName);
+        _test.sleep(5000); // wait for list to finish load
+        boolean result = getFacetValues(hasData).contains(value);
+        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Cancel", "filter-btn"));
+        return result;
+    }
+
+    public String getFacetValues(boolean hasData)
+    {
+        Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
+        String facetContent = _test.getText(gridLoc).trim();
+        if (hasData)
+        {
+            if (!facetContent.contains(FACET_HAS_DATA_HEADER))
+                return "";
+            if (facetContent.contains(FACET_NO_DATA_HEADER))
+            {
+                facetContent = facetContent.substring(0, facetContent.indexOf(FACET_NO_DATA_HEADER));
+            }
+        }
+        else
+        {
+            if (!facetContent.contains(FACET_NO_DATA_HEADER))
+                return "";
+            facetContent = facetContent.substring(facetContent.indexOf(FACET_NO_DATA_HEADER));
+        }
+        _test.log(facetContent);
+        return facetContent;
     }
 
     @LogMethod

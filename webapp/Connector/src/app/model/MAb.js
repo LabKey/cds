@@ -33,6 +33,8 @@ Ext.define('Connector.app.model.MAb', {
         {name: 'isotypes', convert : Connector.model.Filter.asArray},
         {name: 'hxb2Locs_str'},
         {name: 'hxb2Locs', convert : Connector.model.Filter.asArray},
+        {name: 'abBindings_str'},
+        {name: 'abBindings', convert : Connector.model.Filter.asArray},
 
         {name: 'mabnames_str'},
 

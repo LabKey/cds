@@ -12,8 +12,17 @@
     font-size: 18px;
   }
 
+  h2.mab-section-title-filtered {
+    padding: 0 0 0 8px;
+    font-size: 16px;
+  }
+
   .emptytext {
     padding: 12px 0 0 28px;
+  }
+
+  .mab-subtitle-filtered {
+    padding: 12px 0 0 8px;
   }
 }
 
@@ -214,6 +223,6 @@ ul.indent li {
   }
 }
 
-.filterheader-text {
+.filterheader-text, .mab-filterheader-text {
   margin-top: 5px;
 }

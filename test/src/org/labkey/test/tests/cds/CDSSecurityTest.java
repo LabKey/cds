@@ -165,9 +165,12 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.enterApplication();
 
         cds.viewLearnAboutPage("Studies");
-
         validateStudyListDataAdded(false);
         validateStudyDetailDataAvailability(false);
+
+        cds.viewLearnAboutPage("Publications");
+        validatePublicationStudyList();
+        validatePublicationDetailDataAvailability(false);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
@@ -177,20 +180,61 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         studyPermissions = new HashMap<>();
         studyPermissions.put("q1", "Reader");
         studyPermissions.put("q2", "Reader");
-        log("Create a user group with Read permission to project, q1 and q2.");
+        studyPermissions.put("z102", "Reader");
+        log("Create a user group with Read permission to project, q1, q2 and z102.");
         cds.setUpPermGroup(_permGroups[1], studyPermissions);
         impersonateGroup(_permGroups[1], false);
         cds.enterApplication();
 
         cds.viewLearnAboutPage("Studies");
-
+        sleep(CDSHelper.CDS_WAIT);
         validateStudyListDataAdded(true);
         validateStudyDetailDataAvailability(true);
+
+        cds.viewLearnAboutPage("Publications");
+        validatePublicationStudyList();
+        validatePublicationDetailDataAvailability(true);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
         stopImpersonatingGroup();
         assertSignedInNotImpersonating();
+    }
+
+    private void validatePublicationDetailDataAvailability(boolean hasAccessToR4)
+    {
+        Locator publicationRow = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/div").withText("J Infect Dis");
+        mouseOver(publicationRow);
+        waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
+        waitAndClick(publicationRow);
+        waitForText("Data Availability");
+
+        String studies = getText(Locator.tagWithClass("div", "learnmodulegrid"));
+        validateText("Study list", studies, "QED 3", "QED 4", "RED 1", "RED 2",
+                "RED 3", "RED 4", "xyz123", "ZAP 101", "ZAP 102", "ZAP 103");
+
+        String tooltip = getStudyDetailDataAvailabilityTooltip("RED 4");
+        validateText("RED 4 tooltip", tooltip, "Assays without data accessible", "IFNg ELISpot", "NABMAB", "ICS");
+
+
+        tooltip = getStudyDetailDataAvailabilityTooltip("ZAP 102");
+        validateText("ZAP 102 tooltip", tooltip, "Assays " + (hasAccessToR4 ? "with" : "without") + " data accessible", "ICS");
+    }
+
+    private String getStudyDetailDataAvailabilityTooltip(String studyName)
+    {
+        mouseOver(Locator.tagWithText("a", studyName));
+        sleep(500); // If the mouse moves too quickly ext may not always see it, so pause for a moment.
+        Locator tooltipLoc = Locator.css("div.hopscotch-bubble-container");
+        return getText(tooltipLoc);
+    }
+
+    private void validatePublicationStudyList()
+    {
+        setFormElement(Locator.xpath(XPATH_TEXTBOX), "fong y");
+        sleep(3000);
+        String studyList = getText(Locator.tagWithClass("div", "publication-study-list"));
+        Assert.assertEquals("Publication Studies listing is not as expected for 'Fong Y 2018 J Infect Dis'", "QED 3\nQED 4\nRED 1\nRED 2\nRED 3\n...", studyList);
     }
 
     private void validateStudyDetailDataAvailability(boolean hasAccessToQ2)
@@ -231,8 +275,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     private void validateStudyListDataAdded(boolean hasAccessToQ2)
     {
         final int STUDY_WITH_DATA_ADDED = 24;
-        int dataAddedCount = hasAccessToQ2 ? (STUDY_WITH_DATA_ADDED - 1) : STUDY_WITH_DATA_ADDED;
-        int dataAccessibleCount = hasAccessToQ2 ? 2 : 1;
+        int dataAddedCount = hasAccessToQ2 ? (STUDY_WITH_DATA_ADDED - 2) : STUDY_WITH_DATA_ADDED;
+        int dataAccessibleCount = hasAccessToQ2 ? 3 : 1;
 
         List<WebElement> hasDataIcons = LearnGrid.Locators.rowsWithDataNotAccessible.findElements(getDriver());
         List<WebElement> hasAccessIcons = LearnGrid.Locators.rowsWithDataAccessible.findElements(getDriver());
@@ -251,9 +295,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         if (hasAccessToQ2)
-            validateToolTipText(toolTipText, "Assays with Data Accessible", "NAB", "NABMAB");
+            validateText("Tooltip", toolTipText, "Assays with Data Accessible", "NAB", "NABMAB");
         else
-            validateToolTipText(toolTipText, "Assays without Data Accessible", "NAB", "NABMAB");
+            validateText("Tooltip", toolTipText, "Assays without Data Accessible", "NAB", "NABMAB");
 
         String red4DataAddedText = "0/3 Assays Accessible";
         cellText = learnGrid.getCellText(7, dataAddedColumn);
@@ -263,14 +307,14 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(7, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateToolTipText(toolTipText, "Assays without Data Accessible", "ICS", "IFNg ELISpot", "NABMAB");
+        validateText("Tooltip", toolTipText, "Assays without Data Accessible", "ICS", "IFNg ELISpot", "NABMAB");
     }
 
-    private void validateToolTipText(String toolTipText, String... expectedText)
+    private void validateText(String logMsg, String actualText, String... expectedText)
     {
         for (String expected : expectedText)
         {
-            Assert.assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
+            Assert.assertTrue(logMsg + " did not contain text: '" + expected + "'. Found: '" + actualText + "'.", actualText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
         }
     }
 

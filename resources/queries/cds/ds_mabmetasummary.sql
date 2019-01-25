@@ -20,6 +20,7 @@ SELECT
   mix.mab_id,
   mixmeta.container,
   mabmeta.mab_hxb2_location,
+  mabmeta.mab_ab_binding_type,
   mabmeta.mab_isotype,
   mabmeta.mab_donor_species
 

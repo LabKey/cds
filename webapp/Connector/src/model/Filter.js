@@ -190,6 +190,29 @@ Ext.define('Connector.model.Filter', {
                 return Ext.isArray(value) ? value : [];
             },
 
+            getPublicationDateSortStr: function(publicationDateStr) {
+                //"YYYY MON DD" (2018 Mar 28), "YYYY MON" (2018 Mar), "YYYY" (2018)
+                if (!publicationDateStr)
+                    return;
+
+                var parts = publicationDateStr.trim().split(/\s+/);
+                var year = parts[0], mon = '00', day = '00';
+                if (parts[1]) {
+                    var monStr = parts[1].toLowerCase();
+                    var d = Date.parse(monStr + "1, 2012");
+                    if(!isNaN(d)){
+                        mon = '' +  (new Date(d).getMonth() + 1);
+                        mon = mon.length === 1 ? '0' + mon : mon;
+                    }
+
+                    if (parts[2]) {
+                        var dayStr = parts[2];
+                        day = dayStr.toString().length === 1 ? '0' + dayStr : dayStr;
+                    }
+                }
+                return [year, mon, day].join('');
+            },
+
             /**
              * A valid Array.sort() function that sorts an Array of strings alphanumerically. This sort is case-insensitive
              * and only permits valid instances of string (not undefined, null, etc).
@@ -370,6 +393,7 @@ Ext.define('Connector.model.Filter', {
                 method: 'POST',
                 headers:{'X-LABKEY-CSRF': LABKEY.CSRF},
                 success: config.success,
+                scope: config.scope,
                 failure: config.failure || Connector.model.Filter.getErrorCallback(),
                 jsonData: {
                     label: config.group.label,

@@ -584,6 +584,8 @@
             <column columnName="publication_location"/>
             <column columnName="publication_pmid"/>
             <column columnName="publication_link"/>
+            <column columnName="publication_author_first"/>
+            <column columnName="publication_label"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -658,6 +660,8 @@
             <column columnName="location"/>
             <column columnName="pmid"/>
             <column columnName="link"/>
+            <column columnName="author_first"/>
+            <column columnName="publication_label"/>
         </columns>
     </table>
     <table tableName="studypublication" tableDbType="TABLE">
@@ -1024,9 +1028,29 @@
             <column columnName="mab_mix_type"/>
             <column columnName="mab_id"/>
             <column columnName="mab_hxb2_location"/>
+            <column columnName="mab_ab_binding_type"/>
             <column columnName="mab_isotype"/>
             <column columnName="mab_donor_species"/>
             <column columnName="Container"/>
+        </columns>
+    </table>
+    <table tableName="mabgroup" tableDbType="TABLE">
+        <columns>
+            <column columnName="RowId">
+                <isHidden>true</isHidden>
+            </column>
+            <column columnName="Label"/>
+            <column columnName="Description"/>
+            <column columnName="Type"/>
+            <column columnName="Filters"/>
+            <column columnName="Shared"/>
+            <column columnName="Created"/>
+            <column columnName="CreatedBy"/>
+            <column columnName="Modified"/>
+            <column columnName="ModifiedBy"/>
+            <column columnName="Container">
+                <isHidden>true</isHidden>
+            </column>
         </columns>
     </table>
     <table tableName="studymAb" tableDbType="TABLE">
