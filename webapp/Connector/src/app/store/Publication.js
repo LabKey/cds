@@ -90,6 +90,9 @@ Ext.define('Connector.app.store.Publication', {
                 study.assays = studyAssays[study.prot];
 
                 study.data_label = study.study_label;
+
+                if (!study.study_label)
+                    study.study_label = study.prot;
                 study.data_id = study.prot;
                 study.data_link_id = study.prot;
                 study.has_access = this.accessibleStudies[study.prot];
