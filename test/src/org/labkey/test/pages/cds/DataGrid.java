@@ -17,7 +17,6 @@ package org.labkey.test.pages.cds;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -341,7 +340,7 @@ public class DataGrid
                 }
             }
         }
-        catch (IOException | InvalidFormatException fail)
+        catch (IOException fail)
         {
             throw new RuntimeException("Error reading exported grid file", fail);
         }
@@ -372,7 +371,7 @@ public class DataGrid
             List<String> fieldLabels = excel.getFieldLabels();
             verifyColumnValues(sheet, fieldLabels, "Field label", 1);
         }
-        catch (IOException | InvalidFormatException fail)
+        catch (IOException fail)
         {
             throw new RuntimeException("Error reading exported grid file", fail);
         }
@@ -391,7 +390,7 @@ public class DataGrid
             verifyColumnValues(sheet, assays, "Assay Name", 1);
             verifyColumnValues(sheet, assayProvenances, "Data provenance - source", 2);
         }
-        catch (IOException | InvalidFormatException fail)
+        catch (IOException fail)
         {
             throw new RuntimeException("Error reading exported grid file", fail);
         }
@@ -410,7 +409,7 @@ public class DataGrid
             verifyColumnValues(sheet, studyNetworks, "Network", 0);
             verifyColumnValues(sheet, studies, "Study", 1);
         }
-        catch (IOException | InvalidFormatException fail)
+        catch (IOException fail)
         {
             throw new RuntimeException("Error reading exported grid file", fail);
         }
@@ -442,7 +441,7 @@ public class DataGrid
             verifyTOC(sheet);
             verifyFilters(sheet, excel);
         }
-        catch (IOException | InvalidFormatException fail)
+        catch (IOException fail)
         {
             throw new RuntimeException("Error reading exported grid file", fail);
         }
@@ -520,7 +519,7 @@ public class DataGrid
                 Assert.assertEquals("Sheet name not as expected: ", expectedName, sheet.getSheetName());
             return sheet.getLastRowNum(); // +1 for zero-based, -1 for header row
         }
-        catch (IOException | InvalidFormatException fail)
+        catch (IOException fail)
         {
             throw new RuntimeException("Error reading exported grid file", fail);
         }
