@@ -250,7 +250,7 @@ public class CDSController extends SpringActionController
                 // Determine if user should be included for analytics (i.e. if they are not in NON_ANALYTICS_GROUPS)
                 if (!getUser().isImpersonated()) // 27915
                 {
-                    boolean isAnalytics = !user.isInSiteAdminGroup() && !user.isDeveloper();
+                    boolean isAnalytics = !user.hasSiteAdminPermission() && !user.isPlatformDeveloper();
                     if (isAnalytics)
                     {
                         List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
