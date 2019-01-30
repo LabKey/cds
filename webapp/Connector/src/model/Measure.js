@@ -23,17 +23,21 @@ Ext.define('Connector.model.Measure', {
         {name: 'schemaName', defaultValue: undefined},
         {name: 'queryName', defaultValue: undefined},
         {name: 'queryLabel', defaultValue: undefined},
+        {name: 'altQueryLabel', defaultValue: undefined},
         {name: 'queryDescription', defaultValue: undefined},
         {name: 'lookup', defaultValue: {}},
         {name: 'type', defaultValue: undefined},
 
         // Boolean properties describing the type of measure/column
         {name: 'hidden', type: 'boolean', defaultValue: false},
+        {name: 'hiddenInPlot', type: 'boolean', defaultValue: false},
+        {name: 'hiddenInGrid', type: 'boolean', defaultValue: false},
         {name: 'isDemographic', type: 'boolean', defaultValue: false},
         {name: 'isUserDefined', type: 'boolean', defaultValue: undefined},
         {name: 'isMeasure', type: 'boolean', defaultValue: false},
         {name: 'isDimension', type: 'boolean', defaultValue: false},
         {name: 'isDiscreteTime', type: 'boolean', defaultValue: false},
+        {name: 'isHoursType', type: 'boolean', defaultValue: false},
 
         // Misc properties about the measure display in the application
         {name: 'sourceTitle', convert: function(val, rec) {
@@ -41,8 +45,8 @@ Ext.define('Connector.model.Measure', {
                 return val;
             }
             else {
-                var title = rec.get('queryLabel');
-                if (rec.get('queryType') == 'datasets' && !rec.get('isDemographic')) {
+                var title = rec.get('altQueryLabel') ? rec.get('altQueryLabel') : rec.get('queryLabel');
+                if (rec.get('queryType') == 'datasets' && !rec.get('isDemographic') && !rec.get('altQueryLabel')) {
                     title = rec.get('queryName') + ' (' + title + ')';
                 }
 
@@ -95,7 +99,10 @@ Ext.define('Connector.model.Measure', {
         // a WHERE clause for the query to get the distinct values for the given measure in the Advanced options
         // panel of the Variable Selector.
         {name: 'distinctValueFilterColumnAlias', defaultValue: undefined},
-        {name: 'distinctValueFilterColumnValue', defaultValue: undefined}
+        {name: 'distinctValueFilterColumnValue', defaultValue: undefined},
+
+        // Array of alias to add when generating plot queries
+        {name: 'plotDependencyColumnAlias', defaultValue: undefined}
     ],
 
     statics : {
@@ -186,5 +193,17 @@ Ext.define('Connector.model.Measure', {
         }
 
         return '';
+    },
+
+    getPlotDependencyMeasures : function() {
+        var dependencies = this.get('plotDependencyColumnAlias');
+        if (Ext.isArray(dependencies) && dependencies.length > 0) {
+            var measures = [];
+            Ext.each(dependencies, function(dependency){
+                measures.push(Connector.getService('Query').getMeasureRecordByAlias(dependency));
+            });
+            return measures;
+        }
+        return null;
     }
 });

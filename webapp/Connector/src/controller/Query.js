@@ -601,6 +601,17 @@ Ext.define('Connector.controller.Query', {
             requiredVarMatch = config.includeAssayRequired && record.get('recommendedVariableGrouper') == '1_AssayRequired';
             demogSubjectColMatch = config.includeAssayRequired && record.get('isDemographic') && record.get('name') == Connector.studyContext.subjectColumn;
             hiddenMatch = config.includeHidden || !record.get('hidden') || requiredVarMatch || demogSubjectColMatch;
+            if (hiddenMatch) {
+                if (config.isGridSelector) {
+                    hiddenMatch = config.includeHidden || !record.get('hiddenInGrid');
+                }
+                else {
+                    if (record.get('recommendedVariableGrouper') == '1_AssayRequired')
+                        hiddenMatch = !record.get('hiddenInPlot');
+                    else
+                        hiddenMatch = config.includeHidden || !record.get('hiddenInPlot');
+                }
+            }
 
             // The userFilter is a function used to further filter down the available measures.
             // Needed so the color picker only displays categorical measures.

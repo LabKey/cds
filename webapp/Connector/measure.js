@@ -77,10 +77,16 @@ Ext.define('Connector.measure.Configuration', {
                     category: 'Assays',
                     dimensions: [
                         'study_PKMAb_mab_mix_name_std',
-                         'study_PKMAb_summary_level',
+                        'study_PKMAb_summary_level',
                         'study_PKMAb_source_assay',
                         'study_PKMAb_specimen_type',
-                        'study_PKMAb_lab_code'
+                        'study_PKMAb_lab_code',
+                        'study_PKMAb_mab_mix_id',
+                        'study_PKMAb_visit_code',
+                        'study_PKMAb_visit_time_label'
+                    ],
+                    plotDependencyColumnAlias: [
+                        'study_PKMAb_visit_time_label'
                     ],
                     defaultScale: 'LOG'
                 },
@@ -609,7 +615,10 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_PKMAb_mab_mix_name_std': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                },
+                'study_PKMAb_mab_mix_id': {
+                    hiddenInPlot: true
                 },
                 'study_Demographics_species': {
                     isRecommendedVariable: true
@@ -736,28 +745,30 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_PKMAb_visit_code': {
-                    hidden: true
+                    hiddenInPlot: true
                 },
                 'study_PKMAb_visit_time_label': {
-                    hidden: true
-                },
-                'study_PKMAb_mab_mix_id': {
-                    hidden: true
+                    hiddenInPlot: true
                 },
                 'study_PKMAb_mab_name_source': {
-                    hidden: true
+                    hiddenInPlot: true
                 },
                 'study_PKMAb_mab_concentration_units': {
-                    hidden: true
+                    hiddenInPlot: true
                 },
                 'study_PKMAb_assay_identifier': {
                     hidden: true
                 },
                 'study_PKMAb_hours_post_initial_infusion': {
-                    hidden: true
+                    sortOrder: 98,
+                    variableType: 'TIME',
+                    isHoursType: true,
+                    altQueryLabel: 'Time points'
                 },
                 'study_PKMAb_hours_post_recent_infusion': {
-                    hidden: true
+                    sortOrder: 99,
+                    altQueryLabel: 'Time points',
+                    hiddenInPlot: true
                 },
                 'study_PKMAb_study_prot': {
                     hidden: true

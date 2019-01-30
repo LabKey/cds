@@ -1588,14 +1588,14 @@
         <columnTitle>Visit code</columnTitle>
         <description>Unique ID assigned to the study visit. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>false</dimension>
+        <dimension>true</dimension>
       </column>
       <column columnName="visit_time_label">
         <datatype>varchar</datatype>
         <columnTitle>Visit description</columnTitle>
         <description>Description of the study visit. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>false</dimension>
+        <dimension>true</dimension>
       </column>
       <column columnName="hours_post_initial_infusion">
         <datatype>double</datatype>
@@ -1672,7 +1672,7 @@
           <fkTable>MAbMixMetadata</fkTable>
           <fkColumnName>mab_mix_id</fkColumnName>
         </fk>
-        <dimension>false</dimension>
+        <dimension>true</dimension>
       </column>
       <column columnName="mab_concentration">
         <datatype>double</datatype>

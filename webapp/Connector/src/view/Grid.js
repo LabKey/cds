@@ -395,6 +395,7 @@ Ext.define('Connector.view.Grid', {
                     includeAssayRequired: true,
                     includeVirtualSources: true,
                     includeDefinedMeasureSources: true,
+                    isGridSelector: true,
                     userFilter : function(row) {
                         return row.variableType !== 'TIME' || !row.isDiscreteTime;
                     }

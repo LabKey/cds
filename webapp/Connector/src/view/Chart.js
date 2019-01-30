@@ -2891,6 +2891,13 @@ Ext.define('Connector.view.Chart', {
 
                         measureRecord = Connector.getQueryService().getMeasureRecordByAlias(alias);
                         this.addValuesToMeasureMap(measuresMap, axisName, schema, query, measureRecord.get('name'), measureRecord.get('type'), values);
+
+                        var dependencies = measureRecord.getPlotDependencyMeasures();
+                        if (dependencies) {
+                            Ext.each(dependencies, function(dependency) {
+                                this.addValuesToMeasureMap(measuresMap, axisName, schema, query, dependency.get('name'), dependency.get('type'), values);
+                            }, this);
+                        }
                     }, this);
                 }
             }
@@ -3138,7 +3145,8 @@ Ext.define('Connector.view.Chart', {
                     includeTimepointMeasures: true,
                     userFilter : function(row) {
                         // for TIME variables, only show the ProtocolDay based non-discrete ones for the x-axis options
-                        return row.variableType !== 'TIME' || (row.name === Connector.studyContext.protocolDayColumn && !row.isDiscreteTime);
+                        return row.variableType !== 'TIME' || row.isHoursType
+                                || (row.name === Connector.studyContext.protocolDayColumn && !row.isDiscreteTime);
                     }
                 },
                 listeners: {
