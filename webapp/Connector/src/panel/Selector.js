@@ -185,7 +185,7 @@ Ext.define('Connector.panel.Selector', {
         this.updateSelectorPane();
     },
 
-    updateSelectorPane : function() {
+    updateSelectorPane : function() { //
         var source = this.getSourceForMeasure(this.activeMeasure);
         if (source) {
             this.showMeasures(source, this.activeMeasure);
@@ -222,8 +222,6 @@ Ext.define('Connector.panel.Selector', {
 
     clearSelection : function(axis) {
         this.setActiveMeasure(null);
-        if (axis === 'y')
-            this.activeYMeasure = null;
     },
 
     getSourceForMeasure : function(measure) {

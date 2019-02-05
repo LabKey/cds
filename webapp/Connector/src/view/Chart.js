@@ -2299,8 +2299,10 @@ Ext.define('Connector.view.Chart', {
 
             this.activeMeasures.y = y.measure;
             this.getYSelector().getModel().updateVariable([this.activeMeasures.y]);
-            if (this.getAxisSelectorIfInitialized('x'))
+            if (this.getAxisSelectorIfInitialized('x')) {
                 this.getAxisSelectorIfInitialized('x').activeYMeasure = this.activeMeasures.y;
+                this.getAxisSelectorIfInitialized('x').updateSelectorPane();
+            }
 
             axisSelector = this.getAxisSelectorIfInitialized('y');
             if (axisSelector)
@@ -2338,6 +2340,11 @@ Ext.define('Connector.view.Chart', {
         {
             this.activeMeasures.y = null;
             this.getYSelector().clearModel();
+
+            if (this.getAxisSelectorIfInitialized('x')) {
+                this.getAxisSelectorIfInitialized('x').activeYMeasure = null;
+                this.getAxisSelectorIfInitialized('x').updateSelectorPane();
+            }
         }
         else if (axis == 'x')
         {
@@ -3169,8 +3176,10 @@ Ext.define('Connector.view.Chart', {
 
                         this.activeMeasures.y = selected;
                         this.getYSelector().getModel().updateVariable([selected]);
-                        if (this.getAxisSelectorIfInitialized('x'))
+                        if (this.getAxisSelectorIfInitialized('x')) {
                             this.getAxisSelectorIfInitialized('x').activeYMeasure = selected;
+                            this.getAxisSelectorIfInitialized('x').updateSelectorPane();
+                        }
 
                         this.variableSelectionMade(this.ywin, this.getYSelector().getEl());
                     },
