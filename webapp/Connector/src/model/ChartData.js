@@ -289,7 +289,7 @@ Ext.define('Connector.model.ChartData', {
                 isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'FLOAT' || x.type === 'REAL',
                 isContinuous: Connector.model.ChartData.isContinuousMeasure(x),
                 isDimension: x.isDimension,
-                isLinePlot  : x.options && x.options.timePlotType.indexOf('line') > -1
+                isLinePlot  : x.options && x.options.timePlotType && x.options.timePlotType.indexOf('line') > -1
             };
         }
 
