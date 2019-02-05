@@ -412,12 +412,21 @@ Ext.define('Connector.component.AdvancedOptionTimePlotType', {
     },
 
     initComponent : function() {
+        var data = [
+            {value: 'scatter', label: 'Scatter plot'},
+            {value: 'box', label: 'Box plot'},
+            {value: 'line', label: 'Line plot'},
+            {value: 'box-line', label: 'Box & line plot'}
+        ];
+        if (this.isHoursType) {
+            data = [
+                {value: 'scatter', label: 'Scatter plot'},
+                {value: 'line', label: 'Line plot'}
+            ];
+        }
         this.store = Ext.create('Ext.data.Store', {
             fields: [this.storeValueField, this.storeLabelField],
-            data: [
-                {value: 'Scatter plot', label: 'Scatter plot'},
-                {value: 'Line plot', label: 'Line plot'}
-            ]
+            data: data
         });
 
         this.setValue(this.value, false);
@@ -521,6 +530,8 @@ Ext.define('Connector.component.AdvancedOptionTimeAlignedBy', {
 
     getDropdownPanelConfig : function() {
         var config = this.callParent();
+        if (!this.allowTimeAlignment)
+            config.optionsDisabled = true;
 
         // for 'Align by' time option, append the 'Aligned by Day 0' radio item
         if (this.singleUseOnly) {
@@ -688,7 +699,7 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
                 radioItems.push({
                     boxLabel: record.get(this.labelField) || record.get(this.valueField),
                     inputValue: record.get(this.valueField),
-                    checked: this.initSelection && this.initSelection.indexOf(record.get(this.valueField)) > -1
+                    checked: this.initSelection && this.initSelection === record.get(this.valueField)
                 });
             }, this);
 
@@ -703,6 +714,7 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
                 columns: 1,
                 items: radioItems,
                 validateOnChange: false,
+                disabled: this.optionsDisabled,
                 listeners: {
                     scope: this,
                     change: function(radiogroup, newValue) {

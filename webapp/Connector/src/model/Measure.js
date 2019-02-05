@@ -23,7 +23,9 @@ Ext.define('Connector.model.Measure', {
         {name: 'schemaName', defaultValue: undefined},
         {name: 'queryName', defaultValue: undefined},
         {name: 'queryLabel', defaultValue: undefined},
-        {name: 'altQueryLabel', defaultValue: undefined},
+        {name: 'altSourceKey', defaultValue: undefined},
+        {name: 'altPlotLabel', defaultValue: undefined},
+        {name: 'altDescription', defaultValue: undefined},
         {name: 'queryDescription', defaultValue: undefined},
         {name: 'lookup', defaultValue: {}},
         {name: 'type', defaultValue: undefined},
@@ -38,6 +40,7 @@ Ext.define('Connector.model.Measure', {
         {name: 'isDimension', type: 'boolean', defaultValue: false},
         {name: 'isDiscreteTime', type: 'boolean', defaultValue: false},
         {name: 'isHoursType', type: 'boolean', defaultValue: false},
+        {name: 'allowHoursTimePoint', type: 'boolean', defaultValue: false},
 
         // Misc properties about the measure display in the application
         {name: 'sourceTitle', convert: function(val, rec) {
@@ -45,8 +48,14 @@ Ext.define('Connector.model.Measure', {
                 return val;
             }
             else {
-                var title = rec.get('altQueryLabel') ? rec.get('altQueryLabel') : rec.get('queryLabel');
-                if (rec.get('queryType') == 'datasets' && !rec.get('isDemographic') && !rec.get('altQueryLabel')) {
+                if (rec.get('altSourceKey')) {
+                    var sourceContextMap = Connector.measure.Configuration.context.sources;
+                    if (Ext.isDefined(sourceContextMap[rec.get('altSourceKey')])) {
+                        return sourceContextMap[rec.get('altSourceKey')].queryLabel;
+                    }
+                }
+                var title = rec.get('queryLabel');
+                if (rec.get('queryType') == 'datasets' && !rec.get('isDemographic')) {
                     title = rec.get('queryName') + ' (' + title + ')';
                 }
 
@@ -83,6 +92,9 @@ Ext.define('Connector.model.Measure', {
         // True to allow multiple values of this option to be selected in the Advanced options panel of the Variable Selector.
         {name: 'allowMultiSelect', type: 'boolean', defaultValue: true},
 
+        // True to allow 'Align By' in the Advanced options panel of Time Options Selector.
+        {name: 'allowTimeAlignment', type: 'boolean', defaultValue: true},
+
         // The default selection state for this option. Configurations include: select all {all: true},
         // select first {all: false}, or select a specific value {all: false, value: 'XYZ'}.
         {name: 'defaultSelection', defaultValue: {all: true, value: undefined}},
@@ -102,7 +114,12 @@ Ext.define('Connector.model.Measure', {
         {name: 'distinctValueFilterColumnValue', defaultValue: undefined},
 
         // Array of alias to add when generating plot queries
-        {name: 'plotDependencyColumnAlias', defaultValue: undefined}
+        {name: 'plotDependencyColumnAlias', defaultValue: undefined},
+
+        // Alternative alias to use for sorting on Time plot
+        {name: 'timePointSortColumnAlias', defaultValue: undefined},
+
+        {name: 'defaultPlotType', defaultValue: undefined}
     ],
 
     statics : {
@@ -196,11 +213,18 @@ Ext.define('Connector.model.Measure', {
     },
 
     getPlotDependencyMeasures : function() {
-        var dependencies = this.get('plotDependencyColumnAlias');
-        if (Ext.isArray(dependencies) && dependencies.length > 0) {
+        return this.getMeasuresFromAlias(this.get('plotDependencyColumnAlias'));
+    },
+
+    getTimePointSortColumnAlias : function() {
+        return this.getMeasuresFromAlias(this.get('timePointSortColumnAlias'));
+    },
+
+    getMeasuresFromAlias: function(alias) {
+        if (Ext.isArray(alias) && alias.length > 0) {
             var measures = [];
-            Ext.each(dependencies, function(dependency){
-                measures.push(Connector.getService('Query').getMeasureRecordByAlias(dependency));
+            Ext.each(alias, function(name){
+                measures.push(Connector.getService('Query').getMeasureRecordByAlias(name));
             });
             return measures;
         }

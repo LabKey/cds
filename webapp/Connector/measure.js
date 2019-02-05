@@ -88,6 +88,9 @@ Ext.define('Connector.measure.Configuration', {
                     plotDependencyColumnAlias: [
                         'study_PKMAb_visit_time_label'
                     ],
+                    timePointSortColumnAlias: 'study_PKMAb_hours_post_initial_infusion',
+                    defaultPlotType: 'line',
+                    allowHoursTimePoint: true,
                     defaultScale: 'LOG'
                 },
                 // New/virtual sources
@@ -612,10 +615,11 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_PKMAb_mab_concentration': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                    allowTimeAlignment: false
                 },
                 'study_PKMAb_mab_mix_name_std': {
-                    isRecommendedVariable: true,
+                    isRecommendedVariable: true
                 },
                 'study_PKMAb_mab_mix_id': {
                     hiddenInPlot: true
@@ -763,11 +767,14 @@ Ext.define('Connector.measure.Configuration', {
                     sortOrder: 98,
                     variableType: 'TIME',
                     isHoursType: true,
-                    altQueryLabel: 'Time points'
+                    altSourceKey: 'cds|GridBase',
+                    altPlotLabel: 'Study Hours (PK MAb only)',
+                    altDescription: 'Hours after initial infusion time option is available for PK MAb assay only.',
+                    scale: 'LINEAR'
                 },
                 'study_PKMAb_hours_post_recent_infusion': {
                     sortOrder: 99,
-                    altQueryLabel: 'Time points',
+                    altSourceKey: 'cds|GridBase',
                     hiddenInPlot: true
                 },
                 'study_PKMAb_study_prot': {

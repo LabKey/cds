@@ -25,8 +25,8 @@ Ext.define('Connector.model.ChartData', {
 
     statics: {
         isContinuousMeasure : function(measure) {
-            if (measure.options['timeAxisType'] !== undefined) {
-                return measure.options['timeAxisType'] === 'Continuous';
+            if (measure.options['timePlotType'] !== undefined) {
+                return measure.options['timePlotType'].indexOf('box') === -1;
             }
 
             var type = measure.type;
@@ -245,7 +245,7 @@ Ext.define('Connector.model.ChartData', {
             axisMeasureStore = LABKEY.Query.AxisMeasureStore.create(),
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
             xDomain = [null,null], yDomain = [null,null],
-            xVal, yVal, colorVal = null,
+            xVal, yVal, colorVal = null, altXVal = null,
             distinctXVals = {},
             hasNegOrZeroX = false, hasNegOrZeroY = false,
             yMeasureFilter = {}, xMeasureFilter = {}, zMeasureFilter = {},
@@ -288,7 +288,8 @@ Ext.define('Connector.model.ChartData', {
                 type   : x.type,
                 isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'FLOAT' || x.type === 'REAL',
                 isContinuous: Connector.model.ChartData.isContinuousMeasure(x),
-                isDimension: x.isDimension
+                isDimension: x.isDimension,
+                isLinePlot  : x.options && x.options.timePlotType.indexOf('line') > -1
             };
         }
 
@@ -377,6 +378,7 @@ Ext.define('Connector.model.ChartData', {
             _row = dataRows[r];
 
             yVal = this._getYValue(y, _yid, _row);
+            altXVal = this._getAltTimeValue(y, _row);
             xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
             colorVal = color ? this._getColorValue(color, _cid, _row, isSameXYZ) : undefined;
 
@@ -448,6 +450,7 @@ Ext.define('Connector.model.ChartData', {
             var entry = {
                 x: xVal,
                 y: yVal,
+                altXVal: altXVal,
                 timeAxisKey : timeAxisKey,
                 color: colorVal,
                 subjectId: _row[QueryUtils.SUBJECT_ALIAS],
@@ -592,6 +595,13 @@ Ext.define('Connector.model.ChartData', {
             return this.roundMedian(row.y.getMedian());
         }
 
+        return null;
+    },
+
+    _getAltTimeValue: function(measure, row) {
+        var timeDependency = measure.timePointSortColumnAlias;
+        if (timeDependency)
+            return row[timeDependency];
         return null;
     },
 

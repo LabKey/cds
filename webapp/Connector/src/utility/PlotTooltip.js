@@ -133,20 +133,23 @@ Ext.define('Connector.utility.PlotTooltip', {
             content += '<div class="axis-details">';
             content += 'Treatment Summary' + colon + plotData.TreatmentSummary + linebreak;
             content += 'Subject' + colon + data.subjectId + linebreak;
-            if (xAxis && xAxis.name == 'ProtocolDay') {
-                // Issue 29379: use alignment measure label for hover description
-                var xMeasureAlias = QueryUtils.ensureAlignmentAlias(plot._getAxisWrappedMeasure(xAxis));
-                label = Connector.getQueryService().getMeasure(xMeasureAlias).label;
-
-                content += label + colon + ' '
-                        + (data.x > 0 && xAxis.options.alignmentVisitTag != null ? '+' : '') + data.x
-                        + linebreak;
-            }
-            else {
-                content += 'Study Day' + colon + 'Day ' + plotData.ProtocolDay + linebreak;
-            }
             if (plotData.timeLabel)
-                content += 'Visit Time' + colon + ' ' + plotData.timeLabel + linebreak;
+                content += 'Visit time' + colon + ' ' + plotData.timeLabel + linebreak;
+            else {
+                if (xAxis && xAxis.name == 'ProtocolDay') {
+                    // Issue 29379: use alignment measure label for hover description
+                    var xMeasureAlias = QueryUtils.ensureAlignmentAlias(plot._getAxisWrappedMeasure(xAxis));
+                    label = Connector.getQueryService().getMeasure(xMeasureAlias).label;
+
+                    content += label + colon + ' '
+                            + (data.x > 0 && xAxis.options.alignmentVisitTag != null ? '+' : '') + data.x
+                            + linebreak;
+                }
+                else {
+                    content += 'Study day' + colon + ' Day ' + plotData.ProtocolDay + linebreak;
+                }
+            }
+
             content += '</div>';
         }
 
@@ -350,8 +353,8 @@ Ext.define('Connector.utility.PlotTooltip', {
                     else {
                         visitLabel = plotData.visitLabels.length + " visits";
                     }
-                    content += '<span class="group-title">Visit Time</span>';
-                    content += colon + Ext.htmlEncode(visitLabel) + linebreak;
+                    content += '<span class="group-title">Visit time</span>';
+                    content += colon + ' ' + Ext.htmlEncode(visitLabel) + linebreak;
                 }
             }
         }

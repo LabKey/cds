@@ -531,7 +531,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.TIME_POINTS);
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
-        xaxis.setAxisType(CDSHelper.AXIS_TYPE_CATEGORICAL);
+        xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX);
         xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
         xaxis.confirmSelection();
 
@@ -545,7 +545,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         InfoPane infoPane = new InfoPane(this);
         infoPane.clickActiveFilter("In the plot");
         String ipText = getText(Locator.css("div.infopane"));
-        assertTrue(ipText.contains(CDSHelper.AXIS_TYPE_CATEGORICAL));
+        assertTrue(ipText.contains(CDSHelper.PLOT_TYPE_BOX));
         assertTrue(ipText.contains(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC));
         click(CDSHelper.Locators.cdsButtonLocator("Close", "infoplotcancel"));
 
@@ -796,7 +796,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.TIME_POINTS);
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
-        xaxis.setAxisType(CDSHelper.AXIS_TYPE_CATEGORICAL);
+        xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX);
         xaxis.confirmSelection();
 
         pattern = Pattern.compile("^0137.*3303003000");
@@ -805,7 +805,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         log("Choose 'Study weeks with axis type Categorical'.");
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
-        xaxis.setAxisType(CDSHelper.AXIS_TYPE_CATEGORICAL);
+        xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX);
         xaxis.confirmSelection();
 
         pattern = Pattern.compile("^0124.*3303003000");
@@ -814,7 +814,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         log("Choose 'Study months with axis type Categorical'.");
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
-        xaxis.setAxisType(CDSHelper.AXIS_TYPE_CATEGORICAL);
+        xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX);
         xaxis.confirmSelection();
 
         pattern = Pattern.compile("^0123.*3303003000");

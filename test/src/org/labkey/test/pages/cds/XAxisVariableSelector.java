@@ -120,9 +120,9 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         super.setAssayDimension(XPATHID, AssayDimensions.CellType, value);
     }
 
-    public void setAxisType(String... value)
+    public void setPlotType(String... value)
     {
-        super.setAssayDimension(XPATHID, AssayDimensions.AxisType, value);
+        super.setAssayDimension(XPATHID, AssayDimensions.PlotType, value);
     }
 
     public void setAlignedBy(String... value)

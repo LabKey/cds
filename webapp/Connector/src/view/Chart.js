@@ -987,6 +987,51 @@ Ext.define('Connector.view.Chart', {
         return this.getNoPlotLayer();
     },
 
+    getPathLayer : function() {
+        var pathAes = {
+            sortFn: function(a, b) {
+                if (a.altXVal != null) // align by hours for PK
+                    return a.altXVal - b.altXVal;
+                return a.x - b.x;
+            },
+            yLeft: function(row) {
+                return row.y;
+            },
+            group: function(row) {
+                return row['subjectId'];
+            }
+        };
+
+        // only color path when color axis is from demographics
+        if (this.activeMeasures.color && this.activeMeasures.color.isDemographic) {
+            pathAes.pathColor = function(rows)
+            {
+                return Ext4.isArray(rows) && rows.length > 0 ? rows[0].color : null;
+            };
+
+            this.plot.scales.pathColor = {
+                scaleType: 'discrete',
+                range: LABKEY.vis.Scale.DataspaceColor()
+            };
+        }
+
+        return new LABKEY.vis.Layer({
+            geom: new LABKEY.vis.Geom.Path({
+                size: 1,
+                opacity: 0.5
+            }),
+            aes: pathAes
+        });
+    },
+
+    ensurePathLayer: function(noplot, properties, layerScope) {
+        if (!noplot) {
+            if (Ext.isDefined(properties.xaxis) && properties.xaxis.isLinePlot){
+                this.plot.addLayer(this.getPathLayer());
+            }
+        }
+    },
+
     /**
      * @param chartData
      * @param {object} [studyAxisInfo]
@@ -1161,6 +1206,7 @@ Ext.define('Connector.view.Chart', {
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
 
         if (this.plot) {
+            this.ensurePathLayer(noplot, properties, layerScope);
             this.plot.addLayer(this.getPlotLayer(noplot, properties, layerScope));
             try {
                 this.hidePlotMsg();
@@ -2077,7 +2123,8 @@ Ext.define('Connector.view.Chart', {
                     this.convertWrappedTimeMeasure(selection.plotMeasures[0]);
 
                     var timeFilters = [selection.gridFilter[0]];
-                    if (this.activeMeasures.x.options['timeAxisType'] === 'Continuous')
+                    var timePlotType = this.activeMeasures.x.options['timePlotType'];
+                    if (timePlotType === 'scatter' || timePlotType === 'line')
                     {
                         timeFilters.push(selection.gridFilter[1]);
                     }
@@ -2120,8 +2167,8 @@ Ext.define('Connector.view.Chart', {
 
     convertWrappedTimeMeasure : function(wrappedMeasure) {
         // Issue 29397: continuous vs categorical time filters should not override each other
-        var timeAxisType = wrappedMeasure.measure.options['timeAxisType'];
-        if (timeAxisType === 'Categorical')
+        var timePlotType = wrappedMeasure.measure.options['timePlotType'];
+        if (timePlotType.indexOf('box') === 0)
         {
             // replace the current selection measure and filter with the categorical/discrete version of the time point measure
             var discreteTimeMeasure = Connector.getQueryService().getMeasure(wrappedMeasure.measure.alias + '_Discrete');
@@ -2186,6 +2233,8 @@ Ext.define('Connector.view.Chart', {
         }
         else if (axis == 'x' && this.activeMeasures.x)
         {
+            if (this.activeMeasures.x.variableType === 'TIME')
+                return 'linear';
             scale = this.getSelectedOptionScale(this.activeMeasures.x);
         }
 
@@ -2225,7 +2274,16 @@ Ext.define('Connector.view.Chart', {
         {
             hasMeasures = true;
 
-            this.activeMeasures.x = x.measure;
+            var xMeasure = x.measure;
+            if (xMeasure && xMeasure.options && xMeasure.options.hoursMeasure) {
+                var sourceHoursMeasure = Connector.getService('Query').getMeasureRecordByAlias(xMeasure.options.hoursMeasure);
+                if (sourceHoursMeasure) {
+                    sourceHoursMeasure = sourceHoursMeasure.data;
+                    sourceHoursMeasure.options = xMeasure.options;
+                    xMeasure = sourceHoursMeasure;
+                }
+            }
+            this.activeMeasures.x = xMeasure;
             this.getXSelector().getModel().updateVariable([this.activeMeasures.x]);
 
             axisSelector = this.getAxisSelectorIfInitialized('x');
@@ -2241,6 +2299,8 @@ Ext.define('Connector.view.Chart', {
 
             this.activeMeasures.y = y.measure;
             this.getYSelector().getModel().updateVariable([this.activeMeasures.y]);
+            if (this.getAxisSelectorIfInitialized('x'))
+                this.getAxisSelectorIfInitialized('x').activeYMeasure = this.activeMeasures.y;
 
             axisSelector = this.getAxisSelectorIfInitialized('y');
             if (axisSelector)
@@ -2294,7 +2354,7 @@ Ext.define('Connector.view.Chart', {
         var axisSelector = this.getAxisSelectorIfInitialized(axis);
         if (axisSelector)
         {
-            axisSelector.clearSelection();
+            axisSelector.clearSelection(axis);
         }
     },
 
@@ -2318,7 +2378,7 @@ Ext.define('Connector.view.Chart', {
             {
                 this.fireEvent('showload', this);
 
-                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME';
+                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME' && !this.activeMeasures.x.isHoursType;
 
                 this.requestChartData();
             }
@@ -2876,6 +2936,20 @@ Ext.define('Connector.view.Chart', {
                             'VisitRowId',
                             'INTEGER'
                     );
+
+                    // if x, check y's additional time measure
+                    if (axis === 'x' && activeMeasures['y'])
+                    {
+                        var timeDependency = activeMeasures['y'].timePointSortColumnAlias;
+                        if (timeDependency)
+                        {
+                            var timeMeasure = Connector.getService('Query').getMeasureRecordByAlias(timeDependency);
+                            this.addValuesToMeasureMap(measuresMap, this.getAxisNameProperty('y', xAxisNameProp, yAxisNameProp), timeMeasure.get('schemaName'), timeMeasure.get('queryName'), timeMeasure.get('name'), timeMeasure.get('type'), null);
+                        }
+                    }
+                    // var hoursMeasure = Connector.getService('Query').getMeasureRecordByAlias(dependency);
+                    // this.addValuesToMeasureMap(measuresMap, axisName, hoursMeasure.get('schemaName'), hoursMeasure.get('queryName'), hoursMeasure.get('name'), hoursMeasure.get('type'), values);
+
                 }
 
                 // add selection information from the advanced options panel of the variable selector
@@ -2895,7 +2969,7 @@ Ext.define('Connector.view.Chart', {
                         var dependencies = measureRecord.getPlotDependencyMeasures();
                         if (dependencies) {
                             Ext.each(dependencies, function(dependency) {
-                                this.addValuesToMeasureMap(measuresMap, axisName, schema, query, dependency.get('name'), dependency.get('type'), values);
+                                this.addValuesToMeasureMap(measuresMap, axisName, dependency.get('schemaName'), dependency.get('queryName'), dependency.get('name'), dependency.get('type'), []);
                             }, this);
                         }
                     }, this);
@@ -3095,6 +3169,8 @@ Ext.define('Connector.view.Chart', {
 
                         this.activeMeasures.y = selected;
                         this.getYSelector().getModel().updateVariable([selected]);
+                        if (this.getAxisSelectorIfInitialized('x'))
+                            this.getAxisSelectorIfInitialized('x').activeYMeasure = selected;
 
                         this.variableSelectionMade(this.ywin, this.getYSelector().getEl());
                     },
@@ -3138,6 +3214,7 @@ Ext.define('Connector.view.Chart', {
                 headerTitle: 'x-axis',
                 testCls: 'x-axis-selector',
                 activeMeasure: this.activeMeasures.x,
+                activeYMeasure: this.activeMeasures.y,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
@@ -3212,7 +3289,7 @@ Ext.define('Connector.view.Chart', {
                     includeTimepointMeasures: true,
                     userFilter : function(row) {
                         // Don't show time with alignment even in dev mode
-                        return !row.isMeasure && !(row.isDiscreteTime && row.hidden);
+                        return !row.isMeasure && !(row.isDiscreteTime && row.hidden) && !row.isHoursType;
                     }
                 },
                 listeners: {

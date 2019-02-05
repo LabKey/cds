@@ -547,8 +547,10 @@ public class CDSHelper
     public static final String GRID_COL_ALL_VARS = "All variables from this session";
 
     // Time point axis types
-    public static final String AXIS_TYPE_CONTINUOUS = "Continuous";
-    public static final String AXIS_TYPE_CATEGORICAL = "Categorical";
+    public static final String PLOT_TYPE_SCATTER = "Scatter plot";
+    public static final String PLOT_TYPE_BOX = "Box plot";
+    public static final String PLOT_TYPE_LINE = "Line plot";
+    public static final String PLOT_TYPE_BOX_WITH_LINE = "Box with line plot";
 
     // Time points alignments
     public static final String TIME_POINTS_ALIGN_DAY0 = "Aligned by Day 0";

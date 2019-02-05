@@ -39,6 +39,14 @@ Ext.define('Connector.model.Source', {
         {name: 'measures', defaultValue: undefined},
 
         // Array of alias to add when generating plot queries
-        {name: 'plotDependencyColumnAlias', defaultValue: undefined}
+        {name: 'plotDependencyColumnAlias', defaultValue: undefined},
+
+        // alias to add when X axis is using Time point measures, for soring time points
+        {name: 'timePointSortColumnAlias', defaultValue: undefined},
+
+        {name: 'defaultPlotType', defaultValue: undefined},
+
+        // if Hours option should show up in Time point for plot X axis
+        {name: 'allowHoursTimePoint', type: 'boolean', defaultValue: false}
     ]
 });

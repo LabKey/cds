@@ -328,8 +328,8 @@ public abstract class DataspaceVariableSelector
                 }
 
                 break;
-            case AxisType:
-                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//div[contains(@class, 'field-label')][text()='Axis type:']/./following-sibling::div[contains(@class, 'field-display')]//div[contains(@class, 'main-label')]";
+            case PlotType:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//div[contains(@class, 'field-label')][text()='Plot type:']/./following-sibling::div[contains(@class, 'field-display')]//div[contains(@class, 'main-label')]";
                 xpathDimDropDown = "//div[contains(@class, 'advanced-dropdown')][not(contains(@style, 'display: none'))]";
 
                 locDimField = Locator.xpath(xpathDimField);
@@ -554,7 +554,6 @@ public abstract class DataspaceVariableSelector
     // TODO Still working on this as part of the detail selection.
     public static enum AssayDimensions
     {
-        AxisType,
         AlignBy,
         AntigenName,
         AntigensAggregated,
@@ -567,6 +566,7 @@ public abstract class DataspaceVariableSelector
         Isotype,
         LabId,
         PeptidePool,
+        PlotType,
         Protein,
         ProteinPanel,
         SpecimenType,

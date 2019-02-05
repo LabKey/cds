@@ -220,8 +220,10 @@ Ext.define('Connector.panel.Selector', {
         this.updateSelectorPane();
     },
 
-    clearSelection : function() {
+    clearSelection : function(axis) {
         this.setActiveMeasure(null);
+        if (axis === 'y')
+            this.activeYMeasure = null;
     },
 
     getSourceForMeasure : function(measure) {
@@ -230,7 +232,7 @@ Ext.define('Connector.panel.Selector', {
         {
             var sourceKey = measure.get('selectedSourceKey')
                                 ? measure.get('selectedSourceKey')
-                                : measure.get('schemaName') + '|' + measure.get('queryName');
+                                : (measure.get('altSourceKey') ? measure.get('altSourceKey') : measure.get('schemaName') + '|' + measure.get('queryName'));
             source = this.sourcesStore.getById(sourceKey);
 
             if (source == null) {
@@ -374,7 +376,7 @@ Ext.define('Connector.panel.Selector', {
                 select: this.onMeasureSelect,
                 deselect: this.deselectMeasure,
                 itemmouseenter: function(view, record, item) {
-                    this.showLearnMessage(item, record.get('label'), record.get('description'), 'Measure');
+                    this.showLearnMessage(item, record.get('label'), record.get('altDescription') ? record.get('altDescription') : record.get('description'), 'Measure');
                 },
                 itemmouseleave: function() {
                     this.hideLearnMessage('Measure');
@@ -465,7 +467,11 @@ Ext.define('Connector.panel.Selector', {
                         '<div class="content-grouping extrapadding">Additional</div>',
                     '</tpl>',
                     '<div class="content-item">',
+                        '<tpl if="altPlotLabel">',
+                        '<div class="content-label">{altPlotLabel:htmlEncode}</div>',
+                        '<tpl else>',
                         '<div class="content-label">{label:htmlEncode}</div>',
+                        '</tpl>',
                     '</div>',
                 '</tpl>'
             )
@@ -548,7 +554,8 @@ Ext.define('Connector.panel.Selector', {
             }
         }, this);
 
-
+        var sourceContextMap = Connector.measure.Configuration.context.sources;
+        var activeYMeasure = this.activeYMeasure;
         // setup the measures store filter based on the selected source
         if (variableType === 'VIRTUAL') {
             filter = function(measure) {
@@ -565,7 +572,6 @@ Ext.define('Connector.panel.Selector', {
                 // for those measures being included, set the sourceTitle if the measure is part of a DEFINED_MEASURES source
                 if (toInclude && Ext.isDefined(definedMeasureSourceMap[alias])) {
                     measure.set('sourceTitle', definedMeasureSourceMap[alias]);
-                    // TODO
                 }
 
                 return toInclude;
@@ -573,15 +579,30 @@ Ext.define('Connector.panel.Selector', {
         }
         else if (variableType == 'DEFINED_MEASURES') {
             filter = function(measure) {
-                if (measure.get('altQueryLabel')) {
-                    return source.get('queryLabel') === measure.get('altQueryLabel');
-                }
-                alias = measure.get('alias');
+                var targetSource = source, include =false;
 
-                if (source.get('measures').indexOf(alias) > -1) {
+                if (measure.get('altSourceKey')) {
+                    if (Ext.isDefined(sourceContextMap[measure.get('altSourceKey')])) {
+                        if (source.get('queryLabel') === sourceContextMap[measure.get('altSourceKey')].queryLabel) {
+                            include = true;
+                            targetSource = sourceContextMap[measure.get('altSourceKey')];
+                        }
+
+                    }
+                }
+                include = include || targetSource.get('measures').indexOf(measure.get('alias')) > -1;
+
+                if (measure.get("isHoursType")) {
+                    if (activeYMeasure)
+                        include = include && activeYMeasure.allowHoursTimePoint;
+                    else
+                        include = false;
+                }
+
+                if (include) {
                     measure.set({
-                        selectedSourceKey: source.get('key'),
-                        sourceTitle: source.get('queryLabel')
+                        selectedSourceKey: targetSource.get('key'),
+                        sourceTitle: targetSource.get('queryLabel')
                     });
 
                     return true;
@@ -593,8 +614,18 @@ Ext.define('Connector.panel.Selector', {
         else {
             // for all other sources, filter based on the schemaName/queryName source key
             filter = function(measure) {
-                if (measure.get('altQueryLabel')) {
-                    return source.get('queryLabel') === measure.get('altQueryLabel');
+                if (measure.get('altSourceKey')) {
+                    if (Ext.isDefined(sourceContextMap[measure.get('altSourceKey')])) {
+                        var include = source.get('queryLabel') === sourceContextMap[measure.get('altSourceKey')].queryLabel;
+
+                        if (measure.get("isHoursType")) {
+                            if (activeYMeasure)
+                                include = include && activeYMeasure.allowHoursTimePoint;
+                            else
+                                include = false;
+                        }
+                        return include;
+                    }
                 }
                 return key == (measure.get('schemaName') + '|' + measure.get('queryName'));
             };
@@ -1072,25 +1103,27 @@ Ext.define('Connector.panel.Selector', {
 
     bindTimeOptions : function() {
         if (this.activeMeasure.get('variableType') === 'TIME') {
-            this.getAdvancedPane().add(
-                Ext.create('Connector.component.AdvancedOptionTimeAxisType', {
-                    measure: this.activeMeasure,
-                    value: this.initOptions ? this.initOptions['timeAxisType'] : 'Continuous' //default to continuous
-                })
-            );
-            if (!this.activeMeasure.get('isHoursType')) {
-                this.getAdvancedPane().add(
-                        Ext.create('Connector.component.AdvancedOptionTimeAlignedBy', {
-                            measure: this.activeMeasure,
-                            value: this.initOptions ? this.initOptions['alignmentVisitTag'] : undefined
-                        })
-                );
-            }
+
+            var initPlotType = this.initOptions ? this.initOptions['timePlotType'] : null;
+            if (initPlotType && initPlotType.indexOf('box') > -1 && this.activeMeasure.get('isHoursType'))
+                initPlotType = null;
 
             this.getAdvancedPane().add(
                     Ext.create('Connector.component.AdvancedOptionTimePlotType', {
                         measure: this.activeMeasure,
-                        value: this.activeMeasure.get('isHoursType') ? 'Line plot' : (this.initOptions ? this.initOptions['timePlotType'] : 'Scatter plot')
+                        value: initPlotType ? initPlotType
+                                : (this.activeMeasure.get('isHoursType') || ((this.activeYMeasure && this.activeYMeasure.defaultPlotType === 'line'))
+                                        ? 'line' : 'scatter'),
+                        isHoursType: this.activeMeasure.get('isHoursType')
+                    })
+            );
+
+            this.getAdvancedPane().add(
+                    Ext.create('Connector.component.AdvancedOptionTimeAlignedBy', {
+                        measure: this.activeMeasure,
+                        value: this.initOptions ? this.initOptions['alignmentVisitTag'] : undefined,
+                        hidden: this.activeMeasure.get('isHoursType'),
+                        allowTimeAlignment: !this.activeYMeasure || (this.activeYMeasure.allowTimeAlignment)
                     })
             );
         }
