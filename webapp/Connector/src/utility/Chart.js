@@ -362,6 +362,7 @@ Ext.define('Connector.utility.Chart', {
 
         // second we go back through and highlight the subject associated points in the main plot and both gutters
         ChartUtils._brushAssociatedPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
+        ChartUtils._brushAssociatedLinesByCanvas(this.plot.renderer.canvas, extent, subjects);
         if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
             ChartUtils._brushAssociatedPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
         }
@@ -409,11 +410,18 @@ Ext.define('Connector.utility.Chart', {
 
     _brushAssociatedPointsByCanvas : function(canvas, extent, subjects)
     {
+        var opacityFn = function(d) {
+            if (d.isSelected || subjects[d.subjectId] === true) {
+                return 1;
+            }
+            return 0.1;
+        };
+
         canvas.selectAll('.point path')
                 .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPostFill, [extent, subjects]))
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects]))
-                .attr('fill-opacity', 1)
-                .attr('stroke-opacity', 1);
+                .attr('fill-opacity', opacityFn)
+                .attr('stroke-opacity', opacityFn);
 
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
         canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function()
@@ -429,6 +437,53 @@ Ext.define('Connector.utility.Chart', {
         });
     },
 
+    getLineColorFn : function(subjectIds) {
+        return function lineColorFn(d) {
+            var data = Ext4.isArray(d.data) && d.data.length > 0 ? d.data[0] : null;
+            if (!data)
+                return ChartUtils.colors.HEATSCALE1;
+
+            if (subjectIds.indexOf(data.subjectId) !== -1) {
+                return ChartUtils.colors.BLACK;
+            }
+            return ChartUtils.colors.HEATSCALE1;
+        }
+    },
+
+    getLineOpacityFn : function(subjectIds) {
+        return function lineOpacityFn(d) {
+            var data = Ext4.isArray(d.data) && d.data.length > 0 ? d.data[0] : null;
+            if (!data)
+                return 0.1;
+
+            if (subjectIds.indexOf(data.subjectId) !== -1) {
+                return 1;
+            }
+            return 0.1;
+        }
+    },
+
+    _brushAssociatedLinesByCanvas : function(canvas, extent, subjects)
+    {
+        var subjectIds = [];
+        Ext.iterate(subjects, function (subject, include) {
+            if (include)
+                subjectIds.push(subject);
+        });
+        if (subjectIds.length === 0)
+            return;
+
+        canvas.selectAll('path.line')
+                .attr('stroke', ChartUtils.getLineColorFn(subjectIds)).attr('stroke-opacity', ChartUtils.getLineOpacityFn(subjectIds));
+
+        // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function()
+        {
+            var node = this.parentNode;
+            node.parentNode.appendChild(node);
+        });
+    },
+
     _brushPointPreFill : function(d, i, unknown, extent, subjects)
     {
         d.isSelected = ChartUtils.isSelectedWithBrush(extent, d.x, d.y);
@@ -440,7 +495,7 @@ Ext.define('Connector.utility.Chart', {
             return ChartUtils.colors.SELECTED;
         }
 
-        return ChartUtils.colors.UNSELECTED;
+        return ChartUtils.colors.HEATSCALE1;
     },
 
     _brushPointPostFill : function(d, i, unknown, extent, subjects) {
@@ -456,7 +511,7 @@ Ext.define('Connector.utility.Chart', {
         if (d.isSelected) {
             return ChartUtils.colors.SELECTED;
         }
-        return ChartUtils.colors.UNSELECTED;
+        return ChartUtils.colors.HEATSCALE1;
     },
 
     _brushPointPostStroke : function(d, i, unknown, extent, subjects) {

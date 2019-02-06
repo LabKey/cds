@@ -246,7 +246,8 @@ Ext.define('Connector.view.Chart', {
                 },
                 items: [
                     this.getHeatmapModeIndicator(),
-                    this.getMedianModeIndicator()
+                    this.getMedianModeIndicator(),
+                    this.getSkipLinePlotModeIndicator()
                 ]
             },{
                 xtype: 'container',
@@ -298,6 +299,26 @@ Ext.define('Connector.view.Chart', {
         }
 
         return this.medianIndicator;
+    },
+
+    getSkipLinePlotModeIndicator : function() {
+        if (!this.skipLinePlotIndicator) {
+            this.skipLinePlotIndicator = Ext.create('Ext.Component', {
+                hidden: true,
+                cls: 'plotmodeon',
+                html: 'Line plot off',
+                width: 110,
+                listeners: {
+                    scope: this,
+                    afterrender : function(c) {
+                        c.getEl().on('mouseover', function() { this.showWhySkipLine(); }, this);
+                        c.getEl().on('mouseout', function() { this.fireEvent('hidelineplotmsg', this); }, this);
+                    }
+                }
+            });
+        }
+
+        return this.skipLinePlotIndicator;
     },
 
     getYSelector : function() {
@@ -468,6 +489,9 @@ Ext.define('Connector.view.Chart', {
         }, this);
         this.hideMedianModeTask = new Ext.util.DelayedTask(function() {
             this.fireEvent('hidemedianmsg', this);
+        }, this);
+        this.hideSkipLineModeTask = new Ext.util.DelayedTask(function() {
+            this.fireEvent('hidelineplotmsg', this);
         }, this);
 
         this.on('resize', function() {
@@ -1025,11 +1049,16 @@ Ext.define('Connector.view.Chart', {
     },
 
     ensurePathLayer: function(noplot, properties, layerScope) {
+        this.skipLinePlotMode = false;
         if (!noplot) {
             if (Ext.isDefined(properties.xaxis) && properties.xaxis.isLinePlot){
-                this.plot.addLayer(this.getPathLayer());
+                if (!this.showPointsAsBin)
+                    this.plot.addLayer(this.getPathLayer());
+                else
+                    this.skipLinePlotMode = true;
             }
         }
+        this.toggleSKipLineMode();
     },
 
     /**
@@ -1206,8 +1235,8 @@ Ext.define('Connector.view.Chart', {
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
 
         if (this.plot) {
-            this.plot.addLayer(this.getPlotLayer(noplot, properties, layerScope));
             this.ensurePathLayer(noplot, properties, layerScope);
+            this.plot.addLayer(this.getPlotLayer(noplot, properties, layerScope));
             try {
                 this.hidePlotMsg();
                 this.plot.render();
@@ -1855,48 +1884,32 @@ Ext.define('Connector.view.Chart', {
             else if (subjectIds.indexOf(d.subjectId) != -1) {
                 return ChartUtils.colors.BLACK;
             }
-            return ChartUtils.colors.UNSELECTED;
+            return ChartUtils.colors.HEATSCALE1;
+        };
+
+        var opacityFn = function(d) {
+            if (d.isMouseOver || subjectIds.indexOf(d.subjectId) != -1)
+                return 1;
+            return 0.1;
         };
 
         if (this.plot.renderer) {
-            this.highlightPointsByCanvas(this.plot.renderer.canvas, fillColorFn);
+            this.highlightPointsByCanvas(this.plot.renderer.canvas, fillColorFn, opacityFn);
             this.highlightLinesByCanvas(this.plot.renderer.canvas, subjectIds);
 
             if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
-                this.highlightPointsByCanvas(this.xGutterPlot.renderer.canvas, fillColorFn);
+                this.highlightPointsByCanvas(this.xGutterPlot.renderer.canvas, fillColorFn, opacityFn);
             }
 
             if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
-                this.highlightPointsByCanvas(this.yGutterPlot.renderer.canvas, fillColorFn);
+                this.highlightPointsByCanvas(this.yGutterPlot.renderer.canvas, fillColorFn, opacityFn);
             }
         }
     },
 
     highlightLinesByCanvas : function(canvas, subjectIds) {
-        var lineColorFn = function(d) {
-            var data = Ext4.isArray(d.data) && d.data.length > 0 ? d.data[0] : null;
-            if (!data)
-                return ChartUtils.colors.HEATSCALE1;
-
-            if (subjectIds.indexOf(data.subjectId) != -1) {
-                return ChartUtils.colors.BLACK;
-            }
-            return ChartUtils.colors.HEATSCALE1;
-        };
-
-        var lineOpacityFn = function(d) {
-            var data = Ext4.isArray(d.data) && d.data.length > 0 ? d.data[0] : null;
-            if (!data)
-                return 0.1;
-
-            if (subjectIds.indexOf(data.subjectId) != -1) {
-                return 1;
-            }
-            return 0.1;
-        };
-
         canvas.selectAll('path.line')
-                .attr('stroke', lineColorFn).attr('stroke-opacity', lineOpacityFn);
+                .attr('stroke', ChartUtils.getLineColorFn(subjectIds)).attr('stroke-opacity', ChartUtils.getLineOpacityFn(subjectIds));
 
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
         canvas.selectAll('path.line[stroke="' + ChartUtils.colors.BLACK + '"]').each(function() {
@@ -1905,10 +1918,10 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    highlightPointsByCanvas : function(canvas, fillColorFn) {
+    highlightPointsByCanvas : function(canvas, fillColorFn, opacityFn) {
         canvas.selectAll('.point path')
-            .attr('fill', fillColorFn).attr('fill-opacity', 1)
-            .attr('stroke', fillColorFn).attr('stroke-opacity', 1);
+            .attr('fill', fillColorFn).attr('fill-opacity', opacityFn)
+            .attr('stroke', fillColorFn).attr('stroke-opacity', opacityFn);
 
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
         canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function() {
@@ -2882,9 +2895,12 @@ Ext.define('Connector.view.Chart', {
         // Show binning message for a few seconds if first time user hits it
         var msgKey = 'HEATMAP_MODE';
         if (!this.disableAutoMsg && this.showPointsAsBin && Connector.getService('Messaging').isAllowed(msgKey)) {
-            this.showWhyBinning();
-            this.hideHeatmapModeTask.delay(5000);
-            Connector.getService('Messaging').block(msgKey);
+            // delay adding to cache to allow skipLinePlot mode to suppress msg
+            new Ext.util.DelayedTask(function() {
+                this.showWhyBinning();
+                this.hideHeatmapModeTask.delay(5000);
+                Connector.getService('Messaging').block(msgKey);
+            }, this).delay(1000);
         }
     },
 
@@ -2899,6 +2915,9 @@ Ext.define('Connector.view.Chart', {
                 content: 'There are too many dots to show interactively. Higher data density is represented by darker'
                 + ' tones. Color variables are disabled. Reduce the amount of data plotted to see dots again.'
             };
+
+            if (this.skipLinePlotMode)
+                config.content = config.content + ' Line plot options are ignored when plot is in heatmap mode.';
 
             ChartUtils.showCallout(config, 'hideheatmapmsg', this);
         }
@@ -2929,6 +2948,41 @@ Ext.define('Connector.view.Chart', {
             };
 
             ChartUtils.showCallout(config, 'hidemedianmsg', this);
+        }
+    },
+
+    toggleSKipLineMode : function() {
+        this.getSkipLinePlotModeIndicator().setVisible(this.skipLinePlotMode);
+
+        // Show message for a few seconds if first time user hits it
+        var msgKey = 'SKIP_LINE_PLOT_MODE';
+        // If this is the first time heat map msg is shown, skip line plot msg in favor of heat map msg, to avoid overlapping showing
+        var msgKeyHeatMap = 'HEATMAP_MODE';
+        if (!this.disableAutoMsg && this.skipLinePlotMode
+                && Connector.getService('Messaging').isAllowed(msgKey)
+                && !Connector.getService('Messaging').isAllowed(msgKeyHeatMap)) {
+            this.showWhySkipLine();
+            this.hideSkipLineModeTask.delay(5000);
+            Connector.getService('Messaging').block(msgKey);
+        }
+    },
+
+    showWhySkipLine : function() {
+        if (this.skipLinePlotMode) {
+            var config = {
+                target: this.getSkipLinePlotModeIndicator().getEl().dom,
+                placement: 'bottom',
+                title: 'Line plot off',
+                xOffset: -65,
+                arrowOffset: 100,
+                content: 'Line plot options are ignored when plot is in heatmap mode.'
+            };
+
+            ChartUtils.showCallout(config, 'hidelineplotmsg', this);
+
+            var msgKey = 'SKIP_LINE_PLOT_MODE';
+            if (Connector.getService('Messaging').isAllowed(msgKey))
+                Connector.getService('Messaging').block(msgKey);
         }
     },
 
