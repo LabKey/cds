@@ -397,7 +397,7 @@ Ext.define('Connector.view.Grid', {
                     includeDefinedMeasureSources: true,
                     isGridSelector: true,
                     userFilter : function(row) {
-                        return row.variableType !== 'TIME' || !row.isDiscreteTime;
+                        return row.variableType !== 'TIME' || row.isHoursType || !row.isDiscreteTime;
                     }
                 },
                 disableAdvancedOptions: true,

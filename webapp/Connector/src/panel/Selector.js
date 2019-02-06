@@ -534,7 +534,8 @@ Ext.define('Connector.panel.Selector', {
             variableType = source.get('variableType'),
             filter, aliases = {}, toInclude, index, alias,
             selModel = this.getMeasurePane().getSelectionModel(),
-            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap();
+            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap(),
+            multiSelect = this.multiSelect;
 
         // collect the aliases for all locked measures
         Ext.each(this.getLockedRecords(), function(measure) {
@@ -590,7 +591,7 @@ Ext.define('Connector.panel.Selector', {
                 }
                 include = include || targetSource.get('measures').indexOf(measure.get('alias')) > -1;
 
-                if (measure.get("isHoursType")) {
+                if (measure.get("isHoursType") && !multiSelect) {
                     if (activeYMeasure)
                         include = include && activeYMeasure.allowHoursTimePoint;
                     else
@@ -616,7 +617,7 @@ Ext.define('Connector.panel.Selector', {
                     if (Ext.isDefined(sourceContextMap[measure.get('altSourceKey')])) {
                         var include = source.get('queryLabel') === sourceContextMap[measure.get('altSourceKey')].queryLabel;
 
-                        if (measure.get("isHoursType")) {
+                        if (measure.get("isHoursType") && !multiSelect) {
                             if (activeYMeasure)
                                 include = include && activeYMeasure.allowHoursTimePoint;
                             else

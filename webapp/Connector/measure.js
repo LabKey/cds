@@ -774,6 +774,8 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'study_PKMAb_hours_post_recent_infusion': {
                     sortOrder: 99,
+                    variableType: 'TIME',
+                    isHoursType: true,
                     altSourceKey: 'cds|GridBase',
                     hiddenInPlot: true
                 },

@@ -1206,8 +1206,8 @@ Ext.define('Connector.view.Chart', {
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
 
         if (this.plot) {
-            this.ensurePathLayer(noplot, properties, layerScope);
             this.plot.addLayer(this.getPlotLayer(noplot, properties, layerScope));
+            this.ensurePathLayer(noplot, properties, layerScope);
             try {
                 this.hidePlotMsg();
                 this.plot.render();
@@ -1774,8 +1774,10 @@ Ext.define('Connector.view.Chart', {
     clearHighlightedData : function() {
         if (this.showPointsAsBin)
             this.clearHighlightBins();
-        else
+        else {
             this.clearHighlightPoints();
+            this.clearHighlightLines();
+        }
     },
 
     retrievePointSubjectIds : function(target, subjects, isStudyAxis) {
@@ -1858,6 +1860,7 @@ Ext.define('Connector.view.Chart', {
 
         if (this.plot.renderer) {
             this.highlightPointsByCanvas(this.plot.renderer.canvas, fillColorFn);
+            this.highlightLinesByCanvas(this.plot.renderer.canvas, subjectIds);
 
             if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
                 this.highlightPointsByCanvas(this.xGutterPlot.renderer.canvas, fillColorFn);
@@ -1867,6 +1870,39 @@ Ext.define('Connector.view.Chart', {
                 this.highlightPointsByCanvas(this.yGutterPlot.renderer.canvas, fillColorFn);
             }
         }
+    },
+
+    highlightLinesByCanvas : function(canvas, subjectIds) {
+        var lineColorFn = function(d) {
+            var data = Ext4.isArray(d.data) && d.data.length > 0 ? d.data[0] : null;
+            if (!data)
+                return ChartUtils.colors.HEATSCALE1;
+
+            if (subjectIds.indexOf(data.subjectId) != -1) {
+                return ChartUtils.colors.BLACK;
+            }
+            return ChartUtils.colors.HEATSCALE1;
+        };
+
+        var lineOpacityFn = function(d) {
+            var data = Ext4.isArray(d.data) && d.data.length > 0 ? d.data[0] : null;
+            if (!data)
+                return 0.1;
+
+            if (subjectIds.indexOf(data.subjectId) != -1) {
+                return 1;
+            }
+            return 0.1;
+        };
+
+        canvas.selectAll('path.line')
+                .attr('stroke', lineColorFn).attr('stroke-opacity', lineOpacityFn);
+
+        // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+        canvas.selectAll('path.line[stroke="' + ChartUtils.colors.BLACK + '"]').each(function() {
+            var node = this;
+            this.parentNode.appendChild(node);
+        });
     },
 
     highlightPointsByCanvas : function(canvas, fillColorFn) {
@@ -1885,17 +1921,23 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    clearHighlightColorFn : function() {
+    clearHighlightColorFn : function(isLine) {
         var colorScale = null, colorAcc = null;
 
         if (this.plot.scales.color && this.plot.scales.color.scale) {
-            colorScale = this.plot.scales.color.scale;
-            colorAcc = this.plot.aes.color;
+            if (!isLine || (isLine && this.activeMeasures && this.activeMeasures.color && this.activeMeasures.color.isDemographic)) {
+                colorScale = this.plot.scales.color.scale;
+                colorAcc = this.plot.aes.color;
+            }
         }
 
         return function(d) {
             if (colorScale && colorAcc) {
-                return colorScale(colorAcc.getValue(d));
+                var colorVal = colorAcc.getValue(d);
+                if (isLine) {
+                    colorVal = Ext4.isArray(d.data) && d.data.length > 0 ? d.data[0].color : null;
+                }
+                return colorScale(colorVal);
             }
 
             return ChartUtils.colors.BLACK;
@@ -1921,11 +1963,28 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
+    clearHighlightLines: function() {
+        var paths = this.plot.renderer.canvas.selectAll('path.line');
+        paths.each(function(d) {
+            d.isMouseOver = false;
+        });
+
+        if (this.plot.renderer) {
+            this.clearLinesByCanvas(this.plot.renderer.canvas, this.clearHighlightColorFn(true));
+        }
+    },
+
     clearPointsByCanvas : function(canvas, colorFn) {
         canvas.selectAll('.point path')
                 .attr('fill', colorFn)
                 .attr('stroke', colorFn)
                 .attr('fill-opacity', 0.5)
+                .attr('stroke-opacity', 0.5);
+    },
+
+    clearLinesByCanvas : function(canvas, colorFn) {
+        canvas.selectAll('path.line')
+                .attr('stroke', colorFn)
                 .attr('stroke-opacity', 0.5);
     },
 

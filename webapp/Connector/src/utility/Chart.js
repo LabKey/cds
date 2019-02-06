@@ -269,7 +269,7 @@ Ext.define('Connector.utility.Chart', {
             this.highlightSelected();
 
             //move data layer to front
-            this.plot.renderer.canvas.select('svg g.layer').each(function() {
+            this.plot.renderer.canvas.selectAll('svg g.layer').each(function() {
                 this.parentNode.appendChild(this);
             });
 
