@@ -87,7 +87,7 @@
         String script = AnalyticsService.getTrackingScript();
         if (StringUtils.isNotEmpty(script))
         {
-            if (user.isSiteAdmin())
+            if (user.hasSiteAdminPermission())
             {
     %>      <!-- see <%=new ActionURL("analytics","begin",ContainerManager.getRoot()).getURIString()%> -->
     <%
