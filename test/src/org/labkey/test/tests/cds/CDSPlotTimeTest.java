@@ -266,7 +266,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedCounts.put("RED_4", new CDSHelper.TimeAxisData("RED 4", 1, 3, 1, 5, 1, 0));
         expectedCounts.put("ZAP_110", new CDSHelper.TimeAxisData("ZAP 110", 1, 4, 3, 4, 0, 0));
         expectedCounts.put("ZAP_111", new CDSHelper.TimeAxisData("ZAP 111", 1, 4, 2, 6, 0, 0));
-        expectedCounts.put("ZAP_134", new CDSHelper.TimeAxisData("ZAP 134", 0, 4, 1, 11, 0, 0));
+        expectedCounts.put("ZAP_134", new CDSHelper.TimeAxisData("ZAP 134", 0, 4, 1, 16, 0, 0));
 
         final String yaxisScale = "\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000";
         final String studyDaysScales = "0\n200\n400\n600\n800\n1000" + yaxisScale;
@@ -390,8 +390,8 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedCounts.put("ZAP_111-Group_3_Arm_Ca_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm Ca Placebo", 1, 4, 1, 7, 0, 0));
         expectedCounts.put("ZAP_111-Group_4_Arm_T4_Vaccine", new CDSHelper.TimeAxisData("Group 4 Arm T4 Vaccine", 1, 4, 1, 7, 0, 0));
         expectedCounts.put("ZAP_134", new CDSHelper.TimeAxisData("ZAP 134", 0, 0, 0, 0, 0, 0));
-        expectedCounts.put("ZAP_134-Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 0, 4, 1, 11, 0, 0));
-        expectedCounts.put("ZAP_134-Group_2_Arm_C1_Placebo", new CDSHelper.TimeAxisData("Group 2 Arm C1 Placebo", 0, 4, 1, 11, 0, 0));
+        expectedCounts.put("ZAP_134-Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 0, 4, 1, 16, 0, 0));
+        expectedCounts.put("ZAP_134-Group_2_Arm_C1_Placebo", new CDSHelper.TimeAxisData("Group 2 Arm C1 Placebo", 0, 4, 1, 16, 0, 0));
 
         studies = CDSPlot.Locators.timeAxisStudies.findElements(getDriver());
         assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
@@ -422,8 +422,8 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         expectedCounts.put("ZAP_111-Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 1, 4, 1, 7, 0, 0));
         expectedCounts.put("ZAP_111-Group_3_Arm_Ca_Placebo", new CDSHelper.TimeAxisData("Group 3 Arm Ca Placebo", 1, 4, 1, 7, 0, 0));
         expectedCounts.put("ZAP_111-Group_4_Arm_T4_Vaccine", new CDSHelper.TimeAxisData("Group 4 Arm T4 Vaccine", 1, 4, 1, 7, 0, 0));
-        expectedCounts.put("ZAP_134-Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 0, 4, 1, 11, 0, 0));
-        expectedCounts.put("ZAP_134-Group_2_Arm_C1_Placebo", new CDSHelper.TimeAxisData("Group 2 Arm C1 Placebo", 0, 4, 1, 11, 0, 0));
+        expectedCounts.put("ZAP_134-Group_1_Arm_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 0, 4, 1, 13, 0, 0));
+        expectedCounts.put("ZAP_134-Group_2_Arm_C1_Placebo", new CDSHelper.TimeAxisData("Group 2 Arm C1 Placebo", 0, 4, 1, 13, 0, 0));
 
         studies = CDSPlot.Locators.timeAxisStudies.findElements(getDriver());
         assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
@@ -545,7 +545,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         InfoPane infoPane = new InfoPane(this);
         infoPane.clickActiveFilter("In the plot");
         String ipText = getText(Locator.css("div.infopane"));
-        assertTrue(ipText.contains(CDSHelper.PLOT_TYPE_BOX));
+        assertTrue(ipText.contains("Categorical"));
         assertTrue(ipText.contains(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC));
         click(CDSHelper.Locators.cdsButtonLocator("Close", "infoplotcancel"));
 
@@ -799,7 +799,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX);
         xaxis.confirmSelection();
 
-        pattern = Pattern.compile("^0137.*3303003000");
+        pattern = Pattern.compile("^01237.*3303003000");
         cds.assertPlotTickText(1, pattern);
 
         log("Choose 'Study weeks with axis type Categorical'.");
@@ -808,7 +808,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX);
         xaxis.confirmSelection();
 
-        pattern = Pattern.compile("^0124.*3303003000");
+        pattern = Pattern.compile("^01234.*3303003000");
         cds.assertPlotTickText(1, pattern);
 
         log("Choose 'Study months with axis type Categorical'.");

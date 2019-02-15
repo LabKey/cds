@@ -24,7 +24,7 @@ Ext.define('Connector.app.store.AssayAntigen', {
         if (this.isAntigensLoaded)
             return;
         var assayType = this.assayType.toUpperCase();
-        if (assayType == 'PKMAB') { //TODO
+        if (assayType == 'PKMAB') { //TODO in PK learn story
             this.loadRawData([]);
             return;
         }

@@ -1529,7 +1529,7 @@
     <tableTitle>Neutralization Antibody - Monoclonal Antibodies</tableTitle>
   </table>
   <table tableName="PKMAb" tableDbType="TABLE">
-    <description>TODO</description>
+    <description>Contains up to one row of PKMAb (Pharmacokinetics Monoclonal Antibody) data for each Subject/VisitTime combination.</description>
     <columns>
       <column columnName="SubjectId">
         <datatype>varchar</datatype>

@@ -185,7 +185,7 @@ Ext.define('Connector.panel.Selector', {
         this.updateSelectorPane();
     },
 
-    updateSelectorPane : function() { //
+    updateSelectorPane : function() {
         var source = this.getSourceForMeasure(this.activeMeasure);
         if (source) {
             this.showMeasures(source, this.activeMeasure);
@@ -1107,12 +1107,17 @@ Ext.define('Connector.panel.Selector', {
             if (initPlotType && initPlotType.indexOf('box') > -1 && this.activeMeasure.get('isHoursType'))
                 initPlotType = null;
 
+            if (!initPlotType) {
+                if (this.activeMeasure.get('isHoursType') || ((this.activeYMeasure && this.activeYMeasure.defaultPlotType === 'line')))
+                    initPlotType = 'line';
+                else
+                    initPlotType = 'scatter';
+            }
+
             this.getAdvancedPane().add(
                     Ext.create('Connector.component.AdvancedOptionTimePlotType', {
                         measure: this.activeMeasure,
-                        value: initPlotType ? initPlotType
-                                : (this.activeMeasure.get('isHoursType') || ((this.activeYMeasure && this.activeYMeasure.defaultPlotType === 'line'))
-                                        ? 'line' : 'scatter'),
+                        value: initPlotType ,
                         isHoursType: this.activeMeasure.get('isHoursType')
                     })
             );

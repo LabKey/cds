@@ -1042,7 +1042,8 @@ Ext.define('Connector.view.Chart', {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Path({
                 size: 1,
-                opacity: 0.5
+                opacity: 0.5,
+                dataspaceBoxPlot: this.activeMeasures && this.activeMeasures.x && !Connector.model.ChartData.isContinuousMeasure(this.activeMeasures.x)
             }),
             aes: pathAes
         });

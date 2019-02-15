@@ -54,8 +54,8 @@ FROM(
 		UNION
 
 		SELECT
-				DISTINCT subject_id,
-								 prot
+		DISTINCT subject_id,
+		prot
 		FROM import_pkmab
 	)
 ) as datasets

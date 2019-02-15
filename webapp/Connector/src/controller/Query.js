@@ -600,6 +600,8 @@ Ext.define('Connector.controller.Query', {
             timepointMatch = config.includeTimepointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
             requiredVarMatch = config.includeAssayRequired && record.get('recommendedVariableGrouper') == '1_AssayRequired';
             demogSubjectColMatch = config.includeAssayRequired && record.get('isDemographic') && record.get('name') == Connector.studyContext.subjectColumn;
+
+            // config.includeHidden: module property show hidden fields
             hiddenMatch = config.includeHidden || !record.get('hidden') || requiredVarMatch || demogSubjectColMatch;
             if (hiddenMatch) {
                 if (config.isGridSelector) {

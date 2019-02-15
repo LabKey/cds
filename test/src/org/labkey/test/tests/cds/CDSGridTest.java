@@ -272,7 +272,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         sleep(1000);
         DataGrid grid = new DataGrid(this);
         log("Export without filter or additional columns");
-        CDSExport exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 13860)));
+        CDSExport exported = new CDSExport(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 14285)));
         exported.setDataTabHeaders(Arrays.asList(new Pair<>(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
                 Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days"))));
         exported.setAssays(Collections.emptyList());
