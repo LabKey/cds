@@ -512,8 +512,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String secondPublicationTitle = publicationLockedLists.get(1).getText();
         String[] secondPublicationUnlockedParts = freeColItems.get(1).getText().split("\n");
 
+        log(secondPublicationTitle);
         log("Validating the 2nd newest publication: publications should be ordered by date desc by default");
-        Assert.assertEquals("Publication title not as expected", expectedPublicationTitle, secondPublicationTitle);
+        Assert.assertEquals("Publication title not as expected", expectedPublictionLabel + "\n" + expectedPublicationTitle, secondPublicationTitle);
         Assert.assertEquals("Publication journal not as expected", "J Infect Dis", secondPublicationUnlockedParts[0]);
         Assert.assertEquals("Publication author not as expected", "Fong Y", secondPublicationUnlockedParts[1]);
         Assert.assertEquals("Publication journal not as expected", "2018 Mar 28", secondPublicationUnlockedParts[2]);
