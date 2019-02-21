@@ -1026,19 +1026,20 @@ public class CDSHelper
 
                 WebElement logo = Locator.xpath(LOGO_IMG_XPATH).findElement(_test.getWrappedDriver());
                 builder.moveToElement(logo).build().perform();
-                _test.sleep(250);
+                _test.sleep(1000);
 
                 // Because the mouse moved over the bar the element changed so we need to get a reference to the new element.
                 builder.moveToElement(barLabelElement, 2, 2).build().perform();
+                _test.sleep(1000);
                 barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
 
-                _test.sleep(250);
+                _test.sleep(1000);
 
                 builder.click(barLabelElement).build().perform();
                 _test.waitForElement(Locator.xpath(xPath + "/parent::div[contains(@class,'bar-selected')]"));
                 barSelected = true;
             }
-            catch(org.openqa.selenium.NoSuchElementException nse)
+            catch(NoSuchElementException nse)
             {
                 _test.log("The click of the bar element did not work as expected, going to try again.");
 

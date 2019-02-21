@@ -64,7 +64,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
         checkCheckbox(termsCheckbox);
         loginPage.logIn();
 
-        simpleSignOut();
+        signOutHTTP();
 
         sleep(1000);
 

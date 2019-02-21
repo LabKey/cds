@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.labkey.test.WebDriverWrapper.WAIT_FOR_PAGE;
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_IC50_REPORT;
 
@@ -154,7 +155,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         Locator clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear");
         if (_webDriverWrapper.isElementPresent(clearAllFilterBtn) && _webDriverWrapper.isElementVisible(clearAllFilterBtn))
             _webDriverWrapper.click(clearAllFilterBtn);
-        _webDriverWrapper.waitForElementToDisappear(Locator.tagWithClass("div", "filtered-column"));
+        _webDriverWrapper.waitForElementToDisappear(Locator.tagWithClass("div", "filtered-column"), WAIT_FOR_PAGE);
     }
 
     public boolean hasGridColumnFilters()
