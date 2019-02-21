@@ -594,7 +594,6 @@ public class CDSController extends SpringActionController
     {
         public CDSExportQueryForm()
         {
-            super();
         }
 
         public CDSExportQueryForm(String schemaName, String queryName, PropertyValues values)
