@@ -966,13 +966,13 @@ public class CDSHelper
         selectBars(true, bars);
     }
 
-    public void selectBars(boolean multiSelect, String... bars)
+    public void selectBars(boolean shiftSelect, String... bars)
     {
         if (bars == null || bars.length == 0)
             throw new IllegalArgumentException("Please specify bars to select.");
 
         Keys multiSelectKey;
-        if (multiSelect)
+        if (shiftSelect)
             multiSelectKey = Keys.SHIFT;
         else if (SystemUtils.IS_OS_MAC)
             multiSelectKey = Keys.COMMAND;
@@ -997,7 +997,6 @@ public class CDSHelper
 
     private void clickBar(String barLabel)
     {
-
         _test.log("Going to click a bar with text '" + barLabel + "'.");
 
         Actions builder = new Actions(_test.getDriver());
@@ -1007,7 +1006,8 @@ public class CDSHelper
         // Get a reference to the detail panel. After the bar is selected this reference will become stale. (and checked lated in the function).
         WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT);
 
-        BaseWebDriverTest.sleep(500);
+        // clicking previous item cause dom to rerender
+        BaseWebDriverTest.sleep(3000);
 
         _test.waitForElementToBeVisible(Locators.barLabel.withText(barLabel));
 
@@ -1028,13 +1028,7 @@ public class CDSHelper
                 builder.moveToElement(logo).build().perform();
                 _test.sleep(1000);
 
-                // Because the mouse moved over the bar the element changed so we need to get a reference to the new element.
                 builder.moveToElement(barLabelElement, 2, 2).build().perform();
-                _test.sleep(1000);
-                barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
-
-                _test.sleep(1000);
-
                 builder.click(barLabelElement).build().perform();
                 _test.waitForElement(Locator.xpath(xPath + "/parent::div[contains(@class,'bar-selected')]"));
                 barSelected = true;
