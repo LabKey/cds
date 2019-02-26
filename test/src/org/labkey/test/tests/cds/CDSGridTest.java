@@ -453,7 +453,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
         cds.pickSort("Race");
-        cds.selectBars(false, CDSHelper.RACE_ASIAN);
+        cds.selectBars(CDSHelper.RACE_ASIAN);
 
         log("Create a plot that will filter.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);

@@ -684,6 +684,17 @@ public class CDSHelper
         _test.clickAndWait(Locator.linkWithText("Application"), 10000);
         _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");
 
+        afterInApplication();
+    }
+
+    public void beginAtApplication(String projectName)
+    {
+        _test.beginAt(WebTestHelper.buildURL("cds", projectName, "app", Map.of("logQuery", "1", "_showPlotData", "true", "_disableAutoMsg", "true")));
+        afterInApplication();
+    }
+
+    private void afterInApplication()
+    {
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
         _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
@@ -956,17 +967,19 @@ public class CDSHelper
         }
     }
 
-    public void selectBars(String... bars)
+    @LogMethod
+    public void selectBars(@LoggedParam String... bars)
     {
         selectBars(false, bars);
     }
 
-    public void shiftSelectBars(String... bars)
+    @LogMethod
+    public void shiftSelectBars(@LoggedParam String start, @LoggedParam String end)
     {
-        selectBars(true, bars);
+        selectBars(true, start, end);
     }
 
-    public void selectBars(boolean shiftSelect, String... bars)
+    private void selectBars(boolean shiftSelect, String... bars)
     {
         if (bars == null || bars.length == 0)
             throw new IllegalArgumentException("Please specify bars to select.");
@@ -979,82 +992,48 @@ public class CDSHelper
         else
             multiSelectKey = Keys.CONTROL;
 
-        clickBar(bars[0]);
+        selectBar(bars[0], null);
 
         if (bars.length > 1)
         {
-            Actions builder = new Actions(_test.getDriver());
-            builder.keyDown(multiSelectKey).build().perform();
-
             for (int i = 1; i < bars.length; i++)
             {
-                clickBar(bars[i]);
+                selectBar(bars[i], multiSelectKey);
             }
-
-            builder.keyUp(multiSelectKey).build().perform();
         }
     }
 
-    private void clickBar(String barLabel)
+    private void selectBar(String barLabel, Keys multiSelectKey)
     {
-        _test.log("Going to click a bar with text '" + barLabel + "'.");
-
-        Actions builder = new Actions(_test.getDriver());
-
-        _test.mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
+        _test.log("Going to select a bar with text '" + barLabel + "'.");
 
         // Get a reference to the detail panel. After the bar is selected this reference will become stale. (and checked lated in the function).
         WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT);
 
-        // clicking previous item cause dom to rerender
-        BaseWebDriverTest.sleep(3000);
+        WebElement barLabelElement = _test.waitForElementToBeVisible(Locators.barLabel.withText(barLabel).parent());
 
-        _test.waitForElementToBeVisible(Locators.barLabel.withText(barLabel));
-
-        WebElement barLabelElement = Locators.barLabel.withText(barLabel).findElement(_test.getWrappedDriver());
         _test.scrollIntoView(barLabelElement);
 
-        String xPath = Locators.barLabel.withText(barLabel).toXpath();
+        Actions actions = new Actions(_test.getDriver());
+        if (multiSelectKey != null)
+            actions.keyDown(multiSelectKey).perform();
 
-        boolean barSelected = false;
-        int tries = 0;
+        actions.moveToElement(barLabelElement).perform();
+        barLabelElement.click(); // Use standard click. ctrl-click with Actions sometimes acts like a right-click
 
-        while (!barSelected)
-        {
-            tries++;
-            try{
-
-                WebElement logo = Locator.xpath(LOGO_IMG_XPATH).findElement(_test.getWrappedDriver());
-                builder.moveToElement(logo).build().perform();
-                _test.sleep(1000);
-
-                builder.moveToElement(barLabelElement, 2, 2).build().perform();
-                builder.click(barLabelElement).build().perform();
-                _test.waitForElement(Locator.xpath(xPath + "/parent::div[contains(@class,'bar-selected')]"));
-                barSelected = true;
-            }
-            catch(NoSuchElementException nse)
-            {
-                _test.log("The click of the bar element did not work as expected, going to try again.");
-
-                if (tries > 5)
-                    throw nse;
-
-                barSelected = false;
-                BaseWebDriverTest.sleep(500);
-            }
-
-        }
+        if (multiSelectKey != null)
+            actions.keyUp(multiSelectKey).perform();
 
         // Wait for the filter with the same text as the bar to show up.
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
 
         // Wait for the details count to refresh (element will go stale).
         _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
+        // The entire barchart also goes stale
+        _test.shortWait().until(ExpectedConditions.stalenessOf(barLabelElement));
 
         // And if there is any pending annimation wait for it.
         waitForFilterAnimation();
-
     }
 
     public void clickPointInPlot(String cssPathToSvg, int pointIndex)
