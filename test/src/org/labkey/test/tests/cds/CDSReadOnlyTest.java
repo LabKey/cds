@@ -70,7 +70,7 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
             new CDSHelper(this).beginAtApplication(getProjectName());
             return false;
         }
-        catch (NoSuchElementException e)
+        catch (NoSuchElementException | AssertionError e)
         {
             return true;
         }
