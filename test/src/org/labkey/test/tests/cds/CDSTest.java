@@ -96,7 +96,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(studyPoints);
         waitForElement(dataPoints);
         click(Locator.linkWithText("learn about"));
-        waitForElement(CDSHelper.NavigationLink.LEARN.getExpectedElement());
+        CDSHelper.NavigationLink.LEARN.waitForReady(this);
         InfoPane infoPane = new InfoPane(this);
         infoPane.waitForSpinners();
 
@@ -145,13 +145,13 @@ public class CDSTest extends CDSReadOnlyTest
         sleep(500);
         infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_text')]"));
-        waitForElement(CDSHelper.NavigationLink.LEARN.getExpectedElement());
+        CDSHelper.NavigationLink.LEARN.waitForReady(this);
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         mouseOver(Locator.xpath("//div[contains(@class, 'home_plot')]"));
         sleep(500);
         infoPane.waitForSpinners();
         click(Locator.xpath("//div[contains(@class, 'home_plot')]"));
-        waitForElement(CDSHelper.NavigationLink.PLOT.getExpectedElement());
+        CDSHelper.NavigationLink.PLOT.waitForReady(this);
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
 
         log("Verify open video popup");

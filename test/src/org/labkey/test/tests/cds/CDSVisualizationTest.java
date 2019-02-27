@@ -23,17 +23,17 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
 import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
+import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
-import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
-import org.labkey.test.util.cds.CDSAsserts;
-import org.labkey.test.util.cds.CDSHelpCenterUtil;
-import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
+import org.labkey.test.util.cds.CDSAsserts;
+import org.labkey.test.util.cds.CDSHelpCenterUtil;
+import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.labkey.test.util.cds.CDSHelper.CDS_WAIT;
 
 @Category({})
 public class CDSVisualizationTest extends CDSReadOnlyTest
@@ -1036,7 +1036,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertElementPresent(CDSPlot.Locators.plotBox, 1);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDS_WAIT);
         switchToWindow(1);
 
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
@@ -1058,7 +1058,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertElementPresent(CDSPlot.Locators.plotBox, 1);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDS_WAIT);
         switchToWindow(1);
         plotDataTable = new DataRegionTable("query", this);
         assertEquals(100, plotDataTable.getDataRowCount());
@@ -1108,7 +1108,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertElementPresent(CDSPlot.Locators.plotPoint, 1209);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDS_WAIT);
         switchToWindow(1);
         Ext4Helper.resetCssPrefix();
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
@@ -1122,7 +1122,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDS_WAIT);
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
@@ -1134,7 +1134,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertElementPresent(CDSPlot.Locators.plotPoint, 290);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDS_WAIT);
         switchToWindow(1);
         Ext4Helper.resetCssPrefix();
         plotDataTable = new DataRegionTable("query", this);
@@ -1525,7 +1525,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // This test will only validate that a "Filter" button shows up, but will not validate that the
         // range of the filter is as expected.
 
-        int pointCount, pointToClick;
         CDSHelper cds = new CDSHelper(this);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1544,10 +1543,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
-        // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
-        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1)", pointToClick, CDSHelper.PlotPoints.POINT, 25, -100, true);
+        brushPlot(0, 0.25, CDSHelper.PlotPoints.POINT, 25, -100, true);
 
         // Clear the filter.
         cds.clearFilter(1);
@@ -1562,9 +1558,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         xaxis.confirmSelection();
 
-        // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) a.point"))/4;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(2)", pointToClick, CDSHelper.PlotPoints.POINT, 250, -250, true);
+        brushPlot(1, 0.25, CDSHelper.PlotPoints.POINT, 250, -250, true);
 
         // Clear the plot.
         cds.clearFilters();
@@ -1595,9 +1589,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setAntigensAggregated(CDSHelper.ICS_ANY_POL);
         yaxis.confirmSelection();
 
-        // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1)", pointToClick, CDSHelper.PlotPoints.BIN, -50, -100, true);
+        brushPlot(0, 0.5, CDSHelper.PlotPoints.BIN, -50, -100, true);
 
         cds.clearFilters();
         sleep(500);
@@ -1612,9 +1604,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType("All");
         yaxis.confirmSelection();
 
-        // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1)", pointToClick, CDSHelper.PlotPoints.BIN, 0, -50, true);
+        brushPlot(0, 0.5, CDSHelper.PlotPoints.BIN, 0, -50, true);
 
         // Clear the filter.
         cds.clearFilter(1);
@@ -1626,9 +1616,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.DEMO_COUNTRY);
         xaxis.confirmSelection();
 
-        // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/3;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1)", pointToClick, CDSHelper.PlotPoints.BIN, 0, -50, true);
+        brushPlot(0, 0.333, CDSHelper.PlotPoints.BIN, 0, -50, true);
 
         // Clear the filter.
         cds.clearFilters();
@@ -1653,9 +1641,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         coloraxis.pickVariable(CDSHelper.DEMO_RACE);
         coloraxis.confirmSelection();
 
-        // Try to protect from getting an index out of range error.
-        pointToClick = Locator.css("div:not(.thumbnail) > svg " + CDSHelper.PlotPoints.GLYPH.getTag()).findElements(getWrappedDriver()).size()/4;
-        brushPlot("div:not(.thumbnail) > svg", pointToClick, CDSHelper.PlotPoints.GLYPH, 0, -50, true);
+        brushPlot(0, 0.25, CDSHelper.PlotPoints.GLYPH, 0, -50, true);
 
         // Clear the filter.
         cds.clearFilters();
@@ -1849,9 +1835,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Create a plot with X, Y and Color choosing from the same source");
 
-        String cssPathToSvg;
-        int pointToClick;
-
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
@@ -1890,8 +1873,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     private void gutterPlotBrushingTestHelper(boolean hasXGutter, boolean hasYGutter, boolean hasMainPlotDataPoints, int subjectCountBefore, int numOfOtherFilters)
     {
         WebElement gutterBrushWindow;
-        String dataPointType;
-        int heightWidth, pointToClick;
+        int heightWidth;
         int mainPlotIndex;
         String tempStr, cssPathBrushWindow;
         CDSHelper.PlotPoints plotPointType;
@@ -1920,7 +1902,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
 
             // See what kind of data points we have in the main plot.
-            if (getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + CDSHelper.PlotPoints.POINT.getTag())) != 0)
+            if (getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") ").append(CDSHelper.PlotPoints.POINT.getLocator())) != 0)
             {
                 plotPointType = CDSHelper.PlotPoints.POINT;
             }
@@ -1929,13 +1911,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                 plotPointType = CDSHelper.PlotPoints.BIN;
             }
 
-            dataPointType = plotPointType.getTag();
-
-            // Try to protect from getting an index out of range error. Add one just to make sure that if there is a
-            // very small number of points we don't end up with 0 as pointToClick;
-            pointToClick = (getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType)) / 4) + 1;
-            log("Brushing in the main plot area. Going to click at point: div.plot:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")");
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ")", pointToClick, plotPointType, 50, -50, false);
+            brushPlot(mainPlotIndex - 1, 0.25, plotPointType, 50, -50, false);
 
         }
         else
@@ -1978,11 +1954,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if (isXGutter)
         {
-            brushPlot("div.bottomplot > svg > g:nth-child(4) > g.grid-line > path:nth-of-type(2)", -50, 0, false);
+            WebElement element = Locator.css("div.bottomplot > svg > g:nth-child(4) > g.grid-line > path:nth-of-type(2)").findElement(getDriver());
+            brushPlot(element, -50, 0, false);
         }
         else
         {
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) > g:nth-child(5) > g.grid-line > path:nth-of-type(2)", 0, -50, false);
+            WebElement element = Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) > g:nth-child(5) > g.grid-line > path:nth-of-type(2)").findElement(getDriver());
+            brushPlot(element, 0, -50, false);
         }
 
         log("Move the brush window in the 'undefined y value' gutter.");
@@ -2063,28 +2041,24 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
     }
 
-    private void brushPlot(String cssPathToSvg, int pointIndex, CDSHelper.PlotPoints pointType, int xOffSet, int yOffSet, boolean applyFilter)
+    private void brushPlot(int svgIndex, double pointPosition, CDSHelper.PlotPoints pointType, int xOffSet, int yOffSet, boolean applyFilter)
     {
-        String pointCss;
-        pointCss = cssPathToSvg + " " + pointType.getTag() + ":nth-of-type(" + pointIndex + ")";
-        brushPlot(pointCss, xOffSet, yOffSet, applyFilter);
+        if (pointPosition < 0 || pointPosition > 1)
+            throw new IllegalArgumentException("Point posistion must be between zero and one, inclusive");
+        WebElement svg = Locator.css("div:not(.thumbnail) > svg").index(svgIndex).findElement(getDriver());
+        List<WebElement> points = pointType.getLocator().waitForElements(svg, CDS_WAIT);
+        int pointIndex = Double.valueOf(points.size() * pointPosition).intValue();
+        brushPlot(points.get(pointIndex), xOffSet, yOffSet, applyFilter);
     }
 
-    private void brushPlot(String cssPointOfOrigin, int xOffSet, int yOffSet, boolean applyFilter)
+    private void brushPlot(WebElement pointOfOrigin, int xOffSet, int yOffSet, boolean applyFilter)
     {
-        int subjectCountBefore;
-        String tempStr;
-        Locator plotElement;
-
-        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
-        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
-
-        // Mouse over the given point.
-        plotElement = Locator.css(cssPointOfOrigin);
+        String tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        int subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
         sleep(1000);
-        cds.dragAndDropFromElement(plotElement, xOffSet, yOffSet);
-        sleep(CDSHelper.CDS_WAIT);
+        cds.dragAndDropFromElement(pointOfOrigin, xOffSet, yOffSet);
+        sleep(CDS_WAIT);
 
         if (applyFilter)
         {
@@ -2097,18 +2071,15 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     // Need to special case if trying to brush in an empty plot.
     private void brushEmptyPlot(String cssPathToPlot, int xOffset, int yOffset, boolean applyFilter)
     {
-        int subjectCountBefore;
-        String tempStr;
-
-        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
-        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+        String tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        int subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
         // Going to move the mouse over the area where it is about to start dragging.
         clickAt(Locator.css(cssPathToPlot), 1, 1, 0);
 
         sleep(1000);
         cds.dragAndDropFromElement(Locator.css(cssPathToPlot), xOffset, yOffset);
-        sleep(CDSHelper.CDS_WAIT);
+        sleep(CDS_WAIT);
 
         if (applyFilter)
         {

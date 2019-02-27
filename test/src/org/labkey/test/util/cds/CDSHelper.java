@@ -31,12 +31,16 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
+import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.RReportHelper;
+import org.labkey.test.util.TestLogger;
+import org.labkey.test.util.UIPermissionsHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -47,6 +51,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -752,22 +757,16 @@ public class CDSHelper
 
     public void setUpPermGroup(String perm_group, Map<String, String> studyPermissions, String projectPerm)
     {
-        _test.goToProjectHome();
         ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
-        apiPermissionsHelper.createPermissionsGroup(perm_group);
-        if (_test.isElementPresent(Locator.permissionRendered()) && _test.isButtonPresent("Save and Finish"))
-        {
-            _test.clickButton("Save and Finish");
-        }
+        apiPermissionsHelper.createProjectGroup(perm_group, _test.getPrimaryTestProject());
+        apiPermissionsHelper.addMemberToRole(perm_group, projectPerm, PermissionsHelper.MemberType.group, _test.getPrimaryTestProject());
 
         for (String study : studyPermissions.keySet())
         {
             String permission = studyPermissions.get(study);
-            setStudyPerm(perm_group, study, permission, apiPermissionsHelper);
+            setStudyPerm(perm_group, study, permission);
         }
         _test.goToProjectHome();
-        _test._securityHelper.setProjectPerm(perm_group, projectPerm);
-        _test.clickButton("Save and Finish");
     }
 
     public void setUpUserPerm(String userEmail, String projectPerm, Map<String, String> studyPermissions)
@@ -775,30 +774,24 @@ public class CDSHelper
         _test._userHelper.deleteUser(userEmail);
         _test._userHelper.createUser(userEmail, false, true);
         Ext4Helper.resetCssPrefix();
-        _test.goToProjectHome();
         ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
+        apiPermissionsHelper.addMemberToRole(userEmail, projectPerm, PermissionsHelper.MemberType.user, _test.getPrimaryTestProject());
 
         for (String study : studyPermissions.keySet())
         {
             String permission = studyPermissions.get(study);
-            setStudyPerm(userEmail, study, permission, apiPermissionsHelper);
+            setStudyPerm(userEmail, study, permission);
         }
         _test.goToProjectHome();
-        _test._securityHelper.setProjectPerm(userEmail, projectPerm);
-        _test.clickButton("Save and Finish");
     }
 
-    private void setStudyPerm(String userOrGroup, String study, String perm, ApiPermissionsHelper apiPermissionsHelper)
+    private void setStudyPerm(String userOrGroup, String study, String perm)
     {
         _test.goToProjectHome();
         _test.clickFolder(study);
-
-        apiPermissionsHelper.uncheckInheritedPermissions();
-        _test.clickButton("Save", 0);
-
-        _test.waitForElement(Locator.permissionRendered());
-
-        _test._securityHelper.setProjectPerm(userOrGroup, perm);
+        UIPermissionsHelper uiPermissionsHelper = new UIPermissionsHelper(_test);
+        uiPermissionsHelper.uncheckInheritedPermissions();
+        uiPermissionsHelper.setPermissions(userOrGroup, perm);
         _test.clickButton("Save and Finish");
     }
 
@@ -1248,7 +1241,8 @@ public class CDSHelper
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Hide empty"));
     }
 
-    public void viewInfo(String barLabel)
+    @LogMethod (quiet = true)
+    public void viewInfo(@LoggedParam String barLabel)
     {
         Locator.XPathLocator barLocator = Locator.tag("div").withClass("small").withDescendant(Locator.tag("span").withClass("barlabel").withText(barLabel));
         _test.scrollIntoView(barLocator); // screen might be too small
@@ -1258,14 +1252,15 @@ public class CDSHelper
         _test.waitForElement(Locator.css(".savetitle").withText(barLabel), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
     }
 
-    public void viewLearnAboutPage(String learnAxis)
+    @LogMethod
+    public void viewLearnAboutPage(@LoggedParam String learnAxis)
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
 
         BaseWebDriverTest.sleep(1000);
         // Because of the way CDS hides parts of the UI the total number of these elements may vary.
         // So can't use the standard waitForElements, which expects an exact number of elements, so doing this slightly modified version.
-        _test.waitFor(() -> 3 <= Locator.xpath("//table[@role='presentation']//tr[@role='row']").findElements(_test.getDriver()).size(), _test.WAIT_FOR_JAVASCRIPT);
+        _test.waitFor(() -> 3 <= Locator.xpath("//table[@role='presentation']//tr[@role='row']").findElements(_test.getDriver()).size(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
 
         Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-dim-selector");
         Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
@@ -1282,13 +1277,15 @@ public class CDSHelper
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
+    @LogMethod (quiet = true)
     public void closeInfoPage()
     {
         _test.click(Locators.cdsButtonLocator("Close"));
         _test.waitForElementToDisappear(Locator.button("Close"), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
     }
 
-    public void deleteGroupFromSummaryPage(String name)
+    @LogMethod (quiet = true)
+    public void deleteGroupFromSummaryPage(@LoggedParam String name)
     {
         BaseWebDriverTest.sleep(500);
         Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
@@ -1672,13 +1669,18 @@ public class CDSHelper
         GRID("View data grid", DataGridVariableSelector.titleLocator),
         MABGRID("Monoclonal antibodies", Locator.tagWithClass("div", "mab-connector-grid"));
 
-        private String _linkText;
-        private Locator.XPathLocator _expectedElement;
+        private final String _linkText;
+        private final Consumer<WebDriverWrapper> _waitForReady;
 
-        private NavigationLink(String linkText, Locator.XPathLocator expectedElement)
+        NavigationLink(String linkText, Consumer<WebDriverWrapper> waitForReady)
         {
             _linkText = linkText;
-            _expectedElement = expectedElement.notHidden();
+            _waitForReady = waitForReady;
+        }
+
+        NavigationLink(String linkText, Locator.XPathLocator expectedElement)
+        {
+            this(linkText, wdw -> expectedElement.notHidden().waitForElement(wdw.getDriver(), 10000));
         }
 
         public String getLinkText()
@@ -1691,17 +1693,17 @@ public class CDSHelper
             return Locator.tagWithClass("div", "navigation-view").append(Locator.tagWithClass("div", "nav-label").withText(_linkText));
         }
 
-        public Locator.XPathLocator getExpectedElement()
+        public void makeNavigationSelection(WebDriverWrapper wdw)
         {
-            return _expectedElement;
+            TestLogger.log("Navigate to CDS: " + getLinkText());
+            wdw.waitAndClick(getLinkLocator());
+            waitForReady(wdw);
+            wdw._ext4Helper.waitForMaskToDisappear(30000);
         }
 
-        public void makeNavigationSelection(BaseWebDriverTest _test)
+        public void waitForReady(WebDriverWrapper wdw)
         {
-            _test.waitForElement(getLinkLocator());
-            _test.click(getLinkLocator());
-            _test._ext4Helper.waitForMaskToDisappear(30000);
-            _test.waitForElement(getExpectedElement());
+            _waitForReady.accept(wdw);
         }
     }
 
@@ -1865,17 +1867,18 @@ public class CDSHelper
         // That long ugly value is the asterisks glyph. It's one of the better ones for hit testing.
         // It is not currently used, but it might be in the future, and I didn't want to have to try and find it again.
 
-        private String _tag, _highlightColor;
+        private final Locator.CssLocator locator;
+        private final String _highlightColor;
 
-        private PlotPoints(String linkText, String highlightColor)
+        PlotPoints(String cssSelector, String highlightColor)
         {
-            _tag = linkText;
+            locator = Locator.css(cssSelector);
             _highlightColor = highlightColor;
         }
 
-        public String getTag()
+        public Locator.CssLocator getLocator()
         {
-            return _tag;
+            return locator;
         }
 
         public String getHighlightColor()
@@ -1888,8 +1891,23 @@ public class CDSHelper
     public void dragAndDropFromElement(Locator el, int xOffset, int yOffset)
     {
         WebElement wel = el.findElement(_test.getDriver());
+        dragAndDropFromElement(wel, xOffset, yOffset);
+    }
+
+    public void dragAndDropFromElement(WebElement wel, int xOffset, int yOffset)
+    {
+        WebElement plotScroll = Locator.byClass("plot-scroll").findElementOrNull(_test.getDriver());
+        if (plotScroll != null)
+            scrollPanelTo(plotScroll, wel.getLocation().getX(), 0);
+
         Actions builder = new Actions(_test.getDriver());
-        builder.moveToElement(wel).clickAndHold().moveByOffset(xOffset + 1, yOffset + 1).release().build().perform();
+        Action action = builder.moveToElement(wel).clickAndHold().moveByOffset(xOffset + 1, yOffset + 1).release().build();
+        action.perform();
+    }
+
+    public void scrollPanelTo(WebElement scrollableArea, Integer x, Integer y)
+    {
+        _test.executeScript("arguments[0].scrollTo(arguments[1], arguments[2]);", scrollableArea, x, y);
     }
 
     public void validateDocLink(WebElement documentLink, String expectedFileName)
