@@ -31,7 +31,6 @@ import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 import java.io.IOException;
 import java.net.URL;
@@ -41,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.labkey.test.tests.cds.CDSTestLearnAbout.XPATH_TEXTBOX;
@@ -65,7 +65,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         deletePermissionGroups();
 
         log("Deleting user email accounts that may be left over from a previous run.");
-        deleteUsersIfPresent(_newUserAccounts);
+        _userHelper.deleteUsers(false, _newUserAccounts);
 
         beginAt("project/" + getProjectName() + "/begin.view?");
     }
@@ -107,7 +107,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        stopImpersonatingGroup();
+        stopImpersonating();
         assertSignedInNotImpersonating();
 
         //TODO The call to stopImpersonatingGroup goes to home.
@@ -121,7 +121,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        stopImpersonatingGroup();
+        stopImpersonating();
         assertSignedInNotImpersonating();
     }
 
@@ -151,7 +151,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        stopImpersonatingGroup();
+        stopImpersonating();
         assertSignedInNotImpersonating();
     }
 
@@ -174,7 +174,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        stopImpersonatingGroup();
+        stopImpersonating();
         assertSignedInNotImpersonating();
 
         studyPermissions = new HashMap<>();
@@ -197,7 +197,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        stopImpersonatingGroup();
+        stopImpersonating();
         assertSignedInNotImpersonating();
     }
 
@@ -281,8 +281,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         List<WebElement> hasDataIcons = LearnGrid.Locators.rowsWithDataNotAccessible.findElements(getDriver());
         List<WebElement> hasAccessIcons = LearnGrid.Locators.rowsWithDataAccessible.findElements(getDriver());
 
-        Assert.assertTrue("Number of studies without Data Accessible is not as expected",hasDataIcons.size() == dataAddedCount);
-        assertTrue("Number of studies with Data Accessible is not as expected", hasAccessIcons.size() == dataAccessibleCount);
+        assertEquals("Number of studies without Data Accessible is not as expected", hasDataIcons.size(), dataAddedCount);
+        assertEquals("Number of studies with Data Accessible is not as expected", hasAccessIcons.size(), dataAccessibleCount);
 
         LearnGrid learnGrid = new LearnGrid(this);
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
@@ -333,7 +333,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        stopImpersonatingGroup();
+        stopImpersonating();
         assertSignedInNotImpersonating();
 
         studyPermissions = new HashMap<>();
@@ -349,7 +349,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        stopImpersonatingGroup();
+        stopImpersonating();
         assertSignedInNotImpersonating();
     }
 
@@ -368,43 +368,43 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log("Verify public Reports");
         documentLink = CDSHelper.Locators.studyReportLink(linkText).findElementOrNull(getDriver());
-        Assert.assertTrue("Was not able to find link to the public report document for study '" + study + "'.", documentLink != null);
+        Assert.assertNotNull("Was not able to find link to the public report document for study '" + study + "'.", documentLink);
         cds.validatePDFLink(documentLink, documentName);
 
         log("Verify restricted Reports");
         documentLink = CDSHelper.Locators.studyReportLink("BAMA Results Summary").findElementOrNull(getDriver());
         if (hasAccessToR2)
         {
-            Assert.assertTrue("Was not able to find link to the restricted report document for study '" + study + "'.", documentLink != null);
+            Assert.assertNotNull("Was not able to find link to the restricted report document for study '" + study + "'.", documentLink);
             documentName = "cvd256_ev03_iga_igg.pdf";
             cds.validatePDFLink(documentLink, documentName);
         }
         else
         {
             log("'BAMA Results Summary' access_level is blank so it should be treated as restricted access" );
-            Assert.assertTrue("User should not see link to restricted report document for study '" + study + "'.", documentLink == null);
+            Assert.assertNull("User should not see link to restricted report document for study '" + study + "'.", documentLink);
         }
 
         log("Verify restricted study grant");
         documentLink = cds.getVisibleGrantDocumentLink();
         if (hasAccessToR2)
         {
-            Assert.assertTrue("Was not able to find link to the restricted grant document for study '" + study + "'.", documentLink != null);
+            Assert.assertNotNull("Was not able to find link to the restricted grant document for study '" + study + "'.", documentLink);
         }
         else
         {
-            Assert.assertTrue("There was a visible link to a grant document for this study, and there should not be.", documentLink == null);
+            Assert.assertNull("There was a visible link to a grant document for this study, and there should not be.", documentLink);
         }
 
         log("Verify restricted study protocol");
         List<WebElement> protocolLinksLinks = cds.getVisibleStudyProtocolLinks();
         if (hasAccessToR2)
         {
-            Assert.assertTrue("Was not able to find link to the restricted protocol for study '" + study + "'.", protocolLinksLinks != null);
+            Assert.assertNotNull("Was not able to find link to the restricted protocol for study '" + study + "'.", protocolLinksLinks);
         }
         else
         {
-            Assert.assertTrue("There was a visible link to a protocol for this study, and there should not be.", protocolLinksLinks == null);
+            Assert.assertNull("There was a visible link to a protocol for this study, and there should not be.", protocolLinksLinks);
         }
 
     }
@@ -421,14 +421,14 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         impersonateGroup(_permGroups[0], false);
         log("Verify Editor user won't see restricted import tables");
         verifyRestrictedImportTable(false);
-        stopImpersonatingGroup();
+        stopImpersonating();
 
         log("Create a user group with Folder Administrator permission to project");
         cds.setUpPermGroup(_permGroups[1], studyPermissions, "Folder Administrator");
         impersonateGroup(_permGroups[1], false);
         log("Verify Folder Admin user have access to restricted import tables");
         verifyRestrictedImportTable(true);
-        stopImpersonatingGroup();
+        stopImpersonating();
     }
 
     private void verifyRestrictedImportTable(boolean isAdmin)
@@ -644,7 +644,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         }
 
         log("Delete user " + _newUserAccounts[2] + " then test that first time sign-on behaves as expected for this user.");
-        deleteUsersIfPresent(_newUserAccounts[2]);
+        _userHelper.deleteUsers(false, _newUserAccounts[2]);
 
         log("Now sign out and validate the welcome urls.");
         signOut();
@@ -720,7 +720,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         click(Locator.tagWithClass("a", "help"));
         waitForElement(Locator.tagWithText("h1", "Sign-in Help"));
         assertTextPresent("To set or reset your password, type in your email address and click the submit button.");
-        assertTrue("Did not find email '" + _newUserAccounts[3] + "' in text box.", getFormElement(Locator.inputById("emailhelp")).toLowerCase().equals(_newUserAccounts[3].toLowerCase()));
+        assertEquals("Did not find email '" + _newUserAccounts[3] + "' in text box.", getFormElement(Locator.inputById("emailhelp")).toLowerCase(), _newUserAccounts[3].toLowerCase());
         click(Locator.linkWithText("Cancel"));
 
         // Log in as admin, like start of test, this will allow test to clean up correctly.
@@ -831,7 +831,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        stopImpersonatingGroup();
+        stopImpersonating();
         assertSignedInNotImpersonating();
 
         studyPermissions = new HashMap<>();
@@ -850,7 +850,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
-        stopImpersonatingGroup();
+        stopImpersonating();
         assertSignedInNotImpersonating();
 
     }
