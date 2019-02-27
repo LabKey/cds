@@ -66,6 +66,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     protected static final String BRUSHED_FILL = "#14C9CC";
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
+    protected static final String FADED_FILL = "#E6E6E6";
 
     @Before
     public void preTest()
@@ -705,13 +706,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         waitForElement(CDSPlot.Locators.plotBox);
         waitForElement(CDSPlot.Locators.plotTick.withText("Asian"), 20000);
+        mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
 
         assertElementPresent(CDSPlot.Locators.plotBox, 10);
         assertElementPresent(CDSPlot.Locators.plotPoint, 3627);
 
         log("Verify x axis categories are selectable as filters");
-        mouseOver(Locator.css(CDSHelpCenterUtil.OUTSIDE_POPUP_LOGO_CSS));
-        sleep(500);
         mouseOver(CDSPlot.Locators.plotTick.withText("Asian"));
         waitForElement(Locator.css("svg g.axis g.tick-text a rect.highlight[fill='" + MOUSEOVER_FILL + "']"));
         assertEquals("Incorrect number of points highlighted after mousing over x axis category", 316, cdsPlot.getPointCountByColor(MOUSEOVER_FILL));
@@ -727,9 +727,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Apply category selection as a filter.");
 
         // Need to do this because there is more than one "Filter" buton in the OM, but only want the visible one.
-        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
-        sleep(3000); // Let the plot redraw.
-        _ext4Helper.waitForMaskToDisappear();
+        cdsPlot.doAndWaitForPlotRefresh(() -> waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter")));
 
         assertEquals("Point counts not as expected.", 316, cdsPlot.getPointCount());
 
@@ -759,9 +757,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertEquals("Incorrect number of points highlighted after clicking x axis categories",1443, cdsPlot.getPointCountByColor(MOUSEOVER_FILL));
         assertEquals("Incorrect total number of points after clicking x axis categories",3627, cdsPlot.getPointCount());
         log("Apply selection as exclusive filter.");
-        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Remove"));
-        sleep(3000); // Let the plot redraw.
-        _ext4Helper.waitForMaskToDisappear();
+        cdsPlot.doAndWaitForPlotRefresh(() -> waitAndClick(CDSHelper.Locators.cdsButtonLocator("Remove")));
         assertEquals("Point counts not as expected", (3627 - 1443), cdsPlot.getPointCount());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));

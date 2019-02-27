@@ -346,29 +346,28 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         List<WebElement> weList = cdsPlot.findTimeAxisPointsWithData(cssPath, "nonvaccination_normal.svg");
 
         assertTrue("No glyphs in the time axis had a value indicating they had data.", weList.size() > 0);
-        int totalCount = 0, highlightCount;
+        int highlightCount = 0;
 
         for (WebElement we : weList)
         {
             // Hover over the element.
             builder = new Actions(getDriver());
             builder.moveToElement(we).perform();
-            sleep(1000);
 
             // Count the number of points that are highlighted in the main plot.
-            highlightCount = cdsPlot.getPointCountByColor(cdsPlot.MOUSEOVER_FILL);
+            highlightCount = cdsPlot.getPointCountByColor(CDSPlot.MOUSEOVER_FILL);
             log("Highlighted point count: " + highlightCount);
-            totalCount = totalCount + highlightCount;
+            if (highlightCount > 0)
+                break;
         }
 
-        assertTrue("No points in the plot were highlighted when hovering over a time axis point.", totalCount > 0);
+        assertTrue("No points in the plot were highlighted when hovering over a time axis point.", highlightCount > 0);
 
         log("Verify that points get highlighted when hovering over a time axis label.");
         cssPath = "div.bottomplot > svg > g:nth-child(5) > text.study-label";
         mouseOver(Locator.css(cssPath));
 
-        sleep(500);
-        highlightCount = cdsPlot.getPointCountByColor(cdsPlot.MOUSEOVER_FILL);
+        highlightCount = cdsPlot.waitForPointsWithColor(CDSPlot.MOUSEOVER_FILL);
         assertTrue("No points in the plot were highlighted when hovering over a time axis study label.", highlightCount > 0);
 
         highlightCount = cdsPlot.getTimeAxisPointCountByImage("_hover.svg");

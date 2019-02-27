@@ -16,8 +16,11 @@
 package org.labkey.test.pages.cds;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.mutable.Mutable;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
@@ -38,8 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class CDSPlot
@@ -55,6 +58,12 @@ public class CDSPlot
     public CDSPlot(BaseWebDriverTest test)
     {
         _test = test;
+    }
+
+    public void doAndWaitForPlotRefresh(Runnable runnable)
+    {
+        _test.doAndWaitForElementToRefresh(runnable, Locator.tag("svg"), _test.shortWait());
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     private void scrollElement(String tickText, int maxScroll)
@@ -146,18 +155,19 @@ public class CDSPlot
         }
     }
 
+    public int waitForPointsWithColor(String colorCode)
+    {
+        Mutable<Integer> count = new MutableObject<>();
+        WebDriverWrapper.waitFor(() -> {
+            count.setValue(getPointCountByColor(colorCode));
+            return count.getValue() > 0;
+        }, 15000);
+        return count.getValue();
+    }
+
     public int getPointCountByColor(String colorCode)
     {
-        try
-        {
-            _test.waitForElement(Locator.css("svg g a.point path[fill='" + colorCode + "']"), 15000, true);
-        }
-        catch(NoSuchElementException nse)
-        {
-            return 0;
-        }
-
-        return Locator.css("svg g a.point path[fill='" + colorCode + "']").findElements(_test.getWrappedDriver()).size();
+        return Locator.css("svg g a.point path[fill='" + colorCode + "']").findElements(_test.getDriver()).size();
     }
 
     public int getPointCountByGlyph(String glyphyCode)
