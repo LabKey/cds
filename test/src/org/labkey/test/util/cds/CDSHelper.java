@@ -16,6 +16,7 @@
 package org.labkey.test.util.cds;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
@@ -820,7 +821,7 @@ public class CDSHelper
             _test.click(Locators.cdsButtonLocator("create a new group"));
         }
 
-        _test.waitForText("replace an existing group");
+        Locator.linkWithText("replace an existing group").waitForElement(_test.getDriver(), CDS_WAIT);
 
         Locator.XPathLocator shareGroupCheckbox = Locator.xpath("//input[contains(@id,'creategroupshared')]");
         if (shared)
@@ -977,13 +978,7 @@ public class CDSHelper
         if (bars == null || bars.length == 0)
             throw new IllegalArgumentException("Please specify bars to select.");
 
-        Keys multiSelectKey;
-        if (shiftSelect)
-            multiSelectKey = Keys.SHIFT;
-        else if (SystemUtils.IS_OS_MAC)
-            multiSelectKey = Keys.COMMAND;
-        else
-            multiSelectKey = Keys.CONTROL;
+        Keys multiSelectKey = getMultiSelectKey(shiftSelect);
 
         selectBar(bars[0], null);
 
@@ -994,6 +989,25 @@ public class CDSHelper
                 selectBar(bars[i], multiSelectKey);
             }
         }
+    }
+
+    @NotNull
+    public static Keys getMultiSelectKey()
+    {
+        return getMultiSelectKey(false);
+    }
+
+    @NotNull
+    public static Keys getMultiSelectKey(boolean shiftSelect)
+    {
+        Keys multiSelectKey;
+        if (shiftSelect)
+            multiSelectKey = Keys.SHIFT;
+        else if (SystemUtils.IS_OS_WINDOWS)
+            multiSelectKey = Keys.CONTROL;
+        else
+            multiSelectKey = Keys.COMMAND; // For some reason, CMD-click works on Linux, but CTRL-click behaves like a right-click
+        return multiSelectKey;
     }
 
     private void selectBar(String barLabel, Keys multiSelectKey)
@@ -1007,15 +1021,15 @@ public class CDSHelper
 
         _test.scrollIntoView(barLabelElement);
 
-        Actions actions = new Actions(_test.getDriver());
+        Actions builder = new Actions(_test.getDriver());
         if (multiSelectKey != null)
-            actions.keyDown(multiSelectKey).perform();
+            builder.keyDown(multiSelectKey);
 
-        actions.moveToElement(barLabelElement).perform();
-        barLabelElement.click(); // Use standard click. ctrl-click with Actions sometimes acts like a right-click
+        builder.moveToElement(barLabelElement).click();
 
         if (multiSelectKey != null)
-            actions.keyUp(multiSelectKey).perform();
+            builder.keyUp(multiSelectKey);
+        builder.build().perform();
 
         // Wait for the filter with the same text as the bar to show up.
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);

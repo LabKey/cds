@@ -15,7 +15,6 @@
  */
 package org.labkey.test.pages.cds;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.labkey.test.BaseWebDriverTest;
@@ -127,13 +126,7 @@ public class CDSPlot
         if (axes == null || axes.length == 0)
             throw new IllegalArgumentException("Please specify axes to select.");
 
-        Keys multiSelectKey;
-        if(SystemUtils.IS_OS_WINDOWS)
-            multiSelectKey = Keys.CONTROL;
-        else if (SystemUtils.IS_OS_MAC)
-            multiSelectKey = Keys.COMMAND;
-        else
-            multiSelectKey = Keys.SHIFT;
+        Keys multiSelectKey = CDSHelper.getMultiSelectKey();
 
         int maxScroll = getMaxXScrollValue();
 
