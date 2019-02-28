@@ -723,7 +723,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertElementPresent(CDSPlot.Locators.removeButton);
 
         log("Ensure correct number of points are highlighted");
-        assertEquals("Incorrect number of points highlighted after clicking x axis category", 316, cdsPlot.getPointCountByColor(MOUSEOVER_FILL));
+        assertEquals("Incorrect number of points highlighted after clicking x axis category", 316, cdsPlot.waitForPointsWithColor(MOUSEOVER_FILL));
         log("Ensure correct total number of points.");
         assertEquals("Incorrect total number of points after clicking x axis category", 3627, cdsPlot.getPointCount());
         log("Apply category selection as a filter.");
