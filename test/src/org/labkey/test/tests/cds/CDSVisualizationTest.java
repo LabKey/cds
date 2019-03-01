@@ -1185,6 +1185,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     @Test
     public void verifyLogAndLinearScales()
     {
+        final char le = '\u2264';
         String scaleValues, originalScale;
         int expectedCount, originalCount;
         CDSHelper cds = new CDSHelper(this);
@@ -1204,7 +1205,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType("All");
         yaxis.confirmSelection();
 
-        scaleValues = "≤0\n0.0005\n0.005\n0.05\n0.5\n5";
+        scaleValues = le + "0\n0.0005\n0.005\n0.05\n0.5\n5";
         expectedCount = 1604;
 
         verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
@@ -1241,7 +1242,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
-        originalScale = "≤0\n0.0005\n0.005\n0.05\n0.5\n5\n≤0\n0.001\n0.01\n0.1\n1";
+        originalScale = le + "0\n0.0005\n0.005\n0.05\n0.5\n5\n" + le + "0\n0.001\n0.01\n0.1\n1";
         originalCount = 1453;
         verifyLogAndLinearHelper(originalScale, 2, originalCount, true);
         assertTrue("There was no x-axis log gutter there should be.", cdsPlot.hasXLogGutter());
@@ -1254,7 +1255,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
-        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n≤0\n0.001\n0.01\n0.1\n1";
+        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n" + le + "0\n0.001\n0.01\n0.1\n1";
         expectedCount = 1453;  // Is this right?
         verifyLogAndLinearHelper(scaleValues, 2, expectedCount, true);
         assertTrue("There was no x-axis log gutter there should be.", cdsPlot.hasXLogGutter());
@@ -1278,7 +1279,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setScale(DataspaceVariableSelector.Scale.Log);
         xaxis.confirmSelection();
 
-        scaleValues = "≤0\n0.0005\n0.005\n0.05\n0.5\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
+        scaleValues = le + "0\n0.0005\n0.005\n0.05\n0.5\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
         expectedCount = 1453;
         verifyLogAndLinearHelper(scaleValues, 2, expectedCount, true);
         assertTrue("There  x-axis log gutter was present, it should not be there.", !cdsPlot.hasXLogGutter());
@@ -1334,7 +1335,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.DEMO_AGEGROUP);
         xaxis.confirmSelection();
 
-        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n≤0\n30\n300\n3000\n30000";
+        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n" + le + "0\n30\n300\n3000\n30000";
         originalCount = 477;
         verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
 
@@ -1344,7 +1345,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         _asserts.assertFilterStatusCounts(55, 4, 1, 1, 18);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n≤0\n30\n300";
+        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n" + le + "0\n30\n300";
         originalCount = 55;
         verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
 
