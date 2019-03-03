@@ -25,12 +25,12 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
-import org.labkey.api.action.ApiAction;
 import org.labkey.api.action.ApiSimpleResponse;
 import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
 import org.labkey.api.action.MutatingApiAction;
+import org.labkey.api.action.ReadOnlyApiAction;
 import org.labkey.api.action.SimpleApiJsonForm;
 import org.labkey.api.action.SimpleErrorView;
 import org.labkey.api.action.SimpleViewAction;
@@ -406,7 +406,7 @@ public class CDSController extends SpringActionController
 
     @RequiresNoPermission
     @Marshal(Marshaller.Jackson)
-    public class PropertiesAction extends ApiAction<PropertiesForm>
+    public class PropertiesAction extends ReadOnlyApiAction<PropertiesForm>
     {
         @Override
         public Object execute(PropertiesForm form, BindException errors) throws Exception
@@ -977,7 +977,7 @@ public class CDSController extends SpringActionController
 
 
     @RequiresPermission(ReadPermission.class)
-    public class UserPropertyAction extends ApiAction<SimpleApiJsonForm>
+    public class UserPropertyAction extends MutatingApiAction<SimpleApiJsonForm>
     {
         @Override
         public Object execute(SimpleApiJsonForm form, BindException errors) throws Exception
