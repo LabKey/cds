@@ -23,6 +23,7 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.Map;
@@ -102,6 +103,13 @@ public abstract class DataspaceVariableSelector
             _test.sleep(5000);
         }
         _test.click(window().append(" div.content-label").withText(source));
+
+        // Click the title (try to get rid of tool-tip bubble.
+        _test.click(Locator.xpath("//span[@class='section-title']").notHidden());
+
+        // Move the mouse to the LabKey icon (again trying to remove the tool tip).
+        _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+
 //        _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(window().append(" div.content-label").withText(source)));
         _test.sleep(1000);
     }
@@ -195,6 +203,10 @@ public abstract class DataspaceVariableSelector
 
     public void cancelSelection()
     {
+        // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+        _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+        _test.sleep(500);
+        _test.mouseOut();
         _test.click(window().append(" a.x-btn").withText("Cancel"));
         _test._ext4Helper.waitForMaskToDisappear();
     }
@@ -295,12 +307,37 @@ public abstract class DataspaceVariableSelector
 
     }
 
+    private void commonAssayDimensionSelection(String selector, String xpathDimField, String xpathDimDropDown, String... value)
+    {
+
+        Locator.XPathLocator locDimField = Locator.xpath(xpathDimField);
+
+        if (_test.isElementPresent(locDimField))
+        {
+            _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
+            _test.click(locDimField);
+
+            // Let the drop down render.
+            _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
+
+            for (String val : value)
+                _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+
+            // Move the mouse so the drop down can close.
+            Actions builder = new Actions(_test.getDriver());
+            builder.moveToElement(locDimField.findElement(_test.getWrappedDriver()), 50, -50).build().perform();
+
+        }
+
+    }
+
     // TODO Still working on this as part of the detail selection.
     protected void setAssayDimension(String selector, AssayDimensions dimension, String... value)
     {
         String xpathDimField, xpathDimDropDown, xpathPanelSelector;
         Locator.XPathLocator locDimField, allTag;
         CDSHelper cds = new CDSHelper(_test);
+        Actions builder = new Actions(_test.getDriver());
 
         switch(dimension)
         {
@@ -308,50 +345,17 @@ public abstract class DataspaceVariableSelector
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//div[contains(@class, 'field-label')][text()='Aligned by:']/./following-sibling::div[contains(@class, 'field-display')]//div[contains(@class, 'main-label')]";
                 xpathDimDropDown = "//div[contains(@class, 'advanced-dropdown')][not(contains(@style, 'display: none'))]";
 
-                locDimField = Locator.xpath(xpathDimField);
-
-                if (_test.isElementPresent(locDimField))
-                {
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
-                    _test.click(locDimField);
-
-                    // Let the drop down render.
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
-
-                    // Since it is a radio button shouldn't really iterate.
-                    for (String val : value)
-                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
-
-                    // Move the mouse to close the drop down.
-                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
-
-                }
+                commonAssayDimensionSelection(selector, xpathDimField, xpathDimDropDown, value);
 
                 break;
             case PlotType:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//div[contains(@class, 'field-label')][text()='Plot type:']/./following-sibling::div[contains(@class, 'field-display')]//div[contains(@class, 'main-label')]";
                 xpathDimDropDown = "//div[contains(@class, 'advanced-dropdown')][not(contains(@style, 'display: none'))]";
 
-                locDimField = Locator.xpath(xpathDimField);
-
-                if (_test.isElementPresent(locDimField))
-                {
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
-                    _test.click(locDimField);
-
-                    // Let the drop down render.
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
-
-                    // Since it is a radio button shouldn't really iterate.
-                    for (String val : value)
-                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
-
-                    // Move the mouse to close the drop down.
-                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
-
-                }
+                commonAssayDimensionSelection(selector, xpathDimField, xpathDimDropDown, value);
 
                 break;
+
             case AntigenName:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-antigen')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
                 xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
@@ -376,9 +380,14 @@ public abstract class DataspaceVariableSelector
                 for (String val : value)
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[text()='" + val + "']"));
 
+                // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+                _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+                _test.sleep(500);
+                _test.mouseOut();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
+
             case CellType:
             case AntigensAggregated:
                 String option = dimension == CellType ? "cell_type" : "pooled_info";
@@ -407,59 +416,29 @@ public abstract class DataspaceVariableSelector
                     for (String val : value)
                         _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
 
-                    // Move the mouse to close the drop down.
-                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+                    // Move the mouse so the drop down can close.
+                    builder.moveToElement(locDimField.findElement(_test.getWrappedDriver()), 50, -50).build().perform();
 
                 }
 
                 break;
+
             case DataSummaryLevel:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-summary_level')]//div[contains(@class, 'main-label')]";
                 xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-summary_level-dropdown')][not(contains(@style, 'display: none'))]";
 
-                locDimField = Locator.xpath(xpathDimField);
-
-                if (_test.isElementPresent(locDimField))
-                {
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
-                    _test.click(locDimField);
-
-                    // Let the drop down render.
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
-
-                    for (String val : value)
-                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
-
-                    // Move the mouse to close the drop down.
-                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
-
-                }
+                commonAssayDimensionSelection(selector, xpathDimField, xpathDimDropDown, value);
 
                 break;
+
             case Isotype:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-antibody_isotype')]//div[contains(@class, 'main-label')]";
                 xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-antibody_isotype-dropdown')][not(contains(@style, 'display: none'))]";
 
-                locDimField = Locator.xpath(xpathDimField);
-
-                if (_test.isElementPresent(locDimField))
-                {
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
-                    _test.click(locDimField);
-
-                    // Let the drop down render.
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
-
-                    // Since it is a radio button shouldn't really iterate.
-                    for (String val : value)
-                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" + val + "']"));
-
-                    // Move the mouse to close the drop down.
-                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
-
-                }
+                commonAssayDimensionSelection(selector, xpathDimField, xpathDimDropDown, value);
 
                 break;
+
             case Protein:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-protein')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
                 xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
@@ -489,33 +468,22 @@ public abstract class DataspaceVariableSelector
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
                 }
 
+                // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+                _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+                _test.sleep(500);
+                _test.mouseOut();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
+
             case TargetCell:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-target_cell')]//div[contains(@class, 'main-label')]";
                 xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-target_cell-dropdown')][not(contains(@style, 'display: none'))]";
 
-                locDimField = Locator.xpath(xpathDimField);
-
-                if (_test.isElementPresent(locDimField))
-                {
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
-                    _test.click(locDimField);
-
-                    // Let the drop down render.
-                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
-
-                    // Since it is a radio button shouldn't really iterate.
-                    for (String val : value)
-                        _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
-
-                    // Move the mouse to close the drop down.
-                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
-
-                }
+                commonAssayDimensionSelection(selector, xpathDimField, xpathDimDropDown, value);
 
                 break;
+
             case VirusName:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-virus')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
                 xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
@@ -543,6 +511,10 @@ public abstract class DataspaceVariableSelector
                 for (String val : value)
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
 
+                // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+                _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+                _test.sleep(500);
+                _test.mouseOut();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;

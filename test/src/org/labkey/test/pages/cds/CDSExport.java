@@ -15,7 +15,7 @@
  */
 package org.labkey.test.pages.cds;
 
-import org.labkey.api.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.List;
@@ -115,9 +115,9 @@ public class CDSExport
     {
         for (Pair<String, Integer> pair : this.dataTabCounts)
         {
-            if (pair.first.equals(dataTabName))
+            if (pair.getLeft().equals(dataTabName))
             {
-                return pair.second;
+                return pair.getRight();
             }
         }
         return null;

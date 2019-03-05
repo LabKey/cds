@@ -15,12 +15,15 @@
  */
 package org.labkey.test.pages.cds;
 
-import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.mutable.Mutable;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
@@ -37,8 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class CDSPlot
@@ -56,18 +59,78 @@ public class CDSPlot
         _test = test;
     }
 
-    public void selectXAxes(boolean useShiftForMultiSelect, String... axes)
+    public void doAndWaitForPlotRefresh(Runnable runnable)
+    {
+        _test.doAndWaitForElementToRefresh(runnable, Locator.tag("svg"), _test.shortWait());
+        _test._ext4Helper.waitForMaskToDisappear();
+    }
+
+    private void scrollElement(String tickText, int maxScroll)
+    {
+        if (maxScroll == 0)
+            return;
+
+        // If the x position is larger than the maxScroll value scroll the difference.
+        // I'm sure this math is flawed, but it should be good enough to get the element visible.
+
+        String strX = Locators.plotTick.withText(tickText).findElement(_test.getWrappedDriver()).getAttribute("x");
+        if(strX.contains("."))
+            strX = strX.substring(0, strX.indexOf("."));
+        int x = Integer.parseInt(strX);
+
+        if(x > maxScroll)
+        {
+            JavascriptExecutor jse = (JavascriptExecutor) _test.getWrappedDriver();
+            jse.executeScript("document.querySelector('div.plot-scroll').scrollLeft = " + (x - maxScroll) + ";");
+        }
+
+    }
+
+    private int getMaxXScrollValue()
+    {
+        int maxScroll;
+        // Some of the x axes may be under the right hand pane. If they are they need to be scrolled into view.
+        // We will need to get the maxScroll value to see if elements will need to be scrolled into view.
+
+        // If there is no scroll bar nothing to worry about.
+        if(!_test.isElementPresent(Locators.plotScrollContainer))
+        {
+            maxScroll = 0;
+        }
+        else if (!_test.isElementVisible(Locators.plotScrollContainer))
+            maxScroll = 0;
+        else
+        {
+            // First find the width of the client area.
+            String strWidth = Locators.plotScrollContainer.findElement(_test.getWrappedDriver()).getAttribute("clientWidth");
+            int width = Integer.parseInt(strWidth);
+
+            // Now scroll to that width, this should be larger than the scroll bar can go.
+            JavascriptExecutor jse = (JavascriptExecutor) _test.getWrappedDriver();
+            jse.executeScript("document.querySelector('div.plot-scroll').scrollLeft = " + width + ";");
+
+            // The scrollLeft attribute will now have it's maximum scroll value.
+            String strMaxScroll = Locators.plotScrollContainer.findElement(_test.getWrappedDriver()).getAttribute("scrollLeft");
+            maxScroll = Integer.parseInt(strMaxScroll);
+
+            // Scroll back to the left so everything looks ok.
+            jse.executeScript("document.querySelector('div.plot-scroll').scrollLeft = 0;");
+
+        }
+
+        return maxScroll;
+    }
+
+    public void selectXAxes(String... axes)
     {
         if (axes == null || axes.length == 0)
             throw new IllegalArgumentException("Please specify axes to select.");
 
-        Keys multiSelectKey;
-        if (useShiftForMultiSelect)
-            multiSelectKey = Keys.SHIFT;
-        else if (SystemUtils.IS_OS_MAC)
-            multiSelectKey = Keys.COMMAND;
-        else
-            multiSelectKey = Keys.CONTROL;
+        Keys multiSelectKey = CDSHelper.getMultiSelectKey();
+
+        int maxScroll = getMaxXScrollValue();
+
+        scrollElement(axes[0], maxScroll);
 
         _test.click(Locators.plotTick.withText(axes[0]));
         _test.waitForElement(Locator.xpath("//div[contains(@class, 'selectionpanel')]//div[contains(@class, 'activefilter')]//div[contains(@class, 'selitem')]//div[contains(text(), '" + axes[0] + "')]"));
@@ -75,20 +138,29 @@ public class CDSPlot
         if (axes.length > 1)
         {
             Actions builder = new Actions(_test.getDriver());
-            builder.keyDown(multiSelectKey).build().perform();
 
             for (int i = 1; i < axes.length; i++)
             {
-                _test.click(Locators.plotTick.withText(axes[i]));
+                scrollElement(axes[i], maxScroll);
+                builder.keyDown(multiSelectKey).click(Locators.plotTick.withText(axes[i]).findElement(_test.getWrappedDriver())).keyUp(multiSelectKey).build().perform();
                 _test.waitForElement(Locator.xpath("//div[contains(@class, 'selectionpanel')]//div[contains(@class, 'activefilter')]//div[contains(@class, 'selitem')]//div[contains(text(), '" + axes[i] + "')]"));
             }
-            builder.keyUp(multiSelectKey).build().perform();
         }
+    }
+
+    public int waitForPointsWithColor(String colorCode)
+    {
+        Mutable<Integer> count = new MutableObject<>();
+        WebDriverWrapper.waitFor(() -> {
+            count.setValue(getPointCountByColor(colorCode));
+            return count.getValue() > 0;
+        }, 15000);
+        return count.getValue();
     }
 
     public int getPointCountByColor(String colorCode)
     {
-        return _test.getElementCount(Locator.css("svg g a.point path[fill='" + colorCode + "']"));
+        return Locator.css("svg g a.point path[fill='" + colorCode + "']").findElements(_test.getDriver()).size();
     }
 
     public int getPointCountByGlyph(String glyphyCode)
@@ -330,6 +402,12 @@ public class CDSPlot
                 condensedExpected = strTemp.toLowerCase().replaceAll("\\s+", "");
                 assertTrue("Item not found in tool tip. Expected: '" + strTemp + "' (" + condensedExpected + "), actual: '" + actualToolTipText + "' (" + condensedActual + ").", condensedActual.contains(condensedExpected));
             }
+
+            // Move the mouse so the tool tip goes away.
+            Actions builder = new Actions(_test.getDriver());
+            builder.moveToElement(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]").findElement(_test.getWrappedDriver()), 50, -250).build().perform();
+
+
         }
         catch (NoSuchElementException nse)
         {
@@ -609,6 +687,8 @@ public class CDSPlot
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
         public static Locator plotTickLinear = Locator.css("g.tick-text > g > text");
         public static Locator plotTick = Locator.css("g.tick-text > a > text");
+        public static Locator plotTickContainer = Locator.css("g.tick-text > a > rect");
+        public static Locator plotScrollContainer = Locator.css("div.plot-scroll");
         public static Locator plotPoint = Locator.css("svg a.point");
         public static Locator plotSquare = Locator.css("svg a.vis-bin-square");
         public static Locator filterDataButton = Locator.xpath("//span[text()='Filter']");

@@ -84,6 +84,7 @@ public class LearnGrid
     {
         Locator.XPathLocator columnHeader = Locators.columnHeaderLocator(columnHeaderName);
         Locator.XPathLocator filterIcon = columnHeader.append(Locator.tagWithClass("div", "x-column-header-trigger"));
+        _test.mouseOver(columnHeader);
         _test.waitForElement(filterIcon);
         _test.scrollIntoView(filterIcon);
         _test.mouseOver(filterIcon);

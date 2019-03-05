@@ -16,7 +16,6 @@
      */
 %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
-<%@ page import="java.util.LinkedHashSet" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     String contextPath = request.getContextPath();
@@ -57,7 +56,7 @@
     <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/headerlogo.png">
 
     <!-- Include base labkey.js -->
-    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>(), false)%>
+    <%=PageFlowUtil.getLabkeyJS(getViewContext(), null, null, false)%>
     <script data-main="<%=text(frontPagePath)%>/js/config" src="<%=text(frontPagePath)%>/components/requirejs/require.js"></script>
 
     <%--<!-- Client API Dependencies -->--%>

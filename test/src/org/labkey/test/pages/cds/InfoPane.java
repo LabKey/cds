@@ -15,14 +15,11 @@
  */
 package org.labkey.test.pages.cds;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 public class InfoPane
 {
@@ -85,32 +82,24 @@ public class InfoPane
 
     public void setFilter(String... studiesFilter)
     {
-
         // Wait a moment.
         _test.sleep(CDSHelper.CDS_WAIT);
 
-        Keys multiSelectKey;
-        if (SystemUtils.IS_OS_MAC)
-            multiSelectKey = Keys.COMMAND;
-        else
-            multiSelectKey = Keys.CONTROL;
-
-        // Clear the current selection.
-        if (!_test.isElementPresent(Locator.css("div.x-column-header-checkbox.x-grid-hd-checker-on")))
+        WebElement selectAllCheckbox = Locator.css("div.x-column-header-checkbox").findElement(_test.getDriver());
+        if (!selectAllCheckbox.getAttribute("class").contains("x-grid-hd-checker-on"))
         {
-            _test.click(Locator.css("div.x-column-header-checkbox"));
-            _test.sleep(CDSHelper.CDS_WAIT);
+            selectAllCheckbox.click(); // Clear the current selection
         }
-        _test.click(Locator.css("div.x-column-header-checkbox"));
-        _test.sleep(CDSHelper.CDS_WAIT);
-
-        Actions builder = new Actions(_test.getDriver());
-        builder.keyDown(multiSelectKey).build().perform();
+        selectAllCheckbox.click();
+        _test.waitForElementToDisappear(Locator.byClass("x-grid-row-selected"));
 
         for (String val : studiesFilter)
         {
-            _test.click(Locator.xpath("//tr//div[@title='" + val + "']"));
-            _test.sleep(500);
+            WebElement studyRow =Locator.tagWithClass("tr", "x-grid-row")
+                    .withDescendant(Locator.tagWithAttribute("div", "title", val)).findElement(_test.getDriver());
+            WebElement studyCheckbox = Locator.tagWithClass("div", "x-grid-row-checker").findElement(studyRow);
+            studyCheckbox.click();
+            _test.shortWait().until(wd -> studyRow.getAttribute("class").contains("x-grid-row-selected"));
         }
 
         _test.click(Locator.css(cssFilterAction));

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
@@ -29,6 +30,7 @@ import org.labkey.api.action.ApiSimpleResponse;
 import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
+import org.labkey.api.action.MutatingApiAction;
 import org.labkey.api.action.SimpleApiJsonForm;
 import org.labkey.api.action.SimpleErrorView;
 import org.labkey.api.action.SimpleViewAction;
@@ -55,7 +57,6 @@ import org.labkey.api.reader.Readers;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.AuthenticationManager;
-import org.labkey.api.security.CSRF;
 import org.labkey.api.security.Group;
 import org.labkey.api.security.IgnoresTermsOfUse;
 import org.labkey.api.security.RequiresNoPermission;
@@ -249,7 +250,7 @@ public class CDSController extends SpringActionController
                 // Determine if user should be included for analytics (i.e. if they are not in NON_ANALYTICS_GROUPS)
                 if (!getUser().isImpersonated()) // 27915
                 {
-                    boolean isAnalytics = !user.isInSiteAdminGroup() && !user.isDeveloper();
+                    boolean isAnalytics = !user.hasSiteAdminPermission() && !user.isPlatformDeveloper();
                     if (isAnalytics)
                     {
                         List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
@@ -593,7 +594,6 @@ public class CDSController extends SpringActionController
     {
         public CDSExportQueryForm()
         {
-            super();
         }
 
         public CDSExportQueryForm(String schemaName, String queryName, PropertyValues values)
@@ -629,7 +629,7 @@ public class CDSController extends SpringActionController
 
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
 
-        protected BindException doBindParameters(PropertyValues in)
+        protected @NotNull BindException doBindParameters(PropertyValues in)
         {
             BindException errors = super.doBindParameters(in);
 
@@ -798,7 +798,6 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresSiteAdmin
-    @CSRF
     public static class MailMergeAction extends SimpleViewAction<Object>
     {
         @Override
@@ -842,7 +841,7 @@ public class CDSController extends SpringActionController
         public String target;
     }
 
-    @RequiresPermission(AdminPermission.class) @CSRF
+    @RequiresPermission(AdminPermission.class)
     public static class CmsCopyAction extends FormViewAction<Object>
     {
         HttpView _success = null;
@@ -1120,7 +1119,7 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresPermission(ReadPermission.class)
-    public class UpdateCDSUserInfoAction extends ApiAction<CDSUserInfoForm>
+    public class UpdateCDSUserInfoAction extends MutatingApiAction<CDSUserInfoForm>
     {
         @Override
         public Object execute(CDSUserInfoForm form, BindException errors) throws Exception

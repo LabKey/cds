@@ -18,13 +18,11 @@ package org.labkey.test.tests.cds;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.cds.CDSHelper;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 90)
 public class CDSHiddenVarsTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);

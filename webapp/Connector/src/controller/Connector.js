@@ -416,7 +416,7 @@ Ext.define('Connector.controller.Connector', {
     },
 
     /**
-     * Resovles the transition functions that will be called to show the newViewXtype and hide the oldViewXtype.
+     * Resolves the transition functions that will be called to show the newViewXtype and hide the oldViewXtype.
      * @param {String} oldViewXtype
      * @param {String} newViewXtype
      */

@@ -113,6 +113,7 @@ public class CDSInitializer
         _test._containerHelper.enableModule(_project, "DataIntegration");
 
         _test.setPipelineRoot(TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent());
+        _test.waitForText("The pipeline root was set to '");
         _test.importFolderFromPipeline("/MasterDataspace/folder.xml");
 
         _cds.initModuleProperties();

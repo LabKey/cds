@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests.cds;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -50,6 +51,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
 
+    private boolean studyLabelUpdated = false;
+
     @Before
     public void preTest()
     {
@@ -74,6 +77,16 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         // go back to app starting location
         cds.goToAppHome();
+    }
+
+    @After
+    public void revertStudyName() throws Exception
+    {
+        if(studyLabelUpdated)
+        {
+            changeStudyLabelAndLoadData(CDSHelper.ZAP_139, CDSHelper.PROT_Z139, CDSHelper.ZAP_139);
+        }
+
     }
 
     @Override
@@ -107,10 +120,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         cds.useSelectionAsSubjectFilter();
         cds.saveGroup(STUDY_GROUP, studyGroupDesc);
-
-        // verify group save messaging
-        //ISSUE 19997
-        waitForText("Group \"Study Group...\" saved.");
 
         // verify filter is still applied
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
@@ -323,6 +332,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         log("Go change the label for the study.");
         changeStudyLabelAndLoadData(CDSHelper.ZAP_139, CDSHelper.PROT_Z139, CDSHelper.ZAP_139 + "modified");
 
+        studyLabelUpdated = true;
+
         log("Go back to the CDS portal, load the group, and validate the expected error message is shown.");
         cds.enterApplication();
 
@@ -353,6 +364,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         log("Change the label for the study back.");
         changeStudyLabelAndLoadData(CDSHelper.ZAP_139, CDSHelper.PROT_Z139, CDSHelper.ZAP_139);
+
+        studyLabelUpdated = false;
 
         log("Go back to the CDS portal, load the group, and validate no error is shown and the filter is applied.");
         cds.enterApplication();

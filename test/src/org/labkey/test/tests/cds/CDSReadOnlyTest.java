@@ -30,6 +30,7 @@ import org.openqa.selenium.NoSuchElementException;
 import java.util.Arrays;
 import java.util.List;
 
+@BaseWebDriverTest.ClassTimeout(minutes = 45)
 public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, PostgresOnlyTest
 {
     @Override
@@ -66,11 +67,10 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
     {
         try
         {
-            goToProjectHome();
-            new CDSHelper(this).enterApplication();
+            new CDSHelper(this).beginAtApplication(getProjectName());
             return false;
         }
-        catch (NoSuchElementException e)
+        catch (NoSuchElementException | AssertionError e)
         {
             return true;
         }

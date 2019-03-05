@@ -59,7 +59,7 @@
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
 
     <!-- Include base labkey.js -->
-    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>(), false)%>
+    <%=PageFlowUtil.getLabkeyJS(getViewContext(), pageConfigBean, new LinkedHashSet<>(), false)%>
     <script type="text/javascript">
         var Connector = {
             studyContext: {
@@ -87,7 +87,7 @@
         String script = AnalyticsService.getTrackingScript();
         if (StringUtils.isNotEmpty(script))
         {
-            if (user.isSiteAdmin())
+            if (user.hasSiteAdminPermission())
             {
     %>      <!-- see <%=new ActionURL("analytics","begin",ContainerManager.getRoot()).getURIString()%> -->
     <%
