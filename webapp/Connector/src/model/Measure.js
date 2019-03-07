@@ -34,6 +34,10 @@ Ext.define('Connector.model.Measure', {
         {name: 'hidden', type: 'boolean', defaultValue: false},
         {name: 'hiddenInPlot', type: 'boolean', defaultValue: false},
         {name: 'hiddenInGrid', type: 'boolean', defaultValue: false},
+        // for dimension that's hidden on X and color (hidden:true), but visible on advanced option and grid
+        {name: 'requiredInGrid', type: 'boolean', defaultValue: false},
+        // used for fields hidden from advanced options but available on X, color & grid
+        {name: 'hiddenInAdvancedOptions', type: 'boolean', defaultValue: false},
         {name: 'isDemographic', type: 'boolean', defaultValue: false},
         {name: 'isUserDefined', type: 'boolean', defaultValue: undefined},
         {name: 'isMeasure', type: 'boolean', defaultValue: false},

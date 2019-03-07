@@ -77,6 +77,7 @@ Ext.define('Connector.measure.Configuration', {
                     category: 'Assays',
                     dimensions: [
                         'study_PKMAb_mab_mix_name_std',
+                        'study_PKMAb_mab_mix_label',
                         'study_PKMAb_summary_level',
                         'study_PKMAb_source_assay',
                         'study_PKMAb_specimen_type',
@@ -278,6 +279,13 @@ Ext.define('Connector.measure.Configuration', {
                     hierarchicalSelectionParent: null,
                     distinctValueFilterColumnAlias: 'study_ELISPOT_summary_level',
                     distinctValueFilterColumnValue: 'Protein Panel'
+                },
+                'study_PKMAb_summary_level': {
+                    hidden: true,
+                    requiresSelection: true,
+                    allowMultiSelect: true,
+                    requiredInGrid: true, // included in grid even if no filter is made on summary_level
+                    defaultSelection: {all: true}
                 },
                 'cds_GridBase_Study': {
                     sourceMeasureAlias: 'study_Demographics_study_label'
@@ -748,6 +756,9 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_visit_day': {
                     hidden: true
                 },
+                'study_PKMAb_mab_mix_label': {
+                    hiddenInAdvancedOptions: true
+                },
                 'study_PKMAb_visit_code': {
                     hiddenInPlot: true
                 },
@@ -768,7 +779,7 @@ Ext.define('Connector.measure.Configuration', {
                     variableType: 'TIME',
                     isHoursType: true,
                     altSourceKey: 'cds|GridBase',
-                    altPlotLabel: 'Study Hours (PK MAb only)',
+                    altPlotLabel: 'Study hours (PK MAb only)',
                     altDescription: 'Hours after initial infusion time option is available for PK MAb assay only.',
                     scale: 'LINEAR'
                 },

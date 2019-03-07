@@ -34,6 +34,7 @@ SELECT
 
        dd.mab_mix_id,
        mixmeta.mab_mix_name_std,
+       mixmeta.mab_mix_label,
        dd.mab_name_source,
        dd.mab_concentration,
        dd.mab_concentration_units

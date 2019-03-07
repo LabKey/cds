@@ -277,6 +277,12 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
             this.distinctValueFilterColumnAlias = this.dimension.get('distinctValueFilterColumnAlias');
         }
 
+        if (this.dimension.get("hiddenInAdvancedOptions"))
+        {
+            this.hidden = true;
+            this.includeOptionValue = true;
+        }
+
         this.callParent();
     },
 

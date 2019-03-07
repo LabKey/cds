@@ -766,10 +766,20 @@ Ext.define('Connector.view.Chart', {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.DataspaceBoxPlot({
                 binSize : 3,
-                binRowLimit : this.binRowLimit
+                binRowLimit : this.binRowLimit,
+                skipJitter: this.isLinePlot()
             }),
             aes: aes
         });
+    },
+
+    isLinePlot: function() {
+        if (this.activeMeasures && this.activeMeasures.x)
+        {
+            var x = this.activeMeasures.x;
+            return x.options && x.options.timePlotType && x.options.timePlotType.indexOf('line') > -1
+        }
+        return false;
     },
 
     getBasePlotConfig : function() {
@@ -3345,7 +3355,7 @@ Ext.define('Connector.view.Chart', {
                     includeTimepointMeasures: true,
                     userFilter : function(row) {
                         // for TIME variables, only show the ProtocolDay based non-discrete ones for the x-axis options
-                        return row.variableType !== 'TIME' || row.isHoursType
+                        return row.variableType !== 'TIME' || (row.isHoursType && !row.hiddenInPlot)
                                 || (row.name === Connector.studyContext.protocolDayColumn && !row.isDiscreteTime);
                     }
                 },

@@ -1358,14 +1358,14 @@
       </column>
       <column columnName="mab_concentration">
         <datatype>double</datatype>
-        <columnTitle>Mab concentration</columnTitle>
+        <columnTitle>MAb concentration</columnTitle>
         <description>The concentration of the specimen (mab) being tested in a given well on a plate. The initial concentration of each specimen is reduced by the dilution factor (3). Typically, a total of 8 concentrations are tested for each specimen (mab). </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="mab_concentration_units">
         <datatype>varchar</datatype>
-        <columnTitle>Mab concentration units</columnTitle>
+        <columnTitle>MAb concentration units</columnTitle>
         <description>The units in which the concentration is measured (ug/mL)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>false</dimension>
@@ -1657,8 +1657,15 @@
       </column>
       <column columnName="mab_mix_name_std">
         <datatype>varchar</datatype>
-        <columnTitle>MAb or Mixture Standardized Name</columnTitle>
-        <description>MAb or Mixture Standardized Name. </description>
+        <columnTitle>MAb or mixture standardized name</columnTitle>
+        <description>MAb or mixture standardized name. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="mab_mix_label">
+        <datatype>varchar</datatype>
+        <columnTitle>MAb or mixture label</columnTitle>
+        <description>MAb or mixture label. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -1676,14 +1683,14 @@
       </column>
       <column columnName="mab_concentration">
         <datatype>double</datatype>
-        <columnTitle>Mab concentration</columnTitle>
+        <columnTitle>MAb concentration</columnTitle>
         <description>The antibody concentration measured at a given timepoint. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="mab_concentration_units">
         <datatype>varchar</datatype>
-        <columnTitle>Mab concentration units</columnTitle>
+        <columnTitle>MAb concentration units</columnTitle>
         <description>The unit of the concentration measured.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>false</dimension>

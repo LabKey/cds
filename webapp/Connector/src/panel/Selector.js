@@ -885,10 +885,10 @@ Ext.define('Connector.panel.Selector', {
             return null;
         }
 
-        // track wich of the assay dimension advanced option fields are hidden so we don't return them as part of the values object
+        // track which of the assay dimension advanced option fields are hidden so we don't return them as part of the values object
         Ext.each(this.advancedOptionCmps, function(advancedOptionItem)
         {
-            dimensionFieldHidden[advancedOptionItem.getHiddenField().name] = advancedOptionItem.hidden;
+            dimensionFieldHidden[advancedOptionItem.getHiddenField().name] = advancedOptionItem.hidden && !advancedOptionItem.includeOptionValue;
         });
 
         values = this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);

@@ -131,7 +131,7 @@ Ext.define('Connector.utility.PlotTooltip', {
             content += '<span class="group-title">' + Ext.htmlEncode(plotData.Study) + '</span>';
             content +=  colon + Ext.htmlEncode(plotData.StudyShortName);
             content += '<div class="axis-details">';
-            content += 'Treatment Summary' + colon + plotData.TreatmentSummary + linebreak;
+            content += 'Treatment summary' + colon + plotData.TreatmentSummary + linebreak;
             content += 'Subject' + colon + data.subjectId + linebreak;
             if (plotData.timeLabel)
                 content += 'Visit time' + colon + ' ' + plotData.timeLabel + linebreak;
