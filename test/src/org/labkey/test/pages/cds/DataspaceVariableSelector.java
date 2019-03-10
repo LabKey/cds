@@ -26,9 +26,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.labkey.test.pages.cds.DataspaceVariableSelector.AssayDimensions.CellType;
+import static org.labkey.test.pages.cds.XAxisVariableSelector.XPATHID;
 
 public abstract class DataspaceVariableSelector
 {
@@ -147,6 +150,19 @@ public abstract class DataspaceVariableSelector
         _test.scrollIntoView(variableLock);
         _test.click(variableLock);
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+    }
+
+    public List<String> getAvailableVariables()
+    {
+        List<String> variables = new ArrayList<>();
+        Locator.XPathLocator selectorPanelLoc = Locator.tagWithClass("div", "variable-selector");
+        Locator.XPathLocator variableLoc = selectorPanelLoc.append(Locator.tagWithClass("div", "content-label").notHidden());
+        List<WebElement> variableElements = variableLoc.findElements(_test.getDriver());
+        if (variableElements != null)
+        {
+            variableElements.forEach(webElement -> variables.add(webElement.getText()));
+        }
+        return variables;
     }
 
     //Pick measure from one of multiple split panel measure pickers
@@ -331,6 +347,20 @@ public abstract class DataspaceVariableSelector
 
     }
 
+    protected void selectTimeOptionAdvancedOption(String axisSelector, String fieldLabel, String... value)
+    {
+        String xpathDimField = getTimeOptionAdvancedOptionXPathDimField(fieldLabel);
+        String xpathDimDropDown = "//div[contains(@class, 'advanced-dropdown')][not(contains(@style, 'display: none'))]";
+
+        commonAssayDimensionSelection(axisSelector, xpathDimField, xpathDimDropDown, value);
+    }
+
+    protected String getTimeOptionAdvancedOptionXPathDimField(String fieldLabel)
+    {
+        return "//div[contains(@class, '" + XPATHID + "')]//div[contains(@class, 'advanced')]//div[contains(@class, 'field-label')][text()='" +
+                fieldLabel + ":']/./following-sibling::div[contains(@class, 'field-display')]//div[contains(@class, 'main-label')]";
+    }
+
     // TODO Still working on this as part of the detail selection.
     protected void setAssayDimension(String selector, AssayDimensions dimension, String... value)
     {
@@ -342,18 +372,10 @@ public abstract class DataspaceVariableSelector
         switch(dimension)
         {
             case AlignBy:
-                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//div[contains(@class, 'field-label')][text()='Aligned by:']/./following-sibling::div[contains(@class, 'field-display')]//div[contains(@class, 'main-label')]";
-                xpathDimDropDown = "//div[contains(@class, 'advanced-dropdown')][not(contains(@style, 'display: none'))]";
-
-                commonAssayDimensionSelection(selector, xpathDimField, xpathDimDropDown, value);
-
+                selectTimeOptionAdvancedOption(selector, "Aligned by", value);
                 break;
             case PlotType:
-                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//div[contains(@class, 'field-label')][text()='Plot type:']/./following-sibling::div[contains(@class, 'field-display')]//div[contains(@class, 'main-label')]";
-                xpathDimDropDown = "//div[contains(@class, 'advanced-dropdown')][not(contains(@style, 'display: none'))]";
-
-                commonAssayDimensionSelection(selector, xpathDimField, xpathDimDropDown, value);
-
+                selectTimeOptionAdvancedOption(selector, "Plot type", value);
                 break;
 
             case AntigenName:
@@ -531,6 +553,7 @@ public abstract class DataspaceVariableSelector
         AntigensAggregated,
         CellType,
         DataSummaryLevel,
+        DataSummaryLevelPKMAb,
         DetectionSystem,
         Dilution,
         FunctionalMarkerName,

@@ -49,6 +49,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.cds.CDSHelper.CDS_WAIT;
+import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_BOX;
+import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_BOX_AND_LINE;
+import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_LINE;
+import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_SCATTER;
 
 @Category({})
 @BaseWebDriverTest.ClassTimeout(minutes = 55)
@@ -844,26 +848,29 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW},
                         {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_RAW},
-                        {CDSHelper.NAB, CDSHelper.NAB_TITERID50, CDSHelper.NAB_TITERID80}
+                        {CDSHelper.NAB, CDSHelper.NAB_TITERID50, CDSHelper.NAB_TITERID80},
+                        {CDSHelper.PKMAB, CDSHelper.PKMAB_CONCENTRATION}
                 };
         final String[][] X_AXIS_SOURCES =
                 {
                         {CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.DEMO_STUDY_NAME, CDSHelper.DEMO_TREAT_SUMM, CDSHelper.DEMO_DATE_SUBJ_ENR, CDSHelper.DEMO_DATE_FUP_COMP, CDSHelper.DEMO_DATE_PUB, CDSHelper.DEMO_DATE_START, CDSHelper.DEMO_NETWORK, CDSHelper.DEMO_PROD_CLASS, CDSHelper.DEMO_PROD_COMB, CDSHelper.DEMO_STUDY_TYPE, CDSHelper.DEMO_TREAT_ARM, CDSHelper.DEMO_TREAT_CODED, CDSHelper.DEMO_VACC_PLAC},
-                        {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_BMI, CDSHelper.DEMO_BMI_GROUP, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_GENDER_IDENTITY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_STUDY_COHORT, CDSHelper.DEMO_SUBSPECIES},
+                        {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_BMI, CDSHelper.DEMO_BMI_GROUP, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_GENDER_IDENTITY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_STUDY_COHORT, CDSHelper.DEMO_SUBSPECIES, CDSHelper.DEMO_SUBJECT_ID},
                         {CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_DAYS, CDSHelper.TIME_POINTS_WEEKS, CDSHelper.TIME_POINTS_MONTHS},
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
                         {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
-                        {CDSHelper.NAB, CDSHelper.NAB_RESPONSE_CALL_ID50, CDSHelper.NAB_TITERID50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERID80}
+                        {CDSHelper.NAB, CDSHelper.NAB_RESPONSE_CALL_ID50, CDSHelper.NAB_TITERID50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERID80},
+                        {CDSHelper.PKMAB, CDSHelper.PKMAB_CONCENTRATION, CDSHelper.PKMAB_STD_NAME, CDSHelper.PKMAB_LAB_ID, CDSHelper.PKMAB_MAB_LABEL, CDSHelper.PKMAB_SOURCE_ASSAY, CDSHelper.PKMAB_SPECIMEN_TYPE}
                 };
         final String[][] COLOR_AXIS_SOURCES =
                 {
                         {CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.DEMO_STUDY_NAME, CDSHelper.DEMO_TREAT_SUMM, CDSHelper.DEMO_NETWORK, CDSHelper.DEMO_PROD_CLASS, CDSHelper.DEMO_PROD_COMB, CDSHelper.DEMO_STUDY_TYPE, CDSHelper.DEMO_TREAT_ARM, CDSHelper.DEMO_TREAT_CODED, CDSHelper.DEMO_VACC_PLAC},
-                        {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES},
+                        {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES, CDSHelper.DEMO_SUBJECT_ID},
                         {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_CLADE, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
                         {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN},
-                        {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE_CALL_ID50, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL}
+                        {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE_CALL_ID50, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL},
+                        {CDSHelper.PKMAB, CDSHelper.PKMAB_STD_NAME, CDSHelper.PKMAB_LAB_ID, CDSHelper.PKMAB_MAB_LABEL, CDSHelper.PKMAB_SOURCE_ASSAY, CDSHelper.PKMAB_SPECIMEN_TYPE}
                 };
 
         final Map<String, String> SubjectCounts = new HashMap<>();
@@ -874,6 +881,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         SubjectCounts.put(CDSHelper.ELISPOT, "477");
         SubjectCounts.put(CDSHelper.ICS, "1,604");
         SubjectCounts.put(CDSHelper.NAB, "839");
+        SubjectCounts.put(CDSHelper.PKMAB, "30");
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -2142,6 +2150,167 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         _studyHelper.deleteCustomParticipantGroup(PGROUP2, "Subject");
         _studyHelper.deleteCustomParticipantGroup(PGROUP3, "Subject");
         _studyHelper.deleteCustomParticipantGroup(PGROUP3_COPY, "Subject");
+    }
+
+    @Test
+    public void verifyTimePointPlotTypeOptions()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Verify 'Study Hours' time point option is not available when no Y axis is selected");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        List<String> availableTimeOptions = xaxis.getAvailableVariables();
+        assertFalse(CDSHelper.TIME_POINTS_HOURS + " time point option shouldn't be available unless PK MAb is selected", availableTimeOptions.contains(CDSHelper.TIME_POINTS_HOURS));
+
+        log("Verify 'Plot Type' options for non Hours time point for non PK MAb plot");
+        final List<String> allPlotTypes = Arrays.asList(PLOT_TYPE_SCATTER, PLOT_TYPE_BOX, PLOT_TYPE_LINE, PLOT_TYPE_BOX_AND_LINE);
+        assertEquals("Plot type options for non Hours time point is not as expected", allPlotTypes, xaxis.getTimePointPlotTypeOptions());
+
+        log("Verify Align by options");
+        assertFalse("Align by options should be disabled", xaxis.isTimeOptionAlignedByDisabled());
+
+        xaxis.cancelSelection();
+
+        log("Verify time point options when PK MAb measure is selected as Y axis field");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.PKMAB);
+        yaxis.pickVariable(CDSHelper.PKMAB_CONCENTRATION);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        log("Verify 'Study Hours' time point option is available for PK MAb plot");
+        availableTimeOptions = xaxis.getAvailableVariables();
+        assertTrue(CDSHelper.TIME_POINTS_HOURS + " time point option should be available for PK MAb plot", availableTimeOptions.contains(CDSHelper.TIME_POINTS_HOURS));
+
+        log("Verify 'Line' is the default plot type for PK MAb plot");
+        assertEquals("Default plot type for PK MAb is not as expected", PLOT_TYPE_LINE, xaxis.getTimePointAdvancedOptionSelectedValue("Plot type"));
+
+        log("Verify 'Align by' dropdown is disabled for PK MAb plot for non Hours time point");
+        assertTrue("Align by options should be disabled", xaxis.isTimeOptionAlignedByDisabled());
+
+        log("Verify 'Plot Type' options for Hours time point for non PK MAb plot");
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_HOURS);
+        final List<String> hoursPlotTypes = Arrays.asList(PLOT_TYPE_SCATTER, PLOT_TYPE_LINE);
+        assertEquals("Plot type options for Hours time point is not as expected", hoursPlotTypes, xaxis.getTimePointPlotTypeOptions());
+
+        log("Verify 'Align by' dropdown is hidden for Hours time point");
+        assertFalse("Align by options should not be present", xaxis.isTimeOptionAlignByPresent());
+        Locator selectedVariable = Locator.tagWithClass("div", "content-selected");
+        assertTrue(isElementVisible(selectedVariable));
+        xaxis.confirmSelection();
+
+        log("Verify changing Y axis to non PK after selecting Hours time type");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        availableTimeOptions = xaxis.getAvailableVariables();
+        assertFalse(CDSHelper.TIME_POINTS_HOURS + " time point option shouldn't be available unless PK MAb is selected", availableTimeOptions.contains(CDSHelper.TIME_POINTS_HOURS));
+        assertFalse("No time option is selected since Hours is no longer valid option", isElementVisible(selectedVariable));
+    }
+
+    @Test
+    public void verifyPKLinePlot()
+    {
+        cds.initModuleProperties(false); // temporarily hide hidden to confirm SubjectId can be used for color
+
+        goToProjectHome();
+        cds.enterApplication();
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        log("Plot PK MAb with Study Day and Line option");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.PKMAB);
+        yaxis.pickVariable(CDSHelper.PKMAB_CONCENTRATION);
+        yaxis.confirmSelection();
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        xaxis.confirmSelection();
+
+        final Locator lineLoc = Locator.css("svg g.layer path.line");
+
+        final int totalPKSubjectCount = 30;
+        int plotLineCount = getElementCount(lineLoc);
+        assertEquals("Number of lines in plot is not as expected", totalPKSubjectCount, plotLineCount);
+
+        log("Verify line plot with color with Subject Id");
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        coloraxis.pickVariable(CDSHelper.DEMO_SUBJECT_ID);
+        coloraxis.confirmSelection();
+
+        String green = "#52B700";
+        final Locator greenLineLoc = Locator.css("svg g.layer path.line[stroke='" + green + "']");
+
+        plotLineCount = getElementCount(lineLoc);
+        assertEquals("Number of lines in plot is not as expected", totalPKSubjectCount, plotLineCount);
+        int plotGreenLineCount = getElementCount(greenLineLoc);
+        assertEquals("Number of green lines in plot is not as expected", 3, plotGreenLineCount);
+
+        log("Verify PK MAb with Study Hours and Line option");
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_HOURS);
+        xaxis.confirmSelection();
+
+        assertTrue("X axis label is not as expected for Hours time point", isElementVisible(Locator.tagWithClass("li", "variable-label").withText("Hours after initial infusion")));
+        plotLineCount = getElementCount(lineLoc);
+        assertEquals("Number of lines in plot is not as expected", totalPKSubjectCount, plotLineCount);
+        plotGreenLineCount = getElementCount(greenLineLoc);
+        assertEquals("Number of green lines in plot is not as expected", 3, plotGreenLineCount);
+
+        log("Verify line plot using non Subject Characteristics as color");
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.PKMAB);
+        coloraxis.pickVariable(CDSHelper.PKMAB_MAB_LABEL);
+        coloraxis.confirmSelection();
+
+        plotGreenLineCount = getElementCount(greenLineLoc);
+        assertEquals("Line should not use color from non Subject Characteristics", 0, plotGreenLineCount);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        coloraxis.pickVariable(CDSHelper.DEMO_SUBJECT_ID);
+        coloraxis.confirmSelection();
+
+        log("Filter to fewer subjects");
+        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.addRaceFilter(CDSHelper.RACE_WHITE);
+        _asserts.assertFilterStatusCounts(5, 1, 1, 1, 2);
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this, true); // color btn hidden since color exist, skip check
+        waitForElement(lineLoc);
+        plotLineCount = getElementCount(lineLoc);
+        assertEquals("Number of lines in plot is not as expected", 5, plotLineCount);
+        plotGreenLineCount = getElementCount(greenLineLoc);
+        assertEquals("Number of green lines in plot is not as expected", 1, plotGreenLineCount);
+
+        log("Verify PK MAb with Line & Box plot type");
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX_AND_LINE);
+        xaxis.confirmSelection();
+
+        plotLineCount = getElementCount(lineLoc);
+        assertEquals("Number of lines in plot is not as expected", 5, plotLineCount);
+        plotGreenLineCount = getElementCount(greenLineLoc);
+        assertEquals("Number of green lines in plot is not as expected", 1, plotGreenLineCount);
+
+        final Locator boxLoc = Locator.css("svg g.layer g.dataspace-box-group");
+        assertEquals("Number of boxes in plot is not as expected", 15, getElementCount(boxLoc));
+
+        cds.initModuleProperties(true); // toggle module property back, test dependency
     }
 
 }
