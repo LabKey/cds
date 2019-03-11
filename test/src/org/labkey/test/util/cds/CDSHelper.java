@@ -266,6 +266,7 @@ public class CDSHelper
     public static final String TITLE_ELISPOT = "ELISPOT";
     public static final String TITLE_ICS = "ICS";
     public static final String TITLE_NABMAB = "NABMAB";
+    public static final String TITLE_PKMAB = "PKMAb";
 
     // These are used to build ids of elements on the tree panels.
     public static final String PANEL_PREFIX = "study";
@@ -532,6 +533,9 @@ public class CDSHelper
     public static final String PKMAB_MAB_LABEL = "MAb or mixture label";
     public static final String PKMAB_SOURCE_ASSAY = "Source assay";
     public static final String PKMAB_SPECIMEN_TYPE = "Specimen type";
+    public static final String PKMAB_MAB_ID = "MAb or mixture id";
+    public static final String PKMAB_VISIT_CODE = "Visit code";
+    public static final String PKMAB_VISIT_DESC = "Visit description";
 
     //Response Call is also hidden, but checking if its present would conflict with Response call ID50, which is valid.
     public static final String[] NAB_HIDDEN_VARS = {"Titer IC50", "Titer IC80", "Virus Insert Name"};

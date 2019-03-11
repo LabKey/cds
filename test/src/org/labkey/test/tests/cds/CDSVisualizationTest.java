@@ -2245,6 +2245,15 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         int plotLineCount = getElementCount(lineLoc);
         assertEquals("Number of lines in plot is not as expected", totalPKSubjectCount, plotLineCount);
 
+        String cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
+
+        log("Verify PK MAb plot tooltip");
+        cds.clickPointInPlot(cssPathToSvg, 1);
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+        cdsPlot.validateToolTipText("Visit time", "MAb or mixture standardized name", "MAb or mixture label");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
         log("Verify line plot with color with Subject Id");
         coloraxis.openSelectorWindow();
         coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);

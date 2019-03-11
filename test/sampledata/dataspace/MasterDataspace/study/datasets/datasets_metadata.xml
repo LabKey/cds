@@ -1671,7 +1671,7 @@
       </column>
       <column columnName="mab_mix_id">
         <datatype>varchar</datatype>
-        <columnTitle>Mab mix id</columnTitle>
+        <columnTitle>MAb or mixture id</columnTitle>
         <description>Unique ID assigned to an individual mAb or mixture of mAbs. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <fk>

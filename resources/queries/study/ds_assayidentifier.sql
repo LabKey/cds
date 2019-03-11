@@ -43,5 +43,12 @@ UNION
 
 SELECT
   DISTINCT ds.assay_identifier as assay_identifier,
-           'NABMAb' as dataset_name
+  'PKMAb' as dataset_name
+from study.PKMAb as ds
+
+UNION
+
+SELECT
+  DISTINCT ds.assay_identifier as assay_identifier,
+  'NABMAb' as dataset_name
 from study.NABMAb as ds
