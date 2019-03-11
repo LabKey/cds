@@ -2209,6 +2209,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
+        sleep(1000);
 
         xaxis.openSelectorWindow();
         availableTimeOptions = xaxis.getAvailableVariables();
