@@ -55,7 +55,14 @@ Ext.define('Connector.view.PageHeader', {
         {
             if (Ext.isDefined(this.dimension) && Ext.isArray(this.dimension.itemDetailTabs))
             {
-                this.tabs = this.dimension.itemDetailTabs;
+                var dataModel = this.model;
+                this.tabs = Ext.Array.filter(this.dimension.itemDetailTabs, function(tab) {
+                    if (tab.matchField && dataModel) {
+                        if (!dataModel.get(tab.matchField))
+                            return false;
+                    }
+                    return true;
+                });
             }
             else
             {
