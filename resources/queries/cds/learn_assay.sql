@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-SELECT *
+SELECT *,
+    (CASE WHEN AA.assay_identifier = 'PK MAB' THEN false
+      ELSE true
+    END) AS hasAntigen
 FROM cds.assay AS AA
 LEFT JOIN (
   SELECT assay_identifier AS id,
   COUNT(assay_identifier) AS study_count
   FROM (
     SELECT DISTINCT assay_identifier,
-    study_name,
+    study_name
     FROM ds_subjectassay
   )
   GROUP BY assay_identifier
