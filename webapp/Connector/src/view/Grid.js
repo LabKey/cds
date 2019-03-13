@@ -424,7 +424,7 @@ Ext.define('Connector.view.Grid', {
 
         var target;
 
-        if (Ext.isString(columnName)) {
+        if (Ext.isString(columnName) && this.getModel().getActiveSheetMetadata()) {
             var fields = this.getModel().getActiveSheetMetadata().metaData.fields;
 
             if (!Ext.isEmpty(fields)) {

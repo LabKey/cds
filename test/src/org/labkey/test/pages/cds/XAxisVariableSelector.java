@@ -200,7 +200,9 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
             Locator.XPathLocator disabledDropdownOptionsLoc = dropdownLoc.append(Locator.tagWithClass("table", "x-item-disabled"));
             _test.longWait().until(LabKeyExpectedConditions.animationIsDone(dropdownLoc));
 
-            return _test.isElementPresent(disabledDropdownOptionsLoc);
+            boolean isPresent = _test.isElementPresent(disabledDropdownOptionsLoc);
+            _test.mouseOver(Locator.tagWithText("div", "Aligned by:"));
+            return isPresent;
         }
         return false;
     }
