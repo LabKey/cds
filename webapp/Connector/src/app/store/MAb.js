@@ -151,10 +151,11 @@ Ext.define('Connector.app.store.MAb', {
                         data_label: studymab.label,
                         data_id: study_id,
                         data_link_id: study_id,
-                        has_data: true,
+                        has_data: studymab.has_data,
                         has_access: this.accessibleStudies[study_id] === true,
                         data_status: studymab.assay_status,
-                        alt_label: studymab.mix_labels && studymab.mix_labels.length > 0 ? studymab.mix_labels : null
+                        alt_label: studymab.mix_labels && studymab.mix_labels.length > 0 ? studymab.mix_labels : null,
+                        data_group: studymab.study_type
                     };
                     studies.push(study);
                 }, this);

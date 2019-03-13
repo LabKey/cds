@@ -644,7 +644,9 @@ Ext4.define('Connector.cube.Configuration', {
                         staticData: {
                             title: 'Data Availability',
                             dataField: 'studies',
-                            dataLink: 'Study'
+                            dataLink: 'Study',
+                            hasGrouping: true,
+                            groupDir: 'DESC'
                         }
                     }]]
                 }]
