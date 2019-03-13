@@ -185,6 +185,7 @@
             <column columnName="product_manufacturer"/>
             <column columnName="product_immunogen"/>
             <column columnName="product_description"/>
+            <column columnName="mab_mix_id"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -873,6 +874,7 @@
             <column columnName="product_developer"/>
             <column columnName="product_manufacturer"/>
             <column columnName="product_description"/>
+            <column columnName="mab_mix_id"/>
         </columns>
     </table>
     <table tableName="studygroup" tableDbType="TABLE">
