@@ -228,7 +228,7 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         cds.useSelectionAsSubjectFilter();
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]), 1);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[4]), 1);
-        _asserts.assertFilterStatusCounts(137, 3, 1, 1, 15); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(137, 3, 1, 3, 15); // TODO Test data dependent.
 
         // remove filter
         cds.clearFilters();
@@ -239,7 +239,7 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         // verify undo
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
-        _asserts.assertFilterStatusCounts(137, 3, 1, 1, 15); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(137, 3, 1, 3, 15); // TODO Test data dependent.
 
         // remove an undo filter
         cds.clearFilters();

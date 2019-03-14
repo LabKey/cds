@@ -199,7 +199,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 152); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 3, 152); // TODO Test data dependent.
         }
 
         //
@@ -243,7 +243,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 152); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 3, 152); // TODO Test data dependent.
         }
 
 
@@ -416,7 +416,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
         log("Validating grid counts");
-        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 45);
+        _asserts.assertFilterStatusCounts(159, 13, 1, 3, 45);
         grid.assertPageTotal(27);
 
         setUpGridStep2(true);
