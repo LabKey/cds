@@ -201,7 +201,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
-        _asserts.assertFilterStatusCounts(139, 12, 1, 1, 42);
+        _asserts.assertFilterStatusCounts(139, 12, 1, 3, 42);
 
         final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
         final String saveLabel = "Group \"A Plotted...\" saved.";

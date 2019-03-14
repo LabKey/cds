@@ -161,7 +161,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
-        _asserts.assertFilterStatusCounts(1604, 14, 2, 1, 91); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(1604, 14, 2, 3, 91); // TODO Test data dependent.
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);

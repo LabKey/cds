@@ -573,7 +573,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
@@ -2297,7 +2297,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Filter to fewer subjects");
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_WHITE);
-        _asserts.assertFilterStatusCounts(5, 1, 1, 1, 2);
+        _asserts.assertFilterStatusCounts(5, 1, 1, 2, 2);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this, true); // color btn hidden since color exist, skip check
         waitForElement(lineLoc);
