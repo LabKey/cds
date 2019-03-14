@@ -1493,6 +1493,7 @@ public class CDSHelper
         String curValue;
         boolean changed = false;
 
+        _test.waitForElement(Locator.xpath(xpathValueTxtBox));
         curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
 
         if (turnOn)
