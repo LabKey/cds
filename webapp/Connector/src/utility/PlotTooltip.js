@@ -10,9 +10,12 @@ Ext.define('Connector.utility.PlotTooltip', {
 
     singleton: true,
 
+    TIME_LABEL_FIELD_SUFFIX : 'study_PKMAb_visit_time_label',
+
     loadBinTooltipData: function(plot, point, datas, plotName)
     {
         var rawRows = this.getRawDataRows(plot, datas);
+        var visitLabels = Ext.Array.unique(Ext.Array.pluck(rawRows, PlotTooltipUtils.TIME_LABEL_FIELD_SUFFIX));
         var participantSeqContainerMap = {};
         Ext.each(rawRows, function(row){
             var participantSeq = row[QueryUtils.SUBJECT_SEQNUM_ALIAS];
@@ -37,6 +40,7 @@ Ext.define('Connector.utility.PlotTooltip', {
                             filteredRecords.push(record);
                     });
                     var plotData = {
+                        visitLabels : visitLabels
                         //rows: filteredRecords // if in the futher more info is needed for binned tooltip, pass in gridbase records
                     };
                     plotData.studyLabels = Ext.Array.unique(Ext.Array.pluck(filteredRecords, 'Study'));
@@ -73,6 +77,7 @@ Ext.define('Connector.utility.PlotTooltip', {
         var rawRow = plot.allDataRowsMap[data.rowKey];
         var participantSeq = rawRow[QueryUtils.SUBJECT_SEQNUM_ALIAS];
         var container = rawRow[QueryUtils.CONTAINER_ALIAS];
+        var timeLabel = rawRow[PlotTooltipUtils.TIME_LABEL_FIELD_SUFFIX];
         LABKEY.Query.selectRows({
             schemaName: 'cds',
             queryName: 'gridbase',
@@ -82,6 +87,7 @@ Ext.define('Connector.utility.PlotTooltip', {
             ],
             success: function (results) {
                 var plotData = results.rows[0];
+                plotData.timeLabel = timeLabel;
                 var studyLabel = plotData.Study;
                 if (plot.studyMap)
                 {
@@ -125,20 +131,25 @@ Ext.define('Connector.utility.PlotTooltip', {
             content += '<span class="group-title">' + Ext.htmlEncode(plotData.Study) + '</span>';
             content +=  colon + Ext.htmlEncode(plotData.StudyShortName);
             content += '<div class="axis-details">';
-            content += 'Treatment Summary' + colon + plotData.TreatmentSummary + linebreak;
+            content += 'Treatment summary' + colon + plotData.TreatmentSummary + linebreak;
             content += 'Subject' + colon + data.subjectId + linebreak;
-            if (xAxis && xAxis.name == 'ProtocolDay') {
-                // Issue 29379: use alignment measure label for hover description
-                var xMeasureAlias = QueryUtils.ensureAlignmentAlias(plot._getAxisWrappedMeasure(xAxis));
-                label = Connector.getQueryService().getMeasure(xMeasureAlias).label;
-
-                content += label + colon + ' '
-                        + (data.x > 0 && xAxis.options.alignmentVisitTag != null ? '+' : '') + data.x
-                        + linebreak;
-            }
+            if (plotData.timeLabel)
+                content += 'Visit time' + colon + ' ' + plotData.timeLabel + linebreak;
             else {
-                content += 'Study Day' + colon + 'Day ' + plotData.ProtocolDay + linebreak;
+                if (xAxis && xAxis.name == 'ProtocolDay') {
+                    // Issue 29379: use alignment measure label for hover description
+                    var xMeasureAlias = QueryUtils.ensureAlignmentAlias(plot._getAxisWrappedMeasure(xAxis));
+                    label = Connector.getQueryService().getMeasure(xMeasureAlias).label;
+
+                    content += label + colon + ' '
+                            + (data.x > 0 && xAxis.options.alignmentVisitTag != null ? '+' : '') + data.x
+                            + linebreak;
+                }
+                else {
+                    content += 'Study day' + colon + ' Day ' + plotData.ProtocolDay + linebreak;
+                }
             }
+
             content += '</div>';
         }
 
@@ -205,7 +216,7 @@ Ext.define('Connector.utility.PlotTooltip', {
                         }
                     }
                     if (values.length > 0) {
-                        if (hierarchicalDimensionInfo[dim]) {
+                        if (hierarchicalDimensionInfo && hierarchicalDimensionInfo[dim]) {
                             var levelDimensions = hierarchicalDimensionInfo[dim];
                             var dimensionVals = {};
                             Ext.each(values, function(fullStr){
@@ -321,7 +332,7 @@ Ext.define('Connector.utility.PlotTooltip', {
         }
         if (xName && plot.activeMeasures.x) {
             // Issue 29379: use alignment measure label for hover description
-            if (plot.activeMeasures.x.name == 'ProtocolDay') {
+            if (plot.activeMeasures.x.name == 'ProtocolDay' || plot.activeMeasures.x.isHoursType) {
                 var xMeasureAlias = QueryUtils.ensureAlignmentAlias(plot._getAxisWrappedMeasure(plot.activeMeasures.x));
                 xName = Connector.getQueryService().getMeasure(xMeasureAlias).label;
             }
@@ -331,7 +342,21 @@ Ext.define('Connector.utility.PlotTooltip', {
             content += plot.showAsMedian ? ' (median)' : '';
             content += '<div class="axis-details">';
             content += this.buildBinAxisDetailTooltip(xDimensionVals, xDimensions, xHierarchicalDimensionInfo);
-            content += '</div>'
+            content += '</div>';
+
+            if (plot.activeMeasures.x.name == 'ProtocolDay' || plot.activeMeasures.x.isHoursType) {
+                if (Ext.isArray(plotData.visitLabels) && plotData.visitLabels.length > 0) {
+                    var visitLabel;
+                    if (plotData.visitLabels.length == 1) {
+                        visitLabel = plotData.visitLabels[0];
+                    }
+                    else {
+                        visitLabel = plotData.visitLabels.length + " visits";
+                    }
+                    content += '<span class="group-title">Visit time</span>';
+                    content += colon + ' ' + Ext.htmlEncode(visitLabel) + linebreak;
+                }
+            }
         }
         if (yName && plot.activeMeasures.y) {
             content += '<span class="group-title">' + Ext.htmlEncode(this.getSourceDisplayValue(plot.activeMeasures.y) + ' - ' + yName) + '</span>';
@@ -440,7 +465,7 @@ Ext.define('Connector.utility.PlotTooltip', {
                 if (dimensionVals[dim]) {
                     var dimVals = Ext.Object.getKeys(dimensionVals[dim]);
                     if (dimVals.length > 0) {
-                        if (Ext.isArray(hierarchicalDimensionInfo[dim]) && hierarchicalDimensionInfo[dim].length > 0) {
+                        if (hierarchicalDimensionInfo && Ext.isArray(hierarchicalDimensionInfo[dim]) && hierarchicalDimensionInfo[dim].length > 0) {
                             Ext.each(hierarchicalDimensionInfo[dim], function(level) {
                                 if (dimensionVals[level]) {
                                     var levelVals = Ext.Object.getKeys(dimensionVals[level]);

@@ -654,7 +654,7 @@ Ext.define('Connector.utility.Query', {
 
             Ext.each(allMeasures, function (m)
             {
-                var isKeyCol = m.measure.name.toLowerCase() == 'subjectid'
+                var isKeyCol = (m.measure.name.toLowerCase() == 'subjectid' && m.measure.queryName !== 'Demographics')
                                 || m.measure.name.toLowerCase() == 'container'
                                 || m.measure.name.toLowerCase() == 'sequencenum'
                                 || m.measure.name.toLowerCase() == 'participantsequencenum',

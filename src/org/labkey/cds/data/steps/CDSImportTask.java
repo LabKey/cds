@@ -72,6 +72,7 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudyPartGroupArmProduct"),
         new TSVCopyConfig("StudyPartGroupArmVisit"),
         new TSVCopyConfig("StudyPartGroupArmVisitProduct"),
+        new TSVCopyConfig("StudyPartGroupArmVisitTime"),
         new TSVCopyConfig("ProductInsert", "ProductInsertClade"),
         new TSVCopyConfig("StudyRelationshipOrder"),
         new TSVCopyConfig("StudyRelationship"),
@@ -96,7 +97,8 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("ELS_IFNg", "AssayELS_IFNg"),
         new TSVCopyConfig("NAB", "AssayNAB"),
         new TSVCopyConfig("BAMA", "AssayBAMA"),
-        new TSVCopyConfig("NABMAb", "AssayNABMAb")
+        new TSVCopyConfig("NABMAb", "AssayNABMAb"),
+        new TSVCopyConfig("PKMAb", "AssayPKMAb")
     };
 
     @Override

@@ -73,7 +73,27 @@ Ext.define('Connector.measure.Configuration', {
                     ],
                     defaultScale: 'LOG'
                 },
-
+                'study|PKMAb': {
+                    category: 'Assays',
+                    dimensions: [
+                        'study_PKMAb_mab_mix_name_std',
+                        'study_PKMAb_mab_mix_label',
+                        'study_PKMAb_summary_level',
+                        'study_PKMAb_source_assay',
+                        'study_PKMAb_specimen_type',
+                        'study_PKMAb_lab_code',
+                        'study_PKMAb_mab_mix_id',
+                        'study_PKMAb_visit_code',
+                        'study_PKMAb_visit_time_label'
+                    ],
+                    plotDependencyColumnAlias: [
+                        'study_PKMAb_visit_time_label'
+                    ],
+                    timePointSortColumnAlias: 'study_PKMAb_hours_post_initial_infusion',
+                    defaultPlotType: 'line',
+                    allowHoursTimePoint: true,
+                    defaultScale: 'LOG'
+                },
                 // New/virtual sources
                 'CurrentColumns': {
                     sortOrder: -100,
@@ -259,6 +279,13 @@ Ext.define('Connector.measure.Configuration', {
                     hierarchicalSelectionParent: null,
                     distinctValueFilterColumnAlias: 'study_ELISPOT_summary_level',
                     distinctValueFilterColumnValue: 'Protein Panel'
+                },
+                'study_PKMAb_summary_level': {
+                    hidden: true,
+                    requiresSelection: true,
+                    allowMultiSelect: true,
+                    requiredInGrid: true, // included in grid even if no filter is made on summary_level
+                    defaultSelection: {all: true}
                 },
                 'cds_GridBase_Study': {
                     sourceMeasureAlias: 'study_Demographics_study_label'
@@ -595,6 +622,16 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_study_prot': {
                     hidden: true
                 },
+                'study_PKMAb_mab_concentration': {
+                    isRecommendedVariable: true,
+                    allowTimeAlignment: false
+                },
+                'study_PKMAb_mab_mix_name_std': {
+                    isRecommendedVariable: true
+                },
+                'study_PKMAb_mab_mix_id': {
+                    hiddenInPlot: true
+                },
                 'study_Demographics_species': {
                     isRecommendedVariable: true
                 },
@@ -719,6 +756,52 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_visit_day': {
                     hidden: true
                 },
+                'study_PKMAb_mab_mix_label': {
+                    hiddenInAdvancedOptions: true
+                },
+                'study_PKMAb_visit_code': {
+                    hiddenInPlot: true
+                },
+                'study_PKMAb_visit_time_label': {
+                    hiddenInPlot: true
+                },
+                'study_PKMAb_mab_name_source': {
+                    hiddenInPlot: true
+                },
+                'study_PKMAb_mab_concentration_units': {
+                    hiddenInPlot: true
+                },
+                'study_PKMAb_assay_identifier': {
+                    hidden: true
+                },
+                'study_PKMAb_hours_post_initial_infusion': {
+                    sortOrder: 98,
+                    variableType: 'TIME',
+                    isHoursType: true,
+                    altSourceKey: 'cds|GridBase',
+                    altPlotLabel: 'Study hours (PK MAb only)',
+                    altDescription: 'Hours after initial infusion time option is available for PK MAb assay only.',
+                    scale: 'LINEAR'
+                },
+                'study_PKMAb_hours_post_recent_infusion': {
+                    sortOrder: 99,
+                    variableType: 'TIME',
+                    isHoursType: true,
+                    altSourceKey: 'cds|GridBase',
+                    hiddenInPlot: true
+                },
+                'study_PKMAb_study_prot': {
+                    hidden: true
+                },
+                'study_PKMAb_SubjectId': {
+                    hidden: true
+                },
+                'study_PKMAb_SubjectVisit_Visit': {
+                    hidden: true
+                },
+                'study_PKMAb_visit_day': {
+                    hidden: true
+                },
                 'study_Demographics_bmi_enrollment': {
                     hidden: true
                 },
@@ -738,9 +821,6 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_Demographics_subspecies': {
-                    hidden: true
-                },
-                'study_Demographics_SubjectId': {
                     hidden: true
                 },
                 'study_Demographics_SubjectVisit_Visit': {

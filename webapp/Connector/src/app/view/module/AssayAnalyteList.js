@@ -47,6 +47,9 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
             {label: "Lab ID", name: "lab_code"}],
         "NAb" : [{label: "Initial dilution", name: "initial_dilution"},
             {label: "Specimen type", name: "specimen_type"},
+            {label: "Lab ID", name: "lab_code"}],
+        "PKMAB" : [
+            {label: "Specimen type", name: "specimen_type"},
             {label: "Lab ID", name: "lab_code"}]
     },
 
@@ -56,7 +59,7 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
                 assay_id = this.data.model.get('assay_identifier'),
                 assay_type = this.data.model.get('assay_type');
 
-        if (assay_type.toUpperCase() === 'NABMAB')
+        if (assay_type.toUpperCase() === 'NABMAB' || assay_type.toUpperCase() === 'PKMAB')
             return;
 
         store.loadAnalytes(assay_type, this.assayNameToAnalytesMap[assay_type], function(results) {

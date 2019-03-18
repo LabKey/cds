@@ -373,9 +373,10 @@ Ext.define('Connector.controller.Query', {
      * This finds all the dimensions for a given schema and query and returns them as an array.
      * @param schema The name of the schema for the query
      * @param query The name of the query of the desired dimensions.
+     * @param isGrid {boolean} True if used for grid.
      * @returns {Array} An array of dimension objects
      */
-    getDimensions : function(schema, query) {
+    getDimensions : function(schema, query, isGrid) {
         var dimensionArray = [],
             index = this.SOURCE_STORE.findExact('key', schema + '|' + query);
 
@@ -385,7 +386,7 @@ Ext.define('Connector.controller.Query', {
 
             Ext.each(dimensions, function(dimension) {
                 var d = this.getMeasure(dimension);
-                if (d.isDimension && !d.hidden) {
+                if (d.isDimension && (!d.hidden || (isGrid && d.requiredInGrid))) {
                     dimensionArray.push(d);
                 }
             }, this);
@@ -600,7 +601,20 @@ Ext.define('Connector.controller.Query', {
             timepointMatch = config.includeTimepointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
             requiredVarMatch = config.includeAssayRequired && record.get('recommendedVariableGrouper') == '1_AssayRequired';
             demogSubjectColMatch = config.includeAssayRequired && record.get('isDemographic') && record.get('name') == Connector.studyContext.subjectColumn;
+
+            // config.includeHidden: module property show hidden fields
             hiddenMatch = config.includeHidden || !record.get('hidden') || requiredVarMatch || demogSubjectColMatch;
+            if (hiddenMatch) {
+                if (config.isGridSelector) {
+                    hiddenMatch = config.includeHidden || !record.get('hiddenInGrid');
+                }
+                else {
+                    if (record.get('recommendedVariableGrouper') == '1_AssayRequired')
+                        hiddenMatch = !record.get('hiddenInPlot');
+                    else
+                        hiddenMatch = config.includeHidden || !record.get('hiddenInPlot');
+                }
+            }
 
             // The userFilter is a function used to further filter down the available measures.
             // Needed so the color picker only displays categorical measures.
