@@ -157,11 +157,8 @@ public abstract class DataspaceVariableSelector
         List<String> variables = new ArrayList<>();
         Locator.XPathLocator selectorPanelLoc = Locator.tagWithClass("div", "variable-selector");
         Locator.XPathLocator variableLoc = selectorPanelLoc.append(Locator.tagWithClass("div", "content-label").notHidden());
-        List<WebElement> variableElements = variableLoc.findElements(_test.getDriver());
-        if (variableElements != null)
-        {
-            variableElements.forEach(webElement -> variables.add(webElement.getText()));
-        }
+        variableLoc.findElements(_test.getDriver())
+                .forEach(webElement -> variables.add(webElement.getText()));
         return variables;
     }
 

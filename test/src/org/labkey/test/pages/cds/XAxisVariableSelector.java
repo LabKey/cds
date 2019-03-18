@@ -145,12 +145,9 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         _test.mouseOver(Locator.tagWithText("div", optionLabel + ":"));
         String xpathDimField = getTimeOptionAdvancedOptionXPathDimField(optionLabel);
         Locator.XPathLocator locDimField = Locator.xpath(xpathDimField);
-        if (_test.isElementPresent(locDimField))
-        {
-            WebElement element = locDimField.findElement(_test.getDriver());
-            if (element != null)
-                return element.getText();
-        }
+        WebElement element = locDimField.findElementOrNull(_test.getDriver());
+        if (element != null)
+            return element.getText();
         return null;
     }
 
@@ -163,10 +160,12 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
 
         Locator.XPathLocator locDimField = Locator.xpath(xpathDimField);
 
-        if (_test.isElementPresent(locDimField))
+        WebElement locDimFieldEl = locDimField.findElementOrNull(_test.getDriver());
+
+        if (locDimFieldEl != null)
         {
-            _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
-            _test.click(locDimField);
+            _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimFieldEl));
+            locDimFieldEl.click();
 
             // Let the drop down render.
             Locator.XPathLocator dropdownLoc = Locator.xpath(xpathDimDropDown);
@@ -200,7 +199,9 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
             Locator.XPathLocator disabledDropdownOptionsLoc = dropdownLoc.append(Locator.tagWithClass("table", "x-item-disabled"));
             _test.longWait().until(LabKeyExpectedConditions.animationIsDone(dropdownLoc));
 
-            return _test.isElementPresent(disabledDropdownOptionsLoc);
+            boolean isPresent = _test.isElementPresent(disabledDropdownOptionsLoc);
+            _test.mouseOver(Locator.tagWithText("div", "Aligned by:"));
+            return isPresent;
         }
         return false;
     }
