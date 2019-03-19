@@ -34,7 +34,7 @@ Ext.define('Connector.view.module.ProductHeader', {
                 '<tpl if="mab_mix_name_std">',
                     '<tr>',
                         '<td class="item-label">MAb standard name:</td>',
-                        '<td class="item-value"><a href="#learn/learn/MAb/{mab_mix_name_std}">{mab_mix_name_std:htmlEncode}</a></td>',
+                        '<td class="item-value"><a class="learn-product-mab-link" href="#learn/learn/MAb/{mab_mix_name_std}">{mab_mix_name_std:htmlEncode}</a></td>',
                     '</tr>',
                 '</tpl>',
             '</table>',
