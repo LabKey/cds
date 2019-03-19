@@ -1707,7 +1707,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155);
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
@@ -1737,7 +1737,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155);
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
