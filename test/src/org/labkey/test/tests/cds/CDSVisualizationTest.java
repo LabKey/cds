@@ -1350,7 +1350,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Add a filter and make sure that the log scale changes appropriately.");
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_ASIAN);
-        _asserts.assertFilterStatusCounts(55, 4, 1, 1, 18);
+        _asserts.assertFilterStatusCounts(55, 4, 1, 3, 18);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n" + le + "0\n30\n300";
