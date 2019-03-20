@@ -7,6 +7,9 @@ dependencies
 }
 
 project.evaluationDependsOn(BuildUtils.getInternalProjectPath(project.gradle))
+project.evaluationDependsOn(BuildUtils.getPlatformModuleProjectPath(project.gradle, "query"))
+project.evaluationDependsOn(BuildUtils.getPlatformModuleProjectPath(project.gradle, "core"))
+project.evaluationDependsOn(BuildUtils.getApiProjectPath(project.gradle))
 
 // FIXME this will not work if not also building the modules below. Probably will need a
 // different approach to source code for these dependencies.
