@@ -683,9 +683,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == 10);
 
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath("QED 2")));
-        assertFalse(isElementPresent(cds.hasDataDetailIconXPath("QED 1")));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath("RED 6")));
+        assertElementPresent(cds.hasDataDetailIconXPath("QED 2"));
+        assertElementNotPresent(cds.hasDataDetailIconXPath("QED 1"));
+        assertElementPresent(cds.noDataDetailIconXPath("RED 6"));
 
         log("Verify Variables page");
         waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
@@ -922,9 +922,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[0])));
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[1])));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath(ASSAY_TITLES[2])));
+        assertElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[0]));
+        assertElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[1]));
+        assertElementPresent(cds.noDataDetailIconXPath(ASSAY_TITLES[2]));
 
 
         log("Testing data availability module in Assays");
@@ -940,8 +940,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
 
-        assertFalse(isElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA)));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA)));
+        assertElementNotPresent(cds.hasDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
+        assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
 
 
         log("Testing data availability module in Products");
@@ -955,8 +955,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_PRODUCT[0])));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_PRODUCT[1])));
+        assertElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_PRODUCT[0]));
+        assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_PRODUCT[1]));
 
         log("Testing data availability module in mAbs");
         cds.viewLearnAboutPage("MAbs");
@@ -977,10 +977,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator subHeaderCharacterization = Locator.tagWithText("div", "MAb Characterization Studies");
         Locator subHeaderAdministration = Locator.tagWithText("div", "MAb Administration Studies");
         log("Verify mAb data availability sub listing with 2 categories");
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117)));
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134)));
-        assertTrue(isElementVisible(subHeaderCharacterization));
-        assertTrue(isElementVisible(subHeaderAdministration));
+        assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117));
+        assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
+        assertElementVisible(subHeaderCharacterization);
+        assertElementVisible(subHeaderAdministration);
 
         log("Verify mAb labeled as label");
         Locator labeledAsLoc = cds.getDataRowXPath(CDSHelper.ZAP_117).append(Locator.tagWithClass("td", "data-availability-alt-label")
@@ -995,11 +995,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementPresent(mabRowLoc);
         assertElementVisible(Locator.tagWithText("div", "1 Study Accessible"));
         goToDetail(mAbName, true);
-        assertFalse(isElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_130)));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath(CDSHelper.ZAP_130)));
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134)));
+        assertElementNotPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_130));
+        assertElementPresent(cds.noDataDetailIconXPath(CDSHelper.ZAP_130));
+        assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
         assertFalse(isElementPresent(subHeaderCharacterization) && isElementVisible(subHeaderCharacterization));
-        assertTrue(isElementVisible(subHeaderAdministration));
+        assertElementVisible(subHeaderAdministration);
     }
 
     @Test
@@ -1039,9 +1039,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies with PK MAb data is not as expected", 1, smallHasDataIcons.size());
 
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134)));
-        assertFalse(isElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_136)));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath(CDSHelper.ZAP_136)));
+        assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
+        assertElementNotPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_136));
+        assertElementPresent(cds.noDataDetailIconXPath(CDSHelper.ZAP_136));
 
         log("Verify Assay Dimension");
         List<String> fields = Arrays.asList(CDSHelper.LEARN_ABOUT_PKMAB_ASSAY_DIM_FIELDS);
