@@ -106,6 +106,21 @@ div.learnview {
     border-width: 0;
   }
   .learnmodulegrid {
+    .x-group-hd-container {
+      padding-top: 12px;
+    }
+
+    .x-grid-group-hd {
+      background: none;
+      border: none;
+      padding-bottom: 12px;
+
+      .x-grid-group-title {
+        color: $secondary-text-color;
+        font: $body-one-font;
+      }
+    }
+
     .x-grid-header-ct {
       border-width: 0!important;
     }
@@ -374,6 +389,10 @@ img.detail-has-data-small {
   td:nth-child(even) {
     padding-right: 10px;
   }
+}
+
+.data-availability-header.data-availability-header-with-group {
+  padding-bottom: 0;
 }
 
 .data-availability-alt-label {

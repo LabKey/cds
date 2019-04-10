@@ -19,7 +19,7 @@ SELECT DISTINCT
 	md.assay_status,
 	md.provenance_source,
 	md.provenance_summary,
-	d.prot IS NOT NULL AND d.assay_identifier IS NOT NULL AS "has_data",
+	d.prot IS NOT NULL AND d.assay_identifier IS NOT NULL AS "has_data"
 FROM import_studyassay md --metadataTable
 LEFT JOIN (
   -- Could use ds_subjectassay, but then we must ensure this is run after that in the ETL

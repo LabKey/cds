@@ -186,7 +186,7 @@ public class CDSHelper
             PROT_Z123, PROT_Z124, PROT_Z125, PROT_Z126, PROT_Z127, PROT_Z128, PROT_Z129, PROT_Z130, PROT_Z131,
             PROT_Z132, PROT_Z133, PROT_Z134, PROT_Z135, PROT_Z136, PROT_Z137, PROT_Z138, PROT_Z139, PROT_Z140};
 
-    public static final String[] PRODUCTS = {"Acetaminophen, Dextromethorphan Hydrobromide, Doxylamine Succinate",
+    public static final String[] PRODUCTS = {"2F5", "3BNC117", "Acetaminophen, Dextromethorphan Hydrobromide, Doxylamine Succinate",
             "ACETAMINOPHEN, DEXTROMETHORPHAN HYDROBROMIDE, PHENYLEPHRINE HYDROCHLORIDE",
             "Acetaminophen, Diphenhydramine Hydrochloride, and Phenylephrine Hydrochloride",
             "Acetaminophen, Doxylamine Succinate, Phenylephrine HCl", "Adenosinum cyclophosphoricum", "ALCOHOL",
@@ -208,7 +208,7 @@ public class CDSHelper
             "OCTINOXATE, ZINC OXIDE, ENZACAMENE, TITANIUM DIOXIDE, AMILOXATE, AVOBENZONE",
             "Octinoxate, Zinc Oxide, Octisalate, Oxybenzone", "Olanzapine", "Oxygen", "OXYGEN, NITROGEN, CARBON DIOXIDE",
             "Oxymorphone hydrochloride", "pantoprazole sodium", "Peach", "Penicillin V Potassium", "Petasites Veronica",
-            "Pseudoephedrine Hydrochloride", "quetiapine fumarate", "risperidone", "Risperidone",
+            "PGT121", "PGT151", "Pseudoephedrine Hydrochloride", "quetiapine fumarate", "risperidone", "Risperidone",
             "Sagebrush, Mugwort Artemisia vulgaris", "Salicylic Acid", "Sennosides", "Standardized Timothy Grass Pollen",
             "Titanium Dioxide", "TITANIUM DIOXIDE, ZINC OXIDE", "TITANIUM OXIDE", "tramadol hydrochloride",
             "TRICLOSAN", "TRICLOSAN CARBONATE", "trifluoperazine hydrochloride", "verapamil hydrochloride"};
@@ -233,6 +233,7 @@ public class CDSHelper
     public static final String[] LEARN_ABOUT_ZAP117_INFO_FIELDS = {"Network", "Grant Affiliation", "Strategy", "Study Type", "Species", "Stage", "First enrollment"};
     public static final String[] LEARN_ABOUT_CONTACT_FIELDS = {"First point of contact", "Grant Principal Investigator", "Grant Project Manager", "Study Investigator"};
     public static final String[] LEARN_ABOUT_DESCRIPTION_FIELDS = {"Objectives", "Rationale", "Groups", "Methods", "Findings", "Conclusions", "Publications"};
+    public static final String[] LEARN_ABOUT_PKMAB_ASSAY_DIM_FIELDS = {"Lab ID", "MAb or mixture", "Source assay", "Specimen type"};
 
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";

@@ -573,7 +573,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
@@ -1350,7 +1350,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Add a filter and make sure that the log scale changes appropriately.");
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_ASIAN);
-        _asserts.assertFilterStatusCounts(55, 4, 1, 1, 18);
+        _asserts.assertFilterStatusCounts(55, 4, 1, 3, 18);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n60-69\n" + le + "0\n30\n300";
@@ -1707,7 +1707,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155);
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
@@ -1737,7 +1737,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_BLACK);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155);
+        _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155);
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
@@ -2297,7 +2297,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Filter to fewer subjects");
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_WHITE);
-        _asserts.assertFilterStatusCounts(5, 1, 1, 1, 2);
+        _asserts.assertFilterStatusCounts(5, 1, 1, 2, 2);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this, true); // color btn hidden since color exist, skip check
         waitForElement(lineLoc);

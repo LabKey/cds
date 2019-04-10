@@ -31,7 +31,9 @@ product_id	product_name	insert_id	insert_name	clade_id	clade_name
 195	HYDROCODONE BITARTRATE AND ACETAMINOPHEN	4	ENV	5	E         
 196	Aspirin	\N	Not Recorded	3	C         
 202	Peach	\N	Not Recorded	3	C         
-213	Avobenzone, Homosalate, Octisalate, Oxybenzone	\N	Not Recorded	3	C         
-215	TITANIUM DIOXIDE, ZINC OXIDE	4	ENV	3	C         
+213	"Avobenzone, Homosalate, Octisalate, Oxybenzone"	\N	Not Recorded	3	C         
+215	"TITANIUM DIOXIDE, ZINC OXIDE"	4	ENV	3	C         
 216	Colocynthis Lycopodium Clavatum Natrum Sulphuricum	4	ENV	3	C         
 220	HYDROMORPHONE HYDROCHLORIDE	\N	Not Recorded	3	C
+224	PGT121	\N	Not Recorded	\N	Not Recorded
+225	2F5	\N	Not Recorded	\N	Not Recorded

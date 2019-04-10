@@ -278,7 +278,7 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
         log("Validating subject count with a filter of race-asian.");
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_ASIAN);
-        _asserts.assertFilterStatusCounts(815, 49, 1, 3, 165);
+        _asserts.assertFilterStatusCounts(815, 49, 1, 5, 165);
 
         sourcesSubjectCounts.clear();
         antigenCounts.clear();
@@ -492,7 +492,7 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
         log("Validating counts with filters of Race=white and target cell of A3R5 and TZM-bl.");
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.addRaceFilter(CDSHelper.RACE_WHITE);
-        _asserts.assertFilterStatusCounts(777, 48, 1, 1, 152);
+        _asserts.assertFilterStatusCounts(777, 48, 1, 3, 152);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -647,7 +647,7 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
         assertEquals("Subjects count not as expected.", 1458, ip.getSubjectCount());
         assertEquals("Species count not as expected.", 2, ip.getSpeciesCount());
         assertEquals("Studies count not as expected.", 14, ip.getStudiesCount());
-        assertEquals("Product count not as expected.", 1, ip.getProductCount());
+        assertEquals("Product count not as expected.", 3, ip.getProductCount());
         assertEquals("Treatments count not as expected.", 91, ip.getTreatmentsCount());
         assertEquals("Time Points count not as expected.", 55, ip.getTimePointsCount());
         assertEquals("Antigens In Y count not as expected.", 3, ip.getAntigensInYCount());
@@ -671,7 +671,7 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
         assertEquals("Subjects count not as expected.", 1453, ip.getSubjectCount());
         assertEquals("Species count not as expected.", 2, ip.getSpeciesCount());
         assertEquals("Studies count not as expected.", 14, ip.getStudiesCount());
-        assertEquals("Product count not as expected.", 1, ip.getProductCount());
+        assertEquals("Product count not as expected.", 3, ip.getProductCount());
         assertEquals("Treatments count not as expected.", 91, ip.getTreatmentsCount());
         assertEquals("Time Points count not as expected.", 55, ip.getTimePointsCount());
         assertEquals("Antigens In X count not as expected.", 3, ip.getAntigensInXCount());

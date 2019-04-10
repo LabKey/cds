@@ -538,7 +538,8 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     url: 'antigens',
                     label: 'Antigens',
-                    hasSearch: true
+                    hasSearch: true,
+                    matchField: 'hasAntigen' // assay.hasAntigen must be true for tab to show up
                 }],
                 itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
@@ -643,7 +644,9 @@ Ext4.define('Connector.cube.Configuration', {
                         staticData: {
                             title: 'Data Availability',
                             dataField: 'studies',
-                            dataLink: 'Study'
+                            dataLink: 'Study',
+                            hasGrouping: true,
+                            groupDir: 'DESC'
                         }
                     }]]
                 }]

@@ -29,7 +29,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     '<p>',
                         Connector.constant.Templates.module.title,
                     '</p>',
-                    '<table class="data-availability-header">',
+                    '<table class="data-availability-header' + (this.data.hasGrouping ? ' data-availability-header-with-group' : '') + '">',
                         '<tr>',
                             '<td>',
                                 '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallCheck.png"/>',
@@ -47,7 +47,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     '</table>',
                     '</tpl>'
             )).apply(this.getTitleData(this.data))
-        },{
+        },Ext.apply({
             xtype: 'grid',
             cls: 'learnmodulegrid',
             viewConfig: {
@@ -129,9 +129,25 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                 scope: this
             },
             scope: this
-        }];
+        }, this.getGroupingFeature())];
 
         this.callParent();
+    },
+
+    getGroupingFeature: function() {
+        if (this.data.hasGrouping) {
+            return {
+                requires: ['Ext.grid.feature.Grouping'],
+                features: [
+                    {
+                        ftype: 'grouping',
+                        collapsible: false,
+                        groupHeaderTpl: new Ext.XTemplate('{name:htmlEncode}')
+                    }
+                ]
+            }
+        }
+        return {};
     },
 
     getDataAddedTemplate : function() {
@@ -170,10 +186,15 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
     },
 
     getDataAddedStore : function(data) {
-        return Ext.create('Ext.data.Store', {
-            model: "DataAdded",
-            data: data.model.getData()[this.data.dataField]
-        });
+        var storeConfig =  {
+                model: "DataAdded",
+                data: data.model.getData()[this.data.dataField]
+        };
+        if (this.data.hasGrouping) {
+            storeConfig.groupField = 'data_group';
+            storeConfig.groupDir = this.data.groupDir ? this.data.groupDir : 'DESC';
+        }
+        return Ext.create('Ext.data.Store', storeConfig);
     },
 
     showDataStatusTooltip : function(event, item, options) {
@@ -214,6 +235,7 @@ Ext.define("DataAdded", {
         {name: 'data_id'},
         {name: 'data_status', convert: function(value) {
             return value ? value : "Status not available";
-        }}
+        }},
+        {name: 'data_group'}
     ]
 });

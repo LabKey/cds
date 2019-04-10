@@ -199,7 +199,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 152); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 3, 152); // TODO Test data dependent.
         }
 
         //
@@ -243,7 +243,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 152); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 3, 152); // TODO Test data dependent.
         }
 
 
@@ -416,12 +416,12 @@ public class CDSGridTest extends CDSReadOnlyTest
         grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
         log("Validating grid counts");
-        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 45);
+        _asserts.assertFilterStatusCounts(159, 13, 1, 3, 45);
         grid.assertPageTotal(27);
 
         setUpGridStep2(true);
 
-        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        _asserts.assertFilterStatusCounts(2, 2, 1, 3, 2);
         grid.assertPageTotal(1);
         grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
@@ -432,7 +432,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         log("Remove the plot and validate that the columns stay the same, but the counts could change.");
         cds.clearFilter(0);
-        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        _asserts.assertFilterStatusCounts(2, 2, 1, 3, 2);
         grid.assertPageTotal(1);
         grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
@@ -487,7 +487,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         if (verifyGrid)
         {
-            _asserts.assertFilterStatusCounts(4, 3, 1, 1, 3);
+            _asserts.assertFilterStatusCounts(4, 3, 1, 3, 3);
             grid.assertPageTotal(1);
             grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         }
@@ -521,7 +521,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
         if (verifyGrid)
         {
-            _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+            _asserts.assertFilterStatusCounts(2, 2, 1, 3, 2);
             grid.assertRowCount(2);
         }
 

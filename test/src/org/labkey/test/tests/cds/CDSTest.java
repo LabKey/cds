@@ -201,7 +201,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
-        _asserts.assertFilterStatusCounts(139, 12, 1, 1, 42);
+        _asserts.assertFilterStatusCounts(139, 12, 1, 3, 42);
 
         final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
         final String saveLabel = "Group \"A Plotted...\" saved.";
@@ -217,7 +217,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         new CDSHelper(this).clickHelper(clippedLabel.findElement(getWrappedDriver()), voidFunc -> {waitForText("Your filters have been"); return null;});
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
-        _asserts.assertFilterStatusCounts(139, 12, 1, 1, 42); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(139, 12, 1, 3, 42); // TODO Test data dependent.
 
         // remove just the plot filter
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
@@ -225,7 +225,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.clearFilter(0);
         cds.saveOverGroup(HOME_PAGE_GROUP);
         waitForText(saveLabel);
-        _asserts.assertFilterStatusCounts(829, 48, 1, 1, 155); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155); // TODO Test data dependent.
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForElements(Locator.css("div.groupicon img"), plotFilterCount - 1);
     }
