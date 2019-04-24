@@ -17,14 +17,18 @@ package org.labkey.test.pages.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class XAxisVariableSelector extends DataspaceVariableSelector
 {
-    private final String XPATHID = "x-axis-selector";
+    public static final String XPATHID = "x-axis-selector";
 
     public XAxisVariableSelector(BaseWebDriverTest test)
     {
@@ -126,9 +130,87 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         super.setAssayDimension(XPATHID, AssayDimensions.CellType, value);
     }
 
-    public void setAxisType(String... value)
+    public void setPlotType(String... value)
     {
-        super.setAssayDimension(XPATHID, AssayDimensions.AxisType, value);
+        super.setAssayDimension(XPATHID, AssayDimensions.PlotType, value);
+    }
+
+    public List<String> getTimePointPlotTypeOptions()
+    {
+        return getTimePointAdvancedOptions("Plot type");
+    }
+
+    public String getTimePointAdvancedOptionSelectedValue(String optionLabel)
+    {
+        _test.mouseOver(Locator.tagWithText("div", optionLabel + ":"));
+        String xpathDimField = getTimeOptionAdvancedOptionXPathDimField(optionLabel);
+        Locator.XPathLocator locDimField = Locator.xpath(xpathDimField);
+        WebElement element = locDimField.findElementOrNull(_test.getDriver());
+        if (element != null)
+            return element.getText();
+        return null;
+    }
+
+    public List<String> getTimePointAdvancedOptions(String optionLabel)
+    {
+        _test.mouseOver(Locator.tagWithText("div", optionLabel + ":"));
+        List<String> options = new ArrayList<>();
+        String xpathDimField = getTimeOptionAdvancedOptionXPathDimField(optionLabel);
+        String xpathDimDropDown = "//div[contains(@class, 'advanced-dropdown')][not(contains(@style, 'display: none'))]";
+
+        Locator.XPathLocator locDimField = Locator.xpath(xpathDimField);
+
+        WebElement locDimFieldEl = locDimField.findElementOrNull(_test.getDriver());
+
+        if (locDimFieldEl != null)
+        {
+            _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimFieldEl));
+            locDimFieldEl.click();
+
+            // Let the drop down render.
+            Locator.XPathLocator dropdownLoc = Locator.xpath(xpathDimDropDown);
+            _test.longWait().until(LabKeyExpectedConditions.animationIsDone(dropdownLoc));
+
+            Locator.XPathLocator dropdownOptionsLoc = dropdownLoc.append(Locator.tagWithClass("label", "x-form-cb-label"));
+            List<WebElement> dropdownOptions = dropdownOptionsLoc.findElements(_test.getDriver());
+            if (dropdownOptions != null)
+            {
+                dropdownOptions.forEach(dropdown -> options.add(dropdown.getText()));
+            }
+        }
+        return options;
+    }
+
+    public boolean isTimeOptionAlignedByDisabled()
+    {
+        _test.mouseOver(Locator.tagWithText("div", "Aligned by:"));
+        String xpathDimField = getTimeOptionAdvancedOptionXPathDimField("Aligned by");
+        String xpathDimDropDown = "//div[contains(@class, 'advanced-dropdown')][not(contains(@style, 'display: none'))]";
+
+        Locator.XPathLocator locDimField = Locator.xpath(xpathDimField);
+
+        if (_test.isElementPresent(locDimField))
+        {
+            _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
+            _test.click(locDimField);
+
+            // Let the drop down render.
+            Locator.XPathLocator dropdownLoc = Locator.xpath(xpathDimDropDown);
+            Locator.XPathLocator disabledDropdownOptionsLoc = dropdownLoc.append(Locator.tagWithClass("table", "x-item-disabled"));
+            _test.longWait().until(LabKeyExpectedConditions.animationIsDone(dropdownLoc));
+
+            boolean isPresent = _test.isElementPresent(disabledDropdownOptionsLoc);
+            _test.mouseOver(Locator.tagWithText("div", "Aligned by:"));
+            return isPresent;
+        }
+        return false;
+    }
+
+    public boolean isTimeOptionAlignByPresent()
+    {
+        String xpathDimField = getTimeOptionAdvancedOptionXPathDimField("Aligned by");
+        Locator.XPathLocator locDimField = Locator.xpath(xpathDimField);
+        return _test.isElementVisible(locDimField);
     }
 
     public void setAlignedBy(String... value)

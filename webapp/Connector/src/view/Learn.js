@@ -547,8 +547,11 @@ Ext.define('Connector.view.Learn', {
                     modules: item.modules
                 };
 
-                if (Connector.view.Learn.detailGridTabs.indexOf(dimension.itemDetailTabs[i].url) > -1)
-                {
+                if (Connector.view.Learn.detailGridTabs.indexOf(dimension.itemDetailTabs[i].url) > -1) {
+                    if (dimension.itemDetailTabs[i].matchField) {
+                        if (!model.get(dimension.itemDetailTabs[i].matchField))
+                            return;
+                    }
                     tabConfig.learnViewConfig = {
                         learnView: me,
                         tabId: id,
@@ -562,8 +565,16 @@ Ext.define('Connector.view.Learn', {
         }, this);
 
         var activeTab = 0;
-        if (!Ext.isEmpty(dimension.itemDetailTabs)) {
-            Ext.each(dimension.itemDetailTabs, function(tab, i) {
+        var validDetailTabs = [];
+        Ext.each(dimension.itemDetailTabs, function(tab) {
+            if (tab.matchField) {
+                if (!model.get(tab.matchField))
+                    return;
+            }
+            validDetailTabs.push(tab);
+        });
+        if (!Ext.isEmpty(validDetailTabs)) {
+            Ext.each(validDetailTabs, function(tab, i) {
                 if (tab.url === urlTab) {
                     activeTab = i;
                     return false;
@@ -726,7 +737,7 @@ Ext.define('Connector.view.LearnHeader', {
         if (!this.headerDataView) {
             this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
                 flex: 2,
-                minWidth: 580,
+                minWidth: 620,
                 cls: 'learn-dim-selector',
                 dimensions: this.dimensions,
                 store: Ext.create('Ext.data.Store', {

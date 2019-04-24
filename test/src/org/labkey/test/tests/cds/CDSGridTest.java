@@ -199,7 +199,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 152); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 3, 152); // TODO Test data dependent.
         }
 
         //
@@ -243,7 +243,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         {
             grid.assertPageTotal(32); // TODO Test data dependent.
             grid.assertRowCount(792); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(777, 48, 1, 1, 152); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, 1, 3, 152); // TODO Test data dependent.
         }
 
 
@@ -271,7 +271,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         sleep(1000);
         DataGrid grid = new DataGrid(this);
         log("Export without filter or additional columns");
-        CDSExport exported = new CDSExport(Arrays.asList(Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 13860)));
+        CDSExport exported = new CDSExport(Arrays.asList(Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 14285)));
         exported.setDataTabHeaders(Arrays.asList(Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
                 Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days"))));
         exported.setAssays(Collections.emptyList());
@@ -416,12 +416,12 @@ public class CDSGridTest extends CDSReadOnlyTest
         grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
         log("Validating grid counts");
-        _asserts.assertFilterStatusCounts(159, 13, 1, 1, 45);
+        _asserts.assertFilterStatusCounts(159, 13, 1, 3, 45);
         grid.assertPageTotal(27);
 
         setUpGridStep2(true);
 
-        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        _asserts.assertFilterStatusCounts(2, 2, 1, 3, 2);
         grid.assertPageTotal(1);
         grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
@@ -432,7 +432,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         log("Remove the plot and validate that the columns stay the same, but the counts could change.");
         cds.clearFilter(0);
-        _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+        _asserts.assertFilterStatusCounts(2, 2, 1, 3, 2);
         grid.assertPageTotal(1);
         grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
@@ -487,7 +487,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         if (verifyGrid)
         {
-            _asserts.assertFilterStatusCounts(4, 3, 1, 1, 3);
+            _asserts.assertFilterStatusCounts(4, 3, 1, 3, 3);
             grid.assertPageTotal(1);
             grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         }
@@ -521,7 +521,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
         if (verifyGrid)
         {
-            _asserts.assertFilterStatusCounts(2, 2, 1, 1, 2);
+            _asserts.assertFilterStatusCounts(2, 2, 1, 3, 2);
             grid.assertRowCount(2);
         }
 
@@ -831,6 +831,53 @@ public class CDSGridTest extends CDSReadOnlyTest
         }
 
         gridColumnSelector.backToSource();
+    }
+
+    @Test
+    public void verifyPKPlotGrid()
+    {
+        goToProjectHome();
+        cds.enterApplication();
+
+        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.addRaceFilter(CDSHelper.RACE_WHITE);
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Plot PK MAb");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.PKMAB);
+        yaxis.pickVariable(CDSHelper.PKMAB_CONCENTRATION);
+        yaxis.confirmSelection();
+
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        sleep(5000);
+        DataGrid grid = new DataGrid(this);
+
+        log("Validate additional mab and visit columns are present in grid.");
+        grid.goToDataTab(CDSHelper.TITLE_PKMAB);
+        grid.ensureColumnsPresent(CDSHelper.PKMAB_MAB_LABEL, CDSHelper.PKMAB_MAB_ID, CDSHelper.PKMAB_VISIT_CODE, CDSHelper.PKMAB_VISIT_DESC);
+
+        log("Verify PKMAb grid export");
+        CDSExport exported = new CDSExport(Arrays.asList(Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 80),
+                Pair.of(CDSHelper.TITLE_PKMAB, 97)));
+        exported.setDataTabHeaders(Arrays.asList(
+                Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
+                        Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days")),
+                Pair.of(CDSHelper.TITLE_PKMAB,
+                        Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days", "Data summary level", "Lab ID",
+                                "MAb concentration", "MAb or mixture id", "MAb or mixture label", "MAb or mixture standardized name",
+                                "Source assay", "Specimen type", "Visit code", "Visit description"))
+        ));
+
+        exported.setStudyNetworks(Arrays.asList("HVTN"));
+        exported.setAssays(Arrays.asList("Monoclonal Antibody Pharmacokinetics"));
+        exported.setAssayProvenances(Arrays.asList("VISC analysis dataset"));
+        exported.setFieldLabels(Arrays.asList("Data summary level", "Lab ID", "MAb concentration", "MAb or mixture id",
+                "MAb or mixture label", "MAb or mixture standardized name", "Source assay", "Specimen type", "Visit code", "Visit description"));
+        grid.verifyCDSExcel(exported, false);
     }
 
 }

@@ -21,7 +21,12 @@ Ext.define('Connector.model.Variable', {
             if (Ext.isObject(variable)) {
                 isAssayDataset = variable['queryType'] == 'datasets' && !variable['isDemographic'];
 
-                if (Ext.isDefined(sourceContextMap[variable.selectedSourceKey])) {
+                if (variable.altSourceKey) {
+                    if (Ext.isDefined(sourceContextMap[variable.altSourceKey])) {
+                        sourceTxt = sourceContextMap[variable.altSourceKey].queryLabel;
+                    }
+                }
+                else if (Ext.isDefined(sourceContextMap[variable.selectedSourceKey])) {
                     sourceTxt = sourceContextMap[variable.selectedSourceKey].queryLabel;
                 }
                 else {
@@ -56,9 +61,14 @@ Ext.define('Connector.model.Variable', {
         getOptionsDisplayText : function(variable, includeScale) {
             var optionsTxt = '', sep = '';
 
+            if (variable.isHoursType)
+                return undefined;
+
             if (Ext.isObject(variable) && Ext.isObject(variable.options)) {
-                if (Ext.isString(variable.options.timeAxisType)) {
-                    optionsTxt += sep + variable.options.timeAxisType;
+                var plotType = variable.options.timePlotType;
+                if (Ext.isString(plotType)) {
+                    var axisType = plotType.indexOf('box') > -1 ? 'Categorical' : 'Continuous';
+                    optionsTxt += sep + axisType;
                     sep = '; ';
                 }
                 if (Ext.isDefined(variable.options.alignmentVisitTag)) {

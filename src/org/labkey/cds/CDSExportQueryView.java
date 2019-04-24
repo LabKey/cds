@@ -640,8 +640,12 @@ public class CDSExportQueryView extends QueryView
             studyAssayValues.add((String) studyAssay.get(PROVENANCE_SUMMARY));
             allStudyAssays.add(studyAssayValues);
         }
-        // sort by assay name
-        allStudyAssays.sort(Comparator.comparing(studyassay -> studyassay.get(1)));
+        // sort by assay name, then by study
+        allStudyAssays.sort((o1, o2) -> {
+            if (!o1.get(1).equals(o2.get(1)))
+                return o1.get(1).compareTo(o2.get(1));
+            return o1.get(0).compareTo(o2.get(0));
+        });
         return allStudyAssays;
     }
 

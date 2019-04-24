@@ -481,7 +481,9 @@ Ext.define('Connector.model.Grid', {
         // gather required columns from each source
         Ext.iterate(sourceMap, function(sourceKey)
         {
-            var dimensions = queryService.getDimensions.apply(queryService, sourceKey.split('|'));
+            var schemaKeys = sourceKey.split('|');
+            var params = schemaKeys.concat(true);
+            var dimensions = queryService.getDimensions.apply(queryService, params);
             if (!Ext.isEmpty(dimensions))
             {
                 Ext.each(dimensions, function(dim)

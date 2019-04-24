@@ -220,7 +220,7 @@ Ext.define('Connector.panel.Selector', {
         this.updateSelectorPane();
     },
 
-    clearSelection : function() {
+    clearSelection : function(axis) {
         this.setActiveMeasure(null);
     },
 
@@ -230,7 +230,7 @@ Ext.define('Connector.panel.Selector', {
         {
             var sourceKey = measure.get('selectedSourceKey')
                                 ? measure.get('selectedSourceKey')
-                                : measure.get('schemaName') + '|' + measure.get('queryName');
+                                : (measure.get('altSourceKey') ? measure.get('altSourceKey') : measure.get('schemaName') + '|' + measure.get('queryName'));
             source = this.sourcesStore.getById(sourceKey);
 
             if (source == null) {
@@ -374,7 +374,7 @@ Ext.define('Connector.panel.Selector', {
                 select: this.onMeasureSelect,
                 deselect: this.deselectMeasure,
                 itemmouseenter: function(view, record, item) {
-                    this.showLearnMessage(item, record.get('label'), record.get('description'), 'Measure');
+                    this.showLearnMessage(item, record.get('label'), record.get('altDescription') ? record.get('altDescription') : record.get('description'), 'Measure');
                 },
                 itemmouseleave: function() {
                     this.hideLearnMessage('Measure');
@@ -465,7 +465,11 @@ Ext.define('Connector.panel.Selector', {
                         '<div class="content-grouping extrapadding">Additional</div>',
                     '</tpl>',
                     '<div class="content-item">',
+                        '<tpl if="altPlotLabel">',
+                        '<div class="content-label">{altPlotLabel:htmlEncode}</div>',
+                        '<tpl else>',
                         '<div class="content-label">{label:htmlEncode}</div>',
+                        '</tpl>',
                     '</div>',
                 '</tpl>'
             )
@@ -530,7 +534,8 @@ Ext.define('Connector.panel.Selector', {
             variableType = source.get('variableType'),
             filter, aliases = {}, toInclude, index, alias,
             selModel = this.getMeasurePane().getSelectionModel(),
-            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap();
+            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap(),
+            multiSelect = this.multiSelect;
 
         // collect the aliases for all locked measures
         Ext.each(this.getLockedRecords(), function(measure) {
@@ -548,7 +553,8 @@ Ext.define('Connector.panel.Selector', {
             }
         }, this);
 
-
+        var sourceContextMap = Connector.measure.Configuration.context.sources;
+        var activeYMeasure = this.activeYMeasure;
         // setup the measures store filter based on the selected source
         if (variableType === 'VIRTUAL') {
             filter = function(measure) {
@@ -572,12 +578,30 @@ Ext.define('Connector.panel.Selector', {
         }
         else if (variableType == 'DEFINED_MEASURES') {
             filter = function(measure) {
-                alias = measure.get('alias');
+                var targetSource = source, include =false;
 
-                if (source.get('measures').indexOf(alias) > -1) {
+                if (measure.get('altSourceKey')) {
+                    if (Ext.isDefined(sourceContextMap[measure.get('altSourceKey')])) {
+                        if (source.get('queryLabel') === sourceContextMap[measure.get('altSourceKey')].queryLabel) {
+                            include = true;
+                            targetSource = sourceContextMap[measure.get('altSourceKey')];
+                        }
+
+                    }
+                }
+                include = include || targetSource.get('measures').indexOf(measure.get('alias')) > -1;
+
+                if (measure.get("isHoursType") && !multiSelect) {
+                    if (activeYMeasure)
+                        include = include && activeYMeasure.allowHoursTimePoint;
+                    else
+                        include = false;
+                }
+
+                if (include) {
                     measure.set({
-                        selectedSourceKey: source.get('key'),
-                        sourceTitle: source.get('queryLabel')
+                        selectedSourceKey: targetSource.get('key'),
+                        sourceTitle: targetSource.get('queryLabel')
                     });
 
                     return true;
@@ -589,6 +613,19 @@ Ext.define('Connector.panel.Selector', {
         else {
             // for all other sources, filter based on the schemaName/queryName source key
             filter = function(measure) {
+                if (measure.get('altSourceKey')) {
+                    if (Ext.isDefined(sourceContextMap[measure.get('altSourceKey')])) {
+                        var include = source.get('queryLabel') === sourceContextMap[measure.get('altSourceKey')].queryLabel;
+
+                        if (measure.get("isHoursType") && !multiSelect) {
+                            if (activeYMeasure)
+                                include = include && activeYMeasure.allowHoursTimePoint;
+                            else
+                                include = false;
+                        }
+                        return include;
+                    }
+                }
                 return key == (measure.get('schemaName') + '|' + measure.get('queryName'));
             };
         }
@@ -848,10 +885,10 @@ Ext.define('Connector.panel.Selector', {
             return null;
         }
 
-        // track wich of the assay dimension advanced option fields are hidden so we don't return them as part of the values object
+        // track which of the assay dimension advanced option fields are hidden so we don't return them as part of the values object
         Ext.each(this.advancedOptionCmps, function(advancedOptionItem)
         {
-            dimensionFieldHidden[advancedOptionItem.getHiddenField().name] = advancedOptionItem.hidden;
+            dimensionFieldHidden[advancedOptionItem.getHiddenField().name] = advancedOptionItem.hidden && !advancedOptionItem.includeOptionValue;
         });
 
         values = this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);
@@ -895,6 +932,8 @@ Ext.define('Connector.panel.Selector', {
         this.advancedOptionCmps = [];
 
         Ext.each(this.getDimensionsForMeasure(this.activeMeasure), function(dimension) {
+            if (dimension.get("hiddenInPlot"))
+                return;
 
             alias = dimension.getFilterMeasure().get('alias');
             this.boundDimensionAliases.push(alias);
@@ -906,13 +945,23 @@ Ext.define('Connector.panel.Selector', {
             Ext.each(advancedOptionCmp.getMeasureSet(), function(measure) {
                 // hierarchical dimensions can have use an alternate column for filtering
                 var m = measure.getFilterMeasure();
-                if (measureSetAliases.indexOf(m.get('alias')) == -1) {
+                if (measureSetAliases.indexOf(m.get('alias')) === -1) {
                     measureSetAliases.push(m.get('alias'));
                     measureSet.push(m);
                 }
 
+                // add measures the current measure depends on
+                var dependencyMeasures = measure.getPlotDependencyMeasures();
+                if (Ext.isArray(dependencyMeasures)) {
+                    Ext.each(dependencyMeasures, function(dependencyMeasure) {
+                        if (measureSetAliases.indexOf(dependencyMeasure.get('alias')) === -1) {
+                            measureSetAliases.push(dependencyMeasure.get('alias'));
+                            measureSet.push(dependencyMeasure);
+                        }
+                    })
+                }
                 // also add the measure alias itself
-                if (measureSetAliases.indexOf(measure.get('alias')) == -1) {
+                if (measureSetAliases.indexOf(measure.get('alias')) === -1) {
                     measureSetAliases.push(measure.get('alias'));
                     measureSet.push(measure);
                 }
@@ -1052,18 +1101,34 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindTimeOptions : function() {
-        if (this.activeMeasure.get('variableType') == 'TIME') {
+        if (this.activeMeasure.get('variableType') === 'TIME') {
+
+            var initPlotType = this.initOptions ? this.initOptions['timePlotType'] : null;
+            if (initPlotType && initPlotType.indexOf('box') > -1 && this.activeMeasure.get('isHoursType'))
+                initPlotType = null;
+
+            if (!initPlotType) {
+                if (this.activeMeasure.get('isHoursType') || ((this.activeYMeasure && this.activeYMeasure.defaultPlotType === 'line')))
+                    initPlotType = 'line';
+                else
+                    initPlotType = 'scatter';
+            }
+
             this.getAdvancedPane().add(
-                Ext.create('Connector.component.AdvancedOptionTimeAxisType', {
-                    measure: this.activeMeasure,
-                    value: this.initOptions ? this.initOptions['timeAxisType'] : 'Continuous' //default to continuous
-                })
+                    Ext.create('Connector.component.AdvancedOptionTimePlotType', {
+                        measure: this.activeMeasure,
+                        value: initPlotType ,
+                        isHoursType: this.activeMeasure.get('isHoursType')
+                    })
             );
+
             this.getAdvancedPane().add(
-                Ext.create('Connector.component.AdvancedOptionTimeAlignedBy', {
-                    measure: this.activeMeasure,
-                    value: this.initOptions ? this.initOptions['alignmentVisitTag'] : undefined
-                })
+                    Ext.create('Connector.component.AdvancedOptionTimeAlignedBy', {
+                        measure: this.activeMeasure,
+                        value: this.initOptions ? this.initOptions['alignmentVisitTag'] : undefined,
+                        hidden: this.activeMeasure.get('isHoursType'),
+                        allowTimeAlignment: !this.activeYMeasure || (this.activeYMeasure.allowTimeAlignment)
+                    })
             );
         }
     },

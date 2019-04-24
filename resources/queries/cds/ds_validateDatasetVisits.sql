@@ -30,7 +30,7 @@ FROM (
       subject_id,
       prot,
       study_day,
-      'BAMA' as assay_type,
+      'BAMA' as assay_type
       FROM import_bama
 
       UNION
@@ -39,7 +39,7 @@ FROM (
       subject_id,
       prot,
       study_day,
-      'ELISPOT' as assay_type,
+      'ELISPOT' as assay_type
       FROM import_els_ifng
 
       UNION
@@ -48,7 +48,7 @@ FROM (
       subject_id,
       prot,
       study_day,
-      'ICS' as assay_type,
+      'ICS' as assay_type
       FROM import_ics
 
       UNION
@@ -57,8 +57,18 @@ FROM (
       subject_id,
       prot,
       study_day,
-      'NAB' as assay_type,
-      FROM import_nab) AS MQ
+      'NAB' as assay_type
+      FROM import_nab
+
+      UNION
+
+      SELECT DISTINCT
+      subject_id,
+      prot,
+      study_day,
+      'PKMAB' as assay_type
+      FROM import_pkmab
+      ) AS MQ
    LEFT JOIN
        import_studypartgrouparmsubject AS IQ
    ON MQ.subject_id = IQ.subject_id

@@ -395,8 +395,9 @@ Ext.define('Connector.view.Grid', {
                     includeAssayRequired: true,
                     includeVirtualSources: true,
                     includeDefinedMeasureSources: true,
+                    isGridSelector: true,
                     userFilter : function(row) {
-                        return row.variableType !== 'TIME' || !row.isDiscreteTime;
+                        return row.variableType !== 'TIME' || row.isHoursType || !row.isDiscreteTime;
                     }
                 },
                 disableAdvancedOptions: true,
@@ -423,7 +424,7 @@ Ext.define('Connector.view.Grid', {
 
         var target;
 
-        if (Ext.isString(columnName)) {
+        if (Ext.isString(columnName) && this.getModel().getActiveSheetMetadata()) {
             var fields = this.getModel().getActiveSheetMetadata().metaData.fields;
 
             if (!Ext.isEmpty(fields)) {

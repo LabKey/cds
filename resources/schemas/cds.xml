@@ -185,6 +185,7 @@
             <column columnName="product_manufacturer"/>
             <column columnName="product_immunogen"/>
             <column columnName="product_description"/>
+            <column columnName="mab_mix_id"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -217,6 +218,20 @@
             <column columnName="enrollment"/>
             <column columnName="firstvacc"/>
             <column columnName="lastvacc"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_studypartgrouparmvisittime" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="study_part"/>
+            <column columnName="study_group"/>
+            <column columnName="study_arm"/>
+            <column columnName="study_day"/>
+            <column columnName="visit_code"/>
+            <column columnName="hours_post_initial_infusion"/>
+            <column columnName="hours_post_recent_infusion"/>
+            <column columnName="visit_time_label"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -452,6 +467,25 @@
             <column columnName="fit_inflection"/>
             <column columnName="fit_error"/>
             <column columnName="vaccine_matched"/>
+        </columns>
+    </table>
+    <table tableName="import_pkmab" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="container"/>
+            <column columnName="prot"/>
+            <column columnName="subject_id"/>
+            <column columnName="study_day"/>
+            <column columnName="visit_code"/>
+            <column columnName="source_assay"/>
+            <column columnName="assay_identifier"/>
+            <column columnName="summary_level"/>
+            <column columnName="specimen_type"/>
+            <column columnName="lab_code"/>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_name_source"/>
+            <column columnName="mab_concentration"/>
+            <column columnName="mab_concentration_units"/>
         </columns>
     </table>
     <table tableName="import_ics" tableDbType="TABLE">
@@ -840,6 +874,7 @@
             <column columnName="product_developer"/>
             <column columnName="product_manufacturer"/>
             <column columnName="product_description"/>
+            <column columnName="mab_mix_id"/>
         </columns>
     </table>
     <table tableName="studygroup" tableDbType="TABLE">
@@ -1001,6 +1036,19 @@
             <column columnName="study_arm"/>
             <column columnName="product_id"/>
             <column columnName="projectContainer"/>
+        </columns>
+    </table>
+    <table tableName="studypartgrouparmvisittime" tableDbType="TABLE">
+        <columns>
+            <column columnName="study_part"/>
+            <column columnName="study_group"/>
+            <column columnName="study_arm"/>
+            <column columnName="study_day"/>
+            <column columnName="visit_code"/>
+            <column columnName="hours_post_initial_infusion"/>
+            <column columnName="hours_post_recent_infusion"/>
+            <column columnName="visit_time_label"/>
+            <column columnName="container"/>
         </columns>
     </table>
     <table tableName="mAbGridBase" tableDbType="TABLE">

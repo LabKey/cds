@@ -246,7 +246,8 @@ Ext.define('Connector.view.Chart', {
                 },
                 items: [
                     this.getHeatmapModeIndicator(),
-                    this.getMedianModeIndicator()
+                    this.getMedianModeIndicator(),
+                    this.getSkipLinePlotModeIndicator()
                 ]
             },{
                 xtype: 'container',
@@ -298,6 +299,26 @@ Ext.define('Connector.view.Chart', {
         }
 
         return this.medianIndicator;
+    },
+
+    getSkipLinePlotModeIndicator : function() {
+        if (!this.skipLinePlotIndicator) {
+            this.skipLinePlotIndicator = Ext.create('Ext.Component', {
+                hidden: true,
+                cls: 'plotmodeon',
+                html: 'Line plot off',
+                width: 110,
+                listeners: {
+                    scope: this,
+                    afterrender : function(c) {
+                        c.getEl().on('mouseover', function() { this.showWhySkipLine(); }, this);
+                        c.getEl().on('mouseout', function() { this.fireEvent('hidelineplotmsg', this); }, this);
+                    }
+                }
+            });
+        }
+
+        return this.skipLinePlotIndicator;
     },
 
     getYSelector : function() {
@@ -468,6 +489,9 @@ Ext.define('Connector.view.Chart', {
         }, this);
         this.hideMedianModeTask = new Ext.util.DelayedTask(function() {
             this.fireEvent('hidemedianmsg', this);
+        }, this);
+        this.hideSkipLineModeTask = new Ext.util.DelayedTask(function() {
+            this.fireEvent('hidelineplotmsg', this);
         }, this);
 
         this.on('resize', function() {
@@ -742,10 +766,20 @@ Ext.define('Connector.view.Chart', {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.DataspaceBoxPlot({
                 binSize : 3,
-                binRowLimit : this.binRowLimit
+                binRowLimit : this.binRowLimit,
+                skipJitter: this.isLinePlot()
             }),
             aes: aes
         });
+    },
+
+    isLinePlot: function() {
+        if (this.activeMeasures && this.activeMeasures.x)
+        {
+            var x = this.activeMeasures.x;
+            return x.options && x.options.timePlotType && x.options.timePlotType.indexOf('line') > -1
+        }
+        return false;
     },
 
     getBasePlotConfig : function() {
@@ -987,6 +1021,57 @@ Ext.define('Connector.view.Chart', {
         return this.getNoPlotLayer();
     },
 
+    getPathLayer : function() {
+        var pathAes = {
+            sortFn: function(a, b) {
+                if (a.altXVal != null) // align by hours for PK
+                    return a.altXVal - b.altXVal;
+                return a.x - b.x;
+            },
+            yLeft: function(row) {
+                return row.y;
+            },
+            group: function(row) {
+                return row['subjectId'];
+            }
+        };
+
+        // only color path when color axis is from demographics
+        if (this.activeMeasures.color && this.activeMeasures.color.isDemographic) {
+            pathAes.pathColor = function(rows)
+            {
+                return Ext4.isArray(rows) && rows.length > 0 ? rows[0].color : null;
+            };
+
+            this.plot.scales.pathColor = {
+                scaleType: 'discrete',
+                range: LABKEY.vis.Scale.DataspaceColor()
+            };
+        }
+
+        return new LABKEY.vis.Layer({
+            geom: new LABKEY.vis.Geom.Path({
+                size: 1,
+                opacity: 0.5,
+                dataspaceBoxPlot: this.activeMeasures && this.activeMeasures.x && !Connector.model.ChartData.isContinuousMeasure(this.activeMeasures.x)
+            }),
+            aes: pathAes
+        });
+    },
+
+    ensurePathLayer: function(noplot, properties, layerScope) {
+        this.skipLinePlotMode = false;
+        if (!noplot) {
+            if (Ext.isDefined(properties.xaxis) && properties.xaxis.isLinePlot){
+                if (!this.showPointsAsBin)
+                    this.plot.addLayer(this.getPathLayer());
+                else
+                    this.skipLinePlotMode = true;
+            }
+        }
+        this.toggleSKipLineMode();
+    },
+
     /**
      * @param chartData
      * @param {object} [studyAxisInfo]
@@ -1161,6 +1246,7 @@ Ext.define('Connector.view.Chart', {
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
 
         if (this.plot) {
+            this.ensurePathLayer(noplot, properties, layerScope);
             this.plot.addLayer(this.getPlotLayer(noplot, properties, layerScope));
             try {
                 this.hidePlotMsg();
@@ -1728,8 +1814,10 @@ Ext.define('Connector.view.Chart', {
     clearHighlightedData : function() {
         if (this.showPointsAsBin)
             this.clearHighlightBins();
-        else
+        else {
             this.clearHighlightPoints();
+            this.clearHighlightLines();
+        }
     },
 
     retrievePointSubjectIds : function(target, subjects, isStudyAxis) {
@@ -1807,26 +1895,44 @@ Ext.define('Connector.view.Chart', {
             else if (subjectIds.indexOf(d.subjectId) != -1) {
                 return ChartUtils.colors.BLACK;
             }
-            return ChartUtils.colors.UNSELECTED;
+            return ChartUtils.colors.HEATSCALE1;
+        };
+
+        var opacityFn = function(d) {
+            if (d.isMouseOver || subjectIds.indexOf(d.subjectId) != -1)
+                return 1;
+            return 0.1;
         };
 
         if (this.plot.renderer) {
-            this.highlightPointsByCanvas(this.plot.renderer.canvas, fillColorFn);
+            this.highlightPointsByCanvas(this.plot.renderer.canvas, fillColorFn, opacityFn);
+            this.highlightLinesByCanvas(this.plot.renderer.canvas, subjectIds);
 
             if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
-                this.highlightPointsByCanvas(this.xGutterPlot.renderer.canvas, fillColorFn);
+                this.highlightPointsByCanvas(this.xGutterPlot.renderer.canvas, fillColorFn, opacityFn);
             }
 
             if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
-                this.highlightPointsByCanvas(this.yGutterPlot.renderer.canvas, fillColorFn);
+                this.highlightPointsByCanvas(this.yGutterPlot.renderer.canvas, fillColorFn, opacityFn);
             }
         }
     },
 
-    highlightPointsByCanvas : function(canvas, fillColorFn) {
+    highlightLinesByCanvas : function(canvas, subjectIds) {
+        canvas.selectAll('path.line')
+                .attr('stroke', ChartUtils.getLineColorFn(subjectIds)).attr('stroke-opacity', ChartUtils.getLineOpacityFn(subjectIds));
+
+        // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+        canvas.selectAll('path.line[stroke="' + ChartUtils.colors.BLACK + '"]').each(function() {
+            var node = this;
+            this.parentNode.appendChild(node);
+        });
+    },
+
+    highlightPointsByCanvas : function(canvas, fillColorFn, opacityFn) {
         canvas.selectAll('.point path')
-            .attr('fill', fillColorFn).attr('fill-opacity', 1)
-            .attr('stroke', fillColorFn).attr('stroke-opacity', 1);
+            .attr('fill', fillColorFn).attr('fill-opacity', opacityFn)
+            .attr('stroke', fillColorFn).attr('stroke-opacity', opacityFn);
 
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
         canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function() {
@@ -1839,17 +1945,23 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    clearHighlightColorFn : function() {
+    clearHighlightColorFn : function(isLine) {
         var colorScale = null, colorAcc = null;
 
         if (this.plot.scales.color && this.plot.scales.color.scale) {
-            colorScale = this.plot.scales.color.scale;
-            colorAcc = this.plot.aes.color;
+            if (!isLine || (isLine && this.activeMeasures && this.activeMeasures.color && this.activeMeasures.color.isDemographic)) {
+                colorScale = this.plot.scales.color.scale;
+                colorAcc = this.plot.aes.color;
+            }
         }
 
         return function(d) {
             if (colorScale && colorAcc) {
-                return colorScale(colorAcc.getValue(d));
+                var colorVal = colorAcc.getValue(d);
+                if (isLine) {
+                    colorVal = Ext4.isArray(d.data) && d.data.length > 0 ? d.data[0].color : null;
+                }
+                return colorScale(colorVal);
             }
 
             return ChartUtils.colors.BLACK;
@@ -1875,11 +1987,28 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
+    clearHighlightLines: function() {
+        var paths = this.plot.renderer.canvas.selectAll('path.line');
+        paths.each(function(d) {
+            d.isMouseOver = false;
+        });
+
+        if (this.plot.renderer) {
+            this.clearLinesByCanvas(this.plot.renderer.canvas, this.clearHighlightColorFn(true));
+        }
+    },
+
     clearPointsByCanvas : function(canvas, colorFn) {
         canvas.selectAll('.point path')
                 .attr('fill', colorFn)
                 .attr('stroke', colorFn)
                 .attr('fill-opacity', 0.5)
+                .attr('stroke-opacity', 0.5);
+    },
+
+    clearLinesByCanvas : function(canvas, colorFn) {
+        canvas.selectAll('path.line')
+                .attr('stroke', colorFn)
                 .attr('stroke-opacity', 0.5);
     },
 
@@ -2077,7 +2206,8 @@ Ext.define('Connector.view.Chart', {
                     this.convertWrappedTimeMeasure(selection.plotMeasures[0]);
 
                     var timeFilters = [selection.gridFilter[0]];
-                    if (this.activeMeasures.x.options['timeAxisType'] === 'Continuous')
+                    var timePlotType = this.activeMeasures.x.options['timePlotType'];
+                    if (timePlotType === 'scatter' || timePlotType === 'line')
                     {
                         timeFilters.push(selection.gridFilter[1]);
                     }
@@ -2120,8 +2250,8 @@ Ext.define('Connector.view.Chart', {
 
     convertWrappedTimeMeasure : function(wrappedMeasure) {
         // Issue 29397: continuous vs categorical time filters should not override each other
-        var timeAxisType = wrappedMeasure.measure.options['timeAxisType'];
-        if (timeAxisType === 'Categorical')
+        var timePlotType = wrappedMeasure.measure.options['timePlotType'];
+        if (timePlotType.indexOf('box') === 0)
         {
             // replace the current selection measure and filter with the categorical/discrete version of the time point measure
             var discreteTimeMeasure = Connector.getQueryService().getMeasure(wrappedMeasure.measure.alias + '_Discrete');
@@ -2186,6 +2316,8 @@ Ext.define('Connector.view.Chart', {
         }
         else if (axis == 'x' && this.activeMeasures.x)
         {
+            if (this.activeMeasures.x.variableType === 'TIME')
+                return 'linear';
             scale = this.getSelectedOptionScale(this.activeMeasures.x);
         }
 
@@ -2225,7 +2357,16 @@ Ext.define('Connector.view.Chart', {
         {
             hasMeasures = true;
 
-            this.activeMeasures.x = x.measure;
+            var xMeasure = x.measure;
+            if (xMeasure && xMeasure.options && xMeasure.options.hoursMeasure) {
+                var sourceHoursMeasure = Connector.getService('Query').getMeasureRecordByAlias(xMeasure.options.hoursMeasure);
+                if (sourceHoursMeasure) {
+                    sourceHoursMeasure = sourceHoursMeasure.data;
+                    sourceHoursMeasure.options = xMeasure.options;
+                    xMeasure = sourceHoursMeasure;
+                }
+            }
+            this.activeMeasures.x = xMeasure;
             this.getXSelector().getModel().updateVariable([this.activeMeasures.x]);
 
             axisSelector = this.getAxisSelectorIfInitialized('x');
@@ -2241,6 +2382,10 @@ Ext.define('Connector.view.Chart', {
 
             this.activeMeasures.y = y.measure;
             this.getYSelector().getModel().updateVariable([this.activeMeasures.y]);
+            if (this.getAxisSelectorIfInitialized('x')) {
+                this.getAxisSelectorIfInitialized('x').activeYMeasure = this.activeMeasures.y;
+                this.getAxisSelectorIfInitialized('x').updateSelectorPane();
+            }
 
             axisSelector = this.getAxisSelectorIfInitialized('y');
             if (axisSelector)
@@ -2278,6 +2423,11 @@ Ext.define('Connector.view.Chart', {
         {
             this.activeMeasures.y = null;
             this.getYSelector().clearModel();
+
+            if (this.getAxisSelectorIfInitialized('x')) {
+                this.getAxisSelectorIfInitialized('x').activeYMeasure = null;
+                this.getAxisSelectorIfInitialized('x').updateSelectorPane();
+            }
         }
         else if (axis == 'x')
         {
@@ -2294,7 +2444,7 @@ Ext.define('Connector.view.Chart', {
         var axisSelector = this.getAxisSelectorIfInitialized(axis);
         if (axisSelector)
         {
-            axisSelector.clearSelection();
+            axisSelector.clearSelection(axis);
         }
     },
 
@@ -2318,7 +2468,7 @@ Ext.define('Connector.view.Chart', {
             {
                 this.fireEvent('showload', this);
 
-                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME';
+                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME' && !this.activeMeasures.x.isHoursType;
 
                 this.requestChartData();
             }
@@ -2756,9 +2906,12 @@ Ext.define('Connector.view.Chart', {
         // Show binning message for a few seconds if first time user hits it
         var msgKey = 'HEATMAP_MODE';
         if (!this.disableAutoMsg && this.showPointsAsBin && Connector.getService('Messaging').isAllowed(msgKey)) {
-            this.showWhyBinning();
-            this.hideHeatmapModeTask.delay(5000);
-            Connector.getService('Messaging').block(msgKey);
+            // delay adding to cache to allow skipLinePlot mode to suppress msg
+            new Ext.util.DelayedTask(function() {
+                this.showWhyBinning();
+                this.hideHeatmapModeTask.delay(5000);
+                Connector.getService('Messaging').block(msgKey);
+            }, this).delay(1000);
         }
     },
 
@@ -2773,6 +2926,9 @@ Ext.define('Connector.view.Chart', {
                 content: 'There are too many dots to show interactively. Higher data density is represented by darker'
                 + ' tones. Color variables are disabled. Reduce the amount of data plotted to see dots again.'
             };
+
+            if (this.skipLinePlotMode)
+                config.content = config.content + ' Line plot options are ignored when plot is in heatmap mode.';
 
             ChartUtils.showCallout(config, 'hideheatmapmsg', this);
         }
@@ -2803,6 +2959,41 @@ Ext.define('Connector.view.Chart', {
             };
 
             ChartUtils.showCallout(config, 'hidemedianmsg', this);
+        }
+    },
+
+    toggleSKipLineMode : function() {
+        this.getSkipLinePlotModeIndicator().setVisible(this.skipLinePlotMode);
+
+        // Show message for a few seconds if first time user hits it
+        var msgKey = 'SKIP_LINE_PLOT_MODE';
+        // If this is the first time heat map msg is shown, skip line plot msg in favor of heat map msg, to avoid overlapping showing
+        var msgKeyHeatMap = 'HEATMAP_MODE';
+        if (!this.disableAutoMsg && this.skipLinePlotMode
+                && Connector.getService('Messaging').isAllowed(msgKey)
+                && !Connector.getService('Messaging').isAllowed(msgKeyHeatMap)) {
+            this.showWhySkipLine();
+            this.hideSkipLineModeTask.delay(5000);
+            Connector.getService('Messaging').block(msgKey);
+        }
+    },
+
+    showWhySkipLine : function() {
+        if (this.skipLinePlotMode) {
+            var config = {
+                target: this.getSkipLinePlotModeIndicator().getEl().dom,
+                placement: 'bottom',
+                title: 'Line plot off',
+                xOffset: -65,
+                arrowOffset: 100,
+                content: 'Line plot options are ignored when plot is in heatmap mode.'
+            };
+
+            ChartUtils.showCallout(config, 'hidelineplotmsg', this);
+
+            var msgKey = 'SKIP_LINE_PLOT_MODE';
+            if (Connector.getService('Messaging').isAllowed(msgKey))
+                Connector.getService('Messaging').block(msgKey);
         }
     },
 
@@ -2876,6 +3067,20 @@ Ext.define('Connector.view.Chart', {
                             'VisitRowId',
                             'INTEGER'
                     );
+
+                    // if x, check y's additional time measure
+                    if (axis === 'x' && activeMeasures['y'])
+                    {
+                        var timeDependency = activeMeasures['y'].timePointSortColumnAlias;
+                        if (timeDependency)
+                        {
+                            var timeMeasure = Connector.getService('Query').getMeasureRecordByAlias(timeDependency);
+                            this.addValuesToMeasureMap(measuresMap, this.getAxisNameProperty('y', xAxisNameProp, yAxisNameProp), timeMeasure.get('schemaName'), timeMeasure.get('queryName'), timeMeasure.get('name'), timeMeasure.get('type'), null);
+                        }
+                    }
+                    // var hoursMeasure = Connector.getService('Query').getMeasureRecordByAlias(dependency);
+                    // this.addValuesToMeasureMap(measuresMap, axisName, hoursMeasure.get('schemaName'), hoursMeasure.get('queryName'), hoursMeasure.get('name'), hoursMeasure.get('type'), values);
+
                 }
 
                 // add selection information from the advanced options panel of the variable selector
@@ -2891,6 +3096,13 @@ Ext.define('Connector.view.Chart', {
 
                         measureRecord = Connector.getQueryService().getMeasureRecordByAlias(alias);
                         this.addValuesToMeasureMap(measuresMap, axisName, schema, query, measureRecord.get('name'), measureRecord.get('type'), values);
+
+                        var dependencies = measureRecord.getPlotDependencyMeasures();
+                        if (dependencies) {
+                            Ext.each(dependencies, function(dependency) {
+                                this.addValuesToMeasureMap(measuresMap, axisName, dependency.get('schemaName'), dependency.get('queryName'), dependency.get('name'), dependency.get('type'), []);
+                            }, this);
+                        }
                     }, this);
                 }
             }
@@ -3088,6 +3300,10 @@ Ext.define('Connector.view.Chart', {
 
                         this.activeMeasures.y = selected;
                         this.getYSelector().getModel().updateVariable([selected]);
+                        if (this.getAxisSelectorIfInitialized('x')) {
+                            this.getAxisSelectorIfInitialized('x').activeYMeasure = selected;
+                            this.getAxisSelectorIfInitialized('x').updateSelectorPane();
+                        }
 
                         this.variableSelectionMade(this.ywin, this.getYSelector().getEl());
                     },
@@ -3131,6 +3347,7 @@ Ext.define('Connector.view.Chart', {
                 headerTitle: 'x-axis',
                 testCls: 'x-axis-selector',
                 activeMeasure: this.activeMeasures.x,
+                activeYMeasure: this.activeMeasures.y,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
@@ -3138,7 +3355,8 @@ Ext.define('Connector.view.Chart', {
                     includeTimepointMeasures: true,
                     userFilter : function(row) {
                         // for TIME variables, only show the ProtocolDay based non-discrete ones for the x-axis options
-                        return row.variableType !== 'TIME' || (row.name === Connector.studyContext.protocolDayColumn && !row.isDiscreteTime);
+                        return row.variableType !== 'TIME' || (row.isHoursType && !row.hiddenInPlot)
+                                || (row.name === Connector.studyContext.protocolDayColumn && !row.isDiscreteTime);
                     }
                 },
                 listeners: {
@@ -3204,7 +3422,7 @@ Ext.define('Connector.view.Chart', {
                     includeTimepointMeasures: true,
                     userFilter : function(row) {
                         // Don't show time with alignment even in dev mode
-                        return !row.isMeasure && !(row.isDiscreteTime && row.hidden);
+                        return !row.isMeasure && !(row.isDiscreteTime && row.hidden) && !row.isHoursType;
                     }
                 },
                 listeners: {

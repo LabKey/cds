@@ -1358,14 +1358,14 @@
       </column>
       <column columnName="mab_concentration">
         <datatype>double</datatype>
-        <columnTitle>Mab concentration</columnTitle>
+        <columnTitle>MAb concentration</columnTitle>
         <description>The concentration of the specimen (mab) being tested in a given well on a plate. The initial concentration of each specimen is reduced by the dilution factor (3). Typically, a total of 8 concentrations are tested for each specimen (mab). </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="mab_concentration_units">
         <datatype>varchar</datatype>
-        <columnTitle>Mab concentration units</columnTitle>
+        <columnTitle>MAb concentration units</columnTitle>
         <description>The units in which the concentration is measured (ug/mL)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>false</dimension>
@@ -1527,5 +1527,175 @@
 
     </columns>
     <tableTitle>Neutralization Antibody - Monoclonal Antibodies</tableTitle>
+  </table>
+  <table tableName="PKMAb" tableDbType="TABLE">
+    <description>Contains up to one row of PKMAb (Pharmacokinetics Monoclonal Antibody) data for each Subject/VisitTime combination.</description>
+    <columns>
+      <column columnName="SubjectId">
+        <datatype>varchar</datatype>
+        <columnTitle>Subject Id</columnTitle>
+        <description>Unique ID assigned to a subject for a given study.</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Subject</fkTable>
+          <fkColumnName>SubjectId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+      </column>
+      <column columnName="visit_day">
+        <datatype>integer</datatype>
+        <columnTitle>Visit Day</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Target study day defined for a study visit. Study days are relative to Day 0, where Day 0 is typically defined as enrollment and/or first injection.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="third_key">
+        <datatype>integer</datatype>
+        <columnTitle>Third Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <isHidden>true</isHidden>
+        <isKeyField>true</isKeyField>
+        <isAutoInc>true</isAutoInc>
+      </column>
+      <column columnName="study_prot">
+        <datatype>varchar</datatype>
+        <columnTitle>Study Protocol</columnTitle>
+        <description>Study protocol</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="visit_code">
+        <datatype>varchar</datatype>
+        <columnTitle>Visit code</columnTitle>
+        <description>Unique ID assigned to the study visit. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="visit_time_label">
+        <datatype>varchar</datatype>
+        <columnTitle>Visit description</columnTitle>
+        <description>Description of the study visit. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="hours_post_initial_infusion">
+        <datatype>double</datatype>
+        <columnTitle>Hours after initial infusion</columnTitle>
+        <description>Study hours after initial infusion</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <dimension>false</dimension>
+        <measure>false</measure>
+      </column>
+      <column columnName="hours_post_recent_infusion">
+        <datatype>double</datatype>
+        <columnTitle>Hours after most recent infusion</columnTitle>
+        <description>Study hours after most recent infusion</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <dimension>false</dimension>
+        <measure>false</measure>
+      </column>
+      <column columnName="source_assay">
+        <datatype>varchar</datatype>
+        <columnTitle>Source assay</columnTitle>
+        <description>The assay used to measure the mAb concentration. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="lab_code">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab ID</columnTitle>
+        <description>A code indicating the lab performing the assay.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="specimen_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimen type</columnTitle>
+        <description>The type of specimen used in the assay.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="assay_identifier">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay identifier</columnTitle>
+        <description>Name identifying assay</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="summary_level">
+        <datatype>varchar</datatype>
+        <columnTitle>Data summary level</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Defines the level at which the magnitude or response has been summarized (e.g. summarized at the isolate level).</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="mab_name_source">
+        <datatype>varchar</datatype>
+        <columnTitle>Mab name source</columnTitle>
+        <description>Unique ID assigned to the mAb (often recoded) being tested in a given study. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>false</dimension>
+      </column>
+      <column columnName="mab_mix_name_std">
+        <datatype>varchar</datatype>
+        <columnTitle>MAb or mixture standardized name</columnTitle>
+        <description>MAb or mixture standardized name. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="mab_mix_label">
+        <datatype>varchar</datatype>
+        <columnTitle>MAb or mixture label</columnTitle>
+        <description>MAb or mixture label. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="mab_mix_id">
+        <datatype>varchar</datatype>
+        <columnTitle>MAb or mixture id</columnTitle>
+        <description>Unique ID assigned to an individual mAb or mixture of mAbs. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <fk>
+          <fkDbSchema>cds</fkDbSchema>
+          <fkTable>MAbMixMetadata</fkTable>
+          <fkColumnName>mab_mix_id</fkColumnName>
+        </fk>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="mab_concentration">
+        <datatype>double</datatype>
+        <columnTitle>MAb concentration</columnTitle>
+        <description>The antibody concentration measured at a given timepoint. </description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="mab_concentration_units">
+        <datatype>varchar</datatype>
+        <columnTitle>MAb concentration units</columnTitle>
+        <description>The unit of the concentration measured.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>false</dimension>
+      </column>
+    </columns>
+    <tableTitle>PK MAb</tableTitle>
   </table>
 </tables>

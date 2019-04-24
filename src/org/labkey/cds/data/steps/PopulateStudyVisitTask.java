@@ -171,6 +171,38 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
                     logger.error(e.getMessage(), e);
                 }
             }
+
+            // Insert visit time
+            //
+            TableInfo visitTimeSource = cdsSchema.getTable("import_studypartgrouparmvisittime");
+            TableInfo visitTimeTarget = cdsSchema.getTable("studypartgrouparmvisittime");
+            QueryUpdateService visitTimeTargetService = visitTimeTarget.getUpdateService();
+
+            SQLFragment visitTimeSql = new SQLFragment("SELECT study_part, study_group, study_arm, study_day, visit_code, hours_post_initial_infusion, hours_post_recent_infusion, visit_time_label" +
+                    " FROM ").append(visitTimeSource).append(" WHERE prot = ?");
+            visitTimeSql.add(container.getName());
+
+            Map<String, Object>[] visitTimeRows = new SqlSelector(visitTimeSource.getSchema(), visitTimeSql).getMapArray();
+            if (visitTimeRows.length > 0)
+            {
+                try
+                {
+                    visitTimeTargetService.insertRows(user, container, Arrays.asList(visitTimeRows), errors, null, null);
+                }
+                catch (Exception e)
+                {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+
+            if (errors.hasErrors())
+            {
+                for (ValidationException error : errors.getRowErrors())
+                {
+                    logger.error(error.getMessage());
+                }
+                return;
+            }
         }
 
         long finish = System.currentTimeMillis();

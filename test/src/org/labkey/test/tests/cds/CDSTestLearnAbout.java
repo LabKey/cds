@@ -683,9 +683,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == 10);
 
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath("QED 2")));
-        assertFalse(isElementPresent(cds.hasDataDetailIconXPath("QED 1")));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath("RED 6")));
+        assertElementPresent(cds.hasDataDetailIconXPath("QED 2"));
+        assertElementNotPresent(cds.hasDataDetailIconXPath("QED 1"));
+        assertElementPresent(cds.noDataDetailIconXPath("RED 6"));
 
         log("Verify Variables page");
         waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
@@ -922,9 +922,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[0])));
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[1])));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath(ASSAY_TITLES[2])));
+        assertElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[0]));
+        assertElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[1]));
+        assertElementPresent(cds.noDataDetailIconXPath(ASSAY_TITLES[2]));
 
 
         log("Testing data availability module in Assays");
@@ -940,8 +940,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
 
-        assertFalse(isElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA)));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA)));
+        assertElementNotPresent(cds.hasDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
+        assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
 
 
         log("Testing data availability module in Products");
@@ -955,8 +955,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText("Data Availability");
 
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_PRODUCT[0])));
-        assertTrue(isElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_PRODUCT[1])));
+        assertElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_PRODUCT[0]));
+        assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_PRODUCT[1]));
 
         log("Testing data availability module in mAbs");
         cds.viewLearnAboutPage("MAbs");
@@ -968,19 +968,94 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator.XPathLocator mabRowLoc = LEARN_HAS_DATA_ROW_TITLE_LOC.withText(mAbName);
         log("Verify mAb data availability on summary page");
         assertElementPresent(mabRowLoc);
-        mabRowLoc.withText("1 Study Accessible");
-
+        assertElementVisible(Locator.tagWithText("div", "2 Studies Accessible"));
         goToDetail(mAbName, true);
 
         refresh();
         waitForText("Data Availability");
 
-        assertTrue(isElementPresent(cds.hasDataDetailIconXPath("ZAP 117")));
+        Locator subHeaderCharacterization = Locator.tagWithText("div", "MAb Characterization Studies");
+        Locator subHeaderAdministration = Locator.tagWithText("div", "MAb Administration Studies");
+        log("Verify mAb data availability sub listing with 2 categories");
+        assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117));
+        assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
+        assertElementVisible(subHeaderCharacterization);
+        assertElementVisible(subHeaderAdministration);
 
-        Locator labeledAsLoc = cds.getDataRowXPath("ZAP 117").append(Locator.tagWithClass("td", "data-availability-alt-label")
+        log("Verify mAb labeled as label");
+        Locator labeledAsLoc = cds.getDataRowXPath(CDSHelper.ZAP_117).append(Locator.tagWithClass("td", "data-availability-alt-label")
                 .withText("Labeled as 2F5 (PlantForm); 2F5 (Polymun) (IAM 2F5, IAM-41-2F5, IAM2F5, c2F5)"));
-
         assertElementPresent(labeledAsLoc);
+
+        log("Verify mAb data availability sub listing with only 1 category");
+        cds.viewLearnAboutPage("MAbs");
+        mAbName = "PGT121";
+        learnGrid.setSearch(mAbName);
+        mabRowLoc = LEARN_HAS_DATA_ROW_TITLE_LOC.withText(mAbName);
+        assertElementPresent(mabRowLoc);
+        assertElementVisible(Locator.tagWithText("div", "1 Study Accessible"));
+        goToDetail(mAbName, true);
+        assertElementNotPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_130));
+        assertElementPresent(cds.noDataDetailIconXPath(CDSHelper.ZAP_130));
+        assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
+        assertFalse(isElementPresent(subHeaderCharacterization) && isElementVisible(subHeaderCharacterization));
+        assertElementVisible(subHeaderAdministration);
+    }
+
+    @Test
+    public void verifyLearnAboutMabProductDetail()
+    {
+        cds.viewLearnAboutPage("Products");
+
+        String mabProduct = "2F5";
+        LearnGrid summaryGrid = new LearnGrid(this);
+        summaryGrid.setSearch(mabProduct).clickFirstItem();
+
+        log("Verify Data Availability");
+        waitForText("Data Availability");
+        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
+        assertEquals("Number of studies using the mAb product is not as expected", 1, smallHasDataIcons.size());
+
+        String mAbStdName = "2F5";
+        log("Verify link to mAb details page from product page");
+        Locator mabLink = Locator.tagWithClass("a", "learn-product-mab-link").withText(mAbStdName);
+        WebElement mabLinkEl = mabLink.findElementOrNull(getDriver());
+        Assert.assertNotNull("Link to mAb detail page is not present", mabLinkEl);
+        mabLinkEl.click();
+        waitForText("2F5 (PlantForm) (other)");
+    }
+
+    @Test
+    public void testLearnAboutPKMAbAssay()
+    {
+        cds.viewLearnAboutPage("Assays");
+        LearnGrid summaryGrid = new LearnGrid(this);
+
+        summaryGrid.setSearch(CDSHelper.TITLE_PKMAB)
+                .clickFirstItem();
+
+        log("Verify Data Availability");
+        waitForText("Data Availability");
+        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
+        assertEquals("Number of studies with PK MAb data is not as expected", 1, smallHasDataIcons.size());
+
+        assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
+        assertElementNotPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_136));
+        assertElementPresent(cds.noDataDetailIconXPath(CDSHelper.ZAP_136));
+
+        log("Verify Assay Dimension");
+        List<String> fields = Arrays.asList(CDSHelper.LEARN_ABOUT_PKMAB_ASSAY_DIM_FIELDS);
+        fields.stream().forEach((field) -> assertTextPresent(field));
+
+        log("Verify Variables page");
+        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
+        sleep(CDSHelper.CDS_WAIT);
+        waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("MAb or mixture standardized name"));
+
+        log("Verify Antigens tab is not present");
+        Locator antigenTabLoc = Locator.tagWithClass("h1", "lhdv").withText("Antigens");
+        assertFalse("Antigen tab should not be present for PK MAb assay", isElementPresent(antigenTabLoc) && isElementVisible(antigenTabLoc));
     }
 
     @Test

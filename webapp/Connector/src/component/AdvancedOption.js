@@ -159,7 +159,8 @@ Ext.define('Connector.component.AdvancedOptionBase', {
             if (storeCount == 0) {
                 this.hide();
             }
-            else if (this.fieldName.indexOf('_summary_level') > 0 && storeCount == 1) {
+            else if ((this.fieldName.indexOf('_summary_level') > 0 && this.fieldName.indexOf('study_PKMAb') === -1)
+                    && storeCount == 1) {
                 this.getDisplayField().addCls('display-option-only');
             }
             else {
@@ -274,6 +275,12 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         // pull distinctValueFilterColumnAlias property up out of dimension.data so we can query for components easier (see Selector.js bindDimensions)
         if (Ext.isDefined(this.dimension.get('distinctValueFilterColumnAlias'))) {
             this.distinctValueFilterColumnAlias = this.dimension.get('distinctValueFilterColumnAlias');
+        }
+
+        if (this.dimension.get("hiddenInAdvancedOptions"))
+        {
+            this.hidden = true;
+            this.includeOptionValue = true;
         }
 
         this.callParent();
@@ -395,6 +402,48 @@ Ext.define('Connector.component.AdvancedOptionScale', {
         this.showDropdownPanel();
     }
 });
+Ext.define('Connector.component.AdvancedOptionTimePlotType', {
+
+    extend: 'Connector.component.AdvancedOptionBase',
+
+    fieldName: 'timePlotType',
+    fieldLabel: 'Plot type',
+
+    constructor : function(config) {
+        if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
+            console.error('Advanced option axis type field must be defined using a Measure record.');
+        }
+
+        this.callParent([config]);
+    },
+
+    initComponent : function() {
+        var data = [
+            {value: 'scatter', label: 'Scatter plot'},
+            {value: 'box', label: 'Box plot'},
+            {value: 'line', label: 'Line plot'},
+            {value: 'box-line', label: 'Box & line plot'}
+        ];
+        if (this.isHoursType) {
+            data = [
+                {value: 'scatter', label: 'Scatter plot'},
+                {value: 'line', label: 'Line plot'}
+            ];
+        }
+        this.store = Ext.create('Ext.data.Store', {
+            fields: [this.storeValueField, this.storeLabelField],
+            data: data
+        });
+
+        this.setValue(this.value, false);
+
+        this.callParent();
+    },
+
+    onDisplayFieldClick : function() {
+        this.showDropdownPanel();
+    }
+});
 
 Ext.define('Connector.component.AdvancedOptionTimeAxisType', {
 
@@ -487,6 +536,8 @@ Ext.define('Connector.component.AdvancedOptionTimeAlignedBy', {
 
     getDropdownPanelConfig : function() {
         var config = this.callParent();
+        if (!this.allowTimeAlignment)
+            config.optionsDisabled = true;
 
         // for 'Align by' time option, append the 'Aligned by Day 0' radio item
         if (this.singleUseOnly) {
@@ -654,7 +705,7 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
                 radioItems.push({
                     boxLabel: record.get(this.labelField) || record.get(this.valueField),
                     inputValue: record.get(this.valueField),
-                    checked: this.initSelection && this.initSelection.indexOf(record.get(this.valueField)) > -1
+                    checked: this.initSelection && this.initSelection === record.get(this.valueField)
                 });
             }, this);
 
@@ -669,6 +720,7 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
                 columns: 1,
                 items: radioItems,
                 validateOnChange: false,
+                disabled: this.optionsDisabled,
                 listeners: {
                     scope: this,
                     change: function(radiogroup, newValue) {

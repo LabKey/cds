@@ -22,9 +22,11 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
                                 '<td class="item-value">{value:htmlEncode}</td>',
                             '</tr>',
                         '</tpl>',
-                        '<tr>',
-                            '<td class="item-value"><a href="{antigen_link:htmlEncode}">View {antigen_display_name:htmlEncode} List</td>',
-                        '</tr>',
+                        '<tpl if="hasAntigen">',
+                            '<tr>',
+                                '<td class="item-value"><a href="{antigen_link:htmlEncode}">View {antigen_display_name:htmlEncode} List</td>',
+                            '</tr>',
+                        '</tpl>',
                     '</table>',
                 '<tpl else>',
                     '<p>There are no dimensions to display</p>',
@@ -47,14 +49,21 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
             {label: "Lab ID", name: "lab_code"}],
         "NAb" : [{label: "Initial dilution", name: "initial_dilution"},
             {label: "Specimen type", name: "specimen_type"},
-            {label: "Lab ID", name: "lab_code"}]
+            {label: "Lab ID", name: "lab_code"}],
+        "PKMAb" : [
+            {label: "MAb or mixture", name: "mab_mix_name_std"},
+            {label: "Source assay", name: "source_assay"},
+            {label: "Lab ID", name: "lab_code"},
+            {label: "Specimen type", name: "specimen_type"}
+            ]
     },
 
     initComponent : function() {
         var store = StoreCache.getStore('Connector.app.store.Assay'),
                 title = this.data.title,
                 assay_id = this.data.model.get('assay_identifier'),
-                assay_type = this.data.model.get('assay_type');
+                assay_type = this.data.model.get('assay_type'),
+                hasAntigen = this.data.model.get('hasAntigen');
 
         if (assay_type.toUpperCase() === 'NABMAB')
             return;
@@ -64,7 +73,8 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
                 title: title,
                 results: results,
                 antigen_display_name: assay_type == "NAb" ? 'Virus' : 'Antigen',
-                antigen_link: Connector.getService('Learn').getURL('Assay', assay_id) + '/antigens'
+                antigen_link: Connector.getService('Learn').getURL('Assay', assay_id) + '/antigens',
+                hasAntigen: hasAntigen
             });
         }, this);
     }

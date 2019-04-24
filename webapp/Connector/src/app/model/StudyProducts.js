@@ -41,6 +41,7 @@ Ext.define('Connector.app.model.StudyProducts', {
         {name: 'product_developer'},
         {name: 'product_manufacturer'},
         {name: 'product_description'},
+        {name: 'mab_mix_name_std'},
         {name: 'data_availability'},
         {name: 'data_accessible'},
         {name: 'studies_with_data_count'},

@@ -46,7 +46,7 @@ public class CDSAsserts
     {
         assertCDSPortalRow("Subject characteristics", "2 subject characteristics", "2 species", "6 decades by age", "3 ethnicities", "60 countries", "2 sexes",
                 "10 races", "2 gender identities", "5 circumcision categories", "5 bmi categories", "3 study cohorts");
-        assertCDSPortalRow("Products", "4 products", "4 products", "4 classes", "4 developers", "3 types");
+        assertCDSPortalRow("Products", "6 products", "6 products", "5 classes", "4 developers", "4 types");
         assertCDSPortalRow("Studies", "51 studies", "4 networks", "6 study types", "282 coded labels", "282 treatments", "48 pi", "6 strategy");
     }
 
@@ -204,7 +204,7 @@ public class CDSAsserts
 
     public void assertDefaultFilterStatusCounts()
     {
-        assertFilterStatusCounts(8277, 51, 2, 4, 282); // TODO Test data dependent.
+        assertFilterStatusCounts(8277, 51, 2, 6, 282); // TODO Test data dependent.
     }
 
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int speciesCount, int productCount, int treatmentCount)

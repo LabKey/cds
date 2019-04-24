@@ -60,7 +60,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public static final List<String> NABMAB_ASSAY_COLUMNS = Arrays.asList("Study", "Mab mix id", "Mab mix label", "Mab mix name std", "Mab name source", "Assay identifier", "Curve id", "Data summary level");
 
     public static final List<String> NABMAB_ASSAY_VARIABLES = Arrays.asList("Assay identifier",
-            "Curve id", "Data summary level", "Fit asymmetry", "Fit error", "Fit inflection", "Fit max", "Fit min", "Fit slope", "Initial concentration", "Lab ID", "Mab concentration units", "Mab concentration");
+            "Curve id", "Data summary level", "Fit asymmetry", "Fit error", "Fit inflection", "Fit max", "Fit min", "Fit slope", "Initial concentration", "Lab ID", "MAb concentration units", "MAb concentration");
 
     public static final List<String> ColumnLabels = Arrays.asList(MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL, ANTIGEN_BINDING_COL,
             VIRUSES_COL, CLADES_COL, TIERS_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL);

@@ -98,6 +98,28 @@ public class CDSValidateTask extends AbstractPopulateTask
             logger.warn(error);
         }
 
+        logger.info("Validating Visit Time In Datasets");
+        validationTable = sourceSchema.getTable("ds_validateDatasetVisitTime");
+        sql = new SQLFragment("SELECT * FROM ").append(validationTable, "Validator");
+        rows = new SqlSelector(validationTable.getSchema(), sql).getMapArray();
+        if (rows.length > 0)
+        {
+            StringBuilder error = new StringBuilder("Validation Failed!");
+            for (Map<String, Object> row : rows)
+            {
+                error.append("\n\tStudy day ")
+                        .append(row.get("study_day"))
+                        .append(" visit_code ")
+                        .append(row.get("visit_code"))
+                        .append(" is not on the schedule for Subject ")
+                        .append(row.get("subject_id"))
+                        .append(" in assay ")
+                        .append(row.get("assay_type"));
+
+            }
+            logger.warn(error);
+        }
+
         logger.info("Validating Subjects in Assays");
         validationTable = sourceSchema.getTable("ds_validatestudyassay");
         sql = new SQLFragment("SELECT * FROM ").append(validationTable, "Validator");
@@ -139,5 +161,6 @@ public class CDSValidateTask extends AbstractPopulateTask
             }
             logger.warn(error);
         }
+
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 LabKey Corporation
+ * Copyright (c) 2017-2018 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-SELECT *,
-    (CASE WHEN AA.assay_identifier = 'PK MAB' THEN false
-      ELSE true
-    END) AS hasAntigen
-FROM cds.assay AS AA
-LEFT JOIN (
-  SELECT assay_identifier AS id,
-  COUNT(assay_identifier) AS study_count
-  FROM (
-    SELECT DISTINCT assay_identifier,
-    study_name
-    FROM ds_subjectassay
-  )
-  GROUP BY assay_identifier
-)
-AS BB ON AA.assay_identifier = BB.id
+-- Helper query for store\Study.js. Grabs all metadata for each product.
+SELECT
+       prod.*,
+       mab.mab_mix_name_std
+FROM cds.product prod
+LEFT JOIN cds.MAbMixMetadata mab ON prod.mab_mix_id = mab.mab_mix_id AND prod.container = mab.container

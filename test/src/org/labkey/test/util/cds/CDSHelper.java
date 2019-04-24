@@ -186,7 +186,7 @@ public class CDSHelper
             PROT_Z123, PROT_Z124, PROT_Z125, PROT_Z126, PROT_Z127, PROT_Z128, PROT_Z129, PROT_Z130, PROT_Z131,
             PROT_Z132, PROT_Z133, PROT_Z134, PROT_Z135, PROT_Z136, PROT_Z137, PROT_Z138, PROT_Z139, PROT_Z140};
 
-    public static final String[] PRODUCTS = {"Acetaminophen, Dextromethorphan Hydrobromide, Doxylamine Succinate",
+    public static final String[] PRODUCTS = {"2F5", "3BNC117", "Acetaminophen, Dextromethorphan Hydrobromide, Doxylamine Succinate",
             "ACETAMINOPHEN, DEXTROMETHORPHAN HYDROBROMIDE, PHENYLEPHRINE HYDROCHLORIDE",
             "Acetaminophen, Diphenhydramine Hydrochloride, and Phenylephrine Hydrochloride",
             "Acetaminophen, Doxylamine Succinate, Phenylephrine HCl", "Adenosinum cyclophosphoricum", "ALCOHOL",
@@ -208,7 +208,7 @@ public class CDSHelper
             "OCTINOXATE, ZINC OXIDE, ENZACAMENE, TITANIUM DIOXIDE, AMILOXATE, AVOBENZONE",
             "Octinoxate, Zinc Oxide, Octisalate, Oxybenzone", "Olanzapine", "Oxygen", "OXYGEN, NITROGEN, CARBON DIOXIDE",
             "Oxymorphone hydrochloride", "pantoprazole sodium", "Peach", "Penicillin V Potassium", "Petasites Veronica",
-            "Pseudoephedrine Hydrochloride", "quetiapine fumarate", "risperidone", "Risperidone",
+            "PGT121", "PGT151", "Pseudoephedrine Hydrochloride", "quetiapine fumarate", "risperidone", "Risperidone",
             "Sagebrush, Mugwort Artemisia vulgaris", "Salicylic Acid", "Sennosides", "Standardized Timothy Grass Pollen",
             "Titanium Dioxide", "TITANIUM DIOXIDE, ZINC OXIDE", "TITANIUM OXIDE", "tramadol hydrochloride",
             "TRICLOSAN", "TRICLOSAN CARBONATE", "trifluoperazine hydrochloride", "verapamil hydrochloride"};
@@ -233,6 +233,7 @@ public class CDSHelper
     public static final String[] LEARN_ABOUT_ZAP117_INFO_FIELDS = {"Network", "Grant Affiliation", "Strategy", "Study Type", "Species", "Stage", "First enrollment"};
     public static final String[] LEARN_ABOUT_CONTACT_FIELDS = {"First point of contact", "Grant Principal Investigator", "Grant Project Manager", "Study Investigator"};
     public static final String[] LEARN_ABOUT_DESCRIPTION_FIELDS = {"Objectives", "Rationale", "Groups", "Methods", "Findings", "Conclusions", "Publications"};
+    public static final String[] LEARN_ABOUT_PKMAB_ASSAY_DIM_FIELDS = {"Lab ID", "MAb or mixture", "Source assay", "Specimen type"};
 
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
@@ -266,6 +267,7 @@ public class CDSHelper
     public static final String TITLE_ELISPOT = "ELISPOT";
     public static final String TITLE_ICS = "ICS";
     public static final String TITLE_NABMAB = "NABMAB";
+    public static final String TITLE_PKMAB = "PKMAb";
 
     // These are used to build ids of elements on the tree panels.
     public static final String PANEL_PREFIX = "study";
@@ -451,6 +453,7 @@ public class CDSHelper
     public static final String DEMO_TREAT_ARM = "Treatment Arm";
     public static final String DEMO_TREAT_CODED = "Treatment Arm Coded Label";
     public static final String DEMO_VACC_PLAC = "Vaccine or Placebo";
+    public static final String DEMO_SUBJECT_ID = "Subject Id";
 
     public static final String ELISPOT = "ELISPOT (Enzyme-Linked ImmunoSpot)";
     public static final String ELISPOT_ANTIGEN = "Antigen name";
@@ -524,6 +527,17 @@ public class CDSHelper
     public static final String NAB_VIRUS_NAME = "Virus name";
     public static final String NAB_VIRUS_TYPE = "Virus type";
 
+    public static final String PKMAB = "PKMAb (PK MAb)";
+    public static final String PKMAB_CONCENTRATION = "MAb concentration";
+    public static final String PKMAB_STD_NAME = "MAb or mixture standardized name";
+    public static final String PKMAB_LAB_ID = "Lab ID";
+    public static final String PKMAB_MAB_LABEL = "MAb or mixture label";
+    public static final String PKMAB_SOURCE_ASSAY = "Source assay";
+    public static final String PKMAB_SPECIMEN_TYPE = "Specimen type";
+    public static final String PKMAB_MAB_ID = "MAb or mixture id";
+    public static final String PKMAB_VISIT_CODE = "Visit code";
+    public static final String PKMAB_VISIT_DESC = "Visit description";
+
     //Response Call is also hidden, but checking if its present would conflict with Response call ID50, which is valid.
     public static final String[] NAB_HIDDEN_VARS = {"Titer IC50", "Titer IC80", "Virus Insert Name"};
 
@@ -531,6 +545,7 @@ public class CDSHelper
     public static final String TIME_POINTS_DAYS = "Study days";
     public static final String TIME_POINTS_WEEKS = "Study weeks";
     public static final String TIME_POINTS_MONTHS = "Study months";
+    public static final String TIME_POINTS_HOURS = "Study hours (PK MAb only)";
     public static final String TIME_POINTS_DAYS_FIRST_VACC = "Study days relative to first vaccination";
     public static final String TIME_POINTS_WEEKS_FIRST_VACC = "Study weeks relative to first vaccination";
     public static final String TIME_POINTS_MONTHS_FIRST_VACC = "Study months relative to first vaccination";
@@ -555,8 +570,10 @@ public class CDSHelper
     public static final String GRID_COL_ALL_VARS = "All variables from this session";
 
     // Time point axis types
-    public static final String AXIS_TYPE_CONTINUOUS = "Continuous";
-    public static final String AXIS_TYPE_CATEGORICAL = "Categorical";
+    public static final String PLOT_TYPE_SCATTER = "Scatter plot";
+    public static final String PLOT_TYPE_BOX = "Box plot";
+    public static final String PLOT_TYPE_LINE = "Line plot";
+    public static final String PLOT_TYPE_BOX_AND_LINE = "Box & line plot";
 
     // Time points alignments
     public static final String TIME_POINTS_ALIGN_DAY0 = "Aligned by Day 0";
@@ -1477,6 +1494,7 @@ public class CDSHelper
         String curValue;
         boolean changed = false;
 
+        _test.waitForElement(Locator.xpath(xpathValueTxtBox));
         curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
 
         if (turnOn)
@@ -1709,9 +1727,15 @@ public class CDSHelper
 
         public void makeNavigationSelection(WebDriverWrapper wdw)
         {
+            makeNavigationSelection(wdw, false);
+        }
+
+        public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)
+        {
             TestLogger.log("Navigate to CDS: " + getLinkText());
             wdw.waitAndClick(getLinkLocator());
-            waitForReady(wdw);
+            if (!skipReadyCheck)
+                waitForReady(wdw);
             wdw._ext4Helper.waitForMaskToDisappear(30000);
         }
 
