@@ -47,7 +47,7 @@ public class CDSSimpleQueryUpdateService extends SimpleQueryUpdateService implem
     }
 
     @Override
-    protected Object[] getKeys(Map<String, Object> map) throws InvalidKeyException
+    protected Object[] getKeys(Map<String, Object> map, Container container) throws InvalidKeyException
     {
         //Since many of our tables fake a single column primary key but actually have a compound key including container,
         //we need to ensure the container is in the key set if necessary.
@@ -66,6 +66,6 @@ public class CDSSimpleQueryUpdateService extends SimpleQueryUpdateService implem
                 break;
             }
         }
-        return super.getKeys(map);
+        return super.getKeys(map, container);
     }
 }
