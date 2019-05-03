@@ -15,17 +15,19 @@
  */
 package org.labkey.cds;
 
+import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.query.SimpleUserSchema;
+import org.labkey.api.query.SimpleUserSchema.SimpleTable;
 
 /**
  * Created by xingyang on 4/28/17.
  */
-public class CDSMetadataTable extends SimpleUserSchema.SimpleTable<SimpleUserSchema>
+public class CDSMetadataTable extends SimpleTable<SimpleUserSchema>
 {
-    public CDSMetadataTable(SimpleUserSchema schema, TableInfo table)
+    public CDSMetadataTable(SimpleUserSchema schema, TableInfo table, ContainerFilter cf)
     {
-        super(schema, table);
+        super(schema, table, cf);
 
         setContainerFilter(new CDSMetadataContainerFilter(schema.getUser()));
     }

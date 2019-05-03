@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.collections.CaseInsensitiveTreeSet;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.module.Module;
 import org.labkey.api.query.DefaultSchema;
@@ -71,33 +72,33 @@ public class CDSUserSchema extends SimpleUserSchema
     }
 
     @Override
-    protected TableInfo createWrappedTable(String name, @NotNull TableInfo sourceTable)
+    protected TableInfo createWrappedTable(String name, @NotNull TableInfo sourceTable, ContainerFilter cf)
     {
         if (SUBJECT_IMPORT_TABLES.contains(name.toLowerCase()) && !getContainer().hasPermission(getUser(), AdminPermission.class))
             return null;
 
         if (name.equalsIgnoreCase(MabGroupTable.NAME))
-            return super.createWrappedTable(name, sourceTable);
+            return super.createWrappedTable(name, sourceTable, cf);
 
-        return new CDSSimpleTable(this, sourceTable).init();
+        return new CDSSimpleTable(this, sourceTable, cf).init();
     }
 
     @Override
-    @Nullable
-    public TableInfo createTable(String name)
+    public TableInfo createTable(String name, ContainerFilter cf)
     {
         if (name.equalsIgnoreCase(MabGroupTable.NAME))
         {
-            return new MabGroupTable(getDbSchema().getTable(MabGroupTable.NAME), this);
+            return new MabGroupTable(getDbSchema().getTable(MabGroupTable.NAME), this, cf);
         }
 
-        return super.createTable(name);
+        return super.createTable(name, cf);
     }
 
     static public void register(final Module module)
     {
         DefaultSchema.registerProvider(SCHEMA_NAME, new DefaultSchema.SchemaProvider(module)
         {
+            @Override
             public QuerySchema createSchema(DefaultSchema schema, Module module)
             {
                 return new CDSUserSchema(schema.getUser(), schema.getContainer());
@@ -120,7 +121,7 @@ public class CDSUserSchema extends SimpleUserSchema
         {
             CDSUserSchema cds = new CDSUserSchema(getUser(), getContainer())
             {
-                private final Set<String> _metatables = new CaseInsensitiveTreeSet(Arrays.asList("study", "studyproductmap", "studypartgrouparmproduct", "studyassay"));
+                private final Set<String> _metatables = Collections.unmodifiableSet(new CaseInsensitiveTreeSet(Arrays.asList("study", "studyproductmap", "studypartgrouparmproduct", "studyassay")));
 
                 @Override
                 public @NotNull String getName()
@@ -129,30 +130,31 @@ public class CDSUserSchema extends SimpleUserSchema
                 }
 
                 @Override
-                public TableInfo createTable(String name)
+                public TableInfo createTable(String name, ContainerFilter cf)
                 {
                     TableInfo sourceTable = createSourceTable(name);
 
                     if (sourceTable != null)
                     {
-                        return new CDSMetadataTable(this, sourceTable).init();
+                        return new CDSMetadataTable(this, sourceTable, cf).init();
                     }
 
-                    return super.createTable(name);
+                    return super.createTable(name, cf);
                 }
 
                 @Override
                 public Set<String> getTableNames()
                 {
-                    return Collections.unmodifiableSet(_metatables);
+                    return _metatables;
                 }
 
                 @Override
-                public synchronized Set<String> getVisibleTableNames()
+                public Set<String> getVisibleTableNames()
                 {
-                    return Collections.unmodifiableSet(_metatables);
+                    return _metatables;
                 }
 
+                @Override
                 @NotNull
                 public Map<String, QueryDefinition> getQueryDefs()
                 {

@@ -1,6 +1,7 @@
 package org.labkey.cds.query;
 
 import org.jetbrains.annotations.NotNull;
+import org.labkey.api.data.BaseColumnInfo;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.CompareType;
 import org.labkey.api.data.Container;
@@ -36,11 +37,11 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
 {
     public static final String NAME = "MabGroup";
 
-    public MabGroupTable(@NotNull TableInfo table, @NotNull CDSUserSchema userSchema)
+    public MabGroupTable(@NotNull TableInfo table, @NotNull CDSUserSchema userSchema, ContainerFilter cf)
     {
-        super(table, userSchema);
+        super(table, userSchema, cf);
 
-        ColumnInfo rowId = addWrapColumn(_rootTable.getColumn("RowId"));
+        BaseColumnInfo rowId = addWrapColumn(_rootTable.getColumn("RowId"));
         rowId.setHidden(true);
 
         addWrapColumn(_rootTable.getColumn("Label"));

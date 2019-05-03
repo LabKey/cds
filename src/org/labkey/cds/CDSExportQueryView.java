@@ -252,7 +252,7 @@ public class CDSExportQueryView extends QueryView
         }
 
         ew.renderNewSheet();
-        ColumnInfo filterColumnInfo = new ColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
+        ColumnInfo filterColumnInfo = new BaseColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
         ew.setColumns(Collections.singletonList(filterColumnInfo));
         ew.setSheetName(METADATA_SHEET);
 
@@ -508,7 +508,7 @@ public class CDSExportQueryView extends QueryView
     private List<ColumnInfo> getColumns(List<String> columnNames)
     {
         return columnNames.stream().map(column -> {
-            ColumnInfo columnInfo = new ColumnInfo(column, JdbcType.VARCHAR);
+            BaseColumnInfo columnInfo = new BaseColumnInfo(column, JdbcType.VARCHAR);
             columnInfo.setInputRows(1); // force single row to avoid text wrap
             return columnInfo;
         }).collect(Collectors.toList());
