@@ -129,7 +129,9 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
         }
 
         String temp = queryForRowsWithoutValidStudy.getSQL();
-        queryForRowsWithoutValidStudy = new SQLFragment(temp.substring(0, temp.length() - 5));
+        temp = temp.strip();
+        assert temp.endsWith("WHERE");
+        queryForRowsWithoutValidStudy = new SQLFragment(temp.substring(0, temp.length() - "WHERE".length()));
         rows = new SqlSelector(sourceTable.getSchema(), queryForRowsWithoutValidStudy).getMapArray();
         if (rows.length > 0)
         {

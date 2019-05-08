@@ -46,15 +46,10 @@ public class PopulateRelationshipTask extends AbstractPopulateTask
             throw new PipelineJobException("Schema not found: cds");
         }
 
-        TableInfo sourceTable = cdsSchema.getTable("learn_relationshipsforstudies");
-        TableInfo targetTable = cdsSchema.getTable("studyrelationship");
+        TableInfo sourceTable = cdsSchema.getTable("learn_relationshipsforstudies", null);
+        TableInfo targetTable = cdsSchema.getTable("studyrelationship", new ContainerFilter.CurrentAndSubfolders(user));
 
         // Truncate the target table
-        if (targetTable instanceof ContainerFilterable)
-        {
-            ((ContainerFilterable) targetTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
-        }
-
         try
         {
             targetTable.getUpdateService().truncateRows(user, project, null, null);

@@ -60,7 +60,7 @@ public class PopulateFactsTask extends AbstractPopulateTask
                 throw new PipelineJobException("Unable to find source schema: \"" + SOURCE_SCHEMA + "\".");
             }
 
-            TableInfo sourceTable = sourceSchema.getTable(SOURCE_QUERY);
+            TableInfo sourceTable = sourceSchema.getTable(SOURCE_QUERY, ContainerFilter.CURRENT);
 
             if (null == sourceTable)
             {
@@ -72,11 +72,6 @@ public class PopulateFactsTask extends AbstractPopulateTask
             if (null == targetSchema)
             {
                 throw new PipelineJobException("Unable to find target schema: \"" + TARGET_SCHEMA + "\".");
-            }
-
-            if (sourceTable instanceof ContainerFilterable)
-            {
-                ((ContainerFilterable) sourceTable).setContainerFilter(ContainerFilter.CURRENT);
             }
 
             TableInfo targetTable = targetSchema.getTable(TARGET_QUERY);
