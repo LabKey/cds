@@ -327,6 +327,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         QueryDefinition qd = queryService.getQueryDef(user, project, "cds", "ds_study");
 
         ArrayList<QueryException> qerrors = new ArrayList<>();
+        qd.setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
         TableInfo tiImportStudy = qd.getTable(qerrors, true);
 
         if (!qerrors.isEmpty())
@@ -339,8 +340,6 @@ public class PopulateStudiesTask extends AbstractPopulateTask
             logger.error("Unable to find source query for studies.");
             return Collections.emptyMap();
         }
-
-        ((ContainerFilterable) tiImportStudy).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
 
         // Get all the studies
         SQLFragment sql = new SQLFragment("SELECT * FROM ").append(tiImportStudy);

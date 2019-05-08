@@ -72,7 +72,7 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
             throw new PipelineJobException("Unable to find target schema: \"" + settings.get(TARGET_SCHEMA) + "\".");
         }
 
-        TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
+        TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY), new ContainerFilter.CurrentAndSubfolders(user));
 
         if (null == targetTable)
         {
@@ -80,11 +80,6 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
         }
 
         // Truncate the target table
-        if (targetTable instanceof ContainerFilterable)
-        {
-            ((ContainerFilterable) targetTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
-        }
-
         try
         {
             targetTable.getUpdateService().truncateRows(user, project, null, null);
