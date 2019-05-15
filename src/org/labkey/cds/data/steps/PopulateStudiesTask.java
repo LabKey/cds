@@ -62,6 +62,7 @@ import java.util.Set;
 
 public class PopulateStudiesTask extends AbstractPopulateTask
 {
+    @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
         // Retrieve the set of studies available in the 'import_' schema
@@ -93,7 +94,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                     rows.clear();
                     rows.add(studies.get(studyName));
 
-                    TableInfo studyTable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"));
+                    TableInfo studyTable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"), null);
                     QueryUpdateService qud = studyTable.getUpdateService();
 
                     if (null != qud && !rows.isEmpty())
@@ -326,6 +327,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         QueryDefinition qd = queryService.getQueryDef(user, project, "cds", "ds_study");
 
         ArrayList<QueryException> qerrors = new ArrayList<>();
+        qd.setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
         TableInfo tiImportStudy = qd.getTable(qerrors, true);
 
         if (!qerrors.isEmpty())
@@ -338,8 +340,6 @@ public class PopulateStudiesTask extends AbstractPopulateTask
             logger.error("Unable to find source query for studies.");
             return Collections.emptyMap();
         }
-
-        ((ContainerFilterable) tiImportStudy).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
 
         // Get all the studies
         SQLFragment sql = new SQLFragment("SELECT * FROM ").append(tiImportStudy);

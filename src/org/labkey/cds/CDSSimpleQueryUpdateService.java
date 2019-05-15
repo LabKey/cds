@@ -19,15 +19,11 @@ import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.TableInfo;
-import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.InvalidKeyException;
 import org.labkey.api.query.QueryUpdateService;
-import org.labkey.api.query.QueryUpdateServiceException;
 import org.labkey.api.query.SimpleQueryUpdateService;
 import org.labkey.api.query.SimpleUserSchema;
-import org.labkey.api.security.User;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +34,7 @@ import java.util.Map;
  */
 public class CDSSimpleQueryUpdateService extends SimpleQueryUpdateService implements QueryUpdateService
 {
-    Container _container;
+    private final Container _container;
 
     public CDSSimpleQueryUpdateService(Container container, final SimpleUserSchema.SimpleTable queryTable, TableInfo dbTable)
     {

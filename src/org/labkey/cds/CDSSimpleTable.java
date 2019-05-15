@@ -15,6 +15,7 @@
  */
 package org.labkey.cds;
 
+import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.DatabaseTableType;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.query.QueryUpdateService;
@@ -28,19 +29,25 @@ import org.labkey.api.study.DataspaceContainerFilter;
  */
 public class CDSSimpleTable extends SimpleUserSchema.SimpleTable<SimpleUserSchema>
 {
-    public CDSSimpleTable(SimpleUserSchema schema, TableInfo table)
+    public CDSSimpleTable(SimpleUserSchema schema, TableInfo table, ContainerFilter cf)
     {
-        super(schema, table);
+        super(schema, table, cf);
+    }
 
-        setContainerFilter(new DataspaceContainerFilter(schema.getUser(), schema.getContainer().getProject())
+
+    @Override
+    protected ContainerFilter getDefaultContainerFilter()
+    {
+        return new DataspaceContainerFilter(getUserSchema().getUser(), getUserSchema().getContainer().getProject())
         {
             @Override
             public boolean useCTE()
             {
                 return true;
             }
-        });
+        };
     }
+
 
     @Override
     public QueryUpdateService getUpdateService()

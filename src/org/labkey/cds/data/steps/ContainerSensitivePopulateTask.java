@@ -72,7 +72,7 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
             throw new PipelineJobException("Unable to find target schema: \"" + settings.get(TARGET_SCHEMA) + "\".");
         }
 
-        TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
+        TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY), new ContainerFilter.CurrentAndSubfolders(user));
 
         if (null == targetTable)
         {
@@ -80,11 +80,6 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
         }
 
         // Truncate the target table
-        if (targetTable instanceof ContainerFilterable)
-        {
-            ((ContainerFilterable) targetTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
-        }
-
         try
         {
             targetTable.getUpdateService().truncateRows(user, project, null, null);
@@ -134,7 +129,12 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
         }
 
         String temp = queryForRowsWithoutValidStudy.getSQL();
-        queryForRowsWithoutValidStudy = new SQLFragment(temp.substring(0, temp.length() - 5));
+        temp = temp.strip();
+        if (temp.endsWith("WHERE"))
+            temp = temp.substring(0, temp.length() - "WHERE".length());
+        else if (temp.endsWith("AND"))
+            temp = temp.substring(0, temp.length() - "AND".length());
+        queryForRowsWithoutValidStudy = new SQLFragment(temp);
         rows = new SqlSelector(sourceTable.getSchema(), queryForRowsWithoutValidStudy).getMapArray();
         if (rows.length > 0)
         {

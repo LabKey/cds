@@ -36,7 +36,7 @@ import org.labkey.api.action.SimpleErrorView;
 import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
-import org.labkey.api.data.ColumnInfo;
+import org.labkey.api.data.BaseColumnInfo;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.CoreSchema;
 import org.labkey.api.data.DataColumn;
@@ -815,7 +815,7 @@ public class CDSController extends SpringActionController
                 {
                     List<DisplayColumn> list = new ArrayList<>();
                     for (String s : Arrays.asList("email", "displayname", "firstname", "lastname", "lastlogin", "verification"))
-                        list.add(new DataColumn(new ColumnInfo(s, JdbcType.valueOf(rs.getMetaData().getColumnType(rs.findColumn(s))))));
+                        list.add(new DataColumn(new BaseColumnInfo(s, JdbcType.valueOf(rs.getMetaData().getColumnType(rs.findColumn(s))))));
                     try (Results r = new ResultsImpl(rs))
                     {
                         ExcelWriter xl = new ExcelWriter(r, list);
