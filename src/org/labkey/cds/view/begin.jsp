@@ -20,11 +20,9 @@
 <%@ page import="org.labkey.api.di.DataIntegrationUrls" %>
 <%@ page import="org.labkey.api.query.QueryUrls" %>
 <%@ page import="org.labkey.api.study.StudyService" %>
-<%@ page import="org.labkey.api.util.PageFlowUtil" %>
+<%@ page import="org.labkey.api.view.ActionURL" %>
 <%@ page import="org.labkey.cds.CDSController" %>
 <%@ page import="org.labkey.cds.CDSUserSchema" %>
-<%@ page import="org.labkey.api.view.ActionURL" %>
-<%@ page import="org.labkey.folder.xml.PagesDocument" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%@ taglib prefix="labkey" uri="http://www.labkey.org/taglib" %>
 <%
@@ -51,13 +49,13 @@
 </style>
 <div class="cds-begin">
     <ul>
-        <li><%=textLink("Application", CDSController.AppAction.class)%></li>
-        <li><%=textLink("Manage Configuration", PageFlowUtil.urlProvider(SinglePageAppUrls.class).getManageAppURL(getContainer()))%></li>
-        <li><%=textLink("Run ETLs", PageFlowUtil.urlProvider(DataIntegrationUrls.class).getBeginURL(c))%></li>
-        <li><%=textLink("Browse Schema", PageFlowUtil.urlProvider(QueryUrls.class).urlSchemaBrowser(c, CDSUserSchema.SCHEMA_NAME))%></li>
-        <li><%=textLink("Manage News Feed", PageFlowUtil.urlProvider(QueryUrls.class).urlExecuteQuery(newsFeedURL))%></li>
-        <li><%=textLink("Add Users", addUserUrl)%></li>
-        <li><%=textLink("Download Group Permissions Report", CDSController.PermissionsReportExportAction.class)%></li>
+        <li><%=link("Application", CDSController.AppAction.class)%></li>
+        <li><%=link("Manage Configuration").href(urlProvider(SinglePageAppUrls.class).getManageAppURL(getContainer()))%></li>
+        <li><%=link("Run ETLs").href(urlProvider(DataIntegrationUrls.class).getBeginURL(c))%></li>
+        <li><%=link("Browse Schema").href(urlProvider(QueryUrls.class).urlSchemaBrowser(c, CDSUserSchema.SCHEMA_NAME))%></li>
+        <li><%=link("Manage News Feed").href(urlProvider(QueryUrls.class).urlExecuteQuery(newsFeedURL))%></li>
+        <li><%=link("Add Users").href(addUserUrl)%></li>
+        <li><%=link("Download Group Permissions Report", CDSController.PermissionsReportExportAction.class)%></li>
     </ul>
 </div>
 <%
