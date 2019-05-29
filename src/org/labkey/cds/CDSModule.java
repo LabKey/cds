@@ -130,38 +130,43 @@ public class CDSModule extends DefaultModule
         addModuleProperty(_mabReport2Label);
     }
 
+    @Override
     public String getName()
     {
         return NAME;
     }
 
+    @Override
     public double getVersion()
     {
-        return 18.35;
+        return 19.10;
     }
 
+    @Override
     public boolean hasScripts()
     {
         return true;
     }
 
+    @Override
     @NotNull
     protected Collection<WebPartFactory> createWebPartFactories()
     {
         return new ArrayList<>(Collections.singletonList(
-                new BaseWebPartFactory("CDS Management")
+            new BaseWebPartFactory("CDS Management")
+            {
+                @Override
+                public WebPartView getWebPartView(@NotNull ViewContext portalCtx, @NotNull Portal.WebPart webPart)
                 {
-                    @Override
-                    public WebPartView getWebPartView(@NotNull ViewContext portalCtx, @NotNull Portal.WebPart webPart)
-                    {
-                        JspView view = new JspView("/org/labkey/cds/view/begin.jsp");
-                        view.setTitle("CDS Management");
-                        return view;
-                    }
+                    JspView view = new JspView("/org/labkey/cds/view/begin.jsp");
+                    view.setTitle("CDS Management");
+                    return view;
                 }
+            }
         ));
     }
 
+    @Override
     protected void init()
     {
         addController("cds", CDSController.class);
@@ -170,6 +175,7 @@ public class CDSModule extends DefaultModule
     }
 
 
+    @Override
     public void doStartup(ModuleContext moduleContext)
     {
         // add a container listener so we'll know when our container is deleted:

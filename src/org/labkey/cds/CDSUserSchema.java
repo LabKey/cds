@@ -60,7 +60,7 @@ public class CDSUserSchema extends SimpleUserSchema
 
 
     @Override
-    public synchronized Set<String> getVisibleTableNames()
+    public Set<String> getVisibleTableNames()
     {
         Set<String> available = new CaseInsensitiveTreeSet();
         available.addAll(super.getVisibleTableNames());
