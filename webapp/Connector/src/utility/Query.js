@@ -862,8 +862,8 @@ Ext.define('Connector.utility.Query', {
                         var operator = f.getFilterType().getURLSuffix();
                         if (operator == 'eq' || operator == 'in')
                         {
-                            var strvalue = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-                            listofFilters.push(operator=='eq' ? [strvalue] : strvalue.split(';'));
+                            let value = f.getValue();
+                            listofFilters.push(operator=='eq' ? [value] : value);
                         }
                         else
                             m.filterArray.push(f);
@@ -1020,13 +1020,12 @@ Ext.define('Connector.utility.Query', {
             case 'datelte':
             case 'dategt':
             case 'dategte':
-                v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+                v = f.getValue();
                 clause = columnName + operatorMap[operator] + literalFn(v);
                 break;
             case 'in':
             case 'notin':
-                v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-                clause = columnName + (operator==='in' ? " IN " : " NOT IN ") + this._toSqlValuesList(v.split(';'),literalFn,forDebugging);
+                clause = columnName + (operator==='in' ? " IN " : " NOT IN ") + this._toSqlValuesList(f.getValue(), literalFn,forDebugging);
                 break;
             case 'isblank':
                 clause = columnName + " IS NULL";
@@ -1036,10 +1035,7 @@ Ext.define('Connector.utility.Query', {
                 break;
             case 'between':
             case 'notbetween':
-                v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-                if (!Ext.isString(v))
-                    throw "invalid value for between: " + v;
-                arr = v.split(",");
+                arr = f.getValue();
                 if (arr.length != 2)
                     throw "invalid value for between: " + v;
                 clause = columnName + (operator==='between'?" BETWEEN ":" NOT BETWEEN ") +
@@ -1047,14 +1043,14 @@ Ext.define('Connector.utility.Query', {
                 break;
             case 'startswith':
             case 'doesnotstartwith':
-                v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+                v = f.getValue();
                 v = v.replace(/([%_!])/g, "!$1") + '%';
                 clause = columnName + (operator==='like'?" LIKE ":" NOT LIKE ") +
                         literalFn(v) + " ESCAPE '!'";
                 break;
             case 'contains':
             case 'doesnotcontain':
-                v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+                v = f.getValue();
                 v = '%' + v.replace(/([%_!])/g, "!$1") + '%';
                 clause = (operator==='like'?" LIKE ":" NOT LIKE ") +
                         literalFn(v) + " ESCAPE '!'";
