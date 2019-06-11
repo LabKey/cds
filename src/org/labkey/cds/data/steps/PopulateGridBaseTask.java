@@ -69,7 +69,7 @@ public class PopulateGridBaseTask extends AbstractPopulateTask
                 throw new PipelineJobException("Unable to find target schema: \"" + settings.get(TARGET_SCHEMA) + "\".");
             }
 
-            TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
+            TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY), null);
 
             if (null == targetTable)
             {
@@ -95,7 +95,7 @@ public class PopulateGridBaseTask extends AbstractPopulateTask
                 throw new PipelineJobException("Unable to find source table: \"" + settings.get(SOURCE_QUERY) + "\".");
             }
 
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
+            sql = new SQLFragment("SELECT * FROM ").append(sourceTable, "ST");
             rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
 
             if (rows.length > 0)

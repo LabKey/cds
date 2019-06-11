@@ -106,9 +106,9 @@ Ext.define('Connector.window.MabGridFacet', {
         var filter = this.mabModel.getFieldStateFilter(fieldName);
 
         if (filter) {
-            var value = Ext.isArray(filter.getValue()) ? filter.getValue()[0] : filter.getValue();
+            let value = filter.getValue();
             return {
-                filterValues: value ? value.split(";") : [],
+                filterValues: value ? value : [],
                 isFilterNegated: filter.getFilterType().getURLSuffix() === 'notin'
             }
         }

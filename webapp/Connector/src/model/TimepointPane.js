@@ -268,9 +268,7 @@ Ext.define('Connector.model.TimepointPane', {
 
             Ext.each(this.get('filter').getTimeFilters(), function(filter)
             {
-                value = Ext.isArray(filter.getValue()) ? filter.getValue()[0] : filter.getValue();
-
-                Ext.each(value.split(';'), function(idStr)
+                Ext.each(filter.getValue(), function(idStr)
                 {
                     visitRowsIds.push(parseInt(idStr));
                 });
