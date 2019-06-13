@@ -79,8 +79,8 @@ Ext.define('Connector.panel.MabVirusSelection', {
             this.allValues = this.mabModel.getUniqueFieldValues(this.filterFieldName);
             var filter = this.mabModel.getFieldStateFilter(this.filterFieldName);
             if (filter) {
-                var values = Ext.isArray(filter.getValue()) ? filter.getValue()[0] : filter.getValue();
-                values = values ? values.split(";") : [];
+                var values = filter.getValue();
+                values = values ? values : [];
                 if (filter.getFilterType().getURLSuffix() === 'notin') {
                     values = Ext.Array.difference(this.allValues, values);
                 }

@@ -322,8 +322,8 @@ Ext.define('Connector.utility.MabQuery', {
 
     _getFilterWhereSub : function(tableAliasName, filter, isDataset) {
         var f = filter.gridFilter[0];
-        var v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-        var values = v.split(';'), noEmptyWhere, emptyWhere;
+        var values = f.getValue();
+        var noEmptyWhere, emptyWhere;
         var nullInd = values.indexOf(this.BLANK_VALUE);
         var columnName = isDataset ? this._getGridBaseDatasetColumnName(f) : f.getColumnName();
 
@@ -540,8 +540,7 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     _getProcessedIC50Ranges : function(f) {
-        var value = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-        var ranges = value.split(';');
+        const ranges = f.getValue();
         if (f.getFilterType().getURLSuffix() === 'notin') {
             var reversedRanges = [];
             Ext.iterate(this.IC50Ranges, function(key) {
@@ -746,7 +745,8 @@ Ext.define('Connector.utility.MabQuery', {
 
     _getExportedFilterValuesStr : function(filter) {
         var f = filter.gridFilter[0], op = '';
-        var valueStr = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+        var valueStr = f.getValue();
+
         if (f.getColumnName() === this.VIRUS_FILTER_COLUMN)
             valueStr = valueStr.replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, ' ');
 
