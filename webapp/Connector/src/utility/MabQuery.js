@@ -540,7 +540,7 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     _getProcessedIC50Ranges : function(f) {
-        let ranges = f.getValue();
+        const ranges = f.getValue();
         if (f.getFilterType().getURLSuffix() === 'notin') {
             var reversedRanges = [];
             Ext.iterate(this.IC50Ranges, function(key) {

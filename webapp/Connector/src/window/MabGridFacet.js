@@ -106,7 +106,7 @@ Ext.define('Connector.window.MabGridFacet', {
         var filter = this.mabModel.getFieldStateFilter(fieldName);
 
         if (filter) {
-            let value = filter.getValue();
+            const value = filter.getValue();
             return {
                 filterValues: value ? value : [],
                 isFilterNegated: filter.getFilterType().getURLSuffix() === 'notin'

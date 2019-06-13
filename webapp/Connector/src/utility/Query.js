@@ -862,7 +862,7 @@ Ext.define('Connector.utility.Query', {
                         var operator = f.getFilterType().getURLSuffix();
                         if (operator == 'eq' || operator == 'in')
                         {
-                            let value = f.getValue();
+                            const value = f.getValue();
                             listofFilters.push(operator=='eq' ? [value] : value);
                         }
                         else
