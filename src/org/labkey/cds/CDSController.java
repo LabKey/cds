@@ -81,7 +81,10 @@ import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
 import org.labkey.api.view.RedirectException;
 import org.labkey.api.view.VBox;
+import org.labkey.api.view.ViewContext;
 import org.labkey.api.view.template.PageConfig;
+import org.labkey.api.view.template.WarningService;
+import org.labkey.api.view.template.Warnings;
 import org.labkey.api.webdav.WebdavResource;
 import org.labkey.api.webdav.WebdavService;
 import org.labkey.api.writer.PrintWriters;
@@ -94,6 +97,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -106,11 +110,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.labkey.api.view.template.PageConfig.SESSION_WARNINGS_BANNER_KEY;
 
 
 public class CDSController extends SpringActionController
@@ -1129,6 +1136,45 @@ public class CDSController extends SpringActionController
             CDSManager.get().updateSurvey(getUser(), form.getFirstName(), form.getLastName(), form.getInstitution(),
                     form.getRole(), form.getNetwork(), form.getResearchArea(), form.getReferrer());
             response.put("success", true);
+            return response;
+        }
+    }
+
+    @RequiresPermission(ReadPermission.class)
+    public class GetDismissableWarningsAction extends ReadOnlyApiAction
+    {
+        @Override
+        public ApiSimpleResponse execute(Object o, BindException errors) throws Exception
+        {
+            ApiSimpleResponse response = new ApiSimpleResponse();
+
+            ViewContext context = getViewContext();
+            List<String> messages = new LinkedList<>();
+            Warnings dismissibleWarnings = Warnings.of(messages);
+            WarningService.get().forEachProvider(p->p.addDismissibleWarnings(dismissibleWarnings, context));
+
+            if (context != null && context.getRequest() != null)
+            {
+                HttpSession session = context.getRequest().getSession(true);
+
+                if (session.getAttribute(SESSION_WARNINGS_BANNER_KEY) == null)
+                {
+                    session.setAttribute(SESSION_WARNINGS_BANNER_KEY, true);
+                }
+                else if (!(boolean) session.getAttribute(SESSION_WARNINGS_BANNER_KEY) && messages.isEmpty())
+                {
+                    // If the session attribute has explicitly been set to false & there are no more warnings, remove it
+                    session.removeAttribute(SESSION_WARNINGS_BANNER_KEY);
+                }
+
+                if (session.getAttribute(SESSION_WARNINGS_BANNER_KEY) != null &&
+                        (boolean) session.getAttribute(SESSION_WARNINGS_BANNER_KEY) &&
+                        !messages.isEmpty())
+                {
+                    response.put("messages", messages);
+                }
+                response.put("success", true);
+            }
             return response;
         }
     }

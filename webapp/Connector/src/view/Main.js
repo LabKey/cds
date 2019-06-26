@@ -21,8 +21,13 @@ Ext.define('Connector.view.Main', {
     ui: 'custom',
 
     items: [{
-        xtype: 'connectorheader',
-        region: 'north'
+        xtype: 'panel',
+        region: 'north',
+        cls : 'karl',
+        items : [
+            {xtype : 'connectorheader'},
+            {xtype : 'announcementheader'}
+        ]
     },{
         xtype: 'tabpanel',
         region: 'center',

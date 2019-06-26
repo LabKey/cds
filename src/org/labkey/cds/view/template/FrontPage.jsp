@@ -87,6 +87,13 @@
             </div>
         </div>
     </div>
+    <div id="notification">
+        <img src="<%=h(contextPath + "/production/Connector/resources/images/icon_general_expand_hover.svg")%>" width="20" height="20"/>
+        <span>The server will be offline for 1 hour starting at 6/25 6:00 PST</span>
+        <div class="dismiss">
+            <img src="<%=h(contextPath + "/production/Connector/resources/images/icon_general_expand_hover.svg")%>" width="20" height="20"/>
+        </div>
+    </div>
     <div class="signin-modal-popup hidden">
         <div class="signin-modal front-page-popup-container">
             <div data-form="sign-in" class="sign-in">

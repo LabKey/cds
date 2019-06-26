@@ -119,3 +119,83 @@ Ext.define("Connector.view.Header", {
         this.callParent();
     }
 });
+
+Ext.define('Connector.view.AnnouncementHeader', {
+
+    extend : 'Ext.panel.Panel',
+
+    layout : {
+        type : 'hbox',
+        align : 'middle'
+    },
+
+    alias : 'widget.announcementheader',
+
+    hidden : true,
+
+    initComponent : function() {
+
+        this.msg = this.getMessages();
+        this.items = [
+            {
+                xtype: 'box',
+                tpl: ['<img src="{imgSrc}" width="20" height="20">'],
+                data: {imgSrc: Connector.resourceContext.imgPath + '/' + 'icon_general_expand_hover.svg'},
+                margin : 10
+            },
+            this.msg,
+            {
+                xtype : 'button',
+                text : 'x',
+                margin : 8,
+                tooltip : 'dismiss this notification',
+                handler : function(){
+                    LABKEY.Ajax.request({
+                        url : LABKEY.ActionURL.buildURL("core", "dismissCoreWarnings.api"),
+                        method : 'POST',
+                        scope : this,
+                        success : function (){
+                            this.setVisible(false);
+                        },
+                        failure : function(){
+                            Ext.Msg.alert('Failed to dismiss warnings');
+                        }
+                    });
+                },
+                scope : this
+            }
+        ];
+
+        LABKEY.Ajax.request({
+            url: LABKEY.ActionURL.buildURL("cds", "getDismissableWarnings.api"),
+            method: 'GET',
+            scope : this,
+            success: function (response){
+                let o = Ext.decode(response.responseText);
+                if (o.messages) {
+                    this.setVisible(true);
+                    this.msg.update(o.messages);
+                }
+                else
+                    this.setVisible(false);
+            }
+        }, this);
+
+        this.callParent();
+    },
+
+    getMessages : function(){
+        let tpl = new Ext.XTemplate(
+            '<tpl for=".">',
+            '<div class="">',
+            '<span>{.}</span><br>',
+            '</div>',
+            '</tpl>',
+        );
+
+        return new Ext.Component({
+            tpl : tpl,
+            flex : 2
+        });
+    }
+});

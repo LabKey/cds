@@ -129,6 +129,35 @@ html { box-sizing: border-box; }
   #navigation .link.hide { opacity: 1 !important; }
   #navigation .link span { display: none; } }
 #navigation span { width: auto; }
+#notification {
+  top: 4.635em;
+  max-width: 1280px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+  height: 25px;
+  background-color: #F2F2F2;
+  position: fixed;
+  overflow: hidden;
+  z-index: 15;
+  padding: 0em;
+}
+#notification .dismiss {
+  float: right;
+  height: 100%;
+  width: auto;
+  overflow: hidden;
+  display: table;
+  white-space: nowrap;
+  margin: 0;
+  outline: none;
+  border: none;
+  text-align: right;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
 
 @-webkit-keyframes $animation_name { 0% { opacity: 1; }
   100% { opacity: 0; } }
