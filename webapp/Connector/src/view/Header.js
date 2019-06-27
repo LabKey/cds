@@ -173,7 +173,7 @@ Ext.define('Connector.view.AnnouncementHeader', {
             method: 'GET',
             scope : this,
             success: function (response){
-                let o = Ext.decode(response.responseText);
+                var o = Ext.decode(response.responseText);
                 if (o.messages) {
                     this.setVisible(true);
                     this.msg.update(o.messages);
@@ -187,19 +187,18 @@ Ext.define('Connector.view.AnnouncementHeader', {
     },
 
     getMessages : function(){
-        let tpl = new Ext.XTemplate(
+        var tpl = new Ext.XTemplate(
             '<tpl for=".">',
-            '<div class="">',
+            '<div class="notification-messages">',
             '<span>{.}</span><br>',
             '</div>',
-            '</tpl>',
+            '</tpl>'
         );
 
         return new Ext.Component({
             tpl : tpl,
             flex : 2,
-            margin : '15, 5, 15, 5',
-            cls : 'notification-messages'
+            margin : '15, 5, 15, 5'
         });
     }
 });

@@ -56,3 +56,12 @@
   background: -moz-linear-gradient(left, $black,  $dark-color);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#333333',GradientType=1);
 }
+
+.announcementheader {
+
+  .notification-messages {
+    font-family: "Arial", sans-serif;
+    font-size: 14px;
+    color : #303030;
+  }
+}
