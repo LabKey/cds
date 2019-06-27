@@ -133,6 +133,8 @@ Ext.define('Connector.view.AnnouncementHeader', {
 
     hidden : true,
 
+    cls: 'announcementheader',
+
     initComponent : function() {
 
         this.msg = this.getMessages();
@@ -140,14 +142,14 @@ Ext.define('Connector.view.AnnouncementHeader', {
             {
                 xtype: 'box',
                 tpl: ['<img src="{imgSrc}" width="20" height="20">'],
-                data: {imgSrc: Connector.resourceContext.imgPath + '/' + 'icon_general_expand_hover.svg'},
-                margin : 10
+                data: {imgSrc: Connector.resourceContext.imgPath + '/' + 'warning_indicator.svg'},
+                margin : 15
             },
             this.msg,
             {
                 xtype : 'button',
                 text : 'x',
-                margin : 8,
+                margin : 15,
                 tooltip : 'dismiss this notification',
                 handler : function(){
                     LABKEY.Ajax.request({
@@ -195,7 +197,9 @@ Ext.define('Connector.view.AnnouncementHeader', {
 
         return new Ext.Component({
             tpl : tpl,
-            flex : 2
+            flex : 2,
+            margin : '15, 5, 15, 5',
+            cls : 'notification-messages'
         });
     }
 });

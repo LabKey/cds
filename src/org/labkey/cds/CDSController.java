@@ -1140,7 +1140,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresPermission(ReadPermission.class)
+    @RequiresNoPermission
     public class GetDismissableWarningsAction extends ReadOnlyApiAction
     {
         @Override

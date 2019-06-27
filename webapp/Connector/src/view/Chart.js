@@ -1037,14 +1037,12 @@ Ext.define('Connector.view.Chart', {
         };
 
         // only color path when color axis is from demographics
-//        if (this.activeMeasures.color && this.activeMeasures.color.isDemographic) {
-        if (this.activeMeasures.color) {
+        if (this.activeMeasures.color && this.activeMeasures.color.isDemographic) {
             pathAes.pathColor = function(rows)
             {
                 return Ext4.isArray(rows) && rows.length > 0 ? rows[0].color : null;
             };
 
-            console.log('choosing multi color for chart');
             this.plot.scales.pathColor = {
                 scaleType: 'discrete',
                 range: LABKEY.vis.Scale.DataspaceColor()

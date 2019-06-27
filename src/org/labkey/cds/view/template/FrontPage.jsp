@@ -62,10 +62,43 @@
     <%--<!-- Client API Dependencies -->--%>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
+    <script type="text/javascript" src="<%=text(frontPagePath)%>/components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript">
         reloadRegisterPage = function() {
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
-        }
+        };
+
+        LABKEY.Utils.onReady(function ()
+        {
+            $(document).ready(function(){
+
+                // notification close button
+                $('div.dismiss').click(function(){
+                    $('#notification').remove();
+                });
+
+                LABKEY.Ajax.request({
+                    url: LABKEY.ActionURL.buildURL("cds", "getDismissableWarnings.api"),
+                    method: 'GET',
+                    success: function (response){
+                        const o = LABKEY.Utils.decode(response.responseText);
+                        if (o.messages) {
+                            const msgDiv = $('div.notification-messages');
+
+                            $.each(o.messages, function (idx, msg) {
+                                msgDiv.append($('<span>').text(msg).append($('<br>')));
+                            });
+                        }
+                        else {
+                            $('#notification').remove();
+                        }
+                    }
+                });
+
+            });
+        });
+
     </script>
 </head>
 <body>
@@ -88,10 +121,13 @@
         </div>
     </div>
     <div id="notification">
-        <img src="<%=h(contextPath + "/production/Connector/resources/images/icon_general_expand_hover.svg")%>" width="20" height="20"/>
-        <span>The server will be offline for 1 hour starting at 6/25 6:00 PST</span>
+        <div class="warning">
+            <img src="<%=text(frontPagePath)%>/img/warning_indicator.svg" width="20" height="20"/>
+        </div>
+        <div class="notification-messages">
+        </div>
         <div class="dismiss">
-            <img src="<%=h(contextPath + "/production/Connector/resources/images/icon_general_expand_hover.svg")%>" width="20" height="20"/>
+            <img src="<%=text(frontPagePath)%>/img/dismiss.svg" width="20" height="20"/>
         </div>
     </div>
     <div class="signin-modal-popup hidden">
