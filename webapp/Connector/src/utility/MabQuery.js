@@ -745,7 +745,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     _getExportedFilterValuesStr : function(filter) {
         var f = filter.gridFilter[0], op = '';
-        var valueStr = f.getValue();
+        var valueStr = f.getURLParameterValue();
 
         if (f.getColumnName() === this.VIRUS_FILTER_COLUMN)
             valueStr = valueStr.replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, ' ');
