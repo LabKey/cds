@@ -2276,7 +2276,7 @@ Ext.define('Connector.view.Chart', {
                     data = selections[i].get('timeFilters')[0];
                 }
                 if (data.getColumnName() === name) {
-                    values = values.concat(data.getValue()).concat(';');
+                    values = values.concat(data.getURLParameterValue()).concat(';');
                 }
             }
         }
