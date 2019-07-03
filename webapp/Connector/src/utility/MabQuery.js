@@ -322,7 +322,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     _getFilterWhereSub : function(tableAliasName, filter, isDataset) {
         var f = filter.gridFilter[0];
-        var values = f.getValue();
+        var values = f.getValue().slice(); // a copy of filter values
         var noEmptyWhere, emptyWhere;
         var nullInd = values.indexOf(this.BLANK_VALUE);
         var columnName = isDataset ? this._getGridBaseDatasetColumnName(f) : f.getColumnName();
@@ -339,7 +339,7 @@ Ext.define('Connector.utility.MabQuery', {
         }
 
         if (nullInd > -1) {
-            values.splice(nullInd, 1);
+            values.splice(nullInd, 1); // splice mutates
             emptyWhere = tableAliasName + '.' + columnName + this._getNULLFilterOp(f);
         }
         else if (f.getFilterType().getURLSuffix() === 'notin') {
