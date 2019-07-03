@@ -2048,8 +2048,9 @@ Ext.define('Connector.view.Chart', {
                 gridData = s.get('timeFilters');
             }
             for (var i = 0; i < gridData.length; i++) {
-                if (gridData[i] != null && Ext.isString(gridData[i].getValue())) {
-                    values = gridData[i].getValue().split(';');
+                if (gridData[i] != null && gridData[i].getValue() != null) {
+                    var filterVal = gridData[i].getValue();
+                    values = LABKEY.Utils.isArray(filterVal) ? filterVal.slice() : [filterVal];
                     break;
                 }
             }
