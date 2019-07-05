@@ -545,7 +545,7 @@ Connector.view.StudyAxis = function() {
         var ranges = xScale.range();
         var newRanges = [];
         Ext.each(ranges, function(r) {
-            newRanges.push(r + 150);
+            newRanges.push(r + Connector.view.Chart.studyAxisWidthOffset);
         });
         xScale.range(newRanges);
         return studyAxis;

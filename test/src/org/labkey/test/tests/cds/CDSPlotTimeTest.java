@@ -553,6 +553,33 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyTimepointXAxisTicks()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        // verify x-axis only show whole number ticks
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
+        xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT);
+
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        String studyName = "ZAP 105";
+        filterForSingleStudy(studyName);
+
+        final String expectedPlotTickText = "0\n1\n2\n3\n4\n0\n0.1\n0.2\n0.3\n0.4\n0.5\n0.6\n0.7\n0.8\n0.9\n1\n1.1\n1.2";
+        cds.assertPlotTickText(expectedPlotTickText);
+    }
+
+    @Test
     public void verifyTimepointAlignmentScenario1()
     {
         // Scenario #1: Only one vaccination for a given group, in which case the first vaccination and the last vaccination are the same visit
