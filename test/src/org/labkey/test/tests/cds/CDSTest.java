@@ -242,13 +242,30 @@ public class CDSTest extends CDSReadOnlyTest
                 .sendKeys("Testing User notice on public page to announce outages");
         clickButton("Save");
 
-        log("Verifying the message in the CDS application");
+        log("Verifying the message in the CDS application - Home");
         cds.enterApplication();
         cds.goToAppHome();
         assertElementPresent(Locator.tagWithClass("div", "notification-messages").
                 withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
 
+        log("Verifying the message is displayed in learn about");
+        cds.viewLearnAboutPage("Assays");
+        assertElementPresent(Locator.tagWithClass("div", "notification-messages").
+                withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
+
+        log("Verifying the message is displayed in summary");
+        cds.goToSummary();
+        assertElementPresent(Locator.tagWithClass("div", "notification-messages").
+                withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
+
+        cds.logOutFromApplication();
+        assertElementPresent(Locator.tagWithClass("div", "notification-messages").
+                withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
+
         log("Turning off the notification");
+        simpleSignIn();
+
+        goToProjectHome();
         goToAdminConsole().clickSiteSettings();
         waitForElement(Locator.name("showRibbonMessage"));
         uncheckCheckbox(Locator.checkboxByName("showRibbonMessage"));
