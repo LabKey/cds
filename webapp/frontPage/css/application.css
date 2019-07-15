@@ -129,7 +129,7 @@ html { box-sizing: border-box; }
   #navigation .link.hide { opacity: 1 !important; }
   #navigation .link span { display: none; } }
 #navigation span { width: auto; }
-#notification { top: 4.635em; max-width: 1280px; left: 0; right: 0; margin: 0 auto; display: block; width: 100%; min-height: 4.635em; height: auto; background-color: white; position: fixed; overflow: hidden; z-index: 15; padding: 0em; }
+#notification { top: 4.635em; max-width: 1280px; left: 0; right: 0; margin: 0 auto; display: none; width: 100%; min-height: 4.635em; height: auto; background-color: white; position: fixed; overflow: hidden; z-index: 15; padding: 0em; }
 #notification .notification-messages { position: relative; left: 40px; margin: 15px; font-family: "Arial"; font-size: 14px; color: #303030; }
 #notification .warning { position: absolute; left: 0; top: 0; margin: 15px;}
 #notification .dismiss { position: absolute; right: 0; top: 0; cursor: pointer; margin: 15px;}

@@ -68,37 +68,6 @@
         reloadRegisterPage = function() {
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
         };
-
-        LABKEY.Utils.onReady(function ()
-        {
-            $(document).ready(function(){
-
-                // notification close button
-                $('div.dismiss').click(function(){
-                    $('#notification').remove();
-                });
-
-                LABKEY.Ajax.request({
-                    url: LABKEY.ActionURL.buildURL("cds", "getDismissableWarnings.api"),
-                    method: 'GET',
-                    success: function (response){
-                        const o = LABKEY.Utils.decode(response.responseText);
-                        if (o.messages) {
-                            const msgDiv = $('div.notification-messages');
-
-                            $.each(o.messages, function (idx, msg) {
-                                msgDiv.append($('<span>').text(msg).append($('<br>')));
-                            });
-                        }
-                        else {
-                            $('#notification').remove();
-                        }
-                    }
-                });
-
-            });
-        });
-
     </script>
 </head>
 <body>

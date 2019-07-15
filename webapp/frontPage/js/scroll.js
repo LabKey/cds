@@ -36,37 +36,73 @@ define(['jquery', 'slimScroll', 'fullPage', 'section'], function($, slimScroll, 
       // IE8 / IE9 complain about jquery not being loaded
       $(document).ready(function() {
 
-        var section_names = [];
-        // Initialize all sections
-        $(self.section_selector).each(function(index, element) {
-          var name = $(element).data('name');
-          var fullpage_section = section.initialize({
-            index: index + 1,
-            gif: $(element).data('gif')
+        // scroll div default top padding
+        let topPadding = '4.635em';
+
+        // fullpage initialization function
+        let fullPageInit = function(topPadding){
+
+          var section_names = [];
+          // Initialize all sections
+          $(self.section_selector).each(function(index, element) {
+            var name = $(element).data('name');
+            var fullpage_section = section.initialize({
+              index: index + 1,
+              gif: $(element).data('gif')
+            });
+
+            self.sections.push( fullpage_section );
+            section_names.push(name);
           });
 
-          self.sections.push( fullpage_section );
-          section_names.push(name);
+          // Initialize fullpage
+          $(self.fullpage_selector).fullpage({
+            onLeave: self.onLeave,
+            afterLoad: self.afterLoad,
+            navigation: true,
+            paddingTop: topPadding,
+            scrollOverflow: true,
+            showActiveTooltip: true,
+            navigationTooltips: section_names,
+          });
+
+          // Fade content in when ready.
+          $(self.fullpage_selector).animate({ opacity: 1 });
+
+          // Load the first section
+          if( self.sections[0] ) {
+            self.sections[0].setup();
+          }
+        };
+
+        // notification close button
+        $('div.dismiss').click(function(){
+          $('#notification').remove();
         });
 
-        // Initialize fullpage
-        $(self.fullpage_selector).fullpage({
-          onLeave: self.onLeave,
-          afterLoad: self.afterLoad,
-          navigation: true,
-          paddingTop: '4.635em',
-          scrollOverflow: true,
-          showActiveTooltip: true,
-          navigationTooltips: section_names,
+        LABKEY.Ajax.request({
+          url: LABKEY.ActionURL.buildURL("cds", "getDismissableWarnings.api"),
+          method: 'GET',
+          success: function (response){
+            const o = LABKEY.Utils.decode(response.responseText);
+            if (o.messages) {
+              // increase the padding for the notification area
+              topPadding = '9.27em';
+
+              const msgDiv = $('div.notification-messages');
+
+              $.each(o.messages, function (idx, msg) {
+                msgDiv.append($('<span>').text(msg).append($('<br>')));
+              });
+              $('#notification').show();
+            }
+            else {
+              $('#notification').remove();
+            }
+
+            fullPageInit.call(this, topPadding);
+          }
         });
-
-        // Fade content in when ready.
-        $(self.fullpage_selector).animate({ opacity: 1 });
-
-        // Load the first section
-        if( self.sections[0] ) {
-          self.sections[0].setup();
-        }
       });
 
       return self;
