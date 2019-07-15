@@ -35,8 +35,6 @@ Ext.define('Connector.view.Chart', {
 
     yGutterName: 'yGutterPlot',
 
-    studyAxisWidthOffset: 150,
-
     minStudyAxisHeight: 75,
 
     disableAutoMsg: false,
@@ -48,6 +46,8 @@ Ext.define('Connector.view.Chart', {
     isStudyAxisExpanded: false,
 
     statics: {
+        studyAxisWidthOffset: 150,
+
         // Template used for contents of VisitTag tooltips
         studyAxisTipTpl: new Ext.XTemplate(
             '<tpl if="isAggregate">',
@@ -525,7 +525,7 @@ Ext.define('Connector.view.Chart', {
 
         if (this.requireStudyAxis && this.hasStudyAxisData)
         {
-            size.width = box.width - this.studyAxisWidthOffset;
+            size.width = box.width - Connector.view.Chart.studyAxisWidthOffset;
         }
         else if (this.requireYGutter)
         {
@@ -802,7 +802,7 @@ Ext.define('Connector.view.Chart', {
     getMainPlotConfig : function(data, aes, scales, yAxisMargin, properties) {
         var size = this.getPlotSize(this.el.getSize(), properties, scales);
 
-        var additionalWidth = this.requireStudyAxis && this.hasStudyAxisData ? this.studyAxisWidthOffset : this.requireYGutter ? this.yGutterWidth : 0;
+        var additionalWidth = this.requireStudyAxis && this.hasStudyAxisData ? Connector.view.Chart.studyAxisWidthOffset : this.requireYGutter ? this.yGutterWidth : 0;
         if (size.extended === true)
         {
             this.getCenter().addCls('plot-scroll');
@@ -907,6 +907,10 @@ Ext.define('Connector.view.Chart', {
                     if (properties.xaxis.isNumeric)
                     {
                         scales.x.tickFormat = ChartUtils.tickFormat.numeric;
+
+                        // show only integer ticks for continuous time plot
+                        if (this.activeMeasures && this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME')
+                            scales.x.tickFormat = ChartUtils.tickFormat.integerOnly;
                     }
                     else if (properties.xaxis.type === 'TIMESTAMP')
                     {
@@ -4050,7 +4054,7 @@ Ext.define('Connector.view.Chart', {
     resizePlotContainers : function(numStudies) {
         if (this.requireStudyAxis && this.hasStudyAxisData)
         {
-            this.plotEl.setStyle('padding-left', this.studyAxisWidthOffset + 'px');
+            this.plotEl.setStyle('padding-left', Connector.view.Chart.studyAxisWidthOffset + 'px');
             this.bottomPlotEl.setStyle('margin-left', '0');
 
             // set max height to 1/3 of the center region height
