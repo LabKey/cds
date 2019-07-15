@@ -137,6 +137,7 @@ Ext.define('Connector.view.AnnouncementHeader', {
 
     initComponent : function() {
 
+        this.dismissBtnId = Ext4.id();
         this.msg = this.getMessages();
         this.items = [
             {
@@ -147,26 +148,25 @@ Ext.define('Connector.view.AnnouncementHeader', {
             },
             this.msg,
             {
-                xtype : 'button',
-                text : 'x',
-                margin : 15,
-                tooltip : 'dismiss this notification',
-                handler : function(){
-                    LABKEY.Ajax.request({
-                        url : LABKEY.ActionURL.buildURL("core", "dismissCoreWarnings.api"),
-                        method : 'POST',
-                        scope : this,
-                        success : function (){
-                            this.setVisible(false);
-                        },
-                        failure : function(){
-                            Ext.Msg.alert('Failed to dismiss warnings');
-                        }
-                    });
-                },
-                scope : this
+                xtype: 'box',
+                id : this.dismissBtnId,
+                tpl: ['<img class="dismiss-btn" src="{imgSrc}" width="20" height="20">'],
+                data: {imgSrc: Connector.resourceContext.imgPath + '/' + 'dismiss.svg'},
+                margin : 15
             }
         ];
+
+        this.listeners = {
+            scope : this,
+            render : function(){
+                this.renderMessages()
+            }
+        };
+
+        this.callParent();
+    },
+
+    renderMessages : function(){
 
         LABKEY.Ajax.request({
             url: LABKEY.ActionURL.buildURL("cds", "getDismissableWarnings.api"),
@@ -183,7 +183,23 @@ Ext.define('Connector.view.AnnouncementHeader', {
             }
         }, this);
 
-        this.callParent();
+        // wire up an event listener to the dismiss button
+        const btnEl = Ext4.get(this.dismissBtnId);
+        if (btnEl){
+            Ext4.EventManager.on(btnEl, 'click', function(){
+                LABKEY.Ajax.request({
+                    url : LABKEY.ActionURL.buildURL("core", "dismissCoreWarnings.api"),
+                    method : 'POST',
+                    scope : this,
+                    success : function (){
+                        this.setVisible(false);
+                    },
+                    failure : function(){
+                        Ext.Msg.alert('Failed to dismiss warnings');
+                    }
+                });
+            }, this);
+        }
     },
 
     getMessages : function(){
@@ -198,7 +214,7 @@ Ext.define('Connector.view.AnnouncementHeader', {
         return new Ext.Component({
             tpl : tpl,
             flex : 2,
-            margin : '15, 5, 15, 5'
+            margin : '15px 5px'
         });
     }
 });
