@@ -64,6 +64,15 @@ Ext.define('Connector.utility.Chart', {
                 }
             }
             return val;
+        },
+        // filter out ticks that are not integer
+        integerOnly : function(val) {
+            if(Number.isInteger(val))
+            {
+                return val;
+            }
+
+            return null;
         }
     },
 

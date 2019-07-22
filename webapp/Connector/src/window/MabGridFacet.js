@@ -153,23 +153,14 @@ Ext.define('Connector.window.MabGridFacet', {
             var columnName = this.filterConfig.fieldName;
 
             if (selected.length > unselected.length) {
-                filter = LABKEY.Filter.create(columnName, this.delimitValues(unselected), LABKEY.Filter.Types.NOT_IN);
+                filter = LABKEY.Filter.create(columnName, unselected, LABKEY.Filter.Types.NOT_IN);
             }
             else {
-                filter = LABKEY.Filter.create(columnName, this.delimitValues(selected), LABKEY.Filter.Types.IN);
+                filter = LABKEY.Filter.create(columnName, selected, LABKEY.Filter.Types.IN);
             }
         }
 
         return filter;
-    },
-
-    delimitValues : function (valueArray) {
-        var value = '', sep = '';
-        for (var s = 0; s < valueArray.length; s++) {
-            value += sep + valueArray[s];
-            sep = ';';
-        }
-        return value;
     }
 });
 

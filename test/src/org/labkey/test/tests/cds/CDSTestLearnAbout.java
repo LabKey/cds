@@ -894,7 +894,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private void goToDetail(String itemName, boolean hasData)
     {
-        Locator element = hasData ? LEARN_HAS_DATA_ROW_TITLE_LOC.withText(itemName) : LEARN_ROW_TITLE_LOC.withText(itemName);
+        Locator element = hasData ? LEARN_HAS_DATA_ROW_TITLE_LOC.withText(itemName).notHidden() : LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
         assertElementPresent(element);
         new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction ->{waitForText("Overview"); return null;});
     }
@@ -993,7 +993,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         learnGrid.setSearch(mAbName);
         mabRowLoc = LEARN_HAS_DATA_ROW_TITLE_LOC.withText(mAbName);
         assertElementPresent(mabRowLoc);
-        assertElementVisible(Locator.tagWithText("div", "1 Study Accessible"));
+        assertElementPresent(Locator.tagWithText("div", "1 Study Accessible").notHidden());
         goToDetail(mAbName, true);
         assertElementNotPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_130));
         assertElementPresent(cds.noDataDetailIconXPath(CDSHelper.ZAP_130));
