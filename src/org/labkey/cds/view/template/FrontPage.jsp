@@ -68,6 +68,13 @@
         reloadRegisterPage = function() {
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
         };
+
+        $(document).ready(function() {
+            // notification close button
+            $('div.dismiss').click(function(){
+                $('#notification').remove();
+            });
+        });
     </script>
 </head>
 <body>
