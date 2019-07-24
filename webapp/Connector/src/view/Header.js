@@ -119,3 +119,102 @@ Ext.define("Connector.view.Header", {
         this.callParent();
     }
 });
+
+Ext.define('Connector.view.AnnouncementHeader', {
+
+    extend : 'Ext.panel.Panel',
+
+    layout : {
+        type : 'hbox',
+        align : 'middle'
+    },
+
+    alias : 'widget.announcementheader',
+
+    hidden : true,
+
+    cls: 'announcementheader',
+
+    initComponent : function() {
+
+        this.dismissBtnId = Ext4.id();
+        this.msg = this.getMessages();
+        this.items = [
+            {
+                xtype: 'box',
+                tpl: ['<img src="{imgSrc}" width="20" height="20">'],
+                data: {imgSrc: Connector.resourceContext.imgPath + '/' + 'warning_indicator.svg'},
+                margin : 15
+            },
+            this.msg,
+            {
+                xtype: 'box',
+                id : this.dismissBtnId,
+                tpl: ['<img class="dismiss-btn" src="{imgSrc}" width="20" height="20">'],
+                data: {imgSrc: Connector.resourceContext.imgPath + '/' + 'dismiss.svg'},
+                margin : 15
+            }
+        ];
+
+        this.listeners = {
+            scope : this,
+            render : function(){
+                this.renderMessages()
+            }
+        };
+
+        this.callParent();
+    },
+
+    renderMessages : function(){
+
+        LABKEY.Ajax.request({
+            url: LABKEY.ActionURL.buildURL("cds", "getDismissableWarnings.api"),
+            method: 'GET',
+            scope : this,
+            success: function (response){
+                var o = Ext.decode(response.responseText);
+                if (o.messages) {
+                    this.setVisible(true);
+                    this.msg.update(o.messages);
+                }
+                else
+                    this.setVisible(false);
+            }
+        }, this);
+
+        // wire up an event listener to the dismiss button
+        const btnEl = Ext4.get(this.dismissBtnId);
+        if (btnEl){
+            Ext4.EventManager.on(btnEl, 'click', function(){
+                LABKEY.Ajax.request({
+                    url : LABKEY.ActionURL.buildURL("core", "dismissCoreWarnings.api"),
+                    method : 'POST',
+                    scope : this,
+                    success : function (){
+                        this.setVisible(false);
+                    },
+                    failure : function(){
+                        Ext.Msg.alert('Failed to dismiss warnings');
+                    }
+                });
+            }, this);
+        }
+    },
+
+    getMessages : function(){
+        var tpl = new Ext.XTemplate(
+            '<tpl for=".">',
+            '<div class="notification-messages">',
+            '<span>{.}</span><br>',
+            '</div>',
+            '</tpl>'
+        );
+
+        return new Ext.Component({
+            tpl : tpl,
+            flex : 2,
+            margin : '15px 5px'
+        });
+    }
+});

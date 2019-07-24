@@ -231,6 +231,57 @@ public class CDSTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void testOutagesAnnouncement()
+    {
+        log("Turning on the ribbon bar notification with custom HTML message");
+        goToAdminConsole().clickSiteSettings();
+        waitForElement(Locator.name("showRibbonMessage"));
+        checkCheckbox(Locator.checkboxByName("showRibbonMessage"));
+        Locator.name("ribbonMessageHtml").findElement(getDriver()).clear();
+        Locator.name("ribbonMessageHtml").findElement(getDriver())
+                .sendKeys("Testing User notice on public page to announce outages");
+        clickButton("Save");
+
+        log("Verifying the message in the CDS application - Home");
+        cds.enterApplication();
+        cds.goToAppHome();
+        assertElementPresent(Locator.tagWithClass("div", "notification-messages").
+                withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
+
+        log("Verifying the message is displayed in learn about");
+        cds.viewLearnAboutPage("Assays");
+        assertElementPresent(Locator.tagWithClass("div", "notification-messages").
+                withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
+
+        log("Verifying the message is displayed in summary");
+        cds.goToSummary();
+        assertElementPresent(Locator.tagWithClass("div", "notification-messages").
+                withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
+
+        cds.logOutFromApplication();
+        assertElementPresent(Locator.tagWithClass("div", "notification-messages").
+                withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
+
+        log("Turning off the notification");
+        simpleSignIn();
+
+        goToProjectHome();
+        goToAdminConsole().clickSiteSettings();
+        waitForElement(Locator.name("showRibbonMessage"));
+        uncheckCheckbox(Locator.checkboxByName("showRibbonMessage"));
+        Locator.name("ribbonMessageHtml").findElement(getDriver()).clear();
+        clickButton("Save");
+
+        log("Verifing the message is not present");
+        cds.enterApplication();
+        cds.goToAppHome();
+        assertElementNotPresent(Locator.tagWithClass("div", "notification-messages").
+                withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
+
+    }
+
+
+    @Test
     public void verifyAssaySummary()
     {
         log("Verify Assay Summary View");
