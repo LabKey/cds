@@ -15,20 +15,55 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
      * and initialize each section.
      */
     initialize: function() {
-      window.frontPage = window.frontPage || {};
-      scroll.initialize({
-        section_selector: '.section',
-        fullpage_selector: '#fullpage'
+
+      // scroll div default top padding
+      let fullpageTopPadding = '4.635em';
+
+      // front page initialization
+      let fullInitialize = function(topPadding) {
+        window.frontPage = window.frontPage || {};
+        scroll.initialize({
+          section_selector: '.section',
+          fullpage_selector: '#fullpage',
+          topPadding : topPadding
+        });
+
+        if (LABKEY.ActionURL.getParameter('create_account') != 'true') {
+          $('.create-account-modal-trigger').each(function(){
+            $(this).css('display', 'none');
+          })
+        }
+
+        this.initializeModals();
+        this.bindEvents();
+      };
+
+      LABKEY.Ajax.request({
+        url: LABKEY.ActionURL.buildURL("cds", "getDismissableWarnings.api"),
+        method: 'GET',
+        scope : this,
+        success: function(response){
+          const o = LABKEY.Utils.decode(response.responseText);
+          if (o.messages) {
+            // increase the padding for the notification area
+            fullpageTopPadding = '9.27em';
+
+            const msgDiv = $('div.notification-messages');
+
+            $.each(o.messages, function (idx, msg) {
+              msgDiv.append($('<span>').text(msg).append($('<br>')));
+            });
+            $('#notification').show();
+          }
+          else {
+            $('#notification').remove();
+          }
+          fullInitialize.call(this, fullpageTopPadding);
+        },
+        failure : function(response){
+          fullInitialize.call(this, fullpageTopPadding);
+        }
       });
-
-      if (LABKEY.ActionURL.getParameter('create_account') != 'true') {
-        $('.create-account-modal-trigger').each(function(){
-          $(this).css('display', 'none');
-        })
-      }
-
-      this.initializeModals();
-      this.bindEvents();
     },
 
     /**

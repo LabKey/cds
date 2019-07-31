@@ -62,10 +62,19 @@
     <%--<!-- Client API Dependencies -->--%>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
+    <script type="text/javascript" src="<%=text(frontPagePath)%>/components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript">
         reloadRegisterPage = function() {
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
-        }
+        };
+
+        $(document).ready(function() {
+            // notification close button
+            $('div.dismiss').click(function(){
+                $('#notification').remove();
+            });
+        });
     </script>
 </head>
 <body>
@@ -85,6 +94,16 @@
                 <a href="#" class="create-account-modal-trigger">Create Account</a>
                 <a href="#" class="signin-modal-trigger front-page-button">Sign In</a>
             </div>
+        </div>
+    </div>
+    <div id="notification">
+        <div class="warning">
+            <img src="<%=text(frontPagePath)%>/img/warning_indicator.svg" width="20" height="20"/>
+        </div>
+        <div class="notification-messages">
+        </div>
+        <div class="dismiss">
+            <img src="<%=text(frontPagePath)%>/img/dismiss.svg" width="20" height="20"/>
         </div>
     </div>
     <div class="signin-modal-popup hidden">
