@@ -129,6 +129,10 @@ html { box-sizing: border-box; }
   #navigation .link.hide { opacity: 1 !important; }
   #navigation .link span { display: none; } }
 #navigation span { width: auto; }
+#notification { top: 4.635em; max-width: 1280px; left: 0; right: 0; margin: 0 auto; display: none; width: 100%; min-height: 4.635em; height: auto; background-color: white; position: fixed; overflow: hidden; z-index: 15; padding: 0em; }
+#notification .notification-messages { position: relative; left: 40px; margin: 15px; font-family: "Arial"; font-size: 14px; color: #303030; }
+#notification .warning { position: absolute; left: 0; top: 0; margin: 15px;}
+#notification .dismiss { position: absolute; right: 0; top: 0; cursor: pointer; margin: 15px;}
 
 @-webkit-keyframes $animation_name { 0% { opacity: 1; }
   100% { opacity: 0; } }
@@ -239,22 +243,24 @@ div.video-header button.video-close:hover { background-color: #dd133f; }
 @media only screen and (max-width: 700px) { .section.intro-section .links a.front-page-button, .section.intro-section .links span.front-page-button { margin-right: 0em; } }
 .section.intro-section .links span { background-color: transparent; color: #6e6e6e; width: auto; }
 @media only screen and (max-width: 480px) { .section.intro-section .links { opacity: 0; } }
-.section.intro-section .welcome { text-align: center; display: block; overflow: hidden; margin: 2.67em 0; }
+.section.intro-section .welcome { text-align: center; display: block; overflow: hidden; margin: 2.67em 0; position: relative; top: 4em;}
 @media only screen and (max-width: 700px) { .section.intro-section .welcome { margin: 3em 0em 2.67em 0; } }
 .section.intro-section .welcome .title { margin-bottom: 2.67em; }
 .section.intro-section .welcome .title h1 { font-size: 3.011em; margin: 0; font-family: "Georgia"; font-weight: 100; color: #2d2d2d; }
 .section.intro-section .welcome .title h1:last-child { color: #ed365e; }
 .section.intro-section .welcome .subtitle { margin-top: 2.67em; }
 .section.intro-section .welcome .subtitle p { margin: 0; line-height: 1.5em; font-family: "Georgia"; font-weight: 100; color: #2d2d2d; }
-.section.intro-section .video-container { margin: 4em 0em 4em 0em; position: relative; }
+.section.intro-section .video-container { margin: 4em 0em 4em 0em; position: relative; top: 3em;}
 .section.intro-section .video-container .video-placeholder { display: block; position: relative; max-width: 25.35em; width: 100%; height: 13.35em; margin: -1.33em auto; border: 1.33em solid white; background-color: #F2F2F2; background-image: url("/img/intro.png"); background-size: contain; outline: none; }
 @media only screen and (max-width: 480px) { .section.intro-section .video-container .video-placeholder { width: 100%; } }
 .section.intro-section .video-container .play { background-color: white; color: black; left: 0; right: 0; margin: -2em auto 0 auto; top: 50%; position: absolute; width: 4em; height: 4em; border: none; -webkit-border-radius: 50%; -moz-border-radius: 50%; border-radius: 50%; }
 .section.intro-section .video-container .play:after { content: "\25B6"; font-family: VideoJS; line-height: 4em; text-shadow: .05em .05em .1em #000; text-align: center; position: absolute; left: 0; width: 100%; height: 100%; }
-.section.intro-section .learn-more { text-align: center; max-width: 25.35em; margin: 2.67em auto 1.33em auto; overflow: hidden; }
+.section.intro-section .learn-more { text-align: center; max-width: 25.35em; margin: 2.67em auto 1.33em auto; overflow: hidden; position: relative; top: 3em;}
 .section.intro-section .learn-more p { margin: 0; line-height: 1.5em; font-family: "Arial"; font-weight: 100; color: #2d2d2d; }
 .section.intro-section .learn-more .container { margin: 5.33em 0em 0em 0em; }
 .section.intro-section .learn-more .container h3 { font-size: 1.5em; font-family: "Georgia"; font-weight: 100; color: #2d2d2d; color: #6e6e6e; margin: 0; }
+
+.section.intro-section .circle { position: relative; top: 3em; }
 
 .section.learn-section { text-align: center; max-height: 54em; }
 .section.learn-section .container { text-align: center; padding: 1.83em 0 5.33em 0; }

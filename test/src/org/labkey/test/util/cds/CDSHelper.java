@@ -889,6 +889,13 @@ public class CDSHelper
 
     }
 
+    public void logOutFromApplication()
+    {
+        _test.clickAndWait(Locator.linkWithText("Logout"));
+        _test.waitForElement(Locator.linkWithText("Register Here"));
+
+    }
+
     public boolean updateSharedGroupDetails(String groupName, @Nullable String newName, @Nullable String newDescription,
                                          @Nullable Boolean newSharedStatus)
     {
