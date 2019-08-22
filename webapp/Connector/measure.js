@@ -245,7 +245,8 @@ Ext.define('Connector.measure.Configuration', {
                     distinctValueFilterColumnValue: 'Antigen'
                 },
                 'study_BAMA_dilution': {
-                    requiresSelection: true
+                    requiresSelection: true,
+                    hideInColorSelector: true
                 },
                 // study|ELISPOT
                 'study_ELISPOT_functional_marker_name': {
@@ -582,7 +583,8 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_ICS_response_call': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                    hideInColorSelector: true
                 },
                 'study_ICS_functionality_score': {
                     defaultScale: 'LINEAR'
@@ -599,7 +601,8 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'study_NAb_nab_response_ID50': {
                     isRecommendedVariable: true,
-                    isMeasure: false
+                    isMeasure: false,
+                    hideInColorSelector: true
                 },
                 'study_NAb_study_prot': {
                     hidden: true
@@ -608,7 +611,8 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_BAMA_response_call': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                    hideInColorSelector: true
                 },
                 'study_BAMA_study_prot': {
                     hidden: true
@@ -617,7 +621,8 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_ELISPOT_response_call': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                    hideInColorSelector: true
                 },
                 'study_ELISPOT_study_prot': {
                     hidden: true
@@ -647,7 +652,8 @@ Ext.define('Connector.measure.Configuration', {
                 },
 
                 'study_NAb_nab_response_ID80': {
-                    isMeasure: false
+                    isMeasure: false,
+                    hideInColorSelector: true
                 },
 
                 // hidden variables
@@ -825,6 +831,12 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'study_Demographics_SubjectVisit_Visit': {
                     hidden: true
+                },
+                'study_ICS_response_method' : {
+                    hideInColorSelector : true
+                },
+                'study_NAb_initial_dilution' : {
+                    hideInColorSelector : true
                 }
             }
         }

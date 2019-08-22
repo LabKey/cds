@@ -123,7 +123,8 @@ Ext.define('Connector.model.Measure', {
         // Alternative alias to use for sorting on Time plot
         {name: 'timePointSortColumnAlias', defaultValue: undefined},
 
-        {name: 'defaultPlotType', defaultValue: undefined}
+        {name: 'defaultPlotType', defaultValue: undefined},
+        {name: 'hideInColorSelector', defaultValue : undefined}
     ],
 
     statics : {

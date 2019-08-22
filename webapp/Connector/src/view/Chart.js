@@ -1040,8 +1040,7 @@ Ext.define('Connector.view.Chart', {
             }
         };
 
-        // only color path when color axis is from demographics
-        if (this.activeMeasures.color && this.activeMeasures.color.isDemographic) {
+        if (this.activeMeasures.color) {
             pathAes.pathColor = function(rows)
             {
                 return Ext4.isArray(rows) && rows.length > 0 ? rows[0].color : null;
@@ -1953,7 +1952,7 @@ Ext.define('Connector.view.Chart', {
         var colorScale = null, colorAcc = null;
 
         if (this.plot.scales.color && this.plot.scales.color.scale) {
-            if (!isLine || (isLine && this.activeMeasures && this.activeMeasures.color && this.activeMeasures.color.isDemographic)) {
+            if (!isLine || (isLine && this.activeMeasures && this.activeMeasures.color)) {
                 colorScale = this.plot.scales.color.scale;
                 colorAcc = this.plot.aes.color;
             }
@@ -3427,7 +3426,7 @@ Ext.define('Connector.view.Chart', {
                     includeTimepointMeasures: true,
                     userFilter : function(row) {
                         // Don't show time with alignment even in dev mode
-                        return !row.isMeasure && !(row.isDiscreteTime && row.hidden) && !row.isHoursType;
+                        return !row.isMeasure && !(row.isDiscreteTime && row.hidden) && !row.isHoursType && !row.hideInColorSelector;
                     }
                 },
                 listeners: {
