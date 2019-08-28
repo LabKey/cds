@@ -106,7 +106,7 @@ Ext.define('Connector.view.MabGrid', {
                 items: [{
                     xtype: 'actiontitle',
                     flex: 1,
-                    text: 'Explore monoclonal antibody (mAb) screening data',
+                    text: 'Explore monoclonal antibody (mAb) characterization data',
                     buttons: [
                         this.getExportCSVButton(),
                         this.getExportExcelButton()
