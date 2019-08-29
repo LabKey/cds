@@ -887,7 +887,7 @@ public class CDSController extends SpringActionController
             Container target = getTarget();
             if (null != target)
                 cms.target = "/_webdav" + target.getPath() + "/@files/blog/";
-            return new JspView<>(CDSController.class, "view/cms.jsp", cms, errors);
+            return new JspView<>("/org/labkey/cds/view/cms.jsp", cms, errors);
         }
 
         @Override
