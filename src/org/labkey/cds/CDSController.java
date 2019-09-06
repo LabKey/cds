@@ -70,6 +70,7 @@ import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.util.CSRFUtil;
+import org.labkey.api.util.HtmlString;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.util.Path;
 import org.labkey.api.util.URLHelper;
@@ -1149,7 +1150,7 @@ public class CDSController extends SpringActionController
             ApiSimpleResponse response = new ApiSimpleResponse();
 
             ViewContext context = getViewContext();
-            List<String> messages = new LinkedList<>();
+            List<HtmlString> messages = new LinkedList<>();
             Warnings dismissibleWarnings = Warnings.of(messages);
             WarningService.get().forEachProvider(p->p.addDynamicWarnings(dismissibleWarnings, context));
 
