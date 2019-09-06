@@ -117,7 +117,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.labkey.api.view.template.PageConfig.SESSION_WARNINGS_BANNER_KEY;
+import static org.labkey.api.view.template.WarningService.SESSION_WARNINGS_BANNER_KEY;
 
 
 public class CDSController extends SpringActionController
@@ -1144,14 +1144,14 @@ public class CDSController extends SpringActionController
     public class GetDismissableWarningsAction extends ReadOnlyApiAction
     {
         @Override
-        public ApiSimpleResponse execute(Object o, BindException errors) throws Exception
+        public ApiSimpleResponse execute(Object o, BindException errors)
         {
             ApiSimpleResponse response = new ApiSimpleResponse();
 
             ViewContext context = getViewContext();
             List<String> messages = new LinkedList<>();
             Warnings dismissibleWarnings = Warnings.of(messages);
-            WarningService.get().forEachProvider(p->p.addDismissibleWarnings(dismissibleWarnings, context));
+            WarningService.get().forEachProvider(p->p.addDynamicWarnings(dismissibleWarnings, context));
 
             if (context != null && context.getRequest() != null)
             {
