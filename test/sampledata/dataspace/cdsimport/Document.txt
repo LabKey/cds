@@ -169,3 +169,6 @@ document_id	label	filename	document_type
 75	Zolla-Pazner: Epitope-Scaffold Immunogens	cavd_grant_profiles/Zolla-Pazner OPP38631_01 Epitope-Scaffold Immunogens.pdf	grant_document
 56	?�berla: Antibodies without HIV T helper cells	cavd_grant_profiles/Uberla OPP1040727 Antibodies without HIV T helper cells.pdf	grant_document
 1	Missing: This document is missing	cavd_grant_profiles/MissingDocument.pdf	grant_document
+201	ARV drug levels	study_documents/cvd277_NI_ARV_Drug_Levels.zip	Non-Integrated Assay
+202	Viral load	study_documents/cvd277_NI_Viral_Load.csv	Non-Integrated Assay
+203	Viral sequencing		Non-Integrated Assay
