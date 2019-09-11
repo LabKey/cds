@@ -333,6 +333,8 @@ Ext.define('Connector.app.store.Study', {
 
                 study.non_integrated_assay_data = documents.filter(function (doc) {
                     return doc.label && doc.docType === 'Non-Integrated Assay';
+                }).sort(function(a, b) {
+                    return Connector.model.Filter.sorters.natural(a.label, b.label);
                 });
                 study.non_integrated_assay_data_has_permission = study.non_integrated_assay_data.filter(function(doc) {
                     return doc.hasPermission === true
