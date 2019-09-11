@@ -257,7 +257,7 @@ Ext.define('Connector.app.store.Study', {
                 });
 
                 var documents = this.documentData.filter(function(doc) {
-                    return doc.document_type === 'Report or summary' || doc.document_type === 'Study plan or protocol'
+                    return doc.document_type === 'Report or summary' || doc.document_type === 'Study plan or protocol' || doc.document_type === 'Non-Integrated Assay';
                 }).filter(function(doc) {
                     return study.study_name === doc.prot;
                 }).map(function(doc) {
@@ -330,6 +330,14 @@ Ext.define('Connector.app.store.Study', {
                 study.data_listings_and_reports_has_permission = study.data_listings_and_reports.filter(function(doc) {
                             return doc.hasPermission === true
                 }).length > 0;
+
+                study.non_integrated_assay_data = documents.filter(function (doc) {
+                    return doc.label && doc.docType === 'Non-Integrated Assay';
+                });
+                study.non_integrated_assay_data_has_permission = study.non_integrated_assay_data.filter(function(doc) {
+                    return doc.hasPermission === true
+                }).length > 0;
+
                 studies.push(study);
             }, this);
 

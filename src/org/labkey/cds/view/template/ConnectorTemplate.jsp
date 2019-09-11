@@ -343,6 +343,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ReportModuleContainer.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/DataAvailabilityModule.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/NonIntegratedDataAvailability.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ContactCDS.js"></script>
