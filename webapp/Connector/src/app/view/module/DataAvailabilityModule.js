@@ -146,7 +146,21 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     {
                         ftype: 'grouping',
                         collapsible: false,
-                        groupHeaderTpl: new Ext.XTemplate('{name:htmlEncode}')
+                        groupHeaderTpl: new Ext.XTemplate('{name:htmlEncode}',
+                                '<tpl if="name === \'MAb Administration Studies\'">',
+                                    '</br>',
+                                    '<p>',
+                                        this.data.instructionsForAdministration,
+                                    '</p>',
+                                    '</br>',
+                                '</tpl>',
+                                '<tpl if="name === \'MAb Characterization Studies\'">',
+                                    '</br>',
+                                    '<p>',
+                                        this.data.instructionsForCharacterization,
+                                    '</p>',
+                                    '</br>',
+                                '</tpl>')
                     }
                 ]
             }
