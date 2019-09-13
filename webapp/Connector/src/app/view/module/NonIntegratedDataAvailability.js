@@ -20,7 +20,18 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
             '<tpl for="non_integrated_assay_data">',
             '<tr>',
             '<tpl if="isLinkValid">',
-            '<td class="item-value"><a href="{filePath}" target="_blank">{label:htmlEncode}</a> {suffix}</td>',
+            '<td class="item-value">',
+            //TODO : configure assay link
+            //     '<a href="#learn/learn/',
+            //         '{[this.getDataLink()]}',
+            //         '/{[encodeURIComponent(values.data_link_id)]}">',
+            //         '{label:htmlEncode}',
+            //     '</a> {suffix}',
+                '<a href="_none" target="_blank">',
+                    '{label:htmlEncode}',
+                '</a>',
+            '</td>',
+            '<td><a href="{filePath}" target="_blank"><img src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13"/></a></td>',
             '<tpl elseif="hasPermission">',
             '<td class="item-value">{label:htmlEncode}</td>',
             '</tpl>',
@@ -28,6 +39,12 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
             '</tpl>',
             '</table>',
             '</tpl>'
+            // {
+            //     getDataLink: function()
+            //     {
+            //         return encodeURIComponent(this.data.dataLink);
+            //     }
+            // }
     ),
 
     initComponent : function() {
