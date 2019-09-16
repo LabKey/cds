@@ -181,7 +181,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         sleep(CDSHelper.CDS_WAIT);
 
-        log("Verifying data availability on summary page.");
+        log("Verifying integrated data availability on summary page.");
         LearnGrid learnGrid = new LearnGrid(this);
         int rowCount = learnGrid.getRowCount();
         assertTrue("Expected one row in the grid, found " + rowCount + " row(s).", rowCount == 1);
@@ -320,7 +320,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void verifyLearnAboutMabDetails()
     {
         final String infoHeader = "Monoclonal Antibody Information";
-        final String dataHeader = "Data Availability";
+        final String dataHeader = "Integrated Data";
 
         final String labelStandardname = "Standard name";
         final String labelAntibodyType = "Antibody type";
@@ -678,8 +678,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         summaryGrid.setSearch(CDSHelper.TITLE_NABMAB)
                 .clickFirstItem();
 
-        log("Verify Data Availability");
-        waitForText("Data Availability");
+        log("Verify Integrated Data Availability");
+        waitForText("Integrated Data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == 10);
 
@@ -914,20 +914,22 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String PRODUCT = "benztropine mesylate";
         final String[] STUDY_FROM_PRODUCT = {"QED 1", "YOYO 55"};
 
+        final String partialLogMsgIntegratedData = "Testing integrated data availability module in ";
+        final String waitForTextIntegratedData = "Integrated Data";
 
-        log("Testing data availability module in Studies");
+        log(partialLogMsgIntegratedData + "Studies");
         cds.viewLearnAboutPage("Studies");
 
         goToDetail(STUDY, true);
 
-        waitForText("Data Availability");
+        waitForText(waitForTextIntegratedData);
 
         assertElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[0]));
         assertElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[1]));
         assertElementPresent(cds.noDataDetailIconXPath(ASSAY_TITLES[2]));
 
 
-        log("Testing data availability module in Assays");
+        log(partialLogMsgIntegratedData + "Assays");
         cds.viewLearnAboutPage("Assays");
         Locator loc = Locator.xpath("//h2[contains(text(), '" + CDSHelper.ICS + "')]");
         waitForElementToBeVisible(loc);
@@ -935,7 +937,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         refresh(); //ensures only selecting elements on viewable page.
 
-        waitForText("Data Availability");
+        waitForText(waitForTextIntegratedData);
 
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
@@ -944,7 +946,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
 
 
-        log("Testing data availability module in Products");
+        log(partialLogMsgIntegratedData + "Products");
         cds.viewLearnAboutPage("Products");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), PRODUCT);
         sleep(CDSHelper.CDS_WAIT);
@@ -953,12 +955,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         refresh();
 
-        waitForText("Data Availability");
+        waitForText(waitForTextIntegratedData);
 
         assertElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_PRODUCT[0]));
         assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_PRODUCT[1]));
 
-        log("Testing data availability module in mAbs");
+        log(partialLogMsgIntegratedData + "mAbs");
         cds.viewLearnAboutPage("MAbs");
         String mAbName = "2F5";
 
@@ -966,17 +968,17 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         learnGrid.setSearch(mAbName);
 
         Locator.XPathLocator mabRowLoc = LEARN_HAS_DATA_ROW_TITLE_LOC.withText(mAbName);
-        log("Verify mAb data availability on summary page");
+        log("Verify mAb integrated data availability on summary page");
         assertElementPresent(mabRowLoc);
         assertElementVisible(Locator.tagWithText("div", "2 Studies Accessible"));
         goToDetail(mAbName, true);
 
         refresh();
-        waitForText("Data Availability");
+        waitForText(waitForTextIntegratedData);
 
         Locator subHeaderCharacterization = Locator.tagWithText("div", "MAb Characterization Studies");
         Locator subHeaderAdministration = Locator.tagWithText("div", "MAb Administration Studies");
-        log("Verify mAb data availability sub listing with 2 categories");
+        log("Verify mAb integrated data availability sub listing with 2 categories");
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117));
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
         assertElementVisible(subHeaderCharacterization);
@@ -987,7 +989,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 .withText("Labeled as 2F5 (PlantForm); 2F5 (Polymun) (IAM 2F5, IAM-41-2F5, IAM2F5, c2F5)"));
         assertElementPresent(labeledAsLoc);
 
-        log("Verify mAb data availability sub listing with only 1 category");
+        log("Verify mAb integrated data availability sub listing with only 1 category");
         cds.viewLearnAboutPage("MAbs");
         mAbName = "PGT121";
         learnGrid.setSearch(mAbName);
@@ -1011,8 +1013,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         LearnGrid summaryGrid = new LearnGrid(this);
         summaryGrid.setSearch(mabProduct).clickFirstItem();
 
-        log("Verify Data Availability");
-        waitForText("Data Availability");
+        log("Verify Integrated Data Availability");
+        waitForText("Integrated Data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies using the mAb product is not as expected", 1, smallHasDataIcons.size());
 
@@ -1034,8 +1036,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         summaryGrid.setSearch(CDSHelper.TITLE_PKMAB)
                 .clickFirstItem();
 
-        log("Verify Data Availability");
-        waitForText("Data Availability");
+        log("Verify Integrated Data Availability");
+        waitForText("Integrated Data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies with PK MAb data is not as expected", 1, smallHasDataIcons.size());
 
