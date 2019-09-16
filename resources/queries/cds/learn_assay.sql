@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 SELECT *,
-    (CASE WHEN AA.assay_identifier = 'PK MAB' THEN false
+    (CASE WHEN (AA.assay_identifier = 'PK MAB' OR AA.assay_type IS NULL) THEN false -- assay_type is null for Non-Integrated assay, at least for now, see ds_assay query.
       ELSE true
     END) AS hasAntigen
 FROM cds.assay AS AA

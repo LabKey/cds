@@ -46,7 +46,7 @@ UNION
 
 SELECT
   IA.assay_identifier,
-  IA.assay_identifier AS assay_type, --Note: this may need to be updated, it is not yet clear what assay_type values will be for Non-Integrated Assay
+  NULL AS assay_type, --Note: this may need to be updated, it is not yet clear what assay_type values will be for Non-Integrated Assay
   assay_label,
   assay_short_name,
   assay_category,

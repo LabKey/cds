@@ -65,6 +65,8 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
                 assay_type = this.data.model.get('assay_type'),
                 hasAntigen = this.data.model.get('hasAntigen');
 
+        if (assay_type == null)
+            return;
         if (assay_type.toUpperCase() === 'NABMAB')
             return;
 
