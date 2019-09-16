@@ -597,7 +597,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String toolTipText, cellText, expectedText;
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
 
-        log("Checking: " + learnGrid.getCellText(4, 0));
+        log("Checking: " + learnGrid.getCellText(5, 0));
         expectedText = "11 Studies";
         cellText = learnGrid.getCellText(4, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
