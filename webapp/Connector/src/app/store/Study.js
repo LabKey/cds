@@ -270,7 +270,8 @@ Ext.define('Connector.app.store.Study', {
                         suffix: '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',
                         sortIndex: doc.document_order,
                         filePath: Connector.plugin.DocumentValidation.getStudyDocumentUrl(doc.filename, study.study_name, doc.document_id),
-                        hasPermission: doc.accessible
+                        hasPermission: doc.accessible,
+                        assayIdentifier: doc.assay_identifier
                     }
                 }).sort(function(docA, docB){
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);

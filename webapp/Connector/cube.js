@@ -371,8 +371,6 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'nonintegrateddataavailability',
                         staticData: {
                             title: 'Non-Integrated Data',
-                            // dataField: 'assays',
-                            // dataLink: 'Assay',
                             instructions: 'Download Individual Files.'
                         }
                      }, {

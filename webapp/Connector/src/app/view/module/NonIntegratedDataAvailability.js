@@ -12,7 +12,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
     plugins : ['documentvalidation'],
 
     tpl : new Ext.XTemplate(
-            '<tpl if="non_integrated_assay_data.length &gt; 0 && non_integrated_assay_data_has_permission">',
+            '<tpl if="non_integrated_assay_data.length && non_integrated_assay_data_has_permission">',
             '<h3>{title_non_integrated_assay}</h3>',
             '<p>{instructions_non_integrated_assay}</p>',
             '</br>',
@@ -21,17 +21,12 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
             '<tr>',
             '<tpl if="isLinkValid">',
             '<td class="item-value">',
-            //TODO : configure assay link
-            //     '<a href="#learn/learn/',
-            //         '{[this.getDataLink()]}',
-            //         '/{[encodeURIComponent(values.data_link_id)]}">',
-            //         '{label:htmlEncode}',
-            //     '</a> {suffix}',
-                '<a href="_none" target="_blank">',
+                '<a href="#learn/learn/Assay',
+                    '/{assayIdentifier}">',
                     '{label:htmlEncode}',
-                '</a>',
+                '</a> {suffix} ',
             '</td>',
-            '<td><a href="{filePath}" target="_blank"><img src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13"/></a></td>',
+            '<td><a href="{filePath}" target="_blank"><img src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></td>',
             '<tpl elseif="hasPermission">',
             '<td class="item-value">{label:htmlEncode}</td>',
             '</tpl>',
@@ -39,12 +34,6 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
             '</tpl>',
             '</table>',
             '</tpl>'
-            // {
-            //     getDataLink: function()
-            //     {
-            //         return encodeURIComponent(this.data.dataLink);
-            //     }
-            // }
     ),
 
     initComponent : function() {
