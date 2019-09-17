@@ -157,7 +157,17 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/cube.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/measure.js"></script>
 
-    <!-- Connector Application -->
+    <!-- Tours -->
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_get_oriented.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_active_filters.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_learn_about.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_find_subjects.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_plot_data.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_view_data_grid.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_monoclonal_antibodies.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_helpers.js"></script>
+
+    <!-- connector Application -->
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
 
     <!-- Constant singletons -->
