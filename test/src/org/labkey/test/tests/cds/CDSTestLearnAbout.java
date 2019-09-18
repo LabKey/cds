@@ -976,8 +976,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         refresh();
         waitForText(waitForTextIntegratedData);
 
-        Locator subHeaderCharacterization = Locator.tagWithText("div", "MAb Characterization Studies");
-        Locator subHeaderAdministration = Locator.tagWithText("div", "MAb Administration Studies");
+        Locator subHeaderCharacterization = Locator.tagContainingText("div", "MAb Characterization Studies");
+        Locator subHeaderAdministration = Locator.tagContainingText("div", "MAb Administration Studies");
         log("Verify mAb integrated data availability sub listing with 2 categories");
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117));
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
