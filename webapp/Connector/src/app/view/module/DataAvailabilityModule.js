@@ -24,6 +24,10 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
             align: 'stretch'
         };
 
+        if (this.data.hasGrouping) {
+            this.data['groupSubHeaderInstr'] = this.getGroupSubHeaderInstr(this.data);
+        }
+
         this.items = [{
             html: (new Ext.XTemplate('<tpl if="hasDetails">',
                     '<p>',
@@ -140,6 +144,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
     getGroupingFeature: function() {
         if (this.data.hasGrouping) {
+            var me = this;
             return {
                 requires: ['Ext.grid.feature.Grouping'],
                 features: [
@@ -147,20 +152,21 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         ftype: 'grouping',
                         collapsible: false,
                         groupHeaderTpl: new Ext.XTemplate('{name:htmlEncode}',
-                                '<tpl if="name === \'MAb Administration Studies\'">',
-                                    '</br>',
-                                    '<p class="data-availability-subheader-instructions">',
-                                        this.data.instructionsForAdministration,
-                                    '</p>',
-                                    '</br>',
+                                '<tpl if="this.getInstructions(values.name)">',
+                                    '<table>',
+                                        '<tr>',
+                                        '<td style="white-space:normal">',
+                                        '{[this.getInstructions(values.name)]}',
+                                        '</td>',
+                                        '</tr>',
+                                    '</table>',
                                 '</tpl>',
-                                '<tpl if="name === \'MAb Characterization Studies\'">',
-                                    '</br>',
-                                    '<p class="data-availability-subheader-instructions">',
-                                        this.data.instructionsForCharacterization,
-                                    '</p>',
-                                    '</br>',
-                                '</tpl>')
+                                {
+                                    getInstructions: function(key)
+                                    {
+                                        return me.data.groupSubHeaderInstr[key];
+                                    }
+                                })
                     }
                 ]
             }
@@ -201,6 +207,18 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         else
             data.hasDetails = true;
         return data;
+    },
+
+    getGroupSubHeaderInstr: function(data) {
+
+        var dataModel = data.model.getData()[this.data.dataField];
+
+        var groupInstr = {};
+        Ext4.Array.forEach(dataModel, function(dataRow){
+                groupInstr[dataRow.data_group] = dataRow.data_group_instr;
+        }, this);
+
+        return groupInstr;
     },
 
     getDataAddedStore : function(data) {
@@ -254,6 +272,7 @@ Ext.define("DataAdded", {
         {name: 'data_status', convert: function(value) {
             return value ? value : "Status not available";
         }},
-        {name: 'data_group'}
+        {name: 'data_group'},
+        {name: 'data_group_instr'}
     ]
 });

@@ -655,8 +655,6 @@ Ext4.define('Connector.cube.Configuration', {
                             dataField: 'studies',
                             dataLink: 'Study',
                             hasGrouping: true,
-                            instructionsForCharacterization: 'Go to Monoclonal Antibodies to view or export.',
-                            instructionsForAdministration: 'Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.',
                             groupDir: 'DESC'
                         }
                     }]]

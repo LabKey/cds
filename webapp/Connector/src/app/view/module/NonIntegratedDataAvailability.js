@@ -12,7 +12,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
     plugins : ['documentvalidation'],
 
     tpl : new Ext.XTemplate(
-            '<tpl if="non_integrated_assay_data.length && non_integrated_assay_data_has_permission">',
+            '<tpl if="non_integrated_assay_data.length &gt; 0 && non_integrated_assay_data_has_permission">',
             '<h3>{title_non_integrated_assay}</h3>',
             '<p>{instructions_non_integrated_assay}</p>',
             '</br>',
