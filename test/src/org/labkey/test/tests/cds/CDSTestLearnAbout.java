@@ -599,11 +599,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Checking: " + learnGrid.getCellText(5, 0));
         expectedText = "11 Studies";
-        cellText = learnGrid.getCellText(4, dataAddedColumn);
+        cellText = learnGrid.getCellText(5, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(5, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         // Can't depend upon the text in the tooltip to be in the same order every time. So check for each value separately.
@@ -612,13 +612,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         sleep(1000);
 
-        log("Checking: " + learnGrid.getCellText(3, 0));
+        log("Checking: " + learnGrid.getCellText(4, 0));
         expectedText = "5 Studies";
-        cellText = learnGrid.getCellText(3, dataAddedColumn);
+        cellText = learnGrid.getCellText(4, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         validateToolTipText(toolTipText, "ZAP 133", "ZAP 128", "YOYO 55", "ZAP 135", "QED 2");
@@ -626,13 +626,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         sleep(1000);
 
-        log("Checking: " + learnGrid.getCellText(2, 0));
+        log("Checking: " + learnGrid.getCellText(3, 0));
         expectedText = "4 Studies";
-        cellText = learnGrid.getCellText(2, dataAddedColumn);
+        cellText = learnGrid.getCellText(3, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         validateToolTipText(toolTipText, "ZAP 134", "RED 4", "ZAP 110", "ZAP 111");
@@ -640,13 +640,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         sleep(1000);
 
-        log("Checking: " + learnGrid.getCellText(1, 0));
+        log("Checking: " + learnGrid.getCellText(2, 0));
         expectedText = "14 Studies";
-        cellText = learnGrid.getCellText(1, dataAddedColumn);
+        cellText = learnGrid.getCellText(2, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         validateToolTipText(toolTipText, "ZAP 102", "RED 4", "RED 5", "RED 6", "ZAP 105", "ZAP 106", "ZAP 134", "ZAP 136", "ZAP 124", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118");
@@ -654,13 +654,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         sleep(1000);
 
-        log("Checking: " + learnGrid.getCellText(0, 0));
+        log("Checking: " + learnGrid.getCellText(1, 0));
         expectedText = "1 Study";
-        cellText = learnGrid.getCellText(0, dataAddedColumn);
+        cellText = learnGrid.getCellText(1, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         validateToolTipText(toolTipText, "ZAP 117");
