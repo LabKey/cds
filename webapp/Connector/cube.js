@@ -467,7 +467,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Integrated Data',
                             dataField: 'studies',
                             dataLink: 'Study',
-                            instructions: 'Go to Plot to view or Grid to export.'
+                            instructions: 'Go to Plot to view or Grid to export. Additional non-integrated data files may be available for download. See study page.'
                         }
                     },{
                         type: 'productotherproducts',
