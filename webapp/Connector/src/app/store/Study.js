@@ -13,6 +13,8 @@ Ext.define('Connector.app.store.Study', {
 
     model : 'Connector.app.model.Study',
 
+    integratedAssayIdentifiers : ['BAMA Biotin LX', 'ICS', 'IFNg ELS', 'NAB A3R5', 'NAB MAB', 'PK MAB', 'NAB TZM-bl'], //from cds.assays.assay_identifier
+
     constructor: function(config) {
         Ext.applyIf(config, {
             cache: []
@@ -192,7 +194,7 @@ Ext.define('Connector.app.store.Study', {
                 });
                 study.product_to_sort_on = products[0] ? products[0].product_name.toLowerCase() : '';
 
-                var assays = [], assaysAdded = [], assayAddedCount = 0;
+                var assays = [], assaysAdded = [], nonIntegratedAssays = [], assayAddedCount = 0;
                 study.data_availability = false;
                 study.data_accessible = hasStudyAccess;
                 for (var a=0; a < this.assayData.length; a++) {
@@ -206,7 +208,13 @@ Ext.define('Connector.app.store.Study', {
                             has_access: hasStudyAccess,
                             data_status: this.assayData[a].assay_status
                         };
-                        assays.push(assay);
+
+                        if (this.integratedAssayIdentifiers.includes(this.assayData[a].assay_identifier)) {
+                            assays.push(assay);
+                        }
+                        else {
+                            nonIntegratedAssays.push(assay);
+                        }
                     }
                 }
 
@@ -271,7 +279,8 @@ Ext.define('Connector.app.store.Study', {
                         sortIndex: doc.document_order,
                         filePath: Connector.plugin.DocumentValidation.getStudyDocumentUrl(doc.filename, study.study_name, doc.document_id),
                         hasPermission: doc.accessible,
-                        assayIdentifier: doc.assay_identifier
+                        assayIdentifier: doc.assay_identifier,
+                        hasAssayData: study.data_availability
                     }
                 }).sort(function(docA, docB){
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
@@ -332,11 +341,33 @@ Ext.define('Connector.app.store.Study', {
                             return doc.hasPermission === true
                 }).length > 0;
 
+                //non-integrated assay that's in cds.assays, document, and studydocument
                 study.non_integrated_assay_data = documents.filter(function (doc) {
                     return doc.label && doc.docType === 'Non-Integrated Assay';
-                }).sort(function(a, b) {
+                });
+
+                //non-integrated assay that's in studyassay
+                Ext.each(nonIntegratedAssays, function(niAssay) {
+                    var nonIntegratedAssay = {
+                        id: undefined,
+                        label: niAssay.data_id,
+                        fileName: undefined,
+                        docType: undefined,
+                        isLinkValid: undefined,
+                        suffix: undefined,
+                        sortIndex: undefined,
+                        filePath: undefined,
+                        hasPermission: niAssay.has_access,
+                        assayIdentifier: niAssay.data_id,
+                        hasAssayData: niAssay.has_data
+                    };
+                    study.non_integrated_assay_data.push(nonIntegratedAssay);
+                });
+
+                study.non_integrated_assay_data.sort(function(a, b) {
                     return Connector.model.Filter.sorters.natural(a.label, b.label);
                 });
+
                 study.non_integrated_assay_data_has_permission = study.non_integrated_assay_data.filter(function(doc) {
                     return doc.hasPermission === true
                 }).length > 0;
