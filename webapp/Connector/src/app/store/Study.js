@@ -13,7 +13,7 @@ Ext.define('Connector.app.store.Study', {
 
     model : 'Connector.app.model.Study',
 
-    integratedAssayIdentifiers : ['BAMA Biotin LX', 'ICS', 'IFNg ELS', 'NAB A3R5', 'NAB MAB', 'PK MAB', 'NAB TZM-bl'], //from cds.assays.assay_identifier
+    integratedAssayIdentifiers : ['BAMA Biotin LX', 'ICS', 'IFNg ELS', 'NAB A3R5', 'PK MAB', 'NAB TZM-bl'], //from cds.assays.assay_identifier
 
     constructor: function(config) {
         Ext.applyIf(config, {
