@@ -19,7 +19,8 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
             '<table class="learn-study-info">',
             '<tpl for="non_integrated_assay_data">',
             '<tr>',
-            '<tpl if="isLinkValid">',
+            // case when there is both a link to the assay learn page and data to download
+            '<tpl if="isLinkValid && hasAssayLearn">',
                 '<td class="item-value">',
                     '<a href="#learn/learn/Assay',
                         '/{assayIdentifier}">',
@@ -27,13 +28,25 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                     '</a> {suffix} ',
                 '</td>',
                 '<td><a href="{filePath}" target="_blank"><img src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></td>',
-            '<tpl elseif="hasPermission && hasAssayData">',
+
+            // case when there is data to download and no assay learn page
+            '<tpl elseif="isLinkValid && !hasAssayLearn">',
+                '<td class="item-value">',
+                    '{label:htmlEncode}',
+                    '{suffix} ',
+                '</td>',
+                '<td><a href="{filePath}" target="_blank"><img src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></td>',
+
+            // case when there is assay learn page and no data to download
+            '<tpl elseif="hasPermission && hasAssayLearn">',
                 '<td class="item-value">',
                     '<a href="#learn/learn/Assay',
                         '/{assayIdentifier}">',
                         '{label:htmlEncode}',
                     '</a>',
                 '</td>',
+
+            // case when there is no assay learn page and no data to download
             '<tpl elseif="hasPermission">',
                 '<td class="item-value">',
                 '{label:htmlEncode}',

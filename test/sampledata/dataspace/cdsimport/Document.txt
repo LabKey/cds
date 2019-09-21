@@ -172,3 +172,4 @@ document_id	label	filename	document_type	assay_identifier
 201	ARV drug levels	study_documents/cvd277_ARV_Drug_Levels.zip	Non-Integrated Assay	ARV DL
 202	Viral load	study_documents/cvd277_Viral_Load.csv	Non-Integrated Assay	VL
 203	Viral sequencing	study_documents/cvd277_Viral_Sequencing.csv	Non-Integrated Assay	VS
+204	ILLUMINA 454-X	study_documents/ILLUMINA_454_X.pdf	Non-Integrated Assay	ILLUMINA 454-X

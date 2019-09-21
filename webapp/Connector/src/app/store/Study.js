@@ -13,8 +13,6 @@ Ext.define('Connector.app.store.Study', {
 
     model : 'Connector.app.model.Study',
 
-    integratedAssayIdentifiers : ['BAMA Biotin LX', 'ICS', 'IFNg ELS', 'NAB A3R5', 'PK MAB', 'NAB TZM-bl'], //from cds.assays.assay_identifier
-
     constructor: function(config) {
         Ext.applyIf(config, {
             cache: []
@@ -24,6 +22,7 @@ Ext.define('Connector.app.store.Study', {
 
     loadSlice : function(slice) {
         this.studyData = undefined;
+        this.learnAssayData = undefined;
         this.productData = undefined;
         this.assayData = undefined;
         this.documentData = undefined;
@@ -49,6 +48,12 @@ Ext.define('Connector.app.store.Study', {
             schemaName: 'cds',
             queryName: 'learn_assaysforstudies',
             success: this.onLoadAssays,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_assay',
+            success: this.onLoadLearnAssays,
             scope: this
         });
         LABKEY.Query.selectRows({
@@ -94,6 +99,11 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadLearnAssays : function(learnAssayData) {
+        this.learnAssayData = learnAssayData.rows;
+        this._onLoadComplete();
+    },
+
     onLoadAssays : function(assayData) {
         this.assayData = assayData.rows;
         this._onLoadComplete();
@@ -127,7 +137,8 @@ Ext.define('Connector.app.store.Study', {
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
-                && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies) && Ext.isDefined(this.mabMixData)) {
+                && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)
+                && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.learnAssayData)) {
             var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                 return relOrder.relationship;
@@ -135,6 +146,9 @@ Ext.define('Connector.app.store.Study', {
             var studyNames = this.studyData.map(function(study) {
                 return study.study_name;
             });
+
+            this.assayData.integratedAssayIdentifiers = ['BAMA Biotin LX', 'ICS', 'IFNg ELS', 'NAB A3R5', 'PK MAB', 'NAB TZM-bl']; //from cds.assays.assay_identifier
+            this.learnAssayData.assaysWithLearnPage = this.learnAssayData.map(assay => assay.assay_identifier);
 
             // join products to study
             Ext.each(this.studyData, function(study) {
@@ -202,19 +216,20 @@ Ext.define('Connector.app.store.Study', {
                         study.data_availability = study.data_availability || this.assayData[a].has_data;
                         var assay = {
                             data_label: this.assayData[a].assay_short_name,
-                            data_id: this.assayData[a].study_assay_id,
+                            data_id: this.assayData[a].study_assay_id, //same as assay_identifier as per learn_assaysforstudies.sql
                             data_link_id: this.assayData[a].assay_identifier,
                             has_data: this.assayData[a].has_data,
                             has_access: hasStudyAccess,
-                            data_status: this.assayData[a].assay_status
+                            data_status: this.assayData[a].assay_status,
+                            has_assay_learn: this.learnAssayData.assaysWithLearnPage.includes(this.assayData[a].assay_identifier) //if there's a learn assay page
                         };
 
-                        if (this.integratedAssayIdentifiers.includes(this.assayData[a].assay_identifier)) {
+                        if (this.assayData.integratedAssayIdentifiers.includes(this.assayData[a].assay_identifier)) {
                             assays.push(assay);
                         }
                         else {
                             nonIntegratedAssays.push(assay);
-                        }
+                      }
                     }
                 }
 
@@ -266,9 +281,9 @@ Ext.define('Connector.app.store.Study', {
 
                 var documents = this.documentData.filter(function(doc) {
                     return doc.document_type === 'Report or summary' || doc.document_type === 'Study plan or protocol' || doc.document_type === 'Non-Integrated Assay';
-                }).filter(function(doc) {
+                }, this).filter(function(doc) {
                     return study.study_name === doc.prot;
-                }).map(function(doc) {
+                }, this).map(function(doc) {
                     return {
                         id: doc.document_id,
                         label: doc.label,
@@ -280,11 +295,11 @@ Ext.define('Connector.app.store.Study', {
                         filePath: Connector.plugin.DocumentValidation.getStudyDocumentUrl(doc.filename, study.study_name, doc.document_id),
                         hasPermission: doc.accessible,
                         assayIdentifier: doc.assay_identifier,
-                        hasAssayData: study.data_availability
+                        hasAssayLearn: this.learnAssayData.assaysWithLearnPage.includes(doc.assay_identifier)
                     }
-                }).sort(function(docA, docB){
+                }, this).sort(function(docA, docB){
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
-                });
+                }, this);
 
                 var relationships = this.relationshipData.filter(function(rel){
                     // only return studies this user can see and that are related
@@ -341,27 +356,64 @@ Ext.define('Connector.app.store.Study', {
                             return doc.hasPermission === true
                 }).length > 0;
 
-                //non-integrated assay that's in cds.assays, document, and studydocument
+                //non-integrated assay with potentially downloadable data, which may or may not also have a learn assay page
                 study.non_integrated_assay_data = documents.filter(function (doc) {
                     return doc.label && doc.docType === 'Non-Integrated Assay';
                 });
 
-                //non-integrated assay that's in studyassay
+                //non-integrated assay that has subject metadata in cds.studyassay, which may or may not also have a learn assay page
                 Ext.each(nonIntegratedAssays, function(niAssay) {
-                    var nonIntegratedAssay = {
-                        id: undefined,
-                        label: niAssay.data_id,
-                        fileName: undefined,
-                        docType: undefined,
-                        isLinkValid: undefined,
-                        suffix: undefined,
-                        sortIndex: undefined,
-                        filePath: undefined,
-                        hasPermission: niAssay.has_access,
-                        assayIdentifier: niAssay.data_id,
-                        hasAssayData: niAssay.has_data
-                    };
-                    study.non_integrated_assay_data.push(nonIntegratedAssay);
+
+                    //combine when there is assay page and downloadable data and subject metadata
+                    var niToCombine = study.non_integrated_assay_data.filter(function(documentData) {
+                        return documentData.assayIdentifier === niAssay.data_link_id || documentData.assayIdentifier === niAssay.data_id;
+                    });
+                    var indexToRemove = study.non_integrated_assay_data.findIndex(function(documentData) {
+                        return documentData.assayIdentifier === niAssay.data_link_id || documentData.assayIdentifier === niAssay.data_id;
+                    });
+                    if (indexToRemove >= 0) {
+                        study.non_integrated_assay_data.splice(indexToRemove, 1);
+                    }
+
+                    //length should be always 1
+                    if (niToCombine.length > 0) {
+
+                        for (var i = 0; i < niToCombine.length; i++) {
+
+                            var nonIntegratedAssay = {
+                                id: niToCombine[i].id,
+                                label: niToCombine[i].label ? niToCombine[i].label : niAssay.data_id,
+                                fileName: niToCombine[i].fileName,
+                                docType: niToCombine[i].docType,
+                                isLinkValid: niToCombine[i].isLinkValid,
+                                suffix: niToCombine[i].suffix,
+                                sortIndex: niToCombine[i].sortIndex,
+                                filePath: niToCombine[i].filePath,
+                                hasPermission: niToCombine[i].hasPermission ? niToCombine[i].hasPermission : niAssay.has_access,
+                                assayIdentifier: niToCombine[i].assayIdentifier ? niToCombine[i].assayIdentifier : niAssay.data_id,
+                                hasAssayLearn: niToCombine[i].hasAssayLearn ? niToCombine[i].hasAssayLearn : niAssay.has_assay_learn
+                            };
+                            study.non_integrated_assay_data.push(nonIntegratedAssay);
+                        }
+                    }
+                    else {
+
+                        var nonIntegratedAssay = {
+                            id: undefined,
+                            label: niAssay.data_id,
+                            fileName: undefined,
+                            docType: undefined,
+                            isLinkValid: undefined,
+                            suffix: undefined,
+                            sortIndex: undefined,
+                            filePath: undefined,
+                            hasPermission: niAssay.has_access,
+                            assayIdentifier: niAssay.data_id,
+                            hasAssayLearn: niAssay.has_assay_learn
+                        };
+                        study.non_integrated_assay_data.push(nonIntegratedAssay);
+                    }
+
                 });
 
                 study.non_integrated_assay_data.sort(function(a, b) {
@@ -381,6 +433,7 @@ Ext.define('Connector.app.store.Study', {
 
             this.studyData = undefined;
             this.assayData = undefined;
+            this.learnAssayData = undefined;
             this.productData = undefined;
             this.documentData = undefined;
             this.publicationData = undefined;
