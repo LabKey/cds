@@ -375,26 +375,22 @@ Ext.define('Connector.app.store.Study', {
                         study.non_integrated_assay_data.splice(indexToRemove, 1);
                     }
 
-                    //length should be always 1
-                    if (niToCombine.length > 0) {
+                    if (niToCombine.length === 1) {
 
-                        for (var i = 0; i < niToCombine.length; i++) {
-
-                            var nonIntegratedAssay = {
-                                id: niToCombine[i].id,
-                                label: niToCombine[i].label ? niToCombine[i].label : niAssay.data_id,
-                                fileName: niToCombine[i].fileName,
-                                docType: niToCombine[i].docType,
-                                isLinkValid: niToCombine[i].isLinkValid,
-                                suffix: niToCombine[i].suffix,
-                                sortIndex: niToCombine[i].sortIndex,
-                                filePath: niToCombine[i].filePath,
-                                hasPermission: niToCombine[i].hasPermission ? niToCombine[i].hasPermission : niAssay.has_access,
-                                assayIdentifier: niToCombine[i].assayIdentifier ? niToCombine[i].assayIdentifier : niAssay.data_id,
-                                hasAssayLearn: niToCombine[i].hasAssayLearn ? niToCombine[i].hasAssayLearn : niAssay.has_assay_learn
-                            };
-                            study.non_integrated_assay_data.push(nonIntegratedAssay);
-                        }
+                        var nonIntegratedAssay = {
+                            id: niToCombine[0].id,
+                            label: niToCombine[0].label ? niToCombine[0].label : niAssay.data_id,
+                            fileName: niToCombine[0].fileName,
+                            docType: niToCombine[0].docType,
+                            isLinkValid: niToCombine[0].isLinkValid,
+                            suffix: niToCombine[0].suffix,
+                            sortIndex: niToCombine[0].sortIndex,
+                            filePath: niToCombine[0].filePath,
+                            hasPermission: niToCombine[0].hasPermission ? niToCombine[0].hasPermission : niAssay.has_access,
+                            assayIdentifier: niToCombine[0].assayIdentifier ? niToCombine[0].assayIdentifier : niAssay.data_id,
+                            hasAssayLearn: niToCombine[0].hasAssayLearn ? niToCombine[0].hasAssayLearn : niAssay.has_assay_learn
+                        };
+                        study.non_integrated_assay_data.push(nonIntegratedAssay);
                     }
                     else {
 
