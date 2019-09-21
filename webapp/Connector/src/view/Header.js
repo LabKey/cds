@@ -188,7 +188,7 @@ Ext.define('Connector.view.AnnouncementHeader', {
         if (btnEl){
             Ext4.EventManager.on(btnEl, 'click', function(){
                 LABKEY.Ajax.request({
-                    url : LABKEY.ActionURL.buildURL("core", "dismissCoreWarnings.api"),
+                    url : LABKEY.ActionURL.buildURL("core", "dismissWarnings.api"),
                     method : 'POST',
                     scope : this,
                     success : function (){
