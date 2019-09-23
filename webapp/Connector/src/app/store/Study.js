@@ -87,6 +87,12 @@ Ext.define('Connector.app.store.Study', {
             success: this.onLoadMabs,
             scope: this
         });
+        LABKEY.Query.selectRows({
+            schemaName: 'study',
+            queryName: 'ds_assayidentifier',
+            success: this.onLoadAssayIdentifiers,
+            scope: this
+        });
     },
 
     onLoadStudies : function(studyData) {
@@ -134,6 +140,11 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadAssayIdentifiers : function(assayIdentifiers) {
+        this.assayIdentifiers = assayIdentifiers.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
@@ -147,7 +158,7 @@ Ext.define('Connector.app.store.Study', {
                 return study.study_name;
             });
 
-            this.assayData.integratedAssayIdentifiers = ['BAMA Biotin LX', 'ICS', 'IFNg ELS', 'NAB A3R5', 'PK MAB', 'NAB TZM-bl']; //from cds.assays.assay_identifier
+            this.assayIdentifiers.integratedAssays = this.assayIdentifiers.map(integratedAssay => integratedAssay.assay_identifier);
             this.learnAssayData.assaysWithLearnPage = this.learnAssayData.map(assay => assay.assay_identifier);
 
             // join products to study
@@ -224,7 +235,7 @@ Ext.define('Connector.app.store.Study', {
                             has_assay_learn: this.learnAssayData.assaysWithLearnPage.includes(this.assayData[a].assay_identifier) //if there's a learn assay page
                         };
 
-                        if (this.assayData.integratedAssayIdentifiers.includes(this.assayData[a].assay_identifier)) {
+                        if (this.assayIdentifiers.integratedAssays.includes(this.assayData[a].assay_identifier)) {
                             assays.push(assay);
                         }
                         else {
