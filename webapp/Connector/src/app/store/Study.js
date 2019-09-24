@@ -159,8 +159,8 @@ Ext.define('Connector.app.store.Study', {
                 return study.study_name;
             });
 
-            this.assayIdentifiers.integratedAssays = this.assayIdentifiers.map(integratedAssay => integratedAssay.assay_identifier);
-            this.learnAssayData.assaysWithLearnPage = this.learnAssayData.map(assay => assay.assay_identifier);
+            var integratedAssays = this.assayIdentifiers.map(integratedAssay => integratedAssay.assay_identifier);
+            var assaysWithLearnPage = this.learnAssayData.map(assay => assay.assay_identifier);
 
             // join products to study
             Ext.each(this.studyData, function(study) {
@@ -233,10 +233,10 @@ Ext.define('Connector.app.store.Study', {
                             has_data: this.assayData[a].has_data,
                             has_access: hasStudyAccess,
                             data_status: this.assayData[a].assay_status,
-                            has_assay_learn: this.learnAssayData.assaysWithLearnPage.includes(this.assayData[a].assay_identifier) //if there's a learn assay page
+                            has_assay_learn: assaysWithLearnPage.includes(this.assayData[a].assay_identifier) //if there's a learn assay page
                         };
 
-                        if (this.assayIdentifiers.integratedAssays.includes(this.assayData[a].assay_identifier)) {
+                        if (integratedAssays.includes(this.assayData[a].assay_identifier)) {
                             assays.push(assay);
                         }
                         else {
@@ -307,7 +307,7 @@ Ext.define('Connector.app.store.Study', {
                         filePath: Connector.plugin.DocumentValidation.getStudyDocumentUrl(doc.filename, study.study_name, doc.document_id),
                         hasPermission: doc.accessible,
                         assayIdentifier: doc.assay_identifier,
-                        hasAssayLearn: this.learnAssayData.assaysWithLearnPage.includes(doc.assay_identifier)
+                        hasAssayLearn: assaysWithLearnPage.includes(doc.assay_identifier)
                     }
                 }, this).sort(function(docA, docB){
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
