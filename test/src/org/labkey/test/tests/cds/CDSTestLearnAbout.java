@@ -32,6 +32,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -895,6 +896,112 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private void goToDetail(String itemName, boolean hasData)
     {
         Locator element = hasData ? LEARN_HAS_DATA_ROW_TITLE_LOC.withText(itemName).notHidden() : LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
+        assertElementPresent(element);
+        new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction ->{waitForText("Overview"); return null;});
+    }
+
+    @Test
+    public void testIntegratedDataInstructions()
+    {
+        String studyName = "QED 2";
+        log("Verify instruction text on Learn About page for Studies - " + studyName);
+        cds.viewLearnAboutPage("Studies");
+        goToDetail(studyName, true);
+        assertTextPresent("Go to Plot to view or Grid to export.");
+
+        String assayName = CDSHelper.ASSAYS_FULL_TITLES[1]; //ICS
+        log("Verify instruction text on Learn About page for Assays - " + assayName);
+        cds.viewLearnAboutPage("Assays");
+        goToDetail(assayName, true);
+        assertTextPresent("Go to Plot to view or Grid to export.");
+
+        String productName = "2F5";
+        log("Verify instruction text on Learn About page for Products - " + productName);
+        cds.viewLearnAboutPage("Products");
+        goToDetail(productName, true);
+        assertTextPresent("Go to Plot to view or Grid to export. Additional non-integrated data files may be available for download. See study page.");
+
+        String MAbName = "2F5";
+        log("Verify sub-header instruction text on Learn About page for MAbs - " + MAbName);
+        cds.viewLearnAboutPage("MAbs");
+        goToDetail(MAbName, true);
+        String subHeaderCharacterizationInstr = "Go to Monoclonal Antibodies to view or export.";
+        String subHeaderAdministrationInstr = "Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.";
+        assertTextPresent(subHeaderCharacterizationInstr);
+        assertTextPresent(subHeaderAdministrationInstr);
+
+        String publicationName = "Fong Y 2018 J Infect Dis";
+        log("Verify instruction text on Learn About page for Publications - " + publicationName);
+        cds.viewLearnAboutPage("Publications");
+        gotToLearnAboutDetail(publicationName);
+        assertTextPresent("Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.");
+    }
+
+    @Test
+    public void testNonIntegratedData()
+    {
+        String ni_assay1_label = "ILLUMINA 454";
+        String ni_assay2_label = "ILLUMINA 454-X";
+        String ni_assay2_identifier = "ILLUMINA 454-X";
+        String ni_assay3_label = "ARV drug levels";
+        String ni_assay3_identifier = "ARV DL";
+        String ni_assay4_label = "Viral load";
+        String ni_assay5_label = "Viral sequencing";
+        String study1 = "RED 4";
+        String study2 = "ZAP 135";
+
+        verifyNonIntegratedDataHeader(study1);
+        log("Non-Integrated data with metadata only, and no link to assay learn, and no downloadable data");
+        verifyDetailFieldValues(ni_assay1_label);
+
+        log("Non-Integrated data with metadata, no link to assay learn, has downloadable data");
+        verifyDetailFieldValues(ni_assay2_label + " (TSV)");
+        verifyNonIntegratedDownloadLink(ni_assay2_identifier, "ILLUMINA_454_X.tsv");
+
+        verifyNonIntegratedDataHeader(study2);
+        log("Non-Integrated data with with Learn Assay page, and downloadable data");
+        verifyDetailFieldValues(ni_assay3_label + " (Archive)");
+        verifyDetailFieldValues(ni_assay4_label + " (CSV)");
+        verifyNonIntegratedDownloadLink(ni_assay3_identifier, "cvd277_ARV_Drug_Levels.zip");
+        click(Locator.linkContainingText(ni_assay3_label));
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+        verifyDetailFieldValues("ARV drug levels (ARV drug levels)");
+
+        log("Non-Integrated data with with Learn Assay page, and no downloadable data");
+        cds.viewLearnAboutPage("Studies");
+        goToDetail(study2, true);
+        verifyDetailFieldValues(ni_assay5_label);
+        click(Locator.linkContainingText(ni_assay5_label));
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+        verifyDetailFieldValues("Viral sequencing (Viral sequencing)");
+    }
+
+    private void verifyNonIntegratedDownloadLink(String assay_identifier, String documentName)
+    {
+        Locator.XPathLocator downloadLinkLocator = Locator.tagWithAttributeContaining("img", "alt", assay_identifier);
+        File downloadedFile = clickAndWaitForDownload(downloadLinkLocator, 1)[0];
+        assertTrue(downloadedFile + " not downloaded.", downloadedFile.getName().contains(documentName));
+    }
+
+    private void verifyNonIntegratedDataHeader(String studyName)
+    {
+        log("Verify Don-Integrated Data header for " + studyName);
+
+        cds.viewLearnAboutPage("Studies");
+        goToDetail(studyName, true);
+
+        verifySectionHeaders("Non-Integrated Data");
+
+        Locator.XPathLocator nonIntegratedDataElement = Locator.tagWithAttributeContaining("div", "id", "nonintegrateddataavailability");
+        assertElementPresent(nonIntegratedDataElement);
+
+        Locator.XPathLocator instructions = nonIntegratedDataElement.childTag("p").containing("Download Individual Files.");
+        assertElementPresent(instructions);
+    }
+
+    private void gotToLearnAboutDetail(String itemName)
+    {
+        Locator element = LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
         assertElementPresent(element);
         new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction ->{waitForText("Overview"); return null;});
     }

@@ -25,17 +25,18 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                     '<a href="#learn/learn/Assay',
                         '/{assayIdentifier}">',
                         '{label:htmlEncode}',
-                    '</a> {suffix} ',
+                    '</a> {suffix}',
                 '</td>',
-                '<td><a href="{filePath}" target="_blank"><img src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></td>',
+                '<td><a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></td>',
 
             // case when there is data to download and no assay learn page
             '<tpl elseif="isLinkValid && !hasAssayLearn">',
                 '<td class="item-value">',
                     '{label:htmlEncode}',
-                    '{suffix} ',
+                    ' ',
+                    '{suffix}',
                 '</td>',
-                '<td><a href="{filePath}" target="_blank"><img src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></td>',
+                '<td><a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></td>',
 
             // case when there is assay learn page and no data to download
             '<tpl elseif="hasPermission && hasAssayLearn">',
