@@ -22,7 +22,6 @@ Ext.define('Connector.app.store.Study', {
 
     loadSlice : function(slice) {
         this.studyData = undefined;
-        this.learnAssayData = undefined;
         this.productData = undefined;
         this.assayData = undefined;
         this.documentData = undefined;
@@ -49,12 +48,6 @@ Ext.define('Connector.app.store.Study', {
             schemaName: 'cds',
             queryName: 'learn_assaysforstudies',
             success: this.onLoadAssays,
-            scope: this
-        });
-        LABKEY.Query.selectRows({
-            schemaName: 'cds',
-            queryName: 'learn_assay',
-            success: this.onLoadLearnAssays,
             scope: this
         });
         LABKEY.Query.selectRows({
@@ -106,11 +99,6 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
-    onLoadLearnAssays : function(learnAssayData) {
-        this.learnAssayData = learnAssayData.rows;
-        this._onLoadComplete();
-    },
-
     onLoadAssays : function(assayData) {
         this.assayData = assayData.rows;
         this._onLoadComplete();
@@ -150,7 +138,7 @@ Ext.define('Connector.app.store.Study', {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
                 && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)
-                && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.learnAssayData) && Ext.isDefined(this.assayIdentifiers)) {
+                && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.assayIdentifiers)) {
             var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                 return relOrder.relationship;
@@ -160,7 +148,9 @@ Ext.define('Connector.app.store.Study', {
             });
 
             var integratedAssays = this.assayIdentifiers.map(integratedAssay => integratedAssay.assay_identifier);
-            var assaysWithLearnPage = this.learnAssayData.map(assay => assay.assay_identifier);
+            var assaysWithLearnPage = this.assayData.map(assay => assay.assay_identifier).filter(function (value, index, self) {
+                return value === undefined || value === null ? false : self.indexOf(value) === index;
+            });
 
             // join products to study
             Ext.each(this.studyData, function(study) {
@@ -441,7 +431,6 @@ Ext.define('Connector.app.store.Study', {
 
             this.studyData = undefined;
             this.assayData = undefined;
-            this.learnAssayData = undefined;
             this.productData = undefined;
             this.documentData = undefined;
             this.publicationData = undefined;
