@@ -2,36 +2,49 @@ var tour_find_subjects = {
     title:       'Find-subjects',
     description: 'A tour for the "Find subjects" section.',
     id:          'tour-find-subjects',
-    started:     0,
+    winerror:    0,
     i18n:        {
         skipBtn: 'Start the tour'
     },
-    onStart:     function(){
-        window.onerror = function() { hopscotch.endTour(); };
-        if(self.started === 0){
-            self.started = 1;
+    onStart:      function(){
+        window.onerror = function() { self.winerror = 1; hopscotch.endTour(); };
+        if(self.winerror === 0){
             for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
                 i.click();
             };
             for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
                 j.click();
             };
-        };      
+            self.winerror = 0;
+        };
     },
-    onEnd:       function(){
-        document.querySelector('div.nav-label:nth-child(1)').click();
+    onEnd:        function(){
+        var nodes = null;
+        var promise = new Promise(function(resolve, reject){
+            nodes = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear"));
+            if(nodes.length > 0){
+                resolve();
+            } else {
+                document.querySelector('div.nav-label:nth-child(1)').click();
+                reject();
+            }
+        }).then(function(result){
+            nodes[0].click();
+        }).then(function(result){
+            document.querySelector('div.nav-label:nth-child(1)').click();
+        });
+    },
+    
+    onClose:      function(){
+        hopscotch.endTour();
+    },
+    onError:      function(){
         for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
             i.click();
         };
         for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
             j.click();
         };
-        self.started = 0;
-    },
-    onClose:     function(){
-        hopscotch.endTour();
-    },
-    onError:     function(){
         hopscotch.endTour();
     },
     steps:
@@ -40,8 +53,8 @@ var tour_find_subjects = {
             target:      'h3[class*="tour-section-title"]',
             placement:   'bottom',
             arrowOffset: 'center',
-            title:       'DataSpace tours',
-            content:     'This is a guided tour design]ed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.<br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
+            title:       'Find subjects',
+            content:     'This is a guided tour designed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.<br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
         },{
@@ -54,7 +67,10 @@ var tour_find_subjects = {
                 document.querySelector('div.nav-label:nth-child(3) > span:nth-child(2)').click();
                 var checkExist = setInterval(
                     function() {
-                        if(nodeDisplaySearch(document.querySelectorAll('div[id*=summarydataview]')).length > 0){
+                        if (
+                            nodeDisplaySearch(document.querySelectorAll('div[id*=summarydataview]')).length > 0 &&
+                                nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[class*="label"]'), " Subject characteristics")).length > 0
+                          ) {
                             window.location = 'cds-app.view?#summary';
                             checkTarget('div[id*=summarydataview]');
                             clearInterval(checkExist);
@@ -67,7 +83,7 @@ var tour_find_subjects = {
             placement:   'top',
             arrowOffset: 'center',
             xOffset:     70,
-            content:     'Here we see a set of parameters we can use to search for subjects and studies.',
+            content:     'Here you see a set of parameters we can use to search for subjects and studies.',
             onNext:      function(){
                 document.querySelector('div[id*=summarydataview]').firstChild.nextSibling.classList.add("by-products-row");
                 var checkExist = setInterval(
@@ -102,7 +118,7 @@ var tour_find_subjects = {
             placement:   'top',
             arrowOffset: 'left',
             xOffset:     -20,
-            content:     'Each category has other related categories that can be viewed. When we click on the red arrow next to the category, it expands the list',
+            content:     'Each category has other related categories that can be viewed. When you click on the red arrow next to the category, it expands the list',
             onNext:      function(){
                 document.querySelector('div[class*="x-container titlepanel secondary"]').click();
                 checkTarget('.bargroup');
@@ -181,10 +197,10 @@ var tour_find_subjects = {
             }
         },{
             target:      'ul[class="detailstatus"]',
-            placement:   'bottom',
-            arrowOffset: '250',
-            xOffset:     -110,
-            yOffset:     10,
+            placement:   'left',
+            arrowOffset: '0',
+            xOffset:     0,
+            yOffset:     30,
             content:     'The total number of subjects has been reduced and a summary of those subjects is seen here.'
         },{
             target:      'h2[class*="filterheader-text"]',
@@ -259,45 +275,34 @@ var tour_find_subjects = {
             target:      'div[class*="age-elem"]',
             placement:   'top',
             arrowOffset: 'left',
-            content:     'Now that we\'ve identified a group of subjects, we can look at their subject characteristics, e.g. by age category, by expanding with the plus sign.',
+            content:     'Now that you\'ve identified a group of subjects, we can look at their subject characteristics, e.g. by age category, by expanding with the plus sign.',
             xOffset:     -20,
             onNext:      function(){
-                var node = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Hide empty"))[0];
-                node.classList.add("hide-empty-btn");
+
+                if(nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Hide empty")).length > 0) {
+                    var node = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Hide empty"))[0];
+                } else {
+                    var node = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Show empty"))[0];
+                };
+                
+                node.classList.add("hide-show-empty-btn");
                 var checkExist = setInterval(
                     function(){
-                        if(document.querySelector('span[class*="hide-empty-btn"]') !== null){
-                            checkTarget('span[class*="hide-empty-btn"]');
+                        if(document.querySelector('span[class*="hide-show-empty-btn"]') !== null){
+                            checkTarget('span[class*="hide-show-empty-btn"]');
                             clearInterval(checkExist);
                         }
                     }, 100);
 
             }, multipage: true
         },{
-            target:      'span[class*="hide-empty-btn"]',
+            target:      'span[class*="hide-show-empty-btn"]',
             placement:   'left',
             arrowOffset: 'center',
-            yOffset:     -47,
+            yOffset:     -53,
             content:     'Click on the Hide/Show empty button to remove categories that don\'t have subjects.',
             onNext:      function(){
-                document.querySelector('span[class*="hide-empty-btn"]').click();
-                var checkExist = setInterval(
-                    function(){
-                        var node = document.querySelector('h3[class*="tour-section-title"]');
-                        if(node !== null && isVisCoords(node)){
-                            checkTarget('h3[class*="tour-section-title"]');
-                            clearInterval(checkExist);
-                        }
-                    }, 100);
-
-                checkTarget('div.nav-label:nth-child(1)');
-            }, multipage: true
-        },{
-            target:    'div.nav-label:nth-child(1)',
-            placement: 'left',
-            yOffset:   -17,
-            content:   'Clicking home takes send you back to the front page.',
-            onNext:    function(){
+                document.querySelector('span[class*="hide-show-empty-btn"]').click();
                 document.querySelector('div.nav-label:nth-child(1)').click();
                 var checkExist = setInterval(
                     function(){
@@ -307,7 +312,18 @@ var tour_find_subjects = {
                             clearInterval(checkExist);
                         }
                     }, 100);
-            }
+
+                // document.querySelector('div.nav-label:nth-child(1)').click();
+                // var checkExist = setInterval(
+                //     function(){
+                //         var node = document.querySelector('h3[class*="tour-section-title"]');
+                //         if(node !== null && isVisCoords(node)){
+                //             checkTarget('h3[class*="tour-section-title"]');
+                //             clearInterval(checkExist);
+                //         }
+                //     }, 100);
+
+            }, multipage: true
         },{
             target:      'h3[class*="tour-section-title"]',
             placement:   'bottom',

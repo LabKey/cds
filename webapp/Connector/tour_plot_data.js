@@ -2,36 +2,44 @@ var tour_plot_data = {
     title:       'Plot-data',
     description: 'A tour for the "Plot data" section.',
     id:          'tour-plot-data',
-    started:     0,
+    winerror:    0,
     i18n:        {
         skipBtn: 'Start the tour'
     },
-    onStart:     function(){
-        window.onerror = function() { hopscotch.endTour(); };
-        if(self.started === 0){
-            self.started = 1;
+    onStart:      function(){
+        window.onerror = function() { self.winerror = 1; hopscotch.endTour(); };
+        if(self.winerror === 0){
             for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
                 i.click();
             };
             for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
                 j.click();
             };
-        };      
+            self.winerror = 0;
+        };
     },
-    onEnd:       function(){
-        document.querySelector('div.nav-label:nth-child(1)').click();
+    onEnd:        function(){
+        document.querySelector('div.nav-label:nth-child(1)').click();        
+        var nodes = null;
+        var promise = new Promise(function(resolve, reject){
+            nodes = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear"));
+            if(nodes.length > 0){
+                resolve();
+            }
+        }).then(function(result){
+            nodes[0].click();
+        });
+    },
+    onClose:      function(){
+        hopscotch.endTour();
+    },
+    onError:      function(){
         for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
             i.click();
         };
         for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
             j.click();
         };
-        self.started = 0;
-    },
-    onClose:     function(){
-        hopscotch.endTour();
-    },
-    onError:     function(){
         hopscotch.endTour();
     },
     steps:
@@ -40,7 +48,7 @@ var tour_plot_data = {
             target:      'h3[class*="tour-section-title"]',
             placement:   'bottom',
             arrowOffset: 'center',
-            title:       'DataSpace tours',
+            title:       'Plot data',
             content:     'This is a guided tour designed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.<br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
@@ -230,7 +238,7 @@ var tour_plot_data = {
             placement:   'left',
             arrowOffset: 'center',
             xOffset:     -10,
-            yOffset:     -260,
+            yOffset:     -265,
             title:       'Choosing the assay dimensions',
             content:     'When plotting assay data, you will see an Assay Dimensions section which describes important elements specific to this data type. Many of the assay dimensions are also key fields that, when combined with other dimensions, are used to define unique records in the dataset. <br><br>Use this section to apply additional filters to the data for each of the assay dimensions. You\'ll want to review each dimension to make sure you haven\'t selected any values that are grayed out (i.e. not present in the filtered data). Selecting a value that is grayed out when that element can only have one value will result in a \"No data in the plot\" message. You can choose not to apply any filters to the assay dimensions, but your exploration will be more meaningful if your data is filtered with intention. <br><br>More information about the assay dimensions can be found on the assay pages in Learn about.',
             onNext:      function(){
@@ -250,7 +258,6 @@ var tour_plot_data = {
 
                 var checkExist2 = setInterval(
                     function(){
-                        var event = new Event('mouseleave');
                         if(document.querySelector('input[class*="tour-checked-fmn"]') !== null){
                             var node = nodeDisplaySearch(document.querySelectorAll('div[class*="functional_marker_name-dropdown"]'))[0];
                             node.dispatchEvent(event);
@@ -304,32 +311,76 @@ var tour_plot_data = {
             placement:   'right',
             arrowOffset: 'center',
             xOffset:     15,
-            yOffset:     -60,
+            yOffset:     -80,
             title:       'Set the y-axis',
             content:     'When finished making selections for the y-axis, click the button to set the axis.',
             onNext:      function(){
-                document.querySelector('span[class*="setYAxis"]').click();
+
+                function getScrollParent(node) {
+                    if (node == null) {
+                        return null;
+                    }
+                    if (node.style.overflow === "hidden auto") {
+                        return node;
+                    } else {
+                        return getScrollParent(node.parentNode);
+                    }
+                };
                 
-                var checkExist = setInterval(
+                document.querySelector('span[class*="setYAxis"]').click();
+
+                var smt = null;
+                var checkExist1 = setInterval(
                     function(){
+                        var nodes = nodeDisplaySearch(document.querySelectorAll('div[class*="AntigensInY"]'));
                         if (
-                            document.querySelector('div[class*="AntigensInY"]') !== null &&
-                                isVisCoords(document.querySelector('div[class*="AntigensInY"]')) &&
+                            nodes.length > 0 &&
+                                document.querySelector('div[class="x-mask"]') !== null &&
                                 !isVisCoords(document.querySelector('div[class="x-mask"]'))
                         ) {
-                            checkTarget('div[class*="AntigensInY"]');
-                            clearInterval(checkExist);
+                            getScrollParent(nodes[0]).classList.add("info-pane-scroll-frame");
+                            clearInterval(checkExist1);
                         };
                     }, 100);
 
+                var checkExist2 = setInterval(
+                    function(){
+                        if(
+                            document.querySelector('div[class*="info-pane-scroll-frame"]') !== null &&
+                                !isVisCoords(document.querySelector('div[class="x-mask"]')) &&
+                                nodeDisplaySearch(
+                                    nodeTextSearch(
+                                        document.querySelectorAll('span[class*="statme status-label"]'),
+                                        "Antigens in Y"
+                                    )
+                                ).length > 0
+                    ){
+                            smt = Math.max(document.querySelector('div[class*="AntigensInY"]').getBoundingClientRect().y - 200, 0);
+                            document.querySelector('div[class*="info-pane-scroll-frame"]').scrollTo({left: 0, top: smt, behavior: 'smooth'});
+                            clearInterval(checkExist2);
+                        }
+                    }, 100);
+
+                var checkExist3 = setInterval(
+                    function(){
+                        var node = document.querySelector('div[class*="info-pane-scroll-frame"]');
+                        if(
+                            isVisCoords(document.querySelector('div[class*="AntigensInY"]')) &&
+                                node !== null &&
+                                (node.scrollTop === smt ||
+                                 Math.abs((node.clientHeight + node.scrollTop) - node.scrollHeight) < 3)
+                        ){      
+                            checkTarget('div[class*="AntigensInY"]');
+                            clearInterval(checkExist3);
+                        }
+                    }, 100);
             }
         },{
-            
             target:      'div[class*="AntigensInY"]',
             placement:   'left',
-            arrowOffset: 'center',
-            yOffset:     -85,
-            content:     'We now have a one-dimensional plot. <br><br>In the Active Filters pane, we now have 2 new categories that describe the data in this plot. We see that the data is from 2 studies (CAVD 371 and 434) and includes 5 antigens across 11 time points. If we click on the \'Antigens in Y\'...',
+            arrowOffset: 220,
+            yOffset:     -225,
+            content:     'We now have a one-dimensional plot. Hover over a single data point on the plot. The dark data points show data from the same subject. Click on a data point to see the details. Click outside the details to close the box. <br><br>In the Active Filters pane, we now have 2 new categories that describe the data in this plot. We see that the data is from 2 studies (CAVD 371 and 434) and includes 5 antigens across 11 time points. If we click on the \'Antigens in Y\'...',
             onNext:      function(){
                 document.querySelector('div[class*="AntigensInY"]').click();
                 
@@ -387,7 +438,7 @@ var tour_plot_data = {
             title:       'Choosing the x-axis for your plot',
             xOffset:     -60,
             yOffset:     0,
-            content:     'Now let\'s select the type of data we want to plot on the x-axis. You\'ll notice there are a few other data types that can be plotted on the x-axis. Plotting the measure over time gives you a good overview of the data.',
+            content:     'Now let\'s select the type of data we want to plot on the x-axis. ',
             onNext:      function(){
 
                 document.querySelector('div[id="xvarselector"]').click();
@@ -409,9 +460,9 @@ var tour_plot_data = {
             target:      'div[class*="time-points-label"]',
             placement:   'left',
             arrowOffset: 'center',
-            content:     'We can select timepoints for the x-axis. The following dialog will give options for what time intervals are available to plot with. You\'ll notice there are a few other data types that can be plotted on the x-axis. Plotting the measure over time gives you a good overview of the data.',
+            content:     'You\'ll notice there are a few other data types that can be plotted on the x-axis. Plotting the measure over time gives you a good overview of the data.',
             xOffset:     -20,
-            yOffset:     -70,
+            yOffset:     -85,
             onNext:      function() {
                 
                 nodeTextSearch(document.querySelectorAll('div[class*="content-label"]'), "Time points")[0].click();
@@ -475,7 +526,7 @@ var tour_plot_data = {
             target:      'g[class*="study"]',
             placement:   'top',
             arrowOffset: 'left',
-            content:     'Now our plot shows the background-subtracted magnitude over time. Below the plot, you can see the different studies and treatment groups, and when the study visits occurred. The syringe icons indicate when the vaccinations were given to the subjects in each group. Hover over one of the icons to see what products were given. Notice that the study day at which the last vaccination is given is different for the different groups.',
+            content:     'Now the plot shows the background-subtracted magnitude over time. Below the plot, you can see the different studies and treatment groups, and when the study visits occurred. <br><br> Click on the "+" sign to expand the study groups. <br><br> The syringe icons indicate when the vaccinations were given to the subjects in each group. Hover over one of the icons to see what products were given. Notice that the study day at which the last vaccination is given is different for the different groups. <br><br> Collapse the study groups by clicking on the "-" sign.',
             yOffset:     0,
             xOffset:     0,
             onNext:      function() {
@@ -516,14 +567,25 @@ var tour_plot_data = {
             target:      'div[class*="aligned-by-label"]',
             placement:   'left',
             arrowOffset: 'center',
-            content:     'To make it easier to compare the immunogenicity measures at the \'peak time points\' across groups, we can re-align the study days by the last vaccination.<br>We can select the time points after the last vaccination and add that to our filters.',
-            yOffset:     -85,
+            content:     'To make it easier to compare the immunogenicity measures at the \'peak time points\' across groups, we can re-align the study days by the last vaccination.',
+            yOffset:     -98,
             xOffset:     -10,
             onNext:      function(){
 
-                var event = new Event('mouseleave');
-                nodeDisplaySearch(document.querySelectorAll("div[class*='aligned-by-dropdown']"))[0].dispatchEvent(event);
-                nodeTextSearch(document.querySelectorAll('span[id*="button"][id*="btnInnerEl"]'), "Set x-axis")[0].click();
+                var nodes = nodeDisplaySearch(document.querySelectorAll("div[class*='aligned-by-dropdown']"));
+                if(nodes.length > 0){
+                    var event = new Event('mouseleave');
+                    nodes[0].dispatchEvent(event);
+                }
+                
+                var checkExist1 = setInterval(
+                    function(){
+                        var nodes = nodeDisplaySearch(document.querySelectorAll("div[class*='aligned-by-dropdown']"));
+                        if(nodes.length === 0){
+                            nodeTextSearch(document.querySelectorAll('span[id*="button"][id*="btnInnerEl"]'), "Set x-axis")[0].click();
+                            clearInterval(checkExist1)
+                        };
+                    }, 100);
                 
                 var checkExist2 = setInterval(
                     function(){
@@ -541,7 +603,7 @@ var tour_plot_data = {
             target:      'g[class*="study"]',
             placement:   'top',
             arrowOffset: 'left',
-            content:     'Now our plot shows time points aligned by last vaccination.',
+            content:     'Now our plot shows time points aligned by last vaccination. We can select the time point 14 days after the last vaccination and add it to our filters. To select the time point either (1) click on the visit icons or (2) use a click and drag motion to highlight the plot in teal. Click the Filter button to apply the filter.',
             yOffset:     0,
             xOffset:     0,
             onNext:      function() {
@@ -576,7 +638,7 @@ var tour_plot_data = {
             arrowOffset: 'center',
             xOffset:     15,
             yOffset:     -32,
-            content:     'Clicking this back arrow, we can navigate back to select other sources for the X axis.',
+            content:     'Clicking this back arrow, we can navigate back to select other sources for the x-axis.',
             onNext:      function(){
                 document.querySelector('span[class="arrow back-to-sources"]').click();
                 var checkExist1 = setInterval(

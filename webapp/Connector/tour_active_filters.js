@@ -1,37 +1,44 @@
 var tour_active_filters = {
-    title:        'Active_filters',
-    description:  'A tour for using "Active filters".',
-    id:           'tour-active-filters',
-    started:      0,
+    title:       'Active_filters',
+    description: 'A tour for using "Active filters".',
+    id:          'tour-active-filters',
+    winerror:    0,
     i18n:        {
         skipBtn: 'Start the tour'
     },
     onStart:      function(){
-        window.onerror = function() { hopscotch.endTour(); };
-        if(self.started === 0){
-            self.started = 1;
+        window.onerror = function() { self.winerror = 1; hopscotch.endTour(); };
+        if(self.winerror === 0){
             for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
                 i.click();
             };
             for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
                 j.click();
             };
-        };      
+            self.winerror = 0;
+        };
     },
     onEnd:        function(){
-        document.querySelector('div.nav-label:nth-child(1)').click();
+        var nodes = null;
+        var promise = new Promise(function(resolve, reject){
+            nodes = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear"));
+            if(nodes.length > 0){
+                resolve();
+            }
+        }).then(function(result){
+            nodes[0].click();
+        });
+    },
+    onClose:      function(){
+        hopscotch.endTour();
+    },
+    onError:      function(){
         for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
             i.click();
         };
         for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
             j.click();
         };
-        self.started = 0;
-    },
-    onClose:      function(){
-        hopscotch.endTour();
-    },
-    onError:      function(){
         hopscotch.endTour();
     },
     steps:
@@ -72,7 +79,7 @@ var tour_active_filters = {
             placement:   'left',
             arrowOffset: 'center',
             content:     'As an example, when we click on the species category \...',
-            yOffset:     -17,
+            yOffset:     -8,
             onNext:      function(){
                 document.querySelector('.info_Species > li:nth-child(1) > span:nth-child(1)').click();
                 var checkExist = setInterval(
@@ -149,22 +156,36 @@ var tour_active_filters = {
             placement:   'left',
             arrowOffset: 'center',
             content:     'Once you have applied one or more filters, if we click on the Studies row...',
-            yOffset:     -17,
+            yOffset:     -40,
             onNext:      function(){
                 document.querySelector('.info_Study > li:nth-child(1)').click();
-                var checkExist = setInterval(
+                
+                var checkExist1 = setInterval(
                     function(){
-                        if(document.querySelector('span[class*="sorter-content"]') !== null){
-                            window.hopscotch.startTour(window.hopscotch.getCurrTour(), window.hopscotch.getCurrStepNum());
-                            clearInterval(checkExist);
+                        var nodes = nodeTextSearch(document.querySelectorAll('div[class*="x-grid-group-title"]'), "Has data in active filters");
+                        if(document.querySelector('span[class*="sorter-content"]') !== null &&
+                           isVisCoords(document.querySelector('span[class*="sorter-content"]')) &&
+                           nodes.length > 0){
+                            nodes[0].classList.add("has-data-header");
+                            clearInterval(checkExist1);
                         };
                     }, 100);
+
+                var checkExist2 = setInterval(
+                    function(){
+                        if(document.querySelector('div[class*="has-data-header"]') !== null){
+                            clearInterval(checkExist2);
+                            checkTarget('div[class*="has-data-header"]');
+                        }
+                    }, 100);
+
             },
             multipage: true
         },{
-            target:      'div[class*="infopane"]',
+            target:      'div[class*="has-data-header"]',
             placement:   'left',
             arrowOffset: 'center',
+            yOffset:     -60,
             content:     'The studies will be listed under \'Has data in active filters\' and \'No data in active filters\' to indicate if any subjects in that study meet the filter criteria.',
             onNext:      function(){
                 // Need to handle what if there are two of these?
@@ -195,7 +216,7 @@ var tour_active_filters = {
             arrowOffset: 'center',
             content:     'You can remove a filter by clicking the red <font color="red"><b>❌</b></font> in the corner of the filter box. The Clear button removes all filters. Click the Save button to save your filters for further exploration in a future session.',
             xOffset:     -200,
-            yOffset:     -15,
+            yOffset:     -50,
             onNext:    function(){
                 document.querySelector('div.nav-label:nth-child(1)').click();
                 var checkExist = setInterval(

@@ -2,36 +2,50 @@ var tour_monoclonal_antibodies = {
     title:       'Monoclonal Antibodies',
     description: 'A tour for the "Monoclonal antibodies" section.',
     id:          'tour-monoclonal-antibodies',
-    started:     0,
+    winerror:    0,
     i18n:        {
         skipBtn: 'Start the tour'
     },
-    onStart:     function(){
-        window.onerror = function() { hopscotch.endTour(); };
-        if(self.started === 0){
-            self.started = 1;
+    onStart:      function(){
+        window.onerror = function() { self.winerror = 1; hopscotch.endTour(); };
+        if(self.winerror === 0){
             for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
                 i.click();
             };
             for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
                 j.click();
             };
-        };      
+            self.winerror = 0;
+        };
     },
-    onEnd:       function(){
-        self.started = 0;
-        document.querySelector('div.nav-label:nth-child(1)').click();
+    onEnd:        function(){
+
+        var nodes = null;
+        var promise = new Promise(function(resolve, reject){
+            nodes = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear"));
+            if(nodes.length > 0){
+                resolve();
+            }
+        }).then(function(result){
+            if(nodes[0] !== null){
+                nodes[0].click();
+                return;
+            }
+        }).then(function(result){
+            document.querySelector('div.nav-label:nth-child(1)').click();
+            return;
+        });
+    },
+    onClose:      function(){
+        hopscotch.endTour();
+    },
+    onError:      function(){
         for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
             i.click();
         };
         for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
             j.click();
         };
-    },
-    onClose:     function(){
-        hopscotch.endTour();
-    },
-    onError:     function(){
         hopscotch.endTour();
     },
     steps:
@@ -40,8 +54,8 @@ var tour_monoclonal_antibodies = {
             target:      'h3[class*="tour-section-title"]',
             placement:   'bottom',
             arrowOffset: 'center',
-            title:       'DataSpace tours',
-            content:     'This is a guided tour design]ed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.<br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
+            title:       'Monoclonal antibodies',
+            content:     'This is a guided tour designed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.<br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
         },{
@@ -126,7 +140,7 @@ var tour_monoclonal_antibodies = {
             arrowOffset: 'center',
             xOffset:     -110,
             yOffset:     -10,
-            title:       'Choosing the type of data to plot',
+            title:       'Choosing mAb data to plot',
             content:     'The MAb/Mixture column can be sorted or filtered to specific mAbs.',
             onNext:      function(){
 
@@ -225,7 +239,7 @@ var tour_monoclonal_antibodies = {
             arrowOffset: 'top',
             xOffset:     10,
             yOffset:     -25,
-            content:     'Now the list of mAbs only includes the mAbs we selected.',
+            content:     'Now the list of mAbs only includes the mAbs selected.',
             onNext:      function(){
 
                 var checkExist1 = setInterval(
@@ -413,7 +427,8 @@ var tour_monoclonal_antibodies = {
                 var checkExist = setInterval(
                     function(){
                         if(document.querySelector('div[class*="labkey-knitr"]') !== null &&
-                           isVisCoords(document.querySelector('div[class*="labkey-knitr"]'))){
+                           nodeDisplaySearch(document.querySelectorAll('div[class*="labkey-knitr"]')).length > 0 && 
+                           nodeDisplaySearch(document.querySelectorAll('div[class*="svg-container"]')).length > 0 ){
                             clearInterval(checkExist);
                             window.hopscotch.startTour(window.hopscotch.getCurrTour(), window.hopscotch.getCurrStepNum());
                         };
@@ -427,7 +442,7 @@ var tour_monoclonal_antibodies = {
             arrowOffset: 'center',
             xOffset:     0,
             yOffset:     0,
-            content:     'The heatmap report shows the titer IC50 for each mAb-virus combination. The titer IC50 (50% maximal inhibitory concentration) is the concentration of the antibody required to achieve 50% neutralization of the virus. A low titer IC50 value indicates more efficient neutralization of the virus by the antibody. The geometric mean of the titer is plotted when the mAb-virus combination is tested in more than one study.  Hover over the cell for each combination to see the titer value.  \<br\>If you\'ve selected a large number of mAbs and viruses, the plot content might be very dense and hard to read. Hover over the plot to get the tool bar. Use the tool bar to zoom, pan, and resize the plot.',
+            content:     'The heatmap report shows the titer IC50 for each mAb-virus combination. The titer IC50 (50% maximal inhibitory concentration) is the concentration of the antibody required to achieve 50% neutralization of the virus. A low titer IC50 value indicates more efficient neutralization of the virus by the antibody. The geometric mean of the titer is plotted when the mAb-virus combination is tested in more than one study.  Hover over the cell for each combination to see the titer value.<br><br>If you\'ve selected a large number of mAbs and viruses, the plot content might be very dense and hard to read. Hover over the plot to get the tool bar. Use the tool bar to zoom, pan, and resize the plot.',
             onNext:      function(){
 
                 document.querySelector('div[class*="iarrow"]').click();
@@ -447,7 +462,7 @@ var tour_monoclonal_antibodies = {
             arrowOffset: 'center',
             xOffset:     -115,
             yOffset:     0,
-            content:     'The other report shows \the neutralization curves of the mAbs and viruses selected.',
+            content:     'The other report shows the neutralization curves of the mAbs and viruses selected.',
             onNext:      function(){
 
                 document.querySelector('a[class*="mab-report-button1"]').click();
@@ -479,7 +494,7 @@ var tour_monoclonal_antibodies = {
             arrowOffset: 'center',
             xOffset:     50,
             yOffset:     0,
-            content:     'This tab shows the neutralization curves of all the viruses one of the mAbs were tested against. Scroll down to see the details from the curves.',
+            content:     'This tab shows the neutralization curves of all the viruses tested against one of the mAb mixtures. Scroll down to see the details of the curves.',
             onNext:      function(){
                 document.querySelector('button[onclick*="PGT121 + PGDM1400"]').click();
                 window.hopscotch.startTour(window.hopscotch.getCurrTour(), window.hopscotch.getCurrStepNum());
@@ -539,15 +554,26 @@ var tour_monoclonal_antibodies = {
             yOffset:     -45,
             content:     'Data can also be exported as zipped CSV files or as an Excel workbook.',
             onNext:    function(){
-                document.querySelector('div.nav-label:nth-child(1)').click();
-                var checkExist = setInterval(
-                    function(){
-                        var node = document.querySelector('h3[class*="tour-section-title"]');
-                        if(node !== null && isVisCoords(node)){
-                            checkTarget('h3[class*="tour-section-title"]');
-                            clearInterval(checkExist);
-                        }
-                    }, 100);
+
+                var nodes = null;
+                var promise = new Promise(function(resolve, reject){
+                    nodes = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear"));
+                    if(nodes.length > 0){
+                        resolve();
+                    }
+                }).then(function(result){
+                    if(nodes[0] !== null){
+                        nodes[0].click();
+                        return;
+                    }
+                }).then(function(result){
+                    document.querySelector('div.nav-label:nth-child(1)').click();
+                    return;
+                }).then(function(result){
+                    if(nodeDisplaySearch(document.querySelectorAll('h3[class*="tour-section-title"]')).length > 0){
+                        checkTarget('h3[class*="tour-section-title"]');
+                    }
+                });
             }
         },{
             target:      'h3[class*="tour-section-title"]',

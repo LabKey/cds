@@ -2,38 +2,53 @@ var tour_learn_about = {
     title:       'Learn-about',
     description: 'A tour for the "Learn about" section.',
     id:          'tour-learn-about',
-    started:     0,
+    winerror:    0,
     i18n:        {
         skipBtn: 'Start the tour'
     },
-    onStart:     function(){
-        window.onerror = function() { hopscotch.endTour(); };
-        if(self.started === 0){
-            self.started = 1;
+    onStart:      function(){
+        window.onerror = function() { self.winerror = 1; hopscotch.endTour(); };
+        if(self.winerror === 0){
             for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
                 i.click();
             };
             for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
                 j.click();
             };
-        };      
+            self.winerror = 0;
+        };
     },
     onEnd:       function(){
         self.started = 0;
         document.querySelector('div.nav-label:nth-child(1)').click();
+        var node = null;
+        var promise = new Promise(function(resolve, reject) {
+            node = document.querySelector('input[class*="search-studies"]');
+            if(node !== null){
+                resolve();
+            };
+        }).then(function(result) {
+            node.value = "";
+            if(node.vale === ""){
+                return;
+            }
+        }).then(function(result) {
+            var event = new Event("change");
+            node.dispatchEvent(event);
+            return;
+        });
+        
+    },
+    onClose:     function(){
+        hopscotch.endTour();
+    },
+    onError:      function(){
         for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
             i.click();
         };
         for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
             j.click();
         };
-        document.querySelector("input[id*=learn-search]").parentElement.nextSibling.firstChild.click();
-
-    },
-    onClose:     function(){
-        hopscotch.endTour();
-    },
-    onError:     function(){
         hopscotch.endTour();
     },
     steps:
@@ -106,7 +121,9 @@ var tour_learn_about = {
                 document.querySelector('div[id^="templatecolumn"][id*="-titleEl"]').classList.add("x-column-header-over");
                 var checkExist = setInterval(
                     function(){
-                        if(document.querySelector('div[id^="templatecolumn"][id*="-triggerEl"]') !== null){
+                        if(
+                            document.querySelector('div[id^="templatecolumn"][id*="-triggerEl"][class*="x-column-header-over"]') !== null
+                          ){
                             checkTarget('div[id^="templatecolumn"][id*="-triggerEl"]');
                             clearInterval(checkExist);
                         };
@@ -144,17 +161,53 @@ var tour_learn_about = {
             yOffset:     0,
             xOffset:     -15,
             onNext:      function(){
-                var event = new Event("change");
-                document.querySelector('div[id*="menuitem"]').click();
-                document.querySelector('a[class*="x-btn-custom-toolbar-small x-noicon x-btn-noicon"]').click();
+
+                var checkExist_4 = setInterval(
+                    function(){
+                        var nodes = nodeDisplaySearch(document.querySelectorAll('div[id*="menuitem"]'));
+                        if ( nodes.length > 0 ) {
+                            nodes[0].classList.add("search-by-menu-dropdown");
+                            clearInterval(checkExist_4);
+                        }
+                    }, 100);
+                
+                var checkExist_3 = setInterval(
+                    function(){
+                        var node = document.querySelector('div[class*="search-by-menu-dropdown"]');
+                        if ( node !== null ) {
+                            node.click();
+                            clearInterval(checkExist_3);
+                        }
+                    }, 100);
+
+                var checkExist_2 = setInterval(
+                    function(){
+                        var nodes = nodeDisplaySearch(document.querySelectorAll('a[class*="x-btn-custom-toolbar-small x-noicon x-btn-noicon"]'));
+                        if ( nodes.length > 0 ) {
+                            nodes[0].click();
+                            clearInterval(checkExist_2);
+                        }
+                    }, 100
+                );
+                
+                var checkExist_1 = setInterval(
+                    function() {
+                        if(
+                            nodeDisplaySearch(document.querySelectorAll('div[class*=window-body-filterwindow]')).length === 0 &&
+                                nodeDisplaySearch(document.querySelectorAll('input')).length !== 0
+                        ){
+                            nodeDisplaySearch(document.querySelectorAll('input'))[0].classList.add("search-studies");                            
+                            clearInterval(checkExist_1);
+                        }
+                    }, 100);
 
                 var checkExist1 = setInterval(
-                    function() {
-                        if(document.querySelector('div[class*=window-body-filterwindow]') === null){
-                            var inbox = nodeDisplaySearch(document.querySelectorAll('input'))[0];
-                            inbox.value = "434";
-                            inbox.dispatchEvent(event);
-                            inbox.classList.add("search-studies");
+                    function(){
+                        var event = new Event("change");
+                        var node = document.querySelector('input[class*="search-studies"]');
+                        if(node !== null){
+                            node.value = "434";
+                            node.dispatchEvent(event);
                             clearInterval(checkExist1);
                         }
                     }, 100);
@@ -168,15 +221,17 @@ var tour_learn_about = {
                                 node2 !== null &&
                                 node1.nextSibling === null &&
                                 node1.previousSibling === null &&
-                                isVisCoords(node1)
-                        );
-                        checkTarget('input[id*="learn-search"]');
-                        clearInterval(checkExist2);
+                                isVisCoords(node1) &&
+                                node2.value == "434"
+                        ){
+                            checkTarget('input[class*="search-studies"]');
+                            clearInterval(checkExist2);
+                        };
                     },100);
 
-            }
+            }, multipage: true
         },{
-            target:    'input[id*="learn-search"]',
+            target:    'input[class*="search-studies"]',
             placement: 'left',
             content:   'You can also use the search bar to find a specific study.',
             yOffset:   -17,
@@ -213,7 +268,7 @@ var tour_learn_about = {
             placement:   'right',
             arrowOffset: 'top',
             xOffset:     -200,
-            yOffset:     -10,
+            yOffset:     -75,
             content:     'On the study pages, you\'ll find background information about the study, including the type of study, the species being studied, the grant under which it was conducted, as well as the study objectives, rationale, and methods.  Treatment and assay schemas provide a summary view of vaccination administration and assay testing schedules.',
             onNext:       function(){
 
@@ -228,23 +283,40 @@ var tour_learn_about = {
                     }
                 }
 
-                var nodes = nodeTextSearch('h3', "Findings");
-                nodes[0].classList.add("findings-header");
-                
+                var smt = null;
+                var checkExist_2 = setInterval(
+                    function(){
+                        var nodes = nodeTextSearch('h3', "Findings");
+                        if(nodes.length > 0){
+                            nodes[0].classList.add("findings-header");
+                            clearInterval(checkExist_2);
+                        }
+                    }, 100);
+
+                var checkExist_1 = setInterval(
+                    function(){
+                        var node = document.querySelector('h3[class*="findings-header"]');
+                        if(node !== null && smt === null){
+                            smt = Math.max(node.getBoundingClientRect().y - 300, 0);
+                            clearInterval(checkExist_1);
+                        }
+                    }, 100);
+
                 var checkExist1 = setInterval(
                     function(){
-                        if(document.querySelector('h3[class*="findings-header"]') !== null) {
+                        if(document.querySelector('h3[class*="findings-header"]') !== null && smt !== null) {
                             getScrollParent(document.querySelector('div[class="x-container auto-scroll-y x-container-default"]')).classList.add("find-scroll-frame");
                             clearInterval(checkExist1);
                         }
                     }, 100);
 
-                var smt = Math.max(document.querySelector('h3[class*="findings-header"]').getBoundingClientRect().y - 500, 0);
+                // if(smt + node.clientHeight > node.scrollHeight) smt = node.scrollHeight - node.clientHeight
+                
                 var checkExist2 = setInterval(
                     function(){
                         var node = document.querySelector('div[class*="find-scroll-frame"]');
                         if(node !== null){
-                            document.querySelector('div[class*="find-scroll-frame"]').scrollTo({left: 0, top: smt, behavior: 'smooth'});
+                            node.scrollTo({left: 0, top: smt, behavior: 'smooth'});
                             clearInterval(checkExist2);
                        }
                     }, 100);
@@ -252,7 +324,11 @@ var tour_learn_about = {
                 var checkExist3 = setInterval(
                     function(){
                         var node = document.querySelector('div[class*="find-scroll-frame"]');
-                        if(node !== null && node.scrollTop === smt){
+                        if (
+                            node !== null && smt != null &&
+                                ( Math.abs(node.scrollTop - smt) < 3  ||
+                                  Math.abs((node.clientHeight + node.scrollTop) - node.scrollHeight) < 3)
+                        ){
                             checkTarget('h3[class*="findings-header"]');
                             clearInterval(checkExist3);
                         }
@@ -262,17 +338,19 @@ var tour_learn_about = {
         },{
             target:      'h3[class*="findings-header"]',
             placement:   'right',
-            arrowOffset: 'top',
+            arrowOffset: 'center',
             xOffset:     -200,
-            yOffset:     -10,
+            yOffset:     -55,
             content:     'Completed studies include a summary of findings and links to publications.',
             onNext:      function(){
 
-                var smt = Math.max(document.querySelector('div[id*="app-module-contactcds"]').getBoundingClientRect().y - 500, 0);
+                var snd = null;
+                var smt = null;
                 var checkExist1 = setInterval(
                     function(){
-                        var node = document.querySelector('div[class*="find-scroll-frame"]');
-                        if(node !== null){
+                        snd = document.querySelector('div[class*="find-scroll-frame"]');
+                        if( snd !== null ){
+                            smt = Math.max((snd.scrollTop + document.querySelector('div[id*="app-module-contactcds"]').getBoundingClientRect().y - 300), 0);
                             document.querySelector('div[class*="find-scroll-frame"]').scrollTo({left: 0, top: smt, behavior: 'smooth'});
                             clearInterval(checkExist1);
                        }
@@ -281,7 +359,11 @@ var tour_learn_about = {
                 var checkExist2 = setInterval(
                     function(){
                         var node = document.querySelector('div[class*="find-scroll-frame"]');
-                        if(node.scrollTop === smt){
+                        if (
+                            node !== null &&
+                                smt != null &&
+                                Math.abs(node.scrollTop - smt) < 3 
+                        ) {
                             checkTarget('div[id*="app-module-contactcds"]');
                             clearInterval(checkExist2);
                         }
@@ -291,27 +373,20 @@ var tour_learn_about = {
         },{
             target:      'div[id*="app-module-contactcds"]',
             placement:   'right',
-            arrowOffset: 'top',
+            arrowOffset: 'center',
             xOffset:     -200,
-            yOffset:     -10,
+            yOffset:     -60,
             content:     'Additional resources and contact information are available for follow up questions.',
         },{
             target:      'div[id*="app-module-studyproducts"]',
             placement:   'right',
-            arrowOffset: 'top',
+            arrowOffset: 'center',
             xOffset:     -200,
-            yOffset:     -10,
+            yOffset:     -60,
             content:     'Links to the Product pages in Learn about provide more information for the products tested in the study.',
-        },{
-            target:      'div[id*="app-module-dataavailability"]',
-            placement:   'right',
-            arrowOffset: 'top',
-            xOffset:     -200,
-            yOffset:     -10,
-            content:     'This section gives you a summary of the data collected during the study and whether the data is available via the DataSpace. Hover over the data type to get the status.  Assays highlighted in red are links to the Assay pages in Learn about.',
             onNext:      function(){
 
-                var smt = Math.max(document.querySelector('div[id*="app-module-studyreports"]').getBoundingClientRect().y - 500, 0); 
+                var smt = Math.max(document.querySelector('div[id*="app-module-dataavailability"]').getBoundingClientRect().y - 300, 0); 
                 var checkExist1 = setInterval(
                     function(){
                         var node = document.querySelector('div[class*="find-scroll-frame"]');
@@ -324,7 +399,47 @@ var tour_learn_about = {
                 var checkExist2 = setInterval(
                     function(){
                         var node = document.querySelector('div[class*="find-scroll-frame"]');
-                        if(node.scrollTop === smt){
+                        if(
+                            node !== null && smt != null &&
+                                ( Math.abs(node.scrollTop - smt) < 3 ||
+                                  Math.floor(node.clientHeight + node.scrollTop) === Math.floor(node.scrollHeight) )
+                          ){
+                            checkTarget('div[id*="app-module-dataavailability"]');
+                            clearInterval(checkExist2);
+                        }
+                    }, 100);
+
+            }, multipage: true
+            
+        },{
+            target:      'div[id*="app-module-dataavailability"]',
+            placement:   'right',
+            arrowOffset: 'center',
+            xOffset:     -200,
+            yOffset:     -78,
+            content:     'This section gives you a summary of the data collected during the study and whether the data is available via the DataSpace. Hover over the data type to get the status.  Assays highlighted in red are links to the Assay pages in Learn about.',
+            onNext:      function(){
+
+                var smt = null;
+                var node = null;
+                var checkExist1 = setInterval(
+                    function(){
+                        node = document.querySelector('div[class*="find-scroll-frame"]');
+                        smt = Math.max(document.querySelector('div[id*="app-module-studyreports"]').getBoundingClientRect().y - 100, 0); 
+                        if(node !== null && smt !== null){
+                            node.scrollTo({left: 0, top: smt, behavior: 'smooth'});
+                            clearInterval(checkExist1);
+                       }
+                    }, 100);
+
+                var checkExist2 = setInterval(
+                    function(){
+                        var node = document.querySelector('div[class*="find-scroll-frame"]');
+                        if(
+                            node !== null && smt != null &&
+                                ( Math.abs(node.scrollTop - smt) < 3 ||
+                                  Math.floor(node.clientHeight + node.scrollTop) === Math.floor(node.scrollHeight) )
+                        ){
                             checkTarget('div[id*="app-module-studyreports"]');
                             clearInterval(checkExist2);
                         }
@@ -334,17 +449,19 @@ var tour_learn_about = {
         },{
             target:      'div[id*="app-module-studyreports"]',
             placement:   'right',
-            arrowOffset: 'top',
+            arrowOffset: 'center',
             xOffset:     -200,
-            yOffset:     -10,
+            yOffset:     -60,
             content:     'Some studies have additional reports or presentations to summarize study findings.',
             onNext:      function(){
 
-                var smt = Math.max(document.querySelector('.iarrow').getBoundingClientRect().y - 500, 0);
+                var smt = null;
+                var node = null;
                 var checkExist1 = setInterval(
                     function(){
-                        var node = document.querySelector('div[class*="find-scroll-frame"]');
-                        if(node !== null){
+                        node = document.querySelector('div[class*="find-scroll-frame"]');
+                        smt = Math.max(document.querySelector('.iarrow').getBoundingClientRect().y - 300, 0);
+                        if(node !== null && smt !== null){
                             document.querySelector('div[class*="find-scroll-frame"]').scrollTo({left: 0, top: smt, behavior: 'smooth'});
                             clearInterval(checkExist1);
                        }
@@ -353,7 +470,11 @@ var tour_learn_about = {
                 var checkExist2 = setInterval(
                     function(){
                         var node = document.querySelector('div[class*="find-scroll-frame"]');
-                        if(node.scrollTop === smt){
+                        if (
+                            node !== null && smt != null &&
+                                ( Math.abs(node.scrollTop - smt) < 3  ||
+                                  Math.floor(node.clientHeight + node.scrollTop) === Math.floor(node.scrollHeight) )
+                        ){
                             checkTarget('.iarrow');
                             clearInterval(checkExist2);
                         }
@@ -381,7 +502,7 @@ var tour_learn_about = {
                 
                 var checkExist2 = setInterval(
                     function() {
-                        if(document.querySelector('h1[class*="find-assay-tab"]')){
+                        if(nodeDisplaySearch(document.querySelectorAll('h1[class*="find-assay-tab"]')).length > 0){
                             checkTarget('h1[class*="find-assay-tab"]');
                             clearInterval(checkExist2);
                         };
@@ -396,14 +517,14 @@ var tour_learn_about = {
             title:       'Learn about - Assays',
             content:     'Assay pages describe the assay methods and endpoints and show which studies have data for the assay. Each assay page contains assay dimensions and variable definitions to provide background on the assay data.',
             onNext:      function(){
-
+                
                 var event = new Event("change");
-                document.querySelectorAll('h1[class*="lhdv"]')[2].click();
+                nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[2].click();
 
                 var checkExist1 = setInterval(
                     function() {
                         if(document.querySelector('input[placeholder*="Search products"]') !== null){
-                            var inbox = document.querySelector('input');
+                            var inbox = document.querySelector('input[placeholder*="Search products"]');
                             inbox.value = "ALVAC";
                             inbox.dispatchEvent(event);
                             clearInterval(checkExist1);
@@ -485,7 +606,7 @@ var tour_learn_about = {
                 var checkExist1 = setInterval(
                     function() {
                         if(document.querySelector('div[id*="learnheader"]').style.display !== 'none'){                            
-                            document.querySelectorAll('h1[class*="lhdv"]')[3].click();
+                            nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[3].click();
                             clearInterval(checkExist1);
                         };
                     }, 100);
@@ -493,7 +614,7 @@ var tour_learn_about = {
                 var checkExist2 = setInterval(
                     function(){
                         if(nodeDisplaySearch(document.querySelectorAll('input[id*="learn-search"]')).length > 0 &&
-                           document.querySelectorAll('h1[class*="lhdv"]')[3].className === 'lhdv active' &&
+                           nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[3].className === 'lhdv active' &&
                            document.querySelector('input[placeholder*="Search mabs"]') !== null){
                             var inbox = document.querySelector('input[placeholder*="Search mabs"]');
                             inbox.value = "PGT";
@@ -521,26 +642,36 @@ var tour_learn_about = {
             title:       'Learn about - MAbs',
             content:     'On the MAbs page, use the column filters or search bar to find specific monoclonal antibodies.',
             onNext:      function(){
-                var checkExist = setInterval(
-                    function(){
-                        if(document.querySelector('tr[id*="record-PGT121 + PGDM1400"]').getAttribute("data-recordindex") < 5){
-                            checkTarget('tr[id*="record-PGT121 + PGDM1400"]');
-                            clearInterval(checkExist);
-                        };
-                    }, 100);
+
+                var promise = new Promise(function(resolve, reject){
+                    if(nodeDisplaySearch(nodeTextSearch('h2', 'PGT121 + PGDM1400')).length > 0){
+                        resolve();
+                    }
+                }).then(function(){
+                    var nodes = nodeDisplaySearch(document.querySelectorAll('tr[id*="record-PGT121 + PGDM1400"]'));
+                    if( nodes.length > 0 ){
+                        nodes[0].classList.add("record-pgt121-pgdm1400");
+                        return;
+                    }
+                }).then(function(){
+                    if(document.querySelector('tr[class*="record-pgt121-pgdm1400"]') !== null){
+                        checkTarget('tr[class*="record-pgt121-pgdm1400"]');
+                        return;
+                    }
+                });
+                
             }, multipage: true
-            
         },{
-            target:      'tr[id*="record-PGT121 + PGDM1400"]',
+            target:      'tr[class*="record-pgt121-pgdm1400"]',
             placement:   'top',
             arrowOffset: 'center',
             title:       'Learn about - MAbs',
             content:     'Get details about monoclonal antibodies and see what studies tested them. For more details, follow the link to the Los Alamos National Lab antibody database.',
             onNext:      function(){
-                document.querySelectorAll('h1[class*="lhdv"]')[4].click();
+                nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[4].click();
                 var checkExist = setInterval(
                     function(){
-                        if(document.querySelectorAll('h1[class*="lhdv"]')[4].className === 'lhdv active'){
+                        if(nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[4].className === 'lhdv active'){
                             checkTarget('h1[class*="lhdv"][class*="lhdv active"]');
                             clearInterval(checkExist);
                         };
@@ -554,10 +685,10 @@ var tour_learn_about = {
             title:       'Learn about - Reports',
             content:     'On the Reports page, you\'ll find use cases describing how others have used the DataSpace and reports summarizing the studies and data in the DataSpace.',
             onNext:      function(){
-                document.querySelectorAll('h1[class*="lhdv"]')[5].click();
+                nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[5].click();
                 var checkExist = setInterval(
                     function(){
-                        if(document.querySelectorAll('h1[class*="lhdv"]')[5].className === 'lhdv active'){
+                        if(nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[5].className === 'lhdv active'){
                             checkTarget('h1[class*="lhdv"][class*="lhdv active"]');
                             clearInterval(checkExist);
                         };
@@ -570,12 +701,15 @@ var tour_learn_about = {
             arrowOffset: 'top',
             title:       'Learn about - Publications',
             content:     'The Publications page combines publications across the contributing networks. Search publications by title, author, journal, and related studies.',
-            
+            onNext:      function(){
+                checkTarget('div.nav-label:nth-child(1)');
+            }
+
         },{
             target:      'div.nav-label:nth-child(1)',
             placement:   'left',
             yOffset:     -17,
-            content:     'Clicking home takes send you back to the front page.',
+            content:     'The menu bar takes you back to the Home page',
             onNext:    function(){
                 document.querySelector('div.nav-label:nth-child(1)').click();
                 var checkExist = setInterval(

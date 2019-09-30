@@ -2,36 +2,34 @@ var tour_get_oriented = {
     title:       'Get-oriented',
     description: 'A tour for getting oriented with DataSpace.',
     id:          'tour-get-oriented',
-    started:     0,
+    winerror:    0,
     i18n:        {
         skipBtn: 'Start the tour'
     },
-    onStart:     function(){
-        window.onerror = function() { hopscotch.endTour(); };
-        if(self.started === 0){
-            self.started = 1;
+    onStart:      function(){
+        window.onerror = function() { self.winerror = 1; hopscotch.endTour(); };
+        if(self.winerror === 1){
             for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
                 i.click();
             };
             for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
                 j.click();
             };
-        };      
+            self.winerror = 0;
+        };
     },
-    onEnd:       function(){
-        document.querySelector('div.nav-label:nth-child(1)').click();
+    onEnd:        function(){
+    },
+    onClose:      function(){
+        hopscotch.endTour();
+    },
+    onError:      function(){
         for(var i of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "clear")){
             i.click();
         };
         for(var j of nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Cancel")){
             j.click();
         };
-        self.started = 0;
-    },
-    onClose:     function(){
-        hopscotch.endTour();
-    },
-    onError:     function(){
         hopscotch.endTour();
     },
     steps:
@@ -41,7 +39,7 @@ var tour_get_oriented = {
             placement:   'bottom',
             arrowOffset: 'center',
             title:       'Get oriented to the DataSpace',
-            content:     'This is a guided tour design]ed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.',
+            content:     'This is a guided tour designed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
         },{
@@ -121,7 +119,7 @@ var tour_get_oriented = {
                     function(){
                         var node = document.querySelector('div[class*="quick-link-scroll-frame"]');
                         if(node !== null && smt !== null){
-                            document.querySelector('div[class*="quick-link-scroll-frame"]').scrollTo({left: 0, top: smt, behavior: 'smooth'});
+                            node.scrollTo({left: 0, top: smt, behavior: 'smooth'});
                             clearInterval(checkExist1);
                        }
                     }, 100);
@@ -129,9 +127,12 @@ var tour_get_oriented = {
                 var checkExist2 = setInterval(
                     function(){
                         var node = document.querySelector('div[class*="quick-link-scroll-frame"]');
-                        if(node !== null &&
-                           smt !== null &&
-                           (node.scrollTop === smt || node.scrollTop === node.scrollTopMax)){
+                        if(
+                            node !== null &&
+                                smt !== null &&
+                                (node.scrollTop === smt ||
+                                 Math.abs((node.clientHeight + node.scrollTop) - node.scrollHeight) < 3)
+                          ){
                             checkTarget('h2[class*="groups-plots"]');
                             clearInterval(checkExist2);
                         }
@@ -153,6 +154,41 @@ var tour_get_oriented = {
             content:     'The News section on the Home page is where you\'ll find blogs about how other members have used the DataSpace. We\'ll also let you know about new data, new features, and collaboration opportunities.',
             yOffset:     -17,
             onNext:    function(){
+
+                var smt = null;
+
+                var checkExist_1 = setInterval(
+                    function(){
+                        var node = document.querySelector('h3[class*="tour-section-title"]');
+                        if(node !== null && smt === null){
+                            smt = Math.max(node.getBoundingClientRect().y - 300, 0);
+                            clearInterval(checkExist_1);
+                        }
+                    }, 100);
+                
+                var checkExist1 = setInterval(
+                    function(){
+                        var node = document.querySelector('div[class*="quick-link-scroll-frame"]');
+                        if(node !== null && smt !== null){
+                            node.scrollTo({left: 0, top: smt, behavior: 'smooth'});
+                            clearInterval(checkExist1);
+                       }
+                    }, 100);
+
+                var checkExist2 = setInterval(
+                    function(){
+                        var node = document.querySelector('div[class*="quick-link-scroll-frame"]');
+                        if(
+                            node !== null &&
+                                smt !== null &&
+                                (node.scrollTop === smt ||
+                                 node.scrollTop === 0)
+                          ){
+                            checkTarget('h3[class*="tour-section-title"]');
+                            clearInterval(checkExist2);
+                        }
+                    }, 100);
+
             }
         },{
             target:      'h3[class*="tour-section-title"]',
