@@ -514,7 +514,7 @@ var tour_plot_data = {
             onNext:      function(){
 
                 var event = new Event('mouseleave');
-                document.querySelector("div[class*='aligned-by-dropdown']").dispatchEvent(event);
+                nodeDisplaySearch(document.querySelectorAll("div[class*='aligned-by-dropdown']"))[0].dispatchEvent(event);
                 nodeTextSearch(document.querySelectorAll('span[id*="button"][id*="btnInnerEl"]'), "Set x-axis")[0].click();
                 
                 var checkExist2 = setInterval(
@@ -643,7 +643,8 @@ var tour_plot_data = {
                 nodeTextSearch(document.querySelectorAll('span[id*=button]'), "Set x-axis")[0].click();
                 var checkExist = setInterval(
                     function(){
-                        if (document.querySelectorAll('div[class="x-mask"]')[0].style.display === "none") {
+                        if (document.querySelectorAll('div[class="x-mask"]')[0].style.display === "none" ||
+                            document.querySelectorAll('div[class="x-mask"]')[0].style.visibility === "hidden") {
                             checkTarget('div[id="colorvarselector"]');
                             clearInterval(checkExist);
                         }
@@ -695,7 +696,8 @@ var tour_plot_data = {
                 nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Set color")[0].click();
                 var checkExist = setInterval(
                     function(){
-                        if (document.querySelectorAll('div[class="x-mask"]')[0].style.display === "none") {
+                        if (document.querySelectorAll('div[class="x-mask"]')[0].style.display === "none" ||
+                            document.querySelectorAll('div[class="x-mask"]')[0].style.visibility === "hidden") {
                             checkTarget('h2[class*="filterheader-text section-title-filtered"]');
                             clearInterval(checkExist);
                         };
