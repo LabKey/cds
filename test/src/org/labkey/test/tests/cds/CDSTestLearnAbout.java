@@ -359,10 +359,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 labelHXB2, labelBindingType, labelSpecies);
 
         log("Verify mab detail field values");
-        if(getBrowserType() == BrowserType.CHROME)
-            verifyDetailFieldValues(mAbName, "Individual mAb", "815", "2F5 (Polymun) (other)", "IgG3?", "gp160", "gp41 MPER", "human");
-        else
-            verifyDetailFieldValues(mAbName, "Individual mAb", "815", "2F5 (PlantForm) (other)", "IgG3?", "gp160", "gp41 MPER", "human");
+        verifyDetailFieldValues(mAbName, "Individual mAb", "815", "2F5 (PlantForm) (other)", "IgG3?", "gp160", "gp41 MPER", "human");
 
         click(breadcrumb);
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']")));
