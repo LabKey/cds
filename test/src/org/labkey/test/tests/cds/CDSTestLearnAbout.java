@@ -949,16 +949,16 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         verifyNonIntegratedDataHeader(study1);
         log("Non-Integrated data with metadata only, and no link to assay learn, and no downloadable data");
-        verifyDetailFieldValues(ni_assay1_label);
+        verifyNonIntegratedDetailFieldValues(ni_assay1_label, null);
 
         log("Non-Integrated data with metadata, no link to assay learn, has downloadable data");
-        verifyDetailFieldValues(ni_assay2_label + " (TSV)");
+        verifyNonIntegratedDetailFieldValues(ni_assay2_label, "(TSV)");
         verifyNonIntegratedDownloadLink(ni_assay2_identifier, "ILLUMINA_454_X.tsv");
 
         verifyNonIntegratedDataHeader(study2);
         log("Non-Integrated data with with Learn Assay page, and downloadable data");
-        verifyDetailFieldValues(ni_assay3_label + " (Archive)");
-        verifyDetailFieldValues(ni_assay4_label + " (CSV)");
+        verifyNonIntegratedDetailFieldValues(ni_assay3_label, "(Archive)");
+        verifyNonIntegratedDetailFieldValues(ni_assay4_label, "(CSV)");
         verifyNonIntegratedDownloadLink(ni_assay3_identifier, "cvd277_ARV_Drug_Levels.zip");
         click(Locator.linkContainingText(ni_assay3_label));
         sleep(CDSHelper.CDS_WAIT_LEARN);
@@ -967,10 +967,31 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Non-Integrated data with with Learn Assay page, and no downloadable data");
         cds.viewLearnAboutPage("Studies");
         goToDetail(study2, true);
-        verifyDetailFieldValues(ni_assay5_label);
+        verifyNonIntegratedDetailFieldValues(ni_assay5_label, null);
+
+        log("Validate tooltip");
+        validateToolTip(Locator.linkWithText("ARV drug levels").findElement(getDriver()), "provided, pending processing");
+        validateToolTip(Locator.linkWithText("Viral load").findElement(getDriver()), "not approved");
+        validateToolTip(Locator.linkWithText("Viral sequencing").findElement(getDriver()), "provided, but not included");
+
         click(Locator.linkContainingText(ni_assay5_label));
         sleep(CDSHelper.CDS_WAIT_LEARN);
         verifyDetailFieldValues("Viral sequencing (Viral sequencing)");
+    }
+
+    private void verifyNonIntegratedDetailFieldValues(String value, String suffix)
+    {
+        Locator.XPathLocator li = Locator.tagWithClass("li", "non-integrated-data-li").containing(value);
+
+        Assert.assertTrue(value + " field value is not present", isElementPresent(li));
+
+        if (suffix != null)
+        {
+            Assert.assertTrue(suffix + " is not present", isElementPresent(li.containing(suffix)));
+        }
+
+        mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+        sleep(CDSHelper.CDS_WAIT_LEARN);
     }
 
     private void verifyNonIntegratedDownloadLink(String assay_identifier, String documentName)
@@ -992,7 +1013,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator.XPathLocator nonIntegratedDataElement = Locator.tagWithAttributeContaining("div", "id", "nonintegrateddataavailability");
         assertElementPresent(nonIntegratedDataElement);
 
-        Locator.XPathLocator instructions = nonIntegratedDataElement.childTag("p").containing("Download Individual Files.");
+        Locator.XPathLocator instructions = nonIntegratedDataElement.withDescendant(Locator.tag("p")).containing("Download Individual Files.");
         assertElementPresent(instructions);
     }
 
