@@ -4,7 +4,7 @@ var tour_get_oriented = {
     id:          'tour-get-oriented',
     started:     0,
     i18n:        {
-        skipBtn: 'Start The Tour'
+        skipBtn: 'Start the tour'
     },
     onStart:     function(){
         window.onerror = function() { hopscotch.endTour(); };
@@ -40,8 +40,8 @@ var tour_get_oriented = {
             target:      'h3[class*="tour-section-title"]',
             placement:   'bottom',
             arrowOffset: 'center',
-            title:       'DataSpace tours',
-            content:     'This is a guided tour designed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. <br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
+            title:       'Get oriented to the DataSpace',
+            content:     'This is a guided tour design]ed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
         },{
@@ -93,20 +93,53 @@ var tour_get_oriented = {
             content:     'The Active filter pane gives you a summary of the data being explored during your session and provides you with important context for selecting and interpreting the data.',
             yOffset:     -17,
             onNext:      function(){
-                var samt = scrollAmount(document.querySelector('div[class*="x-component grouplist-view x-component-default"]'));
-                var node = document.querySelector('div[id*=homeheader]').nextSibling;
-                node.scroll(samt.x, samt.y);
-                var checkExist = setInterval(
+
+                function getScrollParent(node) {
+                    if (node == null) {
+                        return null;
+                    } else if (node.style.overflow == "hidden auto") {
+                        return node;
+                    } else {
+                        return getScrollParent(node.parentNode);
+                    }
+                }
+
+                nodeTextSearch(document.querySelectorAll('h2[class*="section-title"]'), "Groups and plots")[0].classList.add("groups-plots");
+                getScrollParent(nodeTextSearch(document.querySelectorAll('h3'), "Explore relationships")[0]).classList.add("quick-link-scroll-frame");
+                var smt = null;
+
+                var checkExist_1 = setInterval(
                     function(){
-                        var nloc = scrollAmount(document.querySelector('div[class*="x-component grouplist-view x-component-default"]'));
-                        if(nloc.x == 0 && nloc.y == 0){
-                            clearInterval(checkExist);
-                            window.hopscotch.startTour(window.hopscotch.getCurrTour(), window.hopscotch.getCurrStepNum());
+                        var node = document.querySelector('h2[class*="groups-plots"]');
+                        if(node !== null){
+                            smt = Math.max(node.getBoundingClientRect().y - 200, 0);
+                            clearInterval(checkExist_1);
                         }
-                    }, 100);  
-            }
+                    }, 100); 
+            
+                var checkExist1 = setInterval(
+                    function(){
+                        var node = document.querySelector('div[class*="quick-link-scroll-frame"]');
+                        if(node !== null && smt !== null){
+                            document.querySelector('div[class*="quick-link-scroll-frame"]').scrollTo({left: 0, top: smt, behavior: 'smooth'});
+                            clearInterval(checkExist1);
+                       }
+                    }, 100);
+
+                var checkExist2 = setInterval(
+                    function(){
+                        var node = document.querySelector('div[class*="quick-link-scroll-frame"]');
+                        if(node !== null &&
+                           smt !== null &&
+                           (node.scrollTop === smt || node.scrollTop === node.scrollTopMax)){
+                            checkTarget('h2[class*="groups-plots"]');
+                            clearInterval(checkExist2);
+                        }
+                    }, 100);
+                
+            }, multipage: true
         },{
-            target:      'div[class*="x-component grouplist-view x-component-default"]',
+            target:      'h2[class*="groups-plots"]',
             placement:   'top',
             arrowOffset: 'left',
             title:       'Curated groups and plots',
@@ -120,22 +153,13 @@ var tour_get_oriented = {
             content:     'The News section on the Home page is where you\'ll find blogs about how other members have used the DataSpace. We\'ll also let you know about new data, new features, and collaboration opportunities.',
             yOffset:     -17,
             onNext:    function(){
-                document.querySelector('div.nav-label:nth-child(1)').click();
-                var checkExist = setInterval(
-                    function(){
-                        var node = document.querySelector('h3[class*="tour-section-title"]');
-                        if(node !== null && isVisCoords(node)){
-                            checkTarget('h3[class*="tour-section-title"]');
-                            clearInterval(checkExist);
-                        }
-                    }, 100);
             }
         },{
             target:      'h3[class*="tour-section-title"]',
             placement:   'bottom',
             arrowOffset: 'center',
             title:       'This concludes the tour',
-            content:     'We’re back on the Home page where we started. From here you can take another tour or try it out for yourself. Have any questions? Click the Help section at the top of the page or contact us for more information.',
+            content:     'We’re back on the Home page where we started. From here you can take another tour or try it out for yourself. <br><br>Have any questions? Click the Help section at the top of the page or contact us for more information.',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
         }

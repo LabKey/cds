@@ -4,7 +4,7 @@ var tour_find_subjects = {
     id:          'tour-find-subjects',
     started:     0,
     i18n:        {
-        skipBtn: 'Start The Tour'
+        skipBtn: 'Start the tour'
     },
     onStart:     function(){
         window.onerror = function() { hopscotch.endTour(); };
@@ -41,7 +41,7 @@ var tour_find_subjects = {
             placement:   'bottom',
             arrowOffset: 'center',
             title:       'DataSpace tours',
-            content:     'This is a guided tour designed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. <br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
+            content:     'This is a guided tour design]ed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.<br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
         },{
@@ -313,7 +313,7 @@ var tour_find_subjects = {
             placement:   'bottom',
             arrowOffset: 'center',
             title:       'This concludes the tour',
-            content:     'We’re back on the Home page where we started. From here you can take another tour or try it out for yourself. Have any questions? Click the Help section at the top of the page or contact us for more information.',
+            content:     'We’re back on the Home page where we started. From here you can take another tour or try it out for yourself. <br><br>Have any questions? Click the Help section at the top of the page or contact us for more information.',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
         }

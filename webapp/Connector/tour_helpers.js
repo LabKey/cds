@@ -84,24 +84,6 @@ function scrollAmount(node, amount = 60){
     return(ret);
 }
 
-// // returns a bool if tour position is valid. should have a target that
-// // is both visible and exists in some portion inside the window.
-// //////////
-// function validElem(target){
-//     var nod = document.querySelector(target);
-//     var xbd = window.innerWidth;
-//     var ybd = window.innerHeight;
-
-//     if ( nod !== null && nod.offsetParent !== null ) {
-//         var dim = nod.getBoundingClientRect();
-//         if ( dim.x >= 0 || dim.y >= 0 || dim.top > ybd || dim.left > xbd ) {
-//             return(true);
-//         }
-//     } else {
-//         return(false);
-//     }
-// };
-
 // starts the next step of the tour if the next target is valid.
 //////////
 function checkTarget(target){
