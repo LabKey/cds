@@ -4,7 +4,7 @@ var tour_plot_data = {
     id:          'tour-plot-data',
     started:     0,
     i18n:        {
-        skipBtn: 'Start The Tour'
+        skipBtn: 'Start the tour'
     },
     onStart:     function(){
         window.onerror = function() { hopscotch.endTour(); };
@@ -41,7 +41,7 @@ var tour_plot_data = {
             placement:   'bottom',
             arrowOffset: 'center',
             title:       'DataSpace tours',
-            content:     'This is a guided tour designed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. <br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
+            content:     'This is a guided tour designed to take you on a specific path through the DataSpace. Clicking the \'Next\' button will advance you through the predefined steps of the tour. Please be aware that any additional clicking or scrolling during the tour (unless instructed) may cause the tour to terminate early. Some tours are not compatible with small screens. For best results, view tours in full screen mode.<br><br><b>Note: Taking this tour will change the filters in the Active filters pane. If you have applied filters during this session that you don\'t want to lose, save your data before proceeding on this tour. If you continue, your filters will be modified.</b>',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
         },{
@@ -327,7 +327,7 @@ var tour_plot_data = {
             
             target:      'div[class*="AntigensInY"]',
             placement:   'left',
-            arrowOffset: 'bottom',
+            arrowOffset: 'center',
             yOffset:     -85,
             content:     'We now have a one-dimensional plot. <br><br>In the Active Filters pane, we now have 2 new categories that describe the data in this plot. We see that the data is from 2 studies (CAVD 371 and 434) and includes 5 antigens across 11 time points. If we click on the \'Antigens in Y\'...',
             onNext:      function(){
@@ -337,16 +337,23 @@ var tour_plot_data = {
                     function(){
                         if(
                             document.querySelector('span[class="section-title"]') !== null &&
-                            isVisCoords(document.querySelector('span[class="section-title"]')) &&
-                                nodeTextSearch(document.querySelectorAll('span[class="section-title"]'), "Magnitude (% cells) - Background subtracted")[0] !== "none found"
+                                isVisCoords(document.querySelector('span[class="section-title"]')) &&
+                                nodeTextSearch(document.querySelectorAll('span[class="section-title"]'), "Magnitude (% cells) - Background subtracted")[0] !== "none found" &&
+                                document.querySelector('label[test-data-value="study_ICS_protein_panel-Any_Antigen"]') !== null &&
+                                document.querySelector('label[test-data-value="study_ICS_protein-Any_Antigen-Any_ENV"]') !== null
                         ){
                             document.querySelector('label[test-data-value="study_ICS_protein_panel-Any_Antigen"]').click();
                             document.querySelector('label[test-data-value="study_ICS_protein-Any_Antigen-Any_ENV"]').click();
-                            if(document.querySelector('div[class*="antigen-selection-panel"]') !== null &&
-                               isVisCoords(document.querySelector('div[class*="antigen-selection-panel"]'))){
-                                checkTarget('div[class*="antigen-selection-panel"]');
-                                clearInterval(checkExist);
-                            };
+                            clearInterval(checkExist);
+                        };
+                    }, 100);
+
+                var checkExist2 = setInterval(
+                    function(){
+                        if(document.querySelector('div[class*="antigen-selection-panel"]') !== null &&
+                           isVisCoords(document.querySelector('div[class*="antigen-selection-panel"]'))){
+                            checkTarget('div[class*="antigen-selection-panel"]');
+                            clearInterval(checkExist2);
                         };
                     }, 100);
             }, multipage: true
@@ -365,7 +372,8 @@ var tour_plot_data = {
 
                 var checkExist = setInterval(
                     function(){
-                        if (document.querySelectorAll('div[class="x-mask"]')[0].style.display === "none") {
+                        if (document.querySelectorAll('div[class="x-mask"]')[0].style.visibility === "hidden" ||
+                            document.querySelectorAll('div[class="x-mask"]')[0].style.display === "none") {
                             checkTarget('div[id="xvarselector"]');
                             clearInterval(checkExist);
                         };
@@ -727,7 +735,7 @@ var tour_plot_data = {
             placement:   'bottom',
             arrowOffset: 'center',
             title:       'This concludes the tour',
-            content:     'We’re back on the Home page where we started. From here you can take another tour or try it out for yourself. Have any questions? Click the Help section at the top of the page or contact us for more information.',
+            content:     'We’re back on the Home page where we started. From here you can take another tour or try it out for yourself. <br><br>Have any questions? Click the Help section at the top of the page or contact us for more information.',
             xOffset:     (window.innerWidth / 2) - 280,
             showSkip:    true
         }
