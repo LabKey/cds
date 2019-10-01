@@ -37,11 +37,11 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
         this.items = [{
             html: (new Ext.XTemplate('<tpl if="hasDetails">',
+                    '<h3>',
+                        this.initialConfig.data.title,
+                    '</h3>',
                     '<p>',
-                    this.initialConfig.data.title,
-                    '</p>',
-                    '<p>',
-                    this.initialConfig.data.instructions,
+                        this.initialConfig.data.instructions,
                     '</p>',
                     '</br>',
                     '</tpl>'
