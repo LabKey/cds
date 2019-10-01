@@ -69,7 +69,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
             }],
             listeners : {
                 'itemmouseenter' : function(view, record, item, index, evt) {
-                    var dataLink = Ext.get(Ext.query("a", item)[0]) || Ext.get(Ext.query("span", item)[0]),
+                    var dataLink = Ext.get(Ext.get(Ext.query("span", item)[0] || Ext.query("a", item)[0])),
                             id = Ext.id();
                     if (record.data.dataStatus && dataLink) {
                         dataLink.on('mouseenter', this.showDataStatusTooltip, this, {
@@ -198,8 +198,8 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                 '<tpl elseif="isLinkValid && !hasAssayLearn">',
                 '<ul class="non-integrated-data-ul">',
                     '<li class="non-integrated-data-li">',
-                        '{label:htmlEncode}',
-                        '&nbsp;{suffix}&nbsp;',
+                        '<span>{label:htmlEncode}',
+                        '&nbsp;{suffix}&nbsp;</span>',
                         '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></p>',
                     '</li>',
                 '</ul>',
@@ -218,7 +218,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                 '<tpl elseif="hasPermission">',
                 '<ul class="non-integrated-data-ul">',
                     '<li class="non-integrated-data-li">',
-                        '{label:htmlEncode}',
+                        '<span>{label:htmlEncode}</span>',
                     '</li>',
                 '</tpl>',
            '</tpl>')
