@@ -1145,7 +1145,7 @@ public class CDSController extends SpringActionController
     public class GetDismissableWarningsAction extends ReadOnlyApiAction
     {
         @Override
-        public ApiSimpleResponse execute(Object o, BindException errors) throws Exception
+        public ApiSimpleResponse execute(Object o, BindException errors)
         {
             ApiSimpleResponse response = new ApiSimpleResponse();
 

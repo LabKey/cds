@@ -1252,7 +1252,7 @@
       </column>
       <column columnName="mab_name_source">
         <datatype>varchar</datatype>
-        <columnTitle>Mab name source</columnTitle>
+        <columnTitle>MAb name source</columnTitle>
         <description>Unique ID assigned to the mAb (often recoded) being tested in a given study. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>false</dimension>
@@ -1650,7 +1650,7 @@
       </column>
       <column columnName="mab_name_source">
         <datatype>varchar</datatype>
-        <columnTitle>Mab name source</columnTitle>
+        <columnTitle>MAb name source</columnTitle>
         <description>Unique ID assigned to the mAb (often recoded) being tested in a given study. </description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>false</dimension>

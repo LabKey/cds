@@ -62,7 +62,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     BASE_EXPORT_COLUMNS : ['prot', 'mab_mix_id', 'mab_mix_label', 'mab_mix_name_std', 'mab_name_source', 'mab_id', 'mab_name_std',
         'mab_lanlid', 'mab_hxb2_location', 'mab_ab_binding_type', 'mab_isotype', 'mab_donorid', 'mab_donor_species', 'mab_donor_clade'],
-    BASE_EXPORT_COLUMN_LABLES : ['Study', 'Mab mix id', 'Mab mix label', 'Mab mix name std', 'Mab name source', 'Mab id', 'Mab name std',
+    BASE_EXPORT_COLUMN_LABLES : ['Study', 'Mab mix id', 'Mab mix label', 'Mab mix name std', 'MAb name source', 'Mab id', 'Mab name std',
         'Mab Lanl id', 'Mab Hxb2 location', 'Mab Ab binding type', 'Mab isotype', 'Mab donor id', 'Mab donor species', 'Mab donor clade'],
 
     MAB_META_VARIABLES: [
