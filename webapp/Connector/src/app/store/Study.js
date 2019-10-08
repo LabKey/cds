@@ -83,7 +83,7 @@ Ext.define('Connector.app.store.Study', {
         });
         LABKEY.Query.selectRows({
             schemaName: 'study',
-            queryName: 'ds_assayidentifier',
+            queryName: 'integratedAssays',
             success: this.onLoadAssayIdentifiers,
             scope: this
         });
