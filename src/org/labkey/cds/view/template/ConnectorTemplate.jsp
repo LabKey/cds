@@ -18,27 +18,15 @@
 <%@ page import="org.apache.commons.lang3.StringUtils" %>
 <%@ page import="org.labkey.api.analytics.AnalyticsService" %>
 <%@ page import="org.labkey.api.data.ContainerManager" %>
-<%@ page import="org.labkey.api.module.ModuleLoader" %>
-<%@ page import="org.labkey.api.module.ModuleProperty" %>
 <%@ page import="org.labkey.api.security.User" %>
 <%@ page import="org.labkey.api.settings.AppProps" %>
-<%@ page import="org.labkey.api.util.FileUtil" %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
-<%@ page import="org.labkey.api.util.Path" %>
 <%@ page import="org.labkey.api.view.ActionURL" %>
 <%@ page import="org.labkey.api.view.HttpView" %>
 <%@ page import="org.labkey.api.view.template.PageConfig" %>
-<%@ page import="org.labkey.api.webdav.WebdavResource" %>
-<%@ page import="org.labkey.api.webdav.WebdavService" %>
 <%@ page import="org.labkey.cds.CDSController" %>
-<%@ page import="org.labkey.cds.CDSModule" %>
 <%@ page import="org.labkey.cds.view.template.ConnectorTemplate" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Collection" %>
-<%@ page import="static org.labkey.cds.CDSModule.TOURS_DEFINITION_FOLDER" %>
 <%@ page import="java.util.LinkedHashSet" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     ConnectorTemplate me = (ConnectorTemplate) HttpView.currentView();
@@ -56,29 +44,6 @@
     String resourcePath = productionPath + "/resources";
     String imageResourcePath = resourcePath + "/images";
     User user = getUser();
-
-    // see if there are any configured tour definitions that need to be added
-    Map<String, ModuleProperty> properties = ModuleLoader.getInstance().getModule(CDSModule.NAME).getModuleProperties();
-    List<String> toursFiles = new ArrayList<>();
-    if (properties.containsKey(TOURS_DEFINITION_FOLDER))
-    {
-        String value = properties.get(TOURS_DEFINITION_FOLDER).getEffectiveValue(getContainer());
-        if (value != null)
-        {
-            Path folderPath = Path.decode(properties.get(TOURS_DEFINITION_FOLDER).getEffectiveValue(getContainer()));
-            WebdavResource resource = WebdavService.get().lookup(folderPath);
-            if (resource != null)
-            {
-                Collection<? extends WebdavResource> resources = resource.list();
-                for (WebdavResource r : resources)
-                {
-                    // we want only javascript files
-                    if ("js".equalsIgnoreCase(FileUtil.getExtension(r.getName())))
-                        toursFiles.add(String.valueOf(r.getPath()));
-                }
-            }
-        }
-    }
 %>
 <!DOCTYPE html>
 <html>
@@ -137,16 +102,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/internal/jQuery/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/hopscotch/js/hopscotch.min.js"></script>
 
-    <!-- Tours files -->
-    <%
-        for (String tourFile : toursFiles)
-        {
-    %>
-            <script type="text/javascript" src="<%=h(contextPath + tourFile)%>"></script>
-    <%
-        }
-    %>
-    <!-- Tours files -->
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/ext-patches.js"></script>
@@ -162,6 +117,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Visualization.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ParticipantGroup.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Security.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Webpart.js"></script>
 
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/Util.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Reader.js"></script>
