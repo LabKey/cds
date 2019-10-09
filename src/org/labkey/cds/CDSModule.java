@@ -56,6 +56,7 @@ public class CDSModule extends DefaultModule
     public static final String REPORT_1_LABEL = "MAbReportLabel1";
     public static final String REPORT_2_ID = "MAbReportID2";
     public static final String REPORT_2_LABEL = "MAbReportLabel2";
+    public static final String TOURS_DEFINITION_FOLDER = "ToursDefinitionsFolder";
 
     final ModuleProperty _showHiddenVariables;
     final ModuleProperty _blogPath;
@@ -128,6 +129,11 @@ public class CDSModule extends DefaultModule
         _mabReport2Label.setDescription("Button display label for the 1st MAb R report on MAb grid");
         _mabReport2Label.setCanSetPerContainer(false);
         addModuleProperty(_mabReport2Label);
+
+        ModuleProperty toursFolder = new ModuleProperty(this, TOURS_DEFINITION_FOLDER);
+        toursFolder.setDescription("Webdav path to the folder location of the tours definition files eg: /_webdav/CDSFolder/@pipeline");
+        toursFolder.setCanSetPerContainer(false);
+        addModuleProperty(toursFolder);
     }
 
     @Override
