@@ -56,6 +56,8 @@ public class CDSModule extends DefaultModule
     public static final String REPORT_1_LABEL = "MAbReportLabel1";
     public static final String REPORT_2_ID = "MAbReportID2";
     public static final String REPORT_2_LABEL = "MAbReportLabel2";
+    public static final String WHATYOUNEEDTOKNOW_WIKI_LABEL = "WhatYouNeedToKnowWiki";
+    public static final String TOURS_WIKI_LABEL = "ToursWiki";
 
     final ModuleProperty _showHiddenVariables;
     final ModuleProperty _blogPath;
@@ -69,6 +71,10 @@ public class CDSModule extends DefaultModule
     final ModuleProperty _mabReport1Label;
     final ModuleProperty _mabReport2ID;
     final ModuleProperty _mabReport2Label;
+
+    //wiki properties for the front page
+    final ModuleProperty _whatYouNeedToKnowWiki;
+    final ModuleProperty _takeATourWiki;
 
     public CDSModule()
     {
@@ -128,6 +134,16 @@ public class CDSModule extends DefaultModule
         _mabReport2Label.setDescription("Button display label for the 1st MAb R report on MAb grid");
         _mabReport2Label.setCanSetPerContainer(false);
         addModuleProperty(_mabReport2Label);
+
+        _whatYouNeedToKnowWiki = new ModuleProperty(this, WHATYOUNEEDTOKNOW_WIKI_LABEL);
+        _whatYouNeedToKnowWiki.setDescription("Source wiki page for 'What You Need to Know' on the front page.");
+        _whatYouNeedToKnowWiki.setCanSetPerContainer(false);
+        addModuleProperty(_whatYouNeedToKnowWiki);
+
+        _takeATourWiki = new ModuleProperty(this, TOURS_WIKI_LABEL);
+        _takeATourWiki.setDescription("Source wiki page for 'Tours' on the front page.");
+        _takeATourWiki.setCanSetPerContainer(false);
+        addModuleProperty(_takeATourWiki);
     }
 
     @Override

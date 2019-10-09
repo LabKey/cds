@@ -969,7 +969,7 @@ text.study-label {
     }
     .tile {
       width: 200px;
-      margin-bottom: 30px;
+      margin-bottom: auto;
       margin-left: auto;
       margin-right: auto;
     }
@@ -1020,8 +1020,8 @@ text.study-label {
     .home_bar {
       background-image: url('images/home_bars.png');
     }
-    .home_plot {
-      background-image: url('images/home_plot.png');
+    .home_try_it_out {
+      background-image: url('images/try_it_out.png');
     }
     .home_video {
       background-image: url('images/home_video.png');
