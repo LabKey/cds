@@ -166,7 +166,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Delete"));
         waitForText("Are you sure you want to delete");
         click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
-        waitForTextWithRefresh(WAIT_FOR_JAVASCRIPT, "Groups and plots");
+        waitForText("groups and plots");
         refresh();
         assertElementNotPresent("Group: " + sharedGroupName + " should not have been present after deletion",
                 Locator.xpath("//*[contains(@class, 'section-title')]" +
