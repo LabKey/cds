@@ -362,11 +362,18 @@ Ext4.define('Connector.cube.Configuration', {
                     },{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Data Availability',
+                            title: 'Integrated Data',
                             dataField: 'assays',
-                            dataLink: 'Assay'
+                            dataLink: 'Assay',
+                            instructions: 'Go to Plot to view or Grid to export.'
                         }
-                    },{
+                    }, {
+                        type: 'nonintegrateddataavailability',
+                        staticData: {
+                            title: 'Non-Integrated Data',
+                            instructions: 'Download Individual Files.'
+                        }
+                     }, {
                         type: 'studyreports',
                         staticData: {
                             title: "Reports"
@@ -457,9 +464,10 @@ Ext4.define('Connector.cube.Configuration', {
                     }],[{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Data Availability',
+                            title: 'Integrated Data',
                             dataField: 'studies',
-                            dataLink: 'Study'
+                            dataLink: 'Study',
+                            instructions: 'Go to Plot to view or Grid to export. Additional non-integrated data files may be available for download. See study page.'
                         }
                     },{
                         type: 'productotherproducts',
@@ -585,9 +593,10 @@ Ext4.define('Connector.cube.Configuration', {
                     },{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Data Availability',
+                            title: 'Integrated Data',
                             dataField: 'studies',
-                            dataLink: 'Study'
+                            dataLink: 'Study',
+                            instructions: 'Go to Plot to view or Grid to export.'
                         }
                     }]]
                 },{
@@ -642,7 +651,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }],[{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Data Availability',
+                            title: 'Integrated Data',
                             dataField: 'studies',
                             dataLink: 'Study',
                             hasGrouping: true,
@@ -694,9 +703,10 @@ Ext4.define('Connector.cube.Configuration', {
                     }],[{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Data Availability',
+                            title: 'Integrated Data',
                             dataField: 'studies',
-                            dataLink: 'Study'
+                            dataLink: 'Study',
+                            instructions: 'Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.'
                         }
                     }]]
                 }]

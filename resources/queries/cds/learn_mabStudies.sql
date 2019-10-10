@@ -16,7 +16,8 @@
 
 -- mab as subject
 SELECT mabwithstudy.prot as prot, mabwithstudy.mab_mix_name_std, mabwithstudy.mab_label as mix_labels,
-  studyassay.label, studyassay.has_data, studyassay.assay_status, 'MAb Characterization Studies' as study_type
+  studyassay.label, studyassay.has_data, studyassay.assay_status, 'MAb Characterization Studies' as study_type,
+  'Go to Monoclonal Antibodies to view or export.' as subheader_instr,
 FROM cds.learn_mab_mix_forstudies mabwithstudy
 LEFT JOIN cds.learn_studiesforassays studyassay
   ON mabwithstudy.prot = studyassay.prot
@@ -26,7 +27,8 @@ UNION
 
 -- mab as product
 SELECT s.study_name as prot, mab.mab_mix_name_std, null as mix_labels,
-       s.label, spm.has_data, studyassay.assay_status, 'MAb Administration Studies' as study_type
+       s.label, spm.has_data, studyassay.assay_status, 'MAb Administration Studies' as study_type,
+       'Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.' as subheader_instr
 FROM cds.metadata.studyproductmap spm
           JOIN cds.product p ON (spm.product_id = p.product_id AND spm.projectContainer = p.container)
           JOIN cds.MabMixMetadata mab ON (mab.mab_mix_id = p.mab_mix_id AND mab.container = p.container)

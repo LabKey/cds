@@ -207,7 +207,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         mouseOver(publicationRow);
         waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
         waitAndClick(publicationRow);
-        waitForText("Data Availability");
+        waitForText("Integrated Data");
 
         String studies = getText(Locator.tagWithClass("div", "learnmodulegrid"));
         validateText("Study list", studies, "QED 3", "QED 4", "RED 1", "RED 2",
@@ -247,27 +247,27 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         String dataIcon = hasAccessToQ2 ? ACCESSIBLE_ICON : NOT_ACCESSIBLE_ICON;
 
-        log("Verify detailed Data Availability for QED 2");
+        log("Verify detailed Integrated Data Availability for QED 2");
         String study = "QED 2";
         Locator element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
         scrollIntoView(element);
         mouseOver(element);
         sleep(1000);
-        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Data Availability"); return null;});
-        Assert.assertTrue("Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
+        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated Data"); return null;});
+        Assert.assertTrue("Integrated Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
 
         cds.viewLearnAboutPage("Studies");
-        log("Verify detailed Data Availability for RED 4");
+        log("Verify detailed Integrated Data Availability for RED 4");
         study = "RED 4";
         element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
 
-        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Data Availability"); return null;});
+        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated Data"); return null;});
 
-        Assert.assertTrue("Data Availability status for ICS is not as expected", isElementPresent(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
-        Assert.assertTrue("Data Availability status for IFNg ELISpot is not as expected", isElementPresent(cds.getDataRowXPath("IFNg ELISpot").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
-        Assert.assertTrue("Data Availability status for BAMA is not as expected", isElementPresent(cds.getDataRowXPath("BAMA").append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
+        Assert.assertTrue("Integrated Data Availability status for ICS is not as expected", isElementPresent(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
+        Assert.assertTrue("Integrated Data Availability status for IFNg ELISpot is not as expected", isElementPresent(cds.getDataRowXPath("IFNg ELISpot").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
+        Assert.assertTrue("Integrated Data Availability status for BAMA is not as expected", isElementPresent(cds.getDataRowXPath("BAMA").append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
 
         cds.viewLearnAboutPage("Studies");
     }
