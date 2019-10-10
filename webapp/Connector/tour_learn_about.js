@@ -29,7 +29,7 @@ var tour_learn_about = {
             };
         }).then(function(result) {
             node.value = "";
-            if(node.vale === ""){
+            if(node.value === ""){
                 return;
             }
         }).then(function(result) {
@@ -203,16 +203,24 @@ var tour_learn_about = {
 
                 var checkExist1 = setInterval(
                     function(){
-                        var event = new Event("change");
                         var node = document.querySelector('input[class*="search-studies"]');
                         if(node !== null){
                             node.value = "434";
-                            node.dispatchEvent(event);
                             clearInterval(checkExist1);
                         }
                     }, 100);
 
                 var checkExist2 = setInterval(
+                    function(){
+                        var node = document.querySelector('input[class*="search-studies"]');
+                        var event = new Event("change");
+                        if(node !== null && node.value === "434"){
+                            node.dispatchEvent(event);
+                            clearInterval(checkExist2);
+                        }
+                    }, 100);
+                
+                var checkExist3 = setInterval(
                     function(){
                         var node1 = document.querySelector('tr[id*="gridview"][id*="record-cvd434"]');
                         var node2 = document.querySelector('input[class*="search-studies"]');
@@ -225,7 +233,7 @@ var tour_learn_about = {
                                 node2.value == "434"
                         ){
                             checkTarget('input[class*="search-studies"]');
-                            clearInterval(checkExist2);
+                            clearInterval(checkExist3);
                         };
                     },100);
 
@@ -489,29 +497,54 @@ var tour_learn_about = {
             onNext:      function(){
 
                 document.querySelector('.iarrow').click();
-                var checkExist1 = setInterval(
-                    function() {
-                        var nodes = nodeTextSearch(nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]')), "Assays");
-                        if(document.querySelector('div[id*="learnheader"]').style.display !== 'none' &&
-                           nodes.length > 0){
-                            nodes[0].classList.add("find-assay-tab");
-                            nodes[0].click();
-                            clearInterval(checkExist1);
-                        };
+                var event = new Event("change");
+                
+                var ck1 = setInterval(
+                    function(){
+                        if(document.querySelector('input[id*=learn-search]').offsetParent !== null &&
+                           document.querySelector('div[id*="learnheader"]').offsetParent !== null){
+                            document.querySelector('input[id*=learn-search]').value = "";
+                            clearInterval(ck1);
+                        }
                     }, 100);
                 
-                var checkExist2 = setInterval(
-                    function() {
-                        if(nodeDisplaySearch(document.querySelectorAll('h1[class*="find-assay-tab"]')).length > 0){
-                            checkTarget('h1[class*="find-assay-tab"]');
-                            clearInterval(checkExist2);
-                        };
+                var ck2 = setInterval(
+                    function(){
+                        var event = new Event("change");
+                        var node = document.querySelector('input[id*="learn-search"]'); 
+                        if(document.querySelector('input[id*=learn-search]').offsetParent !== null &&
+                           document.querySelector('div[id*="learnheader"]').offsetParent !== null &&
+                           document.querySelector('input[id*=learn-search]').value === ""){
+                            document.querySelector('input[id*=learn-search]').dispatchEvent(event);
+                            clearInterval(ck2);
+                        }
                     }, 100);
                 
+                var ck3 = setInterval(
+                    function(){
+                        var nodes =  nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"][class*=active]'));
+                        if( nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('h2'), 'CAVD 434')).length > 0 &&
+                            !isVisCoords(nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('h2'), 'CAVD 434'))[0]) &&
+                            nodes.length > 0
+                          ){
+                            nodes[0].nextSibling.click();
+                            nodes[0].nextSibling.classList.add("learn-assay-tab");
+                            clearInterval(ck3);
+                        }
+                    }, 100);
+                
+                var ck5 = setInterval(
+                    function(){
+                        if(document.querySelector('h1[class*="learn-assay-tab"]') !== null){
+                            checkTarget('h1[class*="learn-assay-tab"]');
+                            clearInterval(ck5);
+                        }
+                    }, 100);
+
             }, multipage: true
             
         },{
-            target:      'h1[class*="find-assay-tab"]',
+            target:      'h1[class*="learn-assay-tab"]',
             placement:   'right',
             arrowOffset: 'bottom',
             title:       'Learn about - Assays',
@@ -600,56 +633,88 @@ var tour_learn_about = {
             arrowOffset: 'top',
             content:     'Clicking this arrow sends the page back to Learn about.',
             onNext:      function(){
-                var event = new Event("change");
-                document.querySelector('.iarrow').click();
                 
-                var checkExist1 = setInterval(
-                    function() {
-                        if(document.querySelector('div[id*="learnheader"]').style.display !== 'none'){                            
-                            nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[3].click();
-                            clearInterval(checkExist1);
-                        };
+                document.querySelector('.iarrow').click();
+                var event = new Event("change");
+                
+                var ck1 = setInterval(
+                    function(){
+                        if(document.querySelector('input[id*=learn-search]').offsetParent !== null &&
+                           document.querySelector('div[id*="learnheader"]').offsetParent !== null){
+                            document.querySelector('input[id*=learn-search]').value = "";
+                            clearInterval(ck1);
+                        }
                     }, 100);
-
-                var checkExist2 = setInterval(
+                
+                var ck2 = setInterval(
+                    function(){
+                        var event = new Event("change");
+                        var node = document.querySelector('input[id*="learn-search"]'); 
+                        if(document.querySelector('input[id*=learn-search]').offsetParent !== null &&
+                           document.querySelector('div[id*="learnheader"]').offsetParent !== null &&
+                           document.querySelector('input[id*=learn-search]').value === ""){
+                            document.querySelector('input[id*=learn-search]').dispatchEvent(event);
+                            clearInterval(ck2);
+                        }
+                    }, 100);
+                
+                var ck3 = setInterval(
+                    function(){
+                        var nodes =  nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"][class*=active]'));
+                        if( nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('h2'), 'ALVAC (vCP1521)')).length > 0 &&
+                            !isVisCoords(nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('h2'), 'ALVAC (vCP1521)'))[0]) &&
+                            nodes.length > 0
+                          ){
+                            nodes[0].nextSibling.click();
+                            nodes[0].nextSibling.classList.add("learn-mab-tab");
+                            clearInterval(ck3);
+                        }
+                    }, 100);
+                
+                var ck5 = setInterval(
                     function(){
                         if(nodeDisplaySearch(document.querySelectorAll('input[id*="learn-search"]')).length > 0 &&
-                           nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[3].className === 'lhdv active' &&
+                           document.querySelector('h1[class*="learn-mab-tab"][class*=active]') !== null &&
                            document.querySelector('input[placeholder*="Search mabs"]') !== null){
                             var inbox = document.querySelector('input[placeholder*="Search mabs"]');
                             inbox.value = "PGT";
                             inbox.dispatchEvent(event);
-                            clearInterval(checkExist2);
+                            clearInterval(ck5);
                         }
                     }, 100);
-                
-                var checkExist3 = setInterval(
+
+                var ck6 = setInterval(
                     function(){
-                        var nodes = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('h2'), "PGT121"));
-                        if(nodes.length > 0){
-                            checkTarget('h1[class*="lhdv"][class*="active"]');
-                            clearInterval(checkExist3);
-                        };
+                        if(document.querySelector('input[placeholder*="Search mabs"]') !== null &&
+                           document.querySelector('input[placeholder*="Search mabs"]').value === "PGT" &&
+                           nodeDisplaySearch(nodeTextSearch('h2', 'PGT121 + PGDM1400')).length > 0 &&
+                           isVisCoords(nodeDisplaySearch(nodeTextSearch('h2', 'PGT121 + PGDM1400'))[0])
+                          ){
+                            checkTarget('h1[class*="learn-mab-tab"]');
+                            clearInterval(ck6);
+                        }
                     }, 100);
-
-
+                    
+                
             }, multipage: true
             
         },{
-            target:      'h1[class*="lhdv"][class*="active"]',
+            target:      'h1[class*="learn-mab-tab"]',
             placement:   'right',
             arrowOffset: 'top',
             title:       'Learn about - MAbs',
             content:     'On the MAbs page, use the column filters or search bar to find specific monoclonal antibodies.',
             onNext:      function(){
-
+                
                 var promise = new Promise(function(resolve, reject){
                     if(nodeDisplaySearch(nodeTextSearch('h2', 'PGT121 + PGDM1400')).length > 0){
                         resolve();
                     }
                 }).then(function(){
                     var nodes = nodeDisplaySearch(document.querySelectorAll('tr[id*="record-PGT121 + PGDM1400"]'));
-                    if( nodes.length > 0 ){
+                    if( nodes.length > 0  &&
+                        isVisCoords(nodes[0])
+                      ){
                         nodes[0].classList.add("record-pgt121-pgdm1400");
                         return;
                     }
@@ -668,18 +733,53 @@ var tour_learn_about = {
             title:       'Learn about - MAbs',
             content:     'Get details about monoclonal antibodies and see what studies tested them. For more details, follow the link to the Los Alamos National Lab antibody database.',
             onNext:      function(){
-                nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[4].click();
+
+                var event = new Event("change");
+                
+                var ck1 = setInterval(
+                    function(){
+                        if(document.querySelector('input[id*=learn-search]').offsetParent !== null &&
+                           document.querySelector('div[id*="learnheader"]').offsetParent !== null){
+                            document.querySelector('input[id*=learn-search]').value = "";
+                            clearInterval(ck1);
+                        }
+                    }, 100);
+                
+                var ck2 = setInterval(
+                    function(){
+                        var event = new Event("change");
+                        var node = document.querySelector('input[id*="learn-search"]'); 
+                        if(document.querySelector('input[id*=learn-search]').offsetParent !== null &&
+                           document.querySelector('div[id*="learnheader"]').offsetParent !== null &&
+                           document.querySelector('input[id*=learn-search]').value === ""){
+                            document.querySelector('input[id*=learn-search]').dispatchEvent(event);
+                            clearInterval(ck2);
+                        }
+                    }, 100);
+                
+                var ck3 = setInterval(
+                    function(){
+                        if( nodeDisplaySearch(document.querySelectorAll('tr[id*="record-PGT121 + PGDM1400"]')).length > 0 &&
+                            !isVisCoords(nodeDisplaySearch(document.querySelectorAll('tr[id*="record-PGT121 + PGDM1400"]'))[0])
+                          ){
+                            document.querySelector('h1[class*="learn-mab-tab"]').nextSibling.click();
+                            document.querySelector('h1[class*="learn-mab-tab"]').nextSibling.classList.add("learn-reports-tab");
+                            clearInterval(ck3);
+                        }
+                    }, 100);
+
                 var checkExist = setInterval(
                     function(){
-                        if(nodeDisplaySearch(document.querySelectorAll('h1[class*="lhdv"]'))[4].className === 'lhdv active'){
-                            checkTarget('h1[class*="lhdv"][class*="lhdv active"]');
+                        if(document.querySelector('h1[class*="learn-reports-tab"][class*=active]') !== null){
+                            checkTarget('h1[class*="learn-reports-tab"]');
+                            console.log("test");
                             clearInterval(checkExist);
                         };
                     }, 100);            
-            }
 
+            }, multipage: true
         },{
-            target:      'h1[class*="lhdv"][class*="lhdv active"]',
+            target:      'h1[class*="learn-reports-tab"]',
             placement:   'right',
             arrowOffset: 'top',
             title:       'Learn about - Reports',
@@ -702,9 +802,39 @@ var tour_learn_about = {
             title:       'Learn about - Publications',
             content:     'The Publications page combines publications across the contributing networks. Search publications by title, author, journal, and related studies.',
             onNext:      function(){
-                checkTarget('div.nav-label:nth-child(1)');
-            }
 
+                var node = null;
+                var promise = new Promise(function(resolve, reject) {
+                    document.querySelector('h1[class*="learn-studies-tab"]').click();
+                    if(document.querySelector('h1[class*="learn-studies-tab"][class*="active"]') !== null){
+                        resolve();
+                    };
+                }).then(function(result) {
+                    var nodes = nodeDisplaySearch(nodeTextSearch(document.querySelectorAll('h2'), "CAVD 434"));
+                    if(nodes.length > 0){
+                        return;
+                    }
+                }).then(function(result) {
+                    node = document.querySelector('input[class*="search-studies"]');
+                    if(node !== null){
+                        return;
+                    };
+                }).then(function(result) {
+                    node.value = "";
+                    if(node.value === ""){
+                        return;
+                    }
+                }).then(function(result) {
+                    var event = new Event("change");
+                    node.dispatchEvent(event);
+                    if(nodeTextSearch(document.querySelectorAll('h2'), "CAVD 434").length >= 0 &&
+                       isVisCoords(nodeTextSearch(document.querySelectorAll('h2'), "CAVD 434")[0])){
+                        checkTarget('div.nav-label:nth-child(1)');
+                        return;
+                    }
+                });
+                
+            }
         },{
             target:      'div.nav-label:nth-child(1)',
             placement:   'left',
@@ -712,15 +842,9 @@ var tour_learn_about = {
             content:     'The menu bar takes you back to the Home page',
             onNext:    function(){
                 document.querySelector('div.nav-label:nth-child(1)').click();
-                var checkExist = setInterval(
-                    function(){
-                        var node = document.querySelector('h3[class*="tour-section-title"]');
-                        if(node !== null && isVisCoords(node)){
-                            checkTarget('h3[class*="tour-section-title"]');
-                            clearInterval(checkExist);
-                        }
-                    }, 100);
+                checkTarget('h3[class*="tour-section-title"]');
             }
+            
         },{
             target:      'h3[class*="tour-section-title"]',
             placement:   'bottom',

@@ -156,7 +156,7 @@ var tour_view_data_grid  = {
             arrowOffset: 'center',
             xOffset:     -25,
             yOffset:     0,
-            content:     'Here you can filter on a particular study.',
+            content:     'Here we select CAVD 434 and apply the filter.',
             onNext:      function(){      
 
                 var checkExist_1 = setInterval(
@@ -319,7 +319,7 @@ var tour_view_data_grid  = {
         },{
             target:    'div.nav-label:nth-child(5)',
             placement: 'left',
-            content:   '...the ICS data plotted will carry over to the data grid.<paragraph>Going back to Grid...',
+            content:   '...the ICS data plotted will carry over to the data grid.<br><br>Going back to Grid...',
             yOffset:   -17,
             onNext:    function(){
                 document.querySelector('div.nav-label:nth-child(5)').click();
@@ -372,54 +372,63 @@ var tour_view_data_grid  = {
             yOffset:     -65,
             onNext:      function(){
 
-                var checkExist_1 = setInterval(
+                var ck1 = setInterval(
                     function(){
                         var nodes = nodeTextSearch(document.querySelectorAll('span[class*="gridtablhdv"]'), "Study and treatment");
                         if( nodes.length > 0 ){
                             nodes[0].click();
-                            clearInterval(checkExist_1);
+                            clearInterval(ck1);
                         }
                     }, 100);                
                 
                 document.querySelector('div.nav-label:nth-child(5)').click();
 
-                var checkExist1 = setInterval(
+                var ck2 = setInterval(
                     function(){
-                        nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Export CSV")[0].classList.add("export-csv");
-                        if(document.querySelector('span[class*="export-csv"]') !== null){
-                            checkTarget('span[class*="export-csv"]');
-                            clearInterval(checkExist1);
-                        }
-
+                        var nodes = nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Add/Remove columns");
+                        if(nodes.length > 0){
+                            nodes[0].classList.add("add-rm-col");
+                            clearInterval(ck2);
+                        };
                     }, 100);
 
-                // var checkExist1 = setInterval(
-                //     function(){
-                //         nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Add/Remove columns")[0].classList.add("add-rm-col");
-                //         if(document.querySelector('span[class*="add-rm-col"]') !== null){
-                //             checkTarget('span[class*="export-csv"]');
-                //             clearInterval(checkExist1);
-                //         }
-                //     }, 100);
+                var ck3 = setInterval(
+                    function(){
+                        if(nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Add/Remove columns").length > 0 &&
+                           document.querySelector('span[class*="add-rm-col"]') !== null){
+                            checkTarget('span[class*="add-rm-col"]');
+                            clearInterval(ck3);
+                        }
+                    }, 100);
 
             }, multipage: true
-        // },{
-        //     target:    'span[class*="add-rm-col"]',
-        //     placement: 'left',
-        //     content:   'You can also add additional columns or data types.',
-        //     yOffset:   -21,
-        //     xOffset:   -14,
-        //     onNext:    function(){
-        //         var checkExist1 = setInterval(
-        //             function(){
-        //                 nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Export CSV")[0].classList.add("export-csv");
-        //                 if(document.querySelector('span[class*="export-csv"]') !== null){
-        //                     window.hopscotch.startTour(window.hopscotch.getCurrTour(), window.hopscotch.getCurrStepNum());
-        //                     clearInterval(checkExist1);
-        //                 }
+        },{
+            target:    'span[class*="add-rm-col"]',
+            placement: 'left',
+            content:   'You can also add additional columns or data types.',
+            yOffset:   -21,
+            xOffset:   -14,
+            onNext:    function(){
 
-        //             }, 100);
-        //     }, multipage: true
+                var ck2 = setInterval(
+                    function(){
+                        var nodes = nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Export CSV");
+                        if(nodes.length > 0){
+                            nodes[0].classList.add("export-csv");
+                            clearInterval(ck2);
+                        };
+                    }, 100);
+
+                var ck3 = setInterval(
+                    function(){
+                        if(nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Export CSV").length > 0 &&
+                           document.querySelector('span[class*="export-csv"]') !== null){
+                            checkTarget('span[class*="export-csv"]');
+                            clearInterval(ck3);
+                        }
+                    }, 100);
+
+            }, multipage: true
         },{
             target:    'span[class*="export-csv"]',
             placement: 'left',

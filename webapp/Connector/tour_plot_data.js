@@ -415,7 +415,7 @@ var tour_plot_data = {
             arrowOffset: 'center',
             xOffset:     15,
             yOffset:     0,
-            content:     'We see a list of the antigens (in this case, the proteins) included in the plot. Modifying the filters in this box will have the same effect as going back to the Y-axis to modify the Protein filter in the assay dimensions. Let\'s filter to just ENV proteins.',
+            content:     'We see a list of the antigens (in this case, the proteins) included in the plot. Modifying the filters in this box will have the same effect as going back to the y-axis to modify the Protein filter in the assay dimensions. Let\'s filter to just ENV proteins.',
             onNext:      function(){
 
                 nodeTextSearch(document.querySelectorAll('span[id*="button"]'), "Done")[0].click();
