@@ -938,7 +938,7 @@ text.study-label {
 }
 
 .get-started-multiRow {
-  height: 740px;
+  height: fit-content;
   margin-left: auto;
   margin-right: auto;
   .started-row-2 {
@@ -973,6 +973,11 @@ text.study-label {
       margin-left: auto;
       margin-right: auto;
     }
+    .tile-image {
+      padding-top: 20px;
+      width: 25%;
+      padding-left: 7%;
+    }
     .tile:hover {
       color:$info-color;
     }
@@ -993,20 +998,22 @@ text.study-label {
     }
 
     .tile-title {
-      margin-top: 30px;
-      margin-bottom: 30px;
-      text-align: center;
+      white-space:nowrap;
+      padding-bottom: 15px
     }
     .tile-title:hover {
       text-decoration: underline;
     }
     .tile-detail {
-      position: absolute;
-      bottom: 30px;
-      width: 200px;
+      width: 25%;
+      text-align: left;
+      vertical-align: top;
     }
     .tile-detail:hover {
       color:$info-color;
+    }
+    .tile-detail-static {
+      padding-bottom: 5px;
     }
     .backgroundimage {
       height: 200px;
@@ -1014,8 +1021,8 @@ text.study-label {
       background-size: 100%;
       margin-bottom: 30px;
     }
-    .home_text {
-      background-image: url('images/home_text.png');
+    .home_integrated_data {
+      background-image: url('images/home_integrated_data.png');
     }
     .home_bar {
       background-image: url('images/home_bars.png');
