@@ -138,19 +138,19 @@ public class CDSTest extends CDSReadOnlyTest
         if(isElementVisible(Locator.linkContainingText("Show tips for getting started")))
         {
             click(Locator.linkContainingText("Show tips for getting started"));
-            waitForElement(Locator.xpath("//div[contains(@class, 'home_text')]"));
+            waitForElement(Locator.xpath("//div[contains(@class, 'home_integrated_data')]"));
         }
 
-        mouseOver(Locator.xpath("//div[contains(@class, 'home_text')]"));
+        mouseOver(Locator.xpath("//div[contains(@class, 'home_integrated_data')]"));
         sleep(500);
         infoPane.waitForSpinners();
-        click(Locator.xpath("//div[contains(@class, 'home_text')]"));
+        click(Locator.xpath("//div[contains(@class, 'home_integrated_data')]"));
         CDSHelper.NavigationLink.LEARN.waitForReady(this);
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        mouseOver(Locator.xpath("//div[contains(@class, 'home_plot')]"));
+        mouseOver(Locator.xpath("//div[contains(@class, 'home_try_it_out')]"));
         sleep(500);
         infoPane.waitForSpinners();
-        click(Locator.xpath("//div[contains(@class, 'home_plot')]"));
+        click(Locator.xpath("//div[contains(@class, 'home_try_it_out')]"));
         CDSHelper.NavigationLink.PLOT.waitForReady(this);
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
 
