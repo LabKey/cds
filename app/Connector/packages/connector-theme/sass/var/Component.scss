@@ -978,40 +978,18 @@ text.study-label {
       width: 25%;
       padding-left: 7%;
     }
-    .tile:hover {
-      color:$info-color;
-    }
-    .tile:hover .tile-title {
-      text-decoration: underline;
-    }
-    .tile:hover .home_text {
-      background-image: url('images/home_text_hover.png');
-    }
-    .tile:hover .home_bar {
-      background-image: url('images/home_bars_hover.png');
-    }
-    .tile:hover .home_plot {
-      background-image: url('images/home_plot_hover.png');
-    }
-    .tile:hover .home_video{
-      background-image: url('images/home_video_hover.png');
-    }
 
     .tile-title {
       white-space:nowrap;
       padding-bottom: 15px
     }
-    .tile-title:hover {
-      text-decoration: underline;
-    }
+
     .tile-detail {
       width: 25%;
       text-align: left;
       vertical-align: top;
     }
-    .tile-detail:hover {
-      color:$info-color;
-    }
+
     .tile-detail-static {
       padding-bottom: 5px;
     }
