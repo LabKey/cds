@@ -49,7 +49,7 @@ Ext.define('Connector.component.Started', {
                                     '<tr><td class="tile-detail-static">Compare <a href=\'#mabgrid\' target="_blank">Monoclonal antibodies</a> and their neutralization curves</td></td></tr>',
                                 '</table></div>',
                             '</td>',
-                            '<td class="tile-detail" style="padding-left:10%;padding-right:10%">',
+                            '<td class="tile-detail" style="padding-left:10%">',
                                 '<div id="whatyouneedtoknow-wiki"><table>',
                                 '<tr><td>{[this.getWhatYouNeedToKnowWiki()]}</td></tr>',
                                 '</table></div>',
