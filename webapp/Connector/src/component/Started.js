@@ -54,7 +54,7 @@ Ext.define('Connector.component.Started', {
                                 '<tr><td>{[this.getWhatYouNeedToKnowWiki()]}</td></tr>',
                                 '</table></div>',
                                     '<div id="helpCenter"><table>',
-                                    '<tr><td style="padding-top: 10px;">See the <a id="helpCenterPopup" href="#" onclick="return false">Help</a> section for more info</td></tr>',
+                                    '<tr><td style="padding-top: 10px;">See the <a id="helpCenterDialog" class="helpcenter-panel" href="#" onclick="return false">Help</a> section for more info</td></tr>',
                                 '</table></div>',
                             '</td>',
                         '</tr>',
@@ -64,8 +64,7 @@ Ext.define('Connector.component.Started', {
                     '<div style="margin-left: 28px;">Hey! You look like an admin. The Get Started Video URL needs to be setup.&nbsp;',
                     '<a href="{adminURL}" target="_blank">Configure</a></div>',
                     '</tpl>', {
-                        getWhatYouNeedToKnowWiki: function()
-                        {
+                        getWhatYouNeedToKnowWiki: function() {
                             return new LABKEY.WebPart({
                                 partName: 'Wiki',
                                 frame: 'none',
@@ -75,8 +74,7 @@ Ext.define('Connector.component.Started', {
                                 }
                             }).render();
                         },
-                        getTakeATourWiki: function()
-                        {
+                        getTakeATourWiki: function() {
                             return new LABKEY.WebPart({
                                 partName: 'Wiki',
                                 frame: 'none',
@@ -126,15 +124,37 @@ Ext.define('Connector.component.Started', {
         nproduct: 0
     },
 
+    helpCenterDialogHandler: function (event, target) {
+        var config = {
+            ui: 'axiswindow',
+            id: 'helpdialog',
+            items: [{
+                xtype: 'helpcenter',
+                listeners: {
+                    afterrender: function(me) {
+                        HelpRouter.clearHistory();
+                        me.loadHelpFile();
+                    }
+                }
+            }],
+        };
+        Connector.panel.HelpCenter.displayWikiWindow(target, config);
+    },
+
     listeners: {
-        afterLayout: function(start) {
+        afterLayout: function(scope) {
                 Ext.get('hidelink').on('click', function(event, target) {
-                    start.dismiss();
+                    scope.dismiss();
                 });
                 Ext.get('showlink').on('click', function(event, target) {
-                    start.display();
+                    scope.display();
                 });
-            start.registerTileHandlers();
+
+                //afterLayout gets called multiple times accumulating event handler and throwing off the Help Center window - hence unregistering first and then registering so that there's only one event handler
+                Ext.get('helpCenterDialog').un('click', scope.helpCenterDialogHandler, scope);
+                Ext.get('helpCenterDialog').on('click', scope.helpCenterDialogHandler, scope);
+
+            scope.registerTileHandlers();
         },resize: function(c)
         {
             var divHeight = Ext.get('expanded-intro-div').getHeight();
