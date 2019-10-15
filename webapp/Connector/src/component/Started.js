@@ -69,6 +69,7 @@ Ext.define('Connector.component.Started', {
                                 partName: 'Wiki',
                                 frame: 'none',
                                 renderTo: 'whatyouneedtoknow-wiki',
+                                containerPath: '/Shared',
                                 partConfig: {
                                     name: LABKEY.getModuleProperty('cds', 'WhatYouNeedToKnowWiki')
                                 }
@@ -79,6 +80,7 @@ Ext.define('Connector.component.Started', {
                                 partName: 'Wiki',
                                 frame: 'none',
                                 renderTo: 'tours-wiki',
+                                containerPath: '/Shared',
                                 partConfig: {
                                     name: LABKEY.getModuleProperty('cds', 'ToursWiki')
                                 }

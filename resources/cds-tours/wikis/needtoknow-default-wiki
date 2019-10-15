@@ -1,0 +1,5 @@
+<h3 class="tile-title">What you need to know</h3>
+<ul id="cds-whatyouneedtoknow-wiki-links">
+    <li style="padding-bottom:10px"><a "tile-detail-static href="#learn/learn/Study">Types of studies in DataSpace</a></li>
+    <li style="padding-bottom:10px"><a "tile-detail-static href="#learn/learn/Assay">Assay data available by study</a></li>
+</ul>
