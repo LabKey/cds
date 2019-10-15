@@ -1213,7 +1213,7 @@ public class CDSController extends SpringActionController
                 {
                     for (String name : r.listNames())
                     {
-                        Resource tour = module.getModuleResource(Path.parse("cds-tours").append(Path.parse(name)));
+                        Resource tour = module.getModuleResource(Path.parse("cds-tours/definitions/").append(Path.parse(name)));
                         if (tour.exists() && tour.isFile())
                         {
                             ZipEntry entry = new ZipEntry(tour.getName());
