@@ -1,14 +1,15 @@
 <!-- example of how to add javascript dependencies -->
 <!-- add the correct webdav path to your resources and uncomment the line to get the dependency to load -->
+<!-- and remove the # prefix from the labkey.dependency declaration -->
 
-<!-- ${labkey.dependency(path='_webdav/CDS/@files/tours/tour_active_filters.js')} -->
-<!-- ${labkey.dependency(path='_webdav/CDS/@files/tours/tour_find_subjects.js')} -->
-<!-- ${labkey.dependency(path='_webdav/CDS/@files/tours/tour_get_oriented.js')} -->
-<!-- ${labkey.dependency(path='_webdav/CDS/@files/tours/tour_helpers.js')} -->
-<!-- ${labkey.dependency(path='_webdav/CDS/@files/tours/tour_learn_about.js')} -->
-<!-- ${labkey.dependency(path='_webdav/CDS/@files/tours/tour_monoclonal_antibodies.js')} -->
-<!-- ${labkey.dependency(path='_webdav/CDS/@files/tours/tour_plot_data.js')} -->
-<!-- ${labkey.dependency(path='_webdav/CDS/@files/tours/tour_view_data_grid.js')} -->
+<!-- ${#labkey.dependency(path='_webdav/CDS/@files/tours/tour_active_filters.js')} -->
+<!-- ${#labkey.dependency(path='_webdav/CDS/@files/tours/tour_find_subjects.js')} -->
+<!-- ${#labkey.dependency(path='_webdav/CDS/@files/tours/tour_get_oriented.js')} -->
+<!-- ${#labkey.dependency(path='_webdav/CDS/@files/tours/tour_helpers.js')} -->
+<!-- ${#labkey.dependency(path='_webdav/CDS/@files/tours/tour_learn_about.js')} -->
+<!-- ${#labkey.dependency(path='_webdav/CDS/@files/tours/tour_monoclonal_antibodies.js')} -->
+<!-- ${#labkey.dependency(path='_webdav/CDS/@files/tours/tour_plot_data.js')} -->
+<!-- ${#labkey.dependency(path='_webdav/CDS/@files/tours/tour_view_data_grid.js')} -->
 
 <h3 class="tile-title tour-section-title">Take a Tour</h3>
 <!-- <div><a href="#" onclick="return hopscotch.startTour(tour_get_oriented);">Get oriented</a></div> -->
