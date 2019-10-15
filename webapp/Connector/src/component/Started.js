@@ -31,7 +31,7 @@ Ext.define('Connector.component.Started', {
                             '<td class="tile tile-image"><div class="home_integrated_data backgroundimage"></div></td>',
                         '</tr>',
                         '<tr>',
-                            '<td class="tile-detail" style="padding-left:5%;"><h3 class="tile-title">Watch the <a href="{videoURL}" target="_blank">Get Started</a> video</h3>',
+                            '<td class="tile-detail" style="padding-left:5%;"><h3 class="tile-title">Watch the <a style="cursor:pointer" class="tile" id="home-video">Get Started</a> video</h3>',
                                 '<div><table>',
                                     '<tr><td>See the most powerful ways to explore the DataSpace.</td></tr>',
                                 '</table></div>',
