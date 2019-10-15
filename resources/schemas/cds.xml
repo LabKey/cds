@@ -591,6 +591,7 @@
     <table tableName="import_document" tableDbType="TABLE">
         <columns>
             <column columnName="document_id"/>
+            <column columnName="assay_identifier"/>
             <column columnName="label"/>
             <column columnName="filename"/>
             <column columnName="document_type"/>
@@ -634,6 +635,7 @@
     <table tableName="document" tableDbType="TABLE">
         <columns>
             <column columnName="document_id"/>
+            <column columnName="assay_identifier"/>
             <column columnName="container"/>
             <column columnName="label"/>
             <column columnName="filename"/>

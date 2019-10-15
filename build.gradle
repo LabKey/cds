@@ -4,6 +4,8 @@ dependencies
 {
     BuildUtils.addLabKeyDependency(project: project, config: "compile", depProjectPath: ":server:optionalModules:dataintegration", depProjectConfig: "apiCompile")
     BuildUtils.addLabKeyDependency(project: project, config: "jspImplementation", depProjectPath: ":server:optionalModules:dataintegration", depProjectConfig: "apiCompile")
+    BuildUtils.addLabKeyDependency(project: project, config: "modules", depProjectPath: BuildUtils.getPlatformModuleProjectPath(project.gradle, "study"), depProjectConfig: "published", depExtension: "module")
+    BuildUtils.addLabKeyDependency(project: project, config: "modules", depProjectPath: ":server:optionalModules:dataintegration", depProjectConfig: "published", depExtension: "module")
 }
 
 project.evaluationDependsOn(BuildUtils.getInternalProjectPath(project.gradle))

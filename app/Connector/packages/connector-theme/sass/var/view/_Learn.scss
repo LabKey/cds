@@ -395,6 +395,23 @@ img.detail-has-data-small {
   padding-bottom: 0;
 }
 
+.data-availability-subheader-instructions {
+  color:#A09C9C !important;
+  font-size:12px !important;
+  white-space:normal !important;
+}
+
+.non-integrated-data-ul {
+  list-style-type: none !important;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.non-integrated-data-li {
+  display: inline-flex !important;
+  padding-bottom: 0.5em
+}
+
 .data-availability-alt-label {
   padding-left: 2em;
   white-space: normal;

@@ -1,4 +1,4 @@
-document_id	label	filename	document_type
+document_id	label	filename	document_type	assay_identifier
 128	ADCC Data Summary	study_documents/cvd277_adccLUCBoxplots_18Oct2012.pdf	Report or summary
 91	ADCC Data Summary	study_documents/cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf	Report or summary
 185	ADCC Results Summary	study_documents/cvd434_AUP567_ADCC_PT_Report_20140912.pdf	Report or summary
@@ -169,3 +169,7 @@ document_id	label	filename	document_type
 75	Zolla-Pazner: Epitope-Scaffold Immunogens	cavd_grant_profiles/Zolla-Pazner OPP38631_01 Epitope-Scaffold Immunogens.pdf	grant_document
 56	?�berla: Antibodies without HIV T helper cells	cavd_grant_profiles/Uberla OPP1040727 Antibodies without HIV T helper cells.pdf	grant_document
 1	Missing: This document is missing	cavd_grant_profiles/MissingDocument.pdf	grant_document
+201	ARV drug levels	study_documents/cvd277_ARV_Drug_Levels.zip	Non-Integrated Assay	ARV DL
+202	Viral load	study_documents/cvd277_Viral_Load.csv	Non-Integrated Assay	VL
+203	Viral sequencing	study_documents/cvd277_Viral_Sequencing.csv	Non-Integrated Assay	VS
+204	ILLUMINA 454-X	study_documents/ILLUMINA_454_X.tsv	Non-Integrated Assay	ILLUMINA 454-X
