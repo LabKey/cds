@@ -124,7 +124,11 @@ Ext.define('Connector.model.Measure', {
         {name: 'timePointSortColumnAlias', defaultValue: undefined},
 
         {name: 'defaultPlotType', defaultValue: undefined},
-        {name: 'hideInColorSelector', defaultValue : undefined}
+        // show in the color selection dialog
+        {name: 'hideInColorSelector', defaultValue : undefined},
+        // override display in the X or Y axis selectors
+        {name: 'hideInYAxisSelector', defaultValue : undefined},
+        {name: 'hideInXAxisSelector', defaultValue : undefined}
     ],
 
     statics : {

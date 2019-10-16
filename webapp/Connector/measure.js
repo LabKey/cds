@@ -172,7 +172,7 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
-                    defaultSelection: {all: false}
+                    defaultSelection: {all: false, value: 'IL2'}
                 },
                 'study_ICS_summary_level': {
                     hidden: true,
@@ -831,6 +831,12 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'study_Demographics_SubjectVisit_Visit': {
                     hidden: true
+                },
+                'study_ICS_antigen' : {
+                    hideInYAxisSelector : true
+                },
+                'study_ICS_pooled_info' : {
+                    hideInYAxisSelector : true
                 },
                 'study_ICS_response_method' : {
                     hideInColorSelector : true
