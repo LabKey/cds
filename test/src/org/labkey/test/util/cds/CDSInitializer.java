@@ -207,6 +207,9 @@ public class CDSInitializer
         propList.add(new ModulePropertyValue("CDS", "/", "MAbReportLabel1", NAB_MAB_DILUTION_REPORT));
         propList.add(new ModulePropertyValue("CDS", "/", "MAbReportID2", "db:" + heatmapReportId));
         propList.add(new ModulePropertyValue("CDS", "/", "MAbReportLabel2", NAB_MAB_IC50_REPORT));
+        propList.add(new ModulePropertyValue("CDS", "/", "WhatYouNeedToKnowWiki", CDSHelper.WHAT_YOU_NEED_TO_KNOW_WIKI));
+        propList.add(new ModulePropertyValue("CDS", "/", "ToursWiki", CDSHelper.TOURS_WIKI));
+
         _test.setModuleProperties(propList);
         _test.goToProjectHome();
     }

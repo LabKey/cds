@@ -606,6 +606,9 @@ public class CDSHelper
     public static final String NAB_MAB_DILUTION_REPORT = "NAb dilution report";
     public static final String NAB_MAB_IC50_REPORT = "NAb ic50 plot";
 
+    public static final String WHAT_YOU_NEED_TO_KNOW_WIKI = "CDS_WhatYouNeedToKnowWiki";
+    public static final String TOURS_WIKI = "CDS_ToursWiki";
+
     public static final Map<String, String> siteGroupRoles;
     static
     {
