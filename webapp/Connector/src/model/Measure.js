@@ -126,9 +126,8 @@ Ext.define('Connector.model.Measure', {
         {name: 'defaultPlotType', defaultValue: undefined},
         // show in the color selection dialog
         {name: 'hideInColorSelector', defaultValue : undefined},
-        // override display in the X or Y axis selectors
-        {name: 'hideInYAxisSelector', defaultValue : undefined},
-        {name: 'hideInXAxisSelector', defaultValue : undefined}
+        // override display either the x or y axis dimension selectors
+        {name: 'hideInDimensionSelector', defaultValue : undefined}
     ],
 
     statics : {

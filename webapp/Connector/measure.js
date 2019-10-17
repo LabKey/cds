@@ -833,10 +833,10 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_ICS_antigen' : {
-                    hideInYAxisSelector : true
+                    hideInDimensionSelector : true
                 },
                 'study_ICS_pooled_info' : {
-                    hideInYAxisSelector : true
+                    hideInDimensionSelector : true
                 },
                 'study_ICS_response_method' : {
                     hideInColorSelector : true
