@@ -3297,8 +3297,8 @@ Ext.define('Connector.view.Chart', {
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
                     measuresOnly: true,
-                    userFilter : function(row) {
-                        return !row.hideInYAxisSelector;
+                    userFilter : function(row, isDimensionSelector) {
+                        return !isDimensionSelector || !row.hideInDimensionSelector;
                     }
                 },
                 listeners: {
@@ -3360,12 +3360,12 @@ Ext.define('Connector.view.Chart', {
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
                     includeTimepointMeasures: true,
-                    userFilter : function(row) {
+                    userFilter : function(row, isDimensionSelector) {
                         // for TIME variables, only show the ProtocolDay based non-discrete ones for the x-axis options
                         return (row.variableType !== 'TIME'
                                     || (row.isHoursType && !row.hiddenInPlot)
                                     || (row.name === Connector.studyContext.protocolDayColumn && !row.isDiscreteTime))
-                                && !row.hideInXAxisSelector;
+                                && (!isDimensionSelector || !row.hideInDimensionSelector);
                     }
                 },
                 listeners: {
@@ -3429,7 +3429,7 @@ Ext.define('Connector.view.Chart', {
                     includeHidden: this.canShowHidden,
                     includeDefinedMeasureSources: true,
                     includeTimepointMeasures: true,
-                    userFilter : function(row) {
+                    userFilter : function(row, isDimensionSelector) {
                         // Don't show time with alignment even in dev mode
                         return !row.isMeasure && !(row.isDiscreteTime && row.hidden) && !row.isHoursType && !row.hideInColorSelector;
                     }

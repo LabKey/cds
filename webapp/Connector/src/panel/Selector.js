@@ -936,7 +936,7 @@ Ext.define('Connector.panel.Selector', {
             if (dimension.get("hiddenInPlot"))
                 return;
 
-            if (Ext.isFunction(config.userFilter) && !config.userFilter(dimension.data))
+            if (Ext.isFunction(config.userFilter) && !config.userFilter(dimension.data, true))
                 return;
 
             alias = dimension.getFilterMeasure().get('alias');
