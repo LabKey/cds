@@ -55,7 +55,7 @@ Ext.define('Connector.component.Started', {
                         '<tr><td class="tile-image"><div class="home_try_it_out backgroundimage"></div></td></tr>',
                         '<tr><td style="padding-left: 25%"><div>',
                             '<h3 class="tile-title">Try it out</h3>',
-                            '<table>',
+                            '<table width="220px">',
                                 '<tr><td class="tile-detail-static"><a id="learn-about-link" href=\'#learn/learn/Study/\'">Learn about</a> studies, products, assays, antibodies, ad publications</td></td></tr>',
                                 '<tr><td class="tile-detail-static"><a id="find-subjects-link" href=\'#summary\'">Find subjects</a> with common characteristics</td></td></tr>',
                                 '<tr><td class="tile-detail-static"><a id="plot-link" href=\'#chart\'">Plot</a> assay results across studies and years of research</td></td></tr>',
