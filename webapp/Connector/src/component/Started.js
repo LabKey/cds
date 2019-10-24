@@ -13,6 +13,8 @@ Ext.define('Connector.component.Started', {
         DISMISS_PROPERTY: 'showIntroPage'
     },
 
+    maxHt: 1000,
+
     tpl: new Ext.XTemplate(
             '<div class="expanded-intro" id="expanded-intro-div"',
             '<tpl if="showIntro==false">',
@@ -174,12 +176,24 @@ Ext.define('Connector.component.Started', {
             scope.registerTileHandlers();
         },resize: function(c)
         {
+
+            var toursWikiHeight = Ext.get('tours-wiki').getHeight();
+            var needToKnowWikiHeight = Ext.get('whatyouneedtoknow-wiki').getHeight();
+
             var divHeight = Ext.get('expanded-intro-div').getHeight();
             var divWidth = c.getEl().dom.offsetWidth;
-            var needResize = (divWidth < 880 && divHeight < 800) || (divWidth > 880 && divHeight > 800);
+
+            if (c.maxHt < divHeight) {
+                c.maxHt = divHeight;
+            }
+            if (c.maxHt === divHeight) {
+                c.maxHt = toursWikiHeight + needToKnowWikiHeight;
+            }
+
+            var needResize = (divWidth < 880 && divHeight < c.maxHt) || (divWidth > 880 && divHeight > c.maxHt);
             if (needResize) {
                 var isMulti = false;
-                if (divWidth < 880 && divHeight < 800) {
+                if (divWidth < 880 && divHeight < c.maxHt) {
                     isMulti = true;
                 }
                 var data = {
@@ -221,6 +235,7 @@ Ext.define('Connector.component.Started', {
             this.update(data);
             this.doLayout();
         }, this);
+        this.maxHt = 1000;
     },
 
     registerTileHandlers: function(){
