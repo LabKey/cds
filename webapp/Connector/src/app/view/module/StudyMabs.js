@@ -20,7 +20,7 @@ Ext.define('Connector.view.module.StudyMabs', {
                 '<h3 id="mab_listing_title" class="mab_listing_title">{title_related_mabs}</h3>',
                 '<table class="learn-study-info"><tbody>',
                     '<tpl for="monoclonal_antibodies">',
-                        '<tpl if="parent.showAll || (xindex &lt; 11)">',
+                        '<tpl if="xindex &lt; 11">',
                             '<tr>',
                             '<td class="item-label"><a href="#learn/learn/MAb/{name}">{name:htmlEncode}</a></td>',
                                 '<tpl if="label">',
@@ -33,15 +33,27 @@ Ext.define('Connector.view.module.StudyMabs', {
                 '</tpl>',
 
                 '<tpl if="monoclonal_antibodies.length &gt; 10">',
-                    '<div class="show-hide-mabs-toggle">',
+                    'and {monoclonal_antibodies.length} more ',
                     '<tpl if="showAll">',
-                    '<span>- SHOW LESS</span>',
+                        '<span class="show-hide-mabs-toggle">(show less)</span>',
                     '<tpl else>',
-                    '<span>+ SHOW ALL {monoclonal_antibodies.length}</span>',
+                        '<span class="show-hide-mabs-toggle">(show all)</span>',
                     '</tpl>',
-                    '</div>',
+                    '</br></br>',
                 '</tpl>',
 
+                '<table class="learn-study-info"><tbody>',
+                    '<tpl for="monoclonal_antibodies">',
+                        '<tpl if="parent.showAll && (xindex &gt; 10)">',
+                            '<tr>',
+                                '<td class="item-label"><a href="#learn/learn/MAb/{name}">{name:htmlEncode}</a></td>',
+                                '<tpl if="label">',
+                                    '<td class="item-value" style="padding-right: 1em;">Labeled as: {label:htmlEncode}</td>',
+                                '</tpl>',
+                            '</tr>',
+                        '</tpl>',
+                    '</tpl>',
+                '</tbody></table>',
             '</tpl>'
     ),
     listeners: {
@@ -71,6 +83,9 @@ Ext.define('Connector.view.module.StudyMabs', {
     },
 
     registerMabListToggle: function(scroll) {
+        if (this.mabSectionY > 0) {
+            Ext.get('mab_listing_title').el.dom.scrollIntoView()
+        }
         var me = this;
         var expandos = Ext.query('.show-hide-mabs-toggle');
         Ext.each(expandos, function(expando) {
@@ -78,9 +93,7 @@ Ext.define('Connector.view.module.StudyMabs', {
                 me.toggleMabListTask.delay(100);
             });
         });
-        if (this.mabSectionY > 0) {
-            Ext.get('mab_listing_title').el.dom.scrollIntoView()
-        }
+
     },
 
     toggleMabList: function() {
