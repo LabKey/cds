@@ -7,7 +7,7 @@ Ext.define('Connector.view.module.StudyMabs', {
 
     xtype : 'app.module.studymabs',
 
-    extend : 'Ext.view.View',
+    extend : 'Connector.view.module.ShowList',
 
     cls: 'module',
 
@@ -17,7 +17,7 @@ Ext.define('Connector.view.module.StudyMabs', {
             '<tpl>',
 
                 '<tpl if="monoclonal_antibodies.length &gt; 0">',
-                '<h3 id="mab_listing_title" class="mab_listing_title">{title_related_mabs}</h3>',
+                '<h3 id="mab_listing_title" class="listing_title">{title_related}</h3>',
                 '<table class="learn-study-info"><tbody>',
                     '<tpl for="monoclonal_antibodies">',
                         '<tpl if="xindex &lt; 11">',
@@ -35,9 +35,9 @@ Ext.define('Connector.view.module.StudyMabs', {
                 '<tpl if="monoclonal_antibodies.length &gt; 10">',
                     'and {monoclonal_antibodies.length} more ',
                     '<tpl if="showAll">',
-                        '<span class="show-hide-mabs-toggle">(show less)</span>',
+                        '<span class="show-hide-toggle">(show less)</span>',
                     '<tpl else>',
-                        '<span class="show-hide-mabs-toggle">(show all)</span>',
+                        '<span class="show-hide-toggle">(show all)</span>',
                     '</tpl>',
                     '</br></br>',
                 '</tpl>',
@@ -56,52 +56,10 @@ Ext.define('Connector.view.module.StudyMabs', {
                 '</tbody></table>',
             '</tpl>'
     ),
-    listeners: {
-        render: function(cmp) {
-            cmp.registerMabListToggle();
-        },
-        refresh: function(cmp) {
-            cmp.registerMabListToggle(true);
-        },
-        scope: this
-    },
 
     initComponent : function() {
-        if (!this.hasContent()) {
-            this.hidden = true;
-        }
 
         this.callParent();
-
-        var data = this.initialConfig.data.model.data;
-        data['title_related_mabs'] = this.initialConfig.data.title;
-        data['showAll'] = false;
-
-        this.update(data);
-
-        this.toggleMabListTask = new Ext.util.DelayedTask(this.toggleMabList, this);
-    },
-
-    registerMabListToggle: function(scroll) {
-        if (this.mabSectionY > 0) {
-            Ext.get('mab_listing_title').el.dom.scrollIntoView()
-        }
-        var me = this;
-        var expandos = Ext.query('.show-hide-mabs-toggle');
-        Ext.each(expandos, function(expando) {
-            Ext.get(expando).on('click', function() {
-                me.toggleMabListTask.delay(100);
-            });
-        });
-
-    },
-
-    toggleMabList: function() {
-        this.mabSectionY = 1;
-        var data = this.initialConfig.data.model.data;
-        data['showAll'] = !data['showAll'];
-        this.update(data);
-        this.refresh();
     },
 
     hasContent : function() {
@@ -110,5 +68,17 @@ Ext.define('Connector.view.module.StudyMabs', {
             return mabs.length > 0;
         }
         return false;
+    },
+
+    getListData : function () {
+        return this.initialConfig.data.model.data;
+    },
+
+    getListTitle : function () {
+        return this.initialConfig.data.title;
+    },
+
+    scrollListIntoView: function() {
+        Ext.get('mab_listing_title').el.dom.scrollIntoView();
     }
 });
