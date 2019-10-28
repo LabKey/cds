@@ -25,7 +25,9 @@ import org.labkey.test.pages.cds.DataspaceVariableSelector;
 import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
+import org.labkey.test.util.PortalHelper;
 import org.labkey.test.util.cds.CDSAsserts;
+import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
 
 import java.util.ArrayList;
@@ -39,9 +41,20 @@ public class CDSTest extends CDSReadOnlyTest
 
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
+    private final CDSHelpCenterUtil _helpCenterUtil = new CDSHelpCenterUtil(this);
+
 
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
     private static final String GROUP_NAME = "A Plottable group";
+
+    public static final String WHAT_YOU_NEED_TO_KNOW_WIKI_TITLE = "What you need to know";
+    public static final String WHAT_YOU_NEED_TO_KNOW_WIKI_CONTENT = "<h3 id=\"what-you-need-title-id\" class=\"tile-title\">What you need to know</h3>\n" +
+            "<ul>\n" +
+            "    <li><a id=\"study-link-id\" href=\"#learn/learn/Study\">Types of studies in DataSpace</a></li>\n" +
+            "    <li><a id=\"assay-link-id\" href=\"#learn/learn/Assay\">Assay data available by study</a></li>\n" +
+            "</ul>";
+    public static final String TOURS_WIKI_TITLE = "Take a tour";
+    public static final String TOURS_WIKI_CONTENT = "<h3 id=\"take-tour-title-id\" class=\"tile-title\">Take a guided tour</h3>";
 
     @Before
     public void preTest()
@@ -118,51 +131,38 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(Locator.xpath("//a[@id='showlink'][contains(@style, 'display: none')]"));
         assertElementPresent(hiddenShowBarLink);
 
-        log("Verify tile text");
-        String[] tileTitles = {"Answer questions", "Find a cohort", "Explore relationships", "Get started!"};
-        String[] tileDetails = {"Learn about ", "55", " CAVD studies, ", "90", " products, and ", "5", " assays.",
-                                "Find subjects based on attributes that span studies.",
-                                "Plot assay results across ", "51", " studies and years of research.",
-                                "Watch the most powerful ways to explore the DataSpace."};
-        List<String> tites = Arrays.asList(tileTitles);
-        tites.stream().forEach((tite) ->  {
-            assertTextPresent(tite);
-        });
-        tites = Arrays.asList(tileDetails);
-        tites.stream().forEach((tite) ->  {
-            assertTextPresent(tite);
-        });
-
-        log("Verify tile link");
-
-        if(isElementVisible(Locator.linkContainingText("Show tips for getting started")))
-        {
-            click(Locator.linkContainingText("Show tips for getting started"));
-            waitForElement(Locator.xpath("//div[contains(@class, 'home_text')]"));
-        }
-
-        mouseOver(Locator.xpath("//div[contains(@class, 'home_text')]"));
-        sleep(500);
-        infoPane.waitForSpinners();
-        click(Locator.xpath("//div[contains(@class, 'home_text')]"));
-        CDSHelper.NavigationLink.LEARN.waitForReady(this);
-        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        mouseOver(Locator.xpath("//div[contains(@class, 'home_plot')]"));
-        sleep(500);
-        infoPane.waitForSpinners();
-        click(Locator.xpath("//div[contains(@class, 'home_plot')]"));
-        CDSHelper.NavigationLink.PLOT.waitForReady(this);
-        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-
         log("Verify open video popup");
-        mouseOver(Locator.xpath("//div[contains(@class, 'home_video')]"));
-        sleep(500);
-        infoPane.waitForSpinners();
-        click(Locator.xpath("//div[contains(@class, 'home_video')]"));
+        click(Locator.linkContainingText("Get Started"));
         waitForElement(Locator.xpath("id('started-video-frame')"));
         infoPane.waitForSpinners();
         waitForElement(Locator.tagWithId("div", "started-video-frame"));
         clickAt(Locator.xpath(CDSHelper.LOGO_IMG_XPATH), 10, 10, 0);
+        waitForElement(Locator.linkWithId("learn-about-link"));
+
+        log("Verify Try it out links");
+        click(Locator.linkWithId("learn-about-link"));
+        waitForText("Name & Description");
+        clickAt(Locator.xpath(CDSHelper.LOGO_IMG_XPATH), 10, 10, 0);
+        refresh();
+
+        waitForElement(Locator.linkWithId("find-subjects-link"));
+        click(Locator.linkWithId("find-subjects-link"));
+        waitForText("Find subjects of interest with assay data in DataSpace.");
+        clickAt(Locator.xpath(CDSHelper.LOGO_IMG_XPATH), 10, 10, 0);
+        refresh();
+
+        waitForElement(Locator.linkWithId("plot-link"));
+        click(Locator.linkWithId("plot-link"));
+        waitForText("Choose a \"y\" variable and up to two more to plot at a time");
+        clickAt(Locator.xpath(CDSHelper.LOGO_IMG_XPATH), 10, 10, 0);
+        refresh();
+
+        waitForElement(Locator.linkWithId("monoclonal-antibodies-link"));
+        click(Locator.linkWithId("monoclonal-antibodies-link"));
+        waitForText("Explore monoclonal antibody (mAb) characterization data");
+        clickAt(Locator.xpath(CDSHelper.LOGO_IMG_XPATH), 10, 10, 0);
+        refresh();
+
         //
         // Validate News feed
         //
@@ -228,6 +228,16 @@ public class CDSTest extends CDSReadOnlyTest
         _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155); // TODO Test data dependent.
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForElements(Locator.css("div.groupicon img"), plotFilterCount - 1);
+    }
+
+    @Test
+    public void verifyDynamicContentOnHomePage()
+    {
+        setupSharedHomePageWikis();
+        cds.enterApplication();
+        refresh();
+        assertElementPresent(Locator.tagWithId("h3", "take-tour-title-id"));
+        assertElementPresent(Locator.tagWithId("h3", "what-you-need-title-id"));
     }
 
     @Test
@@ -341,5 +351,30 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(CDSHelper.Locators.activeDimensionHeaderLocator("Subject characteristics"));
         waitForFormElementToEqual(hierarchySelector, "Country at enrollment");
         cds.goToSummary();
+    }
+
+    public void setupSharedHomePageWikis()
+    {
+        goToProjectHome("Shared");
+
+        if(!isElementPresent(Locator.tagWithName("a", "Pages")))
+        {
+            PortalHelper portalHelper = new PortalHelper(this);
+            portalHelper.addWebPart("Wiki Table of Contents");
+        }
+
+        if(isElementPresent(Locator.linkWithText(WHAT_YOU_NEED_TO_KNOW_WIKI_TITLE)))
+        {
+            _helpCenterUtil.deleteWiki(WHAT_YOU_NEED_TO_KNOW_WIKI_TITLE);
+        }
+        goToProjectHome("Shared");
+        _helpCenterUtil.createWikiPage(CDSHelper.WHAT_YOU_NEED_TO_KNOW_WIKI, WHAT_YOU_NEED_TO_KNOW_WIKI_TITLE, WHAT_YOU_NEED_TO_KNOW_WIKI_CONTENT, null, null, true);
+
+        if(isElementPresent(Locator.linkWithText(TOURS_WIKI_TITLE)))
+        {
+            _helpCenterUtil.deleteWiki(TOURS_WIKI_TITLE);
+        }
+        goToProjectHome("Shared");
+        _helpCenterUtil.createWikiPage(CDSHelper.TOURS_WIKI, TOURS_WIKI_TITLE, TOURS_WIKI_CONTENT, null, null, true);
     }
 }

@@ -56,6 +56,7 @@
         <li><%=link("Manage News Feed", urlProvider(QueryUrls.class).urlExecuteQuery(newsFeedURL))%></li>
         <li><%=link("Add Users", addUserUrl)%></li>
         <li><%=link("Download Group Permissions Report", CDSController.PermissionsReportExportAction.class)%></li>
+        <li><%=link("Download Tour Definition Files", CDSController.ExportTourDefinitionsAction.class)%></li>
     </ul>
 </div>
 <%

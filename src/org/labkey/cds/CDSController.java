@@ -54,6 +54,7 @@ import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.reader.Readers;
+import org.labkey.api.resource.Resource;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.AuthenticationManager;
@@ -70,6 +71,7 @@ import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.util.CSRFUtil;
+import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.HtmlString;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.util.Path;
@@ -100,11 +102,13 @@ import org.springframework.web.servlet.mvc.Controller;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,6 +121,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.labkey.api.view.template.WarningService.SESSION_WARNINGS_BANNER_KEY;
 
@@ -131,7 +137,6 @@ public class CDSController extends SpringActionController
         }
         catch (ClassNotFoundException x)
         {
-            ;
         }
     }
 
@@ -157,6 +162,7 @@ public class CDSController extends SpringActionController
     @RequiresPermission(ReadPermission.class)
     public class BeginAction extends SimpleViewAction
     {
+        @Override
         public ModelAndView getView(Object o, BindException errors) throws Exception
         {
             if (getContainer().isRoot())
@@ -164,6 +170,7 @@ public class CDSController extends SpringActionController
             return new JspView("/org/labkey/cds/view/begin.jsp");
         }
 
+        @Override
         public NavTree appendNavTrail(NavTree root)
         {
             return root.addChild("Dataspace Management");
@@ -637,6 +644,7 @@ public class CDSController extends SpringActionController
 
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
 
+        @Override
         protected @NotNull BindException doBindParameters(PropertyValues in)
         {
             BindException errors = super.doBindParameters(in);
@@ -927,7 +935,7 @@ public class CDSController extends SpringActionController
                         url + "rss/feed.rss");
                 pb.redirectErrorStream(true);
                 Process p = pb.start();
-                IOUtils.copy(new InputStreamReader(p.getInputStream(), "UTF-8"), swOuputLog);
+                IOUtils.copy(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8), swOuputLog);
                 p.waitFor();
                 swOuputLog.flush();
             }
@@ -1177,6 +1185,53 @@ public class CDSController extends SpringActionController
                 response.put("success", true);
             }
             return response;
+        }
+    }
+
+    @RequiresPermission(ReadPermission.class)
+    public class ExportTourDefinitionsAction extends SimpleViewAction<QueryForm>
+    {
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+
+        @Override
+        public ModelAndView getView(QueryForm queryForm, BindException errors) throws Exception
+        {
+            Module module = ModuleLoader.getInstance().getModule(CDSModule.NAME);
+            Path path = Path.parse("cds-tours/definitions");
+            Resource r = module.getModuleResource(path);
+            if (r != null && r.exists() && r.isCollection())
+            {
+                HttpServletResponse response = getViewContext().getResponse();
+                response.setContentType("application/zip");
+                response.setHeader("Content-Disposition", "attachment; filename=\"cds-tours.zip\"");
+
+                try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
+                {
+                    for (String name : r.listNames())
+                    {
+                        Resource tour = module.getModuleResource(Path.parse("cds-tours/definitions/").append(Path.parse(name)));
+                        if (tour.exists() && tour.isFile())
+                        {
+                            ZipEntry entry = new ZipEntry(tour.getName());
+                            out.putNextEntry(entry);
+
+                            try (InputStream in = tour.getInputStream())
+                            {
+                                if (in != null)
+                                    FileUtil.copyData(in, out);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+                throw new RuntimeException("tour source files were not found");
+
+            return null;
         }
     }
 

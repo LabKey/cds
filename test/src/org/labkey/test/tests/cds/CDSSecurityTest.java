@@ -55,6 +55,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     private final String[] _newUserAccounts = {"addusertest01@cdssecurity.test", "addusertest02@cdssecurity.test", "addusertest03@cdssecurity.test", "addusertest04@cdssecurity.test"};
 
+    @Override
     @Before
     public void preTest()
     {
@@ -476,7 +477,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
             for (String study : CDSHelper.siteGroupStudies.get(groupName))
             {
                 // Validate that the container is in the key set for the map of containers & access.
-                if (containerAccess.keySet().contains(study))
+                if (containerAccess.containsKey(study))
                 {
                     // Now check that the permission for the container is as expected.
                     if (!containerAccess.get(study).toLowerCase().equals(CDSHelper.siteGroupRoles.get(groupName).toLowerCase()))
@@ -528,7 +529,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         for (String study : inheritedStudyList)
         {
             // Validate that the container is in the key set for the map of containers & access.
-            if (containerAccess.keySet().contains(study))
+            if (containerAccess.containsKey(study))
             {
                 // Special case the inherited studies.
                 String expectedAccess;

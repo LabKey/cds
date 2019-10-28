@@ -25,8 +25,12 @@ import org.labkey.api.data.ContainerManager;
 import org.labkey.api.module.DefaultModule;
 import org.labkey.api.module.ModuleContext;
 import org.labkey.api.module.ModuleProperty;
+import org.labkey.api.resource.Resource;
 import org.labkey.api.security.AuthenticationManager;
+import org.labkey.api.security.User;
+import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.Path;
+import org.labkey.api.util.StringUtilsLabKey;
 import org.labkey.api.view.BaseWebPartFactory;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.Portal;
@@ -35,10 +39,17 @@ import org.labkey.api.view.WebPartFactory;
 import org.labkey.api.view.WebPartView;
 import org.labkey.api.webdav.WebdavResource;
 import org.labkey.api.webdav.WebdavService;
+import org.labkey.api.wiki.WikiRendererType;
+import org.labkey.api.wiki.WikiService;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class CDSModule extends DefaultModule
@@ -56,6 +67,10 @@ public class CDSModule extends DefaultModule
     public static final String REPORT_1_LABEL = "MAbReportLabel1";
     public static final String REPORT_2_ID = "MAbReportID2";
     public static final String REPORT_2_LABEL = "MAbReportLabel2";
+    public static final String WHATYOUNEEDTOKNOW_WIKI_LABEL = "WhatYouNeedToKnowWiki";
+    public static final String TOURS_WIKI_LABEL = "ToursWiki";
+    private static final String TOURS_WIKI_DEFAULT = "tour-default-wiki";
+    private static final String WHATYOUNEEDTOKNOW_WIKI_DEFAULT = "needtoknow-default-wiki";
 
     final ModuleProperty _showHiddenVariables;
     final ModuleProperty _blogPath;
@@ -69,6 +84,10 @@ public class CDSModule extends DefaultModule
     final ModuleProperty _mabReport1Label;
     final ModuleProperty _mabReport2ID;
     final ModuleProperty _mabReport2Label;
+
+    //wiki properties for the front page
+    final ModuleProperty _whatYouNeedToKnowWiki;
+    final ModuleProperty _takeATourWiki;
 
     public CDSModule()
     {
@@ -128,6 +147,18 @@ public class CDSModule extends DefaultModule
         _mabReport2Label.setDescription("Button display label for the 1st MAb R report on MAb grid");
         _mabReport2Label.setCanSetPerContainer(false);
         addModuleProperty(_mabReport2Label);
+
+        _whatYouNeedToKnowWiki = new ModuleProperty(this, WHATYOUNEEDTOKNOW_WIKI_LABEL);
+        _whatYouNeedToKnowWiki.setDescription("Source wiki page for 'What You Need to Know' on the front page. The wiki needs to be created in the shared folder.");
+        _whatYouNeedToKnowWiki.setCanSetPerContainer(false);
+        _whatYouNeedToKnowWiki.setDefaultValue(WHATYOUNEEDTOKNOW_WIKI_DEFAULT);
+        addModuleProperty(_whatYouNeedToKnowWiki);
+
+        _takeATourWiki = new ModuleProperty(this, TOURS_WIKI_LABEL);
+        _takeATourWiki.setDescription("Source wiki page for 'Tours' on the front page. The wiki needs to be created in the shared folder.");
+        _takeATourWiki.setCanSetPerContainer(false);
+        _takeATourWiki.setDefaultValue(TOURS_WIKI_DEFAULT);
+        addModuleProperty(_takeATourWiki);
     }
 
     @Override
@@ -181,6 +212,7 @@ public class CDSModule extends DefaultModule
         // add a container listener so we'll know when our container is deleted:
         ContainerManager.addContainerListener(new CDSContainerListener());
         ensureShortcuts(true);
+        ensureHomePageWikis();
     }
 
 
@@ -253,5 +285,51 @@ public class CDSModule extends DefaultModule
     public Set<String> getSchemaNames()
     {
         return Collections.singleton("cds");
+    }
+
+    /**
+     * Initialize default wiki content for the front page so we have at least some content for the tours
+     * and need to know tiles
+     */
+    private void ensureHomePageWikis()
+    {
+        insertDefaultWikiIfNotPresent(TOURS_WIKI_LABEL, TOURS_WIKI_DEFAULT);
+        insertDefaultWikiIfNotPresent(WHATYOUNEEDTOKNOW_WIKI_LABEL, WHATYOUNEEDTOKNOW_WIKI_DEFAULT);
+    }
+
+    private void insertDefaultWikiIfNotPresent(String wikiLabel, String defaultWikiValue)
+    {
+        Map<String, ModuleProperty> moduleProperties = getModuleProperties();
+        List<String> existingWikis = WikiService.get().getNames(ContainerManager.getSharedContainer());
+        if (moduleProperties.containsKey(wikiLabel))
+        {
+            if (defaultWikiValue.equals(moduleProperties.get(wikiLabel).getEffectiveValue(ContainerManager.getRoot())))
+            {
+                if (!existingWikis.contains(defaultWikiValue))
+                {
+                    try
+                    {
+                        Resource r = getModuleResource(Path.parse("cds-tours/wikis/" + defaultWikiValue));
+                        if (r != null && r.exists() && r.isFile())
+                        {
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            try (InputStream in = r.getInputStream())
+                            {
+                                if (in != null)
+                                {
+                                    FileUtil.copyData(in, baos);
+                                }
+                            }
+                            String content = new String(baos.toByteArray(), StringUtilsLabKey.DEFAULT_CHARSET);
+                            WikiService.get().insertWiki(User.getSearchUser(), ContainerManager.getSharedContainer(), defaultWikiValue, content, WikiRendererType.HTML, defaultWikiValue);
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        throw new RuntimeException();
+                    }
+                }
+            }
+        }
     }
 }
