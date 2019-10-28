@@ -29,7 +29,6 @@ Ext.define('Connector.view.module.ShowList', {
 
         var data = this.getListData();
 
-        data['title_related'] = this.getListTitle();
         data['showAll'] = false;
 
         this.update(data);
@@ -66,10 +65,6 @@ Ext.define('Connector.view.module.ShowList', {
     },
 
     getListData: function () {
-        return null;
-    },
-
-    getListTitle : function () {
         return null;
     },
 

@@ -17,7 +17,7 @@ Ext.define('Connector.view.module.StudyMabs', {
             '<tpl>',
 
                 '<tpl if="monoclonal_antibodies.length &gt; 0">',
-                '<h3 id="mab_listing_title" class="listing_title">{title_related}</h3>',
+                '<h3 id="mab_listing_title" class="listing_title">{title_related_mabs}</h3>',
                 '<table class="learn-study-info"><tbody>',
                     '<tpl for="monoclonal_antibodies">',
                         '<tpl if="xindex &lt; 11">',
@@ -33,7 +33,7 @@ Ext.define('Connector.view.module.StudyMabs', {
                 '</tpl>',
 
                 '<tpl if="monoclonal_antibodies.length &gt; 10">',
-                    'and {monoclonal_antibodies.length} more ',
+                    'and {monoclonal_antibodies.length - 10} more ',
                     '<tpl if="showAll">',
                         '<span class="show-hide-toggle">(show less)</span>',
                     '<tpl else>',
@@ -59,6 +59,8 @@ Ext.define('Connector.view.module.StudyMabs', {
 
     initComponent : function() {
 
+        var data = this.initialConfig.data.model.data;
+        data['title_related_mabs'] = this.initialConfig.data.title;
         this.callParent();
     },
 
@@ -72,10 +74,6 @@ Ext.define('Connector.view.module.StudyMabs', {
 
     getListData : function () {
         return this.initialConfig.data.model.data;
-    },
-
-    getListTitle : function () {
-        return this.initialConfig.data.title;
     },
 
     scrollListIntoView: function() {
