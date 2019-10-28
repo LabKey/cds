@@ -41,3 +41,22 @@ SELECT
               FROM cds.ds_nabmab
 
             ) AS SA ON IA.assay_identifier=SA.assay_identifier;
+
+UNION
+
+SELECT
+  IA.assay_identifier,
+  NULL AS assay_type, --Note: this may need to be updated, it is not yet clear what assay_type values will be for Non-Integrated Assay. Updating this would also require updating learn_assay.sql.
+  assay_label,
+  assay_short_name,
+  assay_category,
+  assay_detection_platform,
+  assay_body_system_type,
+  assay_body_system_target,
+  assay_general_specimen_type,
+  assay_description,
+  assay_method_description,
+  assay_endpoint_description,
+  assay_endpoint_statistical_analysis
+ FROM cds.import_assay as IA
+ INNER JOIN cds.import_document ID ON IA.assay_identifier=ID.assay_identifier WHERE ID.document_type='Non-Integrated Assay'

@@ -930,9 +930,13 @@ Ext.define('Connector.panel.Selector', {
                 alias, advancedOptionCmp;
 
         this.advancedOptionCmps = [];
+        var config = this.sourceMeasureFilter;
 
         Ext.each(this.getDimensionsForMeasure(this.activeMeasure), function(dimension) {
             if (dimension.get("hiddenInPlot"))
+                return;
+
+            if (Ext.isFunction(config.userFilter) && !config.userFilter(dimension.data, true))
                 return;
 
             alias = dimension.getFilterMeasure().get('alias');

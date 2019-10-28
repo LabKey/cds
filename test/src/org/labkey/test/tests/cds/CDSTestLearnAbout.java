@@ -32,6 +32,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -80,6 +81,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     public static final org.labkey.test.Locator.XPathLocator DETAIL_PAGE_BREADCRUMB_LOC = Locator.tagWithClass("div", "breadcrumb");
 
+    @Override
     @Before
     public void preTest()
     {
@@ -181,7 +183,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         sleep(CDSHelper.CDS_WAIT);
 
-        log("Verifying data availability on summary page.");
+        log("Verifying integrated data availability on summary page.");
         LearnGrid learnGrid = new LearnGrid(this);
         int rowCount = learnGrid.getRowCount();
         assertTrue("Expected one row in the grid, found " + rowCount + " row(s).", rowCount == 1);
@@ -320,7 +322,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void verifyLearnAboutMabDetails()
     {
         final String infoHeader = "Monoclonal Antibody Information";
-        final String dataHeader = "Data Availability";
+        final String dataHeader = "Integrated Data";
 
         final String labelStandardname = "Standard name";
         final String labelAntibodyType = "Antibody type";
@@ -358,10 +360,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 labelHXB2, labelBindingType, labelSpecies);
 
         log("Verify mab detail field values");
-        if(getBrowserType() == BrowserType.CHROME)
-            verifyDetailFieldValues(mAbName, "Individual mAb", "815", "2F5 (Polymun) (other)", "IgG3?", "gp160", "gp41 MPER", "human");
-        else
-            verifyDetailFieldValues(mAbName, "Individual mAb", "815", "2F5 (PlantForm) (other)", "IgG3?", "gp160", "gp41 MPER", "human");
+        verifyDetailFieldValues(mAbName, "Individual mAb", "815", "2F5 (PlantForm) (other)", "IgG3?", "gp160", "gp41 MPER", "human");
 
         click(breadcrumb);
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']")));
@@ -597,13 +596,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String toolTipText, cellText, expectedText;
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
 
-        log("Checking: " + learnGrid.getCellText(4, 0));
+        log("Checking: " + learnGrid.getCellText(5, 0));
         expectedText = "11 Studies";
-        cellText = learnGrid.getCellText(4, dataAddedColumn);
+        cellText = learnGrid.getCellText(5, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(5, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         // Can't depend upon the text in the tooltip to be in the same order every time. So check for each value separately.
@@ -612,13 +611,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         sleep(1000);
 
-        log("Checking: " + learnGrid.getCellText(3, 0));
+        log("Checking: " + learnGrid.getCellText(4, 0));
         expectedText = "5 Studies";
-        cellText = learnGrid.getCellText(3, dataAddedColumn);
+        cellText = learnGrid.getCellText(4, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         validateToolTipText(toolTipText, "ZAP 133", "ZAP 128", "YOYO 55", "ZAP 135", "QED 2");
@@ -626,13 +625,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         sleep(1000);
 
-        log("Checking: " + learnGrid.getCellText(2, 0));
+        log("Checking: " + learnGrid.getCellText(3, 0));
         expectedText = "4 Studies";
-        cellText = learnGrid.getCellText(2, dataAddedColumn);
+        cellText = learnGrid.getCellText(3, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         validateToolTipText(toolTipText, "ZAP 134", "RED 4", "ZAP 110", "ZAP 111");
@@ -640,13 +639,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         sleep(1000);
 
-        log("Checking: " + learnGrid.getCellText(1, 0));
+        log("Checking: " + learnGrid.getCellText(2, 0));
         expectedText = "14 Studies";
-        cellText = learnGrid.getCellText(1, dataAddedColumn);
+        cellText = learnGrid.getCellText(2, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         validateToolTipText(toolTipText, "ZAP 102", "RED 4", "RED 5", "RED 6", "ZAP 105", "ZAP 106", "ZAP 134", "ZAP 136", "ZAP 124", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118");
@@ -654,13 +653,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         sleep(1000);
 
-        log("Checking: " + learnGrid.getCellText(0, 0));
+        log("Checking: " + learnGrid.getCellText(1, 0));
         expectedText = "1 Study";
-        cellText = learnGrid.getCellText(0, dataAddedColumn);
+        cellText = learnGrid.getCellText(1, dataAddedColumn);
         assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
-        toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn)
+        toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         validateToolTipText(toolTipText, "ZAP 117");
@@ -678,8 +677,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         summaryGrid.setSearch(CDSHelper.TITLE_NABMAB)
                 .clickFirstItem();
 
-        log("Verify Data Availability");
-        waitForText("Data Availability");
+        log("Verify Integrated Data Availability");
+        waitForText("Integrated Data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == 10);
 
@@ -900,6 +899,133 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     }
 
     @Test
+    public void testIntegratedDataInstructions()
+    {
+        String studyName = "QED 2";
+        log("Verify instruction text on Learn About page for Studies - " + studyName);
+        cds.viewLearnAboutPage("Studies");
+        goToDetail(studyName, true);
+        assertTextPresent("Go to Plot to view or Grid to export.");
+
+        String assayName = CDSHelper.ASSAYS_FULL_TITLES[1]; //ICS
+        log("Verify instruction text on Learn About page for Assays - " + assayName);
+        cds.viewLearnAboutPage("Assays");
+        goToDetail(assayName, true);
+        assertTextPresent("Go to Plot to view or Grid to export.");
+
+        String productName = "2F5";
+        log("Verify instruction text on Learn About page for Products - " + productName);
+        cds.viewLearnAboutPage("Products");
+        goToDetail(productName, true);
+        assertTextPresent("Go to Plot to view or Grid to export. Additional non-integrated data files may be available for download. See study page.");
+
+        String MAbName = "2F5";
+        log("Verify sub-header instruction text on Learn About page for MAbs - " + MAbName);
+        cds.viewLearnAboutPage("MAbs");
+        goToDetail(MAbName, true);
+        String subHeaderCharacterizationInstr = "Go to Monoclonal Antibodies to view or export.";
+        String subHeaderAdministrationInstr = "Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.";
+        assertTextPresent(subHeaderCharacterizationInstr);
+        assertTextPresent(subHeaderAdministrationInstr);
+
+        String publicationName = "Fong Y 2018 J Infect Dis";
+        log("Verify instruction text on Learn About page for Publications - " + publicationName);
+        cds.viewLearnAboutPage("Publications");
+        gotToLearnAboutDetail(publicationName);
+        assertTextPresent("Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.");
+    }
+
+    @Test
+    public void testNonIntegratedData()
+    {
+        String ni_assay1_label = "ILLUMINA 454";
+        String ni_assay2_label = "ILLUMINA 454-X";
+        String ni_assay2_identifier = "ILLUMINA 454-X";
+        String ni_assay3_label = "ARV drug levels";
+        String ni_assay3_identifier = "ARV DL";
+        String ni_assay4_label = "Viral load";
+        String ni_assay5_label = "Viral sequencing";
+        String study1 = "RED 4";
+        String study2 = "ZAP 135";
+
+        verifyNonIntegratedDataHeader(study1);
+        log("Non-Integrated data with metadata only, and no link to assay learn, and no downloadable data");
+        verifyNonIntegratedDetailFieldValues(ni_assay1_label, null);
+
+        log("Non-Integrated data with metadata, no link to assay learn, has downloadable data");
+        verifyNonIntegratedDetailFieldValues(ni_assay2_label, "(TSV)");
+        verifyNonIntegratedDownloadLink(ni_assay2_identifier, "ILLUMINA_454_X.tsv");
+
+        verifyNonIntegratedDataHeader(study2);
+        log("Non-Integrated data with with Learn Assay page, and downloadable data");
+        verifyNonIntegratedDetailFieldValues(ni_assay3_label, "(Archive)");
+        verifyNonIntegratedDetailFieldValues(ni_assay4_label, "(CSV)");
+        verifyNonIntegratedDownloadLink(ni_assay3_identifier, "cvd277_ARV_Drug_Levels.zip");
+        click(Locator.linkContainingText(ni_assay3_label));
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+        verifyDetailFieldValues("ARV drug levels (ARV drug levels)");
+
+        log("Non-Integrated data with with Learn Assay page, and no downloadable data");
+        cds.viewLearnAboutPage("Studies");
+        goToDetail(study2, true);
+        verifyNonIntegratedDetailFieldValues(ni_assay5_label, null);
+
+        log("Validate tooltip");
+        validateToolTip(Locator.linkWithText("ARV drug levels").findElement(getDriver()), "provided, pending processing");
+        validateToolTip(Locator.linkWithText("Viral load").findElement(getDriver()), "not approved");
+        validateToolTip(Locator.linkWithText("Viral sequencing").findElement(getDriver()), "provided, but not included");
+
+        click(Locator.linkContainingText(ni_assay5_label));
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+        verifyDetailFieldValues("Viral sequencing (Viral sequencing)");
+    }
+
+    private void verifyNonIntegratedDetailFieldValues(String value, String suffix)
+    {
+        Locator.XPathLocator li = Locator.tagWithClass("li", "non-integrated-data-li").containing(value);
+
+        Assert.assertTrue(value + " field value is not present", isElementPresent(li));
+
+        if (suffix != null)
+        {
+            Assert.assertTrue(suffix + " is not present", isElementPresent(li.containing(suffix)));
+        }
+
+        mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+    }
+
+    private void verifyNonIntegratedDownloadLink(String assay_identifier, String documentName)
+    {
+        Locator.XPathLocator downloadLinkLocator = Locator.tagWithAttributeContaining("img", "alt", assay_identifier);
+        File downloadedFile = clickAndWaitForDownload(downloadLinkLocator, 1)[0];
+        assertTrue(downloadedFile + " not downloaded.", downloadedFile.getName().contains(documentName));
+    }
+
+    private void verifyNonIntegratedDataHeader(String studyName)
+    {
+        log("Verify Don-Integrated Data header for " + studyName);
+
+        cds.viewLearnAboutPage("Studies");
+        goToDetail(studyName, true);
+
+        verifySectionHeaders("Non-Integrated Data");
+
+        Locator.XPathLocator nonIntegratedDataElement = Locator.tagWithAttributeContaining("div", "id", "nonintegrateddataavailability");
+        assertElementPresent(nonIntegratedDataElement);
+
+        Locator.XPathLocator instructions = nonIntegratedDataElement.withDescendant(Locator.tag("p")).containing("Download Individual Files.");
+        assertElementPresent(instructions);
+    }
+
+    private void gotToLearnAboutDetail(String itemName)
+    {
+        Locator element = LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
+        assertElementPresent(element);
+        new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction ->{waitForText("Overview"); return null;});
+    }
+
+    @Test
     public void validateDetailsDataAvailability()
     {
         //Valuse for Study Details inspection
@@ -914,20 +1040,22 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String PRODUCT = "benztropine mesylate";
         final String[] STUDY_FROM_PRODUCT = {"QED 1", "YOYO 55"};
 
+        final String partialLogMsgIntegratedData = "Testing integrated data availability module in ";
+        final String waitForTextIntegratedData = "Integrated Data";
 
-        log("Testing data availability module in Studies");
+        log(partialLogMsgIntegratedData + "Studies");
         cds.viewLearnAboutPage("Studies");
 
         goToDetail(STUDY, true);
 
-        waitForText("Data Availability");
+        waitForText(waitForTextIntegratedData);
 
         assertElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[0]));
         assertElementPresent(cds.hasDataDetailIconXPath(ASSAY_TITLES[1]));
         assertElementPresent(cds.noDataDetailIconXPath(ASSAY_TITLES[2]));
 
 
-        log("Testing data availability module in Assays");
+        log(partialLogMsgIntegratedData + "Assays");
         cds.viewLearnAboutPage("Assays");
         Locator loc = Locator.xpath("//h2[contains(text(), '" + CDSHelper.ICS + "')]");
         waitForElementToBeVisible(loc);
@@ -935,7 +1063,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         refresh(); //ensures only selecting elements on viewable page.
 
-        waitForText("Data Availability");
+        waitForText(waitForTextIntegratedData);
 
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
@@ -944,7 +1072,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
 
 
-        log("Testing data availability module in Products");
+        log(partialLogMsgIntegratedData + "Products");
         cds.viewLearnAboutPage("Products");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), PRODUCT);
         sleep(CDSHelper.CDS_WAIT);
@@ -953,12 +1081,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         refresh();
 
-        waitForText("Data Availability");
+        waitForText(waitForTextIntegratedData);
 
         assertElementPresent(cds.hasDataDetailIconXPath(STUDY_FROM_PRODUCT[0]));
         assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_PRODUCT[1]));
 
-        log("Testing data availability module in mAbs");
+        log(partialLogMsgIntegratedData + "mAbs");
         cds.viewLearnAboutPage("MAbs");
         String mAbName = "2F5";
 
@@ -966,17 +1094,17 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         learnGrid.setSearch(mAbName);
 
         Locator.XPathLocator mabRowLoc = LEARN_HAS_DATA_ROW_TITLE_LOC.withText(mAbName);
-        log("Verify mAb data availability on summary page");
+        log("Verify mAb integrated data availability on summary page");
         assertElementPresent(mabRowLoc);
         assertElementVisible(Locator.tagWithText("div", "2 Studies Accessible"));
         goToDetail(mAbName, true);
 
         refresh();
-        waitForText("Data Availability");
+        waitForText(waitForTextIntegratedData);
 
-        Locator subHeaderCharacterization = Locator.tagWithText("div", "MAb Characterization Studies");
-        Locator subHeaderAdministration = Locator.tagWithText("div", "MAb Administration Studies");
-        log("Verify mAb data availability sub listing with 2 categories");
+        Locator subHeaderCharacterization = Locator.tagContainingText("div", "MAb Characterization Studies");
+        Locator subHeaderAdministration = Locator.tagContainingText("div", "MAb Administration Studies");
+        log("Verify mAb integrated data availability sub listing with 2 categories");
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117));
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
         assertElementVisible(subHeaderCharacterization);
@@ -987,7 +1115,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 .withText("Labeled as 2F5 (PlantForm); 2F5 (Polymun) (IAM 2F5, IAM-41-2F5, IAM2F5, c2F5)"));
         assertElementPresent(labeledAsLoc);
 
-        log("Verify mAb data availability sub listing with only 1 category");
+        log("Verify mAb integrated data availability sub listing with only 1 category");
         cds.viewLearnAboutPage("MAbs");
         mAbName = "PGT121";
         learnGrid.setSearch(mAbName);
@@ -1011,8 +1139,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         LearnGrid summaryGrid = new LearnGrid(this);
         summaryGrid.setSearch(mabProduct).clickFirstItem();
 
-        log("Verify Data Availability");
-        waitForText("Data Availability");
+        log("Verify Integrated Data Availability");
+        waitForText("Integrated Data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies using the mAb product is not as expected", 1, smallHasDataIcons.size());
 
@@ -1034,8 +1162,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         summaryGrid.setSearch(CDSHelper.TITLE_PKMAB)
                 .clickFirstItem();
 
-        log("Verify Data Availability");
-        waitForText("Data Availability");
+        log("Verify Integrated Data Availability");
+        waitForText("Integrated Data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies with PK MAb data is not as expected", 1, smallHasDataIcons.size());
 

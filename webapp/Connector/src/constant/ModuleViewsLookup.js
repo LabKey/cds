@@ -24,5 +24,6 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	assayheader: 'app.module.assayheader',
     assayanalytelist: 'app.module.assayanalytelist',
 	variablelist: 'app.module.variablelist',
-	dataavailability : 'app.module.dataavailability'
+	dataavailability : 'app.module.dataavailability',
+	nonintegrateddataavailability : 'app.module.nonintegrateddataavailability'
 });

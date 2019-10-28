@@ -22,6 +22,8 @@ Ext.define('Connector.utility.FileExtension', {
                         return 'Archive';
                     case 'tsv':
                         return 'TSV';
+                    case 'csv':
+                        return 'CSV';
                     case 'xls':
                     case 'xlsb':
                     case 'xlsm':

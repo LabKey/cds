@@ -155,7 +155,8 @@ Ext.define('Connector.app.store.MAb', {
                         has_access: this.accessibleStudies[study_id] === true,
                         data_status: studymab.assay_status,
                         alt_label: studymab.mix_labels && studymab.mix_labels.length > 0 ? studymab.mix_labels : null,
-                        data_group: studymab.study_type
+                        data_group: studymab.study_type,
+                        data_group_instr: studymab.subheader_instr
                     };
                     studies.push(study);
                 }, this);

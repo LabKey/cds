@@ -105,6 +105,8 @@ Ext.define('Connector.app.model.Study', {
         {name: 'protocol_docs_and_study_plans_has_permission'},
         {name: 'data_listings_and_reports', convert : Connector.model.Filter.asArray},
         {name: 'data_listings_and_reports_has_permission'},
+        {name: 'non_integrated_assay_data', convert : Connector.model.Filter.asArray},
+        {name: 'non_integrated_assay_data_has_permission'},
         {name: 'publications', convert : Connector.model.Filter.asArray},
         {name: 'relationships', convert : Connector.model.Filter.asArray},
         {name: 'clintrials_id'},

@@ -175,10 +175,12 @@ public class CDSExportQueryView extends QueryView
 
     public void writeExcelToResponse(HttpServletResponse response) throws IOException
     {
-        ExcelWriter ew = getExcelWriter();
-        ew.setCaptionType(getColumnHeaderType());
-        ew.write(response);
-        logAuditEvent("Exported to Excel", ew.getDataRowCount());
+        try (ExcelWriter ew = getExcelWriter())
+        {
+            ew.setCaptionType(getColumnHeaderType());
+            ew.write(response);
+            logAuditEvent("Exported to Excel", ew.getDataRowCount());
+        }
     }
 
     private Results getStudies(List<ColumnInfo> studyColumns)
@@ -211,6 +213,9 @@ public class CDSExportQueryView extends QueryView
         return "CDS Export";
     }
 
+    /**
+     * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
+     */
     private ExcelWriter getExcelWriter() throws IOException
     {
         ColumnHeaderType headerType = ColumnHeaderType.Caption;
@@ -291,6 +296,9 @@ public class CDSExportQueryView extends QueryView
         return false;
     }
 
+    /**
+     * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
+     */
     private ExcelWriter getCDSExcelWriter() throws IOException
     {
         QueryView queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
