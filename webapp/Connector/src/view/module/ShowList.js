@@ -26,20 +26,13 @@ Ext.define('Connector.view.module.ShowList', {
         }
 
         this.callParent();
-
-        var data = this.getListData();
-
-        data['showAll'] = false;
-
-        this.update(data);
-
         this.toggleListTask = new Ext.util.DelayedTask(this.toggleList, this);
     },
 
-    registerListToggle: function(scroll) {
+    registerListToggle: function() {
 
         var me = this;
-        var expandos = Ext.query('.show-hide-toggle');
+        var expandos = this.getToggleId();
 
         if (this.sectionY > 0) {
             this.scrollListIntoView();
@@ -69,5 +62,8 @@ Ext.define('Connector.view.module.ShowList', {
     },
 
     scrollListIntoView : function () {
+    },
+
+    getToggleId : function() {
     }
 });

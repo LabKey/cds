@@ -35,9 +35,9 @@ Ext.define('Connector.view.module.StudyMabs', {
                 '<tpl if="monoclonal_antibodies.length &gt; 10">',
                     'and {monoclonal_antibodies.length - 10} more ',
                     '<tpl if="showAll">',
-                        '<span class="show-hide-toggle">(show less)</span>',
+                        '<span class="show-hide-toggle-mabs">(show less)</span>',
                     '<tpl else>',
-                        '<span class="show-hide-toggle">(show all)</span>',
+                        '<span class="show-hide-toggle-mabs">(show all)</span>',
                     '</tpl>',
                     '</br></br>',
                 '</tpl>',
@@ -59,8 +59,11 @@ Ext.define('Connector.view.module.StudyMabs', {
 
     initComponent : function() {
 
-        var data = this.initialConfig.data.model.data;
+        var data = this.getListData();
         data['title_related_mabs'] = this.initialConfig.data.title;
+        data['showAll'] = false;
+        this.update(data);
+
         this.callParent();
     },
 
@@ -78,5 +81,9 @@ Ext.define('Connector.view.module.StudyMabs', {
 
     scrollListIntoView: function() {
         Ext.get('mab_listing_title').el.dom.scrollIntoView();
+    },
+
+    getToggleId : function () {
+        return Ext.query('.show-hide-toggle-mabs');
     }
 });
