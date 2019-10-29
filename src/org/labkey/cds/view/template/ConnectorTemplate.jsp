@@ -117,6 +117,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Visualization.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ParticipantGroup.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Security.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Webpart.js"></script>
 
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/Util.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Reader.js"></script>

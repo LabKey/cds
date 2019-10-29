@@ -81,6 +81,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     public static final org.labkey.test.Locator.XPathLocator DETAIL_PAGE_BREADCRUMB_LOC = Locator.tagWithClass("div", "breadcrumb");
 
+    @Override
     @Before
     public void preTest()
     {
