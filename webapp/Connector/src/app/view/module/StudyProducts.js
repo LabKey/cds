@@ -50,6 +50,7 @@ Ext.define('Connector.view.module.StudyProducts', {
                             '</tpl>',
 
                         '<tpl else if="!products || products.length === 0">',
+                            Connector.constant.Templates.module.title,
                             '<div class="item-row">',
                                 '<p>No related products</p>',
                             '</div>',
