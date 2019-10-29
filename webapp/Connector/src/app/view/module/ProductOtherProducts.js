@@ -79,7 +79,7 @@ Ext.define('Connector.view.module.ProductOtherProducts', {
     },
 
     scrollListIntoView: function() {
-        Ext.get('other-products_listing_title').el.dom.scrollIntoView();
+        Ext.get('other_products_listing_title').el.dom.scrollIntoView();
     },
 
     getToggleId : function () {
