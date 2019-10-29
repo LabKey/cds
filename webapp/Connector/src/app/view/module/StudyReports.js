@@ -11,6 +11,8 @@ Ext.define('Connector.view.module.StudyReports', {
 
     plugins : ['documentvalidation'],
 
+    showAll: false,
+
     tpl : new Ext.XTemplate(
             '<tpl>',
                 '<tpl if="data_listings_and_reports.length &gt; 0 && data_listings_and_reports_has_permission">',
@@ -61,7 +63,7 @@ Ext.define('Connector.view.module.StudyReports', {
         var data = this.getListData();
 
         data['title_study_reports'] = this.initialConfig.data.title;
-        data['showAll'] = false;
+        data['showAll'] = this.showAll;
         this.update(data);
         this.callParent();
 

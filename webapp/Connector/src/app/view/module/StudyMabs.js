@@ -9,9 +9,9 @@ Ext.define('Connector.view.module.StudyMabs', {
 
     extend : 'Connector.view.module.ShowList',
 
-    cls: 'module',
-
     mabSectionY: -1,
+
+    showAll: false,
 
     tpl : new Ext.XTemplate(
             '<tpl>',
@@ -61,7 +61,7 @@ Ext.define('Connector.view.module.StudyMabs', {
 
         var data = this.getListData();
         data['title_related_mabs'] = this.initialConfig.data.title;
-        data['showAll'] = false;
+        data['showAll'] = this.showAll;
         this.update(data);
 
         this.callParent();

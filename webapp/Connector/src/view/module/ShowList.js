@@ -9,6 +9,8 @@ Ext.define('Connector.view.module.ShowList', {
 
     sectionY: -1,
 
+    cls: 'module',
+
     listeners: {
         render: function(cmp) {
             cmp.registerListToggle();
@@ -34,21 +36,22 @@ Ext.define('Connector.view.module.ShowList', {
         var me = this;
         var expandos = this.getToggleId();
 
-        if (this.sectionY > 0) {
-            this.scrollListIntoView();
-        }
-
         Ext.each(expandos, function(expando) {
             Ext.get(expando).on('click', function() {
                 me.toggleListTask.delay(100);
             });
         });
+
+        if (this.sectionY > 0) {
+            this.scrollListIntoView();
+        }
     },
 
     toggleList: function() {
         this.sectionY = 1;
         var data = this.getListData();
-        data['showAll'] = !data['showAll'];
+        this.showAll = !this.showAll;
+        data['showAll'] = this.showAll;
         this.update(data);
         this.refresh();
     },
