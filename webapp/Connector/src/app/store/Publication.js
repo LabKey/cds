@@ -82,7 +82,7 @@ Ext.define('Connector.app.store.Publication', {
             });
 
             var productStudies = {};
-            Ext.each(this.studyData, function(study) {
+            Ext.each(this.studyData, function(study, index) {
                 var productId = study.id;
                 delete study.id;
                 if (!productStudies[productId])
@@ -96,6 +96,7 @@ Ext.define('Connector.app.store.Publication', {
                 study.data_id = study.prot;
                 study.data_link_id = study.prot;
                 study.has_access = this.accessibleStudies[study.prot];
+                study.data_index = index; //for show all/show less on display
                 var dataStatus = 'Data not added';
                 if (study.assays)
                 {

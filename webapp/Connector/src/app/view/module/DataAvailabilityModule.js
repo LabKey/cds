@@ -18,6 +18,8 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         }
     },
 
+    showAll: false,
+
     initComponent : function() {
         this.layout = {
             type: 'vbox',
@@ -27,6 +29,10 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         if (this.data.hasGrouping) {
             this.data['groupSubHeaderInstr'] = this.getGroupSubHeaderInstr(this.data);
         }
+        this.data['showAll'] = this.showAll;
+        this.update(this.data);
+
+        this.toggleListTask = new Ext.util.DelayedTask(this.toggleList, this);
 
         this.items = [{
             html: (new Ext.XTemplate('<tpl if="hasDetails">',
@@ -68,28 +74,25 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
             rowLines: false,
 
             columns: [{
-                xtype: 'templatecolumn',
-                header: 'All',
-                width: 30,
-                sortable: false,
-                menuDisabled: true,
-                tpl: new Ext4.XTemplate(
-                        '<tpl if="has_data">',
-                            '<tpl if="has_access">',
-                                '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallCheck.png"/>',
-                            '<tpl else>',
-                                '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/grayCheck.png"/>',
-                            '</tpl>',
-                        '<tpl else>',
-                            '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallGreyX.png">',
-                        '</tpl>')
-            }, {
-                xtype: 'templatecolumn',
-                header: 'All',
-                width: '90%',
-                sortable: false,
-                menuDisabled: true,
-                tpl: this.getDataAddedTemplate()
+                    xtype: 'templatecolumn',
+                    header: 'All',
+                    width: '90%',
+                    sortable: false,
+                    menuDisabled: true,
+                    tpl: this.getDataAddedTemplate(),
+                    tplShowAll: this.getShowAllTemplate(),
+                    showAll: false,
+                    defaultRenderer: function(value, meta, record) {
+                        var data = Ext.apply({}, record.data, record.getAssociatedData());
+                        var tplInUse = this.tpl;
+                        if (this.showAll) {
+                            tplInUse = this.tplShowAll;
+                        }
+                        return tplInUse.apply(data);
+                    },
+                    setShowAll(isShowAll) {
+                        this.showAll = isShowAll;
+                    }
             }],
             store: this.getDataAddedStore(this.data),
 
@@ -115,12 +118,19 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         var cursorX = evt.browserEvent.clientX;
                         var cursorY = evt.browserEvent.clientY;
                         if (textRect.top <= cursorY && cursorY <= textRect.bottom
-                            && textRect.left <= cursorX && cursorX <= textRect.right) {
+                                && textRect.left <= cursorX && cursorX <= textRect.right) {
                             this.showDataStatusTooltip(evt, dataLink.dom, {
                                 status: record.data.data_status,
                                 id: id
                             });
                         }
+                    }
+
+                    var showAllLink = Ext.get('integrated-data-showAll');
+                    if (showAllLink) {
+                        showAllLink.on('click', function(){
+                            this.toggleListTask.delay(100);
+                        }, this);
                     }
                 },
 
@@ -132,6 +142,13 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         dataLink.un('click', this.hideDataStatusTooltip, this);
                         this.fireEvent('hideTooltip');
                     }
+
+                    var showAllLink = Ext.get('integrated-data-showAll');
+                    if (showAllLink) {
+                        showAllLink.un('click', function(){
+                            this.toggleListTask.delay(100);
+                        }, this);
+                    }
                 },
 
                 scope: this
@@ -140,6 +157,28 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         }, this.getGroupingFeature())];
 
         this.callParent();
+    },
+
+    toggleList: function() {
+        var data = this.data;
+        this.showAll = !this.showAll;
+        data['showAll'] = this.showAll;
+        this.update(data);
+
+        var dataView = this.items.items[1].getView();
+        dataView.panel.columns[0].setShowAll(this.showAll);
+        if (this.showAll) {
+            var dataRecords = this.getDataAddedStore(data).data.items;
+            Ext.each(dataRecords, function(record) {
+                if (record.data.data_index >= 10) {
+                    dataView.panel.columns[0].defaultRenderer(null, null, record);
+                    dataView.panel.view.refresh();
+                }
+            });
+        }
+        else if (!this.showAll) {
+            dataView.panel.view.refresh();
+        }
     },
 
     getGroupingFeature: function() {
@@ -174,28 +213,106 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         return {};
     },
 
+    getShowAllTemplate : function() {
+        var me = this;
+        return new Ext4.XTemplate(
+            '<tpl>',
+                '<tpl if="data_index === 10">',
+                    'and {[this.getRemainingListSize()]} more ',
+                    '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show less)</span>',
+                    '</br></br>',
+                '</tpl>',
+                '<table>',
+                    '<tr>',
+                        '<td>',
+                            '<tpl if="has_data">',
+                                '<tpl if="has_access">',
+                                    '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallCheck.png"/>',
+                                '<tpl else>',
+                                    '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/grayCheck.png"/>',
+                                '</tpl>',
+                            '<tpl else>',
+                                '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallGreyX.png">',
+                            '</tpl>',
+                        '</td>',
+                        '<td>',
+                            '<tpl if="data_label">', //determines if we have a learn about page to back the assay
+                                '<a href="#learn/learn/',
+                                '{[this.getDataLink()]}',
+                                '/{[encodeURIComponent(values.data_link_id)]}">{data_label:htmlEncode}</a>',
+                            '<tpl else>',
+                                '<span>{data_id:htmlEncode}</span>',
+                            '</tpl>',
+                        '</td>',
+                        '<td class="data-availability-alt-label">',
+                            '<tpl if="alt_label">', //determines if we have a learn about page to back the assay
+                                '<span>Labeled as {alt_label:htmlEncode}</span>',
+                            '</tpl>',
+                        '</td>',
+                    '</tr>',
+                '</table>',
+             '</tpl>',
+                {
+                    getDataLink: function () {
+
+                        return encodeURIComponent(me.data.dataLink);
+                    },
+                    getRemainingListSize: function() {
+                        return me.data.model.data[me.data.dataField].length - 10;
+                    }
+                }
+        )
+    },
+
     getDataAddedTemplate : function() {
         var me = this;
         return new Ext4.XTemplate(
                 '<tpl>',
-                '<table><tr><td>',
-                '<tpl if="data_label">', //determines if we have a learn about page to back the assay
-                '<a href="#learn/learn/',
-                '{[this.getDataLink()]}',
-                '/{[encodeURIComponent(values.data_link_id)]}">{data_label:htmlEncode}</a>',
-                '<tpl else>',
-                '<span>{data_id:htmlEncode}</span>',
-                '</tpl>',
-                '</td><td class="data-availability-alt-label">',
-                '<tpl if="alt_label">', //determines if we have a learn about page to back the assay
-                '<span>Labeled as {alt_label:htmlEncode}</span>',
-                '</tpl>',
-                '</td></tr></table>',
+                    '<table>',
+                        '<tpl if="data_index &lt; 10">',
+                            '<tr>',
+                                '<td>',
+                                    '<tpl if="has_data">',
+                                        '<tpl if="has_access">',
+                                            '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallCheck.png"/>',
+                                        '<tpl else>',
+                                            '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/grayCheck.png"/>',
+                                        '</tpl>',
+                                    '<tpl else>',
+                                        '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallGreyX.png">',
+                                    '</tpl>',
+                                '</td>',
+                                '<td>',
+                                    '<tpl if="data_label">', //determines if we have a learn about page to back the assay
+                                        '<a href="#learn/learn/',
+                                        '{[this.getDataLink()]}',
+                                        '/{[encodeURIComponent(values.data_link_id)]}">{data_label:htmlEncode}</a>',
+                                    '<tpl else>',
+                                        '<span>{data_id:htmlEncode}</span>',
+                                    '</tpl>',
+                                '</td>',
+                                '<td class="data-availability-alt-label">',
+                                    '<tpl if="alt_label">', //determines if we have a learn about page to back the assay
+                                        '<span>Labeled as {alt_label:htmlEncode}</span>',
+                                    '</tpl>',
+                                '</td>',
+                            '</tr>',
+                        '</tpl>',
+                    '</table>',
+
+                    '<tpl if="data_index === 9">',
+                        'and {[this.getRemainingListSize()]} more ',
+                        '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show all)</span>',
+                        '</br></br>',
+                    '</tpl>',
                 '</tpl>',
                 {
-                    getDataLink: function()
-                    {
+                    getDataLink: function() {
+
                         return encodeURIComponent(me.data.dataLink);
+                    },
+                    getRemainingListSize: function() {
+                            return me.data.model.data[me.data.dataField].length - 10;
                     }
                 })
     },
@@ -273,6 +390,7 @@ Ext.define("DataAdded", {
             return value ? value : "Status not available";
         }},
         {name: 'data_group'},
-        {name: 'data_group_instr'}
+        {name: 'data_group_instr'},
+        {name: 'data_index'}
     ]
 });

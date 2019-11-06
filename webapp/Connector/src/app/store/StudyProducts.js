@@ -186,13 +186,14 @@ Ext.define('Connector.app.store.StudyProducts', {
                     }
                 }
                 studies.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
-                Ext.each(studies, function(study){
+                Ext.each(studies, function(study, index){
                     if (study.has_data) {
                         if (!product.data_accessible && study.has_access)
                             product.data_accessible = true;
                         product.data_availability = true;
                         studiesWithData.push(study);
                     }
+                    study.data_index = index; //for show all/show less on display
                 });
                 product.studies = studies;
                 product.studies_with_data = studiesWithData;

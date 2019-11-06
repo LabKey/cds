@@ -80,13 +80,14 @@ Ext.define('Connector.app.store.Assay', {
                     }
                 }
                 studies.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
-                Ext.each(studies, function(study) {
+                Ext.each(studies, function(study, index) {
                     if (study.has_data) {
                         assay.data_availability = true;
                         studiesWithData.push(study);
                         if (!study.data_accessible && study.has_access)
                             assay.data_accessible = true;
                     }
+                    study.data_index = index; //for show all/show less on display
                 });
                 assay.studies = studies;
                 assay.studies_with_data = studiesWithData;

@@ -236,11 +236,13 @@ Ext.define('Connector.app.store.Study', {
                 }
 
                 assays.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
-                Ext.each(assays, function(assay){
+                Ext.each(assays, function(assay, index){
                     if (assay.has_data) {
                         assaysAdded.push(assay);
                         assayAddedCount += 1;
                     }
+
+                    assay.data_index = index; //for show all/show less on display, maybe not needed since there will be max of 5 integrated assays, but adding for consistency
                 });
 
                 for (var d=0; d < this.documentData.length; d++) {
