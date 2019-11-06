@@ -82,7 +82,7 @@ Ext.define('Connector.app.store.Publication', {
             });
 
             var productStudies = {};
-            Ext.each(this.studyData, function(study, index) {
+            Ext.each(this.studyData, function(study) {
                 var productId = study.id;
                 delete study.id;
                 if (!productStudies[productId])
@@ -96,7 +96,6 @@ Ext.define('Connector.app.store.Publication', {
                 study.data_id = study.prot;
                 study.data_link_id = study.prot;
                 study.has_access = this.accessibleStudies[study.prot];
-                study.data_index = index; //for show all/show less on display
                 var dataStatus = 'Data not added';
                 if (study.assays)
                 {
@@ -136,7 +135,8 @@ Ext.define('Connector.app.store.Publication', {
                     });
                     publication.study_to_sort_on = publication.studies[0].study_label;
                     var studyNames = [];
-                    Ext.each(publication.studies, function(study){
+                    Ext.each(publication.studies, function(study, index){
+                        study.data_index = index; //for show all/show less on display
                         studyNames.push(study.study_label);
                     });
                     publication.study_names = studyNames;
