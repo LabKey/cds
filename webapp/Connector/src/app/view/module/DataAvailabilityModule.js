@@ -10,6 +10,8 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
     cls: 'module learn-data-available-module',
 
+    showAll: false,
+
     statics: {
         dataAddedSortFn: function(a, b) {
             var val1 = a.data_label ? a.data_label : a.data_id;
@@ -17,8 +19,6 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
             return val1.localeCompare(val2);
         }
     },
-
-    showAll: false,
 
     initComponent : function() {
         this.layout = {
@@ -36,9 +36,9 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
         this.items = [{
             html: (new Ext.XTemplate('<tpl if="hasDetails">',
-                    '<p>',
+                    '<div id="integrated-data-title"><p>',
                         Connector.constant.Templates.module.title,
-                    '</p>',
+                    '</p></div>',
                     '<p>',
                         this.data.instructions,
                     '</p>',
@@ -175,6 +175,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     dataView.panel.view.refresh();
                 }
             });
+            Ext.get('integrated-data-title').el.dom.scrollIntoView();
         }
         else if (!this.showAll) {
             dataView.panel.view.refresh();

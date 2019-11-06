@@ -9,8 +9,6 @@ Ext.define('Connector.view.module.StudyMabs', {
 
     extend : 'Connector.view.module.ShowList',
 
-    mabSectionY: -1,
-
     showAll: false,
 
     tpl : new Ext.XTemplate(
