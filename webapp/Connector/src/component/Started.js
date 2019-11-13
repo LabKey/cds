@@ -13,15 +13,13 @@ Ext.define('Connector.component.Started', {
         DISMISS_PROPERTY: 'showIntroPage'
     },
 
-    maxHt: 1000,
-
     tpl: new Ext.XTemplate(
             '<div class="expanded-intro" id="expanded-intro-div"',
             '<tpl if="showIntro==false">',
                 ' style="display: none !important;"',
             '</tpl>',
             '>',
-            '<h1 class="started-section-title bottom-spacer">Quick Links</h1>',
+            '<h1 class="started-section-title bottom-spacer">Getting Started</h1>',
             '<a id="hidelink" href="#" onclick="return false;" class="started-dismiss">Hide &nbsp; <span style="font-size: 9px">&#x2715;</span></a>',
             '<tpl if="videoURL">',
                 '<div style="height:auto" class="get-started ',
@@ -44,7 +42,7 @@ Ext.define('Connector.component.Started', {
                 '<td style="vertical-align: top"><div>',
                     '<table class="tile">',
                         '<tr><td class="tile-image"><div class="home_bar backgroundimage"></div></td></tr>',
-                        '<tr><td style="padding-left:20%;"><div id="tours-wiki">{[this.getTakeATourWiki()]}</div></td></tr>',
+                        '<tr><td style="padding-left:10%;"><div id="tours-wiki">{[this.getTakeATourWiki()]}</div></td></tr>',
                     '</table>',
                 '</div></td>',
 
@@ -55,10 +53,10 @@ Ext.define('Connector.component.Started', {
                 '<td style="vertical-align: top;"><div>',
                     '<table class="tile">',
                         '<tr><td class="tile-image"><div class="home_try_it_out backgroundimage"></div></td></tr>',
-                        '<tr><td style="padding-left: 25%"><div>',
+                        '<tr><td style="padding-left: 10%"><div>',
                             '<h3 class="tile-title">Try it out</h3>',
-                            '<table width="220px">',
-                                '<tr><td class="tile-detail-static"><a id="learn-about-link" href=\'#learn/learn/Study/\'">Learn about</a> studies, products, assays, antibodies, ad publications</td></td></tr>',
+                            '<table width="200px">',
+                                '<tr><td class="tile-detail-static"><a id="learn-about-link" href=\'#learn/learn/Study/\'">Learn about</a> studies, products, assays, antibodies, and publications</td></td></tr>',
                                 '<tr><td class="tile-detail-static"><a id="find-subjects-link" href=\'#summary\'">Find subjects</a> with common characteristics</td></td></tr>',
                                 '<tr><td class="tile-detail-static"><a id="plot-link" href=\'#chart\'">Plot</a> assay results across studies and years of research</td></td></tr>',
                                 '<tr><td class="tile-detail-static">Compare <a id="monoclonal-antibodies-link" href=\'#mabgrid\'">Monoclonal antibodies</a> and their neutralization curves</td></td></tr>',
@@ -70,8 +68,8 @@ Ext.define('Connector.component.Started', {
                 '<td style="vertical-align: top"><div>',
                     '<table class="tile">',
                         '<tr><td class="tile-image"><div class="home_integrated_data backgroundimage"></div></td></tr>',
-                        '<tr><td style="padding-left:20%;white-space: normal"><div id="whatyouneedtoknow-wiki">{[this.getWhatYouNeedToKnowWiki()]}</div></td></tr>',
-                        '<tr><td style="padding-top: 5%;padding-left:20%;"><div id="helpCenter">See the <a id="helpCenterDialog" class="helpcenter-panel" href="#" onclick="return false">Help</a> section for more info</div></td></tr>',
+                        '<tr><td style="padding-left:10%;white-space: normal"><div id="whatyouneedtoknow-wiki">{[this.getWhatYouNeedToKnowWiki()]}</div></td></tr>',
+                        '<tr><td style="padding-top: 5%;padding-left:10%;"><div id="helpCenter">See the <a id="helpCenterDialog" class="helpcenter-panel" href="#" onclick="return false">Help</a> section for more info</div></td></tr>',
                     '</table>',
                 '</div></td>',
 
@@ -176,24 +174,12 @@ Ext.define('Connector.component.Started', {
             scope.registerTileHandlers();
         },resize: function(c)
         {
-
-            var toursWikiHeight = Ext.get('tours-wiki').getHeight();
-            var needToKnowWikiHeight = Ext.get('whatyouneedtoknow-wiki').getHeight();
-
             var divHeight = Ext.get('expanded-intro-div').getHeight();
             var divWidth = c.getEl().dom.offsetWidth;
-
-            if (c.maxHt < divHeight) {
-                c.maxHt = divHeight;
-            }
-            if (c.maxHt === divHeight) {
-                c.maxHt = toursWikiHeight + needToKnowWikiHeight;
-            }
-
-            var needResize = (divWidth < 880 && divHeight < c.maxHt) || (divWidth > 880 && divHeight > c.maxHt);
+            var needResize = (divWidth < 880 && divHeight < 700) || (divWidth > 880 && divHeight > 700);
             if (needResize) {
                 var isMulti = false;
-                if (divWidth < 880 && divHeight < c.maxHt) {
+                if (divWidth < 880 && divHeight < 700) {
                     isMulti = true;
                 }
                 var data = {
@@ -235,7 +221,6 @@ Ext.define('Connector.component.Started', {
             this.update(data);
             this.doLayout();
         }, this);
-        this.maxHt = 1000;
     },
 
     registerTileHandlers: function(){
