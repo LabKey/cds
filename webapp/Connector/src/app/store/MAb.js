@@ -144,9 +144,31 @@ Ext.define('Connector.app.store.MAb', {
                 mixRec.mabs = mabs;
 
                 // process study data
-                var studies = [], studiesWithData = [];
-                Ext.each(mstudies, function(studymab, index) {
+                var studies = [], studiesWithData = [], groupWithIndexes = [];
+
+                //group with indexes in order to show all/show less for long lists
+                if (mstudies) {
+                    var groupedStudyData = mstudies.map(function(studymab) {return studymab.study_type}).filter(function(value, index, self) {
+                        return index === self.indexOf(value);
+                    });
+
+                    Ext.each(groupedStudyData, function(gName) {
+                        var groupIdx = {
+                            groupName: gName,
+                            groupIndex: 0
+                        };
+                        groupWithIndexes.push(groupIdx);
+                    })
+                }
+
+                Ext.each(mstudies, function(studymab) {
                     var study_id = studymab.prot;
+
+                    //get index of a group/study_type (so far there are just the two groups: 'MAb Characterization Studies' & 'MAb Administration Studies')
+                    var grpIdx = groupWithIndexes.findIndex(function(value) {
+                       return value ? value.groupName === studymab.study_type : false;
+                    });
+
                     var study = {
                         data_label: studymab.label,
                         data_id: study_id,
@@ -157,7 +179,7 @@ Ext.define('Connector.app.store.MAb', {
                         alt_label: studymab.mix_labels && studymab.mix_labels.length > 0 ? studymab.mix_labels : null,
                         data_group: studymab.study_type,
                         data_group_instr: studymab.subheader_instr,
-                        data_index: index //for show all/show less on display
+                        data_index: groupWithIndexes[grpIdx].groupIndex++ //update data_index for the group
                     };
                     studies.push(study);
                 }, this);

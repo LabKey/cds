@@ -12,6 +12,8 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
     showAll: false,
 
+    showAllGroupFlags: [],
+
     statics: {
         dataAddedSortFn: function(a, b) {
             var val1 = a.data_label ? a.data_label : a.data_id;
@@ -28,6 +30,8 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
         if (this.data.hasGrouping) {
             this.data['groupSubHeaderInstr'] = this.getGroupSubHeaderInstr(this.data);
+            this.setShowAllGroupFlags(this.data, this.showAllGroupFlags);
+            this.data['groupShowAll'] = this.showAllGroupFlags;
         }
         this.data['showAll'] = this.showAll;
         this.update(this.data);
@@ -132,10 +136,26 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                             this.toggleListTask.delay(100);
                         }, this);
                     }
+
+                    if (this.data.hasGrouping) {
+
+                        var groups = this.data.model.data[this.data.dataField].map(function(grp) {return grp.data_group;}).filter(function (value, index, self) {
+                            return value === undefined || value === null ? false : self.indexOf(value) === index;
+                        });
+
+                        Ext.each(groups, function (grp, index) {
+                            var showAllLinkGroup = Ext.get('integrated-data-showAll-' + (index + 1));
+                            if (showAllLinkGroup) {
+                                showAllLinkGroup.on('click', function (event) {
+                                    this.toggleListTask.delay(100, null, this, [event, grp]);
+                                }, this);
+                            }
+                        }, this);
+                    }
                 },
 
                 'itemmouseleave' : function(view, record, item) {
-                    var dataLink = Ext.get(Ext.query("a", item)[0])|| Ext.get(Ext.query("span", item)[0]);
+                    var dataLink = Ext.get(Ext.query("a", item)[0]) || Ext.get(Ext.query("span", item)[0]);
                     if (dataLink) {
                         dataLink.un('mouseenter', this.showDataStatusTooltip, this);
                         dataLink.un('mouseleave', this.hideDataStatusTooltip, this);
@@ -149,6 +169,23 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                             this.toggleListTask.delay(100);
                         }, this);
                     }
+
+                    if (this.data.hasGrouping) {
+                        var groups = this.data.model.data[this.data.dataField].map(function (grp) {
+                            return grp.data_group;
+                        }).filter(function (value, index, self) {
+                            return value === undefined || value === null ? false : self.indexOf(value) === index;
+                        });
+                        Ext.each(groups, function (grp, index) {
+                            var showAllLinkGroup = Ext.get('integrated-data-showAll-' + (index + 1));
+                            if (showAllLinkGroup) {
+                                showAllLinkGroup.un('click', function (grp) {
+                                    this.toggleListTask.delay(100, null, this, [event, grp]);
+                                }, this);
+                            }
+
+                        }, this);
+                    }
                 },
 
                 scope: this
@@ -159,26 +196,57 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         this.callParent();
     },
 
-    toggleList: function() {
+    toggleList: function(event, grpName) {
         var data = this.data;
-        this.showAll = !this.showAll;
-        data['showAll'] = this.showAll;
-        this.update(data);
 
-        var dataView = this.items.items[1].getView();
-        dataView.panel.columns[0].setShowAll(this.showAll);
-        if (this.showAll) {
-            var dataRecords = this.getDataAddedStore(data).data.items;
-            Ext.each(dataRecords, function(record) {
-                if (record.data.data_index >= 10) {
-                    dataView.panel.columns[0].defaultRenderer(null, null, record);
-                    dataView.panel.view.refresh();
-                }
-            });
-            Ext.get('integrated-data-title').el.dom.scrollIntoView();
+        if (data.hasGrouping) {
+
+            // var dataView = this.items.items[1].getView();
+            //
+            // var idx = this.showAllGroupFlags.findIndex(function (value) {
+            //     return value.groupName === grpName;
+            // });
+            //
+            // this.showAllGroupFlags[idx].showAll = !this.showAllGroupFlags[idx].showAll;
+            // data['showAllGroup'] = this.showAllGroupFlags[idx].showAll;
+            // this.update(data);
+            //
+            // var dataView = this.items.items[1].getView();
+            // dataView.panel.columns[0].setShowAll(this.showAllGroupFlags[idx].showAll);
+            // if (this.showAllGroupFlags[idx].showAll) {
+            //     var groupedDataRecords = this.getDataAddedStore(data).data.items;
+            //     Ext.each(groupedDataRecords, function (record) {
+            //         if (record.data.data_index >= 10 && record.data.data_group === grpName) {
+            //             var rec = dataView.panel.columns[0].defaultRenderer(null, null, record);
+            //             dataView.refreshRow(record);
+            //         }
+            //     });
+            //     Ext.get('integrated-data-title').el.dom.scrollIntoView();
+            // }
+            // else if (!this.showAllGroupFlags[idx].showAll) {
+            //     dataView.panel.view.refresh();
+            // }
         }
-        else if (!this.showAll) {
-            dataView.panel.view.refresh();
+        else {
+            this.showAll = !this.showAll;
+            data['showAll'] = this.showAll;
+            this.update(data);
+
+            var dataView = this.items.items[1].getView();
+            dataView.panel.columns[0].setShowAll(this.showAll);
+            if (this.showAll) {
+                var dataRecords = this.getDataAddedStore(data).data.items;
+                Ext.each(dataRecords, function (record) {
+                    if (record.data.data_index >= 10) {
+                        dataView.panel.columns[0].defaultRenderer(null, null, record);
+                        dataView.panel.view.refresh();
+                    }
+                });
+                Ext.get('integrated-data-title').el.dom.scrollIntoView();
+            }
+            else if (!this.showAll) {
+                dataView.panel.view.refresh();
+            }
         }
     },
 
@@ -219,10 +287,20 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         return new Ext4.XTemplate(
             '<tpl>',
                 '<tpl if="data_index === 10">',
-                    'and {[this.getRemainingListSize()]} more ',
-                    '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show less)</span>',
+                    '<tpl if="this.hasGrouping()">',
+                        '<tpl for="this.getGroups()">',
+                            '<tpl if="parent.data_group === values">',
+                                'and {[this.getGroupedListSize(values)]} less ',
+                                '<span id="{[this.getGroupId(xindex)]}" class="show-hide-toggle-integrateddata">(show less)</span>',
+                            '</tpl>',
+                        '</tpl>',
+                    '<tpl else>',
+                        'and {[this.getRemainingListSize()]} more ',
+                        '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show less)</span>',
+                    '</tpl>',
                     '</br></br>',
                 '</tpl>',
+
                 '<table>',
                     '<tr>',
                         '<td>',
@@ -260,6 +338,22 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     },
                     getRemainingListSize: function() {
                         return me.data.model.data[me.data.dataField].length - 10;
+                    },
+                    getGroupedListSize: function(group) {
+                        var data = me.data.model.data[me.data.dataField];
+                        var groupedList = data.map(function(grp) { return grp.data_group === group;}).filter(function(value, index, self) { return value === true});
+                        return groupedList.length - 10;
+                    },
+                    hasGrouping: function () {
+                        return me.data.hasGrouping;
+                    },
+                    getGroupId: function (idx) {
+                        return "integrated-data-showAll-" + idx;
+                    },
+                    getGroups: function() {
+                        return me.data.model.data[me.data.dataField].map(function(grp) {return grp.data_group}).filter(function (value, index, self) {
+                            return value === undefined || value === null ? false : self.indexOf(value) === index;
+                        });
                     }
                 }
         )
@@ -302,8 +396,17 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     '</table>',
 
                     '<tpl if="data_index === 9">',
-                        'and {[this.getRemainingListSize()]} more ',
-                        '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show all)</span>',
+                        '<tpl if="this.hasGrouping()">',
+                            '<tpl for="this.getGroups()">',
+                                '<tpl if="parent.data_group === values">',
+                                    'and {[this.getGroupedListSize(values)]} more ',
+                                    '<span id="{[this.getGroupId(xindex)]}" class="show-hide-toggle-integrateddata">(show all)</span>',
+                                '</tpl>',
+                            '</tpl>',
+                        '<tpl else>',
+                            'and {[this.getRemainingListSize()]} more ',
+                            '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show all)</span>',
+                        '</tpl>',
                         '</br></br>',
                     '</tpl>',
                 '</tpl>',
@@ -314,6 +417,22 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     },
                     getRemainingListSize: function() {
                             return me.data.model.data[me.data.dataField].length - 10;
+                    },
+                    getGroupedListSize: function(group) {
+                        var data = me.data.model.data[me.data.dataField];
+                        var groupedList = data.map(function(grp) { return grp.data_group === group;}).filter(function(value, index, self) { return value === true});
+                        return groupedList.length - 10;
+                    },
+                    hasGrouping: function () {
+                        return me.data.hasGrouping;
+                    },
+                    getGroupId: function (idx) {
+                        return "integrated-data-showAll-" + idx;
+                    },
+                    getGroups: function() {
+                        return me.data.model.data[me.data.dataField].map(function(grp) {return grp.data_group}).filter(function (value, index, self) {
+                            return value === undefined || value === null ? false : self.indexOf(value) === index;
+                        });
                     }
                 })
     },
@@ -337,6 +456,23 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         }, this);
 
         return groupInstr;
+    },
+
+    setShowAllGroupFlags: function(data, groupFlags) {
+        var groups = data.model.data[data.dataField].map(function (grp) {
+            return grp.data_group
+        }).filter(function (value, index, self) {
+            return value === undefined || value === null ? false : self.indexOf(value) === index;
+        });
+
+        Ext.each(groups, function(grp){
+
+            var grpShowAllFlagObj = {
+              groupName: grp,
+              showAll: false
+            };
+            groupFlags.push(grpShowAllFlagObj)
+        });
     },
 
     getDataAddedStore : function(data) {
