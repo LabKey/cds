@@ -40,7 +40,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -242,8 +241,8 @@ public class CDSExportQueryView extends QueryView
 
                 try
                 {
-                    Results rs = rgn.getResultSet(view.getRenderContext());
-                    ew.setResults(rs);
+                    Results results = rgn.getResults(view.getRenderContext());
+                    ew.setResults(results);
                     ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
                     ew.setSheetName(tabName);
                     ew.setAutoSize(true);
@@ -312,9 +311,9 @@ public class CDSExportQueryView extends QueryView
         try
         {
             RenderContext rc = view.getRenderContext();
-            ResultSet rs = rgn.getResultSet(rc);
-            Map<FieldKey, ColumnInfo> map = rc.getFieldMap();
-            ExcelWriter ew = new ExcelWriter(rs, map, getExportColumns(rgn.getDisplayColumns()), docType){
+            Results results = rgn.getResults(rc);
+            ExcelWriter ew = new ExcelWriter(results, getExportColumns(rgn.getDisplayColumns()), docType)
+            {
                 private XSSFCellStyle importantStyle = null;
                 private XSSFCellStyle boldStyle = null;
 
@@ -711,11 +710,11 @@ public class CDSExportQueryView extends QueryView
 
             try
             {
-                Results rs = rgn.getResultSet(view.getRenderContext());
+                Results results = rgn.getResults(view.getRenderContext());
 
                 final File tmpFile;
 
-                try (TSVGridWriter tsv = new TSVGridWriter(rs, getExportColumns(rgn.getDisplayColumns())))
+                try (TSVGridWriter tsv = new TSVGridWriter(results, getExportColumns(rgn.getDisplayColumns())))
                 {
                     tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
                     tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
