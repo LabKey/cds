@@ -179,8 +179,10 @@ Ext.define('Connector.app.store.MAb', {
                         alt_label: studymab.mix_labels && studymab.mix_labels.length > 0 ? studymab.mix_labels : null,
                         data_group: studymab.study_type,
                         data_group_instr: studymab.subheader_instr,
-                        data_index: groupWithIndexes[grpIdx].groupIndex++ //update data_index for the group
+                        data_index: groupWithIndexes[grpIdx].groupIndex, //update data_index for the group
+                        data_show: !groupWithIndexes[grpIdx].groupIndex >= 10
                     };
+                    groupWithIndexes[grpIdx].groupIndex++;
                     studies.push(study);
                 }, this);
                 Ext.each(studies, function(study) {

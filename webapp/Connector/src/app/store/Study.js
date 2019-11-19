@@ -243,6 +243,7 @@ Ext.define('Connector.app.store.Study', {
                     }
 
                     assay.data_index = index; //for show all/show less on display, maybe not needed since there will be max of 5 integrated assays, but adding for consistency
+                    assay.data_show = !index >= 10; //for show all/show less on display
                 });
 
                 for (var d=0; d < this.documentData.length; d++) {

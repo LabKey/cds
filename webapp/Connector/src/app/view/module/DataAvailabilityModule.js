@@ -83,20 +83,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     width: '90%',
                     sortable: false,
                     menuDisabled: true,
-                    tpl: this.getDataAddedTemplate(),
-                    tplShowAll: this.getShowAllTemplate(),
-                    showAll: false,
-                    defaultRenderer: function(value, meta, record) {
-                        var data = Ext.apply({}, record.data, record.getAssociatedData());
-                        var tplInUse = this.tpl;
-                        if (this.showAll) {
-                            tplInUse = this.tplShowAll;
-                        }
-                        return tplInUse.apply(data);
-                    },
-                    setShowAll(isShowAll) {
-                        this.showAll = isShowAll;
-                    }
+                    tpl: this.getDataAddedTemplate()
             }],
             store: this.getDataAddedStore(this.data),
 
@@ -198,56 +185,61 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
     toggleList: function(event, grpName) {
         var data = this.data;
+        var dataView = this.items.items[1].getView();
+        var groupedDataRecords = this.getDataAddedStore(data).data.items;
+        var groupedDataStore = dataView.panel.store;
 
         if (data.hasGrouping) {
 
-            // var dataView = this.items.items[1].getView();
-            //
-            // var idx = this.showAllGroupFlags.findIndex(function (value) {
-            //     return value.groupName === grpName;
-            // });
-            //
-            // this.showAllGroupFlags[idx].showAll = !this.showAllGroupFlags[idx].showAll;
-            // data['showAllGroup'] = this.showAllGroupFlags[idx].showAll;
-            // this.update(data);
-            //
-            // var dataView = this.items.items[1].getView();
-            // dataView.panel.columns[0].setShowAll(this.showAllGroupFlags[idx].showAll);
-            // if (this.showAllGroupFlags[idx].showAll) {
-            //     var groupedDataRecords = this.getDataAddedStore(data).data.items;
-            //     Ext.each(groupedDataRecords, function (record) {
-            //         if (record.data.data_index >= 10 && record.data.data_group === grpName) {
-            //             var rec = dataView.panel.columns[0].defaultRenderer(null, null, record);
-            //             dataView.refreshRow(record);
-            //         }
-            //     });
-            //     Ext.get('integrated-data-title').el.dom.scrollIntoView();
-            // }
-            // else if (!this.showAllGroupFlags[idx].showAll) {
-            //     dataView.panel.view.refresh();
-            // }
+            var idx = this.showAllGroupFlags.findIndex(function (value) {
+                return value.groupName === grpName;
+            });
+
+            this.showAllGroupFlags[idx].showAll = !this.showAllGroupFlags[idx].showAll;
+
+            if (this.showAllGroupFlags[idx].showAll) {
+                Ext.each(groupedDataRecords, function (record, idx) {
+                    if (record.data.data_index >= 10 && record.data.data_group === grpName) {
+                        var rec = groupedDataStore.getAt(idx);
+                        rec.set('data_show', true);
+
+                    }
+                });
+            }
+            else if (!this.showAllGroupFlags[idx].showAll) {
+                Ext.each(groupedDataRecords, function (record, idx) {
+                    if (record.data.data_index >= 10 && record.data.data_group === grpName) {
+                        var rec = groupedDataStore.getAt(idx);
+                        rec.set('data_show', false);
+                    }
+                });
+            }
+            Ext.get('integrated-data-showAll-'+(idx+1)).el.dom.scrollIntoView();
         }
         else {
             this.showAll = !this.showAll;
             data['showAll'] = this.showAll;
             this.update(data);
 
-            var dataView = this.items.items[1].getView();
-            dataView.panel.columns[0].setShowAll(this.showAll);
             if (this.showAll) {
-                var dataRecords = this.getDataAddedStore(data).data.items;
-                Ext.each(dataRecords, function (record) {
+                Ext.each(groupedDataRecords, function (record, idx) {
                     if (record.data.data_index >= 10) {
-                        dataView.panel.columns[0].defaultRenderer(null, null, record);
-                        dataView.panel.view.refresh();
+                        var rec = groupedDataStore.getAt(idx);
+                        rec.set('data_show', true);
                     }
                 });
-                Ext.get('integrated-data-title').el.dom.scrollIntoView();
             }
             else if (!this.showAll) {
-                dataView.panel.view.refresh();
+                Ext.each(groupedDataRecords, function (record, idx) {
+                    if (record.data.data_index >= 10) {
+                        var rec = groupedDataStore.getAt(idx);
+                        rec.set('data_show', false);
+                    }
+                });
             }
+            Ext.get('integrated-data-title').el.dom.scrollIntoView();
         }
+        dataView.panel.view.refresh();
     },
 
     getGroupingFeature: function() {
@@ -280,83 +272,6 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
             }
         }
         return {};
-    },
-
-    getShowAllTemplate : function() {
-        var me = this;
-        return new Ext4.XTemplate(
-            '<tpl>',
-                '<tpl if="data_index === 10">',
-                    '<tpl if="this.hasGrouping()">',
-                        '<tpl for="this.getGroups()">',
-                            '<tpl if="parent.data_group === values">',
-                                'and {[this.getGroupedListSize(values)]} less ',
-                                '<span id="{[this.getGroupId(xindex)]}" class="show-hide-toggle-integrateddata">(show less)</span>',
-                            '</tpl>',
-                        '</tpl>',
-                    '<tpl else>',
-                        'and {[this.getRemainingListSize()]} more ',
-                        '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show less)</span>',
-                    '</tpl>',
-                    '</br></br>',
-                '</tpl>',
-
-                '<table>',
-                    '<tr>',
-                        '<td>',
-                            '<tpl if="has_data">',
-                                '<tpl if="has_access">',
-                                    '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallCheck.png"/>',
-                                '<tpl else>',
-                                    '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/grayCheck.png"/>',
-                                '</tpl>',
-                            '<tpl else>',
-                                '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallGreyX.png">',
-                            '</tpl>',
-                        '</td>',
-                        '<td>',
-                            '<tpl if="data_label">', //determines if we have a learn about page to back the assay
-                                '<a href="#learn/learn/',
-                                '{[this.getDataLink()]}',
-                                '/{[encodeURIComponent(values.data_link_id)]}">{data_label:htmlEncode}</a>',
-                            '<tpl else>',
-                                '<span>{data_id:htmlEncode}</span>',
-                            '</tpl>',
-                        '</td>',
-                        '<td class="data-availability-alt-label">',
-                            '<tpl if="alt_label">', //determines if we have a learn about page to back the assay
-                                '<span>Labeled as {alt_label:htmlEncode}</span>',
-                            '</tpl>',
-                        '</td>',
-                    '</tr>',
-                '</table>',
-             '</tpl>',
-                {
-                    getDataLink: function () {
-
-                        return encodeURIComponent(me.data.dataLink);
-                    },
-                    getRemainingListSize: function() {
-                        return me.data.model.data[me.data.dataField].length - 10;
-                    },
-                    getGroupedListSize: function(group) {
-                        var data = me.data.model.data[me.data.dataField];
-                        var groupedList = data.map(function(grp) { return grp.data_group === group;}).filter(function(value, index, self) { return value === true});
-                        return groupedList.length - 10;
-                    },
-                    hasGrouping: function () {
-                        return me.data.hasGrouping;
-                    },
-                    getGroupId: function (idx) {
-                        return "integrated-data-showAll-" + idx;
-                    },
-                    getGroups: function() {
-                        return me.data.model.data[me.data.dataField].map(function(grp) {return grp.data_group}).filter(function (value, index, self) {
-                            return value === undefined || value === null ? false : self.indexOf(value) === index;
-                        });
-                    }
-                }
-        )
     },
 
     getDataAddedTemplate : function() {
@@ -394,8 +309,8 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                             '</tr>',
                         '</tpl>',
                     '</table>',
-
-                    '<tpl if="data_index === 9">',
+                    '<tpl if="data_index === 10 && data_show === false">',
+                        '</br>',
                         '<tpl if="this.hasGrouping()">',
                             '<tpl for="this.getGroups()">',
                                 '<tpl if="parent.data_group === values">',
@@ -408,7 +323,52 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                             '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show all)</span>',
                         '</tpl>',
                         '</br></br>',
+                    '<tpl elseif="data_index === 10 && data_show === true">',
+                        '</br>',
+                        '<tpl if="this.hasGrouping()">',
+                            '<tpl for="this.getGroups()">',
+                                '<tpl if="parent.data_group === values">',
+                                    'and {[this.getGroupedListSize(values)]} less ',
+                                    '<span id="{[this.getGroupId(xindex)]}" class="show-hide-toggle-integrateddata">(show less)</span>',
+                                '</tpl>',
+                            '</tpl>',
+                        '<tpl else>',
+                            'and {[this.getRemainingListSize()]} more ',
+                            '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show less)</span>',
+                        '</tpl>',
+                        '</br></br>',
                     '</tpl>',
+                    '<table>',
+                        '<tpl if="data_index &gt; 9 && data_show === true">',
+                            '<tr>',
+                                '<td>',
+                                    '<tpl if="has_data">',
+                                        '<tpl if="has_access">',
+                                            '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallCheck.png"/>',
+                                        '<tpl else>',
+                                            '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/grayCheck.png"/>',
+                                        '</tpl>',
+                                    '<tpl else>',
+                                        '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallGreyX.png">',
+                                    '</tpl>',
+                                '</td>',
+                                '<td>',
+                                    '<tpl if="data_label">', //determines if we have a learn about page to back the assay
+                                        '<a href="#learn/learn/',
+                                        '{[this.getDataLink()]}',
+                                        '/{[encodeURIComponent(values.data_link_id)]}">{data_label:htmlEncode}</a>',
+                                    '<tpl else>',
+                                        '<span>{data_id:htmlEncode}</span>',
+                                    '</tpl>',
+                                '</td>',
+                                '<td class="data-availability-alt-label">',
+                                    '<tpl if="alt_label">', //determines if we have a learn about page to back the assay
+                                        '<span>Labeled as {alt_label:htmlEncode}</span>',
+                                    '</tpl>',
+                                '</td>',
+                            '</tr>',
+                        '</tpl>',
+                    '</table>',
                 '</tpl>',
                 {
                     getDataLink: function() {
@@ -528,6 +488,7 @@ Ext.define("DataAdded", {
         }},
         {name: 'data_group'},
         {name: 'data_group_instr'},
-        {name: 'data_index'}
+        {name: 'data_index'},
+        {name: 'data_show'}
     ]
 });

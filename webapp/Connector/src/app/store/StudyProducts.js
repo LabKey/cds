@@ -194,6 +194,7 @@ Ext.define('Connector.app.store.StudyProducts', {
                         studiesWithData.push(study);
                     }
                     study.data_index = index; //for show all/show less on display
+                    study.data_show = !index >= 10; //for show all/show less on display
                 });
                 product.studies = studies;
                 product.studies_with_data = studiesWithData;
