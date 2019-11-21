@@ -235,9 +235,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify mAb listing section");
         assertElementPresent(Locator.tagWithText("h3", "Monoclonal Antibodies"));
 
-        Locator.XPathLocator mabListToggle = Locator.tagWithClass("div", "show-hide-mabs-toggle");
+        Locator.XPathLocator mabListToggle = Locator.tagWithClass("span", "show-hide-toggle-mabs");
+        scrollIntoView(mabListToggle);
         log("Verify mAb listing is collapsed by default");
-        assertElementPresent(mabListToggle.withText("+ SHOW ALL 36"));
+        assertElementPresent(mabListToggle.withText("(show all)"));
         verifyDetailFieldLabels(false, "mAb 93", "mAb 94", "mAb 95", "mAb 96", "mAb 97", "mAb 98",
                 "mAb 99", "mAb 100", "mAb 101", "mAb 102");
         assertElementNotPresent(Locator.linkWithText("mAb 103"));
@@ -245,16 +246,18 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify mAb list expand");
         scrollIntoView(mabListToggle);
         click(mabListToggle);
-        waitForElement(mabListToggle.withText("- SHOW LESS"));
+        waitForElement(mabListToggle.withText("(show less)"));
         verifyDetailFieldLabels(false, "mAb 93", "mAb 94", "mAb 95", "mAb 96", "mAb 97", "mAb 98",
                 "mAb 99", "mAb 100", "mAb 101", "mAb 102",
                 "mAb 113", "mAb 114", "mAb 115", "mAb 116",
-                "mAb 117", "mAb 118", "mAb 119", "mAb 120");
+                "mAb 117", "mAb 118", "mAb 119", "mAb 120",
+                "mAb 121", "mAb 122", "mAb 123", "mAb 124",
+                "mAb 125", "mAb 126", "mAb 127");
 
         log("Verify mAb list collapse");
         scrollIntoView(mabListToggle);
         click(mabListToggle);
-        waitForElement(mabListToggle.withText("+ SHOW ALL 36"));
+        waitForText("and 26 more");
 
         log("Verify mAb link");
         click(Locator.linkWithText("mAb 93"));
