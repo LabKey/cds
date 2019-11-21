@@ -1144,8 +1144,26 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify Integrated Data Availability");
         waitForText("Integrated Data");
+        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+
+        log("Verify show all list expand");
+        scrollIntoView(showAllListToggle);
+        assertElementPresent(showAllListToggle.withText("(show all)"));
+        assertTextPresent("and 3 more");
+        mouseOver(showAllListToggle);
+        click(showAllListToggle);
+
+        waitForElement(showAllListToggle.withText("(show less)"));
+        assertTextPresent("and 3 more");
+
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies using the mAb product is not as expected", 1, smallHasDataIcons.size());
+
+        log("Verify show all list collapse");
+        mouseOver(showAllListToggle);
+        click(showAllListToggle);
+        waitForElement(showAllListToggle.withText("(show all)"));
+        assertTextPresent("and 3 more");
 
         String mAbStdName = "2F5";
         log("Verify link to mAb details page from product page");
