@@ -1068,12 +1068,28 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText(waitForTextIntegratedData);
 
+        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        log("Verify show all list expand");
+        scrollIntoView(showAllListToggle);
+        assertElementPresent(showAllListToggle.withText("(show all)"));
+        assertTextPresent("and 6 more");
+        mouseOver(showAllListToggle);
+        click(showAllListToggle);
+
+        waitForElement(showAllListToggle.withText("(show less)"));
+        assertTextPresent("and 6 more");
+
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
 
         assertElementNotPresent(cds.hasDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
         assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
 
+        log("Verify show all list collapse");
+        mouseOver(showAllListToggle);
+        click(showAllListToggle);
+        waitForElement(showAllListToggle.withText("(show all)"));
+        assertTextPresent("and 6 more");
 
         log(partialLogMsgIntegratedData + "Products");
         cds.viewLearnAboutPage("Products");
@@ -1109,7 +1125,26 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator subHeaderAdministration = Locator.tagContainingText("div", "MAb Administration Studies");
         log("Verify mAb integrated data availability sub listing with 2 categories");
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117));
+
+        Locator.XPathLocator showAllListToggle2 = Locator.tagWithId("span", "integrated-data-showAll");
+        log("Verify show all list expand");
+        scrollIntoView(showAllListToggle2);
+        assertElementPresent(showAllListToggle2.withText("(show all)"));
+        assertTextPresent("and 3 more");
+        mouseOver(showAllListToggle2);
+        click(showAllListToggle2);
+
+        waitForElement(showAllListToggle2.withText("(show less)"));
+        assertTextPresent("and 3 more");
+
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
+
+        log("Verify show all list collapse");
+        mouseOver(showAllListToggle2);
+        click(showAllListToggle2);
+        waitForElement(showAllListToggle2.withText("(show all)"));
+        assertTextPresent("and 3 more");
+
         assertElementVisible(subHeaderCharacterization);
         assertElementVisible(subHeaderAdministration);
 
