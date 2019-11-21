@@ -12,7 +12,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
     showAll: false,
 
-    showAllGroupFlags: [],
+    showAllGroupFlags: [], //to set showAll flag for each grouping/sub-sections
 
     statics: {
         dataAddedSortFn: function(a, b) {
@@ -117,13 +117,6 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         }
                     }
 
-                    var showAllLink = Ext.get('integrated-data-showAll');
-                    if (showAllLink) {
-                        showAllLink.on('click', function(){
-                            this.toggleListTask.delay(100);
-                        }, this);
-                    }
-
                     if (this.data.hasGrouping) {
 
                         var groups = this.data.model.data[this.data.dataField].map(function(grp) {return grp.data_group;}).filter(function (value, index, self) {
@@ -139,6 +132,14 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                             }
                         }, this);
                     }
+                    else {
+                        var showAllLink = Ext.get('integrated-data-showAll');
+                        if (showAllLink) {
+                            showAllLink.on('click', function(){
+                                this.toggleListTask.delay(100);
+                            }, this);
+                        }
+                    }
                 },
 
                 'itemmouseleave' : function(view, record, item) {
@@ -148,13 +149,6 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         dataLink.un('mouseleave', this.hideDataStatusTooltip, this);
                         dataLink.un('click', this.hideDataStatusTooltip, this);
                         this.fireEvent('hideTooltip');
-                    }
-
-                    var showAllLink = Ext.get('integrated-data-showAll');
-                    if (showAllLink) {
-                        showAllLink.un('click', function(){
-                            this.toggleListTask.delay(100);
-                        }, this);
                     }
 
                     if (this.data.hasGrouping) {
@@ -172,6 +166,14 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                             }
 
                         }, this);
+                    }
+                    else {
+                        var showAllLink = Ext.get('integrated-data-showAll');
+                        if (showAllLink) {
+                            showAllLink.un('click', function(){
+                                this.toggleListTask.delay(100);
+                            }, this);
+                        }
                     }
                 },
 

@@ -88,7 +88,7 @@ Ext.define('Connector.app.store.Assay', {
                             assay.data_accessible = true;
                     }
                     study.data_index = index; //for show all/show less on display
-                    study.data_show = !index >= 10; //for show all/show less on display
+                    study.data_show = index < 10; //for show all/show less on display
                 });
                 assay.studies = studies;
                 assay.studies_with_data = studiesWithData;

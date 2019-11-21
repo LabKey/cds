@@ -137,7 +137,7 @@ Ext.define('Connector.app.store.Publication', {
                     var studyNames = [];
                     Ext.each(publication.studies, function(study, index){
                         study.data_index = index; //for show all/show less on display
-                        study.data_show = !index >= 10; //for show all/show less on display
+                        study.data_show = index < 10; //for show all/show less on display
                         studyNames.push(study.study_label);
                     });
                     publication.study_names = studyNames;
