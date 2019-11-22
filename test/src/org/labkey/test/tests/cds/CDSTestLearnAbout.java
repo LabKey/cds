@@ -241,7 +241,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         Locator.XPathLocator mabListToggle = Locator.tagWithClass("span", "show-hide-toggle-mabs");
         showAllExpandAndVerify(mabListToggle, 26);
-        waitForElement(mabListToggle.withText("(show less)"));
         verifyDetailFieldLabels(false, "mAb 93", "mAb 94", "mAb 95", "mAb 96", "mAb 97", "mAb 98",
                 "mAb 99", "mAb 100", "mAb 101", "mAb 102",
                 "mAb 113", "mAb 114", "mAb 115", "mAb 116",
@@ -254,6 +253,40 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify mAb link");
         click(Locator.linkWithText("mAb 93"));
         waitForElement(Locator.tagWithText("h3", "mAb 93 Details"));
+    }
+
+    @Test
+    public void verifyStudyDetailsShowAll()
+    {
+        cds.viewLearnAboutPage("Studies");
+        String studyName = "ZAP 110";
+
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(studyName);
+        goToDetail(studyName, true);
+        Locator breadcrumb = DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /");
+        waitForElement(breadcrumb);
+
+        log("Verify over 10 Products");
+        Locator.XPathLocator productListToggle = Locator.tagWithClass("span", "show-hide-toggle-products");
+        showAllExpandAndVerify(productListToggle, 1);
+        scrollIntoView(productListToggle);
+        assertTextPresent("Salicylic Acid");
+        verifyShowAllCollapse(productListToggle, 1);
+
+        log("Verify over 10 Reports");
+        Locator.XPathLocator reportsListToggle = Locator.tagWithClass("span", "show-hide-toggle-reports");
+        showAllExpandAndVerify(reportsListToggle, 1);
+        scrollIntoView(reportsListToggle);
+        assertTextPresent("Assay Data Summary");
+        verifyShowAllCollapse(reportsListToggle, 1);
+
+        log("Verify over 10 Publications");
+        Locator.XPathLocator pubListToggle = Locator.tagWithClass("span", "show-hide-toggle-pub");
+        showAllExpandAndVerify(pubListToggle, 1);
+        scrollIntoView(pubListToggle);
+        assertTextPresent("T cell responses and their role in protection after HIV-1 infection.");
+        verifyShowAllCollapse(pubListToggle, 1);
     }
 
     @Test
