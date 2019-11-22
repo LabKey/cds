@@ -178,11 +178,13 @@ Ext.define('Connector.app.store.MAb', {
                         data_status: studymab.assay_status,
                         alt_label: studymab.mix_labels && studymab.mix_labels.length > 0 ? studymab.mix_labels : null,
                         data_group: studymab.study_type,
-                        data_group_instr: studymab.subheader_instr,
-                        data_index: groupWithIndexes[grpIdx].groupIndex, //update data_index for the group
-                        data_show: groupWithIndexes[grpIdx].groupIndex < 10
+                        data_group_instr: studymab.subheader_instr
                     };
-                    groupWithIndexes[grpIdx].groupIndex++;
+                    if (grpIdx >= 0) {
+                        study.data_index = groupWithIndexes[grpIdx].groupIndex; //update data_index for the group
+                        study.data_show = groupWithIndexes[grpIdx].groupIndex < 10;
+                        groupWithIndexes[grpIdx].groupIndex++;
+                    }
                     studies.push(study);
                 }, this);
                 Ext.each(studies, function(study) {
