@@ -702,6 +702,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutNABMAbAssay()
     {
+        getDriver().manage().window().maximize();
         cds.viewLearnAboutPage("Assays");
         LearnGrid summaryGrid = new LearnGrid(this);
 
@@ -711,11 +712,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify Integrated Data Availability");
         waitForText("Integrated Data");
-        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
 
         Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
         showAllExpandAndVerify(showAllListToggle, 2);
 
+        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == 10);
 
         verifyShowAllCollapse(showAllListToggle, 2);
@@ -1066,6 +1067,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateDetailsDataAvailability()
     {
+        getDriver().manage().window().maximize();
+
         //Valuse for Study Details inspection
         final String STUDY = "RED 4";
         final String[] ASSAY_TITLES = {"IFNg ELISpot", "ICS", "BAMA"};
@@ -1149,6 +1152,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify mAb integrated data availability sub listing with 2 categories");
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117));
 
+        showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll-1");
         showAllExpandAndVerify(showAllListToggle, 3);
 
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));

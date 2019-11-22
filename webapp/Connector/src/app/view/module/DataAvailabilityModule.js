@@ -330,7 +330,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         '<tpl if="this.hasGrouping()">',
                             '<tpl for="this.getGroups()">',
                                 '<tpl if="parent.data_group === values">',
-                                    'and {[this.getGroupedListSize(values)]} less ',
+                                    'and {[this.getGroupedListSize(values)]} more ',
                                     '<span id="{[this.getGroupId(xindex)]}" class="show-hide-toggle-integrateddata">(show less)</span>',
                                 '</tpl>',
                             '</tpl>',
