@@ -357,21 +357,21 @@ Ext4.define('Connector.cube.Configuration', {
                     },{
                         type: 'studyrelationships',
                         staticData: {
-                            title: 'Related Studies'
+                            title: 'Related studies'
                         }
                     },{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Integrated Data',
+                            title: 'Integrated data',
                             dataField: 'assays',
                             dataLink: 'Assay',
-                            instructions: 'Go to Plot to view or Grid to export.'
+                            instructions: 'Go to Plot to view or Grid to export'
                         }
                     }, {
                         type: 'nonintegrateddataavailability',
                         staticData: {
-                            title: 'Non-Integrated Data',
-                            instructions: 'Download Individual Files.'
+                            title: 'Non-integrated data',
+                            instructions: 'Download individual files'
                         }
                      }, {
                         type: 'studyreports',
@@ -381,7 +381,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }, {
                         type: 'studymabs',
                         staticData: {
-                            title: 'Monoclonal Antibodies'
+                            title: 'Monoclonal antibodies'
                         }
                     }]]
                 }]
@@ -464,7 +464,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }],[{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Integrated Data',
+                            title: 'Integrated data',
                             dataField: 'studies',
                             dataLink: 'Study',
                             instructions: 'Go to Plot to view or Grid to export. Additional non-integrated data files may be available for download. See study page.'
@@ -593,10 +593,10 @@ Ext4.define('Connector.cube.Configuration', {
                     },{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Integrated Data',
+                            title: 'Integrated data',
                             dataField: 'studies',
                             dataLink: 'Study',
-                            instructions: 'Go to Plot to view or Grid to export.'
+                            instructions: 'Go to Plot to view or Grid to export'
                         }
                     }]]
                 },{
@@ -646,12 +646,12 @@ Ext4.define('Connector.cube.Configuration', {
                     modules: [[{
                         type: 'mabdetails',
                         staticData: {
-                            title: 'Monoclonal Antibody Information'
+                            title: 'Monoclonal antibody information'
                         }
                     }],[{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Integrated Data',
+                            title: 'Integrated data',
                             dataField: 'studies',
                             dataLink: 'Study',
                             hasGrouping: true,
@@ -703,7 +703,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }],[{
                         type: 'dataavailability',
                         staticData: {
-                            title: 'Integrated Data',
+                            title: 'Integrated data',
                             dataField: 'studies',
                             dataLink: 'Study',
                             instructions: 'Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.'
