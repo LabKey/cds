@@ -53,6 +53,8 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
 
     public void verifySharedGroups()
     {
+        getDriver().manage().window().maximize();
+
         //Ensure test users don't already exist
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[0]);
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[1]);
@@ -166,8 +168,9 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Delete"));
         waitForText("Are you sure you want to delete");
         click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
-        waitForText("groups and plots");
+        waitForText("Getting Started");
         refresh();
+        scrollIntoView(Locator.tagWithClass("h2", "section-title").containing("Groups and plots"));
         assertElementNotPresent("Group: " + sharedGroupName + " should not have been present after deletion",
                 Locator.xpath("//*[contains(@class, 'section-title')]" +
                         "[contains(text(), 'Curated groups and plots')]" +

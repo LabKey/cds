@@ -1330,6 +1330,8 @@ public class CDSHelper
     {
         BaseWebDriverTest.sleep(500);
         Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
+        _test.scrollIntoView(groupListing);
+
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing));
         groupListing.findElement(_test.getWrappedDriver()).click();
         BaseWebDriverTest.sleep(1000);
