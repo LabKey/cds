@@ -233,7 +233,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(breadcrumb);
 
         log("Verify mAb listing section");
-        assertElementPresent(Locator.tagWithText("h3", "Monoclonal Antibodies"));
+        assertElementPresent(Locator.tagWithText("h3", "Monoclonal antibodies"));
 
         Locator.XPathLocator mabListToggle = Locator.tagWithClass("div", "show-hide-mabs-toggle");
         log("Verify mAb listing is collapsed by default");
@@ -321,8 +321,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyLearnAboutMabDetails()
     {
-        final String infoHeader = "Monoclonal Antibody Information";
-        final String dataHeader = "Integrated Data";
+        final String infoHeader = "Monoclonal antibody information";
+        final String dataHeader = "Integrated data";
 
         final String labelStandardname = "Standard name";
         final String labelAntibodyType = "Antibody type";
@@ -678,7 +678,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 .clickFirstItem();
 
         log("Verify Integrated Data Availability");
-        waitForText("Integrated Data");
+        waitForText("Integrated data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == 10);
 
@@ -905,7 +905,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify instruction text on Learn About page for Studies - " + studyName);
         cds.viewLearnAboutPage("Studies");
         goToDetail(studyName, true);
-        assertTextPresent("Go to Plot to view or Grid to export.");
+        assertTextPresent("Go to Plot to view or Grid to export");
 
         String assayName = CDSHelper.ASSAYS_FULL_TITLES[1]; //ICS
         log("Verify instruction text on Learn About page for Assays - " + assayName);
@@ -1009,7 +1009,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Studies");
         goToDetail(studyName, true);
 
-        verifySectionHeaders("Non-Integrated Data");
+        verifySectionHeaders("Non-integrated data");
 
         Locator.XPathLocator nonIntegratedDataElement = Locator.tagWithAttributeContaining("div", "id", "nonintegrateddataavailability");
         assertElementPresent(nonIntegratedDataElement);
@@ -1041,7 +1041,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String[] STUDY_FROM_PRODUCT = {"QED 1", "YOYO 55"};
 
         final String partialLogMsgIntegratedData = "Testing integrated data availability module in ";
-        final String waitForTextIntegratedData = "Integrated Data";
+        final String waitForTextIntegratedData = "Integrated data";
 
         log(partialLogMsgIntegratedData + "Studies");
         cds.viewLearnAboutPage("Studies");
@@ -1140,7 +1140,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         summaryGrid.setSearch(mabProduct).clickFirstItem();
 
         log("Verify Integrated Data Availability");
-        waitForText("Integrated Data");
+        waitForText("Integrated data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies using the mAb product is not as expected", 1, smallHasDataIcons.size());
 
@@ -1163,7 +1163,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 .clickFirstItem();
 
         log("Verify Integrated Data Availability");
-        waitForText("Integrated Data");
+        waitForText("Integrated data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies with PK MAb data is not as expected", 1, smallHasDataIcons.size());
 
@@ -1580,7 +1580,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Check the links for " + studyName + ". Each of the different relationship types should be listed.");
         goToDetail(studyName, false);
 
-        Locator relatedStudiesTable = Locator.xpath("//h3[text()='Related Studies']/following-sibling::table[@class='learn-study-info']");
+        Locator relatedStudiesTable = Locator.xpath("//h3[text()='Related studies']/following-sibling::table[@class='learn-study-info']");
 
         relatedStudiesText = getText(relatedStudiesTable);
         log("Text: " + relatedStudiesText);
