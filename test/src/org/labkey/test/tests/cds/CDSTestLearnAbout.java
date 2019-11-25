@@ -911,7 +911,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify instruction text on Learn About page for Assays - " + assayName);
         cds.viewLearnAboutPage("Assays");
         goToDetail(assayName, true);
-        assertTextPresent("Go to Plot to view or Grid to export.");
+        assertTextPresent("Go to Plot to view or Grid to export");
 
         String productName = "2F5";
         log("Verify instruction text on Learn About page for Products - " + productName);
@@ -1014,7 +1014,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator.XPathLocator nonIntegratedDataElement = Locator.tagWithAttributeContaining("div", "id", "nonintegrateddataavailability");
         assertElementPresent(nonIntegratedDataElement);
 
-        Locator.XPathLocator instructions = nonIntegratedDataElement.withDescendant(Locator.tag("p")).containing("Download Individual Files.");
+        Locator.XPathLocator instructions = nonIntegratedDataElement.withDescendant(Locator.tag("p")).containing("Download individual files");
         assertElementPresent(instructions);
     }
 
