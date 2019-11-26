@@ -878,6 +878,8 @@ public class CDSHelper
         //ISSUE 19997
         _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
 
+        _test.log("Saving '" + name + "' group was success!");
+
         return true;
     }
 
