@@ -923,7 +923,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify sub-header instruction text on Learn About page for MAbs - " + MAbName);
         cds.viewLearnAboutPage("MAbs");
         goToDetail(MAbName, true);
-        String subHeaderCharacterizationInstr = "Go to Monoclonal Antibodies to view or export.";
+        String subHeaderCharacterizationInstr = "Go to Monoclonal Antibodies to view or export";
         String subHeaderAdministrationInstr = "Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.";
         assertTextPresent(subHeaderCharacterizationInstr);
         assertTextPresent(subHeaderAdministrationInstr);
