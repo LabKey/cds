@@ -17,7 +17,7 @@
 -- mab as subject
 SELECT mabwithstudy.prot as prot, mabwithstudy.mab_mix_name_std, mabwithstudy.mab_label as mix_labels,
   studyassay.label, studyassay.has_data, studyassay.assay_status, 'MAb Characterization Studies' as study_type,
-  'Go to monoclonal antibodies to view or export' as subheader_instr,
+  'Go to monoclonal antibodies to view or export' as subheader_instr
 FROM cds.learn_mab_mix_forstudies mabwithstudy
 LEFT JOIN cds.learn_studiesforassays studyassay
   ON mabwithstudy.prot = studyassay.prot
