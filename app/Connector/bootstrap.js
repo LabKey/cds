@@ -185,6 +185,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.AssayAnalyteList": "../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
   "Connector.view.module.AssayHeader": "../../webapp/Connector/src/app/view/module/AssayHeader.js",
   "Connector.view.module.BaseModule": "../../webapp/Connector/src/view/module/BaseModule.js",
+  "Connector.view.module.ShowList": "../../webapp/Connector/src/view/module/ShowList.js",
   "Connector.view.module.ContactCDS": "../../webapp/Connector/src/app/view/module/ContactCDS.js",
   "Connector.view.module.DataAvailabilityModule": "../../webapp/Connector/src/app/view/module/DataAvailabilityModule.js",
   "Connector.view.module.NonIntegratedDataAvailability": "../../webapp/Connector/src/app/view/module/NonIntegratedDataAvailability.js",
@@ -425,6 +426,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.AssayAnalyteList": [],
   "Connector.view.module.AssayHeader": [],
   "Connector.view.module.BaseModule": [],
+  "Connector.view.module.ShowList": [],
   "Connector.view.module.ContactCDS": [],
   "Connector.view.module.DataAvailabilityModule": [],
   "Connector.view.module.NonIntegratedDataAvailability": [],
@@ -1596,6 +1598,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.app.module.assayheader"
   ],
   "Connector.view.module.BaseModule": [],
+  "Connector.view.module.ShowList": [],
   "Connector.view.module.ContactCDS": [
     "widget.app.module.contactcds"
   ],

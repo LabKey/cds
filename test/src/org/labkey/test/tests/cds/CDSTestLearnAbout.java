@@ -235,30 +235,58 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify mAb listing section");
         assertElementPresent(Locator.tagWithText("h3", "Monoclonal antibodies"));
 
-        Locator.XPathLocator mabListToggle = Locator.tagWithClass("div", "show-hide-mabs-toggle");
-        log("Verify mAb listing is collapsed by default");
-        assertElementPresent(mabListToggle.withText("+ SHOW ALL 36"));
         verifyDetailFieldLabels(false, "mAb 93", "mAb 94", "mAb 95", "mAb 96", "mAb 97", "mAb 98",
                 "mAb 99", "mAb 100", "mAb 101", "mAb 102");
         assertElementNotPresent(Locator.linkWithText("mAb 103"));
 
-        log("Verify mAb list expand");
-        scrollIntoView(mabListToggle);
-        click(mabListToggle);
-        waitForElement(mabListToggle.withText("- SHOW LESS"));
+        Locator.XPathLocator mabListToggle = Locator.tagWithClass("span", "show-hide-toggle-mabs");
+        showAllExpandAndVerify(mabListToggle, 26);
         verifyDetailFieldLabels(false, "mAb 93", "mAb 94", "mAb 95", "mAb 96", "mAb 97", "mAb 98",
                 "mAb 99", "mAb 100", "mAb 101", "mAb 102",
                 "mAb 113", "mAb 114", "mAb 115", "mAb 116",
-                "mAb 117", "mAb 118", "mAb 119", "mAb 120");
+                "mAb 117", "mAb 118", "mAb 119", "mAb 120",
+                "mAb 121", "mAb 122", "mAb 123", "mAb 124",
+                "mAb 125", "mAb 126", "mAb 127");
 
-        log("Verify mAb list collapse");
-        scrollIntoView(mabListToggle);
-        click(mabListToggle);
-        waitForElement(mabListToggle.withText("+ SHOW ALL 36"));
+        verifyShowAllCollapse(mabListToggle, 26);
 
         log("Verify mAb link");
         click(Locator.linkWithText("mAb 93"));
         waitForElement(Locator.tagWithText("h3", "mAb 93 Details"));
+    }
+
+    @Test
+    public void verifyStudyDetailsShowAll()
+    {
+        cds.viewLearnAboutPage("Studies");
+        String studyName = "ZAP 110";
+
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(studyName);
+        goToDetail(studyName, true);
+        Locator breadcrumb = DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /");
+        waitForElement(breadcrumb);
+
+        log("Verify over 10 Products");
+        Locator.XPathLocator productListToggle = Locator.tagWithClass("span", "show-hide-toggle-products");
+        showAllExpandAndVerify(productListToggle, 1);
+        scrollIntoView(productListToggle);
+        assertTextPresent("Salicylic Acid");
+        verifyShowAllCollapse(productListToggle, 1);
+
+        log("Verify over 10 Reports");
+        Locator.XPathLocator reportsListToggle = Locator.tagWithClass("span", "show-hide-toggle-reports");
+        showAllExpandAndVerify(reportsListToggle, 1);
+        scrollIntoView(reportsListToggle);
+        assertTextPresent("Assay Data Summary");
+        verifyShowAllCollapse(reportsListToggle, 1);
+
+        log("Verify over 10 Publications");
+        Locator.XPathLocator pubListToggle = Locator.tagWithClass("span", "show-hide-toggle-pub");
+        showAllExpandAndVerify(pubListToggle, 1);
+        scrollIntoView(pubListToggle);
+        assertTextPresent("T cell responses and their role in protection after HIV-1 infection.");
+        verifyShowAllCollapse(pubListToggle, 1);
     }
 
     @Test
@@ -588,7 +616,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         validateToolTip(Locator.linkWithText("ZAP 102").findElement(getDriver()), "Status not available");
         validateToolTip(Locator.linkWithText("ZAP 108").findElement(getDriver()), "provided, but not included");
         validateToolTip(Locator.linkWithText("ZAP 115").findElement(getDriver()), "being processed");
+
+        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        showAllExpandAndVerify(showAllListToggle, 6);
         validateToolTip(Locator.linkWithText("ZAP 117").findElement(getDriver()), "pending study completion");
+        verifyShowAllCollapse(showAllListToggle, 6);
 
         // Go back to assays and validate the Data Added column.
         cds.viewLearnAboutPage("Assays");
@@ -670,6 +702,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutNABMAbAssay()
     {
+        getDriver().manage().window().maximize();
         cds.viewLearnAboutPage("Assays");
         LearnGrid summaryGrid = new LearnGrid(this);
 
@@ -679,8 +712,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify Integrated Data Availability");
         waitForText("Integrated data");
+
+        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        showAllExpandAndVerify(showAllListToggle, 2);
+
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == 10);
+
+        verifyShowAllCollapse(showAllListToggle, 2);
 
         assertElementPresent(cds.hasDataDetailIconXPath("QED 2"));
         assertElementNotPresent(cds.hasDataDetailIconXPath("QED 1"));
@@ -1028,6 +1067,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateDetailsDataAvailability()
     {
+        getDriver().manage().window().maximize();
+
         //Valuse for Study Details inspection
         final String STUDY = "RED 4";
         final String[] ASSAY_TITLES = {"IFNg ELISpot", "ICS", "BAMA"};
@@ -1065,12 +1106,16 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText(waitForTextIntegratedData);
 
+        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        showAllExpandAndVerify(showAllListToggle, 6);
+
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
 
         assertElementNotPresent(cds.hasDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
         assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
 
+        verifyShowAllCollapse(showAllListToggle, 6);
 
         log(partialLogMsgIntegratedData + "Products");
         cds.viewLearnAboutPage("Products");
@@ -1106,7 +1151,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator subHeaderAdministration = Locator.tagContainingText("div", "MAb Administration Studies");
         log("Verify mAb integrated data availability sub listing with 2 categories");
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117));
+
+        showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll-1");
+        showAllExpandAndVerify(showAllListToggle, 3);
+
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
+
+        verifyShowAllCollapse(showAllListToggle, 3);
+
         assertElementVisible(subHeaderCharacterization);
         assertElementVisible(subHeaderAdministration);
 
@@ -1141,8 +1193,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify Integrated Data Availability");
         waitForText("Integrated data");
+        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+
+        showAllExpandAndVerify(showAllListToggle, 3);
+
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies using the mAb product is not as expected", 1, smallHasDataIcons.size());
+
+        verifyShowAllCollapse(showAllListToggle, 3);
 
         String mAbStdName = "2F5";
         log("Verify link to mAb details page from product page");
@@ -1798,5 +1856,28 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private String getToolTipText()
     {
         return getText(Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content"));
+    }
+
+    private void showAllExpandAndVerify(Locator showAllListToggle, int remaining)
+    {
+        log("Expand Show all & Verify");
+        scrollIntoView(showAllListToggle);
+        assertElementPresent(showAllListToggle.withText("(show all)"));
+        assertTextPresent("and " + remaining + " more");
+        mouseOver(showAllListToggle);
+        click(showAllListToggle);
+
+        waitForElement(showAllListToggle.withText("(show less)"));
+        assertTextPresent("and " + remaining + " more");
+    }
+
+    private void verifyShowAllCollapse(Locator showAllListToggle, int remaining)
+    {
+        log("Verify show all list collapse");
+        scrollIntoView(showAllListToggle);
+        mouseOver(showAllListToggle);
+        click(showAllListToggle);
+        waitForElement(showAllListToggle.withText("(show all)"));
+        assertTextPresent("and " + remaining + " more");
     }
 }
