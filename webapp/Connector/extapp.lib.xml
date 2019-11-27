@@ -130,6 +130,7 @@
         <script path="Connector/src/view/Viewport.js"/>
 
         <script path="Connector/src/view/module/BaseModule.js"/>
+        <script path="Connector/src/view/module/ShowList.js"/>
         <script path="Connector/src/view/module/Text.js"/>
 
         <!-- Application Controllers -->

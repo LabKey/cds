@@ -283,6 +283,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/ShowList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
 
     <!-- Application Controllers -->
