@@ -878,6 +878,8 @@ public class CDSHelper
         //ISSUE 19997
         _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
 
+        _test.log("Saving '" + name + "' group was success!");
+
         return true;
     }
 
@@ -1330,6 +1332,8 @@ public class CDSHelper
     {
         BaseWebDriverTest.sleep(500);
         Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
+        _test.scrollIntoView(groupListing);
+
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing));
         groupListing.findElement(_test.getWrappedDriver()).click();
         BaseWebDriverTest.sleep(1000);

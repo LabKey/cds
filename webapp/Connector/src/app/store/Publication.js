@@ -135,7 +135,9 @@ Ext.define('Connector.app.store.Publication', {
                     });
                     publication.study_to_sort_on = publication.studies[0].study_label;
                     var studyNames = [];
-                    Ext.each(publication.studies, function(study){
+                    Ext.each(publication.studies, function(study, index){
+                        study.data_index = index; //for show all/show less on display
+                        study.data_show = index < 10; //for show all/show less on display
                         studyNames.push(study.study_label);
                     });
                     publication.study_names = studyNames;

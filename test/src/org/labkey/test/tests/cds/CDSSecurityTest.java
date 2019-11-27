@@ -208,11 +208,17 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         mouseOver(publicationRow);
         waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
         waitAndClick(publicationRow);
-        waitForText("Integrated Data");
+        waitForText("Integrated data");
 
         String studies = getText(Locator.tagWithClass("div", "learnmodulegrid"));
+
         validateText("Study list", studies, "QED 3", "QED 4", "RED 1", "RED 2",
-                "RED 3", "RED 4", "xyz123", "ZAP 101", "ZAP 102", "ZAP 103");
+                "RED 3", "RED 4", "xyz123", "ZAP 101", "ZAP 102");
+
+        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        showAllExpandAndVerify(showAllListToggle, 1);
+        assertTextPresent("ZAP 103");
+        verifyShowAllCollapse(showAllListToggle, 1);
 
         String tooltip = getStudyDetailDataAvailabilityTooltip("RED 4");
         validateText("RED 4 tooltip", tooltip, "Assays without data accessible", "IFNg ELISpot", "NABMAB", "ICS");
@@ -220,6 +226,29 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         tooltip = getStudyDetailDataAvailabilityTooltip("ZAP 102");
         validateText("ZAP 102 tooltip", tooltip, "Assays " + (hasAccessToR4 ? "with" : "without") + " data accessible", "ICS");
+    }
+
+    private void showAllExpandAndVerify(Locator showAllListToggle, int remaining)
+    {
+        log("Expand Show all & Verify");
+        scrollIntoView(showAllListToggle);
+        assertElementPresent(showAllListToggle.withText("(show all)"));
+        assertTextPresent("and " + remaining + " more");
+        mouseOver(showAllListToggle);
+        click(showAllListToggle);
+
+        waitForElement(showAllListToggle.withText("(show less)"));
+        assertTextPresent("and " + remaining + " more");
+    }
+
+    private void verifyShowAllCollapse(Locator showAllListToggle, int remaining)
+    {
+        log("Verify show all list collapse");
+        scrollIntoView(showAllListToggle);
+        mouseOver(showAllListToggle);
+        click(showAllListToggle);
+        waitForElement(showAllListToggle.withText("(show all)"));
+        assertTextPresent("and " + remaining + " more");
     }
 
     private String getStudyDetailDataAvailabilityTooltip(String studyName)
@@ -235,7 +264,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         setFormElement(Locator.xpath(XPATH_TEXTBOX), "fong y");
         sleep(3000);
         String studyList = getText(Locator.tagWithClass("div", "publication-study-list"));
-        Assert.assertEquals("Publication Studies listing is not as expected for 'Fong Y 2018 J Infect Dis'", "QED 3\nQED 4\nRED 1\nRED 2\nRED 3\n...", studyList);
+        Assert.assertEquals("Publication Studies listing is not as expected for 'Fong Y 2018 J Infect Dis'", "QED 1\nQED 3\nQED 4\nRED 1\nRED 2\n...", studyList);
     }
 
     private void validateStudyDetailDataAvailability(boolean hasAccessToQ2)
@@ -255,7 +284,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         scrollIntoView(element);
         mouseOver(element);
         sleep(1000);
-        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated Data"); return null;});
+        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated data"); return null;});
         Assert.assertTrue("Integrated Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
 
         cds.viewLearnAboutPage("Studies");
@@ -264,7 +293,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
 
-        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated Data"); return null;});
+        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated data"); return null;});
 
         Assert.assertTrue("Integrated Data Availability status for ICS is not as expected", isElementPresent(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
         Assert.assertTrue("Integrated Data Availability status for IFNg ELISpot is not as expected", isElementPresent(cds.getDataRowXPath("IFNg ELISpot").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
