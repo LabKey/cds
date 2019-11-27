@@ -208,7 +208,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         mouseOver(publicationRow);
         waitForElement(Locator.tagWithClass("tr", "detail-row-hover"));
         waitAndClick(publicationRow);
-        waitForText("Integrated Data");
+        waitForText("Integrated data");
 
         String studies = getText(Locator.tagWithClass("div", "learnmodulegrid"));
 
@@ -284,7 +284,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         scrollIntoView(element);
         mouseOver(element);
         sleep(1000);
-        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated Data"); return null;});
+        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated data"); return null;});
         Assert.assertTrue("Integrated Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
 
         cds.viewLearnAboutPage("Studies");
@@ -293,7 +293,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
         assertElementPresent(element);
 
-        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated Data"); return null;});
+        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated data"); return null;});
 
         Assert.assertTrue("Integrated Data Availability status for ICS is not as expected", isElementPresent(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
         Assert.assertTrue("Integrated Data Availability status for IFNg ELISpot is not as expected", isElementPresent(cds.getDataRowXPath("IFNg ELISpot").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));

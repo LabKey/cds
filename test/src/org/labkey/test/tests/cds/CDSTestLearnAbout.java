@@ -233,7 +233,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(breadcrumb);
 
         log("Verify mAb listing section");
-        assertElementPresent(Locator.tagWithText("h3", "Monoclonal Antibodies"));
+        assertElementPresent(Locator.tagWithText("h3", "Monoclonal antibodies"));
 
         verifyDetailFieldLabels(false, "mAb 93", "mAb 94", "mAb 95", "mAb 96", "mAb 97", "mAb 98",
                 "mAb 99", "mAb 100", "mAb 101", "mAb 102");
@@ -349,8 +349,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyLearnAboutMabDetails()
     {
-        final String infoHeader = "Monoclonal Antibody Information";
-        final String dataHeader = "Integrated Data";
+        final String infoHeader = "Monoclonal antibody information";
+        final String dataHeader = "Integrated data";
 
         final String labelStandardname = "Standard name";
         final String labelAntibodyType = "Antibody type";
@@ -711,7 +711,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 .clickFirstItem();
 
         log("Verify Integrated Data Availability");
-        waitForText("Integrated Data");
+        waitForText("Integrated data");
 
         Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
         showAllExpandAndVerify(showAllListToggle, 2);
@@ -944,13 +944,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify instruction text on Learn About page for Studies - " + studyName);
         cds.viewLearnAboutPage("Studies");
         goToDetail(studyName, true);
-        assertTextPresent("Go to Plot to view or Grid to export.");
+        assertTextPresent("Go to Plot to view or Grid to export");
 
         String assayName = CDSHelper.ASSAYS_FULL_TITLES[1]; //ICS
         log("Verify instruction text on Learn About page for Assays - " + assayName);
         cds.viewLearnAboutPage("Assays");
         goToDetail(assayName, true);
-        assertTextPresent("Go to Plot to view or Grid to export.");
+        assertTextPresent("Go to Plot to view or Grid to export");
 
         String productName = "2F5";
         log("Verify instruction text on Learn About page for Products - " + productName);
@@ -962,7 +962,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify sub-header instruction text on Learn About page for MAbs - " + MAbName);
         cds.viewLearnAboutPage("MAbs");
         goToDetail(MAbName, true);
-        String subHeaderCharacterizationInstr = "Go to Monoclonal Antibodies to view or export.";
+        String subHeaderCharacterizationInstr = "Go to monoclonal antibodies to view or export";
         String subHeaderAdministrationInstr = "Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.";
         assertTextPresent(subHeaderCharacterizationInstr);
         assertTextPresent(subHeaderAdministrationInstr);
@@ -1048,12 +1048,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Studies");
         goToDetail(studyName, true);
 
-        verifySectionHeaders("Non-Integrated Data");
+        verifySectionHeaders("Non-integrated data");
 
         Locator.XPathLocator nonIntegratedDataElement = Locator.tagWithAttributeContaining("div", "id", "nonintegrateddataavailability");
         assertElementPresent(nonIntegratedDataElement);
 
-        Locator.XPathLocator instructions = nonIntegratedDataElement.withDescendant(Locator.tag("p")).containing("Download Individual Files.");
+        Locator.XPathLocator instructions = nonIntegratedDataElement.withDescendant(Locator.tag("p")).containing("Download individual files");
         assertElementPresent(instructions);
     }
 
@@ -1082,7 +1082,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String[] STUDY_FROM_PRODUCT = {"QED 1", "YOYO 55"};
 
         final String partialLogMsgIntegratedData = "Testing integrated data availability module in ";
-        final String waitForTextIntegratedData = "Integrated Data";
+        final String waitForTextIntegratedData = "Integrated data";
 
         log(partialLogMsgIntegratedData + "Studies");
         cds.viewLearnAboutPage("Studies");
@@ -1192,7 +1192,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         summaryGrid.setSearch(mabProduct).clickFirstItem();
 
         log("Verify Integrated Data Availability");
-        waitForText("Integrated Data");
+        waitForText("Integrated data");
         Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
 
         showAllExpandAndVerify(showAllListToggle, 3);
@@ -1221,7 +1221,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 .clickFirstItem();
 
         log("Verify Integrated Data Availability");
-        waitForText("Integrated Data");
+        waitForText("Integrated data");
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies with PK MAb data is not as expected", 1, smallHasDataIcons.size());
 
@@ -1638,7 +1638,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Check the links for " + studyName + ". Each of the different relationship types should be listed.");
         goToDetail(studyName, false);
 
-        Locator relatedStudiesTable = Locator.xpath("//h3[text()='Related Studies']/following-sibling::table[@class='learn-study-info']");
+        Locator relatedStudiesTable = Locator.xpath("//h3[text()='Related studies']/following-sibling::table[@class='learn-study-info']");
 
         relatedStudiesText = getText(relatedStudiesTable);
         log("Text: " + relatedStudiesText);
