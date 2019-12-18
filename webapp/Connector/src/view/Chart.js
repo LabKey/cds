@@ -1036,7 +1036,7 @@ Ext.define('Connector.view.Chart', {
                 return row.y;
             },
             group: function(row) {
-                return row.querySrc === "PKMAb" ? (row['subjectId'] + row['mab_mix_id']) : row['subjectId'];
+                return (row.querySrc === "PKMAb" && row['mab_mix_id']) ? (row['subjectId'] + row['mab_mix_id']) : row['subjectId'];
             }
         };
 
