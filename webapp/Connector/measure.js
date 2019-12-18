@@ -635,7 +635,8 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_PKMAb_mab_mix_id': {
-                    hiddenInPlot: true
+                    hiddenInPlot: true,
+                    allowForGrouping: true
                 },
                 'study_Demographics_species': {
                     isRecommendedVariable: true
