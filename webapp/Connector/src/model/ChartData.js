@@ -429,10 +429,14 @@ Ext.define('Connector.model.ChartData', {
             if (_row[QueryUtils.STUDY_ALIAS] && _row[QueryUtils.VISITROWID_ALIAS]) {
                 timeAxisKey = ChartUtils.studyAxisKeyDelimiter + xVal;
                 timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
-                if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
-                    timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
+                if (ya.query === "PKMAb" && _row["study_PKMAb_mab_mix_id"]) {
+                    timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row["study_PKMAb_mab_mix_id"];
                 }
-
+                else {
+                    if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
+                        timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
+                    }
+                }
             }
 
             var rowKey = '';
@@ -457,7 +461,9 @@ Ext.define('Connector.model.ChartData', {
                 xname: xa.label,
                 yname: ya.label,
                 colorname: ca.label,
-                rowKey: rowKey
+                rowKey: rowKey,
+                mab_mix_id: ya.query === "PKMAb" ? _row["study_PKMAb_mab_mix_id"] : undefined,
+                querySrc: ya.query
             };
 
             // split the data entry based on undefined x and y values for gutter plotting
