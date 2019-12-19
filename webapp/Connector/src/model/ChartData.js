@@ -462,8 +462,11 @@ Ext.define('Connector.model.ChartData', {
                 yname: ya.label,
                 colorname: ca.label,
                 rowKey: rowKey,
+                querySrc: ya.query,
                 mab_mix_id: ya.query === "PKMAb" ? _row["study_PKMAb_mab_mix_id"] : undefined,
-                querySrc: ya.query
+                lab_code:  ya.query === "PKMAb" ? _row["study_PKMAb_lab_code"] : undefined,
+                source_assay:  ya.query === "PKMAb" ? _row["study_PKMAb_source_assay"] : undefined,
+                specimen_type:  ya.query === "PKMAb" ? _row["study_PKMAb_specimen_type"] : undefined
             };
 
             // split the data entry based on undefined x and y values for gutter plotting
