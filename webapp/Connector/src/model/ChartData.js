@@ -429,13 +429,8 @@ Ext.define('Connector.model.ChartData', {
             if (_row[QueryUtils.STUDY_ALIAS] && _row[QueryUtils.VISITROWID_ALIAS]) {
                 timeAxisKey = ChartUtils.studyAxisKeyDelimiter + xVal;
                 timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.STUDY_ALIAS];
-                if (ya.query === "PKMAb" && _row["study_PKMAb_mab_mix_id"]) {
-                    timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row["study_PKMAb_mab_mix_id"];
-                }
-                else {
-                    if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
-                        timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
-                    }
+                if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
+                    timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
                 }
             }
 
@@ -451,6 +446,17 @@ Ext.define('Connector.model.ChartData', {
 
             allRows[rowKey] = _row;
 
+            var measureSet = this.getMeasureSet();
+            var grouping = _row[QueryUtils.SUBJECT_ALIAS]; // at minimum, group by subject_id
+
+            //additional grouping by fields that has 'isLinePlotGroupingField' set to true in measure.js
+            Ext.each(measureSet, function(m) {
+                var measureRecord = Connector.getService('Query').getMeasureRecordByAlias(m.measure.alias);
+                if (measureRecord && measureRecord.data.isLinePlotGroupingField) {
+                    grouping += "-" + _row[m.measure.alias]
+                }
+            }, this);
+
             var entry = {
                 x: xVal,
                 y: yVal,
@@ -462,11 +468,7 @@ Ext.define('Connector.model.ChartData', {
                 yname: ya.label,
                 colorname: ca.label,
                 rowKey: rowKey,
-                querySrc: ya.query,
-                mab_mix_id: ya.query === "PKMAb" ? _row["study_PKMAb_mab_mix_id"] : undefined,
-                lab_code:  ya.query === "PKMAb" ? _row["study_PKMAb_lab_code"] : undefined,
-                source_assay:  ya.query === "PKMAb" ? _row["study_PKMAb_source_assay"] : undefined,
-                specimen_type:  ya.query === "PKMAb" ? _row["study_PKMAb_specimen_type"] : undefined
+                groupField: grouping
             };
 
             // split the data entry based on undefined x and y values for gutter plotting
