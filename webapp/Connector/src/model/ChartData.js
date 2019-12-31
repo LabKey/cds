@@ -313,7 +313,12 @@ Ext.define('Connector.model.ChartData', {
             // exclude if x, y and color are all from same source, and ca is not a dimension with diff filter values
             if (this.isSameSource(xa, ca) && excludeAliases.indexOf(ca.alias) == -1)
             {
-                excludeAliases.push(ca.alias);
+                var caField = Connector.getService('Query').getMeasureRecordByAlias(ca.alias);
+
+                //exclude only if its not required for grouping
+                if (caField && caField.data && !caField.data.isLinePlotGroupingField) {
+                    excludeAliases.push(ca.alias);
+                }
             }
         }
 
