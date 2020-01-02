@@ -862,7 +862,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         log("Verify PKMAb grid export");
         CDSExport exported = new CDSExport(Arrays.asList(Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT, 80),
-                Pair.of(CDSHelper.TITLE_PKMAB, 97)));
+                Pair.of(CDSHelper.TITLE_PKMAB, 116)));
         exported.setDataTabHeaders(Arrays.asList(
                 Pair.of(CDSHelper.GRID_TITLE_STUDY_TREATMENT,
                         Arrays.asList("Subject Id", "Study", "Treatment Summary", "Study days")),
