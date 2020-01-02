@@ -313,12 +313,7 @@ Ext.define('Connector.model.ChartData', {
             // exclude if x, y and color are all from same source, and ca is not a dimension with diff filter values
             if (this.isSameSource(xa, ca) && excludeAliases.indexOf(ca.alias) == -1)
             {
-                var caField = Connector.getService('Query').getMeasureRecordByAlias(ca.alias);
-
-                //exclude only if its not required for grouping
-                if (caField && caField.data && !caField.data.isLinePlotGroupingField) {
-                    excludeAliases.push(ca.alias);
-                }
+                excludeAliases.push(ca.alias);
             }
         }
 
@@ -377,6 +372,12 @@ Ext.define('Connector.model.ChartData', {
         dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated), getAllDimensions);
 
         var allRows = {};
+
+        var measureSet = this.getMeasureSet();
+        var measureSetAliases = measureSet.map(function(m) {return m.measure.alias}).filter(function (value, index, self) {
+            return value === undefined || value === null ? false : self.indexOf(value) === index;
+        });//set of unique measure aliases
+
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++)
         {
@@ -451,16 +452,25 @@ Ext.define('Connector.model.ChartData', {
 
             allRows[rowKey] = _row;
 
-            var measureSet = this.getMeasureSet();
             var grouping = _row[QueryUtils.SUBJECT_ALIAS]; // at minimum, group by subject_id
 
             //additional grouping by fields that has 'isLinePlotGroupingField' set to true in measure.js
-            Ext.each(measureSet, function(m) {
-                var measureRecord = Connector.getService('Query').getMeasureRecordByAlias(m.measure.alias);
-                if (measureRecord && measureRecord.data.isLinePlotGroupingField) {
-                    grouping += "-" + _row[m.measure.alias]
+            Ext.each(measureSetAliases, function(measureAlias) {
+                var measureRecord = Connector.getService('Query').getMeasureRecordByAlias(measureAlias);
+
+                if (measureRecord && measureRecord.data.isLinePlotGroupingField && _row[measureAlias]) {
+                    grouping += "-" + _row[measureAlias]
                 }
             }, this);
+
+            // for cases when color fields are excluded from the grouping done above
+            if (ca.alias) {
+                var caField = Connector.getService('Query').getMeasureRecordByAlias(ca.alias);
+
+                if (!_row[ca.alias] && caField.data.isLinePlotGroupingField) {
+                    grouping += "-" + colorVal;
+                }
+            }
 
             var entry = {
                 x: xVal,
