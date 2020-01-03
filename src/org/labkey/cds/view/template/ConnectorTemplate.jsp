@@ -143,7 +143,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/patches.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/geom.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/statistics.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/stat.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/scale.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/layer.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/internal/D3Renderer.js"></script>
