@@ -40,7 +40,7 @@ Ext.define('Connector.view.module.MabDetails', {
             '</div>',
             '<tpl for="mabs">',
                 '<div class="reportmodulecontainer">',
-                '<h3>{mabName:htmlEncode} Details</h3>',
+                '<h3>{mabName:htmlEncode} details</h3>',
 
                 '<tpl if="isotype || hxb2Loc || bindingType || mab_lanlid || donorSpecies || donorId || donorClade">',
                     '<table class="learn-study-info">',
