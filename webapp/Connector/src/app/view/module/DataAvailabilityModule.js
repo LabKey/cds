@@ -91,8 +91,8 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                 'itemmouseenter' : function(view, record, item, index, evt) {
                     var dataLink = Ext.get(Ext.query("a", item)[0]) || Ext.get(Ext.query("span", item)[0]),
                             id = Ext.id();
-                    var showAllId = dataLink.id;
-                    if (record.data.data_status && dataLink && showAllId !== 'integrated-data-showAll') {
+
+                    if (record.data.data_status && dataLink) {
                         dataLink.on('mouseenter', this.showDataStatusTooltip, this, {
                             status: record.data.data_status,
                             id: id
@@ -317,29 +317,37 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         '<tpl if="this.hasGrouping()">',
                             '<tpl for="this.getGroups()">',
                                 '<tpl if="parent.data_group === values">',
-                                    'and {[this.getGroupedListSize(values)]} more ',
-                                    '<span id="{[this.getGroupId(xindex)]}" class="show-hide-toggle-integrateddata">(show all)</span>',
+                                    '<table id="{[this.getGroupId(xindex)]}"><tr>',
+                                        '<td>and {[this.getGroupedListSize(values)]} more </td>',
+                                        '<td class="show-hide-toggle-integrateddata" style="padding-bottom:0px">(show all)</td>',
+                                    '</tr></table>',
                                 '</tpl>',
                             '</tpl>',
                         '<tpl else>',
-                            'and {[this.getRemainingListSize()]} more ',
-                            '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show all)</span>',
+                            '<table id="integrated-data-showAll"><tr>',
+                                '<td>and {[this.getRemainingListSize()]} more </td>',
+                                '<td class="show-hide-toggle-integrateddata" style="padding-bottom:0px">(show all)</td>',
+                            '</tr></table>',
                         '</tpl>',
-                        '</br></br>',
+                        '</br>',
                     '<tpl elseif="data_index === 10 && data_show === true">',
                         '</br>',
                         '<tpl if="this.hasGrouping()">',
                             '<tpl for="this.getGroups()">',
                                 '<tpl if="parent.data_group === values">',
-                                    'and {[this.getGroupedListSize(values)]} more ',
-                                    '<span id="{[this.getGroupId(xindex)]}" class="show-hide-toggle-integrateddata">(show less)</span>',
+                                    '<table id="{[this.getGroupId(xindex)]}"><tr>',
+                                        '<td>and {[this.getGroupedListSize(values)]} more </td>',
+                                        '<td class="show-hide-toggle-integrateddata"style="padding-bottom:0px">(show less)</td>',
+                                    '</tr></table>',
                                 '</tpl>',
                             '</tpl>',
                         '<tpl else>',
-                            'and {[this.getRemainingListSize()]} more ',
-                            '<span id="integrated-data-showAll" class="show-hide-toggle-integrateddata">(show less)</span>',
+                            '<table id="integrated-data-showAll"><tr>',
+                                '<td>and {[this.getRemainingListSize()]} more </td>',
+                                '<td class="show-hide-toggle-integrateddata"style="padding-bottom:0px">(show less)</td>',
+                            '</tr></table>',
                         '</tpl>',
-                        '</br></br>',
+                        '</br>',
                     '</tpl>',
                     '<table>',
                         '<tpl if="data_index &gt; 9 && data_show === true">',
@@ -396,6 +404,9 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         return me.data.model.data[me.data.dataField].map(function(grp) {return grp.data_group}).filter(function (value, index, self) {
                             return value === undefined || value === null ? false : self.indexOf(value) === index;
                         });
+                    },
+                    getId: function () {
+                        return Ext.id();
                     }
                 })
     },
