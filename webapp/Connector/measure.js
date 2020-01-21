@@ -635,7 +635,18 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_PKMAb_mab_mix_id': {
-                    hiddenInPlot: true
+                    hiddenInPlot: true,
+                    isLinePlotGroupingField: true,
+                    hiddenInAdvancedOptions: true
+                },
+                'study_PKMAb_lab_code': {
+                    isLinePlotGroupingField: true
+                },
+                'study_PKMAb_source_assay': {
+                    isLinePlotGroupingField: true
+                },
+                'study_PKMAb_specimen_type': {
+                    isLinePlotGroupingField: true
                 },
                 'study_Demographics_species': {
                     isRecommendedVariable: true

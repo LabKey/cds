@@ -372,6 +372,12 @@ Ext.define('Connector.model.ChartData', {
         dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated), getAllDimensions);
 
         var allRows = {};
+
+        var measureSet = this.getMeasureSet();
+        var measureSetAliases = measureSet.map(function(m) {return m.measure.alias}).filter(function (value, index, self) {
+            return value === undefined || value === null ? false : self.indexOf(value) === index;
+        });//set of unique measure aliases
+
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++)
         {
@@ -432,7 +438,6 @@ Ext.define('Connector.model.ChartData', {
                 if (_row[QueryUtils.TREATMENTSUMMARY_ALIAS]) {
                     timeAxisKey += ChartUtils.studyAxisKeyDelimiter + _row[QueryUtils.TREATMENTSUMMARY_ALIAS];
                 }
-
             }
 
             var rowKey = '';
@@ -447,6 +452,26 @@ Ext.define('Connector.model.ChartData', {
 
             allRows[rowKey] = _row;
 
+            var grouping = _row[QueryUtils.SUBJECT_ALIAS]; // at minimum, group by subject_id
+
+            //additional grouping by fields that has 'isLinePlotGroupingField' set to true in measure.js
+            Ext.each(measureSetAliases, function(measureAlias) {
+                var measureRecord = Connector.getService('Query').getMeasureRecordByAlias(measureAlias);
+
+                if (measureRecord && measureRecord.data.isLinePlotGroupingField && _row[measureAlias]) {
+                    grouping += "-" + _row[measureAlias]
+                }
+            }, this);
+
+            // for cases when color fields are excluded from the grouping done above
+            if (ca.alias) {
+                var caField = Connector.getService('Query').getMeasureRecordByAlias(ca.alias);
+
+                if (!_row[ca.alias] && caField.data.isLinePlotGroupingField) {
+                    grouping += "-" + colorVal;
+                }
+            }
+
             var entry = {
                 x: xVal,
                 y: yVal,
@@ -457,7 +482,8 @@ Ext.define('Connector.model.ChartData', {
                 xname: xa.label,
                 yname: ya.label,
                 colorname: ca.label,
-                rowKey: rowKey
+                rowKey: rowKey,
+                groupField: grouping
             };
 
             // split the data entry based on undefined x and y values for gutter plotting

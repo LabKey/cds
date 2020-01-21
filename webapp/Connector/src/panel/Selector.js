@@ -933,7 +933,7 @@ Ext.define('Connector.panel.Selector', {
         var config = this.sourceMeasureFilter;
 
         Ext.each(this.getDimensionsForMeasure(this.activeMeasure), function(dimension) {
-            if (dimension.get("hiddenInPlot"))
+            if (dimension.get("hiddenInPlot") && !dimension.get("isLinePlotGroupingField"))
                 return;
 
             if (Ext.isFunction(config.userFilter) && !config.userFilter(dimension.data, true))

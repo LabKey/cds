@@ -1036,7 +1036,7 @@ Ext.define('Connector.view.Chart', {
                 return row.y;
             },
             group: function(row) {
-                return row['subjectId'];
+                return row['groupField'];
             }
         };
 
