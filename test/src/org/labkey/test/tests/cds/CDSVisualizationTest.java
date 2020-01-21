@@ -23,17 +23,14 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.SortDirection;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
-import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.cds.CDSAsserts;
-import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 
@@ -55,9 +52,15 @@ import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_LINE;
 import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_SCATTER;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 55)
+@BaseWebDriverTest.ClassTimeout(minutes = 38)
 public class CDSVisualizationTest extends CDSReadOnlyTest
 {
+    protected static final String MOUSEOVER_FILL = "#41C49F";
+    protected static final String MOUSEOVER_STROKE = "#00EAFF";
+    protected static final String BRUSHED_FILL = "#14C9CC";
+    protected static final String BRUSHED_STROKE = "#00393A";
+    protected static final String NORMAL_COLOR = "#000000";
+    protected static final String FADED_FILL = "#E6E6E6";
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSPlot cdsPlot = new CDSPlot(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
@@ -66,22 +69,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     private final String PGROUP3 = "visgroup 3";
     private final String PGROUP3_COPY = "copy of visgroup 3";
     private final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subject')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
-
-    protected static final String MOUSEOVER_FILL = "#41C49F";
-    protected static final String MOUSEOVER_STROKE = "#00EAFF";
-    protected static final String BRUSHED_FILL = "#14C9CC";
-    protected static final String BRUSHED_STROKE = "#00393A";
-    protected static final String NORMAL_COLOR = "#000000";
-    protected static final String FADED_FILL = "#E6E6E6";
-
-    @Before
-    public void preTest()
-    {
-        cds.enterApplication();
-        cds.ensureNoFilter();
-        cds.ensureNoSelection();
-        getDriver().manage().window().setSize(CDSHelper.idealWindowSize);
-    }
 
     @BeforeClass
     public static void initTest() throws Exception
@@ -97,6 +84,15 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
 //        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
 //        cvt.deleteParticipantGroups();
+    }
+
+    @Before
+    public void preTest()
+    {
+        cds.enterApplication();
+        cds.ensureNoFilter();
+        cds.ensureNoSelection();
+        getDriver().manage().window().setSize(CDSHelper.idealWindowSize);
     }
 
     @Override
@@ -141,7 +137,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         assertFalse("For BAMA Magnitude vs NAB Lab x-axis gutter plot was present it should not have been.", cdsPlot.hasXGutter());
         assertTrue("For BAMA Magnitude vs NAB Lab y-axis gutter plot was not present.", cdsPlot.hasYGutter());
-        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0 );
+        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0);
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
@@ -163,7 +159,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         assertTrue("For NAB IC80 vs ICS Magnitude x-axis gutter plot was not present.", cdsPlot.hasXGutter());
-        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
+        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0);
         assertFalse("For NAB IC80 vs ICS Magnitude y-axis gutter plot was present and it should not have been.", cdsPlot.hasYGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
@@ -193,9 +189,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         assertTrue("For ICS CD8+ vs ICS CD4+ x-axis gutter plot was not present.", cdsPlot.hasXGutter());
-        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0 );
+        assertTrue("There is an x-axis gutter plot, but there are no data points in it.", cdsPlot.getXGutterPlotPointCount() > 0);
         assertTrue("For ICS CD8+ vs ICS CD4+ y-axis gutter plot was not present.", cdsPlot.hasYGutter());
-        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0 );
+        assertTrue("There is an y-axis gutter plot, but there are no data points in it.", cdsPlot.getYGutterPlotPointCount() > 0);
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
@@ -461,7 +457,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
     }
 
-// TODO CDS does not work with groups created in LabKey, the groups need to be created in CDS.
+    // TODO CDS does not work with groups created in LabKey, the groups need to be created in CDS.
 //    @Test
     public void verifySavedGroupPlot()
     {
@@ -895,7 +891,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Click on a point in the plot and make sure the tool tip is as expected.");
         // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        pointToClick = Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point").findElements(getDriver()).size() / 4;
         log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
         cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
 
@@ -922,7 +918,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Click on a point in the plot and make sure the tool tip has the expected text.");
 
         // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        pointToClick = Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point").findElements(getDriver()).size() / 4;
         log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
         cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
 
@@ -950,7 +946,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Click on a point in the 'Undefined X value' gutter and make sure the tool tip is as expected.");
         // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        pointToClick = Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point").findElements(getDriver()).size() / 4;
         log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
         cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
 
@@ -966,7 +962,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Click on a point in the 'Undefined Y value' gutter and make sure the tool tip is as expected.");
         // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        pointToClick = Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.point").findElements(getDriver()).size() / 4;
         log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
         cssPathToSvg = "div.bottomplot > svg";
 
@@ -982,7 +978,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Click on a point in the main plot and make sure the tool tip is as expected.");
         // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(2) a.point"))/4;
+        pointToClick = Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(2) a.point").findElements(getDriver()).size() / 4;
         log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
         cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(2)";
 
@@ -1009,7 +1005,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Click on one of the heat map points and make sure the tool tip is as expected.");
         // Try to protect from getting an index out of range error.
-        pointToClick = getElementCount(Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/4;
+        pointToClick = Locator.css("div.plot:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square").findElements(getDriver()).size() / 4;
         log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square\".");
         cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
 
