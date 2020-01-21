@@ -91,7 +91,8 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                 'itemmouseenter' : function(view, record, item, index, evt) {
                     var dataLink = Ext.get(Ext.query("a", item)[0]) || Ext.get(Ext.query("span", item)[0]),
                             id = Ext.id();
-                    if (record.data.data_status && dataLink) {
+                    var showAllId = dataLink.id;
+                    if (record.data.data_status && dataLink && showAllId !== 'integrated-data-showAll') {
                         dataLink.on('mouseenter', this.showDataStatusTooltip, this, {
                             status: record.data.data_status,
                             id: id
