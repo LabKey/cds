@@ -187,6 +187,12 @@ Ext.define('Connector.view.MabGrid', {
                     disabled: !this.allowReporting,
                     disabledCls: 'vardisable',
                     maskOnDisable: false,
+                    childEls: ['outerCt', 'innerCt'],
+                    renderTpl: [
+                        '<span id="{id}-outerCt" style="display:table;">',
+                            '<div id="{id}-innerCt" class="mabgridbuttonslayout"></div>',
+                        '</span>'
+                    ],
                     items: items,
                     listeners: {
                         afterrender: {
