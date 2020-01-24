@@ -170,7 +170,7 @@ public class CDSModule extends DefaultModule
     @Override
     public double getVersion()
     {
-        return 19.21;
+        return 20.000;
     }
 
     @Override
