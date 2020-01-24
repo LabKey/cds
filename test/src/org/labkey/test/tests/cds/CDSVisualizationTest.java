@@ -52,7 +52,7 @@ import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_LINE;
 import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_SCATTER;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 38)
+@BaseWebDriverTest.ClassTimeout(minutes = 45)
 public class CDSVisualizationTest extends CDSReadOnlyTest
 {
     protected static final String MOUSEOVER_FILL = "#41C49F";
