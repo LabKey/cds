@@ -12,11 +12,16 @@ Ext.define('Connector.view.MabReport', {
 
     rightSideNavWidth: 244,
 
+    loadReport: false,
+
     initComponent : function() {
         if (this.parentGrid) {
             this.parentGrid.on('resize', this.resizeReport, this, {buffer: 200});
         }
-        this.items = [this.getHeaderItem(), this.getReportResult()];
+
+        if (this.loadReport) {
+            this.items = [this.getHeaderItem(), this.getReportResult()];
+        }
         this.callParent();
     },
 

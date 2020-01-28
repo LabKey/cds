@@ -726,6 +726,18 @@ Ext.define('Connector.view.MabGrid', {
             return false;
         }
 
+        // Fix for Issue 39229: Lag opening report when clicking on mAb report buttons
+        // Immediately go to the report view before prepareMAbReportQueries step below instead of staying on the grid view
+        // This report view is a temporary one, and will be later removed
+        this.showGridView(false);
+        this.add({
+            xtype: 'mabreportview',
+            parentGrid: this,
+            id: 'mab-temp-report-view'
+        });
+        this.doLayout();
+        this.fireEvent('showload', this);//show loading mask in the meantime/until prepareMAbReportQueries completes
+
         Connector.getQueryService().prepareMAbReportQueries({
             reportId: reportId,
             reportLabel: reportLabel,
@@ -735,17 +747,23 @@ Ext.define('Connector.view.MabGrid', {
             },
             scope: this
         });
+
     },
 
     renderRReportPanel : function(config) {
         this.showGridView(false);
+        this.remove(this.down('#mab-temp-report-view')); //remove temporary report view
+        this.fireEvent('hideload', this); //hide loading mask
+
+        //load real report with data
         this.add({
             xtype: 'mabreportview',
             parentGrid: this,
             reportId: config.reportId,
             reportLabel: config.reportLabel,
             filteredKeysQuery: config.filteredKeysQuery,
-            filteredDatasetQuery: config.filteredDatasetQuery
+            filteredDatasetQuery: config.filteredDatasetQuery,
+            loadReport: true
         });
         this.doLayout();
     },
