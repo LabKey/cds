@@ -725,45 +725,13 @@ Ext.define('Connector.view.MabGrid', {
             Ext.Msg.alert('Error', "No MAb/Mixture has been selected.");
             return false;
         }
-
-        // Fix for Issue 39229: Lag opening report when clicking on mAb report buttons
-        // Immediately go to the report view before prepareMAbReportQueries step below instead of staying on the grid view
-        // This report view is a temporary one, and will be later removed
         this.showGridView(false);
         this.add({
             xtype: 'mabreportview',
             parentGrid: this,
-            id: 'mab-temp-report-view'
-        });
-        this.doLayout();
-        this.fireEvent('showload', this);//show loading mask in the meantime/until prepareMAbReportQueries completes
-
-        Connector.getQueryService().prepareMAbReportQueries({
+            id: 'mab-report-view',
             reportId: reportId,
-            reportLabel: reportLabel,
-            success: this.renderRReportPanel,
-            failure: function() {
-                Ext.Msg.alert('Error', "Unable to render report.");
-            },
-            scope: this
-        });
-
-    },
-
-    renderRReportPanel : function(config) {
-        this.showGridView(false);
-        this.remove(this.down('#mab-temp-report-view')); //remove temporary report view
-        this.fireEvent('hideload', this); //hide loading mask
-
-        //load real report with data
-        this.add({
-            xtype: 'mabreportview',
-            parentGrid: this,
-            reportId: config.reportId,
-            reportLabel: config.reportLabel,
-            filteredKeysQuery: config.filteredKeysQuery,
-            filteredDatasetQuery: config.filteredDatasetQuery,
-            loadReport: true
+            reportLabel: reportLabel
         });
         this.doLayout();
     },
