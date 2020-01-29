@@ -197,8 +197,12 @@ Ext.define('Connector.utility.PlotTooltip', {
     buildPointAxisDetailTooltip: function(plot, axis, record, aggregators, hierarchicalDimensionInfo) {
         var content = '<div class="axis-details">', colon = ': ', linebreak = '<br/>';
         if (axis) {
+            var skipToolTip = axis.skipToolTip;
             var dimensions = axis.options.dimensions;
             for (var dim in dimensions) {
+                if (skipToolTip && skipToolTip.length > 0 && skipToolTip.indexOf(dim) >= 0) {
+                    continue;
+                }
                 if (dimensions.hasOwnProperty(dim)) {
                     var values = [];
                     if (plot.hasDimensionalAggregators) {
