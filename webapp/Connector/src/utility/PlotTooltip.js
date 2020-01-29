@@ -200,10 +200,10 @@ Ext.define('Connector.utility.PlotTooltip', {
             var skipToolTip = axis.skipToolTip;
             var dimensions = axis.options.dimensions;
             for (var dim in dimensions) {
-                if (skipToolTip && skipToolTip.length > 0 && skipToolTip.indexOf(dim) >= 0) {
+                if (Ext.isArray(skipToolTip) && skipToolTip.length > 0 && skipToolTip.indexOf(dim) >= 0) {
                     continue;
                 }
-                if (dimensions.hasOwnProperty(dim)) {
+                if (dimensions.hasOwnPropertyExt.isArray(dim)) {
                     var values = [];
                     if (plot.hasDimensionalAggregators) {
                         var aggregatorValues = aggregators[dim] ? Ext.clone(aggregators[dim].getValues()) : null;

@@ -47,7 +47,7 @@ Ext.define('Connector.model.Measure', {
         {name: 'isHoursType', type: 'boolean', defaultValue: false},
         {name: 'allowHoursTimePoint', type: 'boolean', defaultValue: false},
 
-        // Property to skip displaying in plot tooltip
+        // Array of properties to skip displaying in plot tooltip
         {name: 'skipToolTip', defaultValue: undefined},
 
         // Misc properties about the measure display in the application
