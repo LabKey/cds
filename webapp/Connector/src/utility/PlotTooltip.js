@@ -203,7 +203,7 @@ Ext.define('Connector.utility.PlotTooltip', {
                 if (Ext.isArray(skipToolTip) && skipToolTip.length > 0 && skipToolTip.indexOf(dim) >= 0) {
                     continue;
                 }
-                if (dimensions.hasOwnPropertyExt.isArray(dim)) {
+                if (dimensions.hasOwnProperty(dim)) {
                     var values = [];
                     if (plot.hasDimensionalAggregators) {
                         var aggregatorValues = aggregators[dim] ? Ext.clone(aggregators[dim].getValues()) : null;
