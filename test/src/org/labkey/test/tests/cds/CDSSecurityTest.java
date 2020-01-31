@@ -215,7 +215,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         validateText("Study list", studies, "QED 3", "QED 4", "RED 1", "RED 2",
                 "RED 3", "RED 4", "xyz123", "ZAP 101", "ZAP 102");
 
-        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        Locator.XPathLocator showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
         showAllExpandAndVerify(showAllListToggle, 1);
         assertTextPresent("ZAP 103");
         verifyShowAllCollapse(showAllListToggle, 1);

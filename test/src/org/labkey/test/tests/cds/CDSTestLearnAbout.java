@@ -252,7 +252,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify mAb link");
         click(Locator.linkWithText("mAb 93"));
-        waitForElement(Locator.tagWithText("h3", "mAb 93 Details"));
+        waitForElement(Locator.tagWithText("h3", "mAb 93 details"));
     }
 
     @Test
@@ -377,7 +377,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(breadcrumb);
 
         log("Verify mAb details section headers");
-        verifySectionHeaders(infoHeader, dataHeader, mAbName + " Details");
+        verifySectionHeaders(infoHeader, dataHeader, mAbName + " details");
 
         log("Verify external LANL link");
         String lanlLinkLoc = "//a[contains(@href, 'https://www.hiv.lanl.gov/content/immunology/ab_search?results=Search&id=$')]";
@@ -404,7 +404,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify mAb details section headers");
 
-        verifySectionHeaders(infoHeader, "3BNC117 Details", "PGDM1400 Details", "PGT128 Details");
+        verifySectionHeaders(infoHeader, "3BNC117 details", "PGDM1400 details", "PGT128 details");
 
         log("Verify external LANL links for each mab in the mix");
         assertElementPresent(Locator.xpath(lanlLinkLoc.replace("$", "2586")));
@@ -617,7 +617,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         validateToolTip(Locator.linkWithText("ZAP 108").findElement(getDriver()), "provided, but not included");
         validateToolTip(Locator.linkWithText("ZAP 115").findElement(getDriver()), "being processed");
 
-        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        Locator.XPathLocator showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
         showAllExpandAndVerify(showAllListToggle, 6);
         validateToolTip(Locator.linkWithText("ZAP 117").findElement(getDriver()), "pending study completion");
         verifyShowAllCollapse(showAllListToggle, 6);
@@ -713,7 +713,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify Integrated Data Availability");
         waitForText("Integrated data");
 
-        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        Locator.XPathLocator showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
         showAllExpandAndVerify(showAllListToggle, 2);
 
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
@@ -1106,7 +1106,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         waitForText(waitForTextIntegratedData);
 
-        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        Locator.XPathLocator showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
         showAllExpandAndVerify(showAllListToggle, 6);
 
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
@@ -1152,7 +1152,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify mAb integrated data availability sub listing with 2 categories");
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_117));
 
-        showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll-1");
+        showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
         showAllExpandAndVerify(showAllListToggle, 3);
 
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
@@ -1193,7 +1193,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify Integrated Data Availability");
         waitForText("Integrated data");
-        Locator.XPathLocator showAllListToggle = Locator.tagWithId("span", "integrated-data-showAll");
+        Locator.XPathLocator showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
 
         showAllExpandAndVerify(showAllListToggle, 3);
 
