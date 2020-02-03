@@ -60,7 +60,7 @@ public class PopulateRelationshipTask extends AbstractPopulateTask
         }
 
         // Get a new TableInfo with the default container filter
-        targetTable = cdsSchema.getTable("studyrelationship");
+        targetTable = cdsSchema.getTable("studyrelationship", null);
 
         SQLFragment sql;
         SQLFragment queryForRowsWithoutValidStudy = new SQLFragment("SELECT * FROM ").append(sourceTable)
@@ -80,7 +80,7 @@ public class PopulateRelationshipTask extends AbstractPopulateTask
         // Insert all the rows
         for (Container container : containers)
         {
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable, sourceTable.getName()).append(" WHERE prot = ?");
+            sql = new SQLFragment("SELECT prot, rel_prot, relationship FROM ").append(sourceTable, sourceTable.getName()).append(" WHERE prot = ?");
             sql.add(container.getName());
             rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
 
