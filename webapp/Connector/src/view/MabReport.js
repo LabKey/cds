@@ -69,32 +69,46 @@ Ext.define('Connector.view.MabReport', {
             listeners: {
                 render : function(cmp){
                     me.reportPanel = cmp;
-                    var url = LABKEY.ActionURL.buildURL('reports', 'viewScriptReport', LABKEY.container.path, {
+                    cmp.getEl().mask("Generating " + me.reportLabel);
+
+                    Connector.getQueryService().prepareMAbReportQueries({
                         reportId: this.reportId,
-                        filteredKeysQuery: this.filteredKeysQuery,
-                        filteredDatasetQuery: this.filteredDatasetQuery
-                    });
-                    cmp.getEl().mask("Generating " + this.reportLabel);
-                    Ext.Ajax.request({
-                        url : url,
-                        method: 'POST',
-                        success: function(resp){
-                            cmp.getEl().unmask();
-                            var json = LABKEY.Utils.decode(resp.responseText);
-                            if (!json || !json.html)
-                                Ext.Msg.alert("Error", "Unable to load " + this.reportLabel + ". The report doesn't exist or you may not have permission to view it.");
-                            LABKEY.Utils.loadAjaxContent(resp, 'mabreportrenderpanel', function() {
-                                me.resizeReport();
+                        reportLabel: this.reportLabel,
+                        success: function(vals) {
+
+                            var url = LABKEY.ActionURL.buildURL('reports', 'viewScriptReport', LABKEY.container.path, {
+                                reportId: me.reportId,
+                                filteredKeysQuery: vals.filteredKeysQuery,
+                                filteredDatasetQuery: vals.filteredDatasetQuery
                             });
+
+                            Ext.Ajax.request({
+                                url : url,
+                                method: 'POST',
+                                success: function(resp){
+                                    cmp.getEl().unmask();
+                                    var json = LABKEY.Utils.decode(resp.responseText);
+                                    if (!json || !json.html)
+                                        Ext.Msg.alert("Error", "Unable to load " + me.reportLabel + ". The report doesn't exist or you may not have permission to view it.");
+                                    LABKEY.Utils.loadAjaxContent(resp, 'mabreportrenderpanel', function() {
+                                        me.resizeReport();
+                                    });
+                                },
+                                failure : function() {
+                                    Ext.Msg.alert("Error", "Failed to load " + me.reportLabel);
+                                },
+                                scope : this
+                            });
+
                         },
-                        failure : function() {
-                            Ext.Msg.alert("Error", "Failed to load " + this.reportLabel);
+                        failure: function() {
+                            Ext.Msg.alert('Error', "Unable to render report.");
                         },
-                        scope : this
+                        scope: this
                     });
                 },
                 resize : function() {
-                    this.resizeReport();
+                    me.resizeReport();
                 },
                 scope: this
             }
