@@ -114,7 +114,7 @@ Ext.define('Connector.model.InfoPane', {
             }
         }
         else if (!noopFilter) {
-            state.addFilter(filter);
+            state.addFilter(filter, false, false);
         }
     },
 

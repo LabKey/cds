@@ -187,6 +187,12 @@ Ext.define('Connector.view.MabGrid', {
                     disabled: !this.allowReporting,
                     disabledCls: 'vardisable',
                     maskOnDisable: false,
+                    childEls: ['outerCt', 'innerCt'],
+                    renderTpl: [
+                        '<span id="{id}-outerCt" style="display:table;">',
+                            '<div id="{id}-innerCt" class="mabgridbuttonslayout"></div>',
+                        '</span>'
+                    ],
                     items: items,
                     listeners: {
                         afterrender: {
@@ -719,27 +725,13 @@ Ext.define('Connector.view.MabGrid', {
             Ext.Msg.alert('Error', "No MAb/Mixture has been selected.");
             return false;
         }
-
-        Connector.getQueryService().prepareMAbReportQueries({
-            reportId: reportId,
-            reportLabel: reportLabel,
-            success: this.renderRReportPanel,
-            failure: function() {
-                Ext.Msg.alert('Error', "Unable to render report.");
-            },
-            scope: this
-        });
-    },
-
-    renderRReportPanel : function(config) {
         this.showGridView(false);
         this.add({
             xtype: 'mabreportview',
             parentGrid: this,
-            reportId: config.reportId,
-            reportLabel: config.reportLabel,
-            filteredKeysQuery: config.filteredKeysQuery,
-            filteredDatasetQuery: config.filteredDatasetQuery
+            id: 'mab-report-view',
+            reportId: reportId,
+            reportLabel: reportLabel
         });
         this.doLayout();
     },

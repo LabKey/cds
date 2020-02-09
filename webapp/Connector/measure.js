@@ -89,6 +89,9 @@ Ext.define('Connector.measure.Configuration', {
                     plotDependencyColumnAlias: [
                         'study_PKMAb_visit_time_label'
                     ],
+                    skipToolTip: [
+                       'study_PKMAb_mab_mix_id'
+                    ],
                     timePointSortColumnAlias: 'study_PKMAb_hours_post_initial_infusion',
                     defaultPlotType: 'line',
                     allowHoursTimePoint: true,
