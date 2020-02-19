@@ -350,6 +350,11 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Contact information'
                         }
                     },{
+                        type: 'studyresources',
+                        staticData: {
+                            title: 'Other study resources'
+                        }
+                    },{
                         type: 'studyproducts',
                         staticData: {
                             title: 'Products'

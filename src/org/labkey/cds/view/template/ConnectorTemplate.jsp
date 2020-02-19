@@ -349,6 +349,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ContactCDS.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyResources.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/MabDetails.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/PublicationDetails.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>

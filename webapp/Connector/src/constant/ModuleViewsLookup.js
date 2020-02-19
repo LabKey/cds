@@ -10,6 +10,7 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	text: 'module.text',
 	html: 'module.html',
 	contactcds: 'app.module.contactcds',
+	studyresources: 'app.module.studyresources',
 	productheader: 'app.module.productheader',
 	productotherproducts: 'app.module.productotherproducts',
 	studyheader: 'app.module.studyheader',
