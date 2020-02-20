@@ -41,6 +41,11 @@ Ext.define('Connector.view.module.StudyResources', {
                 'View this study on <a href=" https://clinicaltrials.gov/show/{clintrials_id}" target="_blank">clintrials.gov <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
                 '</div>',
             '</tpl>',
+            '<tpl if="study_specimen_repository">',
+                '<div class="item-row">',
+                    'View research <a href="http://www.specimenrepository.org/RepositorySite/search/replaySearch?study={study_specimen_repository}" target="_blank">specimens in repository <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/><br/>',
+                '</div>',
+            '</tpl>',
         '</tpl>'
     ),
     initComponent : function() {

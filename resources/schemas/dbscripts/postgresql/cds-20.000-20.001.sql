@@ -1,0 +1,1 @@
+ALTER TABLE cds.study ADD COLUMN study_specimen_repository VARCHAR(250);
