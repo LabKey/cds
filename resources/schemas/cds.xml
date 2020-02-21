@@ -61,6 +61,7 @@
             <column columnName="atlas_link"/>
             <column columnName="cavd_link"/>
             <column columnName="study_clintrials_id"/>
+            <column columnName="study_specimen_repository"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -757,14 +758,8 @@
             <column columnName="strategy"/>
             <column columnName="atlas_link"/>
             <column columnName="cavd_link"/>
-            <column columnName="study_specimen_repository">
-                <columnTitle>Specimen Repository Link</columnTitle>
-                <url>http://www.specimenrepository.org/RepositorySite/search/replaySearch?study=${study_specimen_repository}</url>
-                <description>
-                    A link to the repository where surplus specimens are stored and can be requested. (Values under this column are used as a parameter in specimen repository url, and will be mostly same as what's under the 'label' column, but not always.)
-                </description>
-            </column>
             <column columnName="clintrials_id"/>
+            <column columnName="specimen_repository_label"/>
         </columns>
     </table>
     <table tableName="treatmentarmsubjectmap" tableDbType="TABLE">
