@@ -177,6 +177,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String firstContactEmail = "hholmest@alexa.com";
         final String rationale = "In sagittis dui vel nisl.";
         final String clintrialsId = "blah030";
+        final String specimenRepoLabel = "HVTN 505";
 
         cds.viewLearnAboutPage("Studies");
         log("Searching for '" + searchString + "'.");
@@ -205,6 +206,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementPresent(Locator.xpath("//a[contains(@href, 'mailto:" + firstContactEmail + "')][text()='" + firstContactName + "']"));
 
         assertElementPresent(Locator.xpath("//a[contains(@href, 'https://clinicaltrials.gov/show/" + clintrialsId + "')]"));
+        assertElementPresent(Locator.xpath("//a[contains(@href, 'http://www.specimenrepository.org/RepositorySite/search/replaySearch?study=" + specimenRepoLabel + "')]"));
 
         log("Verifying description section.");
         fields = Arrays.asList(CDSHelper.LEARN_ABOUT_DESCRIPTION_FIELDS);
