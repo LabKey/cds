@@ -38,7 +38,7 @@ Ext.define('Connector.view.module.StudyResources', {
             '</tpl>',
             '<tpl if="clintrials_id && species == \'Human\'"]}>',
                 '<div class="item-row">',
-                'View this study on <a href=" https://clinicaltrials.gov/show/{clintrials_id}" target="_blank">clintrials.gov <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
+                'View this study on <a href="https://clinicaltrials.gov/show/{clintrials_id}" target="_blank">clintrials.gov <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
                 '</div>',
             '</tpl>',
             '<tpl if="specimen_repository_label">',
