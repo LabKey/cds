@@ -195,6 +195,7 @@
         <script path="Connector/src/app/view/module/AssayAnalyteList.js"/>
         <script path="Connector/src/app/view/module/AssayHeader.js"/>
         <script path="Connector/src/app/view/module/ContactCDS.js"/>
+        <script path="Connector/src/app/view/module/StudyResources.js"/>
         <script path="Connector/src/app/view/module/MabDetails.js"/>
         <script path="Connector/src/app/view/module/PublicationDetails.js"/>
         <script path="Connector/src/app/view/module/ProductHeader.js"/>

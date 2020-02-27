@@ -61,6 +61,7 @@
             <column columnName="atlas_link"/>
             <column columnName="cavd_link"/>
             <column columnName="study_clintrials_id"/>
+            <column columnName="study_specimen_repository"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -758,6 +759,7 @@
             <column columnName="atlas_link"/>
             <column columnName="cavd_link"/>
             <column columnName="clintrials_id"/>
+            <column columnName="specimen_repository_label"/>
         </columns>
     </table>
     <table tableName="treatmentarmsubjectmap" tableDbType="TABLE">
