@@ -593,8 +593,8 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
 
         final Locator lineLoc = Locator.css("svg g.layer path.line");
 
-        final int totalPKSubjectCount = 30;
-        int plotLineCount = getElementCount(lineLoc);
+        final int totalPKSubjectCount = 34;
+        int plotLineCount = lineLoc.findElements(getDriver()).size();
         assertEquals("Number of lines in plot is not as expected", totalPKSubjectCount, plotLineCount);
 
         String cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
