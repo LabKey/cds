@@ -65,6 +65,40 @@ Ext.define('Connector.view.AssayAntigen', {
         }
     },
 
+    getVirusColumn: function(antigenNameLabel, flex)
+    {
+        return [{
+            text: antigenNameLabel,
+            xtype: 'templatecolumn',
+            minWidth: 300,
+            flex: 2*flex, // increased label & description flex to better reflect spec images.
+            dataIndex: 'antigen_name',
+            filterConfigSet: [{
+                filterField: 'antigen_name',
+                valueType: 'string',
+                title: antigenNameLabel
+            }],
+            tpl: new Ext.XTemplate(
+               '<div class="detail-description">',
+                    '<h2>{antigen_name:htmlEncode}</h2>',
+                    '<div class="antigen-description detail-description-text">',
+
+                    '<tpl if="antigen_virus_full_name">',
+                        '<p class="block-with-text">',
+                            '{antigen_virus_full_name:htmlEncode}',
+                        '</p>',
+                    '</tpl>',
+                    '<tpl if="antigen_virus_name_other">',
+                        '<p class="block-with-text">',
+                            'Other names: {antigen_virus_name_other:htmlEncode}',
+                        '</p>',
+                    '</tpl>',
+                    '</div>',
+               '</div>'
+            )
+        }];
+    },
+
     getCommonColumns: function(antigenNameLabel, flex)
     {
         return [{
@@ -121,12 +155,16 @@ Ext.define('Connector.view.AssayAntigen', {
 
     getNABColumns: function()
     {
-        var commonColumns = this.getCommonColumns('Virus', 1/7);
+        var commonColumns = this.getVirusColumn('Virus', 1/7);
         var columns = [
+            this.getSimpleValueColumn('Virus Type', 'antigen_virus_type', 'antigen_virus_type', 100, 1/7),
+            this.getSimpleValueColumn('Species', 'antigen_virus_species', 'antigen_virus_species', 100, 1/7),
             this.getSimpleValueColumn('Clade', 'antigen_clade', 'antigen_clade', 100, 1/7),
             this.getSimpleValueColumn('Tier', 'antigen_neutralization_tier', 'antigen_neutralization_tier', 100, 1/7),
-            this.getSimpleValueColumn('Virus Type', 'antigen_virus_type', 'antigen_virus_type', 100, 1/7),
-            this.getSimpleValueColumn('Target Cell', 'antigen_target_cell', 'antigen_target_cell', 100, 1/7)
+            this.getSimpleValueColumn('Panels', 'antigen_panel_names', 'antigen_panel_names', 200, 1/7),
+            this.getSimpleValueColumn('Host Cell', 'antigen_virus_host_cell', 'antigen_virus_host_cell', 100, 1/7),
+            this.getSimpleValueColumn('Control', 'antigen_control_value', 'antigen_control_value', 100, 1/7),
+            this.getSimpleValueColumn('Backbone', 'antigen_virus_backbone', 'antigen_virus_backbone', 100, 1/7)
         ];
         return commonColumns.concat(columns);
     },

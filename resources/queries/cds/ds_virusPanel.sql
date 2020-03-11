@@ -1,0 +1,4 @@
+SELECT
+cds_virus_id,
+cds_panel_id
+FROM cds.import_virusPanel

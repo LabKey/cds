@@ -1,0 +1,7 @@
+cds_panel_id	panel_name	panel_description	antigen_type
+cds_panel_1	Antigen Panel 1	Mild panel	Virus
+cds_panel_2	Antigen Panel 2	Mild panel	Virus
+cds_panel_3	Antigen Panel 3	Medium panel	Virus
+cds_panel_4	Antigen Panel 4	Medium panel	Virus
+cds_panel_5	Antigen Panel 5	Medium panel	Virus
+cds_panel_6	Antigen Panel 6	Severe panel	Virus

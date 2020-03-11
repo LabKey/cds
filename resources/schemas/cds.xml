@@ -333,6 +333,12 @@
             <column columnName="antigen_description"/>
             <column columnName="antigen_control"/>
             <column columnName="container"/>
+            <column columnName="virus_full_name"/>
+            <column columnName="virus_name_other"/>
+            <column columnName="virus_species"/>
+            <column columnName="virus_host_cell"/>
+            <column columnName="virus_backbone"/>
+            <column columnName="cds_virus_id"/>
         </columns>
     </table>
     <table tableName="import_icsantigen" tableDbType="TABLE">
@@ -931,6 +937,7 @@
         </columns>
     </table>
     <table tableName="nabantigen" tableDbType="TABLE">
+        <description>Metadata table for both NAb and NAb MAb</description>
         <columns>
             <column columnName="assay_identifier"/>
             <column columnName="container"/>
@@ -944,6 +951,12 @@
             <column columnName="clade"/>
             <column columnName="antigen_description"/>
             <column columnName="antigen_control"/>
+            <column columnName="virus_full_name"/>
+            <column columnName="virus_name_other"/>
+            <column columnName="virus_species"/>
+            <column columnName="virus_host_cell"/>
+            <column columnName="virus_backbone"/>
+            <column columnName="cds_virus_id"/>
         </columns>
     </table>
     <table tableName="icsantigen" tableDbType="TABLE">
@@ -1113,6 +1126,42 @@
         <columns>
             <column columnName="prot"/>
             <column columnName="mab_mix_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_antigenPanel" tableDbType="TABLE">
+        <columns>
+            <column columnName="cds_panel_id"/>
+            <column columnName="panel_name"/>
+            <column columnName="panel_description"/>
+            <column columnName="antigen_type"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="antigenPanel" tableDbType="TABLE">
+        <columns>
+            <column columnName="cds_panel_id"/>
+            <column columnName="panel_name"/>
+            <column columnName="panel_description"/>
+            <column columnName="antigen_type"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_virusPanel" tableDbType="TABLE">
+        <columns>
+            <column columnName="rowid"/>
+            <column columnName="cds_virus_id"/>
+            <column columnName="cds_panel_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="virusPanel" tableDbType="TABLE">
+        <columns>
+            <column columnName="rowid">
+                <isHidden>true</isHidden>
+            </column>
+            <column columnName="cds_virus_id"/>
+            <column columnName="cds_panel_id"/>
             <column columnName="container"/>
         </columns>
     </table>

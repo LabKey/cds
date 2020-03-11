@@ -28,6 +28,12 @@ Ext.define('Connector.app.model.AssayAntigen', {
         {name: 'antigen_proteins', convert : Connector.model.Filter.asArray},
         {name: 'antigen_pools', convert : Connector.model.Filter.asArray},
         {name: 'antigen_target_cell',sortType: 'asUCString'},
-        {name: 'antigen_virus_type'}
+        {name: 'antigen_virus_type'},
+        {name: 'antigen_virus_full_name'},
+        {name: 'antigen_virus_name_other'},
+        {name: 'antigen_virus_species'},
+        {name: 'antigen_virus_host_cell'},
+        {name: 'antigen_virus_backbone'},
+        {name: 'antigen_panel_names'}
     ]
 });
