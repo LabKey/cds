@@ -99,6 +99,33 @@ Ext.define('Connector.view.AssayAntigen', {
         }];
     },
 
+    getPanelValues: function(panelLabel, panelDataIndex, filterField, width, flex)
+    {
+        return {
+            text: panelLabel,
+            xtype: 'templatecolumn',
+            minWidth: width,
+            flex: flex,
+            dataIndex: panelDataIndex,
+            filterConfigSet: [{
+                filterField: filterField,
+                valueType: 'string',
+                title: panelLabel
+            }],
+            tpl: new Ext.XTemplate(
+                '<tpl if="antigen_panel_names && antigen_panel_names.length &gt; 0">',
+                    '<tpl for="antigen_panel_names">',
+                        '<div class="detail-text">',
+                            '<p class="detail-gray-text">',
+                                '{.:htmlEncode}',
+                            '</p>',
+                        '</div>',
+                    '</tpl>',
+                '</tpl>',
+            )
+        };
+    },
+
     getCommonColumns: function(antigenNameLabel, flex)
     {
         return [{
@@ -161,7 +188,7 @@ Ext.define('Connector.view.AssayAntigen', {
             this.getSimpleValueColumn('Species', 'antigen_virus_species', 'antigen_virus_species', 100, 1/7),
             this.getSimpleValueColumn('Clade', 'antigen_clade', 'antigen_clade', 100, 1/7),
             this.getSimpleValueColumn('Tier', 'antigen_neutralization_tier', 'antigen_neutralization_tier', 100, 1/7),
-            this.getSimpleValueColumn('Panels', 'antigen_panel_names', 'antigen_panel_names', 200, 1/7),
+            this.getPanelValues('Panels', 'antigen_panel_names', 'antigen_panel_names', 100, 1/7),
             this.getSimpleValueColumn('Host Cell', 'antigen_virus_host_cell', 'antigen_virus_host_cell', 100, 1/7),
             this.getSimpleValueColumn('Control', 'antigen_control_value', 'antigen_control_value', 100, 1/7),
             this.getSimpleValueColumn('Backbone', 'antigen_virus_backbone', 'antigen_virus_backbone', 100, 1/7)

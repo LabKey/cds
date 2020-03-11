@@ -122,7 +122,7 @@ Ext.define('Connector.app.store.AssayAntigen', {
             antigen_virus_species: row.virus_species,
             antigen_virus_host_cell: row.virus_host_cell,
             antigen_virus_backbone: row.virus_backbone,
-            antigen_panel_names: row.panel_names ? row.panel_names[0] : ""
+            antigen_panel_names: row.panel_names && row.panel_names.length > 0 ? row.panel_names[0].split(";") : []
         };
     }
 
