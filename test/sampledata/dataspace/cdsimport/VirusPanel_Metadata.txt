@@ -54,3 +54,6 @@ cds_324	cds_panel_3
 cds_324	cds_panel_2
 cds_325	cds_panel_1
 cds_325	cds_panel_3
+cds_326	cds_panel_3
+cds_326	cds_panel_1
+cds_326	cds_panel_2
