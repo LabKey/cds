@@ -16,7 +16,6 @@
 package org.labkey.cds;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.security.AuthenticationProvider.ResetPasswordProvider;
 import org.labkey.api.security.SecurityManager;
@@ -53,13 +52,6 @@ public class CDSResetPasswordProvider implements ResetPasswordProvider
         {
             return SecurityManager.getRegistrationMessage(null, isAdminCopy);
         }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public ActionURL getConfigurationLink()
-    {
         return null;
     }
 
