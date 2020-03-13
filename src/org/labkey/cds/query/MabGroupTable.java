@@ -208,7 +208,7 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
                 //Issue 15301: allow workbooks records to be deleted/updated from the parent container
                 if (row.get("container") != null)
                 {
-                    Container rowContainer = UserSchema.translateRowSuppliedContainer(row.get("container"), container, user, getQueryTable(), ReadPermission.class);
+                    Container rowContainer = UserSchema.translateRowSuppliedContainer(row.get("container"), container, user, getQueryTable(), ReadPermission.class, null);
                     if (rowContainer != null && container.allowRowMutationForContainer(rowContainer))
                     {
                         row.put("container", rowContainer.getId()); //normalize to container ID
