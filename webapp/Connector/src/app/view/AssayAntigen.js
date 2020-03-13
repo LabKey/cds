@@ -120,7 +120,7 @@ Ext.define('Connector.view.AssayAntigen', {
                             '</p>',
                         '</div>',
                     '</tpl>',
-                '</tpl>',
+                '</tpl>'
             )
         };
     },
