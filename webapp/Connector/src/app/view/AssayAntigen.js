@@ -19,7 +19,6 @@ Ext.define('Connector.view.AssayAntigen', {
 
     viewConfig: {
         stripeRows: false,
-        overflowY: 'scroll',
         trackOver: false,
         resizable: false,
 
