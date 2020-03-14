@@ -730,7 +730,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         sleep(5000);
         log("Validate we are on the CDS home page.");
-        assertTextPresent("Welcome to the CAVD DataSpace.");
+        assertTextPresent(CDSHelper.HOME_PAGE_HEADER);
+        assertTextPresent("For HIV vaccine data sharing and discovery");
 
         log("Done. Signing back into main site with default test account to clean up.");
         click(Locator.xpath("//a[contains(@class, 'logout')][contains(text(), 'Logout')]"));
