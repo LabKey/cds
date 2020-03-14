@@ -581,7 +581,7 @@ public class CDSHelper
     public static final String TIME_POINTS_ALIGN_FIRST_VAC = "First Vaccination";
     public static final String TIME_POINTS_ALIGN_LAST_VAC = "Last Vaccination";
 
-    public static final String HOME_PAGE_HEADER = "Welcome to the CAVD DataSpace.";
+    public static final String HOME_PAGE_HEADER = "CAVD DataSpace";
 
     public static final String PLOT_POINT_HIGHLIGHT_COLOR = "#41C49F";
 
