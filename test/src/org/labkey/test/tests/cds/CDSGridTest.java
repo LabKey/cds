@@ -17,6 +17,8 @@ package org.labkey.test.tests.cds;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
@@ -69,6 +71,20 @@ public class CDSGridTest extends CDSReadOnlyTest
         cds.goToAppHome();
     }
 
+    @BeforeClass
+    public static void setShowHiddenVariables()
+    {
+        CDSGridTest currentTest = (CDSGridTest) getCurrentTest();
+        currentTest.cds.initModuleProperties(true); //set ShowHiddenVariables property to true
+    }
+
+    @AfterClass
+    public static void resetShowHiddenVariables()
+    {
+        CDSGridTest currentTest = (CDSGridTest) getCurrentTest();
+        currentTest.cds.initModuleProperties(false); // reset ShowHiddenVariables property back to false
+    }
+
     @Override
     public BrowserType bestBrowser()
     {
@@ -85,8 +101,6 @@ public class CDSGridTest extends CDSReadOnlyTest
     @Test
     public void verifyGrid()
     {
-        cds.initModuleProperties(true); //set ShowHiddenVariables property to true to make this test pass on teamcity
-
         log("Verify Grid");
 
         DataGrid grid = new DataGrid(this);
@@ -263,8 +277,6 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         gridColumnSelector.openSelectorWindow();
         gridColumnSelectorValidator(gridColumnSelector, CDSHelper.TIME_POINTS, columns);
-
-        cds.initModuleProperties(false); //reset ShowHiddenVariables property back to false
     }
 
     @Test
