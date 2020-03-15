@@ -85,6 +85,8 @@ public class CDSGridTest extends CDSReadOnlyTest
     @Test
     public void verifyGrid()
     {
+        cds.initModuleProperties(true); //set ShowHiddenVariables property to true to make this test pass on teamcity
+
         log("Verify Grid");
 
         DataGrid grid = new DataGrid(this);
@@ -262,6 +264,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         gridColumnSelector.openSelectorWindow();
         gridColumnSelectorValidator(gridColumnSelector, CDSHelper.TIME_POINTS, columns);
 
+        cds.initModuleProperties(false); //reset ShowHiddenVariables property back to false
     }
 
     @Test
