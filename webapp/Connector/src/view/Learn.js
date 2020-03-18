@@ -52,7 +52,10 @@ Ext.define('Connector.view.Learn', {
             }, this);
             if (visibleDetailGrid.length === 1)
             {
-                visibleDetailGrid[0].items.items[1].items.items[2].fireEvent("learnDetailsGridResizeHeight", height);
+                var grid = Ext.getCmp("app-view-assayantigengrid");
+                if (grid) {
+                    grid.fireEvent("learnDetailsGridResizeHeight", height);
+                }
             }
         },
         hide: function(view)

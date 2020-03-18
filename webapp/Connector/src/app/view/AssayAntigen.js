@@ -13,6 +13,8 @@ Ext.define('Connector.view.AssayAntigen', {
 
     isDetailLearnGrid: true,
 
+    id: "app-view-assayantigengrid",
+
     statics: {
         searchFields: Ext.pluck(Connector.app.model.AssayAntigen.getFields(), 'name')
     },
