@@ -46,6 +46,14 @@ Ext.define('Connector.view.Learn', {
             {
                 visibleGrid[0].fireEvent("learnGridResizeHeight", height);
             }
+
+            var visibleDetailGrid = this.items.items.filter(function(item) {
+                return !item.hidden && item.pageID === 'learnDetailAssay';
+            }, this);
+            if (visibleDetailGrid.length === 1)
+            {
+                visibleDetailGrid[0].items.items[1].items.items[2].fireEvent("learnDetailsGridResizeHeight", height);
+            }
         },
         hide: function(view)
         {

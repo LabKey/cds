@@ -95,6 +95,11 @@ Ext.define('Connector.app.view.LearnGrid', {
             this.setTitleColumnWidth();
         },
 
+        learnDetailsGridResizeHeight : function (viewHeight)
+        {
+            this.setHeight(viewHeight - this.learnView.headerViews.main.height);
+        },
+
         boxready: function(grid)
         {
             if (!this.isDetailLearnGrid)
