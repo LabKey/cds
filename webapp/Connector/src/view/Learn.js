@@ -611,9 +611,6 @@ Ext.define('Connector.view.Learn', {
             }
         });
 
-        if (urlTab === 'antigens') {
-            pageView.removeCls('auto-scroll-y');
-        }
         this.detailPageView = pageView;
         this.add(pageView);
     },
