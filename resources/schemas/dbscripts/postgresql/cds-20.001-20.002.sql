@@ -66,22 +66,18 @@ ALTER TABLE cds.nabantigen ADD PRIMARY KEY (container, assay_identifier, antigen
 
 CREATE TABLE cds.import_virusPanel
 (
-    rowid SERIAL,
     cds_virus_id VARCHAR(250),
     cds_panel_id VARCHAR(250),
     container ENTITYID NOT NULL,
 
-    CONSTRAINT pk_import_virusPanel PRIMARY KEY(rowid),
-    CONSTRAINT uq_import_virusPanel UNIQUE (container, cds_virus_id, cds_panel_id)
+    CONSTRAINT pk_import_virusPanel PRIMARY KEY (container, cds_virus_id, cds_panel_id)
 );
 
 CREATE TABLE cds.virusPanel
 (
-    rowid SERIAL,
     cds_virus_id VARCHAR(250),
     cds_panel_id VARCHAR(250),
     container ENTITYID NOT NULL,
 
-    CONSTRAINT pk_virusPanel PRIMARY KEY(rowid),
-    CONSTRAINT uq_virusPanel UNIQUE (container, cds_virus_id, cds_panel_id)
+    CONSTRAINT pk_virusPanel PRIMARY KEY (container, cds_virus_id, cds_panel_id)
 );

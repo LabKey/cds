@@ -1149,7 +1149,6 @@
     </table>
     <table tableName="import_virusPanel" tableDbType="TABLE">
         <columns>
-            <column columnName="rowid"/>
             <column columnName="cds_virus_id"/>
             <column columnName="cds_panel_id"/>
             <column columnName="container"/>
@@ -1157,9 +1156,6 @@
     </table>
     <table tableName="virusPanel" tableDbType="TABLE">
         <columns>
-            <column columnName="rowid">
-                <isHidden>true</isHidden>
-            </column>
             <column columnName="cds_virus_id"/>
             <column columnName="cds_panel_id"/>
             <column columnName="container"/>
