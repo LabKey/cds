@@ -79,9 +79,11 @@ Ext.define('Connector.app.store.AssayAntigen', {
         {
             if (assayType === 'NABMAB')
                 assayType = "NAB";
+
+            var query = assayType === "NAB" ? 'nabAntigenWithPanelMeta' : (assayType + 'antigen');
             LABKEY.Query.selectRows({
                 schemaName: 'cds',
-                queryName: assayType + 'antigen',
+                queryName: query,
                 scope: this,
                 success: function(result) {
                     var antigens = [];
@@ -116,7 +118,13 @@ Ext.define('Connector.app.store.AssayAntigen', {
             antigen_neutralization_tier: row.neutralization_tier,
             antigen_protein: row.protein,
             antigen_target_cell: row.target_cell,
-            antigen_virus_type: row.virus_type
+            antigen_virus_type: row.virus_type,
+            antigen_virus_full_name: row.virus_full_name,
+            antigen_virus_name_other: row.virus_name_other,
+            antigen_virus_species: row.virus_species,
+            antigen_virus_host_cell: row.virus_host_cell,
+            antigen_virus_backbone: row.virus_backbone,
+            antigen_panel_names: row.panel_names && row.panel_names.length > 0 ? row.panel_names[0].split("|") : []
         };
     }
 

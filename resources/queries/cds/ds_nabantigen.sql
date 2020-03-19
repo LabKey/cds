@@ -24,5 +24,12 @@ SELECT
   neutralization_tier,
   clade,
   antigen_description,
-  antigen_control
+  antigen_control,
+  virus_full_name,
+  virus_name_other,
+  virus_species,
+  virus_host_cell,
+  virus_backbone,
+  cds_virus_id
+
 FROM cds.import_NAbAntigen

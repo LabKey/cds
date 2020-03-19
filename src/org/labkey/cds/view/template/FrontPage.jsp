@@ -540,6 +540,7 @@
                 <div class="title">
                     <h1>Welcome to the</h1>
                     <h1>CAVD DataSpace</h1>
+                    <h1>A data sharing and discovery tool for HIV vaccine research</h1>
                 </div>
             </div>
             <div class="video-container">

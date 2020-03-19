@@ -74,3 +74,24 @@ Ext.override(Ext.grid.View, {
         me.superclass.setHighlightedItem.apply(this, arguments);
     }
 });
+
+Ext.override(Ext.util.Format, {
+    date(v, format){
+        if (!v) {
+            return "";
+        }
+        if (!Ext.isDate(v)) {
+            var orig = v;
+            v = new Date(Date.parse(v));
+
+            // issue 39930 - Safari is strict regarding ECMAScript date time string formats (ISO 8601)
+            if (isNaN(v) && Ext.isSafari){
+                var parts = orig.split(/[\s-:.]/);
+                if (parts.length === 7) {
+                    v = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]), parseInt(parts[3]), parseInt(parts[4]), parseInt(parts[5]), parseInt(parts[6]));
+                }
+            }
+        }
+        return Ext.Date.dateFormat(v, format || Ext.Date.defaultFormat);
+    }
+});

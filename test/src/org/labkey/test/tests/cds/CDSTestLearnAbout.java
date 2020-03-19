@@ -738,6 +738,67 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("X2160_C25"));
+
+        log("Verify row for 'BJOX002000.03.2.delta624G.E625R.3-5' virus");
+
+        log("Verify virus short name");
+        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("BJOX002000.03.2.delta624G.E625R.3-5"));
+
+        log("Verify Virus full name");
+        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("BJOX002000.03.2.delta624G.E625R.3-5, Env Pseudotype, TZM-bl, delta chain"));
+
+        log("Verify Species");
+        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("HIV"));
+
+        log("Verify Panels");
+        assertElementPresent(Locator.xpath("//div").withClass("detail-text").child("p").withText("Diversity"));
+
+        log("Verify Host Cell");
+        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("294T/18"));
+
+        log("Verify Backbone");
+        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("SG3 alpha env 1"));
+
+    }
+
+    @Test
+    public void testLearnAboutNABAssayAntigenTab()
+    {
+        getDriver().manage().window().maximize();
+        cds.viewLearnAboutPage("Assays");
+        LearnGrid summaryGrid = new LearnGrid(this);
+
+        log("Go to NAB assay page");
+        summaryGrid.setSearch(CDSHelper.GRID_TITLE_NAB).clickFirstItem();
+
+        log("Verify NAb Antigens page");
+        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        sleep(CDSHelper.CDS_WAIT);
+
+        log("Verify row for 'Ce2010_F5.LucR.T2A.ecto' virus");
+
+        log("Verify Virus short name");
+        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("Ce2010_F5.LucR.T2A.ecto"));
+
+        log("Verify Virus long name");
+        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("Ce2010_F5.LucR.T2A.ecto, IMC, A3R5"));
+
+        log("Verify Virus other names");
+        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("Other names: Ce2010_F5.LucR.T2A.ecto, IMC, A3R5, ut massa"));
+
+        log("Verify Species");
+        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("HIV"));
+
+        log("Verify Panels");
+        assertElementPresent(Locator.xpath("//div").withClass("detail-text").child("p").withText("F Subtype"));
+
+        log("Verify Host Cell");
+        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("293T/17"));
+
+        log("Verify Backbone");
+        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("SG3 beta env 4"));
+
     }
 
     @Test

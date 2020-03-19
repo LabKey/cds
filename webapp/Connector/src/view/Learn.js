@@ -46,6 +46,17 @@ Ext.define('Connector.view.Learn', {
             {
                 visibleGrid[0].fireEvent("learnGridResizeHeight", height);
             }
+
+            var visibleDetailGrid = this.items.items.filter(function(item) {
+                return !item.hidden && item.pageID === 'learnDetailAssay';
+            }, this);
+            if (visibleDetailGrid.length === 1)
+            {
+                var grid = Ext.getCmp("app-view-assayantigengrid");
+                if (grid) {
+                    grid.fireEvent("learnDetailsGridResizeHeight", height);
+                }
+            }
         },
         hide: function(view)
         {
@@ -610,6 +621,9 @@ Ext.define('Connector.view.Learn', {
                 }
             }
         });
+        if (urlTab === 'antigens') {
+            pageView.removeCls('auto-scroll-y');
+        }
         this.detailPageView = pageView;
         this.add(pageView);
     },

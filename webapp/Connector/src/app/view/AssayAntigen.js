@@ -13,6 +13,8 @@ Ext.define('Connector.view.AssayAntigen', {
 
     isDetailLearnGrid: true,
 
+    id: "app-view-assayantigengrid",
+
     statics: {
         searchFields: Ext.pluck(Connector.app.model.AssayAntigen.getFields(), 'name')
     },
@@ -33,6 +35,7 @@ Ext.define('Connector.view.AssayAntigen', {
         if (this.learnViewConfig)
         {
             this.learnView = this.learnViewConfig.learnView;
+            this.learnView.getEl().removeCls('auto-scroll-y');
             this.tabId = this.learnViewConfig.tabId;
             this.tabDimension = this.learnViewConfig.tabDimension;
             this.tabParams = this.learnViewConfig.tabParams;
@@ -63,6 +66,67 @@ Ext.define('Connector.view.AssayAntigen', {
         else if (assay_type === 'PKMAB') {
             return [];
         }
+    },
+
+    getVirusColumn: function(antigenNameLabel, flex)
+    {
+        return [{
+            text: antigenNameLabel,
+            xtype: 'templatecolumn',
+            minWidth: 400,
+            flex: flex,
+            dataIndex: 'antigen_name',
+            filterConfigSet: [{
+                filterField: 'antigen_name',
+                valueType: 'string',
+                title: antigenNameLabel
+            }],
+            tpl: new Ext.XTemplate(
+               '<div class="detail-description">',
+                    '<h2>{antigen_name:htmlEncode}</h2>',
+                    '<div class="antigen-description detail-description-text">',
+
+                    '<tpl if="antigen_virus_full_name">',
+                        '<p class="block-with-text">',
+                            '{antigen_virus_full_name:htmlEncode}',
+                        '</p>',
+                    '</tpl>',
+                    '<tpl if="antigen_virus_name_other">',
+                        '<p class="block-with-text">',
+                            'Other names: {antigen_virus_name_other:htmlEncode}',
+                        '</p>',
+                    '</tpl>',
+                    '</div>',
+               '</div>'
+            )
+        }];
+    },
+
+    getPanelValues: function(panelLabel, panelDataIndex, filterField, width, flex)
+    {
+        return {
+            text: panelLabel,
+            xtype: 'templatecolumn',
+            minWidth: width,
+            flex: flex,
+            dataIndex: panelDataIndex,
+            filterConfigSet: [{
+                filterField: filterField,
+                valueType: 'string',
+                title: panelLabel
+            }],
+            tpl: new Ext.XTemplate(
+                '<tpl if="antigen_panel_names && antigen_panel_names.length &gt; 0">',
+                    '<tpl for="antigen_panel_names">',
+                        '<div class="detail-text">',
+                            '<p class="detail-gray-text">',
+                                '{.:htmlEncode}',
+                            '</p>',
+                        '</div>',
+                    '</tpl>',
+                '</tpl>'
+            )
+        };
     },
 
     getCommonColumns: function(antigenNameLabel, flex)
@@ -121,12 +185,17 @@ Ext.define('Connector.view.AssayAntigen', {
 
     getNABColumns: function()
     {
-        var commonColumns = this.getCommonColumns('Virus', 1/7);
+        //flex value 0.25 for Virus col, and 0.09375 for remaining 8 cols, which totals to 1
+        var commonColumns = this.getVirusColumn('Virus', 0.25);
         var columns = [
-            this.getSimpleValueColumn('Clade', 'antigen_clade', 'antigen_clade', 100, 1/7),
-            this.getSimpleValueColumn('Tier', 'antigen_neutralization_tier', 'antigen_neutralization_tier', 100, 1/7),
-            this.getSimpleValueColumn('Virus Type', 'antigen_virus_type', 'antigen_virus_type', 100, 1/7),
-            this.getSimpleValueColumn('Target Cell', 'antigen_target_cell', 'antigen_target_cell', 100, 1/7)
+            this.getSimpleValueColumn('Virus Type', 'antigen_virus_type', 'antigen_virus_type', 100, 0.09375),
+            this.getSimpleValueColumn('Species', 'antigen_virus_species', 'antigen_virus_species', 100, 0.09375),
+            this.getSimpleValueColumn('Clade', 'antigen_clade', 'antigen_clade', 100, 0.09375),
+            this.getSimpleValueColumn('Tier', 'antigen_neutralization_tier', 'antigen_neutralization_tier', 100, 0.09375),
+            this.getPanelValues('Panels', 'antigen_panel_names', 'antigen_panel_names', 100, 0.09375),
+            this.getSimpleValueColumn('Host Cell', 'antigen_virus_host_cell', 'antigen_virus_host_cell', 100, 0.09375),
+            this.getSimpleValueColumn('Control', 'antigen_control_value', 'antigen_control_value', 100, 0.09375),
+            this.getSimpleValueColumn('Backbone', 'antigen_virus_backbone', 'antigen_virus_backbone', 100, 0.09375)
         ];
         return commonColumns.concat(columns);
     },
