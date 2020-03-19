@@ -593,8 +593,8 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
 
         final Locator lineLoc = Locator.css("svg g.layer path.line");
 
-        final int totalPKSubjectCount = 30;
-        int plotLineCount = getElementCount(lineLoc);
+        final int totalPKSubjectCount = 34;
+        int plotLineCount = lineLoc.findElements(getDriver()).size();
         assertEquals("Number of lines in plot is not as expected", totalPKSubjectCount, plotLineCount);
 
         String cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
@@ -638,7 +638,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         coloraxis.confirmSelection();
 
         plotGreenLineCount = getElementCount(greenLineLoc);
-        assertEquals("Line should also use color for a non-Subject Characteristic field that won't change over time", 3, plotGreenLineCount);
+        assertEquals("Line should also use color for a non-Subject Characteristic field that won't change over time", 27, plotGreenLineCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
@@ -653,7 +653,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this, true); // color btn hidden since color exist, skip check
         waitForElement(lineLoc);
         plotLineCount = getElementCount(lineLoc);
-        assertEquals("Number of lines in plot is not as expected", 5, plotLineCount);
+        assertEquals("Number of lines in plot is not as expected", 6, plotLineCount);
         plotGreenLineCount = getElementCount(greenLineLoc);
         assertEquals("Number of green lines in plot is not as expected", 1, plotGreenLineCount);
 
@@ -664,7 +664,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         xaxis.confirmSelection();
 
         plotLineCount = getElementCount(lineLoc);
-        assertEquals("Number of lines in plot is not as expected", 5, plotLineCount);
+        assertEquals("Number of lines in plot is not as expected", 6, plotLineCount);
         plotGreenLineCount = getElementCount(greenLineLoc);
         assertEquals("Number of green lines in plot is not as expected", 1, plotGreenLineCount);
 

@@ -149,6 +149,8 @@ public class CDSManager
                     "Study",
                     "Assay",
                     "Lab",
+                    "antigenPanel",
+                    "virusPanel",
 
                     "import_nabmab",
                     "import_ics",
@@ -189,7 +191,9 @@ public class CDSManager
                     "import_mabmetadata",
                     "import_mabmixmetadata",
                     "import_lab",
-                    "import_study"
+                    "import_study",
+                    "import_antigenPanel",
+                    "import_virusPanel"
             })
             {
                 TableInfo t = dbSchema.getTable(s);

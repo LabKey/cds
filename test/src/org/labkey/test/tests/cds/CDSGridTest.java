@@ -17,6 +17,8 @@ package org.labkey.test.tests.cds;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
@@ -67,6 +69,20 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         // go back to app starting location
         cds.goToAppHome();
+    }
+
+    @BeforeClass
+    public static void setShowHiddenVariables()
+    {
+        CDSGridTest currentTest = (CDSGridTest) getCurrentTest();
+        currentTest.cds.initModuleProperties(true); //set ShowHiddenVariables property to true
+    }
+
+    @AfterClass
+    public static void resetShowHiddenVariables()
+    {
+        CDSGridTest currentTest = (CDSGridTest) getCurrentTest();
+        currentTest.cds.initModuleProperties(false); // reset ShowHiddenVariables property back to false
     }
 
     @Override
@@ -261,7 +277,6 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         gridColumnSelector.openSelectorWindow();
         gridColumnSelectorValidator(gridColumnSelector, CDSHelper.TIME_POINTS, columns);
-
     }
 
     @Test

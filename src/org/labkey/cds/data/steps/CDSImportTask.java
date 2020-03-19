@@ -91,6 +91,8 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("ELISpotAntigen", "AssayELSAntigen_Metadata"),
         new TSVCopyConfig("NAbAntigen", "AssayNABAntigen_Metadata"),
         new TSVCopyConfig("BAMAAntigen", "AssayBAMAAntigen_Metadata"),
+        new TSVCopyConfig("antigenPanel", "AntigenPanel_Metadata"),
+        new TSVCopyConfig("virusPanel", "VirusPanel_Metadata"),
 
         // Datasets
         new TSVCopyConfig("ICS", "AssayICS"),
