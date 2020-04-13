@@ -41,6 +41,7 @@ Ext.define('Connector.view.module.PublicationDetails', {
 
     initComponent : function() {
         var data = this.initialConfig.data.model.data;
+        console.log(data);
         data['title'] = this.initialConfig.data.title;
         this.update(data);
     }

@@ -5,8 +5,6 @@
  */
 Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
-    xtype : 'app.module.nonintegrateddataavailability',
-
     extend: 'Ext.container.Container',
 
     cls: 'module learn-data-available-module',
@@ -20,18 +18,17 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
     initComponent : function() {
 
-        var data = this.initialConfig.data.model.data;
-
-        if (data.non_integrated_assay_data.length > 0) {
+        const data = this.getData();
+        if (data.length > 0) {
             var docIsValidAction = function(doc, status) {
                 doc.isLinkValid = status;
                 var gridObj = this.items.items[1];
                 var gridView = gridObj.getView();
-                gridView.update(data.non_integrated_assay_data);
-                gridObj.getStore().loadData(data.non_integrated_assay_data, false);
+                gridView.update(data);
+                gridObj.getStore().loadData(data, false);
             };
             this.on("afterrender", function() {
-                this.validateDocLinks(data.non_integrated_assay_data, docIsValidAction);
+                this.validateDocLinks(data, docIsValidAction);
             }, this);
         }
 
@@ -97,7 +94,6 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                         }
                     }
                 },
-
                 'itemmouseleave' : function(view, record, item) {
                     var dataLink = Ext.get(Ext.query("a", item)[0])|| Ext.get(Ext.query("span", item)[0]);
                     if (dataLink) {
@@ -107,7 +103,6 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                         this.fireEvent('hideTooltip');
                     }
                 },
-
                 scope: this
             },
             scope: this
@@ -117,36 +112,27 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
         this.callParent();
     },
 
+    getData : function() {
+        console.warn('need to override getData')
+    },
+
     hasContent : function() {
-        var reports = this.initialConfig.data.model.data.non_integrated_assay_data;
+        console.log('has content');
+
+        // todo delete this unused code
+        var reports = this.getData();
         if (reports) {
             return reports.length > 0;
         }
         return false;
     },
+
     getTitleData: function(data) {
-        if (data.non_integrated_assay_data.length > 0 && data.non_integrated_assay_data_has_permission) {
-            data.hasDetails = true;
-        }
-        else {
-            data.hasDetails = false;
-        }
-        return data;
+        console.warn('need to override getTitleData');
     },
 
-    getStore : function(niAssayData) {
-
-        Ext.each(niAssayData.non_integrated_assay_data, function(assay, index){
-            assay.assayIdentfierId = assay.assayIdentifier.replace(/\W/g, '').toLowerCase() + "-" + index;//replace non-alphanumeric characters with an empty string
-        });
-
-        var storeConfig =  {
-            fields: ['assayIdentifier', 'dataStatus', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentfierId'],
-            data: niAssayData.non_integrated_assay_data,
-            storeId: 'NonIntegratedDataStore'
-        };
-
-        return Ext.create('Ext.data.Store', storeConfig);
+    getStore : function(data) {
+        console.warn('need to override getStore')
     },
 
     showDataStatusTooltip : function(event, item, options) {
@@ -174,6 +160,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
     hideDataStatusTooltip : function() {
         this.fireEvent('hideTooltip');
     },
+
     getColTemplate : function() {
         var me = this;
         return new Ext4.XTemplate(
@@ -223,4 +210,90 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                 '</tpl>',
            '</tpl>')
     },
+});
+
+Ext.define('Connector.view.module.StudyNonIntegratedData', {
+
+    xtype: 'app.module.studynonintegrateddata',
+
+    extend: 'Connector.view.module.NonIntegratedDataAvailability',
+
+    cls: 'module learn-data-available-module',
+
+    initComponent : function() {
+
+        this.callParent();
+    },
+
+    getData : function() {
+        return this.initialConfig.data.model.data.non_integrated_assay_data;
+    },
+
+    getTitleData: function(data) {
+        if (data.non_integrated_assay_data.length > 0 && data.non_integrated_assay_data_has_permission) {
+            data.hasDetails = true;
+        }
+        else {
+            data.hasDetails = false;
+        }
+        return data;
+    },
+
+    getStore : function(data) {
+
+        Ext.each(data.non_integrated_assay_data, function(assay, index){
+            assay.assayIdentfierId = assay.assayIdentifier.replace(/\W/g, '').toLowerCase() + "-" + index;//replace non-alphanumeric characters with an empty string
+        });
+
+        var storeConfig =  {
+            fields: ['assayIdentifier', 'dataStatus', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentfierId'],
+            data: data.non_integrated_assay_data,
+            storeId: 'NonIntegratedDataStore'
+        };
+
+        return Ext.create('Ext.data.Store', storeConfig);
+    }
+});
+
+Ext.define('Connector.view.module.PublicationNonIntegratedData', {
+
+    xtype: 'app.module.publicationnonintegrateddata',
+
+    extend: 'Connector.view.module.NonIntegratedDataAvailability',
+
+    cls: 'module learn-data-available-module',
+
+    initComponent : function() {
+
+        this.callParent();
+    },
+
+    getData : function() {
+        return this.data.model.data.publication_data;
+    },
+
+    getTitleData: function(data) {
+        if (data.publication_data.length > 0) {
+            data.hasDetails = true;
+        }
+        else {
+            data.hasDetails = false;
+        }
+        return data;
+    },
+
+    getStore : function(data) {
+
+        Ext.each(data.non_integrated_assay_data, function(assay, index){
+            assay.assayIdentfierId = assay.assayIdentifier.replace(/\W/g, '').toLowerCase() + "-" + index;//replace non-alphanumeric characters with an empty string
+        });
+
+        var storeConfig =  {
+            fields: ['assayIdentifier', 'dataStatus', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentfierId'],
+            data: data.non_integrated_assay_data,
+            storeId: 'NonIntegratedDataStore'
+        };
+
+        return Ext.create('Ext.data.Store', storeConfig);
+    }
 });

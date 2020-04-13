@@ -189,7 +189,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.ContactCDS": "../../../../webapp/Connector/src/app/view/module/ContactCDS.js",
   "Connector.view.module.StudyResources": "../../../../webapp/Connector/src/app/view/module/StudyResources.js",
   "Connector.view.module.DataAvailabilityModule": "../../../../webapp/Connector/src/app/view/module/DataAvailabilityModule.js",
-  "Connector.view.module.NonIntegratedDataAvailability": "../../../../webapp/Connector/src/app/view/module/NonIntegratedDataAvailability.js",
+  "Connector.view.module.StudyNonIntegratedData": "../../../../webapp/Connector/src/app/view/module/NonIntegratedDataAvailability.js",
+  "Connector.view.module.PublicationNonIntegratedData": "../../../../webapp/Connector/src/app/view/module/NonIntegratedDataAvailability.js",
   "Connector.view.module.HTML": "../../../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
   "Connector.view.module.ProductOtherProducts": "../../../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
@@ -431,7 +432,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.ContactCDS": [],
   "Connector.view.module.StudyResources": [],
   "Connector.view.module.DataAvailabilityModule": [],
-  "Connector.view.module.NonIntegratedDataAvailability": [],
+  "Connector.view.module.StudyNonIntegratedData": [],
+  "Connector.view.module.PublicationNonIntegratedData": [],
   "Connector.view.module.HTML": [],
   "Connector.view.module.ProductHeader": [],
   "Connector.view.module.ProductOtherProducts": [],
@@ -1610,8 +1612,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.DataAvailabilityModule": [
     "widget.app.module.dataavailability"
   ],
-  "Connector.view.module.NonIntegratedDataAvailability": [
-    "widget.app.module.nonintegrateddataavailability"
+  "Connector.view.module.StudyNonIntegratedData": [
+    "widget.app.module.studynonintegrateddata"
+  ],
+  "Connector.view.module.PublicationNonIntegratedData": [
+    "widget.app.module.publicationnonintegrateddata"
   ],
   "Connector.view.module.HTML": [
     "widget.module.html"

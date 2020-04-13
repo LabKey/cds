@@ -142,6 +142,10 @@ Ext.define('Connector.app.store.Publication', {
                     });
                     publication.study_names = studyNames;
                 }
+
+                // publication data
+                publication.publication_data = ['foo'];
+
                 publications.push(publication);
             });
 
