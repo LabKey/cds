@@ -78,6 +78,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
             clearTable("cds", "studypublication", container, logger);
             clearTable("cds", "studyrelationship", container, logger);
             clearTable("cds", "study", container, logger);
+            clearTable("cds", "publicationDocument", container, logger);
         }
 
         clearTable("cds", "studyproductmap", project, logger);      // May have project data, too
@@ -89,6 +90,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
         clearTable("cds", "bamaantigen", project, logger);
         clearTable("cds", "facts", project, logger);
         clearTable("study", "visittag", project, logger);
+        clearTable("cds", "publicationDocument", project, logger);
 
         long finish = System.currentTimeMillis();
         logger.info("Clearing mapping tables took " + DateUtil.formatDuration(finish - start) + ".");

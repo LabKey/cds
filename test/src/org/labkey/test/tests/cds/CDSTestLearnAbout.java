@@ -564,7 +564,43 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
         sleep(CDSHelper.CDS_WAIT);
         _asserts.verifyEmptyLearnAboutPublicationsPage();
+    }
 
+    @Test
+    public void testLearnAboutPublicationData()
+    {
+        final String publication_data_1 = "Publication Datasets - Monoclonal antibodies";
+        final String publication_data_2 = "Analysis Data - T Cell Immune Response";
+        final String publication_data_3 = "Publication Datasets";
+
+        final String publication_1 = "Bekker LG 2018 Lancet HIV";
+        final String publication_2 = "Fong Y 2018 J Infect Dis";
+
+        log("Verify Publication Details Data");
+        cds.viewLearnAboutPage("Publications");
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+        log(XPATH_RESULT_ROW_TITLE.toString());
+        List<WebElement> publicationList = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+
+        scrollIntoView(publicationList.get(0));
+        publicationList.get(0).click();
+        sleep(CDSHelper.CDS_WAIT);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + publication_1 + "']")));
+
+        verifyNonIntegratedDetailFieldValues(publication_data_1, "(PDF)");
+        click(CDSHelper.Locators.pageHeaderBack());
+        sleep(CDSHelper.CDS_WAIT_LEARN);
+        publicationList = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        scrollIntoView(publicationList.get(1));
+        publicationList.get(1).click();
+        sleep(CDSHelper.CDS_WAIT);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + publication_2 + "']")));
+
+        verifyNonIntegratedDetailFieldValues(publication_data_2, "(Archive)");
+        verifyNonIntegratedDownloadLink(publication_data_2, "t_cell_data.zip");
+
+        verifyNonIntegratedDetailFieldValues(publication_data_3, "(TSV)");
+        verifyNonIntegratedDownloadLink(publication_data_3, "t_cell_ir.tsv");
     }
 
     @Test
@@ -1097,9 +1133,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_LEARN);
     }
 
-    private void verifyNonIntegratedDownloadLink(String assay_identifier, String documentName)
+    private void verifyNonIntegratedDownloadLink(String altText, String documentName)
     {
-        Locator.XPathLocator downloadLinkLocator = Locator.tagWithAttributeContaining("img", "alt", assay_identifier);
+        Locator.XPathLocator downloadLinkLocator = Locator.tagWithAttributeContaining("img", "alt", altText);
         File downloadedFile = clickAndWaitForDownload(downloadLinkLocator, 1)[0];
         assertTrue(downloadedFile + " not downloaded.", downloadedFile.getName().contains(documentName));
     }

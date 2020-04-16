@@ -302,7 +302,7 @@ Ext.define('Connector.view.module.PublicationNonIntegratedData', {
                     '<li class="non-integrated-data-li">',
                         '{label:htmlEncode}',
                         '&nbsp;{suffix}&nbsp;',
-                        '<a href="{filePath}" target="_blank"><img src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
+                        '<a href="{filePath}" target="_blank"><img alt="{label}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
                     '</li>',
                     '</ul>',
                 '</tpl>',
