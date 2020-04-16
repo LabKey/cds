@@ -116,17 +116,6 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
         console.warn('need to override getData')
     },
 
-    hasContent : function() {
-        console.log('has content');
-
-        // todo delete this unused code
-        var reports = this.getData();
-        if (reports) {
-            return reports.length > 0;
-        }
-        return false;
-    },
-
     getTitleData: function(data) {
         console.warn('need to override getTitleData');
     },
@@ -194,51 +183,45 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
 
     getColTemplate : function() {
         return new Ext4.XTemplate(
-                '<tpl>',
-                // '<table><tr><td>',
-
+            '<tpl>',
                 // case when there is both a link to the assay learn page and data to download
                 '<tpl if="isLinkValid && hasAssayLearn">',
-                '<ul class="non-integrated-data-ul">',
-                '<li class="non-integrated-data-li">',
-                '<a href="#learn/learn/Assay',
-                '/{assayIdentifier}">',
-                '{label:htmlEncode}',
-                '</a>',
-                '&nbsp;{suffix}&nbsp;',
-                '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
-                '</li>',
-                '</ul>',
-
-
+                    '<ul class="non-integrated-data-ul">',
+                        '<li class="non-integrated-data-li">',
+                            '<a href="#learn/learn/Assay',
+                            '/{assayIdentifier}">',
+                            '{label:htmlEncode}',
+                            '</a>',
+                            '&nbsp;{suffix}&nbsp;',
+                            '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
+                        '</li>',
+                    '</ul>',
                 // case when there is data to download and no assay learn page
                 '<tpl elseif="isLinkValid && !hasAssayLearn">',
-                '<ul class="non-integrated-data-ul">',
-                '<li class="non-integrated-data-li">',
-                '<span>{label:htmlEncode}',
-                '&nbsp;{suffix}&nbsp;</span>',
-                '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></p>',
-                '</li>',
-                '</ul>',
-
+                    '<ul class="non-integrated-data-ul">',
+                        '<li class="non-integrated-data-li">',
+                            '<span>{label:htmlEncode}',
+                            '&nbsp;{suffix}&nbsp;</span>',
+                            '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></p>',
+                        '</li>',
+                    '</ul>',
                 // case when there is assay learn page and no data to download
                 '<tpl elseif="hasPermission && hasAssayLearn">',
-                '<ul class="non-integrated-data-ul">',
-                '<li class="non-integrated-data-li">',
-                '<a href="#learn/learn/Assay',
-                '/{assayIdentifier}">',
-                '{label:htmlEncode}',
-                '</li>',
-                '</ul>',
-
+                    '<ul class="non-integrated-data-ul">',
+                        '<li class="non-integrated-data-li">',
+                            '<a href="#learn/learn/Assay',
+                            '/{assayIdentifier}">',
+                            '{label:htmlEncode}',
+                            '</li>',
+                        '</ul>',
                 // case when there is no assay learn page and no data to download
                 '<tpl elseif="hasPermission">',
-                '<ul class="non-integrated-data-ul">',
-                '<li class="non-integrated-data-li">',
-                '<span>{label:htmlEncode}</span>',
-                '</li>',
+                    '<ul class="non-integrated-data-ul">',
+                        '<li class="non-integrated-data-li">',
+                            '<span>{label:htmlEncode}</span>',
+                        '</li>',
                 '</tpl>',
-                '</tpl>')
+            '</tpl>')
     },
 
     getStore : function(data) {
