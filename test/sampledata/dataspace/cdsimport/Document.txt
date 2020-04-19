@@ -1,175 +1,178 @@
 document_id	label	filename	document_type	assay_identifier
-128	ADCC Data Summary	study_documents/cvd277_adccLUCBoxplots_18Oct2012.pdf	Report or summary
-91	ADCC Data Summary	study_documents/cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf	Report or summary
-185	ADCC Results Summary	study_documents/cvd434_AUP567_ADCC_PT_Report_20140912.pdf	Report or summary
-130	ADCVI Data Summary	study_documents/cvd277_AUP485 bleed 26 Summary 6-1-2012.xlsx	Report or summary
-132	Assay Data Summary	study_documents/cvd277_aup485AnalysisPlots_14Sept2012.pdf	Report or summary
-138	Assay Data Summary	study_documents/cvd294_Powerpoint figures for Pilot NHP rBCG study--final.ppt	Report or summary
-162	Assay Results Summary	study_documents/cvd392_PA 392 Gallo Immuno Prelim Slides.pptx	Report or summary
-87	Assay Results Summary	study_documents/cvd247_Study summary NHP 30.0.pdf	Report or summary
-179	Assay Results Summary	study_documents/cvd421_Study 38.2 Experimental Design and Summary_PowerPoint.pptx	Report or summary
-178	Assay Results Summary	study_documents/cvd419_V43 Prelim Slides.pptx	Report or summary
-115	Assay Results Summary	study_documents/cvd267_47 Study Report.pdf	Report or summary
-168	Assay Results Summary	study_documents/cvd412_Study 31 _MICC work.ppt	Report or summary
-160	Assay Results Summary	study_documents/cvd391_PA 391 Gallo Challenge Prelim Slides.pptx	Report or summary
-151	Assay Results Summary	study_documents/cvd363_NHP # 45Report for CAVD Portalv2.docx	Report or summary
-146	Assay Results Summary	study_documents/cvd351_DeVico FLSC Prelim Slides v2.pptx	Report or summary
-102	Avidity Results Summary	study_documents/cvd264_DC-Vax001_Avidity_Report.pdf	Report or summary
-170	B-cell Phenotyping Results Summary	study_documents/cvd412_Study 31-B cell phenotyping-2.pptx	Report or summary
-150	BAMA Data Summary	study_documents/cvd354_SENT.Rh-048Data Summary.2012.xlsx	Report or summary
-85	BAMA Data Summary 1	study_documents/cvd247_NHP 30.0 03FEB2013 Tomaras titrations_Binding MFI _ Ab titers.pdf	Report or summary
-86	BAMA Data Summary 2	study_documents/cvd247_NHP 30.0 Tomaras 9 Jul 2010- NHP rBCG Study IgG-Biot Plate 2.pdf	Report or summary
-133	BAMA IgA Data Summary	study_documents/cvd277_aup485IgaBoxplot_19Nov2012.pdf	Report or summary
-95	BAMA IgA Data Summary	study_documents/cvd259_profileBoxplotsBindingAb_IgA_byGroup_09May2012.pdf	Report or summary
-96	BAMA IgG Data Summary	study_documents/cvd259_profileBoxplotsBindingAb_IgG_byGroup_09May2012.pdf	Report or summary
-134	BAMA IgG Data Summary	study_documents/cvd277_aup485IggBoxplots_19Nov2012.pdf	Report or summary
-112	BAMA IgG Results Summary	study_documents/cvd266_SENT IgG Mucosal Rectal Weck. VRC284. 30 APRIL.pdf	Report or summary
-194	BAMA Results Summary	study_documents/cvd456_Parks RV 456 IgG serum 28aug2015.pptx	Report or summary
-149	BAMA Results Summary	study_documents/cvd354_SENT 24.July CAVIMC-044 .pptx	Report or summary
-148	BAMA Results Summary	study_documents/cvd351_Gallo PA 351 IgG analysis to send.pptx	Report or summary
-89	BAMA Results Summary	study_documents/cvd256_ev03_iga_igg.pdf	Report or summary
-191	BAMA Results Summary	study_documents/cvd434_REVISED_AUP567_IgG&IgA_BAMA_PT_Report_FINAL_06Mar2015.pdf	Report or summary
-176	BAMA Results Summary 1	study_documents/cvd417_VRC 422_Rectal IgG _SENT 30June2014.pptx	Report or summary
-103	BAMA Results Summary 1	study_documents/cvd264_DC-Vax001_BAMA_Report.pdf	Report or summary
-174	BAMA Results Summary 2	study_documents/cvd417_Plasma IgG Data_25mar2015 Tomaras SEND_GT.pptx	Report or summary
-100	BAMA Results Summary 2 	study_documents/cvd264_DCVax_BAMA_Subclass_PT_Report_FINAL_20May2015.pdf	Report or summary
-171	BAMA Results Summary 3	study_documents/cvd417_08June2015_VRC422_IgA_Plasma_TO SEND.pptx	Report or summary
-172	BAMA Results Summary 4	study_documents/cvd417_08June2015_VRC422_IgA_REC_TO SEND.pptx	Report or summary
-93	BAMA and ELISA Results Summary	study_documents/cvd259_baselineComparisons_24May2012.pdf	Report or summary
-6	Barouch: Novel Vector/Protein Vaccines	cavd_grant_profiles/Barouch OPP1040741 Novel VectorProtein Vaccines.pdf	grant_document
-7	Barouch: Therapeutic Efficacy of Potent Broadly Neutralizing mAbs for HIV-1 Eradication	cavd_grant_profiles/Barouch OPP1107669 Therapeutic Efficacy of Potent Broadly Neutralizing mAbs for HIV-1 Eradication.pdf	grant_document
-177	BiaCore Results Summary	study_documents/cvd417_VRC422_SPR_Plasma IgG_SENT30June2014-2.pptx	Report or summary
-61	Bjorkman: Improving Potency and Breadth of Natural bNAbs	cavd_grant_profiles/Bjorkman OPP1040753 Improving Potency and Breadth of Natural bNAbs.pdf	grant_document
-145	CBC and Tetramer Data Summary	study_documents/cvd335_3_Mucosal_PK_CBC_tetramer.pdf	Report or summary
-104	CFSE Results Summary	study_documents/cvd264_DCVax001_CFSE_Memo_JUL13_v4.docx	Report or summary
-118	CFSE Results Summary	study_documents/cvd268_cfse_analysis_report.pdf	Report or summary
-36	Comprehensive Antibody VIMC	cavd_grant_profiles/Montefiori OPP1032144 Antibody Vaccine Immune Monitoring Consortium.pdf	grant_document
-120	Cross-assay Results Summary	study_documents/cvd268_MucoVac02_CrossAssays_20140811_FINAL.pdf	Report or summary
-101	Cross-assay Results Summary	study_documents/cvd264_dcvax_cross_assay12MAR14.pdf	Report or summary
-105	Cytokine Luminex Results Summary	study_documents/cvd264_DCVax001_CytokineLuminex_Report_14NOV12.pdf	Report or summary
-123	Cytokine Luminex Results Summary	study_documents/cvd268_MUCOVAC2_CytLum_Report_AUG13_v5.pdf	Report or summary
-109	ELISA Titer Results Summary	study_documents/cvd266_cavd_vrc284_draft4.pdf	Report or summary
-83	ELISpot Data Summary	study_documents/cvd247_ELISpot data_tetramer data NHP 30.0.pdf	Report or summary
-131	ELISpot Data Summary	study_documents/cvd277_AUP485 WK26 Elispot 2 wks post 2 NYVAC+protein17Feb2012_modified_CT_AC_edits.xlsx	Report or summary
-114	ELISpot Data Summary 1	study_documents/cvd267_47 IFNg-ELISpot_p11C tetramer responses.pdf	Report or summary
-116	ELISpot Data Summary 2	study_documents/cvd267_NYVAC 47 NHP graphs.pdf	Report or summary
-106	ELISpot Results Summary	study_documents/cvd264_DCVax001_ELISpot_Memo_17APR13.pdf	Report or summary
-88	ELISpot Results Summary	study_documents/cvd256_EV03 ELISpot data.pdf	Report or summary
-186	ELISpot Results Summary	study_documents/cvd434_AUP567_ELISpot_PT_Report_31Jul2015_FINAL.pdf	Report or summary
-166	ELISpot Results Summary	study_documents/cvd405_ELISPOT VRC MRV144.pptx	Report or summary
-94	ELISpot Results Summary	study_documents/cvd259_Pantaleo ABL ELISpot Analysis Summary.pdf	Report or summary
-97	Epitope Mapping Results Summary 	study_documents/cvd260_CAVIMC 031 Linear Epitope Mapping_BaselineSubtracted-3.pptx	Report or summary
-139	Experimental Design	study_documents/cvd294_Powerpoint Schematic of Experimatal design.ppt	Study plan or protocol
-10	Farzan: Preventing HIV-1 transmission with eCD4-Ig	cavd_grant_profiles/Farzan OPP1132169 eCD4ig.pdf	grant_document
-11	Frank: Studies to Maximize Immunogenicity	cavd_grant_profiles/Frank OPP1033096 Studies to Maximize Immunogenicity.pdf	grant_document
-12	Gallo: FLSC Phase I & II Clinical Trials	cavd_grant_profiles/Gallo OPP1017606 FLSC Phase I II Clinical Trials.pdf	grant_document
-62	Gallo: Systemic, Mucosal & Passive Immunity	cavd_grant_profiles/Gallo OPP41351 Systemic, Mucosal and Passive Immunity.docx	grant_document
-15	Haynes: B-Cell Lineage Envelope Design	cavd_grant_profiles/Haynes OPP1033098 B-Cell Lineage Envelope Design.pdf	grant_document
-63	Haynes: Broad Neutralizing Antibody Consortium	cavd_grant_profiles/Haynes OPP38643 Broad Neutralizing Antibody Consortium.pdf	grant_document
-20	Haynes: Centralized Envelope Phase I Study	cavd_grant_profiles/Haynes OPP52282 Centralized Envelope Phase I Study.pdf	grant_document
-19	Haynes: Isolation of 10E8-like bnAbs from CHAVI 001	cavd_grant_profiles/Haynes OPP1115416 10E8-like bNAbs.pdf	grant_document
-18	Haynes: MPER-Peptide Liposome Immunogen Testing	cavd_grant_profiles/Haynes OPP1094352 MPER-Peptide Liposome Immunogen Testing.pdf	grant_document
-16	Haynes: Role of IgA in HIV-1 Protection	cavd_grant_profiles/Haynes OPP1040785 Role of IgA in HIV-1 Protection.pdf	grant_document
-21	Ho: Engineered Bispecific bNabs for Prevention	cavd_grant_profiles/Ho OPP1040731 Engineered Bispecific bNabs for Prevention.pdf	grant_document
-64	Ho: Enhancing Innate Immune Activation	cavd_grant_profiles/Ho OPP38648 Enhancing Innate Immune Activation.pdf	grant_document
-22	Ho: Ibalizumab for HIV Prevention	cavd_grant_profiles/Ho OPP50714 Ibalizumab for HIV Prevention.pdf	grant_document
-23	Hope: Antibody-Mucus Interactions	cavd_grant_profiles/Hope OPP1031734 Antibody-Mucus Interactions.pdf	grant_document
-24	Hu: Unmasking Conserved Epitopes	cavd_grant_profiles/Hu OPP1033102 Unmasking Conserved Epitopes.pdf	grant_document
-119	ICS Data Summary	study_documents/cvd268_ics_all_plots_20130912.pdf	Report or summary
-108	ICS Data Summary	study_documents/cvd264_ICS_LAB_REPORT_19APR13_n24fcm_fh_IL2_CD154_MIMOSA.pdf	Report or summary
-187	ICS Results Summary	study_documents/cvd434_AUP567_ICS_PT_Report_06Jul2015_FINAL.pdf	Report or summary
-124	ICS Results Summary	study_documents/cvd268_MUCOVAC2_ICS_Report_27Jun13.pdf	Report or summary
-167	ICS Results Summary	study_documents/cvd405_ICS MRV144 single cytokines.ppt	Report or summary
-107	ICS Results Summary	study_documents/cvd264_DCVax001_ICS_Memo_20April2013.pdf	Report or summary
-28	Koup: T Cell VIMC	cavd_grant_profiles/Koup OPP1032325 T Cell Vaccine Immune Monitoring Consortium.pdf	grant_document
-65	Letvin: rAdenoviral & rMycobacterial Vector Immunogens	cavd_grant_profiles/Letvin OPP38614 rAdenoviral and rMycobacterial Vector Immunogens.pdf	grant_document
-30	Lewis: Ab Specificity & Fc-Mediated Protection	cavd_grant_profiles/Lewis OPP1033109 Ab Specificity and Fc-Mediated Protection.pdf	grant_document
-31	Lu: Creating a Better Envelope	cavd_grant_profiles/Lu OPP1033112 Creating a Better Envelope.pdf	grant_document
-66	McElrath: Innate to Adaptive Immunity	cavd_grant_profiles/McElrath OPP38645 Innate to Adaptive Immunity.pdf	grant_document
-169	Microarray Results Summary	study_documents/cvd412_Study 31_Microarrays.pptx	Report or summary
-125	NAB A3R5 Results Summary	study_documents/cvd268_MUCOVAC2_NAb_A3R5_Analysis_Report.pdf	Report or summary
-110	NAB A3R5 Results Summary	study_documents/cvd266_nab_analysis_a3r5.pdf	Report or summary
-143	NAB Data Summary	study_documents/cvd310_Ho_Ibalizumab Macaque Sera 1.pdf	Report or summary
-180	NAB Data Summary	study_documents/cvd423_Parks_RV_423 Data Report.pdf	Report or summary
-142	NAB Data Summary	study_documents/cvd304_Cole_Macaque1_Data_Summary.pdf	Report or summary
-147	NAB Data Summary	study_documents/cvd351_Devico_FLSC 1.7 (Wk 59 UPDATE)_10May13.pdf	Report or summary
-159	NAB Data Summary	study_documents/cvd391_CAVIMC_Gallo_PA_391 Serum Neutralization Data Report 13 September 2013.xlsx	Report or summary
-141	NAB Data Summary	study_documents/cvd303_Lewis_Macaque 1.2 Data Report.pdf	Report or summary
-154	NAB Data Summary	study_documents/cvd380_CAVIMC-046 Neutralization Data.xlsx	Report or summary
-173	NAB Data Summary	study_documents/cvd417_CAVIMC Seder_TP_023 Neutralization Data-2.xlsx	Report or summary
-193	NAB Data Summary	study_documents/cvd453_Barouch_PA_453 (13.14) Data Report.pdf	Report or summary
-161	NAB Data Summary	study_documents/cvd392_CAVIMC Gallo_PA_392 Neutralization Data.xlsx	Report or summary
-117	NAB Data Summary	study_documents/cvd268_CAVIMC-MUCOVAC A3R5.7 Neutralization Data 26 June 2013.xlsx	Report or summary
-163	NAB Data Summary	study_documents/cvd393_CAVIMC Weiss_PA_393 Neutralization Data.xlsx	Report or summary
-76	NAB Data Summary	study_documents/cvd239_ Lerner_CAVIMC-015_031209_Data Summary_Mar12 209-2.doc	Report or summary
-165	NAB Data Summary 1	study_documents/cvd394_CAVD NHP#28.4 Report 9Oct12.xlsx	Report or summary
-196	NAB Data Summary 1	study_documents/cvd456_Parks RV2_456 Neutralization Data_26Jul14.xlsx	Report or summary
-200	NAB Data Summary 1	study_documents/cvd470_CAVD Haynes_PA_470; NHP#204 and NHP#205 Neutralization Data Report_5Jan16.xlsx	Report or summary
-99	NAB Data Summary 1	study_documents/cvd260_McElrath_Seder_Antibody Responses 1.1 01Jun11.pdf	Report or summary
-129	NAB Data Summary 1	study_documents/cvd277_aucBoxplots_06Aug2012.pdf	Report or summary
-190	NAB Data Summary 1	study_documents/cvd434_CAVIMC-AUP567 Neutralization Data.xlsx	Report or summary
-182	NAB Data Summary 1	study_documents/cvd430_Haynes_PA_430_wk 0 and 23_Extended Virus Panels_TZM-bl and A3R5 Assay_19Sep13.xlsx	Report or summary
-77	NAB Data Summary 1	study_documents/cvd240_Devico_Macaque 1 Data Summary.pdf	Report or summary
-98	NAB Data Summary 2	study_documents/cvd260_CAVIMC-031 Neutralization Data with AUC 3 May 2011-6.xlsx	Report or summary
-164	NAB Data Summary 2	study_documents/cvd394_CAVD NHP#28 4_Report 23Nov12.xlsx	Report or summary
-137	NAB Data Summary 2	study_documents/cvd277_titerBoxplots_06Aug2012.pdf	Report or summary
-183	NAB Data Summary 2	study_documents/cvd430_Haynes_PA_430_wk 0 and 23_TZM-bl Assay_Feb 2014_Aug 2014.xlsx	Report or summary
-189	NAB Data Summary 2	study_documents/cvd434_CAVIMC AUP567 Neutralization Data Report 2 June 2014.xlsx	Report or summary
-195	NAB Data Summary 2	study_documents/cvd456_Parks RV2_456 NAb_Report_20Feb15.xlsx	Report or summary
-199	NAB Data Summary 2	study_documents/cvd470_CAVD Haynes_PA_470; NHP#204 and NHP#205 Neutralization Data Report_15Sep15.xlsx	Report or summary
-78	NAB Data Summary 2	study_documents/cvd240_Devico_Macaque 1.2 Data Summary.pdf	Report or summary
-181	NAB Data Summary 3	study_documents/cvd430_Haynes_PA_430_wk 0 and 23 and 49_A3R5 Assay_25Jun14.xlsx	Report or summary
-198	NAB Data Summary 3	study_documents/cvd470_CAVD Haynes_PA_470 NHP#204 Neutralization Data Report_31Dec14.xlsx	Report or summary
-79	NAB Data Summary 3	study_documents/cvd240_Devico_Macaque 1.3 Data Summary.pdf	Report or summary
-135	NAB Data Summary 3	study_documents/cvd277_CAVIMC-AUP485 Neutralization Data-2-3.xlsx	Report or summary
-197	NAB Data Summary 4	study_documents/cvd470_CAVD Haynes_PA_470 NHP#204 mAbs Neutralization Data Report_27Mar15.xlsx	Report or summary
-80	NAB Data Summary 4	study_documents/cvd240_Devico_Macaque 1.4 Data Summary.pdf	Report or summary
-81	NAB Data Summary 5	study_documents/cvd240_Devico_Macaque 1.5 Data Report.pdf	Report or summary
-82	NAB Data Summary 6	study_documents/cvd240_Devico_Macaque 1.6 Data Report.pdf	Report or summary
-188	NAB Results Summary	study_documents/cvd434_AUP567_NAB_PT_Report_FINAL_05May52015.pdf	Report or summary
-126	NAB TZMbl Results Summary	study_documents/cvd268_MUCOVAC2_Nab_TZMbl_Memo_Dec092013.pdf	Report or summary
-111	NAB TZMbl Results Summary	study_documents/cvd266_nab_analysis_tzmbl.pdf	Report or summary
-41	Nussenzweig: Development of optimized broadly neutralizing antibodies for HIV-1 prevention	cavd_grant_profiles/Nussenzweig Opp1124068 bnAb Development.pdf	grant_document
-39	Nussenzweig: Discovery & Characterization of bNAbs	cavd_grant_profiles/Nussenzweig OPP1033115 Isolation of Human Monoclonal Abs for HIV Prevention.pdf	grant_document
-43	Pantaleo: Generation/Isolation of Novel bnAbs from Lymph Node B cells	cavd_grant_profiles/Pantaleo OPP1114725 Novel bNAbs.pdf	grant_document
-44	Pantaleo: Poxvirus-Based Vaccine Development	cavd_grant_profiles/Pantaleo OPP38599 OPP52845 Poxvirus-Based Vaccine Development.pdf	grant_document
-42	Pantaleo: RepliVax Vaccine Platform	cavd_grant_profiles/Pantaleo OPP1040705 RepliVax Vaccine Platform.pdf	grant_document
-67	Parks: CDV and VSV Viral Vectors	cavd_grant_profiles/Parks OPP38606 CDV and VSV Viral Vectors.pdf	grant_document
-45	Parks: HIV Vaccine Clinical Candidates based on Replication-Competent Viral Vectors that Preferentially Replicate in Lymphoid Tissues	cavd_grant_profiles/Parks OPP1033117 HIV Vaccine Clinical Candidates.pdf	grant_document
-68	Parks: Replicating Viral Vaccine Vectors	cavd_grant_profiles/Parks OPP38606 Replicating Viral Vaccine Vectors.pdf	grant_document
-192	Peptide Microarray Results Summary	study_documents/cvd434_SENT.AUP 567 Peptide Array Summary_20141212 SXS.pptx	Report or summary
-127	Peptide Microarray Results Summary	study_documents/cvd268_Updated_MucoVac2 Serum IgG Array_20130601_sxs.pptx	Report or summary
-152	Peptide Microarray Results Summary 1	study_documents/cvd369_SENT.CAVIMC_369_C1086_IgG_array_02Feb2013.pptx	Report or summary
-155	Peptide Microarray Results Summary 1	study_documents/cvd384_SENT.CAVIMC 384 (VAC1003) IgG Array Summary_05Sep2013.pptx	Report or summary
-153	Peptide Microarray Results Summary 2	study_documents/cvd369_SENT.CAVIMC_369_CN54_study_IgG_Array_summary_22Feb2013.pptx	Report or summary
-156	Peptide Microarray Results Summary 2	study_documents/cvd384_SENT.CAVIMC 384_227 IgG Array_11Sep2013.pptx	Report or summary
-157	Peptide Microarray Results Summary 3	study_documents/cvd384_SENT.VAC1003 Post Challenge Array Summary_05Mar15.pptx	Report or summary
-158	Peptide Microarray Results Summary 4	study_documents/cvd384_SENT.VAC1003 Post Challenge Individual Plots_05Mar2015.pptx	Report or summary
-46	Pettit: Just Biotherapeutics Support for HIV bnAbs	cavd_grant_profiles/Pettit OPP1138851 Just Biotherapeutics.pdf	grant_document
-69	Picker: An Attenuated CMV Vector	cavd_grant_profiles/Picker OPP1033121 An Attenuated CMV Vector.pdf	grant_document
-184	Protocol	study_documents/cvd434_AUP 567 protocol final executed.pdf	Study plan or protocol
-92	Protocol	study_documents/cvd259_ABL AUP 444 NYVAC-C-KC complete signed Aug 2010.pdf	Study plan or protocol
-90	Protocol Version 3	study_documents/cvd256_EV03-ANRS Vac20 _3 0_ 180408.pdf	Study plan or protocol
-49	Pulendran: Protective humoral responses against HIV	cavd_grant_profiles/Pulendran OPP1040768 Protective humoral responses against HIV.pdf	grant_document
-70	Reinherz: bNAbs Against Clade C	cavd_grant_profiles/Reinherz OPP50314 bNAbs Against Clade C.pdf	grant_document
-121	Safety and Immunogenicity Results Summary	study_documents/cvd268_MUCOVAC-2 Phase I trial  -IC report.pdf	Report or summary
-84	Sampling Schedule	study_documents/cvd247_MSS NHP 30.0.pdf	Study plan or protocol
-71	Shattock: Novel Antigens for Mucosal Protection	cavd_grant_profiles/Shattock OPP37872 Novel Antigens for Mucosal Protection.pdf	grant_document
-72	Stamatatos: Novel HIV Immunogen Vaccines	cavd_grant_profiles/Stamatatos OPP38660 Novel HIV Immunogen Vaccines.pdf	grant_document
-73	Steinman: Dendritic Cells & Flavivirus Vectors	cavd_grant_profiles/Steinman OPP24029 Dendritic Cells and Flavivirus Vectors.pdf	grant_document
-144	Study Outline	study_documents/cvd335_1_Haynes_mucosal_experimental_design.pdf	Study plan or protocol
-140	Study Outline	study_documents/cvd294_Study_Design.pdf	Study plan or protocol
-175	Study Overview	study_documents/cvd417_VRC 422 Overview.docx	Study plan or protocol
-136	Study Overview Slides	study_documents/cvd277_NHP Ab Assay Disscussion 20 Jan 2012.pptx	Study plan or protocol
-113	Study Overview Slides	study_documents/cvd266_vrc 284 background.ppt	Study plan or protocol
-122	Study Schedule	study_documents/cvd268_MUCOVAC-2 schedule.docx	Study plan or protocol
-57	Walker: bNabs after Infection and Immunization	cavd_grant_profiles/Walker OPP1066973 bNabs after Infection and Immunization.pdf	grant_document
-74	Weiss: Protection by Neutralizing Antibodies	cavd_grant_profiles/Weiss OPP38637 Protection by Neutralizing Antibodies.pdf	grant_document
-59	Wilson: Vector-Mediated Passive Immunization	cavd_grant_profiles/Wilson OPP51061 Vector-Mediated Passive Immunization.pdf	grant_document
-75	Zolla-Pazner: Epitope-Scaffold Immunogens	cavd_grant_profiles/Zolla-Pazner OPP38631_01 Epitope-Scaffold Immunogens.pdf	grant_document
-56	?�berla: Antibodies without HIV T helper cells	cavd_grant_profiles/Uberla OPP1040727 Antibodies without HIV T helper cells.pdf	grant_document
-1	Missing: This document is missing	cavd_grant_profiles/MissingDocument.pdf	grant_document
+128	ADCC Data Summary	study_documents/cvd277_adccLUCBoxplots_18Oct2012.pdf	Report or summary	
+91	ADCC Data Summary	study_documents/cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf	Report or summary	
+185	ADCC Results Summary	study_documents/cvd434_AUP567_ADCC_PT_Report_20140912.pdf	Report or summary	
+130	ADCVI Data Summary	study_documents/cvd277_AUP485 bleed 26 Summary 6-1-2012.xlsx	Report or summary	
+132	Assay Data Summary	study_documents/cvd277_aup485AnalysisPlots_14Sept2012.pdf	Report or summary	
+138	Assay Data Summary	study_documents/cvd294_Powerpoint figures for Pilot NHP rBCG study--final.ppt	Report or summary	
+162	Assay Results Summary	study_documents/cvd392_PA 392 Gallo Immuno Prelim Slides.pptx	Report or summary	
+87	Assay Results Summary	study_documents/cvd247_Study summary NHP 30.0.pdf	Report or summary	
+179	Assay Results Summary	study_documents/cvd421_Study 38.2 Experimental Design and Summary_PowerPoint.pptx	Report or summary	
+178	Assay Results Summary	study_documents/cvd419_V43 Prelim Slides.pptx	Report or summary	
+115	Assay Results Summary	study_documents/cvd267_47 Study Report.pdf	Report or summary	
+168	Assay Results Summary	study_documents/cvd412_Study 31 _MICC work.ppt	Report or summary	
+160	Assay Results Summary	study_documents/cvd391_PA 391 Gallo Challenge Prelim Slides.pptx	Report or summary	
+151	Assay Results Summary	study_documents/cvd363_NHP # 45Report for CAVD Portalv2.docx	Report or summary	
+146	Assay Results Summary	study_documents/cvd351_DeVico FLSC Prelim Slides v2.pptx	Report or summary	
+102	Avidity Results Summary	study_documents/cvd264_DC-Vax001_Avidity_Report.pdf	Report or summary	
+170	B-cell Phenotyping Results Summary	study_documents/cvd412_Study 31-B cell phenotyping-2.pptx	Report or summary	
+150	BAMA Data Summary	study_documents/cvd354_SENT.Rh-048Data Summary.2012.xlsx	Report or summary	
+85	BAMA Data Summary 1	study_documents/cvd247_NHP 30.0 03FEB2013 Tomaras titrations_Binding MFI _ Ab titers.pdf	Report or summary	
+86	BAMA Data Summary 2	study_documents/cvd247_NHP 30.0 Tomaras 9 Jul 2010- NHP rBCG Study IgG-Biot Plate 2.pdf	Report or summary	
+133	BAMA IgA Data Summary	study_documents/cvd277_aup485IgaBoxplot_19Nov2012.pdf	Report or summary	
+95	BAMA IgA Data Summary	study_documents/cvd259_profileBoxplotsBindingAb_IgA_byGroup_09May2012.pdf	Report or summary	
+96	BAMA IgG Data Summary	study_documents/cvd259_profileBoxplotsBindingAb_IgG_byGroup_09May2012.pdf	Report or summary	
+134	BAMA IgG Data Summary	study_documents/cvd277_aup485IggBoxplots_19Nov2012.pdf	Report or summary	
+112	BAMA IgG Results Summary	study_documents/cvd266_SENT IgG Mucosal Rectal Weck. VRC284. 30 APRIL.pdf	Report or summary	
+194	BAMA Results Summary	study_documents/cvd456_Parks RV 456 IgG serum 28aug2015.pptx	Report or summary	
+149	BAMA Results Summary	study_documents/cvd354_SENT 24.July CAVIMC-044 .pptx	Report or summary	
+148	BAMA Results Summary	study_documents/cvd351_Gallo PA 351 IgG analysis to send.pptx	Report or summary	
+89	BAMA Results Summary	study_documents/cvd256_ev03_iga_igg.pdf	Report or summary	
+191	BAMA Results Summary	study_documents/cvd434_REVISED_AUP567_IgG&IgA_BAMA_PT_Report_FINAL_06Mar2015.pdf	Report or summary	
+176	BAMA Results Summary 1	study_documents/cvd417_VRC 422_Rectal IgG _SENT 30June2014.pptx	Report or summary	
+103	BAMA Results Summary 1	study_documents/cvd264_DC-Vax001_BAMA_Report.pdf	Report or summary	
+174	BAMA Results Summary 2	study_documents/cvd417_Plasma IgG Data_25mar2015 Tomaras SEND_GT.pptx	Report or summary	
+100	BAMA Results Summary 2 	study_documents/cvd264_DCVax_BAMA_Subclass_PT_Report_FINAL_20May2015.pdf	Report or summary	
+171	BAMA Results Summary 3	study_documents/cvd417_08June2015_VRC422_IgA_Plasma_TO SEND.pptx	Report or summary	
+172	BAMA Results Summary 4	study_documents/cvd417_08June2015_VRC422_IgA_REC_TO SEND.pptx	Report or summary	
+93	BAMA and ELISA Results Summary	study_documents/cvd259_baselineComparisons_24May2012.pdf	Report or summary	
+6	Barouch: Novel Vector/Protein Vaccines	cavd_grant_profiles/Barouch OPP1040741 Novel VectorProtein Vaccines.pdf	grant_document	
+7	Barouch: Therapeutic Efficacy of Potent Broadly Neutralizing mAbs for HIV-1 Eradication	cavd_grant_profiles/Barouch OPP1107669 Therapeutic Efficacy of Potent Broadly Neutralizing mAbs for HIV-1 Eradication.pdf	grant_document	
+177	BiaCore Results Summary	study_documents/cvd417_VRC422_SPR_Plasma IgG_SENT30June2014-2.pptx	Report or summary	
+61	Bjorkman: Improving Potency and Breadth of Natural bNAbs	cavd_grant_profiles/Bjorkman OPP1040753 Improving Potency and Breadth of Natural bNAbs.pdf	grant_document	
+145	CBC and Tetramer Data Summary	study_documents/cvd335_3_Mucosal_PK_CBC_tetramer.pdf	Report or summary	
+104	CFSE Results Summary	study_documents/cvd264_DCVax001_CFSE_Memo_JUL13_v4.docx	Report or summary	
+118	CFSE Results Summary	study_documents/cvd268_cfse_analysis_report.pdf	Report or summary	
+36	Comprehensive Antibody VIMC	cavd_grant_profiles/Montefiori OPP1032144 Antibody Vaccine Immune Monitoring Consortium.pdf	grant_document	
+120	Cross-assay Results Summary	study_documents/cvd268_MucoVac02_CrossAssays_20140811_FINAL.pdf	Report or summary	
+101	Cross-assay Results Summary	study_documents/cvd264_dcvax_cross_assay12MAR14.pdf	Report or summary	
+105	Cytokine Luminex Results Summary	study_documents/cvd264_DCVax001_CytokineLuminex_Report_14NOV12.pdf	Report or summary	
+123	Cytokine Luminex Results Summary	study_documents/cvd268_MUCOVAC2_CytLum_Report_AUG13_v5.pdf	Report or summary	
+109	ELISA Titer Results Summary	study_documents/cvd266_cavd_vrc284_draft4.pdf	Report or summary	
+83	ELISpot Data Summary	study_documents/cvd247_ELISpot data_tetramer data NHP 30.0.pdf	Report or summary	
+131	ELISpot Data Summary	study_documents/cvd277_AUP485 WK26 Elispot 2 wks post 2 NYVAC+protein17Feb2012_modified_CT_AC_edits.xlsx	Report or summary	
+114	ELISpot Data Summary 1	study_documents/cvd267_47 IFNg-ELISpot_p11C tetramer responses.pdf	Report or summary	
+116	ELISpot Data Summary 2	study_documents/cvd267_NYVAC 47 NHP graphs.pdf	Report or summary	
+106	ELISpot Results Summary	study_documents/cvd264_DCVax001_ELISpot_Memo_17APR13.pdf	Report or summary	
+88	ELISpot Results Summary	study_documents/cvd256_EV03 ELISpot data.pdf	Report or summary	
+186	ELISpot Results Summary	study_documents/cvd434_AUP567_ELISpot_PT_Report_31Jul2015_FINAL.pdf	Report or summary	
+166	ELISpot Results Summary	study_documents/cvd405_ELISPOT VRC MRV144.pptx	Report or summary	
+94	ELISpot Results Summary	study_documents/cvd259_Pantaleo ABL ELISpot Analysis Summary.pdf	Report or summary	
+97	Epitope Mapping Results Summary 	study_documents/cvd260_CAVIMC 031 Linear Epitope Mapping_BaselineSubtracted-3.pptx	Report or summary	
+139	Experimental Design	study_documents/cvd294_Powerpoint Schematic of Experimatal design.ppt	Study plan or protocol	
+10	Farzan: Preventing HIV-1 transmission with eCD4-Ig	cavd_grant_profiles/Farzan OPP1132169 eCD4ig.pdf	grant_document	
+11	Frank: Studies to Maximize Immunogenicity	cavd_grant_profiles/Frank OPP1033096 Studies to Maximize Immunogenicity.pdf	grant_document	
+12	Gallo: FLSC Phase I & II Clinical Trials	cavd_grant_profiles/Gallo OPP1017606 FLSC Phase I II Clinical Trials.pdf	grant_document	
+62	"Gallo: Systemic, Mucosal & Passive Immunity"	"cavd_grant_profiles/Gallo OPP41351 Systemic, Mucosal and Passive Immunity.docx"	grant_document	
+15	Haynes: B-Cell Lineage Envelope Design	cavd_grant_profiles/Haynes OPP1033098 B-Cell Lineage Envelope Design.pdf	grant_document	
+63	Haynes: Broad Neutralizing Antibody Consortium	cavd_grant_profiles/Haynes OPP38643 Broad Neutralizing Antibody Consortium.pdf	grant_document	
+20	Haynes: Centralized Envelope Phase I Study	cavd_grant_profiles/Haynes OPP52282 Centralized Envelope Phase I Study.pdf	grant_document	
+19	Haynes: Isolation of 10E8-like bnAbs from CHAVI 001	cavd_grant_profiles/Haynes OPP1115416 10E8-like bNAbs.pdf	grant_document	
+18	Haynes: MPER-Peptide Liposome Immunogen Testing	cavd_grant_profiles/Haynes OPP1094352 MPER-Peptide Liposome Immunogen Testing.pdf	grant_document	
+16	Haynes: Role of IgA in HIV-1 Protection	cavd_grant_profiles/Haynes OPP1040785 Role of IgA in HIV-1 Protection.pdf	grant_document	
+21	Ho: Engineered Bispecific bNabs for Prevention	cavd_grant_profiles/Ho OPP1040731 Engineered Bispecific bNabs for Prevention.pdf	grant_document	
+64	Ho: Enhancing Innate Immune Activation	cavd_grant_profiles/Ho OPP38648 Enhancing Innate Immune Activation.pdf	grant_document	
+22	Ho: Ibalizumab for HIV Prevention	cavd_grant_profiles/Ho OPP50714 Ibalizumab for HIV Prevention.pdf	grant_document	
+23	Hope: Antibody-Mucus Interactions	cavd_grant_profiles/Hope OPP1031734 Antibody-Mucus Interactions.pdf	grant_document	
+24	Hu: Unmasking Conserved Epitopes	cavd_grant_profiles/Hu OPP1033102 Unmasking Conserved Epitopes.pdf	grant_document	
+119	ICS Data Summary	study_documents/cvd268_ics_all_plots_20130912.pdf	Report or summary	
+108	ICS Data Summary	study_documents/cvd264_ICS_LAB_REPORT_19APR13_n24fcm_fh_IL2_CD154_MIMOSA.pdf	Report or summary	
+187	ICS Results Summary	study_documents/cvd434_AUP567_ICS_PT_Report_06Jul2015_FINAL.pdf	Report or summary	
+124	ICS Results Summary	study_documents/cvd268_MUCOVAC2_ICS_Report_27Jun13.pdf	Report or summary	
+167	ICS Results Summary	study_documents/cvd405_ICS MRV144 single cytokines.ppt	Report or summary	
+107	ICS Results Summary	study_documents/cvd264_DCVax001_ICS_Memo_20April2013.pdf	Report or summary	
+28	Koup: T Cell VIMC	cavd_grant_profiles/Koup OPP1032325 T Cell Vaccine Immune Monitoring Consortium.pdf	grant_document	
+65	Letvin: rAdenoviral & rMycobacterial Vector Immunogens	cavd_grant_profiles/Letvin OPP38614 rAdenoviral and rMycobacterial Vector Immunogens.pdf	grant_document	
+30	Lewis: Ab Specificity & Fc-Mediated Protection	cavd_grant_profiles/Lewis OPP1033109 Ab Specificity and Fc-Mediated Protection.pdf	grant_document	
+31	Lu: Creating a Better Envelope	cavd_grant_profiles/Lu OPP1033112 Creating a Better Envelope.pdf	grant_document	
+66	McElrath: Innate to Adaptive Immunity	cavd_grant_profiles/McElrath OPP38645 Innate to Adaptive Immunity.pdf	grant_document	
+169	Microarray Results Summary	study_documents/cvd412_Study 31_Microarrays.pptx	Report or summary	
+125	NAB A3R5 Results Summary	study_documents/cvd268_MUCOVAC2_NAb_A3R5_Analysis_Report.pdf	Report or summary	
+110	NAB A3R5 Results Summary	study_documents/cvd266_nab_analysis_a3r5.pdf	Report or summary	
+143	NAB Data Summary	study_documents/cvd310_Ho_Ibalizumab Macaque Sera 1.pdf	Report or summary	
+180	NAB Data Summary	study_documents/cvd423_Parks_RV_423 Data Report.pdf	Report or summary	
+142	NAB Data Summary	study_documents/cvd304_Cole_Macaque1_Data_Summary.pdf	Report or summary	
+147	NAB Data Summary	study_documents/cvd351_Devico_FLSC 1.7 (Wk 59 UPDATE)_10May13.pdf	Report or summary	
+159	NAB Data Summary	study_documents/cvd391_CAVIMC_Gallo_PA_391 Serum Neutralization Data Report 13 September 2013.xlsx	Report or summary	
+141	NAB Data Summary	study_documents/cvd303_Lewis_Macaque 1.2 Data Report.pdf	Report or summary	
+154	NAB Data Summary	study_documents/cvd380_CAVIMC-046 Neutralization Data.xlsx	Report or summary	
+173	NAB Data Summary	study_documents/cvd417_CAVIMC Seder_TP_023 Neutralization Data-2.xlsx	Report or summary	
+193	NAB Data Summary	study_documents/cvd453_Barouch_PA_453 (13.14) Data Report.pdf	Report or summary	
+161	NAB Data Summary	study_documents/cvd392_CAVIMC Gallo_PA_392 Neutralization Data.xlsx	Report or summary	
+117	NAB Data Summary	study_documents/cvd268_CAVIMC-MUCOVAC A3R5.7 Neutralization Data 26 June 2013.xlsx	Report or summary	
+163	NAB Data Summary	study_documents/cvd393_CAVIMC Weiss_PA_393 Neutralization Data.xlsx	Report or summary	
+76	NAB Data Summary	study_documents/cvd239_ Lerner_CAVIMC-015_031209_Data Summary_Mar12 209-2.doc	Report or summary	
+165	NAB Data Summary 1	study_documents/cvd394_CAVD NHP#28.4 Report 9Oct12.xlsx	Report or summary	
+196	NAB Data Summary 1	study_documents/cvd456_Parks RV2_456 Neutralization Data_26Jul14.xlsx	Report or summary	
+200	NAB Data Summary 1	study_documents/cvd470_CAVD Haynes_PA_470; NHP#204 and NHP#205 Neutralization Data Report_5Jan16.xlsx	Report or summary	
+99	NAB Data Summary 1	study_documents/cvd260_McElrath_Seder_Antibody Responses 1.1 01Jun11.pdf	Report or summary	
+129	NAB Data Summary 1	study_documents/cvd277_aucBoxplots_06Aug2012.pdf	Report or summary	
+190	NAB Data Summary 1	study_documents/cvd434_CAVIMC-AUP567 Neutralization Data.xlsx	Report or summary	
+182	NAB Data Summary 1	study_documents/cvd430_Haynes_PA_430_wk 0 and 23_Extended Virus Panels_TZM-bl and A3R5 Assay_19Sep13.xlsx	Report or summary	
+77	NAB Data Summary 1	study_documents/cvd240_Devico_Macaque 1 Data Summary.pdf	Report or summary	
+98	NAB Data Summary 2	study_documents/cvd260_CAVIMC-031 Neutralization Data with AUC 3 May 2011-6.xlsx	Report or summary	
+164	NAB Data Summary 2	study_documents/cvd394_CAVD NHP#28 4_Report 23Nov12.xlsx	Report or summary	
+137	NAB Data Summary 2	study_documents/cvd277_titerBoxplots_06Aug2012.pdf	Report or summary	
+183	NAB Data Summary 2	study_documents/cvd430_Haynes_PA_430_wk 0 and 23_TZM-bl Assay_Feb 2014_Aug 2014.xlsx	Report or summary	
+189	NAB Data Summary 2	study_documents/cvd434_CAVIMC AUP567 Neutralization Data Report 2 June 2014.xlsx	Report or summary	
+195	NAB Data Summary 2	study_documents/cvd456_Parks RV2_456 NAb_Report_20Feb15.xlsx	Report or summary	
+199	NAB Data Summary 2	study_documents/cvd470_CAVD Haynes_PA_470; NHP#204 and NHP#205 Neutralization Data Report_15Sep15.xlsx	Report or summary	
+78	NAB Data Summary 2	study_documents/cvd240_Devico_Macaque 1.2 Data Summary.pdf	Report or summary	
+181	NAB Data Summary 3	study_documents/cvd430_Haynes_PA_430_wk 0 and 23 and 49_A3R5 Assay_25Jun14.xlsx	Report or summary	
+198	NAB Data Summary 3	study_documents/cvd470_CAVD Haynes_PA_470 NHP#204 Neutralization Data Report_31Dec14.xlsx	Report or summary	
+79	NAB Data Summary 3	study_documents/cvd240_Devico_Macaque 1.3 Data Summary.pdf	Report or summary	
+135	NAB Data Summary 3	study_documents/cvd277_CAVIMC-AUP485 Neutralization Data-2-3.xlsx	Report or summary	
+197	NAB Data Summary 4	study_documents/cvd470_CAVD Haynes_PA_470 NHP#204 mAbs Neutralization Data Report_27Mar15.xlsx	Report or summary	
+80	NAB Data Summary 4	study_documents/cvd240_Devico_Macaque 1.4 Data Summary.pdf	Report or summary	
+81	NAB Data Summary 5	study_documents/cvd240_Devico_Macaque 1.5 Data Report.pdf	Report or summary	
+82	NAB Data Summary 6	study_documents/cvd240_Devico_Macaque 1.6 Data Report.pdf	Report or summary	
+188	NAB Results Summary	study_documents/cvd434_AUP567_NAB_PT_Report_FINAL_05May52015.pdf	Report or summary	
+126	NAB TZMbl Results Summary	study_documents/cvd268_MUCOVAC2_Nab_TZMbl_Memo_Dec092013.pdf	Report or summary	
+111	NAB TZMbl Results Summary	study_documents/cvd266_nab_analysis_tzmbl.pdf	Report or summary	
+41	Nussenzweig: Development of optimized broadly neutralizing antibodies for HIV-1 prevention	cavd_grant_profiles/Nussenzweig Opp1124068 bnAb Development.pdf	grant_document	
+39	Nussenzweig: Discovery & Characterization of bNAbs	cavd_grant_profiles/Nussenzweig OPP1033115 Isolation of Human Monoclonal Abs for HIV Prevention.pdf	grant_document	
+43	Pantaleo: Generation/Isolation of Novel bnAbs from Lymph Node B cells	cavd_grant_profiles/Pantaleo OPP1114725 Novel bNAbs.pdf	grant_document	
+44	Pantaleo: Poxvirus-Based Vaccine Development	cavd_grant_profiles/Pantaleo OPP38599 OPP52845 Poxvirus-Based Vaccine Development.pdf	grant_document	
+42	Pantaleo: RepliVax Vaccine Platform	cavd_grant_profiles/Pantaleo OPP1040705 RepliVax Vaccine Platform.pdf	grant_document	
+67	Parks: CDV and VSV Viral Vectors	cavd_grant_profiles/Parks OPP38606 CDV and VSV Viral Vectors.pdf	grant_document	
+45	Parks: HIV Vaccine Clinical Candidates based on Replication-Competent Viral Vectors that Preferentially Replicate in Lymphoid Tissues	cavd_grant_profiles/Parks OPP1033117 HIV Vaccine Clinical Candidates.pdf	grant_document	
+68	Parks: Replicating Viral Vaccine Vectors	cavd_grant_profiles/Parks OPP38606 Replicating Viral Vaccine Vectors.pdf	grant_document	
+192	Peptide Microarray Results Summary	study_documents/cvd434_SENT.AUP 567 Peptide Array Summary_20141212 SXS.pptx	Report or summary	
+127	Peptide Microarray Results Summary	study_documents/cvd268_Updated_MucoVac2 Serum IgG Array_20130601_sxs.pptx	Report or summary	
+152	Peptide Microarray Results Summary 1	study_documents/cvd369_SENT.CAVIMC_369_C1086_IgG_array_02Feb2013.pptx	Report or summary	
+155	Peptide Microarray Results Summary 1	study_documents/cvd384_SENT.CAVIMC 384 (VAC1003) IgG Array Summary_05Sep2013.pptx	Report or summary	
+153	Peptide Microarray Results Summary 2	study_documents/cvd369_SENT.CAVIMC_369_CN54_study_IgG_Array_summary_22Feb2013.pptx	Report or summary	
+156	Peptide Microarray Results Summary 2	study_documents/cvd384_SENT.CAVIMC 384_227 IgG Array_11Sep2013.pptx	Report or summary	
+157	Peptide Microarray Results Summary 3	study_documents/cvd384_SENT.VAC1003 Post Challenge Array Summary_05Mar15.pptx	Report or summary	
+158	Peptide Microarray Results Summary 4	study_documents/cvd384_SENT.VAC1003 Post Challenge Individual Plots_05Mar2015.pptx	Report or summary	
+46	Pettit: Just Biotherapeutics Support for HIV bnAbs	cavd_grant_profiles/Pettit OPP1138851 Just Biotherapeutics.pdf	grant_document	
+69	Picker: An Attenuated CMV Vector	cavd_grant_profiles/Picker OPP1033121 An Attenuated CMV Vector.pdf	grant_document	
+184	Protocol	study_documents/cvd434_AUP 567 protocol final executed.pdf	Study plan or protocol	
+92	Protocol	study_documents/cvd259_ABL AUP 444 NYVAC-C-KC complete signed Aug 2010.pdf	Study plan or protocol	
+90	Protocol Version 3	study_documents/cvd256_EV03-ANRS Vac20 _3 0_ 180408.pdf	Study plan or protocol	
+49	Pulendran: Protective humoral responses against HIV	cavd_grant_profiles/Pulendran OPP1040768 Protective humoral responses against HIV.pdf	grant_document	
+70	Reinherz: bNAbs Against Clade C	cavd_grant_profiles/Reinherz OPP50314 bNAbs Against Clade C.pdf	grant_document	
+121	Safety and Immunogenicity Results Summary	study_documents/cvd268_MUCOVAC-2 Phase I trial  -IC report.pdf	Report or summary	
+84	Sampling Schedule	study_documents/cvd247_MSS NHP 30.0.pdf	Study plan or protocol	
+71	Shattock: Novel Antigens for Mucosal Protection	cavd_grant_profiles/Shattock OPP37872 Novel Antigens for Mucosal Protection.pdf	grant_document	
+72	Stamatatos: Novel HIV Immunogen Vaccines	cavd_grant_profiles/Stamatatos OPP38660 Novel HIV Immunogen Vaccines.pdf	grant_document	
+73	Steinman: Dendritic Cells & Flavivirus Vectors	cavd_grant_profiles/Steinman OPP24029 Dendritic Cells and Flavivirus Vectors.pdf	grant_document	
+144	Study Outline	study_documents/cvd335_1_Haynes_mucosal_experimental_design.pdf	Study plan or protocol	
+140	Study Outline	study_documents/cvd294_Study_Design.pdf	Study plan or protocol	
+175	Study Overview	study_documents/cvd417_VRC 422 Overview.docx	Study plan or protocol	
+136	Study Overview Slides	study_documents/cvd277_NHP Ab Assay Disscussion 20 Jan 2012.pptx	Study plan or protocol	
+113	Study Overview Slides	study_documents/cvd266_vrc 284 background.ppt	Study plan or protocol	
+122	Study Schedule	study_documents/cvd268_MUCOVAC-2 schedule.docx	Study plan or protocol	
+57	Walker: bNabs after Infection and Immunization	cavd_grant_profiles/Walker OPP1066973 bNabs after Infection and Immunization.pdf	grant_document	
+74	Weiss: Protection by Neutralizing Antibodies	cavd_grant_profiles/Weiss OPP38637 Protection by Neutralizing Antibodies.pdf	grant_document	
+59	Wilson: Vector-Mediated Passive Immunization	cavd_grant_profiles/Wilson OPP51061 Vector-Mediated Passive Immunization.pdf	grant_document	
+75	Zolla-Pazner: Epitope-Scaffold Immunogens	cavd_grant_profiles/Zolla-Pazner OPP38631_01 Epitope-Scaffold Immunogens.pdf	grant_document	
+56	?�berla: Antibodies without HIV T helper cells	cavd_grant_profiles/Uberla OPP1040727 Antibodies without HIV T helper cells.pdf	grant_document	
+1	Missing: This document is missing	cavd_grant_profiles/MissingDocument.pdf	grant_document	
 201	ARV drug levels	study_documents/cvd277_ARV_Drug_Levels.zip	Non-Integrated Assay	ARV DL
 202	Viral load	study_documents/cvd277_Viral_Load.csv	Non-Integrated Assay	VL
 203	Viral sequencing	study_documents/cvd277_Viral_Sequencing.csv	Non-Integrated Assay	VS
 204	ILLUMINA 454-X	study_documents/ILLUMINA_454_X.tsv	Non-Integrated Assay	ILLUMINA 454-X
+300	Publication Datasets - Monoclonal antibodies	study_documents/alvac.pdf	Publication Data	
+301	Analysis Data - T Cell Immune Response	study_documents/t_cell_data.zip	Publication Data	
+302	Publication Datasets	study_documents/t_cell_ir.tsv	Publication Data	

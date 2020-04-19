@@ -44,5 +44,4 @@ Ext.define('Connector.view.module.PublicationDetails', {
         data['title'] = this.initialConfig.data.title;
         this.update(data);
     }
-
 });

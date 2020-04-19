@@ -1045,7 +1045,7 @@ public class CDSController extends SpringActionController
         @Override
         public void validate(StudyDocumentForm form, BindException errors)
         {
-            if (null == form.getStudy())
+            if (null == form.getStudy() && !form.isPublicAccess())
                 errors.reject(ERROR_MSG, "study parameter required");
             if (null == form.getDocumentId())
                 errors.reject(ERROR_MSG, "documentId parameter required");
@@ -1064,31 +1064,39 @@ public class CDSController extends SpringActionController
             {
                 errors.reject(ERROR_MSG, "Study document location not specified.");
             }
-            if (!errors.hasErrors() && CDSManager.get().isStudyDocumentAccessible(form.getStudy(), form.getDocumentId(), getUser(), getContainer()) && !StringUtils.isBlank(filename))
+
+            if (!errors.hasErrors() && !StringUtils.isBlank(filename))
             {
-                WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
-                WebdavResource resource = service.lookup(Path.parse(basePath + filename));
-                if (resource != null)
+                if (form.isPublicAccess() || CDSManager.get().isStudyDocumentAccessible(form.getStudy(), form.getDocumentId(), getUser(), getContainer()))
                 {
-                    File requestedFile = resource.getFile();
-                    if (requestedFile == null || !requestedFile.canRead())
+                    WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
+                    WebdavResource resource = service.lookup(Path.parse(basePath + filename));
+                    if (resource != null)
                     {
-                        errors.reject(ERROR_MSG, "Requested file not found or unreadable");
+                        File requestedFile = resource.getFile();
+                        if (requestedFile == null || !requestedFile.canRead())
+                        {
+                            errors.reject(ERROR_MSG, "Requested file not found or unreadable");
+                        }
+                        else
+                        {
+                            PageFlowUtil.streamFile(response, requestedFile, false);
+                            return null;
+                        }
                     }
                     else
                     {
-                        PageFlowUtil.streamFile(response, requestedFile, false);
-                        return null;
+                        errors.reject(ERROR_MSG, "Requested file not found or unreadable");
                     }
                 }
                 else
                 {
-                    errors.reject(ERROR_MSG, "Requested file not found or unreadable");
+                    errors.reject(ERROR_MSG, "User don't have permission to access restricted study documents");
                 }
             }
             else
             {
-                errors.reject(ERROR_MSG, "User don't have permission to access restricted study documents");
+                errors.reject(ERROR_MSG, "File information is incorrect.");
             }
             // file was not able to be shown so show error message(s)
             ModelAndView result = new SimpleErrorView(errors, false);
@@ -1102,6 +1110,7 @@ public class CDSController extends SpringActionController
         private String study;
         private String documentId;
         private String filename;
+        private boolean publicAccess;
 
         public String getStudy()
         {
@@ -1131,6 +1140,16 @@ public class CDSController extends SpringActionController
         public void setFilename(String name)
         {
             this.filename = name;
+        }
+
+        public boolean isPublicAccess()
+        {
+            return publicAccess;
+        }
+
+        public void setPublicAccess(boolean publicAccess)
+        {
+            this.publicAccess = publicAccess;
         }
     }
 

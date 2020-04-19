@@ -639,6 +639,13 @@
             <column columnName="container"/>
         </columns>
     </table>
+    <table tableName="import_publicationDocument" tableDbType="TABLE">
+        <columns>
+            <column columnName="publication_id"/>
+            <column columnName="document_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
     <table tableName="document" tableDbType="TABLE">
         <columns>
             <column columnName="document_id"/>
@@ -1158,6 +1165,13 @@
         <columns>
             <column columnName="cds_virus_id"/>
             <column columnName="cds_panel_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="publicationDocument" tableDbType="TABLE">
+        <columns>
+            <column columnName="publication_id"/>
+            <column columnName="document_id"/>
             <column columnName="container"/>
         </columns>
     </table>

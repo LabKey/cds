@@ -16,6 +16,14 @@ Ext.define('Connector.plugin.DocumentValidation', {
                 documentId: docId,
                 filename: filename
             });
+        },
+        getPublicationDocumentUrl: function(filename, docId)
+        {
+            return LABKEY.ActionURL.buildURL('cds', 'getStudyDocument', null, {
+                documentId: docId,
+                filename: filename,
+                publicAccess: true
+            });
         }
     },
 
