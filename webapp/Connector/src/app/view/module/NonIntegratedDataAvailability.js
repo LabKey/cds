@@ -5,8 +5,6 @@
  */
 Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
-    xtype : 'app.module.nonintegrateddataavailability',
-
     extend: 'Ext.container.Container',
 
     cls: 'module learn-data-available-module',
@@ -20,18 +18,17 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
     initComponent : function() {
 
-        var data = this.initialConfig.data.model.data;
-
-        if (data.non_integrated_assay_data.length > 0) {
+        const data = this.getData();
+        if (data.length > 0) {
             var docIsValidAction = function(doc, status) {
                 doc.isLinkValid = status;
                 var gridObj = this.items.items[1];
                 var gridView = gridObj.getView();
-                gridView.update(data.non_integrated_assay_data);
-                gridObj.getStore().loadData(data.non_integrated_assay_data, false);
+                gridView.update(data);
+                gridObj.getStore().loadData(data, false);
             };
             this.on("afterrender", function() {
-                this.validateDocLinks(data.non_integrated_assay_data, docIsValidAction);
+                this.validateDocLinks(data, docIsValidAction);
             }, this);
         }
 
@@ -97,7 +94,6 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                         }
                     }
                 },
-
                 'itemmouseleave' : function(view, record, item) {
                     var dataLink = Ext.get(Ext.query("a", item)[0])|| Ext.get(Ext.query("span", item)[0]);
                     if (dataLink) {
@@ -107,7 +103,6 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                         this.fireEvent('hideTooltip');
                     }
                 },
-
                 scope: this
             },
             scope: this
@@ -117,36 +112,16 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
         this.callParent();
     },
 
-    hasContent : function() {
-        var reports = this.initialConfig.data.model.data.non_integrated_assay_data;
-        if (reports) {
-            return reports.length > 0;
-        }
-        return false;
+    getData : function() {
+        console.warn('need to override getData')
     },
+
     getTitleData: function(data) {
-        if (data.non_integrated_assay_data.length > 0 && data.non_integrated_assay_data_has_permission) {
-            data.hasDetails = true;
-        }
-        else {
-            data.hasDetails = false;
-        }
-        return data;
+        console.warn('need to override getTitleData');
     },
 
-    getStore : function(niAssayData) {
-
-        Ext.each(niAssayData.non_integrated_assay_data, function(assay, index){
-            assay.assayIdentfierId = assay.assayIdentifier.replace(/\W/g, '').toLowerCase() + "-" + index;//replace non-alphanumeric characters with an empty string
-        });
-
-        var storeConfig =  {
-            fields: ['assayIdentifier', 'dataStatus', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentfierId'],
-            data: niAssayData.non_integrated_assay_data,
-            storeId: 'NonIntegratedDataStore'
-        };
-
-        return Ext.create('Ext.data.Store', storeConfig);
+    getStore : function(data) {
+        console.warn('need to override getStore')
     },
 
     showDataStatusTooltip : function(event, item, options) {
@@ -174,36 +149,62 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
     hideDataStatusTooltip : function() {
         this.fireEvent('hideTooltip');
     },
-    getColTemplate : function() {
-        var me = this;
-        return new Ext4.XTemplate(
-           '<tpl>',
-                // '<table><tr><td>',
 
+    getColTemplate : function() {
+        console.warn('need to override getColTemplate');
+    }
+});
+
+Ext.define('Connector.view.module.StudyNonIntegratedData', {
+
+    xtype: 'app.module.studynonintegrateddata',
+
+    extend: 'Connector.view.module.NonIntegratedDataAvailability',
+
+    cls: 'module learn-data-available-module',
+
+    initComponent : function() {
+        this.callParent();
+    },
+
+    getData : function() {
+        return this.initialConfig.data.model.data.non_integrated_assay_data;
+    },
+
+    getTitleData: function(data) {
+        if (data.non_integrated_assay_data.length > 0 && data.non_integrated_assay_data_has_permission) {
+            data.hasDetails = true;
+        }
+        else {
+            data.hasDetails = false;
+        }
+        return data;
+    },
+
+    getColTemplate : function() {
+        return new Ext4.XTemplate(
+            '<tpl>',
                 // case when there is both a link to the assay learn page and data to download
                 '<tpl if="isLinkValid && hasAssayLearn">',
-                '<ul class="non-integrated-data-ul">',
-                    '<li class="non-integrated-data-li">',
-                        '<a href="#learn/learn/Assay',
-                        '/{assayIdentifier}">',
-                        '{label:htmlEncode}',
-                        '</a>',
-                        '&nbsp;{suffix}&nbsp;',
-                        '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
-                    '</li>',
-                '</ul>',
-
-
+                    '<ul class="non-integrated-data-ul">',
+                        '<li class="non-integrated-data-li">',
+                            '<a href="#learn/learn/Assay',
+                            '/{assayIdentifier}">',
+                            '{label:htmlEncode}',
+                            '</a>',
+                            '&nbsp;{suffix}&nbsp;',
+                            '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
+                        '</li>',
+                    '</ul>',
                 // case when there is data to download and no assay learn page
                 '<tpl elseif="isLinkValid && !hasAssayLearn">',
-                '<ul class="non-integrated-data-ul">',
-                    '<li class="non-integrated-data-li">',
-                        '<span>{label:htmlEncode}',
-                        '&nbsp;{suffix}&nbsp;</span>',
-                        '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></p>',
-                    '</li>',
-                '</ul>',
-
+                    '<ul class="non-integrated-data-ul">',
+                        '<li class="non-integrated-data-li">',
+                            '<span>{label:htmlEncode}',
+                            '&nbsp;{suffix}&nbsp;</span>',
+                            '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></p>',
+                        '</li>',
+                    '</ul>',
                 // case when there is assay learn page and no data to download
                 '<tpl elseif="hasPermission && hasAssayLearn">',
                     '<ul class="non-integrated-data-ul">',
@@ -211,16 +212,83 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                             '<a href="#learn/learn/Assay',
                             '/{assayIdentifier}">',
                             '{label:htmlEncode}',
-                        '</li>',
-                    '</ul>',
-
+                            '</li>',
+                        '</ul>',
                 // case when there is no assay learn page and no data to download
                 '<tpl elseif="hasPermission">',
+                    '<ul class="non-integrated-data-ul">',
+                        '<li class="non-integrated-data-li">',
+                            '<span>{label:htmlEncode}</span>',
+                        '</li>',
+                '</tpl>',
+            '</tpl>')
+    },
+
+    getStore : function(data) {
+
+        Ext.each(data.non_integrated_assay_data, function(assay, index){
+            assay.assayIdentfierId = assay.assayIdentifier.replace(/\W/g, '').toLowerCase() + "-" + index;//replace non-alphanumeric characters with an empty string
+        });
+
+        var storeConfig =  {
+            fields: ['assayIdentifier', 'dataStatus', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentfierId'],
+            data: data.non_integrated_assay_data,
+            storeId: 'NonIntegratedDataStore'
+        };
+
+        return Ext.create('Ext.data.Store', storeConfig);
+    }
+});
+
+Ext.define('Connector.view.module.PublicationNonIntegratedData', {
+
+    xtype: 'app.module.publicationnonintegrateddata',
+
+    extend: 'Connector.view.module.NonIntegratedDataAvailability',
+
+    cls: 'module learn-data-available-module',
+
+    initComponent : function() {
+
+        this.callParent();
+    },
+
+    getData : function() {
+        return this.data.model.data.publication_data;
+    },
+
+    getTitleData: function(data) {
+        if (data.publication_data.length > 0) {
+            data.hasDetails = true;
+        }
+        else {
+            data.hasDetails = false;
+        }
+        return data;
+    },
+
+    getStore : function(data) {
+        let config =  {
+            fields: ['publication_id', 'document_id', 'label', 'fileName', 'filePath', 'docType', 'isLinkValid', 'suffix'],
+            data: data,
+            storeId: 'PublicationNonIntegratedDataStore'
+        };
+
+        return Ext.create('Ext.data.Store', config);
+    },
+
+    getColTemplate : function() {
+        return new Ext4.XTemplate(
+            '<tpl>',
+                '<tpl if="isLinkValid">',
                 '<ul class="non-integrated-data-ul">',
                     '<li class="non-integrated-data-li">',
-                        '<span>{label:htmlEncode}</span>',
+                        '{label:htmlEncode}',
+                        '&nbsp;{suffix}&nbsp;',
+                        '<a href="{filePath}" target="_blank"><img alt="{label}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
                     '</li>',
+                    '</ul>',
                 '</tpl>',
-           '</tpl>')
-    },
+            '</tpl>');
+    }
 });

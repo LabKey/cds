@@ -84,6 +84,7 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudyPartGroupArmSubject"),
         new TSVCopyConfig("StudyDocument"),
         new TSVCopyConfig("StudyPublication"),
+        new TSVCopyConfig("PublicationDocument"),
 //        new TSVCopyConfig("StudySitePersonnel"),
 
         //AntigenMetadata

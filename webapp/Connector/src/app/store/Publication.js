@@ -23,6 +23,7 @@ Ext.define('Connector.app.store.Publication', {
         this.publicationData = undefined;
         this.studyData = undefined;
         this.assayData = undefined;
+        this.publicationDocuments = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
@@ -46,6 +47,13 @@ Ext.define('Connector.app.store.Publication', {
             success: this.onLoadAssays,
             scope: this
         });
+
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_publicationdata',
+            success: this.onLoadPublicationData,
+            scope: this
+        });
     },
 
     onLoadPublications: function (data) {
@@ -63,9 +71,15 @@ Ext.define('Connector.app.store.Publication', {
         this._onLoadComplete();
     },
 
+    onLoadPublicationData: function(data) {
+        this.publicationDocuments = data.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.publicationData) && Ext.isDefined(this.studyData)
-                && Ext.isDefined(this.assayData) && Ext.isDefined(this.accessibleStudies)) {
+                && Ext.isDefined(this.assayData) && Ext.isDefined(this.accessibleStudies)
+                && Ext.isDefined(this.publicationDocuments)) {
 
             this.publicationData.sort(function(row1, row2) {
                 var date1Str = Connector.model.Filter.sorters.getPublicationDateSortStr(row1.date);
@@ -117,6 +131,31 @@ Ext.define('Connector.app.store.Publication', {
                 productStudies[productId].push(study);
             }, this);
 
+            // publication data documents
+            var documents = this.publicationDocuments.filter(function(doc) {
+                return doc.document_type === 'Publication Data';
+            }, this).map(function(doc) {
+                return {
+                    publication_id: doc.publication_id,
+                    document_id: doc.document_id,
+                    label: doc.label,
+                    fileName: doc.filename,
+                    docType: doc.document_type,
+                    isLinkValid: undefined,
+                    hasPermission: true,                // publication documents are always public
+                    suffix: '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',
+                    filePath: Connector.plugin.DocumentValidation.getPublicationDocumentUrl(doc.filename, doc.document_id)
+                }
+            }, this).sort(function(docA, docB){
+                return Connector.model.Filter.sorters.natural(docA.label, docB.label);
+            }, this);
+
+            // map the docs to each publication
+            let publicationMap = {};
+            Ext.each(documents, function (doc) {
+                publicationMap[doc.publication_id] = publicationMap[doc.publication_id] || [];
+                publicationMap[doc.publication_id].push(doc);
+            }, this);
 
             var publications = [];
             Ext.each(this.publicationData, function(publication) {
@@ -142,6 +181,9 @@ Ext.define('Connector.app.store.Publication', {
                     });
                     publication.study_names = studyNames;
                 }
+
+                // publication data
+                publication.publication_data = publicationMap[publication.publication_id] || [];
                 publications.push(publication);
             });
 

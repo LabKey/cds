@@ -1,0 +1,4 @@
+publication_id	document_id
+80	301
+136	300
+80	302
