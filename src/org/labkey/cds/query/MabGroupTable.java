@@ -16,7 +16,6 @@
 package org.labkey.cds.query;
 
 import org.jetbrains.annotations.NotNull;
-import org.labkey.api.data.BaseColumnInfo;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.CompareType;
 import org.labkey.api.data.Container;
@@ -56,7 +55,7 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
     {
         super(table, userSchema, cf);
 
-        BaseColumnInfo rowId = addWrapColumn(_rootTable.getColumn("RowId"));
+        var rowId = addWrapColumn(_rootTable.getColumn("RowId"));
         rowId.setHidden(true);
 
         addWrapColumn(_rootTable.getColumn("Label"));
