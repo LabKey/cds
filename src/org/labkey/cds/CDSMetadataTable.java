@@ -29,6 +29,6 @@ public class CDSMetadataTable extends SimpleTable<SimpleUserSchema>
     {
         super(schema, table, cf);
 
-        setContainerFilter(new CDSMetadataContainerFilter(schema.getUser()));
+        setContainerFilter(new CDSMetadataContainerFilter(schema.getContainer(), schema.getUser()));
     }
 }
