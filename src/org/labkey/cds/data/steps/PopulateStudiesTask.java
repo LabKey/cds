@@ -327,7 +327,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         QueryDefinition qd = queryService.getQueryDef(user, project, "cds", "ds_study");
 
         ArrayList<QueryException> qerrors = new ArrayList<>();
-        qd.setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
+        qd.setContainerFilter(ContainerFilter.Type.CurrentAndSubfolders.create(project, user));
         TableInfo tiImportStudy = qd.getTable(qerrors, true);
 
         if (!qerrors.isEmpty())
