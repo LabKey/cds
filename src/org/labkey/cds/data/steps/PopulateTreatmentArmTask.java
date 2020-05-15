@@ -292,7 +292,7 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
             if (visitTagAlignTargetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.visittagalignment in " + container.getPath());
 
-            TableInfo visitTagAlignSource = cdsSchema.getTable("ds_visittagalignment", new ContainerFilter.CurrentAndSubfolders(user));
+            TableInfo visitTagAlignSource = cdsSchema.getTable("ds_visittagalignment", ContainerFilter.Type.CurrentAndSubfolders.create(cdsSchema));
             SQLFragment visitTagAlignSql = new SQLFragment("SELECT * FROM ").append(visitTagAlignSource);
 
             Map<String, Object>[] visitTagAlignRows = new SqlSelector(visitTagAlignSource.getSchema(), visitTagAlignSql).getMapArray();

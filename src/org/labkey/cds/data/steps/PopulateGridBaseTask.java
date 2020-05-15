@@ -88,7 +88,7 @@ public class PopulateGridBaseTask extends AbstractPopulateTask
                 throw new PipelineJobException("Unable to find source schema: \"" + settings.get(SOURCE_SCHEMA) + "\".");
             }
 
-            TableInfo sourceTable = sourceSchema.getTable(settings.get(SOURCE_QUERY), ContainerFilter.CURRENT);
+            TableInfo sourceTable = sourceSchema.getTable(settings.get(SOURCE_QUERY), ContainerFilter.current(container));
 
             if (null == sourceTable)
             {

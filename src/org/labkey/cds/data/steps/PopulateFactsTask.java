@@ -60,7 +60,7 @@ public class PopulateFactsTask extends AbstractPopulateTask
                 throw new PipelineJobException("Unable to find source schema: \"" + SOURCE_SCHEMA + "\".");
             }
 
-            TableInfo sourceTable = sourceSchema.getTable(SOURCE_QUERY, ContainerFilter.CURRENT);
+            TableInfo sourceTable = sourceSchema.getTable(SOURCE_QUERY, ContainerFilter.current(container));
 
             if (null == sourceTable)
             {

@@ -31,16 +31,18 @@ import java.util.Set;
  * Created by xingyang on 4/28/17.
  * Metadata table check user permission at project folder, rather than study folders
  */
-public class CDSMetadataContainerFilter extends ContainerFilter.ContainerFilterWithUser
+public class CDSMetadataContainerFilter extends ContainerFilter.ContainerFilterWithPermission
 {
-    public CDSMetadataContainerFilter(User user)
+    public CDSMetadataContainerFilter(Container c, User user)
     {
-        super(user);
+        super(c, user);
     }
 
     @Override
-    public Collection<GUID> getIds(Container currentContainer, Class<? extends Permission> perm, Set<Role> roles)
+    public Collection<GUID> generateIds(Container currentContainer, Class<? extends Permission> perm, Set<Role> roles)
     {
+        assert null == _container || _container.equals(currentContainer);
+
         HashSet<GUID> allowedContainerIds = new HashSet<>();
         Container project = currentContainer.getProject();
         if (null != project &&  project.hasPermission(_user, perm, roles))

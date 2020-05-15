@@ -72,7 +72,7 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
             throw new PipelineJobException("Unable to find target schema: \"" + settings.get(TARGET_SCHEMA) + "\".");
         }
 
-        TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY), new ContainerFilter.CurrentAndSubfolders(user));
+        TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY), ContainerFilter.Type.CurrentAndSubfolders.create(targetSchema));
 
         if (null == targetTable)
         {

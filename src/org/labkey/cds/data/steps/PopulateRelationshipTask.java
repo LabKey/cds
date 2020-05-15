@@ -47,7 +47,7 @@ public class PopulateRelationshipTask extends AbstractPopulateTask
         }
 
         TableInfo sourceTable = cdsSchema.getTable("learn_relationshipsforstudies", null);
-        TableInfo targetTable = cdsSchema.getTable("studyrelationship", new ContainerFilter.CurrentAndSubfolders(user));
+        TableInfo targetTable = cdsSchema.getTable("studyrelationship", ContainerFilter.Type.CurrentAndSubfolders.create(cdsSchema));
 
         // Truncate the target table
         try
