@@ -39,6 +39,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         return XPATH;
     }
 
+    @Override
     public Locator.CssLocator window()
     {
         return Locator.css("." + getPickerClass());

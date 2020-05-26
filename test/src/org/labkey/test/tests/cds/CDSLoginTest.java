@@ -33,6 +33,7 @@ import static org.labkey.test.pages.cds.CDSLoginPage.Locators.termsCheckbox;
 @Category({})
 public class CDSLoginTest extends CDSReadOnlyTest
 {
+    @Override
     @Before
     public void preTest()
     {

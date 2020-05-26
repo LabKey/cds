@@ -41,6 +41,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         return "xaxispicker";
     }
 
+    @Override
     public Locator.CssLocator window()
     {
         return Locator.css("." + XPATHID);
@@ -112,6 +113,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         super.back(XPATHID);
     }
 
+    @Override
     public void setScale(Scale scale)
     {
         _test.waitForElementToBeVisible(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']/following-sibling::div"));

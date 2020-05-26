@@ -53,6 +53,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
     private boolean studyLabelUpdated = false;
 
+    @Override
     @Before
     public void preTest()
     {

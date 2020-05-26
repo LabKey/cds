@@ -39,6 +39,7 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
         return "coloraxispicker";
     }
 
+    @Override
     public Locator.CssLocator window()
     {
         return Locator.css(".color-axis-selector");
@@ -91,6 +92,7 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
         _test.sleep(750);
     }
 
+    @Override
     public void setScale(Scale scale)
     {
         throw new UnsupportedOperationException("No log scale for color variable");

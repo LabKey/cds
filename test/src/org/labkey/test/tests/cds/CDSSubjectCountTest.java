@@ -56,6 +56,7 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
 
+    @Override
     @Before
     public void preTest()
     {

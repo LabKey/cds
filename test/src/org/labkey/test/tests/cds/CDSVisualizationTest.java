@@ -86,6 +86,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 //        cvt.deleteParticipantGroups();
     }
 
+    @Override
     @Before
     public void preTest()
     {
