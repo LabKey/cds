@@ -151,7 +151,7 @@ Ext.define('Connector.app.store.Publication', {
             }, this);
 
             // map the docs to each publication
-            let publicationMap = {};
+            var publicationMap = {};
             Ext.each(documents, function (doc) {
                 publicationMap[doc.publication_id] = publicationMap[doc.publication_id] || [];
                 publicationMap[doc.publication_id].push(doc);
