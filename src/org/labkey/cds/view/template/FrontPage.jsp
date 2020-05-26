@@ -536,11 +536,16 @@
                 <span>Don't have an account?</span>
                 <a href="#" class="register-modal-trigger front-page-button">Register Here</a>
             </div>
-            <div class="welcome">
-                <div class="title">
+            <div class="welcome" style="margin-bottom: unset">
+                <div class="title" style="margin-bottom: unset">
+                    <h1></h1>
                     <h1>Welcome to the</h1>
                     <h1>CAVD DataSpace</h1>
-                    <h1>A data sharing and discovery tool for HIV vaccine research</h1>
+                </div>
+            </div>
+            <div class="learn-more" style="max-width:unset;">
+                <div class="container" style="margin-top: unset;">
+                    <h3>A data sharing and discovery tool for HIV vaccine research</h3>
                 </div>
             </div>
             <div class="video-container">
