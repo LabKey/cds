@@ -16,39 +16,104 @@ Ext.define('Connector.view.MabReport', {
         if (this.parentGrid) {
             this.parentGrid.on('resize', this.resizeReport, this, {buffer: 200});
         }
-        this.items = [this.getHeaderItem(), this.getReportResult()];
+        this.items = [this.getHeaderBreadCrumbs(), this.getReportResult()];
         this.callParent();
     },
 
-    getHeaderItem: function() {
-        return {
-            xtype: 'box',
-            width: '100%',
-            cls: 'mabreportheader learnheader',
-            flex: 1,
-            renderTpl: new Ext.XTemplate(
-                    '<div class="title-and-back-panel">',
-                    '<div class="iarrow">&nbsp;</div>',
-                    '<div class="breadcrumb">Monoclonal antibodies / </div>',
-                    '<div class="studyname">{title:htmlEncode}</div>',
-                    '</div>'
-            ),
-            renderData: {
-                title: this.reportLabel
-            },
-            renderSelectors: {
-                upEl: 'div.title-and-back-panel'
-            },
-            listeners: {
-                afterrender: {
-                    fn: function (cmp) {
-                        cmp.upEl.on('click', this._onBackClick, this);
-                    },
-                    single: true,
-                    scope: this
-                }
-            }
+    getHeaderBreadCrumbs : function() {
+        if (!this.gridHeader) {
+            this.gridHeader = Ext.create('Ext.container.Container', {
+                height: this.headerHeight,
+                ui: 'custom',
+                cls: 'header-container',
+                layout: {
+                    type: 'hbox'
+                },
+                items: [{
+                            xtype: 'box',
+                            width: '100%',
+                            cls: 'mabreportheader learnheader title',
+                            flex: 1,
+                            renderTpl: new Ext.XTemplate(
+                                    '<div class="title-and-back-panel">',
+                                    '<div class="iarrow">&nbsp;</div>',
+                                    '<div class="breadcrumb">Monoclonal antibodies / </div>',
+                                    '<div class="studyname">{title:htmlEncode}</div>',
+                                    '</div>'
+                            ),
+                            renderData: {
+                                title: this.reportLabel
+                            },
+                            renderSelectors: {
+                                upEl: 'div.title-and-back-panel'
+                            },
+                            listeners: {
+                                afterrender: {
+                                    fn: function (cmp) {
+                                        cmp.upEl.on('click', this._onBackClick, this);
+                                    },
+                                    single: true,
+                                    scope: this
+                                }
+                            }
+                        },{
+                            xtype: 'actiontitle',
+                            // flex: 1,
+                            text: '',
+                            buttons: [
+                                this.getExportCSVButtonBreadCrumb(),
+                                this.getExportExcelButtonBreadCrumb(),
+                                this.getViewGridButton()
+                            ]
+                    }]
+            });
         }
+        return this.gridHeader;
+    },
+
+    getExportCSVButtonBreadCrumb : function() {
+        if (!this.exportCSVButton) {
+            this.exportCSVButton = Ext.create('Ext.button.Button', {
+                cls: 'gridexportcsvbtn',
+                ui: 'rounded-inverted-accent-text',
+                text: 'Export CSV',
+                margin: '0 15 0 0',
+                handler: this._onExportCSVClick,
+                scope: this
+            });
+        }
+
+        return this.exportCSVButton;
+    },
+
+    getExportExcelButtonBreadCrumb : function() {
+        if (!this.exportExcelButton) {
+            this.exportExcelButton = Ext.create('Ext.button.Button', {
+                cls: 'gridexportexcelbtn',
+                ui: 'rounded-inverted-accent-text',
+                text: 'Export Excel',
+                margin: '0 15 0 0',
+                handler: this._onExportExcel,
+                scope: this
+            });
+        }
+
+        return this.exportExcelButton;
+    },
+
+    getViewGridButton : function() {
+        if (!this.viewGridButton) {
+            this.viewGridButton = Ext.create('Ext.button.Button', {
+                cls: 'mabgridcolumnsbtn',
+                // ui: 'rounded-inverted-accent-text',
+                text: 'View Grid',
+                margin: '0 15 0 0',
+                handler: this._onBackClick,
+                scope: this
+            });
+        }
+
+        return this.viewGridButton;
     },
 
     _onBackClick: function(){
@@ -56,6 +121,18 @@ Ext.define('Connector.view.MabReport', {
         if (this.parentGrid) {
             this.parentGrid.showGridView(true);
             this.parentGrid.remove(this);
+        }
+    },
+
+    _onExportCSVClick: function(){
+        if (this.parentGrid) {
+            this.parentGrid.requestExportCSV();
+        }
+    },
+
+    _onExportExcel: function(){
+        if (this.parentGrid) {
+            this.parentGrid.requestExportExcel();
         }
     },
 
