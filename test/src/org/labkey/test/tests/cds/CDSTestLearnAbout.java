@@ -1137,7 +1137,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         Locator.XPathLocator downloadLinkLocator = Locator.tagWithAttributeContaining("img", "alt", altText);
         scrollIntoView(downloadLinkLocator);
-        File downloadedFile = clickAndWaitForDownload(downloadLinkLocator, 1)[0];
+        File downloadedFile = clickAndWaitForDownload(downloadLinkLocator);
         assertTrue(downloadedFile + " not downloaded.", downloadedFile.getName().contains(documentName));
     }
 
