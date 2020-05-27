@@ -12,6 +12,8 @@ Ext.define('Connector.view.MabReport', {
 
     rightSideNavWidth: 244,
 
+    maskWidthOffset: 500,
+
     initComponent : function() {
         if (this.parentGrid) {
             this.parentGrid.on('resize', this.resizeReport, this, {buffer: 200});
@@ -147,6 +149,11 @@ Ext.define('Connector.view.MabReport', {
             listeners: {
                 render : function(cmp){
                     me.reportPanel = cmp;
+
+                    //temporary setting of height and width so that the mask position is not out of bounds
+                    cmp.getEl().setWidth(me.maskWidthOffset);
+                    cmp.getEl().setHeight(me.reportHeaderHeight);
+
                     cmp.getEl().mask("Generating " + me.reportLabel);
 
                     Connector.getQueryService().prepareMAbReportQueries({
