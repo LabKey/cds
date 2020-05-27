@@ -1677,18 +1677,21 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         documentLink = CDSHelper.Locators.studyReportLink("Epitope Mapping Results Summary").findElement(getDriver());
         assertTrue("Was not able to find link to the Powerpoint document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_CAVIMC 031 Linear Epitope Mapping_BaselineSubtracted-3.pptx";
+        scrollIntoView(documentLink);
         cds.validateDocLink(documentLink, documentName);
 
         log("Now check the Excel link.");
         documentLink = CDSHelper.Locators.studyReportLink("NAB Data Summary 2").findElement(getDriver());
         assertTrue("Was not able to find link to the Excel document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_CAVIMC-031 Neutralization Data with AUC 3 May 2011-6.xlsx";
+        scrollIntoView(documentLink);
         cds.validateDocLink(documentLink, documentName);
 
         log("Finally for this study validate the pdf file.");
         documentLink = CDSHelper.Locators.studyReportLink("NAB Data Summary 1").findElement(getDriver());
         assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd260_McElrath_Seder_Antibody Responses 1.1 01Jun11.pdf";
+        scrollIntoView(documentLink);
         cds.validatePDFLink(documentLink, documentName);
 
         cds.viewLearnAboutPage("Studies");
@@ -1707,12 +1710,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         documentLink = CDSHelper.Locators.studyReportLink("CFSE Results Summary").findElement(getDriver());
         assertTrue("Was not able to find link to the Word Document document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd264_DCVax001_CFSE_Memo_JUL13_v4.docx";
+        scrollIntoView(documentLink);
         cds.validateDocLink(documentLink, documentName);
 
         log("Now check one of the PDF link.");
         documentLink = CDSHelper.Locators.studyReportLink("ICS Data Summary").findElement(getDriver());
         assertTrue("Was not able to find link to the PDF document for study '" + studyName + "'.", documentLink != null);
         documentName = "cvd264_ICS_LAB_REPORT_19APR13_n24fcm_fh_IL2_CD154_MIMOSA.pdf";
+        scrollIntoView(documentLink);
         cds.validatePDFLink(documentLink, documentName);
 
         cds.viewLearnAboutPage("Studies");
