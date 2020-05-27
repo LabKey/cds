@@ -75,6 +75,7 @@ Ext.define('Connector.view.MabReport', {
         if (!this.exportCSVButton) {
             this.exportCSVButton = Ext.create('Ext.button.Button', {
                 cls: 'gridexportcsvbtn',
+                id: 'gridexportcsvbtn-breadcrumb',
                 ui: 'rounded-inverted-accent-text',
                 text: 'Export CSV',
                 margin: '0 15 0 0',
@@ -90,6 +91,7 @@ Ext.define('Connector.view.MabReport', {
         if (!this.exportExcelButton) {
             this.exportExcelButton = Ext.create('Ext.button.Button', {
                 cls: 'gridexportexcelbtn',
+                id: 'gridexportexcelbtn-breadcrumb',
                 ui: 'rounded-inverted-accent-text',
                 text: 'Export Excel',
                 margin: '0 15 0 0',
@@ -105,7 +107,7 @@ Ext.define('Connector.view.MabReport', {
         if (!this.viewGridButton) {
             this.viewGridButton = Ext.create('Ext.button.Button', {
                 cls: 'mabgridcolumnsbtn',
-                // ui: 'rounded-inverted-accent-text',
+                id: 'mabgridcolumnsbtn-breadcrumb',
                 text: 'View Grid',
                 margin: '0 15 0 0',
                 handler: this._onBackClick,
