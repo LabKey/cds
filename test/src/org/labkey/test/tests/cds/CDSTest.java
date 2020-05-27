@@ -56,6 +56,7 @@ public class CDSTest extends CDSReadOnlyTest
     public static final String TOURS_WIKI_TITLE = "Take a tour";
     public static final String TOURS_WIKI_CONTENT = "<h3 id=\"take-tour-title-id\" class=\"tile-title\">Take a guided tour</h3>";
 
+    @Override
     @Before
     public void preTest()
     {

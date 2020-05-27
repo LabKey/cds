@@ -171,9 +171,9 @@ public class CDSController extends SpringActionController
         }
 
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return root.addChild("Dataspace Management");
+            root.addChild("Dataspace Management");
         }
     }
 
@@ -192,9 +192,8 @@ public class CDSController extends SpringActionController
         }
 
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return null;
         }
     }
 
@@ -290,9 +289,8 @@ public class CDSController extends SpringActionController
         }
 
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return root;
         }
     }
 
@@ -493,9 +491,8 @@ public class CDSController extends SpringActionController
         }
 
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return null;
         }
     }
 
@@ -547,9 +544,8 @@ public class CDSController extends SpringActionController
         }
 
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return null;
         }
     }
 
@@ -558,9 +554,8 @@ public class CDSController extends SpringActionController
     public class PermissionsReportExportAction extends SimpleViewAction<QueryForm>
     {
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return null;
         }
 
         @Override
@@ -845,9 +840,8 @@ public class CDSController extends SpringActionController
         }
 
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return null;
         }
     }
 
@@ -985,9 +979,8 @@ public class CDSController extends SpringActionController
         }
 
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return null;
         }
     }
 
@@ -1037,9 +1030,8 @@ public class CDSController extends SpringActionController
     public static class GetStudyDocumentAction extends SimpleViewAction<StudyDocumentForm>
     {
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return null;
         }
 
         @Override
@@ -1211,9 +1203,8 @@ public class CDSController extends SpringActionController
     public class ExportTourDefinitionsAction extends SimpleViewAction<QueryForm>
     {
         @Override
-        public NavTree appendNavTrail(NavTree root)
+        public void addNavTrail(NavTree root)
         {
-            return null;
         }
 
         @Override

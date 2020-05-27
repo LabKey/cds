@@ -37,6 +37,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subject')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
 
+    @Override
     @Before
     public void preTest()
     {

@@ -202,6 +202,7 @@ public class CDSHelpCenterTest extends CDSReadOnlyTest
         doShortWait();
     }
 
+    @Override
     @Before
     public void preTest()
     {
