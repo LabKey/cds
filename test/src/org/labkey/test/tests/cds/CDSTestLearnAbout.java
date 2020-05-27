@@ -1136,6 +1136,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private void verifyNonIntegratedDownloadLink(String altText, String documentName)
     {
         Locator.XPathLocator downloadLinkLocator = Locator.tagWithAttributeContaining("img", "alt", altText);
+        scrollIntoView(downloadLinkLocator);
         File downloadedFile = clickAndWaitForDownload(downloadLinkLocator, 1)[0];
         assertTrue(downloadedFile + " not downloaded.", downloadedFile.getName().contains(documentName));
     }
@@ -1149,7 +1150,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         verifySectionHeaders("Non-integrated data");
 
-        Locator.XPathLocator nonIntegratedDataElement = Locator.tagWithAttributeContaining("div", "id", "nonintegrateddataavailability");
+        Locator.XPathLocator nonIntegratedDataElement = Locator.tagWithAttributeContaining("div", "id", "studynonintegrateddata");
         assertElementPresent(nonIntegratedDataElement);
 
         Locator.XPathLocator instructions = nonIntegratedDataElement.withDescendant(Locator.tag("p")).containing("Download individual files");
