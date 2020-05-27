@@ -32,10 +32,10 @@ Ext.define('Connector.view.MabReport', {
                 items: [{
                             xtype: 'box',
                             width: '100%',
-                            cls: 'mabreportheader learnheader title',
+                            cls: 'mabreportheader learnheader',
                             flex: 1,
                             renderTpl: new Ext.XTemplate(
-                                    '<div class="title-and-back-panel">',
+                                    '<div class="title-and-back-panel" style="white-space: nowrap">',
                                     '<div class="iarrow">&nbsp;</div>',
                                     '<div class="breadcrumb">Monoclonal antibodies / </div>',
                                     '<div class="studyname">{title:htmlEncode}</div>',
@@ -58,7 +58,6 @@ Ext.define('Connector.view.MabReport', {
                             }
                         },{
                             xtype: 'actiontitle',
-                            // flex: 1,
                             text: '',
                             buttons: [
                                 this.getExportCSVButtonBreadCrumb(),
