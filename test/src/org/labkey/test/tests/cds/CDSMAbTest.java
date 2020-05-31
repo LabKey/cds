@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
 import org.labkey.test.Locator;
+import org.labkey.test.TestFileUtils;
 import org.labkey.test.pages.cds.AntigenFilterPanel;
 import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.InfoPane;
@@ -29,12 +30,16 @@ import org.labkey.test.pages.cds.MAbDataGrid;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.labkey.test.pages.cds.MAbDataGrid.ANTIGEN_BINDING_COL;
 import static org.labkey.test.pages.cds.MAbDataGrid.CLADES_COL;
 import static org.labkey.test.pages.cds.MAbDataGrid.GEOMETRIC_MEAN_IC50_COL;
@@ -227,7 +232,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
     }
 
     @Test
-    public void testMAbReports()
+    public void testMAbReports() throws IOException
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
@@ -284,6 +289,42 @@ public class CDSMAbTest extends CDSGroupBaseTest
         log("Verify the 2nd R report");
         grid.openIC50Report();
         Assert.assertTrue("Report image is not rendered", isElementPresent(grid.getReportImageOut()));
+
+        verifyBreadCrumbs(grid);
+    }
+
+    private void verifyBreadCrumbs(MAbDataGrid grid) throws IOException
+    {
+        log("Verify header breadcrumbs from the Reports view");
+        clickExportCSVBreadCrumb();
+        clickExportExcelBreadCrumb();
+        clickViewGrid(grid);
+    }
+
+    private void clickViewGrid(MAbDataGrid grid)
+    {
+        log("Verify 'View Grid' button takes user back to MAb grid.");
+        Locator.XPathLocator viewGridBtn = Locator.tagWithId("a", "mabgridcolumnsbtn-breadcrumb");
+        click(viewGridBtn);
+        assertTrue("Unable to get back to the grid, MAb report buttons not present",
+                isElementPresent(grid.getDilutionReportBtn()) && isElementPresent(grid.getIC50ReportBtn()));
+    }
+
+    private void clickExportExcelBreadCrumb()
+    {
+        log("Verify 'Export CSV' button downloads the zip from Reports view.");
+        Locator.XPathLocator exportExcelBtn = Locator.tagWithId("a", "gridexportexcelbtn-breadcrumb");
+        File exceldownload = clickAndWaitForDownload(exportExcelBtn);
+        String fileContents = TestFileUtils.getFileContents(exceldownload);
+        assertTrue("Empty file", fileContents.length() > 0);
+    }
+
+    private void clickExportCSVBreadCrumb() throws IOException
+    {
+        Locator.XPathLocator exportCSVBtn = Locator.tagWithId("a", "gridexportcsvbtn-breadcrumb");
+        File csvZipArchive = clickAndWaitForDownload(exportCSVBtn);
+        assertEquals("Zip archive file count mismatch (expected these files in the zip archive: Assays.csv, MAbs.csv, Metadata.txt, NAB MAB.csv, Studies.csv, Study and MAbs.csv, Variable definitions.csv)", 7,
+                TestFileUtils.getFilesInZipArchive(csvZipArchive).size());
     }
 
     private void verifyReportContent(List<String> expectedContent, String reportContent)

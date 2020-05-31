@@ -18,7 +18,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
     initComponent : function() {
 
-        const data = this.getData();
+        var data = this.getData();
         if (data.length > 0) {
             var docIsValidAction = function(doc, status) {
                 doc.isLinkValid = status;
@@ -62,7 +62,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                 width: '90%',
                 sortable: false,
                 menuDisabled: true,
-                tpl:  this.getColTemplate(),
+                tpl:  this.getColTemplate()
             }],
             listeners : {
                 'itemmouseenter' : function(view, record, item, index, evt) {
@@ -268,7 +268,7 @@ Ext.define('Connector.view.module.PublicationNonIntegratedData', {
     },
 
     getStore : function(data) {
-        let config =  {
+        var config =  {
             fields: ['publication_id', 'document_id', 'label', 'fileName', 'filePath', 'docType', 'isLinkValid', 'suffix'],
             data: data,
             storeId: 'PublicationNonIntegratedDataStore'

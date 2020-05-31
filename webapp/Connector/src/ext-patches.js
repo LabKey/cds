@@ -76,7 +76,7 @@ Ext.override(Ext.grid.View, {
 });
 
 Ext.override(Ext.util.Format, {
-    date(v, format){
+    date : function(v, format){
         if (!v) {
             return "";
         }

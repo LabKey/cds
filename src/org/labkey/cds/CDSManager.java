@@ -17,6 +17,7 @@
 package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerManager;
 import org.labkey.api.data.CoreSchema;
@@ -245,15 +246,31 @@ public class CDSManager
 
     public boolean isStudyDocumentAccessible(String studyName, String docId, User user, Container container)
     {
+        TableSelector selector = getDocumentsForStudiesTableSelector(studyName, docId, user, container);
+        return selector.getObject(Boolean.class);
+    }
+
+    @NotNull
+    private TableSelector getDocumentsForStudiesTableSelector(String studyName, String docId, User user, Container container)
+    {
         TableInfo tableInfo = getCDSQueryTableInfo("learn_documentsforstudies", user, container);
         SimpleFilter filter = new SimpleFilter();
         filter.addCondition(FieldKey.fromParts("prot"), studyName);
         filter.addCondition(FieldKey.fromParts("document_id"), docId);
 
-        TableSelector selector = new TableSelector(tableInfo, Collections.singleton("accessible"), filter, null);
-        return selector.getObject(Boolean.class);
+        return new TableSelector(tableInfo, Collections.singleton("accessible"), filter, null);
     }
 
+    public boolean isParamValueValid(String studyName, String docId, User user, Container container)
+    {
+        TableSelector selector = getDocumentsForStudiesTableSelector(studyName, docId, user, container);
+
+        if (null == selector.getObject(Boolean.class))
+        {
+            return false;
+        }
+        return selector.getObject(Boolean.class);
+    }
 
     public static TableInfo getCDSQueryTableInfo(String queryName, User user, Container container)
     {

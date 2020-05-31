@@ -1036,7 +1036,6 @@ public class CDSController extends SpringActionController
     @RequiresPermission(ReadPermission.class)
     public static class GetStudyDocumentAction extends SimpleViewAction<StudyDocumentForm>
     {
-        @Override
         public NavTree appendNavTrail(NavTree root)
         {
             return null;
@@ -1067,7 +1066,12 @@ public class CDSController extends SpringActionController
 
             if (!errors.hasErrors() && !StringUtils.isBlank(filename))
             {
-                if (form.isPublicAccess() || CDSManager.get().isStudyDocumentAccessible(form.getStudy(), form.getDocumentId(), getUser(), getContainer()))
+                //fix for Secure Issue 40526: Invalid param value for 'study' throws NPE
+                if (null != form.getStudy() && null != form.getDocumentId() && !CDSManager.get().isParamValueValid(form.getStudy(), form.getDocumentId(), getUser(), getContainer()))
+                {
+                    errors.reject(ERROR_MSG, "Invalid parameter value(s) for 'study' and/or 'documentId'.");
+                }
+                else if (form.isPublicAccess() || CDSManager.get().isStudyDocumentAccessible(form.getStudy(), form.getDocumentId(), getUser(), getContainer()))
                 {
                     WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
                     WebdavResource resource = service.lookup(Path.parse(basePath + filename));
