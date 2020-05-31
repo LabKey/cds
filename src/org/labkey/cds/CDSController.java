@@ -1067,7 +1067,7 @@ public class CDSController extends SpringActionController
             if (!errors.hasErrors() && !StringUtils.isBlank(filename))
             {
                 //fix for Secure Issue 40526: Invalid param value for 'study' throws NPE
-                if (!CDSManager.get().isParamValueValid(form.getStudy(), form.getDocumentId(), getUser(), getContainer()))
+                if (null != form.getStudy() && null != form.getDocumentId() && !CDSManager.get().isParamValueValid(form.getStudy(), form.getDocumentId(), getUser(), getContainer()))
                 {
                     errors.reject(ERROR_MSG, "Invalid parameter value(s) for 'study' and/or 'documentId'.");
                 }
