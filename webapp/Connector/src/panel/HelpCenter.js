@@ -27,7 +27,7 @@ Ext.define('Connector.panel.HelpCenter', {
                         },
                         scope: this
                     }
-                }],
+                }]
             };
             Connector.panel.HelpCenter.displayWikiWindow(animateTarget, config);
         },

@@ -21,7 +21,7 @@ Ext.define('Connector.panel.ToolsAndLinks', {
                 id: 'toolspopup',
                 items: [{
                     xtype: 'toolslinks'
-                }],
+                }]
             };
             Connector.panel.HelpCenter.displayWikiWindow(animateTarget, config);
         }

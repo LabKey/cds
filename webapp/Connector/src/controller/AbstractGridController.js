@@ -67,5 +67,5 @@ Ext.define('Connector.controller.AbstractGridController', {
 
     onViewActivate : function() {},
 
-    onViewDeactivate : function() {},
+    onViewDeactivate : function() {}
 });
