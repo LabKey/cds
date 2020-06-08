@@ -236,6 +236,8 @@ public class CDSController extends SpringActionController
             Container c = getContainer();
             StudyService sss = StudyService.get();
             boolean hasStudy = null != sss && null != sss.getStudy(c);
+            boolean needSurvey = Boolean.parseBoolean(getViewContext().getActionURL().getParameter("NeedSurvey"));
+
             if (!c.isProject() || !hasStudy)
             {
                 throw new NotFoundException();
@@ -246,9 +248,9 @@ public class CDSController extends SpringActionController
             {
                 template = new FrontPageTemplate(defaultPageConfig());
             }
-            else if (AuthenticationManager.isRegistrationEnabled() && (CDSManager.get().isNeedSurvey(getUser()) || getUser().getLastLogin() == null)) // on first log in, flag user as need survey
+            else if (AuthenticationManager.isRegistrationEnabled() && (needSurvey || CDSManager.get().isNeedSurvey(getUser()) || getUser().getLastLogin() == null)) // on first log in, flag user as need survey
             {
-                if (getUser().getLastLogin() == null)
+                if (needSurvey || getUser().getLastLogin() == null)
                     CDSManager.get().setNeedSurvey(getUser(), true);
                 String surveyParam = getViewContext().getActionURL().getParameter("survey");
                 if (surveyParam == null || !"true".equals(surveyParam))

@@ -395,7 +395,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             'X-LABKEY-CSRF': LABKEY.CSRF
           }
         }).success(function() {
-            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?"); // set password should log user in automatically
+            window.location = LABKEY.ActionURL.buildURL("cds", "app.view", null, {NeedSurvey:true}); // set password should log user in automatically
         }).error(function(e) {
           var errorMsg = 'Create account failed. ';
           if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
