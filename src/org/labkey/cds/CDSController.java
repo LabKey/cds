@@ -227,11 +227,26 @@ public class CDSController extends SpringActionController
     private static final String ANALYTICS_USER_GROUP = "Active CAVD Member";
 
     @RequiresNoPermission
+    public class UpdateNeedSurveyAction extends MutatingApiAction<Object>
+    {
+
+        @Override
+        public Object execute(Object o, BindException errors) throws Exception
+        {
+            CDSManager.get().setNeedSurvey(getUser(), true);
+
+            ApiSimpleResponse response  = new ApiSimpleResponse();
+            response.put("success", !errors.hasErrors());
+            return response;
+        }
+    }
+
+    @RequiresNoPermission
     @IgnoresTermsOfUse
     public class AppAction extends SimpleViewAction
     {
         @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
+        public ModelAndView getView(Object o, BindException errors)
         {
             Container c = getContainer();
             StudyService sss = StudyService.get();
@@ -250,8 +265,6 @@ public class CDSController extends SpringActionController
             }
             else if (AuthenticationManager.isRegistrationEnabled() && (needSurvey || CDSManager.get().isNeedSurvey(getUser()) || getUser().getLastLogin() == null)) // on first log in, flag user as need survey
             {
-                if (needSurvey || getUser().getLastLogin() == null)
-                    CDSManager.get().setNeedSurvey(getUser(), true);
                 String surveyParam = getViewContext().getActionURL().getParameter("survey");
                 if (surveyParam == null || !"true".equals(surveyParam))
                 {
