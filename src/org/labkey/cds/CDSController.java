@@ -226,7 +226,7 @@ public class CDSController extends SpringActionController
 
     private static final String ANALYTICS_USER_GROUP = "Active CAVD Member";
 
-    @RequiresNoPermission
+    @RequiresPermission(ReadPermission.class)
     public class UpdateNeedSurveyAction extends MutatingApiAction<Object>
     {
 
