@@ -157,7 +157,7 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
                             {
                                 renderHeader: function(v) {
                                     return v ? this.groupInText : this.groupOutText;
-                                }.bind(this),
+                                }.bind(this)
                             }
                         )
                     }

@@ -153,7 +153,7 @@ Ext.define('Connector.component.Started', {
                         me.loadHelpFile();
                     }
                 }
-            }],
+            }]
         };
         Connector.panel.HelpCenter.displayWikiWindow(target, config);
     },

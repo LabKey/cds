@@ -789,5 +789,5 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
             }
         }
         this.store.resumeEvents();
-    },
+    }
 });

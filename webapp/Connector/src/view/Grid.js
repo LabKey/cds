@@ -91,7 +91,7 @@ Ext.define('Connector.view.Grid', {
                 xtype: 'container',
                 items: [this.getSourceTabHeader(), this.getSelectColumnsButton()],
                 layout: {
-                    type: 'hbox',
+                    type: 'hbox'
                 }
             }]
         }];
