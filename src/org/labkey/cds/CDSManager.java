@@ -309,12 +309,25 @@ public class CDSManager
 
     public boolean isNeedSurvey(User user)
     {
-        SimpleFilter filter = new SimpleFilter();
-        filter.addCondition(FieldKey.fromParts("UserId"), user.getUserId());
-        filter.addCondition(FieldKey.fromParts("NeedSurvey"), true);
+        String needSurveyProp = "NeedSurvey";
+        Domain domain = getSiteUserTableInfo(user).getDomain();
+        if (domain == null)
+            return false;
 
-        TableSelector selector = new TableSelector(getSiteUserTableInfo(user), Collections.singleton("NeedSurvey"), filter, null);
-        return selector.exists();
+        Map<String, DomainProperty> propsMap = new HashMap<>();
+        for (DomainProperty dp : domain.getProperties())
+            propsMap.put(dp.getName(), dp);
+
+        if (propsMap.containsKey(needSurveyProp))
+        {
+            Map<String, Object> properties = OntologyManager.getProperties(getUserTableContainer(), user.getEntityId());
+            String propertyUri = propsMap.get(needSurveyProp).getPropertyURI();
+            if(properties.containsKey(propertyUri))
+            {
+                return (boolean) properties.get(propertyUri);
+            }
+        }
+        return false;
     }
 
     public void setNeedSurvey(User user, boolean needSurvey) throws ValidEmail.InvalidEmailException, SQLException, BatchValidationException, InvalidKeyException, QueryUpdateServiceException, ValidationException

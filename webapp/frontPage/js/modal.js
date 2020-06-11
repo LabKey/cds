@@ -411,7 +411,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
                 'X-LABKEY-CSRF': LABKEY.CSRF
               }
             }).success(function() {
-              window.location = LABKEY.ActionURL.buildURL("cds", "app.view", null, {NeedSurvey:true}); // set password should log user in automatically
+              window.location = LABKEY.ActionURL.buildURL("cds", "app.view", null, {survey:true}); // set password should log user in automatically
             }).error(function(e) {
               var errorMsg = 'Unable to set NeedSurvey property to true';
               createAccountError(e, errorMsg);

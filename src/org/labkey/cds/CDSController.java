@@ -251,7 +251,6 @@ public class CDSController extends SpringActionController
             Container c = getContainer();
             StudyService sss = StudyService.get();
             boolean hasStudy = null != sss && null != sss.getStudy(c);
-            boolean needSurvey = Boolean.parseBoolean(getViewContext().getActionURL().getParameter("NeedSurvey"));
 
             if (!c.isProject() || !hasStudy)
             {
@@ -259,18 +258,8 @@ public class CDSController extends SpringActionController
             }
 
             HttpView template;
-            if (getUser().isGuest())
+            if (getUser().isGuest() || (AuthenticationManager.isRegistrationEnabled() && (CDSManager.get().isNeedSurvey(getUser()))))// on first log in, flag user as need survey
             {
-                template = new FrontPageTemplate(defaultPageConfig());
-            }
-            else if (AuthenticationManager.isRegistrationEnabled() && (needSurvey || CDSManager.get().isNeedSurvey(getUser()) || getUser().getLastLogin() == null)) // on first log in, flag user as need survey
-            {
-                String surveyParam = getViewContext().getActionURL().getParameter("survey");
-                if (surveyParam == null || !"true".equals(surveyParam))
-                {
-                    ActionURL redirect = getViewContext().cloneActionURL().addParameter("survey", "true");
-                    throw new RedirectException(redirect);
-                }
                 template = new FrontPageTemplate(defaultPageConfig());
             }
             else
