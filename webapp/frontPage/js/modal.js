@@ -415,6 +415,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             }).error(function(e) {
               var errorMsg = 'Unable to set NeedSurvey property to true';
               createAccountError(e, errorMsg);
+              window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
             });
 
           }).error(function(e) {
