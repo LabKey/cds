@@ -60,6 +60,7 @@ import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.AuthenticationManager;
 import org.labkey.api.security.Group;
 import org.labkey.api.security.IgnoresTermsOfUse;
+import org.labkey.api.security.MethodsAllowed;
 import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.RequiresSiteAdmin;
@@ -986,6 +987,7 @@ public class CDSController extends SpringActionController
 
 
     @RequiresPermission(ReadPermission.class)
+    @MethodsAllowed({"POST","DELETE"})
     public class UserPropertyAction extends MutatingApiAction<SimpleApiJsonForm>
     {
         @Override
