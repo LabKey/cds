@@ -226,36 +226,40 @@ public class CDSController extends SpringActionController
 
     private static final String ANALYTICS_USER_GROUP = "Active CAVD Member";
 
+    @RequiresPermission(ReadPermission.class)
+    public class UpdateNeedSurveyAction extends MutatingApiAction<Object>
+    {
+
+        @Override
+        public Object execute(Object o, BindException errors) throws Exception
+        {
+            CDSManager.get().setNeedSurvey(getUser(), true);
+
+            ApiSimpleResponse response  = new ApiSimpleResponse();
+            response.put("success", !errors.hasErrors());
+            return response;
+        }
+    }
+
     @RequiresNoPermission
     @IgnoresTermsOfUse
     public class AppAction extends SimpleViewAction
     {
         @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
+        public ModelAndView getView(Object o, BindException errors)
         {
             Container c = getContainer();
             StudyService sss = StudyService.get();
             boolean hasStudy = null != sss && null != sss.getStudy(c);
+
             if (!c.isProject() || !hasStudy)
             {
                 throw new NotFoundException();
             }
 
             HttpView template;
-            if (getUser().isGuest())
+            if (getUser().isGuest() || (AuthenticationManager.isRegistrationEnabled() && (CDSManager.get().isNeedSurvey(getUser()))))// on first log in, flag user as need survey
             {
-                template = new FrontPageTemplate(defaultPageConfig());
-            }
-            else if (AuthenticationManager.isRegistrationEnabled() && (CDSManager.get().isNeedSurvey(getUser()) || getUser().getLastLogin() == null)) // on first log in, flag user as need survey
-            {
-                if (getUser().getLastLogin() == null)
-                    CDSManager.get().setNeedSurvey(getUser(), true);
-                String surveyParam = getViewContext().getActionURL().getParameter("survey");
-                if (surveyParam == null || !"true".equals(surveyParam))
-                {
-                    ActionURL redirect = getViewContext().cloneActionURL().addParameter("survey", "true");
-                    throw new RedirectException(redirect);
-                }
                 template = new FrontPageTemplate(defaultPageConfig());
             }
             else
