@@ -125,6 +125,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static org.labkey.api.util.HttpUtil.Method;
 import static org.labkey.api.view.template.WarningService.SESSION_WARNINGS_BANNER_KEY;
 
 
@@ -987,7 +988,7 @@ public class CDSController extends SpringActionController
 
 
     @RequiresPermission(ReadPermission.class)
-    @MethodsAllowed({"POST","DELETE"})
+    @MethodsAllowed({Method.POST, Method.DELETE})
     public class UserPropertyAction extends MutatingApiAction<SimpleApiJsonForm>
     {
         @Override
