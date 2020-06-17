@@ -60,6 +60,7 @@ import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.AuthenticationManager;
 import org.labkey.api.security.Group;
 import org.labkey.api.security.IgnoresTermsOfUse;
+import org.labkey.api.security.MethodsAllowed;
 import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.RequiresSiteAdmin;
@@ -124,6 +125,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static org.labkey.api.util.HttpUtil.Method;
 import static org.labkey.api.view.template.WarningService.SESSION_WARNINGS_BANNER_KEY;
 
 
@@ -986,6 +988,7 @@ public class CDSController extends SpringActionController
 
 
     @RequiresPermission(ReadPermission.class)
+    @MethodsAllowed({Method.POST, Method.DELETE})
     public class UserPropertyAction extends MutatingApiAction<SimpleApiJsonForm>
     {
         @Override
