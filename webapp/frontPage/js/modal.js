@@ -372,6 +372,13 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
 
       });
 
+      function createAccountError(e, errorMsg) {
+        if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+          errorMsg = errorMsg + e.responseJSON.errors[0].message;
+        }
+        $('.create-account-modal .notifications p').html(errorMsg);
+      }
+
       self.action('confirmcreateaccount', function($click) {
         var pw1 = document.getElementById('password3');
         var pw2 = document.getElementById('password4');
@@ -395,14 +402,25 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             'X-LABKEY-CSRF': LABKEY.CSRF
           }
         }).success(function() {
-            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?"); // set password should log user in automatically
-        }).error(function(e) {
-          var errorMsg = 'Create account failed. ';
-          if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
-            errorMsg = errorMsg + e.responseJSON.errors[0].message;
-          }
-          $('.create-account-modal .notifications p').html(errorMsg);
-        });
+
+            //sets NeedSurvey to true
+            $.ajax({
+              url: LABKEY.ActionURL.buildURL("cds", "updateNeedSurvey.api"),
+              method: 'POST',
+              data: {
+                'X-LABKEY-CSRF': LABKEY.CSRF
+              }
+            }).success(function() {
+              window.location = LABKEY.ActionURL.buildURL("cds", "app.view", null, {survey:true}); // set password should log user in automatically
+            }).error(function(e) {
+              console.error('Unable to set NeedSurvey property to true');
+              window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
+            });
+
+          }).error(function(e) {
+            var errorMsg = 'Create account failed. ';
+            createAccountError(e, errorMsg);
+          });
 
       });
 
