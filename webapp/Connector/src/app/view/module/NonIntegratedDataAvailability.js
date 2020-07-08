@@ -226,13 +226,13 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
 
     getStore : function(data) {
 
-        Ext.each(data.non_integrated_assay_data, function(assay, index){
-            assay.assayIdentfierId = assay.assayIdentifier.replace(/\W/g, '').toLowerCase() + "-" + index;//replace non-alphanumeric characters with an empty string
+        Ext.each(data, function(assay, index){
+            assay.assayIdentifierId = assay.assayIdentifier.replace(/\W/g, '').toLowerCase() + "-" + index;//replace non-alphanumeric characters with an empty string
         });
 
         var storeConfig =  {
-            fields: ['assayIdentifier', 'dataStatus', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentfierId'],
-            data: data.non_integrated_assay_data,
+            fields: ['assayIdentifier', 'dataStatus', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentifierId'],
+            data: data,
             storeId: 'NonIntegratedDataStore'
         };
 

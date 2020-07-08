@@ -1034,6 +1034,7 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresPermission(ReadPermission.class)
+    @MethodsAllowed({Method.HEAD, Method.GET})
     public static class GetStudyDocumentAction extends SimpleViewAction<StudyDocumentForm>
     {
         @Override
