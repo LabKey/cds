@@ -87,7 +87,7 @@ public class CDSExportQueryView extends QueryView
     public static final String SPECIES = "species";
     public static final List<String> STUDY_DB_COLUMNS = Arrays.asList(NETWORK, LABEL, STUDY_NAME, GRANT_PI_NAME, INVESTIGATOR_NAME, PRIMARY_POC_NAME, PRIMARY_POC_EMAIL, DESCRIPTION, TYPE, SPECIES);
     private static final List<String> STUDY_COLUMNS = Arrays.asList("Network", "Study", "Grant PI", "Study Investigator", "Primary Contact", "Description", "Study Type", "Species", "Sharing Restrictions");
-    public static final String PUBLIC_STUDY = "Available to share with network members";
+    public static final String PUBLIC_STUDY = "Available to share with DataSpace members";
     public static final String PRIVATE_STUDY = "Restricted - contact DataSpace team prior to sharing data";
 
     public static final String PROT = "prot";
