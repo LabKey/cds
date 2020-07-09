@@ -1387,35 +1387,35 @@
       <column columnName="min_well_value">
         <datatype>double</datatype>
         <columnTitle>Min well value</columnTitle>
-        <description>The minimum well value (luminescence?) across replicates/duplicates for each unique assay_id-run-plate_number-specimen_id-dilution)</description>
+        <description>The minimum value of fluorescence across replicate wells (i.e. testing the same antibody-concentration-virus combination)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="max_well_value">
         <datatype>double</datatype>
         <columnTitle>Max well value</columnTitle>
-        <description>The maximum well value (luminescence?) across replicates/duplicates for each unique assay_id-run-plate_number-specimen_id-dilution)</description>
+        <description>The maximum value of fluorescence across replicate wells (i.e. testing the same antibody-concentration-virus combination)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="mean_well_value">
         <datatype>double</datatype>
         <columnTitle>Mean well value</columnTitle>
-        <description>The mean of the well values (luminescence?) across replicates/duplicates for each unique assay_id-run-plate_number-specimen_id-dilution)</description>
+        <description>The mean of fluorescence values across replicate wells (i.e. testing the same antibody-concentration-virus combination)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="well_std_dev">
         <datatype>double</datatype>
         <columnTitle>Well std dev</columnTitle>
-        <description>The standard deviation around the mean of the well values (luminscence?) across replicates/duplicates for each unique assay_id-run-plate_number-specimen_id-dilution)</description>
+        <description>The standard deviation of fluorescence values across replicate wells (i.e. testing the same antibody-concentration-virus combination)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="percent_neutralization">
         <datatype>double</datatype>
         <columnTitle>Percent neutralization</columnTitle>
-        <description>Represents the percent of virus neutralized by the specimen at a specific dilution. The percent neutralization is calculated using the mean well value (luminiscence?) of each unique assay_id-run-plate_number-specimen_id-dilution, where the mean is calculated across 1 or more replicates/duplicates (ReplicateNumber).</description>
+        <description>The percent of virus neutralized by the antibody at a specific concentration.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
