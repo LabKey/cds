@@ -300,7 +300,7 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'groups_treatment_schema'
                         }
                     },{
-                        type: 'html',
+                        type: 'assayschemamethod',
                         staticData: {
                             title: 'Methods'
                         },

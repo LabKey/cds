@@ -1042,7 +1042,9 @@ public class CDSController extends SpringActionController
         public Object execute(StudyDocumentForm form, BindException errors)
         {
             if (null == form.getFilename())
-                errors.reject(ERROR_MSG, "filename parameter required");
+            {
+                return false;
+            }
 
             boolean isValidLink = false;
             WebdavService service = ServiceRegistry.get().getService(WebdavService.class);

@@ -196,6 +196,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.ProductOtherProducts": "../../../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
   "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
   "Connector.view.module.TreatmentSchemaGroup": "../../../../webapp/Connector/src/app/view/module/TreatmentSchemaGroup.js",
+  "Connector.view.module.AssaySchemaMethod": "../../../../webapp/Connector/src/app/view/module/AssaySchemaMethod.js",
   "Connector.view.module.StudyProducts": "../../../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.StudyPublications": "../../../../webapp/Connector/src/app/view/module/StudyPublications.js",
   "Connector.view.module.StudyRelationships": "../../../../webapp/Connector/src/app/view/module/StudyRelationships.js",
@@ -440,6 +441,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.ProductOtherProducts": [],
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.TreatmentSchemaGroup": [],
+  "Connector.view.module.AssaySchemaMethod": [],
   "Connector.view.module.StudyProducts": [],
   "Connector.view.module.StudyPublications": [],
   "Connector.view.module.StudyRelationships": [],
@@ -1634,6 +1636,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.TreatmentSchemaGroup": [
     "widget.app.module.treatmentschemagroup"
+  ],
+  "Connector.view.module.AssaySchemaMethod": [
+    "widget.app.module.assayschemamethod"
   ],
   "Connector.view.module.StudyProducts": [
     "widget.app.module.studyproducts"

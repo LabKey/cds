@@ -157,18 +157,6 @@ Ext.define('Connector.app.store.Study', {
                 var hasStudyAccess = this.accessibleStudies[study.study_name] === true;
                 study.study_title = study.title;
 
-                if (study.methods || study.assay_schema_link) {
-                    study.methods_assay_schema = '';
-                    if (study.assay_schema_link) {
-                        study.methods_assay_schema += '<div class="schema-link"><a href="';
-                        study.methods_assay_schema += study.assay_schema_link;
-                        study.methods_assay_schema += '" target="_blank">Click for assay schema</a></div>';
-                    }
-                    if (study.methods) {
-                        study.methods_assay_schema += study.methods;
-                    }
-                }
-
                 var startDate = study.first_enr_date || study.start_date;
                 if (startDate) {
                     study.start_year = (new Date(startDate)).getFullYear().toString();

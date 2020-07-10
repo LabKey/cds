@@ -202,6 +202,7 @@
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
         <script path="Connector/src/app/view/module/TreatmentSchemaGroup.js"/>
+        <script path="Connector/src/app/view/module/AssaySchemaMethod.js"/>
         <script path="Connector/src/app/view/module/StudyPublications.js"/>
         <script path="Connector/src/app/view/module/StudyProducts.js"/>
         <script path="Connector/src/app/view/module/StudyRelationships.js"/>
