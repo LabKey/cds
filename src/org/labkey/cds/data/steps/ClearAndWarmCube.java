@@ -15,7 +15,7 @@
  */
 package org.labkey.cds.data.steps;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.labkey.api.cache.CacheManager;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.QueryService;

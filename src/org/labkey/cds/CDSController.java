@@ -20,7 +20,8 @@ package org.labkey.cds;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
@@ -77,13 +78,11 @@ import org.labkey.api.util.HtmlString;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.util.Path;
 import org.labkey.api.util.URLHelper;
-import org.labkey.api.view.ActionURL;
 import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
-import org.labkey.api.view.RedirectException;
 import org.labkey.api.view.VBox;
 import org.labkey.api.view.ViewContext;
 import org.labkey.api.view.template.PageConfig;
@@ -142,7 +141,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    private static final Logger LOG = Logger.getLogger(CDSController.class);
+    private static final Logger LOG = LogManager.getLogger(CDSController.class);
 
     private static final DefaultActionResolver _actionResolver = new DefaultActionResolver(CDSController.class);
 

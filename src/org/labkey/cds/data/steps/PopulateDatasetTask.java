@@ -15,7 +15,7 @@
  */
 package org.labkey.cds.data.steps;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
@@ -27,7 +27,6 @@ import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
-import org.labkey.api.security.User;
 import org.labkey.api.util.DateUtil;
 
 import java.util.Arrays;

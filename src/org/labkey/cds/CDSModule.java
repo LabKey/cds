@@ -17,7 +17,7 @@
 package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
@@ -258,7 +258,7 @@ public class CDSModule extends DefaultModule
             }
             catch (IllegalArgumentException x)
             {
-                Logger.getLogger(CDSModule.class).warn("Could not create shortcut from '" + source + "' to '" + target + "'.");
+                LogManager.getLogger(CDSModule.class).warn("Could not create shortcut from '" + source + "' to '" + target + "'.");
             }
         }
         return target;
