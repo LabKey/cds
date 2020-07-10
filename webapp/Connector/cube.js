@@ -292,7 +292,7 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'rationale'
                         }
                     },{
-                        type: 'html',
+                        type: 'treatmentschemagroup',
                         staticData: {
                             title: 'Groups'
                         },

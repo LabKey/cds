@@ -50,6 +50,7 @@ import org.labkey.api.data.TSVMapWriter;
 import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
+import org.labkey.api.module.ModuleProperty;
 import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
@@ -116,6 +117,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1030,6 +1032,35 @@ public class CDSController extends SpringActionController
             response.put("properties", CDSManager.get().getActiveUserProperties(getUser(), getContainer()));
             response.put("success", !errors.hasErrors());
             return response;
+        }
+    }
+
+    @RequiresPermission(ReadPermission.class)
+    public static class ValidateStudySchemaLinkAction extends ReadOnlyApiAction<StudyDocumentForm>
+    {
+        @Override
+        public Object execute(StudyDocumentForm form, BindException errors)
+        {
+            if (null == form.getFilename())
+                errors.reject(ERROR_MSG, "filename parameter required");
+
+            boolean isValidLink = false;
+            WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
+            WebdavResource resource = service.lookup(Path.parse(form.filename));
+
+            if (resource != null)
+            {
+                File requestedFile = resource.getFile();
+                if (requestedFile == null || !requestedFile.canRead())
+                {
+                    isValidLink = false;
+                }
+                else
+                {
+                    isValidLink = true;
+                }
+            }
+            return new ApiSimpleResponse("isValidLink", isValidLink);
         }
     }
 

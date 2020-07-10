@@ -156,17 +156,7 @@ Ext.define('Connector.app.store.Study', {
             Ext.each(this.studyData, function(study) {
                 var hasStudyAccess = this.accessibleStudies[study.study_name] === true;
                 study.study_title = study.title;
-                if (study.groups || study.treatment_schema_link) {
-                    study.groups_treatment_schema = '';
-                    if (study.treatment_schema_link) {
-                        study.groups_treatment_schema += '<div class="schema-link"><a href="';
-                        study.groups_treatment_schema += study.treatment_schema_link;
-                        study.groups_treatment_schema += '" target="_blank">Click for treatment schema</a></div>';
-                    }
-                    if (study.groups) {
-                        study.groups_treatment_schema += study.groups;
-                    }
-                }
+
                 if (study.methods || study.assay_schema_link) {
                     study.methods_assay_schema = '';
                     if (study.assay_schema_link) {
