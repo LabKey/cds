@@ -18,7 +18,7 @@ Ext.define('Connector.view.module.AssaySchemaMethod', {
                     '<h3 id="assay_methods_title" class="listing_title">{method_title}</h3>',
                     '<tpl if="methods_assay_schema_link_valid">',
                         '<div class="schema-link">',
-                            '<a href= "' + LABKEY.contextPath + '{assay_schema_link}" target="_blank">Click for assay schema</a>',
+                            '<a id="methods_assay_link" href= "' + LABKEY.contextPath + '{assay_schema_link}" target="_blank">Click for assay schema</a>',
                         '</div>',
                     '</tpl>',
                      '{methods:htmlEncode}',
