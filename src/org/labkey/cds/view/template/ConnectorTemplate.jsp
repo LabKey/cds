@@ -355,6 +355,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/TreatmentSchemaGroup.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssaySchemaMethod.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyPublications.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyRelationships.js"></script>

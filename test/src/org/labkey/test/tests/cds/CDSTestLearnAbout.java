@@ -24,6 +24,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.Locators;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.categories.Git;
+import org.labkey.test.components.ext4.Window;
 import org.labkey.test.pages.cds.LearnDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
@@ -169,6 +170,40 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifySchemaLinks()
+    {
+        final String studyName = CDSHelper.QED_1;
+
+        cds.viewLearnAboutPage("Studies");
+
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(studyName);
+        goToDetail(studyName, false);
+        String treatmentLinkId = "groups_treatment_link";
+        waitForElement(Locator.id(treatmentLinkId));
+        sleep(CDSHelper.CDS_WAIT);
+
+        log("Verify Treatment Schema link under Groups");
+        scrollIntoView(Locator.id(treatmentLinkId));
+        click(Locator.tagWithId("a", treatmentLinkId).withText("Click for treatment schema"));
+        switchToWindow(1);
+        assertTextPresent("Treatment Schedule by Day");
+
+        getDriver().close();
+        switchToMainWindow();
+
+        log("Verify Assay Schema link under Methods");
+        String assayLinkId = "methods_assay_link";
+        assertElementPresent(Locator.id(assayLinkId));
+        click(Locator.tagWithId("a", assayLinkId).withText("Click for assay schema"));
+        switchToWindow(1);
+        assertTextPresent("Assay Schedule by Study Day");
+
+        getDriver().close();
+        switchToMainWindow();
+    }
+
+    @Test
     public void verifyLearnAboutStudyDetails()
     {
         final String searchString = CDSHelper.ZAP_117;
@@ -212,7 +247,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         fields = Arrays.asList(CDSHelper.LEARN_ABOUT_DESCRIPTION_FIELDS);
         fields.stream().forEach((field) -> assertTextPresent(field));
         assertTextPresent(rationale);
-        assertElementPresent(Locator.xpath("//a[text()='Click for treatment schema']"));
 
         validateToolTip(Locator.linkWithText("NAB").findElement(getDriver()), "provided, but not included");
 
