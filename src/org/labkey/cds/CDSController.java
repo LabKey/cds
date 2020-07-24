@@ -78,6 +78,7 @@ import org.labkey.api.util.HtmlString;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.util.Path;
 import org.labkey.api.util.URLHelper;
+import org.labkey.api.util.element.CsrfInput;
 import org.labkey.api.view.ActionURL;
 import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
@@ -824,7 +825,7 @@ public class CDSController extends SpringActionController
         {
             if ("GET".equals(getViewContext().getRequest().getMethod()))
             {
-                String csrf = "<input type=\"hidden\" name=\"" + CSRFUtil.csrfName + "\" value=\"" + CSRFUtil.getExpectedToken(getViewContext()) + "\">";
+                String csrf = new CsrfInput(getViewContext()).toString();
                 return new HtmlView("<form method=POST><input type=submit value=submit>" + csrf + "</form>");
             }
             else if ("POST".equals(getViewContext().getRequest().getMethod()))
