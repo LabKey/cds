@@ -71,8 +71,8 @@
                 subjectLabel: 'Subject Id'
             },
             resourceContext: {
-                path: <%=PageFlowUtil.jsString(resourcePath)%>,
-                imgPath: <%=PageFlowUtil.jsString(imageResourcePath)%>
+                path: <%=q(resourcePath)%>,
+                imgPath: <%=q(imageResourcePath)%>
             },
             user: {
                 isAnalyticsUser: <%=model.isAnalyticsUser()%>,
