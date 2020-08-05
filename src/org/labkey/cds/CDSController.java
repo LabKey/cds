@@ -20,7 +20,8 @@ package org.labkey.cds;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
@@ -145,7 +146,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    private static final Logger LOG = Logger.getLogger(CDSController.class);
+    private static final Logger LOG = LogManager.getLogger(CDSController.class);
 
     private static final DefaultActionResolver _actionResolver = new DefaultActionResolver(CDSController.class);
 

@@ -16,7 +16,7 @@
 package org.labkey.cds.data.steps;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.labkey.api.data.Container;
 import org.labkey.api.module.FolderTypeManager;
