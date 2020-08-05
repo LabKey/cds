@@ -109,7 +109,8 @@ Ext.define('Connector.view.MabReport', {
             this.viewGridButton = Ext.create('Ext.button.Button', {
                 cls: 'mabgridcolumnsbtn',
                 id: 'mabgridcolumnsbtn-breadcrumb',
-                text: 'View Grid',
+                text: 'Return to mAb grid',
+                height: 25,
                 margin: '0 15 0 0',
                 handler: this._onBackClick,
                 scope: this

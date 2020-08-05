@@ -51,6 +51,7 @@ import org.labkey.api.data.TSVMapWriter;
 import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
+import org.labkey.api.module.ModuleProperty;
 import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
@@ -78,11 +79,14 @@ import org.labkey.api.util.HtmlString;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.util.Path;
 import org.labkey.api.util.URLHelper;
+import org.labkey.api.util.element.CsrfInput;
+import org.labkey.api.view.ActionURL;
 import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
+import org.labkey.api.view.RedirectException;
 import org.labkey.api.view.VBox;
 import org.labkey.api.view.ViewContext;
 import org.labkey.api.view.template.PageConfig;
@@ -115,6 +119,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -821,7 +826,7 @@ public class CDSController extends SpringActionController
         {
             if ("GET".equals(getViewContext().getRequest().getMethod()))
             {
-                String csrf = "<input type=\"hidden\" name=\"" + CSRFUtil.csrfName + "\" value=\"" + CSRFUtil.getExpectedToken(getViewContext()) + "\">";
+                String csrf = new CsrfInput(getViewContext()).toString();
                 return new HtmlView("<form method=POST><input type=submit value=submit>" + csrf + "</form>");
             }
             else if ("POST".equals(getViewContext().getRequest().getMethod()))
@@ -1033,6 +1038,38 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresPermission(ReadPermission.class)
+    public static class ValidateStudySchemaLinkAction extends ReadOnlyApiAction<StudyDocumentForm>
+    {
+        @Override
+        public Object execute(StudyDocumentForm form, BindException errors)
+        {
+            if (null == form.getFilename())
+            {
+                return false;
+            }
+
+            boolean isValidLink = false;
+            WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
+            WebdavResource resource = service.lookup(Path.parse(form.filename));
+
+            if (resource != null)
+            {
+                File requestedFile = resource.getFile();
+                if (requestedFile == null || !requestedFile.canRead())
+                {
+                    isValidLink = false;
+                }
+                else
+                {
+                    isValidLink = true;
+                }
+            }
+            return new ApiSimpleResponse("isValidLink", isValidLink);
+        }
+    }
+
+    @RequiresPermission(ReadPermission.class)
+    @MethodsAllowed({Method.HEAD, Method.GET})
     public static class GetStudyDocumentAction extends SimpleViewAction<StudyDocumentForm>
     {
         @Override
