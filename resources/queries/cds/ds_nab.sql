@@ -38,6 +38,10 @@ na.target_cell,
 nab.initial_dilution,
 na.virus,
 na.virus_type,
+na.virus_full_name,
+na.virus_species,
+na.virus_host_cell,
+na.virus_backbone,
 na.virus_insert_name,
 
 -- LOOKUPS
