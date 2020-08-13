@@ -20,7 +20,7 @@ SELECT
   dd.mab_mix_id,
   dd.mab_name_source,
   dd.summary_level,
-  dd.target_cell,
+  na.target_cell,
   dd.assay_identifier,
   dd.mab_concentration,
   dd.mab_concentration_units,
@@ -28,7 +28,7 @@ SELECT
   dd.curve_id,
   dd.specimen_type,
   dd.lab_code,
-  dd.virus,
+  na.virus,
   dd.initial_concentration,
   dd.min_concentration,
   dd.max_concentration,
@@ -45,14 +45,14 @@ SELECT
   dd.titer_point_ic50,
   dd.titer_point_ic80,
   dd.slope,
-  dd.virus_type,
+  na.virus_type,
   dd.virus_dilution,
-  dd.clade,
-  dd.neutralization_tier,
+  na.clade,
+  na.neutralization_tier,
   -- Delimiter has to match ChartUtil.ANTIGEN_LEVEL_DELIMITER
-  (CASE WHEN dd.neutralization_tier IS NULL THEN 'null' ELSE dd.neutralization_tier END)
-  || '|||' || (CASE WHEN dd.clade IS NULL THEN 'null' ELSE dd.clade END)
-  || '|||' || (CASE WHEN dd.virus IS NULL THEN 'null' ELSE dd.virus END)
+  (CASE WHEN na.neutralization_tier IS NULL THEN 'null' ELSE na.neutralization_tier END)
+  || '|||' || (CASE WHEN na.clade IS NULL THEN 'null' ELSE na.clade END)
+  || '|||' || (CASE WHEN na.virus IS NULL THEN 'null' ELSE na.virus END)
     AS tier_clade_virus,
   dd.fit_min,
   dd.fit_max,
@@ -62,4 +62,4 @@ SELECT
   dd.fit_error,
   dd.vaccine_matched
 
-FROM cds.import_NABMAb AS dd;
+FROM cds.import_NABMAb AS dd left join cds.import_nabantigen na on na.cds_virus_id = dd.cds_virus_id
