@@ -89,11 +89,11 @@
         {
             if (user.hasSiteAdminPermission())
             {
-    %>      <!-- see <%=new ActionURL("analytics","begin",ContainerManager.getRoot()).getURIString()%> -->
+    %>      <!-- see <%=h(new ActionURL("analytics", "begin", ContainerManager.getRoot()))%> -->
     <%
             }
     %>
-    <%=script%>
+    <%=unsafe(script)%>
     <%
             }
         }
