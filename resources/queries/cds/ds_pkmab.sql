@@ -61,5 +61,5 @@ LEFT JOIN (
                         AND subjectgroup.study_group = visittime.study_group
                         AND subjectvisit.visit_code = visittime.visit_code
                         AND subjectgroup.container = visittime.container
-    ) AS VT ON dd.container = VT.container AND dd.subject_id = VT.subject_id AND dd.visit_code = VT.visit_code;
+    ) AS VT ON dd.container = VT.container AND dd.subject_id = VT.subject_id AND dd.visit_code = VT.visit_code
 

@@ -28,7 +28,7 @@ FROM (
   0 AS subjects,
   0 AS products,
   0 AS datacount,
-  0 AS subjectlevelstudies,
+  0 AS subjectlevelstudies
   FROM cds.assay AS assay
 
   UNION
@@ -52,7 +52,7 @@ FROM (
   0 AS subjects,
   0 AS products,
   0 AS datacount,
-  COUNT(DISTINCT demographics.study_label) AS subjectlevelstudies,
+  COUNT(DISTINCT demographics.study_label) AS subjectlevelstudies
   FROM study.Demographics AS demographics
 
   UNION
@@ -63,7 +63,7 @@ FROM (
   COUNT(*) AS subjects,
   0 AS products,
   0 AS datacount,
-  0 AS subjectlevelstudies,
+  0 AS subjectlevelstudies
   FROM study.Demographics
 
   UNION
@@ -75,7 +75,7 @@ FROM (
   0 AS subjects,
   COUNT(*) AS products,
   0 AS datacount,
-  0 AS subjectlevelstudies,
+  0 AS subjectlevelstudies
   FROM cds.Product
 
   UNION
@@ -87,7 +87,7 @@ FROM (
   0 AS subjects,
   0 AS products,
   COUNT(*) AS datacount,
-  0 AS subjectlevelstudies,
+  0 AS subjectlevelstudies
   FROM study.ICS
 
   UNION
@@ -98,7 +98,7 @@ FROM (
   0 AS subjects,
   0 AS products,
   COUNT(*) AS datacount,
-  0 AS subjectlevelstudies,
+  0 AS subjectlevelstudies
   FROM study.ELISPOT
 
   UNION
@@ -109,7 +109,7 @@ FROM (
   0 AS subjects,
   0 AS products,
   COUNT(*) AS datacount,
-  0 AS subjectlevelstudies,
+  0 AS subjectlevelstudies
   FROM study.NAb
 
   UNION
@@ -120,6 +120,6 @@ FROM (
   0 AS subjects,
   0 AS products,
   COUNT(*) AS datacount,
-  0 AS subjectlevelstudies,
+  0 AS subjectlevelstudies
   FROM study.BAMA
-)
+) _union_

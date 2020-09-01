@@ -19,7 +19,7 @@ DD.folder.entityid as container,
 DD.container as study,
 S.label AS study_label,
 TA.coded_label AS treatment_arm,
-DD.participantid || '-product' AS product_group,
+DD.participantid || '-product' AS product_group
 FROM study.demographics AS DD
 LEFT JOIN cds.treatmentarmsubjectmap AS TSM ON (DD.participantid = TSM.participantid AND DD.container = TSM.container)
 LEFT JOIN cds.treatmentarm AS TA ON (TSM.arm_id = TA.arm_id)

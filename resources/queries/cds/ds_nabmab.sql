@@ -62,4 +62,4 @@ SELECT
   dd.fit_error,
   dd.vaccine_matched
 
-FROM cds.import_NABMAb AS dd;
+FROM cds.import_NABMAb AS dd

@@ -28,4 +28,4 @@ INNER JOIN
   FROM cds.metadata.studyassay sa
   WHERE sa.has_data = true
 ) noEmptyStudy
-ON allStudy.study_name = noEmptyStudy.prot;
+ON allStudy.study_name = noEmptyStudy.prot

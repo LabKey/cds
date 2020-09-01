@@ -48,6 +48,6 @@ mfi_blank,
 mfi_blank_baseline,
 mfi_bkgd,
 mfi_bkgd_blank,
-auc,
+auc
 
-FROM cds.import_bama;
+FROM cds.import_bama

@@ -16,7 +16,7 @@
 SELECT
 TA.arm_id,
 ITS.subject_id AS participantId,
-ITS.prot,
+ITS.prot
 FROM cds.treatmentarm AS TA
 JOIN cds.import_studypartgrouparmsubject AS ITS
 ON (TA.container.name = ITS.prot AND

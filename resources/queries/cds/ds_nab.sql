@@ -53,6 +53,6 @@ nab_response_ID50,
 nab_response_ID80,
 titer_ID50,
 titer_ID80,
-slope,
+slope
 
-FROM cds.import_nab;
+FROM cds.import_nab

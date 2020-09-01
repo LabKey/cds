@@ -59,4 +59,4 @@ SELECT
   mab.vaccine_matched
 
 FROM study.NABMAb as mab
-  LEFT JOIN cds.MAbMixMetadata as MixMeta on (MixMeta.mab_mix_id = mab.mab_mix_id);
+  LEFT JOIN cds.MAbMixMetadata as MixMeta on (MixMeta.mab_mix_id = mab.mab_mix_id)

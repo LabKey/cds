@@ -55,4 +55,4 @@ LEFT JOIN (SELECT Container, ParticipantId, MIN(ProtocolDay) AS ProtocolDay_Firs
   AND SV.participantId.participantId=visittagalignment_first_vaccination.participantid
 
 WHERE SV.participantId NOT IN
-      (SELECT MAB.participantId FROM study.NABMAb AS MAB WHERE MAB.participantId = SV.participantId AND MAB.container = SV.container);
+      (SELECT MAB.participantId FROM study.NABMAb AS MAB WHERE MAB.participantId = SV.participantId AND MAB.container = SV.container)

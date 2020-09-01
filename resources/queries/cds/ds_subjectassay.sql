@@ -19,14 +19,14 @@ assay_identifier,
 assay_type,
 SS.study_name,
 lab_code,
-label,
+label
 FROM (
   SELECT
   DISTINCT participantid,
   'ICS' AS assay_type,
   assay_identifier,
   container,
-  lab_code,
+  lab_code
   FROM study.ICS
 
   UNION
@@ -36,7 +36,7 @@ FROM (
   'NAb' AS assay_type,
   assay_identifier,
   container,
-  lab_code,
+  lab_code
   FROM study.NAb
 
   UNION
@@ -46,7 +46,7 @@ FROM (
   'ELISPOT' AS assay_type,
   assay_identifier,
   container,
-  lab_code,
+  lab_code
   FROM study.ELISpot
 
   UNION
@@ -56,7 +56,7 @@ FROM (
   'BAMA' AS assay_type,
   assay_identifier,
   container,
-  lab_code,
+  lab_code
   FROM study.BAMA
 
   UNION
