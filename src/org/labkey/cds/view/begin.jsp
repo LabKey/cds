@@ -70,7 +70,7 @@ Please upload a study to begin using the collaborative dataspace.
     else
     {
 %>
-Go to <a href="<%=new ActionURL(CDSController.BeginAction.class, c.getProject())%>">project</a>.
+Go to <a href="<%=h(new ActionURL(CDSController.BeginAction.class, c.getProject()))%>">project</a>.
 <%
     }
 %>
