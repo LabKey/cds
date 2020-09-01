@@ -37,10 +37,10 @@ SELECT
               UNION
               SELECT DISTINCT
                 assay_identifier,
-                'NABMAb'
+                'NABMAb' AS assay_type
               FROM cds.ds_nabmab
 
-            ) AS SA ON IA.assay_identifier=SA.assay_identifier;
+            ) AS SA ON IA.assay_identifier=SA.assay_identifier
 
 UNION
 

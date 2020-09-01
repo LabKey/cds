@@ -38,4 +38,4 @@ FROM (
                  FROM import_studypartgrouparmvisittime
                  ) AS possible_visittimes
          ON recorded_visittimes.visit=possible_visittimes.visit
-WHERE possible_visittimes.visit IS NULL;
+WHERE possible_visittimes.visit IS NULL

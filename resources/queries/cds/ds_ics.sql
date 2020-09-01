@@ -60,4 +60,4 @@ response_method,
 functionality_score,
 polyfunctionality_score
 
-FROM cds.import_ics;
+FROM cds.import_ics

@@ -57,7 +57,7 @@ FROM(
 		DISTINCT subject_id,
 		prot
 		FROM import_pkmab
-	)
+	) _union_
 ) as datasets
 LEFT JOIN(
 	SELECT

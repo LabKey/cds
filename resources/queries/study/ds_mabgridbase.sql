@@ -43,4 +43,4 @@ select
   MixMeta.mab_mix_name_std
 FROM study.NABMAb as MAB
   LEFT JOIN cds.MAbMixMetadata as MixMeta on (MixMeta.mab_mix_id = MAB.mab_mix_id)
-where MAB.specimen_concentration_id = 8;
+where MAB.specimen_concentration_id = 8

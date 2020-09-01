@@ -24,4 +24,4 @@ CAST(study_day AS DOUBLE) AS sequencenummax,
 -- 0 AS chronologicalorder,
 'normal' AS sequencenumhandling,
 prot
-FROM cds.import_studypartgrouparmvisit;
+FROM cds.import_studypartgrouparmvisit

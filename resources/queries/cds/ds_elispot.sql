@@ -53,6 +53,6 @@ exp_assayid,
 els_ifng_response AS response_call,
 mean_sfc,
 mean_sfc_neg,
-mean_sfc_raw,
+mean_sfc_raw
 
-FROM cds.import_ELS_IFNg;
+FROM cds.import_ELS_IFNg

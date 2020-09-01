@@ -25,7 +25,7 @@ LEFT JOIN (
     SELECT DISTINCT assay_identifier,
     study_name
     FROM ds_subjectassay
-  )
+  ) _x_
   GROUP BY assay_identifier
 )
 AS BB ON AA.assay_identifier = BB.id
