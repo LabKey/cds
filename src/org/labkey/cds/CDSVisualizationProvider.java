@@ -147,7 +147,7 @@ public class CDSVisualizationProvider extends VisualizationProvider<CDSUserSchem
     }
 
     @Override
-    public void appendAggregates(StringBuilder sql, Map<String, Set<VisualizationSourceColumn>> columnAliases, Map<String, VisualizationIntervalColumn> intervals, String queryAlias, IVisualizationSourceQuery joinQuery)
+    public void appendAggregates(StringBuilder sql, Map<String, Set<VisualizationSourceColumn>> columnAliases, Map<String, VisualizationIntervalColumn> intervals, String queryAlias, IVisualizationSourceQuery joinQuery, boolean forSelect)
     {}
 
     @Override
