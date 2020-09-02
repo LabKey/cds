@@ -21,7 +21,7 @@ Ext.define('Connector.view.module.TreatmentSchemaGroup', {
                                 '<a id="groups_treatment_link" href= "' + LABKEY.contextPath + '{treatment_schema_link}" target="_blank">Click for treatment schema</a>',
                             '</div>',
                         '</tpl>',
-                        '{groups:htmlEncode}',
+                        '{groups}',
                 '</div>',
             '</tpl>',
         '</tpl>'
