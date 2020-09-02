@@ -1055,15 +1055,17 @@ public class CDSController extends SpringActionController
             if (resource != null)
             {
                 File requestedFile = resource.getFile();
-                LOG.info(requestedFile.getName() + " is present: " + (requestedFile != null));//TODO: Added for investigating Ticket 40760, to be removed.
-                LOG.info(requestedFile.getName() + " is readable: " + requestedFile.canRead());//TODO: Added for investigating Ticket 40760, to be removed.
                 if (requestedFile == null || !requestedFile.canRead())
                 {
+                    if (requestedFile != null)
+                    {
+                        LOG.info(requestedFile.getName() + " is readable: " + requestedFile.canRead());//TODO: Added for investigating Ticket 40760, to be removed.
+                    }
                     isValidLink = false;
                 }
                 else
                 {
-                    isValidLink = true;
+                   isValidLink = true;
                 }
             }
             return new ApiSimpleResponse("isValidLink", isValidLink);
