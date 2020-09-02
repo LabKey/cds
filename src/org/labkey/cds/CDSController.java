@@ -1049,14 +1049,14 @@ public class CDSController extends SpringActionController
 
             boolean isValidLink = false;
             WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
-            LOG.info("File path: " + Path.parse(form.getFilename()).toString());
+            LOG.info("File path: " + Path.parse(form.getFilename()).toString()); //TODO: Added for investigating Ticket 40760, to be removed.
             WebdavResource resource = service.lookup(Path.parse(form.getFilename()));
 
             if (resource != null)
             {
                 File requestedFile = resource.getFile();
-                LOG.info(requestedFile.getName() + " is present: " + (requestedFile != null));
-                LOG.info(requestedFile.getName() + " is readable: " + requestedFile.canRead());
+                LOG.info(requestedFile.getName() + " is present: " + (requestedFile != null));//TODO: Added for investigating Ticket 40760, to be removed.
+                LOG.info(requestedFile.getName() + " is readable: " + requestedFile.canRead());//TODO: Added for investigating Ticket 40760, to be removed.
                 if (requestedFile == null || !requestedFile.canRead())
                 {
                     isValidLink = false;
