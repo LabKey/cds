@@ -10,7 +10,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     singleton: true,
 
-    MAB_GRID_BASE: 'cds.mAbGridBase',
+    MAB_GRID_BASE: 'cds.mAbGridBaseWithVirusFullName',
 
     MAB_GRID_BASE_ALIAS: 'CDS_MabGridBase',
 
@@ -48,7 +48,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     IC50_GROUP_COLUMN: 'titer_curve_ic50_group',
 
-    VIRUS_COLUMNS: ['neutralization_tier', 'clade', 'virus'],
+    VIRUS_COLUMNS: ['neutralization_tier', 'clade', 'virus', 'virus_full_name'],
 
     BLANK_VALUE: '[blank]',
 

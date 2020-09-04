@@ -52,9 +52,12 @@ Ext.define('Connector.panel.AbstractAntigenSelection', {
                     var dataValue = alias + '-' + concatValue.replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, '-').replace(/ /g, '_');
                     var virusLabel = undefined;
 
-                    //TODO: is there a better way to have virus full name show up on the tooltip?
+                    //use virus full names for tooltips
                     if (alias === 'study_NAb_virus') {
                         virusLabel = record.raw.study_NAb_virus_full_name;
+                    }
+                    else if (alias === 'virus') {
+                        virusLabel = record.raw.virus_full_name;
                     }
                     checkboxItems.push(this.createCheckboxCmp(alias, record.get(alias), dataValue, record, fields, i, concatValue, addCls, virusLabel));
                 }
