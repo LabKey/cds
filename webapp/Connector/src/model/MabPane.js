@@ -42,11 +42,22 @@ Ext.define('Connector.model.MabPane', {
 
                 Ext.Array.forEach(all, function(row) {
                     var name = row[fieldKey];
+                    var otherName = "";
+
+                    if (fieldKey === 'virus') {
+                        if (row['virus_full_name']) {
+                            otherName = row['virus_full_name'];
+                        }
+                        else {
+                            otherName = name;
+                        }
+                    }
 
                     if (name) {
                         var rec = {
                             count: this.isActive(name, fieldKey, active) ? 1 : 0,
-                            name: name
+                            name: name,
+                            otherName: otherName
                         };
                         if (hasDetails) {
                             Ext.apply(rec, {

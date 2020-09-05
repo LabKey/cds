@@ -215,9 +215,16 @@ Ext.define('Connector.utility.MabQuery', {
         if (config.useFilter) {
             WHERE = this._getMabStateFilterWhere(false, includeSelection, isExport)
         }
+        var stmt;
 
+        if (config.fieldName === 'virus') {
+            stmt = 'SELECT DISTINCT ' + this.MAB_GRID_BASE_ALIAS + '.' + config.fieldName + ", " + this.MAB_GRID_BASE_ALIAS + '.virus_full_name';
+        }
+        else {
+            stmt = 'SELECT DISTINCT ' + this.MAB_GRID_BASE_ALIAS + '.' + config.fieldName;
+        }
         return [
-            'SELECT DISTINCT ' + this.MAB_GRID_BASE_ALIAS + '.' + config.fieldName,
+            stmt,
             this._getAssayFrom(),
             this._buildWhere(WHERE),
             'ORDER BY ' + config.fieldName

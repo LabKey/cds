@@ -1,350 +1,350 @@
 assay_identifier	antigen_name	target_cell	antigen_type	virus	virus_type	virus_insert_name	neutralization_tier	clade	antigen_description	antigen_control	virus_full_name	virus_name_other	virus_species	virus_host_cell	virus_backbone	cds_virus_id
-NAB TZM-bl	Q23.17	TZM-bl	Pseudovirus Virus	Q23.17	Pseudovirus	ipsum dolor	1	A	Nulla ac enim.	0	Q23.17, Pseudovirus, TZM-bl	Q23.17, Pseudovirus, TZM-bl, ipsum dolor	HIV	293T/17	SG3 delta env 1	cds_111
-NAB TZM-bl	REJO4541.67	TZM-bl	Pseudovirus Virus	REJO4541.67	Pseudovirus	placerat praesent blandit	2	B	Fusce posuere felis sed lacus.	0	REJO4541.67, Pseudovirus, TZM-bl	REJO4541.67, Pseudovirus, TZM-bl, placerat praesent blandit	HIV	293T/17	SG3 alpha env 1	cds_112
-NAB TZM-bl	BaL.26	TZM-bl	Not Reported	BaL.26	Not Reported	condimentum	Not Available	Not Currently Recorded in Data	In hac habitasse platea dictumst.	0	BaL.26, Not Reported, TZM-bl	BaL.26, Not Reported, TZM-bl, condimentum	HIV	293T/17	SG3 beta env 2	cds_113
-NAB A3R5	C3347.c11.LucR.T2A.ecto	A3R5	Not Reported	C3347.c11.LucR.T2A.ecto	Not Reported	elit proin	Not Available	Not Currently Recorded in Data	Integer ac leo. Pellentesque ultrices mattis odio.	0	C3347.c11.LucR.T2A.ecto, Not Reported, A3R5	C3347.c11.LucR.T2A.ecto, Not Reported, A3R5, elit proin	HIV	293T/17	SG3 delta env 1	cds_114
-NAB TZM-bl	TRO.11	TZM-bl	Pseudovirus Virus	TRO.11	Pseudovirus	odio	2	B	Praesent lectus. Vestibulum quam sapien, varius ut, blandit non, interdum in, ante.	0	TRO.11, Pseudovirus, TZM-bl	TRO.11, Pseudovirus, TZM-bl, odio	HIV	293T/17	SG3 alpha env 1	cds_115
-NAB TZM-bl	WITO4160.33	TZM-bl	Not Reported	WITO4160.33	Not Reported	felis sed interdum	2	B	Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante.	0	WITO4160.33, Not Reported, TZM-bl	WITO4160.33, Not Reported, TZM-bl, felis sed interdum	HIV	293T/17	SG3 beta env 2	cds_116
-NAB A3R5	WITO.LucR.T2A.ecto	A3R5	IMC Virus	WITO.LucR.T2A.ecto	IMC	mauris laoreet	Not Available	Not Currently Recorded in Data	Morbi porttitor lorem id ligula.	0	WITO.LucR.T2A.ecto, IMC, A3R5	WITO.LucR.T2A.ecto, IMC, A3R5, mauris laoreet	HIV	293T/17	SG3 beta env 3	cds_117
-NAB TZM-bl	SS1196.1	TZM-bl	Pseudovirus Virus	SS1196.1	Pseudovirus	lacinia	1	B	Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet.	0	SS1196.1, Pseudovirus, TZM-bl	SS1196.1, Pseudovirus, TZM-bl, lacinia	HIV	293T/17	SG3 beta env 4	cds_118
-NAB A3R5	9020.A13.LucR.T2A.ecto	A3R5	IMC Virus	9020.A13.LucR.T2A.ecto	IMC	ultrices posuere	Not Available	Not Currently Recorded in Data	Aliquam sit amet diam in magna bibendum imperdiet.	0	9020.A13.LucR.T2A.ecto, IMC, A3R5	9020.A13.LucR.T2A.ecto, IMC, A3R5, ultrices posuere	HIV	293T/17	SG3 beta env 5	cds_119
-NAB TZM-bl	RHPA4259.7	TZM-bl	Not Reported	RHPA4259.7	Not Reported	accumsan felis ut	2	B	Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue.	0	RHPA4259.7, Not Reported, TZM-bl	RHPA4259.7, Not Reported, TZM-bl, accumsan felis ut	HIV	293T/17	SG3 beta env 6	cds_120
-NAB A3R5	R2184.c04.LucR.T2A.ecto	A3R5	Not Reported	R2184.c04.LucR.T2A.ecto	Not Reported	libero quis	Not Available	Not Currently Recorded in Data	Sed accumsan felis.	0	R2184.c04.LucR.T2A.ecto, Not Reported, A3R5	R2184.c04.LucR.T2A.ecto, Not Reported, A3R5, libero quis	HIV	293T/17	SG3 delta env 1	cds_121
-NAB TZM-bl	BaL.26	TZM-bl	Pseudovirus Virus	BaL.26	Pseudovirus	in leo maecenas	Not Available	Not Currently Recorded in Data	Nulla tempus.	0	BaL.26, Pseudovirus, TZM-bl	BaL.26, Pseudovirus, TZM-bl, in leo maecenas	HIV	293T/17	SG3 alpha env 1	cds_122
-NAB TZM-bl	TH023.6	TZM-bl	Not Reported	TH023.6	Not Reported	consectetuer	Not Available	CRF01_AE	Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo.	0	TH023.6, Not Reported, TZM-bl	TH023.6, Not Reported, TZM-bl, consectetuer	HIV	293T/17	SG3 beta env 2	cds_123
-NAB A3R5	Ce1176_A3.LucR.T2A.ecto	A3R5	IMC Virus	Ce1176_A3.LucR.T2A.ecto	IMC	condimentum	Not Available	Not Currently Recorded in Data	Pellentesque at nulla. Suspendisse potenti.	0	Ce1176_A3.LucR.T2A.ecto, IMC, A3R5	Ce1176_A3.LucR.T2A.ecto, IMC, A3R5, condimentum	HIV	293T/17	SG3 delta env 1	cds_124
-NAB A3R5	C1080.c03.LucR.T2A.ecto	A3R5	Not Reported	C1080.c03.LucR.T2A.ecto	Not Reported	ante	Not Available	Not Currently Recorded in Data	Integer a nibh. In quis justo.	0	C1080.c03.LucR.T2A.ecto, Not Reported, A3R5	C1080.c03.LucR.T2A.ecto, Not Reported, A3R5, ante	HIV	293T/17	SG3 alpha env 1	cds_125
-NAB TZM-bl	CAAN5342.A2	TZM-bl	Pseudovirus Virus	CAAN5342.A2	Pseudovirus	nascetur	Not Available	Not Currently Recorded in Data	Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.	0	CAAN5342.A2, Pseudovirus, TZM-bl	CAAN5342.A2, Pseudovirus, TZM-bl, nascetur	HIV	293T/17	SG3 beta env 2	cds_126
-NAB A3R5	CH77.LucR.T2A.ecto	A3R5	IMC Virus	CH77.LucR.T2A.ecto	IMC	dapibus augue	Not Available	Not Currently Recorded in Data	Praesent lectus. Vestibulum quam sapien, varius ut, blandit non, interdum in, ante.	0	CH77.LucR.T2A.ecto, IMC, A3R5	CH77.LucR.T2A.ecto, IMC, A3R5, dapibus augue	HIV	293T/17	SG3 beta env 3	cds_127
-NAB A3R5	Ce2010_F5.LucR.T2A.ecto	A3R5	IMC Virus	Ce2010_F5.LucR.T2A.ecto	IMC	ut massa	Not Available	Not Currently Recorded in Data	Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum.	0	Ce2010_F5.LucR.T2A.ecto, IMC, A3R5	Ce2010_F5.LucR.T2A.ecto, IMC, A3R5, ut massa	HIV	293T/17	SG3 beta env 4	cds_128
-NAB A3R5	SIVmac239.ps-NL.LucR.T2A.ecto	A3R5	IMC Virus	SIVmac239.ps-NL.LucR.T2A.ecto	IMC	nunc	Not Available	Not Currently Recorded in Data	Donec posuere metus vitae ipsum. Aliquam non mauris.	0	SIVmac239.ps-NL.LucR.T2A.ecto, IMC, A3R5	SIVmac239.ps-NL.LucR.T2A.ecto, IMC, A3R5, nunc	HIV	293T/17	SG3 beta env 5	cds_129
-NAB A3R5	Du151.2.LucR.T2A.ecto	A3R5	IMC Virus	Du151.2.LucR.T2A.ecto	IMC	vestibulum	Not Available	Not Currently Recorded in Data	In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante.	0	Du151.2.LucR.T2A.ecto, IMC, A3R5	Du151.2.LucR.T2A.ecto, IMC, A3R5, vestibulum	HIV	293T/17	SG3 beta env 6	cds_130
-NAB TZM-bl	RHPA.LucR.T2A.ecto	TZM-bl	IMC Virus	RHPA.LucR.T2A.ecto	IMC	purus	Not Available	Not Currently Recorded in Data	Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.	0	RHPA.LucR.T2A.ecto, IMC, TZM-bl	RHPA.LucR.T2A.ecto, IMC, TZM-bl, purus	HIV	293T/17	SG3 delta env 1	cds_131
-NAB TZM-bl	CH58.LucR.T2A.ecto	TZM-bl	IMC Virus	CH58.LucR.T2A.ecto	IMC	in sagittis	Not Available	Not Currently Recorded in Data	Integer tincidunt ante vel ipsum.	0	CH58.LucR.T2A.ecto, IMC, TZM-bl	CH58.LucR.T2A.ecto, IMC, TZM-bl, in sagittis	HIV	293T/17	SG3 alpha env 1	cds_132
-NAB A3R5	SC22.3C2.LucR.T2A.ecto	A3R5	IMC Virus	SC22.3C2.LucR.T2A.ecto	IMC	tristique	Not Available	Not Currently Recorded in Data	Ut at dolor quis odio consequat varius.	0	SC22.3C2.LucR.T2A.ecto, IMC, A3R5	SC22.3C2.LucR.T2A.ecto, IMC, A3R5, tristique	HIV	293T/17	SG3 beta env 2	cds_133
-NAB TZM-bl	TV1.21	TZM-bl	Pseudovirus Virus	TV1.21	Pseudovirus	volutpat dui	Not Available	C	Cras pellentesque volutpat dui. Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.	0	TV1.21, Pseudovirus, TZM-bl		SHIV	293T/17		cds_134
-NAB A3R5	TV1.21.LucR.T2A.ecto	A3R5	IMC Virus	TV1.21.LucR.T2A.ecto	IMC	nulla sed vel	Not Available	Not Currently Recorded in Data	Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem.	0	TV1.21.LucR.T2A.ecto, IMC, A3R5		SHIV	293T/17		cds_135
-NAB TZM-bl	92RW020.2	TZM-bl	Not Reported	92RW020.2	Not Reported	vehicula	Not Available	A	In sagittis dui vel nisl. Duis ac nibh.	0	92RW020.2, Not Reported, TZM-bl	92RW020.2, Not Reported, TZM-bl, vehicula	HIV	293T/17	SG3 beta env 2	cds_136
-NAB TZM-bl	97ZA012.29	TZM-bl	Not Reported	97ZA012.29	Not Reported	pellentesque quisque porta	Not Available	Not Currently Recorded in Data	In hac habitasse platea dictumst.	0	97ZA012.29, Not Reported, TZM-bl	97ZA012.29, Not Reported, TZM-bl, pellentesque quisque porta	HIV	293T/17	SG3 beta env 3	cds_137
-NAB TZM-bl	TH023.6	TZM-bl	Pseudovirus Virus	TH023.6	Pseudovirus	at	Not Available	CRF01_AE	Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa.	0	TH023.6, Pseudovirus, TZM-bl	TH023.6, Pseudovirus, TZM-bl, at	HIV	293T/17	SG3 beta env 4	cds_138
-NAB TZM-bl	NP03.13	TZM-bl	Not Reported	NP03.13	Not Reported	parturient montes	Not Available	CRF01_AE	Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.	0	NP03.13, Not Reported, TZM-bl	NP03.13, Not Reported, TZM-bl, parturient montes	HIV	293T/17	SG3 beta env 5	cds_139
-NAB A3R5	CH58.LucR.T2A.ecto	A3R5	IMC Virus	CH58.LucR.T2A.ecto	IMC	duis consequat dui	Not Available	Not Currently Recorded in Data	Nullam varius.	0	CH58.LucR.T2A.ecto, IMC, A3R5	CH58.LucR.T2A.ecto, IMC, A3R5, duis consequat dui	HIV	293T/17	SG3 beta env 6	cds_140
-NAB TZM-bl	W61D(TCLA).71	TZM-bl	TCLA Virus	W61D(TCLA).71	TCLA	lacus purus	Not Available	Not Currently Recorded in Data	Sed ante. Vivamus tortor.	0	W61D(TCLA).71, TCLA, TZM-bl	W61D(TCLA).71, TCLA, TZM-bl, lacus purus	HIV	293T/17	SG3 delta env 2	cds_141
-NAB A3R5	RHPA.LucR.T2A.ecto	A3R5	IMC Virus	RHPA.LucR.T2A.ecto	IMC	sit	Not Available	Not Currently Recorded in Data	Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.	0	RHPA.LucR.T2A.ecto, IMC, A3R5	RHPA.LucR.T2A.ecto, IMC, A3R5, sit	HIV	293T/17	SG3 alpha env 2	cds_142
-NAB A3R5	SIVmac239.ps.LucR.T2A.ecto	A3R5	IMC Virus	SIVmac239.ps.LucR.T2A.ecto	IMC	vulputate nonummy maecenas	Not Available	Not Currently Recorded in Data	Praesent lectus. Vestibulum quam sapien, varius ut, blandit non, interdum in, ante.	0	SIVmac239.ps.LucR.T2A.ecto, IMC, A3R5	SIVmac239.ps.LucR.T2A.ecto, IMC, A3R5, vulputate nonummy maecenas	HIV	293T/17	SG3 beta env 3	cds_143
-NAB A3R5	Du422.1.LucR.T2A.ecto	A3R5	IMC Virus	Du422.1.LucR.T2A.ecto	IMC	ac est	Not Available	Not Currently Recorded in Data	Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.	0	Du422.1.LucR.T2A.ecto, IMC, A3R5	Du422.1.LucR.T2A.ecto, IMC, A3R5, ac est	HIV	293T/17	SG3 delta env 2	cds_144
-NAB TZM-bl	W61D(TCLA).71	TZM-bl	Pseudovirus Virus	W61D(TCLA).71	Pseudovirus	interdum in	Not Available	Not Currently Recorded in Data	Aliquam non mauris.	0	W61D(TCLA).71, Pseudovirus, TZM-bl	W61D(TCLA).71, Pseudovirus, TZM-bl, interdum in	HIV	293T/17	SG3 alpha env 2	cds_145
-NAB A3R5	REJO.LucR.T2A.ecto	A3R5	IMC Virus	REJO.LucR.T2A.ecto	IMC	semper	Not Available	Not Currently Recorded in Data	Donec ut dolor.	0	REJO.LucR.T2A.ecto, IMC, A3R5	REJO.LucR.T2A.ecto, IMC, A3R5, semper	HIV	293T/17	SG3 beta env 7	cds_146
-NAB TZM-bl	CH77.LucR.T2A.ecto	TZM-bl	IMC Virus	CH77.LucR.T2A.ecto	IMC	interdum in	Not Available	Not Currently Recorded in Data	Donec ut dolor.	0	CH77.LucR.T2A.ecto, IMC, TZM-bl	CH77.LucR.T2A.ecto, IMC, TZM-bl, interdum in	HIV	293T/17	SG3 beta env 8	cds_147
-NAB TZM-bl	SC22.3C2.LucR.T2A.ecto	TZM-bl	IMC Virus	SC22.3C2.LucR.T2A.ecto	IMC	mattis pulvinar nulla	Not Available	Not Currently Recorded in Data	Nulla tempus.	0	SC22.3C2.LucR.T2A.ecto, IMC, TZM-bl	SC22.3C2.LucR.T2A.ecto, IMC, TZM-bl, mattis pulvinar nulla	HIV	293T/17	SG3 beta env 9	cds_148
-NAB TZM-bl	SVA-MLV	TZM-bl	Pseudovirus Virus	SVA-MLV	Pseudovirus	tristique in	Not Available	Not Currently Recorded in Data	Etiam pretium iaculis justo. In hac habitasse platea dictumst.	0	SVA-MLV, Pseudovirus, TZM-bl	SVA-MLV, Pseudovirus, TZM-bl, tristique in	HIV	293T/17	SG3 beta env 10	cds_149
-NAB TZM-bl	NP03.13	TZM-bl	Pseudovirus Virus	NP03.13	Pseudovirus	posuere nonummy integer	Not Available	CRF01_AE	Cras pellentesque volutpat dui.	0	NP03.13, Pseudovirus, TZM-bl	NP03.13, Pseudovirus, TZM-bl, posuere nonummy integer	HIV	293T/17	SG3 beta env 11	cds_150
-NAB TZM-bl	SC422661.8	TZM-bl	Pseudovirus Virus	SC422661.8	Pseudovirus	condimentum	2	B	Mauris ullamcorper purus sit amet nulla.	0	SC422661.8, Pseudovirus, TZM-bl	SC422661.8, Pseudovirus, TZM-bl, condimentum	HIV	293T/17	SG3 delta env 3	cds_151
-NAB A3R5	CM244.c01-ETH2220LucR.T2A.4	A3R5	Not Reported	CM244.c01-ETH2220LucR.T2A.4	Not Reported	diam	Not Available	Not Currently Recorded in Data	Maecenas ut massa quis augue luctus tincidunt.	0	CM244.c01-ETH2220LucR.T2A.4, Not Reported, A3R5	CM244.c01-ETH2220LucR.T2A.4, Not Reported, A3R5, diam	HIV	293T/17	SG3 alpha env 3	cds_152
-NAB TZM-bl	MN.3	TZM-bl	Pseudovirus Virus	MN.3	Pseudovirus	integer	1	B	Maecenas ut massa quis augue luctus tincidunt.	0	MN.3, Pseudovirus, TZM-bl	MN.3, Pseudovirus, TZM-bl, integer	HIV	293T/17	SG3 alpha env 1	cds_153
-NAB TZM-bl	MW965.26	TZM-bl	Pseudovirus Virus	MW965.26	Pseudovirus	orci luctus	Not Available	Not Currently Recorded in Data	Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis.	0	MW965.26, Pseudovirus, TZM-bl	MW965.26, Pseudovirus, TZM-bl, orci luctus	HIV	293T/17	SG3 beta env 2	cds_154
-NAB TZM-bl	Bx08.16	TZM-bl	Pseudovirus Virus	Bx08.16	Pseudovirus	rutrum ac	1	B	Integer non velit.	0	Bx08.16, Pseudovirus, TZM-bl	Bx08.16, Pseudovirus, TZM-bl, rutrum ac	HIV	293T/17	SG3 delta env 1	cds_155
-NAB TZM-bl	SF162.LS	TZM-bl	Not Reported	SF162.LS	Not Reported	nonummy integer non	1	B	In hac habitasse platea dictumst. Etiam faucibus cursus urna.	0	SF162.LS, Not Reported, TZM-bl	SF162.LS, Not Reported, TZM-bl, nonummy integer non	HIV	293T/17	SG3 alpha env 1	cds_156
-NAB TZM-bl	96ZM651.2	TZM-bl	Pseudovirus Virus	96ZM651.2	Pseudovirus	ipsum	Not Available	Not Currently Recorded in Data	Donec posuere metus vitae ipsum.	0	96ZM651.2, Pseudovirus, TZM-bl	96ZM651.2, Pseudovirus, TZM-bl, ipsum	HIV	293T/17	SG3 beta env 2	cds_157
-NAB A3R5	Ce1086_B2.LucR.T2A.ecto	A3R5	IMC Virus	Ce1086_B2.LucR.T2A.ecto	IMC	risus dapibus augue	Not Available	Not Currently Recorded in Data	Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.	0	Ce1086_B2.LucR.T2A.ecto, IMC, A3R5	Ce1086_B2.LucR.T2A.ecto, IMC, A3R5, risus dapibus augue	HIV	293T/17	SG3 beta env 3	cds_158
-NAB TZM-bl	SF162.LS	TZM-bl	Pseudovirus Virus	SF162.LS	Pseudovirus	libero ut	1	B	Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.	0	SF162.LS, Pseudovirus, TZM-bl	SF162.LS, Pseudovirus, TZM-bl, libero ut	HIV	293T/17	SG3 beta env 4	cds_159
-NAB TZM-bl	MW965.26	TZM-bl	Not Reported	MW965.26	Not Reported	adipiscing lorem	Not Available	Not Currently Recorded in Data	Integer ac leo.	0	MW965.26, Not Reported, TZM-bl	MW965.26, Not Reported, TZM-bl, adipiscing lorem	HIV	293T/17	SG3 beta env 5	cds_160
-NAB TZM-bl	MN.3	TZM-bl	Not Reported	MN.3	Not Reported	faucibus accumsan odio	1	B	Integer a nibh. In quis justo.	0	MN.3, Not Reported, TZM-bl	MN.3, Not Reported, TZM-bl, faucibus accumsan odio	HIV	294T/18	SG3 beta env 6	cds_161
-NAB MAB	CNE5	TZM-bl	Env Pseudotype	CNE5	Env Pseudotype				In hac habitasse platea dictumst.	0	CNE5, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_162
-NAB MAB	T211-9	TZM-bl	Env Pseudotype	T211-9	Env Pseudotype				In hac habitasse platea dictumst.	0	T211-9, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_163
-NAB MAB	7030102001E5 (Rev-)	TZM-bl	Env Pseudotype	7030102001E5 (Rev-)	Env Pseudotype				Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.	0	7030102001E5 (Rev-), Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_164
-NAB MAB	BB1012-11.TC21	TZM-bl	Env Pseudotype	BB1012-11.TC21	Env Pseudotype				Integer ac leo.	0	BB1012-11.TC21, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_165
-NAB MAB	0330.v4.c3	TZM-bl	Env Pseudotype	0330.v4.c3	Env Pseudotype		2	A	Integer a nibh. In quis justo.	0	0330.v4.c3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_166
-NAB MAB	BJOX009000.02.4	TZM-bl	Env Pseudotype	BJOX009000.02.4	Env Pseudotype					0	BJOX009000.02.4, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 7	cds_167
-NAB MAB	CNE58	TZM-bl	Env Pseudotype	CNE58	Env Pseudotype			BC		0	CNE58, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 8	cds_168
-NAB MAB	P1981_C5_3	TZM-bl	Env Pseudotype	P1981_C5_3	Env Pseudotype			G		0	P1981_C5_3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 9	cds_169
-NAB MAB	C3347.c11	TZM-bl	Env Pseudotype	C3347.c11	Env Pseudotype			CRF01_AE		0	C3347.c11, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 10	cds_170
-NAB MAB	3817.v2.c59	TZM-bl	Env Pseudotype	3817.v2.c59	Env Pseudotype					0	3817.v2.c59, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 11	cds_171
-NAB MAB	263-8	TZM-bl	Env Pseudotype	263-8	Env Pseudotype		2	A1U		0	263-8, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 3	cds_172
-NAB MAB	MN.3	TZM-bl	Env Pseudotype	MN.3	Env Pseudotype		1A	B		0	MN.3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 3	cds_173
-NAB MAB	DJ263.8	TZM-bl	Env Pseudotype	DJ263.8	Env Pseudotype		1B	CRF02_AG		0	DJ263.8, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_174
-NAB MAB	Ce703010054_2A2	TZM-bl	Env Pseudotype	Ce703010054_2A2	Env Pseudotype		2	C		0	Ce703010054_2A2, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_175
-NAB MAB	89-F1_2_25	TZM-bl	Env Pseudotype	89-F1_2_25	Env Pseudotype					0	89-F1_2_25, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_176
-NAB MAB	0260.V5.C36	TZM-bl	Env Pseudotype	0260.V5.C36	Env Pseudotype					0	0260.V5.C36, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_177
-NAB MAB	620345.c01	TZM-bl	Env Pseudotype	620345.c01	Env Pseudotype					0	620345.c01, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_178
-NAB MAB	X1632_S2_B10	TZM-bl	Env Pseudotype	X1632_S2_B10	Env Pseudotype					0	X1632_S2_B10, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_179
-NAB MAB	Ce2060_G9	TZM-bl	Env Pseudotype	Ce2060_G9	Env Pseudotype		3	C		0	Ce2060_G9, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_180
-NAB MAB	BJOX010000.06.2	TZM-bl	Env Pseudotype	BJOX010000.06.2	Env Pseudotype					0	BJOX010000.06.2, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_181
-NAB MAB	P0402_C2_11	TZM-bl	Env Pseudotype	P0402_C2_11	Env Pseudotype			G		0	P0402_C2_11, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_182
-NAB MAB	6535.3	TZM-bl	Env Pseudotype	6535.3	Env Pseudotype		1B	B		0	6535.3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_183
-NAB MAB	62357.14.D3.4589	TZM-bl	Env Pseudotype	62357.14.D3.4589	Env Pseudotype		2	B		0	62357.14.D3.4589, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_184
-NAB MAB	3103.v3.c10	TZM-bl	Env Pseudotype	3103.v3.c10	Env Pseudotype			A/C/D		0	3103.v3.c10, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_185
-NAB MAB	6644.v2.C33	TZM-bl	Env Pseudotype	6644.v2.C33	Env Pseudotype		1B	C		0	6644.v2.C33, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_186
-NAB MAB	Q842.d12	TZM-bl	Env Pseudotype	Q842.d12	Env Pseudotype		2	A		0	Q842.d12, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_187
-NAB MAB	C4118.c09	TZM-bl	Env Pseudotype	C4118.c09	Env Pseudotype					0	C4118.c09, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_188
-NAB MAB	Du156.12	TZM-bl	Env Pseudotype	Du156.12	Env Pseudotype		2	C		0	Du156.12, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_189
-NAB MAB	CAP45.2.00.G3	TZM-bl	Env Pseudotype	CAP45.2.00.G3	Env Pseudotype		2	C		0	CAP45.2.00.G3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_190
-NAB MAB	C246F C1G	TZM-bl	Env Pseudotype	C246F C1G	Env Pseudotype					0	C246F C1G, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_191
-NAB MAB	X1193_C1	TZM-bl	Env Pseudotype	X1193_C1	Env Pseudotype					0	X1193_C1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_192
-NAB MAB	T271-11	TZM-bl	Env Pseudotype	T271-11	Env Pseudotype					0	T271-11, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_193
-NAB MAB	SVA-MLV	TZM-bl	Env Pseudotype	SVA-MLV	Env Pseudotype		1			0	SVA-MLV, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_194
-NAB MAB	ZM135M.PL10a	TZM-bl	Env Pseudotype	ZM135M.PL10a	Env Pseudotype		2	C		0	ZM135M.PL10a, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_195
-NAB MAB	ZM197M.PB7	TZM-bl	Env Pseudotype	ZM197M.PB7	Env Pseudotype		1B / 2	C		0	ZM197M.PB7, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_196
-NAB MAB	TRJO4551.58	TZM-bl	Env Pseudotype	TRJO4551.58	Env Pseudotype		3	B		0	TRJO4551.58, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_197
-NAB MAB	A07412M1.vrc12	TZM-bl	Env Pseudotype	A07412M1.vrc12	Env Pseudotype					0	A07412M1.vrc12, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_198
-NAB MAB	A03349M1.VRC4A	TZM-bl	Env Pseudotype	A03349M1.VRC4A	Env Pseudotype			D		0	A03349M1.VRC4A, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_199
-NAB MAB	BB1006-11.C3.1601	TZM-bl	Env Pseudotype	BB1006-11.C3.1601	Env Pseudotype					0	BB1006-11.C3.1601, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_200
-NAB MAB	PVO.4	TZM-bl	Env Pseudotype	PVO.4	Env Pseudotype		3	B		0	PVO.4, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_201
-NAB MAB	BJOX028000.10.3	TZM-bl	Env Pseudotype	BJOX028000.10.3	Env Pseudotype					0	BJOX028000.10.3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_202
-NAB MAB	ZM233M.PB6	TZM-bl	Env Pseudotype	ZM233M.PB6	Env Pseudotype		2	C		0	ZM233M.PB6, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_203
-NAB MAB	SF162.LS	TZM-bl	Env Pseudotype	SF162.LS	Env Pseudotype		1A	B		0	SF162.LS, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_204
-NAB MAB	C3347.11	TZM-bl	Env Pseudotype	C3347.11	Env Pseudotype					0	C3347.11, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_205
-NAB MAB	X2278-C2-B6	TZM-bl	Env Pseudotype	X2278-C2-B6	Env Pseudotype		2	B		0	X2278-C2-B6, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_206
-NAB MAB	Ce1086_B2	TZM-bl	Env Pseudotype	Ce1086_B2	Env Pseudotype		2	C		0	Ce1086_B2, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_207
-NAB MAB	BJOX002000.03.2	TZM-bl	Env Pseudotype	BJOX002000.03.2	Env Pseudotype			CRF07_BC		0	BJOX002000.03.2, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_208
-NAB MAB	CM244.c01	TZM-bl	Env Pseudotype	CM244.c01	Env Pseudotype			CRF01_AE		0	CM244.c01, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 7	cds_209
-NAB MAB	398-F1-F6_20	TZM-bl	Env Pseudotype	398-F1-F6_20	Env Pseudotype			A		0	398-F1-F6_20, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 8	cds_210
-NAB MAB	CNE17	TZM-bl	Env Pseudotype	CNE17	Env Pseudotype					0	CNE17, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 9	cds_211
-NAB MAB	242-14	TZM-bl	Env Pseudotype	242-14	Env Pseudotype		1B	02A1		0	242-14, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 10	cds_212
-NAB MAB	CH181.12	TZM-bl	Env Pseudotype	CH181.12	Env Pseudotype		2	07_BC		0	CH181.12, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 11	cds_213
-NAB MAB	SC05.8C11.2344	TZM-bl/Fc??__RI	Env Pseudotype	SC05.8C11.2344	Env Pseudotype		2	B		0	SC05.8C11.2344, Env Pseudotype, TZM-bl/Fc??__RI		HIV	294T/18	SG3 delta env 3	cds_214
-NAB MAB	Ce1176_A3	TZM-bl/Fc??__RI	Env Pseudotype	Ce1176_A3	Env Pseudotype		2	C		0	Ce1176_A3, Env Pseudotype, TZM-bl/Fc??__RI		HIV	294T/18	SG3 alpha env 3	cds_215
-NAB MAB	ZM109F.PB4	TZM-bl	Env Pseudotype	ZM109F.PB4	Env Pseudotype		1B / 2	C		0	ZM109F.PB4, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_216
-NAB MAB	191821_E6_1	TZM-bl	Env Pseudotype	191821_E6_1	Env Pseudotype					0	191821_E6_1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_217
-NAB MAB	SHIV SF162.P3	TZM-bl	SHIV	SHIV SF162.P3	SHIV					0	SHIV SF162.P3, SHIV, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_218
-NAB MAB	6952.v1.c20	TZM-bl	Env Pseudotype	6952.v1.c20	Env Pseudotype					0	6952.v1.c20, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_219
-NAB MAB	6405.V4.C34	TZM-bl	Env Pseudotype	6405.V4.C34	Env Pseudotype					0	6405.V4.C34, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_220
-NAB MAB	3016.v5.c45	TZM-bl	Env Pseudotype	3016.v5.c45	Env Pseudotype			D		0	3016.v5.c45, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_221
-NAB MAB	Ce0682_E4	TZM-bl	Env Pseudotype	Ce0682_E4	Env Pseudotype		2	C		0	Ce0682_E4, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_222
-NAB MAB	SHIV-BaLP4	TZM-bl	Primary Isolate	SHIV-BaLP4	Primary Isolate					0	SHIV-BaLP4, Primary Isolate, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_223
-NAB MAB	Ce0393_C3	TZM-bl	Env Pseudotype	Ce0393_C3	Env Pseudotype		2	C		0	Ce0393_C3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_224
-NAB MAB	ZM214M.PL15	TZM-bl	Env Pseudotype	ZM214M.PL15	Env Pseudotype		2	C		0	ZM214M.PL15, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_225
-NAB MAB	R3265.c06	TZM-bl	Env Pseudotype	R3265.c06	Env Pseudotype					0	R3265.c06, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_226
-NAB MAB	16055-2.3	TZM-bl	Env Pseudotype	16055-2.3	Env Pseudotype		2	C		0	16055-2.3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_227
-NAB MAB	T263-8	TZM-bl	Env Pseudotype	T263-8	Env Pseudotype					0	T263-8, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_228
-NAB MAB	Du172.17	TZM-bl	Env Pseudotype	Du172.17	Env Pseudotype		2	C		0	Du172.17, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_229
-NAB MAB	Q769.d22	TZM-bl	Env Pseudotype	Q769.d22	Env Pseudotype		2	A		0	Q769.d22, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 7	cds_230
-NAB MAB	Ce2010_F5	TZM-bl	Env Pseudotype	Ce2010_F5	Env Pseudotype		3	C		0	Ce2010_F5, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 8	cds_231
-NAB MAB	CH064.20	TZM-bl	Env Pseudotype	CH064.20	Env Pseudotype		2	07_BC		0	CH064.20, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 9	cds_232
-NAB MAB	1394C9_G1 (Rev-)	TZM-bl	Env Pseudotype	1394C9_G1 (Rev-)	Env Pseudotype					0	1394C9_G1 (Rev-), Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 10	cds_233
-NAB MAB	CNE21	TZM-bl	Env Pseudotype	CNE21	Env Pseudotype					0	CNE21, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 11	cds_234
-NAB MAB	MS208.A1	TZM-bl	Env Pseudotype	MS208.A1	Env Pseudotype					0	MS208.A1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 3	cds_235
-NAB MAB	6540.v4.c1	TZM-bl	Env Pseudotype	6540.v4.c1	Env Pseudotype					0	6540.v4.c1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 3	cds_236
-NAB MAB	CNE55	TZM-bl	Env Pseudotype	CNE55	Env Pseudotype		2	CRF01_AE		0	CNE55, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_237
-NAB MAB	6041.v3.c23	TZM-bl	Env Pseudotype	6041.v3.c23	Env Pseudotype					0	6041.v3.c23, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_238
-NAB MAB	Q23.17	TZM-bl	Env Pseudotype	Q23.17	Env Pseudotype		1B	A		0	Q23.17, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_239
-NAB MAB	0013095-2.11	TZM-bl	Env Pseudotype	0013095-2.11	Env Pseudotype		2	C		0	0013095-2.11, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_240
-NAB MAB	QH0692.42	TZM-bl	Env Pseudotype	QH0692.42	Env Pseudotype		2	B		0	QH0692.42, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_241
-NAB MAB	CH110.2	TZM-bl	Env Pseudotype	CH110.2	Env Pseudotype		2	07_BC		0	CH110.2, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_242
-NAB MAB	9004SS_A3_4	TZM-bl	Env Pseudotype	9004SS_A3_4	Env Pseudotype					0	9004SS_A3_4, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_243
-NAB MAB	CNE19	TZM-bl	Env Pseudotype	CNE19	Env Pseudotype					0	CNE19, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_244
-NAB MAB	NKU3006.ec1	TZM-bl	Env Pseudotype	NKU3006.ec1	Env Pseudotype					0	NKU3006.ec1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_245
-NAB MAB	AC10.0.29	TZM-bl	Env Pseudotype	AC10.0.29	Env Pseudotype		2	B		0	AC10.0.29, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_246
-NAB MAB	TRO.11	TZM-bl/Fc??__RI	Env Pseudotype	TRO.11	Env Pseudotype		2	B		0	TRO.11, Env Pseudotype, TZM-bl/Fc??__RI		HIV	294T/18	SG3 delta env 1	cds_247
-NAB MAB	SHIV SF162P4	TZM-bl	SHIV	SHIV SF162P4	SHIV					0	SHIV SF162P4, SHIV, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_248
-NAB MAB	R1166.c01	TZM-bl	Env Pseudotype	R1166.c01	Env Pseudotype			CRF01_AE		0	R1166.c01, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_249
-NAB MAB	Du422.1	TZM-bl	Env Pseudotype	Du422.1	Env Pseudotype		2	C		0	Du422.1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_250
-NAB MAB	T257-31	TZM-bl	Env Pseudotype	T257-31	Env Pseudotype					0	T257-31, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_251
-NAB MAB	BB1054-07.TC4.1499	TZM-bl	Env Pseudotype	BB1054-07.TC4.1499	Env Pseudotype					0	BB1054-07.TC4.1499, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_252
-NAB MAB	CNE30	TZM-bl	Env Pseudotype	CNE30	Env Pseudotype					0	CNE30, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_253
-NAB MAB	CNE8	TZM-bl	Env Pseudotype	CNE8	Env Pseudotype		2	CRF01_AE		0	CNE8, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_254
-NAB MAB	191084 B7-19	TZM-bl	Env Pseudotype	191084 B7-19	Env Pseudotype					0	191084 B7-19, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_255
-NAB MAB	T278-50	TZM-bl	Env Pseudotype	T278-50	Env Pseudotype					0	T278-50, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_256
-NAB MAB	3365.v2.c20	TZM-bl	Env Pseudotype	3365.v2.c20	Env Pseudotype		2	A		0	3365.v2.c20, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_257
-NAB MAB	T255-34	TZM-bl	Env Pseudotype	T255-34	Env Pseudotype					0	T255-34, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_258
-NAB MAB	928-28	TZM-bl	Env Pseudotype	928-28	Env Pseudotype		2	02_AG		0	928-28, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_259
-NAB MAB	THRO4156.18	TZM-bl	Env Pseudotype	THRO4156.18	Env Pseudotype		2	B		0	THRO4156.18, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_260
-NAB MAB	16845-2.22	TZM-bl	Env Pseudotype	16845-2.22	Env Pseudotype		2	C		0	16845-2.22, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_261
-NAB MAB	Q461.e2	TZM-bl	Env Pseudotype	Q461.e2	Env Pseudotype		2	A		0	Q461.e2, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_262
-NAB MAB	231965.c1	TZM-bl	Env Pseudotype	231965.c1	Env Pseudotype					0	231965.c1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_263
-NAB MAB	Ce1172_H1	TZM-bl	Env Pseudotype	Ce1172_H1	Env Pseudotype		2	C		0	Ce1172_H1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_264
-NAB MAB	001428-2.42	TZM-bl	Env Pseudotype	001428-2.42	Env Pseudotype		2	C		0	001428-2.42, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_265
-NAB MAB	CNE20	TZM-bl	Env Pseudotype	CNE20	Env Pseudotype					0	CNE20, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_266
-NAB MAB	BJOX025000.01.1	TZM-bl	Env Pseudotype	BJOX025000.01.1	Env Pseudotype					0	BJOX025000.01.1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_267
-NAB MAB	SC422661.8	TZM-bl	Env Pseudotype	SC422661.8	Env Pseudotype		2	B		0	SC422661.8, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_268
-NAB MAB	MN.3	TZM-bl/Fc??__RI	Env Pseudotype	MN.3	Env Pseudotype		1A	B		0	MN.3, Env Pseudotype, TZM-bl/Fc??__RI		HIV	294T/18	SG3 beta env 3	cds_269
-NAB MAB	X1854_C2_10	TZM-bl	Env Pseudotype	X1854_C2_10	Env Pseudotype					0	X1854_C2_10, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_270
-NAB MAB	CNE52	TZM-bl	Env Pseudotype	CNE52	Env Pseudotype					0	CNE52, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_271
-NAB MAB	C1080.c03	TZM-bl	Env Pseudotype	C1080.c03	Env Pseudotype			CRF01_AE		0	C1080.c03, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 7	cds_272
-NAB MAB	191955_A11	TZM-bl	Env Pseudotype	191955_A11	Env Pseudotype					0	191955_A11, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 8	cds_273
-NAB MAB	ZM249M.PL1	TZM-bl	Env Pseudotype	ZM249M.PL1	Env Pseudotype		2	C		0	ZM249M.PL1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 9	cds_274
-NAB MAB	WITO4160.33	TZM-bl	Env Pseudotype	WITO4160.33	Env Pseudotype		2	B		0	WITO4160.33, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 10	cds_275
-NAB MAB	427299.c12	TZM-bl	Env Pseudotype	427299.c12	Env Pseudotype			CRF01_AE		0	427299.c12, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 11	cds_276
-NAB MAB	25710-2.43	TZM-bl	Env Pseudotype	25710-2.43	Env Pseudotype		1B	C		0	25710-2.43, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 3	cds_277
-NAB MAB	TH023.6	TZM-bl	Env Pseudotype	TH023.6	Env Pseudotype			CRF01_AE		0	TH023.6, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 3	cds_278
-NAB MAB	231966.c2	TZM-bl	Env Pseudotype	231966.c2	Env Pseudotype					0	231966.c2, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_279
-NAB MAB	CNE53	TZM-bl	Env Pseudotype	CNE53	Env Pseudotype					0	CNE53, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_280
-NAB MAB	X1632-S2-B10	TZM-bl	Env Pseudotype	X1632-S2-B10	Env Pseudotype			G		0	X1632-S2-B10, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_281
-NAB MAB	WEAU-d15.410.787	TZM-bl	Env Pseudotype	WEAU-d15.410.787	Env Pseudotype		2	B		0	WEAU-d15.410.787, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_282
-NAB MAB	Q23.17	TZM-bl/Fc??__RI	Env Pseudotype	Q23.17	Env Pseudotype		1B	A		0	Q23.17, Env Pseudotype, TZM-bl/Fc??__RI		HIV	294T/18	SG3 beta env 2	cds_283
-NAB MAB	235-47	TZM-bl	Env Pseudotype	235-47	Env Pseudotype		2	02_AG		0	235-47, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_284
-NAB MAB	X1254_C3	TZM-bl	Env Pseudotype	X1254_C3	Env Pseudotype					0	X1254_C3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_285
-NAB MAB	CH119.10	TZM-bl	Env Pseudotype	CH119.10	Env Pseudotype		2	07_BC		0	CH119.10, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_286
-NAB MAB	TRO.11	TZM-bl	Env Pseudotype	TRO.11	Env Pseudotype		2	B		0	TRO.11, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_287
-NAB MAB	RHPA4259.7	TZM-bl	Env Pseudotype	RHPA4259.7	Env Pseudotype		2	B		0	RHPA4259.7, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_288
-NAB MAB	703357.c02	TZM-bl	Env Pseudotype	703357.c02	Env Pseudotype			CRF01_AE		0	703357.c02, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_289
-NAB MAB	ZM53M.PB12	TZM-bl	Env Pseudotype	ZM53M.PB12	Env Pseudotype		2	C		0	ZM53M.PB12, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_290
-NAB MAB	6480.v4.c25	TZM-bl	Env Pseudotype	6480.v4.c25	Env Pseudotype					0	6480.v4.c25, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 2	cds_291
-NAB MAB	X2088_C9	TZM-bl	Env Pseudotype	X2088_C9	Env Pseudotype					0	X2088_C9, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 2	cds_292
-NAB MAB	X2160_C25	TZM-bl	Env Pseudotype	X2160_C25	Env Pseudotype					0	X2160_C25, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 7	cds_293
-NAB MAB	6545.v4.c1	TZM-bl	Env Pseudotype	6545.v4.c1	Env Pseudotype					0	6545.v4.c1, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 8	cds_294
-NAB MAB	246-F3_C10_2	TZM-bl	Env Pseudotype	246-F3_C10_2	Env Pseudotype			AC		0	246-F3_C10_2, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 9	cds_295
-NAB MAB	C2101.c01	TZM-bl	Env Pseudotype	C2101.c01	Env Pseudotype					0	C2101.c01, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 10	cds_296
-NAB MAB	6811.v7.c18	TZM-bl	Env Pseudotype	6811.v7.c18	Env Pseudotype					0	6811.v7.c18, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 11	cds_297
-NAB MAB	SHIV 1157ipd3N4	TZM-bl	SHIV	SHIV 1157ipd3N4	SHIV		2	C		0	SHIV 1157ipd3N4, SHIV, TZM-bl		HIV	294T/18	SG3 delta env 3	cds_298
-NAB MAB	R2184.c04	TZM-bl	Env Pseudotype	R2184.c04	Env Pseudotype			CRF01_AE		0	R2184.c04, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 3	cds_299
-NAB MAB	BF1266.431a	TZM-bl	Env Pseudotype	BF1266.431a	Env Pseudotype		2	C		0	BF1266.431a, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_300
-NAB MAB	Q259.d2.17	TZM-bl	Env Pseudotype	Q259.d2.17	Env Pseudotype		2	A		0	Q259.d2.17, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_301
-NAB MAB	CAAN5342.A2	TZM-bl	Env Pseudotype	CAAN5342.A2	Env Pseudotype		2	B		0	CAAN5342.A2, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_302
-NAB MAB	TV1.21	TZM-bl	Env Pseudotype	TV1.21	Env Pseudotype		1	C		0	TV1.21, Env Pseudotype, TZM-bl		SHIV	294T/18		cds_303
-NAB MAB	BaL.26	TZM-bl	Env Pseudotype	BaL.26	Env Pseudotype		1B	B		0	BaL.26, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_304
-NAB MAB	MW965.26	TZM-bl	Env Pseudotype	MW965.26	Env Pseudotype		1A	C		0	MW965.26, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_305
-NAB MAB	CH111.8	TZM-bl	Env Pseudotype	CH111.8	Env Pseudotype		2	07_BC		0	CH111.8, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_306
-NAB MAB	6240.08.TA5.4622	TZM-bl	Env Pseudotype	6240.08.TA5.4622	Env Pseudotype		2	B		0	6240.08.TA5.4622, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_307
-NAB MAB	Ce704809221_1B3	TZM-bl	Env Pseudotype	Ce704809221_1B3	Env Pseudotype		2	C		0	Ce704809221_1B3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_308
-NAB MAB	Ce1176_A3	TZM-bl	Env Pseudotype	Ce1176_A3	Env Pseudotype		2	C		0	Ce1176_A3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_309
-NAB MAB	SC05.8C11.2344	TZM-bl	Env Pseudotype	SC05.8C11.2344	Env Pseudotype		2	B		0	SC05.8C11.2344, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_310
-NAB MAB	X2131_C1_B5	TZM-bl	Env Pseudotype	X2131_C1_B5	Env Pseudotype					0	X2131_C1_B5, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_311
-NAB MAB	6244.13.B5.4567	TZM-bl	Env Pseudotype	6244.13.B5.4567	Env Pseudotype		2	B		0	6244.13.B5.4567, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_312
-NAB MAB	CAP210.2.00.E8	TZM-bl	Env Pseudotype	CAP210.2.00.E8	Env Pseudotype		2	C		0	CAP210.2.00.E8, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_313
-NAB MAB	Ce703010217_B6	TZM-bl	Env Pseudotype	Ce703010217_B6	Env Pseudotype		2	C		0	Ce703010217_B6, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_314
-NAB MAB	T250-4	TZM-bl	Env Pseudotype	T250-4	Env Pseudotype					0	T250-4, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_315
-NAB MAB	TRO.11.N332A	TZM-bl	Env Pseudotype	TRO.11.N332A	Env Pseudotype			B		0	TRO.11.N332A, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 3	cds_316
-NAB MAB	REJO4541.67	TZM-bl	Env Pseudotype	REJO4541.67	Env Pseudotype		2	B		0	REJO4541.67, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 4	cds_317
-NAB MAB	BB1056-10.TA11.1826	TZM-bl	Env Pseudotype	BB1056-10.TA11.1826	Env Pseudotype					0	BB1056-10.TA11.1826, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 5	cds_318
-NAB MAB	T251-18	TZM-bl	Env Pseudotype	T251-18	Env Pseudotype					0	T251-18, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 6	cds_319
-NAB MAB	3301.v1.c24	TZM-bl	Env Pseudotype	3301.v1.c24	Env Pseudotype			A/C		0	3301.v1.c24, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_320
-NAB MAB	0815.v3.c3	TZM-bl	Env Pseudotype	0815.v3.c3	Env Pseudotype			A/C/D		0	0815.v3.c3, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_321
-NAB MAB	ZM247v1 (Rev-)	TZM-bl	Env Pseudotype	ZM247v1 (Rev-)	Env Pseudotype		2	C		0	ZM247v1 (Rev-), Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_322
-NAB MAB	249M B10	TZM-bl	Env Pseudotype	249M B10	Env Pseudotype					0	249M B10, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 delta env 1	cds_323
-NAB MAB	3718.v3.c11	TZM-bl	Env Pseudotype	3718.v3.c11	Env Pseudotype		2	A		0	3718.v3.c11, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 alpha env 1	cds_324
-NAB MAB	BJOX015000.11.5	TZM-bl	Env Pseudotype	BJOX015000.11.5	Env Pseudotype						BJOX015000.11.5, Env Pseudotype, TZM-bl		HIV	294T/18	SG3 beta env 2	cds_325
-NAB MAB	BJOX002000.03.2.delta624G.E625R.3-5	TZM-bl	Env Pseudotype	BJOX002000.03.2.delta624G.E625R.3-5	Env Pseudotype						BJOX002000.03.2.delta624G.E625R.3-5, Env Pseudotype, TZM-bl, delta chain		HIV	294T/18	SG3 beta env 2	cds_326
-NAB A3R5	CH58.LucR.T2A.ecto	A3R5	IMC Virus	CH58.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CH58.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 delta env 1	cds_327
-NAB A3R5	CH77.LucR.T2A.ecto	A3R5	IMC Virus	CH77.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CH77.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 alpha env 1	cds_328
-NAB A3R5	Ce1086_B2.LucR.T2A.ecto	A3R5	IMC Virus	Ce1086_B2.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Ce1086_B2.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 beta env 2	cds_329
-NAB A3R5	Ce1176_A3.LucR.T2A.ecto	A3R5	IMC Virus	Ce1176_A3.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Ce1176_A3.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 delta env 1	cds_330
-NAB A3R5	Ce2010_F5.LucR.T2A.ecto	A3R5	IMC Virus	Ce2010_F5.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Ce2010_F5.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 alpha env 1	cds_331
-NAB A3R5	Du151.2.LucR.T2A.ecto	A3R5	IMC Virus	Du151.2.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Du151.2.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 beta env 2	cds_332
-NAB A3R5	Du422.1.LucR.T2A.ecto	A3R5	IMC Virus	Du422.1.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Du422.1.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 delta env 1	cds_333
-NAB A3R5	REJO.LucR.T2A.ecto	A3R5	IMC Virus	REJO.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	REJO.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 alpha env 1	cds_334
-NAB A3R5	RHPA.LucR.T2A.ecto	A3R5	IMC Virus	RHPA.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	RHPA.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 beta env 2	cds_335
-NAB A3R5	SC22.3C2.LucR.T2A.ecto	A3R5	IMC Virus	SC22.3C2.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SC22.3C2.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 delta env 1	cds_336
-NAB A3R5	TV1.21.LucR.T2A.ecto	A3R5	IMC Virus	TV1.21.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	TV1.21.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 alpha env 1	cds_337
-NAB A3R5	WITO.LucR.T2A.ecto	A3R5	IMC Virus	WITO.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	WITO.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 beta env 2	cds_338
-NAB A3R5	SIVmac239.ps-NL.LucR.T2A.ecto	A3R5	IMC Virus	SIVmac239.ps-NL.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SIVmac239.ps-NL.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 delta env 1	cds_339
-NAB TZM-bl	BaL.26	TZM-bl	Pseudovirus Virus	BaL.26	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	BaL.26 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 alpha env 1	cds_340
-NAB TZM-bl	Bx08.16	TZM-bl	Pseudovirus Virus	Bx08.16	Pseudovirus	Not Yet Available	1	B		0	Bx08.16 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 beta env 2	cds_341
-NAB TZM-bl	MN.3	TZM-bl	Pseudovirus Virus	MN.3	Pseudovirus	Not Yet Available	1	B		0	MN.3 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 delta env 1	cds_342
-NAB TZM-bl	MW965.26	TZM-bl	Pseudovirus Virus	MW965.26	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	MW965.26 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 alpha env 1	cds_343
-NAB TZM-bl	SF162.LS	TZM-bl	Pseudovirus Virus	SF162.LS	Pseudovirus	Not Yet Available	1	B		0	SF162.LS TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 beta env 2	cds_344
-NAB TZM-bl	NP03.13	TZM-bl	Not Reported	NP03.13	Not Reported	Not Yet Available	Not Available	CRF01_AE		0	NP03.13 TZM-bl Not Reported		HIV	293T/17	SG3 delta env 1	cds_345
-NAB TZM-bl	NP03.13	TZM-bl	Pseudovirus Virus	NP03.13	Pseudovirus	Not Yet Available	Not Available	CRF01_AE		0	NP03.13 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 alpha env 1	cds_346
-NAB TZM-bl	Q23.17	TZM-bl	Pseudovirus Virus	Q23.17	Pseudovirus	Not Yet Available	1	A		0	Q23.17 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 beta env 2	cds_347
-NAB A3R5	C1080.c03.LucR.T2A.ecto	A3R5	Not Reported	C1080.c03.LucR.T2A.ecto	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	C1080.c03.LucR.T2A.ecto A3R5 Not Reported		HIV	293T/17	SG3 delta env 1	cds_348
-NAB A3R5	C3347.c11.LucR.T2A.ecto	A3R5	Not Reported	C3347.c11.LucR.T2A.ecto	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	C3347.c11.LucR.T2A.ecto A3R5 Not Reported		HIV	293T/17	SG3 alpha env 1	cds_349
-NAB A3R5	CM244.c01-ETH2220LucR.T2A.4	A3R5	Not Reported	CM244.c01-ETH2220LucR.T2A.4	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CM244.c01-ETH2220LucR.T2A.4 A3R5 Not Reported		HIV	293T/17	SG3 beta env 2	cds_350
-NAB A3R5	R2184.c04.LucR.T2A.ecto	A3R5	Not Reported	R2184.c04.LucR.T2A.ecto	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	R2184.c04.LucR.T2A.ecto A3R5 Not Reported		HIV	293T/17	SG3 delta env 1	cds_351
-NAB TZM-bl	TH023.6	TZM-bl	Pseudovirus Virus	TH023.6	Pseudovirus	Not Yet Available	Not Available	CRF01_AE		0	TH023.6 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 alpha env 1	cds_352
-NAB TZM-bl	96ZM651.2	TZM-bl	Pseudovirus Virus	96ZM651.2	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	96ZM651.2 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 beta env 2	cds_353
-NAB A3R5	SIVmac239.ps.LucR.T2A.ecto	A3R5	IMC Virus	SIVmac239.ps.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SIVmac239.ps.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 delta env 1	cds_354
-NAB TZM-bl	SVA-MLV	TZM-bl	Pseudovirus Virus	SVA-MLV	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SVA-MLV TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 alpha env 1	cds_355
-NAB TZM-bl	CH58.LucR.T2A.ecto	TZM-bl	IMC Virus	CH58.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CH58.LucR.T2A.ecto TZM-bl IMC Virus		HIV	293T/17	SG3 beta env 2	cds_356
-NAB TZM-bl	CH77.LucR.T2A.ecto	TZM-bl	IMC Virus	CH77.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CH77.LucR.T2A.ecto TZM-bl IMC Virus		HIV	293T/17	SG3 delta env 1	cds_357
-NAB TZM-bl	RHPA.LucR.T2A.ecto	TZM-bl	IMC Virus	RHPA.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	RHPA.LucR.T2A.ecto TZM-bl IMC Virus		HIV	293T/17	SG3 alpha env 1	cds_358
-NAB TZM-bl	SC22.3C2.LucR.T2A.ecto	TZM-bl	IMC Virus	SC22.3C2.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SC22.3C2.LucR.T2A.ecto TZM-bl IMC Virus		HIV	293T/17	SG3 beta env 2	cds_359
-NAB A3R5	9020.A13.LucR.T2A.ecto	A3R5	IMC Virus	9020.A13.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	9020.A13.LucR.T2A.ecto A3R5 IMC Virus		HIV	293T/17	SG3 delta env 1	cds_360
-NAB TZM-bl	CAAN5342.A2	TZM-bl	Pseudovirus Virus	CAAN5342.A2	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CAAN5342.A2 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 alpha env 1	cds_361
-NAB TZM-bl	REJO4541.67	TZM-bl	Pseudovirus Virus	REJO4541.67	Pseudovirus	Not Yet Available	2	B		0	REJO4541.67 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 beta env 2	cds_362
-NAB TZM-bl	SC422661.8	TZM-bl	Pseudovirus Virus	SC422661.8	Pseudovirus	Not Yet Available	2	B		0	SC422661.8 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 delta env 1	cds_363
-NAB TZM-bl	SS1196.1	TZM-bl	Pseudovirus Virus	SS1196.1	Pseudovirus	Not Yet Available	1	B		0	SS1196.1 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 alpha env 1	cds_364
-NAB TZM-bl	TRO.11	TZM-bl	Pseudovirus Virus	TRO.11	Pseudovirus	Not Yet Available	2	B		0	TRO.11 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 beta env 2	cds_365
-NAB TZM-bl	W61D(TCLA).71	TZM-bl	Pseudovirus Virus	W61D(TCLA).71	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	W61D(TCLA).71 TZM-bl Pseudovirus Virus		HIV	293T/17	SG3 delta env 1	cds_366
-NAB TZM-bl	W61D(TCLA).71	TZM-bl	TCLA Virus	W61D(TCLA).71	TCLA	Not Yet Available	Not Available	Not Currently Recorded in Data		0	W61D(TCLA).71 TZM-bl TCLA Virus		HIV	293T/17	SG3 alpha env 1	cds_367
-NAB TZM-bl	92RW020.2	TZM-bl	Not Reported	92RW020.2	Not Reported	Not Yet Available	Not Available	A		0	92RW020.2 TZM-bl Not Reported		HIV	293T/17	SG3 beta env 2	cds_368
-NAB TZM-bl	97ZA012.29	TZM-bl	Not Reported	97ZA012.29	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	97ZA012.29 TZM-bl Not Reported		HIV	293T/17	SG3 beta env 3	cds_369
-NAB MAB	0260.V5.C36	TZM-bl	Not Reported	0260.V5.C36	Env Pseudotype	Not Yet Available	\N	\N		0	0260.V5.C36 TZM-bl Not Reported		HIV			cds_370
-NAB MAB	0815.v3.c3	TZM-bl	Not Reported	0815.v3.c3	Env Pseudotype	Not Yet Available	\N	A/C/D		0	0815.v3.c3 TZM-bl Not Reported		HIV			cds_371
-NAB MAB	231965.c1	TZM-bl	Not Reported	231965.c1	Env Pseudotype	Not Yet Available	\N	\N		0	231965.c1 TZM-bl Not Reported		HIV			cds_372
-NAB MAB	3016.v5.c45	TZM-bl	Not Reported	3016.v5.c45	Env Pseudotype	Not Yet Available	\N	D		0	3016.v5.c45 TZM-bl Not Reported		HIV			cds_373
-NAB MAB	3103.v3.c10	TZM-bl	Not Reported	3103.v3.c10	Env Pseudotype	Not Yet Available	\N	A/C/D		0	3103.v3.c10 TZM-bl Not Reported		HIV			cds_374
-NAB MAB	3301.v1.c24	TZM-bl	Not Reported	3301.v1.c24	Env Pseudotype	Not Yet Available	\N	A/C		0	3301.v1.c24 TZM-bl Not Reported		HIV			cds_375
-NAB MAB	3817.v2.c59	TZM-bl	Not Reported	3817.v2.c59	Env Pseudotype	Not Yet Available	\N	\N		0	3817.v2.c59 TZM-bl Not Reported		HIV			cds_376
-NAB MAB	6041.v3.c23	TZM-bl	Not Reported	6041.v3.c23	Env Pseudotype	Not Yet Available	\N	\N		0	6041.v3.c23 TZM-bl Not Reported		HIV			cds_377
-NAB MAB	620345.c01	TZM-bl	Not Reported	620345.c01	Env Pseudotype	Not Yet Available	\N	\N		0	620345.c01 TZM-bl Not Reported		HIV			cds_378
-NAB MAB	6405.V4.C34	TZM-bl	Not Reported	6405.V4.C34	Env Pseudotype	Not Yet Available	\N	\N		0	6405.V4.C34 TZM-bl Not Reported		HIV			cds_379
-NAB MAB	6540.v4.c1	TZM-bl	Not Reported	6540.v4.c1	Env Pseudotype	Not Yet Available	\N	\N		0	6540.v4.c1 TZM-bl Not Reported		HIV			cds_380
-NAB MAB	6545.v4.c1	TZM-bl	Not Reported	6545.v4.c1	Env Pseudotype	Not Yet Available	\N	\N		0	6545.v4.c1 TZM-bl Not Reported		HIV			cds_381
-NAB MAB	6811.v7.c18	TZM-bl	Not Reported	6811.v7.c18	Env Pseudotype	Not Yet Available	\N	\N		0	6811.v7.c18 TZM-bl Not Reported		HIV			cds_382
-NAB MAB	6952.v1.c20	TZM-bl	Not Reported	6952.v1.c20	Env Pseudotype	Not Yet Available	\N	\N		0	6952.v1.c20 TZM-bl Not Reported		HIV			cds_383
-NAB MAB	703357.c02	TZM-bl	Not Reported	703357.c02	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	703357.c02 TZM-bl Not Reported		HIV			cds_384
-NAB MAB	89-F1_2_25	TZM-bl	Not Reported	89-F1_2_25	Env Pseudotype	Not Yet Available	\N	\N		0	89-F1_2_25 TZM-bl Not Reported		HIV			cds_385
-NAB MAB	A03349M1.VRC4A	TZM-bl	Not Reported	A03349M1.VRC4A	Env Pseudotype	Not Yet Available	\N	D		0	A03349M1.VRC4A TZM-bl Not Reported		HIV			cds_386
-NAB MAB	BB1006-11.C3.1601	TZM-bl	Not Reported	BB1006-11.C3.1601	Env Pseudotype	Not Yet Available	\N	\N		0	BB1006-11.C3.1601 TZM-bl Not Reported		HIV			cds_387
-NAB MAB	BB1012-11.TC21	TZM-bl	Not Reported	BB1012-11.TC21	Env Pseudotype	Not Yet Available	\N	\N		0	BB1012-11.TC21 TZM-bl Not Reported		HIV			cds_388
-NAB MAB	BB1054-07.TC4.1499	TZM-bl	Not Reported	BB1054-07.TC4.1499	Env Pseudotype	Not Yet Available	\N	\N		0	BB1054-07.TC4.1499 TZM-bl Not Reported		HIV			cds_389
-NAB MAB	BB1056-10.TA11.1826	TZM-bl	Not Reported	BB1056-10.TA11.1826	Env Pseudotype	Not Yet Available	\N	\N		0	BB1056-10.TA11.1826 TZM-bl Not Reported		HIV			cds_390
-NAB MAB	C1080.c03	TZM-bl	Not Reported	C1080.c03	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	C1080.c03 TZM-bl Not Reported		HIV			cds_391
-NAB MAB	C2101.c01	TZM-bl	Not Reported	C2101.c01	Env Pseudotype	Not Yet Available	\N	\N		0	C2101.c01 TZM-bl Not Reported		HIV			cds_392
-NAB MAB	CNE19	TZM-bl	Not Reported	CNE19	Env Pseudotype	Not Yet Available	\N	\N		0	CNE19 TZM-bl Not Reported		HIV			cds_393
-NAB MAB	CNE20	TZM-bl	Not Reported	CNE20	Env Pseudotype	Not Yet Available	\N	\N		0	CNE20 TZM-bl Not Reported		HIV			cds_394
-NAB MAB	CNE21	TZM-bl	Not Reported	CNE21	Env Pseudotype	Not Yet Available	\N	\N		0	CNE21 TZM-bl Not Reported		HIV			cds_395
-NAB MAB	NKU3006.ec1	TZM-bl	Not Reported	NKU3006.ec1	Env Pseudotype	Not Yet Available	\N	\N		0	NKU3006.ec1 TZM-bl Not Reported		HIV			cds_396
-NAB MAB	P1981_C5_3	TZM-bl	Not Reported	P1981_C5_3	Env Pseudotype	Not Yet Available	\N	G		0	P1981_C5_3 TZM-bl Not Reported		HIV			cds_397
-NAB MAB	R1166.c01	TZM-bl	Not Reported	R1166.c01	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	R1166.c01 TZM-bl Not Reported		HIV			cds_398
-NAB MAB	R2184.c04	TZM-bl	Not Reported	R2184.c04	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	R2184.c04 TZM-bl Not Reported		HIV			cds_399
-NAB MAB	R3265.c06	TZM-bl	Not Reported	R3265.c06	Env Pseudotype	Not Yet Available	\N	\N		0	R3265.c06 TZM-bl Not Reported		HIV			cds_400
-NAB MAB	SVA-MLV	TZM-bl	Not Reported	SVA-MLV	Env Pseudotype	Not Yet Available	1	\N		0	SVA-MLV TZM-bl Not Reported		HIV			cds_401
-NAB MAB	T250-4	TZM-bl	Not Reported	T250-4	Env Pseudotype	Not Yet Available	\N	\N		0	T250-4 TZM-bl Not Reported		HIV			cds_402
-NAB MAB	T251-18	TZM-bl	Not Reported	T251-18	Env Pseudotype	Not Yet Available	\N	\N		0	T251-18 TZM-bl Not Reported		HIV			cds_403
-NAB MAB	T257-31	TZM-bl	Not Reported	T257-31	Env Pseudotype	Not Yet Available	\N	\N		0	T257-31 TZM-bl Not Reported		HIV			cds_404
-NAB MAB	T263-8	TZM-bl	Not Reported	T263-8	Env Pseudotype	Not Yet Available	\N	\N		0	T263-8 TZM-bl Not Reported		HIV			cds_405
-NAB MAB	T271-11	TZM-bl	Not Reported	T271-11	Env Pseudotype	Not Yet Available	\N	\N		0	T271-11 TZM-bl Not Reported		HIV			cds_406
-NAB MAB	X1193_C1	TZM-bl	Not Reported	X1193_C1	Env Pseudotype	Not Yet Available	\N	\N		0	X1193_C1 TZM-bl Not Reported		HIV			cds_407
-NAB MAB	X1254_C3	TZM-bl	Not Reported	X1254_C3	Env Pseudotype	Not Yet Available	\N	\N		0	X1254_C3 TZM-bl Not Reported		HIV			cds_408
-NAB MAB	X1632_S2_B10	TZM-bl	Not Reported	X1632_S2_B10	Env Pseudotype	Not Yet Available	\N	\N		0	X1632_S2_B10 TZM-bl Not Reported		HIV			cds_409
-NAB MAB	X1854_C2_10	TZM-bl	Not Reported	X1854_C2_10	Env Pseudotype	Not Yet Available	\N	\N		0	X1854_C2_10 TZM-bl Not Reported		HIV			cds_410
-NAB MAB	X2088_C9	TZM-bl	Not Reported	X2088_C9	Env Pseudotype	Not Yet Available	\N	\N		0	X2088_C9 TZM-bl Not Reported		HIV			cds_411
-NAB MAB	X2131_C1_B5	TZM-bl	Not Reported	X2131_C1_B5	Env Pseudotype	Not Yet Available	\N	\N		0	X2131_C1_B5 TZM-bl Not Reported		HIV			cds_412
-NAB MAB	X2160_C25	TZM-bl	Not Reported	X2160_C25	Env Pseudotype	Not Yet Available	\N	\N		0	X2160_C25 TZM-bl Not Reported		HIV			cds_413
-NAB MAB	246-F3_C10_2	TZM-bl	Not Reported	246-F3_C10_2	Env Pseudotype	Not Yet Available	\N	AC		0	246-F3_C10_2 TZM-bl Not Reported		HIV			cds_414
-NAB MAB	398-F1-F6_20	TZM-bl	Not Reported	398-F1-F6_20	Env Pseudotype	Not Yet Available	\N	A		0	398-F1-F6_20 TZM-bl Not Reported		HIV			cds_415
-NAB MAB	BJOX002000.03.2	TZM-bl	Not Reported	BJOX002000.03.2	Env Pseudotype	Not Yet Available	\N	CRF07_BC		0	BJOX002000.03.2 TZM-bl Not Reported		HIV			cds_416
-NAB MAB	SHIV SF162.P3	TZM-bl	Not Reported	SHIV SF162.P3	SHIV	Not Yet Available	\N	\N		0	SHIV SF162.P3 TZM-bl Not Reported		SHIV			cds_417
-NAB MAB	SHIV SF162P4	TZM-bl	Not Reported	SHIV SF162P4	SHIV	Not Yet Available	\N	\N		0	SHIV SF162P4 TZM-bl Not Reported		SHIV			cds_418
-NAB MAB	SHIV-BaLP4	TZM-bl	Not Reported	SHIV-BaLP4	Primary Isolate	Not Yet Available	\N	\N		0	SHIV-BaLP4 TZM-bl Not Reported		HIV			cds_419
-NAB MAB	1394C9_G1 (Rev-)	TZM-bl	Not Reported	1394C9_G1 (Rev-)	Env Pseudotype	Not Yet Available	\N	\N		0	1394C9_G1 (Rev-) TZM-bl Not Reported		HIV			cds_420
-NAB MAB	191084 B7-19	TZM-bl	Not Reported	191084 B7-19	Env Pseudotype	Not Yet Available	\N	\N		0	191084 B7-19 TZM-bl Not Reported		HIV			cds_421
-NAB MAB	191821_E6_1	TZM-bl	Not Reported	191821_E6_1	Env Pseudotype	Not Yet Available	\N	\N		0	191821_E6_1 TZM-bl Not Reported		HIV			cds_422
-NAB MAB	191955_A11	TZM-bl	Not Reported	191955_A11	Env Pseudotype	Not Yet Available	\N	\N		0	191955_A11 TZM-bl Not Reported		HIV			cds_423
-NAB MAB	231966.c2	TZM-bl	Not Reported	231966.c2	Env Pseudotype	Not Yet Available	\N	\N		0	231966.c2 TZM-bl Not Reported		HIV			cds_424
-NAB MAB	249M B10	TZM-bl	Not Reported	249M B10	Env Pseudotype	Not Yet Available	\N	\N		0	249M B10 TZM-bl Not Reported		HIV			cds_425
-NAB MAB	6480.v4.c25	TZM-bl	Not Reported	6480.v4.c25	Env Pseudotype	Not Yet Available	\N	\N		0	6480.v4.c25 TZM-bl Not Reported		HIV			cds_426
-NAB MAB	7030102001E5 (Rev-)	TZM-bl	Not Reported	7030102001E5 (Rev-)	Env Pseudotype	Not Yet Available	\N	\N		0	7030102001E5 (Rev-) TZM-bl Not Reported		HIV			cds_427
-NAB MAB	9004SS_A3_4	TZM-bl	Not Reported	9004SS_A3_4	Env Pseudotype	Not Yet Available	\N	\N		0	9004SS_A3_4 TZM-bl Not Reported		HIV			cds_428
-NAB MAB	A07412M1.vrc12	TZM-bl	Not Reported	A07412M1.vrc12	Env Pseudotype	Not Yet Available	\N	\N		0	A07412M1.vrc12 TZM-bl Not Reported		HIV			cds_429
-NAB MAB	BJOX009000.02.4	TZM-bl	Not Reported	BJOX009000.02.4	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX009000.02.4 TZM-bl Not Reported		HIV			cds_430
-NAB MAB	BJOX010000.06.2	TZM-bl	Not Reported	BJOX010000.06.2	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX010000.06.2 TZM-bl Not Reported		HIV			cds_431
-NAB MAB	BJOX015000.11.5	TZM-bl	Not Reported	BJOX015000.11.5	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX015000.11.5 TZM-bl Not Reported		HIV			cds_432
-NAB MAB	BJOX025000.01.1	TZM-bl	Not Reported	BJOX025000.01.1	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX025000.01.1 TZM-bl Not Reported		HIV			cds_433
-NAB MAB	BJOX028000.10.3	TZM-bl	Not Reported	BJOX028000.10.3	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX028000.10.3 TZM-bl Not Reported		HIV			cds_434
-NAB MAB	C246F C1G	TZM-bl	Not Reported	C246F C1G	Env Pseudotype	Not Yet Available	\N	\N		0	C246F C1G TZM-bl Not Reported		HIV			cds_435
-NAB MAB	C3347.11	TZM-bl	Not Reported	C3347.11	Env Pseudotype	Not Yet Available	\N	\N		0	C3347.11 TZM-bl Not Reported		HIV			cds_436
-NAB MAB	C4118.c09	TZM-bl	Not Reported	C4118.c09	Env Pseudotype	Not Yet Available	\N	\N		0	C4118.c09 TZM-bl Not Reported		HIV			cds_437
-NAB MAB	CNE17	TZM-bl	Not Reported	CNE17	Env Pseudotype	Not Yet Available	\N	\N		0	CNE17 TZM-bl Not Reported		HIV			cds_438
-NAB MAB	CNE30	TZM-bl	Not Reported	CNE30	Env Pseudotype	Not Yet Available	\N	\N		0	CNE30 TZM-bl Not Reported		HIV			cds_439
-NAB MAB	CNE5	TZM-bl	Not Reported	CNE5	Env Pseudotype	Not Yet Available	\N	\N		0	CNE5 TZM-bl Not Reported		HIV			cds_440
-NAB MAB	CNE52	TZM-bl	Not Reported	CNE52	Env Pseudotype	Not Yet Available	\N	\N		0	CNE52 TZM-bl Not Reported		HIV			cds_441
-NAB MAB	CNE53	TZM-bl	Not Reported	CNE53	Env Pseudotype	Not Yet Available	\N	\N		0	CNE53 TZM-bl Not Reported		HIV			cds_442
-NAB MAB	CNE58	TZM-bl	Not Reported	CNE58	Env Pseudotype	Not Yet Available	\N	BC		0	CNE58 TZM-bl Not Reported		HIV			cds_443
-NAB MAB	MS208.A1	TZM-bl	Not Reported	MS208.A1	Env Pseudotype	Not Yet Available	\N	\N		0	MS208.A1 TZM-bl Not Reported		HIV			cds_444
-NAB MAB	P0402_C2_11	TZM-bl	Not Reported	P0402_C2_11	Env Pseudotype	Not Yet Available	\N	G		0	P0402_C2_11 TZM-bl Not Reported		HIV			cds_445
-NAB MAB	T211-9	TZM-bl	Not Reported	T211-9	Env Pseudotype	Not Yet Available	\N	\N		0	T211-9 TZM-bl Not Reported		HIV			cds_446
-NAB MAB	T255-34	TZM-bl	Not Reported	T255-34	Env Pseudotype	Not Yet Available	\N	\N		0	T255-34 TZM-bl Not Reported		HIV			cds_447
-NAB MAB	T278-50	TZM-bl	Not Reported	T278-50	Env Pseudotype	Not Yet Available	\N	\N		0	T278-50 TZM-bl Not Reported		HIV			cds_448
-NAB MAB	TRO.11.N332A	TZM-bl	Not Reported	TRO.11.N332A	Env Pseudotype	Not Yet Available	\N	B		0	TRO.11.N332A TZM-bl Not Reported		HIV			cds_449
-NAB MAB	X1632-S2-B10	TZM-bl	Not Reported	X1632-S2-B10	Env Pseudotype	Not Yet Available	\N	G		0	X1632-S2-B10 TZM-bl Not Reported		HIV			cds_450
-NAB MAB	427299.c12	TZM-bl	Not Reported	427299.c12	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	427299.c12 TZM-bl Not Reported		HIV			cds_451
-NAB MAB	C3347.c11	TZM-bl	Not Reported	C3347.c11	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	C3347.c11 TZM-bl Not Reported		HIV			cds_452
-NAB MAB	CM244.c01	TZM-bl	Not Reported	CM244.c01	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	CM244.c01 TZM-bl Not Reported		HIV			cds_453
-NAB MAB	TH023.6	TZM-bl	Not Reported	TH023.6	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	TH023.6 TZM-bl Not Reported		HIV			cds_454
-NAB MAB	1006-11.C3.1601	TZM-bl	Not Reported	1006-11.C3.1601	Env Pseudotype	Not Yet Available				0	1006-11.C3.1601 TZM-bl Not Reported		HIV			cds_455
-NAB MAB	1054-07.TC4.1499	TZM-bl	Not Reported	1054-07.TC4.1499	Env Pseudotype	Not Yet Available				0	1054-07.TC4.1499 TZM-bl Not Reported		HIV			cds_456
-NAB MAB	1056-10.TA11.1826	TZM-bl	Not Reported	1056-10.TA11.1826	Env Pseudotype	Not Yet Available				0	1056-10.TA11.1826 TZM-bl Not Reported		HIV			cds_457
-NAB MAB	1012-11.TC21	TZM-bl	Not Reported	1012-11.TC21	Env Pseudotype	Not Yet Available				0	1012-11.TC21 TZM-bl Not Reported		HIV			cds_458
-NAB MAB	246F C1G	TZM-bl	Not Reported	246F C1G	Env Pseudotype	Not Yet Available		C		0	246F C1G TZM-bl Not Reported		HIV			cds_459
+NAB MAB	6535.3	TZM-bl	Env Pseudotype	6535.3	Env Pseudotype		1B	B		0	6535.3,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_183
+NAB MAB	0013095-2.11	TZM-bl	Env Pseudotype	0013095-2.11	Env Pseudotype		2	C		0	0013095-2.11,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_240
+NAB MAB	001428-2.42	TZM-bl	Env Pseudotype	001428-2.42	Env Pseudotype		2	C		0	001428-2.42,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_265
+NAB MAB	0260.V5.C36	TZM-bl	Env Pseudotype	0260.V5.C36	Env Pseudotype					0	0260.V5.C36,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_177
+NAB MAB	0260.V5.C36	TZM-bl	Not Reported	0260.V5.C36	Env Pseudotype	Not Yet Available	\N	\N		0	0260.V5.C36,TZM-bl,full name		HIV			cds_370
+NAB MAB	0330.v4.c3	TZM-bl	Env Pseudotype	0330.v4.c3	Env Pseudotype		2	A	Integer a nibh. In quis justo.	0	0330.v4.c3,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_166
+NAB MAB	0815.v3.c3	TZM-bl	Env Pseudotype	0815.v3.c3	Env Pseudotype			A/C/D		0	0815.v3.c3,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_321
+NAB MAB	0815.v3.c3	TZM-bl	Not Reported	0815.v3.c3	Env Pseudotype	Not Yet Available	\N	A/C/D		0	0815.v3.c3,TZM-bl,full name		HIV			cds_371
+NAB MAB	1006-11.C3.1601	TZM-bl	Not Reported	1006-11.C3.1601	Env Pseudotype	Not Yet Available				0	1006-11.C3.1601,TZM-bl,full name		HIV			cds_455
+NAB MAB	1012-11.TC21	TZM-bl	Not Reported	1012-11.TC21	Env Pseudotype	Not Yet Available				0	1012-11.TC21,TZM-bl,full name		HIV			cds_458
+NAB MAB	1054-07.TC4.1499	TZM-bl	Not Reported	1054-07.TC4.1499	Env Pseudotype	Not Yet Available				0	1054-07.TC4.1499,TZM-bl,full name		HIV			cds_456
+NAB MAB	1056-10.TA11.1826	TZM-bl	Not Reported	1056-10.TA11.1826	Env Pseudotype	Not Yet Available				0	1056-10.TA11.1826,TZM-bl,full name		HIV			cds_457
+NAB MAB	1394C9_G1 (Rev-)	TZM-bl	Env Pseudotype	1394C9_G1 (Rev-)	Env Pseudotype					0	1394C9_G1 (Rev-),TZM-bl,full name		HIV	294T/18	SG3 beta env 10	cds_233
+NAB MAB	1394C9_G1 (Rev-)	TZM-bl	Not Reported	1394C9_G1 (Rev-)	Env Pseudotype	Not Yet Available	\N	\N		0	1394C9_G1 (Rev-),TZM-bl,full name		HIV			cds_420
+NAB MAB	16055-2.3	TZM-bl	Env Pseudotype	16055-2.3	Env Pseudotype		2	C		0	16055-2.3,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_227
+NAB MAB	16845-2.22	TZM-bl	Env Pseudotype	16845-2.22	Env Pseudotype		2	C		0	16845-2.22,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_261
+NAB MAB	191084 B7-19	TZM-bl	Env Pseudotype	191084 B7-19	Env Pseudotype					0	191084 B7-19,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_255
+NAB MAB	191084 B7-19	TZM-bl	Not Reported	191084 B7-19	Env Pseudotype	Not Yet Available	\N	\N		0	191084 B7-19,TZM-bl,full name		HIV			cds_421
+NAB MAB	191821_E6_1	TZM-bl	Env Pseudotype	191821_E6_1	Env Pseudotype					0	191821_E6_1,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_217
+NAB MAB	191821_E6_1	TZM-bl	Not Reported	191821_E6_1	Env Pseudotype	Not Yet Available	\N	\N		0	191821_E6_1,TZM-bl,full name		HIV			cds_422
+NAB MAB	191955_A11	TZM-bl	Env Pseudotype	191955_A11	Env Pseudotype					0	191955_A11,TZM-bl,full name		HIV	294T/18	SG3 beta env 8	cds_273
+NAB MAB	191955_A11	TZM-bl	Not Reported	191955_A11	Env Pseudotype	Not Yet Available	\N	\N		0	191955_A11,TZM-bl,full name		HIV			cds_423
+NAB MAB	231965.c1	TZM-bl	Env Pseudotype	231965.c1	Env Pseudotype					0	231965.c1,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_263
+NAB MAB	231965.c1	TZM-bl	Not Reported	231965.c1	Env Pseudotype	Not Yet Available	\N	\N		0	231965.c1,TZM-bl,full name		HIV			cds_372
+NAB MAB	231966.c2	TZM-bl	Env Pseudotype	231966.c2	Env Pseudotype					0	231966.c2,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_279
+NAB MAB	231966.c2	TZM-bl	Not Reported	231966.c2	Env Pseudotype	Not Yet Available	\N	\N		0	231966.c2,TZM-bl,full name		HIV			cds_424
+NAB MAB	235-47	TZM-bl	Env Pseudotype	235-47	Env Pseudotype		2	02_AG		0	235-47,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_284
+NAB MAB	242-14	TZM-bl	Env Pseudotype	242-14	Env Pseudotype		1B	02A1		0	242-14,TZM-bl,full name		HIV	294T/18	SG3 beta env 10	cds_212
+NAB MAB	246F C1G	TZM-bl	Not Reported	246F C1G	Env Pseudotype	Not Yet Available		C		0	246F C1G,TZM-bl,full name		HIV			cds_459
+NAB MAB	246-F3_C10_2	TZM-bl	Env Pseudotype	246-F3_C10_2	Env Pseudotype			AC		0	246-F3_C10_2,TZM-bl,full name		HIV	294T/18	SG3 beta env 9	cds_295
+NAB MAB	246-F3_C10_2	TZM-bl	Not Reported	246-F3_C10_2	Env Pseudotype	Not Yet Available	\N	AC		0	246-F3_C10_2,TZM-bl,full name		HIV			cds_414
+NAB MAB	249M B10	TZM-bl	Env Pseudotype	249M B10	Env Pseudotype					0	249M B10,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_323
+NAB MAB	249M B10	TZM-bl	Not Reported	249M B10	Env Pseudotype	Not Yet Available	\N	\N		0	249M B10,TZM-bl,full name		HIV			cds_425
+NAB MAB	25710-2.43	TZM-bl	Env Pseudotype	25710-2.43	Env Pseudotype		1B	C		0	25710-2.43,TZM-bl,full name		HIV	294T/18	SG3 delta env 3	cds_277
+NAB MAB	263-8	TZM-bl	Env Pseudotype	263-8	Env Pseudotype		2	A1U		0	263-8,TZM-bl,full name		HIV	294T/18	SG3 delta env 3	cds_172
+NAB MAB	3016.v5.c45	TZM-bl	Env Pseudotype	3016.v5.c45	Env Pseudotype			D		0	3016.v5.c45,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_221
+NAB MAB	3016.v5.c45	TZM-bl	Not Reported	3016.v5.c45	Env Pseudotype	Not Yet Available	\N	D		0	3016.v5.c45,TZM-bl,full name		HIV			cds_373
+NAB MAB	3103.v3.c10	TZM-bl	Env Pseudotype	3103.v3.c10	Env Pseudotype			A/C/D		0	3103.v3.c10,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_185
+NAB MAB	3103.v3.c10	TZM-bl	Not Reported	3103.v3.c10	Env Pseudotype	Not Yet Available	\N	A/C/D		0	3103.v3.c10,TZM-bl,full name		HIV			cds_374
+NAB MAB	3301.v1.c24	TZM-bl	Env Pseudotype	3301.v1.c24	Env Pseudotype			A/C		0	3301.v1.c24,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_320
+NAB MAB	3301.v1.c24	TZM-bl	Not Reported	3301.v1.c24	Env Pseudotype	Not Yet Available	\N	A/C		0	3301.v1.c24,TZM-bl,full name		HIV			cds_375
+NAB MAB	3365.v2.c20	TZM-bl	Env Pseudotype	3365.v2.c20	Env Pseudotype		2	A		0	3365.v2.c20,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_257
+NAB MAB	3718.v3.c11	TZM-bl	Env Pseudotype	3718.v3.c11	Env Pseudotype		2	A		0	3718.v3.c11,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_324
+NAB MAB	3817.v2.c59	TZM-bl	Env Pseudotype	3817.v2.c59	Env Pseudotype					0	3817.v2.c59,TZM-bl,full name		HIV	294T/18	SG3 beta env 11	cds_171
+NAB MAB	3817.v2.c59	TZM-bl	Not Reported	3817.v2.c59	Env Pseudotype	Not Yet Available	\N	\N		0	3817.v2.c59,TZM-bl,full name		HIV			cds_376
+NAB MAB	398-F1-F6_20	TZM-bl	Env Pseudotype	398-F1-F6_20	Env Pseudotype			A		0	398-F1-F6_20,TZM-bl,full name		HIV	294T/18	SG3 beta env 8	cds_210
+NAB MAB	398-F1-F6_20	TZM-bl	Not Reported	398-F1-F6_20	Env Pseudotype	Not Yet Available	\N	A		0	398-F1-F6_20,TZM-bl,full name		HIV			cds_415
+NAB MAB	427299.c12	TZM-bl	Env Pseudotype	427299.c12	Env Pseudotype			CRF01_AE		0	427299.c12,TZM-bl,full name		HIV	294T/18	SG3 beta env 11	cds_276
+NAB MAB	427299.c12	TZM-bl	Not Reported	427299.c12	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	427299.c12,TZM-bl,full name		HIV			cds_451
+NAB MAB	6041.v3.c23	TZM-bl	Env Pseudotype	6041.v3.c23	Env Pseudotype					0	6041.v3.c23,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_238
+NAB MAB	6041.v3.c23	TZM-bl	Not Reported	6041.v3.c23	Env Pseudotype	Not Yet Available	\N	\N		0	6041.v3.c23,TZM-bl,full name		HIV			cds_377
+NAB MAB	620345.c01	TZM-bl	Env Pseudotype	620345.c01	Env Pseudotype					0	620345.c01,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_178
+NAB MAB	620345.c01	TZM-bl	Not Reported	620345.c01	Env Pseudotype	Not Yet Available	\N	\N		0	620345.c01,TZM-bl,full name		HIV			cds_378
+NAB MAB	62357.14.D3.4589	TZM-bl	Env Pseudotype	62357.14.D3.4589	Env Pseudotype		2	B		0	62357.14.D3.4589,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_184
+NAB MAB	6240.08.TA5.4622	TZM-bl	Env Pseudotype	6240.08.TA5.4622	Env Pseudotype		2	B		0	6240.08.TA5.4622,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_307
+NAB MAB	6244.13.B5.4567	TZM-bl	Env Pseudotype	6244.13.B5.4567	Env Pseudotype		2	B		0	6244.13.B5.4567,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_312
+NAB MAB	6405.V4.C34	TZM-bl	Env Pseudotype	6405.V4.C34	Env Pseudotype					0	6405.V4.C34,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_220
+NAB MAB	6405.V4.C34	TZM-bl	Not Reported	6405.V4.C34	Env Pseudotype	Not Yet Available	\N	\N		0	6405.V4.C34,TZM-bl,full name		HIV			cds_379
+NAB MAB	6480.v4.c25	TZM-bl	Env Pseudotype	6480.v4.c25	Env Pseudotype					0	6480.v4.c25,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_291
+NAB MAB	6480.v4.c25	TZM-bl	Not Reported	6480.v4.c25	Env Pseudotype	Not Yet Available	\N	\N		0	6480.v4.c25,TZM-bl,full name		HIV			cds_426
+NAB MAB	6540.v4.c1	TZM-bl	Env Pseudotype	6540.v4.c1	Env Pseudotype					0	6540.v4.c1,TZM-bl,full name		HIV	294T/18	SG3 alpha env 3	cds_236
+NAB MAB	6540.v4.c1	TZM-bl	Not Reported	6540.v4.c1	Env Pseudotype	Not Yet Available	\N	\N		0	6540.v4.c1,TZM-bl,full name		HIV			cds_380
+NAB MAB	6545.v4.c1	TZM-bl	Env Pseudotype	6545.v4.c1	Env Pseudotype					0	6545.v4.c1,TZM-bl,full name		HIV	294T/18	SG3 beta env 8	cds_294
+NAB MAB	6545.v4.c1	TZM-bl	Not Reported	6545.v4.c1	Env Pseudotype	Not Yet Available	\N	\N		0	6545.v4.c1,TZM-bl,full name		HIV			cds_381
+NAB MAB	6644.v2.C33	TZM-bl	Env Pseudotype	6644.v2.C33	Env Pseudotype		1B	C		0	6644.v2.C33,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_186
+NAB MAB	6811.v7.c18	TZM-bl	Env Pseudotype	6811.v7.c18	Env Pseudotype					0	6811.v7.c18,TZM-bl,full name		HIV	294T/18	SG3 beta env 11	cds_297
+NAB MAB	6811.v7.c18	TZM-bl	Not Reported	6811.v7.c18	Env Pseudotype	Not Yet Available	\N	\N		0	6811.v7.c18,TZM-bl,full name		HIV			cds_382
+NAB MAB	6952.v1.c20	TZM-bl	Env Pseudotype	6952.v1.c20	Env Pseudotype					0	6952.v1.c20,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_219
+NAB MAB	6952.v1.c20	TZM-bl	Not Reported	6952.v1.c20	Env Pseudotype	Not Yet Available	\N	\N		0	6952.v1.c20,TZM-bl,full name		HIV			cds_383
+NAB MAB	7030102001E5 (Rev-)	TZM-bl	Env Pseudotype	7030102001E5 (Rev-)	Env Pseudotype				Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.	0	7030102001E5 (Rev-),TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_164
+NAB MAB	7030102001E5 (Rev-)	TZM-bl	Not Reported	7030102001E5 (Rev-)	Env Pseudotype	Not Yet Available	\N	\N		0	7030102001E5 (Rev-),TZM-bl,full name		HIV			cds_427
+NAB MAB	703357.c02	TZM-bl	Env Pseudotype	703357.c02	Env Pseudotype			CRF01_AE		0	703357.c02,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_289
+NAB MAB	703357.c02	TZM-bl	Not Reported	703357.c02	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	703357.c02,TZM-bl,full name		HIV			cds_384
+NAB MAB	89-F1_2_25	TZM-bl	Env Pseudotype	89-F1_2_25	Env Pseudotype					0	89-F1_2_25,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_176
+NAB MAB	89-F1_2_25	TZM-bl	Not Reported	89-F1_2_25	Env Pseudotype	Not Yet Available	\N	\N		0	89-F1_2_25,TZM-bl,full name		HIV			cds_385
+NAB MAB	9004SS_A3_4	TZM-bl	Env Pseudotype	9004SS_A3_4	Env Pseudotype					0	9004SS_A3_4,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_243
+NAB MAB	9004SS_A3_4	TZM-bl	Not Reported	9004SS_A3_4	Env Pseudotype	Not Yet Available	\N	\N		0	9004SS_A3_4,TZM-bl,full name		HIV			cds_428
+NAB A3R5	9020.A13.LucR.T2A.ecto	A3R5	IMC Virus	9020.A13.LucR.T2A.ecto	IMC	ultrices posuere	Not Available	Not Currently Recorded in Data	Aliquam sit amet diam in magna bibendum imperdiet.	0	9020.A13.LucR.T2A.ecto,A3R5,full name	9020.A13.LucR.T2A.ecto, IMC, A3R5, ultrices posuere	HIV	293T/17	SG3 beta env 5	cds_119
+NAB A3R5	9020.A13.LucR.T2A.ecto	A3R5	IMC Virus	9020.A13.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	9020.A13.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 delta env 1	cds_360
+NAB MAB	928-28	TZM-bl	Env Pseudotype	928-28	Env Pseudotype		2	02_AG		0	928-28,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_259
+NAB TZM-bl	92RW020.2	TZM-bl	Not Reported	92RW020.2	Not Reported	vehicula	Not Available	A	In sagittis dui vel nisl. Duis ac nibh.	0	92RW020.2,TZM-bl,full name	92RW020.2, Not Reported, TZM-bl, vehicula	HIV	293T/17	SG3 beta env 2	cds_136
+NAB TZM-bl	92RW020.2	TZM-bl	Not Reported	92RW020.2	Not Reported	Not Yet Available	Not Available	A		0	92RW020.2,TZM-bl,full name		HIV	293T/17	SG3 beta env 2	cds_368
+NAB TZM-bl	96ZM651.2	TZM-bl	Pseudovirus Virus	96ZM651.2	Pseudovirus	ipsum	Not Available	Not Currently Recorded in Data	Donec posuere metus vitae ipsum.	0	96ZM651.2,TZM-bl,full name	96ZM651.2, Pseudovirus, TZM-bl, ipsum	HIV	293T/17	SG3 beta env 2	cds_157
+NAB TZM-bl	96ZM651.2	TZM-bl	Pseudovirus Virus	96ZM651.2	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	96ZM651.2,TZM-bl,full name		HIV	293T/17	SG3 beta env 2	cds_353
+NAB TZM-bl	97ZA012.29	TZM-bl	Not Reported	97ZA012.29	Not Reported	pellentesque quisque porta	Not Available	Not Currently Recorded in Data	In hac habitasse platea dictumst.	0	97ZA012.29,TZM-bl,full name	97ZA012.29, Not Reported, TZM-bl, pellentesque quisque porta	HIV	293T/17	SG3 beta env 3	cds_137
+NAB TZM-bl	97ZA012.29	TZM-bl	Not Reported	97ZA012.29	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	97ZA012.29,TZM-bl,full name		HIV	293T/17	SG3 beta env 3	cds_369
+NAB MAB	A03349M1.VRC4A	TZM-bl	Env Pseudotype	A03349M1.VRC4A	Env Pseudotype			D		0	A03349M1.VRC4A,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_199
+NAB MAB	A03349M1.VRC4A	TZM-bl	Not Reported	A03349M1.VRC4A	Env Pseudotype	Not Yet Available	\N	D		0	A03349M1.VRC4A,TZM-bl,full name		HIV			cds_386
+NAB MAB	A07412M1.vrc12	TZM-bl	Env Pseudotype	A07412M1.vrc12	Env Pseudotype					0	A07412M1.vrc12,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_198
+NAB MAB	A07412M1.vrc12	TZM-bl	Not Reported	A07412M1.vrc12	Env Pseudotype	Not Yet Available	\N	\N		0	A07412M1.vrc12,TZM-bl,full name		HIV			cds_429
+NAB MAB	AC10.0.29	TZM-bl	Env Pseudotype	AC10.0.29	Env Pseudotype		2	B		0	AC10.0.29,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_246
+NAB TZM-bl	BaL.26	TZM-bl	Not Reported	BaL.26	Not Reported	condimentum	Not Available	Not Currently Recorded in Data	In hac habitasse platea dictumst.	0	BaL.26,TZM-bl,full name	BaL.26, Not Reported, TZM-bl, condimentum	HIV	293T/17	SG3 beta env 2	cds_113
+NAB TZM-bl	BaL.26	TZM-bl	Pseudovirus Virus	BaL.26	Pseudovirus	in leo maecenas	Not Available	Not Currently Recorded in Data	Nulla tempus.	0	BaL.26,TZM-bl,full name	BaL.26, Pseudovirus, TZM-bl, in leo maecenas	HIV	293T/17	SG3 alpha env 1	cds_122
+NAB MAB	BaL.26	TZM-bl	Env Pseudotype	BaL.26	Env Pseudotype		1B	B		0	BaL.26,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_304
+NAB TZM-bl	BaL.26	TZM-bl	Pseudovirus Virus	BaL.26	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	BaL.26,TZM-bl,full name		HIV	293T/17	SG3 alpha env 1	cds_340
+NAB MAB	BB1006-11.C3.1601	TZM-bl	Env Pseudotype	BB1006-11.C3.1601	Env Pseudotype					0	BB1006-11.C3.1601,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_200
+NAB MAB	BB1006-11.C3.1601	TZM-bl	Not Reported	BB1006-11.C3.1601	Env Pseudotype	Not Yet Available	\N	\N		0	BB1006-11.C3.1601,TZM-bl,full name		HIV			cds_387
+NAB MAB	BB1012-11.TC21	TZM-bl	Env Pseudotype	BB1012-11.TC21	Env Pseudotype				Integer ac leo.	0	BB1012-11.TC21,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_165
+NAB MAB	BB1012-11.TC21	TZM-bl	Not Reported	BB1012-11.TC21	Env Pseudotype	Not Yet Available	\N	\N		0	BB1012-11.TC21,TZM-bl,full name		HIV			cds_388
+NAB MAB	BB1054-07.TC4.1499	TZM-bl	Env Pseudotype	BB1054-07.TC4.1499	Env Pseudotype					0	BB1054-07.TC4.1499,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_252
+NAB MAB	BB1054-07.TC4.1499	TZM-bl	Not Reported	BB1054-07.TC4.1499	Env Pseudotype	Not Yet Available	\N	\N		0	BB1054-07.TC4.1499,TZM-bl,full name		HIV			cds_389
+NAB MAB	BB1056-10.TA11.1826	TZM-bl	Env Pseudotype	BB1056-10.TA11.1826	Env Pseudotype					0	BB1056-10.TA11.1826,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_318
+NAB MAB	BB1056-10.TA11.1826	TZM-bl	Not Reported	BB1056-10.TA11.1826	Env Pseudotype	Not Yet Available	\N	\N		0	BB1056-10.TA11.1826,TZM-bl,full name		HIV			cds_390
+NAB MAB	BF1266.431a	TZM-bl	Env Pseudotype	BF1266.431a	Env Pseudotype		2	C		0	BF1266.431a,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_300
+NAB MAB	BJOX002000.03.2	TZM-bl	Env Pseudotype	BJOX002000.03.2	Env Pseudotype			CRF07_BC		0	BJOX002000.03.2,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_208
+NAB MAB	BJOX002000.03.2	TZM-bl	Not Reported	BJOX002000.03.2	Env Pseudotype	Not Yet Available	\N	CRF07_BC		0	BJOX002000.03.2,TZM-bl,full name		HIV			cds_416
+NAB MAB	BJOX002000.03.2.delta624G.E625R.3-5	TZM-bl	Env Pseudotype	BJOX002000.03.2.delta624G.E625R.3-5	Env Pseudotype						BJOX002000.03.2.delta624G.E625R.3-5,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_326
+NAB MAB	BJOX009000.02.4	TZM-bl	Env Pseudotype	BJOX009000.02.4	Env Pseudotype					0	BJOX009000.02.4,TZM-bl,full name		HIV	294T/18	SG3 beta env 7	cds_167
+NAB MAB	BJOX009000.02.4	TZM-bl	Not Reported	BJOX009000.02.4	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX009000.02.4,TZM-bl,full name		HIV			cds_430
+NAB MAB	BJOX010000.06.2	TZM-bl	Env Pseudotype	BJOX010000.06.2	Env Pseudotype					0	BJOX010000.06.2,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_181
+NAB MAB	BJOX010000.06.2	TZM-bl	Not Reported	BJOX010000.06.2	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX010000.06.2,TZM-bl,full name		HIV			cds_431
+NAB MAB	BJOX015000.11.5	TZM-bl	Env Pseudotype	BJOX015000.11.5	Env Pseudotype						BJOX015000.11.5,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_325
+NAB MAB	BJOX015000.11.5	TZM-bl	Not Reported	BJOX015000.11.5	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX015000.11.5,TZM-bl,full name		HIV			cds_432
+NAB MAB	BJOX025000.01.1	TZM-bl	Env Pseudotype	BJOX025000.01.1	Env Pseudotype					0	BJOX025000.01.1,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_267
+NAB MAB	BJOX025000.01.1	TZM-bl	Not Reported	BJOX025000.01.1	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX025000.01.1,TZM-bl,full name		HIV			cds_433
+NAB MAB	BJOX028000.10.3	TZM-bl	Env Pseudotype	BJOX028000.10.3	Env Pseudotype					0	BJOX028000.10.3,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_202
+NAB MAB	BJOX028000.10.3	TZM-bl	Not Reported	BJOX028000.10.3	Env Pseudotype	Not Yet Available	\N	\N		0	BJOX028000.10.3,TZM-bl,full name		HIV			cds_434
+NAB TZM-bl	Bx08.16	TZM-bl	Pseudovirus Virus	Bx08.16	Pseudovirus	rutrum ac	1	B	Integer non velit.	0	Bx08.16,TZM-bl,full name	Bx08.16, Pseudovirus, TZM-bl, rutrum ac	HIV	293T/17	SG3 delta env 1	cds_155
+NAB TZM-bl	Bx08.16	TZM-bl	Pseudovirus Virus	Bx08.16	Pseudovirus	Not Yet Available	1	B		0	Bx08.16,TZM-bl,full name		HIV	293T/17	SG3 beta env 2	cds_341
+NAB MAB	C1080.c03	TZM-bl	Env Pseudotype	C1080.c03	Env Pseudotype			CRF01_AE		0	C1080.c03,TZM-bl,full name		HIV	294T/18	SG3 beta env 7	cds_272
+NAB MAB	C1080.c03	TZM-bl	Not Reported	C1080.c03	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	C1080.c03,TZM-bl,full name		HIV			cds_391
+NAB A3R5	C1080.c03.LucR.T2A.ecto	A3R5	Not Reported	C1080.c03.LucR.T2A.ecto	Not Reported	ante	Not Available	Not Currently Recorded in Data	Integer a nibh. In quis justo.	0	C1080.c03.LucR.T2A.ecto,A3R5,full name	C1080.c03.LucR.T2A.ecto, Not Reported, A3R5, ante	HIV	293T/17	SG3 alpha env 1	cds_125
+NAB A3R5	C1080.c03.LucR.T2A.ecto	A3R5	Not Reported	C1080.c03.LucR.T2A.ecto	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	C1080.c03.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 delta env 1	cds_348
+NAB MAB	C2101.c01	TZM-bl	Env Pseudotype	C2101.c01	Env Pseudotype					0	C2101.c01,TZM-bl,full name		HIV	294T/18	SG3 beta env 10	cds_296
+NAB MAB	C2101.c01	TZM-bl	Not Reported	C2101.c01	Env Pseudotype	Not Yet Available	\N	\N		0	C2101.c01,TZM-bl,full name		HIV			cds_392
+NAB MAB	C246F C1G	TZM-bl	Env Pseudotype	C246F C1G	Env Pseudotype					0	C246F C1G,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_191
+NAB MAB	C246F C1G	TZM-bl	Not Reported	C246F C1G	Env Pseudotype	Not Yet Available	\N	\N		0	C246F C1G,TZM-bl,full name		HIV			cds_435
+NAB MAB	C3347.11	TZM-bl	Env Pseudotype	C3347.11	Env Pseudotype					0	C3347.11,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_205
+NAB MAB	C3347.11	TZM-bl	Not Reported	C3347.11	Env Pseudotype	Not Yet Available	\N	\N		0	C3347.11,TZM-bl,full name		HIV			cds_436
+NAB MAB	C3347.c11	TZM-bl	Env Pseudotype	C3347.c11	Env Pseudotype			CRF01_AE		0	C3347.c11,TZM-bl,full name		HIV	294T/18	SG3 beta env 10	cds_170
+NAB MAB	C3347.c11	TZM-bl	Not Reported	C3347.c11	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	C3347.c11,TZM-bl,full name		HIV			cds_452
+NAB A3R5	C3347.c11.LucR.T2A.ecto	A3R5	Not Reported	C3347.c11.LucR.T2A.ecto	Not Reported	elit proin	Not Available	Not Currently Recorded in Data	Integer ac leo. Pellentesque ultrices mattis odio.	0	C3347.c11.LucR.T2A.ecto,A3R5,full name	C3347.c11.LucR.T2A.ecto, Not Reported, A3R5, elit proin	HIV	293T/17	SG3 delta env 1	cds_114
+NAB A3R5	C3347.c11.LucR.T2A.ecto	A3R5	Not Reported	C3347.c11.LucR.T2A.ecto	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	C3347.c11.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 alpha env 1	cds_349
+NAB MAB	C4118.c09	TZM-bl	Env Pseudotype	C4118.c09	Env Pseudotype					0	C4118.c09,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_188
+NAB MAB	C4118.c09	TZM-bl	Not Reported	C4118.c09	Env Pseudotype	Not Yet Available	\N	\N		0	C4118.c09,TZM-bl,full name		HIV			cds_437
+NAB TZM-bl	CAAN5342.A2	TZM-bl	Pseudovirus Virus	CAAN5342.A2	Pseudovirus	nascetur	Not Available	Not Currently Recorded in Data	Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.	0	CAAN5342.A2,TZM-bl,full name	CAAN5342.A2, Pseudovirus, TZM-bl, nascetur	HIV	293T/17	SG3 beta env 2	cds_126
+NAB MAB	CAAN5342.A2	TZM-bl	Env Pseudotype	CAAN5342.A2	Env Pseudotype		2	B		0	CAAN5342.A2,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_302
+NAB TZM-bl	CAAN5342.A2	TZM-bl	Pseudovirus Virus	CAAN5342.A2	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CAAN5342.A2,TZM-bl,full name		HIV	293T/17	SG3 alpha env 1	cds_361
+NAB MAB	CAP210.2.00.E8	TZM-bl	Env Pseudotype	CAP210.2.00.E8	Env Pseudotype		2	C		0	CAP210.2.00.E8,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_313
+NAB MAB	CAP45.2.00.G3	TZM-bl	Env Pseudotype	CAP45.2.00.G3	Env Pseudotype		2	C		0	CAP45.2.00.G3,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_190
+NAB MAB	Ce0393_C3	TZM-bl	Env Pseudotype	Ce0393_C3	Env Pseudotype		2	C		0	Ce0393_C3,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_224
+NAB MAB	Ce0682_E4	TZM-bl	Env Pseudotype	Ce0682_E4	Env Pseudotype		2	C		0	Ce0682_E4,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_222
+NAB MAB	Ce1086_B2	TZM-bl	Env Pseudotype	Ce1086_B2	Env Pseudotype		2	C		0	Ce1086_B2,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_207
+NAB A3R5	Ce1086_B2.LucR.T2A.ecto	A3R5	IMC Virus	Ce1086_B2.LucR.T2A.ecto	IMC	risus dapibus augue	Not Available	Not Currently Recorded in Data	Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.	0	Ce1086_B2.LucR.T2A.ecto,A3R5,full name	Ce1086_B2.LucR.T2A.ecto, IMC, A3R5, risus dapibus augue	HIV	293T/17	SG3 beta env 3	cds_158
+NAB A3R5	Ce1086_B2.LucR.T2A.ecto	A3R5	IMC Virus	Ce1086_B2.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Ce1086_B2.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 beta env 2	cds_329
+NAB MAB	Ce1172_H1	TZM-bl	Env Pseudotype	Ce1172_H1	Env Pseudotype		2	C		0	Ce1172_H1,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_264
+NAB MAB	Ce1176_A3	TZM-bl/Fc??__RI	Env Pseudotype	Ce1176_A3	Env Pseudotype		2	C		0	Ce1176_A3,TZM-bl,full name		HIV	294T/18	SG3 alpha env 3	cds_215
+NAB MAB	Ce1176_A3	TZM-bl	Env Pseudotype	Ce1176_A3	Env Pseudotype		2	C		0	Ce1176_A3,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_309
+NAB A3R5	Ce1176_A3.LucR.T2A.ecto	A3R5	IMC Virus	Ce1176_A3.LucR.T2A.ecto	IMC	condimentum	Not Available	Not Currently Recorded in Data	Pellentesque at nulla. Suspendisse potenti.	0	Ce1176_A3.LucR.T2A.ecto,A3R5,full name	Ce1176_A3.LucR.T2A.ecto, IMC, A3R5, condimentum	HIV	293T/17	SG3 delta env 1	cds_124
+NAB A3R5	Ce1176_A3.LucR.T2A.ecto	A3R5	IMC Virus	Ce1176_A3.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Ce1176_A3.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 delta env 1	cds_330
+NAB MAB	Ce2010_F5	TZM-bl	Env Pseudotype	Ce2010_F5	Env Pseudotype		3	C		0	Ce2010_F5,TZM-bl,full name		HIV	294T/18	SG3 beta env 8	cds_231
+NAB A3R5	Ce2010_F5.LucR.T2A.ecto	A3R5	IMC Virus	Ce2010_F5.LucR.T2A.ecto	IMC	ut massa	Not Available	Not Currently Recorded in Data	Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum.	0	Ce2010_F5.LucR.T2A.ecto,A3R5,full name	Ce2010_F5.LucR.T2A.ecto, IMC, A3R5, ut massa	HIV	293T/17	SG3 beta env 4	cds_128
+NAB A3R5	Ce2010_F5.LucR.T2A.ecto	A3R5	IMC Virus	Ce2010_F5.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Ce2010_F5.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 alpha env 1	cds_331
+NAB MAB	Ce2060_G9	TZM-bl	Env Pseudotype	Ce2060_G9	Env Pseudotype		3	C		0	Ce2060_G9,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_180
+NAB MAB	Ce703010054_2A2	TZM-bl	Env Pseudotype	Ce703010054_2A2	Env Pseudotype		2	C		0	Ce703010054_2A2,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_175
+NAB MAB	Ce703010217_B6	TZM-bl	Env Pseudotype	Ce703010217_B6	Env Pseudotype		2	C		0	Ce703010217_B6,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_314
+NAB MAB	Ce704809221_1B3	TZM-bl	Env Pseudotype	Ce704809221_1B3	Env Pseudotype		2	C		0	Ce704809221_1B3,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_308
+NAB MAB	CH064.20	TZM-bl	Env Pseudotype	CH064.20	Env Pseudotype		2	07_BC		0	CH064.20,TZM-bl,full name		HIV	294T/18	SG3 beta env 9	cds_232
+NAB MAB	CH110.2	TZM-bl	Env Pseudotype	CH110.2	Env Pseudotype		2	07_BC		0	CH110.2,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_242
+NAB MAB	CH111.8	TZM-bl	Env Pseudotype	CH111.8	Env Pseudotype		2	07_BC		0	CH111.8,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_306
+NAB MAB	CH119.10	TZM-bl	Env Pseudotype	CH119.10	Env Pseudotype		2	07_BC		0	CH119.10,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_286
+NAB MAB	CH181.12	TZM-bl	Env Pseudotype	CH181.12	Env Pseudotype		2	07_BC		0	CH181.12,TZM-bl,full name		HIV	294T/18	SG3 beta env 11	cds_213
+NAB TZM-bl	CH58.LucR.T2A.ecto	TZM-bl	IMC Virus	CH58.LucR.T2A.ecto	IMC	in sagittis	Not Available	Not Currently Recorded in Data	Integer tincidunt ante vel ipsum.	0	CH58.LucR.T2A.ecto,TZM-bl,full name	CH58.LucR.T2A.ecto, IMC, TZM-bl, in sagittis	HIV	293T/17	SG3 alpha env 1	cds_132
+NAB A3R5	CH58.LucR.T2A.ecto	A3R5	IMC Virus	CH58.LucR.T2A.ecto	IMC	duis consequat dui	Not Available	Not Currently Recorded in Data	Nullam varius.	0	CH58.LucR.T2A.ecto,A3R5,full name	CH58.LucR.T2A.ecto, IMC, A3R5, duis consequat dui	HIV	293T/17	SG3 beta env 6	cds_140
+NAB A3R5	CH58.LucR.T2A.ecto	A3R5	IMC Virus	CH58.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CH58.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 delta env 1	cds_327
+NAB TZM-bl	CH58.LucR.T2A.ecto	TZM-bl	IMC Virus	CH58.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CH58.LucR.T2A.ecto,TZM-bl,full name		HIV	293T/17	SG3 beta env 2	cds_356
+NAB A3R5	CH77.LucR.T2A.ecto	A3R5	IMC Virus	CH77.LucR.T2A.ecto	IMC	dapibus augue	Not Available	Not Currently Recorded in Data	Praesent lectus. Vestibulum quam sapien, varius ut, blandit non, interdum in, ante.	0	CH77.LucR.T2A.ecto,A3R5,full name	CH77.LucR.T2A.ecto, IMC, A3R5, dapibus augue	HIV	293T/17	SG3 beta env 3	cds_127
+NAB TZM-bl	CH77.LucR.T2A.ecto	TZM-bl	IMC Virus	CH77.LucR.T2A.ecto	IMC	interdum in	Not Available	Not Currently Recorded in Data	Donec ut dolor.	0	CH77.LucR.T2A.ecto,TZM-bl,full name	CH77.LucR.T2A.ecto, IMC, TZM-bl, interdum in	HIV	293T/17	SG3 beta env 8	cds_147
+NAB A3R5	CH77.LucR.T2A.ecto	A3R5	IMC Virus	CH77.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CH77.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 alpha env 1	cds_328
+NAB TZM-bl	CH77.LucR.T2A.ecto	TZM-bl	IMC Virus	CH77.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CH77.LucR.T2A.ecto,TZM-bl,full name		HIV	293T/17	SG3 delta env 1	cds_357
+NAB MAB	CM244.c01	TZM-bl	Env Pseudotype	CM244.c01	Env Pseudotype			CRF01_AE		0	CM244.c01,TZM-bl,full name		HIV	294T/18	SG3 beta env 7	cds_209
+NAB MAB	CM244.c01	TZM-bl	Not Reported	CM244.c01	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	CM244.c01,TZM-bl,full name		HIV			cds_453
+NAB A3R5	CM244.c01-ETH2220LucR.T2A.4	A3R5	Not Reported	CM244.c01-ETH2220LucR.T2A.4	Not Reported	diam	Not Available	Not Currently Recorded in Data	Maecenas ut massa quis augue luctus tincidunt.	0	CM244.c01-ETH2220LucR.T2A.4,A3R5,full name	CM244.c01-ETH2220LucR.T2A.4, Not Reported, A3R5, diam	HIV	293T/17	SG3 alpha env 3	cds_152
+NAB A3R5	CM244.c01-ETH2220LucR.T2A.4	A3R5	Not Reported	CM244.c01-ETH2220LucR.T2A.4	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	CM244.c01-ETH2220LucR.T2A.4,A3R5,full name		HIV	293T/17	SG3 beta env 2	cds_350
+NAB MAB	CNE17	TZM-bl	Env Pseudotype	CNE17	Env Pseudotype					0	CNE17,TZM-bl,full name		HIV	294T/18	SG3 beta env 9	cds_211
+NAB MAB	CNE17	TZM-bl	Not Reported	CNE17	Env Pseudotype	Not Yet Available	\N	\N		0	CNE17,TZM-bl,full name		HIV			cds_438
+NAB MAB	CNE19	TZM-bl	Env Pseudotype	CNE19	Env Pseudotype					0	CNE19,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_244
+NAB MAB	CNE19	TZM-bl	Not Reported	CNE19	Env Pseudotype	Not Yet Available	\N	\N		0	CNE19,TZM-bl,full name		HIV			cds_393
+NAB MAB	CNE20	TZM-bl	Env Pseudotype	CNE20	Env Pseudotype					0	CNE20,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_266
+NAB MAB	CNE20	TZM-bl	Not Reported	CNE20	Env Pseudotype	Not Yet Available	\N	\N		0	CNE20,TZM-bl,full name		HIV			cds_394
+NAB MAB	CNE21	TZM-bl	Env Pseudotype	CNE21	Env Pseudotype					0	CNE21,TZM-bl,full name		HIV	294T/18	SG3 beta env 11	cds_234
+NAB MAB	CNE21	TZM-bl	Not Reported	CNE21	Env Pseudotype	Not Yet Available	\N	\N		0	CNE21,TZM-bl,full name		HIV			cds_395
+NAB MAB	CNE30	TZM-bl	Env Pseudotype	CNE30	Env Pseudotype					0	CNE30,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_253
+NAB MAB	CNE30	TZM-bl	Not Reported	CNE30	Env Pseudotype	Not Yet Available	\N	\N		0	CNE30,TZM-bl,full name		HIV			cds_439
+NAB MAB	CNE5	TZM-bl	Env Pseudotype	CNE5	Env Pseudotype				In hac habitasse platea dictumst.	0	CNE5,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_162
+NAB MAB	CNE5	TZM-bl	Not Reported	CNE5	Env Pseudotype	Not Yet Available	\N	\N		0	CNE5,TZM-bl,full name		HIV			cds_440
+NAB MAB	CNE52	TZM-bl	Env Pseudotype	CNE52	Env Pseudotype					0	CNE52,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_271
+NAB MAB	CNE52	TZM-bl	Not Reported	CNE52	Env Pseudotype	Not Yet Available	\N	\N		0	CNE52,TZM-bl,full name		HIV			cds_441
+NAB MAB	CNE53	TZM-bl	Env Pseudotype	CNE53	Env Pseudotype					0	CNE53,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_280
+NAB MAB	CNE53	TZM-bl	Not Reported	CNE53	Env Pseudotype	Not Yet Available	\N	\N		0	CNE53,TZM-bl,full name		HIV			cds_442
+NAB MAB	CNE55	TZM-bl	Env Pseudotype	CNE55	Env Pseudotype		2	CRF01_AE		0	CNE55,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_237
+NAB MAB	CNE58	TZM-bl	Env Pseudotype	CNE58	Env Pseudotype			BC		0	CNE58,TZM-bl,full name		HIV	294T/18	SG3 beta env 8	cds_168
+NAB MAB	CNE58	TZM-bl	Not Reported	CNE58	Env Pseudotype	Not Yet Available	\N	BC		0	CNE58,TZM-bl,full name		HIV			cds_443
+NAB MAB	CNE8	TZM-bl	Env Pseudotype	CNE8	Env Pseudotype		2	CRF01_AE		0	CNE8,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_254
+NAB MAB	DJ263.8	TZM-bl	Env Pseudotype	DJ263.8	Env Pseudotype		1B	CRF02_AG		0	DJ263.8,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_174
+NAB A3R5	Du151.2.LucR.T2A.ecto	A3R5	IMC Virus	Du151.2.LucR.T2A.ecto	IMC	vestibulum	Not Available	Not Currently Recorded in Data	In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante.	0	Du151.2.LucR.T2A.ecto,A3R5,full name	Du151.2.LucR.T2A.ecto, IMC, A3R5, vestibulum	HIV	293T/17	SG3 beta env 6	cds_130
+NAB A3R5	Du151.2.LucR.T2A.ecto	A3R5	IMC Virus	Du151.2.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Du151.2.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 beta env 2	cds_332
+NAB MAB	Du156.12	TZM-bl	Env Pseudotype	Du156.12	Env Pseudotype		2	C		0	Du156.12,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_189
+NAB MAB	Du172.17	TZM-bl	Env Pseudotype	Du172.17	Env Pseudotype		2	C		0	Du172.17,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_229
+NAB MAB	Du422.1	TZM-bl	Env Pseudotype	Du422.1	Env Pseudotype		2	C		0	Du422.1,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_250
+NAB A3R5	Du422.1.LucR.T2A.ecto	A3R5	IMC Virus	Du422.1.LucR.T2A.ecto	IMC	ac est	Not Available	Not Currently Recorded in Data	Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.	0	Du422.1.LucR.T2A.ecto,A3R5,full name	Du422.1.LucR.T2A.ecto, IMC, A3R5, ac est	HIV	293T/17	SG3 delta env 2	cds_144
+NAB A3R5	Du422.1.LucR.T2A.ecto	A3R5	IMC Virus	Du422.1.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	Du422.1.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 delta env 1	cds_333
+NAB TZM-bl	MN.3	TZM-bl	Pseudovirus Virus	MN.3	Pseudovirus	integer	1	B	Maecenas ut massa quis augue luctus tincidunt.	0	MN.3,TZM-bl,full name	MN.3, Pseudovirus, TZM-bl, integer	HIV	293T/17	SG3 alpha env 1	cds_153
+NAB TZM-bl	MN.3	TZM-bl	Not Reported	MN.3	Not Reported	faucibus accumsan odio	1	B	Integer a nibh. In quis justo.	0	MN.3,TZM-bl,full name	MN.3, Not Reported, TZM-bl, faucibus accumsan odio	HIV	294T/18	SG3 beta env 6	cds_161
+NAB MAB	MN.3	TZM-bl	Env Pseudotype	MN.3	Env Pseudotype		1A	B		0	MN.3,TZM-bl,full name		HIV	294T/18	SG3 alpha env 3	cds_173
+NAB MAB	MN.3	TZM-bl/Fc??__RI	Env Pseudotype	MN.3	Env Pseudotype		1A	B		0	MN.3,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_269
+NAB TZM-bl	MN.3	TZM-bl	Pseudovirus Virus	MN.3	Pseudovirus	Not Yet Available	1	B		0	MN.3,TZM-bl,full name		HIV	293T/17	SG3 delta env 1	cds_342
+NAB MAB	MS208.A1	TZM-bl	Env Pseudotype	MS208.A1	Env Pseudotype					0	MS208.A1,TZM-bl,full name		HIV	294T/18	SG3 delta env 3	cds_235
+NAB MAB	MS208.A1	TZM-bl	Not Reported	MS208.A1	Env Pseudotype	Not Yet Available	\N	\N		0	MS208.A1,TZM-bl,full name		HIV			cds_444
+NAB TZM-bl	MW965.26	TZM-bl	Pseudovirus Virus	MW965.26	Pseudovirus	orci luctus	Not Available	Not Currently Recorded in Data	Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis.	0	MW965.26,TZM-bl,full name	MW965.26, Pseudovirus, TZM-bl, orci luctus	HIV	293T/17	SG3 beta env 2	cds_154
+NAB TZM-bl	MW965.26	TZM-bl	Not Reported	MW965.26	Not Reported	adipiscing lorem	Not Available	Not Currently Recorded in Data	Integer ac leo.	0	MW965.26,TZM-bl,full name	MW965.26, Not Reported, TZM-bl, adipiscing lorem	HIV	293T/17	SG3 beta env 5	cds_160
+NAB MAB	MW965.26	TZM-bl	Env Pseudotype	MW965.26	Env Pseudotype		1A	C		0	MW965.26,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_305
+NAB TZM-bl	MW965.26	TZM-bl	Pseudovirus Virus	MW965.26	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	MW965.26,TZM-bl,full name		HIV	293T/17	SG3 alpha env 1	cds_343
+NAB MAB	NKU3006.ec1	TZM-bl	Env Pseudotype	NKU3006.ec1	Env Pseudotype					0	NKU3006.ec1,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_245
+NAB MAB	NKU3006.ec1	TZM-bl	Not Reported	NKU3006.ec1	Env Pseudotype	Not Yet Available	\N	\N		0	NKU3006.ec1,TZM-bl,full name		HIV			cds_396
+NAB TZM-bl	NP03.13	TZM-bl	Not Reported	NP03.13	Not Reported	parturient montes	Not Available	CRF01_AE	Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.	0	NP03.13,TZM-bl,full name	NP03.13, Not Reported, TZM-bl, parturient montes	HIV	293T/17	SG3 beta env 5	cds_139
+NAB TZM-bl	NP03.13	TZM-bl	Pseudovirus Virus	NP03.13	Pseudovirus	posuere nonummy integer	Not Available	CRF01_AE	Cras pellentesque volutpat dui.	0	NP03.13,TZM-bl,full name	NP03.13, Pseudovirus, TZM-bl, posuere nonummy integer	HIV	293T/17	SG3 beta env 11	cds_150
+NAB TZM-bl	NP03.13	TZM-bl	Not Reported	NP03.13	Not Reported	Not Yet Available	Not Available	CRF01_AE		0	NP03.13,TZM-bl,full name		HIV	293T/17	SG3 delta env 1	cds_345
+NAB TZM-bl	NP03.13	TZM-bl	Pseudovirus Virus	NP03.13	Pseudovirus	Not Yet Available	Not Available	CRF01_AE		0	NP03.13,TZM-bl,full name		HIV	293T/17	SG3 alpha env 1	cds_346
+NAB MAB	P0402_C2_11	TZM-bl	Env Pseudotype	P0402_C2_11	Env Pseudotype			G		0	P0402_C2_11,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_182
+NAB MAB	P0402_C2_11	TZM-bl	Not Reported	P0402_C2_11	Env Pseudotype	Not Yet Available	\N	G		0	P0402_C2_11,TZM-bl,full name		HIV			cds_445
+NAB MAB	P1981_C5_3	TZM-bl	Env Pseudotype	P1981_C5_3	Env Pseudotype			G		0	P1981_C5_3,TZM-bl,full name		HIV	294T/18	SG3 beta env 9	cds_169
+NAB MAB	P1981_C5_3	TZM-bl	Not Reported	P1981_C5_3	Env Pseudotype	Not Yet Available	\N	G		0	P1981_C5_3,TZM-bl,full name		HIV			cds_397
+NAB MAB	PVO.4	TZM-bl	Env Pseudotype	PVO.4	Env Pseudotype		3	B		0	PVO.4,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_201
+NAB TZM-bl	Q23.17	TZM-bl	Pseudovirus Virus	Q23.17	Pseudovirus	ipsum dolor	1	A	Nulla ac enim.	0	Q23.17,TZM-bl,full name	Q23.17, Pseudovirus, TZM-bl, ipsum dolor	HIV	293T/17	SG3 delta env 1	cds_111
+NAB MAB	Q23.17	TZM-bl	Env Pseudotype	Q23.17	Env Pseudotype		1B	A		0	Q23.17,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_239
+NAB MAB	Q23.17	TZM-bl/Fc??__RI	Env Pseudotype	Q23.17	Env Pseudotype		1B	A		0	Q23.17,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_283
+NAB TZM-bl	Q23.17	TZM-bl	Pseudovirus Virus	Q23.17	Pseudovirus	Not Yet Available	1	A		0	Q23.17,TZM-bl,full name		HIV	293T/17	SG3 beta env 2	cds_347
+NAB MAB	Q259.d2.17	TZM-bl	Env Pseudotype	Q259.d2.17	Env Pseudotype		2	A		0	Q259.d2.17,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_301
+NAB MAB	Q461.e2	TZM-bl	Env Pseudotype	Q461.e2	Env Pseudotype		2	A		0	Q461.e2,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_262
+NAB MAB	Q769.d22	TZM-bl	Env Pseudotype	Q769.d22	Env Pseudotype		2	A		0	Q769.d22,TZM-bl,full name		HIV	294T/18	SG3 beta env 7	cds_230
+NAB MAB	Q842.d12	TZM-bl	Env Pseudotype	Q842.d12	Env Pseudotype		2	A		0	Q842.d12,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_187
+NAB MAB	QH0692.42	TZM-bl	Env Pseudotype	QH0692.42	Env Pseudotype		2	B		0	QH0692.42,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_241
+NAB MAB	R1166.c01	TZM-bl	Env Pseudotype	R1166.c01	Env Pseudotype			CRF01_AE		0	R1166.c01,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_249
+NAB MAB	R1166.c01	TZM-bl	Not Reported	R1166.c01	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	R1166.c01,TZM-bl,full name		HIV			cds_398
+NAB MAB	R2184.c04	TZM-bl	Env Pseudotype	R2184.c04	Env Pseudotype			CRF01_AE		0	R2184.c04,TZM-bl,full name		HIV	294T/18	SG3 alpha env 3	cds_299
+NAB MAB	R2184.c04	TZM-bl	Not Reported	R2184.c04	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	R2184.c04,TZM-bl,full name		HIV			cds_399
+NAB A3R5	R2184.c04.LucR.T2A.ecto	A3R5	Not Reported	R2184.c04.LucR.T2A.ecto	Not Reported	libero quis	Not Available	Not Currently Recorded in Data	Sed accumsan felis.	0	R2184.c04.LucR.T2A.ecto,A3R5,full name	R2184.c04.LucR.T2A.ecto, Not Reported, A3R5, libero quis	HIV	293T/17	SG3 delta env 1	cds_121
+NAB A3R5	R2184.c04.LucR.T2A.ecto	A3R5	Not Reported	R2184.c04.LucR.T2A.ecto	Not Reported	Not Yet Available	Not Available	Not Currently Recorded in Data		0	R2184.c04.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 delta env 1	cds_351
+NAB MAB	R3265.c06	TZM-bl	Env Pseudotype	R3265.c06	Env Pseudotype					0	R3265.c06,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_226
+NAB MAB	R3265.c06	TZM-bl	Not Reported	R3265.c06	Env Pseudotype	Not Yet Available	\N	\N		0	R3265.c06,TZM-bl,full name		HIV			cds_400
+NAB A3R5	REJO.LucR.T2A.ecto	A3R5	IMC Virus	REJO.LucR.T2A.ecto	IMC	semper	Not Available	Not Currently Recorded in Data	Donec ut dolor.	0	REJO.LucR.T2A.ecto,A3R5,full name	REJO.LucR.T2A.ecto, IMC, A3R5, semper	HIV	293T/17	SG3 beta env 7	cds_146
+NAB A3R5	REJO.LucR.T2A.ecto	A3R5	IMC Virus	REJO.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	REJO.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 alpha env 1	cds_334
+NAB TZM-bl	REJO4541.67	TZM-bl	Pseudovirus Virus	REJO4541.67	Pseudovirus	placerat praesent blandit	2	B	Fusce posuere felis sed lacus.	0	REJO4541.67,TZM-bl,full name	REJO4541.67, Pseudovirus, TZM-bl, placerat praesent blandit	HIV	293T/17	SG3 alpha env 1	cds_112
+NAB MAB	REJO4541.67	TZM-bl	Env Pseudotype	REJO4541.67	Env Pseudotype		2	B		0	REJO4541.67,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_317
+NAB TZM-bl	REJO4541.67	TZM-bl	Pseudovirus Virus	REJO4541.67	Pseudovirus	Not Yet Available	2	B		0	REJO4541.67,TZM-bl,full name		HIV	293T/17	SG3 beta env 2	cds_362
+NAB TZM-bl	RHPA.LucR.T2A.ecto	TZM-bl	IMC Virus	RHPA.LucR.T2A.ecto	IMC	purus	Not Available	Not Currently Recorded in Data	Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.	0	RHPA.LucR.T2A.ecto,TZM-bl,full name	RHPA.LucR.T2A.ecto, IMC, TZM-bl, purus	HIV	293T/17	SG3 delta env 1	cds_131
+NAB A3R5	RHPA.LucR.T2A.ecto	A3R5	IMC Virus	RHPA.LucR.T2A.ecto	IMC	sit	Not Available	Not Currently Recorded in Data	Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.	0	RHPA.LucR.T2A.ecto,A3R5,full name	RHPA.LucR.T2A.ecto, IMC, A3R5, sit	HIV	293T/17	SG3 alpha env 2	cds_142
+NAB A3R5	RHPA.LucR.T2A.ecto	A3R5	IMC Virus	RHPA.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	RHPA.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 beta env 2	cds_335
+NAB TZM-bl	RHPA.LucR.T2A.ecto	TZM-bl	IMC Virus	RHPA.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	RHPA.LucR.T2A.ecto,TZM-bl,full name		HIV	293T/17	SG3 alpha env 1	cds_358
+NAB TZM-bl	RHPA4259.7	TZM-bl	Not Reported	RHPA4259.7	Not Reported	accumsan felis ut	2	B	Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue.	0	RHPA4259.7,TZM-bl,full name	RHPA4259.7, Not Reported, TZM-bl, accumsan felis ut	HIV	293T/17	SG3 beta env 6	cds_120
+NAB MAB	RHPA4259.7	TZM-bl	Env Pseudotype	RHPA4259.7	Env Pseudotype		2	B		0	RHPA4259.7,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_288
+NAB MAB	SC05.8C11.2344	TZM-bl/Fc??__RI	Env Pseudotype	SC05.8C11.2344	Env Pseudotype		2	B		0	SC05.8C11.2344,TZM-bl,full name		HIV	294T/18	SG3 delta env 3	cds_214
+NAB MAB	SC05.8C11.2344	TZM-bl	Env Pseudotype	SC05.8C11.2344	Env Pseudotype		2	B		0	SC05.8C11.2344,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_310
+NAB A3R5	SC22.3C2.LucR.T2A.ecto	A3R5	IMC Virus	SC22.3C2.LucR.T2A.ecto	IMC	tristique	Not Available	Not Currently Recorded in Data	Ut at dolor quis odio consequat varius.	0	SC22.3C2.LucR.T2A.ecto,A3R5,full name	SC22.3C2.LucR.T2A.ecto, IMC, A3R5, tristique	HIV	293T/17	SG3 beta env 2	cds_133
+NAB TZM-bl	SC22.3C2.LucR.T2A.ecto	TZM-bl	IMC Virus	SC22.3C2.LucR.T2A.ecto	IMC	mattis pulvinar nulla	Not Available	Not Currently Recorded in Data	Nulla tempus.	0	SC22.3C2.LucR.T2A.ecto,TZM-bl,full name	SC22.3C2.LucR.T2A.ecto, IMC, TZM-bl, mattis pulvinar nulla	HIV	293T/17	SG3 beta env 9	cds_148
+NAB A3R5	SC22.3C2.LucR.T2A.ecto	A3R5	IMC Virus	SC22.3C2.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SC22.3C2.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 delta env 1	cds_336
+NAB TZM-bl	SC22.3C2.LucR.T2A.ecto	TZM-bl	IMC Virus	SC22.3C2.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SC22.3C2.LucR.T2A.ecto,TZM-bl,full name		HIV	293T/17	SG3 beta env 2	cds_359
+NAB TZM-bl	SC422661.8	TZM-bl	Pseudovirus Virus	SC422661.8	Pseudovirus	condimentum	2	B	Mauris ullamcorper purus sit amet nulla.	0	SC422661.8,TZM-bl,full name	SC422661.8, Pseudovirus, TZM-bl, condimentum	HIV	293T/17	SG3 delta env 3	cds_151
+NAB MAB	SC422661.8	TZM-bl	Env Pseudotype	SC422661.8	Env Pseudotype		2	B		0	SC422661.8,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_268
+NAB TZM-bl	SC422661.8	TZM-bl	Pseudovirus Virus	SC422661.8	Pseudovirus	Not Yet Available	2	B		0	SC422661.8,TZM-bl,full name		HIV	293T/17	SG3 delta env 1	cds_363
+NAB TZM-bl	SF162.LS	TZM-bl	Not Reported	SF162.LS	Not Reported	nonummy integer non	1	B	In hac habitasse platea dictumst. Etiam faucibus cursus urna.	0	SF162.LS,TZM-bl,full name	SF162.LS, Not Reported, TZM-bl, nonummy integer non	HIV	293T/17	SG3 alpha env 1	cds_156
+NAB TZM-bl	SF162.LS	TZM-bl	Pseudovirus Virus	SF162.LS	Pseudovirus	libero ut	1	B	Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.	0	SF162.LS,TZM-bl,full name	SF162.LS, Pseudovirus, TZM-bl, libero ut	HIV	293T/17	SG3 beta env 4	cds_159
+NAB MAB	SF162.LS	TZM-bl	Env Pseudotype	SF162.LS	Env Pseudotype		1A	B		0	SF162.LS,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_204
+NAB TZM-bl	SF162.LS	TZM-bl	Pseudovirus Virus	SF162.LS	Pseudovirus	Not Yet Available	1	B		0	SF162.LS,TZM-bl,full name		HIV	293T/17	SG3 beta env 2	cds_344
+NAB MAB	SHIV 1157ipd3N4	TZM-bl	SHIV	SHIV 1157ipd3N4	SHIV		2	C		0	SHIV 1157ipd3N4,TZM-bl,full name		HIV	294T/18	SG3 delta env 3	cds_298
+NAB MAB	SHIV SF162.P3	TZM-bl	SHIV	SHIV SF162.P3	SHIV					0	SHIV SF162.P3,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_218
+NAB MAB	SHIV SF162.P3	TZM-bl	Not Reported	SHIV SF162.P3	SHIV	Not Yet Available	\N	\N		0	SHIV SF162.P3,TZM-bl,full name		SHIV			cds_417
+NAB MAB	SHIV SF162P4	TZM-bl	SHIV	SHIV SF162P4	SHIV					0	SHIV SF162P4,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_248
+NAB MAB	SHIV SF162P4	TZM-bl	Not Reported	SHIV SF162P4	SHIV	Not Yet Available	\N	\N		0	SHIV SF162P4,TZM-bl,full name		SHIV			cds_418
+NAB MAB	SHIV-BaLP4	TZM-bl	Primary Isolate	SHIV-BaLP4	Primary Isolate					0	SHIV-BaLP4,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_223
+NAB MAB	SHIV-BaLP4	TZM-bl	Not Reported	SHIV-BaLP4	Primary Isolate	Not Yet Available	\N	\N		0	SHIV-BaLP4,TZM-bl,full name		HIV			cds_419
+NAB A3R5	SIVmac239.ps.LucR.T2A.ecto	A3R5	IMC Virus	SIVmac239.ps.LucR.T2A.ecto	IMC	vulputate nonummy maecenas	Not Available	Not Currently Recorded in Data	Praesent lectus. Vestibulum quam sapien, varius ut, blandit non, interdum in, ante.	0	SIVmac239.ps.LucR.T2A.ecto,A3R5,full name	SIVmac239.ps.LucR.T2A.ecto, IMC, A3R5, vulputate nonummy maecenas	HIV	293T/17	SG3 beta env 3	cds_143
+NAB A3R5	SIVmac239.ps.LucR.T2A.ecto	A3R5	IMC Virus	SIVmac239.ps.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SIVmac239.ps.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 delta env 1	cds_354
+NAB A3R5	SIVmac239.ps-NL.LucR.T2A.ecto	A3R5	IMC Virus	SIVmac239.ps-NL.LucR.T2A.ecto	IMC	nunc	Not Available	Not Currently Recorded in Data	Donec posuere metus vitae ipsum. Aliquam non mauris.	0	SIVmac239.ps-NL.LucR.T2A.ecto,A3R5,full name	SIVmac239.ps-NL.LucR.T2A.ecto, IMC, A3R5, nunc	HIV	293T/17	SG3 beta env 5	cds_129
+NAB A3R5	SIVmac239.ps-NL.LucR.T2A.ecto	A3R5	IMC Virus	SIVmac239.ps-NL.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SIVmac239.ps-NL.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 delta env 1	cds_339
+NAB TZM-bl	SS1196.1	TZM-bl	Pseudovirus Virus	SS1196.1	Pseudovirus	lacinia	1	B	Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet.	0	SS1196.1,TZM-bl,full name	SS1196.1, Pseudovirus, TZM-bl, lacinia	HIV	293T/17	SG3 beta env 4	cds_118
+NAB TZM-bl	SS1196.1	TZM-bl	Pseudovirus Virus	SS1196.1	Pseudovirus	Not Yet Available	1	B		0	SS1196.1,TZM-bl,full name		HIV	293T/17	SG3 alpha env 1	cds_364
+NAB TZM-bl	SVA-MLV	TZM-bl	Pseudovirus Virus	SVA-MLV	Pseudovirus	tristique in	Not Available	Not Currently Recorded in Data	Etiam pretium iaculis justo. In hac habitasse platea dictumst.	0	SVA-MLV,TZM-bl,full name	SVA-MLV, Pseudovirus, TZM-bl, tristique in	HIV	293T/17	SG3 beta env 10	cds_149
+NAB MAB	SVA-MLV	TZM-bl	Env Pseudotype	SVA-MLV	Env Pseudotype		1			0	SVA-MLV,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_194
+NAB TZM-bl	SVA-MLV	TZM-bl	Pseudovirus Virus	SVA-MLV	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	SVA-MLV,TZM-bl,full name		HIV	293T/17	SG3 alpha env 1	cds_355
+NAB MAB	SVA-MLV	TZM-bl	Not Reported	SVA-MLV	Env Pseudotype	Not Yet Available	1	\N		0	SVA-MLV,TZM-bl,full name		HIV			cds_401
+NAB MAB	T211-9	TZM-bl	Env Pseudotype	T211-9	Env Pseudotype				In hac habitasse platea dictumst.	0	T211-9,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_163
+NAB MAB	T211-9	TZM-bl	Not Reported	T211-9	Env Pseudotype	Not Yet Available	\N	\N		0	T211-9,TZM-bl,full name		HIV			cds_446
+NAB MAB	T250-4	TZM-bl	Env Pseudotype	T250-4	Env Pseudotype					0	T250-4,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_315
+NAB MAB	T250-4	TZM-bl	Not Reported	T250-4	Env Pseudotype	Not Yet Available	\N	\N		0	T250-4,TZM-bl,full name		HIV			cds_402
+NAB MAB	T251-18	TZM-bl	Env Pseudotype	T251-18	Env Pseudotype					0	T251-18,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_319
+NAB MAB	T251-18	TZM-bl	Not Reported	T251-18	Env Pseudotype	Not Yet Available	\N	\N		0	T251-18,TZM-bl,full name		HIV			cds_403
+NAB MAB	T255-34	TZM-bl	Env Pseudotype	T255-34	Env Pseudotype					0	T255-34,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_258
+NAB MAB	T255-34	TZM-bl	Not Reported	T255-34	Env Pseudotype	Not Yet Available	\N	\N		0	T255-34,TZM-bl,full name		HIV			cds_447
+NAB MAB	T257-31	TZM-bl	Env Pseudotype	T257-31	Env Pseudotype					0	T257-31,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_251
+NAB MAB	T257-31	TZM-bl	Not Reported	T257-31	Env Pseudotype	Not Yet Available	\N	\N		0	T257-31,TZM-bl,full name		HIV			cds_404
+NAB MAB	T263-8	TZM-bl	Env Pseudotype	T263-8	Env Pseudotype					0	T263-8,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_228
+NAB MAB	T263-8	TZM-bl	Not Reported	T263-8	Env Pseudotype	Not Yet Available	\N	\N		0	T263-8,TZM-bl,full name		HIV			cds_405
+NAB MAB	T271-11	TZM-bl	Env Pseudotype	T271-11	Env Pseudotype					0	T271-11,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_193
+NAB MAB	T271-11	TZM-bl	Not Reported	T271-11	Env Pseudotype	Not Yet Available	\N	\N		0	T271-11,TZM-bl,full name		HIV			cds_406
+NAB MAB	T278-50	TZM-bl	Env Pseudotype	T278-50	Env Pseudotype					0	T278-50,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_256
+NAB MAB	T278-50	TZM-bl	Not Reported	T278-50	Env Pseudotype	Not Yet Available	\N	\N		0	T278-50,TZM-bl,full name		HIV			cds_448
+NAB TZM-bl	TH023.6	TZM-bl	Not Reported	TH023.6	Not Reported	consectetuer	Not Available	CRF01_AE	Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo.	0	TH023.6,TZM-bl,full name	TH023.6, Not Reported, TZM-bl, consectetuer	HIV	293T/17	SG3 beta env 2	cds_123
+NAB TZM-bl	TH023.6	TZM-bl	Pseudovirus Virus	TH023.6	Pseudovirus	at	Not Available	CRF01_AE	Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa.	0	TH023.6,TZM-bl,full name	TH023.6, Pseudovirus, TZM-bl, at	HIV	293T/17	SG3 beta env 4	cds_138
+NAB MAB	TH023.6	TZM-bl	Env Pseudotype	TH023.6	Env Pseudotype			CRF01_AE		0	TH023.6,TZM-bl,full name		HIV	294T/18	SG3 alpha env 3	cds_278
+NAB TZM-bl	TH023.6	TZM-bl	Pseudovirus Virus	TH023.6	Pseudovirus	Not Yet Available	Not Available	CRF01_AE		0	TH023.6,TZM-bl,full name		HIV	293T/17	SG3 alpha env 1	cds_352
+NAB MAB	TH023.6	TZM-bl	Not Reported	TH023.6	Env Pseudotype	Not Yet Available	\N	CRF01_AE		0	TH023.6,TZM-bl,full name		HIV			cds_454
+NAB MAB	THRO4156.18	TZM-bl	Env Pseudotype	THRO4156.18	Env Pseudotype		2	B		0	THRO4156.18,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_260
+NAB MAB	TRJO4551.58	TZM-bl	Env Pseudotype	TRJO4551.58	Env Pseudotype		3	B		0	TRJO4551.58,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_197
+NAB TZM-bl	TRO.11	TZM-bl	Pseudovirus Virus	TRO.11	Pseudovirus	odio	2	B	Praesent lectus. Vestibulum quam sapien, varius ut, blandit non, interdum in, ante.	0	TRO.11,TZM-bl,full name	TRO.11, Pseudovirus, TZM-bl, odio	HIV	293T/17	SG3 alpha env 1	cds_115
+NAB MAB	TRO.11	TZM-bl/Fc??__RI	Env Pseudotype	TRO.11	Env Pseudotype		2	B		0	TRO.11,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_247
+NAB MAB	TRO.11	TZM-bl	Env Pseudotype	TRO.11	Env Pseudotype		2	B		0	TRO.11,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_287
+NAB TZM-bl	TRO.11	TZM-bl	Pseudovirus Virus	TRO.11	Pseudovirus	Not Yet Available	2	B		0	TRO.11,TZM-bl,full name		HIV	293T/17	SG3 beta env 2	cds_365
+NAB MAB	TRO.11.N332A	TZM-bl	Env Pseudotype	TRO.11.N332A	Env Pseudotype			B		0	TRO.11.N332A,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_316
+NAB MAB	TRO.11.N332A	TZM-bl	Not Reported	TRO.11.N332A	Env Pseudotype	Not Yet Available	\N	B		0	TRO.11.N332A,TZM-bl,full name		HIV			cds_449
+NAB TZM-bl	TV1.21	TZM-bl	Pseudovirus Virus	TV1.21	Pseudovirus	volutpat dui	Not Available	C	Cras pellentesque volutpat dui. Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc.	0	TV1.21,TZM-bl,full name		SHIV	293T/17		cds_134
+NAB MAB	TV1.21	TZM-bl	Env Pseudotype	TV1.21	Env Pseudotype		1	C		0	TV1.21,TZM-bl,full name		SHIV	294T/18		cds_303
+NAB A3R5	TV1.21.LucR.T2A.ecto	A3R5	IMC Virus	TV1.21.LucR.T2A.ecto	IMC	nulla sed vel	Not Available	Not Currently Recorded in Data	Maecenas ut massa quis augue luctus tincidunt. Nulla mollis molestie lorem.	0	TV1.21.LucR.T2A.ecto,A3R5,full name		SHIV	293T/17		cds_135
+NAB A3R5	TV1.21.LucR.T2A.ecto	A3R5	IMC Virus	TV1.21.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	TV1.21.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 alpha env 1	cds_337
+NAB TZM-bl	W61D(TCLA).71	TZM-bl	TCLA Virus	W61D(TCLA).71	TCLA	lacus purus	Not Available	Not Currently Recorded in Data	Sed ante. Vivamus tortor.	0	W61D(TCLA).71,TZM-bl,full name	W61D(TCLA).71, TCLA, TZM-bl, lacus purus	HIV	293T/17	SG3 delta env 2	cds_141
+NAB TZM-bl	W61D(TCLA).71	TZM-bl	Pseudovirus Virus	W61D(TCLA).71	Pseudovirus	interdum in	Not Available	Not Currently Recorded in Data	Aliquam non mauris.	0	W61D(TCLA).71,TZM-bl,full name	W61D(TCLA).71, Pseudovirus, TZM-bl, interdum in	HIV	293T/17	SG3 alpha env 2	cds_145
+NAB TZM-bl	W61D(TCLA).71	TZM-bl	Pseudovirus Virus	W61D(TCLA).71	Pseudovirus	Not Yet Available	Not Available	Not Currently Recorded in Data		0	W61D(TCLA).71,TZM-bl,full name		HIV	293T/17	SG3 delta env 1	cds_366
+NAB TZM-bl	W61D(TCLA).71	TZM-bl	TCLA Virus	W61D(TCLA).71	TCLA	Not Yet Available	Not Available	Not Currently Recorded in Data		0	W61D(TCLA).71,TZM-bl,full name		HIV	293T/17	SG3 alpha env 1	cds_367
+NAB MAB	WEAU-d15.410.787	TZM-bl	Env Pseudotype	WEAU-d15.410.787	Env Pseudotype		2	B		0	WEAU-d15.410.787,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_282
+NAB A3R5	WITO.LucR.T2A.ecto	A3R5	IMC Virus	WITO.LucR.T2A.ecto	IMC	mauris laoreet	Not Available	Not Currently Recorded in Data	Morbi porttitor lorem id ligula.	0	WITO.LucR.T2A.ecto,A3R5,full name	WITO.LucR.T2A.ecto, IMC, A3R5, mauris laoreet	HIV	293T/17	SG3 beta env 3	cds_117
+NAB A3R5	WITO.LucR.T2A.ecto	A3R5	IMC Virus	WITO.LucR.T2A.ecto	IMC	Not Yet Available	Not Available	Not Currently Recorded in Data		0	WITO.LucR.T2A.ecto,A3R5,full name		HIV	293T/17	SG3 beta env 2	cds_338
+NAB TZM-bl	WITO4160.33	TZM-bl	Not Reported	WITO4160.33	Not Reported	felis sed interdum	2	B	Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante.	0	WITO4160.33,TZM-bl,full name	WITO4160.33, Not Reported, TZM-bl, felis sed interdum	HIV	293T/17	SG3 beta env 2	cds_116
+NAB MAB	WITO4160.33	TZM-bl	Env Pseudotype	WITO4160.33	Env Pseudotype		2	B		0	WITO4160.33,TZM-bl,full name		HIV	294T/18	SG3 beta env 10	cds_275
+NAB MAB	X1193_C1	TZM-bl	Env Pseudotype	X1193_C1	Env Pseudotype					0	X1193_C1,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_192
+NAB MAB	X1193_C1	TZM-bl	Not Reported	X1193_C1	Env Pseudotype	Not Yet Available	\N	\N		0	X1193_C1,TZM-bl,full name		HIV			cds_407
+NAB MAB	X1254_C3	TZM-bl	Env Pseudotype	X1254_C3	Env Pseudotype					0	X1254_C3,TZM-bl,full name		HIV	294T/18	SG3 beta env 4	cds_285
+NAB MAB	X1254_C3	TZM-bl	Not Reported	X1254_C3	Env Pseudotype	Not Yet Available	\N	\N		0	X1254_C3,TZM-bl,full name		HIV			cds_408
+NAB MAB	X1632_S2_B10	TZM-bl	Env Pseudotype	X1632_S2_B10	Env Pseudotype					0	X1632_S2_B10,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_179
+NAB MAB	X1632_S2_B10	TZM-bl	Not Reported	X1632_S2_B10	Env Pseudotype	Not Yet Available	\N	\N		0	X1632_S2_B10,TZM-bl,full name		HIV			cds_409
+NAB MAB	X1632-S2-B10	TZM-bl	Env Pseudotype	X1632-S2-B10	Env Pseudotype			G		0	X1632-S2-B10,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_281
+NAB MAB	X1632-S2-B10	TZM-bl	Not Reported	X1632-S2-B10	Env Pseudotype	Not Yet Available	\N	G		0	X1632-S2-B10,TZM-bl,full name		HIV			cds_450
+NAB MAB	X1854_C2_10	TZM-bl	Env Pseudotype	X1854_C2_10	Env Pseudotype					0	X1854_C2_10,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_270
+NAB MAB	X1854_C2_10	TZM-bl	Not Reported	X1854_C2_10	Env Pseudotype	Not Yet Available	\N	\N		0	X1854_C2_10,TZM-bl,full name		HIV			cds_410
+NAB MAB	X2088_C9	TZM-bl	Env Pseudotype	X2088_C9	Env Pseudotype					0	X2088_C9,TZM-bl,full name		HIV	294T/18	SG3 alpha env 2	cds_292
+NAB MAB	X2088_C9	TZM-bl	Not Reported	X2088_C9	Env Pseudotype	Not Yet Available	\N	\N		0	X2088_C9,TZM-bl,full name		HIV			cds_411
+NAB MAB	X2131_C1_B5	TZM-bl	Env Pseudotype	X2131_C1_B5	Env Pseudotype					0	X2131_C1_B5,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_311
+NAB MAB	X2131_C1_B5	TZM-bl	Not Reported	X2131_C1_B5	Env Pseudotype	Not Yet Available	\N	\N		0	X2131_C1_B5,TZM-bl,full name		HIV			cds_412
+NAB MAB	X2160_C25	TZM-bl	Env Pseudotype	X2160_C25	Env Pseudotype					0	X2160_C25,TZM-bl,full name		HIV	294T/18	SG3 beta env 7	cds_293
+NAB MAB	X2160_C25	TZM-bl	Not Reported	X2160_C25	Env Pseudotype	Not Yet Available	\N	\N		0	X2160_C25,TZM-bl,full name		HIV			cds_413
+NAB MAB	X2278-C2-B6	TZM-bl	Env Pseudotype	X2278-C2-B6	Env Pseudotype		2	B		0	X2278-C2-B6,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_206
+NAB MAB	ZM109F.PB4	TZM-bl	Env Pseudotype	ZM109F.PB4	Env Pseudotype		1B / 2	C		0	ZM109F.PB4,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_216
+NAB MAB	ZM135M.PL10a	TZM-bl	Env Pseudotype	ZM135M.PL10a	Env Pseudotype		2	C		0	ZM135M.PL10a,TZM-bl,full name		HIV	294T/18	SG3 alpha env 1	cds_195
+NAB MAB	ZM197M.PB7	TZM-bl	Env Pseudotype	ZM197M.PB7	Env Pseudotype		1B / 2	C		0	ZM197M.PB7,TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_196
+NAB MAB	ZM214M.PL15	TZM-bl	Env Pseudotype	ZM214M.PL15	Env Pseudotype		2	C		0	ZM214M.PL15,TZM-bl,full name		HIV	294T/18	SG3 delta env 2	cds_225
+NAB MAB	ZM233M.PB6	TZM-bl	Env Pseudotype	ZM233M.PB6	Env Pseudotype		2	C		0	ZM233M.PB6,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_203
+NAB MAB	ZM247v1 (Rev-)	TZM-bl	Env Pseudotype	ZM247v1 (Rev-)	Env Pseudotype		2	C		0	ZM247v1 (Rev-),TZM-bl,full name		HIV	294T/18	SG3 beta env 2	cds_322
+NAB MAB	ZM249M.PL1	TZM-bl	Env Pseudotype	ZM249M.PL1	Env Pseudotype		2	C		0	ZM249M.PL1,TZM-bl,full name		HIV	294T/18	SG3 beta env 9	cds_274
+NAB MAB	ZM53M.PB12	TZM-bl	Env Pseudotype	ZM53M.PB12	Env Pseudotype		2	C		0	ZM53M.PB12,TZM-bl,full name		HIV	294T/18	SG3 beta env 3	cds_290
