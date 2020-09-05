@@ -40,9 +40,9 @@ Ext.define('Connector.measure.Configuration', {
                         'study_NAb_target_cell',
                         'study_NAb_summary_level',
                         'study_NAb_virus',
-                        'study_NAb_virus_host_cell',
                         'study_NAb_virus_full_name',
                         'study_NAb_virus_species',
+                        'study_NAb_virus_host_cell',
                         'study_NAb_virus_backbone',
                         'study_NAb_initial_dilution',
                         'study_NAb_specimen_type',
@@ -714,15 +714,15 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_virus_insert_name' : {
                     hidden: true
                 },
-                'study_NAb_virus_host_cell': {
-                    hiddenInPlot: false,
-                    hiddenInAdvancedOptions: true
-                },
                 'study_NAb_virus_full_name': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true
                 },
                 'study_NAb_virus_species': {
+                    hiddenInPlot: false,
+                    hiddenInAdvancedOptions: true
+                },
+                'study_NAb_virus_host_cell': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true
                 },
