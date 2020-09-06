@@ -379,7 +379,11 @@ public class CDSGridTest extends CDSReadOnlyTest
                 "Specimen type",
                 "Target cell",
                 "Titer ID50",
-                "Virus name"));
+                "Virus backbone",
+                "Virus full name",
+                "Virus host cell",
+                "Virus name",
+                "Virus species"));
         grid.verifyCDSExcel(exported, false);
         grid.verifyCDSCSV(exported);
     }

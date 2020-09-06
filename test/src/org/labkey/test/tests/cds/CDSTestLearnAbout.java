@@ -815,7 +815,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("BJOX002000.03.2.delta624G.E625R.3-5"));
 
         log("Verify Virus full name");
-        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("BJOX002000.03.2.delta624G.E625R.3-5, Env Pseudotype, TZM-bl, delta chain"));
+        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("BJOX002000.03.2.delta624G.E625R.3-5,TZM-bl,full name"));
 
         log("Verify Species");
         assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("HIV"));
@@ -852,7 +852,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("Ce2010_F5.LucR.T2A.ecto"));
 
         log("Verify Virus long name");
-        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("Ce2010_F5.LucR.T2A.ecto, IMC, A3R5"));
+        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("Ce2010_F5.LucR.T2A.ecto,A3R5,full name"));
 
         log("Verify Virus other names");
         assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("Other names: Ce2010_F5.LucR.T2A.ecto, IMC, A3R5, ut massa"));

@@ -322,7 +322,7 @@ Ext.define('Connector.view.InfoPane', {
                     '</div>',
                     {
                 hasOtherName : function(vals) {
-                    return !Ext.isEmpty(vals.otherName, true);
+                    return !Ext.isEmpty(vals.otherName);
                 }
             }
                 )
