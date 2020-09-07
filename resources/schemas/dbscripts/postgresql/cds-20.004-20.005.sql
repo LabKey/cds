@@ -14,3 +14,5 @@ ALTER TABLE cds.import_nabmab DROP COLUMN neutralization_tier;
 ALTER TABLE cds.import_nabmab DROP COLUMN virus;
 ALTER TABLE cds.import_nabmab DROP COLUMN virus_type;
 ALTER TABLE cds.import_nabmab ADD COLUMN cds_virus_id VARCHAR(250);
+
+ALTER TABLE cds.mabgridbase ADD COLUMN virus_full_name VARCHAR(250);

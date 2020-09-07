@@ -10,7 +10,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     singleton: true,
 
-    MAB_GRID_BASE: 'cds.mAbGridBaseWithVirusFullName',
+    MAB_GRID_BASE: 'cds.mAbGridBase',
 
     MAB_GRID_BASE_ALIAS: 'CDS_MabGridBase',
 

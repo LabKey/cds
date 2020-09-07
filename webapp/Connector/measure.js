@@ -711,28 +711,38 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_response_call' : {
                     hidden: true
                 },
+                'study_NAb_clade': {
+                    sortOrder: 1
+                },
                 'study_NAb_virus_insert_name' : {
-                    hidden: true
+                    hidden: true,
+                    sortOrder: 2
+                },
+                'study_NAb_virus': {
+                    sortOrder: 3
+                },
+                'study_NAb_virus_type': {
+                    sortOrder: 4
                 },
                 'study_NAb_virus_full_name': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true,
-                    sortOrder: 1
+                    sortOrder: 5
                 },
                 'study_NAb_virus_species': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true,
-                    sortOrder: 2
+                    sortOrder: 6
                 },
                 'study_NAb_virus_host_cell': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true,
-                    sortOrder: 3
+                    sortOrder: 7
                 },
                 'study_NAb_virus_backbone': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true,
-                    sortOrder: 4
+                    sortOrder: 8
                 },
                 'study_NAb_assay_identifier': {
                     hidden: true

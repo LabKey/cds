@@ -1074,6 +1074,7 @@
             <column columnName="mab_mix_name_std"/>
             <column columnName="study"/>
             <column columnName="virus"/>
+            <column columnName="virus_full_name"/>
             <column columnName="clade"/>
             <column columnName="neutralization_tier"/>
             <column columnName="tier_clade_virus"/>
