@@ -631,16 +631,38 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     getNABMAbExportColumns : function(excludedColumns) {
-        var allMeasures = Connector.getQueryService().MEASURE_STORE.data.items, mabMeasures = [];
+        var virusMetaSortOrder = {
+            'study_NABMAb_clade' : 1,
+            'study_NABMAb_virus_insert_name' : 2,
+            'study_NABMAb_virus': 3,
+            'study_NABMAb_virus_type' : 4,
+            'study_NABMAb_virus_full_name' : 5,
+            'study_NABMAb_virus_species' : 6,
+            'study_NABMAb_virus_host_cell': 7,
+            'study_NABMAb_virus_backbone': 8};
+
+        var allMeasures = Connector.getQueryService().MEASURE_STORE.data.items, mabMeasures = [], virusMeta = [];
         Ext.each(allMeasures, function(measure) {
             if (measure.get("queryName") === "NABMAb" && !measure.get("hidden")) {
-                if (!excludedColumns || excludedColumns.indexOf(measure.get('lowerAlias')) === -1)
-                    mabMeasures.push(measure);
+                if (virusMetaSortOrder[measure.get("alias")]) {
+                    virusMeta.push(measure);
+                }
+                else {
+                    if (!excludedColumns || excludedColumns.indexOf(measure.get('lowerAlias')) === -1)
+                        mabMeasures.push(measure);
+                }
             }
         });
         var sortedMAbMeasures = mabMeasures.sort(function(a, b) {
             return a.get('label').localeCompare(b.get('label'));
         });
+
+        virusMeta.sort(function (a, b) {
+            return virusMetaSortOrder[a.get('alias')] - virusMetaSortOrder[b.get('alias')];
+        });
+
+        sortedMAbMeasures = sortedMAbMeasures.concat(virusMeta);
+
         var orderedColumns = this.BASE_EXPORT_COLUMNS.slice(0); //clone
         var orderedColumnLabels = this.BASE_EXPORT_COLUMN_LABLES.slice(0);
 
