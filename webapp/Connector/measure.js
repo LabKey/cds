@@ -712,37 +712,45 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_NAb_clade': {
-                    sortOrder: 1
+                    sortOrder: 1,
+                    isVirusMetadataField: true
                 },
                 'study_NAb_virus_insert_name' : {
                     hidden: true,
-                    sortOrder: 2
+                    sortOrder: 2,
+                    isVirusMetadataField: true
                 },
                 'study_NAb_virus': {
-                    sortOrder: 3
+                    sortOrder: 3,
+                    isVirusMetadataField: true
                 },
                 'study_NAb_virus_type': {
-                    sortOrder: 4
+                    sortOrder: 4,
+                    isVirusMetadataField: true
                 },
                 'study_NAb_virus_full_name': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true,
-                    sortOrder: 5
+                    sortOrder: 5,
+                    isVirusMetadataField: true
                 },
                 'study_NAb_virus_species': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true,
-                    sortOrder: 6
+                    sortOrder: 6,
+                    isVirusMetadataField: true
                 },
                 'study_NAb_virus_host_cell': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true,
-                    sortOrder: 7
+                    sortOrder: 7,
+                    isVirusMetadataField: true
                 },
                 'study_NAb_virus_backbone': {
                     hiddenInPlot: false,
                     hiddenInAdvancedOptions: true,
-                    sortOrder: 8
+                    sortOrder: 8,
+                    isVirusMetadataField: true
                 },
                 'study_NAb_assay_identifier': {
                     hidden: true
