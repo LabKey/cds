@@ -1148,15 +1148,27 @@ Ext.define('Connector.model.Grid', {
         // include and default grid columns
         columns = columns.concat(Connector.getQueryService().getDefaultGridAliases(true /* asArray */));
 
+        var virusMetaFields = [];
+        Ext.each(this.getWrappedMeasures(), function(col){
+            if (col.measure.isVirusMetadataField) {
+                virusMetaFields.push({alias: col.measure.alias,  sortOrder: col.measure.sortOrder});
+            }
+        });
+        var virusFieldsSorted = virusMetaFields.sort(function (val1, val2) { return val1.sortOrder - val2.sortOrder;});
+
         // include columns for all the measures
-        Ext.each(this.getWrappedMeasures(), function(wrapped)
-        {
-            if (wrapped.measure.alias.toLowerCase() !== QueryUtils.SUBJECT_SEQNUM_ALIAS.toLowerCase())
+        Ext.each(this.getWrappedMeasures(), function(wrapped) {
+            if (wrapped.measure.alias.toLowerCase() !== QueryUtils.SUBJECT_SEQNUM_ALIAS.toLowerCase() && !wrapped.measure.isVirusMetadataField)
             {
                 columns.push(QueryUtils.ensureAlignmentAlias(wrapped));
             }
         });
 
+        // include sorted virus metadata fields
+        Ext.each(virusFieldsSorted, function(field) {
+            field.sortable = false;
+            columns.push(field.alias);
+        });
         return Ext.Array.unique(columns);
     },
 

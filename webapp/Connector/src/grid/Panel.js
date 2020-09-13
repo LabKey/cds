@@ -134,16 +134,18 @@ Ext.define('Connector.grid.Panel', {
                             return a.measure.sortOrder - b.measure.sortOrder;
                         }
                         else {
-                            var ah = isMeasure ? a.measure.label.toLowerCase() : a.header.toLowerCase(),
-                                    bh = isMeasure ? b.measure.label.toLowerCase() : b.header.toLowerCase();
+                            if (key !== QueryUtils.DATA_SOURCE_NAb) {
+                                var ah = isMeasure ? a.measure.label.toLowerCase() : a.header.toLowerCase(),
+                                        bh = isMeasure ? b.measure.label.toLowerCase() : b.header.toLowerCase();
 
-                            if (ah.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || ah.toLowerCase() === Connector.studyContext.subjectLabel.toLowerCase())
-                                return -1;
-                            else if (bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
-                                return 1;
+                                if (ah.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || ah.toLowerCase() === Connector.studyContext.subjectLabel.toLowerCase())
+                                    return -1;
+                                else if (bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
+                                    return 1;
 
-                            // sort columns alphabetically by title
-                            return ah == bh ? 0 : (ah > bh ? 1 : -1);
+                                // sort columns alphabetically by title
+                                return ah == bh ? 0 : (ah > bh ? 1 : -1);
+                            }
                         }
                     })
                 });
