@@ -526,6 +526,10 @@ public class CDSHelper
     public static final String NAB_TITERIC80 = "Titer IC80";
     public static final String NAB_VIRUS_NAME = "Virus name";
     public static final String NAB_VIRUS_TYPE = "Virus type";
+    public static final String NAB_VIRUS_FULL_NAME = "Virus full name";
+    public static final String NAB_VIRUS_SPECIES = "Virus species";
+    public static final String NAB_VIRUS_HOST_CELL = "Virus host cell";
+    public static final String NAB_VIRUS_BACKBONE = "Virus backbone";
 
     public static final String PKMAB = "PKMAb (PK MAb)";
     public static final String PKMAB_CONCENTRATION = "MAb concentration";
