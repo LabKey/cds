@@ -50,9 +50,6 @@ Ext.define('Connector.model.Measure', {
         // Array of properties to skip displaying in plot tooltip
         {name: 'skipToolTip', defaultValue: undefined},
 
-        // Property to identify virus metadata field
-        {name: 'isVirusMetadataField', defaultValue: false},
-
         // Misc properties about the measure display in the application
         {name: 'sourceTitle', convert: function(val, rec) {
             if (Ext.isString(val) && val.length > 0) {
