@@ -632,15 +632,14 @@ Ext.define('Connector.utility.MabQuery', {
 
     getNABMAbExportColumns : function(excludedColumns) {
         var virusMetaSortOrder = {
-            'study_NABMAb_clade' : 1,
-            'study_NABMAb_virus_insert_name' : 2,
-            'study_NABMAb_virus': 3,
-            'study_NABMAb_virus_type' : 4,
-            'study_NABMAb_virus_full_name' : 5,
-            'study_NABMAb_virus_species' : 6,
-            'study_NABMAb_virus_host_cell': 7,
-            'study_NABMAb_virus_backbone': 8};
-
+            'study_NABMAb_virus': 1,
+            'study_NABMAb_virus_full_name' : 2,
+            'study_NABMAb_virus_type' : 3,
+            'study_NABMAb_virus_species' : 4,
+            'study_NABMAb_clade' : 5,
+            'study_NABMAb_virus_host_cell': 6,
+            'study_NABMAb_virus_backbone': 7
+        };
         var allMeasures = Connector.getQueryService().MEASURE_STORE.data.items, mabMeasures = [], virusMeta = [];
         Ext.each(allMeasures, function(measure) {
             if (measure.get("queryName") === "NABMAb" && !measure.get("hidden")) {

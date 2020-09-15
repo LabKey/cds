@@ -20,14 +20,13 @@ Ext.define('Connector.utility.Query', {
     DATA_SOURCE_STUDY_AND_TREATMENT: 'Study and treatment variables',
     DATA_SOURCE_ADDED_TIME_POINT: 'Time point',
     NAB_VIRUS_META_SORT_ORDER: {
-        'study_NAb_clade' : 1,
-        'study_NAb_virus_insert_name' : 2,
-        'study_NAb_virus': 3,
-        'study_NAb_virus_type' : 4,
-        'study_NAb_virus_full_name' : 5,
-        'study_NAb_virus_species' : 6,
-        'study_NAb_virus_host_cell': 7,
-        'study_NAb_virus_backbone': 8
+        'study_NAb_virus': 1,
+        'study_NAb_virus_full_name' : 2,
+        'study_NAb_virus_type' : 3,
+        'study_NAb_virus_species' : 4,
+        'study_NAb_clade' : 5,
+        'study_NAb_virus_host_cell': 6,
+        'study_NAb_virus_backbone': 7
     },
 
     logging: false,

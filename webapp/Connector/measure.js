@@ -39,9 +39,9 @@ Ext.define('Connector.measure.Configuration', {
                     dimensions: [
                         'study_NAb_target_cell',
                         'study_NAb_summary_level',
-                        'study_NAb_clade',
                         'study_NAb_virus',
                         'study_NAb_virus_full_name',
+                        'study_NAb_clade',
                         'study_NAb_virus_type',
                         'study_NAb_initial_dilution',
                         'study_NAb_specimen_type',
@@ -51,7 +51,6 @@ Ext.define('Connector.measure.Configuration', {
                         'study_NAb_virus_backbone'
                     ],
                     skipToolTip: [
-                        'study_NAb_virus_type',
                         'study_NAb_clade'
                     ],
                     defaultScale: 'LOG'
