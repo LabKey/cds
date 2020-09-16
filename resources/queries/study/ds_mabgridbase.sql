@@ -18,6 +18,7 @@ select
   MAB.container,
   prot as study,
   virus,
+  virus_full_name,
   clade,
   neutralization_tier,
   tier_clade_virus,

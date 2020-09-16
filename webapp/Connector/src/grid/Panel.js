@@ -125,24 +125,65 @@ Ext.define('Connector.grid.Panel', {
             });
 
             var columnCharacterWidth = 14;
+
+            //handle sorting of nab virus metadata
+            var nabVirusCols = [];
+            var nabOtherCols = [];
+            var nabVirusMetaSorted = [];
+
+            //separate out Nab's virus meta cols from non-virus cols
+            Ext.iterate(groupMap, function(key, value) {
+                if (key === QueryUtils.DATA_SOURCE_NAb) {
+                    Ext.each(value, function(col) {
+                        var name = col.measure && col.measure.alias ? col.measure.alias : col.dataIndex;
+                        if (QueryUtils.NAB_VIRUS_META_SORT_ORDER[name]) {
+                            nabVirusCols.push(col);
+                        }
+                        else {
+                            nabOtherCols.push(col);
+                        }
+                    });
+                }
+            });
+
+            //sorted nab virus cols
+            if (nabVirusCols.length > 0) {
+                nabVirusMetaSorted = nabVirusCols.sort(function (a, b) {
+                    var aname = a.measure && a.measure.alias ? a.measure.alias : a.dataIndex;
+                    var bname = b.measure && b.measure.alias ? b.measure.alias : b.dataIndex;
+                    return QueryUtils.NAB_VIRUS_META_SORT_ORDER[aname] - QueryUtils.NAB_VIRUS_META_SORT_ORDER[bname];
+                });
+            }
+
             Ext.iterate(groupMap, function(key, value)
             {
+                //non-virus metadata cols for Nab
+                if (key === QueryUtils.DATA_SOURCE_NAb) {
+                    value = nabOtherCols;
+                }
                 groups.push({
                     text: key,
-                    columns: value.sort(function(a, b)
-                            {
-                                var ah = isMeasure ? a.measure.label.toLowerCase() : a.header.toLowerCase(),
-                                        bh = isMeasure ? b.measure.label.toLowerCase() : b.header.toLowerCase();
+                    columns: value.sort(function(a, b) {
 
-                                if (ah.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || ah.toLowerCase() === Connector.studyContext.subjectLabel.toLowerCase())
-                                    return -1;
-                                else if (bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
-                                    return 1;
+                        var ah = isMeasure ? a.measure.label.toLowerCase() : a.header.toLowerCase(),
+                                bh = isMeasure ? b.measure.label.toLowerCase() : b.header.toLowerCase();
 
-                                // sort columns alphabetically by title
-                                return ah == bh ? 0 : (ah > bh ? 1 : -1);
-                            })
+                        if (ah.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || ah.toLowerCase() === Connector.studyContext.subjectLabel.toLowerCase())
+                            return -1;
+                        else if (bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase() || bh.toLowerCase() === Connector.studyContext.subjectColumn.toLowerCase())
+                            return 1;
+
+                        // sort columns alphabetically by title
+                        return ah == bh ? 0 : (ah > bh ? 1 : -1);
+                    })
                 });
+            });
+
+            //concat sorted nab virus cols with other sorted non-virus cols
+            Ext.each(groups, function (grp) {
+                if (grp.text === QueryUtils.DATA_SOURCE_NAb) {
+                    grp.columns = grp.columns.concat(nabVirusMetaSorted);
+                }
             });
 
             groups.sort(function(a, b)

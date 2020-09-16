@@ -281,6 +281,18 @@ public class CDSGridTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyNAbColumns() throws IOException
+    {
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        sleep(1000);
+        DataGrid grid = new DataGrid(this);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_TITERID50, false, true);
+        grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
+        grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME, CDSHelper.NAB_VIRUS_FULL_NAME, CDSHelper.NAB_VIRUS_SPECIES, CDSHelper.NAB_VIRUS_HOST_CELL, CDSHelper.NAB_VIRUS_BACKBONE);
+    }
+
+    @Test
     public void verifyGridExport() throws IOException
     {
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
@@ -379,7 +391,14 @@ public class CDSGridTest extends CDSReadOnlyTest
                 "Specimen type",
                 "Target cell",
                 "Titer ID50",
-                "Virus name"));
+                "Virus name",
+                "Virus full name",
+                "Virus type",
+                "Virus species",
+                "Virus clade",
+                "Virus host cell",
+                "Virus backbone"
+                ));
         grid.verifyCDSExcel(exported, false);
         grid.verifyCDSCSV(exported);
     }

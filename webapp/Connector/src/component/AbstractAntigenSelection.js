@@ -50,7 +50,16 @@ Ext.define('Connector.panel.AbstractAntigenSelection', {
 
                     var alias = fields[i];
                     var dataValue = alias + '-' + concatValue.replace(ChartUtils.ANTIGEN_LEVEL_DELIMITER_REGEX, '-').replace(/ /g, '_');
-                    checkboxItems.push(this.createCheckboxCmp(alias, record.get(alias), dataValue, record, fields, i, concatValue, addCls));
+                    var virusLabel = undefined;
+
+                    //use virus full names for tooltips
+                    if (alias === 'study_NAb_virus') {
+                        virusLabel = record.raw.study_NAb_virus_full_name;
+                    }
+                    else if (alias === 'virus') {
+                        virusLabel = record.raw.virus_full_name;
+                    }
+                    checkboxItems.push(this.createCheckboxCmp(alias, record.get(alias), dataValue, record, fields, i, concatValue, addCls, virusLabel));
                 }
                 else {
                     checkboxItems.push(this.createSpacerCmp());
@@ -137,14 +146,14 @@ Ext.define('Connector.panel.AbstractAntigenSelection', {
         });
     },
 
-    createCheckboxCmp : function(alias, labelraw, dataValue, record, fields, index, value, addCls) {
+    createCheckboxCmp : function(alias, labelraw, dataValue, record, fields, index, value, addCls, virusLabel) {
         var label = labelraw || '[Blank]';
 
         var checkbox = Ext.create('Ext.form.field.Checkbox', {
             name: alias + '-check',
             boxLabel: label,
             cls: 'checkbox2 col-check ' + addCls,
-            boxLabelAttrTpl: 'test-data-value="' + dataValue + '" title="' + label + '"',
+            boxLabelAttrTpl: 'test-data-value="' + dataValue + '" title="' + (virusLabel ? virusLabel : label) + '"',
             parentFieldAlias: index > 0 ? fields[index - 1] : null,
             fieldAlias: alias,
             fieldValue: labelraw || 'null',

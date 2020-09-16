@@ -40,9 +40,18 @@ Ext.define('Connector.measure.Configuration', {
                         'study_NAb_target_cell',
                         'study_NAb_summary_level',
                         'study_NAb_virus',
+                        'study_NAb_virus_full_name',
+                        'study_NAb_clade',
+                        'study_NAb_virus_type',
                         'study_NAb_initial_dilution',
                         'study_NAb_specimen_type',
-                        'study_NAb_lab_code'
+                        'study_NAb_lab_code',
+                        'study_NAb_virus_species',
+                        'study_NAb_virus_host_cell',
+                        'study_NAb_virus_backbone'
+                    ],
+                    skipToolTip: [
+                        'study_NAb_clade'
                     ],
                     defaultScale: 'LOG'
                 },
@@ -707,8 +716,42 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_response_call' : {
                     hidden: true
                 },
+                'study_NAb_clade': {
+                    sortOrder: 5,
+                    hiddenInPlot: false,
+                    hiddenInAdvancedOptions: true
+                },
                 'study_NAb_virus_insert_name' : {
-                    hidden: true
+                    hidden: true,
+                    sortOrder: 8
+                },
+                'study_NAb_virus': {
+                    sortOrder: 1
+                },
+                'study_NAb_virus_type': {
+                    sortOrder: 3,
+                    hiddenInPlot: false,
+                    hiddenInAdvancedOptions: true
+                },
+                'study_NAb_virus_full_name': {
+                    hiddenInPlot: false,
+                    hiddenInAdvancedOptions: true,
+                    sortOrder: 2
+                },
+                'study_NAb_virus_species': {
+                    hiddenInPlot: false,
+                    hiddenInAdvancedOptions: true,
+                    sortOrder: 4
+                },
+                'study_NAb_virus_host_cell': {
+                    hiddenInPlot: false,
+                    hiddenInAdvancedOptions: true,
+                    sortOrder: 6
+                },
+                'study_NAb_virus_backbone': {
+                    hiddenInPlot: false,
+                    hiddenInAdvancedOptions: true,
+                    sortOrder: 7
                 },
                 'study_NAb_assay_identifier': {
                     hidden: true

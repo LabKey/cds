@@ -48,7 +48,7 @@ Ext.define('Connector.utility.MabQuery', {
 
     IC50_GROUP_COLUMN: 'titer_curve_ic50_group',
 
-    VIRUS_COLUMNS: ['neutralization_tier', 'clade', 'virus'],
+    VIRUS_COLUMNS: ['neutralization_tier', 'clade', 'virus', 'virus_full_name'],
 
     BLANK_VALUE: '[blank]',
 
@@ -215,9 +215,16 @@ Ext.define('Connector.utility.MabQuery', {
         if (config.useFilter) {
             WHERE = this._getMabStateFilterWhere(false, includeSelection, isExport)
         }
+        var stmt;
 
+        if (config.fieldName === 'virus') {
+            stmt = 'SELECT DISTINCT ' + this.MAB_GRID_BASE_ALIAS + '.' + config.fieldName + ", " + this.MAB_GRID_BASE_ALIAS + '.virus_full_name';
+        }
+        else {
+            stmt = 'SELECT DISTINCT ' + this.MAB_GRID_BASE_ALIAS + '.' + config.fieldName;
+        }
         return [
-            'SELECT DISTINCT ' + this.MAB_GRID_BASE_ALIAS + '.' + config.fieldName,
+            stmt,
             this._getAssayFrom(),
             this._buildWhere(WHERE),
             'ORDER BY ' + config.fieldName
@@ -624,16 +631,37 @@ Ext.define('Connector.utility.MabQuery', {
     },
 
     getNABMAbExportColumns : function(excludedColumns) {
-        var allMeasures = Connector.getQueryService().MEASURE_STORE.data.items, mabMeasures = [];
+        var virusMetaSortOrder = {
+            'study_NABMAb_virus': 1,
+            'study_NABMAb_virus_full_name' : 2,
+            'study_NABMAb_virus_type' : 3,
+            'study_NABMAb_virus_species' : 4,
+            'study_NABMAb_clade' : 5,
+            'study_NABMAb_virus_host_cell': 6,
+            'study_NABMAb_virus_backbone': 7
+        };
+        var allMeasures = Connector.getQueryService().MEASURE_STORE.data.items, mabMeasures = [], virusMeta = [];
         Ext.each(allMeasures, function(measure) {
             if (measure.get("queryName") === "NABMAb" && !measure.get("hidden")) {
-                if (!excludedColumns || excludedColumns.indexOf(measure.get('lowerAlias')) === -1)
-                    mabMeasures.push(measure);
+                if (virusMetaSortOrder[measure.get("alias")]) {
+                    virusMeta.push(measure);
+                }
+                else {
+                    if (!excludedColumns || excludedColumns.indexOf(measure.get('lowerAlias')) === -1)
+                        mabMeasures.push(measure);
+                }
             }
         });
         var sortedMAbMeasures = mabMeasures.sort(function(a, b) {
             return a.get('label').localeCompare(b.get('label'));
         });
+
+        virusMeta.sort(function (a, b) {
+            return virusMetaSortOrder[a.get('alias')] - virusMetaSortOrder[b.get('alias')];
+        });
+
+        sortedMAbMeasures = sortedMAbMeasures.concat(virusMeta);
+
         var orderedColumns = this.BASE_EXPORT_COLUMNS.slice(0); //clone
         var orderedColumnLabels = this.BASE_EXPORT_COLUMN_LABLES.slice(0);
 
