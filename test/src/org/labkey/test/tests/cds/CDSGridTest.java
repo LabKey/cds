@@ -391,11 +391,11 @@ public class CDSGridTest extends CDSReadOnlyTest
                 "Specimen type",
                 "Target cell",
                 "Titer ID50",
-                "Virus clade",
                 "Virus name",
-                "Virus type",
                 "Virus full name",
+                "Virus type",
                 "Virus species",
+                "Virus clade",
                 "Virus host cell",
                 "Virus backbone"
                 ));
