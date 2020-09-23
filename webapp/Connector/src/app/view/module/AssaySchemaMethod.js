@@ -18,7 +18,7 @@ Ext.define('Connector.view.module.AssaySchemaMethod', {
                     '<h3 id="assay_methods_title" class="listing_title">{method_title}</h3>',
                     '<tpl if="methods_assay_schema_link_valid">',
                         '<div class="schema-link">',
-                            '<a id="methods_assay_link" href= "' + LABKEY.contextPath + '{assay_schema_link}" target="_blank">Click for assay schema</a>',
+                            '<a id="methods_assay_link" href= "{assay_schema_link_1}" target="_blank">Click for assay schema</a>',
                         '</div>',
                     '</tpl>',
                      '{methods}',
@@ -35,6 +35,8 @@ Ext.define('Connector.view.module.AssaySchemaMethod', {
 
         var methodsAssaySchemaLinkIsValid = function (schema_link, result) {
             data['methods_assay_schema_link_valid'] = result;
+            data['assay_schema_link_1'] = Ext.isEmpty(LABKEY.contextPath) ? data['assay_schema_link'] : (LABKEY.contextPath + data['assay_schema_link']);
+            console.log("assay schema link path = " + data['assay_schema_link_1']); //TODO: Added for investigating Ticket 40760, to be removed.
             this.update(data);
         };
 
