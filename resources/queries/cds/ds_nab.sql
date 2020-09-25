@@ -34,7 +34,7 @@ na.clade,
   || '|||' || (CASE WHEN na.virus IS NULL THEN 'null' ELSE na.virus END)
   AS tier_clade_virus,
 nab.vaccine_matched,
-na.target_cell,
+nab.target_cell,
 nab.initial_dilution,
 na.virus,
 na.virus_type,
