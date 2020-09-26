@@ -73,7 +73,12 @@ Ext.define('Connector.plugin.DocumentValidation', {
         LABKEY.Ajax.request({
             url: LABKEY.ActionURL.buildURL("cds", "validateStudySchemaLink.api"),
             params: {
-                filename: schema_link
+
+                // Support Ticket 40760: Treatment and assay schemas link not showing up on Learn/Study pages
+                // Treatment and Assay schema files reside at '/_webdav/home/files/@files/static/',
+                // however, this link is stored as '/_webdav/home/files/%40files/static/' in cds.study, where '@' is already encoded to %40;
+                // and '%40' gets further encoded to '%2540' messing up the file path during validation, hence replacing "%40files" with "@files"
+                filename: schema_link.replace("%40files", "@files")
             },
             method: 'GET',
             scope: this,
