@@ -78,6 +78,7 @@ Ext.define('Connector.plugin.DocumentValidation', {
                 // Treatment and Assay schema files reside at '/_webdav/home/files/@files/static/',
                 // however, this link is stored as '/_webdav/home/files/%40files/static/' in cds.study, where '@' is already encoded to %40;
                 // and '%40' gets further encoded to '%2540' messing up the file path during validation, hence replacing "%40files" with "@files"
+                // TODO: wonder if it would be better to do this during ETL?
                 filename: schema_link.replace("%40files", "@files")
             },
             method: 'GET',
