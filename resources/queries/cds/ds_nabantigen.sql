@@ -16,7 +16,6 @@
 SELECT
   assay_identifier,
   antigen_name,
-  target_cell,
   antigen_type,
   virus,
   virus_type,
