@@ -1,4 +1,4 @@
-assay_identifier	antigen_name	antigen_type	virus	virus_type	virus_insert_name	neutralization_tier	clade	antigen_description	antigen_control	virus_full_name	virus_name_other	virus_species	virus_host_cell	virus_backbone	cds_virus_id	target_cell
+assay_identifier	antigen_name	antigen_type	virus	virus_type	virus_insert_name	neutralization_tier	clade	antigen_description	antigen_control	virus_full_name	virus_name_other	virus_species	virus_host_cell	virus_backbone	cds_virus_id
 NAB MAB	6535.3	Env Pseudotype	6535.3	Env Pseudotype		1B	B		0	6535.3,TZM-bl,full name		HIV	294T/18	SG3 beta env 6	cds_183
 NAB MAB	0013095-2.11	Env Pseudotype	0013095-2.11	Env Pseudotype		2	C		0	0013095-2.11,TZM-bl,full name		HIV	294T/18	SG3 delta env 1	cds_240
 NAB MAB	001428-2.42	Env Pseudotype	001428-2.42	Env Pseudotype		2	C		0	001428-2.42,TZM-bl,full name		HIV	294T/18	SG3 beta env 5	cds_265

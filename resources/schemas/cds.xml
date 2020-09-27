@@ -323,7 +323,6 @@
         <columns>
             <column columnName="assay_identifier"/>
             <column columnName="antigen_name"/>
-            <column columnName="target_cell"/>
             <column columnName="antigen_type"/>
             <column columnName="virus"/>
             <column columnName="virus_type"/>
@@ -940,7 +939,6 @@
             <column columnName="assay_identifier"/>
             <column columnName="container"/>
             <column columnName="antigen_name"/>
-            <column columnName="target_cell"/>
             <column columnName="antigen_type"/>
             <column columnName="virus"/>
             <column columnName="virus_type"/>
