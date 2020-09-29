@@ -20,7 +20,7 @@ SELECT
   dd.mab_mix_id,
   dd.mab_name_source,
   dd.summary_level,
-  na.target_cell,
+  dd.target_cell,
   dd.assay_identifier,
   dd.mab_concentration,
   dd.mab_concentration_units,

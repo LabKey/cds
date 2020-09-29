@@ -36,7 +36,6 @@ Ext.define('Connector.view.module.AssaySchemaMethod', {
         var methodsAssaySchemaLinkIsValid = function (schema_link, result) {
             data['methods_assay_schema_link_valid'] = result;
             data['assay_schema_link_1'] = Ext.isEmpty(LABKEY.contextPath) ? data['assay_schema_link'] : (LABKEY.contextPath + data['assay_schema_link']);
-            console.log("assay schema link path = " + data['assay_schema_link_1']); //TODO: Added for investigating Ticket 40760, to be removed.
             this.update(data);
         };
 

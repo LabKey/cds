@@ -36,7 +36,6 @@ Ext.define('Connector.view.module.TreatmentSchemaGroup', {
         var treatmentSchemaLinkIsValid = function (schema_link, result) {
             data['treatment_schema_link_valid'] = result;
             data['treatment_schema_link_1'] = Ext.isEmpty(LABKEY.contextPath) ? data['treatment_schema_link'] : (LABKEY.contextPath + data['treatment_schema_link']);
-            console.log("Treatment schema link path = " + data['treatment_schema_link_1']); //TODO: Added for investigating Ticket 40760, to be removed.
             this.update(data);
         };
 

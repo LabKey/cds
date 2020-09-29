@@ -323,7 +323,6 @@
         <columns>
             <column columnName="assay_identifier"/>
             <column columnName="antigen_name"/>
-            <column columnName="target_cell"/>
             <column columnName="antigen_type"/>
             <column columnName="virus"/>
             <column columnName="virus_type"/>
@@ -411,6 +410,7 @@
             <column columnName="specimen_type"/>
             <column columnName="summary_level"/>
             <column columnName="vaccine_matched"/>
+            <column columnName="target_cell"/>
             <column columnName="initial_dilution"/>
             <column columnName="nab_response"/>
             <column columnName="titer_ic50"/>
@@ -430,6 +430,7 @@
             <column columnName="prot"/>
             <column columnName="mab_mix_id"/>
             <column columnName="mab_name_source"/>
+            <column columnName="target_cell"/>
             <column columnName="assay_identifier"/>
             <column columnName="cds_virus_id"/>
             <column columnName="summary_level"/>
@@ -938,7 +939,6 @@
             <column columnName="assay_identifier"/>
             <column columnName="container"/>
             <column columnName="antigen_name"/>
-            <column columnName="target_cell"/>
             <column columnName="antigen_type"/>
             <column columnName="virus"/>
             <column columnName="virus_type"/>
