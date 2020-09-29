@@ -1954,7 +1954,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         for (String expected : expectedText)
         {
             // Not a fatal error if the tooltip does not contain the expected text.
-            checker().verifyTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.",
+            checker().withScreenshot("ToolTipTextError").verifyTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.",
                     toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
         }
     }
@@ -1965,7 +1965,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String toolTipText;
 
         // Not a fatal error if a tooltip is not shown.
-        if(checker().verifyTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el)))
+        String screenShotName = "ValidateToolTip_" + el.getText();
+        if(checker().withScreenshot(screenShotName).verifyTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el)))
         {
             // If the tool-tip is present, checker().verifyTrue returned true, check the text of the tooltip.
             toolTipText = getToolTipText();
