@@ -1981,23 +1981,17 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private boolean triggerToolTip(WebElement el)
     {
-        boolean bubblePresent;
-
-        Actions builder = new Actions(getDriver());
-
         // Move the mouse to the top left corner of the page and make sure there are no popups visible.
         mouseOut();
         waitForElementToDisappear(TOOLTIP_TEXT_LOCATOR);
 
-        // Now move the mouse over the element.
-        builder.moveToElement(el).build().perform();
+        // Move the mouse over the element.
+        mouseOver(el);
 
-        // Now wait for the element to show up.
-        bubblePresent = waitFor(()->
+        // Wait for the tooltip to show up.
+        return waitFor(()->
                 isElementPresent(TOOLTIP_TEXT_LOCATOR),
                 2_000);
-
-        return bubblePresent;
     }
 
     private String getToolTipText()
