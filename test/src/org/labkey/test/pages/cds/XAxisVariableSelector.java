@@ -123,7 +123,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
 
         // Move the mouse so the drop down can close.
         Actions builder = new Actions(_test.getDriver());
-        builder.moveToElement(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']").findElement(_test.getWrappedDriver()), 50, -50).build().perform();
+        builder.moveToElement(Locator.tagWithClass("div", "main-title").findElement(_test.getDriver()));
 
     }
 

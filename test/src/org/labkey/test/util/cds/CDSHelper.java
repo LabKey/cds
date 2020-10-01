@@ -905,6 +905,7 @@ public class CDSHelper
                                          @Nullable Boolean newSharedStatus)
     {
         goToGroup(groupName);
+        _test.waitForElementToBeVisible(CDSHelper.Locators.cdsButtonLocator("Edit details"));
         _test.click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
         _test.waitForText("Shared group:");
 
