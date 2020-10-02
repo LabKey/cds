@@ -66,4 +66,4 @@ SELECT
   dd.fit_error,
   dd.vaccine_matched
 
-FROM cds.import_NABMAb AS dd left join cds.import_nabantigen na on na.cds_virus_id = dd.cds_virus_id
+FROM cds.import_NABMAb AS dd left join cds.import_nabantigen na on na.cds_virus_id = dd.cds_virus_id AND na.assay_identifier = dd.assay_identifier

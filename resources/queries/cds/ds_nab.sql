@@ -59,4 +59,4 @@ nab.titer_ID50,
 nab.titer_ID80,
 nab.slope
 
-FROM cds.import_nab nab left join cds.import_nabantigen na on na.cds_virus_id = nab.cds_virus_id
+FROM cds.import_nab nab left join cds.import_nabantigen na on na.cds_virus_id = nab.cds_virus_id AND na.assay_identifier = nab.assay_identifier
