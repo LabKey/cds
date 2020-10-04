@@ -889,7 +889,7 @@ public class CDSHelper
 
     public void goToGroup(String groupName)
     {
-        Locator groupLabelLocator = Locator.xpath("//div[contains(@class, 'grouprow')]/div[contains(@class,'grouplabel')][@title='" + groupName + "']");
+        Locator groupLabelLocator = Locator.xpath("//div[contains(@class, 'grouprow')]/div[contains(@class,'grouplabel')]").withText(groupName);
 
         goToAppHome();
         _test.waitForElementToBeVisible(groupLabelLocator);
