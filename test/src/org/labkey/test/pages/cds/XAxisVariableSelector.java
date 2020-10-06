@@ -122,8 +122,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[contains(text(), '" + scale.getScaleLabel() + "')]"));
 
         // Move the mouse so the drop down can close.
-        Actions builder = new Actions(_test.getDriver());
-        builder.moveToElement(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']").findElement(_test.getWrappedDriver()), 50, -50).build().perform();
+        _test.mouseOver(Locator.tagWithClass("div", "main-title"));
 
     }
 

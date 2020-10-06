@@ -147,6 +147,7 @@ public abstract class DataspaceVariableSelector
     public void pickVariable(String variable)
     {
         Locator variableLock = window().append(" div.content-label").withText(variable);
+        _test.waitForElementToBeVisible(variableLock);
         _test.scrollIntoView(variableLock);
         _test.click(variableLock);
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -328,6 +329,7 @@ public abstract class DataspaceVariableSelector
         if (_test.isElementPresent(locDimField))
         {
             _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
+            _test.mouseOver(locDimField);
             _test.click(locDimField);
 
             // Let the drop down render.
@@ -336,9 +338,8 @@ public abstract class DataspaceVariableSelector
             for (String val : value)
                 _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
 
-            // Move the mouse so the drop down can close.
-            Actions builder = new Actions(_test.getDriver());
-            builder.moveToElement(locDimField.findElement(_test.getWrappedDriver()), 50, -50).build().perform();
+            // The drop down does not close after a selection is made, so need to close it by moving away from it.
+            _test.mouseOut();
 
         }
 
@@ -418,6 +419,8 @@ public abstract class DataspaceVariableSelector
 
                 if (_test.isElementPresent(locDimField))
                 {
+                    _test.mouseOver(locDimField);
+
                     _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                     _test.click(locDimField);
 
@@ -436,7 +439,7 @@ public abstract class DataspaceVariableSelector
                         _test.click(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
 
                     // Move the mouse so the drop down can close.
-                    builder.moveToElement(locDimField.findElement(_test.getWrappedDriver()), 50, -50).build().perform();
+                    _test.mouseOut();
 
                 }
 
