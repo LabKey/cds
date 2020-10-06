@@ -790,7 +790,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         showAllExpandAndVerify(showAllListToggle, 2);
 
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
-        assertTrue(smallHasDataIcons.size() == 10);
+        checker().verifyEquals("Icon size not as expected.", 10, smallHasDataIcons.size());
 
         verifyShowAllCollapse(showAllListToggle, 2);
 
@@ -812,23 +812,39 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify row for 'BJOX002000.03.2.delta624G.E625R.3-5' virus");
 
+        Locator rowLocator = Locator.tagWithAttribute("tr", "data-recordid", "BJOX002000.03.2.delta624G.E625R.3-5Env Pseudotype");
+
+        waitForElementToBeVisible(rowLocator);
+
+        WebElement rowElement = rowLocator.findElement(getDriver());
+
+        scrollIntoView(rowElement);
+
         log("Verify virus short name");
-        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("BJOX002000.03.2.delta624G.E625R.3-5"));
+        checker().verifyEquals("Virus short name not as expected.",
+                "BJOX002000.03.2.delta624G.E625R.3-5",
+                Locator.tagWithClass("div", "detail-description").childTag("h2").findElement(rowElement).getText());
 
         log("Verify Virus full name");
-        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("BJOX002000.03.2.delta624G.E625R.3-5, Env Pseudotype, TZM-bl, delta chain"));
+        checker().verifyEquals("Virus full name is incorrect.",
+                "BJOX002000.03.2.delta624G.E625R.3-5,TZM-bl,full name",
+                Locator.tagWithClass("div", "antigen-description").childTag("p").findElement(rowElement).getText());
 
         log("Verify Species");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("HIV"));
+        checker().verifyTrue("Species with the expected value 'HIV' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("HIV").findWhenNeeded(rowElement).isDisplayed());
 
         log("Verify Panels");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-text").child("p").withText("Diversity"));
+        checker().verifyTrue("Doesn't look like 'Diversity' is listed in the Panels.",
+                Locator.tagWithClass("div", "detail-text").childTag("p").containing("Diversity").findWhenNeeded(rowElement).isDisplayed());
 
         log("Verify Host Cell");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("294T/18"));
+        checker().verifyTrue("Host cell with expected value '294T/18' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("294T/18").findWhenNeeded(rowElement).isDisplayed());
 
         log("Verify Backbone");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("SG3 alpha env 1"));
+        checker().verifyTrue("Backbone with expected value 'SG3 beta env 2' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").withText("SG3 beta env 2").findWhenNeeded(rowElement).isDisplayed());
 
     }
 
