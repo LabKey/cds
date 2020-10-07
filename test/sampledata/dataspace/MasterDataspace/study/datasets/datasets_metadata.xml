@@ -836,6 +836,34 @@
         <description>The type of virus used in the construction of the nAb antigen.</description>
         <dimension>true</dimension>
       </column>
+      <column columnName="virus_full_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus full name</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The full name of the virus used in the construction of the nAb antigen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_species">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus species</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>A classification for virus species using informal taxonomy.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_host_cell">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus host cell</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The host cell used to incubate the virus stock.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_backbone">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus backbone</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Indicates the backbone used to generate the virus if from a different plasmid than the envelope.</description>
+        <dimension>true</dimension>
+      </column>
       <column columnName="virus_insert_name">
         <datatype>varchar</datatype>
         <columnTitle>Virus insert name</columnTitle>
@@ -1333,6 +1361,34 @@
         <columnTitle>Virus type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <description>The type of virus used in the construction of the nAb antigen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_full_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus full name</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The full name of the virus used in the construction of the nAb antigen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_species">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus species</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>A classification for virus species using informal taxonomy.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_host_cell">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus host cell</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The host cell used to incubate the virus stock.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_backbone">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus backbone</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Indicates the backbone used to generate the virus if from a different plasmid than the envelope.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="initial_concentration">

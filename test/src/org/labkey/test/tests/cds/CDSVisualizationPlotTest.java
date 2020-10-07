@@ -426,7 +426,9 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
 
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
         assertEquals(100, plotDataTable.getDataRowCount());
-        assertEquals(100, getElementCount(Locator.tagContainingText("td", uniqueVirus)));
+
+        log("Counting '" + uniqueVirus + "' in tier_clade_virus & virus_full_name cols.");
+        assertEquals(200, Locator.tagContainingText("td", uniqueVirus).findElements(getDriver()).size());
         assertTextNotPresent(sharedVirus, CDSHelper.LABS[1]);
         getDriver().close();
         switchToMainWindow();
@@ -442,6 +444,13 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         waitForElement(CDSPlot.Locators.plotTick.withText("Pseudovirus"));
         assertElementPresent(CDSPlot.Locators.plotBox, 1);
 
+        log("Verify virus metadata in NAb plot tooltip");
+        String cssPathToSvg = "div.plot:not(.thumbnail) > svg:nth-of-type(1)";
+        cds.clickPointInPlot(cssPathToSvg, 5);
+        // By design the tool tip does not show up instantly, so adding a pause to give it a chance.
+        sleep(1000);
+        cdsPlot.validateToolTipText("Virus name", "Virus full name", "Virus species", "Virus host cell", "Virus backbone");
+
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDS_WAIT);
         switchToWindow(1);
@@ -454,8 +463,9 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         plotDataTable.setSort("cds_GridBase_ParticipantSequenceNum", SortDirection.ASC);
         _ext4Helper.setCssPrefix("x-");
 
-        int actualCount = getElementCount(Locator.tagContainingText("td", uniqueVirus));
-        assertEquals(100, actualCount);
+        log("Counting '" + uniqueVirus + "' in tier_clade_virus & virus_full_name cols.");
+        int actualCount = Locator.tagContainingText("td", uniqueVirus).findElements(getDriver()).size();
+        assertEquals(200, actualCount);
         getDriver().close();
         switchToMainWindow();
 
@@ -490,7 +500,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         waitForElement(CDSPlot.Locators.plotTickLinear.withText("1000"));
-        assertElementPresent(CDSPlot.Locators.plotPoint, 1209);
+        assertElementPresent(CDSPlot.Locators.plotPoint, 2279);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDS_WAIT);

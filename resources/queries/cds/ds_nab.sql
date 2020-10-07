@@ -14,45 +14,49 @@
  * limitations under the License.
  */
 SELECT
-subject_id AS participantid,
-CAST(study_day AS DOUBLE) AS sequencenum,
-study_day AS visit_day,
-prot AS study_prot,
-prot,
-assay_identifier,
+nab.subject_id AS participantid,
+CAST(nab.study_day AS DOUBLE) AS sequencenum,
+nab.study_day AS visit_day,
+nab.prot AS study_prot,
+nab.prot,
+nab.assay_identifier,
 
 -- DIMENSIONS
-summary_level,
-specimen_type,
-antigen,
-antigen_type,
-neutralization_tier,
-clade,
+nab.summary_level,
+nab.specimen_type,
+na.antigen_name as antigen,
+na.antigen_type,
+na.neutralization_tier,
+na.clade,
 -- Delimiter has to match ChartUtil.ANTIGEN_LEVEL_DELIMITER
-(CASE WHEN neutralization_tier IS NULL THEN 'null' ELSE neutralization_tier END)
-  || '|||' || (CASE WHEN clade IS NULL THEN 'null' ELSE clade END)
-  || '|||' || (CASE WHEN virus IS NULL THEN 'null' ELSE virus END)
+(CASE WHEN na.neutralization_tier IS NULL THEN 'null' ELSE na.neutralization_tier END)
+  || '|||' || (CASE WHEN na.clade IS NULL THEN 'null' ELSE na.clade END)
+  || '|||' || (CASE WHEN na.virus IS NULL THEN 'null' ELSE na.virus END)
   AS tier_clade_virus,
-vaccine_matched,
-target_cell,
-initial_dilution,
-virus,
-virus_type,
-virus_insert_name,
+nab.vaccine_matched,
+nab.target_cell,
+nab.initial_dilution,
+na.virus,
+na.virus_type,
+na.virus_full_name,
+na.virus_species,
+na.virus_host_cell,
+na.virus_backbone,
+na.virus_insert_name,
 
 -- LOOKUPS
-nab_lab_source_key,
-exp_assayid,
-lab_code,
+nab.nab_lab_source_key,
+nab.exp_assayid,
+nab.lab_code,
 
 -- MEASURES
-nab_response AS response_call,
-titer_ic50,
-titer_ic80,
-nab_response_ID50,
-nab_response_ID80,
-titer_ID50,
-titer_ID80,
-slope
+nab.nab_response AS response_call,
+nab.titer_ic50,
+nab.titer_ic80,
+nab.nab_response_ID50,
+nab.nab_response_ID80,
+nab.titer_ID50,
+nab.titer_ID80,
+nab.slope
 
-FROM cds.import_nab
+FROM cds.import_nab nab left join cds.import_nabantigen na on na.cds_virus_id = nab.cds_virus_id AND na.assay_identifier = nab.assay_identifier

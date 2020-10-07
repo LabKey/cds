@@ -1,7 +1,6 @@
 SELECT
 ag.assay_identifier,
 ag.antigen_name,
-ag.target_cell,
 ag.antigen_type,
 ag.virus,
 ag.virus_type,
@@ -23,7 +22,6 @@ LEFT JOIN cds.antigenPanel ap ON ap.cds_panel_id = vp.cds_panel_id
 GROUP BY
 ag.assay_identifier,
 ag.antigen_name,
-ag.target_cell,
 ag.antigen_type,
 ag.virus,
 ag.virus_type,

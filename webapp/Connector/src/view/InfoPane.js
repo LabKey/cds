@@ -308,14 +308,23 @@ Ext.define('Connector.view.InfoPane', {
                 sortable: false,
                 menuDisabled: true,
                 tpl: new Ext.XTemplate(
-                    '<div title="{name:htmlEncode}">{name:htmlEncode}',
+                    '<tpl if="this.hasOtherName(values) === true">',
+                        '<div title="{otherName:htmlEncode}">{name:htmlEncode}',
+                    '<tpl else>',
+                        '<div title="{name:htmlEncode}">{name:htmlEncode}',
+                    '</tpl>',
                     '<tpl if="hasDetails === true">',
                         '<a class="expando" href="{detailLink}">',
                             '<span class="icontext">learn about</span>',
                             '<img src="' + Connector.resourceContext.path + '/images/cleardot.gif" class="iconone">',
                         '</a>',
                     '</tpl>',
-                    '</div>'
+                    '</div>',
+                    {
+                hasOtherName : function(vals) {
+                    return !Ext.isEmpty(vals.otherName);
+                }
+            }
                 )
             }],
 

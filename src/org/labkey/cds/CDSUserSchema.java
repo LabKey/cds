@@ -91,7 +91,7 @@ public class CDSUserSchema extends SimpleUserSchema
             return new MabGroupTable(getDbSchema().getTable(MabGroupTable.NAME), this, cf);
         }
 
-        if (name.equalsIgnoreCase("MabMixMetadata"))
+        if (name.equalsIgnoreCase("MabMixMetadata") || name.equalsIgnoreCase("nabantigen"))
         {
             // MAb metadata is always defined at the project level, override the passed in CF
             cf = ContainerFilter.Type.Project.create(this);

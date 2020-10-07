@@ -18,7 +18,7 @@ Ext.define('Connector.view.module.TreatmentSchemaGroup', {
                     '<h3 id="treatment_groups_title" class="listing_title">{group_title}</h3>',
                         '<tpl if="treatment_schema_link_valid">',
                             '<div class="schema-link">',
-                                '<a id="groups_treatment_link" href= "' + LABKEY.contextPath + '{treatment_schema_link}" target="_blank">Click for treatment schema</a>',
+                                '<a id="groups_treatment_link" href= "{treatment_schema_link_1}" target="_blank">Click for treatment schema</a>',
                             '</div>',
                         '</tpl>',
                         '{groups}',
@@ -35,6 +35,7 @@ Ext.define('Connector.view.module.TreatmentSchemaGroup', {
 
         var treatmentSchemaLinkIsValid = function (schema_link, result) {
             data['treatment_schema_link_valid'] = result;
+            data['treatment_schema_link_1'] = Ext.isEmpty(LABKEY.contextPath) ? data['treatment_schema_link'] : (LABKEY.contextPath + data['treatment_schema_link']);
             this.update(data);
         };
 
