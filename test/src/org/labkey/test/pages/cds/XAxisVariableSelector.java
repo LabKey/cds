@@ -17,10 +17,10 @@ package org.labkey.test.pages.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,14 +116,21 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void setScale(Scale scale)
     {
-        _test.waitForElementToBeVisible(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']/following-sibling::div"));
-        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']/following-sibling::div"));
-        _test.waitForElement(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[contains(text(), '" + scale.getScaleLabel() + "')]"), CDSHelper.CDS_WAIT * 2);
-        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[contains(text(), '" + scale.getScaleLabel() + "')]"));
+        WebElement dropDownButton = Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']/following-sibling::div").findWhenNeeded(_test.getDriver());
+        WebDriverWrapper.waitFor(dropDownButton::isDisplayed, "Dropdown button not visible.", 500);
+        dropDownButton.click();
+
+        WebElement dropDownOption = Locator
+                .xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[contains(text(), '" + scale.getScaleLabel() + "')]")
+                .findWhenNeeded(_test.getDriver());
+        WebDriverWrapper.waitFor(dropDownOption::isDisplayed, String.format("Drop down option '%s' not displayed.'", scale.getScaleLabel()), 1_000);
+        dropDownOption.click();
 
         // Move the mouse so the drop down can close.
-        Actions builder = new Actions(_test.getDriver());
-        builder.moveToElement(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']").findElement(_test.getWrappedDriver()), 50, -50).build().perform();
+        _test.mouseOut();
+        WebDriverWrapper.waitFor(
+                ()->!Locator.tagWithClassContaining("div", XPATHID + "-option-scale-dropdown").findWhenNeeded(_test.getDriver()).isDisplayed(),
+                "Drop-down for the scale selector did not go away.", 500);
 
     }
 

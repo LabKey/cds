@@ -24,13 +24,11 @@ import org.labkey.test.Locator;
 import org.labkey.test.Locators;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.categories.Git;
-import org.labkey.test.components.ext4.Window;
 import org.labkey.test.pages.cds.LearnDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
@@ -81,6 +79,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public static final org.labkey.test.Locator.XPathLocator LEARN_HAS_DATA_ROW_TITLE_LOC = Locator.tagWithClass("tr", "detail-row-has-data").append("/td//div/div/h2");
 
     public static final org.labkey.test.Locator.XPathLocator DETAIL_PAGE_BREADCRUMB_LOC = Locator.tagWithClass("div", "breadcrumb");
+
+    private static final Locator TOOLTIP_TEXT_LOCATOR = Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content");
 
     @Override
     @Before
@@ -789,7 +789,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         showAllExpandAndVerify(showAllListToggle, 2);
 
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
-        assertTrue(smallHasDataIcons.size() == 10);
+        checker().verifyEquals("Icon size not as expected.", 10, smallHasDataIcons.size());
 
         verifyShowAllCollapse(showAllListToggle, 2);
 
@@ -811,23 +811,39 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify row for 'BJOX002000.03.2.delta624G.E625R.3-5' virus");
 
+        Locator rowLocator = Locator.tagWithAttribute("tr", "data-recordid", "BJOX002000.03.2.delta624G.E625R.3-5Env Pseudotype");
+
+        waitForElementToBeVisible(rowLocator);
+
+        WebElement rowElement = rowLocator.findElement(getDriver());
+
+        scrollIntoView(rowElement);
+
         log("Verify virus short name");
-        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("BJOX002000.03.2.delta624G.E625R.3-5"));
+        checker().verifyEquals("Virus short name not as expected.",
+                "BJOX002000.03.2.delta624G.E625R.3-5",
+                Locator.tagWithClass("div", "detail-description").childTag("h2").findElement(rowElement).getText());
 
         log("Verify Virus full name");
-        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("BJOX002000.03.2.delta624G.E625R.3-5,TZM-bl,full name"));
+        checker().verifyEquals("Virus full name is incorrect.",
+                "BJOX002000.03.2.delta624G.E625R.3-5,TZM-bl,full name",
+                Locator.tagWithClass("div", "antigen-description").childTag("p").findElement(rowElement).getText());
 
         log("Verify Species");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("HIV"));
+        checker().verifyTrue("Species with the expected value 'HIV' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("HIV").findElement(rowElement).isDisplayed());
 
         log("Verify Panels");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-text").child("p").withText("Diversity"));
+        checker().verifyTrue("Doesn't look like 'Diversity' is listed in the Panels.",
+                Locator.tagWithClass("div", "detail-text").childTag("p").containing("Diversity").findElement(rowElement).isDisplayed());
 
         log("Verify Host Cell");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("294T/18"));
+        checker().verifyTrue("Host cell with expected value '294T/18' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("294T/18").findElement(rowElement).isDisplayed());
 
         log("Verify Backbone");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("SG3 alpha env 1"));
+        checker().verifyTrue("Backbone with expected value 'SG3 beta env 2' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").withText("SG3 beta env 2").findElement(rowElement).isDisplayed());
 
     }
 
@@ -848,26 +864,44 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify row for 'Ce2010_F5.LucR.T2A.ecto' virus");
 
+        Locator rowLocator = Locator.tagWithAttribute("tr", "data-recordid", "Ce2010_F5.LucR.T2A.ectoIMC Virus");
+
+        waitForElementToBeVisible(rowLocator);
+
+        WebElement rowElement = rowLocator.findElement(getDriver());
+
+        scrollIntoView(rowElement);
+
         log("Verify Virus short name");
-        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("Ce2010_F5.LucR.T2A.ecto"));
+        checker().verifyEquals("Virus short name not as expected.",
+                "Ce2010_F5.LucR.T2A.ecto",
+                Locator.tagWithClass("div", "detail-description").childTag("h2").findElement(rowElement).getText());
 
         log("Verify Virus long name");
-        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("Ce2010_F5.LucR.T2A.ecto,A3R5,full name"));
+        checker().verifyEquals("Virus long name is incorrect.",
+                "Ce2010_F5.LucR.T2A.ecto,A3R5,full name",
+                Locator.tagWithClass("div", "antigen-description").childTag("p").findElements(rowElement).get(0).getText());
 
         log("Verify Virus other names");
-        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("Other names: Ce2010_F5.LucR.T2A.ecto, IMC, A3R5, ut massa"));
+        checker().verifyEquals("Virus other names is incorrect.",
+                "Other names: Ce2010_F5.LucR.T2A.ecto, IMC, A3R5, ut massa",
+                Locator.tagWithClass("div", "antigen-description").childTag("p").findElements(rowElement).get(1).getText());
 
         log("Verify Species");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("HIV"));
+        checker().verifyTrue("Species with the expected value 'HIV' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("HIV").findWhenNeeded(rowElement).isDisplayed());
 
         log("Verify Panels");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-text").child("p").withText("F Subtype"));
+        checker().verifyTrue("Doesn't look like 'F Subtype' is listed in the Panels.",
+                Locator.tagWithClass("div", "detail-text").childTag("p").containing("F Subtype").findElement(rowElement).isDisplayed());
 
         log("Verify Host Cell");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("293T/17"));
+        checker().verifyTrue("Host cell with expected value '293T/17' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("293T/17").findElement(rowElement).isDisplayed());
 
         log("Verify Backbone");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("SG3 beta env 4"));
+        checker().verifyTrue("Backbone with expected value 'SG3 beta env 4' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").withText("SG3 beta env 4").findElement(rowElement).isDisplayed());
 
     }
 
@@ -1952,7 +1986,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         for (String expected : expectedText)
         {
-            assertTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.", toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
+            // Not a fatal error if the tooltip does not contain the expected text.
+            checker().withScreenshot("ToolTipTextError").verifyTrue("Tool tip did not contain text: '" + expected + "'. Found: '" + toolTipText + "'.",
+                    toolTipText.trim().toLowerCase().contains(expected.trim().toLowerCase()));
         }
     }
 
@@ -1961,40 +1997,46 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Hover over the link with text '" + el.getText() + "' to validate that the tooltip is shown.");
         String toolTipText;
 
-        assertTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el));
-        log("It looks like a tooltip was shown for '" + el.getText()+ "'.");
+        // Not a fatal error if a tooltip is not shown.
+        String screenShotName = "ValidateToolTip_" + el.getText();
 
-        toolTipText = getToolTipText();
+        checker().setErrorMark();
+        checker().withScreenshot(screenShotName).verifyTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el));
 
-        validateToolTipText(toolTipText, toolTipExpected);
+        if(checker().errorsSinceMark() == 0)
+        {
+            // If the tool-tip is present, checker().verifyTrue returned true, check the text of the tooltip.
+            toolTipText = getToolTipText();
+            validateToolTipText(toolTipText, toolTipExpected);
+        }
 
         // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.
         mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-        waitForElementToDisappear(Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content"));
+        waitForElementToDisappear(TOOLTIP_TEXT_LOCATOR);
 
     }
 
     private boolean triggerToolTip(WebElement el)
     {
-        int elWidth = el.getSize().getWidth();
-        int elHeight = el.getSize().getHeight();
-        boolean bubblePresent = false;
+        // Move the mouse to the top left corner of the page and make sure there are no popups visible.
+        mouseOut();
+        waitForElementToDisappear(TOOLTIP_TEXT_LOCATOR);
 
-        Actions builder = new Actions(getDriver());
+        // Move the mouse over the element.
+        mouseOver(el);
 
-        for (int i = -10; i <= elWidth && i <= elHeight && !bubblePresent; i++)
-        {
-            sleep(250); // Wait a moment.
-            builder.moveToElement(el, i, i).build().perform();
-            bubblePresent = isElementPresent(Locator.css("div.hopscotch-bubble-container"));
-        }
-
-        return bubblePresent;
+        // Wait for the tooltip to show up.
+        return waitFor(()->
+                isElementPresent(TOOLTIP_TEXT_LOCATOR),
+                2_000);
     }
 
     private String getToolTipText()
     {
-        return getText(Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content"));
+        // Shouldn't have to put this check here, but getText is not always return the text of the tooltip so
+        // validate that it is there first.
+        waitForElementToBeVisible(TOOLTIP_TEXT_LOCATOR);
+        return getText(TOOLTIP_TEXT_LOCATOR);
     }
 
     private void showAllExpandAndVerify(Locator showAllListToggle, int remaining)

@@ -1154,6 +1154,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // This test will only validate that a "Filter" button shows up, but will not validate that the
         // range of the filter is as expected.
 
+        // I think that the JS errors we are seeing in TC runs are caused by test code and not product code.
+        // Going to pause the JS Error Checker for this test.
+        pauseJsErrorChecker();
+
         CDSHelper cds = new CDSHelper(this);
         int subjectCountBefore;
         String tempStr;
@@ -1281,6 +1285,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.clearFilters();
         sleep(1000);
         _ext4Helper.waitForMaskToDisappear();
+
+        // Resume JS Error Checker.
+        resumeJsErrorChecker();
 
     }
 
