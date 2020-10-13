@@ -28,6 +28,7 @@ import org.labkey.test.pages.cds.LearnDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -1205,8 +1206,37 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         Locator.XPathLocator downloadLinkLocator = Locator.tagWithAttributeContaining("img", "alt", altText);
         scrollIntoView(downloadLinkLocator);
-        File downloadedFile = clickAndWaitForDownload(downloadLinkLocator);
-        assertTrue(downloadedFile + " not downloaded.", downloadedFile.getName().contains(documentName));
+
+        if(getDownloadDir().list() != null)
+        {
+            log("Files in download directory before clicking the link: " + Arrays.asList(getDownloadDir().list()));
+        }
+        else
+        {
+            log("No files in the download directory before clicking the link.");
+        }
+
+        try
+        {
+            File downloadedFile = clickAndWaitForDownload(downloadLinkLocator);
+
+            checker().verifyEquals("Name of downloaded file not as expected.",
+                    documentName.toLowerCase(), downloadedFile.getName().toLowerCase());
+        }
+        catch(TimeoutException toe)
+        {
+            checker().error("Link did not download the file.");
+        }
+
+        if(getDownloadDir().list() != null)
+        {
+            log("Files in download directory after clicking the link: " + Arrays.asList(getDownloadDir().list()));
+        }
+        else
+        {
+            log("No files in the download directory after clicking the link.");
+        }
+
     }
 
     private void verifyNonIntegratedDataHeader(String studyName)
