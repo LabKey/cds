@@ -1204,7 +1204,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private void verifyNonIntegratedDownloadLink(String altText, String documentName)
     {
-        Locator.XPathLocator downloadLinkLocator = Locator.tagWithAttributeContaining("img", "alt", altText);
+        WebElement downloadLinkLocator = Locator.tagWithAttributeContaining("img", "alt", altText)
+                .parent("a").findElement(getDriver());
+
         scrollIntoView(downloadLinkLocator);
 
         if(getDownloadDir().list() != null)
