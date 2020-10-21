@@ -1,27 +1,22 @@
 <%
-    /*
-     * Copyright (c) 2015-2018 LabKey Corporation
-     *
-     * Licensed under the Apache License, Version 2.0 (the "License");
-     * you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+/*
+ * Copyright (c) 2015-2018 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
-<%
-    String contextPath = request.getContextPath();
-    String appPath = contextPath + "/Connector";
-    String frontPagePath = contextPath + "/frontPage";
-%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,13 +24,13 @@
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CAVD DataSpace</title>
-    <link rel="stylesheet" href="<%=text(frontPagePath)%>/css/application.css">
-    <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/fullpage.js/jquery.fullPage.css">
-    <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/magnific-popup/dist/magnific-popup.css">
+    <link rel="stylesheet" href="<%=getWebappURL("/frontpage/css/application.css")%>">
+    <link rel="stylesheet" href="<%=getWebappURL("/frontpage/components/fullpage.js/jquery.fullPage.css")%>">
+    <link rel="stylesheet" href="<%=getWebappURL("/frontpage/components/magnific-popup/dist/magnific-popup.css")%>">
     <style type="text/css">
         /* Context-sensitive url */
         .section.intro-section .video-container .video-placeholder {
-            background-image: url(<%=text(frontPagePath)%>/img/intro.jpg);
+            background-image: url(<%=getWebappURL("/frontpage/img/intro.jpg")%>);
         }
 
         .twitter {
@@ -44,7 +39,7 @@
         }
 
         .twitter-logo {
-            background-image: url(<%=text(frontPagePath)%>/img/Twitter.svg);
+            background-image: url(<%=getWebappURL("/frontpage/img/Twitter.svg")%>);
             height: 24px;
             width: 24px !important;
             display: inline !important;
@@ -53,17 +48,17 @@
         }
     </style>
 
-    <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/headerlogo.png">
+    <link rel="icon" type="image/png" href="<%=getWebappURL("/frontpage/img/headerlogo.png")%>">
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), null, null, false)%>
-    <script data-main="<%=text(frontPagePath)%>/js/config" src="<%=text(frontPagePath)%>/components/requirejs/require.js"></script>
+    <script data-main="<%=getWebappURL("/frontpage/js/config")%>" src="<%=getWebappURL("/frontpage/components/requirejs/require.js")%>"></script>
 
     <%--<!-- Client API Dependencies -->--%>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
-    <script type="text/javascript" src="<%=text(frontPagePath)%>/components/jquery/dist/jquery.min.js"></script>
+    <%=getScriptTag("/clientapi/core/Utils.js")%>
+    <%=getScriptTag("/clientapi/core/ActionURL.js")%>
+    <%=getScriptTag("/clientapi/core/Ajax.js")%>
+    <%=getScriptTag("/frontpage/components/jquery/dist/jquery.min.js")%>
     <script type="text/javascript">
         reloadRegisterPage = function() {
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
@@ -81,7 +76,7 @@
     <div id="navigation">
         <div class="icon" data-js-id="frontPageHomeIcon">
             <div class="img">
-                <img src="<%=text(frontPagePath)%>/img/icon.png">
+                <img src="<%=getWebappURL("/frontpage/img/icon.png")%>">
             </div>
         </div>
         <div class="title" data-js-id="frontPageNavTitle">
@@ -98,12 +93,12 @@
     </div>
     <div id="notification">
         <div class="warning">
-            <img src="<%=text(frontPagePath)%>/img/warning_indicator.svg" width="20" height="20"/>
+            <img src="<%=getWebappURL("/frontpage/img/warning_indicator.svg")%>" width="20" height="20"/>
         </div>
         <div class="notification-messages">
         </div>
         <div class="dismiss">
-            <img src="<%=text(frontPagePath)%>/img/dismiss.svg" width="20" height="20"/>
+            <img src="<%=getWebappURL("/frontpage/img/dismiss.svg")%>" width="20" height="20"/>
         </div>
     </div>
     <div class="signin-modal-popup hidden">
@@ -233,7 +228,7 @@
                             To help protect against abuse by bots, please enter the six characters shown below (case insensitive).
                         </span>
                         <div class="kaptcha" onclick="return reloadRegisterPage();">
-                            <img src="<%= text(contextPath) %>/kaptcha.jpg" alt="Verification text" title="Click to get a new image." height="50" width="200"/>
+                            <img src="<%=getWebappURL("/kaptcha.jpg")%>" alt="Verification text" title="Click to get a new image." height="50" width="200"/>
                             <br><a class="register-links">Click to get a different image</a>
                         </div>
                         <input id="kaptchaText" name="kaptchaText" type="text" placeholder="Verification code" required>
@@ -558,7 +553,7 @@
                             <button title="Close (Esc)" type="button" class="video-close mfp-close">x</button>
                         </div>
 
-                        <div id="intro-video" poster="<%=text(frontPagePath)%>/img/intro.jpg" class="video-js">
+                        <div id="intro-video" poster="<%=getWebappURL("/frontpage/img/intro.jpg")%>" class="video-js">
                             <iframe src="https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
                         </div>
@@ -659,13 +654,13 @@
                 </a>
             </div>
         </div>
-        <div data-index='4' data-gif="<%=text(frontPagePath)%>/img/learn.gif" data-name="Learn" class="section learn-section">
+        <div data-index='4' data-gif="<%=getWebappURL("/frontpage/img/learn.gif")%>" data-name="Learn" class="section learn-section">
             <div class="gif-title">
                 <h1>Learn</h1>
             </div>
             <div class="gif-container learn">
-                <img src="<%=text(frontPagePath)%>/img/learn.png" class="placeholder">
-                <img src="<%=text(frontPagePath)%>/img/learn-complete.png" class="mobile-img">
+                <img src="<%=getWebappURL("/frontpage/img/learn.png")%>" class="placeholder">
+                <img src="<%=getWebappURL("/frontpage/img/learn-complete.png")%>" class="mobile-img">
                 <div class="gif-description">
                     <p>Learn details about dozens of studies, vaccines, and assays
                         to avoid covering trodden ground and give context to new
@@ -676,13 +671,13 @@
                 <div class="arrow"></div>
             </a>
         </div>
-        <div data-index='5' data-gif="<%=text(frontPagePath)%>/img/explore.gif" data-name="Explore" class="section explore-section">
+        <div data-index='5' data-gif="<%=getWebappURL("/frontpage/img/explore.gif")%>" data-name="Explore" class="section explore-section">
             <div class="gif-title">
                 <h1>Explore</h1>
             </div>
             <div class="gif-container explore">
-                <img src="<%=text(frontPagePath)%>/img/explore.png" class="placeholder">
-                <img src="<%=text(frontPagePath)%>/img/explore-complete.png" class="mobile-img">
+                <img src="<%=getWebappURL("/frontpage/img/explore.png")%>" class="placeholder">
+                <img src="<%=getWebappURL("/frontpage/img/explore-complete.png")%>" class="mobile-img">
                 <div class="gif-description">
                     <p>Find relationships among subjects from many studies,
                         filter to characteristics of interest, and quickly visualize
@@ -693,13 +688,13 @@
                 <div class="arrow"></div>
             </a>
         </div>
-        <div data-index='6' data-gif="<%=text(frontPagePath)%>/img/collab.gif" data-name="Collaborate" class="section collab-section">
+        <div data-index='6' data-gif="<%=getWebappURL("/frontpage/img/collab.gif")%>" data-name="Collaborate" class="section collab-section">
             <div class="gif-title">
                 <h1>Collaborate</h1>
             </div>
             <div class="gif-container collab">
-                <img src="<%=text(frontPagePath)%>/img/collab.png" class="placeholder">
-                <img src="<%=text(frontPagePath)%>/img/collab-complete.png" class="mobile-img">
+                <img src="<%=getWebappURL("/frontpage/img/collab.png")%>" class="placeholder">
+                <img src="<%=getWebappURL("/frontpage/img/collab-complete.png")%>" class="mobile-img">
                 <div class="gif-description">
                     <p>Find a contact for every product, assay, and study for
                         clarification or to explore a new idea together.</p>
