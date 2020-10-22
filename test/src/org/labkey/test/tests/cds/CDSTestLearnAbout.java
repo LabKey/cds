@@ -29,7 +29,6 @@ import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
@@ -790,7 +789,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         showAllExpandAndVerify(showAllListToggle, 2);
 
         List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
-        assertTrue(smallHasDataIcons.size() == 10);
+        checker().verifyEquals("Icon size not as expected.", 10, smallHasDataIcons.size());
 
         verifyShowAllCollapse(showAllListToggle, 2);
 
@@ -812,23 +811,39 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify row for 'BJOX002000.03.2.delta624G.E625R.3-5' virus");
 
+        Locator rowLocator = Locator.tagWithAttribute("tr", "data-recordid", "BJOX002000.03.2.delta624G.E625R.3-5Env Pseudotype");
+
+        waitForElementToBeVisible(rowLocator);
+
+        WebElement rowElement = rowLocator.findElement(getDriver());
+
+        scrollIntoView(rowElement);
+
         log("Verify virus short name");
-        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("BJOX002000.03.2.delta624G.E625R.3-5"));
+        checker().verifyEquals("Virus short name not as expected.",
+                "BJOX002000.03.2.delta624G.E625R.3-5",
+                Locator.tagWithClass("div", "detail-description").childTag("h2").findElement(rowElement).getText());
 
         log("Verify Virus full name");
-        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("BJOX002000.03.2.delta624G.E625R.3-5,TZM-bl,full name"));
+        checker().verifyEquals("Virus full name is incorrect.",
+                "BJOX002000.03.2.delta624G.E625R.3-5,TZM-bl,full name",
+                Locator.tagWithClass("div", "antigen-description").childTag("p").findElement(rowElement).getText());
 
         log("Verify Species");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("HIV"));
+        checker().verifyTrue("Species with the expected value 'HIV' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("HIV").findElement(rowElement).isDisplayed());
 
         log("Verify Panels");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-text").child("p").withText("Diversity"));
+        checker().verifyTrue("Doesn't look like 'Diversity' is listed in the Panels.",
+                Locator.tagWithClass("div", "detail-text").childTag("p").containing("Diversity").findElement(rowElement).isDisplayed());
 
         log("Verify Host Cell");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("294T/18"));
+        checker().verifyTrue("Host cell with expected value '294T/18' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("294T/18").findElement(rowElement).isDisplayed());
 
         log("Verify Backbone");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("SG3 alpha env 1"));
+        checker().verifyTrue("Backbone with expected value 'SG3 beta env 2' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").withText("SG3 beta env 2").findElement(rowElement).isDisplayed());
 
     }
 
@@ -849,26 +864,44 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify row for 'Ce2010_F5.LucR.T2A.ecto' virus");
 
+        Locator rowLocator = Locator.tagWithAttribute("tr", "data-recordid", "Ce2010_F5.LucR.T2A.ectoIMC Virus");
+
+        waitForElementToBeVisible(rowLocator);
+
+        WebElement rowElement = rowLocator.findElement(getDriver());
+
+        scrollIntoView(rowElement);
+
         log("Verify Virus short name");
-        waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("Ce2010_F5.LucR.T2A.ecto"));
+        checker().verifyEquals("Virus short name not as expected.",
+                "Ce2010_F5.LucR.T2A.ecto",
+                Locator.tagWithClass("div", "detail-description").childTag("h2").findElement(rowElement).getText());
 
         log("Verify Virus long name");
-        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("Ce2010_F5.LucR.T2A.ecto,A3R5,full name"));
+        checker().verifyEquals("Virus long name is incorrect.",
+                "Ce2010_F5.LucR.T2A.ecto,A3R5,full name",
+                Locator.tagWithClass("div", "antigen-description").childTag("p").findElements(rowElement).get(0).getText());
 
         log("Verify Virus other names");
-        assertElementPresent(Locator.xpath("//div").withClass("antigen-description").child("p").withText("Other names: Ce2010_F5.LucR.T2A.ecto, IMC, A3R5, ut massa"));
+        checker().verifyEquals("Virus other names is incorrect.",
+                "Other names: Ce2010_F5.LucR.T2A.ecto, IMC, A3R5, ut massa",
+                Locator.tagWithClass("div", "antigen-description").childTag("p").findElements(rowElement).get(1).getText());
 
         log("Verify Species");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("HIV"));
+        checker().verifyTrue("Species with the expected value 'HIV' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("HIV").findWhenNeeded(rowElement).isDisplayed());
 
         log("Verify Panels");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-text").child("p").withText("F Subtype"));
+        checker().verifyTrue("Doesn't look like 'F Subtype' is listed in the Panels.",
+                Locator.tagWithClass("div", "detail-text").childTag("p").containing("F Subtype").findElement(rowElement).isDisplayed());
 
         log("Verify Host Cell");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("293T/17"));
+        checker().verifyTrue("Host cell with expected value '293T/17' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").containing("293T/17").findElement(rowElement).isDisplayed());
 
         log("Verify Backbone");
-        assertElementPresent(Locator.xpath("//div").withClass("detail-gray-text").withText("SG3 beta env 4"));
+        checker().verifyTrue("Backbone with expected value 'SG3 beta env 4' is not visible.",
+                Locator.tagWithClass("div", "detail-gray-text").withText("SG3 beta env 4").findElement(rowElement).isDisplayed());
 
     }
 
@@ -1966,7 +1999,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         // Not a fatal error if a tooltip is not shown.
         String screenShotName = "ValidateToolTip_" + el.getText();
-        if(checker().withScreenshot(screenShotName).verifyTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el)))
+
+        checker().setErrorMark();
+        checker().withScreenshot(screenShotName).verifyTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el));
+
+        if(checker().errorsSinceMark() == 0)
         {
             // If the tool-tip is present, checker().verifyTrue returned true, check the text of the tooltip.
             toolTipText = getToolTipText();
