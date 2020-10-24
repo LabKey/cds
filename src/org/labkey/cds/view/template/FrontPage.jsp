@@ -52,7 +52,7 @@
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), null, null, false)%>
-    <script data-main="<%=getWebappURL("/frontpage/js/config")%>" src="<%=getWebappURL("/frontpage/components/requirejs/require.js")%>"></script>
+    <script data-main="<%=getContextPath()%>/frontpage/js/config" src="<%=getWebappURL("/frontpage/components/requirejs/require.js")%>"></script>
 
     <%--<!-- Client API Dependencies -->--%>
     <%=getScriptTag("/clientapi/core/Utils.js")%>
