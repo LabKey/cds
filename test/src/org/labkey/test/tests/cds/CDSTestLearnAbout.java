@@ -1125,7 +1125,16 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify instruction text on Learn About page for Assays - " + assayName);
         cds.viewLearnAboutPage("Assays");
         goToDetail(assayName, true);
-        assertTextPresent("Go to Plot to view or Grid to export");
+        assertTextPresent("Visualize subject-level data in ");
+        assertElementPresent(plotLink);
+        assertElementPresent(gridLink);
+
+        String mabAssayName = CDSHelper.ASSAYS_FULL_TITLES[4]; //NAb MAb
+        log("Verify instruction text on Learn About page for NAB MAB assay - " + assayName);
+        cds.viewLearnAboutPage("Assays");
+        goToDetail(mabAssayName, true);
+        assertElementPresent(mabLink);
+        assertTextPresent("to visualize or export mAb data");
 
         String productName = "2F5";
         log("Verify instruction text on Learn About page for Products - " + productName);
@@ -1142,10 +1151,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         goToDetail(MAbName, true);
 
         log("Verify sub-header instruction under MAb Characterization Studies");
-        assertTextPresent("to visualize or export mAb data.");
+        assertTextPresent("to visualize or export mAb data");
         assertElementPresent(mabLink);
         log("Verify sub-header instruction under MAb Administration Studies");
-        assertTextPresent("to visualize or export mAb data.");
+        assertTextPresent("to visualize or export mAb data");
 
 
         String publicationName = "Fong Y 2018 J Infect Dis";

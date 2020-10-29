@@ -601,7 +601,8 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Integrated data',
                             dataField: 'studies',
                             dataLink: 'Study',
-                            instructions: 'Go to Plot to view or Grid to export'
+                            instructions: 'Visualize subject-level data in Plot or export from Grid',
+                            nabMabInstructions: 'Go to Monoclonal antibodies to visualize or export mAb data'
                         }
                     }]]
                 },{

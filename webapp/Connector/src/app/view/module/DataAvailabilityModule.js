@@ -37,6 +37,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         this.update(this.data);
 
         this.toggleListTask = new Ext.util.DelayedTask(this.toggleList, this);
+        var assay_iden = this.data.model.data.assay_identifier;
 
         this.items = [{
             html: (new Ext.XTemplate('<tpl if="hasDetails">',
@@ -44,7 +45,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         Connector.constant.Templates.module.title,
                     '</p></div>',
                     '<p>',
-                    this.getInstructions(this.data.instructions),
+                    this.getInstructions(assay_iden && assay_iden.toLowerCase() === 'nab mab' ? this.data.nabMabInstructions : this.data.instructions),
                     '</p>',
                     '</br>',
                     '<table class="data-availability-header' + (this.data.hasGrouping ? ' data-availability-header-with-group' : '') + '">',
@@ -191,15 +192,15 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         if (instructions) {
             if (instrWithHyperlink.indexOf("Monoclonal antibodies") >= 0) {
                 var splitInstr = instrWithHyperlink.split("Monoclonal antibodies");
-                instrWithHyperlink = splitInstr[0] + " <a href=\"#mabgrid\" target=\"_blank\">Monoclonal antibodies</a>" + splitInstr[1];
+                instrWithHyperlink = splitInstr[0] + "<a href=\"#mabgrid\">Monoclonal antibodies</a>" + splitInstr[1];
             }
             if (instrWithHyperlink.indexOf("Plot") >= 0) {
                 var splitPlot = instrWithHyperlink.split("Plot");
-                instrWithHyperlink = splitPlot[0] + " <a href=\"#chart\" target=\"_blank\">Plot</a> " + splitPlot[1];
+                instrWithHyperlink = splitPlot[0] + "<a href=\"#chart\">Plot</a>" + splitPlot[1];
             }
             if (instrWithHyperlink.indexOf("Grid") >= 0) {
                 var splitGrid = instrWithHyperlink.split("Grid");
-                instrWithHyperlink = splitGrid[0] + " <a href=\"#data\" target=\"_blank\">Grid</a>" + splitGrid[1];
+                instrWithHyperlink = splitGrid[0] + "<a href=\"#data\">Grid</a>" + splitGrid[1];
             }
         }
 
@@ -288,21 +289,6 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                                     getInstructions: function(key)
                                     {
                                         return me.getInstructions(me.data.groupSubHeaderInstr[key]);
-                                        //
-                                        // if (instrWithHyperlink.indexOf("Monoclonal antibodies") >= 0) {
-                                        //     var splitInstr = instrWithHyperlink.split("Monoclonal antibodies");
-                                        //     instrWithHyperlink = splitInstr[0] + " <a href=\"#mabgrid\" target=\"_blank\">Monoclonal antibodies</a> " + splitInstr[1];
-                                        // }
-                                        // if (instrWithHyperlink.indexOf("Plot") >= 0) {
-                                        //     var splitPlot = instrWithHyperlink.split("Plot");
-                                        //     instrWithHyperlink = splitPlot[0] + " <a href=\"#chart\" target=\"_blank\">Plot</a> " + splitPlot[1];
-                                        // }
-                                        // if (instrWithHyperlink.indexOf("Grid") >= 0) {
-                                        //     var splitGrid = instrWithHyperlink.split("Grid");
-                                        //     instrWithHyperlink = splitGrid[0] + " <a href=\"#data\" target=\"_blank\">Grid</a>" + splitGrid[1];
-                                        // }
-                                        //
-                                        // return instrWithHyperlink;
                                     }
                                 })
                     }
