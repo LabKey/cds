@@ -44,7 +44,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         Connector.constant.Templates.module.title,
                     '</p></div>',
                     '<p>',
-                        this.data.instructions,
+                    this.getInstructions(this.data.instructions),
                     '</p>',
                     '</br>',
                     '<table class="data-availability-header' + (this.data.hasGrouping ? ' data-availability-header-with-group' : '') + '">',
@@ -186,6 +186,26 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
         this.callParent();
     },
 
+    getInstructions: function (instructions) {
+        var instrWithHyperlink = instructions;
+        if (instructions) {
+            if (instrWithHyperlink.indexOf("Monoclonal antibodies") >= 0) {
+                var splitInstr = instrWithHyperlink.split("Monoclonal antibodies");
+                instrWithHyperlink = splitInstr[0] + " <a href=\"#mabgrid\" target=\"_blank\">Monoclonal antibodies</a>" + splitInstr[1];
+            }
+            if (instrWithHyperlink.indexOf("Plot") >= 0) {
+                var splitPlot = instrWithHyperlink.split("Plot");
+                instrWithHyperlink = splitPlot[0] + " <a href=\"#chart\" target=\"_blank\">Plot</a> " + splitPlot[1];
+            }
+            if (instrWithHyperlink.indexOf("Grid") >= 0) {
+                var splitGrid = instrWithHyperlink.split("Grid");
+                instrWithHyperlink = splitGrid[0] + " <a href=\"#data\" target=\"_blank\">Grid</a>" + splitGrid[1];
+            }
+        }
+
+        return instrWithHyperlink;
+    },
+
     toggleList: function(event, grpName) {
         var data = this.data;
         var dataView = this.items.items[1].getView();
@@ -267,7 +287,22 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                                 {
                                     getInstructions: function(key)
                                     {
-                                        return me.data.groupSubHeaderInstr[key];
+                                        return me.getInstructions(me.data.groupSubHeaderInstr[key]);
+                                        //
+                                        // if (instrWithHyperlink.indexOf("Monoclonal antibodies") >= 0) {
+                                        //     var splitInstr = instrWithHyperlink.split("Monoclonal antibodies");
+                                        //     instrWithHyperlink = splitInstr[0] + " <a href=\"#mabgrid\" target=\"_blank\">Monoclonal antibodies</a> " + splitInstr[1];
+                                        // }
+                                        // if (instrWithHyperlink.indexOf("Plot") >= 0) {
+                                        //     var splitPlot = instrWithHyperlink.split("Plot");
+                                        //     instrWithHyperlink = splitPlot[0] + " <a href=\"#chart\" target=\"_blank\">Plot</a> " + splitPlot[1];
+                                        // }
+                                        // if (instrWithHyperlink.indexOf("Grid") >= 0) {
+                                        //     var splitGrid = instrWithHyperlink.split("Grid");
+                                        //     instrWithHyperlink = splitGrid[0] + " <a href=\"#data\" target=\"_blank\">Grid</a>" + splitGrid[1];
+                                        // }
+                                        //
+                                        // return instrWithHyperlink;
                                     }
                                 })
                     }

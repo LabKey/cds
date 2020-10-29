@@ -370,7 +370,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Integrated data',
                             dataField: 'assays',
                             dataLink: 'Assay',
-                            instructions: 'Go to Plot to view or Grid to export'
+                            instructions: 'Visualize subject-level data in Plot or export from Grid. For mAb data, go to Monoclonal antibodies.'
                         }
                     }, {
                         type: 'studynonintegrateddata',
@@ -472,7 +472,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Integrated data',
                             dataField: 'studies',
                             dataLink: 'Study',
-                            instructions: 'Go to Plot to view or Grid to export. Additional non-integrated data files may be available for download. See study page.'
+                            instructions: 'Visualize subject-level data in Plot or export from Grid. Additional data may be available. See study page.'
                         }
                     },{
                         type: 'productotherproducts',
