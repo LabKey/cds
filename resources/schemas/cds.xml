@@ -464,6 +464,8 @@
             <column columnName="fit_inflection"/>
             <column columnName="fit_error"/>
             <column columnName="vaccine_matched"/>
+            <column columnName="virus_control_mean"/>
+            <column columnName="cell_control_mean"/>
         </columns>
     </table>
     <table tableName="import_pkmab" tableDbType="TABLE">
