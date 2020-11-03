@@ -64,6 +64,8 @@ SELECT
   dd.fit_slope,
   dd.fit_inflection,
   dd.fit_error,
-  dd.vaccine_matched
+  dd.vaccine_matched,
+  dd.virus_control_mean,
+  dd.cell_control_mean
 
 FROM cds.import_NABMAb AS dd left join cds.import_nabantigen na on na.cds_virus_id = dd.cds_virus_id AND na.assay_identifier = dd.assay_identifier

@@ -60,7 +60,9 @@ SELECT
   mab.fit_slope,
   mab.fit_inflection,
   mab.fit_error,
-  mab.vaccine_matched
+  mab.vaccine_matched,
+  mab.virus_control_mean,
+  mab.cell_control_mean
 
 FROM study.NABMAb as mab
   LEFT JOIN cds.MAbMixMetadata as MixMeta on (MixMeta.mab_mix_id = mab.mab_mix_id)

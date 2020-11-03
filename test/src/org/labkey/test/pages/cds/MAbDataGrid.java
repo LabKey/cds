@@ -57,10 +57,17 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public static final String GRID_TITLE_MABS_META = "MAbs";
     public static final List<String> MABS_COLUMNS = Arrays.asList("Mab mix id", "Mab mix label", "Mab mix name std", "Mab id", "Mab name std", "Mab Lanl id");
     public static final String GRID_TITLE_NAB_MAB_ASSAY = "NAB MAB";
-    public static final List<String> NABMAB_ASSAY_COLUMNS = Arrays.asList("Study", "Mab mix id", "Mab mix label", "Mab mix name std", "MAb name source", "Assay identifier", "Curve id", "Data summary level");
+    public static final List<String> NABMAB_ASSAY_COLUMNS = Arrays.asList("Study", "Mab mix id", "Mab mix label", "Mab mix name std",
+            "MAb name source", "Assay identifier", "Cell control mean", "Curve id", "Data summary level", "Fit asymmetry",
+            "Fit error", "Fit inflection", "Fit max", "Fit min", "Fit slope", "Initial concentration", "Lab ID", "MAb concentration",
+            "MAb concentration units", "Max concentration",	"Max well value", "Mean well value", "Min concentration", "Min well value",
+            "Neutralization plus minus", "Neutralization tier",	"Percent neutralization", "Response call IC50",	"Response call IC80", "Slope",
+            "Specimen concentration id", "Specimen type", "Target cell", "Titer curve IC50", "Titer curve IC80", "Titer point IC50", "Titer point IC80",
+            "Vaccine matched",	"Virus control mean", "Virus dilution",	"Well std dev",	"Virus name", "Virus full name", "Virus type",
+            "Virus species", "Virus clade",	"Virus host cell", "Virus backbone");
 
     public static final List<String> NABMAB_ASSAY_VARIABLES = Arrays.asList("Assay identifier",
-            "Curve id", "Data summary level", "Fit asymmetry", "Fit error", "Fit inflection", "Fit max", "Fit min", "Fit slope", "Initial concentration", "Lab ID", "MAb concentration units", "MAb concentration");
+            "Cell control mean", "Curve id", "Data summary level", "Fit asymmetry", "Fit error", "Fit inflection", "Fit max", "Fit min", "Fit slope", "Initial concentration", "Lab ID", "MAb concentration units", "MAb concentration");
 
     public static final List<String> ColumnLabels = Arrays.asList(MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL, ANTIGEN_BINDING_COL,
             VIRUSES_COL, CLADES_COL, TIERS_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL);

@@ -1580,7 +1580,20 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
-
+      <column columnName="virus_control_mean">
+        <datatype>double</datatype>
+        <columnTitle>Virus control mean</columnTitle>
+        <description>Mean signal across virus control wells on the plate</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="cell_control_mean">
+        <datatype>double</datatype>
+        <columnTitle>Cell control mean</columnTitle>
+        <description>Mean signal across cell control wells on the plate</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
     </columns>
     <tableTitle>Neutralization Antibody - Monoclonal Antibodies</tableTitle>
   </table>
