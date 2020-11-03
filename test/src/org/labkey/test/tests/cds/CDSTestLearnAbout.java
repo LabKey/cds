@@ -1107,32 +1107,55 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testIntegratedDataInstructions()
     {
+        Locator plotLink = Locator.linkWithHref("#chart");
+        Locator gridLink = Locator.linkWithHref("#data");
+        Locator mabLink = Locator.linkWithHref("#mabgrid");
+
         String studyName = "QED 2";
         log("Verify instruction text on Learn About page for Studies - " + studyName);
         cds.viewLearnAboutPage("Studies");
         goToDetail(studyName, true);
-        assertTextPresent("Go to Plot to view or Grid to export");
+        assertTextPresent("Visualize subject-level data in");
+        assertElementPresent(plotLink);
+        assertElementPresent(gridLink);
+        assertTextPresent("For mAb data, go to");
+        assertElementPresent(mabLink);
 
         String assayName = CDSHelper.ASSAYS_FULL_TITLES[1]; //ICS
         log("Verify instruction text on Learn About page for Assays - " + assayName);
         cds.viewLearnAboutPage("Assays");
         goToDetail(assayName, true);
-        assertTextPresent("Go to Plot to view or Grid to export");
+        assertTextPresent("Visualize subject-level data in ");
+        assertElementPresent(plotLink);
+        assertElementPresent(gridLink);
+
+        String mabAssayName = CDSHelper.ASSAYS_FULL_TITLES[4]; //NAb MAb
+        log("Verify instruction text on Learn About page for NAB MAB assay - " + assayName);
+        cds.viewLearnAboutPage("Assays");
+        goToDetail(mabAssayName, true);
+        assertElementPresent(mabLink);
+        assertTextPresent("to visualize or export mAb data");
 
         String productName = "2F5";
         log("Verify instruction text on Learn About page for Products - " + productName);
         cds.viewLearnAboutPage("Products");
         goToDetail(productName, true);
-        assertTextPresent("Go to Plot to view or Grid to export. Additional non-integrated data files may be available for download. See study page.");
+        assertTextPresent("Visualize subject-level data in");
+        assertElementPresent(plotLink);
+        assertElementPresent(gridLink);
+        assertTextPresent("Additional data may be available. See study page.");
 
         String MAbName = "2F5";
         log("Verify sub-header instruction text on Learn About page for MAbs - " + MAbName);
         cds.viewLearnAboutPage("MAbs");
         goToDetail(MAbName, true);
-        String subHeaderCharacterizationInstr = "Go to Monoclonal antibodies to view or export";
-        String subHeaderAdministrationInstr = "Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.";
-        assertTextPresent(subHeaderCharacterizationInstr);
-        assertTextPresent(subHeaderAdministrationInstr);
+
+        log("Verify sub-header instruction under MAb Characterization Studies");
+        assertTextPresent("to visualize or export mAb data");
+        assertElementPresent(mabLink);
+        log("Verify sub-header instruction under MAb Administration Studies");
+        assertTextPresent("to visualize or export mAb data");
+
 
         String publicationName = "Fong Y 2018 J Infect Dis";
         log("Verify instruction text on Learn About page for Publications - " + publicationName);
