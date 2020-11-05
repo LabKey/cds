@@ -371,14 +371,41 @@
     <table tableName="import_bamaantigen" tableDbType="TABLE">
         <columns>
             <column columnName="assay_identifier"/>
-            <column columnName="antigen_name"/>
-            <column columnName="antigen_type"/>
-            <column columnName="protein_panel"/>
-            <column columnName="protein"/>
-            <column columnName="clade"/>
-            <column columnName="antigen_description"/>
-            <column columnName="antigen_control"/>
             <column columnName="container"/>
+            <column columnName="cds_ag_id"/>
+            <column columnName="antigen_full_name"/>
+            <column columnName="antigen_short_name"/>
+            <column columnName="antigen_plot_label"/>
+            <column columnName="antigen_name_other"/>
+            <column columnName="dna_construct_id"/>
+            <column columnName="antigen_type_component"/>
+            <column columnName="antigen_category"/>
+            <column columnName="antigen_type_region"/>
+            <column columnName="antigen_type_scaffold"/>
+            <column columnName="antigen_type_modifiers"/>
+            <column columnName="antigen_type_tags"/>
+            <column columnName="antigen_type_differentiate"/>
+            <column columnName="antigen_control"/>
+            <column columnName="isolate_name_component"/>
+            <column columnName="isolate_species"/>
+            <column columnName="isolate_donor_id"/>
+            <column columnName="isolate_differentiate"/>
+            <column columnName="isolate_clade"/>
+            <column columnName="isolate_clone"/>
+            <column columnName="isolate_mutations"/>
+            <column columnName="isolate_cloner_pi"/>
+            <column columnName="isolate_country_origin"/>
+            <column columnName="isolate_yr_isolated"/>
+            <column columnName="isolate_fiebig_stage"/>
+            <column columnName="isolate_accession_num"/>
+            <column columnName="production_component"/>
+            <column columnName="production_host_cell"/>
+            <column columnName="production_purification_method"/>
+            <column columnName="production_special_reagent"/>
+            <column columnName="production_manufacturer"/>
+            <column columnName="production_codon_optimization"/>
+            <column columnName="transfection_method"/>
+            <column columnName="transmitter_founder_status"/>
         </columns>
     </table>
     <table tableName="import_studypartgrouparm" tableDbType="TABLE">
@@ -987,15 +1014,112 @@
     </table>
     <table tableName="bamaantigen" tableDbType="TABLE">
         <columns>
-            <column columnName="assay_identifier"/>
+            <column columnName="assay_identifier">
+                <description>Unique ID assigned to the assay for tracking purposes</description>
+            </column>
             <column columnName="container"/>
-            <column columnName="antigen_name"/>
-            <column columnName="antigen_type"/>
-            <column columnName="protein_panel"/>
-            <column columnName="protein"/>
-            <column columnName="clade"/>
-            <column columnName="antigen_description"/>
-            <column columnName="antigen_control"/>
+            <column columnName="cds_ag_id">
+                <description>Unique ID assigned to antigen by DataSpace team</description>
+            </column>
+            <column columnName="antigen_full_name">
+                <description>Standard, descriptive full name of antigen</description>
+            </column>
+            <column columnName="antigen_short_name">
+                <description>Standard, abbreviated name of antigen</description>
+            </column>
+            <column columnName="antigen_plot_label">
+                <description>Recommended label/name of antigen for use in plots and publications</description>
+            </column>
+            <column columnName="antigen_name_other">
+                <description>Alternate or common names (from submitted data, publications, etc.)</description>
+            </column>
+            <column columnName="dna_construct_id">
+                <description>DNA construct ID assigned for Montefiori Lab Plasmid Database.</description>
+            </column>
+            <column columnName="antigen_type_component">
+                <description>Concatenation of the elements of the antigen type</description>
+            </column>
+            <column columnName="antigen_category">
+                <description>Classification which indicates whether the antigen is a recombinant protein, synthetic peptide, or virus.</description>
+            </column>
+            <column columnName="antigen_type_region">
+                <description>Region of virus (or antibody) covered</description>
+            </column>
+            <column columnName="antigen_type_scaffold">
+                <description>Specific scaffolding applied to the protein</description>
+            </column>
+            <column columnName="antigen_type_modifiers">
+                <description>Deviation from natural protein</description>
+            </column>
+            <column columnName="antigen_type_tags">
+                <description>Specific peptide sequence attached to the protein</description>
+            </column>
+            <column columnName="antigen_type_differentiate">
+                <description>Indicates additional distinctions needed to identify unique antigen type e.g. different provider of protein</description>
+            </column>
+            <column columnName="antigen_control">
+                <description>Indicates if antigen is a control</description>
+            </column>
+            <column columnName="isolate_name_component">
+                <description>Concatenation of the elements of the isolate name</description>
+            </column>
+            <column columnName="isolate_species">
+                <description>Classification for isolate species using informal taxonomy</description>
+            </column>
+            <column columnName="isolate_donor_id">
+                <description>Unique ID assigned to the isolate donor</description>
+            </column>
+            <column columnName="isolate_differentiate">
+                <description>Indicates additional distinctions needed to identify unique isolates from the same donor, e.g. visits or specimen types</description>
+            </column>
+            <column columnName="isolate_clade">
+                <description>Clade (gene subtype) to which the isolate is most closely aligned</description>
+            </column>
+            <column columnName="isolate_clone">
+                <description>Identifier assigned to indicate specific isolate clone</description>
+            </column>
+            <column columnName="isolate_mutations">
+                <description>Indicates specific mutations to the isolate</description>
+            </column>
+            <column columnName="isolate_cloner_pi">
+                <description>Name of the investigator who cloned the isolate</description>
+            </column>
+            <column columnName="isolate_country_origin">
+                <description>Country of origin of the isolate donor</description>
+            </column>
+            <column columnName="isolate_yr_isolated">
+                <description>Year the isolate was isolated</description>
+            </column>
+            <column columnName="isolate_fiebig_stage">
+                <description>Classification for staging early HIV infection based on test results for markers of the virus and the immune response</description>
+            </column>
+            <column columnName="isolate_accession_num">
+                <description>Unique identifier assigned to the amino acid sequence for the isolate</description>
+            </column>
+            <column columnName="production_component">
+                <description>Concatenation of production-related elements</description>
+            </column>
+            <column columnName="production_host_cell">
+                <description>Host cell used to incubate the isolate stock during production process</description>
+            </column>
+            <column columnName="production_purification_method">
+                <description>Production process performed to purify the protein</description>
+            </column>
+            <column columnName="production_special_reagent">
+                <description>Specific reagent used during production of protein</description>
+            </column>
+            <column columnName="production_manufacturer">
+                <description>Lab or commercial facility where antigen produced</description>
+            </column>
+            <column columnName="production_codon_optimization">
+                <description>Indicates if codon optimization was performed during production</description>
+            </column>
+            <column columnName="transfection_method">
+                <description>Indicates stable transfection vs transient</description>
+            </column>
+            <column columnName="transmitter_founder_status">
+                <description>Classification of transmitter/founder status of the isolate</description>
+            </column>
         </columns>
     </table>
     <table tableName="subjectproductmap" tableDbType="TABLE">
@@ -1128,7 +1252,7 @@
             <column columnName="container"/>
         </columns>
     </table>
-    <table tableName="import_antigenPanel" tableDbType="TABLE">
+    <table tableName="import_antigenPanelMeta" tableDbType="TABLE">
         <columns>
             <column columnName="cds_panel_id"/>
             <column columnName="panel_name"/>
@@ -1137,7 +1261,7 @@
             <column columnName="container"/>
         </columns>
     </table>
-    <table tableName="antigenPanel" tableDbType="TABLE">
+    <table tableName="antigenPanelMeta" tableDbType="TABLE">
         <columns>
             <column columnName="cds_panel_id"/>
             <column columnName="panel_name"/>
@@ -1156,6 +1280,20 @@
     <table tableName="virusPanel" tableDbType="TABLE">
         <columns>
             <column columnName="cds_virus_id"/>
+            <column columnName="cds_panel_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_antigenPanel" tableDbType="TABLE">
+        <columns>
+            <column columnName="cds_ag_id"/>
+            <column columnName="cds_panel_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="antigenPanel" tableDbType="TABLE">
+        <columns>
+            <column columnName="cds_ag_id"/>
             <column columnName="cds_panel_id"/>
             <column columnName="container"/>
         </columns>
