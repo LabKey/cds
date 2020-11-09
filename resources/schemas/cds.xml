@@ -1019,18 +1019,23 @@
             </column>
             <column columnName="container"/>
             <column columnName="cds_ag_id">
+                <columnTitle>DataSpace antigen ID</columnTitle>
                 <description>Unique ID assigned to antigen by DataSpace team</description>
             </column>
             <column columnName="antigen_full_name">
+                <columnTitle>Full virus name</columnTitle>
                 <description>Standard, descriptive full name of antigen</description>
             </column>
             <column columnName="antigen_short_name">
+                <columnTitle>Short name</columnTitle>
                 <description>Standard, abbreviated name of antigen</description>
             </column>
             <column columnName="antigen_plot_label">
+                <columnTitle>Plot label</columnTitle>
                 <description>Recommended label/name of antigen for use in plots and publications</description>
             </column>
             <column columnName="antigen_name_other">
+                <columnTitle>Aliases</columnTitle>
                 <description>Alternate or common names (from submitted data, publications, etc.)</description>
             </column>
             <column columnName="dna_construct_id">
@@ -1040,45 +1045,55 @@
                 <description>Concatenation of the elements of the antigen type</description>
             </column>
             <column columnName="antigen_category">
+                <columnTitle>Category</columnTitle>
                 <description>Classification which indicates whether the antigen is a recombinant protein, synthetic peptide, or virus.</description>
             </column>
             <column columnName="antigen_type_region">
+                <columnTitle>Region</columnTitle>
                 <description>Region of virus (or antibody) covered</description>
             </column>
             <column columnName="antigen_type_scaffold">
+                <columnTitle>Scaffold</columnTitle>
                 <description>Specific scaffolding applied to the protein</description>
             </column>
             <column columnName="antigen_type_modifiers">
+                <columnTitle>Modifiers</columnTitle>
                 <description>Deviation from natural protein</description>
             </column>
             <column columnName="antigen_type_tags">
+                <columnTitle>Tags</columnTitle>
                 <description>Specific peptide sequence attached to the protein</description>
             </column>
             <column columnName="antigen_type_differentiate">
                 <description>Indicates additional distinctions needed to identify unique antigen type e.g. different provider of protein</description>
             </column>
             <column columnName="antigen_control">
+                <columnTitle>Control</columnTitle>
                 <description>Indicates if antigen is a control</description>
             </column>
             <column columnName="isolate_name_component">
                 <description>Concatenation of the elements of the isolate name</description>
             </column>
             <column columnName="isolate_species">
+                <columnTitle>Species</columnTitle>
                 <description>Classification for isolate species using informal taxonomy</description>
             </column>
             <column columnName="isolate_donor_id">
+                <columnTitle>Donor ID</columnTitle>
                 <description>Unique ID assigned to the isolate donor</description>
             </column>
             <column columnName="isolate_differentiate">
                 <description>Indicates additional distinctions needed to identify unique isolates from the same donor, e.g. visits or specimen types</description>
             </column>
             <column columnName="isolate_clade">
+                <columnTitle>Clade</columnTitle>
                 <description>Clade (gene subtype) to which the isolate is most closely aligned</description>
             </column>
             <column columnName="isolate_clone">
                 <description>Identifier assigned to indicate specific isolate clone</description>
             </column>
             <column columnName="isolate_mutations">
+                <columnTitle>Mutations</columnTitle>
                 <description>Indicates specific mutations to the isolate</description>
             </column>
             <column columnName="isolate_cloner_pi">
@@ -1099,16 +1114,23 @@
             <column columnName="production_component">
                 <description>Concatenation of production-related elements</description>
             </column>
+            <column columnName="panel_names">
+                <columnTitle>Panels</columnTitle>
+            </column>
             <column columnName="production_host_cell">
+                <columnTitle>Host cell</columnTitle>
                 <description>Host cell used to incubate the isolate stock during production process</description>
             </column>
             <column columnName="production_purification_method">
+                <columnTitle>Purification methods</columnTitle>
                 <description>Production process performed to purify the protein</description>
             </column>
             <column columnName="production_special_reagent">
+                <columnTitle>Special reagents</columnTitle>
                 <description>Specific reagent used during production of protein</description>
             </column>
             <column columnName="production_manufacturer">
+                <columnTitle>Manufacturer</columnTitle>
                 <description>Lab or commercial facility where antigen produced</description>
             </column>
             <column columnName="production_codon_optimization">

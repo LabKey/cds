@@ -34,6 +34,26 @@ Ext.define('Connector.app.model.AssayAntigen', {
         {name: 'antigen_virus_host_cell'},
         {name: 'antigen_virus_backbone'},
         {name: 'antigen_virus_name_other'},
-        {name: 'antigen_panel_names'}
+        {name: 'antigen_panel_names'},
+        //BAMA antigen fields
+        {name: 'antigen_short_name'},
+        {name: 'antigen_full_name'},
+        {name: 'antigen_name_other'},
+        {name: 'antigen_category'},
+        {name: 'isolate_species'},
+        {name: 'isolate_clade'},
+        {name: 'isolate_donor_id'},
+        {name: 'isolate_mutations'},
+        {name: 'antigen_type_region'},
+        {name: 'antigen_type_scaffold'},
+        {name: 'antigen_type_modifiers'},
+        {name: 'antigen_type_tags'},
+        {name: 'panel_name'},
+        {name: 'production_host_cell'},
+        {name: 'production_purification_method'},
+        {name: 'production_special_reagent'},
+        {name: 'production_manufacturer'},
+        {name: 'antigen_plot_label'},
+        {name: 'cds_ag_id'}
     ]
 });

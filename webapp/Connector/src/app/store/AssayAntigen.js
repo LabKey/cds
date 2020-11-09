@@ -124,7 +124,27 @@ Ext.define('Connector.app.store.AssayAntigen', {
             antigen_virus_host_cell: row.virus_host_cell,
             antigen_virus_backbone: row.virus_backbone,
             antigen_virus_name_other: row.virus_name_other,
-            antigen_panel_names: row.panel_names && row.panel_names.length > 0 ? row.panel_names[0].split("|") : []
+            antigen_panel_names: row.panel_names && row.panel_names.length > 0 ? row.panel_names[0].split("|") : [],
+            //BAMA antigen fields
+            antigen_short_name: row.antigen_short_name,
+            antigen_full_name: row.antigen_full_name,
+            antigen_name_other: row.antigen_name_other,
+            antigen_category: row.antigen_category,
+            isolate_species: row.isolate_species,
+            isolate_clade: row.isolate_clade,
+            isolate_donor_id: row.isolate_donor_id,
+            isolate_mutations: row.isolate_mutations,
+            antigen_type_region: row.antigen_type_region,
+            antigen_type_scaffold: row.antigen_type_scaffold,
+            antigen_type_modifiers: row.antigen_type_modifiers,
+            antigen_type_tags: row.antigen_type_tags,
+            panel_name: row.panel_name,
+            production_host_cell: row.production_host_cell,
+            production_purification_method: row.production_purification_method,
+            production_special_reagent: row.production_special_reagent,
+            production_manufacturer: row.production_manufacturer,
+            antigen_plot_label: row.antigen_plot_label,
+            cds_ag_id: row.cds_ag_id
         };
     }
 
