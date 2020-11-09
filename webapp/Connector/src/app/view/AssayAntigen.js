@@ -233,25 +233,25 @@ Ext.define('Connector.view.AssayAntigen', {
 
     getBAMAColumns: function()
     {
-        var commonColumns = this.getBAMAAntigenColumns('Antigen', 1/9);
+        var commonColumns = this.getBAMAAntigenColumns('Antigen', 1/6);
         var columns = [
-            this.getSimpleValueColumn('Category', 'antigen_category', 'antigen_category', 100, 1/9),
-            this.getSimpleValueColumn('Species', 'isolate_species', 'isolate_species', 100, 1/9),
-            this.getSimpleValueColumn('Clade', 'isolate_clade', 'isolate_clade', 100, 1/9),
-            this.getSimpleValueColumn('Donor ID', 'isolate_donor_id', 'isolate_donor_id', 100, 1/9),
-            this.getSimpleValueColumn('Mutations', 'isolate_mutations', 'isolate_mutations', 100, 1/9),
-            this.getSimpleValueColumn('Region', 'antigen_type_region', 'antigen_type_region', 100, 1/9),
-            this.getSimpleValueColumn('Scaffold', 'antigen_type_scaffold', 'antigen_type_scaffold', 100, 1/9),
-            this.getSimpleValueColumn('Modifiers', 'antigen_type_modifiers', 'antigen_type_modifiers', 100, 1/9),
-            this.getSimpleValueColumn('Tags', 'antigen_type_tags', 'antigen_type_tags', 100, 1/9),
-            this.getPanelValues('Panels', 'antigen_panel_names', 'antigen_panel_names', 100, 1/9),
-            this.getSimpleValueColumn('Host cell', 'production_host_cell', 'production_host_cell', 100, 1/9),
-            this.getSimpleValueColumn('Purification methods', 'production_purification_method', 'production_purification_method', 100, 1/9),
-            this.getSimpleValueColumn('Special reagents', 'production_special_reagent', 'production_special_reagent', 100, 1/9),
-            this.getSimpleValueColumn('Manufacturer', 'production_manufacturer', 'production_manufacturer', 100, 1/9),
-            this.getSimpleValueColumn('Plot label', 'antigen_plot_label', 'antigen_plot_label', 100, 1/9),
-            this.getSimpleValueColumn('DataSpace antigen ID', 'cds_ag_id', 'cds_ag_id', 100, 1/9),
-            this.getSimpleValueColumn('Control', 'antigen_control_value', 'antigen_control_value', 100, 1/9)];
+            this.getSimpleValueColumn('Category', 'antigen_category', 'antigen_category', 200, 1/18),
+            this.getSimpleValueColumn('Species', 'isolate_species', 'isolate_species', 200, 1/18),
+            this.getSimpleValueColumn('Clade', 'isolate_clade', 'isolate_clade', 200, 1/18),
+            this.getSimpleValueColumn('Donor ID', 'isolate_donor_id', 'isolate_donor_id', 200, 1/18),
+            this.getSimpleValueColumn('Mutations', 'isolate_mutations', 'isolate_mutations', 200, 1/18),
+            this.getSimpleValueColumn('Region', 'antigen_type_region', 'antigen_type_region', 200, 1/18),
+            this.getSimpleValueColumn('Scaffold', 'antigen_type_scaffold', 'antigen_type_scaffold', 200, 1/18),
+            this.getSimpleValueColumn('Modifiers', 'antigen_type_modifiers', 'antigen_type_modifiers', 200, 1/18),
+            this.getSimpleValueColumn('Tags', 'antigen_type_tags', 'antigen_type_tags', 200, 1/18),
+            this.getPanelValues('Panels', 'antigen_panel_names', 'antigen_panel_names', 200, 1/18),
+            this.getSimpleValueColumn('Host cell', 'production_host_cell', 'production_host_cell', 200, 1/18),
+            this.getSimpleValueColumn('Purification methods', 'production_purification_method', 'production_purification_method', 200, 1/18),
+            this.getSimpleValueColumn('Special reagents', 'production_special_reagent', 'production_special_reagent', 200, 1/18),
+            this.getSimpleValueColumn('Manufacturer', 'production_manufacturer', 'production_manufacturer', 200, 1/18),
+            this.getSimpleValueColumn('Plot label', 'antigen_plot_label', 'antigen_plot_label', 200, 1/18),
+            this.getSimpleValueColumn('DataSpace antigen ID', 'cds_ag_id', 'cds_ag_id', 200, 1/18),
+            this.getSimpleValueColumn('Control', 'antigen_control_value', 'antigen_control_value', 200, 1/18)];
         return commonColumns.concat(columns);
     },
 

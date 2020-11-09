@@ -80,7 +80,8 @@ Ext.define('Connector.app.store.AssayAntigen', {
             if (assayType === 'NABMAB')
                 assayType = "NAB";
 
-            var query = assayType === "NAB" ? 'nabAntigenWithPanelMeta' : (assayType + 'antigen');
+            var query = this.getAntigenQuery(assayType);
+
             LABKEY.Query.selectRows({
                 schemaName: 'cds',
                 queryName: query,
@@ -98,6 +99,15 @@ Ext.define('Connector.app.store.AssayAntigen', {
                 }
             })
         }
+    },
+
+    getAntigenQuery: function(assayType) {
+        if (assayType === "NAB")
+            return 'nabAntigenWithPanelMeta';
+        else if (assayType === "BAMA")
+            return 'bamaAntigenWithPanelMeta';
+        else
+            return (assayType + 'antigen');
     },
 
     getAntigen: function(row)

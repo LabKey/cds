@@ -94,7 +94,6 @@ ALTER TABLE cds.bamaantigen ADD COLUMN production_manufacturer VARCHAR(250);
 ALTER TABLE cds.bamaantigen ADD COLUMN production_codon_optimization VARCHAR(250);
 ALTER TABLE cds.bamaantigen ADD COLUMN transfection_method VARCHAR(250);
 ALTER TABLE cds.bamaantigen ADD COLUMN transmitter_founder_status VARCHAR(250);
-ALTER TABLE cds.bamaantigen ADD COLUMN panel_names VARCHAR(250);
 
 ALTER TABLE cds.bamaantigen ADD PRIMARY KEY (container, assay_identifier, cds_ag_id);
 

@@ -1114,9 +1114,6 @@
             <column columnName="production_component">
                 <description>Concatenation of production-related elements</description>
             </column>
-            <column columnName="panel_names">
-                <columnTitle>Panels</columnTitle>
-            </column>
             <column columnName="production_host_cell">
                 <columnTitle>Host cell</columnTitle>
                 <description>Host cell used to incubate the isolate stock during production process</description>
