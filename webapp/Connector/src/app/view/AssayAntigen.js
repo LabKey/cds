@@ -148,11 +148,10 @@ Ext.define('Connector.view.AssayAntigen', {
                 '<div class="detail-description">',
                     '<h2>{antigen_short_name:htmlEncode}</h2>',
                     '<div class="detail-description-text">',
-                    '<p class="block-with-text">{antigen_full_name:htmlEncode}</p>',
+                        '<p class="block-with-text" style="text-align:initial">{antigen_full_name:htmlEncode}</p>',
                         '<tpl if="antigen_name_other.length &gt; 0">',
                             '</br>',
-                            '<p class="block-with-text">Aliases:</p>',
-                            '<p class="block-with-text">{antigen_name_other:htmlEncode}</p>',
+                            '<p class="block-with-text" style="text-align:initial">Aliases: {antigen_name_other:htmlEncode}</p>',
                         '</tpl>',
                     '</div>',
                 '</div>'

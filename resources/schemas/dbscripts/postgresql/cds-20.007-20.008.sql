@@ -12,8 +12,8 @@ ALTER TABLE cds.import_bamaantigen DROP COLUMN antigen_description;
 
 -- Add new cols to cds.import_bamaantigen
 ALTER TABLE cds.import_bamaantigen ADD COLUMN cds_ag_id VARCHAR(250);
-ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_full_name VARCHAR(250);
-ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_short_name VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_full_name VARCHAR(250) NOT NULL;
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_short_name VARCHAR(250) NOT NULL;
 ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_plot_label VARCHAR(250);
 ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_name_other VARCHAR(250);
 ALTER TABLE cds.import_bamaantigen ADD COLUMN dna_construct_id INTEGER;
@@ -62,8 +62,8 @@ ALTER TABLE cds.bamaantigen DROP COLUMN antigen_description;
 
 -- Add new cols to cds.bamaantigen
 ALTER TABLE cds.bamaantigen ADD COLUMN cds_ag_id VARCHAR(250);
-ALTER TABLE cds.bamaantigen ADD COLUMN antigen_full_name VARCHAR(250);
-ALTER TABLE cds.bamaantigen ADD COLUMN antigen_short_name VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_full_name VARCHAR(250) NOT NULL;
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_short_name VARCHAR(250) NOT NULL;
 ALTER TABLE cds.bamaantigen ADD COLUMN antigen_plot_label VARCHAR(250);
 ALTER TABLE cds.bamaantigen ADD COLUMN antigen_name_other VARCHAR(250);
 ALTER TABLE cds.bamaantigen ADD COLUMN dna_construct_id INTEGER;

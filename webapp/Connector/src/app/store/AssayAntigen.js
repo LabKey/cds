@@ -86,6 +86,7 @@ Ext.define('Connector.app.store.AssayAntigen', {
                 schemaName: 'cds',
                 queryName: query,
                 scope: this,
+                sort: assayType === 'BAMA' ? 'antigen_full_name' : '',
                 success: function(result) {
                     var antigens = [];
                     Ext.each(result.rows, function(row) {
