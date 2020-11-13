@@ -155,7 +155,10 @@ Ext.define('Connector.app.store.AssayAntigen', {
             production_special_reagent: row.production_special_reagent,
             production_manufacturer: row.production_manufacturer,
             antigen_plot_label: row.antigen_plot_label,
-            cds_ag_id: row.cds_ag_id
+            cds_ag_id: row.cds_ag_id,
+            isolate_name_component: row.isolate_name_component,
+            antigen_type_component: row.antigen_type_component,
+            production_component: row.production_component
         };
     }
 

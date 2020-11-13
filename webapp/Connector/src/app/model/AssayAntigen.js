@@ -54,6 +54,9 @@ Ext.define('Connector.app.model.AssayAntigen', {
         {name: 'production_special_reagent'},
         {name: 'production_manufacturer'},
         {name: 'antigen_plot_label'},
-        {name: 'cds_ag_id'}
+        {name: 'cds_ag_id'},
+        {name: 'isolate_name_component'},
+        {name: 'antigen_type_component'},
+        {name: 'production_component'}
     ]
 });

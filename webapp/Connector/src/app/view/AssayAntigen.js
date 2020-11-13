@@ -12,11 +12,13 @@ Ext.define('Connector.view.AssayAntigen', {
     cls: 'learngrid antigengrid',
 
     isDetailLearnGrid: true,
+    
+    antigenColFixedWidth: 45,
 
     id: "app-view-assayantigengrid",
 
     statics: {
-        searchFields: Ext.pluck(Connector.app.model.AssayAntigen.getFields(), 'name')
+        searchFields: Ext.pluck(Connector.app.model.AssayAntigen.getFields(), 'name', 'antigen_full_name', 'antigen_short_name', 'antigen_name_other')
     },
 
     viewConfig: {
@@ -133,11 +135,12 @@ Ext.define('Connector.view.AssayAntigen', {
 
     getBAMAAntigenColumns: function(antigenNameLabel, flex)
     {
+        var me = this;
         return [{
             text: antigenNameLabel,
             xtype: 'templatecolumn',
             locked: true,
-            minWidth: 300,
+            minWidth: 450,
             flex: 2*flex,
             dataIndex: 'antigen_short_name',
             filterConfigSet: [{
@@ -148,14 +151,41 @@ Ext.define('Connector.view.AssayAntigen', {
             tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
                     '<h2>{antigen_short_name:htmlEncode}</h2>',
-                    '<div class="detail-description-text">',
-                        '<p class="block-with-text" style="text-align:initial">{antigen_full_name:htmlEncode}</p>',
+                    '<div class="detail-description-text" id="bama-antigen-id">',
+                        '<p id="bama-ag-id">{[this.getAntigenFullName(values)]}</p>',
                         '<tpl if="antigen_name_other.length &gt; 0">',
-                            '</br>',
-                            '<p class="block-with-text" style="text-align:initial">Aliases: {antigen_name_other:htmlEncode}</p>',
+                                '</br>',
+                                '<p>Aliases: {antigen_name_other:htmlEncode}</p>',
                         '</tpl>',
                     '</div>',
-                '</div>'
+                '</div>',
+                 {
+                    getAntigenFullName: function(values) {
+                        var isolateComp = values.isolate_name_component;
+                        var antigenComp = values.antigen_type_component;
+                        var prodComp = values.production_component;
+                        var antigenFullName = ""; // isolate_name_component [antigen_type_component] production_component
+
+                        if ((isolateComp.length + antigenComp.length + prodComp.length) < me.antigenColFixedWidth) {
+                            antigenFullName = isolateComp + " [" + antigenComp + "] " + prodComp;
+                        }
+                        else {
+                            if ((isolateComp.length + antigenComp.length) > me.antigenColFixedWidth && (antigenComp.length + prodComp.length) < me.antigenColFixedWidth) {
+                                antigenFullName = isolateComp + "<br>[" + antigenComp + "] " + prodComp;
+                            }
+                            else if ((isolateComp.length + antigenComp.length) < me.antigenColFixedWidth && (antigenComp.length + prodComp.length) > me.antigenColFixedWidth) {
+                                antigenFullName = isolateComp + " [" + antigenComp + "]<br>" + prodComp;
+                            }
+                            else if ((isolateComp.length + antigenComp.length) > me.antigenColFixedWidth && (antigenComp.length + prodComp.length) > me.antigenColFixedWidth) {
+                                antigenFullName =  isolateComp + "<br> [" + antigenComp + "]<br>" + prodComp;
+                            }
+                            else if ((isolateComp.length + antigenComp.length) < me.antigenColFixedWidth && (antigenComp.length + prodComp.length) < me.antigenColFixedWidth) {
+                                antigenFullName =  isolateComp + " [" + antigenComp + "]<br>" + prodComp;
+                            }
+                        }
+                        return antigenFullName;
+                    }
+                 }
             )
         }];
     },

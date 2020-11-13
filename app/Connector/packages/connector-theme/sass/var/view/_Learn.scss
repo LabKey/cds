@@ -872,9 +872,22 @@ img.detail-has-data-small {
   }
 
   .detail-row {
-    height: 123px;
+    height: 135px;
+
     .detail-description {
-      height: 74px;
+      height: 130px;
+
+      .detail-description-text {
+        padding-top: 12px;
+        font: $body-one-font;
+        color: $heat-scale-1;
+        margin-right: 5%;
+        text-align:initial;
+        overflow-wrap: break-word;
+      }
+    }
+    .x-grid-cell-inner {
+      height: 130px;
     }
   }
   .antigen-description {
