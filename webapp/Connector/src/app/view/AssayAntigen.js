@@ -13,7 +13,7 @@ Ext.define('Connector.view.AssayAntigen', {
 
     isDetailLearnGrid: true,
     
-    antigenColFixedWidth: 45,
+    antigenColFixedWidth: 50,
 
     id: "app-view-assayantigengrid",
 
