@@ -37,7 +37,7 @@ Ext.define('Connector.view.AssayAntigen', {
         if (this.learnViewConfig)
         {
             this.learnView = this.learnViewConfig.learnView;
-            if (this.learnView.getEl().contains('auto-scroll-y')) {
+            if (this.learnView.getEl().contains('auto-scroll-y') || this.learnViewConfig.learnView.getEl().hasCls('auto-scroll-y')) {
                 this.learnView.getEl().removeCls('auto-scroll-y');
             }
             this.tabId = this.learnViewConfig.tabId;
