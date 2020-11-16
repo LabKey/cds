@@ -916,16 +916,31 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 .clickFirstItem()
                 .getGridTab("Antigens");
         bamaAntigenGrid.setSearch(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[0]);
-        int rowCount = bamaAntigenGrid.getRowCount();
+        scrollIntoView(Locator.tagWithClass("div", "detail-gray-text").containing("Scaffold A"));
+        scrollIntoView(Locator.tagWithClass("p", "detail-gray-text").containing("Diversity"));
+        assertElementPresent(Locator.tagWithClass("p", "detail-gray-text").containing("E Subtype"));
+        assertElementPresent(Locator.tagWithClass("p", "detail-gray-text").containing("F Subtype"));
+        scrollIntoView(Locator.tagWithClass("div", "detail-gray-text").containing("cds_ag_1323"));
 
-        Assert.assertEquals("There should only be one row returned", 1, rowCount);
+        //Note: visually it is just one row, however, locking the Antigen column (& adding scroll on other columns) has two "tr" tags with 'detail-row' class instead of one.
+        assertElementPresent(Locator.tagWithId("div", "app-view-assayantigengrid-locked-body"));
+        assertElementPresent(Locator.tagWithId("div", "app-view-assayantigengrid-normal-body"));
+
+        int lockedColCount = Locator.tagWithId("div", "app-view-assayantigengrid-locked-body").findElements(this.getDriver()).size();
+        Assert.assertEquals("There should only be one row returned with locked column", 1, lockedColCount);
+
+        int unLockedColsCount = Locator.tagWithId("div", "app-view-assayantigengrid-normal-body").findElements(this.getDriver()).size();
+        Assert.assertEquals("There should only be one row returned with unlocked columns with scroll", 1, unLockedColsCount);
 
         log("Test search persistence");
         refresh();
         sleep(CDSHelper.CDS_WAIT_LEARN);
-        rowCount = bamaAntigenGrid.getRowCount();
 
-        Assert.assertEquals("There should only be one row returned", 1, rowCount);
+        lockedColCount = Locator.tagWithId("div", "app-view-assayantigengrid-locked-body").findElements(this.getDriver()).size();
+        Assert.assertEquals("There should only be one row returned with locked column", 1, lockedColCount);
+
+        unLockedColsCount = Locator.tagWithId("div", "app-view-assayantigengrid-normal-body").findElements(this.getDriver()).size();
+        Assert.assertEquals("There should only be one row returned with unlocked columns with scroll", 1, unLockedColsCount);
     }
 
     @Test
@@ -1536,6 +1551,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
         waitForElement(Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Antigen"));
+        verifyBAMAAntigenTabColumns();
+
         for (int i = 0; i < CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA.length; i++)
         {
             // Use this as the conditional test that the page has loaded, and wait for it to load as well.
@@ -1599,6 +1616,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         learnGrid.setWithOptionFacet("Protein:Pools", "Pools", "POL 2");
         assertTrue("Number of antigens is incorrect after filtering by Pools \"POL 2\"", 1 == learnGrid.getTitleRowCount());
+    }
+
+    private void verifyBAMAAntigenTabColumns()
+    {
+        for (String column : CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_COLUMNS)
+        {
+            assertElementPresent(Locator.tagWithClass("span", "x-column-header-text").withText(column));
+        }
     }
 
     @Test
