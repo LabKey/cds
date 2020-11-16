@@ -34,7 +34,6 @@
     ConnectorTemplate me = (ConnectorTemplate) HttpView.currentView();
     CDSController.AppModel model = (CDSController.AppModel) me.getConnectorModel();
     PageConfig pageConfigBean = me.getModelBean(); // TODO make sure we pass in the page config when we create this template.
-    String serverHash = PageFlowUtil.getServerSessionHash();
     String devModeParam = getActionURL().getParameter("devMode");
     boolean devMode = AppProps.getInstance().isDevMode() || (devModeParam != null && devModeParam.equalsIgnoreCase("1"));
 
@@ -52,7 +51,7 @@
 
     <!-- stylesheets -->
     <link type="text/css" href="<%=getWebappURL("/hopscotch/css/hopscotch.min.css")%>" rel="stylesheet">
-    <link type="text/css" href="<%=getWebappURL(resourcePath + "/Connector-all.css" + (devMode ? "" : "?" + serverHash))%>" rel="stylesheet">
+    <link type="text/css" href="<%=getWebappURL(resourcePath + "/Connector-all.css")%>" rel="stylesheet">
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), pageConfigBean, new LinkedHashSet<>(), false)%>
