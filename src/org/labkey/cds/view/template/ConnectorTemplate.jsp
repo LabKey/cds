@@ -27,22 +27,17 @@
 <%@ page import="org.labkey.cds.CDSController" %>
 <%@ page import="org.labkey.cds.view.template.ConnectorTemplate" %>
 <%@ page import="java.util.LinkedHashSet" %>
+<%@ page import="java.util.LinkedList" %>
+<%@ page import="java.util.List" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     ConnectorTemplate me = (ConnectorTemplate) HttpView.currentView();
     CDSController.AppModel model = (CDSController.AppModel) me.getConnectorModel();
     PageConfig pageConfigBean = me.getModelBean(); // TODO make sure we pass in the page config when we create this template.
-    String contextPath = request.getContextPath();
-    String serverHash = PageFlowUtil.getServerSessionHash();
     String devModeParam = getActionURL().getParameter("devMode");
     boolean devMode = AppProps.getInstance().isDevMode() || (devModeParam != null && devModeParam.equalsIgnoreCase("1"));
 
-    String appPath = contextPath + "/Connector";
-    String sdkPath = contextPath + "/ext-4.2.1";
-    String srcPath = appPath + "/src";
-    String productionPath = contextPath + "/production/Connector";
-    String resourcePath = productionPath + "/resources";
-    String imageResourcePath = resourcePath + "/images";
+    String resourcePath = "/production/Connector/resources";
     User user = getUser();
 %>
 <!DOCTYPE html>
@@ -52,11 +47,11 @@
     <meta charset="utf-8">
     <title>DataSpace</title>
 
-    <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/headerlogo.png">
+    <link rel="icon" type="image/png" href="<%=getWebappURL("/Connector/images/headerlogo.png")%>">
 
     <!-- stylesheets -->
-    <link type="text/css" href="<%=text(contextPath)%>/hopscotch/css/hopscotch.min.css" rel="stylesheet">
-    <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
+    <link type="text/css" href="<%=getWebappURL("/hopscotch/css/hopscotch.min.css")%>" rel="stylesheet">
+    <link type="text/css" href="<%=getWebappURL(resourcePath + "/Connector-all.css")%>" rel="stylesheet">
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), pageConfigBean, new LinkedHashSet<>(), false)%>
@@ -71,8 +66,9 @@
                 subjectLabel: 'Subject Id'
             },
             resourceContext: {
-                path: <%=q(resourcePath)%>,
-                imgPath: <%=q(imageResourcePath)%>
+                <% // Not using getWebappURL() below because we don't want HTML encoding %>
+                path: <%=q(request.getContextPath() + resourcePath)%>,
+                imgPath: <%=q(request.getContextPath() + resourcePath + "/images")%>
             },
             user: {
                 isAnalyticsUser: <%=model.isAnalyticsUser()%>,
@@ -97,282 +93,292 @@
     <%
             }
         }
-    %>
 
-    <script type="text/javascript" src="<%=text(contextPath)%>/internal/jQuery/jquery-3.5.1.min.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/hopscotch/js/hopscotch.min.js"></script>
+    final String srcPath = "/Connector/src";
 
-    <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
-    <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/ext-patches.js"></script>
+    List<String> includePaths = new LinkedList<>(List.of(
+        "/internal/jQuery/jquery-3.5.1.min.js",
+        "/hopscotch/js/hopscotch.min.js",
 
-    <!-- Client API Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Utils.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Filter.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/FieldKey.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Query.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Visualization.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ParticipantGroup.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Security.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Webpart.js"></script>
+        "/ext-4.2.1/ext-all" + (devMode ? "-debug" : "") + ".js",
+        "/ext-4.2.1/ext-patches.js",
+        srcPath + "/ext-patches.js",
 
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/Util.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Reader.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Proxy.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Store.js"></script>
+        // Client API Dependencies
+        "/clientapi/core/Ajax.js",
+        "/clientapi/core/Utils.js",
+        "/clientapi/dom/Utils.js",
+        "/clientapi/core/ActionURL.js",
+        "/clientapi/core/Filter.js",
+        "/clientapi/core/FieldKey.js",
+        "/clientapi/core/Query.js",
+        "/clientapi/core/Visualization.js",
+        "/clientapi/core/ParticipantGroup.js",
+        "/clientapi/core/Security.js",
+        "/clientapi/dom/Webpart.js",
 
-    <!-- Internal Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Base.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Model.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Faceted.js"></script>
+        "/clientapi/ext4/Util.js",
+        "/clientapi/ext4/data/Reader.js",
+        "/clientapi/ext4/data/Proxy.js",
+        "/clientapi/ext4/data/Store.js",
 
-    <!-- Ext Widget Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4DefaultFilterPanel.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4GridPanel.js"></script>
+        // Internal Dependencies
+        "/dataregion/filter/Base.js",
+        "/dataregion/filter/Model.js",
+        "/dataregion/filter/Faceted.js",
 
-    <!-- Visualization Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/d3-3.5.17.min.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/hexbin.min.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/sqbin.min.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/crossfilter-1.3.11.js"></script>
+        // Ext Widget Dependencies
+        "/extWidgets/Ext4DefaultFilterPanel.js",
+        "/extWidgets/Ext4GridPanel.js",
 
-    <!-- LabKey Visualization Library -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/patches.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/utils.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/geom.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/statistics.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/scale.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/layer.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/internal/D3Renderer.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/plot.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/MeasureStore.js"></script>
+        // Visualization Dependencies
+        "/vis/lib/d3-3.5.17.min.js",
+        "/vis/lib/hexbin.min.js",
+        "/vis/lib/sqbin.min.js",
+        "/vis/lib/crossfilter-1.3.11.js",
 
-    <script type="text/javascript" src="<%=text(contextPath)%>/query/olap.js"></script>
+        // LabKey Visualization Library
+        "/vis/lib/patches.js",
+        "/vis/src/utils.js",
+        "/vis/src/geom.js",
+        "/vis/src/statistics.js",
+        "/vis/src/scale.js",
+        "/vis/src/layer.js",
+        "/vis/src/internal/D3Renderer.js",
+        "/vis/src/plot.js",
+        "/vis/MeasureStore.js",
 
-    <% if (devMode) { %>
+        "/query/olap.js"
+    ));
 
-    <!-- CDS Module Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/cube.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/measure.js"></script>
+    if (devMode) {
+        includePaths.addAll(List.of(
+            // CDS Module Dependencies
+            "/Connector/cube.js",
+            "/Connector/measure.js",
 
-    <!-- Connector Application -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
+            // Connector Application
+            srcPath + "/types/Filter.js",
 
-    <!-- Constant singletons -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/constant/ModuleViewsLookup.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/constant/State.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
+            // Constant singletons
+            srcPath + "/constant/ModuleViewsLookup.js",
+            srcPath + "/constant/State.js",
+            srcPath + "/constant/Templates.js",
 
-    <!-- Application Models -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/ColumnInfo.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Detail.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Dimension.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Explorer.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Filter.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/FilterGroup.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Measure.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Source.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/InfoPane.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/InfoPaneMember.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/TimepointPane.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/MabDetail.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/MabGrid.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/MabPane.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/MabSummary.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/RSSItem.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/VisitTag.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Antigen.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/ChartData.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/StudyAxisData.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/StudyVisitTag.js"></script>
+            // Application Models
+            srcPath + "/model/State.js",
+            srcPath + "/model/ColumnInfo.js",
+            srcPath + "/model/Detail.js",
+            srcPath + "/model/Dimension.js",
+            srcPath + "/model/Explorer.js",
+            srcPath + "/model/Filter.js",
+            srcPath + "/model/FilterGroup.js",
+            srcPath + "/model/Measure.js",
+            srcPath + "/model/Source.js",
+            srcPath + "/model/InfoPane.js",
+            srcPath + "/model/InfoPaneMember.js",
+            srcPath + "/model/TimepointPane.js",
+            srcPath + "/model/Summary.js",
+            srcPath + "/model/Group.js",
+            srcPath + "/model/Grid.js",
+            srcPath + "/model/MabDetail.js",
+            srcPath + "/model/MabGrid.js",
+            srcPath + "/model/MabPane.js",
+            srcPath + "/model/MabSummary.js",
+            srcPath + "/model/RSSItem.js",
+            srcPath + "/model/Variable.js",
+            srcPath + "/model/VisitTag.js",
+            srcPath + "/model/Antigen.js",
+            srcPath + "/model/ChartData.js",
+            srcPath + "/model/StudyAxisData.js",
+            srcPath + "/model/StudyVisitTag.js",
 
-    <!-- Application source -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/button/RoundedButton.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/component/ActionTitle.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/component/AdvancedOption.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/component/AbstractAntigenSelection.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/component/AntigenSelection.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/component/MabVirusSelection.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/component/DropDown.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/component/GridPager.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/component/News.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/component/Started.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractFilter.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractGroupedFacet.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/window/MabGridFacet.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/window/LearnFacet.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selector.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/HelpCenter.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/ToolsAndLinks.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/grid/Panel.js"></script>
+            // Application source
+            srcPath + "/button/Image.js",
+            srcPath + "/button/RoundedButton.js",
+            srcPath + "/component/ActionTitle.js",
+            srcPath + "/component/AdvancedOption.js",
+            srcPath + "/component/AbstractAntigenSelection.js",
+            srcPath + "/component/AntigenSelection.js",
+            srcPath + "/component/MabVirusSelection.js",
+            srcPath + "/component/DropDown.js",
+            srcPath + "/component/GridPager.js",
+            srcPath + "/component/News.js",
+            srcPath + "/component/Started.js",
+            srcPath + "/window/AbstractFilter.js",
+            srcPath + "/window/Filter.js",
+            srcPath + "/window/Facet.js",
+            srcPath + "/window/AbstractGroupedFacet.js",
+            srcPath + "/window/MabGridFacet.js",
+            srcPath + "/window/LearnFacet.js",
+            srcPath + "/window/SystemMessage.js",
+            srcPath + "/panel/FilterPanel.js",
+            srcPath + "/panel/Selection.js",
+            srcPath + "/panel/GroupList.js",
+            srcPath + "/panel/Selector.js",
+            srcPath + "/panel/HelpCenter.js",
+            srcPath + "/panel/ToolsAndLinks.js",
+            srcPath + "/grid/Panel.js",
 
-    <!-- Application plugins -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/plugin/Messaging.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/plugin/DocumentValidation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/plugin/LoadingMask.js"></script>
+            // Application plugins
+            srcPath + "/plugin/Messaging.js",
+            srcPath + "/plugin/DocumentValidation.js",
+            srcPath + "/plugin/LoadingMask.js",
 
-    <!-- Factories -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/factory/Module.js"></script>
+            // Factories
+            srcPath + "/factory/Module.js",
 
-    <!-- Utilities -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Animation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Statistics.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Chart.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Query.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/MabQuery.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/HashURL.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/FileExtension.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/PlotTooltip.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/utility/InfoPaneUtil.js"></script>
+            // Utilities
+            srcPath + "/utility/Animation.js",
+            srcPath + "/utility/Statistics.js",
+            srcPath + "/utility/StoreCache.js",
+            srcPath + "/utility/Chart.js",
+            srcPath + "/utility/HelpRouter.js",
+            srcPath + "/utility/Query.js",
+            srcPath + "/utility/MabQuery.js",
+            srcPath + "/utility/HashURL.js",
+            srcPath + "/utility/FileExtension.js",
+            srcPath + "/utility/PlotTooltip.js",
+            srcPath + "/utility/InfoPaneUtil.js",
 
-    <!-- Application Stores -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/store/AssayDistinctValue.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/store/MabStatus.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/store/Summary.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/store/VisitTag.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/store/StudyVisitTag.js"></script>
+            // Application Stores
+            srcPath + "/store/AssayDistinctValue.js",
+            srcPath + "/store/Explorer.js",
+            srcPath + "/store/FilterStatus.js",
+            srcPath + "/store/MabStatus.js",
+            srcPath + "/store/Summary.js",
+            srcPath + "/store/VisitTag.js",
+            srcPath + "/store/StudyVisitTag.js",
 
-    <!-- Application Views -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Selection.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/InfoPane.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/GridPane.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/PlotPane.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/TimepointPane.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSave.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSummary.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Header.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Home.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/HomeHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/HeaderDataView.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/MabPane.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Page.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/PageHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/MabReport.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/MabGrid.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/MabStatus.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Chart.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Summary.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
+            // Application Views
+            srcPath + "/view/Selection.js",
+            srcPath + "/view/DetailStatus.js",
+            srcPath + "/view/FilterStatus.js",
+            srcPath + "/view/InfoPane.js",
+            srcPath + "/view/GridPane.js",
+            srcPath + "/view/PlotPane.js",
+            srcPath + "/view/TimepointPane.js",
+            srcPath + "/view/GroupSave.js",
+            srcPath + "/view/GroupSummary.js",
+            srcPath + "/view/Header.js",
+            srcPath + "/view/Home.js",
+            srcPath + "/view/HomeHeader.js",
+            srcPath + "/view/HeaderDataView.js",
+            srcPath + "/view/Learn.js",
+            srcPath + "/view/MabPane.js",
+            srcPath + "/view/Main.js",
+            srcPath + "/view/Navigation.js",
+            srcPath + "/view/Page.js",
+            srcPath + "/view/PageHeader.js",
+            srcPath + "/view/Grid.js",
+            srcPath + "/view/MabReport.js",
+            srcPath + "/view/MabGrid.js",
+            srcPath + "/view/MabStatus.js",
+            srcPath + "/view/Variable.js",
+            srcPath + "/view/StudyAxis.js",
+            srcPath + "/view/Chart.js",
+            srcPath + "/view/SingleAxisExplorer.js",
+            srcPath + "/view/Summary.js",
+            srcPath + "/view/Viewport.js",
 
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/ShowList.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
+            srcPath + "/view/module/BaseModule.js",
+            srcPath + "/view/module/ShowList.js",
+            srcPath + "/view/module/Text.js",
 
-    <!-- Application Controllers -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/AbstractViewController.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/AbstractGridController.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Home.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/HttpInterceptor.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Messaging.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Filter.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Analytics.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Group.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Learn.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Main.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Navigation.js"></script>
+            // Application Controllers
+            srcPath + "/controller/AbstractViewController.js",
+            srcPath + "/controller/AbstractGridController.js",
+            srcPath + "/controller/Home.js",
+            srcPath + "/controller/Chart.js",
+            srcPath + "/controller/Connector.js",
+            srcPath + "/controller/Query.js",
+            srcPath + "/controller/HttpInterceptor.js",
+            srcPath + "/controller/Messaging.js",
+            srcPath + "/controller/Filter.js",
+            srcPath + "/controller/Analytics.js",
+            srcPath + "/controller/Explorer.js",
+            srcPath + "/controller/FilterStatus.js",
+            srcPath + "/controller/Group.js",
+            srcPath + "/controller/Learn.js",
+            srcPath + "/controller/Main.js",
+            srcPath + "/controller/Navigation.js",
 
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Data.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/MabGrid.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Router.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
+            srcPath + "/controller/Data.js",
+            srcPath + "/controller/MabGrid.js",
+            srcPath + "/controller/Router.js",
+            srcPath + "/controller/State.js",
+            srcPath + "/controller/Summary.js",
 
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/AssayAntigen.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Study.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/StudyProducts.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/VariableList.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Report.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/MAb.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Publication.js"></script>
+            srcPath + "/app/model/AssayAntigen.js",
+            srcPath + "/app/model/Assay.js",
+            srcPath + "/app/model/Labs.js",
+            srcPath + "/app/model/Study.js",
+            srcPath + "/app/model/StudyProducts.js",
+            srcPath + "/app/model/VariableList.js",
+            srcPath + "/app/model/Report.js",
+            srcPath + "/app/model/MAb.js",
+            srcPath + "/app/model/Publication.js",
 
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/PermissionedStudy.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/AssayAntigen.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Labs.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Study.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/StudyProducts.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/VariableList.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Report.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/MAb.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Publication.js"></script>
+            srcPath + "/app/store/PermissionedStudy.js",
+            srcPath + "/app/store/AssayAntigen.js",
+            srcPath + "/app/store/Assay.js",
+            srcPath + "/app/store/Labs.js",
+            srcPath + "/app/store/Study.js",
+            srcPath + "/app/store/StudyProducts.js",
+            srcPath + "/app/store/VariableList.js",
+            srcPath + "/app/store/Report.js",
+            srcPath + "/app/store/MAb.js",
+            srcPath + "/app/store/Publication.js",
 
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnGrid.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/LearnSummary.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/AssayAntigen.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Assay.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Labs.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ModuleContainer.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Report.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/MAb.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Publication.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ReportModuleContainer.js"></script>
+            srcPath + "/app/view/LearnGrid.js",
+            srcPath + "/app/view/LearnSummary.js",
+            srcPath + "/app/view/AssayAntigen.js",
+            srcPath + "/app/view/Assay.js",
+            srcPath + "/app/view/Labs.js",
+            srcPath + "/app/view/ModuleContainer.js",
+            srcPath + "/app/view/Study.js",
+            srcPath + "/app/view/StudyProducts.js",
+            srcPath + "/app/view/Report.js",
+            srcPath + "/app/view/MAb.js",
+            srcPath + "/app/view/Publication.js",
+            srcPath + "/app/view/ReportModuleContainer.js",
 
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/DataAvailabilityModule.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/NonIntegratedDataAvailability.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ContactCDS.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyResources.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/MabDetails.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/PublicationDetails.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/TreatmentSchemaGroup.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssaySchemaMethod.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyPublications.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyRelationships.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyReports.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyMabs.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/VariableList.js"></script>
+            srcPath + "/app/view/module/DataAvailabilityModule.js",
+            srcPath + "/app/view/module/NonIntegratedDataAvailability.js",
+            srcPath + "/app/view/module/AssayAnalyteList.js",
+            srcPath + "/app/view/module/AssayHeader.js",
+            srcPath + "/app/view/module/ContactCDS.js",
+            srcPath + "/app/view/module/StudyResources.js",
+            srcPath + "/app/view/module/MabDetails.js",
+            srcPath + "/app/view/module/PublicationDetails.js",
+            srcPath + "/app/view/module/ProductHeader.js",
+            srcPath + "/app/view/module/ProductOtherProducts.js",
+            srcPath + "/app/view/module/StudyHeader.js",
+            srcPath + "/app/view/module/TreatmentSchemaGroup.js",
+            srcPath + "/app/view/module/AssaySchemaMethod.js",
+            srcPath + "/app/view/module/StudyPublications.js",
+            srcPath + "/app/view/module/StudyProducts.js",
+            srcPath + "/app/view/module/StudyRelationships.js",
+            srcPath + "/app/view/module/StudyReports.js",
+            srcPath + "/app/view/module/StudySites.js",
+            srcPath + "/app/view/module/StudyMabs.js",
+            srcPath + "/app/view/module/VariableList.js",
 
-    <script type="text/javascript" src="<%=text(srcPath)%>/Application.js"></script>
+            srcPath + "/Application.js",
 
-    <script type="text/javascript" src="<%=text(srcPath)%>/app.js"></script>
+            srcPath + "/app.js"
+        ));
+    }
+    else
+    {
+        // PRODUCTION
+        includePaths.add("/Connector/extapp.min.js");
+    }
 
-    <% } else {  %>
-    <!-- PRODUCTION -->
-    <script type="text/javascript" src="<%=text(appPath)%>/extapp.min.js?v=<%=text(serverHash)%>"></script>
-    <% } %>
+    // Output all the script tags
+    for (String path : includePaths)
+         out.print(getScriptTag(path));
+%>
 </head>
 <body>
 <div class="banner" style="visibility: hidden;">
