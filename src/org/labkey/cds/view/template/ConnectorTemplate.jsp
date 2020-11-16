@@ -373,7 +373,7 @@
     else
     {
         // PRODUCTION
-        includePaths.add("/Connector/extapp.min.js?v=" + serverHash);
+        includePaths.add("/Connector/extapp.min.js");
     }
 
     // Output all the script tags
