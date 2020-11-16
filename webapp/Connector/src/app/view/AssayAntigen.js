@@ -13,7 +13,7 @@ Ext.define('Connector.view.AssayAntigen', {
 
     isDetailLearnGrid: true,
     
-    antigenColFixedWidth: 50,
+    antigenColFixedWidth: 56,
 
     id: "app-view-assayantigengrid",
 
@@ -140,7 +140,7 @@ Ext.define('Connector.view.AssayAntigen', {
             text: antigenNameLabel,
             xtype: 'templatecolumn',
             locked: true,
-            minWidth: 450,
+            minWidth: 400,
             flex: 2*flex,
             dataIndex: 'antigen_short_name',
             filterConfigSet: [{
@@ -164,26 +164,28 @@ Ext.define('Connector.view.AssayAntigen', {
                         var isolateComp = values.isolate_name_component;
                         var antigenComp = values.antigen_type_component;
                         var prodComp = values.production_component;
-                        var antigenFullName = ""; // isolate_name_component [antigen_type_component] production_component
 
-                        if ((isolateComp.length + antigenComp.length + prodComp.length) < me.antigenColFixedWidth) {
-                            antigenFullName = isolateComp + " [" + antigenComp + "] " + prodComp;
+                        // Antigen full name is comprised of components in this format: ‘isolate component [antigen type component] production component'
+                        var antigenFullName = isolateComp + " [" + antigenComp + "] " + prodComp;
+
+                        var reconstructedFullName = "";
+
+                        // If the full name does not fit, i.e. needs to wrap, then the wrapping should occur between components,
+                        // i.e. a line should not break in the middle of a component.
+                        for (var i = 0; i < antigenFullName.length; i++) {
+
+                            var nameChar = antigenFullName.charAt(i);
+                            if (nameChar === '[' && isolateComp.length < me.antigenColFixedWidth && ((isolateComp.length + antigenComp.length) > me.antigenColFixedWidth)) {
+                                reconstructedFullName += "<br>" + nameChar;
+                            }
+                            else if (nameChar === ']' && ((antigenComp.length + prodComp.length) > me.antigenColFixedWidth)) {
+                                reconstructedFullName += nameChar + "<br>";
+                            }
+                            else {
+                                reconstructedFullName += nameChar;
+                            }
                         }
-                        else {
-                            if ((isolateComp.length + antigenComp.length) > me.antigenColFixedWidth && (antigenComp.length + prodComp.length) < me.antigenColFixedWidth) {
-                                antigenFullName = isolateComp + "<br>[" + antigenComp + "] " + prodComp;
-                            }
-                            else if ((isolateComp.length + antigenComp.length) < me.antigenColFixedWidth && (antigenComp.length + prodComp.length) > me.antigenColFixedWidth) {
-                                antigenFullName = isolateComp + " [" + antigenComp + "]<br>" + prodComp;
-                            }
-                            else if ((isolateComp.length + antigenComp.length) > me.antigenColFixedWidth && (antigenComp.length + prodComp.length) > me.antigenColFixedWidth) {
-                                antigenFullName =  isolateComp + "<br> [" + antigenComp + "]<br>" + prodComp;
-                            }
-                            else if ((isolateComp.length + antigenComp.length) < me.antigenColFixedWidth && (antigenComp.length + prodComp.length) < me.antigenColFixedWidth) {
-                                antigenFullName =  isolateComp + " [" + antigenComp + "]<br>" + prodComp;
-                            }
-                        }
-                        return antigenFullName;
+                        return reconstructedFullName;
                     }
                  }
             )
