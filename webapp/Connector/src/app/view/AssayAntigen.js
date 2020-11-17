@@ -161,12 +161,16 @@ Ext.define('Connector.view.AssayAntigen', {
                 '</div>',
                  {
                     getAntigenFullName: function(values) {
-                        var isolateComp = values.isolate_name_component;
-                        var antigenComp = values.antigen_type_component;
-                        var prodComp = values.production_component;
 
                         // Antigen full name is comprised of components in this format: ‘isolate component [antigen type component] production component'
-                        var antigenFullName = isolateComp + " [" + antigenComp + "] " + prodComp;
+                        var antigenFullName =  values.antigen_full_name;
+
+                        //need to separate out components for to get the length
+                        var fullNamePartial = antigenFullName.split("[");
+                        var isolateComp = fullNamePartial[0];
+                        var fullNamePartial2 = fullNamePartial[1].split("]");
+                        var antigenComp = fullNamePartial2[0];
+                        var prodComp = fullNamePartial2[1];
 
                         var reconstructedFullName = "";
 
