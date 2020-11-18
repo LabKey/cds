@@ -141,7 +141,7 @@ Ext.define('Connector.view.AssayAntigen', {
             xtype: 'templatecolumn',
             locked: true,
             minWidth: 400,
-            flex: 2*flex,
+            flex: flex,
             dataIndex: 'antigen_short_name',
             filterConfigSet: [{
                 filterField: 'antigen_short_name',
@@ -269,7 +269,7 @@ Ext.define('Connector.view.AssayAntigen', {
 
     getBAMAColumns: function()
     {
-        var commonColumns = this.getBAMAAntigenColumns('Antigen', 1/6);
+        var commonColumns = this.getBAMAAntigenColumns('Antigen', 1/3);
         var columns = [
             this.getSimpleValueColumn('Category', 'antigen_category', 'antigen_category', 200, 1/18),
             this.getSimpleValueColumn('Species', 'isolate_species', 'isolate_species', 200, 1/18),
