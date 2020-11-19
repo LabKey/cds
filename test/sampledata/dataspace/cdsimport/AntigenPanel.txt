@@ -1,0 +1,13 @@
+cds_ag_id	cds_panel_id
+cds_ag_1323	cds_panel_6
+cds_ag_1323	cds_panel_2
+cds_ag_1323	cds_panel_5
+cds_ag_1324	cds_panel_5
+cds_ag_1325	cds_panel_2
+cds_ag_1326	cds_panel_3
+cds_ag_1327	cds_panel_4
+cds_ag_1328	cds_panel_5
+cds_ag_1329	cds_panel_1
+cds_ag_1331	cds_panel_1
+cds_ag_1331	cds_panel_2
+cds_ag_1331	cds_panel_3
