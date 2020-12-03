@@ -1,0 +1,22 @@
+
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN initial_concentration TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN mab_concentration TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN min_concentration TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN max_concentration TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN min_well_value TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN max_well_value TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN mean_well_value TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN well_std_dev TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN percent_neutralization TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN neutralization_plus_minus TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN titer_curve_ic50 TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN titer_curve_ic80 TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN slope TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_min TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_max TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_asymmetry TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_slope TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_inflection TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_error TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN virus_control_mean TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN cell_control_mean TYPE double precision;

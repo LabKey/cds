@@ -12,11 +12,13 @@ Ext.define('Connector.view.AssayAntigen', {
     cls: 'learngrid antigengrid',
 
     isDetailLearnGrid: true,
+    
+    antigenColFixedWidth: 56,
 
     id: "app-view-assayantigengrid",
 
     statics: {
-        searchFields: Ext.pluck(Connector.app.model.AssayAntigen.getFields(), 'name')
+        searchFields: Ext.pluck(Connector.app.model.AssayAntigen.getFields(), 'name', 'antigen_full_name', 'antigen_short_name', 'antigen_name_other')
     },
 
     viewConfig: {
@@ -35,7 +37,7 @@ Ext.define('Connector.view.AssayAntigen', {
         if (this.learnViewConfig)
         {
             this.learnView = this.learnViewConfig.learnView;
-            if (this.learnView.getEl().contains('auto-scroll-y')) {
+            if (this.learnView.getEl().contains('auto-scroll-y') || this.learnViewConfig.learnView.getEl().hasCls('auto-scroll-y')) {
                 this.learnView.getEl().removeCls('auto-scroll-y');
             }
             this.tabId = this.learnViewConfig.tabId;
@@ -131,6 +133,69 @@ Ext.define('Connector.view.AssayAntigen', {
         };
     },
 
+    getBAMAAntigenColumns: function(antigenNameLabel, flex)
+    {
+        var me = this;
+        return [{
+            text: antigenNameLabel,
+            xtype: 'templatecolumn',
+            locked: true,
+            minWidth: 400,
+            flex: flex,
+            dataIndex: 'antigen_short_name',
+            filterConfigSet: [{
+                filterField: 'antigen_short_name',
+                valueType: 'string',
+                title: antigenNameLabel
+            }],
+            tpl: new Ext.XTemplate(
+                '<div class="detail-description">',
+                    '<h2>{antigen_short_name:htmlEncode}</h2>',
+                    '<div class="detail-description-text" id="bama-antigen-id">',
+                        '<p id="bama-ag-id">{[this.getAntigenFullName(values)]}</p>',
+                        '<tpl if="antigen_name_other.length &gt; 0">',
+                                '</br>',
+                                '<p>Aliases: {antigen_name_other:htmlEncode}</p>',
+                        '</tpl>',
+                    '</div>',
+                '</div>',
+                 {
+                    getAntigenFullName: function(values) {
+
+                        // Antigen full name is comprised of components in this format: ‘isolate component [antigen type component] production component'
+                        var antigenFullName =  values.antigen_full_name;
+
+                        //need to separate out components for to get the length
+                        var fullNamePartial = antigenFullName.split("[");
+                        var isolateComp = fullNamePartial[0];
+                        var fullNamePartial2 = fullNamePartial[1].split("]");
+                        var antigenComp = fullNamePartial2[0];
+                        var prodComp = fullNamePartial2[1];
+
+                        var reconstructedFullName = "";
+
+                        // If the full name does not fit, i.e. needs to wrap, then the wrapping should occur between components,
+                        // i.e. a line should not break in the middle of a component.
+                        for (var i = 0; i < antigenFullName.length; i++) {
+
+                            var nameChar = antigenFullName.charAt(i);
+                            if (nameChar === '[' && isolateComp.length < me.antigenColFixedWidth && ((isolateComp.length + antigenComp.length) > me.antigenColFixedWidth)) {
+                                reconstructedFullName += "<br>" + nameChar;
+                            }
+                            else if (nameChar === ']' && ((antigenComp.length + prodComp.length) > me.antigenColFixedWidth)) {
+                                reconstructedFullName += nameChar + "<br>";
+                            }
+                            else {
+                                reconstructedFullName += nameChar;
+                            }
+                        }
+                        return reconstructedFullName;
+                    }
+                 }
+            )
+        }];
+    },
+
     getCommonColumns: function(antigenNameLabel, flex)
     {
         return [{
@@ -204,12 +269,25 @@ Ext.define('Connector.view.AssayAntigen', {
 
     getBAMAColumns: function()
     {
-        var commonColumns = this.getCommonColumns('Antigen', 1/6);
+        var commonColumns = this.getBAMAAntigenColumns('Antigen', 1/3);
         var columns = [
-            this.getSimpleValueColumn('Clade', 'antigen_clade', 'antigen_clade', 100, 1/6),
-            this.getSimpleValueColumn('Protein', 'antigen_protein', 'antigen_protein', 100, 1/6),
-            this.getSimpleValueColumn('Antigen Type', 'antigen_type', 'antigen_type', 100, 1/6)
-        ];
+            this.getSimpleValueColumn('Category', 'antigen_category', 'antigen_category', 200, 1/18),
+            this.getSimpleValueColumn('Species', 'isolate_species', 'isolate_species', 200, 1/18),
+            this.getSimpleValueColumn('Clade', 'isolate_clade', 'isolate_clade', 200, 1/18),
+            this.getSimpleValueColumn('Donor ID', 'isolate_donor_id', 'isolate_donor_id', 200, 1/18),
+            this.getSimpleValueColumn('Mutations', 'isolate_mutations', 'isolate_mutations', 200, 1/18),
+            this.getSimpleValueColumn('Region', 'antigen_type_region', 'antigen_type_region', 200, 1/18),
+            this.getSimpleValueColumn('Scaffold', 'antigen_type_scaffold', 'antigen_type_scaffold', 200, 1/18),
+            this.getSimpleValueColumn('Modifiers', 'antigen_type_modifiers', 'antigen_type_modifiers', 200, 1/18),
+            this.getSimpleValueColumn('Tags', 'antigen_type_tags', 'antigen_type_tags', 200, 1/18),
+            this.getPanelValues('Panels', 'antigen_panel_names', 'antigen_panel_names', 200, 1/18),
+            this.getSimpleValueColumn('Host cell', 'production_host_cell', 'production_host_cell', 200, 1/18),
+            this.getSimpleValueColumn('Purification methods', 'production_purification_method', 'production_purification_method', 200, 1/18),
+            this.getSimpleValueColumn('Special reagents', 'production_special_reagent', 'production_special_reagent', 200, 1/18),
+            this.getSimpleValueColumn('Manufacturer', 'production_manufacturer', 'production_manufacturer', 200, 1/18),
+            this.getSimpleValueColumn('Plot label', 'antigen_plot_label', 'antigen_plot_label', 200, 1/18),
+            this.getSimpleValueColumn('DataSpace antigen ID', 'cds_ag_id', 'cds_ag_id', 200, 1/18),
+            this.getSimpleValueColumn('Control', 'antigen_control_value', 'antigen_control_value', 200, 1/18)];
         return commonColumns.concat(columns);
     },
 
