@@ -13,7 +13,7 @@ Ext.define('Connector.view.AssayAntigen', {
 
     isDetailLearnGrid: true,
     
-    antigenColFixedWidth: 56,
+    antigenColFixedWidth: 71,
 
     id: "app-view-assayantigengrid",
 
@@ -140,7 +140,7 @@ Ext.define('Connector.view.AssayAntigen', {
             text: antigenNameLabel,
             xtype: 'templatecolumn',
             locked: true,
-            minWidth: 400,
+            minWidth: 500,
             flex: flex,
             dataIndex: 'antigen_short_name',
             filterConfigSet: [{
