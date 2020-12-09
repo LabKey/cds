@@ -1131,24 +1131,24 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Studies");
         goToDetail(studyName, true);
         assertTextPresent("Visualize subject-level data in");
-        assertElementPresent(plotLink);
-        assertElementPresent(gridLink);
+//        assertElementPresent(plotLink);
+//        assertElementPresent(gridLink);
         assertTextPresent("For mAb data, go to");
-        assertElementPresent(mabLink);
+//        assertElementPresent(mabLink);
 
         String assayName = CDSHelper.ASSAYS_FULL_TITLES[1]; //ICS
         log("Verify instruction text on Learn About page for Assays - " + assayName);
         cds.viewLearnAboutPage("Assays");
         goToDetail(assayName, true);
         assertTextPresent("Visualize subject-level data in ");
-        assertElementPresent(plotLink);
-        assertElementPresent(gridLink);
+//        assertElementPresent(plotLink);
+//        assertElementPresent(gridLink);
 
         String mabAssayName = CDSHelper.ASSAYS_FULL_TITLES[4]; //NAb MAb
         log("Verify instruction text on Learn About page for NAB MAB assay - " + assayName);
         cds.viewLearnAboutPage("Assays");
         goToDetail(mabAssayName, true);
-        assertElementPresent(mabLink);
+//        assertElementPresent(mabLink);
         assertTextPresent("to visualize or export mAb data");
 
         String productName = "2F5";
@@ -1156,8 +1156,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Products");
         goToDetail(productName, true);
         assertTextPresent("Visualize subject-level data in");
-        assertElementPresent(plotLink);
-        assertElementPresent(gridLink);
+//        assertElementPresent(plotLink);
+//        assertElementPresent(gridLink);
         assertTextPresent("Additional data may be available. See study page.");
 
         String MAbName = "2F5";
@@ -1167,7 +1167,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify sub-header instruction under MAb Characterization Studies");
         assertTextPresent("to visualize or export mAb data");
-        assertElementPresent(mabLink);
+//        assertElementPresent(mabLink);
         log("Verify sub-header instruction under MAb Administration Studies");
         assertTextPresent("to visualize or export mAb data");
 

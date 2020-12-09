@@ -188,21 +188,26 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
     },
 
     getInstructions: function (instructions) {
+
+
         var instrWithHyperlink = instructions;
-        if (instructions) {
-            if (instrWithHyperlink.indexOf("Monoclonal antibodies") >= 0) {
-                var splitInstr = instrWithHyperlink.split("Monoclonal antibodies");
-                instrWithHyperlink = splitInstr[0] + "<a href=\"#mabgrid\">Monoclonal antibodies</a>" + splitInstr[1];
-            }
-            if (instrWithHyperlink.indexOf("Plot") >= 0) {
-                var splitPlot = instrWithHyperlink.split("Plot");
-                instrWithHyperlink = splitPlot[0] + "<a href=\"#chart\">Plot</a>" + splitPlot[1];
-            }
-            if (instrWithHyperlink.indexOf("Grid") >= 0) {
-                var splitGrid = instrWithHyperlink.split("Grid");
-                instrWithHyperlink = splitGrid[0] + "<a href=\"#data\">Grid</a>" + splitGrid[1];
-            }
-        }
+
+        // Commenting out below code for now, adding hyperlinks to subheader text has introduced a regression with tooltips.
+        // See Dataspace tickets:  41685 & 42000. Will have to re-implement hyperlink addition as part of ticket 42000
+        // if (instructions) {
+        //     if (instrWithHyperlink.indexOf("Monoclonal antibodies") >= 0) {
+        //         var splitInstr = instrWithHyperlink.split("Monoclonal antibodies");
+        //         instrWithHyperlink = splitInstr[0] + "<a href=\"#mabgrid\">Monoclonal antibodies</a>" + splitInstr[1];
+        //     }
+        //     if (instrWithHyperlink.indexOf("Plot") >= 0) {
+        //         var splitPlot = instrWithHyperlink.split("Plot");
+        //         instrWithHyperlink = splitPlot[0] + "<a href=\"#chart\">Plot</a>" + splitPlot[1];
+        //     }
+        //     if (instrWithHyperlink.indexOf("Grid") >= 0) {
+        //         var splitGrid = instrWithHyperlink.split("Grid");
+        //         instrWithHyperlink = splitGrid[0] + "<a href=\"#data\">Grid</a>" + splitGrid[1];
+        //     }
+        // }
 
         return instrWithHyperlink;
     },
