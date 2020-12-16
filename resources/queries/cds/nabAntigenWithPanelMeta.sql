@@ -18,7 +18,7 @@ ag.cds_virus_id,
 GROUP_CONCAT(DISTINCT ap.panel_name, '|') AS panel_names
 FROM cds.nabantigen ag
 LEFT JOIN cds.virusPanel vp ON vp.cds_virus_id = ag.cds_virus_id
-LEFT JOIN cds.antigenPanel ap ON ap.cds_panel_id = vp.cds_panel_id
+LEFT JOIN cds.antigenPanelMeta ap ON ap.cds_panel_id = vp.cds_panel_id
 GROUP BY
 ag.assay_identifier,
 ag.antigen_name,

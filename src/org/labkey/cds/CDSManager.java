@@ -151,6 +151,7 @@ public class CDSManager
                     "Study",
                     "Assay",
                     "Lab",
+                    "antigenPanelMeta",
                     "antigenPanel",
                     "virusPanel",
 
@@ -195,6 +196,7 @@ public class CDSManager
                     "import_mabmixmetadata",
                     "import_lab",
                     "import_study",
+                    "import_antigenPanelMeta",
                     "import_antigenPanel",
                     "import_virusPanel"
             })
