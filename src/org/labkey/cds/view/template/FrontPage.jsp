@@ -55,9 +55,7 @@
     <script data-main="<%=getContextPath()%>/frontpage/js/config" src="<%=getWebappURL("/frontpage/components/requirejs/require.js")%>"></script>
 
     <%--<!-- Client API Dependencies -->--%>
-    <%=getScriptTag("/clientapi/core/Utils.js")%>
-    <%=getScriptTag("/clientapi/core/ActionURL.js")%>
-    <%=getScriptTag("/clientapi/core/Ajax.js")%>
+    <%=getScriptTag("/clientapi/labkey-api-js-core.min.js")%>
     <%=getScriptTag("/frontpage/components/jquery/dist/jquery.min.js")%>
     <script type="text/javascript">
         reloadRegisterPage = function() {

@@ -105,16 +105,8 @@
         srcPath + "/ext-patches.js",
 
         // Client API Dependencies
-        "/clientapi/core/Ajax.js",
-        "/clientapi/core/Utils.js",
+        "/clientapi/labkey-api-js-core.min.js",
         "/clientapi/dom/Utils.js",
-        "/clientapi/core/ActionURL.js",
-        "/clientapi/core/Filter.js",
-        "/clientapi/core/FieldKey.js",
-        "/clientapi/core/Query.js",
-        "/clientapi/core/Visualization.js",
-        "/clientapi/core/ParticipantGroup.js",
-        "/clientapi/core/Security.js",
         "/clientapi/dom/Webpart.js",
 
         "/clientapi/ext4/Util.js",
