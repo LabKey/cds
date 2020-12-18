@@ -106,6 +106,7 @@
 
         // Client API Dependencies
         "/clientapi/labkey-api-js-core.min.js",
+        "/clientapi/dom/Utils.js",
         "/clientapi/dom/Webpart.js",
 
         "/clientapi/ext4/Util.js",
