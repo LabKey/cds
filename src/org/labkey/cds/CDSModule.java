@@ -45,7 +45,6 @@ import org.labkey.api.wiki.WikiService;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -170,7 +169,7 @@ public class CDSModule extends DefaultModule
     @Override
     public @Nullable Double getSchemaVersion()
     {
-        return 20.009;
+        return 21.000;
     }
 
     @Override
@@ -183,18 +182,18 @@ public class CDSModule extends DefaultModule
     @NotNull
     protected Collection<WebPartFactory> createWebPartFactories()
     {
-        return new ArrayList<>(Collections.singletonList(
+        return List.of(
             new BaseWebPartFactory("CDS Management")
             {
                 @Override
-                public WebPartView getWebPartView(@NotNull ViewContext portalCtx, @NotNull Portal.WebPart webPart)
+                public WebPartView<?> getWebPartView(@NotNull ViewContext portalCtx, @NotNull Portal.WebPart webPart)
                 {
-                    JspView view = new JspView("/org/labkey/cds/view/begin.jsp");
+                    JspView<Void> view = new JspView<>("/org/labkey/cds/view/begin.jsp");
                     view.setTitle("CDS Management");
                     return view;
                 }
             }
-        ));
+        );
     }
 
     @Override
