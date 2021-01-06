@@ -103,6 +103,7 @@ import org.springframework.web.servlet.mvc.Controller;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -110,6 +111,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -198,7 +200,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    public class AppModel
+    public static class AppModel
     {
         private boolean isAnalyticsUser = false;
         private JSONObject userProperties;
@@ -817,7 +819,7 @@ public class CDSController extends SpringActionController
     public static class MailMergeAction extends SimpleViewAction<Object>
     {
         @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
+        public ModelAndView getView(Object o, BindException errors) throws SQLException, IOException
         {
             if ("GET".equals(getViewContext().getRequest().getMethod()))
             {

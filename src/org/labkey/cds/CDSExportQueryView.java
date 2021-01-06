@@ -304,7 +304,7 @@ public class CDSExportQueryView extends QueryView
             private XSSFCellStyle boldStyle = null;
 
             @Override
-            public void renderGrid(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns) throws Exception
+            public void renderGrid(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns) throws MaxRowsExceededException, SQLException, IOException
             {
                 if (!sheet.getSheetName().equals(METADATA_SHEET))
                 {
