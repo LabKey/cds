@@ -47,11 +47,11 @@ import org.labkey.api.data.JdbcType;
 import org.labkey.api.data.Results;
 import org.labkey.api.data.ResultsImpl;
 import org.labkey.api.data.SqlSelector;
+import org.labkey.api.data.StashingResultsFactory;
 import org.labkey.api.data.TSVMapWriter;
 import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
-import org.labkey.api.module.ModuleProperty;
 import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
@@ -73,20 +73,17 @@ import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
-import org.labkey.api.util.CSRFUtil;
 import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.HtmlString;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.util.Path;
 import org.labkey.api.util.URLHelper;
 import org.labkey.api.util.element.CsrfInput;
-import org.labkey.api.view.ActionURL;
 import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
-import org.labkey.api.view.RedirectException;
 import org.labkey.api.view.VBox;
 import org.labkey.api.view.ViewContext;
 import org.labkey.api.view.template.PageConfig;
@@ -106,6 +103,7 @@ import org.springframework.web.servlet.mvc.Controller;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -113,13 +111,12 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -203,7 +200,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    public class AppModel
+    public static class AppModel
     {
         private boolean isAnalyticsUser = false;
         private JSONObject userProperties;
@@ -822,7 +819,7 @@ public class CDSController extends SpringActionController
     public static class MailMergeAction extends SimpleViewAction<Object>
     {
         @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
+        public ModelAndView getView(Object o, BindException errors) throws SQLException, IOException
         {
             if ("GET".equals(getViewContext().getRequest().getMethod()))
             {
@@ -832,18 +829,16 @@ public class CDSController extends SpringActionController
             else if ("POST".equals(getViewContext().getRequest().getMethod()))
             {
                 String sql = "SELECT L.email, U.lastlogin, L.verification, U.displayname, U.firstname, U.lastname FROM core.logins L INNER JOIN core.principals P ON L.email = P.name INNER JOIN core.usersdata U ON P.userid = U.userid";
-                try (ResultSet rs = new SqlSelector(CoreSchema.getInstance().getScope(), sql).getResultSet())
+                try (StashingResultsFactory factory = new StashingResultsFactory(()->new ResultsImpl(new SqlSelector(CoreSchema.getInstance().getScope(), sql).getResultSet())))
                 {
+                    Results results = factory.get();
                     List<DisplayColumn> list = new ArrayList<>();
                     for (String s : Arrays.asList("email", "displayname", "firstname", "lastname", "lastlogin", "verification"))
-                        list.add(new DataColumn(new BaseColumnInfo(s, JdbcType.valueOf(rs.getMetaData().getColumnType(rs.findColumn(s))))));
-                    try (Results r = new ResultsImpl(rs))
-                    {
-                        ExcelWriter xl = new ExcelWriter(r, list);
-                        xl.setFilenamePrefix("mailmerge");
-                        xl.setAutoSize(true);
-                        xl.write(getViewContext().getResponse());
-                    }
+                        list.add(new DataColumn(new BaseColumnInfo(s, JdbcType.valueOf(results.getMetaData().getColumnType(results.findColumn(s))))));
+                    ExcelWriter xl = new ExcelWriter(factory, list);
+                    xl.setFilenamePrefix("mailmerge");
+                    xl.setAutoSize(true);
+                    xl.write(getViewContext().getResponse());
                 }
             }
             return null;

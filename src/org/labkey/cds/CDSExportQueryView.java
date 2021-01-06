@@ -98,20 +98,17 @@ public class CDSExportQueryView extends QueryView
     public static final List<String> STUDY_ASSAY_DB_COLUMNS = Arrays.asList(PROT, ASSAY_IDENTIFIER, PROVENANCE_SOURCE, PROVENANCE_SUMMARY);
     public static final List<String> ASSAY_DB_COLUMNS = Arrays.asList(ASSAY_IDENTIFIER, ASSAY_LABEL);
     private static final List<String> ASSAY_COLUMNS = Arrays.asList("Study", "Assay Name", "Data provenance - source", "Data provenance - Notes");
-
     private static final List<String> VARIABLE_COLUMNS = Arrays.asList("Assay Name", "Field label", "Field description");
 
     private final List<String> _filterStrings;
     private final String[] _studies;
     private final String[] _assays;
-    private String[] _columnNamesOrdered;
-    private Map<String, String> _columnAliases;
-    private List<String> _studyassays;
-    private List<String> _variableStrs;
-
-    private Map<String, CDSController.CDSExportQueryForm> _tabQueryForms;
-    private List<String> _dataTabNames;
-
+    private final String[] _columnNamesOrdered;
+    private final Map<String, String> _columnAliases;
+    private final List<String> _studyassays;
+    private final List<String> _variableStrs;
+    private final Map<String, CDSController.CDSExportQueryForm> _tabQueryForms;
+    private final List<String> _dataTabNames;
     private final String _exportInfoTitle;
     private final String _exportInfoContent;
 
@@ -239,19 +236,11 @@ public class CDSExportQueryView extends QueryView
                 rgn.setAllowAsync(false);
                 prepareQuerySettings(queryView.getSettings());
 
-                try
-                {
-                    Results results = rgn.getResults(view.getRenderContext());
-                    ew.setResults(results);
-                    ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
-                    ew.setSheetName(tabName);
-                    ew.setAutoSize(true);
-                    logAuditEvent("Exported to Excel", ew.getDataRowCount());
-                }
-                catch (SQLException e)
-                {
-                    throw new RuntimeSQLException(e);
-                }
+                ew.setResultsFactory(()->rgn.getResults(view.getRenderContext()));
+                ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
+                ew.setSheetName(tabName);
+                ew.setAutoSize(true);
+                logAuditEvent("Exported to Excel", ew.getDataRowCount());
             }
         }
 
@@ -263,21 +252,21 @@ public class CDSExportQueryView extends QueryView
         ew.renderNewSheet();
         List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
         ew.setColumns(studyColumns);
-        ew.setResults(getStudies(studyColumns));
+        ew.setResultsFactory(()->getStudies(studyColumns));
         ew.setSheetName(STUDY_SHEET);
         ew.setCaptionRowFrozen(false);
 
         ew.renderNewSheet();
         List<ColumnInfo> assayColumns = getColumns(ASSAY_COLUMNS);
         ew.setColumns(assayColumns);
-        ew.setResults(getAssays(assayColumns));
+        ew.setResultsFactory(()->getAssays(assayColumns));
         ew.setSheetName(ASSAY_SHEET);
         ew.setCaptionRowFrozen(false);
 
         ew.renderNewSheet();
         List<ColumnInfo> variableColumns = getColumns(VARIABLE_COLUMNS);
         ew.setColumns(variableColumns);
-        ew.setResults(getVariables(variableColumns));
+        ew.setResultsFactory(()->getVariables(variableColumns));
         ew.setSheetName(VARIABLES_SHEET);
         ew.setCaptionRowFrozen(false);
 
@@ -308,182 +297,174 @@ public class CDSExportQueryView extends QueryView
         QuerySettings settings = queryView.getSettings();
         prepareQuerySettings(settings);
 
-        try
+        RenderContext rc = view.getRenderContext();
+        ExcelWriter ew = new ExcelWriter(()->rgn.getResults(rc), getExportColumns(rgn.getDisplayColumns()), docType)
         {
-            RenderContext rc = view.getRenderContext();
-            Results results = rgn.getResults(rc);
-            ExcelWriter ew = new ExcelWriter(results, getExportColumns(rgn.getDisplayColumns()), docType)
+            private XSSFCellStyle importantStyle = null;
+            private XSSFCellStyle boldStyle = null;
+
+            @Override
+            public void renderGrid(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns) throws MaxRowsExceededException, SQLException, IOException
             {
-                private XSSFCellStyle importantStyle = null;
-                private XSSFCellStyle boldStyle = null;
-
-                @Override
-                public void renderGrid(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns) throws SQLException, MaxRowsExceededException
+                if (!sheet.getSheetName().equals(METADATA_SHEET))
                 {
-                    if (!sheet.getSheetName().equals(METADATA_SHEET))
-                    {
-                        super.renderGrid(ctx, sheet, visibleColumns);
-                        return;
-                    }
-
-                    XSSFFont importantFont= (XSSFFont) getWorkbook().createFont();
-                    importantFont.setFontHeightInPoints((short)14);
-                    importantFont.setBold(true);
-
-                    XSSFFont boldFont= (XSSFFont) getWorkbook().createFont();
-                    boldFont.setBold(true);
-
-                    importantStyle = (XSSFCellStyle) getWorkbook().createCellStyle();
-                    importantStyle.setFont(importantFont);
-                    boldStyle = (XSSFCellStyle) getWorkbook().createCellStyle();
-                    boldStyle.setFont(boldFont);
-
-                    int currentRow = writeTOC(sheet, 0);
-                    currentRow = writeExportDate(sheet, currentRow);
-                    if (hasExtraExportInfo())
-                        currentRow = writeExportInfo(sheet, currentRow);
-                    writeFilterSection(ctx, sheet, visibleColumns, currentRow);
+                    super.renderGrid(ctx, sheet, visibleColumns);
+                    return;
                 }
 
-                private int writeTOC(Sheet sheet, int currentRow)
-                {
-                   for (List<String> row : TOCS)
+                XSSFFont importantFont= (XSSFFont) getWorkbook().createFont();
+                importantFont.setFontHeightInPoints((short)14);
+                importantFont.setBold(true);
+
+                XSSFFont boldFont= (XSSFFont) getWorkbook().createFont();
+                boldFont.setBold(true);
+
+                importantStyle = (XSSFCellStyle) getWorkbook().createCellStyle();
+                importantStyle.setFont(importantFont);
+                boldStyle = (XSSFCellStyle) getWorkbook().createCellStyle();
+                boldStyle.setFont(boldFont);
+
+                int currentRow = writeTOC(sheet, 0);
+                currentRow = writeExportDate(sheet, currentRow);
+                if (hasExtraExportInfo())
+                    currentRow = writeExportInfo(sheet, currentRow);
+                writeFilterSection(ctx, sheet, visibleColumns, currentRow);
+            }
+
+            private int writeTOC(Sheet sheet, int currentRow)
+            {
+               for (List<String> row : TOCS)
+               {
+                   for (int col = 0; col < row.size(); col++)
                    {
-                       for (int col = 0; col < row.size(); col++)
+                       String value = row.get(col);
+                       if (StringUtils.isEmpty(value))
+                           continue;
+
+                       Row rowObject = getRow(sheet, currentRow);
+                       Cell cell = rowObject.getCell(col, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                       cell.setCellValue(value);
+
+                       if (col == 0)
                        {
-                           String value = row.get(col);
-                           if (StringUtils.isEmpty(value))
-                               continue;
-
-                           Row rowObject = getRow(sheet, currentRow);
-                           Cell cell = rowObject.getCell(col, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                           cell.setCellValue(value);
-
-                           if (col == 0)
-                           {
-                               if (currentRow == 0)
-                                   cell.setCellStyle(importantStyle);
-                               else
-                                   cell.setCellStyle(boldStyle);
-                           }
-
-                           // CAVD link
-                           if (currentRow == 1)
-                           {
-                               CreationHelper createHelper = sheet.getWorkbook().getCreationHelper();
-                               XSSFHyperlink link = (XSSFHyperlink)createHelper.createHyperlink(HyperlinkType.URL);
-                               link.setAddress(CAVD_LINK);
-                               cell.setHyperlink(link);
-                           }
+                           if (currentRow == 0)
+                               cell.setCellStyle(importantStyle);
+                           else
+                               cell.setCellStyle(boldStyle);
                        }
-                       currentRow++;
+
+                       // CAVD link
+                       if (currentRow == 1)
+                       {
+                           CreationHelper createHelper = sheet.getWorkbook().getCreationHelper();
+                           XSSFHyperlink link = (XSSFHyperlink)createHelper.createHyperlink(HyperlinkType.URL);
+                           link.setAddress(CAVD_LINK);
+                           cell.setHyperlink(link);
+                       }
                    }
+                   currentRow++;
+               }
 
-                   return currentRow + 2;
-                }
+               return currentRow + 2;
+            }
 
-                private int writeExportDate(Sheet sheet, int currentRow)
+            private int writeExportDate(Sheet sheet, int currentRow)
+            {
+                Row rowObject = getRow(sheet, currentRow);
+                Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                titleCell.setCellValue("Date Exported:");
+                titleCell.setCellStyle(boldStyle);
+
+                rowObject = getRow(sheet, ++currentRow);
+                Cell valueCell = rowObject.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                Date date = new Date();
+                valueCell.setCellValue(date.toString());
+
+                return currentRow + 3;
+            }
+
+            private int writeExportInfo(Sheet sheet, int currentRow)
+            {
+                Row rowObject = getRow(sheet, currentRow);
+                Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                titleCell.setCellValue(_exportInfoTitle);
+                titleCell.setCellStyle(boldStyle);
+
+                rowObject = getRow(sheet, ++currentRow);
+                Cell valueCell = rowObject.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                valueCell.setCellValue(_exportInfoContent);
+
+                return currentRow + 3;
+            }
+
+            private int writeFilterSection(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns, int currentRow)
+            {
+                Row rowObject = getRow(sheet, currentRow);
+                Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                titleCell.setCellValue(getFilterHeaderString());
+                titleCell.setCellStyle(boldStyle);
+                currentRow++;
+
+                currentRow = writeFilterDetails(sheet, currentRow);
+
+                rowObject = getRow(sheet, currentRow);
+                Cell footerCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                footerCell.setCellValue(FILTERS_FOOTER);
+                footerCell.setCellStyle(boldStyle);
+
+                return currentRow;
+            }
+
+            private int writeFilterDetails(Sheet sheet, int currentRow)
+            {
+                String previousCategory = "", currentCategory, currentFilter;
+                for (String filter : _filterStrings)
                 {
-                    Row rowObject = getRow(sheet, currentRow);
-                    Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    titleCell.setCellValue("Date Exported:");
-                    titleCell.setCellStyle(boldStyle);
+                    String[] parts = filter.split(Pattern.quote(FILTER_DELIMITER));
+                    if (parts.length < 2)
+                        continue;
+                    currentCategory = parts[0];
+                    currentFilter = parts[1];
 
-                    rowObject = getRow(sheet, ++currentRow);
-                    Cell valueCell = rowObject.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    Date date = new Date();
-                    valueCell.setCellValue(date.toString());
-
-                    return currentRow + 3;
-                }
-
-                private int writeExportInfo(Sheet sheet, int currentRow)
-                {
-                    Row rowObject = getRow(sheet, currentRow);
-                    Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    titleCell.setCellValue(_exportInfoTitle);
-                    titleCell.setCellStyle(boldStyle);
-
-                    rowObject = getRow(sheet, ++currentRow);
-                    Cell valueCell = rowObject.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    valueCell.setCellValue(_exportInfoContent);
-
-                    return currentRow + 3;
-                }
-
-                private int writeFilterSection(RenderContext ctx, Sheet sheet, List<ExcelColumn> visibleColumns, int currentRow)
-                {
-                    Row rowObject = getRow(sheet, currentRow);
-                    Cell titleCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    titleCell.setCellValue(getFilterHeaderString());
-                    titleCell.setCellStyle(boldStyle);
-                    currentRow++;
-
-                    currentRow = writeFilterDetails(sheet, currentRow);
-
-                    rowObject = getRow(sheet, currentRow);
-                    Cell footerCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    footerCell.setCellValue(FILTERS_FOOTER);
-                    footerCell.setCellStyle(boldStyle);
-
-                    return currentRow;
-                }
-
-                private int writeFilterDetails(Sheet sheet, int currentRow)
-                {
-                    String previousCategory = "", currentCategory, currentFilter;
-                    for (String filter : _filterStrings)
+                    Row rowObject;
+                    Cell cell;
+                    if (!currentCategory.equals(previousCategory))
                     {
-                        String[] parts = filter.split(Pattern.quote(FILTER_DELIMITER));
-                        if (parts.length < 2)
-                            continue;
-                        currentCategory = parts[0];
-                        currentFilter = parts[1];
-
-                        Row rowObject;
-                        Cell cell;
-                        if (!currentCategory.equals(previousCategory))
-                        {
-                            currentRow++;
-                            rowObject = getRow(sheet, currentRow);
-                            cell = rowObject.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                            cell.setCellValue(currentCategory);
-                            previousCategory = currentCategory;
-                            currentRow++;
-                        }
-
-                        rowObject = getRow(sheet, currentRow++);
-                        cell = rowObject.getCell(2, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                        cell.setCellValue(currentFilter);
+                        currentRow++;
+                        rowObject = getRow(sheet, currentRow);
+                        cell = rowObject.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        cell.setCellValue(currentCategory);
+                        previousCategory = currentCategory;
+                        currentRow++;
                     }
-                    return currentRow + 1;
-                }
 
-                protected Row getRow(Sheet sheet, int rowNumber)
-                {
-                    Row row = sheet.getRow(rowNumber);
-                    if (row == null)
-                    {
-                        row = sheet.createRow(rowNumber);
-                    }
-                    return row;
+                    rowObject = getRow(sheet, currentRow++);
+                    cell = rowObject.getCell(2, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    cell.setCellValue(currentFilter);
                 }
+                return currentRow + 1;
+            }
 
-                @Override
-                public void renderColumnCaptions(Sheet sheet, List<ExcelColumn> visibleColumns) throws MaxRowsExceededException
+            protected Row getRow(Sheet sheet, int rowNumber)
+            {
+                Row row = sheet.getRow(rowNumber);
+                if (row == null)
                 {
-                    if (!sheet.getSheetName().equals(METADATA_SHEET))
-                        super.renderColumnCaptions(sheet, visibleColumns);
+                    row = sheet.createRow(rowNumber);
                 }
-            };
-            ew.setFilenamePrefix(settings.getQueryName());
-            ew.setAutoSize(true);
-            return ew;
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeSQLException(e);
-        }
+                return row;
+            }
+
+            @Override
+            public void renderColumnCaptions(Sheet sheet, List<ExcelColumn> visibleColumns) throws MaxRowsExceededException
+            {
+                if (!sheet.getSheetName().equals(METADATA_SHEET))
+                    super.renderColumnCaptions(sheet, visibleColumns);
+            }
+        };
+        ew.setFilenamePrefix(settings.getQueryName());
+        ew.setAutoSize(true);
+        return ew;
     }
 
     private void prepareQuerySettings(QuerySettings settings)
@@ -708,35 +689,26 @@ public class CDSExportQueryView extends QueryView
             rgn.setAllowAsync(false);
             prepareQuerySettings(queryView.getSettings());
 
-            try
+            final File tmpFile;
+
+            try (TSVGridWriter tsv = new TSVGridWriter(()->rgn.getResults(view.getRenderContext()), getExportColumns(rgn.getDisplayColumns())))
             {
-                Results results = rgn.getResults(view.getRenderContext());
-
-                final File tmpFile;
-
-                try (TSVGridWriter tsv = new TSVGridWriter(results, getExportColumns(rgn.getDisplayColumns())))
-                {
-                    tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
-                    tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
-                    tmpFile.deleteOnExit();
-                    tsv.write(tmpFile);
-                    logAuditEvent("Exported to CSV", tsv.getDataRowCount());
-                }
-
-                copyFileToZip(tmpFile, out);
+                tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
+                tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
+                tmpFile.deleteOnExit();
+                tsv.write(tmpFile);
+                logAuditEvent("Exported to CSV", tsv.getDataRowCount());
             }
-            catch (SQLException e)
-            {
-                throw new RuntimeSQLException(e);
-            }
+
+            copyFileToZip(tmpFile, out);
         }
     }
 
-    private void writeGridCSV(String tabName, Results results, ZipOutputStream out) throws IOException
+    private void writeGridCSV(String tabName, ResultsFactory factory, ZipOutputStream out) throws IOException
     {
         final File tmpFile;
 
-        try (TSVGridWriter tsv = new TSVGridWriter(results))
+        try (TSVGridWriter tsv = new TSVGridWriter(factory))
         {
             tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
             tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
@@ -751,17 +723,9 @@ public class CDSExportQueryView extends QueryView
 
     private void writeExtraCSVs(ZipOutputStream out) throws IOException
     {
-        List<ColumnInfo> columns = getColumns(STUDY_COLUMNS);
-        Results results = getStudies(columns);
-        writeGridCSV(STUDY_SHEET, results, out);
-
-        columns = getColumns(ASSAY_COLUMNS);
-        results = getAssays(columns);
-        writeGridCSV(ASSAY_SHEET, results, out);
-
-        columns = getColumns(VARIABLE_COLUMNS);
-        results = getVariables(columns);
-        writeGridCSV(VARIABLES_SHEET, results, out);
+        writeGridCSV(STUDY_SHEET, ()->getStudies(getColumns(STUDY_COLUMNS)), out);
+        writeGridCSV(ASSAY_SHEET, ()->getAssays(getColumns(ASSAY_COLUMNS)), out);
+        writeGridCSV(VARIABLES_SHEET, ()->getVariables(getColumns(VARIABLE_COLUMNS)), out);
     }
 
     public void writeCSVToResponse(HttpServletResponse response) throws IOException
