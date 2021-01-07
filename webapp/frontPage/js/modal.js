@@ -265,8 +265,8 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             approvedTermsOfUse: termsOfUse
           }
         }).success(function() {
-          if (LABKEY.ActionURL.getParameter('returnUrl')) {
-            window.location = LABKEY.ActionURL.getParameter('returnUrl');
+          if (LABKEY.ActionURL.getReturnUrl()) {
+            window.location = LABKEY.ActionURL.getReturnUrl();
             return;
           }
           var newLocation = window.location.href.replace('?login=true', '').replace('&login=true', '').replace('login=true', '');
