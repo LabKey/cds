@@ -40,7 +40,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
         signOut();
         Map<String, String> loginParams = new HashMap<>();
         loginParams.put("login", "true");
-        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "app", loginParams));
+        getDriver().navigate().to(WebTestHelper.buildURL("cds", getProjectName(), "app", loginParams));
     }
 
     @Test
@@ -74,10 +74,10 @@ public class CDSLoginTest extends CDSReadOnlyTest
         // see the grid navigation link and clicking on it will generate a time out message.
         if (isElementPresent(CDSHelper.NavigationLink.GRID.getLinkLocator()) && isElementVisible(CDSHelper.NavigationLink.GRID.getLinkLocator()))
         {
-            clickAndWait(CDSHelper.NavigationLink.GRID.getLinkLocator());
+            click(CDSHelper.NavigationLink.GRID.getLinkLocator());
         }
 
-        waitForElement(Locator.css("p").withText("Your session has timed out. Please login to continue."));
+        waitForElement(Locator.tag("h1").withText("CAVD DataSpace member sign-in"));
     }
 
     @Override
