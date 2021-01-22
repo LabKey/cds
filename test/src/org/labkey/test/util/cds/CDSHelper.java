@@ -905,7 +905,7 @@ public class CDSHelper
 
     public void logOutFromApplication()
     {
-        _test.clickAndWait(Locator.linkWithText("Logout"));
+        _test.click(Locator.linkWithText("Logout"));
         _test.waitForElement(Locator.linkWithText("Register Here"));
 
     }
