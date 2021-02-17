@@ -16,10 +16,13 @@
 package org.labkey.test.util.cds;
 
 import org.labkey.remoteapi.CommandException;
+import org.labkey.remoteapi.Connection;
+import org.labkey.remoteapi.query.InsertRowsCommand;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.ModulePropertyValue;
 import org.labkey.test.TestFileUtils;
+import org.labkey.test.WebTestHelper;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.LogMethod;
@@ -27,11 +30,16 @@ import org.labkey.test.util.PortalHelper;
 import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.di.DataIntegrationHelper;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_IC50_REPORT;
+import static org.labkey.test.util.cds.CDSHelper.QED_2;
+import static org.labkey.test.util.cds.CDSHelper.ZAP_110;
 
 public class CDSInitializer
 {
@@ -44,6 +52,18 @@ public class CDSInitializer
     public DataIntegrationHelper _etlHelper;
     private final ApiPermissionsHelper _apiPermissionsHelper;
     private RReportHelper _rReportHelper;
+
+    private static final String ELISPOT_Z110_REPORT_SOURCE = "library(Rlabkey)\n" +
+            "labkey.data <- labkey.selectRows(\n" +
+            "    baseUrl=labkey.url.base, \n" +
+            "    folderPath=labkey.url.path, \n" +
+            "    schemaName=\"study\", \n" +
+            "    queryName=\"ELISPOT\", \n" +
+            "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,antigen,antigen_type,peptide_pool,protein,protein_panel,protein_panel_protein,protein_panel_protein_peptide_pool,clade,cell_type,cell_name,vaccine_matched,specimen_type,functional_marker_name,functional_marker_type,response_call,mean_sfc,mean_sfc_neg,mean_sfc_raw,els_ifng_lab_source_key,lab_code,exp_assayid\", \n" +
+            "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"z110\")), \n" +
+            "    containerFilter=NULL, \n" +
+            "    colNameOpt=\"rname\"\n" +
+            ")\n";
 
     private static final String DILUTION_REPORT_SOURCE = "library(Rlabkey)\n" +
             "if (!is.null(labkey.url.params$\"filteredKeysQuery\"))  {\n" +
@@ -165,7 +185,7 @@ public class CDSInitializer
             _test.goToModule("DataIntegration");
             _test.waitForText("COMPLETE", 2, 1000 * 60 * 30);
         }
-        initMAbReportConfig();
+        initReportConfig();
         populateNewsFeed();
 
         _test.goToProjectHome();
@@ -192,6 +212,59 @@ public class CDSInitializer
         _test.assertTextPresent(CDSHelper.TEST_FEED);
     }
 
+    public void updateStudyReportsTable(int cds_report_id, String prot) throws IOException, CommandException
+    {
+        insertData("cds_report_id", cds_report_id, "prot", prot, null, null,"cds", "studyReport");
+    }
+
+    public void updateStudyPublicationsTable(int cds_report_id, int pubId) throws IOException, CommandException
+    {
+        insertData("cds_report_id", cds_report_id, null, null,"publication_id", pubId, "cds", "publicationReport");
+    }
+
+    private void insertData(String reportIdColName, int reportIdColVal,
+                            String protColName, String protVal,
+                            String pubColName, Integer pubId,
+                            String schemaName, String table) throws IOException, CommandException
+    {
+        _test.goToProjectHome();
+
+        Connection cn = WebTestHelper.getRemoteApiConnection();
+
+        InsertRowsCommand insertCmd = new InsertRowsCommand(schemaName, table);
+        Map<String,Object> rowMap = new HashMap<>();
+        rowMap.put(reportIdColName, reportIdColVal);
+        if (null != protColName && null != protVal)
+            rowMap.put(protColName, protVal);
+        else if (null != pubColName && null != pubId)
+            rowMap.put(pubColName, pubId);
+
+        insertCmd.addRow(rowMap);
+
+        insertCmd.execute(cn, _test.getCurrentProject());
+    }
+
+    public void initReportConfig()
+    {
+        _test.goToHome();
+        _rReportHelper.ensureRConfig();
+        _test.goToProjectHome();
+        String url = _project +  "/study-dataset.view?datasetId=5003";
+
+        int reportId = _cds.createReport(_rReportHelper, url, ELISPOT_Z110_REPORT_SOURCE, "ELISPOT PROT Z110 Report", true, true);
+        try
+        {
+            updateStudyReportsTable(reportId, "z110");
+            updateStudyPublicationsTable(reportId, 170);
+        }
+        catch (IOException | CommandException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        initMAbReportConfig();
+    }
+
     public void initMAbReportConfig()
     {
         _test.goToHome();
@@ -200,6 +273,16 @@ public class CDSInitializer
         String mAbUrl = _project +  "/study-dataset.view?datasetId=5007";
 
         int dilutionReportId = _cds.createReport(_rReportHelper, mAbUrl, DILUTION_REPORT_SOURCE, NAB_MAB_DILUTION_REPORT, true, true);
+        try
+        {
+            updateStudyReportsTable(dilutionReportId, "q2");
+            updateStudyPublicationsTable(dilutionReportId, 2);
+        }
+        catch (IOException | CommandException e)
+        {
+            throw new RuntimeException(e);
+        }
+
         int heatmapReportId = _cds.createReport(_rReportHelper, mAbUrl, CONCENTRATION_PLOT_REPORT_SOURCE, NAB_MAB_IC50_REPORT, true, true);
 
         List<ModulePropertyValue> propList = new ArrayList<>();
