@@ -480,6 +480,9 @@ Ext.define('Connector.app.store.Study', {
             this.relationshipData = undefined;
             this.relationshipOrderData = undefined;
             this.assayIdentifiers = undefined;
+            this.studyReportsData = undefined;
+            this.savedReportsData = [];
+            this.studyCuratedGroupData = undefined;
 
             this.loadRawData(studies);
         }
