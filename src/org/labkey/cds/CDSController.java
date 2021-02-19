@@ -56,6 +56,8 @@ import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.reader.Readers;
+import org.labkey.api.reports.Report;
+import org.labkey.api.reports.ReportService;
 import org.labkey.api.resource.Resource;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
@@ -114,6 +116,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1369,5 +1372,28 @@ public class CDSController extends SpringActionController
             _referrer = referrer;
         }
 
+    }
+
+    @RequiresPermission(ReadPermission.class)
+    public class GetReportsDataAction extends ReadOnlyApiAction<Object>
+    {
+        @Override
+        public Object execute(Object o, BindException errors) throws Exception
+        {
+            Map<String, JSONObject> result = new HashMap<>(); //key = rowId, val = reportName
+            Collection<Report> reports = ReportService.get().getReports(getUser(), getContainer());
+            if (reports.size() > 0)
+            {
+                for (Report report : reports)
+                {
+                    JSONObject obj = new JSONObject();
+                    obj.put("reportName", report.getDescriptor().getReportName());
+                    obj.put("url", report.getRunReportURL(getViewContext()));
+                    result.put(String.valueOf(report.getDescriptor().getReportId().getRowId()), obj);
+                }
+                return new ApiSimpleResponse("result", result);
+            }
+            return null;
+        }
     }
 }

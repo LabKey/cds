@@ -29,6 +29,9 @@ Ext.define('Connector.app.store.Study', {
         this.relationshipData = undefined;
         this.mabMixData = undefined;
         this.assayIdentifiers = undefined;
+        this.studyReportsData = undefined;
+        this.savedReportsData = [];
+        this.studyCuratedGroupData = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
@@ -87,6 +90,24 @@ Ext.define('Connector.app.store.Study', {
             success: this.onLoadAssayIdentifiers,
             scope: this
         });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'studyReport',
+            success: this.onLoadStudyReports,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'studyCuratedGroup',
+            success: this.onLoadStudyCuratedGroup,
+            scope: this
+        });
+        LABKEY.Ajax.request({
+            url : LABKEY.ActionURL.buildURL("cds", "getReportsData"),
+            method : 'GET',
+            success: this.onLoadSavedReportsData,
+            scope: this
+        });
     },
 
     onLoadStudies : function(studyData) {
@@ -134,11 +155,30 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadStudyReports : function(studyReports) {
+        this.studyReportsData = studyReports.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadStudyCuratedGroup : function(studyCuratedGroup) {
+        this.studyCuratedGroupData = studyCuratedGroup.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadSavedReportsData : function(savedReports) {
+        var json = Ext.decode(savedReports.responseText);
+        for (var r in json.result) {
+            this.savedReportsData.push({reportId: r, reportName:json.result[r].reportName, url: json.result[r].url})
+        }
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
                 && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)
-                && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.assayIdentifiers)) {
+                && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.assayIdentifiers)
+                && Ext.isDefined(this.studyReportsData) && Ext.isDefined(this.studyCuratedGroupData)) {
             var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                 return relOrder.relationship;
@@ -408,6 +448,22 @@ Ext.define('Connector.app.store.Study', {
                 study.non_integrated_assay_data_has_permission = study.non_integrated_assay_data.filter(function(doc) {
                     return doc.hasPermission === true
                 }).length > 0;
+
+                var interactiveReports = [];
+                for (var i=0; i < this.studyReportsData.length; i++) {
+                    if (study.study_name === this.studyReportsData[i].prot) {
+                        var id = this.studyReportsData[i].cds_report_id ? this.studyReportsData[i].cds_report_id.toString() : undefined;
+                        var reportObj = this.savedReportsData.filter(function(val) { return val.reportId === id;}, this);
+
+                        var report  = {
+                            report_id: id,
+                            label: reportObj && reportObj[0] ? reportObj[0].reportName : id,
+                            url: reportObj && reportObj[0] ? reportObj[0].url : undefined
+                        };
+                        interactiveReports.push(report);
+                    }
+                }
+                study.interactive_reports = interactiveReports;
 
                 studies.push(study);
             }, this);
