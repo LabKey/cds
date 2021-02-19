@@ -93,7 +93,7 @@ Ext.define('Connector.app.store.Study', {
         LABKEY.Query.selectRows({
             schemaName: 'cds',
             queryName: 'studyReport',
-            success: this.onLoadStudyReports,
+            success: this.onLoadStudyReport,
             scope: this
         });
         LABKEY.Query.selectRows({
@@ -155,7 +155,7 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
-    onLoadStudyReports : function(studyReports) {
+    onLoadStudyReport : function(studyReports) {
         this.studyReportsData = studyReports.rows;
         this._onLoadComplete();
     },
