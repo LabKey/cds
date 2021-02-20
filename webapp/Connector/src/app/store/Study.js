@@ -98,7 +98,7 @@ Ext.define('Connector.app.store.Study', {
         });
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'studyCuratedGroup',
+            queryName: 'studyCuratedGrpWithLabel',
             success: this.onLoadStudyCuratedGroup,
             scope: this
         });
@@ -457,13 +457,25 @@ Ext.define('Connector.app.store.Study', {
 
                         var report  = {
                             report_id: id,
-                            label: reportObj && reportObj[0] ? reportObj[0].reportName : id,
+                            label: reportObj && reportObj[0] ? reportObj[0].reportName : undefined,
                             url: reportObj && reportObj[0] ? reportObj[0].url : undefined
                         };
                         interactiveReports.push(report);
                     }
                 }
                 study.interactive_reports = interactiveReports;
+
+                var curatedGroups = [];
+                for (var j=0; j < this.studyCuratedGroupData.length; j++) {
+                    if (study.study_name === this.studyCuratedGroupData[j].prot) {
+                        var grp  = {
+                            cds_saved_group_id: this.studyCuratedGroupData[j].cds_saved_group_id,
+                            label: this.studyCuratedGroupData[j].Label ? this.studyCuratedGroupData[j].Label : undefined
+                        };
+                        curatedGroups.push(grp);
+                    }
+                }
+                study.curated_groups = curatedGroups;
 
                 studies.push(study);
             }, this);

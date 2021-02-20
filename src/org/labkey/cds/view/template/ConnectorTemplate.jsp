@@ -356,6 +356,7 @@
             srcPath + "/app/view/module/StudyMabs.js",
             srcPath + "/app/view/module/VariableList.js",
             srcPath + "/app/view/module/InteractiveReports.js",
+            srcPath + "/app/view/module/CuratedGroups.js",
 
             srcPath + "/Application.js",
 

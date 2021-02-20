@@ -3,9 +3,9 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.view.module.InteractiveReports', {
+Ext.define('Connector.view.module.CuratedGroups', {
 
-    xtype : 'app.module.interactivereports',
+    xtype : 'app.module.curatedgroups',
 
     extend : 'Connector.view.module.ShowList',
 
@@ -13,15 +13,13 @@ Ext.define('Connector.view.module.InteractiveReports', {
 
     tpl : new Ext.XTemplate(
             '<tpl>',
-            '<h3 id="interactive_report_title" class="listing_title">{interactive_report_title}</h3>',
+            '<h3 id="curated_groups_title" class="listing_title">{curated_groups_title}</h3>',
                 '<table class="learn-study-info">',
-                    '<tpl for="interactive_reports">',
+                    '<tpl for="curated_groups">',
                         '<tr><td>',
-                            '<div class="item-value">',
-                                '<tpl if="label && url">',
-                                    '<a href="{url}">{label:htmlEncode}</a>',
-                                '<tpl else>',
-                                    '<p>{label:htmlEncode}</p>',
+                            '<div class="item-row">',
+                                '<tpl if="label">',
+                                    '<a href="#group/groupsummary/{cds_saved_group_id}">{label:htmlEncode}</a>',
                                 '</tpl>',
                             '</div>',
                         '</td></tr>',
@@ -32,7 +30,7 @@ Ext.define('Connector.view.module.InteractiveReports', {
 
     initComponent : function() {
         var data = this.getListData();
-        data['interactive_report_title'] = this.initialConfig.data.title
+        data['curated_groups_title'] = this.initialConfig.data.title
         this.update(data);
 
         this.callParent();
@@ -44,6 +42,6 @@ Ext.define('Connector.view.module.InteractiveReports', {
 
     hasContent : function() {
         var d = this.getListData();
-        return d["interactive_reports"].length > 0;
+        return d["curated_groups"].length > 0;
     }
 });

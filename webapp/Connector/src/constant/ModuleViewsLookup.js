@@ -31,5 +31,6 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	dataavailability : 'app.module.dataavailability',
 	studynonintegrateddata : 'app.module.studynonintegrateddata',
 	publicationnonintegrateddata : 'app.module.publicationnonintegrateddata',
-	interactivereports : 'app.module.interactivereports'
+	interactivereports : 'app.module.interactivereports',
+	curatedgroups : 'app.module.curatedgroups'
 });

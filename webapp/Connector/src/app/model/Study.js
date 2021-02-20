@@ -112,6 +112,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'clintrials_id'},
         {name: 'specimen_repository_label'},
         {name: 'monoclonal_antibodies', convert : Connector.model.Filter.asArray},
-        {name: 'interactive_reports', convert : Connector.model.Filter.asArray}
+        {name: 'interactive_reports', convert : Connector.model.Filter.asArray},
+        {name: 'curated_groups', convert : Connector.model.Filter.asArray}
     ]
 });

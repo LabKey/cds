@@ -191,7 +191,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.DataAvailabilityModule": "../../../../webapp/Connector/src/app/view/module/DataAvailabilityModule.js",
   "Connector.view.module.StudyNonIntegratedData": "../../../../webapp/Connector/src/app/view/module/NonIntegratedDataAvailability.js",
   "Connector.view.module.PublicationNonIntegratedData": "../../../../webapp/Connector/src/app/view/module/NonIntegratedDataAvailability.js",
-  "Connector.view.module.InteractiveReports": "../../../../webapp/Connector/src/app/view/module/InteractiveReports.js",
+  "Connector.view.module.InteractiveReports": "../../../../webapp/Connector/src/app/view/module/CurateGroups.js",
+  "Connector.view.module.CuratedGroups": "../../../../webapp/Connector/src/app/view/module/CuratedGroups.js",
   "Connector.view.module.HTML": "../../../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
   "Connector.view.module.ProductOtherProducts": "../../../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
@@ -438,6 +439,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.StudyNonIntegratedData": [],
   "Connector.view.module.PublicationNonIntegratedData": [],
   "Connector.view.module.InteractiveReports": [],
+  "Connector.view.module.CuratedGroups": [],
   "Connector.view.module.HTML": [],
   "Connector.view.module.ProductHeader": [],
   "Connector.view.module.ProductOtherProducts": [],
@@ -1626,6 +1628,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.InteractiveReports": [
     "widget.app.module.interactivereports"
+  ],
+  "Connector.view.module.CuratedGroups": [
+    "widget.app.module.curatedgroups"
   ],
   "Connector.view.module.HTML": [
     "widget.module.html"

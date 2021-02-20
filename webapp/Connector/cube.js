@@ -393,13 +393,12 @@ Ext4.define('Connector.cube.Configuration', {
                         staticData: {
                             title: 'Interactive reports'
                         }
+                    }, {
+                        type: 'curatedgroups',
+                        staticData: {
+                            title: 'Curated groups and plots'
+                        }
                     }
-                    // , {
-                    //     type: 'curatedgroups',
-                    //     staticData: {
-                    //         title: 'Curated groups and plots'
-                    //     }
-                    // }
                     ]]
                 }]
             },{
