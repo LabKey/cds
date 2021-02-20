@@ -1,5 +1,5 @@
 SELECT
-sg.Label,
+sg.Label as label,
 scg.cds_saved_group_id,
 scg.prot
 FROM cds.studyCuratedGroup scg

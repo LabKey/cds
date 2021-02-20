@@ -1,5 +1,5 @@
 SELECT
-    sg.Label,
+    sg.Label as label,
     pcg.cds_saved_group_id,
     pcg.publication_id
 FROM cds.publicationCuratedGroup pcg

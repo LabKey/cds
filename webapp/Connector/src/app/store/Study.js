@@ -468,11 +468,7 @@ Ext.define('Connector.app.store.Study', {
                 var curatedGroups = [];
                 for (var j=0; j < this.studyCuratedGroupData.length; j++) {
                     if (study.study_name === this.studyCuratedGroupData[j].prot) {
-                        var grp  = {
-                            cds_saved_group_id: this.studyCuratedGroupData[j].cds_saved_group_id,
-                            label: this.studyCuratedGroupData[j].Label ? this.studyCuratedGroupData[j].Label : undefined
-                        };
-                        curatedGroups.push(grp);
+                        curatedGroups.push(this.studyCuratedGroupData[j]);
                     }
                 }
                 study.curated_groups = curatedGroups;
