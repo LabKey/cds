@@ -44,7 +44,7 @@ Ext.define('Connector.view.MabGroupSummary', {
                 },
                 fn: function(id) {
                     if (id === 'yes') {
-                        this.fireEvent('requestmabgroupdelete', this.group.get('id'), true);
+                        this.fireEvent('requestmabgroupdelete', this.group.get('rowid'), true);
                     }
                 },
                 scope: this

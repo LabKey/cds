@@ -111,9 +111,9 @@ Ext.define('Connector.model.Group', {
                                         // id needs to be unique in order to avoid collision
                                         // ex. in the case where id=19, i.e its the same rowid for both for participant and mab group
                                         // it only shows one group in the list, so below is the way to make id unique.
-                                        // for (var y = 0; y < mabGroups.length; y++) {
-                                        //     mabGroups[y].id = mabGroups[y].id + "-" + mabGroups[y].type;
-                                        // }
+                                        for (var y = 0; y < mabGroups.length; y++) {
+                                            mabGroups[y].id = mabGroups[y].id + "-" + mabGroups[y].type;
+                                        }
 
                                         var subjGrps = subjectGroups.filter(function(grp) {return grp.id !== -1});
                                         var groups = mabGroups.concat(subjGrps);
