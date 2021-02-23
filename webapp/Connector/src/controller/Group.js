@@ -73,7 +73,7 @@ Ext.define('Connector.controller.Group', {
         });
 
         this.control('mabgroupsummary', {
-            requestgroupdelete: this.doGroupDeleteFromSummary
+            requestmabgroupdelete: this.doMabGroupDeleteFromSummary
         });
 
         this.control('home', {
@@ -601,22 +601,24 @@ Ext.define('Connector.controller.Group', {
         this.getViewManager().changeView('home');
     },
 
-    doGroupDeleteFromSummary : function(id, isMab) {
-        if (isMab)
-        {
-            var group = {
-                RowId : id,
-                Container : LABKEY.container.id
+    doMabGroupDeleteFromSummary : function(id) {
+        var group = {
+            RowId : id,
+            Container : LABKEY.container.id
+        };
+        LABKEY.Query.deleteRows({
+            schemaName: 'cds',
+            queryName: 'mabgroup',
+            rows: [group],
+            scope: this,
+            success: this.onDeleteSuccess,
+            failure: this.saveFailureAlert
+        });
+    },
 
-            };
-            LABKEY.Query.deleteRows({
-                schemaName: 'cds',
-                queryName: 'mabgroup',
-                rows: [group],
-                scope: this,
-                success: this.onDeleteSuccess,
-                failure: this.saveFailureAlert
-            });
+    doGroupDeleteFromSummary : function(id, isMab) {
+        if (isMab) {
+            this.doMabGroupDeleteFromSummary(id);
             return;
         }
         this.doSubjectGroupDelete({
