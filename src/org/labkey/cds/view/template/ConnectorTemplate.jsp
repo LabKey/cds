@@ -252,6 +252,7 @@
             srcPath + "/view/TimepointPane.js",
             srcPath + "/view/GroupSave.js",
             srcPath + "/view/GroupSummary.js",
+            srcPath + "/view/MabGroupSummary.js",
             srcPath + "/view/Header.js",
             srcPath + "/view/Home.js",
             srcPath + "/view/HomeHeader.js",

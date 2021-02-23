@@ -151,6 +151,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSave": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSaveList": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSummary": "../../../../webapp/Connector/src/view/GroupSummary.js",
+  "Connector.view.MabGroupSummary": "../../../../webapp/Connector/src/view/MabGroupSummary.js",
   "Connector.view.GroupSummaryBody": "../../../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
   "Connector.view.HeaderDataView": "../../../../webapp/Connector/src/view/HeaderDataView.js",
@@ -398,6 +399,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSave": [],
   "Connector.view.GroupSaveList": [],
   "Connector.view.GroupSummary": [],
+  "Connector.view.MabGroupSummary": [],
   "Connector.view.GroupSummaryBody": [],
   "Connector.view.Header": [],
   "Connector.view.HeaderDataView": [],
@@ -1527,6 +1529,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.GroupSummary": [
     "widget.groupsummary"
+  ],
+  "Connector.view.MabGroupSummary": [
+    "widget.mabgroupsummary"
   ],
   "Connector.view.GroupSummaryBody": [],
   "Connector.view.Header": [

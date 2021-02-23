@@ -108,6 +108,7 @@
         <script path="Connector/src/view/TimepointPane.js"/>
         <script path="Connector/src/view/GroupSave.js"/>
         <script path="Connector/src/view/GroupSummary.js"/>
+        <script path="Connector/src/view/MabGroupSummary.js"/>
         <script path="Connector/src/view/Header.js"/>
         <script path="Connector/src/view/Home.js"/>
         <script path="Connector/src/view/HomeHeader.js"/>

@@ -6,7 +6,7 @@
 Ext.define('Connector.controller.Group', {
     extend: 'Connector.controller.AbstractViewController',
 
-    views: ['GroupSave', 'GroupSummary'],
+    views: ['GroupSave', 'GroupSummary', 'MabGroupSummary'],
 
     constructor: function(config) {
         Ext.applyIf(config, {
@@ -24,7 +24,12 @@ Ext.define('Connector.controller.Group', {
                         ['.selectionpanel', '.filterpanel', '.filterstatus .emptytext'],
                         'div', 'grouprow');
 
-                this.getViewManager().changeView('group', 'groupsummary', [grp.get('id')]);
+                if (grp.get('type') === 'mab') {
+                    this.getViewManager().changeView('group', 'mabgroupsummary', [grp.get('rowid')]);
+                }
+                else {
+                    this.getViewManager().changeView('group', 'groupsummary', [grp.get('id')]);
+                }
             },
             render: function(view) {
                 this.registerSelectGroup(view);
@@ -64,6 +69,10 @@ Ext.define('Connector.controller.Group', {
         });
 
         this.control('groupsummary', {
+            requestgroupdelete: this.doGroupDeleteFromSummary
+        });
+
+        this.control('mabgroupsummary', {
             requestgroupdelete: this.doGroupDeleteFromSummary
         });
 
@@ -109,25 +118,44 @@ Ext.define('Connector.controller.Group', {
                 groupId: context.groupId
             });
         }
+        else if (xtype == 'mabgroupsummary') {
+
+            v = Ext.create('Connector.view.MabGroupSummary', {
+                store: Connector.model.Group.getGroupStore(),
+                groupId: context.groupId
+            });
+        }
 
         return v;
     },
 
     getViewTitle : function(xtype, context) {
-        if (xtype === 'groupsummary') {
-            var v = this.getViewManager().getViewInstance('groupsummary');
-            var title = 'Groups';
-            if (v.getGroup()) {
-                title = v.getGroup().label + " - " + title;
-            }
-            return title;
+
+        var v;
+        var title;
+        if (xtype === 'mabgroupsummary') {
+            v = this.getViewManager().getViewInstance('mabgroupsummary');
+            title = 'MAb Groups';
         }
+        else {
+            v = this.getViewManager().getViewInstance('groupsummary');
+            title = 'Groups';
+        }
+
+        if (v.getGroup()) {
+            title = v.getGroup().label + " - " + title;
+        }
+        return title;
     },
 
     updateView : function(xtype, context) {
         if (xtype == 'groupsummary') {
             var v = this.getViewManager().getViewInstance('groupsummary');
             v.updateView(context.groupId);
+        }
+        else if (xtype == 'mabgroupsummary') {
+            var m = this.getViewManager().getViewInstance('mabgroupsummary');
+            m.updateView(context.groupId);
         }
     },
 
