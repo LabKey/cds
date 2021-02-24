@@ -13,24 +13,26 @@ Ext.define('Connector.view.module.CuratedGroups', {
 
     tpl : new Ext.XTemplate(
             '<tpl>',
-            '<h3 id="curated_groups_title" class="listing_title">{curated_groups_title}</h3>',
-                '<table class="learn-study-info">',
-                    '<tpl for="curated_groups">',
-                        '<tr><td>',
-                            '<div class="item-row">',
-                                '<tpl if="label">',
-                                    '<a href="#group/groupsummary/{cds_saved_group_id}">{label:htmlEncode}</a>',
-                                '</tpl>',
-                            '</div>',
-                        '</td></tr>',
-                    '</tpl>',
-                '</table>',
-            '</tpl>',
+            '<tpl if="curated_groups && curated_groups.length &gt; 0">',
+                '<h3 id="curated_groups_title" class="listing_title">{curated_groups_title}</h3>',
+                    '<table class="learn-study-info">',
+                        '<tpl for="curated_groups">',
+                            '<tr><td>',
+                                '<div class="item-row">',
+                                    '<tpl if="label">',
+                                        '<a href="#group/groupsummary/{cds_saved_group_id}">{label:htmlEncode}</a>',
+                                    '</tpl>',
+                                '</div>',
+                            '</td></tr>',
+                        '</tpl>',
+                    '</table>',
+                '</tpl>',
+            '</tpl>'
     ),
 
     initComponent : function() {
         var data = this.getListData();
-        data['curated_groups_title'] = this.initialConfig.data.title
+        data['curated_groups_title'] = this.initialConfig.data.title;
         this.update(data);
 
         this.callParent();

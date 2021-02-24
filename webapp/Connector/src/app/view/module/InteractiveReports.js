@@ -14,26 +14,27 @@ Ext.define('Connector.view.module.InteractiveReports', {
     tpl : new Ext.XTemplate(
             '<tpl>',
             '<tpl if="interactive_reports && interactive_reports.length &gt; 0">',
-            '<h3 id="interactive_report_title" class="listing_title">{interactive_report_title}</h3>',
-                '<table class="learn-study-info">',
-                    '<tpl for="interactive_reports">',
-                        '<tr><td>',
-                            '<div class="item-value">',
-                                '<tpl if="label && url">',
-                                    '<a href="{url}">{label:htmlEncode}</a>',
-                                '<tpl else>',
-                                    '<p>{label:htmlEncode}</p>',
-                                '</tpl>',
-                            '</div>',
-                        '</td></tr>',
-                    '</tpl>',
-                '</table>',
-            '</tpl>',
+                '<h3 id="interactive_report_title" class="listing_title">{interactive_report_title}</h3>',
+                    '<table class="learn-study-info">',
+                        '<tpl for="interactive_reports">',
+                            '<tr><td>',
+                                '<div class="item-value">',
+                                    '<tpl if="label && url">',
+                                        '<a href="{url}">{label:htmlEncode}</a>',
+                                    '<tpl else>',
+                                        '<p>{label:htmlEncode}</p>',
+                                    '</tpl>',
+                                '</div>',
+                            '</td></tr>',
+                        '</tpl>',
+                    '</table>',
+                '</tpl>',
+            '</tpl>'
     ),
 
     initComponent : function() {
         var data = this.getListData();
-        data['interactive_report_title'] = this.initialConfig.data.title
+        data['interactive_report_title'] = this.initialConfig.data.title;
         this.update(data);
 
         this.callParent();
