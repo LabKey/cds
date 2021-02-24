@@ -1112,7 +1112,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue(hasDataRows.size()/2 == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
     }
 
-    private void goToDetail(String itemName, boolean hasData)
+    public void goToDetail(String itemName, boolean hasData)
     {
         Locator element = hasData ? LEARN_HAS_DATA_ROW_TITLE_LOC.withText(itemName).notHidden() : LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
         assertElementPresent(element);
@@ -1263,7 +1263,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementPresent(instructions);
     }
 
-    private void gotToLearnAboutDetail(String itemName)
+    public void gotToLearnAboutDetail(String itemName)
     {
         Locator element = LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
         assertElementPresent(element);

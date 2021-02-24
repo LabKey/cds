@@ -75,7 +75,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         result = cds.saveGroup(privateGroupOneName, PRIVATE_GROUP_NAME_DESCRIPTION[0], false, false, isMab());
         assertTrue("Failed to update " + (isMab() ? "mab " : "") + "group", result);
         cds.goToAppHome();
-        cds.deleteGroupFromSummaryPage(privateGroupOneName);
+//        cds.deleteGroupFromSummaryPage(privateGroupOneName);
         _stopImpersonatingRole();
 
         _impersonateRole("Editor");
@@ -83,7 +83,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         result = cds.saveGroup(privateGroupTwoName, PRIVATE_GROUP_NAME_DESCRIPTION[1], true, false, isMab());
         assertTrue("Failed to create new shared " + (isMab() ? "mab " : "") + "group as Editor.", result);
         cds.goToAppHome();
-        cds.deleteGroupFromSummaryPage(privateGroupTwoName);
+//        cds.deleteGroupFromSummaryPage(privateGroupTwoName);
         _stopImpersonatingRole();
 
         String rootContainer = getProjectName();

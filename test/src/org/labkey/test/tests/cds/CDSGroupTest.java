@@ -19,15 +19,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.api.security.roles.ReaderRole;
+import org.labkey.api.security.roles.RoleManager;
+import org.labkey.api.security.roles.SiteAdminRole;
 import org.labkey.remoteapi.CommandException;
 import org.labkey.remoteapi.Connection;
 import org.labkey.remoteapi.query.InsertRowsCommand;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.CDSPlot;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.di.DataIntegrationHelper;
 import org.openqa.selenium.By;
@@ -61,6 +66,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
 
     private boolean studyLabelUpdated = false;
+
+    private final CDSTestLearnAbout _cdsTestLearnAbout = new CDSTestLearnAbout();
 
     @Override
     @Before
@@ -316,16 +323,17 @@ public class CDSGroupTest extends CDSGroupBaseTest
     }
 
     @Test
-    public void verifyCuratedGroup()
+    public void verifyInteractiveAndCuratedLinks()
     {
         cds.enterApplication();
 
         String studyGroupDesc = "Curated group for " + QED_2;
+        log("create " + studyGroupDesc);
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.selectBars(QED_2);
         cds.useSelectionAsSubjectFilter();
-        cds.saveGroup(STUDY_GROUP_Q2, studyGroupDesc);
+        cds.saveGroup(STUDY_GROUP_Q2, studyGroupDesc, true);
 
         cds.goToAppHome();
         Locator.XPathLocator listGroup = Locator.tagWithClass("div", "grouplabel");
@@ -334,6 +342,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         String[] vals = groupUrl.split("/");
         int rowId = Integer.valueOf(vals[vals.length-1]); //study.SubjectGroup.RowId
 
+        log("save report info into cds.studyCuratedGroup & cds.publicationCuratedGroup tables");
         try
         {
             updateStudyCuratedGroupTable(rowId, "q2");
@@ -349,7 +358,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Studies");
         cds.selectBars(ZAP_110);
         cds.useSelectionAsSubjectFilter();
-        cds.saveGroup(STUDY_GROUP_Z110, studyGroupDesc);
+        cds.saveGroup(STUDY_GROUP_Z110, studyGroupDesc, false);
 
         cds.goToAppHome();
         waitAndClick(listGroup.withText(STUDY_GROUP_Z110));
@@ -366,6 +375,74 @@ public class CDSGroupTest extends CDSGroupBaseTest
         {
             throw new RuntimeException(e);
         }
+        goToProjectHome();
+        createUserWithPermissions(NEW_USER_ACCOUNTS[0], getProjectName(), "Reader");
+        _apiPermissionsHelper.addMemberToRole(NEW_USER_ACCOUNTS[0], "Reader", PermissionsHelper.MemberType.user, getProjectName());
+        goToProjectHome();
+        impersonate(NEW_USER_ACCOUNTS[0]);
+        cds.enterApplication();
+        verifyLinksOnStudyPage(studyGroupDesc);
+        verifyLinksOnPublicationPage(studyGroupDesc);
+        goToProjectHome();
+        stopImpersonating();
+        _apiPermissionsHelper.removeRoleAssignment(_apiPermissionsHelper.getUserId(NEW_USER_ACCOUNTS[0]), RoleManager.getRole("org.labkey.api.security.roles.ReaderRole").getName(), getProjectName());
+        _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
+    }
+
+    private void verifyLinksOnPublicationPage(String descr)
+    {
+        log("verify links on publication page");
+        String publicationName = "Korioth-Schmitz B 2015 Vaccine";
+
+        goToPubPage(publicationName);
+        verifyInteractiveLink();
+
+        goToPubPage(publicationName);
+        verifyCuratedLink(descr);
+    }
+
+    private void verifyLinksOnStudyPage(String descr)
+    {
+        log("verify links on study page");
+
+        goToStudyPage(QED_2);
+        verifyInteractiveLink();
+
+        goToStudyPage(QED_2);
+        verifyCuratedLink(descr);
+    }
+
+    private void goToPubPage(String pub)
+    {
+        cds.viewLearnAboutPage("Publications");
+        _cdsTestLearnAbout.gotToLearnAboutDetail(pub);
+    }
+
+    private void goToStudyPage(String prot)
+    {
+        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(prot);
+        _cdsTestLearnAbout.goToDetail(prot, true);
+    }
+
+    private void verifyCuratedLink(String descr)
+    {
+        log("verify curated group link");
+
+        scrollIntoView(Locator.id("curated_groups_title"), false);
+        click(Locator.linkContainingText("Study Q2 Group"));
+        waitForText("No plot saved for this group");
+        assertTextPresent(descr);
+    }
+
+    private void verifyInteractiveLink()
+    {
+        log("verify interactive report link");
+        scrollIntoView(Locator.id("interactive_report_title"));
+        clickAndWait(Locator.linkContainingText("NAb dilution report"));
+        assertTextPresent("Contains NAb MAb data");
+        goBack();
     }
 
     private void updateStudyCuratedGroupTable(int cds_saved_group_id, String prot) throws IOException, CommandException
