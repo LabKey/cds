@@ -353,12 +353,12 @@ public class CDSGroupTest extends CDSGroupBaseTest
             throw new RuntimeException(e);
         }
 
-        studyGroupDesc = "Curated group for " + ZAP_110;
+        String studyGroupDesc2 = "Curated group for " + ZAP_110;
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.selectBars(ZAP_110);
         cds.useSelectionAsSubjectFilter();
-        cds.saveGroup(STUDY_GROUP_Z110, studyGroupDesc, false);
+        cds.saveGroup(STUDY_GROUP_Z110, studyGroupDesc2, false);
 
         cds.goToAppHome();
         waitAndClick(listGroup.withText(STUDY_GROUP_Z110));
@@ -385,7 +385,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
         verifyLinksOnPublicationPage(studyGroupDesc);
         goToProjectHome();
         stopImpersonating();
-        _apiPermissionsHelper.removeRoleAssignment(_apiPermissionsHelper.getUserId(NEW_USER_ACCOUNTS[0]), RoleManager.getRole("org.labkey.api.security.roles.ReaderRole").getName(), getProjectName());
         _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
     }
 
