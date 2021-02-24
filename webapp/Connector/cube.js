@@ -384,11 +384,6 @@ Ext4.define('Connector.cube.Configuration', {
                             title: "Reports"
                         }
                     }, {
-                        type: 'studymabs',
-                        staticData: {
-                            title: 'Monoclonal antibodies'
-                        }
-                    }, {
                         type: 'interactivereports',
                         staticData: {
                             title: 'Interactive reports'
@@ -397,6 +392,11 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'curatedgroups',
                         staticData: {
                             title: 'Curated groups and plots'
+                        }
+                    }, {
+                        type: 'studymabs',
+                        staticData: {
+                            title: 'Monoclonal antibodies'
                         }
                     }
                     ]]

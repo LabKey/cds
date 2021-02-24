@@ -456,12 +456,14 @@ Ext.define('Connector.app.store.Study', {
                         var id = this.studyReportsData[i].cds_report_id ? this.studyReportsData[i].cds_report_id.toString() : undefined;
                         var reportObj = this.savedReportsData.filter(function(val) { return val.reportId === id;}, this);
 
-                        var report  = {
-                            report_id: id,
-                            label: reportObj && reportObj[0] ? reportObj[0].reportName : undefined,
-                            url: reportObj && reportObj[0] ? reportObj[0].url : undefined
-                        };
-                        interactiveReports.push(report);
+                        if (reportObj && reportObj.length > 0) {
+                            var report  = {
+                                report_id: id,
+                                label: reportObj && reportObj[0] ? reportObj[0].reportName : undefined,
+                                url: reportObj && reportObj[0] ? reportObj[0].url : undefined
+                            };
+                            interactiveReports.push(report);
+                        }
                     }
                 }
                 study.interactive_reports = interactiveReports;

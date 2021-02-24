@@ -1386,10 +1386,13 @@ public class CDSController extends SpringActionController
             {
                 for (Report report : reports)
                 {
-                    JSONObject obj = new JSONObject();
-                    obj.put("reportName", report.getDescriptor().getReportName());
-                    obj.put("url", report.getRunReportURL(getViewContext()));
-                    result.put(String.valueOf(report.getDescriptor().getReportId().getRowId()), obj);
+                    if (report.getDescriptor().isShared())
+                    {
+                        JSONObject obj = new JSONObject();
+                        obj.put("reportName", report.getDescriptor().getReportName());
+                        obj.put("url", report.getRunReportURL(getViewContext()));
+                        result.put(String.valueOf(report.getDescriptor().getReportId().getRowId()), obj);
+                    }
                 }
                 return new ApiSimpleResponse("result", result);
             }

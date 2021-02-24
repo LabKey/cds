@@ -13,6 +13,7 @@ Ext.define('Connector.view.module.InteractiveReports', {
 
     tpl : new Ext.XTemplate(
             '<tpl>',
+            '<tpl if="interactive_reports && interactive_reports.length &gt; 0">',
             '<h3 id="interactive_report_title" class="listing_title">{interactive_report_title}</h3>',
                 '<table class="learn-study-info">',
                     '<tpl for="interactive_reports">',
