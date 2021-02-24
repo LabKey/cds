@@ -221,8 +221,6 @@ Ext.define('Connector.app.store.Publication', {
 
             var publications = [];
             Ext.each(this.publicationData, function(publication) {
-                var interactive_reports = [];
-                var curated_groups = [];
 
                 publication.publication_id = publication.id;
                 delete publication.id;
@@ -256,18 +254,16 @@ Ext.define('Connector.app.store.Publication', {
                 });
 
                 if (savedRep && savedRep.length > 0) {
-                    interactive_reports.concat(savedRep);
+                    publication.interactive_reports = savedRep;
                 }
-                publication.interactive_reports = interactive_reports;
 
                 //curated groups
                 var curatedGrp = curatedGroups.filter(function (value) {
                     return value.publication_id.toString() === publication.publication_id;
                 });
                 if (curatedGrp && curatedGrp.length > 0) {
-                    curated_groups.concat(curatedGrp);
+                    publication.curated_groups = curatedGrp;
                 }
-                publication.curated_groups = curated_groups;
 
                 publications.push(publication);
             });
