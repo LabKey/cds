@@ -326,6 +326,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     public void verifyInteractiveAndCuratedLinks()
     {
         cds.enterApplication();
+        cds.ensureGroupsDeleted(new ArrayList(Arrays.asList(STUDY_GROUP_Q2, STUDY_GROUP_Z110)));
 
         String studyGroupDesc = "Curated group for " + QED_2;
         log("create " + studyGroupDesc);
