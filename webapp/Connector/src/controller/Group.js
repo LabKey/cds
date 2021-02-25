@@ -222,7 +222,7 @@ Ext.define('Connector.controller.Group', {
 
                     groupname = replaceFromGroup.get('label');
                     group = {
-                        RowId : replaceFromGroup.get('id'),
+                        RowId : replaceFromGroup.get('rowid'),
                         Container : LABKEY.container.id,
                         Label: groupname,
                         Description: replaceFromGroup.get('description'),
