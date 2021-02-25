@@ -19,9 +19,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.api.security.roles.ReaderRole;
-import org.labkey.api.security.roles.RoleManager;
-import org.labkey.api.security.roles.SiteAdminRole;
 import org.labkey.remoteapi.CommandException;
 import org.labkey.remoteapi.Connection;
 import org.labkey.remoteapi.query.InsertRowsCommand;
@@ -33,6 +30,7 @@ import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.PermissionsHelper;
+import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.di.DataIntegrationHelper;
 import org.openqa.selenium.By;
@@ -68,6 +66,34 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private boolean studyLabelUpdated = false;
 
     private final CDSTestLearnAbout _cdsTestLearnAbout = new CDSTestLearnAbout();
+    private RReportHelper _rReportHelper;
+
+    private static final String NAB_Q2_REPORT_SOURCE ="library(Rlabkey)\n" +
+            "\n" +
+            "# Select rows into a data frame called 'labkey.data'\n" +
+            "\n" +
+            "labkey.data <- labkey.selectRows(\n" +
+            "    baseUrl=labkey.url.base, \n" +
+            "    folderPath=labkey.url.path, \n" +
+            "    schemaName=\"study\", \n" +
+            "    queryName=\"NAb\", \n" +
+            "    viewName=\"\", \n" +
+            "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,specimen_type,antigen,antigen_type,virus,virus_type,virus_full_name,virus_species,virus_host_cell,virus_backbone,virus_insert_name,clade,neutralization_tier,tier_clade_virus,target_cell,initial_dilution,titer_ic50,titer_ic80,titer_ID50,titer_ID80,nab_response_ID50,nab_response_ID80,response_call,nab_lab_source_key,lab_code,exp_assayid,slope,vaccine_matched\", \n" +
+            "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"q2\")), \n" +
+            "    containerFilter=NULL, \n" +
+            "    colNameOpt=\"rname\"\n" +
+            ")\n";
+    private static final String ELISPOT_Z110_REPORT_SOURCE = "library(Rlabkey)\n" +
+            "labkey.data <- labkey.selectRows(\n" +
+            "    baseUrl=labkey.url.base, \n" +
+            "    folderPath=labkey.url.path, \n" +
+            "    schemaName=\"study\", \n" +
+            "    queryName=\"ELISPOT\", \n" +
+            "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,antigen,antigen_type,peptide_pool,protein,protein_panel,protein_panel_protein,protein_panel_protein_peptide_pool,clade,cell_type,cell_name,vaccine_matched,specimen_type,functional_marker_name,functional_marker_type,response_call,mean_sfc,mean_sfc_neg,mean_sfc_raw,els_ifng_lab_source_key,lab_code,exp_assayid\", \n" +
+            "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"z110\")), \n" +
+            "    containerFilter=NULL, \n" +
+            "    colNameOpt=\"rname\"\n" +
+            ")\n";
 
     @Override
     @Before
@@ -325,6 +351,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     @Test
     public void verifyInteractiveAndCuratedLinks()
     {
+        createSharedReports();
         cds.enterApplication();
         cds.ensureGroupsDeleted(new ArrayList(Arrays.asList(STUDY_GROUP_Q2, STUDY_GROUP_Z110)));
 
@@ -387,6 +414,39 @@ public class CDSGroupTest extends CDSGroupBaseTest
         goToProjectHome();
         stopImpersonating();
         _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
+
+    }
+
+    private void createSharedReports()
+    {
+        goToProjectHome();
+        String url = getProjectName() +  "/study-dataset.view?datasetId=5003";
+        _rReportHelper  = new RReportHelper(this);
+
+        int reportId = cds.createReport(_rReportHelper, url, ELISPOT_Z110_REPORT_SOURCE, "ELISPOT PROT Z110 Report", true, true);
+        try
+        {
+            updateStudyReportsTable(reportId, "z110");
+            updateStudyPublicationsTable(reportId, 170);
+        }
+        catch (IOException | CommandException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        goToProjectHome();
+        url = getProjectName() +  "/study-dataset.view?datasetId=5004";
+        reportId = cds.createReport(_rReportHelper, url, NAB_Q2_REPORT_SOURCE, "NAB PROT QED 2 Report", true, true);
+
+        try
+        {
+            updateStudyReportsTable(reportId, "q2");
+            updateStudyPublicationsTable(reportId, 2);
+        }
+        catch (IOException | CommandException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     private void verifyLinksOnPublicationPage(String descr)
@@ -440,9 +500,19 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         log("verify interactive report link");
         scrollIntoView(Locator.id("interactive_report_title"));
-        clickAndWait(Locator.linkContainingText("NAb dilution report"));
-        assertTextPresent("Contains NAb MAb data");
+        clickAndWait(Locator.linkContainingText("NAB PROT QED 2 Report"));
+        assertTextPresent("NAB PROT QED 2 Report");
         goBack();
+    }
+
+    public void updateStudyReportsTable(int cds_report_id, String prot) throws IOException, CommandException
+    {
+        insertData("cds_report_id", cds_report_id, "prot", prot, null, null,"cds", "studyReport");
+    }
+
+    public void updateStudyPublicationsTable(int cds_report_id, int pubId) throws IOException, CommandException
+    {
+        insertData("cds_report_id", cds_report_id, null, null,"publication_id", pubId, "cds", "publicationReport");
     }
 
     private void updateStudyCuratedGroupTable(int cds_saved_group_id, String prot) throws IOException, CommandException
