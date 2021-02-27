@@ -500,9 +500,9 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         log("verify interactive report link");
         scrollIntoView(Locator.id("interactive_report_title"));
-        clickAndWait(Locator.linkContainingText("NAB PROT QED 2 Report"));
+        click(Locator.linkContainingText("NAB PROT QED 2 Report"));
+        waitForText("Overview");
         assertTextPresent("NAB PROT QED 2 Report");
-        goBack();
     }
 
     public void updateStudyReportsTable(int cds_report_id, String prot) throws IOException, CommandException
