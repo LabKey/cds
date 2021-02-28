@@ -168,7 +168,7 @@ Ext.define('Connector.app.store.Study', {
     onLoadSavedReportsData : function(savedReports) {
         var json = Ext.decode(savedReports.responseText);
         for (var r in json.result) {
-            this.savedReportsData.push({reportId: r, reportName:json.result[r].reportName, url: json.result[r].url})
+            this.savedReportsData.push({reportId: r, reportName:json.result[r].reportName})
         }
         this._onLoadComplete();
     },
@@ -460,7 +460,6 @@ Ext.define('Connector.app.store.Study', {
                             var report  = {
                                 report_id: id,
                                 label: reportObj && reportObj[0] ? reportObj[0].reportName : undefined,
-                                url: reportObj && reportObj[0] ? reportObj[0].url : undefined
                             };
                             interactiveReports.push(report);
                         }

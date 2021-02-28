@@ -1390,7 +1390,6 @@ public class CDSController extends SpringActionController
                     {
                         JSONObject obj = new JSONObject();
                         obj.put("reportName", report.getDescriptor().getReportName());
-                        obj.put("url", report.getRunReportURL(getViewContext()));
                         result.put(String.valueOf(report.getDescriptor().getReportId().getRowId()), obj);
                     }
                 }
