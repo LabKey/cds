@@ -1373,29 +1373,4 @@ public class CDSController extends SpringActionController
         }
 
     }
-
-    @RequiresPermission(ReadPermission.class)
-    public class GetReportsDataAction extends ReadOnlyApiAction<Object>
-    {
-        @Override
-        public Object execute(Object o, BindException errors) throws Exception
-        {
-            Map<String, JSONObject> result = new HashMap<>(); //key = rowId, val = reportName
-            Collection<Report> reports = ReportService.get().getReports(getUser(), getContainer());
-            if (reports.size() > 0)
-            {
-                for (Report report : reports)
-                {
-                    if (report.getDescriptor().isShared())
-                    {
-                        JSONObject obj = new JSONObject();
-                        obj.put("reportName", report.getDescriptor().getReportName());
-                        result.put(String.valueOf(report.getDescriptor().getReportId().getRowId()), obj);
-                    }
-                }
-                return new ApiSimpleResponse("result", result);
-            }
-            return null;
-        }
-    }
 }

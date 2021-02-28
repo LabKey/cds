@@ -103,7 +103,7 @@ Ext.define('Connector.app.store.Study', {
             scope: this
         });
         LABKEY.Ajax.request({
-            url : LABKEY.ActionURL.buildURL("cds", "getReportsData"),
+            url : LABKEY.ActionURL.buildURL("reports", "browseDataTree"),
             method : 'GET',
             success: this.onLoadSavedReportsData,
             scope: this
@@ -167,8 +167,17 @@ Ext.define('Connector.app.store.Study', {
 
     onLoadSavedReportsData : function(savedReports) {
         var json = Ext.decode(savedReports.responseText);
-        for (var r in json.result) {
-            this.savedReportsData.push({reportId: r, reportName:json.result[r].reportName})
+        var rreports = [];
+
+        Ext4.each(json.children, function(category) {
+
+            //get shared R reports
+            var reports = category.children.filter(function(rep){ return rep.type === "R Report" && rep.shared; });
+            rreports = rreports.concat(reports);
+        });
+
+        for (var x =0; x < rreports.length; x++) {
+            this.savedReportsData.push({reportId: rreports[x].reportId.split(":")[1], reportName:rreports[x].name});
         }
         this._onLoadComplete();
     },
