@@ -351,8 +351,9 @@ public class CDSGroupTest extends CDSGroupBaseTest
     @Test
     public void verifyInteractiveAndCuratedLinks()
     {
-        createSharedReports();
+//        createSharedReports();
         cds.enterApplication();
+        refresh();
         cds.ensureGroupsDeleted(new ArrayList(Arrays.asList(STUDY_GROUP_Q2, STUDY_GROUP_Z110)));
 
         String studyGroupDesc = "Curated group for " + QED_2;
@@ -404,7 +405,10 @@ public class CDSGroupTest extends CDSGroupBaseTest
             throw new RuntimeException(e);
         }
         goToProjectHome();
-        createUserWithPermissions(NEW_USER_ACCOUNTS[0], getProjectName(), "Reader");
+        if (null == _apiPermissionsHelper.getUserId(NEW_USER_ACCOUNTS[0]))
+        {
+            createUserWithPermissions(NEW_USER_ACCOUNTS[0], getProjectName(), "Reader");
+        }
         _apiPermissionsHelper.addMemberToRole(NEW_USER_ACCOUNTS[0], "Reader", PermissionsHelper.MemberType.user, getProjectName());
         goToProjectHome();
         impersonate(NEW_USER_ACCOUNTS[0]);
@@ -498,11 +502,14 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
     private void verifyInteractiveLink()
     {
+        waitForElementWithRefresh(Locator.id("interactive_report_title"), 5000);
         log("verify interactive report link");
         scrollIntoView(Locator.id("interactive_report_title"));
         click(Locator.linkContainingText("NAB PROT QED 2 Report"));
         waitForText("Overview");
         assertTextPresent("NAB PROT QED 2 Report");
+        goToProjectHome();
+        cds.enterApplication();
     }
 
     public void updateStudyReportsTable(int cds_report_id, String prot) throws IOException, CommandException
