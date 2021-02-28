@@ -351,7 +351,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     @Test
     public void verifyInteractiveAndCuratedLinks()
     {
-//        createSharedReports();
+        createSharedReports();
         cds.enterApplication();
         refresh();
         cds.ensureGroupsDeleted(new ArrayList(Arrays.asList(STUDY_GROUP_Q2, STUDY_GROUP_Z110)));
