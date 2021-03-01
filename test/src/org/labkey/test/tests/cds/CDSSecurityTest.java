@@ -397,12 +397,12 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         WebElement documentLink;
 
         log("Verify public Reports");
-        documentLink = CDSHelper.Locators.studyReportLink(linkText).findElementOrNull(getDriver());
+        documentLink = Locator.tagWithAttributeContaining("img", "alt", linkText).findElementOrNull(getDriver());
         Assert.assertNotNull("Was not able to find link to the public report document for study '" + study + "'.", documentLink);
         cds.validatePDFLink(documentLink, documentName);
 
         log("Verify restricted Reports");
-        documentLink = CDSHelper.Locators.studyReportLink("BAMA Results Summary").findElementOrNull(getDriver());
+        documentLink = Locator.tagWithAttributeContaining("img", "alt", "BAMA Results Summary").findElementOrNull(getDriver());
         if (hasAccessToR2)
         {
             Assert.assertNotNull("Was not able to find link to the restricted report document for study '" + study + "'.", documentLink);

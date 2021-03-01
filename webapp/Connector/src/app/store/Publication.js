@@ -24,6 +24,9 @@ Ext.define('Connector.app.store.Publication', {
         this.studyData = undefined;
         this.assayData = undefined;
         this.publicationDocuments = undefined;
+        this.publicationReportsData = undefined;
+        this.savedReportsData = [];
+        this.publicationCuratedGroupData = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
@@ -54,6 +57,24 @@ Ext.define('Connector.app.store.Publication', {
             success: this.onLoadPublicationData,
             scope: this
         });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'publicationReport',
+            success: this.onLoadPublicationReport,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'pubCuratedGrpWithLabel',
+            success: this.onLoadPublicationCuratedGroup,
+            scope: this
+        });
+        LABKEY.Ajax.request({
+            url : LABKEY.ActionURL.buildURL("reports", "browseDataTree"),
+            method : 'GET',
+            success: this.onLoadSavedReportsData,
+            scope: this
+        });
     },
 
     onLoadPublications: function (data) {
@@ -76,10 +97,38 @@ Ext.define('Connector.app.store.Publication', {
         this._onLoadComplete();
     },
 
+    onLoadPublicationReport : function(pubReports) {
+        this.publicationReportsData = pubReports.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadPublicationCuratedGroup : function(pubCuratedGroup) {
+        this.publicationCuratedGroupData = pubCuratedGroup.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadSavedReportsData : function(savedReports) {
+        var json = Ext.decode(savedReports.responseText);
+        var rreports = [];
+
+        Ext4.each(json.children, function(category) {
+
+            //get shared R reports
+            var reports = category.children.filter(function(rep){ return rep.type === "R Report" && rep.shared; });
+            rreports = rreports.concat(reports);
+        });
+
+        for (var x =0; x < rreports.length; x++) {
+            this.savedReportsData.push({reportId: rreports[x].reportId.split(":")[1], reportName:rreports[x].name});
+        }
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.publicationData) && Ext.isDefined(this.studyData)
                 && Ext.isDefined(this.assayData) && Ext.isDefined(this.accessibleStudies)
-                && Ext.isDefined(this.publicationDocuments)) {
+                && Ext.isDefined(this.publicationDocuments)
+                && Ext.isDefined(this.publicationReportsData) && Ext.isDefined(this.publicationCuratedGroupData)) {
 
             this.publicationData.sort(function(row1, row2) {
                 var date1Str = Connector.model.Filter.sorters.getPublicationDateSortStr(row1.date);
@@ -157,8 +206,30 @@ Ext.define('Connector.app.store.Publication', {
                 publicationMap[doc.publication_id].push(doc);
             }, this);
 
+            var savedReports = [];
+            for (var i=0; i < this.publicationReportsData.length; i++) {
+                var id = this.publicationReportsData[i].cds_report_id.toString();
+                var savedReportObj = this.savedReportsData.filter(function (savedReport) {
+                    return savedReport.reportId === id;
+                }, this);
+                if (savedReportObj && savedReportObj.length > 0) {
+                    var report  = {
+                        report_id: id,
+                        publication_id: this.publicationReportsData[i].publication_id,
+                        label: savedReportObj && savedReportObj[0] ? savedReportObj[0].reportName : id
+                    };
+                    savedReports.push(report);
+                }
+            }
+
+            var curatedGroups = [];
+            for (var j=0; j < this.publicationCuratedGroupData.length; j++) {
+                curatedGroups.push(this.publicationCuratedGroupData[j]);
+            }
+
             var publications = [];
             Ext.each(this.publicationData, function(publication) {
+
                 publication.publication_id = publication.id;
                 delete publication.id;
                 publication.publication_title = publication.title;
@@ -184,6 +255,24 @@ Ext.define('Connector.app.store.Publication', {
 
                 // publication data
                 publication.publication_data = publicationMap[publication.publication_id] || [];
+
+                //saved reports
+                var savedRep = savedReports.filter(function (value) {
+                    return value.publication_id.toString() === publication.publication_id;
+                });
+
+                if (savedRep && savedRep.length > 0) {
+                    publication.interactive_reports = savedRep;
+                }
+
+                //curated groups
+                var curatedGrp = curatedGroups.filter(function (value) {
+                    return value.publication_id.toString() === publication.publication_id;
+                });
+                if (curatedGrp && curatedGrp.length > 0) {
+                    publication.curated_groups = curatedGrp;
+                }
+
                 publications.push(publication);
             });
 
@@ -191,6 +280,9 @@ Ext.define('Connector.app.store.Publication', {
             this.publicationData = undefined;
             this.studyData = undefined;
             this.assayData = undefined;
+            this.publicationReportsData = undefined;
+            this.savedReportsData = [];
+            this.publicationCuratedGroupData = undefined;
 
             this.loadRawData(publications);
 

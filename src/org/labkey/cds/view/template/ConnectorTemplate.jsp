@@ -252,6 +252,7 @@
             srcPath + "/view/TimepointPane.js",
             srcPath + "/view/GroupSave.js",
             srcPath + "/view/GroupSummary.js",
+            srcPath + "/view/MabGroupSummary.js",
             srcPath + "/view/Header.js",
             srcPath + "/view/Home.js",
             srcPath + "/view/HomeHeader.js",
@@ -355,6 +356,8 @@
             srcPath + "/app/view/module/StudySites.js",
             srcPath + "/app/view/module/StudyMabs.js",
             srcPath + "/app/view/module/VariableList.js",
+            srcPath + "/app/view/module/InteractiveReports.js",
+            srcPath + "/app/view/module/CuratedGroups.js",
 
             srcPath + "/Application.js",
 

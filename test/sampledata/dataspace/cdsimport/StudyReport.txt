@@ -1,0 +1,3 @@
+prot	cds_report_id
+q2	110000
+z110	110001
