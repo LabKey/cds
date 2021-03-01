@@ -32,6 +32,7 @@ Ext.define('Connector.view.module.AssaySchemaMethod', {
 
         var data = this.initialConfig.data.model.data;
         data['method_title'] = "Methods";
+        this.update(data);
 
         var methodsAssaySchemaLinkIsValid = function (schema_link, result) {
             data['methods_assay_schema_link_valid'] = result;
