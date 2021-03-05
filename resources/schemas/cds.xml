@@ -1324,4 +1324,60 @@
             <column columnName="container"/>
         </columns>
     </table>
+    <table tableName="import_studyReport" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="cds_report_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="studyReport" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="cds_report_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_studyCuratedGroup" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="cds_saved_group_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="studyCuratedGroup" tableDbType="TABLE">
+        <columns>
+            <column columnName="prot"/>
+            <column columnName="cds_saved_group_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_publicationReport" tableDbType="TABLE">
+        <columns>
+            <column columnName="publication_id"/>
+            <column columnName="cds_report_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="publicationReport" tableDbType="TABLE">
+        <columns>
+            <column columnName="publication_id"/>
+            <column columnName="cds_report_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_publicationCuratedGroup" tableDbType="TABLE">
+        <columns>
+            <column columnName="publication_id"/>
+            <column columnName="cds_saved_group_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="publicationCuratedGroup" tableDbType="TABLE">
+        <columns>
+            <column columnName="publication_id"/>
+            <column columnName="cds_saved_group_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
 </tables>

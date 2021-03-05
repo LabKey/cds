@@ -19,25 +19,34 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.remoteapi.CommandException;
+import org.labkey.remoteapi.Connection;
+import org.labkey.remoteapi.query.InsertRowsCommand;
 import org.labkey.test.Locator;
+import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.CDSPlot;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
-import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
-import org.labkey.test.util.cds.CDSAsserts;
+import org.labkey.test.util.PermissionsHelper;
+import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.di.DataIntegrationHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.util.cds.CDSHelper.QED_2;
+import static org.labkey.test.util.cds.CDSHelper.ZAP_110;
 
 @Category({})
 public class CDSGroupTest extends CDSGroupBaseTest
@@ -49,9 +58,42 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private static final String STUDY_GROUP = "Study Group Verify";
     private static final String GROUP_PLOT_TEST = "Group Plot Test";
 
+    private static final String STUDY_GROUP_Z110 = "Study Z110 Group";
+    private static final String STUDY_GROUP_Q2 = "Study Q2 Group";
+
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
 
     private boolean studyLabelUpdated = false;
+
+    private final CDSTestLearnAbout _cdsTestLearnAbout = new CDSTestLearnAbout();
+    private RReportHelper _rReportHelper;
+
+    private static final String NAB_Q2_REPORT_SOURCE ="library(Rlabkey)\n" +
+            "\n" +
+            "# Select rows into a data frame called 'labkey.data'\n" +
+            "\n" +
+            "labkey.data <- labkey.selectRows(\n" +
+            "    baseUrl=labkey.url.base, \n" +
+            "    folderPath=labkey.url.path, \n" +
+            "    schemaName=\"study\", \n" +
+            "    queryName=\"NAb\", \n" +
+            "    viewName=\"\", \n" +
+            "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,specimen_type,antigen,antigen_type,virus,virus_type,virus_full_name,virus_species,virus_host_cell,virus_backbone,virus_insert_name,clade,neutralization_tier,tier_clade_virus,target_cell,initial_dilution,titer_ic50,titer_ic80,titer_ID50,titer_ID80,nab_response_ID50,nab_response_ID80,response_call,nab_lab_source_key,lab_code,exp_assayid,slope,vaccine_matched\", \n" +
+            "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"q2\")), \n" +
+            "    containerFilter=NULL, \n" +
+            "    colNameOpt=\"rname\"\n" +
+            ")\n";
+    private static final String ELISPOT_Z110_REPORT_SOURCE = "library(Rlabkey)\n" +
+            "labkey.data <- labkey.selectRows(\n" +
+            "    baseUrl=labkey.url.base, \n" +
+            "    folderPath=labkey.url.path, \n" +
+            "    schemaName=\"study\", \n" +
+            "    queryName=\"ELISPOT\", \n" +
+            "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,antigen,antigen_type,peptide_pool,protein,protein_panel,protein_panel_protein,protein_panel_protein_peptide_pool,clade,cell_type,cell_name,vaccine_matched,specimen_type,functional_marker_name,functional_marker_type,response_call,mean_sfc,mean_sfc_neg,mean_sfc_raw,els_ifng_lab_source_key,lab_code,exp_assayid\", \n" +
+            "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"z110\")), \n" +
+            "    containerFilter=NULL, \n" +
+            "    colNameOpt=\"rname\"\n" +
+            ")\n";
 
     @Override
     @Before
@@ -304,6 +346,210 @@ public class CDSGroupTest extends CDSGroupBaseTest
     public void verifySharedSubjectGroups()
     {
         verifySharedGroups();
+    }
+
+    @Test
+    public void verifyInteractiveAndCuratedLinks()
+    {
+        createSharedReports();
+        cds.enterApplication();
+        refresh();
+        cds.ensureGroupsDeleted(new ArrayList(Arrays.asList(STUDY_GROUP_Q2, STUDY_GROUP_Z110)));
+
+        String studyGroupDesc = "Curated group for " + QED_2;
+        log("create " + studyGroupDesc);
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(QED_2);
+        cds.useSelectionAsSubjectFilter();
+        cds.saveGroup(STUDY_GROUP_Q2, studyGroupDesc, true);
+
+        cds.goToAppHome();
+        Locator.XPathLocator listGroup = Locator.tagWithClass("div", "grouplabel");
+        waitAndClick(listGroup.withText(STUDY_GROUP_Q2));
+        String groupUrl = getCurrentRelativeURL();
+        String[] vals = groupUrl.split("/");
+        int rowId = Integer.valueOf(vals[vals.length-1]); //study.SubjectGroup.RowId
+
+        log("save report info into cds.studyCuratedGroup & cds.publicationCuratedGroup tables");
+        try
+        {
+            updateStudyCuratedGroupTable(rowId, "q2");
+            updatePublicationCuratedGroupTable(rowId, 2);
+        }
+        catch (IOException | CommandException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        String studyGroupDesc2 = "Curated group for " + ZAP_110;
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(ZAP_110);
+        cds.useSelectionAsSubjectFilter();
+        cds.saveGroup(STUDY_GROUP_Z110, studyGroupDesc2, false);
+
+        cds.goToAppHome();
+        waitAndClick(listGroup.withText(STUDY_GROUP_Z110));
+        groupUrl = getCurrentRelativeURL();
+        vals = groupUrl.split("/");
+        rowId = Integer.valueOf(vals[vals.length-1]); //study.SubjectGroup.RowId
+
+        try
+        {
+            updateStudyCuratedGroupTable(rowId, "z110");
+            updatePublicationCuratedGroupTable(rowId, 170);
+        }
+        catch (IOException | CommandException e)
+        {
+            throw new RuntimeException(e);
+        }
+        goToProjectHome();
+        if (null == _apiPermissionsHelper.getUserId(NEW_USER_ACCOUNTS[0]))
+        {
+            createUserWithPermissions(NEW_USER_ACCOUNTS[0], getProjectName(), "Reader");
+        }
+        _apiPermissionsHelper.addMemberToRole(NEW_USER_ACCOUNTS[0], "Reader", PermissionsHelper.MemberType.user, getProjectName());
+        goToProjectHome();
+        impersonate(NEW_USER_ACCOUNTS[0]);
+        cds.enterApplication();
+        verifyLinksOnStudyPage(studyGroupDesc);
+        verifyLinksOnPublicationPage(studyGroupDesc);
+        goToProjectHome();
+        stopImpersonating();
+        _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
+
+    }
+
+    private void createSharedReports()
+    {
+        goToProjectHome();
+        String url = getProjectName() +  "/study-dataset.view?datasetId=5003";
+        _rReportHelper  = new RReportHelper(this);
+
+        int reportId = cds.createReport(_rReportHelper, url, ELISPOT_Z110_REPORT_SOURCE, "ELISPOT PROT Z110 Report", true, true);
+        try
+        {
+            updateStudyReportsTable(reportId, "z110");
+            updateStudyPublicationsTable(reportId, 170);
+        }
+        catch (IOException | CommandException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        goToProjectHome();
+        url = getProjectName() +  "/study-dataset.view?datasetId=5004";
+        reportId = cds.createReport(_rReportHelper, url, NAB_Q2_REPORT_SOURCE, "NAB PROT QED 2 Report", true, true);
+
+        try
+        {
+            updateStudyReportsTable(reportId, "q2");
+            updateStudyPublicationsTable(reportId, 2);
+        }
+        catch (IOException | CommandException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void verifyLinksOnPublicationPage(String descr)
+    {
+        log("verify links on publication page");
+        String publicationName = "Korioth-Schmitz B 2015 Vaccine";
+
+        goToPubPage(publicationName);
+        verifyInteractiveLink();
+
+        goToPubPage(publicationName);
+        verifyCuratedLink(descr);
+    }
+
+    private void verifyLinksOnStudyPage(String descr)
+    {
+        log("verify links on study page");
+
+        goToStudyPage(QED_2);
+        verifyInteractiveLink();
+
+        goToStudyPage(QED_2);
+        verifyCuratedLink(descr);
+    }
+
+    private void goToPubPage(String pub)
+    {
+        cds.viewLearnAboutPage("Publications");
+        _cdsTestLearnAbout.gotToLearnAboutDetail(pub);
+    }
+
+    private void goToStudyPage(String prot)
+    {
+        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(prot);
+        _cdsTestLearnAbout.goToDetail(prot, true);
+    }
+
+    private void verifyCuratedLink(String descr)
+    {
+        log("verify curated group link");
+
+        scrollIntoView(Locator.id("curated_groups_title"), false);
+        click(Locator.linkContainingText("Study Q2 Group"));
+        waitForText("No plot saved for this group");
+        assertTextPresent(descr);
+    }
+
+    private void verifyInteractiveLink()
+    {
+        waitForElementWithRefresh(Locator.id("interactive_report_title"), 5000);
+        log("verify interactive report link");
+        scrollIntoView(Locator.id("interactive_report_title"));
+        click(Locator.linkContainingText("NAB PROT QED 2 Report"));
+        waitForText("Overview");
+        assertTextPresent("NAB PROT QED 2 Report");
+        goToProjectHome();
+        cds.enterApplication();
+    }
+
+    public void updateStudyReportsTable(int cds_report_id, String prot) throws IOException, CommandException
+    {
+        insertData("cds_report_id", cds_report_id, "prot", prot, null, null,"cds", "studyReport");
+    }
+
+    public void updateStudyPublicationsTable(int cds_report_id, int pubId) throws IOException, CommandException
+    {
+        insertData("cds_report_id", cds_report_id, null, null,"publication_id", pubId, "cds", "publicationReport");
+    }
+
+    private void updateStudyCuratedGroupTable(int cds_saved_group_id, String prot) throws IOException, CommandException
+    {
+        insertData("cds_saved_group_id", cds_saved_group_id, "prot", prot, null, null,"cds", "studyCuratedGroup");
+    }
+
+    private void updatePublicationCuratedGroupTable(int cds_saved_group_id, int pubId) throws IOException, CommandException
+    {
+        insertData("cds_saved_group_id", cds_saved_group_id, null, null,"publication_id", pubId, "cds", "publicationCuratedGroup");
+    }
+
+    private void insertData(String savedGrpColName, int savedGrpId,
+                            String protColName, String protVal,
+                            String pubColName, Integer pubId,
+                            String schemaName, String table) throws IOException, CommandException
+    {
+        Connection cn = WebTestHelper.getRemoteApiConnection();
+
+        InsertRowsCommand insertCmd = new InsertRowsCommand(schemaName, table);
+        Map<String,Object> rowMap = new HashMap<>();
+        rowMap.put(savedGrpColName, savedGrpId);
+        if (null != protColName && null != protVal)
+            rowMap.put(protColName, protVal);
+        else if (null != pubColName && null != pubId)
+            rowMap.put(pubColName, pubId);
+
+        insertCmd.addRow(rowMap);
+
+        insertCmd.execute(cn, getCurrentContainerPath());
     }
 
     @Test

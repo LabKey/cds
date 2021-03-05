@@ -7,6 +7,7 @@ Ext.define('Connector.model.FilterGroup', {
     extend : 'Ext.data.Model',
     fields : [
         {name : 'id'},
+        {name : 'rowid'},
         {name : 'label'},
         {name : 'name'},
         {name : 'participantIds'},
@@ -31,6 +32,7 @@ Ext.define('Connector.model.FilterGroup', {
 
             return Ext.create('Connector.model.FilterGroup', {
                 id: cohortGroupModel.get('id'),
+                rowid: cohortGroupModel.get('rowid'),
                 label: cohortGroupModel.get('label'),
                 participantIds: cohortGroupModel.get('participantIds'),
                 description: cohortGroupModel.get('description'),

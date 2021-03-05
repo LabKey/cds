@@ -52,6 +52,7 @@ import org.labkey.api.security.ValidEmail;
 import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.view.NotFoundException;
+import org.labkey.cds.data.TSVCopyConfig;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -154,6 +155,10 @@ public class CDSManager
                     "antigenPanelMeta",
                     "antigenPanel",
                     "virusPanel",
+                    "studyReport",
+                    "studyCuratedGroup",
+                    "publicationReport",
+                    "publicationCuratedGroup",
 
                     "import_nabmab",
                     "import_ics",
@@ -198,7 +203,11 @@ public class CDSManager
                     "import_study",
                     "import_antigenPanelMeta",
                     "import_antigenPanel",
-                    "import_virusPanel"
+                    "import_virusPanel",
+                    "import_studyReport",
+                    "import_studyCuratedGroup",
+                    "import_publicationReport",
+                    "import_publicationCuratedGroup",
             })
             {
                 TableInfo t = dbSchema.getTable(s);
