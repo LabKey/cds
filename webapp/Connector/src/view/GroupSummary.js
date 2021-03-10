@@ -113,7 +113,7 @@ Ext.define('Connector.view.GroupSummary', {
                 },
                 fn: function(id) {
                     if (id === 'yes') {
-                        this.fireEvent('requestgroupdelete', this.group.get('id'), this.group.get('type') === 'mab');
+                        this.fireEvent('requestgroupdelete', this.group.get('id'), false);
                     }
                 },
                 scope: this

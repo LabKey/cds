@@ -29,6 +29,9 @@ Ext.define('Connector.app.store.Study', {
         this.relationshipData = undefined;
         this.mabMixData = undefined;
         this.assayIdentifiers = undefined;
+        this.studyReportsData = undefined;
+        this.savedReportsData = [];
+        this.studyCuratedGroupData = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
@@ -87,6 +90,24 @@ Ext.define('Connector.app.store.Study', {
             success: this.onLoadAssayIdentifiers,
             scope: this
         });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'studyReport',
+            success: this.onLoadStudyReport,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'studyCuratedGrpWithLabel',
+            success: this.onLoadStudyCuratedGroup,
+            scope: this
+        });
+        LABKEY.Ajax.request({
+            url : LABKEY.ActionURL.buildURL("reports", "browseDataTree"),
+            method : 'GET',
+            success: this.onLoadSavedReportsData,
+            scope: this
+        });
     },
 
     onLoadStudies : function(studyData) {
@@ -134,11 +155,39 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadStudyReport : function(studyReports) {
+        this.studyReportsData = studyReports.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadStudyCuratedGroup : function(studyCuratedGroup) {
+        this.studyCuratedGroupData = studyCuratedGroup.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadSavedReportsData : function(savedReports) {
+        var json = Ext.decode(savedReports.responseText);
+        var rreports = [];
+
+        Ext4.each(json.children, function(category) {
+
+            //get shared R reports
+            var reports = category.children.filter(function(rep){ return rep.type === "R Report" && rep.shared; });
+            rreports = rreports.concat(reports);
+        });
+
+        for (var x =0; x < rreports.length; x++) {
+            this.savedReportsData.push({reportId: rreports[x].reportId.split(":")[1], reportName:rreports[x].name});
+        }
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
                 && Ext.isDefined(this.documentData) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
                 && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)
-                && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.assayIdentifiers)) {
+                && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.assayIdentifiers)
+                && Ext.isDefined(this.studyReportsData) && Ext.isDefined(this.studyCuratedGroupData)) {
             var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                 return relOrder.relationship;
@@ -247,6 +296,7 @@ Ext.define('Connector.app.store.Study', {
                     return {
                         id: pub.id,
                         title: pub.title,
+                        label: pub.publication_label,
                         authors: pub.author_all,
                         journal: pub.journal_short,
                         date: pub.date,
@@ -409,6 +459,31 @@ Ext.define('Connector.app.store.Study', {
                     return doc.hasPermission === true
                 }).length > 0;
 
+                var interactiveReports = [];
+                for (var i=0; i < this.studyReportsData.length; i++) {
+                    if (study.study_name === this.studyReportsData[i].prot) {
+                        var id = this.studyReportsData[i].cds_report_id ? this.studyReportsData[i].cds_report_id.toString() : undefined;
+                        var reportObj = this.savedReportsData.filter(function(val) { return val.reportId === id;}, this);
+
+                        if (reportObj && reportObj.length > 0) {
+                            var report  = {
+                                report_id: id,
+                                label: reportObj && reportObj[0] ? reportObj[0].reportName : undefined,
+                            };
+                            interactiveReports.push(report);
+                        }
+                    }
+                }
+                study.interactive_reports = interactiveReports;
+
+                var curatedGroups = [];
+                for (var j=0; j < this.studyCuratedGroupData.length; j++) {
+                    if (study.study_name === this.studyCuratedGroupData[j].prot) {
+                        curatedGroups.push(this.studyCuratedGroupData[j]);
+                    }
+                }
+                study.curated_groups = curatedGroups;
+
                 studies.push(study);
             }, this);
 
@@ -424,6 +499,9 @@ Ext.define('Connector.app.store.Study', {
             this.relationshipData = undefined;
             this.relationshipOrderData = undefined;
             this.assayIdentifiers = undefined;
+            this.studyReportsData = undefined;
+            this.savedReportsData = [];
+            this.studyCuratedGroupData = undefined;
 
             this.loadRawData(studies);
         }

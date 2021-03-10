@@ -9,6 +9,7 @@ Ext.define('Connector.model.Group', {
 
     fields : [
         {name: 'id'},
+        {name: 'rowid'},
         {name: 'label'},
         {name: 'description'},
         {name: 'filters'},
@@ -88,6 +89,7 @@ Ext.define('Connector.model.Group', {
                                 Ext.each(mabGroupData.rows, function(row) {
                                     mabGroups.push({
                                         id : row.RowId,
+                                        rowid : row.RowId,
                                         label: row.Label,
                                         description: row.Description,
                                         filters: row.Filters,
@@ -105,7 +107,16 @@ Ext.define('Connector.model.Group', {
                                     success: function(response)
                                     {
                                         var subjectGroups = Ext.JSON.decode(response.responseText).groups;
-                                        var groups = mabGroups.concat(subjectGroups);
+
+                                        // id needs to be unique in order to avoid collision
+                                        // ex. in the case where id=19, i.e its the same rowid for both for participant and mab group
+                                        // it only shows one group in the list, so below is the way to make id unique.
+                                        for (var y = 0; y < mabGroups.length; y++) {
+                                            mabGroups[y].id = mabGroups[y].id + "-" + mabGroups[y].type;
+                                        }
+
+                                        var subjGrps = subjectGroups.filter(function(grp) {return grp.id !== -1});
+                                        var groups = mabGroups.concat(subjGrps);
                                         this.loadRawData(groups);
                                         if (cb)
                                             cb.call(cbScope);

@@ -384,11 +384,22 @@ Ext4.define('Connector.cube.Configuration', {
                             title: "Reports"
                         }
                     }, {
+                        type: 'interactivereports',
+                        staticData: {
+                            title: 'Interactive reports'
+                        }
+                    }, {
+                        type: 'curatedgroups',
+                        staticData: {
+                            title: 'Curated groups and plots'
+                        }
+                    }, {
                         type: 'studymabs',
                         staticData: {
                             title: 'Monoclonal antibodies'
                         }
-                    }]]
+                    }
+                    ]]
                 }]
             },{
                 uniqueName: '[Study Product]',
@@ -714,15 +725,23 @@ Ext4.define('Connector.cube.Configuration', {
                             dataLink: 'Study',
                             instructions: 'Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.'
                         }
-                    }
-                    ,{
+                    },{
                         type: 'publicationnonintegrateddata',
                         staticData: {
                             title: 'Publication data',
                             instructions: 'Download files'
                         }
-                    }
-                    ]]
+                    },{
+                        type: 'interactivereports',
+                        staticData: {
+                            title: 'Interactive reports'
+                        }
+                    },{
+                        type: 'curatedgroups',
+                        staticData: {
+                            title: 'Curated groups and plots'
+                        }
+                    }]]
                 }]
             }]
         },

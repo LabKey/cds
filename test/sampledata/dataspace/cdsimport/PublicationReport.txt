@@ -1,0 +1,3 @@
+publication_id	cds_report_id
+2	110000
+170	110001
