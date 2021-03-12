@@ -699,7 +699,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Logout the user without permissions.");
         click(Locator.xpath("//a[contains(@class, 'logout')][contains(text(), 'Logout')]"));
         sleep(5000);
-        refresh();
 
         log("Validate behavior with the user who has full permissions to CDS.");
         getDriver().navigate().to(welcomeUrls[0]);
@@ -736,10 +735,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Done. Signing back into main site with default test account to clean up.");
         click(Locator.xpath("//a[contains(@class, 'logout')][contains(text(), 'Logout')]"));
         sleep(5000);
-        refresh();
 
         log("Validate that the 'Sign In' button is visible and the 'Create Account' button is not.");
-        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "app"));
+        getDriver().navigate().to(WebTestHelper.buildURL("cds", getProjectName(), "app"));
         assertElementPresent(Locator.css("div.links > a.signin-modal-trigger"));
         assertElementNotVisible(Locator.css("div.links > a.create-account-modal-trigger"));
 
