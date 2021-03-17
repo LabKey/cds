@@ -70,20 +70,22 @@ Ext.define('Connector.plugin.DocumentValidation', {
     },
 
     validateSchemaAccessLink : function(schema_link, callback) {
-        LABKEY.Ajax.request({
-            url: LABKEY.ActionURL.buildURL("cds", "validateStudySchemaLink.api"),
-            params: {
-                filename: schema_link
-            },
-            method: 'GET',
-            scope: this,
-            success: function (response) {
-                var resp = Ext.decode(response.responseText);
-                callback.call(this, schema_link, resp.isValidLink);
-            },
-            failure: function (error) {
-                console.error("Failure on validating Schema Access link");
-            }
-        });
+        if (schema_link) {
+            LABKEY.Ajax.request({
+                url: LABKEY.ActionURL.buildURL("cds", "validateStudySchemaLink.api"),
+                params: {
+                    filename: schema_link
+                },
+                method: 'GET',
+                scope: this,
+                success: function (response) {
+                    var resp = Ext.decode(response.responseText);
+                    callback.call(this, schema_link, resp.isValidLink);
+                },
+                failure: function (error) {
+                    console.error("Failure on validating Schema Access link");
+                }
+            });
+        }
     }
 });

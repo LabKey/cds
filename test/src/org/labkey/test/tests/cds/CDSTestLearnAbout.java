@@ -587,7 +587,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT);
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + expectedPublictionLabel + "']")));
         Assert.assertTrue("Detail page publication title not as expected", isElementVisible(Locator.tagWithClass("div", "module").append(Locator.tagWithText("p", expectedPublicationTitle))));
-        Assert.assertTrue("Publication info not as expected", isElementVisible(Locator.tagWithClass("div", "publication_item").withText("J Infect Dis. 2018 Mar 28;217(8):1280-1288.")));
+        Assert.assertTrue("Publication info not as expected", isElementVisible(Locator.tagWithClass("div", "publication_item").containing("J Infect Dis. 2018 Mar 28;217(8):1280-1288.")));
 
         log("Verify Publications search");
         List<String> searchStrings = new ArrayList<>(Arrays.asList("Calmette-Guérin", "Korioth-Schmitz B", "3152265", "Clin Vaccine Immunol"));
