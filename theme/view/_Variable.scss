@@ -1,0 +1,88 @@
+
+.vardisable {
+  opacity: 0.4 !important;
+}
+
+.varselect {
+  padding: 4px 8px;
+  border: solid transparent 1px;
+  border-radius: 5px;
+
+  .variable {
+    display: inline-block;
+
+    h1 {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select:none;
+      user-select:none;
+
+      display: inline-block;
+      padding-right: 8px;
+      vertical-align: top;
+      color: $interactive-color;
+      font-size: $headline;
+      cursor: default;
+    }
+
+    ul {
+      display: inline-block;
+      vertical-align: bottom;
+      margin-top: 5px;
+
+      li {
+        font-family: $bodycaps-font;
+        font-size: 12px;
+        width: 250px;
+        white-space: nowrap;
+      }
+
+      .source-label {
+        color: $heat-scale-1;
+      }
+
+      .variable-label {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.varselect.active {
+  border: solid $heat-scale-6 1px;
+}
+
+button.ddbutton {
+  margin: 5px 0 0 10px;
+}
+
+.arrow-window {
+  position: absolute;
+  background-color: $gray-7;
+  border: 1px solid $heat-scale-3;
+
+  &:after, &:before {
+    bottom: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  &:after {
+    border-color: rgba(0, 0, 0, 0); // Make the border invisible except for the bottom.
+    border-bottom-color: $gray-7;
+    border-width: 15px;
+    margin-left: -15px;
+  }
+
+  &:before {
+    border-color: rgba(0, 0, 0, 0); // Make the border invisible except for the bottom.
+    border-bottom-color: $heat-scale-3;
+    border-width: 16px;
+    margin-left: -16px;
+  }
+}

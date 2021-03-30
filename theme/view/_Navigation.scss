@@ -1,0 +1,96 @@
+.navigation-view {
+  padding: 16px 0 20px 0;
+  color: $primary-text-color;
+  font: $nav-font;
+  background: $white;
+  border-top: 4px solid $action-red;
+  border-bottom: 1px solid $gray-6;
+}
+
+div.nav-label, div.dis-label {
+  padding: 0 0;
+  margin: 12px 12px 12px 16px;
+  color: $gray-3;
+  height: 24px;
+  line-height: 24px;
+  width: 220px;
+
+  span {
+    &.left-arrow {
+      position: relative;
+      float: left;
+      background: $white;
+      left: 0;
+      top: 0;
+      width:6px;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-right: 0px solid $white;
+    }
+  }
+  span.right-label {
+    padding-left: 12px;
+    float: left;
+    width: 204px;
+    @include prefixer(border-radius, 2px);
+    @include unselectable;
+  }
+
+  span.left-label {
+    float: left;
+    padding-left: 0px;
+    @include unselectable;
+  }
+}
+
+div.grouplist-label-over:after,
+div.nav-label:after, div.dis-label:after{
+  //This is a nifty class that self-clears any floats.
+  content: '.';
+  visibility: hidden;
+  clear: both;
+}
+
+div.dis-label {
+  opacity: 0.35;
+  cursor: default;
+}
+
+div.nav-label-over {
+  cursor : pointer;
+
+  span.right-label {
+    @include prefixer(transition, background 0.3s linear);
+    background: $gray-7;
+  }
+}
+
+div.emptytext span.left-label {
+  padding-left: 23px;
+}
+
+div span.empty-group-label {
+  padding-left: 3px;
+}
+
+div.grouplist-label-selected,
+div.nav-label-selected {
+  span.right-label {
+    color: $black;
+    background: $gray-7;
+
+  }
+  span {
+    &.left-arrow {
+      @include prefixer(transition, border-right 0.3s linear);
+      position: relative;
+      float: left;
+      background: $white;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-right: 6px solid $gray-7;
+      width:6px;
+
+    }
+  }
+}

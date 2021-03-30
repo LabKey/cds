@@ -1,0 +1,45 @@
+.popup {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  overflow: visible!important;
+  * {
+    overflow: visible!important;
+  }
+}
+
+.popup-arrow {
+  background-color: #fff;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  width: 15px;
+  height: 15px;
+  position: relative;
+  &.up {
+    left: 50%;
+    margin-left: -8px;
+    bottom: -8px;
+  }
+  &.down {
+    left: 50%;
+    margin-left: -8px;
+    top: -8px;
+  }
+  &.left {
+    top: 50%;
+    margin-top: -8px;
+    right: -8px;
+  }
+  &.right {
+    top: 50%;
+    margin-top: -8px;
+    left: -8px;
+  }
+}
+
+.shadow {
+  @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
+}
