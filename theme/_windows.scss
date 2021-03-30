@@ -1,0 +1,18 @@
+/* Connector.window.SystemMessage */
+.sysmsg .x-window-body-swmsg {
+  padding: 6px 10px;
+  border: 1px solid $interactive-color;
+  font-weight: bold;
+  background-color: $white;
+  color: $interactive-color;
+  border-radius: 2px;
+  text-align: center;
+  a {
+    color: $interactive-color;
+    text-decoration: underline;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

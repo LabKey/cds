@@ -1,0 +1,37 @@
+.pageheadercontainer {
+  position: relative;
+  top: 0px;
+  z-index: 10;
+
+  .tabbutton {
+    padding: 5px 20px;
+    font: $body-one-font;
+    cursor: pointer;
+    text-transform: uppercase;
+    color: $black;
+    opacity: 0.6;
+
+    .arrow {
+      display: none;
+    }
+
+    &.selected {
+      font-weight: bold;
+      cursor: inherit;
+      opacity: initial;
+
+      .arrow {
+        display: block;
+      }
+    }
+  }
+}
+
+/* Connector.view.PageHeader */
+.arrow {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  margin-left: -8px;
+}
+/* END Connector.view.PageHeader */
