@@ -1,10 +1,21 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// Note: We have to use CssMinimizerPlugin, and set "mode" to development because the minimization automatically done
+// by Webpack in production mode is not compatible with the CSS files in the theme/base directory. It fails with a CSS
+// syntax error about missing semicolons.
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     context: path.resolve(__dirname),
-    mode: 'production',
+    mode: 'development', // See note above. Do not set to "production".
     devtool: false,
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new CssMinimizerPlugin(),
+        ],
+    },
     entry: path.resolve(__dirname, './theme/theme.scss'),
     output: {
         // TODO: should probably output to resources/something/gen
@@ -41,5 +52,8 @@ module.exports = {
             },
         ],
     },
-    plugins: [new MiniCssExtractPlugin({filename: '[name].css'})],
+    plugins: [
+        new MiniCssExtractPlugin({filename: 'Connector-all.css'}),
+        new webpack.NoEmitOnErrorsPlugin(),
+    ],
 }
