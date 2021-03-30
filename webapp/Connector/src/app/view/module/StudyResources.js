@@ -43,7 +43,7 @@ Ext.define('Connector.view.module.StudyResources', {
             '</tpl>',
             '<tpl if="specimen_repository_label">',
                 '<div class="item-row">',
-                    'View research <a href="http://www.specimenrepository.org/RepositorySite/search/replaySearch?study={specimen_repository_label}" target="_blank">specimens in repository <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/><br/>',
+                    'View research <a href="http://www.specimenrepository.org/RepositorySite/search/replaySearch?study={specimen_repository_label}" target="_blank">specimens in repository <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
                 '</div>',
             '</tpl>',
         '</tpl>'
