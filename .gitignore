@@ -16,3 +16,5 @@ webapp/connector-theme
 webapp/production/Connector/app.js
 webapp/production/Connector/index.html
 webapp/production/Connector/resources/Readme.md
+
+node_modules/
