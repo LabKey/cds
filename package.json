@@ -7,8 +7,13 @@
     "test": "test"
   },
   "scripts": {
-    "build": "npm run clean && webpack --config ./style.config.js --color",
-    "clean": "rimraf dist/"
+    "setup": "npm ci",
+    "build": "npm run clean && webpack --config ./style.config.js --color && npm run clean:js",
+    "build-dev:": "npm run build",
+    "build-prod:": "npm run build",
+    "clean:js": "rimraf webapp/production/Connector/resources/main.js",
+    "clean:css": "rimraf webapp/production/Connector/resources/Connector-all.css",
+    "clean": "npm run clean:js && npm run clean:css"
   },
   "repository": {
     "type": "git",

@@ -16,10 +16,9 @@ module.exports = {
     },
     entry: path.resolve(__dirname, './theme/theme.scss'),
     output: {
-        // TODO: should probably output to resources/something/gen
-        path: path.resolve(__dirname, './dist/'),
-        // path: path.resolve(__dirname, '../resources/web.cds/gen/'),
+        path: path.resolve(__dirname, './webapp/production/Connector/resources/'),
         publicPath: './',
+        // Note: we have to output a JS file as well because this is Webpack. The build command deletes the file.
         filename: '[name].js'
     },
     module: {
@@ -31,9 +30,8 @@ module.exports = {
                     {
                         loader: 'css-loader',
                         options: {
-                            importLoaders: 1,
-                            // TODO: We need to either enable this, and move the images to the right directory
-                            //  or keep this disabled and make sure the images are in the correct directory at runtime.
+                            // Don't resolve URLs, the ext-01/02.css files reference a ton of images that we do not
+                            // have.
                             url: false
                         }
                     },
@@ -49,7 +47,9 @@ module.exports = {
         ],
     },
     plugins: [
-        new MiniCssExtractPlugin({filename: 'Connector-all.css'}),
+        new MiniCssExtractPlugin({
+            filename: 'Connector-all.css',
+        }),
         new webpack.NoEmitOnErrorsPlugin(),
     ],
 }
