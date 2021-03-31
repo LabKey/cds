@@ -1,18 +1,16 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// Note: We have to use CssMinimizerPlugin, and set "mode" to development because the minimization automatically done
-// by Webpack in production mode is not compatible with the CSS files in the theme/base directory. It fails with a CSS
-// syntax error about missing semicolons.
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
     context: path.resolve(__dirname),
-    mode: 'development', // See note above. Do not set to "production".
+    mode: 'production',
     devtool: false,
     optimization: {
         minimize: true,
         minimizer: [
+            // results in a smaller file size than the default minifier (Terser)
             new CssMinimizerPlugin(),
         ],
     },
@@ -27,22 +25,20 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader']
-            },
-            {
-                test: /\.scss$/,
+                test: /.s?css$/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     {
                         loader: 'css-loader',
                         options: {
                             importLoaders: 1,
-                            // Don't resolve URLs. The images are already in the right place (production/Connector/resources/images)
+                            // TODO: We need to either enable this, and move the images to the right directory
+                            //  or keep this disabled and make sure the images are in the correct directory at runtime.
                             url: false
                         }
                     },
-                    'sass-loader',
+                    'resolve-url-loader',
+                    'sass-loader'
                 ],
             },
             {
