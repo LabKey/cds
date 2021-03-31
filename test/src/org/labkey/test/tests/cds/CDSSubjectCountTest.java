@@ -72,6 +72,9 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
         //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
 //        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
 //        cvt.createParticipantGroups();
+
+        CDSSubjectCountTest currentTest = (CDSSubjectCountTest) getCurrentTest();
+        currentTest.cds.initModuleProperties(true);
     }
 
     @AfterClass
@@ -80,6 +83,9 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
         //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
 //        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
 //        cvt.deleteParticipantGroups();
+
+        CDSSubjectCountTest currentTest = (CDSSubjectCountTest) getCurrentTest();
+        currentTest.cds.initModuleProperties(false);
     }
 
     @Override
