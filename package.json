@@ -18,7 +18,8 @@
     "clean:connector": "npm run clean:connector-js && npm run clean:connector-css",
     "clean:front-page-js": "rimraf webapp/frontPage/css/main.js",
     "clean:front-page-css": "rimraf webapp/frontPage/css/application.css",
-    "clean:front-page": "npm run clean:front-page-js && npm run clean:front-page-css"
+    "clean:front-page": "npm run clean:front-page-js && npm run clean:front-page-css",
+    "clean": "npm run clean:connector && npm run clean:front-page"
   },
   "repository": {
     "type": "git",
