@@ -14,7 +14,7 @@ module.exports = {
             new CssMinimizerPlugin(),
         ],
     },
-    entry: path.resolve(__dirname, './theme/theme.scss'),
+    entry: path.resolve(__dirname, './themes/connector/theme.scss'),
     output: {
         path: path.resolve(__dirname, './webapp/production/Connector/resources/'),
         publicPath: './',
