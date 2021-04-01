@@ -8,12 +8,17 @@
   },
   "scripts": {
     "setup": "npm ci",
-    "build": "npm run clean && webpack --config ./style.config.js --color && npm run clean:js",
+    "build:connector": "npm run clean:connector && webpack --config ./themes/build/connector.config.js --color && npm run clean:connector-js",
+    "build:front-page": "npm run clean:front-page && webpack --config ./themes/build/front-page.config.js --color && npm run clean:front-page-js",
+    "build": "npm run build:connector && npm run build:front-page",
     "build-dev": "npm run build",
     "build-prod": "npm run build",
-    "clean:js": "rimraf webapp/production/Connector/resources/main.js",
-    "clean:css": "rimraf webapp/production/Connector/resources/Connector-all.css",
-    "clean": "npm run clean:js && npm run clean:css"
+    "clean:connector-js": "rimraf webapp/production/Connector/resources/main.js",
+    "clean:connector-css": "rimraf webapp/production/Connector/resources/Connector-all.css",
+    "clean:connector": "npm run clean:connector-js && npm run clean:connector-css",
+    "clean:front-page-js": "rimraf webapp/frontPage/css/main.js",
+    "clean:front-page-css": "rimraf webapp/frontPage/css/application.css",
+    "clean:front-page": "npm run clean:front-page-js && npm run clean:front-page-css"
   },
   "repository": {
     "type": "git",
@@ -27,6 +32,8 @@
   "homepage": "https://github.com/LabKey/cds#readme",
   "dependencies": {},
   "devDependencies": {
+    "bourbon": "4.2.7",
+    "bourbon-neat": "1.9.1",
     "compass-mixins": "0.12.10",
     "css-loader": "5.0.2",
     "css-minimizer-webpack-plugin": "1.3.0",
