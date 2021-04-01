@@ -212,6 +212,7 @@
         <script path="Connector/src/app/view/module/StudyMabs.js"/>
         <script path="Connector/src/app/view/module/VariableList.js"/>
         <script path="Connector/src/app/view/module/InteractiveReports.js"/>
+        <script path="Connector/src/app/view/module/CuratedGroups.js"/>
 
         <script path="Connector/src/Application.js"/>
 
