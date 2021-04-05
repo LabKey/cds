@@ -1,6 +1,8 @@
 package org.labkey.test.tests.cds;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
@@ -45,6 +47,20 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         cds.ensureNoFilter();
         cds.ensureNoSelection();
         getDriver().manage().window().setSize(CDSHelper.idealWindowSize);
+    }
+
+    @BeforeClass
+    public static void setShowHiddenVariables()
+    {
+        CDSVisualizationPlotTest currentTest = (CDSVisualizationPlotTest) getCurrentTest();
+        currentTest.cds.initModuleProperties(true); //set ShowHiddenVariables property to true
+    }
+
+    @AfterClass
+    public static void resetShowHiddenVariables()
+    {
+        CDSVisualizationPlotTest currentTest = (CDSVisualizationPlotTest) getCurrentTest();
+        currentTest.cds.initModuleProperties(false); // reset ShowHiddenVariables property back to false
     }
 
     @Override
