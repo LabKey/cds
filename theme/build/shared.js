@@ -13,6 +13,12 @@ module.exports = {
             new CssMinimizerPlugin(),
         ],
     },
+    output: {
+        path: path.resolve(__dirname, '../../resources/web/cds/gen/'),
+        publicPath: './',
+        // Note: we have to output a JS file as well because this is Webpack. The build command deletes the file.
+        filename: '[name].js'
+    },
     module: {
         rules: [
             {
