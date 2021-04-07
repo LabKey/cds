@@ -238,8 +238,7 @@ div.filterpanel .x-panel-body-default {
 }
 
 .mabgridcolumnsbtn {
-  position: absolute;
-  right: 0;
+  display: inline-block;
   margin: 0 0 0 28px;
 
   &.x-btn-disabled {
