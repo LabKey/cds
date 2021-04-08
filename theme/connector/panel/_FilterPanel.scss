@@ -211,18 +211,10 @@ ul.indent li {
   overflow: hidden;
 }
 
-.filter-hdr-btn {
-  width: auto;
-
-  margin-right: 4px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-
-  &+.filter-hdr-btn {
-    margin-right: 0;
-  }
-}
-
 .filterheader-text, .mab-filterheader-text {
   margin-top: 5px;
+}
+
+.filterclear {
+  margin-right: 4px;
 }
