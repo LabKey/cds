@@ -28,7 +28,7 @@
 
   .links {
     position: absolute;
-    top: 0em;
+    top: 0;
     left: 0;
     right: 0;
     margin: 0 auto;
@@ -39,6 +39,8 @@
     a, span {
       margin-top: 2em;
       margin-bottom: 2.67em;
+
+      &.register-modal-trigger,
       &.signin-modal-trigger {
         margin-right: 2em;
         @include tablet {
@@ -53,6 +55,10 @@
     }
     @include phone {
       opacity: 0;
+    }
+
+    &.sublink {
+      top: 4.5em;
     }
   }
   .welcome {

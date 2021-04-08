@@ -59,6 +59,7 @@ div.links {
       color:$light-grey-text;
     }
 
+    &.front-page-button,
     &.signin-modal-trigger,
     &.create-account-modal-trigger {
       margin-right: 0;
@@ -68,8 +69,6 @@ div.links {
         background-color: $navigation-pink-hover;
       }
     }
-
-
   }
 }
 
