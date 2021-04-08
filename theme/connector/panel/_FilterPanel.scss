@@ -1,0 +1,220 @@
+.filterstatus  {
+  padding: 34px 6px 24px 6px;
+  background: $white;
+  margin: 0 auto;
+
+  h2.section-title {
+    padding: 0 42px 0 28px;
+  }
+
+  h2.section-title-filtered {
+    padding: 0 0 24px 8px;
+    font-size: 18px;
+  }
+
+  h2.mab-section-title-filtered {
+    padding: 0 0 0 8px;
+    font-size: 16px;
+  }
+
+  .emptytext {
+    padding: 12px 0 0 28px;
+  }
+
+  .mab-subtitle-filtered {
+    padding: 12px 0 0 8px;
+  }
+}
+
+.filterstatus-content {
+  background-color: $gray-7;
+  padding: 0 6px 6px 6px;
+}
+
+div.selitem {
+  font-weight: 700!important;
+}
+
+.sel-list-item {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 17px;
+  width: 95%;
+}
+
+.closeitem {
+  display: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  img {
+    height: 16px;
+    width: 16px;
+  }
+}
+
+div.filterpanel {
+  font: $body-one-font;
+  margin: 0;
+
+  .filterpanel-header {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+
+  .x-container {
+    background-color: $gray-7;
+    @include prefixer(border-radius, 2px);
+    padding: 6px 0 0 0;
+  }
+
+  .x-container:first-child {
+    @include prefixer(border-radius, 2px);
+    padding: 0;
+  }
+}
+
+div.activefilter {
+  position: relative;
+  background-color: $white;
+  @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
+  @include prefixer(border-radius, 2px);
+  padding: 4px 8px;
+  margin: 6px 0 0 0;
+
+  div.selitem {
+    line-height: 17px;
+    width: 95%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .sel-label {
+    font-weight: 400;
+    color: $black;
+    opacity: 0.9;
+  }
+
+  .closeitem {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+  }
+
+  &:hover {
+    cursor: default;
+
+    .closeitem {
+      display: inline-block;
+    }
+  }
+
+}
+
+div.selectionpanel {
+
+  font: $body-one-font;
+  margin: 6px 0 0 0;
+  padding: 5px 0;
+  border: 3px solid $data-green;
+  background-color: $white;
+  @include prefixer(border-radius, 2px);
+
+  .header {
+    font-family: $info-font;
+    color: $black;
+    font-size: 11px;
+    line-height:15px;
+    opacity: 0.7;
+    padding: 0 8px;
+  }
+
+  .instruction {
+    font-family: $info-font;
+    font-size: 11px;
+    font-weight: bold;
+    color: $data-green;
+    padding: 0 0 8px;
+    line-height:15px;
+    width: 80%;
+    border-bottom: 1px solid $gray-7;
+    margin: 0 8px 4px 8px;
+  }
+
+  .activefilter {
+    border: none !important;
+
+    .closeitem {
+      top: -64px;
+      right: 8px;
+    }
+
+    .x-btn-rounded-inverted-accent-small {
+      background: $data-green!important;
+    }
+
+  }
+
+  .x-toolbar {
+    padding: 0;
+    margin: 0 3px 3px 0;
+  }
+
+  &:hover {
+    .closeitem {
+      display: inline-block;
+    }
+  }
+}
+
+.filter-item {
+  font-weight: 700!important;
+  font: $active-filter-font;
+  .selitem {
+    display: block;
+  }
+
+  select {
+    background: $white;
+    border: 1px solid $gray-6;
+    height: 24px;
+    padding: 3px;
+    margin: 12px 0 5px 0;
+    @include prefixer(border-radius, 2px);
+    color: $black;
+    font: $active-filter-font;
+    width: 100%;
+  }
+
+  &:hover {
+    .closeitem {
+      display: block;
+    }
+  }
+}
+
+.memberitem {
+  float: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+ul.indent li {
+  padding-left: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.filterheader-text, .mab-filterheader-text {
+  margin-top: 5px;
+}
+
+.filterclear {
+  margin-right: 4px;
+}

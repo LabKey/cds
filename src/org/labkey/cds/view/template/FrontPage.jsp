@@ -24,7 +24,7 @@
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CAVD DataSpace</title>
-    <link rel="stylesheet" href="<%=getWebappURL("/frontpage/css/application.css")%>">
+    <link rel="stylesheet" href="<%=getWebappURL("/cds/gen/application.css")%>">
     <link rel="stylesheet" href="<%=getWebappURL("/frontpage/components/fullpage.js/jquery.fullPage.css")%>">
     <link rel="stylesheet" href="<%=getWebappURL("/frontpage/components/magnific-popup/dist/magnific-popup.css")%>">
     <style type="text/css">

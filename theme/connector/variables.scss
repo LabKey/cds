@@ -1,0 +1,140 @@
+$base-color: #ffffff;
+
+/* Site wide coloring scheme */
+$select-color: #fb2e5c;            // Bright Blue
+$select-hover-color: #ffffff;      // Light Blue
+
+$legend-color: #BAB4B4;            // 10% darker than $secondary-color
+$gray-7: #ebebeb;             // Light Text
+$gray-7-hover: #ffffff;      //  Light Text Hover
+$dark-color: #333333;              // Dark Gray
+$middle-gray: #6D6E70;             // Middle Gray
+$interactive-color: #fb2e5c;       // Interactive
+$info-color: #fb2e5c;              // Info
+$secondary-color: #F0F0F0;         // Light Gray
+
+$border-color: #BABABA;
+$box-shadow-color: #e1e1e1;
+
+/* NEW COLORS */
+$action-red: #fb2e5c;              // Red full Saturated
+$action-red-hover: #dc2850;         // Red Hover
+$action-red-hover-outline:  #82192d; //  Red hover outline
+
+$data-green: #41c49f;
+$data-green-hover: #3ab08f;
+$data-green-hover-outline: #2d876e;
+
+/* GRAY (DARKEST TO LIGHTEST) */
+
+$gray-1: #1e1e1e;           // Main Gray
+$gray-2: #323232;           // Main Gray
+$gray-25: #646464;           // Main Gray
+$gray-3: #828282;           // Main Gray
+$gray-4: #969696;           // Main Gray
+$gray-5: #bebebe;           // Main Gray
+$gray-6: #e1e1e1;           // Main Gray
+$gray-7: #ebebeb;           // Main Gray
+$gray-8: #f5f5f5;           // Main Gray
+$gray-9: #fafafa;           // Main Gray
+
+/* Other Grays (not darkest to lightest) */
+
+$gray-a: #d1d1d1;
+
+
+/* WHITES */
+
+$white: #fff;
+$off-white: #fefefe;
+$black: #303030;
+$unselect-black: rgba(0, 0, 0, 0.4);
+
+/* TEXT COLORS */
+
+$primary-text-color: #222222;
+$secondary-text-color: #777777;
+$placeholder-text-color: #AFAFAF;
+
+
+
+/* these could be an actual scale using a function -- stick with Artefact colors for now */
+$heat-scale-1: #666363;
+$heat-scale-2: #A09C9C;
+$heat-scale-3: #CCC8C8;
+$heat-scale-4: #E6E1E1;
+$heat-scale-5: #E5E5E5;
+$heat-scale-6: #EEEEEE;
+
+$title: 26px;
+$headline: 16px;
+$pageLeftPadding: 28px;
+$sectionTopPadding: 28px;
+
+$bodycaps-font : Arial;
+$info-font : Arial, sans-serif;
+$data-font : Georgia, serif;
+
+$display-two-font: 26px $data-font;
+$display-one-font: 22px $data-font;
+$headline-font: 18px $data-font;
+$title-font: bold 14px $info-font;
+$subhead-font: bold 11px $info-font;
+$body-two-font: 13px/16px $info-font;
+$body-one-font: 12px/15px $info-font;
+$caption-font: 11px/14px $info-font;
+$nav-font: 14px $data-font;
+$infopane-font: 18px/24px $data-font;
+$active-filter-font: 11px/17px $info-font;
+
+
+// General
+$connector-prefix: 'x-'; /* Used to mimic Ext's $prefix which is not defined yet when this file is compiled */
+$css-shadow-border-radius: 0;
+$font-family: $info-font;
+
+// form/field/Base.scss
+$form-label-font: $body-one-font; //todo: this vs body 1
+$form-toolbar-field-font: $body-one-font; //todo: this vs body 1
+
+// form/field/Text.scss
+$form-field-border-color: rgb(211, 211, 211);
+$form-field-focus-border-color: $dark-color;
+
+// form/field/Display.scss
+$form-display-field-font: normal 12px $info-font;
+
+// load mask
+$loadmask-background-color: $dark-color;
+$loadmask-opacity: 0.35;
+
+// Calendar
+$datepicker-base-color: $gray-7;
+
+$window-body-background-color: $gray-7;
+$window-header-color: $secondary-color;
+
+// Grid
+$grid-row-cell-over-background-color: $select-hover-color;
+$grid-row-cell-over-color: $black;
+$grid-row-cell-font-size: 14px/15px;
+
+$grid-cell-selected-background-color: $gray-7; //$select-color;
+$grid-row-cell-selected-background-color: $gray-7; //$select-color;
+$grid-row-cell-selected-color: $black; //$gray-7;
+$grid-row-cell-selected-border-color: $gray-7; //$select-color;
+$grid-row-cell-alt-background-color: $gray-7;
+$grid-row-cell-background-color: $gray-7;
+$grid-row-cell-focus-border-style: solid;
+$grid-row-cell-focus-border-color: #ddd;
+
+/* Grid Column - default ui */
+$grid-column-header-font-family: $info-font;
+$grid-column-header-font-size: 12px;
+$grid-header-background-color: transparent;
+$grid-header-over-background-color: $select-hover-color;
+
+// Tips
+$tip-background-color: $gray-7;
+$tip-border-color: $info-color;
+$tip-body-color: $info-color;
