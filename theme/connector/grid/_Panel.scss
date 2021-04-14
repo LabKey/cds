@@ -1,0 +1,264 @@
+.connector-grid {
+
+  .x-grid-data-row {
+    line-height: 28px;
+    height: 28px;
+    background: $gray-8!important;
+
+    td {
+      background: transparent!important;
+    }
+
+    &:hover {
+      background: $select-hover-color!important;
+      border-color: $select-hover-color;
+    }
+  }
+
+  .x-column-header-text {
+    font-size: 11px;
+    font-weight: bold;
+  }
+
+  .x-grid-view {
+    z-index: 5;
+    padding-bottom: 70px;
+
+    .x-grid-empty {
+      background: none;
+    }
+  }
+
+  .x-column-header-trigger {
+    display: inline-block;
+    border-left: 1px solid transparent;
+  }
+
+  .x-column-header-trigger {
+    background-color: transparent;
+    background-image: none;
+    &:hover {
+      background-image: url(images/filter_hover.svg);
+    }
+  }
+
+  .x-column-header-over {
+    .x-column-header-trigger {
+      background-color: transparent;
+      background-image: url(images/filter.svg);
+
+      &:hover {
+        background-image: url(images/filter_hover.svg);
+      }
+    }
+  }
+
+  .filtered-column {
+    .x-column-header-trigger {
+      background-color: transparent;
+      background-image: url(images/filter_selected.svg);
+      
+      &:hover {
+        background-image: url(images/filter_selected_hover.svg);
+      }
+    }
+  }
+
+  .x-column-header {
+
+    border: 0;
+
+    .x-column-header-trigger {
+      display: block;
+      position: absolute;
+      bottom: 0;
+      top: inherit;
+      height: 15px;
+    }
+
+    .x-column-header-inner {
+      height: 50px;
+      position: relative;
+      background-color: transparent;
+      border: 0;
+
+      &:hover {
+        background-color: $select-hover-color;
+      }
+    }
+
+    .x-column-header-text {
+      white-space: normal;
+      position: absolute;
+      left: 4px;
+      bottom: 4px;
+      margin: 0;
+      width: 85%;
+      text-align: justify;
+      color: $heat-scale-2;
+    }
+
+    &.x-column-header-checkbox {
+      .x-column-header-text {
+        width: 13px;
+        left: 5px;
+      }
+    }
+
+    &.x-column-header-sort-ASC,
+    &.x-column-header-sort-DESC,
+    &.filtered-column {
+      .x-column-header-text {
+        color: black;
+      }
+    }
+  }
+
+  /* Column Header Hovered */
+  .x-column-header-over {
+    background-image: none;
+    background-color: $select-hover-color;
+  }
+
+  .x-column-header-sort-ASC,
+  .x-column-header-sort-DESC {
+    background-image: none;
+    background-color: $secondary-color;
+  }
+
+  .x-column-header-sort-ASC .x-column-header-text {
+    background-image: url(images/sort_asc.gif) !important;
+
+  }
+
+  .x-column-header-sort-DESC .x-column-header-text {
+    background-image: url(images/sort_desc.gif) !important;
+  }
+
+  .x-grid-row {
+
+    td.no-value {
+      background-color: #dcd8d8;
+      color: #777777;
+
+      .x-grid-cell-inner:before {
+        content: 'no value';
+      }
+    }
+
+    &.x-grid-row-over {
+
+      td.no-value {
+        background-color: #beefef;
+        color: #777777;
+      }
+
+    }
+  }
+}
+
+/* Connector.window.Filter */
+div.filterpanel .x-panel-body-default {
+  background: transparent;
+}
+/* END Connector.window.Filter */
+
+.x-panel-body-default {
+  background: transparent!important;
+}
+
+.x-panel-body-primary-view {
+  .chartview {
+    .x-box-item {
+      background-color : $gray-8; // affects all box items in the gutter on the chart page.
+    }
+    .x-btn {
+      background: $action-red!important;
+    }
+  }
+  .x-border-layout-ct {
+    background: transparent!important;
+  }
+}
+
+.grid-tab-selector {
+  //border-bottom: 1px solid $gray-6;
+  margin: 16px 28px 0 28px;
+  overflow: visible!important;
+}
+
+.connector-grid-container {
+  h1 {
+    &.lhdv {
+      margin-right: 0;
+      padding-right: 28px;
+      font: bold 12px $info-font;
+      border-bottom: 1px solid $gray-6;
+      line-height: 40px;
+      height: 40px;
+
+      &:hover {
+        border-color: $gray-6;
+      }
+
+      span {
+        padding-bottom: 12px;
+        border-bottom: 1px solid $gray-6;
+        &:hover {
+          cursor: pointer;
+          border-color: $gray-4;
+          @include prefixer(transition, border-color 0.3s linear);
+          @include prefixer(transition, color 0.3s linear);
+        }
+      }
+
+
+      &.active {
+        color: $action-red;
+        border-color: $gray-6;
+        &:hover {
+          cursor: default;
+          border-color: $gray-6;
+        }
+        span {
+          border-bottom: 1px solid $action-red;
+          &:hover {
+            border-color: $action-red-hover;
+          }
+        }
+      }
+    }
+  }
+}
+
+.gridcolumnsbtn {
+  position: absolute;
+  right: 0;
+  margin: 24px 28px 0 28px;
+}
+
+.mabgridcolumnsbtn {
+  display: inline-block;
+  margin: 0 0 0 28px;
+
+  &.x-btn-disabled {
+    background-color: $action-red !important;
+  }
+}
+
+.mabgridbuttonslayout {
+  height: 100%;
+  vertical-align: top;
+  display: flex;
+}
+
+.mabreportheader {
+  .title-and-back-panel {
+    line-height: 56px !important;
+    font: $title-font;
+    background: $gray-7;
+    .iarrow {
+      margin: 0 16px 0 0!important;
+    }
+  }
+}

@@ -25,29 +25,18 @@ Through staging queries. There are a set of queries defined over cds as well as 
 Through java code. For more complex processing, java based (or a combination of query and java) approach is used. See PopulateTreatmentArmTask for example. 
 
 ## Compiling scss for cds
-Style for main cds app live in *._scss files and needs to be compiled into css (Connector-all_01.css & Connector-all_02.css) and checked in by developers since the build process doesn’t compile them.
+Themes are built with Webpack and no longer need to be checked in. Styles are built during a gradle build via our build
+commands in package.json.
 
-Requirement:
-Sencha Cmd (v4.0.2.67 required). https://www.labkey.org/_webdav/home/Developer/%40files/sencha/
-JDK 8 available on os (The default java version on system doesn’t have to be 8, but java 8 is needed as Sencha Cmd does not support java version >=9)
+Styles for main cds app live in the theme/connector/ directory.
 
-Run cmd in terminal to compile scss:
-```
-> cd app/Connector
-> sencha ant sass
-```
+Styles for the front page live in the theme/front-page/ directory.
 
-Java version troubleshoot:
-```java
-[ERR] javax/xml/bind/DatatypeConverter -
-```
-Solution: Make sure your terminal’s java version is 8, open a new terminal, run:
-```
-> export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
-```
-Staging and prod server upgrade
+## Staging and prod server upgrade
 Staging server reminder: One thing worth reminding Jon of during each staging upgrade is, for DataSpace staging, a data refresh is never needed/desired. The staging server may hold in progress work, such as R reports, that should not be wiped out during upgrade.  
 CDS take the latest patch release build, not the latest Alpha (sprint) build. 
+
 For each upgrade, developer should check if there is any dataset change. If so, upload the version of MasterDataspace/ folder that matches the build to the server, and run folder import to update dataset definition. If this is not done, ETL might fail. 
 If there is new data, the 2 ETLs will be run. Usually the client uploads the new data and then run the ETLs themselves.
+
 Recommend browser cache clearing if client is seeing weird styles.
