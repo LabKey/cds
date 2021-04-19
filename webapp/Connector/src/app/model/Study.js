@@ -29,6 +29,8 @@ Ext.define('Connector.app.model.Study', {
         {name: 'description'},
         {name: 'strategy'},
         {name: 'groups'},
+        {name: 'groups_header'},
+        {name: 'groups_data'},
         {name: 'treatment_schema_link'},
         {name: 'rationale'},
         {name: 'hypothesis'},

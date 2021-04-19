@@ -186,6 +186,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify Treatment Schema link under Groups");
         scrollIntoView(Locator.id(treatmentLinkId));
         click(Locator.tagWithId("a", treatmentLinkId).withText("Click for treatment schema"));
+        sleep(CDSHelper.CDS_WAIT);
         switchToWindow(1);
         assertTextPresent("Treatment Schedule by Day");
 
@@ -196,6 +197,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String assayLinkId = "methods_assay_link";
         assertElementPresent(Locator.id(assayLinkId));
         click(Locator.tagWithId("a", assayLinkId).withText("Click for assay schema"));
+        sleep(CDSHelper.CDS_WAIT);
         switchToWindow(1);
         assertTextPresent("Assay Schedule by Study Day");
 
@@ -289,6 +291,44 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Verify mAb link");
         click(Locator.linkWithText("mAb 93"));
         waitForElement(Locator.tagWithText("h3", "mAb 93 details"));
+    }
+
+    @Test
+    public void verifyStudyDetailsGroupsListing()
+    {
+        cds.viewLearnAboutPage("Studies");
+        String studyName = "RED 4";
+
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(studyName);
+        goToDetail(studyName, true);
+        Locator breadcrumb = DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /");
+        waitForElement(breadcrumb);
+
+        log("Verify Groups section");
+        assertElementPresent(Locator.tagWithId("h3", "treatment_groups_title"));
+        assertTextPresent("The study consisted of 13 groups:");
+
+        verifyGroupLabels(false,
+                "Group 1: rh123 12 ug combined with blah 10 ug administered IM at weeks 0, 1, 23, and 43",
+                "Group 2: rhesus abc combined with got-123 110 ug administered IM at weeks 3 and 10",
+                "Group 3: rhAXYZ 120 ug administered IM at weeks 0, 8, 16, 32",
+                "Group 4: rhAXYZ 122 ug administered IM at weeks 3, 9, 18, and 36",
+                "Group 5: rhAXYZ 1000 ug administered IM at weeks 3, 9, 18, and 36",
+                "Group 6: rhAXYZ 122 ug administered IM at weeks 3, 9, 18, and 36",
+                "Group 7: rhAXYZ 2110 ug administered IM at weeks 3, 9, 18, and 36",
+                "Group 8: GPI-0100 100 ug administered IM at weeks 0, 4, and 24",
+                "Group 10: rhAXYZ 1211 ug administered IM at weeks 5, 10, 15, and 30 with bbaaxxyyyzzz");
+        assertElementNotPresent(Locator.linkWithText("Group 11: rhAXYZ 1100 ug administered IM at weeks 3, 19, 38, and 56"));
+
+        Locator.XPathLocator groupsToggle = Locator.tagWithClass("span", "show-hide-toggle-groups");
+        showAllExpandAndVerify(groupsToggle, 3);
+        verifyGroupLabels(false,
+                "Group 11: rhAXYZ 1100 ug administered IM at weeks 3, 19, 38, and 56",
+                "Group 12: rhAXYZ 122 ug administered IM at weeks 3, 9, 18, and 36",
+                "Group 13: No product administered to this control group.");
+
+        verifyShowAllCollapse(groupsToggle, 3);
     }
 
     @Test
@@ -471,6 +511,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         for (String label : labels)
         {
             Assert.assertTrue(label + " label is not present", isElementPresent(Locator.tagWithClass("td", "item-label").withText(label + (useDivider ? ":" : ""))));
+        }
+    }
+
+    private void verifyGroupLabels(boolean useDivider, String... labels)
+    {
+        for (String label : labels)
+        {
+            Assert.assertTrue(label + " label is not present", isElementPresent(Locator.tagWithClass("li", "item-value").withText(label + (useDivider ? ":" : ""))));
         }
     }
 
