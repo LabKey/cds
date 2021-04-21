@@ -16,3 +16,8 @@ webapp/connector-theme
 webapp/production/Connector/app.js
 webapp/production/Connector/index.html
 webapp/production/Connector/resources/Readme.md
+webapp/production/Connector/resources/Connector-all.css
+webapp/frontPage/css/application.css
+
+node_modules/
+.gradle/

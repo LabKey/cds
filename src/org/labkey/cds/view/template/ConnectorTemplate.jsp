@@ -51,7 +51,7 @@
 
     <!-- stylesheets -->
     <link type="text/css" href="<%=getWebappURL("/hopscotch/css/hopscotch.min.css")%>" rel="stylesheet">
-    <link type="text/css" href="<%=getWebappURL(resourcePath + "/Connector-all.css")%>" rel="stylesheet">
+    <link type="text/css" href="<%=getWebappURL("/cds/gen/Connector-all.css")%>" rel="stylesheet">
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), pageConfigBean, new LinkedHashSet<>(), false)%>
