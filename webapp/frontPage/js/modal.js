@@ -585,6 +585,11 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       var queryParamRegex = self.options.query_param_regex;
       var showPopup = location.search.match(queryParamRegex);
 
+      // issue 42807 links which reference app pages should automatically show the login & redirect
+      var showForPageNav = self.options.show_for_page_nav;
+      if (!showPopup && showForPageNav)
+        showPopup = location.hash;
+
       var loginRegex = /login=true|returnUrl=/i;
       if (queryParamRegex.source.toString() !== loginRegex.source.toString()) {
         // if login popup is already open, skip opening other matches
