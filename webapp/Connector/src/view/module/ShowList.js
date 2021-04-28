@@ -13,7 +13,16 @@ Ext.define('Connector.view.module.ShowList', {
 
     listeners: {
         render: function(cmp) {
-            cmp.registerListToggle();
+            // treatmentschemagroup component's documentvalidation plugin is somehow interfering with registeringListToggle,
+            // hence have to put a timeout
+            if (cmp.xtype === "app.module.treatmentschemagroup") {
+                setTimeout(function(){
+                    cmp.registerListToggle();
+                }, 500);
+            }
+            else {
+                cmp.registerListToggle();
+            }
         },
         refresh: function(cmp) {
             cmp.registerListToggle(true);

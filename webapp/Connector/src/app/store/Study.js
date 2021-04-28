@@ -484,6 +484,24 @@ Ext.define('Connector.app.store.Study', {
                 }
                 study.curated_groups = curatedGroups;
 
+                //process 'groups' to display 10 or more with show all/show less
+                var grpHeader= study.groups && study.groups.length > 0 ? study.groups.split('<ul>', 1) : undefined;
+                study.groups_header = grpHeader ? grpHeader[0] : undefined;
+                var groupDiv = document.createElement('div');
+                groupDiv.innerHTML = study.groups;
+                var groups = groupDiv.querySelectorAll('ul li');
+                var groupsArray = [];
+
+                if (groups && groups.length > 0) {
+                    for (var k = 0; k < groups.length; k++) {
+                        var str = groups[k].innerText;
+                        if (groupsArray.indexOf(str) === -1) {
+                            groupsArray.push({label: str});
+                        }
+                    }
+                }
+                study.groups_data = groupsArray;
+
                 studies.push(study);
             }, this);
 
