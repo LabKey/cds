@@ -90,7 +90,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
             listeners : {
                 'itemmouseenter' : function(view, record, item, index, evt) {
-                    var dataLink = Ext.get(Ext.query("a", item)[0]) || Ext.get(Ext.query("span", item)[0]),
+                    var dataLink = Ext.get(Ext.query("a:not(.instruction)", item)[0]) || Ext.get(Ext.query("span", item)[0]),
                             id = Ext.id();
 
                     if (record.data.data_status && dataLink) {
@@ -145,7 +145,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                 },
 
                 'itemmouseleave' : function(view, record, item) {
-                    var dataLink = Ext.get(Ext.query("a", item)[0]) || Ext.get(Ext.query("span", item)[0]);
+                    var dataLink = Ext.get(Ext.query("a:not(.instruction)", item)[0]) || Ext.get(Ext.query("span", item)[0]);
                     if (dataLink) {
                         dataLink.un('mouseenter', this.showDataStatusTooltip, this);
                         dataLink.un('mouseleave', this.hideDataStatusTooltip, this);
@@ -194,20 +194,20 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
         // Commenting out below code for now, adding hyperlinks to subheader text has introduced a regression with tooltips.
         // See Dataspace tickets:  41685 & 42000. Will have to re-implement hyperlink addition as part of ticket 42000
-        // if (instructions) {
-        //     if (instrWithHyperlink.indexOf("Monoclonal antibodies") >= 0) {
-        //         var splitInstr = instrWithHyperlink.split("Monoclonal antibodies");
-        //         instrWithHyperlink = splitInstr[0] + "<a href=\"#mabgrid\">Monoclonal antibodies</a>" + splitInstr[1];
-        //     }
-        //     if (instrWithHyperlink.indexOf("Plot") >= 0) {
-        //         var splitPlot = instrWithHyperlink.split("Plot");
-        //         instrWithHyperlink = splitPlot[0] + "<a href=\"#chart\">Plot</a>" + splitPlot[1];
-        //     }
-        //     if (instrWithHyperlink.indexOf("Grid") >= 0) {
-        //         var splitGrid = instrWithHyperlink.split("Grid");
-        //         instrWithHyperlink = splitGrid[0] + "<a href=\"#data\">Grid</a>" + splitGrid[1];
-        //     }
-        // }
+        if (instructions) {
+            if (instrWithHyperlink.indexOf("Monoclonal antibodies") >= 0) {
+                var splitInstr = instrWithHyperlink.split("Monoclonal antibodies");
+                instrWithHyperlink = splitInstr[0] + "<a class=\"instruction\" href=\"#mabgrid\">Monoclonal antibodies</a>" + splitInstr[1];
+            }
+            if (instrWithHyperlink.indexOf("Plot") >= 0) {
+                var splitPlot = instrWithHyperlink.split("Plot");
+                instrWithHyperlink = splitPlot[0] + "<a class=\"instruction\" href=\"#chart\">Plot</a>" + splitPlot[1];
+            }
+            if (instrWithHyperlink.indexOf("Grid") >= 0) {
+                var splitGrid = instrWithHyperlink.split("Grid");
+                instrWithHyperlink = splitGrid[0] + "<a class=\"instruction\" href=\"#data\">Grid</a>" + splitGrid[1];
+            }
+        }
 
         return instrWithHyperlink;
     },
