@@ -128,14 +128,14 @@ public class InfoPane
         String text = _test.getText(Locator.css(cssPath)).replace(",", "");
 
         // If the text is empty let's try and wait in a semi-smart way.
-        if (text.trim().length() == 0)
+        if (text.isBlank())
         {
             _waitForSpinners(_test);
 
             // Try again.
             text = _test.getText(Locator.css(cssPath)).replace(",", "");
 
-            if (text.trim().length() == 0)
+            if (text.isBlank())
             {
 
                 // If it is still empty do one last long wait.
