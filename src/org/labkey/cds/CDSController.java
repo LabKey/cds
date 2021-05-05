@@ -56,8 +56,6 @@ import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.reader.Readers;
-import org.labkey.api.reports.Report;
-import org.labkey.api.reports.ReportService;
 import org.labkey.api.resource.Resource;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
@@ -102,6 +100,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
@@ -116,7 +115,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1213,35 +1211,43 @@ public class CDSController extends SpringActionController
         @Override
         public ApiSimpleResponse execute(Object o, BindException errors)
         {
-            ApiSimpleResponse response = new ApiSimpleResponse();
-
             ViewContext context = getViewContext();
+
+            // Shouldn't be possible, but be paranoid
+            if (null == context)
+                throw new IllegalStateException("ViewContext was null");
+            if (null == context.getUser())
+                throw new IllegalStateException("ViewContext.getUser() was null");
+            HttpServletRequest request = context.getRequest();
+            if (null == request)
+                throw new IllegalStateException("ViewContext.getUser() was null");
+
             List<HtmlString> messages = new LinkedList<>();
             Warnings dismissibleWarnings = Warnings.of(messages);
             WarningService.get().forEachProvider(p->p.addDynamicWarnings(dismissibleWarnings, context));
 
-            if (context != null && context.getRequest() != null)
+            HttpSession session = request.getSession(true);
+
+            if (session.getAttribute(SESSION_WARNINGS_BANNER_KEY) == null)
             {
-                HttpSession session = context.getRequest().getSession(true);
-
-                if (session.getAttribute(SESSION_WARNINGS_BANNER_KEY) == null)
-                {
-                    session.setAttribute(SESSION_WARNINGS_BANNER_KEY, true);
-                }
-                else if (!(boolean) session.getAttribute(SESSION_WARNINGS_BANNER_KEY) && messages.isEmpty())
-                {
-                    // If the session attribute has explicitly been set to false & there are no more warnings, remove it
-                    session.removeAttribute(SESSION_WARNINGS_BANNER_KEY);
-                }
-
-                if (session.getAttribute(SESSION_WARNINGS_BANNER_KEY) != null &&
-                        (boolean) session.getAttribute(SESSION_WARNINGS_BANNER_KEY) &&
-                        !messages.isEmpty())
-                {
-                    response.put("messages", messages);
-                }
-                response.put("success", true);
+                session.setAttribute(SESSION_WARNINGS_BANNER_KEY, true);
             }
+            else if (!(boolean) session.getAttribute(SESSION_WARNINGS_BANNER_KEY) && messages.isEmpty())
+            {
+                // If the session attribute has explicitly been set to false & there are no more warnings, remove it
+                session.removeAttribute(SESSION_WARNINGS_BANNER_KEY);
+            }
+
+            ApiSimpleResponse response = new ApiSimpleResponse();
+
+            if (session.getAttribute(SESSION_WARNINGS_BANNER_KEY) != null &&
+                    (boolean) session.getAttribute(SESSION_WARNINGS_BANNER_KEY) &&
+                    !messages.isEmpty())
+            {
+                response.put("messages", messages);
+            }
+            response.put("success", true);
+
             return response;
         }
     }
