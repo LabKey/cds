@@ -294,6 +294,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         assertElementPresent(element);
 
         cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated data"); return null;});
+        waitForElement(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]"));
 
         Assert.assertTrue("Integrated Data Availability status for ICS is not as expected", isElementPresent(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
         Assert.assertTrue("Integrated Data Availability status for IFNg ELISpot is not as expected", isElementPresent(cds.getDataRowXPath("IFNg ELISpot").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
