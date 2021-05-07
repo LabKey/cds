@@ -22,13 +22,10 @@ import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.CDSLoginPage;
 import org.labkey.test.util.cds.CDSHelper;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
-import static org.labkey.test.pages.cds.CDSLoginPage.Locators.termsCheckbox;
 
 @Category({})
 public class CDSLoginTest extends CDSReadOnlyTest
@@ -54,7 +51,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
         assertElementNotPresent(Locator.linkWithText("Logout"));
 
         CDSLoginPage loginPage = new CDSLoginPage(this);
-        checkCheckbox(termsCheckbox);
+        checkCheckbox(loginPage.termsCheckbox());
         loginPage.logIn();
     }
 
@@ -62,7 +59,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
     public void testSessionTimeoutIntercept()
     {
         CDSLoginPage loginPage = new CDSLoginPage(this);
-        checkCheckbox(termsCheckbox);
+        checkCheckbox(loginPage.termsCheckbox());
         loginPage.logIn();
 
         signOutHTTP();

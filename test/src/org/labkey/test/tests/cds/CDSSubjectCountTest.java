@@ -651,13 +651,15 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
 
         ip.waitForSpinners();
 
-        assertEquals("Subjects count not as expected.", 1458, ip.getSubjectCount());
-        assertEquals("Species count not as expected.", 2, ip.getSpeciesCount());
-        assertEquals("Studies count not as expected.", 14, ip.getStudiesCount());
-        assertEquals("Product count not as expected.", 3, ip.getProductCount());
-        assertEquals("Treatments count not as expected.", 91, ip.getTreatmentsCount());
-        assertEquals("Time Points count not as expected.", 55, ip.getTimePointsCount());
-        assertEquals("Antigens In Y count not as expected.", 3, ip.getAntigensInYCount());
+        checker().verifyEquals("Subjects count not as expected.", 1458, ip.getSubjectCount());
+        checker().verifyEquals("Species count not as expected.", 2, ip.getSpeciesCount());
+        checker().verifyEquals("Studies count not as expected.", 14, ip.getStudiesCount());
+        checker().verifyEquals("Product count not as expected.", 3, ip.getProductCount());
+        checker().verifyEquals("Treatments count not as expected.", 91, ip.getTreatmentsCount());
+        checker().verifyEquals("Time Points count not as expected.", 55, ip.getTimePointsCount());
+        checker().verifyEquals("Antigens In Y count not as expected.", 3, ip.getAntigensInYCount());
+
+        checker().screenShotIfNewError("verifyInfoPaneCounts_afterY-Axis");
 
         log("Validate a list (species) from the info pane.");
         ip.clickSpeciesCount();
@@ -675,14 +677,16 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
 
         ip.waitForSpinners();
 
-        assertEquals("Subjects count not as expected.", 1453, ip.getSubjectCount());
-        assertEquals("Species count not as expected.", 2, ip.getSpeciesCount());
-        assertEquals("Studies count not as expected.", 14, ip.getStudiesCount());
-        assertEquals("Product count not as expected.", 3, ip.getProductCount());
-        assertEquals("Treatments count not as expected.", 91, ip.getTreatmentsCount());
-        assertEquals("Time Points count not as expected.", 55, ip.getTimePointsCount());
-        assertEquals("Antigens In X count not as expected.", 3, ip.getAntigensInXCount());
-        assertEquals("Antigens In Y count not as expected.", 3, ip.getAntigensInYCount());
+        checker().verifyEquals("Subjects count not as expected.", 1453, ip.getSubjectCount());
+        checker().verifyEquals("Species count not as expected.", 2, ip.getSpeciesCount());
+        checker().verifyEquals("Studies count not as expected.", 14, ip.getStudiesCount());
+        checker().verifyEquals("Product count not as expected.", 3, ip.getProductCount());
+        checker().verifyEquals("Treatments count not as expected.", 91, ip.getTreatmentsCount());
+        checker().verifyEquals("Time Points count not as expected.", 55, ip.getTimePointsCount());
+        checker().verifyEquals("Antigens In X count not as expected.", 3, ip.getAntigensInXCount());
+        checker().verifyEquals("Antigens In Y count not as expected.", 3, ip.getAntigensInYCount());
+
+        checker().screenShotIfNewError("verifyInfoPaneCounts_afterX-Axis");
 
         log("Verify that Antigens in X and Antigens in Y bring up the variable selector.");
         try{
@@ -712,14 +716,17 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
         log("Use the info pane to apply a filter to the plot.");
         ip.setFilter("Day 14 - (1 study)");
 
-        assertEquals("Subjects count not as expected.", 49, ip.getSubjectCount());
-        assertEquals("Species count not as expected.", 1, ip.getSpeciesCount());
-        assertEquals("Studies count not as expected.", 1, ip.getStudiesCount());
-        assertEquals("Product count not as expected.", 1, ip.getProductCount());
-        assertEquals("Treatments count not as expected.", 4, ip.getTreatmentsCount());
-        assertEquals("Time Points count not as expected.", 1, ip.getTimePointsCount());
-        assertEquals("Antigens In X count not as expected.", 1, ip.getAntigensInXCount());
-        assertEquals("Antigens In Y count not as expected.", 1, ip.getAntigensInYCount());
+        checker().verifyEquals("Subjects count not as expected.", 49, ip.getSubjectCount());
+        checker().verifyEquals("Species count not as expected.", 1, ip.getSpeciesCount());
+        checker().verifyEquals("Studies count not as expected.", 1, ip.getStudiesCount());
+        checker().verifyEquals("Product count not as expected.", 1, ip.getProductCount());
+        checker().verifyEquals("Treatments count not as expected.", 4, ip.getTreatmentsCount());
+        checker().verifyEquals("Time Points count not as expected.", 1, ip.getTimePointsCount());
+        checker().verifyEquals("Antigens In X count not as expected.", 1, ip.getAntigensInXCount());
+        checker().verifyEquals("Antigens In Y count not as expected.", 1, ip.getAntigensInYCount());
+
+        checker().screenShotIfNewError("verifyInfoPaneCounts_timePointSelector");
+
         log("Clearing the filter.");
         cds.clearFilter(1);
 
@@ -729,14 +736,16 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
         ip.clickStudiesCount();
         ip.setFilter("RED 4");
 
-        assertEquals("Subjects count not as expected.", 79, ip.getSubjectCount());
-        assertEquals("Species count not as expected.", 1, ip.getSpeciesCount());
-        assertEquals("Studies count not as expected.", 1, ip.getStudiesCount());
-        assertEquals("Product count not as expected.", 1, ip.getProductCount());
-        assertEquals("Treatments count not as expected.", 3, ip.getTreatmentsCount());
-        assertEquals("Time Points count not as expected.", 2, ip.getTimePointsCount());
-        assertEquals("Antigens In X count not as expected.", 1, ip.getAntigensInXCount());
-        assertEquals("Antigens In Y count not as expected.", 1, ip.getAntigensInYCount());
+        checker().verifyEquals("Subjects count not as expected.", 79, ip.getSubjectCount());
+        checker().verifyEquals("Species count not as expected.", 1, ip.getSpeciesCount());
+        checker().verifyEquals("Studies count not as expected.", 1, ip.getStudiesCount());
+        checker().verifyEquals("Product count not as expected.", 1, ip.getProductCount());
+        checker().verifyEquals("Treatments count not as expected.", 3, ip.getTreatmentsCount());
+        checker().verifyEquals("Time Points count not as expected.", 2, ip.getTimePointsCount());
+        checker().verifyEquals("Antigens In X count not as expected.", 1, ip.getAntigensInXCount());
+        checker().verifyEquals("Antigens In Y count not as expected.", 1, ip.getAntigensInYCount());
+
+        checker().screenShotIfNewError("verifyInfoPaneCounts_filterApplied");
 
         log("Clearing the filter.");
         cds.clearFilter(1);
