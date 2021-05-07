@@ -120,20 +120,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         currentTest.cds.initModuleProperties(false); // reset ShowHiddenVariables property back to false
     }
 
-    @BeforeClass
-    public static void setShowHiddenVariables()
-    {
-        CDSVisualizationTest currentTest = (CDSVisualizationTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(true); //set ShowHiddenVariables property to true
-    }
-
-    @AfterClass
-    public static void resetShowHiddenVariables()
-    {
-        CDSVisualizationTest currentTest = (CDSVisualizationTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(false); // reset ShowHiddenVariables property back to false
-    }
-
     @Test
     public void verifyGutterPlotBasic()
     {
