@@ -168,6 +168,16 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           }
         });
       }
+
+      var $createaccountcontainer = self.$modal.find('[id=registeraccountform]');
+      if ($createaccountcontainer.length > 0) {
+        $("#registeraccountform input").keypress(function (e) {
+          if (e.keyCode == 13) {
+            e.preventDefault();
+            $('#registeraccountsubmit').click();
+          }
+        });
+      }
     };
 
     /**
