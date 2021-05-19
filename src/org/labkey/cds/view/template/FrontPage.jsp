@@ -725,7 +725,7 @@
                         Sign up for our mailing list
                     </a>
                     <div class="email-modal-popup hidden">
-                        <div class="email-modal">
+                        <div class="email-modal front-page-popup-container">
                             <div class="border"></div>
                             <!-- Begin MailChimp Signup Form -->
                             <!-- <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">-->
