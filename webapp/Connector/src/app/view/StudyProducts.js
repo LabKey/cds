@@ -11,7 +11,7 @@ Ext.define('Connector.app.view.StudyProducts', {
 
     itemPluralName: 'products',
 
-    emptySearchSubtext: 'Also try searching for products in Studies section.',
+    emptySearchSubtext: 'Also try searching for product in Studies section.',
 
     statics: {
         searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer']

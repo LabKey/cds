@@ -893,6 +893,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         checker().verifyTrue("Backbone with expected value 'SG3 beta env 2' is not visible.",
                 Locator.tagWithClass("div", "detail-gray-text").withText("SG3 beta env 2").findElement(rowElement).isDisplayed());
 
+        log("Searching for a string '" + MISSING_SEARCH_STRING + "' that should not be found.");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
+        sleep(CDSHelper.CDS_WAIT);
+        _asserts.verifyEmptyLearnAboutMAbProductsPage();
+
     }
 
     @Test
