@@ -15,6 +15,8 @@ Ext.define('Connector.app.view.MAb', {
 
     itemPluralName: 'Monoclonal Antibodies',
 
+    emptySearchSubtext: 'Also try searching for mAb in Studies section.',
+
     columns: [
         {
             text: 'MAb/Mixture',

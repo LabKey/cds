@@ -36,8 +36,10 @@ Ext.define('Connector.app.view.LearnSummary', {
         this.addEvents("learnGridResizeHeight");
 
         this.lockedViewConfig.emptyText = new Ext.XTemplate(
-                '<div class="detail-empty-text">No available {itemPluralName} meet your selection criteria.</div>'
-        ).apply({itemPluralName: this.itemPluralName});
+                '<div class="detail-empty-text">No available {itemPluralName} meet your selection criteria.</div>' +
+                '<div class="detail-empty-subtext">Search returns exact match on text. Try adjusting your search.</div>' +
+                '<tpl if="emptySearchSubtext"><div class="detail-empty-subtext">{emptySearchSubtext}</div></tpl>'
+        ).apply({itemPluralName: this.itemPluralName, emptySearchSubtext: this.emptySearchSubtext});
 
         this.normalGridConfig.listeners = {
             itemmouseenter : function(view, record, item, index, evt) {
