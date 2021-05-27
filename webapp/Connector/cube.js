@@ -602,11 +602,6 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'assay_endpoint_description'
                         }
                     }],[{
-                        type: 'contactcds',
-                        staticData: {
-                            title: 'Contact information'
-                        }
-                    },{
                         type: 'dataavailability',
                         staticData: {
                             title: 'Integrated data',
