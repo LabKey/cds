@@ -173,6 +173,10 @@ public class CDSController extends SpringActionController
         {
             if (getContainer().isRoot())
                 throw new NotFoundException();
+
+            if (getUser().isGuest())
+                return new JspView("/org/labkey/cds/view/app.jsp");
+
             return new JspView("/org/labkey/cds/view/begin.jsp");
         }
 
