@@ -619,8 +619,14 @@ img.detail-has-data-small {
 
     .detail-empty-text {
       color: black;
-      height: 60px;
+      height: 40px;
       font: $display-two-font;
+    }
+
+    .detail-empty-subtext {
+      color: gray;
+      height: 30px;
+      font: $headline-font;
     }
   }
 }

@@ -190,16 +190,27 @@ public class CDSAsserts
     public void verifyEmptyLearnAboutStudyPage()
     {
         _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available studies meet your selection criteria.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-subtext')][text() = 'Search returns exact match on text. Try adjusting your search.']"));
     }
 
     public void verifyEmptyLearnAboutStudyProductsPage()
     {
         _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available products meet your selection criteria.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-subtext')][text() = 'Search returns exact match on text. Try adjusting your search.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-subtext')][text() = 'Also try searching for product in Studies section.']"));
+    }
+
+    public void verifyEmptyLearnAboutMAbProductsPage()
+    {
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available Monoclonal Antibodies meet your selection criteria.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-subtext')][text() = 'Search returns exact match on text. Try adjusting your search.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-subtext')][text() = 'Also try searching for mAb in Studies section.']"));
     }
 
     public void verifyEmptyLearnAboutPublicationsPage()
     {
         _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available publications meet your selection criteria.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-subtext')][text() = 'Search returns exact match on text. Try adjusting your search.']"));
     }
 
     public void assertDefaultFilterStatusCounts()

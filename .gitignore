@@ -21,3 +21,5 @@ webapp/frontPage/css/application.css
 
 node_modules/
 .gradle/
+
+resources/web/cds/gen/*
