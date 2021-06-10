@@ -31,6 +31,12 @@
 	}
 }
 
+@mixin legacy-desktop {
+	@media only screen and (max-height : $legacy-desktop-height) {
+		@content;
+	}
+}
+
 @mixin phone {
 	@media only screen and (max-width : $phone-width) {
 		@content;
