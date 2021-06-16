@@ -105,19 +105,33 @@ Ext.define('Connector.view.MabReport', {
     },
 
     getViewGridButton : function() {
-        if (!this.viewGridButton) {
-            this.viewGridButton = Ext.create('Ext.button.Button', {
-                cls: 'mabgridcolumnsbtn',
-                id: 'mabgridcolumnsbtn-breadcrumb',
-                text: 'Return to mAb grid',
-                height: 25,
-                margin: '0 15 0 0',
-                handler: this._onBackClick,
-                scope: this
-            });
-        }
 
-        return this.viewGridButton;
+        // Fix for support ticket: 41638: MAb visualization button alignment adjustments
+        // utilize same pattern as Reports on MabGrid so that the buttons are aligned as expected
+        var items = [];
+        this.viewGridButtons = [];
+
+        items.push({
+            xtype: 'button',
+            cls: 'mabgridcolumnsbtn',
+            handler: this._onBackClick,
+            id: 'mabgridcolumnsbtn-breadcrumb',
+            text: 'Return to mAb grid',
+            scope: this
+        });
+
+        this.viewGridButtons.push({
+            xtype: 'container',
+            childEls: ['outerCt', 'innerCt'],
+            items: items,
+            renderTpl: [
+                '<span id="{id}-outerCt" style="display:table;">',
+                '<div id="{id}-innerCt" class="mabgridbuttonslayout"></div>',
+                '</span>'
+            ]
+        });
+
+        return this.viewGridButtons[0];
     },
 
     _onBackClick: function(){
@@ -172,7 +186,10 @@ Ext.define('Connector.view.MabReport', {
                                 url : url,
                                 method: 'POST',
                                 success: function(resp){
-                                    cmp.getEl().unmask();
+
+                                    if (cmp.getEl())
+                                        cmp.getEl().unmask();
+
                                     var json = LABKEY.Utils.decode(resp.responseText);
                                     if (!json || !json.html)
                                         Ext.Msg.alert("Error", "Unable to load " + me.reportLabel + ". The report doesn't exist or you may not have permission to view it.");

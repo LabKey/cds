@@ -754,19 +754,23 @@ Ext.define('Connector.utility.Query', {
         Ext.each(filterQueryMeasures, function(mdef)
         {
             // two places to look for filters, filterArray or measure.values (i.e. IN clause)
-            if (!Ext.isEmpty(mdef.filterArray))
-            {
-                Ext.each(mdef.filterArray, function(f)
-                {
+            if (!Ext.isEmpty(mdef.filterArray)) {
+                Ext.each(mdef.filterArray, function (f) {
                     WHERE.push(this._getWhereClauseFromFilter(f, mdef, false /* recursed */, forDebugging));
                 }, this);
             }
-            else if (Ext.isArray(mdef.measure.values))
-            {
-                // I don't like this extra join/split (maybe make a helper IN function)
-                fType = mdef.measure.values.length == 1 ? LABKEY.Filter.Types.EQUAL : LABKEY.Filter.Types.IN;
-                f = LABKEY.Filter.create(mdef.measure.name, mdef.measure.values.join(';'), fType);
-                WHERE.push(this._getWhereClauseFromFilter(f, mdef, false /* recursed */, forDebugging));
+            else {
+                // Fix for Issue 43079: CDS: Client side error when brushing in the gutter plots, and the plot is using linear scale
+                // handle case when there are no values
+                if (null != mdef.measure.values && 0 === mdef.measure.values.length) {
+                    WHERE.push("1=0");
+                }
+                else if (Ext.isArray(mdef.measure.values)) {
+                    // I don't like this extra join/split (maybe make a helper IN function)
+                    fType = mdef.measure.values.length == 1 ? LABKEY.Filter.Types.EQUAL : LABKEY.Filter.Types.IN;
+                    f = LABKEY.Filter.create(mdef.measure.name, mdef.measure.values.join(';'), fType);
+                    WHERE.push(this._getWhereClauseFromFilter(f, mdef, false /* recursed */, forDebugging));
+                }
             }
         }, this);
 
