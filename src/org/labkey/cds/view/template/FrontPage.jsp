@@ -70,18 +70,21 @@
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
         };
 
-        clickPublicLink = function() {
+        clickPublicLink = function(hash) {
             let url = <%=q(url)%>;
             if (!url) {
                 alert('The module property for the public page URL has not been set.');
             } else {
+                url = url + '#' + hash;
                 window.location = url;
             }
         }
 
         initPublicLinks = function() {
-            $('span.public-page-link').on('click', clickPublicLink);
-            $('div.public-page-link').on('click', clickPublicLink);
+            $('span.public-page-link.study').on('click', function(){clickPublicLink('study');});
+            $('span.public-page-link.assay').on('click', function(){clickPublicLink('assay');});
+            $('div.public-page-link.study').on('click', function(){clickPublicLink('study');});
+            $('div.public-page-link.assay').on('click', function(){clickPublicLink('assay');});
         };
 
         $(document).ready(function() {
@@ -584,7 +587,7 @@
             </div>
             <div class="learn-more">
                 <p>Learn, discover and collaborate on data</p>
-                <p>from dozens of <span class="public-page-link">HIV vaccine studies.</span></p>
+                <p>from dozens of <span class="public-page-link study">HIV vaccine studies.</span></p>
                 <div class="container">
                     <h3>Learn more</h3>
                 </div>
@@ -603,8 +606,8 @@
                     <p class="days">-</p>
                     <p>days ago.</p>
                 </div>
-                <div class="counts public-page-link">
-                    <div class="products datapoint">
+                <div class="counts">
+                    <div class="products datapoint public-page-link study">
                         <div class="value">
                             <h1>-</h1>
                         </div>
@@ -612,7 +615,7 @@
                             <p>Products</p>
                         </div>
                     </div>
-                    <div class="studies datapoint">
+                    <div class="studies datapoint public-page-link study">
                         <div class="value">
                             <h1>-</h1>
                         </div>
@@ -620,7 +623,7 @@
                             <p>Studies</p>
                         </div>
                     </div>
-                    <div class="subjects datapoint">
+                    <div class="subjects datapoint public-page-link study">
                         <div class="value">
                             <h1>-</h1>
                         </div>
@@ -628,7 +631,7 @@
                             <p>Subjects</p>
                         </div>
                     </div>
-                    <div class="assays datapoint">
+                    <div class="assays datapoint public-page-link assay">
                         <div class="value">
                             <h1>-</h1>
                         </div>
@@ -684,7 +687,7 @@
                 <img src="<%=getWebappURL("/frontpage/img/learn.png")%>" class="placeholder">
                 <img src="<%=getWebappURL("/frontpage/img/learn-complete.png")%>" class="mobile-img">
                 <div class="gif-description">
-                    <p>Learn details about dozens of <span class="public-page-link">studies</span>, vaccines, and <span class="public-page-link">assays</span>
+                    <p>Learn details about dozens of <span class="public-page-link study">studies</span>, vaccines, and <span class="public-page-link assay">assays</span>
                         to avoid covering trodden ground and give context to new
                         proposals. </p>
                 </div>
