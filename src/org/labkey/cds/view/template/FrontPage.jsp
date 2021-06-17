@@ -15,8 +15,16 @@
  * limitations under the License.
  */
 %>
+<%@ page import="org.labkey.api.module.ModuleLoader" %>
+<%@ page import="org.labkey.api.module.ModuleProperty" %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
+<%@ page import="org.labkey.cds.CDSModule" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
+<%
+    ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.CDS_PUBLIC_PAGE_URL);
+    String url = mp.getEffectiveValue(getContainer());
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,11 +70,27 @@
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
         };
 
+        clickPublicLink = function() {
+            let url = <%=q(url)%>;
+            if (!url) {
+                alert('The module property for the public page URL has not been set.');
+            } else {
+                window.location = url;
+            }
+        }
+
+        initPublicLinks = function() {
+            $('span.public-page-link').on('click', clickPublicLink);
+            $('div.public-page-link').on('click', clickPublicLink);
+        };
+
         $(document).ready(function() {
             // notification close button
             $('div.dismiss').click(function(){
                 $('#notification').remove();
             });
+
+            initPublicLinks();
         });
     </script>
 </head>
@@ -560,7 +584,7 @@
             </div>
             <div class="learn-more">
                 <p>Learn, discover and collaborate on data</p>
-                <p>from dozens of HIV vaccine studies.</p>
+                <p>from dozens of <span class="public-page-link">HIV vaccine studies.</span></p>
                 <div class="container">
                     <h3>Learn more</h3>
                 </div>
@@ -579,7 +603,7 @@
                     <p class="days">-</p>
                     <p>days ago.</p>
                 </div>
-                <div class="counts">
+                <div class="counts public-page-link">
                     <div class="products datapoint">
                         <div class="value">
                             <h1>-</h1>
@@ -660,7 +684,7 @@
                 <img src="<%=getWebappURL("/frontpage/img/learn.png")%>" class="placeholder">
                 <img src="<%=getWebappURL("/frontpage/img/learn-complete.png")%>" class="mobile-img">
                 <div class="gif-description">
-                    <p>Learn details about dozens of studies, vaccines, and assays
+                    <p>Learn details about dozens of <span class="public-page-link">studies</span>, vaccines, and <span class="public-page-link">assays</span>
                         to avoid covering trodden ground and give context to new
                         proposals. </p>
                 </div>
