@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <etl xmlns="http://labkey.org/etl/xml">
-    <name>Run Reports : (runTemplate, create_static_site, create_neutralization_curves)</name>
+    <name>Run Reports : (create_static_site, create_neutralization_curves)</name>
     <description>Refresh public site pages and other reports</description>
     <transforms>
         <transform id="step1" type="TaskRefTransformStep">
             <taskref ref="org.labkey.di.pipeline.RunReportTask">
                 <settings>
-                    <setting name="reportId" value="db:runTemplates"/>
+                    <setting name="reportId" value="db:create_static_site"/>
                     <setting name="greeter" value="STEP1"/>
                 </settings>
             </taskref>
@@ -14,16 +14,8 @@
         <transform id="step2" type="TaskRefTransformStep">
             <taskref ref="org.labkey.di.pipeline.RunReportTask">
                 <settings>
-                    <setting name="reportId" value="db:create_static_site"/>
-                    <setting name="greeter" value="STEP2"/>
-                </settings>
-            </taskref>
-        </transform>
-        <transform id="step3" type="TaskRefTransformStep">
-            <taskref ref="org.labkey.di.pipeline.RunReportTask">
-                <settings>
                     <setting name="reportId" value="db:create_neutralization_curves"/>
-                    <setting name="greeter" value="STEP3"/>
+                    <setting name="greeter" value="STEP2"/>
                 </settings>
             </taskref>
         </transform>
