@@ -67,7 +67,10 @@
     overflow: hidden;
     margin: 2.67em 0;
     @include tablet {
-      margin: 3em 0em 2.67em 0;
+      margin: 3em 0 2.67em 0;
+    }
+    @include legacy-desktop {
+      margin: 10.67em 0 2.67em 0;
     }
     .title {
       margin-bottom: 2.67em;
