@@ -412,13 +412,12 @@
   }
 }
 
-span.public-page-link {
+a.public-page-link {
   color: $navigation-pink;
-  cursor: pointer;
+  text-decoration: none;
 }
 
-div.public-page-link {
-  cursor: pointer;
+a.public-page-link {
   p, h1 {
     &:hover {
       color: $navigation-pink !important;
