@@ -411,3 +411,16 @@
     margin: 6.5em auto 1.833em auto;
   }
 }
+
+a.public-page-link {
+  color: $navigation-pink;
+  text-decoration: none;
+}
+
+a.public-page-link {
+  p, h1 {
+    &:hover {
+      color: $navigation-pink !important;
+    }
+  }
+}
