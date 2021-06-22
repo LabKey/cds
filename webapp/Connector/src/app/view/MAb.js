@@ -13,7 +13,7 @@ Ext.define('Connector.app.view.MAb', {
         cls: 'mablearngridlocked'
     },
 
-    itemPluralName: 'Monoclonal Antibodies',
+    itemPluralName: 'monoclonal antibodies',
 
     emptySearchSubtext: 'Also try searching for mAb in Studies section.',
 
