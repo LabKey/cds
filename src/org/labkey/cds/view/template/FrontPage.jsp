@@ -15,7 +15,11 @@
  * limitations under the License.
  */
 %>
+<%@ page import="org.labkey.api.module.ModuleLoader" %>
+<%@ page import="org.labkey.api.module.ModuleProperty" %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
+<%@ page import="org.labkey.cds.CDSModule" %>
+<%@ page import="org.labkey.api.util.HtmlString" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -560,7 +564,7 @@
             </div>
             <div class="learn-more">
                 <p>Learn, discover and collaborate on data</p>
-                <p>from dozens of HIV vaccine studies.</p>
+                <p>from dozens of <a class="public-page-link" href="<%=getPublicPageURL("study")%>">HIV vaccine studies.</a></p>
                 <div class="container">
                     <h3>Learn more</h3>
                 </div>
@@ -580,38 +584,46 @@
                     <p>days ago.</p>
                 </div>
                 <div class="counts">
-                    <div class="products datapoint">
-                        <div class="value">
-                            <h1>-</h1>
+                    <a class="public-page-link" href="<%=getPublicPageURL("study")%>">
+                        <div class="products datapoint">
+                            <div class="value">
+                                <h1>-</h1>
+                            </div>
+                            <div class="title">
+                                <p>Products</p>
+                            </div>
                         </div>
-                        <div class="title">
-                            <p>Products</p>
+                    </a>
+                    <a class="public-page-link" href="<%=getPublicPageURL("study")%>">
+                        <div class="studies datapoint">
+                            <div class="value">
+                                <h1>-</h1>
+                            </div>
+                            <div class="title">
+                                <p>Studies</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="studies datapoint">
-                        <div class="value">
-                            <h1>-</h1>
+                    </a>
+                    <a class="public-page-link" href="<%=getPublicPageURL("study")%>">
+                        <div class="subjects datapoint">
+                            <div class="value">
+                                <h1>-</h1>
+                            </div>
+                            <div class="title">
+                                <p>Subjects</p>
+                            </div>
                         </div>
-                        <div class="title">
-                            <p>Studies</p>
+                    </a>
+                    <a class="public-page-link" href="<%=getPublicPageURL("assay")%>">
+                        <div class="assays datapoint">
+                            <div class="value">
+                                <h1>-</h1>
+                            </div>
+                            <div class="title">
+                                <p>Assays</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="subjects datapoint">
-                        <div class="value">
-                            <h1>-</h1>
-                        </div>
-                        <div class="title">
-                            <p>Subjects</p>
-                        </div>
-                    </div>
-                    <div class="assays datapoint">
-                        <div class="value">
-                            <h1>-</h1>
-                        </div>
-                        <div class="title">
-                            <p>Assays</p>
-                        </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="reminder">
                     <p>Our team regularly adds new data</p>
@@ -660,7 +672,8 @@
                 <img src="<%=getWebappURL("/frontpage/img/learn.png")%>" class="placeholder">
                 <img src="<%=getWebappURL("/frontpage/img/learn-complete.png")%>" class="mobile-img">
                 <div class="gif-description">
-                    <p>Learn details about dozens of studies, vaccines, and assays
+                    <p>Learn details about dozens of <a class="public-page-link" href="<%=getPublicPageURL("study")%>">studies</a>, vaccines,
+                        and <a class="public-page-link" href="<%=getPublicPageURL("assay")%>">assays</a>
                         to avoid covering trodden ground and give context to new
                         proposals. </p>
                 </div>
@@ -775,3 +788,17 @@
     </div>
 </body>
 </html>
+
+<%!
+    private String _url;
+    private HtmlString getPublicPageURL(String hash)
+    {
+        if (_url == null)
+        {
+            ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.CDS_PUBLIC_PAGE_URL);
+            _url = mp.getEffectiveValue(getContainer());
+        }
+
+        return _url != null ? HtmlString.unsafe(String.format("%s#%s", _url, hash)) : HtmlString.unsafe("#");
+   }
+%>

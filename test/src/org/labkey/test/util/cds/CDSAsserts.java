@@ -202,7 +202,7 @@ public class CDSAsserts
 
     public void verifyEmptyLearnAboutMAbProductsPage()
     {
-        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available Monoclonal Antibodies meet your selection criteria.']"));
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-text')][text() = 'No available monoclonal antibodies meet your selection criteria.']"));
         _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-subtext')][text() = 'Search returns exact match on text. Try adjusting your search.']"));
         _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'detail-empty-subtext')][text() = 'Also try searching for mAb in Studies section.']"));
     }

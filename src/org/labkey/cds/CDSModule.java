@@ -70,6 +70,7 @@ public class CDSModule extends DefaultModule
     public static final String TOURS_WIKI_LABEL = "ToursWiki";
     private static final String TOURS_WIKI_DEFAULT = "tour-default-wiki";
     private static final String WHATYOUNEEDTOKNOW_WIKI_DEFAULT = "needtoknow-default-wiki";
+    public static final String CDS_PUBLIC_PAGE_URL = "CDSPublicPageUrl";
 
     final ModuleProperty _showHiddenVariables;
     final ModuleProperty _blogPath;
@@ -158,6 +159,12 @@ public class CDSModule extends DefaultModule
         _takeATourWiki.setCanSetPerContainer(false);
         _takeATourWiki.setDefaultValue(TOURS_WIKI_DEFAULT);
         addModuleProperty(_takeATourWiki);
+
+        // public page root
+        ModuleProperty publicPageUrl = new ModuleProperty(this, CDS_PUBLIC_PAGE_URL);
+        publicPageUrl.setDescription("The webdav URL to the main public page.");
+        publicPageUrl.setCanSetPerContainer(false);
+        addModuleProperty(publicPageUrl);
     }
 
     @Override
