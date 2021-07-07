@@ -13,7 +13,7 @@ Ext.define('Connector.app.model.Publication', {
 
     labelProperty: 'publication_label',
 
-    dataAvailabilityField: 'studies',
+    dataAvailabilityField: 'publication_data',
 
     fields: [
         {name: 'publication_id'},
@@ -31,6 +31,7 @@ Ext.define('Connector.app.model.Publication', {
         {name: 'publication_label'},
         {name: 'publication_data', convert : Connector.model.Filter.asArray},
         {name: 'publication_data_count'},
+        {name: 'data_availability'},
         {name: 'year'},
         {name: 'study_to_sort_on'},
         {name: 'study_names', convert : Connector.model.Filter.asArray},

@@ -95,6 +95,7 @@ Ext.define('Connector.app.view.LearnSummary', {
 
     showDataAvailabilityTooltip : function(event, item, options) {
         var config = this.dataAvailabilityTooltipConfig();
+        var labelField = config.labelField || 'data_label';
 
         var dataAvailableListHTML = "<ul>";
         var records = options.itemsWithDataAvailable, accessible = [], nonAccessible = [];
@@ -104,23 +105,21 @@ Ext.define('Connector.app.view.LearnSummary', {
             else
                 nonAccessible.push(record);
         });
-        if (accessible.length > 0)
-        {
+        if (accessible.length > 0) {
             dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " with Data Accessible" + '</p>';
             dataAvailableListHTML += "<ul>";
             Ext.each(accessible, function(record){
-                dataAvailableListHTML += "<li>" + record['data_label'] + "</li>\n";
+                dataAvailableListHTML += "<li>" + record[labelField] + "</li>\n";
             });
             dataAvailableListHTML += "</ul>";
         }
-        if (nonAccessible.length > 0)
-        {
+        if (nonAccessible.length > 0) {
             if (accessible.length > 0)
                 dataAvailableListHTML += '<br>';
             dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " without Data Accessible" + '</p>';
             dataAvailableListHTML += "<ul>";
             Ext.each(nonAccessible, function(record){
-                dataAvailableListHTML += "<li>" + record['data_label'] + "</li>\n";
+                dataAvailableListHTML += "<li>" + record[labelField] + "</li>\n";
             });
             dataAvailableListHTML += "</ul>";
         }

@@ -160,6 +160,12 @@ Ext.define('Connector.app.view.Publication', {
         searchFields: [
             'publication_title', 'author_all', 'pmid', 'journal_short'
         ]
-    }
+    },
 
+    dataAvailabilityTooltipConfig : function() {
+        return {
+            title: 'Publications',
+            labelField : 'label'
+        }
+    }
 });
