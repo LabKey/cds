@@ -37,10 +37,31 @@ Ext.define('Connector.app.view.Publication', {
                     '</div>',
                     '</div>')
         },{
+            text: 'Data Added',
+            xtype: 'templatecolumn',
+            minWidth: 150,
+            flex: 1/7,
+            resizable: false,
+            dataIndex: 'publication_data',
+            filterConfigSet: [{
+                filterField: 'publication_data_count',
+                valueType: 'number',
+                title: 'publication data count'
+            }],
+            tpl: new Ext.XTemplate(
+                '<div class="detail-text">',
+                    '<tpl if="publication_data.length &gt; 0">',
+                        '<div class="detail-has-data detail-has-data-ni"></div>',
+                    '<tpl else>',
+                        'Data not added',
+                    '</tpl>',
+                '</div>'
+            )
+        },{
             text: 'Journal',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 1/6,
+            flex: 1/7,
             resizable: false,
             dataIndex: 'journal_short',
             filterConfigSet: [{
@@ -57,7 +78,7 @@ Ext.define('Connector.app.view.Publication', {
             text: 'First Author',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 1/6,
+            flex: 1/7,
             resizable: false,
             dataIndex: 'author_first',
             filterConfigSet: [{
@@ -74,7 +95,7 @@ Ext.define('Connector.app.view.Publication', {
             text: 'Publication Date',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 1/6,
+            flex: 1/7,
             resizable: false,
             dataIndex: 'date',
             filterConfigSet: [{
@@ -91,7 +112,7 @@ Ext.define('Connector.app.view.Publication', {
             text: 'Studies',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 1/6,
+            flex: 1/7,
             resizable: false,
             dataIndex: 'study_to_sort_on',
             filterConfigSet: [{
@@ -119,7 +140,7 @@ Ext.define('Connector.app.view.Publication', {
             text: 'PubMed Id',
             xtype: 'templatecolumn',
             minWidth: 150,
-            flex: 1/6,
+            flex: 1/7,
             resizable: false,
             dataIndex: 'pmid',
             filterConfigSet: [{

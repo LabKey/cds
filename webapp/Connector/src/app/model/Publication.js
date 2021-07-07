@@ -30,7 +30,7 @@ Ext.define('Connector.app.model.Publication', {
         {name: 'author_first'},
         {name: 'publication_label'},
         {name: 'publication_data', convert : Connector.model.Filter.asArray},
-
+        {name: 'publication_data_count'},
         {name: 'year'},
         {name: 'study_to_sort_on'},
         {name: 'study_names', convert : Connector.model.Filter.asArray},

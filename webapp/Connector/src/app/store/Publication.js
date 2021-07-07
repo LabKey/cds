@@ -255,6 +255,7 @@ Ext.define('Connector.app.store.Publication', {
 
                 // publication data
                 publication.publication_data = publicationMap[publication.publication_id] || [];
+                publication.publication_data_count = publication.publication_data.length;
 
                 //saved reports
                 var savedRep = savedReports.filter(function (value) {
