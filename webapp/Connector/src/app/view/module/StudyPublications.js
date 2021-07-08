@@ -23,7 +23,7 @@ Ext.define('Connector.view.module.StudyPublications', {
                                 '<tr>',
                                     '<td class="item-value">',
                                     '<tpl if="label">',
-                                        '<a href="#learn/learn/Publication/{id}">{label:htmlEncode}: </a>',
+                                        '{[this.getPublicationLink(values)]}',
                                     '</tpl>',
                                     '{authors:htmlEncode}. {title:htmlEncode}. {journal:htmlEncode}. {date:htmlEncode}',
                                     '<tpl if="volume || issue">',
@@ -98,7 +98,23 @@ Ext.define('Connector.view.module.StudyPublications', {
                         '</table>',
 
                 '</tpl>',
-            '</tpl>'
+            '</tpl>',
+            {
+                getPublicationLink : function(row) {
+                    let link = '<a href="#learn/learn/Publication/';
+
+                    link += row.id;
+                    link += '">';
+                    link += Ext.htmlEncode(row.label);
+                    if (row.available_data_count > 0) {
+                        // add the non-integrated data available icon
+                        link += '<img class="detail-has-data-very-small" src="' + Connector.resourceContext.path + '/images/learn/ni-added.svg"/>';
+                    }
+                    link += ': </a>';
+
+                    return link;
+                }
+            }
     ),
 
     initComponent : function() {
