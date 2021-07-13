@@ -23,6 +23,7 @@ import org.labkey.remoteapi.CommandException;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.dumbster.EmailRecordTable;
+import org.labkey.test.pages.cds.CDSCreateAccountPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
@@ -971,13 +972,14 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     private void handleCreateAccount(String password, boolean agreeToTOS)
     {
-        setFormElement(Locator.css("input[name='password']"), password);
-        setFormElement(Locator.css("input[name='reenter-password']"), password);
+        CDSCreateAccountPage createAccountPage = new CDSCreateAccountPage(this);
+        createAccountPage.setPasswordField(password);
+        createAccountPage.setReenterPasswordField(password);
         if (agreeToTOS)
         {
-            checkCheckbox(Locator.css("input[id='tos-create-account']"));
+            createAccountPage.checkTermsBox(true);
         }
-            click(Locator.css("input[id='createaccountsubmit']"));
+        createAccountPage.clickSubmitButton();
     }
 
     private void handleSimpleLogin(String email, String password)
