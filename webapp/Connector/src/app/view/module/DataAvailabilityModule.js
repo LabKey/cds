@@ -48,22 +48,6 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     this.getInstructions(assay_iden && assay_iden.toLowerCase() === 'nab mab' ? this.data.nabMabInstructions : this.data.instructions),
                     '</p>',
                     '</br>',
-                    '<table class="data-availability-header' + (this.data.hasGrouping ? ' data-availability-header-with-group' : '') + '">',
-                        '<tr>',
-                            '<td>',
-                                '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallCheck.png"/>',
-                            '</td>',
-                            '<td> Available </td>',
-                            '<td>',
-                                '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/grayCheck.png"/>',
-                            '</td>',
-                            '<td> Restricted Access </td>',
-                            '<td>',
-                                '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/smallGreyX.png"/>',
-                            '</td>',
-                            '<td> Data not added </td>',
-                        '</tr>',
-                    '</table>',
                     '</tpl>'
             )).apply(this.getTitleData(this.data))
         },Ext.apply({
