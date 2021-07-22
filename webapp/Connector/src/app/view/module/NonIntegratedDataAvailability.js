@@ -187,7 +187,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
                 '<table>',
                     '<tr>',
                         '<td>',
-                            '<tpl if="isLinkValid">',
+                            '<tpl if="hasData && isLinkValid">',
                                 '<tpl if="hasPermission">',
                                     '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/ni-added.svg"/>',
                                 '<tpl else>',
@@ -197,8 +197,8 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
                                 '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/ni-notAdded.svg">',
                             '</tpl>',
                         '</td>',
-                        '<td class="non-integrated-data-ul">',
-                            '<tpl if="isLinkValid">',
+                        '<td class="non-integrated-data">',
+                            '<tpl if="hasData && isLinkValid">',
                                 '<tpl if="hasPermission">',
                                     '<tpl if="hasAssayLearn">',
                                         '<a href="#learn/learn/Assay',
@@ -206,7 +206,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
                                         '{label:htmlEncode}',
                                         '</a>',
                                     '<tpl else>',
-                                        '{label:htmlEncode}',
+                                        '<span>{label:htmlEncode}</span>',
                                     '</tpl>',
                                     '&nbsp;{suffix}&nbsp;',
                                     '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="right"/></a>',
@@ -217,7 +217,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
                                         '{label:htmlEncode}',
                                         '</a>',
                                     '<tpl else>',
-                                        '{label:htmlEncode}',
+                                        '<span>{label:htmlEncode}</span>',
                                     '</tpl>',
                                 '</tpl>',
                             '<tpl else>',
@@ -227,7 +227,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
                                     '{label:htmlEncode}',
                                     '</a>',
                                 '<tpl else>',
-                                    '{label:htmlEncode}',
+                                    '<span>{label:htmlEncode}</span>',
                                 '</tpl>',
                             '</tpl>',
                         '</td>',
@@ -243,7 +243,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
         });
 
         var storeConfig =  {
-            fields: ['assayIdentifier', 'dataStatus', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentifierId'],
+            fields: ['assayIdentifier', 'dataStatus', 'hasData', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentifierId'],
             data: data,
             storeId: 'NonIntegratedDataStore'
         };

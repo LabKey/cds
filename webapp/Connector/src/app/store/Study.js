@@ -413,7 +413,8 @@ Ext.define('Connector.app.store.Study', {
                         hasPermission: niAssay.has_access,
                         assayIdentifier: niAssay.data_id,
                         hasAssayLearn: niAssay.has_assay_learn,
-                        dataStatus: niAssay.data_status
+                        dataStatus: niAssay.data_status,
+                        hasData: niAssay.has_data
                     };
                     non_integrated_assay.push(nonIntegratedAssay);
                 });
@@ -436,7 +437,8 @@ Ext.define('Connector.app.store.Study', {
                             hasPermission: existingAssay.hasPermission ? existingAssay.hasPermission : niAssay.hasPermission,
                             assayIdentifier: existingAssay.assayIdentifier ? existingAssay.assayIdentifier : niAssay.assayIdentifier,
                             hasAssayLearn: existingAssay.hasAssayLearn ? existingAssay.hasAssayLearn : niAssay.hasAssayLearn,
-                            dataStatus: existingAssay.dataStatus ? existingAssay.dataStatus : niAssay.dataStatus
+                            dataStatus: existingAssay.dataStatus ? existingAssay.dataStatus : niAssay.dataStatus,
+                            hasData: existingAssay.hasData ? existingAssay.hasData : niAssay.hasData
                         };
                         non_integrated_assay_data_map[niAssay.assayIdentifier] = combinedAssay;
                     }
