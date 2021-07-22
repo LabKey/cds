@@ -193,7 +193,8 @@ Ext.define('Connector.app.store.Publication', {
                     isLinkValid: undefined,
                     hasPermission: true,                // publication documents are always public
                     suffix: '(' + Connector.utility.FileExtension.fileDisplayType(doc.filename) +')',
-                    filePath: Connector.plugin.DocumentValidation.getPublicationDocumentUrl(doc.filename, doc.document_id)
+                    filePath: Connector.plugin.DocumentValidation.getPublicationDocumentUrl(doc.filename, doc.document_id),
+                    has_access: true                    // needed for the data available tooltip on the learn page
                 }
             }, this).sort(function(docA, docB){
                 return Connector.model.Filter.sorters.natural(docA.label, docB.label);
@@ -255,6 +256,8 @@ Ext.define('Connector.app.store.Publication', {
 
                 // publication data
                 publication.publication_data = publicationMap[publication.publication_id] || [];
+                publication.publication_data_count = publication.publication_data.length;
+                publication.data_availability = publication.publication_data.length > 0;
 
                 //saved reports
                 var savedRep = savedReports.filter(function (value) {

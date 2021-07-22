@@ -305,7 +305,8 @@ Ext.define('Connector.app.store.Study', {
                         location: pub.location,
                         pmid: pub.pmid,
                         link: pub.link,
-                        sortIndex: pub.publication_order
+                        sortIndex: pub.publication_order,
+                        available_data_count: pub.available_data_count
                     };
                 }).sort(function(pubA, pubB){
                     return ((pubA.sortIndex || 0) - (pubB.sortIndex || 0)) ||
