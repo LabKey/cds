@@ -38,7 +38,7 @@ Ext.define('Connector.app.view.Study', {
     },{
         text: 'Data Added',
         xtype: 'templatecolumn',
-        minWidth: 150,
+        minWidth: 175,
         flex: 15/100,
         resizable: false,
         dataIndex: 'assays_added_count',
@@ -49,7 +49,7 @@ Ext.define('Connector.app.view.Study', {
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
-                    '<tpl if="data_availability">',
+                    '<tpl if="assays_added_count &gt; 0">',
                         '<div class="detail-has-data ',
                             '<tpl if="data_accessible">',
                             'detail-has-data-green',
@@ -57,9 +57,28 @@ Ext.define('Connector.app.view.Study', {
                             'detail-has-data-gray',
                             '</tpl>',
                         '"></div>',
-                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
+                        '<div class="detail-gray-text" style="padding-left: 1.25em">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
+                        '<tpl if="publications && publications.length &gt; 0">',
+                            '<div class="detail-gray-text" style="padding-left: 1.25em">{[this.publicationCountText(values)]}</div>',
+                        '</tpl>',
                     '<tpl else>',
-                        'Data not added',
+                            '<tpl if="non_integrated_assay_data.length &gt; 0">',
+                                '<div class="detail-has-data ',
+                                    '<tpl if="ni_assays_added_count &gt; 0">',
+                                    'detail-has-data-ni',
+                                    '<tpl else>',
+                                    'detail-has-data-ni-gray',
+                                    '</tpl>',
+                                '"></div>',
+                                    '<div class="detail-gray-text" style="padding-left: 1.25em">{[this.niAssayCountText(values)]}</div>',
+                                '<tpl if="publications && publications.length &gt; 0">',
+                                    '<div class="detail-gray-text" style="padding-left: 1.25em">{[this.publicationCountText(values)]}</div>',
+                                '</tpl>',
+                            '<tpl else>',
+                                '<div class="detail-gray-text" style="padding-left: 1.25em">',
+                                'Data not added',
+                                '</div>',
+                            '</tpl>',
                     '</tpl>',
                 '</div>',
                 {
@@ -72,7 +91,35 @@ Ext.define('Connector.app.view.Study', {
                             description += ('0/' + totalCount);
                         description += " Assay";
                         description += (totalCount == 1 ? '' : 's');
-                        description += " Accessible";
+                        return description;
+                    },
+                    niAssayCountText : function(values) {
+                        var niCount = values.ni_assays_added_count;
+                        var niCountRestricted = values.ni_assays_added_restricted_count;
+                        var counts = 0;
+                        var description = "";
+                        if (niCount > 0) {
+                            description += niCount;
+                            counts = niCount;
+                        }
+                        else if (niCountRestricted > 0) {
+                            description += niCountRestricted;
+                            counts = niCountRestricted;
+                        }
+                        if (counts > 0) {
+                            description += " Non-integrated Assay";
+                            description += (counts > 0 && counts == 1 ? '' : 's');
+                        }
+
+                        return description;
+                    },
+                    publicationCountText : function(values) {
+                        var totalCount = values.publications.length;
+                        var description = "";
+                        if (totalCount > 0) {
+                            description = totalCount + " Publication";
+                            description += (totalCount == 1 ? '' : 's');
+                        }
                         return description;
                     }
                 }

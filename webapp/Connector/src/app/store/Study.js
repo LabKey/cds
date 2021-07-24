@@ -283,6 +283,9 @@ Ext.define('Connector.app.store.Study', {
                             study.cavd_affiliation_file_has_permission = this.documentData[d].accessible;
                             study.cavd_affiliation_file_path = Connector.plugin.DocumentValidation.getStudyDocumentUrl(this.documentData[d].filename, study.study_name, this.documentData[d].document_id);
                         }
+                        if (this.documentData[d].document_type === 'Non-Integrated Assay') {
+
+                        }
                     }
                 }
 
@@ -438,7 +441,7 @@ Ext.define('Connector.app.store.Study', {
                             assayIdentifier: existingAssay.assayIdentifier ? existingAssay.assayIdentifier : niAssay.assayIdentifier,
                             hasAssayLearn: existingAssay.hasAssayLearn ? existingAssay.hasAssayLearn : niAssay.hasAssayLearn,
                             dataStatus: existingAssay.dataStatus ? existingAssay.dataStatus : niAssay.dataStatus,
-                            hasData: existingAssay.hasData ? existingAssay.hasData : niAssay.hasData
+                            hasData: !!existingAssay.filePath || !!niAssay.filePath
                         };
                         non_integrated_assay_data_map[niAssay.assayIdentifier] = combinedAssay;
                     }
@@ -504,6 +507,24 @@ Ext.define('Connector.app.store.Study', {
                     }
                 }
                 study.groups_data = groupsArray;
+
+                var assaysWithRestrictedAccess = assays.filter(function (value) {
+                    return value.has_data && !value.has_access;
+                });
+
+                var niAssaysAdded = study.non_integrated_assay_data.filter(function (value) {
+                    return value.hasData;
+                });
+
+                var niAssaysWithRestrictedAccess = study.non_integrated_assay_data.filter(function (value) {
+                    return value.hasData && !value.hasPermission;
+                });
+
+                study.assays_added_restricted_count = assaysWithRestrictedAccess.length;
+                study.ni_assays_added_count = niAssaysAdded.length;
+                study.ni_assays_added_restricted_count = niAssaysWithRestrictedAccess.length;
+
+
 
                 studies.push(study);
             }, this);
