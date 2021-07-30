@@ -19,18 +19,6 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
     initComponent : function() {
 
         var data = this.getData();
-        if (data.length > 0) {
-            var docIsValidAction = function(doc, status) {
-                doc.isLinkValid = status;
-                var gridObj = this.items.items[1];
-                var gridView = gridObj.getView();
-                gridView.update(data);
-                gridObj.getStore().loadData(data, false);
-            };
-            this.on("afterrender", function() {
-                this.validateDocLinks(data, docIsValidAction);
-            }, this);
-        }
 
         this.items = [{
             html: (new Ext.XTemplate('<tpl if="hasDetails">',
@@ -187,7 +175,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
                 '<table>',
                     '<tr>',
                         '<td>',
-                            '<tpl if="hasData && isLinkValid">',
+                            '<tpl if="isLinkValid">',
                                 '<tpl if="hasPermission">',
                                     '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/ni-added.svg"/>',
                                 '<tpl else>',
@@ -198,7 +186,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
                             '</tpl>',
                         '</td>',
                         '<td class="non-integrated-data">',
-                            '<tpl if="hasData && isLinkValid">',
+                            '<tpl if="isLinkValid">',
                                 '<tpl if="hasPermission">',
                                     '<tpl if="hasAssayLearn">',
                                         '<a href="#learn/learn/Assay',
