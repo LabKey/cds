@@ -551,21 +551,10 @@ Ext.define('Connector.app.store.Study', {
                 }
                 study.groups_data = groupsArray;
 
-                var assaysWithRestrictedAccess = assays.filter(function (value) {
-                    return value.has_data && !value.has_access;
-                });
-
                 var niAssaysAdded = study.non_integrated_assay_data.filter(function (value) {
-                    return value.isLinkValid;
+                    return value.isLinkValid & value.hasPermission;
                 });
-
-                var niAssaysWithRestrictedAccess = study.non_integrated_assay_data.filter(function (value) {
-                    return value.isLinkValid && !value.hasPermission;
-                });
-
-                study.assays_added_restricted_count = assaysWithRestrictedAccess.length;
                 study.ni_assays_added_count = niAssaysAdded.length;
-                study.ni_assays_added_restricted_count = niAssaysWithRestrictedAccess.length;
 
                 studies.push(study);
             }, this);
