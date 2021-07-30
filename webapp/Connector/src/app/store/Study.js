@@ -153,7 +153,7 @@ Ext.define('Connector.app.store.Study', {
         this.documentData = documentData.rows;
         this._onLoadComplete();
 
-        //For valid downloadable link as an "availability" indicator for NI data
+        //For using valid downloadable link as an "availability" indicator for NI data
         this.niLinkValidationCount = 0;
         this.niDocumentData = this.documentData.filter(function (doc) { return doc.document_type === "Non-Integrated Assay" });
 
