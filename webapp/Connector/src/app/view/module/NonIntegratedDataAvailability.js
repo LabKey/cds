@@ -56,9 +56,14 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                 'itemmouseenter' : function(view, record, item, index, evt) {
                     var dataLink = Ext.get(Ext.get(Ext.query("span", item)[0] || Ext.query("a", item)[0])),
                             id = Ext.id();
+
+                    var toolTipMsg_available = "Non-integrated data added to Dataspace";
+                    var toolTipMsg_restricted = "Non-integrated data access is restricted";
+                    var toolTipMsg_notAdded = "Non-integrated data has not been added at this time";
+
                     if (record.data.dataStatus && dataLink) {
                         dataLink.on('mouseenter', this.showDataStatusTooltip, this, {
-                            status: record.data.dataStatus,
+                            status: !!record.data.isLinkValid ? (record.data.hasPermission ? toolTipMsg_available : toolTipMsg_restricted) : toolTipMsg_notAdded,
                             id: id
                         });
                         dataLink.on('mouseleave', this.hideDataStatusTooltip, this, {
@@ -76,7 +81,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                         if (textRect.top <= cursorY && cursorY <= textRect.bottom
                                 && textRect.left <= cursorX && cursorX <= textRect.right) {
                             this.showDataStatusTooltip(evt, dataLink.dom, {
-                                status: record.data.dataStatus,
+                                status: !!record.data.isLinkValid ? (record.data.hasPermission ? toolTipMsg_available : toolTipMsg_restricted) : toolTipMsg_notAdded,
                                 id: id
                             });
                         }
