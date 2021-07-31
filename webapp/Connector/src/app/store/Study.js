@@ -44,6 +44,7 @@ Ext.define('Connector.app.store.Study', {
         this.productData = undefined;
         this.assayData = undefined;
         this.documentData = undefined;
+        this.niDocumentData = undefined;
         this.publicationData = undefined;
         this.relationshipData = undefined;
         this.mabMixData = undefined;
@@ -150,7 +151,6 @@ Ext.define('Connector.app.store.Study', {
 
         //For using valid downloadable link as an "availability" indicator for NI data
         this.niLinkValidationCount = 0;
-        this.niDocumentData = []; //added to avoid client exception "this.niDocumentData is undefined"
         this.niDocumentData = this.documentData.filter(function (doc) { return doc.document_type === "Non-Integrated Assay" });
 
         if (this.niDocumentData.length > 0) {
@@ -559,6 +559,7 @@ Ext.define('Connector.app.store.Study', {
             this.assayData = undefined;
             this.productData = undefined;
             this.documentData = undefined;
+            this.niDocumentData = undefined;
             this.publicationData = undefined;
             this.relationshipData = undefined;
             this.relationshipOrderData = undefined;
