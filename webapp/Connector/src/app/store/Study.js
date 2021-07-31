@@ -26,12 +26,7 @@ Ext.define('Connector.app.store.Study', {
                 method: 'HEAD',
                 url: Connector.plugin.DocumentValidation.getStudyDocumentUrl(doc.filename, doc.prot, doc.document_id),
                 success: LABKEY.Utils.getCallbackWrapper(function (json, response) {
-                    if (200 === response.status) {
-                        callback.call(this, doc, true);
-                    }
-                    else {
-                        callback.call(this, doc, false);
-                    }
+                    callback.call(this, doc, 200 === response.status);
                 }, this),
                 failure: LABKEY.Utils.getCallbackWrapper(function () {
                     callback.call(this, doc, false);
@@ -155,16 +150,16 @@ Ext.define('Connector.app.store.Study', {
 
         //For using valid downloadable link as an "availability" indicator for NI data
         this.niLinkValidationCount = 0;
+        this.niDocumentData = []; //added to avoid client exception "this.niDocumentData is undefined"
         this.niDocumentData = this.documentData.filter(function (doc) { return doc.document_type === "Non-Integrated Assay" });
 
         if (this.niDocumentData.length > 0) {
+            var docIsValidAction = function (doc, status) {
+                doc.isLinkValid = status;
+                ++this.niLinkValidationCount;
+                this._onLoadComplete();
+            };
             for (var itr = 0; itr < this.niDocumentData.length; itr++) {
-
-                var docIsValidAction = function (doc, status) {
-                    doc.isLinkValid = status;
-                    ++this.niLinkValidationCount;
-                    this._onLoadComplete();
-                };
                 this.validateDocumentLink(this.niDocumentData[itr], docIsValidAction);
             }
         }
@@ -325,9 +320,6 @@ Ext.define('Connector.app.store.Study', {
                             study.cavd_affiliation_file_accessible = undefined;  // not set until we check (when StudyHeader is actually loaded)
                             study.cavd_affiliation_file_has_permission = this.documentData[d].accessible;
                             study.cavd_affiliation_file_path = Connector.plugin.DocumentValidation.getStudyDocumentUrl(this.documentData[d].filename, study.study_name, this.documentData[d].document_id);
-                        }
-                        if (this.documentData[d].document_type === 'Non-Integrated Assay') {
-
                         }
                     }
                 }
