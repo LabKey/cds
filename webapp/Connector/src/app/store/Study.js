@@ -44,7 +44,7 @@ Ext.define('Connector.app.store.Study', {
         this.productData = undefined;
         this.assayData = undefined;
         this.documentData = undefined;
-        this.niDocumentData = undefined;
+        this.niDocumentData = [];
         this.publicationData = undefined;
         this.relationshipData = undefined;
         this.mabMixData = undefined;
@@ -559,7 +559,7 @@ Ext.define('Connector.app.store.Study', {
             this.assayData = undefined;
             this.productData = undefined;
             this.documentData = undefined;
-            this.niDocumentData = undefined;
+            this.niDocumentData = [];
             this.publicationData = undefined;
             this.relationshipData = undefined;
             this.relationshipOrderData = undefined;
