@@ -165,7 +165,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
     },
 
     getTitleData: function(data) {
-        if (data.non_integrated_assay_data.length > 0 && data.non_integrated_assay_data_has_permission) {
+        if (data.non_integrated_assay_data.length > 0) {
             data.hasDetails = true;
         }
         else {

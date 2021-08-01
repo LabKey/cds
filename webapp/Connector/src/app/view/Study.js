@@ -62,9 +62,9 @@ Ext.define('Connector.app.view.Study', {
                             '<div class="detail-gray-text" style="padding-left: 1.25em">{[this.publicationCountText(values)]}</div>',
                         '</tpl>',
                     '<tpl else>',
-                            '<tpl if="non_integrated_assay_data.length &gt; 0">',
+                            '<tpl if="ni_assays_added_count &gt; 0">',
                                 '<div class="detail-has-data ',
-                                    '<tpl if="ni_assays_added_count &gt; 0">',
+                                    '<tpl if="data_accessible">',
                                     'detail-has-data-ni',
                                     '<tpl else>',
                                     'detail-has-data-ni-gray',
@@ -95,21 +95,13 @@ Ext.define('Connector.app.view.Study', {
                     },
                     niAssayCountText : function(values) {
                         var niCount = values.ni_assays_added_count;
-                        var niCountRestricted = values.ni_assays_added_restricted_count;
-                        var counts = 0;
                         var description = "";
-                        if (niCount > 0) {
+                        if (values.data_accessible)
                             description += niCount;
-                            counts = niCount;
-                        }
-                        else if (niCountRestricted > 0) {
-                            description += niCountRestricted;
-                            counts = niCountRestricted;
-                        }
-                        if (counts > 0) {
-                            description += " Non-integrated Assay";
-                            description += (counts > 0 && counts == 1 ? '' : 's');
-                        }
+                        else
+                            description += ('0/' + niCount);
+
+                        description += " Non-integrated Assay";
 
                         return description;
                     },

@@ -318,7 +318,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         LearnGrid learnGrid = new LearnGrid(this);
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
-        String qed2DataAddedText = hasAccessToQ2 ? "2 Assays Accessible" : "0/2 Assays Accessible";
+        String qed2DataAddedText = hasAccessToQ2 ? "2 Assays" : "0/2 Assays";
         String cellText = learnGrid.getCellText(1, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for study 'QED 2' not as expected. Expected: '" + qed2DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(qed2DataAddedText.trim().toLowerCase()));
         log("'Data Added' column text as expected for study 'QED 2'.");

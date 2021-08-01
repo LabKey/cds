@@ -21,7 +21,7 @@ Ext.define('Connector.app.store.Study', {
     },
 
     validateDocumentLink : function (doc, callback) {
-        if (doc.isLinkValid === undefined) {
+        if (doc.isLinkValid === undefined && doc.prot) {
             LABKEY.Ajax.request({
                 method: 'HEAD',
                 url: Connector.plugin.DocumentValidation.getStudyDocumentUrl(doc.filename, doc.prot, doc.document_id),
@@ -222,7 +222,7 @@ Ext.define('Connector.app.store.Study', {
 
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
-                && Ext.isDefined(this.documentData) && this.niLinkValidationCount === this.niDocumentData.length && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
+                && Ext.isDefined(this.documentData) && (Ext.isDefined(this.niDocumentData) && this.niLinkValidationCount === this.niDocumentData.length) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
                 && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)
                 && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.assayIdentifiers)
                 && Ext.isDefined(this.studyReportsData) && Ext.isDefined(this.studyCuratedGroupData)) {
@@ -448,7 +448,7 @@ Ext.define('Connector.app.store.Study', {
                         suffix: undefined,
                         sortIndex: undefined,
                         filePath: undefined,
-                        hasPermission: niAssay.has_access,
+                        hasPermission: hasStudyAccess,
                         assayIdentifier: niAssay.data_id,
                         hasAssayLearn: niAssay.has_assay_learn,
                         dataStatus: niAssay.data_status,
@@ -468,11 +468,11 @@ Ext.define('Connector.app.store.Study', {
                             label: existingAssay.label ? existingAssay.label : niAssay.label,
                             fileName: existingAssay.fileName ? existingAssay.fileName : niAssay.fileName,
                             docType: existingAssay.docType ? existingAssay.docType : niAssay.docType,
-                            isLinkValid: existingAssay.isLinkValid ? existingAssay.isLinkValid : niAssay.isLinkValid,
+                            isLinkValid: Ext.isDefined(existingAssay.isLinkValid) ? existingAssay.isLinkValid : niAssay.isLinkValid,
                             suffix: existingAssay.suffix ? existingAssay.suffix : niAssay.suffix,
                             sortIndex: existingAssay.sortIndex ? existingAssay.sortIndex : niAssay.sortIndex,
                             filePath: existingAssay.filePath ? existingAssay.filePath : niAssay.filePath,
-                            hasPermission: existingAssay.hasPermission ? existingAssay.hasPermission : niAssay.hasPermission,
+                            hasPermission: hasStudyAccess,
                             assayIdentifier: existingAssay.assayIdentifier ? existingAssay.assayIdentifier : niAssay.assayIdentifier,
                             hasAssayLearn: existingAssay.hasAssayLearn ? existingAssay.hasAssayLearn : niAssay.hasAssayLearn,
                             dataStatus: existingAssay.dataStatus ? existingAssay.dataStatus : niAssay.dataStatus,
@@ -544,7 +544,7 @@ Ext.define('Connector.app.store.Study', {
                 study.groups_data = groupsArray;
 
                 var niAssaysAdded = study.non_integrated_assay_data.filter(function (value) {
-                    return value.isLinkValid & value.hasPermission;
+                    return value.isLinkValid;
                 });
                 study.ni_assays_added_count = niAssaysAdded.length;
 
