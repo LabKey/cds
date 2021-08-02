@@ -20,6 +20,19 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
         var data = this.getData();
 
+        //for study page, isLinkValid is getting set in store/Study.js, but for publication page, isLinkValid gets set here:
+        if (this.data.model.data.publication_data && data.length > 0) {
+            var docIsValidAction = function(doc, status) {
+                doc.isLinkValid = status;
+                var gridObj = this.items.items[1];
+                var gridView = gridObj.getView();
+                gridView.update(data);
+                gridObj.getStore().loadData(data, false);
+            };
+            this.on("afterrender", function() {
+                this.validateDocLinks(data, docIsValidAction);
+            }, this);
+        }
         this.items = [{
             html: (new Ext.XTemplate('<tpl if="hasDetails">',
                     '<h3>',
@@ -285,15 +298,17 @@ Ext.define('Connector.view.module.PublicationNonIntegratedData', {
     getColTemplate : function() {
         return new Ext4.XTemplate(
             '<tpl>',
-                '<tpl if="isLinkValid">',
-                '<ul class="non-integrated-data-ul">',
-                    '<li class="non-integrated-data-li">',
-                        '{label:htmlEncode}',
-                        '&nbsp;{suffix}&nbsp;',
-                        '<a href="{filePath}" target="_blank"><img alt="{label}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
-                    '</li>',
-                    '</ul>',
-                '</tpl>',
+                '<table>',
+                    '<tr>',
+                        '<td class="non-integrated-data">',
+                            '<tpl if="isLinkValid">',
+                                '<span>{label:htmlEncode}</span>',
+                                '&nbsp;{suffix}&nbsp;',
+                                '<a href="{filePath}" target="_blank"><img alt="{label}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="right"/></a>',
+                            '</tpl>',
+                        '</td>',
+                    '</tr>',
+                '</table>',
             '</tpl>');
     }
 });

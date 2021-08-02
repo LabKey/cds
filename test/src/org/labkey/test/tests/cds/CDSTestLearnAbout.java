@@ -50,6 +50,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private final Locator XPATH_RESULT_ROW_TITLE = LearnGrid.Locators.lockedRow;
     private final Locator XPATH_RESULT_ROW_DATA = LearnGrid.Locators.unlockedRow;
 
+    public static final String DATA_ADDED_TOOLTIP = "Integrated data added to Dataspace";
+    public static final String DATA_NOT_ADDED_TOOLTIP = "Integrated data has not been added at this time";
+
     public static final String[] MAB_MIXTURES = {"1361", "2158", "2297", "1H9", "1.00E+09", "1NC9", "2F5", "3.00E+03", "3BNC60", "3BNC117", "4.00E+10",
             "10E8.2", "10E8.2/iMab", "10E8.4", "10E8.4/iMab", "10E8.5", "10E8.5/iMab",
             "17b", "19B", "19e", "1393A", "A12", "A14",
@@ -250,11 +253,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         fields.stream().forEach((field) -> assertTextPresent(field));
         assertTextPresent(rationale);
 
-        validateToolTip(Locator.linkWithText("NAB").findElement(getDriver()), "provided, but not included");
+        validateToolTip(Locator.linkWithText("NAB").findElement(getDriver()), DATA_ADDED_TOOLTIP);
 
-        validateToolTip(Locator.linkWithText("ICS").findElement(getDriver()), "pending study completion");
+        validateToolTip(Locator.linkWithText("ICS").findElement(getDriver()), DATA_ADDED_TOOLTIP);
 
-        validateToolTip(Locator.linkWithText("BAMA").findElement(getDriver()), "Status not available");
+        validateToolTip(Locator.linkWithText("BAMA").findElement(getDriver()), DATA_ADDED_TOOLTIP);
 
     }
 
@@ -730,16 +733,16 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElementToBeVisible(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
         waitForElementToBeVisible(Locator.xpath("//h3[text()='Endpoint description']"));
 
-        validateToolTip(Locator.linkWithText("RED 4").findElement(getDriver()), "not approved for sharing");
-        validateToolTip(Locator.linkWithText("RED 6").findElement(getDriver()), "not approved for sharing");
-        validateToolTip(Locator.tagWithText("span", "w101").findElement(getDriver()), "added");
-        validateToolTip(Locator.linkWithText("ZAP 102").findElement(getDriver()), "Status not available");
-        validateToolTip(Locator.linkWithText("ZAP 108").findElement(getDriver()), "provided, but not included");
-        validateToolTip(Locator.linkWithText("ZAP 115").findElement(getDriver()), "being processed");
+        validateToolTip(Locator.linkWithText("RED 4").findElement(getDriver()), DATA_ADDED_TOOLTIP);
+        validateToolTip(Locator.linkWithText("RED 6").findElement(getDriver()), DATA_ADDED_TOOLTIP);
+        validateToolTip(Locator.tagWithText("span", "w101").findElement(getDriver()), DATA_NOT_ADDED_TOOLTIP);
+        validateToolTip(Locator.linkWithText("ZAP 102").findElement(getDriver()), DATA_ADDED_TOOLTIP);
+        validateToolTip(Locator.linkWithText("ZAP 108").findElement(getDriver()), DATA_NOT_ADDED_TOOLTIP);
+        validateToolTip(Locator.linkWithText("ZAP 115").findElement(getDriver()), DATA_ADDED_TOOLTIP);
 
         Locator.XPathLocator showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
         showAllExpandAndVerify(showAllListToggle, 6);
-        validateToolTip(Locator.linkWithText("ZAP 117").findElement(getDriver()), "pending study completion");
+        validateToolTip(Locator.linkWithText("ZAP 117").findElement(getDriver()), DATA_ADDED_TOOLTIP);
         verifyShowAllCollapse(showAllListToggle, 6);
 
         // Go back to assays and validate the Data Added column.
@@ -1283,13 +1286,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private void verifyNonIntegratedDetailFieldValues(String value, String suffix)
     {
-        Locator.XPathLocator li = Locator.tagWithClass("td", "non-integrated-data").containing(value);
+        Locator.XPathLocator niLoc = Locator.tagWithClass("td", "non-integrated-data").containing(value);
 
-        Assert.assertTrue(value + " field value is not present", isElementPresent(li));
+        Assert.assertTrue(value + " field value is not present", isElementPresent(niLoc));
 
         if (suffix != null)
         {
-            Assert.assertTrue(suffix + " is not present", isElementPresent(li.containing(suffix)));
+            Assert.assertTrue(suffix + " is not present", isElementPresent(niLoc.containing(suffix)));
         }
 
         mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
