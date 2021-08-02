@@ -222,11 +222,10 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         verifyShowAllCollapse(showAllListToggle, 1);
 
         String tooltip = getStudyDetailDataAvailabilityTooltip("RED 4");
-        validateText("RED 4 tooltip", tooltip, "Assays without data accessible", "IFNg ELISpot", "NABMAB", "ICS");
-
+        validateText("RED 4 tooltip", tooltip, "Integrated data access is restricted");
 
         tooltip = getStudyDetailDataAvailabilityTooltip("ZAP 102");
-        validateText("ZAP 102 tooltip", tooltip, "Assays " + (hasAccessToR4 ? "with" : "without") + " data accessible", "ICS");
+        validateText("ZAP 102 tooltip", tooltip, hasAccessToR4 ? "Integrated data added to Dataspace" : "Integrated data access is restricted");
     }
 
     private void showAllExpandAndVerify(Locator showAllListToggle, int remaining)
@@ -331,7 +330,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         else
             validateText("Tooltip", toolTipText, "Assays without Data Accessible", "NAB", "NABMAB");
 
-        String red4DataAddedText = "0/3 Assays Accessible";
+        String red4DataAddedText = "0/3 Assays\n1 Publication";
         cellText = learnGrid.getCellText(7, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for study 'RED 4' not as expected. Expected: '" + red4DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(red4DataAddedText.trim().toLowerCase()));
         log("'Data Added' column text as expected for study 'RED 4'.");

@@ -1270,9 +1270,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         verifyNonIntegratedDetailFieldValues(ni_assay5_label, null);
 
         log("Validate tooltip");
-        validateToolTip(Locator.linkWithText("ARV drug levels").findElement(getDriver()), "provided, pending processing");
-        validateToolTip(Locator.linkWithText("Viral load").findElement(getDriver()), "not approved");
-        validateToolTip(Locator.linkWithText("Viral sequencing").findElement(getDriver()), "provided, but not included");
+        scrollIntoView(Locator.linkWithText("ARV drug levels"));
+        sleep(1000);
+        validateToolTip(Locator.linkWithText("ARV drug levels").findElement(getDriver()), "Non-integrated data added to Dataspace");
+        validateToolTip(Locator.linkWithText("Viral load").findElement(getDriver()), "Non-integrated data added to Dataspace");
+        validateToolTip(Locator.linkWithText("Viral sequencing").findElement(getDriver()), "Non-integrated data has not been added at this time");
 
         click(Locator.linkContainingText(ni_assay5_label));
         sleep(CDSHelper.CDS_WAIT_LEARN);
@@ -1281,7 +1283,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private void verifyNonIntegratedDetailFieldValues(String value, String suffix)
     {
-        Locator.XPathLocator li = Locator.tagWithClass("li", "non-integrated-data-li").containing(value);
+        Locator.XPathLocator li = Locator.tagWithClass("td", "non-integrated-data").containing(value);
 
         Assert.assertTrue(value + " field value is not present", isElementPresent(li));
 
@@ -2116,7 +2118,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.
         mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-        waitForElementToDisappear(TOOLTIP_TEXT_LOCATOR);
+        waitForElementToDisappear(TOOLTIP_TEXT_LOCATOR, 1000);
 
     }
 
