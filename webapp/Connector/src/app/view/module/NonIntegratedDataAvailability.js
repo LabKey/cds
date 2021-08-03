@@ -22,7 +22,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
         if (data.length > 0) {
             var docIsValidAction = function(doc, status) {
-                doc.isLinkValid = status;
+                doc.isLinkValid = doc.isLinkValid ? doc.isLinkValid : status;
                 var gridObj = this.items.items[1];
                 var gridView = gridObj.getView();
                 gridView.update(data);

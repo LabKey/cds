@@ -171,7 +171,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Studies");
 
         log("Verify gray checkmark is present indicating limited access");
-        assertElementPresent(Locator.tagWithClassContaining("div", "detail-has-data-ni-gray"));
+        waitForElement(Locator.tagWithClassContaining("div", "detail-has-data-ni-gray"));
 
         log("Verify restricted Non-Integrated Assay is displayed on Learn About > Studies page");
         LearnGrid learnGrid = new LearnGrid(this);
@@ -186,6 +186,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         learnGrid.clickFirstItem();
         waitForElement(cds.getDataRowXPath("ILLUMINA 454-X").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]"));
         assertElementPresent(Locator.xpath("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]"));
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
         stopImpersonating();
         assertSignedInNotImpersonating();
     }
