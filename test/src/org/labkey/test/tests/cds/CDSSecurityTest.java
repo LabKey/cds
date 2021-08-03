@@ -186,6 +186,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         learnGrid.clickFirstItem();
         waitForElement(cds.getDataRowXPath("ILLUMINA 454-X").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]"));
         assertElementPresent(Locator.xpath("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]"));
+        stopImpersonating();
+        assertSignedInNotImpersonating();
     }
 
     @Test
