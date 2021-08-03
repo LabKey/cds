@@ -20,8 +20,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
         var data = this.getData();
 
-        //for study page, isLinkValid is getting set in store/Study.js, but for publication page, isLinkValid gets set here:
-        if (this.data.model.data.publication_data && data.length > 0) {
+        if (data.length > 0) {
             var docIsValidAction = function(doc, status) {
                 doc.isLinkValid = status;
                 var gridObj = this.items.items[1];
