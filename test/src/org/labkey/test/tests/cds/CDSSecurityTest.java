@@ -160,6 +160,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     @Test
     public void testLearnStudyNIDataAvailabilityWithLimitedAccess()
     {
+        final String ACCESSIBLE_ICON = "ni-added.svg";
         final String NOT_ACCESSIBLE_ICON = "ni-restricted.svg";
         final String HAS_NO_DATA_ICON = "ni-notAdded.svg";
         String study = "ZAP 138";
@@ -168,10 +169,14 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         Map<String, String> studyPermissions = new HashMap<>();
         log("Create a user group with Read permission to project but no permission to any study folder");
         cds.setUpPermGroup(_permGroups[0], studyPermissions);
+
+        log ("Verify limited access to Non-integrated data");
         impersonateGroup(_permGroups[0], false);
         cds.enterApplication();
         cds.viewLearnAboutPage("Studies");
         learnGrid.setSearch(study);
+        refresh();
+        sleep(2000);
 
         log("Verify gray checkmark is present indicating limited access");
         assertElementPresent(Locator.tagWithClassContaining("div", "detail-has-data-ni-gray"));
@@ -180,7 +185,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
         String zap138DataAddedText = "0/1 Non-integrated Assay\n1 Publication";
         String cellText = learnGrid.getCellText(0, dataAddedColumn);
-        Assert.assertTrue("Data Added' column text for study 'ZAP 138' not as expected. Expected: '" + zap138DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(zap138DataAddedText.trim().toLowerCase()));
+        Assert.assertTrue("Data Added' column text for restricted study 'ZAP 138' not as expected. Expected: '" + zap138DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(zap138DataAddedText.trim().toLowerCase()));
 
         log("Verify restricted Non-Integrated Assay on Studies page");
         learnGrid.clickFirstItem();
@@ -190,6 +195,25 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         beginAt("project/" + getProjectName() + "/begin.view?");
         stopImpersonating();
         assertSignedInNotImpersonating();
+
+        log ("Verify full access to Non-integrated data");
+        cds.enterApplication();
+        cds.viewLearnAboutPage("Studies");
+        learnGrid.setSearch(study);
+        refresh();
+        sleep(2000);
+
+        log("Verify green checkmark is present indicating access");
+        assertElementPresent(Locator.tagWithClassContaining("div", "detail-has-data-ni"));
+        zap138DataAddedText = "1 Non-integrated Assay\n1 Publication";
+        cellText = learnGrid.getCellText(0, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text for study 'ZAP 138' not as expected. Expected: '" + zap138DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(zap138DataAddedText.trim().toLowerCase()));
+
+        log("Verify restricted Non-Integrated Assay on Studies page");
+        learnGrid.clickFirstItem();
+        waitForElement(cds.getDataRowXPath("ILLUMINA 454-X").append("//td//img[contains(@src, '" + ACCESSIBLE_ICON + "')]"));
+        assertElementPresent(Locator.xpath("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]"));
+
     }
 
     @Test
