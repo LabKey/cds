@@ -45,6 +45,7 @@ Ext.define('Connector.app.store.Study', {
         this.assayData = undefined;
         this.documentData = undefined;
         this.niDocumentData = [];
+        this.niLinkValidationCount = 0;
         this.publicationData = undefined;
         this.relationshipData = undefined;
         this.mabMixData = undefined;
@@ -147,25 +148,22 @@ Ext.define('Connector.app.store.Study', {
 
     onLoadDocuments : function(documentData) {
         this.documentData = documentData.rows;
-        this._onLoadComplete();
 
-        //For using valid downloadable link as an "availability" indicator for NI data
-        this.niLinkValidationCount = 0;
+        //For using valid downloadable link as an "availability" indicator for Non-integrated data
         this.niDocumentData = this.documentData.filter(function (doc) { return doc.document_type === "Non-Integrated Assay" });
 
         if (this.niDocumentData.length > 0) {
             var docIsValidAction = function (doc, status) {
-                doc.isLinkValid = status;
+                doc.isLinkValid = doc.isLinkValid ? doc.isLinkValid : status;
                 ++this.niLinkValidationCount;
+                console.log("this.niLinkValidationCount: " + this.niLinkValidationCount);
                 this._onLoadComplete();
             };
             for (var itr = 0; itr < this.niDocumentData.length; itr++) {
                 this.validateDocumentLink(this.niDocumentData[itr], docIsValidAction);
             }
         }
-        else {
-            this._onLoadComplete();
-        }
+        this._onLoadComplete();
     },
 
     onLoadPublications : function(publicationData) {
@@ -560,6 +558,7 @@ Ext.define('Connector.app.store.Study', {
             this.productData = undefined;
             this.documentData = undefined;
             this.niDocumentData = [];
+            this.niLinkValidationCount = 0;
             this.publicationData = undefined;
             this.relationshipData = undefined;
             this.relationshipOrderData = undefined;

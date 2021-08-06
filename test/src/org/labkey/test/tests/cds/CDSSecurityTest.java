@@ -175,8 +175,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.enterApplication();
         cds.viewLearnAboutPage("Studies");
         learnGrid.setSearch(study);
-        refresh();
-        sleep(2000);
 
         log("Verify gray checkmark is present indicating limited access");
         assertElementPresent(Locator.tagWithClassContaining("div", "detail-has-data-ni-gray"));
@@ -200,8 +198,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.enterApplication();
         cds.viewLearnAboutPage("Studies");
         learnGrid.setSearch(study);
-        refresh();
-        sleep(2000);
 
         log("Verify green checkmark is present indicating access");
         assertElementPresent(Locator.tagWithClassContaining("div", "detail-has-data-ni"));
