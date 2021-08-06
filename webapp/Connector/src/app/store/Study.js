@@ -428,7 +428,7 @@ Ext.define('Connector.app.store.Study', {
                             return doc.hasPermission === true
                 }).length > 0;
 
-                //non-integrated assay with potentially downloadable data, which may or may not also have a learn assay page
+                // non-integrated assay with potentially downloadable data, which may or may not also have a learn assay page
                 var non_integrated_assay = this.niDocumentData.filter(function (niData) {
                     return niData.prot === study.study_name;
                 });
@@ -465,9 +465,9 @@ Ext.define('Connector.app.store.Study', {
                             fileName: existingAssay.fileName ? existingAssay.fileName : niAssay.fileName,
                             docType: existingAssay.docType ? existingAssay.docType : niAssay.docType,
                             isLinkValid: Ext.isDefined(existingAssay.isLinkValid) ? existingAssay.isLinkValid : niAssay.isLinkValid,
-                            suffix: existingAssay.suffix ? existingAssay.suffix : niAssay.suffix,
+                            suffix: '(' + Connector.utility.FileExtension.fileDisplayType(existingAssay.fileName || niAssay.fileName) +')',
                             sortIndex: existingAssay.sortIndex ? existingAssay.sortIndex : niAssay.sortIndex,
-                            filePath: existingAssay.filePath ? existingAssay.filePath : niAssay.filePath,
+                            filePath: Connector.plugin.DocumentValidation.getStudyDocumentUrl(existingAssay.fileName || niAssay.fileName, study.study_name, existingAssay.id || niAssay.id),
                             hasPermission: hasStudyAccess,
                             assayIdentifier: existingAssay.assayIdentifier ? existingAssay.assayIdentifier : niAssay.assayIdentifier,
                             hasAssayLearn: existingAssay.hasAssayLearn ? existingAssay.hasAssayLearn : niAssay.hasAssayLearn,

@@ -1159,7 +1159,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateStudySummaryDataAvailability()
     {
-        final int STUDY_WITH_DATA_AVAILABLE = 25;
+        final int STUDY_WITH_DATA_AVAILABLE = 26;//25 for available integrated assays and 1  for available non-integrated assay
 
         cds.viewLearnAboutPage("Studies");
         assertTextPresent("Data not added");
@@ -1167,7 +1167,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> hasDataRows = Locator.css(".detail-row-has-data").findElements(getDriver());
         List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
         //hasDataRows is larger than hasDataIcons by a factor of two because of locked columns cause rows to be counted twice.
-        assertTrue(hasDataRows.size()/2 == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
+        assertTrue(hasDataRows.size()/2 == hasDataIcons.size()-1  && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
     }
 
     public void goToDetail(String itemName, boolean hasData)
