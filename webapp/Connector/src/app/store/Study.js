@@ -44,8 +44,7 @@ Ext.define('Connector.app.store.Study', {
         this.productData = undefined;
         this.assayData = undefined;
         this.documentData = undefined;
-        this.niDocumentData = [];
-        this.niLinkValidationCount = 0;
+        this.niDocumentData = undefined;
         this.publicationData = undefined;
         this.relationshipData = undefined;
         this.mabMixData = undefined;
@@ -129,6 +128,12 @@ Ext.define('Connector.app.store.Study', {
             success: this.onLoadSavedReportsData,
             scope: this
         });
+        LABKEY.Ajax.request({
+            url : LABKEY.ActionURL.buildURL("cds", "getNonIntegratedDocument.api"),
+            method : 'GET',
+            success: this.onNILoadDocuments,
+            scope: this
+        });
     },
 
     onLoadStudies : function(studyData) {
@@ -148,21 +153,6 @@ Ext.define('Connector.app.store.Study', {
 
     onLoadDocuments : function(documentData) {
         this.documentData = documentData.rows;
-
-        //For using valid downloadable link as an "availability" indicator for Non-integrated data
-        this.niDocumentData = this.documentData.filter(function (doc) { return doc.document_type === "Non-Integrated Assay" });
-
-        if (this.niDocumentData.length > 0) {
-            var docIsValidAction = function (doc, status) {
-                doc.isLinkValid = doc.isLinkValid ? doc.isLinkValid : status;
-                ++this.niLinkValidationCount;
-                console.log("this.niLinkValidationCount: " + this.niLinkValidationCount);
-                this._onLoadComplete();
-            };
-            for (var itr = 0; itr < this.niDocumentData.length; itr++) {
-                this.validateDocumentLink(this.niDocumentData[itr], docIsValidAction);
-            }
-        }
         this._onLoadComplete();
     },
 
@@ -218,9 +208,17 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    //For using valid downloadable link as an "availability" indicator for Non-integrated data on Learn > Studies page
+    onNILoadDocuments : function(documentData) {
+        var json = Ext.decode(documentData.responseText);
+        this.niDocumentData = json.results;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
-                && Ext.isDefined(this.documentData) && (Ext.isDefined(this.niDocumentData) && this.niLinkValidationCount === this.niDocumentData.length) && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
+                && Ext.isDefined(this.documentData) && Ext.isDefined(this.niDocumentData)
+                && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
                 && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)
                 && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.assayIdentifiers)
                 && Ext.isDefined(this.studyReportsData) && Ext.isDefined(this.studyCuratedGroupData)) {
@@ -431,8 +429,8 @@ Ext.define('Connector.app.store.Study', {
                 }).length > 0;
 
                 //non-integrated assay with potentially downloadable data, which may or may not also have a learn assay page
-                var non_integrated_assay = documents.filter(function (doc) {
-                    return doc.label && doc.docType === 'Non-Integrated Assay';
+                var non_integrated_assay = this.niDocumentData.filter(function (niData) {
+                    return niData.prot === study.study_name;
                 });
 
                 //non-integrated assay that has metadata in cds.studyassay, which may or may not also have a learn assay page
@@ -557,8 +555,7 @@ Ext.define('Connector.app.store.Study', {
             this.assayData = undefined;
             this.productData = undefined;
             this.documentData = undefined;
-            this.niDocumentData = [];
-            this.niLinkValidationCount = 0;
+            this.niDocumentData = undefined;
             this.publicationData = undefined;
             this.relationshipData = undefined;
             this.relationshipOrderData = undefined;
