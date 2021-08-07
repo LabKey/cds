@@ -57,28 +57,29 @@ Ext.define('Connector.app.view.Study', {
                             'detail-has-data-gray',
                             '</tpl>',
                         '"></div>',
-                        '<div class="detail-gray-text" style="padding-left: 1.25em">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
-                        '<tpl if="publications && publications.length &gt; 0">',
-                            '<div class="detail-gray-text" style="padding-left: 1.25em">{[this.publicationCountText(values)]}</div>',
+                        '<div class="detail-gray-text learn-about-data-added-detail">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
+                        '<tpl if="pub_available_data_count &gt; 0">',
+                            '<div class="detail-gray-text learn-about-data-added-detail">{[this.publicationCountText(values)]}</div>',
                         '</tpl>',
-                    '<tpl else>',
-                            '<tpl if="ni_assays_added_count &gt; 0">',
-                                '<div class="detail-has-data ',
-                                    '<tpl if="data_accessible">',
-                                    'detail-has-data-ni',
-                                    '<tpl else>',
-                                    'detail-has-data-ni-gray',
-                                    '</tpl>',
-                                '"></div>',
-                                    '<div class="detail-gray-text" style="padding-left: 1.25em">{[this.niAssayCountText(values)]}</div>',
-                                '<tpl if="publications && publications.length &gt; 0">',
-                                    '<div class="detail-gray-text" style="padding-left: 1.25em">{[this.publicationCountText(values)]}</div>',
-                                '</tpl>',
+                    '<tpl elseif="ni_assays_added_count &gt; 0">',
+                        '<div class="detail-has-data ',
+                            '<tpl if="data_accessible">',
+                            'detail-has-data-ni',
                             '<tpl else>',
-                                '<div class="detail-gray-text" style="padding-left: 1.25em">',
-                                'Data not added',
-                                '</div>',
+                            'detail-has-data-ni-gray',
                             '</tpl>',
+                        '"></div>',
+                            '<div class="detail-gray-text learn-about-data-added-detail">{[this.niAssayCountText(values)]}</div>',
+                        '<tpl if="pub_available_data_count &gt; 0">',
+                            '<div class="detail-gray-text learn-about-data-added-detail">{[this.publicationCountText(values)]}</div>',
+                        '</tpl>',
+                    '<tpl elseif="pub_available_data_count &gt; 0">',
+                        '<div class="detail-has-data detail-has-data-ni"></div>',
+                        '<div class="detail-gray-text learn-about-data-added-detail">{[this.publicationCountText(values)]}</div>',
+                    '<tpl else>',
+                        '<div class="detail-gray-text learn-about-data-added-detail">',
+                        'Data not added',
+                        '</div>',
                     '</tpl>',
                 '</div>',
                 {
@@ -106,7 +107,7 @@ Ext.define('Connector.app.view.Study', {
                         return description;
                     },
                     publicationCountText : function(values) {
-                        var totalCount = values.publications.length;
+                        var totalCount = values.pub_available_data_count;
                         var description = "";
                         if (totalCount > 0) {
                             description = totalCount + " Publication";
@@ -273,7 +274,7 @@ Ext.define('Connector.app.view.Study', {
     statics: {
         searchFields: [
             'label', 'study_title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
-            'conclusions', 'publications', 'context', 'population', 'data_availability',
+            'conclusions', 'publications', 'context', 'population', 'data_availability', 'ni_data_availability',
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
         ]
     },

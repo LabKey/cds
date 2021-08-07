@@ -273,6 +273,7 @@ Ext.define('Connector.app.store.Study', {
 
                 var assays = [], assaysAdded = [], nonIntegratedAssays = [], assayAddedCount = 0;
                 study.data_availability = false;
+                study.ni_data_availability = false;
                 study.data_accessible = hasStudyAccess;
                 for (var a=0; a < this.assayData.length; a++) {
                     if (study.study_name === this.assayData[a].prot) {
@@ -324,6 +325,7 @@ Ext.define('Connector.app.store.Study', {
                     study.cavd_affiliation = "[Unaffiliated]";
                 }
 
+                study.pub_available_data_count = 0;
                 var publications = this.publicationData.filter(function(pub){
                     return pub.prot === study.study_name;
                 }).map(function(pub) {
@@ -542,7 +544,18 @@ Ext.define('Connector.app.store.Study', {
                 var niAssaysAdded = study.non_integrated_assay_data.filter(function (value) {
                     return value.isLinkValid;
                 });
+
+                study.ni_assays_added = niAssaysAdded;
                 study.ni_assays_added_count = niAssaysAdded.length;
+
+                if (study.ni_assays_added_count > 0) {
+                    study.ni_data_availability = true;
+                }
+
+                var pubDataAvailable = study.publications.filter(function(pub) {
+                    return pub.available_data_count > 0;
+                })
+                study.pub_available_data_count = pubDataAvailable.length;
 
                 studies.push(study);
             }, this);

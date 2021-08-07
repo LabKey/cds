@@ -181,7 +181,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log("Verify restricted Non-Integrated Assay is displayed on Learn About > Studies page");
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
-        String zap138DataAddedText = "0/1 Non-integrated Assay\n1 Publication";
+        String zap138DataAddedText = "0/1 Non-integrated Assay\n2 Publications";
         String cellText = learnGrid.getCellText(0, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for restricted study 'ZAP 138' not as expected. Expected: '" + zap138DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(zap138DataAddedText.trim().toLowerCase()));
 
@@ -201,7 +201,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log("Verify green checkmark is present indicating access");
         assertElementPresent(Locator.tagWithClassContaining("div", "detail-has-data-ni"));
-        zap138DataAddedText = "1 Non-integrated Assay\n1 Publication";
+        zap138DataAddedText = "1 Non-integrated Assay\n2 Publications";
         cellText = learnGrid.getCellText(0, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for study 'ZAP 138' not as expected. Expected: '" + zap138DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(zap138DataAddedText.trim().toLowerCase()));
 

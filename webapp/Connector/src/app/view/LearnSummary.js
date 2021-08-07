@@ -43,12 +43,13 @@ Ext.define('Connector.app.view.LearnSummary', {
 
         this.normalGridConfig.listeners = {
             itemmouseenter : function(view, record, item, index, evt) {
-                if (record.data.data_availability) {
+                if (record.data.data_availability || record.data.ni_data_availability || record.data.pub_available_data_count > 0) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
                             id = Ext.id();
                     if (checkmark) {
                         checkmark.on('mouseenter', this.showDataAvailabilityTooltip, this, {
-                            itemsWithDataAvailable: record.getData()[record.dataAvailabilityField],
+                            itemsWithDataAvailable: record.data.data_availability ? record.getData()[record.dataAvailabilityField] : record.getData()[record.ni_dataAvailabilityField],
+                            itemsWithPubDataAvailable: record.data.publications,
                             id: id
                         });
                         checkmark.on('mouseleave', this.hideDataAvailabilityTooltip, this);
@@ -62,7 +63,8 @@ Ext.define('Connector.app.view.LearnSummary', {
                         if (textRect.top <= cursorY && cursorY <= textRect.bottom
                                 && textRect.left <= cursorX && cursorX <= textRect.right) {
                             this.showDataAvailabilityTooltip(evt, checkmark.dom, {
-                                itemsWithDataAvailable: record.getData()[record.dataAvailabilityField],
+                                itemsWithDataAvailable:  record.data.data_availability ? record.getData()[record.dataAvailabilityField] : record.getData()[record.ni_dataAvailabilityField],
+                                itemsWithPubDataAvailable: record.data.publications,
                                 id: id
                             });
                         }
@@ -97,14 +99,38 @@ Ext.define('Connector.app.view.LearnSummary', {
         var config = this.dataAvailabilityTooltipConfig();
         var labelField = config.labelField || 'data_label';
 
+        var pubTitle = "Publications";
+        var pubLabelField = "label";
+
         var dataAvailableListHTML = "<ul>";
         var records = options.itemsWithDataAvailable, accessible = [], nonAccessible = [];
+        var pub_records = options.itemsWithPubDataAvailable, availablePubData = [];
         Ext.each(records, function(record){
-            if (record.has_access)
-                accessible.push(record);
+            if (record.docType === "Non-Integrated Assay") {
+
+                config.title = "Non-Integrated Assay";
+                labelField = 'label';
+
+                if (record.isLinkValid)
+                    accessible.push(record);
+                else
+                    nonAccessible.push(record);
+            }
             else
-                nonAccessible.push(record);
+            {
+                if (record.has_access)
+                    accessible.push(record);
+                else
+                    nonAccessible.push(record);
+            }
         });
+
+        Ext.each(pub_records, function(pub_record){
+            if (pub_record.available_data_count > 0) {
+                availablePubData.push(pub_record);
+            }
+        });
+
         if (accessible.length > 0) {
             dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " with Data Accessible" + '</p>';
             dataAvailableListHTML += "<ul>";
@@ -124,6 +150,19 @@ Ext.define('Connector.app.view.LearnSummary', {
             dataAvailableListHTML += "</ul>";
         }
 
+        if (availablePubData.length > 0 && (accessible.length > 0 || nonAccessible.length > 0)) {
+            dataAvailableListHTML += "<br>";
+        }
+
+        if (availablePubData.length > 0) {
+            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + pubTitle + " with Data Accessible" + '</p>';
+            dataAvailableListHTML += "<ul>";
+            Ext.each(availablePubData, function(record){
+                dataAvailableListHTML += "<li>" + record[pubLabelField] + "</li>\n";
+            });
+            dataAvailableListHTML += "</ul>";
+        }
+
         var itemWrapped = Ext.get(item);
         var verticalPosition = itemWrapped.getAnchorXY()[1];
         var viewHeight = itemWrapped.parent("#app-main").getHeight();
@@ -137,7 +176,7 @@ Ext.define('Connector.app.view.LearnSummary', {
         var verticalOffset = verticalPosition + calloutHeight > viewHeight ? calloutHeight - itemWrapped.getHeight() : 0;
 
         var calloutMgr = hopscotch.getCalloutManager(),
-                _id = options.id,
+                _id = options.id + (options.itemsWithPubDataAvailable.length ? "-pub-" + options.itemsWithPubDataAvailable.length : 0),
                 displayTooltip = setTimeout(function() {
                     calloutMgr.createCallout(Ext.apply({
                         id: _id,
