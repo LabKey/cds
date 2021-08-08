@@ -111,7 +111,7 @@ Ext.define('Connector.app.view.LearnSummary', {
                 config.title = "Non-Integrated Assay";
                 labelField = 'label';
 
-                if (record.isLinkValid)
+                if (record.isLinkValid && record.hasPermission)
                     accessible.push(record);
                 else
                     nonAccessible.push(record);
