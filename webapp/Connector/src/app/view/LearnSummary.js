@@ -176,7 +176,7 @@ Ext.define('Connector.app.view.LearnSummary', {
         var verticalOffset = verticalPosition + calloutHeight > viewHeight ? calloutHeight - itemWrapped.getHeight() : 0;
 
         var calloutMgr = hopscotch.getCalloutManager(),
-                _id = options.id + (options.itemsWithPubDataAvailable.length ? "-pub-" + options.itemsWithPubDataAvailable.length : 0),
+                _id = options.id + (options.itemsWithPubDataAvailable ? ("-pub-" + options.itemsWithPubDataAvailable.length) : ''),
                 displayTooltip = setTimeout(function() {
                     calloutMgr.createCallout(Ext.apply({
                         id: _id,
