@@ -19,9 +19,10 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
     initComponent : function() {
 
         var data = this.getData();
+
         if (data.length > 0) {
             var docIsValidAction = function(doc, status) {
-                doc.isLinkValid = status;
+                doc.isLinkValid = doc.isLinkValid ? doc.isLinkValid : status;
                 var gridObj = this.items.items[1];
                 var gridView = gridObj.getView();
                 gridView.update(data);
@@ -31,7 +32,6 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                 this.validateDocLinks(data, docIsValidAction);
             }, this);
         }
-
         this.items = [{
             html: (new Ext.XTemplate('<tpl if="hasDetails">',
                     '<h3>',
@@ -68,9 +68,14 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                 'itemmouseenter' : function(view, record, item, index, evt) {
                     var dataLink = Ext.get(Ext.get(Ext.query("span", item)[0] || Ext.query("a", item)[0])),
                             id = Ext.id();
+
+                    var toolTipMsg_available = "Non-integrated data added to Dataspace";
+                    var toolTipMsg_restricted = "Non-integrated data access is restricted";
+                    var toolTipMsg_notAdded = "Non-integrated data has not been added at this time";
+
                     if (record.data.dataStatus && dataLink) {
                         dataLink.on('mouseenter', this.showDataStatusTooltip, this, {
-                            status: record.data.dataStatus,
+                            status: !!record.data.isLinkValid ? (record.data.hasPermission ? toolTipMsg_available : toolTipMsg_restricted) : toolTipMsg_notAdded,
                             id: id
                         });
                         dataLink.on('mouseleave', this.hideDataStatusTooltip, this, {
@@ -88,7 +93,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                         if (textRect.top <= cursorY && cursorY <= textRect.bottom
                                 && textRect.left <= cursorX && cursorX <= textRect.right) {
                             this.showDataStatusTooltip(evt, dataLink.dom, {
-                                status: record.data.dataStatus,
+                                status: !!record.data.isLinkValid ? (record.data.hasPermission ? toolTipMsg_available : toolTipMsg_restricted) : toolTipMsg_notAdded,
                                 id: id
                             });
                         }
@@ -172,7 +177,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
     },
 
     getTitleData: function(data) {
-        if (data.non_integrated_assay_data.length > 0 && data.non_integrated_assay_data_has_permission) {
+        if (data.non_integrated_assay_data.length > 0) {
             data.hasDetails = true;
         }
         else {
@@ -184,43 +189,55 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
     getColTemplate : function() {
         return new Ext4.XTemplate(
             '<tpl>',
-                // case when there is both a link to the assay learn page and data to download
-                '<tpl if="isLinkValid && hasAssayLearn">',
-                    '<ul class="non-integrated-data-ul">',
-                        '<li class="non-integrated-data-li">',
-                            '<a href="#learn/learn/Assay',
-                            '/{assayIdentifier}">',
-                            '{label:htmlEncode}',
-                            '</a>',
-                            '&nbsp;{suffix}&nbsp;',
-                            '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
-                        '</li>',
-                    '</ul>',
-                // case when there is data to download and no assay learn page
-                '<tpl elseif="isLinkValid && !hasAssayLearn">',
-                    '<ul class="non-integrated-data-ul">',
-                        '<li class="non-integrated-data-li">',
-                            '<span>{label:htmlEncode}',
-                            '&nbsp;{suffix}&nbsp;</span>',
-                            '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a></p>',
-                        '</li>',
-                    '</ul>',
-                // case when there is assay learn page and no data to download
-                '<tpl elseif="hasPermission && hasAssayLearn">',
-                    '<ul class="non-integrated-data-ul">',
-                        '<li class="non-integrated-data-li">',
-                            '<a href="#learn/learn/Assay',
-                            '/{assayIdentifier}">',
-                            '{label:htmlEncode}',
-                            '</li>',
-                        '</ul>',
-                // case when there is no assay learn page and no data to download
-                '<tpl elseif="hasPermission">',
-                    '<ul class="non-integrated-data-ul">',
-                        '<li class="non-integrated-data-li">',
-                            '<span>{label:htmlEncode}</span>',
-                        '</li>',
-                '</tpl>',
+                '<table>',
+                    '<tr>',
+                        '<td>',
+                            '<tpl if="isLinkValid">',
+                                '<tpl if="hasPermission">',
+                                    '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/ni-added.svg"/>',
+                                '<tpl else>',
+                                    '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/ni-restricted.svg"/>',
+                                '</tpl>',
+                            '<tpl else>',
+                                '<img class="detail-has-data-small" src="' + Connector.resourceContext.path + '/images/learn/ni-notAdded.svg">',
+                            '</tpl>',
+                        '</td>',
+                        '<td class="non-integrated-data">',
+                            '<tpl if="isLinkValid">',
+                                '<tpl if="hasPermission">',
+                                    '<tpl if="hasAssayLearn">',
+                                        '<a href="#learn/learn/Assay',
+                                        '/{assayIdentifier}">',
+                                        '{label:htmlEncode}',
+                                        '</a>',
+                                    '<tpl else>',
+                                        '<span>{label:htmlEncode}</span>',
+                                    '</tpl>',
+                                    '&nbsp;{suffix}&nbsp;',
+                                    '<a href="{filePath}" target="_blank"><img alt="{assayIdentifier}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="right"/></a>',
+                                '<tpl else>',
+                                    '<tpl if="hasAssayLearn">',
+                                        '<a href="#learn/learn/Assay',
+                                        '/{assayIdentifier}">',
+                                        '{label:htmlEncode}',
+                                        '</a>',
+                                    '<tpl else>',
+                                        '<span>{label:htmlEncode}</span>',
+                                    '</tpl>',
+                                '</tpl>',
+                            '<tpl else>',
+                                '<tpl if="hasAssayLearn">',
+                                    '<a href="#learn/learn/Assay',
+                                    '/{assayIdentifier}">',
+                                    '{label:htmlEncode}',
+                                    '</a>',
+                                '<tpl else>',
+                                    '<span>{label:htmlEncode}</span>',
+                                '</tpl>',
+                            '</tpl>',
+                        '</td>',
+                    '</tr>',
+                '</table>',
             '</tpl>')
     },
 
@@ -231,7 +248,7 @@ Ext.define('Connector.view.module.StudyNonIntegratedData', {
         });
 
         var storeConfig =  {
-            fields: ['assayIdentifier', 'dataStatus', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentifierId'],
+            fields: ['assayIdentifier', 'dataStatus', 'hasData', 'fileName', 'filePath', 'hasAssayLearn', 'hasPermission', 'isLinkValid', 'label', 'suffix', 'assayIdentifierId'],
             data: data,
             storeId: 'NonIntegratedDataStore'
         };
@@ -280,15 +297,17 @@ Ext.define('Connector.view.module.PublicationNonIntegratedData', {
     getColTemplate : function() {
         return new Ext4.XTemplate(
             '<tpl>',
-                '<tpl if="isLinkValid">',
-                '<ul class="non-integrated-data-ul">',
-                    '<li class="non-integrated-data-li">',
-                        '{label:htmlEncode}',
-                        '&nbsp;{suffix}&nbsp;',
-                        '<a href="{filePath}" target="_blank"><img alt="{label}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
-                    '</li>',
-                    '</ul>',
-                '</tpl>',
+                '<table>',
+                    '<tr>',
+                        '<td class="non-integrated-data">',
+                            '<tpl if="isLinkValid">',
+                                '<span>{label:htmlEncode}</span>',
+                                '&nbsp;{suffix}&nbsp;',
+                                '<a href="{filePath}" target="_blank"><img alt="{label}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="right"/></a>',
+                            '</tpl>',
+                        '</td>',
+                    '</tr>',
+                '</table>',
             '</tpl>');
     }
 });
