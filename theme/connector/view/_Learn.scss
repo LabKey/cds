@@ -377,6 +377,9 @@ h1.lhdv {
   &.detail-has-data-ni {
     background-image: url(images/learn/ni-added.svg);
   }
+  &.detail-has-data-ni-gray {
+    background-image: url(images/learn/ni-restricted.svg);
+  }
 }
 
 img.detail-has-data-small {
@@ -409,6 +412,11 @@ img.detail-has-data-very-small {
   color:#A09C9C !important;
   font-size:12px !important;
   white-space:normal !important;
+}
+
+.non-integrated-data {
+  padding: 0 !important;
+  margin: 0;
 }
 
 .non-integrated-data-ul {
@@ -531,6 +539,10 @@ img.detail-has-data-very-small {
         background-image: url(images/filter_selected_hover.svg);
       }
     }
+  }
+
+  .learn-about-data-added-detail {
+    padding-left: 1.25em;
   }
 
   .detail-row {

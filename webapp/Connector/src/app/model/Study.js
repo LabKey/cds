@@ -13,6 +13,8 @@ Ext.define('Connector.app.model.Study', {
 
     dataAvailabilityField: 'assays_added',
 
+    ni_dataAvailabilityField: 'ni_assays_added',
+
     fields: [
         {name: 'study_name'},
         {name: 'Container'},
@@ -43,6 +45,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'start_date', defaultValue: undefined },
         {name: 'public_date', defaultValue: undefined },
         {name: 'data_availability'},
+        {name: 'ni_data_availability'},
         {name: 'data_accessible'},
         {name: 'cavd_affiliation'},
         {name: 'cavd_affiliation_filename'},
@@ -99,7 +102,9 @@ Ext.define('Connector.app.model.Study', {
         {name: 'groups_treatment_schema', defaultValue: undefined},
         {name: 'methods_assay_schema', defaultValue: undefined},
         {name: 'assays_added_count'},
+        {name: 'ni_assays_added_count'},
         {name: 'assays_added', convert : Connector.model.Filter.asArray},
+        {name: 'ni_assays_added', convert : Connector.model.Filter.asArray},
         {name: 'atlas_link'},
         {name: 'cavd_link'},
 
@@ -110,6 +115,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'non_integrated_assay_data', convert : Connector.model.Filter.asArray},
         {name: 'non_integrated_assay_data_has_permission'},
         {name: 'publications', convert : Connector.model.Filter.asArray},
+        {name: 'pub_available_data_count'},
         {name: 'relationships', convert : Connector.model.Filter.asArray},
         {name: 'clintrials_id'},
         {name: 'specimen_repository_label'},

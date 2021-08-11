@@ -158,6 +158,72 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void testLearnStudyNIDataAvailabilityWithLimitedAccess()
+    {
+        final String ACCESSIBLE_ICON = "ni-added.svg";
+        final String NOT_ACCESSIBLE_ICON = "ni-restricted.svg";
+        final String HAS_NO_DATA_ICON = "ni-notAdded.svg";
+        String study = "ZAP 138";
+        LearnGrid learnGrid = new LearnGrid(this);
+
+        Map<String, String> studyPermissions = new HashMap<>();
+        log("Create a user group with Read permission to project but no permission to any study folder");
+        cds.setUpPermGroup(_permGroups[0], studyPermissions);
+
+        log ("Verify limited access to Non-integrated data");
+        impersonateGroup(_permGroups[0], false);
+        cds.enterApplication();
+        cds.viewLearnAboutPage("Studies");
+        learnGrid.setSearch(study);
+
+        log("Verify gray checkmark is present indicating limited access");
+        assertElementPresent(Locator.tagWithClassContaining("div", "detail-has-data-ni-gray"));
+
+        log("Verify restricted Non-Integrated Assay is displayed on Learn About > Studies page");
+        int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
+        String zap138DataAddedText = "0/1 Non-integrated Assay\n2 Publications";
+        String cellText = learnGrid.getCellText(0, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text for restricted study 'ZAP 138' not as expected. Expected: '" + zap138DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(zap138DataAddedText.trim().toLowerCase()));
+
+        log("Verify data availability tooltip for restricted Non-Integrated Assay");
+        String toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn).getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        validateText("Tooltip", toolTipText, "Non-Integrated Assay without Data Accessible", "ILLUMINA 454-X", "Publications with Data Accessible", "Bekker LG 2018 Lancet HIV", "Fong Y 2018 J Infect Dis");
+        mouseOver(Locator.className("detail-description-text").findElement(getDriver()));
+
+        log("Verify restricted Non-Integrated Assay on Studies page");
+        learnGrid.clickFirstItem();
+        waitForElement(cds.getDataRowXPath("ILLUMINA 454-X").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]"));
+        assertElementPresent(Locator.xpath("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]"));
+
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        stopImpersonating();
+        assertSignedInNotImpersonating();
+
+        log ("Verify full access to Non-integrated data");
+        cds.enterApplication();
+        cds.viewLearnAboutPage("Studies");
+        learnGrid.setSearch(study);
+
+        log("Verify green checkmark is present indicating access");
+        assertElementPresent(Locator.tagWithClassContaining("div", "detail-has-data-ni"));
+        zap138DataAddedText = "1 Non-integrated Assay\n2 Publications";
+        cellText = learnGrid.getCellText(0, dataAddedColumn);
+        Assert.assertTrue("Data Added' column text for study 'ZAP 138' not as expected. Expected: '" + zap138DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(zap138DataAddedText.trim().toLowerCase()));
+
+        log("Verify data availability tooltip for accessible Non-Integrated Assay");
+        toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn).getToolTipText();
+        log("Tool tip: '" + toolTipText + "'");
+        validateText("Tooltip", toolTipText, "Non-Integrated Assay with Data Accessible", "ILLUMINA 454-X", "Publications with Data Accessible", "Bekker LG 2018 Lancet HIV", "Fong Y 2018 J Infect Dis");
+        mouseOver(Locator.className("detail-description-text").findElement(getDriver()));
+
+        log("Verify accessible Non-Integrated Assay on Studies page");
+        learnGrid.clickFirstItem();
+        waitForElement(cds.getDataRowXPath("ILLUMINA 454-X").append("//td//img[contains(@src, '" + ACCESSIBLE_ICON + "')]"));
+        assertElementPresent(Locator.xpath("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]"));
+    }
+
+    @Test
     public void testLearnStudyDataAvailabilityWithLimitedAccess()
     {
         Map<String, String> studyPermissions = new HashMap<>();
@@ -217,16 +283,15 @@ public class CDSSecurityTest extends CDSReadOnlyTest
                 "RED 3", "RED 4", "xyz123", "ZAP 101", "ZAP 102");
 
         Locator.XPathLocator showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
-        showAllExpandAndVerify(showAllListToggle, 1);
+        showAllExpandAndVerify(showAllListToggle, 2);
         assertTextPresent("ZAP 103");
-        verifyShowAllCollapse(showAllListToggle, 1);
+        verifyShowAllCollapse(showAllListToggle, 2);
 
         String tooltip = getStudyDetailDataAvailabilityTooltip("RED 4");
-        validateText("RED 4 tooltip", tooltip, "Assays without data accessible", "IFNg ELISpot", "NABMAB", "ICS");
-
+        validateText("RED 4 tooltip", tooltip, "Integrated data access is restricted");
 
         tooltip = getStudyDetailDataAvailabilityTooltip("ZAP 102");
-        validateText("ZAP 102 tooltip", tooltip, "Assays " + (hasAccessToR4 ? "with" : "without") + " data accessible", "ICS");
+        validateText("ZAP 102 tooltip", tooltip, hasAccessToR4 ? "Integrated data added to Dataspace" : "Integrated data access is restricted");
     }
 
     private void showAllExpandAndVerify(Locator showAllListToggle, int remaining)
@@ -318,7 +383,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         LearnGrid learnGrid = new LearnGrid(this);
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
-        String qed2DataAddedText = hasAccessToQ2 ? "2 Assays Accessible" : "0/2 Assays Accessible";
+        String qed2DataAddedText = hasAccessToQ2 ? "2 Assays" : "0/2 Assays";
         String cellText = learnGrid.getCellText(1, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for study 'QED 2' not as expected. Expected: '" + qed2DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(qed2DataAddedText.trim().toLowerCase()));
         log("'Data Added' column text as expected for study 'QED 2'.");
@@ -331,7 +396,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         else
             validateText("Tooltip", toolTipText, "Assays without Data Accessible", "NAB", "NABMAB");
 
-        String red4DataAddedText = "0/3 Assays Accessible";
+        String red4DataAddedText = "0/3 Assays\n1 Publication";
         cellText = learnGrid.getCellText(7, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for study 'RED 4' not as expected. Expected: '" + red4DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(red4DataAddedText.trim().toLowerCase()));
         log("'Data Added' column text as expected for study 'RED 4'.");

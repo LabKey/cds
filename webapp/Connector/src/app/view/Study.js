@@ -38,7 +38,7 @@ Ext.define('Connector.app.view.Study', {
     },{
         text: 'Data Added',
         xtype: 'templatecolumn',
-        minWidth: 150,
+        minWidth: 175,
         flex: 15/100,
         resizable: false,
         dataIndex: 'assays_added_count',
@@ -49,7 +49,7 @@ Ext.define('Connector.app.view.Study', {
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
-                    '<tpl if="data_availability">',
+                    '<tpl if="assays_added_count &gt; 0">',
                         '<div class="detail-has-data ',
                             '<tpl if="data_accessible">',
                             'detail-has-data-green',
@@ -57,9 +57,29 @@ Ext.define('Connector.app.view.Study', {
                             'detail-has-data-gray',
                             '</tpl>',
                         '"></div>',
-                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
+                        '<div class="detail-gray-text learn-about-data-added-detail">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
+                        '<tpl if="pub_available_data_count &gt; 0">',
+                            '<div class="detail-gray-text learn-about-data-added-detail">{[this.publicationCountText(values)]}</div>',
+                        '</tpl>',
+                    '<tpl elseif="ni_assays_added_count &gt; 0">',
+                        '<div class="detail-has-data ',
+                            '<tpl if="data_accessible">',
+                            'detail-has-data-ni',
+                            '<tpl else>',
+                            'detail-has-data-ni-gray',
+                            '</tpl>',
+                        '"></div>',
+                            '<div class="detail-gray-text learn-about-data-added-detail">{[this.niAssayCountText(values)]}</div>',
+                        '<tpl if="pub_available_data_count &gt; 0">',
+                            '<div class="detail-gray-text learn-about-data-added-detail">{[this.publicationCountText(values)]}</div>',
+                        '</tpl>',
+                    '<tpl elseif="pub_available_data_count &gt; 0">',
+                        '<div class="detail-has-data detail-has-data-ni"></div>',
+                        '<div class="detail-gray-text learn-about-data-added-detail">{[this.publicationCountText(values)]}</div>',
                     '<tpl else>',
+                        '<div class="detail-gray-text learn-about-data-added-detail">',
                         'Data not added',
+                        '</div>',
                     '</tpl>',
                 '</div>',
                 {
@@ -72,7 +92,27 @@ Ext.define('Connector.app.view.Study', {
                             description += ('0/' + totalCount);
                         description += " Assay";
                         description += (totalCount == 1 ? '' : 's');
-                        description += " Accessible";
+                        return description;
+                    },
+                    niAssayCountText : function(values) {
+                        var niCount = values.ni_assays_added_count;
+                        var description = "";
+                        if (values.data_accessible)
+                            description += niCount;
+                        else
+                            description += ('0/' + niCount);
+
+                        description += " Non-integrated Assay";
+
+                        return description;
+                    },
+                    publicationCountText : function(values) {
+                        var totalCount = values.pub_available_data_count;
+                        var description = "";
+                        if (totalCount > 0) {
+                            description = totalCount + " Publication";
+                            description += (totalCount == 1 ? '' : 's');
+                        }
                         return description;
                     }
                 }
@@ -234,7 +274,7 @@ Ext.define('Connector.app.view.Study', {
     statics: {
         searchFields: [
             'label', 'study_title', 'type', 'cavd_affiliation', 'description', 'objectives', 'rationale', 'findings', 'groups', 'methods',
-            'conclusions', 'publications', 'context', 'population', 'data_availability',
+            'conclusions', 'publications', 'context', 'population', 'data_availability', 'ni_data_availability',
             {field: 'products', value: 'product_name', emptyText: 'No related products'}
         ]
     },
