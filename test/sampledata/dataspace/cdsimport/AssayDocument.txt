@@ -1,4 +1,4 @@
 assay_identifier	document_id
-NAB	303
-NAB	304
-NAB	305
+NAB A3R5	303
+NAB A3R5	304
+NAB A3R5	305

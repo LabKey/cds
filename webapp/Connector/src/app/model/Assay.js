@@ -38,6 +38,12 @@ Ext.define('Connector.app.model.Assay', {
         {name: 'studies_with_data', convert : Connector.model.Filter.asArray},
         {name: 'antigen_store'},
         {name: 'variable_store'},
-        {name: 'hasAntigen'}
+        {name: 'hasAntigen'},
+        {name: 'has_assay_tutorial'},
+        {name: 'assay_tutorial_label'},
+        {name: 'assay_tutorial_doc'},
+        {name: 'assay_tutorial_link'},
+        {name: 'assay_tutorial_type'},
+        {name: 'assay_tutorial_id'},
     ]
 });
