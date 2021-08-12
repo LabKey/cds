@@ -1,0 +1,4 @@
+assay_identifier	document_id
+NAB	303
+NAB	304
+NAB	305

@@ -1,4 +1,4 @@
-document_id	label	filename	document_type	assay_identifier
+document_id	label	filename	document_type	assay_identifier	link
 128	ADCC Data Summary	study_documents/cvd277_adccLUCBoxplots_18Oct2012.pdf	Report or summary	
 91	ADCC Data Summary	study_documents/cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf	Report or summary	
 185	ADCC Results Summary	study_documents/cvd434_AUP567_ADCC_PT_Report_20140912.pdf	Report or summary	
@@ -175,4 +175,7 @@ document_id	label	filename	document_type	assay_identifier
 204	ILLUMINA 454-X	study_documents/ILLUMINA_454_X.tsv	Non-Integrated Assay	ILLUMINA 454-X
 300	Publication Datasets - Monoclonal antibodies	study_documents/alvac.pdf	Publication Data	
 301	Analysis Data - T Cell Immune Response	study_documents/t_cell_data.zip	Publication Data	
-302	Publication Datasets	study_documents/t_cell_ir.tsv	Publication Data	
+302	Publication Datasets	study_documents/t_cell_ir.tsv	Publication Data
+303	NAB tutorial A	study_documents/cvd277_adccLUCBoxplots_18Oct2012.pdf	Assay Tutorial Document	NAB
+304	NAB tutorial B	study_documents/cvd277_adccLUCBoxplots_18Oct2012.pdf	Assay Tutorial Document	NAB
+305	NAB YouTube link 1		Assay Tutorial Link	NAB	https://youtu.be/Q3BPWNYyv14
