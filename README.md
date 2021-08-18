@@ -32,6 +32,8 @@ Styles for main cds app live in the theme/connector/ directory.
 
 Styles for the front page live in the theme/front-page/ directory.
 
+You might need to run 'npm run build' from the cds/ root directory before running deployApp for the changes in .scss to take effect.
+
 ## Staging and prod server upgrade
 Staging server reminder: One thing worth reminding Jon of during each staging upgrade is, for DataSpace staging, a data refresh is never needed/desired. The staging server may hold in progress work, such as R reports, that should not be wiped out during upgrade.  
 CDS take the latest patch release build, not the latest Alpha (sprint) build. 

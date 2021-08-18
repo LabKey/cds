@@ -27,6 +27,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="DataSpace is a data sharing, discovery, and visualization tool for HIV vaccine research.">
     <title>CAVD DataSpace</title>
     <link rel="stylesheet" href="<%=getWebappURL("/cds/gen/application.css")%>">
     <link rel="stylesheet" href="<%=getWebappURL("/frontpage/components/fullpage.js/jquery.fullPage.css")%>">

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
@@ -43,15 +44,20 @@ import org.labkey.api.data.CoreSchema;
 import org.labkey.api.data.DataColumn;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
+import org.labkey.api.data.Filter;
 import org.labkey.api.data.JdbcType;
 import org.labkey.api.data.Results;
 import org.labkey.api.data.ResultsImpl;
+import org.labkey.api.data.SimpleFilter;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.StashingResultsFactory;
 import org.labkey.api.data.TSVMapWriter;
+import org.labkey.api.data.TableInfo;
+import org.labkey.api.data.TableSelector;
 import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
+import org.labkey.api.query.FieldKey;
 import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
@@ -1038,6 +1044,57 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresPermission(ReadPermission.class)
+    public static class GetNonIntegratedDocumentAction extends ReadOnlyApiAction
+    {
+        @Override
+        public Object execute(Object o, BindException errors) throws Exception
+        {
+            TableInfo tableInfo = QueryService.get().getUserSchema(getUser(), getContainer(), "cds").getTable("learn_documentsforstudies", null);
+            Filter filter = new SimpleFilter(FieldKey.fromString("document_type"), "Non-Integrated Assay");
+            TableSelector tableSelector = new TableSelector(tableInfo, filter, null);
+            List<StudyDocumentObj> niDocuments = tableSelector.getArrayList(StudyDocumentObj.class);
+
+            Map<String, Object> resultProperties = new HashMap<>();
+            JSONArray results = new JSONArray();
+
+            WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
+            String basePath = CDSManager.get().getStudyDocumentPath(getContainer());
+
+            for (StudyDocumentObj niDoc : niDocuments)
+            {
+                JSONObject json = new JSONObject();
+                json.put("prot", niDoc.getProt());
+                json.put("sortIndex", niDoc.getDocument_order());
+                json.put("hasPermission", niDoc.getAccessible());
+                json.put("id", niDoc.getDocument_id());
+                json.put("label", niDoc.getLabel());
+                json.put("fileName", niDoc.getFilename());
+                json.put("docType", niDoc.getDocument_type());
+                json.put("assayIdentifier", niDoc.getAssay_identifier());
+
+                WebdavResource resource = service.lookup(Path.parse(basePath + niDoc.getFilename()));
+
+                if (resource != null)
+                {
+                    File requestedFile = resource.getFile();
+                    if (requestedFile == null || !requestedFile.canRead())
+                    {
+                        json.put("isLinkValid", false);
+                    }
+                    else
+                    {
+                        json.put("isLinkValid", true);
+                    }
+                }
+                results.put(json);
+            }
+
+            resultProperties.put("results", results);
+            return new ApiSimpleResponse(resultProperties);
+        }
+    }
+
+    @RequiresPermission(ReadPermission.class)
     public static class ValidateStudySchemaLinkAction extends ReadOnlyApiAction<StudyDocumentForm>
     {
         @Override
@@ -1143,6 +1200,109 @@ public class CDSController extends SpringActionController
             ModelAndView result = new SimpleErrorView(errors, false);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return result;
+        }
+    }
+
+    public static class StudyDocumentObj
+    {
+        private String prot;
+        private Integer document_order;
+        private Boolean	accessible;
+        private String document_id;
+        private String label;
+        private String filename;
+        private String document_type;
+        private String assay_identifier;
+        private Boolean isValidLink;
+
+        public String getProt()
+        {
+            return prot;
+        }
+
+        public void setProt(String prot)
+        {
+            this.prot = prot;
+        }
+
+        public Integer getDocument_order()
+        {
+            return document_order;
+        }
+
+        public void setDocument_order(Integer document_order)
+        {
+            this.document_order = document_order;
+        }
+
+        public Boolean getAccessible()
+        {
+            return accessible;
+        }
+
+        public void setAccessible(Boolean accessible)
+        {
+            this.accessible = accessible;
+        }
+
+        public String getDocument_id()
+        {
+            return document_id;
+        }
+
+        public void setDocument_id(String document_id)
+        {
+            this.document_id = document_id;
+        }
+
+        public String getLabel()
+        {
+            return label;
+        }
+
+        public void setLabel(String label)
+        {
+            this.label = label;
+        }
+
+        public String getFilename()
+        {
+            return filename;
+        }
+
+        public void setFilename(String filename)
+        {
+            this.filename = filename;
+        }
+
+        public String getDocument_type()
+        {
+            return document_type;
+        }
+
+        public void setDocument_type(String document_type)
+        {
+            this.document_type = document_type;
+        }
+
+        public String getAssay_identifier()
+        {
+            return assay_identifier;
+        }
+
+        public void setAssay_identifier(String assay_identifier)
+        {
+            this.assay_identifier = assay_identifier;
+        }
+
+        public Boolean getValidLink()
+        {
+            return isValidLink;
+        }
+
+        public void setValidLink(Boolean validLink)
+        {
+            isValidLink = validLink;
         }
     }
 
