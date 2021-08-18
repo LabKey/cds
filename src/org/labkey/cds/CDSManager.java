@@ -300,6 +300,12 @@ public class CDSManager
         return PageFlowUtil.decode(mp.getEffectiveValue(container));
     }
 
+    public String getAssayDocumentPath(Container container)
+    {
+        ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.ASSAY_DOCUMENT_PATH);
+        return PageFlowUtil.decode(mp.getEffectiveValue(container));
+    }
+
     public String getCDSImportFolderPath(Container container)
     {
         ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.CDS_IMPORT_PATH);

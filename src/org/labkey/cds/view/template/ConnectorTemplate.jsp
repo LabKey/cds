@@ -358,6 +358,7 @@
             srcPath + "/app/view/module/VariableList.js",
             srcPath + "/app/view/module/InteractiveReports.js",
             srcPath + "/app/view/module/CuratedGroups.js",
+            srcPath + "/app/view/module/AssayTutorial.js",
 
             srcPath + "/Application.js",
 

@@ -78,7 +78,8 @@ Ext.define('Connector.app.store.Assay', {
             Ext.each(this.assayData, function(assay) {
                 var studies = [];
                 var studiesWithData = [];
-                var assayTutorials = []; //tutorial doc or video links
+                var assayTutorialLinks = []; //tutorial video links
+                var assayTutorialDocuments = []; //tutorial doc links
 
                 assay.data_availability = false;
                 assay.data_accessible = false;
@@ -99,18 +100,26 @@ Ext.define('Connector.app.store.Assay', {
 
                 Ext.each(this.assayDocuments, function(assayDoc) {
                     if (assayDoc.assay_identifier === assay.assay_identifier) {
-                        var doc = {
-                            has_assay_tutorial: assayDoc.filename || assayDoc.link,
-                            assay_tutorial_label: assayDoc.label,
-                            assay_tutorial_doc: assayDoc.filename,
-                            assay_tutorial_link: assayDoc.link,
-                            assay_tutorial_type: assayDoc.document_type,
-                            assay_tutorial_id: assayDoc.document_id
-                        }
-                        assayTutorials.push(doc);
-                    };
+
+                            var doc = {
+                                label: assayDoc.label,
+                                filePath: Connector.plugin.DocumentValidation.getAssayTutorialDocumentUrl(assayDoc.filename, assayDoc.document_id),
+                                assay_tutorial_link: assayDoc.link,
+                                assay_tutorial_type: assayDoc.document_type,
+                                assay_tutorial_id: assayDoc.document_id,
+                                hasPermission: true,
+                                suffix: '(' + Connector.utility.FileExtension.fileDisplayType(assayDoc.filename) +')',
+                            }
+                            if (assayDoc.document_type === "Assay Tutorial Document") {
+                                assayTutorialDocuments.push(doc);
+                            }
+                            else if (assayDoc.document_type === "Assay Tutorial Link") {
+                                assayTutorialLinks.push(doc);
+                            }
+                    }
                 });
-                assay.assayTutorial = assayTutorials;
+                assay.assayTutorialDocuments = assayTutorialDocuments;
+                assay.assayTutorialLinks = assayTutorialLinks;
 
                 studies.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
                 Ext.each(studies, function(study, index) {

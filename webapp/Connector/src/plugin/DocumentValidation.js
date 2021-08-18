@@ -24,6 +24,14 @@ Ext.define('Connector.plugin.DocumentValidation', {
                 filename: filename,
                 publicAccess: true
             });
+        },
+        getAssayTutorialDocumentUrl: function(filename, docId)
+        {
+             return LABKEY.ActionURL.buildURL('cds', 'getAssayDocument', null, {
+                 documentId: docId,
+                 filename: filename,
+                 publicAccess: true
+             });
         }
     },
 

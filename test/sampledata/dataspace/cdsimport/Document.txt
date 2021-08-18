@@ -176,6 +176,6 @@ document_id	label	filename	document_type	assay_identifier	link
 300	Publication Datasets - Monoclonal antibodies	study_documents/alvac.pdf	Publication Data	
 301	Analysis Data - T Cell Immune Response	study_documents/t_cell_data.zip	Publication Data	
 302	Publication Datasets	study_documents/t_cell_ir.tsv	Publication Data
-303	NAB tutorial A	study_documents/cvd277_adccLUCBoxplots_18Oct2012.pdf	Assay Tutorial Document	NAB A3R5
-304	NAB tutorial B	study_documents/cvd277_adccLUCBoxplots_18Oct2012.pdf	Assay Tutorial Document	NAB A3R5
+303	NAB tutorial A	assay_documents/nab_tutorial_a.pdf	Assay Tutorial Document	NAB A3R5
+304	NAB tutorial B	assay_documents/nab_tutorial_b.docx	Assay Tutorial Document	NAB A3R5
 305	NAB YouTube link 1		Assay Tutorial Link	NAB A3R5	https://youtu.be/Q3BPWNYyv14

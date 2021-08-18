@@ -1128,6 +1128,52 @@ public class CDSController extends SpringActionController
 
     @RequiresPermission(ReadPermission.class)
     @MethodsAllowed({Method.HEAD, Method.GET})
+    public static class GetAssayDocumentAction extends SimpleViewAction<StudyDocumentForm>
+    {
+        @Override
+        public void addNavTrail(NavTree root)
+        {
+        }
+
+        @Override
+        public void validate(StudyDocumentForm form, BindException errors)
+        {
+            if (null == form.getDocumentId())
+                errors.reject(ERROR_MSG, "documentId parameter required");
+            if (null == form.getFilename())
+                errors.reject(ERROR_MSG, "filename parameter required");
+        }
+
+        @Override
+        public ModelAndView getView(StudyDocumentForm form, BindException errors) throws Exception
+        {
+            HttpServletResponse response = getViewContext().getResponse();
+            String filename = form.getFilename();
+            String basePath = CDSManager.get().getAssayDocumentPath(getContainer());
+
+            if (StringUtils.isBlank(basePath))
+            {
+                errors.reject(ERROR_MSG, "Assay document location not specified.");
+            }
+
+            if (!errors.hasErrors() && !StringUtils.isBlank(filename))
+            {
+                if (isFileValid(errors, response, filename, basePath))
+                    return null;
+            }
+            else
+            {
+                errors.reject(ERROR_MSG, "File information is incorrect.");
+            }
+            // file was not able to be shown so show error message(s)
+            ModelAndView result = new SimpleErrorView(errors, false);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return result;
+        }
+    }
+
+    @RequiresPermission(ReadPermission.class)
+    @MethodsAllowed({Method.HEAD, Method.GET})
     public static class GetStudyDocumentAction extends SimpleViewAction<StudyDocumentForm>
     {
         @Override
@@ -1167,25 +1213,8 @@ public class CDSController extends SpringActionController
                 }
                 else if (form.isPublicAccess() || CDSManager.get().isStudyDocumentAccessible(form.getStudy(), form.getDocumentId(), getUser(), getContainer()))
                 {
-                    WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
-                    WebdavResource resource = service.lookup(Path.parse(basePath + filename));
-                    if (resource != null)
-                    {
-                        File requestedFile = resource.getFile();
-                        if (requestedFile == null || !requestedFile.canRead())
-                        {
-                            errors.reject(ERROR_MSG, "Requested file not found or unreadable");
-                        }
-                        else
-                        {
-                            PageFlowUtil.streamFile(response, requestedFile, false);
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        errors.reject(ERROR_MSG, "Requested file not found or unreadable");
-                    }
+                    if (isFileValid(errors, response, filename, basePath))
+                        return null;
                 }
                 else
                 {
@@ -1201,6 +1230,30 @@ public class CDSController extends SpringActionController
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return result;
         }
+    }
+
+    private static boolean isFileValid(BindException errors, HttpServletResponse response, String filename, String basePath) throws IOException
+    {
+        WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
+        WebdavResource resource = service.lookup(Path.parse(basePath + filename));
+        if (resource != null)
+        {
+            File requestedFile = resource.getFile();
+            if (requestedFile == null || !requestedFile.canRead())
+            {
+                errors.reject(ERROR_MSG, "Requested file not found or unreadable");
+            }
+            else
+            {
+                PageFlowUtil.streamFile(response, requestedFile, false);
+                return true;
+            }
+        }
+        else
+        {
+            errors.reject(ERROR_MSG, "Requested file not found or unreadable");
+        }
+        return false;
     }
 
     public static class StudyDocumentObj
