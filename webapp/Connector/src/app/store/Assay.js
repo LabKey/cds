@@ -100,22 +100,22 @@ Ext.define('Connector.app.store.Assay', {
 
                 Ext.each(this.assayDocuments, function(assayDoc) {
                     if (assayDoc.assay_identifier === assay.assay_identifier) {
-
-                            var doc = {
-                                label: assayDoc.label,
-                                filePath: Connector.plugin.DocumentValidation.getAssayTutorialDocumentUrl(assayDoc.filename, assayDoc.document_id),
-                                assay_tutorial_link: assayDoc.link,
-                                assay_tutorial_type: assayDoc.document_type,
-                                assay_tutorial_id: assayDoc.document_id,
-                                hasPermission: true,
-                                suffix: '(' + Connector.utility.FileExtension.fileDisplayType(assayDoc.filename) +')',
-                            }
-                            if (assayDoc.document_type === "Assay Tutorial Document") {
-                                assayTutorialDocuments.push(doc);
-                            }
-                            else if (assayDoc.document_type === "Assay Tutorial Link") {
-                                assayTutorialLinks.push(doc);
-                            }
+                        var doc = {
+                            label: assayDoc.label,
+                            filePath: Connector.plugin.DocumentValidation.getAssayTutorialDocumentUrl(assayDoc.filename, assayDoc.document_id),
+                            assay_tutorial_link: assayDoc.video_link,
+                            assay_tutorial_type: assayDoc.document_type,
+                            assay_tutorial_id: assayDoc.document_id,
+                            video_thumbnail_filename: assayDoc.video_thumbnail_filename,
+                            hasPermission: true,
+                            suffix: '(' + Connector.utility.FileExtension.fileDisplayType(assayDoc.filename) +')',
+                        }
+                        if (assayDoc.document_type === "Assay Tutorial Document") {
+                            assayTutorialDocuments.push(doc);
+                        }
+                        else if (assayDoc.document_type === "Assay Tutorial Link") {
+                            assayTutorialLinks.push(doc);
+                        }
                     }
                 });
                 assay.assayTutorialDocuments = assayTutorialDocuments;

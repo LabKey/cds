@@ -5,15 +5,44 @@ Ext.define('Connector.view.module.AssayTutorial', {
 
     plugins : ['documentvalidation'],
 
+    statics : {
+        openPopupModal : function(videoUrl) {
+            var win = Ext.create('Ext.window.Window', {
+                modal: true,
+                width : '80%',
+                height: '80%',
+                resizable: false,
+                draggable: false,
+                closable: false,
+                layout : 'fit',
+                constrain:true,
+                id: 'tutorial-video-frame',
+                items : [{
+                    xtype : "component",
+                    autoEl : {
+                        tag : "iframe",
+                        src : videoUrl
+                    }
+                }]
+            });
+            win.show();
+            win.mon(Ext.getBody(), 'click', function(){
+                win.close();
+            }, win, { delegate: '.x-mask' });
+        }
+    },
+
     tpl : new Ext.XTemplate(
         '<tpl if="has_assay_tutorials">',
-            '<h3 id="assay_tutorial_title_id" class="listing_title">{assay_tutorial_title}</h3>',
+            '<h3 id="assay_tutorial_title_id">{assay_tutorial_title}</h3>',
                 '<tpl if="assayTutorialLinks && assayTutorialLinks.length &gt; 0">',
-                    '<table class="learn-study-info">',
+                    '<table class="assay-tutorial">',
                         '<tpl for="assayTutorialLinks">',
                             '<tr><td>',
-                                '<div class="item-value">',
-                                    '<a style="cursor:pointer" class="tile" href={assay_tutorial_link}>{label:htmlEncode}</a>',
+                                '<div>',
+                                    '<a id="assay-tutorial-video" onclick="Connector.view.module.AssayTutorial.openPopupModal(\'{assay_tutorial_link:htmlEncode}\');">',
+                                        '<img src={[this.getThumbnailImgSrc(values)]}/>',
+                                    '</a>',
                                 '</div>',
                             '</td></tr>',
                         '</tpl>',
@@ -23,9 +52,7 @@ Ext.define('Connector.view.module.AssayTutorial', {
                 '<table class="learn-study-info">',
                     '<tpl for="assayTutorialDocuments">',
                         '<tr><td>',
-                             '<div class="item-value">',
-//                                '<span>{label:htmlEncode}',
-//                                '&nbsp;{suffix}&nbsp;</span>',
+                             '<div id="tutorial-video-id" class="item-value">',
                                 '<a style="display: inline-block" href="{filePath}" target="_blank"><img alt="{label:htmlEncode}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="right"/>',
                                 '<span>{label:htmlEncode}',
                                 '&nbsp;{suffix}&nbsp;</span>',
@@ -35,7 +62,13 @@ Ext.define('Connector.view.module.AssayTutorial', {
                     '</tpl>',
                 '</table>',
             '</tpl>',
-        '</tpl>'
+        '</tpl>',
+        {
+            getThumbnailImgSrc : function(values) {
+                let imgSrc = Connector.resourceContext.path + '/images/learn/' + values.video_thumbnail_filename + " height=\"181\" width=\"322\"";
+                return imgSrc;
+            }
+        }
     ),
 
     initComponent : function() {
@@ -65,5 +98,4 @@ Ext.define('Connector.view.module.AssayTutorial', {
         var d = this.getListData();
         return d["assayTutorialDocuments"].length > 0 || d["assayTutorialLinks"].length > 0;
     }
-
 });

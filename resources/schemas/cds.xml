@@ -622,7 +622,8 @@
             <column columnName="filename"/>
             <column columnName="document_type"/>
             <column columnName="container"/>
-            <column columnName="link"/>
+            <column columnName="video_link"/>
+            <column columnName="video_thumbnail_filename"/>
         </columns>
     </table>
     <table tableName="import_studydocument" tableDbType="TABLE">
@@ -681,7 +682,8 @@
             <column columnName="label"/>
             <column columnName="filename"/>
             <column columnName="document_type"/>
-            <column columnName="link"/>
+            <column columnName="video_link"/>
+            <column columnName="video_thumbnail_filename"/>
         </columns>
     </table>
     <table tableName="MAbMetadata" tableDbType="TABLE">

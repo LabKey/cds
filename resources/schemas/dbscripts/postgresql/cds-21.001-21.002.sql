@@ -14,5 +14,7 @@ CREATE TABLE cds.AssayDocument(
      CONSTRAINT pk_AssayDocument PRIMARY KEY (container, assay_identifier, document_id)
 );
 
-ALTER TABLE cds.import_document ADD COLUMN link TEXT;
-ALTER TABLE cds.document ADD COLUMN link TEXT;
+ALTER TABLE cds.import_document ADD COLUMN video_link TEXT;
+ALTER TABLE cds.import_document ADD COLUMN video_thumbnail_filename TEXT;
+ALTER TABLE cds.document ADD COLUMN video_link TEXT;
+ALTER TABLE cds.document ADD COLUMN video_thumbnail_filename TEXT;
