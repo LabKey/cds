@@ -178,4 +178,6 @@ document_id	label	filename	document_type	assay_identifier	video_link	video_thumb
 302	Publication Datasets	study_documents/t_cell_ir.tsv	Publication Data
 303	NAB tutorial A	assay_documents/nab_tutorial_a.pdf	Assay Tutorial Document	NAB A3R5
 304	NAB tutorial B	assay_documents/nab_tutorial_b.docx	Assay Tutorial Document	NAB A3R5
+306	Intracellular Cytokine Staining tutorial	assay_documents/ics_tutorial.pdf	Assay Tutorial Document	ICS
 305	NAB YouTube link 1		Assay Tutorial Link	NAB A3R5	https://www.youtube.com/embed/Q3BPWNYyv14	Introduction to NAb (Neutralizing antibody assay)
+307	IFNg ELS YouTube link 1		Assay Tutorial Link	IFNg ELS	https://www.youtube.com/embed/Q3BPWNYyv14	Introduction to IFNg ELS (IFNg ELISpot assay)
