@@ -39,10 +39,13 @@ Ext.define('Connector.view.module.AssayTutorial', {
                     '<table class="assay-tutorial">',
                         '<tpl for="assayTutorialLinks">',
                             '<tr><td>',
-                                '<div>',
-                                    '<a id="assay-tutorial-video" onclick="Connector.view.module.AssayTutorial.openPopupModal(\'{assay_tutorial_link:htmlEncode}\');">',
-                                        '<img src={[this.getThumbnailImgSrc(values)]}/>',
-                                    '</a>',
+                                '<div class="assay-tutorial-img-container">',
+                                    '<div>',
+                                        '<a id="assay-tutorial-video" onclick="Connector.view.module.AssayTutorial.openPopupModal(\'{assay_tutorial_link:htmlEncode}\');">',
+                                            '<img src={[this.getThumbnailImgSrc()]}/>',
+                                        '</a>',
+                                        '<div class="assay-tutorial-label">{video_thumbnail_label:htmlEncode}</div>',
+                                    '</div>',
                                 '</div>',
                             '</td></tr>',
                         '</tpl>',
@@ -53,10 +56,9 @@ Ext.define('Connector.view.module.AssayTutorial', {
                     '<tpl for="assayTutorialDocuments">',
                         '<tr><td>',
                              '<div id="tutorial-video-id" class="item-value">',
-                                '<a style="display: inline-block" href="{filePath}" target="_blank"><img alt="{label:htmlEncode}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="right"/>',
                                 '<span>{label:htmlEncode}',
                                 '&nbsp;{suffix}&nbsp;</span>',
-                                '</a>',
+                                '<a style="display: inline-block" href="{filePath}" target="_blank"><img alt="{label:htmlEncode}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
                              '</div>',
                         '</td></tr>',
                     '</tpl>',
@@ -64,8 +66,8 @@ Ext.define('Connector.view.module.AssayTutorial', {
             '</tpl>',
         '</tpl>',
         {
-            getThumbnailImgSrc : function(values) {
-                let imgSrc = Connector.resourceContext.path + '/images/learn/' + values.video_thumbnail_filename + " height=\"181\" width=\"322\"";
+            getThumbnailImgSrc : function() {
+                let imgSrc = Connector.resourceContext.path + '/images/learn/tutorialVideoNoText.png' + " height=\"181\" width=\"322\"";
                 return imgSrc;
             }
         }

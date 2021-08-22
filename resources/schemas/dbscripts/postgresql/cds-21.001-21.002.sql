@@ -15,6 +15,6 @@ CREATE TABLE cds.AssayDocument(
 );
 
 ALTER TABLE cds.import_document ADD COLUMN video_link TEXT;
-ALTER TABLE cds.import_document ADD COLUMN video_thumbnail_filename TEXT;
+ALTER TABLE cds.import_document ADD COLUMN video_thumbnail_label TEXT;
 ALTER TABLE cds.document ADD COLUMN video_link TEXT;
-ALTER TABLE cds.document ADD COLUMN video_thumbnail_filename TEXT;
+ALTER TABLE cds.document ADD COLUMN video_thumbnail_label TEXT;

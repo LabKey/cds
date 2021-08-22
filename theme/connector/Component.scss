@@ -894,6 +894,21 @@ text.study-label {
     }
 }
 
+.assay-tutorial-img-container {
+  position:relative;
+  text-align: left;
+  color: white;
+
+  .assay-tutorial-label {
+    position:absolute;
+    top: 8px;
+    left: 16px;
+    font-size: 12px;
+    font-weight:bold;
+    font-family: Georgia, serif;
+  }
+}
+
 .toolslinks-panel {
   .header {
     padding: 14px 18px 14px 9px;

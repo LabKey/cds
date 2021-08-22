@@ -106,7 +106,7 @@ Ext.define('Connector.app.store.Assay', {
                             assay_tutorial_link: assayDoc.video_link,
                             assay_tutorial_type: assayDoc.document_type,
                             assay_tutorial_id: assayDoc.document_id,
-                            video_thumbnail_filename: assayDoc.video_thumbnail_filename,
+                            video_thumbnail_label: assayDoc.video_thumbnail_label,
                             hasPermission: true,
                             suffix: '(' + Connector.utility.FileExtension.fileDisplayType(assayDoc.filename) +')',
                         }
