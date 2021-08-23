@@ -689,6 +689,27 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     }
 
     @Test
+    public void testAssayTutorial()
+    {
+        cds.viewLearnAboutPage("Assays");
+        LearnGrid grid = new LearnGrid(this);
+
+        log("Go to NAB assay page - verify tutorial section");
+        grid.setSearch(CDSHelper.TITLE_NAB).clickFirstItem();
+
+        assertTextPresent("Assay information", "Tutorials");
+        assertElementPresent("Assay tutorial section should be present.", Locator.tagWithClass("div", "assay-tutorial-img-container"), 1);
+        assertElementPresent("One tutorial video link should be present.", Locator.tagWithId("a", "assay-tutorial-video"), 1);
+        assertElementPresent("Two downloadable tutorials should be present.", Locator.tagWithId("div", "tutorial-doc-id"), 2);
+
+        log("Go to BAMA assay page - verify absence of tutorial section");
+        cds.viewLearnAboutPage("Assays");
+        grid.setSearch(CDSHelper.TITLE_BAMA).clickFirstItem();
+        assertElementNotPresent("Assay tutorial section should not be present.", Locator.tagWithClass("div", "assay-tutorial-img-container"));
+
+    }
+
+    @Test
     public void testLearnAboutAssays()
     {
         cds.viewLearnAboutPage("Assays");

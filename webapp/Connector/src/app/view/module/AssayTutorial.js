@@ -55,7 +55,7 @@ Ext.define('Connector.view.module.AssayTutorial', {
                 '<table class="learn-study-info">',
                     '<tpl for="assayTutorialDocuments">',
                         '<tr><td>',
-                             '<div id="tutorial-video-id" class="item-value">',
+                             '<div id="tutorial-doc-id" class="item-value">',
                                 '<span>{label:htmlEncode}',
                                 '&nbsp;{suffix}&nbsp;</span>',
                                 '<a style="display: inline-block" href="{filePath}" target="_blank"><img alt="{label:htmlEncode}" src="' + LABKEY.contextPath + '/Connector/images/download-icon.svg' + '" height="13" width="13" align="left"/></a>',
