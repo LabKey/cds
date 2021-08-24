@@ -77,7 +77,7 @@ Ext.define('Connector.view.module.AssayTutorial', {
 
     initComponent : function() {
         var data = this.getListData();
-        data['has_assay_tutorial_link'] = data.assayTutorialLinks?.length > 0;
+        data['has_assay_tutorial_link'] = data.assayTutorialLinks && data.assayTutorialLinks.length > 0;
         data['assay_tutorial_title'] = this.initialConfig.data.title;
         data['valid_doc_link_count'] = 0;
         this.update(data);
@@ -104,6 +104,6 @@ Ext.define('Connector.view.module.AssayTutorial', {
 
     hasContent : function() {
         var d = this.getListData();
-        return d["assayTutorialDocuments"]?.length > 0 || d["assayTutorialLinks"]?.length > 0;
+        return (d["assayTutorialDocuments"] && d["assayTutorialDocuments"].length > 0) || (d["assayTutorialLinks"] && d["assayTutorialLinks"].length > 0);
     }
 });
