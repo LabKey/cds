@@ -601,7 +601,14 @@ Ext4.define('Connector.cube.Configuration', {
                         modelData: {
                             text: 'assay_endpoint_description'
                         }
-                    }],[{
+                    }],[
+                    {
+                        type: 'assaytutorial',
+                        staticData: {
+                            title: 'Tutorials'
+                        }
+                    },
+                    {
                         type: 'dataavailability',
                         staticData: {
                             title: 'Integrated data',

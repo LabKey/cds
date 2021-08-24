@@ -622,6 +622,8 @@
             <column columnName="filename"/>
             <column columnName="document_type"/>
             <column columnName="container"/>
+            <column columnName="video_link"/>
+            <column columnName="video_thumbnail_label"/>
         </columns>
     </table>
     <table tableName="import_studydocument" tableDbType="TABLE">
@@ -630,6 +632,13 @@
             <column columnName="document_id"/>
             <column columnName="access_level"/>
             <column columnName="study_document_order"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_assaydocument" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="document_id"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -673,6 +682,8 @@
             <column columnName="label"/>
             <column columnName="filename"/>
             <column columnName="document_type"/>
+            <column columnName="video_link"/>
+            <column columnName="video_thumbnail_label"/>
         </columns>
     </table>
     <table tableName="MAbMetadata" tableDbType="TABLE">
@@ -718,6 +729,13 @@
             <column columnName="container"/>
             <column columnName="access_level"/>
             <column columnName="document_order"/>
+        </columns>
+    </table>
+    <table tableName="assaydocument" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="document_id"/>
+            <column columnName="container"/>
         </columns>
     </table>
     <table tableName="publication" tableDbType="TABLE">

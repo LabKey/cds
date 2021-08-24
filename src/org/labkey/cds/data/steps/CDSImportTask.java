@@ -83,6 +83,7 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudyAssay"),
         new TSVCopyConfig("StudyPartGroupArmSubject"),
         new TSVCopyConfig("StudyDocument"),
+        new TSVCopyConfig("AssayDocument"),
         new TSVCopyConfig("StudyPublication"),
         new TSVCopyConfig("PublicationDocument"),
         new TSVCopyConfig("StudyReport"),

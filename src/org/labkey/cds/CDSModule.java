@@ -61,6 +61,7 @@ public class CDSModule extends DefaultModule
     public static final String CMS = "CMS";
     public static final String GETTING_STARTED_VIDEO_URL = "GettingStartedVideoURL";
     public static final String STUDY_DOCUMENT_PATH = "StudyDocumentPath";
+    public static final String ASSAY_DOCUMENT_PATH = "AssayDocumentPath";
     public static final String CDS_IMPORT_PATH = "CDSImportPath";
     public static final String REPORT_1_ID = "MAbReportID1";
     public static final String REPORT_1_LABEL = "MAbReportLabel1";
@@ -78,6 +79,7 @@ public class CDSModule extends DefaultModule
     final ModuleProperty _cmsURL;
     final ModuleProperty _startedVideoURL;
     final ModuleProperty _studyDocumentPath;
+    final ModuleProperty _assayDocumentPath;
     final ModuleProperty _importFolderPath;
 
     final ModuleProperty _mabReport1ID;
@@ -122,6 +124,11 @@ public class CDSModule extends DefaultModule
         _studyDocumentPath.setDescription("Full webdav path to which study documents are located");
         _studyDocumentPath.setCanSetPerContainer(false);
         addModuleProperty(_studyDocumentPath);
+
+        _assayDocumentPath = new ModuleProperty(this, ASSAY_DOCUMENT_PATH);
+        _assayDocumentPath.setDescription("Full webdav path to which assay documents are located");
+        _assayDocumentPath.setCanSetPerContainer(false);
+        addModuleProperty(_assayDocumentPath);
 
         _importFolderPath = new ModuleProperty(this, CDS_IMPORT_PATH);
         _importFolderPath.setDescription("File path that cds import files are located");
@@ -176,7 +183,7 @@ public class CDSModule extends DefaultModule
     @Override
     public @Nullable Double getSchemaVersion()
     {
-        return 21.001;
+        return 21.002;
     }
 
     @Override
