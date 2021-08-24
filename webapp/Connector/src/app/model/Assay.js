@@ -39,6 +39,8 @@ Ext.define('Connector.app.model.Assay', {
         {name: 'antigen_store'},
         {name: 'variable_store'},
         {name: 'hasAntigen'},
+        {name: 'assayTutorialDocuments'},
+        {name: 'assayTutorialLinks'},
         {name: 'interactive_reports', convert : Connector.model.Filter.asArray}
     ]
 });

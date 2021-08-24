@@ -1500,6 +1500,8 @@ public class CDSHelper
         changed |= returnVal;
         returnVal = setStudyDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
         changed |= returnVal;
+        returnVal = setAssayDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
+        changed |= returnVal;
         returnVal = setCDSImportFolderPath(TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent());
         changed |= returnVal;
 
@@ -1575,9 +1577,14 @@ public class CDSHelper
         return setPropertyPath(path, 6);
     }
 
-    private boolean setCDSImportFolderPath(String path)
+    private boolean setAssayDocumentPath(String path)
     {
         return setPropertyPath(path, 7);
+    }
+
+    private boolean setCDSImportFolderPath(String path)
+    {
+        return setPropertyPath(path, 8);
     }
 
     public void assertPlotTickText(Pattern p)

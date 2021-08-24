@@ -1,0 +1,6 @@
+assay_identifier	document_id
+NAB A3R5	303
+NAB A3R5	304
+NAB A3R5	305
+ICS	306
+IFNg ELS	307

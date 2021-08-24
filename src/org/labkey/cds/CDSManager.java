@@ -142,6 +142,7 @@ public class CDSManager
                     "Product",
                     "StudyAssay",
                     "StudyDocument",
+                    "AssayDocument",
                     "PublicationDocument",
                     "Document",
                     "StudyPublication",
@@ -177,6 +178,7 @@ public class CDSManager
                     "import_studypartgrouparmvisitproduct",
                     "import_studypartgrouparmproduct",
                     "import_studydocument",
+                    "import_assaydocument",
                     "import_studyassay",
                     "import_productinsert",
                     "import_studypartgrouparmvisittime",
@@ -297,6 +299,12 @@ public class CDSManager
     public String getStudyDocumentPath(Container container)
     {
         ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.STUDY_DOCUMENT_PATH);
+        return PageFlowUtil.decode(mp.getEffectiveValue(container));
+    }
+
+    public String getAssayDocumentPath(Container container)
+    {
+        ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.ASSAY_DOCUMENT_PATH);
         return PageFlowUtil.decode(mp.getEffectiveValue(container));
     }
 

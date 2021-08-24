@@ -214,6 +214,7 @@
         <script path="Connector/src/app/view/module/VariableList.js"/>
         <script path="Connector/src/app/view/module/SavedReports.js"/>
         <script path="Connector/src/app/view/module/CuratedGroups.js"/>
+        <script path="Connector/src/app/view/module/AssayTutorial.js"/>
 
         <script path="Connector/src/Application.js"/>
 
