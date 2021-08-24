@@ -1138,9 +1138,7 @@ public class CDSController extends SpringActionController
         @Override
         public void validate(StudyDocumentForm form, BindException errors)
         {
-            if (null == form.getDocumentId())
-                errors.reject(ERROR_MSG, "documentId parameter required");
-            if (null == form.getFilename())
+            if (StringUtils.isBlank(form.getFilename()))
                 errors.reject(ERROR_MSG, "filename parameter required");
         }
 
@@ -1158,7 +1156,7 @@ public class CDSController extends SpringActionController
 
             if (!errors.hasErrors() && !StringUtils.isBlank(filename))
             {
-                if (isFileValid(errors, response, filename, basePath))
+                if (downloadFile(errors, response, filename, basePath))
                     return null;
             }
             else
@@ -1190,6 +1188,8 @@ public class CDSController extends SpringActionController
                 errors.reject(ERROR_MSG, "documentId parameter required");
             if (null == form.getFilename())
                 errors.reject(ERROR_MSG, "filename parameter required");
+            if (StringUtils.isNotBlank(form.getStudy()) && form.isPublicAccess())
+                errors.reject(ERROR_MSG, form.getStudy() + " does not have a public access");
         }
 
         @Override
@@ -1213,7 +1213,7 @@ public class CDSController extends SpringActionController
                 }
                 else if (form.isPublicAccess() || CDSManager.get().isStudyDocumentAccessible(form.getStudy(), form.getDocumentId(), getUser(), getContainer()))
                 {
-                    if (isFileValid(errors, response, filename, basePath))
+                    if (downloadFile(errors, response, filename, basePath))
                         return null;
                 }
                 else
@@ -1232,7 +1232,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    private static boolean isFileValid(BindException errors, HttpServletResponse response, String filename, String basePath) throws IOException
+    private static boolean downloadFile(BindException errors, HttpServletResponse response, String filename, String basePath) throws IOException
     {
         WebdavService service = ServiceRegistry.get().getService(WebdavService.class);
         WebdavResource resource = service.lookup(Path.parse(basePath + filename));
