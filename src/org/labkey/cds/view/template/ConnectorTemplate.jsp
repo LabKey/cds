@@ -312,6 +312,7 @@
             srcPath + "/app/model/MAb.js",
             srcPath + "/app/model/Publication.js",
 
+            srcPath + "/app/store/SavedReports.js",
             srcPath + "/app/store/PermissionedStudy.js",
             srcPath + "/app/store/AssayAntigen.js",
             srcPath + "/app/store/Assay.js",

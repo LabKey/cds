@@ -610,6 +610,11 @@ Ext4.define('Connector.cube.Configuration', {
                             instructions: 'Visualize subject-level data in Plot or export from Grid',
                             nabMabInstructions: 'Go to Monoclonal antibodies to visualize or export mAb data'
                         }
+                    },{
+                        type: 'interactivereports',
+                        staticData: {
+                            title: 'Interactive reports'
+                        }
                     }]]
                 },{
                     view: 'Connector.view.module.VariableList'

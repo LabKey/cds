@@ -167,6 +167,7 @@
         <script path="Connector/src/app/model/MAb.js"/>
         <script path="Connector/src/app/model/Publication.js"/>
 
+        <script path="Connector/src/app/store/SavedReports.js"/>
         <script path="Connector/src/app/store/PermissionedStudy.js"/>
         <script path="Connector/src/app/store/AssayAntigen.js"/>
         <script path="Connector/src/app/store/Assay.js"/>
@@ -211,7 +212,7 @@
         <script path="Connector/src/app/view/module/StudySites.js"/>
         <script path="Connector/src/app/view/module/StudyMabs.js"/>
         <script path="Connector/src/app/view/module/VariableList.js"/>
-        <script path="Connector/src/app/view/module/InteractiveReports.js"/>
+        <script path="Connector/src/app/view/module/SavedReports.js"/>
         <script path="Connector/src/app/view/module/CuratedGroups.js"/>
 
         <script path="Connector/src/Application.js"/>

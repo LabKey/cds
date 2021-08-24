@@ -159,6 +159,7 @@ public class CDSManager
                     "studyCuratedGroup",
                     "publicationReport",
                     "publicationCuratedGroup",
+                    "assayReport",
 
                     "import_nabmab",
                     "import_ics",
@@ -208,6 +209,7 @@ public class CDSManager
                     "import_studyCuratedGroup",
                     "import_publicationReport",
                     "import_publicationCuratedGroup",
+                    "import_assayReport",
             })
             {
                 TableInfo t = dbSchema.getTable(s);

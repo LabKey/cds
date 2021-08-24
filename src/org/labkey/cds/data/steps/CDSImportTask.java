@@ -56,8 +56,6 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudyGroups"),
         new TSVCopyConfig("Product"),
         new TSVCopyConfig("Assay"),
-//        new TSVCopyConfig("Personnel"),
-//        new TSVCopyConfig("Site"),
         new TSVCopyConfig("Lab"),
         new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
         new TSVCopyConfig("Document"),
@@ -66,8 +64,6 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("MAbMixMetadata"),
 
         // Dependent Tables
-//        new TSVCopyConfig("StudyPersonnel"),
-//        new TSVCopyConfig("StudySiteFunction"),
         new TSVCopyConfig("StudyPartGroupArm"),
         new TSVCopyConfig("StudyPartGroupArmProduct"),
         new TSVCopyConfig("StudyPartGroupArmVisit"),
@@ -89,7 +85,7 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudyCuratedGroup"),
         new TSVCopyConfig("PublicationReport"),
         new TSVCopyConfig("PublicationCuratedGroup"),
-//        new TSVCopyConfig("StudySitePersonnel"),
+        new TSVCopyConfig("AssayReport"),
 
         //AntigenMetadata
         new TSVCopyConfig("ICSAntigen", "AssayICSAntigen_Metadata"),

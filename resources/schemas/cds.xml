@@ -1380,4 +1380,18 @@
             <column columnName="container"/>
         </columns>
     </table>
+    <table tableName="import_assayReport" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="cds_report_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="assayReport" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="cds_report_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
 </tables>
