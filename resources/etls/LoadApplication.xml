@@ -205,6 +205,10 @@
                 </settings>
             </taskref>
         </transform>
+        <transform id="PopulateAssayDocument"  type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="import_assaydocument" />
+            <destination schemaName="cds" queryName="assaydocument" targetOption="truncate" />
+        </transform>
         <transform id="PopulatePublication" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="cds" queryName="ds_publication" />
             <destination schemaName="cds" queryName="publication" targetOption="truncate" />

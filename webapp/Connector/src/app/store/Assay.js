@@ -23,6 +23,7 @@ Ext.define('Connector.app.store.Assay', {
     loadSlice : function() {
         this.assayData = undefined;
         this.assayStudies = undefined;
+        this.assayDocuments = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
@@ -38,7 +39,14 @@ Ext.define('Connector.app.store.Assay', {
             queryName: 'learn_studiesforassays',
             success: this.onLoadStudies,
             scope: this
-        })
+        });
+
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_assaydocuments',
+            success: this.onLoadAssayDocuments,
+            scope: this
+        });
     },
 
     onLoadAssays: function (assayData) {
@@ -50,9 +58,16 @@ Ext.define('Connector.app.store.Assay', {
         this.assayStudies = assayStudies.rows;
         this._onLoadComplete();
     },
+    onLoadAssayDocuments: function (assayDocuments) {
+        this.assayDocuments = assayDocuments.rows;
+        this._onLoadComplete();
+    },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.assayData) && Ext.isDefined(this.assayStudies) && Ext.isDefined(this.accessibleStudies)) {
+        if (Ext.isDefined(this.assayData)
+               && Ext.isDefined(this.assayStudies)
+               && Ext.isDefined(this.accessibleStudies)
+               && Ext.isDefined(this.assayDocuments)) {
 
             this.assayData.sort(function(assayA, assayB) {
                 return Connector.model.Filter.sorters.natural(assayA.assay_short_name, assayB.assay_short_name);
@@ -63,6 +78,9 @@ Ext.define('Connector.app.store.Assay', {
             Ext.each(this.assayData, function(assay) {
                 var studies = [];
                 var studiesWithData = [];
+                var assayTutorialLinks = []; //tutorial video links
+                var assayTutorialDocuments = []; //tutorial doc links
+
                 assay.data_availability = false;
                 assay.data_accessible = false;
                 for (var s = 0; s < this.assayStudies.length; s++) {
@@ -79,6 +97,30 @@ Ext.define('Connector.app.store.Assay', {
                         studies.push(study);
                     }
                 }
+
+                Ext.each(this.assayDocuments, function(assayDoc) {
+                    if (assayDoc.assay_identifier === assay.assay_identifier) {
+                        var doc = {
+                            label: assayDoc.label,
+                            filePath: Connector.plugin.DocumentValidation.getAssayTutorialDocumentUrl(assayDoc.filename, assayDoc.document_id),
+                            assay_tutorial_link: assayDoc.video_link,
+                            assay_tutorial_type: assayDoc.document_type,
+                            assay_tutorial_id: assayDoc.document_id,
+                            video_thumbnail_label: assayDoc.video_thumbnail_label,
+                            hasPermission: true,
+                            suffix: '(' + Connector.utility.FileExtension.fileDisplayType(assayDoc.filename) +')',
+                        }
+                        if (assayDoc.document_type === "Assay Tutorial Document") {
+                            assayTutorialDocuments.push(doc);
+                        }
+                        else if (assayDoc.document_type === "Assay Tutorial Link") {
+                            assayTutorialLinks.push(doc);
+                        }
+                    }
+                });
+                assay.assayTutorialDocuments = assayTutorialDocuments;
+                assay.assayTutorialLinks = assayTutorialLinks;
+
                 studies.sort(Connector.view.module.DataAvailabilityModule.dataAddedSortFn);
                 Ext.each(studies, function(study, index) {
                     if (study.has_data) {
@@ -109,6 +151,7 @@ Ext.define('Connector.app.store.Assay', {
 
             this.assayData = undefined;
             this.assayStudies = undefined;
+            this.assayDocuments = undefined;
 
             this.loadRawData(assays);
         }
