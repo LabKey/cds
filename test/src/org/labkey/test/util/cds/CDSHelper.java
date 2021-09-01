@@ -2125,7 +2125,7 @@ public class CDSHelper
     }
 
     // Not really used any more. Could be useful to identify a report if needed.
-    private int getReportNumberFromUrl(String url)
+    public int getReportNumberFromUrl(String url)
     {
         // The last part of the url looks like .reportId=db%3A# where # is the report id.
         // The call to substring(3) skips over the %3A in the url.
@@ -2138,6 +2138,4 @@ public class CDSHelper
 
         return Integer.parseInt(subString);
     }
-
-
 }

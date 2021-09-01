@@ -28,6 +28,8 @@ import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
+import org.labkey.test.pages.query.ExecuteQueryPage;
+import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.RReportHelper;
@@ -62,13 +64,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private static final String STUDY_GROUP_Q2 = "Study Q2 Group";
 
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
-
-    private boolean studyLabelUpdated = false;
-
-    private final CDSTestLearnAbout _cdsTestLearnAbout = new CDSTestLearnAbout();
-    private RReportHelper _rReportHelper;
-
-    private static final String NAB_Q2_REPORT_SOURCE ="library(Rlabkey)\n" +
+    private static final String NAB_Q2_REPORT_SOURCE = "library(Rlabkey)\n" +
             "\n" +
             "# Select rows into a data frame called 'labkey.data'\n" +
             "\n" +
@@ -94,6 +90,9 @@ public class CDSGroupTest extends CDSGroupBaseTest
             "    containerFilter=NULL, \n" +
             "    colNameOpt=\"rname\"\n" +
             ")\n";
+    private final CDSTestLearnAbout _cdsTestLearnAbout = new CDSTestLearnAbout();
+    private boolean studyLabelUpdated = false;
+    private RReportHelper _rReportHelper;
 
     @Override
     @Before
@@ -125,7 +124,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     @After
     public void revertStudyName() throws Exception
     {
-        if(studyLabelUpdated)
+        if (studyLabelUpdated)
         {
             changeStudyLabelAndLoadData(CDSHelper.ZAP_139, CDSHelper.PROT_Z139, CDSHelper.ZAP_139);
         }
@@ -329,8 +328,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clearFilters(true);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForText(GROUP_PLOT_TEST );
-        click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_PLOT_TEST ));
+        waitForText(GROUP_PLOT_TEST);
+        click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_PLOT_TEST));
         waitForText("View in Plot");
         click(Locator.xpath("//span/following::span[contains(text(), 'View in Plot')]").parent().parent().parent());
         assertTrue(getDriver().getCurrentUrl().contains("#chart"));
@@ -338,7 +337,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         CDSPlot cdsPlot = new CDSPlot(this);
         assertTrue("Group filter with plot is not applied correctly", cdsPlot.getPointCount() > 0);
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        cds.deleteGroupFromSummaryPage(GROUP_PLOT_TEST );
+        cds.deleteGroupFromSummaryPage(GROUP_PLOT_TEST);
         cds.clearFilters();
     }
 
@@ -369,7 +368,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         waitAndClick(listGroup.withText(STUDY_GROUP_Q2));
         String groupUrl = getCurrentRelativeURL();
         String[] vals = groupUrl.split("/");
-        int rowId = Integer.valueOf(vals[vals.length-1]); //study.SubjectGroup.RowId
+        int rowId = Integer.valueOf(vals[vals.length - 1]); //study.SubjectGroup.RowId
 
         log("save report info into cds.studyCuratedGroup & cds.publicationCuratedGroup tables");
         try
@@ -393,7 +392,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         waitAndClick(listGroup.withText(STUDY_GROUP_Z110));
         groupUrl = getCurrentRelativeURL();
         vals = groupUrl.split("/");
-        rowId = Integer.valueOf(vals[vals.length-1]); //study.SubjectGroup.RowId
+        rowId = Integer.valueOf(vals[vals.length - 1]); //study.SubjectGroup.RowId
 
         try
         {
@@ -415,6 +414,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.enterApplication();
         verifyLinksOnStudyPage(studyGroupDesc);
         verifyLinksOnPublicationPage(studyGroupDesc);
+        verifyLinksOnAssayPage();
         goToProjectHome();
         stopImpersonating();
         _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
@@ -424,8 +424,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private void createSharedReports()
     {
         goToProjectHome();
-        String url = getProjectName() +  "/study-dataset.view?datasetId=5003";
-        _rReportHelper  = new RReportHelper(this);
+        String url = getProjectName() + "/study-dataset.view?datasetId=5003";
+        _rReportHelper = new RReportHelper(this);
 
         int reportId = cds.createReport(_rReportHelper, url, ELISPOT_Z110_REPORT_SOURCE, "ELISPOT PROT Z110 Report", true, true);
         try
@@ -439,7 +439,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         }
 
         goToProjectHome();
-        url = getProjectName() +  "/study-dataset.view?datasetId=5004";
+        url = getProjectName() + "/study-dataset.view?datasetId=5004";
         reportId = cds.createReport(_rReportHelper, url, NAB_Q2_REPORT_SOURCE, "NAB PROT QED 2 Report", true, true);
 
         try
@@ -476,6 +476,37 @@ public class CDSGroupTest extends CDSGroupBaseTest
         verifyCuratedLink(descr);
     }
 
+    private void verifyLinksOnAssayPage()
+    {
+        String reportName = "NAb ic50 plot";
+        log("inserting the value between report and assay");
+        updateLinkBetweenAssayAndReport("ICS", reportName);
+
+        log("Verifying links of assay page");
+        goToAssayPage(CDSHelper.TITLE_ICS);
+        waitForElementWithRefresh(Locator.id("interactive_report_title"), 5000);
+        log("verify interactive report link");
+        scrollIntoView(Locator.id("interactive_report_title"));
+
+        log("Verifying report is present");
+        assertElementPresent(Locator.linkWithText(reportName));
+    }
+
+    private void updateLinkBetweenAssayAndReport(String assayName, String reportName)
+    {
+        goToProjectHome();
+        clickTab("Clinical and Assay Data");
+        clickAndWait(Locator.linkWithText(reportName));
+        int reportNum = cds.getReportNumberFromUrl(getDriver().getCurrentUrl());
+
+        goToSchemaBrowser();
+        DataRegionTable table = ExecuteQueryPage.beginAt(this, "CDS", "assayReport").getDataRegion();
+        table.clickInsertNewRow();
+        setFormElement(Locator.name("quf_assay_identifier"), assayName);
+        setFormElement(Locator.name("quf_cds_report_id"), String.valueOf(reportNum));
+        clickButton("Submit");
+    }
+
     private void goToPubPage(String pub)
     {
         cds.viewLearnAboutPage("Publications");
@@ -488,6 +519,14 @@ public class CDSGroupTest extends CDSGroupBaseTest
         LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch(prot);
         _cdsTestLearnAbout.goToDetail(prot, true);
+    }
+
+    private void goToAssayPage(String name)
+    {
+        cds.viewLearnAboutPage("Assays");
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(name);
+        _cdsTestLearnAbout.goToDetail(name, true);
     }
 
     private void verifyCuratedLink(String descr)
@@ -514,22 +553,22 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
     public void updateStudyReportsTable(int cds_report_id, String prot) throws IOException, CommandException
     {
-        insertData("cds_report_id", cds_report_id, "prot", prot, null, null,"cds", "studyReport");
+        insertData("cds_report_id", cds_report_id, "prot", prot, null, null, "cds", "studyReport");
     }
 
     public void updateStudyPublicationsTable(int cds_report_id, int pubId) throws IOException, CommandException
     {
-        insertData("cds_report_id", cds_report_id, null, null,"publication_id", pubId, "cds", "publicationReport");
+        insertData("cds_report_id", cds_report_id, null, null, "publication_id", pubId, "cds", "publicationReport");
     }
 
     private void updateStudyCuratedGroupTable(int cds_saved_group_id, String prot) throws IOException, CommandException
     {
-        insertData("cds_saved_group_id", cds_saved_group_id, "prot", prot, null, null,"cds", "studyCuratedGroup");
+        insertData("cds_saved_group_id", cds_saved_group_id, "prot", prot, null, null, "cds", "studyCuratedGroup");
     }
 
     private void updatePublicationCuratedGroupTable(int cds_saved_group_id, int pubId) throws IOException, CommandException
     {
-        insertData("cds_saved_group_id", cds_saved_group_id, null, null,"publication_id", pubId, "cds", "publicationCuratedGroup");
+        insertData("cds_saved_group_id", cds_saved_group_id, null, null, "publication_id", pubId, "cds", "publicationCuratedGroup");
     }
 
     private void insertData(String savedGrpColName, int savedGrpId,
@@ -540,7 +579,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         Connection cn = WebTestHelper.getRemoteApiConnection();
 
         InsertRowsCommand insertCmd = new InsertRowsCommand(schemaName, table);
-        Map<String,Object> rowMap = new HashMap<>();
+        Map<String, Object> rowMap = new HashMap<>();
         rowMap.put(savedGrpColName, savedGrpId);
         if (null != protColName && null != protVal)
             rowMap.put(protColName, protVal);
