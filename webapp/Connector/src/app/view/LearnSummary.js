@@ -118,7 +118,7 @@ Ext.define('Connector.app.view.LearnSummary', {
         var config = this.dataAvailabilityTooltipConfig();
         var labelField = config.labelField || 'data_label';
 
-        var niTitle = "Non-integrated Assay";
+        var niTitle = "Non-integrated Assays";
         var niLabelField = "label";
 
         var pubTitle = "Publications";

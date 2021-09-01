@@ -103,6 +103,7 @@ Ext.define('Connector.app.view.Study', {
                             description += ('0/' + niCount);
 
                         description += " Non-integrated Assay";
+                        description += (niCount == 1 ? '' : 's');
 
                         return description;
                     },
