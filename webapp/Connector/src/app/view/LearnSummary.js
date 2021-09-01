@@ -32,6 +32,39 @@ Ext.define('Connector.app.view.LearnSummary', {
         }
     },
 
+    hideToolTip : function(hoverComponent) {
+        hoverComponent.un('mouseenter', this.showDataAvailabilityTooltip, this);
+        hoverComponent.un('mouseleave', this.hideDataAvailabilityTooltip, this);
+        hoverComponent.un('click', this.hideDataAvailabilityTooltip, this);
+        this.hideDataAvailabilityTooltip();
+    },
+
+    showToolTip : function(hoverComponent, record, id, evt) {
+        hoverComponent.on('mouseenter', this.showDataAvailabilityTooltip, this, {
+            itemsWithDataAvailable: record.data.data_availability ? record.getData()[record.dataAvailabilityField] : [],
+            itemsWithNIDataAvailable: record.data.ni_data_availability ? record.getData()[record.ni_dataAvailabilityField] : [],
+            itemsWithPubDataAvailable: record.data.publications,
+            id: id
+        });
+        hoverComponent.on('mouseleave', this.hideDataAvailabilityTooltip, this);
+        hoverComponent.on('click', this.hideDataAvailabilityTooltip, this);
+
+        //If moving the cursor reasonably quickly, then it's possible to cause the "mouseenter" event to
+        //fire before "itemmouseenter" fires.
+        var textRect = hoverComponent.dom.getBoundingClientRect();
+        var cursorX = evt.browserEvent.clientX;
+        var cursorY = evt.browserEvent.clientY;
+        if (textRect.top <= cursorY && cursorY <= textRect.bottom
+                && textRect.left <= cursorX && cursorX <= textRect.right) {
+            this.showDataAvailabilityTooltip(evt, hoverComponent.dom, {
+                itemsWithDataAvailable: record.data.data_availability ? record.getData()[record.dataAvailabilityField] : [],
+                itemsWithNIDataAvailable: record.data.ni_data_availability ? record.getData()[record.ni_dataAvailabilityField] : [],
+                itemsWithPubDataAvailable: record.data.publications,
+                id: id
+            });
+        }
+    },
+
     initComponent : function() {
         this.addEvents("learnGridResizeHeight");
 
@@ -44,32 +77,14 @@ Ext.define('Connector.app.view.LearnSummary', {
         this.normalGridConfig.listeners = {
             itemmouseenter : function(view, record, item, index, evt) {
                 if (record.data.data_availability || record.data.ni_data_availability || record.data.pub_available_data_count > 0) {
-                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
-                            id = Ext.id() + "-" + index;
+                    var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
+                    var dataAvailabilityText = Ext.get(Ext.query(".detail-gray-text", item)[0]);
+                    var id = Ext.id() + "-" + index;
                     if (checkmark) {
-                        checkmark.on('mouseenter', this.showDataAvailabilityTooltip, this, {
-                            itemsWithDataAvailable: record.data.data_availability ? record.getData()[record.dataAvailabilityField] : [],
-                            itemsWithNIDataAvailable: record.data.ni_data_availability ? record.getData()[record.ni_dataAvailabilityField] : [],
-                            itemsWithPubDataAvailable: record.data.publications,
-                            id: id
-                        });
-                        checkmark.on('mouseleave', this.hideDataAvailabilityTooltip, this);
-                        checkmark.on('click', this.hideDataAvailabilityTooltip, this);
-
-                        //If moving the cursor reasonably quickly, then it's possible to cause the "mouseenter" event to
-                        //fire before "itemmouseenter" fires.
-                        var textRect = checkmark.dom.getBoundingClientRect();
-                        var cursorX = evt.browserEvent.clientX;
-                        var cursorY = evt.browserEvent.clientY;
-                        if (textRect.top <= cursorY && cursorY <= textRect.bottom
-                                && textRect.left <= cursorX && cursorX <= textRect.right) {
-                            this.showDataAvailabilityTooltip(evt, checkmark.dom, {
-                                itemsWithDataAvailable: record.data.data_availability ? record.getData()[record.dataAvailabilityField] : [],
-                                itemsWithNIDataAvailable: record.data.ni_data_availability ? record.getData()[record.ni_dataAvailabilityField] : [],
-                                itemsWithPubDataAvailable: record.data.publications,
-                                id: id
-                            });
-                        }
+                        this.showToolTip(checkmark, record, id, evt);
+                    }
+                    if (dataAvailabilityText) {
+                        this.showToolTip(dataAvailabilityText, record, id, evt);
                     }
                 }
             },
@@ -77,11 +92,13 @@ Ext.define('Connector.app.view.LearnSummary', {
             itemmouseleave : function(view, record, item) {
                 if (record.data.data_availability) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
+                    var dataAvailabilityText = Ext.get(Ext.query(".detail-gray-text", item)[0]);
+
                     if (checkmark) {
-                        checkmark.un('mouseenter', this.showDataAvailabilityTooltip, this);
-                        checkmark.un('mouseleave', this.hideDataAvailabilityTooltip, this);
-                        checkmark.un('click', this.hideDataAvailabilityTooltip, this);
-                        this.hideDataAvailabilityTooltip();
+                        this.hideToolTip(checkmark);
+                    }
+                    if (dataAvailabilityText) {
+                        this.hideToolTip(dataAvailabilityText);
                     }
                 }
             },
