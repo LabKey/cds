@@ -57,10 +57,6 @@ Ext.define('Connector.app.view.Study', {
                             'detail-has-data-gray',
                             '</tpl>',
                         '"></div>',
-                        '<div class="detail-gray-text learn-about-data-added-detail">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
-                        '<tpl if="pub_available_data_count &gt; 0">',
-                            '<div class="detail-gray-text learn-about-data-added-detail">{[this.publicationCountText(values)]}</div>',
-                        '</tpl>',
                     '<tpl elseif="ni_assays_added_count &gt; 0">',
                         '<div class="detail-has-data ',
                             '<tpl if="data_accessible">',
@@ -69,17 +65,21 @@ Ext.define('Connector.app.view.Study', {
                             'detail-has-data-ni-gray',
                             '</tpl>',
                         '"></div>',
-                            '<div class="detail-gray-text learn-about-data-added-detail">{[this.niAssayCountText(values)]}</div>',
-                        '<tpl if="pub_available_data_count &gt; 0">',
-                            '<div class="detail-gray-text learn-about-data-added-detail">{[this.publicationCountText(values)]}</div>',
-                        '</tpl>',
                     '<tpl elseif="pub_available_data_count &gt; 0">',
                         '<div class="detail-has-data detail-has-data-ni"></div>',
-                        '<div class="detail-gray-text learn-about-data-added-detail">{[this.publicationCountText(values)]}</div>',
                     '<tpl else>',
-                        '<div class="detail-gray-text learn-about-data-added-detail">',
-                        'Data not added',
+                        '<div class="detail-gray-text">',
+                            'Data not added',
                         '</div>',
+                    '</tpl>',
+                    '<tpl if="assays_added_count &gt; 0">',
+                        '<div class="detail-gray-text">{[this.assayCountText(values.assays_added, values.data_accessible)]}</div>',
+                    '</tpl>',
+                    '<tpl if="ni_assays_added_count &gt; 0">',
+                        '<div class="detail-gray-text">{[this.niAssayCountText(values)]}</div>',
+                    '</tpl>',
+                    '<tpl if="pub_available_data_count &gt; 0">',
+                        '<div class="detail-gray-text">{[this.publicationCountText(values)]}</div>',
                     '</tpl>',
                 '</div>',
                 {
@@ -90,7 +90,7 @@ Ext.define('Connector.app.view.Study', {
                             description += totalCount;
                         else
                             description += ('0/' + totalCount);
-                        description += " Assay";
+                        description += " Integrated Assay";
                         description += (totalCount == 1 ? '' : 's');
                         return description;
                     },
@@ -281,7 +281,7 @@ Ext.define('Connector.app.view.Study', {
 
     dataAvailabilityTooltipConfig : function() {
         return {
-            title: 'Assays'
+            title: 'Integrated Assays'
         }
     }
 });

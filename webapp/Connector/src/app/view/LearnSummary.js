@@ -45,10 +45,11 @@ Ext.define('Connector.app.view.LearnSummary', {
             itemmouseenter : function(view, record, item, index, evt) {
                 if (record.data.data_availability || record.data.ni_data_availability || record.data.pub_available_data_count > 0) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]),
-                            id = Ext.id();
+                            id = Ext.id() + "-" + index;
                     if (checkmark) {
                         checkmark.on('mouseenter', this.showDataAvailabilityTooltip, this, {
-                            itemsWithDataAvailable: record.data.data_availability ? record.getData()[record.dataAvailabilityField] : record.getData()[record.ni_dataAvailabilityField],
+                            itemsWithDataAvailable: record.data.data_availability ? record.getData()[record.dataAvailabilityField] : [],
+                            itemsWithNIDataAvailable: record.data.ni_data_availability ? record.getData()[record.ni_dataAvailabilityField] : [],
                             itemsWithPubDataAvailable: record.data.publications,
                             id: id
                         });
@@ -63,7 +64,8 @@ Ext.define('Connector.app.view.LearnSummary', {
                         if (textRect.top <= cursorY && cursorY <= textRect.bottom
                                 && textRect.left <= cursorX && cursorX <= textRect.right) {
                             this.showDataAvailabilityTooltip(evt, checkmark.dom, {
-                                itemsWithDataAvailable:  record.data.data_availability ? record.getData()[record.dataAvailabilityField] : record.getData()[record.ni_dataAvailabilityField],
+                                itemsWithDataAvailable: record.data.data_availability ? record.getData()[record.dataAvailabilityField] : [],
+                                itemsWithNIDataAvailable: record.data.ni_data_availability ? record.getData()[record.ni_dataAvailabilityField] : [],
                                 itemsWithPubDataAvailable: record.data.publications,
                                 id: id
                             });
@@ -99,30 +101,29 @@ Ext.define('Connector.app.view.LearnSummary', {
         var config = this.dataAvailabilityTooltipConfig();
         var labelField = config.labelField || 'data_label';
 
+        var niTitle = "Non-integrated Assay";
+        var niLabelField = "label";
+
         var pubTitle = "Publications";
         var pubLabelField = "label";
 
         var dataAvailableListHTML = "<ul>";
         var records = options.itemsWithDataAvailable, accessible = [], nonAccessible = [];
+        var ni_records = options.itemsWithNIDataAvailable, ni_accessible = [], ni_nonAccessible = [];
         var pub_records = options.itemsWithPubDataAvailable, availablePubData = [];
         Ext.each(records, function(record){
-            if (record.docType === "Non-Integrated Assay") {
-
-                config.title = "Non-Integrated Assay";
-                labelField = 'label';
-
-                if (record.isLinkValid && record.hasPermission)
-                    accessible.push(record);
-                else
-                    nonAccessible.push(record);
-            }
+            if (record.has_access)
+                accessible.push(record);
             else
-            {
-                if (record.has_access)
-                    accessible.push(record);
-                else
-                    nonAccessible.push(record);
-            }
+                nonAccessible.push(record);
+
+        });
+
+        Ext.each(ni_records, function(ni_record){
+            if (ni_record.isLinkValid && ni_record.hasPermission)
+                ni_accessible.push(ni_record);
+            else
+                ni_nonAccessible.push(ni_record);
         });
 
         Ext.each(pub_records, function(pub_record){
@@ -150,7 +151,30 @@ Ext.define('Connector.app.view.LearnSummary', {
             dataAvailableListHTML += "</ul>";
         }
 
-        if (availablePubData.length > 0 && (accessible.length > 0 || nonAccessible.length > 0)) {
+        if (accessible.length > 0 || nonAccessible.length > 0) {
+            dataAvailableListHTML += "<br>";
+        }
+
+        if (ni_accessible.length > 0) {
+            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " with Data Accessible" + '</p>';
+            dataAvailableListHTML += "<ul>";
+            Ext.each(ni_accessible, function(record){
+                dataAvailableListHTML += "<li>" + record[niLabelField] + "</li>\n";
+            });
+            dataAvailableListHTML += "</ul>";
+        }
+        if (ni_nonAccessible.length > 0) {
+            if (accessible.length > 0)
+                dataAvailableListHTML += '<br>';
+            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " without Data Accessible" + '</p>';
+            dataAvailableListHTML += "<ul>";
+            Ext.each(ni_nonAccessible, function(record){
+                dataAvailableListHTML += "<li>" + record[niLabelField] + "</li>\n";
+            });
+            dataAvailableListHTML += "</ul>";
+        }
+
+        if (availablePubData.length > 0 && (ni_accessible.length > 0 || ni_nonAccessible.length > 0)) {
             dataAvailableListHTML += "<br>";
         }
 
