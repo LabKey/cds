@@ -214,7 +214,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Verify data availability tooltip for accessible Non-Integrated Assay");
         toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn).getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateText("Tooltip", toolTipText, "Non-Integrated Assay with Data Accessible", "ILLUMINA 454-X", "Publications with Data Accessible", "Bekker LG 2018 Lancet HIV", "Fong Y 2018 J Infect Dis");
+        validateText("Tooltip", toolTipText, "Non-integrated Assay with Data Accessible", "ILLUMINA 454-X", "Publications with Data Accessible", "Bekker LG 2018 Lancet HIV", "Fong Y 2018 J Infect Dis");
         mouseOver(Locator.className("detail-description-text").findElement(getDriver()));
 
         log("Verify accessible Non-Integrated Assay on Studies page");

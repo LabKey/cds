@@ -221,8 +221,8 @@ Ext.define('Connector.app.view.LearnSummary', {
                 displayTooltip = setTimeout(function() {
                     calloutMgr.createCallout(Ext.apply({
                         id: _id,
-                        xOffset: 10,
-                        yOffset: -verticalOffset,
+                        xOffset: itemWrapped.el.dom.className === "detail-gray-text" ? -35 : 20,
+                        yOffset: itemWrapped.el.dom.className === "detail-gray-text" ? -verticalOffset-20 : -verticalOffset,
                         arrowOffset: verticalOffset,
                         showCloseButton: false,
                         target: item,
