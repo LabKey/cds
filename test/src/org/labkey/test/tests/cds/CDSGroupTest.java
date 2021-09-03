@@ -409,16 +409,19 @@ public class CDSGroupTest extends CDSGroupBaseTest
             createUserWithPermissions(NEW_USER_ACCOUNTS[0], getProjectName(), "Reader");
         }
         _apiPermissionsHelper.addMemberToRole(NEW_USER_ACCOUNTS[0], "Reader", PermissionsHelper.MemberType.user, getProjectName());
+        String reportName = "NAb ic50 plot";
+        log("inserting the value between report and assay");
+        updateLinkBetweenAssayAndReport("ICS", reportName);
+
         goToProjectHome();
         impersonate(NEW_USER_ACCOUNTS[0]);
         cds.enterApplication();
         verifyLinksOnStudyPage(studyGroupDesc);
         verifyLinksOnPublicationPage(studyGroupDesc);
-        verifyLinksOnAssayPage();
+        verifyLinksOnAssayPage(reportName);
         goToProjectHome();
         stopImpersonating();
         _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
-
     }
 
     private void createSharedReports()
@@ -476,12 +479,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         verifyCuratedLink(descr);
     }
 
-    private void verifyLinksOnAssayPage()
+    private void verifyLinksOnAssayPage(String reportName)
     {
-        String reportName = "NAb ic50 plot";
-        log("inserting the value between report and assay");
-        updateLinkBetweenAssayAndReport("ICS", reportName);
-
         log("Verifying links of assay page");
         goToAssayPage(CDSHelper.TITLE_ICS);
         waitForElementWithRefresh(Locator.id("interactive_report_title"), 5000);
@@ -498,7 +497,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
         clickTab("Clinical and Assay Data");
         clickAndWait(Locator.linkWithText(reportName));
         int reportNum = cds.getReportNumberFromUrl(getDriver().getCurrentUrl());
-
         goToSchemaBrowser();
         DataRegionTable table = ExecuteQueryPage.beginAt(this, "CDS", "assayReport").getDataRegion();
         table.clickInsertNewRow();
@@ -525,8 +523,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         cds.viewLearnAboutPage("Assays");
         LearnGrid learnGrid = new LearnGrid(this);
-        learnGrid.setSearch(name);
-        _cdsTestLearnAbout.goToDetail(name, true);
+        learnGrid.setSearch(name).clickFirstItem();
     }
 
     private void verifyCuratedLink(String descr)
