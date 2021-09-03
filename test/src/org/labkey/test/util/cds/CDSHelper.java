@@ -56,6 +56,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+import static org.labkey.test.util.TestLogger.log;
+
 public class CDSHelper
 {
     public static final String QED_1 = "QED 1";
@@ -1763,7 +1765,7 @@ public class CDSHelper
 
         public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)
         {
-            TestLogger.log("Navigate to CDS: " + getLinkText());
+            log("Navigate to CDS: " + getLinkText());
             wdw.waitAndClick(getLinkLocator());
             if (!skipReadyCheck)
                 waitForReady(wdw);
@@ -2124,8 +2126,7 @@ public class CDSHelper
         return reportId;
     }
 
-    // Not really used any more. Could be useful to identify a report if needed.
-    private int getReportNumberFromUrl(String url)
+    public int getReportNumberFromUrl(String url)
     {
         // The last part of the url looks like .reportId=db%3A# where # is the report id.
         // The call to substring(3) skips over the %3A in the url.
@@ -2136,8 +2137,9 @@ public class CDSHelper
         index = url.indexOf(REPORT_TAG);
         subString = url.substring(index + REPORT_TAG.length()).substring(3);
 
+       if(subString.length() > 3)
+          return Integer.parseInt(subString.substring(subString.indexOf("%")+1, subString.indexOf("%")+2));
+       else
         return Integer.parseInt(subString);
     }
-
-
 }

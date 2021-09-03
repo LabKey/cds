@@ -167,6 +167,7 @@
         <script path="Connector/src/app/model/MAb.js"/>
         <script path="Connector/src/app/model/Publication.js"/>
 
+        <script path="Connector/src/app/store/SavedReports.js"/>
         <script path="Connector/src/app/store/PermissionedStudy.js"/>
         <script path="Connector/src/app/store/AssayAntigen.js"/>
         <script path="Connector/src/app/store/Assay.js"/>
