@@ -112,6 +112,8 @@ Ext.define('Connector.controller.Explorer', {
             this.on({
                 dimension: v.onDimensionChange,
                 hierarchy: v.onHierarchyChange,
+                mouseenterexplore : v.onMouseEnterExplore,
+                mouseleaveexplore : v.onMouseLeaveExplore,
                 scope: v
             });
 
@@ -234,6 +236,7 @@ Ext.define('Connector.controller.Explorer', {
     onExplorerEnter : function(view, rec) {
         if (!view.loadLock) {
             this._hoverHelper(view, rec, true);
+            this.fireEvent('mouseenterexplore', view, rec);
         }
     },
 
@@ -249,6 +252,7 @@ Ext.define('Connector.controller.Explorer', {
     onExplorerLeave : function(view, rec) {
         if (!view.loadLock) {
             this._hoverHelper(view, rec, false);
+            this.fireEvent('mouseleaveexplore', view, rec);
         }
     },
 
