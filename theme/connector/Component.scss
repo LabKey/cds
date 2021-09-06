@@ -897,13 +897,18 @@ text.study-label {
 .assay-tutorial-img-container {
   position:relative;
   text-align: left;
-  color: white;
+  padding:0;
+  display:block;
+  margin: 0 auto;
+  max-height:100%;
+  max-width:100%;
 
   .assay-tutorial-label {
+    color: white;
     position:absolute;
     top: 8px;
     left: 16px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight:bold;
     font-family: Georgia, serif;
   }
