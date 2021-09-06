@@ -149,59 +149,66 @@ Ext.define('Connector.app.view.LearnSummary', {
             }
         });
 
-        if (accessible.length > 0) {
-            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " with Data Accessible" + '</p>';
-            dataAvailableListHTML += "<ul>";
-            Ext.each(accessible, function(record){
-                dataAvailableListHTML += "<li>" + record[labelField] + "</li>\n";
-            });
-            dataAvailableListHTML += "</ul>";
+        if (config.title === "Publications") {
+            if (accessible.length > 0) {
+                dataAvailableListHTML += '<p>' + "Publication Data Available" + '</p>';
+            }
         }
-        if (nonAccessible.length > 0) {
-            if (accessible.length > 0)
-                dataAvailableListHTML += '<br>';
-            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " without Data Accessible" + '</p>';
-            dataAvailableListHTML += "<ul>";
-            Ext.each(nonAccessible, function(record){
-                dataAvailableListHTML += "<li>" + record[labelField] + "</li>\n";
-            });
-            dataAvailableListHTML += "</ul>";
-        }
+        else {
+            if (accessible.length > 0) {
+                dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " with Data Accessible" + '</p>';
+                dataAvailableListHTML += "<ul>";
+                Ext.each(accessible, function(record){
+                    dataAvailableListHTML += "<li>" + record[labelField] + "</li>\n";
+                });
+                dataAvailableListHTML += "</ul>";
+            }
+            if (nonAccessible.length > 0) {
+                if (accessible.length > 0)
+                    dataAvailableListHTML += '<br>';
+                dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " without Data Accessible" + '</p>';
+                dataAvailableListHTML += "<ul>";
+                Ext.each(nonAccessible, function(record){
+                    dataAvailableListHTML += "<li>" + record[labelField] + "</li>\n";
+                });
+                dataAvailableListHTML += "</ul>";
+            }
 
-        if (accessible.length > 0 || nonAccessible.length > 0) {
-            dataAvailableListHTML += "<br>";
-        }
+            if (accessible.length > 0 || nonAccessible.length > 0) {
+                dataAvailableListHTML += "<br>";
+            }
 
-        if (ni_accessible.length > 0) {
-            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " with Data Accessible" + '</p>';
-            dataAvailableListHTML += "<ul>";
-            Ext.each(ni_accessible, function(record){
-                dataAvailableListHTML += "<li>" + record[niLabelField] + "</li>\n";
-            });
-            dataAvailableListHTML += "</ul>";
-        }
-        if (ni_nonAccessible.length > 0) {
-            if (accessible.length > 0)
-                dataAvailableListHTML += '<br>';
-            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " without Data Accessible" + '</p>';
-            dataAvailableListHTML += "<ul>";
-            Ext.each(ni_nonAccessible, function(record){
-                dataAvailableListHTML += "<li>" + record[niLabelField] + "</li>\n";
-            });
-            dataAvailableListHTML += "</ul>";
-        }
+            if (ni_accessible.length > 0) {
+                dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " with Data Accessible" + '</p>';
+                dataAvailableListHTML += "<ul>";
+                Ext.each(ni_accessible, function(record){
+                    dataAvailableListHTML += "<li>" + record[niLabelField] + "</li>\n";
+                });
+                dataAvailableListHTML += "</ul>";
+            }
+            if (ni_nonAccessible.length > 0) {
+                if (accessible.length > 0)
+                    dataAvailableListHTML += '<br>';
+                dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " without Data Accessible" + '</p>';
+                dataAvailableListHTML += "<ul>";
+                Ext.each(ni_nonAccessible, function(record){
+                    dataAvailableListHTML += "<li>" + record[niLabelField] + "</li>\n";
+                });
+                dataAvailableListHTML += "</ul>";
+            }
 
-        if (availablePubData.length > 0 && (ni_accessible.length > 0 || ni_nonAccessible.length > 0)) {
-            dataAvailableListHTML += "<br>";
-        }
+            if (availablePubData.length > 0 && (ni_accessible.length > 0 || ni_nonAccessible.length > 0)) {
+                dataAvailableListHTML += "<br>";
+            }
 
-        if (availablePubData.length > 0) {
-            dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + pubTitle + " with Data Accessible" + '</p>';
-            dataAvailableListHTML += "<ul>";
-            Ext.each(availablePubData, function(record){
-                dataAvailableListHTML += "<li>" + record[pubLabelField] + "</li>\n";
-            });
-            dataAvailableListHTML += "</ul>";
+            if (availablePubData.length > 0) {
+                dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + pubTitle + " with Data Accessible" + '</p>';
+                dataAvailableListHTML += "<ul>";
+                Ext.each(availablePubData, function(record){
+                    dataAvailableListHTML += "<li>" + record[pubLabelField] + "</li>\n";
+                });
+                dataAvailableListHTML += "</ul>";
+            }
         }
 
         var itemWrapped = Ext.get(item);
