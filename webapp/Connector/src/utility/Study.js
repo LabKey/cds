@@ -9,21 +9,19 @@ Ext.define('Connector.utility.Study', {
 
     singleton: true,
 
-    getStudyDescription : function(label, callback, scope) {
+    initialize : function(callback, scope) {
         if (!this.studyDescription) {
-            this.studyDescription = {};
-
-            // lazily populate the map
             LABKEY.Query.selectRows({
                 schemaName: 'cds',
-                queryName: 'learn_studiesforassays',
+                queryName: 'study',
                 success: function(response) {
+                    this.studyDescription = {};
                     Ext.each(response.rows, function(row){
                         this.studyDescription[row.label] = row.description;
                     }, this);
 
                     if (Ext.isFunction(callback)) {
-                        callback.call(scope ? scope : this, this.studyDescription[label]);
+                        callback.call(scope ? scope : this);
                     }
                 },
                 scope: this
@@ -31,8 +29,15 @@ Ext.define('Connector.utility.Study', {
         }
         else {
             if (Ext.isFunction(callback)) {
-                callback.call(scope ? scope : this, this.studyDescription[label]);
+                callback.call(scope ? scope : this);
             }
         }
+    },
+
+    getStudyDescription : function(label) {
+        if (!this.studyDescription)
+            throw 'study utils has not been initialized, call initialize prior to using this method';
+
+        return this.studyDescription[label];
     }
 });

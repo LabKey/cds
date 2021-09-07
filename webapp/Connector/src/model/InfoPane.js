@@ -466,70 +466,80 @@ Ext.define('Connector.model.InfoPane', {
 
     processMembers : function(hier, level, cellset, mdx) {
 
-        // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
-        var memberDefinitions = cellset.axes[1].positions,
-            counts = cellset.cells,
-            modelDatas = [],
-            selectedItems = [],
-            filterBased = this.isFilterBased(),
-            dim,
-            model;
+        StudyUtils.initialize(function() {
+            // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
+            var memberDefinitions = cellset.axes[1].positions,
+                    counts = cellset.cells,
+                    modelDatas = [],
+                    selectedItems = [],
+                    filterBased = this.isFilterBased(),
+                    dim,
+                    model;
 
-        var validUserLevelMembers = Connector.getQueryService().getCachedUserLevelMembers(hier, level);
+            var validUserLevelMembers = Connector.getQueryService().getCachedUserLevelMembers(hier, level);
 
-        Ext.each(memberDefinitions, function(definition, idx) {
+            Ext.each(memberDefinitions, function(definition, idx) {
 
-            var def = definition[0],
-                    _count = counts[idx][0].value,
-                    _name = Connector.model.Filter.getMemberLabel(def.name),
-                    _prop = '',
-                    _hasDetails;
+                var def = definition[0],
+                        _count = counts[idx][0].value,
+                        _name = Connector.model.Filter.getMemberLabel(def.name),
+                        _prop = '',
+                        _hasDetails;
 
-            if (Ext.isArray(validUserLevelMembers)) {
-                if (validUserLevelMembers.indexOf(def.uniqueName) < 0)
-                    return;
-            }
+                if (Ext.isArray(validUserLevelMembers)) {
+                    if (validUserLevelMembers.indexOf(def.uniqueName) < 0)
+                        return;
+                }
 
-            var _fullName = this.getFullName(def.level.uniqueName, mdx, def.uniqueName, _name);
+                var _fullName = this.getFullName(def.level.uniqueName, mdx, def.uniqueName, _name);
 
-            dim = dim ? dim : this.getDimension(def.level.uniqueName, mdx);
-            model = model ? model : this.getModel(dim);
+                dim = dim ? dim : this.getDimension(def.level.uniqueName, mdx);
+                model = model ? model : this.getModel(dim);
 
-            if (model) {
-                _prop = model.prototype.resolvableField;
-                _hasDetails = true;
-            }
-            else {
-                _hasDetails = false;
-                _prop = '';
-            }
+                if (model) {
+                    _prop = model.prototype.resolvableField;
+                    _hasDetails = true;
+                }
+                else {
+                    _hasDetails = false;
+                    _prop = '';
+                }
 
-            modelDatas.push({
-                uniqueName: def.uniqueName,
-                name: _fullName,
-                count: _count,
-                hasDetails: _hasDetails,
-                detailLink: _hasDetails ? Connector.getService('Learn').getURL(dim.name, _name, _prop) : ''
-            });
+                modelDatas.push({
+                    uniqueName: def.uniqueName,
+                    name: _fullName,
+                    count: _count,
+                    hasDetails: _hasDetails,
+                    detailLink: _hasDetails ? Connector.getService('Learn').getURL(dim.name, _name, _prop) : '',
+                    description: this.getTooltip(def.uniqueName, _fullName)
+                });
 
-            if (filterBased) {
-                if (def.uniqueName in this.filterMemberMap) {
+                if (filterBased) {
+                    if (def.uniqueName in this.filterMemberMap) {
+                        selectedItems.push(def.uniqueName);
+                    }
+                }
+                else {
                     selectedItems.push(def.uniqueName);
                 }
-            }
-            else {
-                selectedItems.push(def.uniqueName);
-            }
 
+            }, this);
+
+            this.set('selectedItems', selectedItems);
+
+            var store = this.get('memberStore');
+            store.loadRawData(modelDatas);
+            store.group(store.groupField, 'DESC');
+
+            this.setReady();
         }, this);
+    },
 
-        this.set('selectedItems', selectedItems);
-
-        var store = this.get('memberStore');
-        store.loadRawData(modelDatas);
-        store.group(store.groupField, 'DESC');
-
-        this.setReady();
+    getTooltip : function(uniqueName, name) {
+        // for now only support studies and treatment arms
+        if (uniqueName.startsWith('[Study.Treatment]')) {
+            return StudyUtils.getStudyDescription(name);
+        }
     },
 
     setReady : function() {

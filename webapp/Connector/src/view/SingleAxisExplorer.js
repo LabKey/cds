@@ -203,28 +203,27 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             if (el) {
                 var calloutMgr = hopscotch.getCalloutManager();
                 var id = el.id;
+                var description = StudyUtils.getStudyDescription(name);
 
-                StudyUtils.getStudyDescription(name, function(description) {
-                    if (description) {
-                        var displayTooltip = setTimeout(function() {
-                            calloutMgr.createCallout(Ext.apply({
-                                id: id,
-                                arrowOffset: 20,
-                                yOffset: 5,
-                                showCloseButton: false,
-                                target: highlighted[0],
-                                placement: 'top',
-                                content: description,
-                                width: 350
-                            }, {}));
-                        }, 400);
+                if (description) {
+                    var displayTooltip = setTimeout(function() {
+                        calloutMgr.createCallout(Ext.apply({
+                            id: id,
+                            arrowOffset: 20,
+                            yOffset: 0,
+                            showCloseButton: false,
+                            target: highlighted[0],
+                            placement: 'top',
+                            content: description,
+                            width: 350
+                        }, {}));
+                    }, 400);
 
-                        this.on('hideTooltip', function() {
-                            clearTimeout(displayTooltip);
-                            calloutMgr.removeCallout(id);
-                        }, this);
-                    }
-                }, this);
+                    this.on('hideTooltip', function() {
+                        clearTimeout(displayTooltip);
+                        calloutMgr.removeCallout(id);
+                    }, this);
+                }
             }
         }
     },
@@ -636,9 +635,12 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
     },
 
     loadStore : function() {
-        this.loadTask.delay(50);
-        this.fireEvent('showLoad', this);
-        this.resizeTask.delay(100, null, null, [this.up('#single-axis-explorer')]);
+        // ensure study utils are initialized
+        StudyUtils.initialize(function() {
+            this.loadTask.delay(50);
+            this.fireEvent('showLoad', this);
+            this.resizeTask.delay(100, null, null, [this.up('#single-axis-explorer')]);
+        }, this);
     },
 
     onDelayedRefresh : function() {

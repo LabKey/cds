@@ -309,9 +309,9 @@ Ext.define('Connector.view.InfoPane', {
                 menuDisabled: true,
                 tpl: new Ext.XTemplate(
                     '<tpl if="this.hasOtherName(values) === true">',
-                        '<div title="{otherName:htmlEncode}">{name:htmlEncode}',
+                        '<div class="single-axis-explorer" title="{otherName:htmlEncode}">{name:htmlEncode}',
                     '<tpl else>',
-                        '<div title="{name:htmlEncode}">{name:htmlEncode}',
+                        '<div class="single-axis-explorer" title="{name:htmlEncode}">{name:htmlEncode}',
                     '</tpl>',
                     '<tpl if="hasDetails === true">',
                         '<a class="expando" href="{detailLink}">',
@@ -353,6 +353,8 @@ Ext.define('Connector.view.InfoPane', {
             cls : 'measuresgrid infopanegrid',
 
             listeners: {
+                itemmouseenter : this.showItemTooltip,
+                itemmouseleave : this.hideItemTooltip,
                 viewready : function(grid) {
                     this.gridready = true;
                 },
@@ -607,5 +609,38 @@ Ext.define('Connector.view.InfoPane', {
 
     getMemberStore : function() {
         return this.getModel().get('memberStore');
+    },
+
+    showItemTooltip : function(cmp, rec) {
+        if (rec) {
+            var highlighted = Ext.dom.Query.select('div.single-axis-explorer:contains(' + rec.data.name + ')');
+            var el = Ext.get(highlighted[0]);
+
+            if (el) {
+                var calloutMgr = hopscotch.getCalloutManager(),
+                        _id = el.id,
+                        displayTooltip = setTimeout(function() {
+                            calloutMgr.createCallout(Ext.apply({
+                                id: _id,
+                                xOffset: -30,
+                                yOffset: -20,
+                                showCloseButton: false,
+                                target: highlighted[0],
+                                placement: 'left',
+                                content: rec.data.description,
+                                width: 200
+                            }, {}));
+                        }, 200);
+
+                this.on('hideTooltip', function() {
+                    clearTimeout(displayTooltip);
+                    calloutMgr.removeCallout(_id);
+                }, this);
+            }
+        }
+    },
+
+    hideItemTooltip : function() {
+        this.fireEvent('hideTooltip');
     }
 });
