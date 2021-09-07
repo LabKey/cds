@@ -1580,7 +1580,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String yearToFilter = "2004";
         final String numAssaysToFilter = "1";
         int numRowsSatisfyFilter = Locator.xpath("//tr/td/div/div/div[contains(@class, 'detail-gray-text')]" +
-                "[contains(text(), '" + numAssaysToFilter + " Assay')]/../../../following-sibling::" +
+                "[contains(text(), '" + numAssaysToFilter + " Integrated Assay')]/../../../following-sibling::" +
                 "td/div/div/table/tbody/tr[contains(@class, 'detail-gray-text')]/td[contains(text(), '"+ yearToFilter + "')]")
                 .findElements(getDriver()).size();
 

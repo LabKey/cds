@@ -188,7 +188,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Verify data availability tooltip for restricted Non-Integrated Assay");
         String toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn).getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateText("Tooltip", toolTipText, "Non-Integrated Assay without Data Accessible", "ILLUMINA 454-X", "Publications with Data Accessible", "Bekker LG 2018 Lancet HIV", "Fong Y 2018 J Infect Dis");
+        validateText("Tooltip", toolTipText, "Non-integrated Assays without Data Accessible", "ILLUMINA 454-X", "Publications with Data Accessible", "Bekker LG 2018 Lancet HIV", "Fong Y 2018 J Infect Dis");
         mouseOver(Locator.className("detail-description-text").findElement(getDriver()));
 
         log("Verify restricted Non-Integrated Assay on Studies page");
@@ -214,7 +214,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Verify data availability tooltip for accessible Non-Integrated Assay");
         toolTipText = learnGrid.showDataAddedToolTip(0, dataAddedColumn).getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateText("Tooltip", toolTipText, "Non-integrated Assay with Data Accessible", "ILLUMINA 454-X", "Publications with Data Accessible", "Bekker LG 2018 Lancet HIV", "Fong Y 2018 J Infect Dis");
+        validateText("Tooltip", toolTipText, "Non-integrated Assays with Data Accessible", "ILLUMINA 454-X", "Publications with Data Accessible", "Bekker LG 2018 Lancet HIV", "Fong Y 2018 J Infect Dis");
         mouseOver(Locator.className("detail-description-text").findElement(getDriver()));
 
         log("Verify accessible Non-Integrated Assay on Studies page");
@@ -383,7 +383,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         LearnGrid learnGrid = new LearnGrid(this);
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
-        String qed2DataAddedText = hasAccessToQ2 ? "2 Assays" : "0/2 Assays";
+        String qed2DataAddedText = hasAccessToQ2 ? "2 Integrated Assays" : "0/2 Integrated Assays";
         String cellText = learnGrid.getCellText(1, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for study 'QED 2' not as expected. Expected: '" + qed2DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(qed2DataAddedText.trim().toLowerCase()));
         log("'Data Added' column text as expected for study 'QED 2'.");
@@ -392,11 +392,11 @@ public class CDSSecurityTest extends CDSReadOnlyTest
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         if (hasAccessToQ2)
-            validateText("Tooltip", toolTipText, "Assays with Data Accessible", "NAB", "NABMAB");
+            validateText("Tooltip", toolTipText, "Integrated Assays with Data Accessible", "NAB", "NABMAB");
         else
-            validateText("Tooltip", toolTipText, "Assays without Data Accessible", "NAB", "NABMAB");
+            validateText("Tooltip", toolTipText, "Integrated Assays without Data Accessible", "NAB", "NABMAB");
 
-        String red4DataAddedText = "0/3 Assays\n1 Publication";
+        String red4DataAddedText = "0/3 Integrated Assays\n0/1 Non-integrated Assay\n1 Publication";
         cellText = learnGrid.getCellText(7, dataAddedColumn);
         Assert.assertTrue("Data Added' column text for study 'RED 4' not as expected. Expected: '" + red4DataAddedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(red4DataAddedText.trim().toLowerCase()));
         log("'Data Added' column text as expected for study 'RED 4'.");
@@ -404,7 +404,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(7, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateText("Tooltip", toolTipText, "Assays without Data Accessible", "ICS", "IFNg ELISpot", "NABMAB");
+        validateText("Tooltip", toolTipText, "Integrated Assays without Data Accessible", "ICS", "IFNg ELISpot", "NABMAB");
     }
 
     private void validateText(String logMsg, String actualText, String... expectedText)
