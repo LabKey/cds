@@ -308,11 +308,7 @@ Ext.define('Connector.view.InfoPane', {
                 sortable: false,
                 menuDisabled: true,
                 tpl: new Ext.XTemplate(
-                    '<tpl if="this.hasOtherName(values) === true">',
-                        '<div class="single-axis-explorer" title="{otherName:htmlEncode}">{name:htmlEncode}',
-                    '<tpl else>',
-                        '<div class="single-axis-explorer" title="{name:htmlEncode}">{name:htmlEncode}',
-                    '</tpl>',
+                    '<div class="single-axis-explorer" title="{[this.getTitle(values)]}">{name:htmlEncode}',
                     '<tpl if="hasDetails === true">',
                         '<a class="expando" href="{detailLink}">',
                             '<span class="icontext">learn about</span>',
@@ -321,10 +317,14 @@ Ext.define('Connector.view.InfoPane', {
                     '</tpl>',
                     '</div>',
                     {
-                hasOtherName : function(vals) {
-                    return !Ext.isEmpty(vals.otherName);
-                }
-            }
+                        getTitle : function(vals) {
+                            if (!vals.description) {
+                                return Ext.isEmpty(vals.otherName)
+                                        ? Ext.util.Format.htmlEncode(vals.name)
+                                        : Ext.util.Format.htmlEncode(vals.otherName);
+                            }
+                        }
+                    }
                 )
             }],
 
@@ -612,7 +612,7 @@ Ext.define('Connector.view.InfoPane', {
     },
 
     showItemTooltip : function(cmp, rec) {
-        if (rec) {
+        if (rec && rec.data.description) {
             var highlighted = Ext.dom.Query.select('div.single-axis-explorer:contains(' + rec.data.name + ')');
             var el = Ext.get(highlighted[0]);
 
