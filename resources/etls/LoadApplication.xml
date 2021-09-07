@@ -247,6 +247,10 @@
             <source schemaName="cds" queryName="import_publicationCuratedGroup"/>
             <destination schemaName="cds" queryName="publicationCuratedGroup" targetOption="truncate"/>
         </transform>
+        <transform id="PopulateAssayReport" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="import_assayReport"/>
+            <destination schemaName="cds" queryName="assayReport" targetOption="truncate"/>
+        </transform>
         <!--Should occur last-->
         <transform id="ClearAndWarmCube" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">
