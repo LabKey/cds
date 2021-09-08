@@ -1,0 +1,4 @@
+assay_identifier	cds_report_id
+NAB TZM-bl	110000
+ICS	110001
+IFNg ELS	110002

@@ -42,7 +42,7 @@ Ext.define('Connector.view.module.AssayTutorial', {
                                 '<div class="assay-tutorial-img-container">',
                                     '<div>',
                                         '<a id="assay-tutorial-video" onclick="Connector.view.module.AssayTutorial.openPopupModal(\'{assay_tutorial_link:htmlEncode}\');">',
-                                            '<img src={[this.getThumbnailImgSrc()]}/>',
+                                            '<img style="max-width:99%;max-height:99%;height:auto" src={[this.getThumbnailImgSrc()]}/>',
                                         '</a>',
                                         '<div class="assay-tutorial-label">{video_thumbnail_label:htmlEncode}</div>',
                                     '</div>',
@@ -69,7 +69,7 @@ Ext.define('Connector.view.module.AssayTutorial', {
         '</tpl>',
         {
             getThumbnailImgSrc : function() {
-                let imgSrc = Connector.resourceContext.path + '/images/learn/tutorialVideoNoText.png' + " height=\"181\" width=\"322\"";
+                let imgSrc = Connector.resourceContext.path + '/images/learn/tutorialVideoNoText.png' + " height=\"300\" width=\"500\"";
                 return imgSrc;
             }
         }

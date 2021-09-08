@@ -71,7 +71,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
 
                     var toolTipMsg_available = "Non-integrated data added to Dataspace";
                     var toolTipMsg_restricted = "Non-integrated data access is restricted";
-                    var toolTipMsg_notAdded = "Non-integrated data has not been added at this time";
+                    var toolTipMsg_notAdded = "Non-integrated data has not been added at this time<br>Status: " + record.data.dataStatus;
 
                     if (record.data.dataStatus && dataLink) {
                         dataLink.on('mouseenter', this.showDataStatusTooltip, this, {

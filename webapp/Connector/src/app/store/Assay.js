@@ -5,7 +5,7 @@
  */
 Ext.define('Connector.app.store.Assay', {
 
-    extend : 'Ext.data.Store',
+    extend : 'Connector.app.store.SavedReports',
 
     mixins: {
         studyAccessHelper: 'Connector.app.store.PermissionedStudy'
@@ -21,9 +21,12 @@ Ext.define('Connector.app.store.Assay', {
     },
 
     loadSlice : function() {
+        this.callParent();
+
         this.assayData = undefined;
         this.assayStudies = undefined;
         this.assayDocuments = undefined;
+        this.assayReportsData = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
@@ -47,6 +50,13 @@ Ext.define('Connector.app.store.Assay', {
             success: this.onLoadAssayDocuments,
             scope: this
         });
+
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'assayReport',
+            success: this.onLoadAssayReport,
+            scope: this
+        });
     },
 
     onLoadAssays: function (assayData) {
@@ -58,8 +68,14 @@ Ext.define('Connector.app.store.Assay', {
         this.assayStudies = assayStudies.rows;
         this._onLoadComplete();
     },
+
     onLoadAssayDocuments: function (assayDocuments) {
         this.assayDocuments = assayDocuments.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadAssayReport : function(assayReports) {
+        this.assayReportsData = assayReports.rows;
         this._onLoadComplete();
     },
 
@@ -67,14 +83,31 @@ Ext.define('Connector.app.store.Assay', {
         if (Ext.isDefined(this.assayData)
                && Ext.isDefined(this.assayStudies)
                && Ext.isDefined(this.accessibleStudies)
-               && Ext.isDefined(this.assayDocuments)) {
+               && Ext.isDefined(this.assayDocuments)
+               && Ext.isDefined(this.assayReportsData)
+               && Ext.isDefined(this.savedReportsData)) {
 
             this.assayData.sort(function(assayA, assayB) {
                 return Connector.model.Filter.sorters.natural(assayA.assay_short_name, assayB.assay_short_name);
             });
 
-            var assays = [];
+            // interactive reports
+            var allInteractiveReports = [];
+            Ext.each(this.assayReportsData, function(report){
+                var id = report.cds_report_id ? report.cds_report_id.toString() : undefined;
+                var reportObj = this.savedReportsData.filter(function(val) { return val.reportId === id;}, this);
 
+                if (reportObj && reportObj.length > 0) {
+                    allInteractiveReports.push({
+                        report_id: id,
+                        assay_identifier: report.assay_identifier,
+                        label: reportObj && reportObj[0] ? reportObj[0].reportName : undefined,
+                    });
+                }
+            }, this);
+
+            // assay data
+            var assays = [];
             Ext.each(this.assayData, function(assay) {
                 var studies = [];
                 var studiesWithData = [];
@@ -146,12 +179,21 @@ Ext.define('Connector.app.store.Assay', {
                     assayType: assay.assay_type
                 });
 
+                var interactiveReports = allInteractiveReports.filter(function (report) {
+                    return report.assay_identifier.toString() === assay.assay_identifier;
+                });
+
+                if (interactiveReports && interactiveReports.length > 0) {
+                    assay.interactive_reports = interactiveReports;
+                }
                 assays.push(assay);
             }, this);
 
             this.assayData = undefined;
             this.assayStudies = undefined;
             this.assayDocuments = undefined;
+            this.assayReportsData = undefined;
+            this.savedReportsData = [];
 
             this.loadRawData(assays);
         }
