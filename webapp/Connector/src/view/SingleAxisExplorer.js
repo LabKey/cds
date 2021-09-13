@@ -203,9 +203,9 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             if (el) {
                 var calloutMgr = hopscotch.getCalloutManager();
                 var id = el.id;
-                var description = StudyUtils.getStudyDescription(name);
+                var tooltip = this.getTooltip(rec.data.hierarchy, name);
 
-                if (description) {
+                if (tooltip) {
                     var displayTooltip = setTimeout(function() {
                         calloutMgr.createCallout(Ext.apply({
                             id: id,
@@ -214,7 +214,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                             showCloseButton: false,
                             target: highlighted[0],
                             placement: 'top',
-                            content: description,
+                            content: tooltip,
                             width: 350
                         }, {}));
                     }, 400);
@@ -240,6 +240,13 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                 return parts[3].substr(1, parts[3].length-2);
             }
         }
+    },
+
+    getTooltip : function(hierarchy, label) {
+        if (hierarchy === '[Study.Treatment]')
+            return StudyUtils.getTreatmentArmDescription(label);
+        else if (hierarchy === '[Assay.Study]')
+            return StudyUtils.getStudyDescription(label);
     },
 
     onFilterChange : function() {

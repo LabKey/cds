@@ -511,7 +511,7 @@ Ext.define('Connector.model.InfoPane', {
                     count: _count,
                     hasDetails: _hasDetails,
                     detailLink: _hasDetails ? Connector.getService('Learn').getURL(dim.name, _name, _prop) : '',
-                    description: this.getTooltip(def.uniqueName, _fullName)
+                    description: this.getTooltip(def.uniqueName, _name)
                 });
 
                 if (filterBased) {
@@ -538,7 +538,11 @@ Ext.define('Connector.model.InfoPane', {
     getTooltip : function(uniqueName, name) {
         // for now only support studies and treatment arms
         if (uniqueName.startsWith('[Study.Treatment]')) {
-            return StudyUtils.getStudyDescription(name);
+            var parts = uniqueName.split('\.');
+            if (parts.length === 4)
+                return StudyUtils.getTreatmentArmDescription(name);
+            else
+                return StudyUtils.getStudyDescription(name);
         }
     },
 
