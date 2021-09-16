@@ -445,7 +445,9 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
 
         log("Counting '" + uniqueVirus + "' in tier_clade_virus & virus_full_name cols.");
         assertEquals(200, Locator.tagContainingText("td", uniqueVirus).findElements(getDriver()).size());
-        assertTextNotPresent(sharedVirus, CDSHelper.LABS[1]);
+        assertTextNotPresent(sharedVirus);
+        plotDataTable.setFilter("study_NAb_lab_code", "Equals", CDSHelper.LABS[1]);
+        assertEquals("WA should not be present in the lab codes", 0, plotDataTable.getDataRowCount());
         getDriver().close();
         switchToMainWindow();
 
