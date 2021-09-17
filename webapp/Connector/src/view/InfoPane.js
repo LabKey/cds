@@ -355,6 +355,7 @@ Ext.define('Connector.view.InfoPane', {
             listeners: {
                 itemmouseenter : this.showItemTooltip,
                 itemmouseleave : this.hideItemTooltip,
+                itemmousedown : this.hideItemTooltip,
                 viewready : function(grid) {
                     this.gridready = true;
                 },
@@ -422,7 +423,10 @@ Ext.define('Connector.view.InfoPane', {
                 {
                     text: 'Cancel',
                     cls: 'filterinfocancel', // tests
-                    handler: function() { this.hide(); },
+                    handler: function() {
+                        this.hideItemTooltip();
+                        this.hide();
+                    },
                     scope: this
                 },{
                     text: model.isFilterBased() ? 'Update' : 'Filter',

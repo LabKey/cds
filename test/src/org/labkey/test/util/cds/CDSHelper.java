@@ -1441,7 +1441,7 @@ public class CDSHelper
     public void clickLearnAboutInfoPaneItem(String label)
     {
         hoverOverInfoPaneItem(label);
-        _test.click(Locator.xpath("//div[contains(@class, 'x-grid-cell-inner')]//div[@title='" + label + "']//a[contains(@class, 'expando')]"));
+        _test.click(Locator.xpath("//div[contains(@class, 'x-grid-cell-inner')]//div[contains(text(), '" + label + "')]//a[contains(@class, 'expando')]"));
         _test.waitForElement(Locator.xpath("//div").withClass("studyname").withText(label));
     }
 
