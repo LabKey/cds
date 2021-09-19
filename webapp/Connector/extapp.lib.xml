@@ -88,6 +88,7 @@
         <script path="Connector/src/utility/HashURL.js"/>
         <script path="Connector/src/utility/FileExtension.js"/>
         <script path="Connector/src/utility/PlotTooltip.js"/>
+        <script path="Connector/src/utility/Study.js"/>
 
         <!-- Application Stores -->
         <script path="Connector/src/store/AssayDistinctValue.js"/>
