@@ -232,6 +232,7 @@
             srcPath + "/utility/FileExtension.js",
             srcPath + "/utility/PlotTooltip.js",
             srcPath + "/utility/InfoPaneUtil.js",
+            srcPath + "/utility/Study.js",
 
             // Application Stores
             srcPath + "/store/AssayDistinctValue.js",

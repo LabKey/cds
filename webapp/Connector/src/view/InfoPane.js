@@ -308,11 +308,7 @@ Ext.define('Connector.view.InfoPane', {
                 sortable: false,
                 menuDisabled: true,
                 tpl: new Ext.XTemplate(
-                    '<tpl if="this.hasOtherName(values) === true">',
-                        '<div title="{otherName:htmlEncode}">{name:htmlEncode}',
-                    '<tpl else>',
-                        '<div title="{name:htmlEncode}">{name:htmlEncode}',
-                    '</tpl>',
+                    '<div class="single-axis-explorer" title="{[this.getTitle(values)]}">{name:htmlEncode}',
                     '<tpl if="hasDetails === true">',
                         '<a class="expando" href="{detailLink}">',
                             '<span class="icontext">learn about</span>',
@@ -321,10 +317,14 @@ Ext.define('Connector.view.InfoPane', {
                     '</tpl>',
                     '</div>',
                     {
-                hasOtherName : function(vals) {
-                    return !Ext.isEmpty(vals.otherName);
-                }
-            }
+                        getTitle : function(vals) {
+                            if (!vals.description) {
+                                return Ext.isEmpty(vals.otherName)
+                                        ? Ext.util.Format.htmlEncode(vals.name)
+                                        : Ext.util.Format.htmlEncode(vals.otherName);
+                            }
+                        }
+                    }
                 )
             }],
 
@@ -353,6 +353,9 @@ Ext.define('Connector.view.InfoPane', {
             cls : 'measuresgrid infopanegrid',
 
             listeners: {
+                itemmouseenter : this.showItemTooltip,
+                itemmouseleave : this.hideItemTooltip,
+                itemmousedown : this.hideItemTooltip,
                 viewready : function(grid) {
                     this.gridready = true;
                 },
@@ -420,7 +423,10 @@ Ext.define('Connector.view.InfoPane', {
                 {
                     text: 'Cancel',
                     cls: 'filterinfocancel', // tests
-                    handler: function() { this.hide(); },
+                    handler: function() {
+                        this.hideItemTooltip();
+                        this.hide();
+                    },
                     scope: this
                 },{
                     text: model.isFilterBased() ? 'Update' : 'Filter',
@@ -607,5 +613,38 @@ Ext.define('Connector.view.InfoPane', {
 
     getMemberStore : function() {
         return this.getModel().get('memberStore');
+    },
+
+    showItemTooltip : function(cmp, rec) {
+        if (rec && rec.data.description) {
+            var highlighted = Ext.dom.Query.select('div.single-axis-explorer:contains(' + rec.data.name + ')');
+            var el = Ext.get(highlighted[0]);
+
+            if (el) {
+                var calloutMgr = hopscotch.getCalloutManager(),
+                        _id = el.id,
+                        displayTooltip = setTimeout(function() {
+                            calloutMgr.createCallout(Ext.apply({
+                                id: _id,
+                                xOffset: -30,
+                                yOffset: -20,
+                                showCloseButton: false,
+                                target: highlighted[0],
+                                placement: 'left',
+                                content: rec.data.description,
+                                width: 200
+                            }, {}));
+                        }, 200);
+
+                this.on('hideTooltip', function() {
+                    clearTimeout(displayTooltip);
+                    calloutMgr.removeCallout(_id);
+                }, this);
+            }
+        }
+    },
+
+    hideItemTooltip : function() {
+        this.fireEvent('hideTooltip');
     }
 });

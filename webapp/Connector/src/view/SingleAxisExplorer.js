@@ -191,6 +191,64 @@ Ext.define('Connector.view.SingleAxisExplorer', {
         }
     },
 
+    /**
+     * Render an optional tooltip on the explorer bar
+     */
+    onMouseEnterExplore : function(view, rec) {
+        var name = this.parseExplorerBarName(rec.data.hierarchy, rec.data.uniqueName);
+        if (name) {
+            var highlighted = Ext.dom.Query.select('span.barlabel[uniquename="' + rec.data.uniqueName + '"]');
+            var el = Ext.get(highlighted[0]);
+
+            if (el) {
+                var calloutMgr = hopscotch.getCalloutManager();
+                var id = el.id;
+                var tooltip = this.getTooltip(rec.data.hierarchy, name);
+
+                if (tooltip) {
+                    var displayTooltip = setTimeout(function() {
+                        calloutMgr.createCallout(Ext.apply({
+                            id: id,
+                            arrowOffset: 20,
+                            yOffset: 0,
+                            showCloseButton: false,
+                            target: highlighted[0],
+                            placement: 'top',
+                            content: tooltip,
+                            width: 350
+                        }, {}));
+                    }, 400);
+
+                    this.on('hideTooltip', function() {
+                        clearTimeout(displayTooltip);
+                        calloutMgr.removeCallout(id);
+                    }, this);
+                }
+            }
+        }
+    },
+
+    onMouseLeaveExplore : function(view, rec) {
+        this.fireEvent('hideTooltip');
+    },
+
+    parseExplorerBarName : function(hierarchy, uniqueName) {
+        // for now only support studies and treatment arms
+        if (hierarchy === '[Study.Treatment]' || hierarchy === '[Assay.Study]') {
+            var parts = uniqueName.split('\.');
+            if (parts.length === 4) {
+                return parts[3].substr(1, parts[3].length-2);
+            }
+        }
+    },
+
+    getTooltip : function(hierarchy, label) {
+        if (hierarchy === '[Study.Treatment]')
+            return StudyUtils.getTreatmentArmDescription(label);
+        else if (hierarchy === '[Assay.Study]')
+            return StudyUtils.getStudyDescription(label);
+    },
+
     onFilterChange : function() {
         if (this.saview) {
             this.saview.filterChange();
@@ -463,7 +521,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
             '<tpl else>',
             '<div class="', this.barCls, ' small<tpl if="collapsed === true"> barcollapse</tpl>',
             '<tpl if="level.length &gt; 0"><tpl if="lvlDepth  &gt; 1"> saelevel{lvlDepth} </tpl> saelevel </tpl>">',
-            '<span class="', this.barLabelCls, '">{label:htmlEncode}',
+            '<span class="', this.barLabelCls, '" uniquename="{uniqueName:htmlEncode}">{label:htmlEncode}',
             (this.ordinal ? '&nbsp;({ordinal:htmlEncode})' : ''),
             '</span>',
             '{[ this.renderCount(values) ]}',
@@ -584,9 +642,12 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
     },
 
     loadStore : function() {
-        this.loadTask.delay(50);
-        this.fireEvent('showLoad', this);
-        this.resizeTask.delay(100, null, null, [this.up('#single-axis-explorer')]);
+        // ensure study utils are initialized
+        StudyUtils.initialize(function() {
+            this.loadTask.delay(50);
+            this.fireEvent('showLoad', this);
+            this.resizeTask.delay(100, null, null, [this.up('#single-axis-explorer')]);
+        }, this);
     },
 
     onDelayedRefresh : function() {
