@@ -180,7 +180,8 @@ Ext.define('Connector.app.store.StudyProducts', {
                             data_link_id: studyName,
                             has_data: this.studyData[s].has_data,
                             has_access:  hasAccess,
-                            data_status: dataStatus
+                            data_status: dataStatus,
+                            data_description: this.studyData[s].description
                         };
                         studies.push(study);
                     }
