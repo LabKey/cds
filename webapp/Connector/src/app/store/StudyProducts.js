@@ -170,8 +170,10 @@ Ext.define('Connector.app.store.StudyProducts', {
                         var assays = this.studyAssayMap[studyName];
                         if (assays) {
                             var dataStatus = '<p class="data-availability-tooltip-header">Assays ' + (hasAccess ? 'with' : 'without') + ' data accessible</p>';
+                            var delim = '';
                             Ext.each(assays, function(assay){
-                                dataStatus += assay.assay_short_name + '<br>';
+                                dataStatus += delim + assay.assay_short_name;
+                                delim = '</br>';
                             });
                         }
                         var study = {

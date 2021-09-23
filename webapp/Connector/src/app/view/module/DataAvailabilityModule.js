@@ -77,9 +77,9 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     var dataLink = Ext.get(Ext.query("a:not(.instruction)", item)[0]) || Ext.get(Ext.query("span", item)[0]),
                             id = Ext.id();
 
-                    var toolTipMsg_available = "Integrated data added to Dataspace";
+                    var toolTipMsg_available = "Integrated data added";
                     var toolTipMsg_restricted = "Integrated data access is restricted";
-                    var toolTipMsg_notAdded = "Integrated data has not been added at this time<br>Status: " + record.data.data_status;
+                    var toolTipMsg_notAdded = "Integrated data not added</br></br>Status: " + record.data.data_status;
 
                     if (record.data.data_status && dataLink) {
                         dataLink.on('mouseenter', this.showDataStatusTooltip, this, {

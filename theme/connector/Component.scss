@@ -660,6 +660,11 @@ div.hopscotch-bubble {
   &.no-close .hopscotch-bubble-close {
     display: none !important;
   }
+
+  .hopscotch-actions {
+    margin: 0;
+    text-align: right;
+  }
 }
 
 
