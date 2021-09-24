@@ -96,7 +96,7 @@ public class InfoPane
         for (String val : studiesFilter)
         {
             WebElement studyRow =Locator.tagWithClass("tr", "x-grid-row")
-                    .withDescendant(Locator.tagWithAttribute("div", "title", val)).findElement(_test.getDriver());
+                    .withDescendant(Locator.tagWithClass("div", "single-axis-explorer").startsWith(val)).findElement(_test.getDriver());
             WebElement studyCheckbox = Locator.tagWithClass("div", "x-grid-row-checker").findElement(studyRow);
             studyCheckbox.click();
             _test.shortWait().until(wd -> studyRow.getAttribute("class").contains("x-grid-row-selected"));
