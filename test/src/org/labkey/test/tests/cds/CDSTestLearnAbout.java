@@ -50,8 +50,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private final Locator XPATH_RESULT_ROW_TITLE = LearnGrid.Locators.lockedRow;
     private final Locator XPATH_RESULT_ROW_DATA = LearnGrid.Locators.unlockedRow;
 
-    public static final String DATA_ADDED_TOOLTIP = "Integrated data added to Dataspace";
-    public static final String DATA_NOT_ADDED_TOOLTIP = "Integrated data has not been added at this time";
+    public static final String DATA_ADDED_TOOLTIP = "Integrated data added";
+    public static final String DATA_NOT_ADDED_TOOLTIP = "Integrated data not added";
 
     public static final String[] MAB_MIXTURES = {"1361", "2158", "2297", "1H9", "1.00E+09", "1NC9", "2F5", "3.00E+03", "3BNC60", "3BNC117", "4.00E+10",
             "10E8.2", "10E8.2/iMab", "10E8.4", "10E8.4/iMab", "10E8.5", "10E8.5/iMab",
