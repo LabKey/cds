@@ -18,9 +18,11 @@ Ext.define('Connector.window.MabGridFacet', {
 
     initComponent : function() {
         this.callParent();
-        this.addEvents('clearmabfilter', 'mabfilter', 'mabfiltersearchchanged');
-        this.createFacetGrid();
-        this.on('mabfiltersearchchanged', this.facetGrid.filterFacetOptions, this.facetGrid);
+        StudyUtils.initialize(function(){
+            this.addEvents('clearmabfilter', 'mabfilter', 'mabfiltersearchchanged');
+            this.createFacetGrid();
+            this.on('mabfiltersearchchanged', this.facetGrid.filterFacetOptions, this.facetGrid);
+        }, this);
     },
 
     // Override to add search box
@@ -95,7 +97,8 @@ Ext.define('Connector.window.MabGridFacet', {
             isFilterNegated: filterStatus.isFilterNegated,
             columnField: config.fieldName,
             valueType: config.valueType,
-            useSearch: allValues && allValues.length > 10 ? true: false
+            useSearch: allValues && allValues.length > 10 ? true: false,
+            filterConfig: this.filterConfig
         });
 
         this.add(this.facetGrid);
@@ -235,5 +238,11 @@ Ext.define('Connector.grid.MabGridFacet', {
             }, this);
         }
         this.updateSelectionTask.delay(600, null, this);
+    },
+
+    getTooltip : function(value) {
+        if (value)
+            return StudyUtils.getStudyDescription(value);
+        return '';
     }
 });
