@@ -1419,6 +1419,7 @@ public class CDSHelper
         if (onlyThisItem)
         {
             // click the label
+            _test.waitForElement(memberLabel);
             _test.click(memberLabel);
         }
         else

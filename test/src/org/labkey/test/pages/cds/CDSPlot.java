@@ -508,7 +508,11 @@ public class CDSPlot
 
     public void toggleTimeAxisExpandCollapseState()
     {
-        Locator.css("div.bottomplot > svg > g > image.img-expand").findElement(_test.getDriver()).click();
+        String css = "div.bottomplot > svg > g > image.img-expand";
+        _test.mouseOver(Locator.css(css));
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        Locator.css(css).findElement(_test.getDriver()).click();
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 

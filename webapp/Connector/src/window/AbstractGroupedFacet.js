@@ -52,7 +52,8 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
         Ext.applyIf(this, {
             allValues: [],
             filterValues: [],
-            latestSelections: []
+            latestSelections: [],
+            filterConfig: {}
         });
 
         this.items = [this.getGrid()];
