@@ -124,7 +124,8 @@ Ext.define('Connector.model.StudyAxisData', {
                     timepointType: record.get('timepoint_type'),
                     alignShiftValue: 0,
                     visits: {},
-                    groups: {}
+                    groups: {},
+                    description: record.get('study_description')
                 };
             }
 

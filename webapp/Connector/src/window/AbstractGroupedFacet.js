@@ -52,11 +52,13 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
         Ext.applyIf(this, {
             allValues: [],
             filterValues: [],
-            latestSelections: []
+            latestSelections: [],
+            filterConfig: {}
         });
 
         this.items = [this.getGrid()];
 
+        this.on('beforedestroy', function(){this.hideItemTooltip();}, this);
         this.callParent();
     },
 
@@ -143,6 +145,9 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
                         }
                         return true;
                     },
+                    itemmouseenter : this.showItemTooltip,
+                    itemmouseleave : this.hideItemTooltip,
+                    itemmousedown : this.hideItemTooltip,
                     scope: this
                 },
 
@@ -172,10 +177,13 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
 
     createColumnFilterStore: function() {
         var me = this;
+        var fields = ['value', 'displayValue', {name:'hasData', type: 'boolean', defaultValue: true}];
+
+        if (this.filterConfig.showTooltip)
+            fields.push({name: 'tooltip', type: 'string', defaultValue: ''});
+
         return Ext.create('Ext.data.ArrayStore', {
-            fields: [
-                'value', 'displayValue', {name:'hasData', type: 'boolean', defaultValue: true}
-            ],
+            fields: fields,
             data: this.prepareValuesArray(),
             storeId: this.getStoreId(),
             groupField: 'hasData',
@@ -193,12 +201,23 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
     prepareValuesArray : function() {
         var values = this.getAllValues();
         values = values.map(function(record) {
-            if (record != undefined && !Ext.isObject(record)) {
-                return [record, record, true];
-            }
-            return [record.value, record.displayValue, true];
-        });
+            var rec;
+
+            if (record != undefined && !Ext.isObject(record))
+                rec = [record, record, true];
+            else
+                rec = [record.value, record.displayValue, true];
+
+            if (this.filterConfig.showTooltip)
+                rec.push(this.getTooltip(!Ext.isObject(record) ? record : record.displayValue));
+
+            return rec;
+        }, this);
         return values;
+    },
+
+    getTooltip : function(value) {
+        return '';
     },
 
     getAllValues : function() {
@@ -336,5 +355,38 @@ Ext.define('Connector.grid.AbstractGroupedFacet', {
         }
 
         this.getGrid().getSelectionModel().select(records, false, true);
+    },
+
+    showItemTooltip : function(cmp, rec) {
+        if (rec && rec.data.tooltip) {
+            var highlighted = Ext.dom.Query.select('div.x-grid-cell-inner:contains(' + rec.data.value + ')');
+            var el = Ext.get(highlighted[0]);
+
+            if (el) {
+                var calloutMgr = hopscotch.getCalloutManager(),
+                        _id = el.id,
+                        displayTooltip = setTimeout(function() {
+                            calloutMgr.createCallout(Ext.apply({
+                                id: _id,
+                                xOffset: -30,
+                                yOffset: -20,
+                                showCloseButton: false,
+                                target: highlighted[0],
+                                placement: 'left',
+                                content: rec.data.tooltip,
+                                width: 200
+                            }, {}));
+                        }, 200);
+
+                this.on('hideTooltip', function() {
+                    clearTimeout(displayTooltip);
+                    calloutMgr.removeCallout(_id);
+                }, this);
+            }
+        }
+    },
+
+    hideItemTooltip : function() {
+        this.fireEvent('hideTooltip');
     }
 });
