@@ -196,6 +196,7 @@ Ext.define('Connector.app.store.Assay', {
             this.savedReportsData = [];
 
             this.loadRawData(assays);
+            this.fireEvent('dataloaded');
         }
     },
 

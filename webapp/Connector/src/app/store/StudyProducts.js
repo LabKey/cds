@@ -229,8 +229,8 @@ Ext.define('Connector.app.store.StudyProducts', {
             this.productProduct = undefined;
 
             this.loadRawData(products);
+            this.fireEvent('dataloaded');
             LABKEY.Utils.signalWebDriverTest("determinationLearnAboutStudyProductLoaded");
-
         }
     }
 });
