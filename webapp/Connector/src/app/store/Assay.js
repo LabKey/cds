@@ -125,7 +125,8 @@ Ext.define('Connector.app.store.Assay', {
                             data_link_id: id,
                             has_data: this.assayStudies[s].has_data,
                             has_access: this.accessibleStudies[this.assayStudies[s].study_name] === true,
-                            data_status: this.assayStudies[s].assay_status
+                            data_status: this.assayStudies[s].assay_status,
+                            data_description: this.assayStudies[s].description
                         };
                         studies.push(study);
                     }

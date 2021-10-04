@@ -77,13 +77,14 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     var dataLink = Ext.get(Ext.query("a:not(.instruction)", item)[0]) || Ext.get(Ext.query("span", item)[0]),
                             id = Ext.id();
 
-                    var toolTipMsg_available = "Integrated data added to Dataspace";
+                    var toolTipMsg_available = "Integrated data added";
                     var toolTipMsg_restricted = "Integrated data access is restricted";
-                    var toolTipMsg_notAdded = "Integrated data has not been added at this time<br>Status: " + record.data.data_status;
+                    var toolTipMsg_notAdded = "Integrated data not added</br></br>Status: " + record.data.data_status;
 
                     if (record.data.data_status && dataLink) {
                         dataLink.on('mouseenter', this.showDataStatusTooltip, this, {
                             status: record.data.has_data ? (record.data.has_access ? toolTipMsg_available : toolTipMsg_restricted) : toolTipMsg_notAdded,
+                            description: record.data.data_description,
                             id: id
                         });
                         dataLink.on('mouseleave', this.hideDataStatusTooltip, this, {
@@ -477,7 +478,14 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
     showDataStatusTooltip : function(event, item, options) {
         var calloutMgr = hopscotch.getCalloutManager(),
-                _id = options.id,
+                _id = options.id;
+                var content = options.status;
+
+                // add an optional data description to the tooltip
+                if (this.data.hasDescription && options.description) {
+                    content += '</br></br>' + options.description;
+                }
+
                 displayTooltip = setTimeout(function() {
                     calloutMgr.createCallout(Ext.apply({
                         id: _id,
@@ -486,7 +494,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                         showCloseButton: false,
                         target: item,
                         placement: 'right',
-                        content: options.status,
+                        content: content,
                         width: 220
                     }, {}));
                 }, 200);
@@ -517,6 +525,7 @@ Ext.define("DataAdded", {
         {name: 'data_group'},
         {name: 'data_group_instr'},
         {name: 'data_index'},
-        {name: 'data_show'}
+        {name: 'data_show'},
+        {name: 'data_description'}
     ]
 });

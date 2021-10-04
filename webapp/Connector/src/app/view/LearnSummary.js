@@ -115,6 +115,10 @@ Ext.define('Connector.app.view.LearnSummary', {
     },
 
     showDataAvailabilityTooltip : function(event, item, options) {
+        // the maximum count of data items to show per grouping
+        var maxItems = 10;
+        this.itemCount = 0;
+
         var config = this.dataAvailabilityTooltipConfig();
         var labelField = config.labelField || 'data_label';
 
@@ -157,21 +161,13 @@ Ext.define('Connector.app.view.LearnSummary', {
         else {
             if (accessible.length > 0) {
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " with Data Accessible" + '</p>';
-                dataAvailableListHTML += "<ul>";
-                Ext.each(accessible, function(record){
-                    dataAvailableListHTML += "<li>" + record[labelField] + "</li>\n";
-                });
-                dataAvailableListHTML += "</ul>";
+                dataAvailableListHTML += this.addDataAvailabilityItems(accessible, labelField, maxItems);
             }
             if (nonAccessible.length > 0) {
                 if (accessible.length > 0)
                     dataAvailableListHTML += '<br>';
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " without Data Accessible" + '</p>';
-                dataAvailableListHTML += "<ul>";
-                Ext.each(nonAccessible, function(record){
-                    dataAvailableListHTML += "<li>" + record[labelField] + "</li>\n";
-                });
-                dataAvailableListHTML += "</ul>";
+                dataAvailableListHTML += this.addDataAvailabilityItems(nonAccessible, labelField, maxItems);
             }
 
             if (accessible.length > 0 || nonAccessible.length > 0) {
@@ -180,21 +176,13 @@ Ext.define('Connector.app.view.LearnSummary', {
 
             if (ni_accessible.length > 0) {
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " with Data Accessible" + '</p>';
-                dataAvailableListHTML += "<ul>";
-                Ext.each(ni_accessible, function(record){
-                    dataAvailableListHTML += "<li>" + record[niLabelField] + "</li>\n";
-                });
-                dataAvailableListHTML += "</ul>";
+                dataAvailableListHTML += this.addDataAvailabilityItems(ni_accessible, niLabelField, maxItems);
             }
             if (ni_nonAccessible.length > 0) {
                 if (accessible.length > 0)
                     dataAvailableListHTML += '<br>';
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " without Data Accessible" + '</p>';
-                dataAvailableListHTML += "<ul>";
-                Ext.each(ni_nonAccessible, function(record){
-                    dataAvailableListHTML += "<li>" + record[niLabelField] + "</li>\n";
-                });
-                dataAvailableListHTML += "</ul>";
+                dataAvailableListHTML += this.addDataAvailabilityItems(ni_nonAccessible, niLabelField, maxItems);
             }
 
             if (availablePubData.length > 0 && (ni_accessible.length > 0 || ni_nonAccessible.length > 0)) {
@@ -203,11 +191,7 @@ Ext.define('Connector.app.view.LearnSummary', {
 
             if (availablePubData.length > 0) {
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + pubTitle + " with Data Accessible" + '</p>';
-                dataAvailableListHTML += "<ul>";
-                Ext.each(availablePubData, function(record){
-                    dataAvailableListHTML += "<li>" + record[pubLabelField] + "</li>\n";
-                });
-                dataAvailableListHTML += "</ul>";
+                dataAvailableListHTML += this.addDataAvailabilityItems(availablePubData, pubLabelField, maxItems);
             }
         }
 
@@ -219,7 +203,7 @@ Ext.define('Connector.app.view.LearnSummary', {
                             + 19 //title line height
                             + 8 //title bottom padding
                             + (17 //line height for content <li> elements
-                                * options.itemsWithDataAvailable.length);
+                                * this.itemCount);
 
         var verticalOffset = verticalPosition + calloutHeight > viewHeight ? calloutHeight - itemWrapped.getHeight() : 0;
 
@@ -243,6 +227,23 @@ Ext.define('Connector.app.view.LearnSummary', {
             clearTimeout(displayTooltip);
             calloutMgr.removeCallout(_id);
         }, this);
+    },
+
+    addDataAvailabilityItems : function(items, labelField, maxItems) {
+        var html = "";
+        html += "<ul>";
+        Ext.each(items, function(record, idx, data){
+            html += "<li>" + record[labelField] + "</li>\n";
+            this.itemCount++;
+            if (idx+1 >= maxItems && data.length > maxItems) {
+                html += '<li>and ' + (data.length - maxItems) + ' more...</li>';
+                this.itemCount++;
+                return false;
+            }
+        }, this);
+        html += "</ul>";
+
+        return html;
     },
 
     hideDataAvailabilityTooltip : function() {

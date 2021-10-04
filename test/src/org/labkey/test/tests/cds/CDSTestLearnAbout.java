@@ -50,8 +50,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private final Locator XPATH_RESULT_ROW_TITLE = LearnGrid.Locators.lockedRow;
     private final Locator XPATH_RESULT_ROW_DATA = LearnGrid.Locators.unlockedRow;
 
-    public static final String DATA_ADDED_TOOLTIP = "Integrated data added to Dataspace";
-    public static final String DATA_NOT_ADDED_TOOLTIP = "Integrated data has not been added at this time";
+    public static final String DATA_ADDED_TOOLTIP = "Integrated data added";
+    public static final String DATA_NOT_ADDED_TOOLTIP = "Integrated data not added";
 
     public static final String[] MAB_MIXTURES = {"1361", "2158", "2297", "1H9", "1.00E+09", "1NC9", "2F5", "3.00E+03", "3BNC60", "3BNC117", "4.00E+10",
             "10E8.2", "10E8.2/iMab", "10E8.4", "10E8.4/iMab", "10E8.5", "10E8.5/iMab",
@@ -782,7 +782,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
         // Can't depend upon the text in the tooltip to be in the same order every time. So check for each value separately.
-        validateToolTipText(toolTipText, "ZAP 135", "ZAP 139", "ZAP 133", "ZAP 128", "ZAP 129", "ZAP 120", "YOYO 55", "ZAP 118", "ZAP 119", "ZAP 134", "ZAP 117");
+        validateToolTipText(toolTipText, List.of("YOYO 55", "ZAP 117", "ZAP 118", "ZAP 119", "ZAP 120", "ZAP 128", "ZAP 129", "ZAP 133", "ZAP 134", "ZAP 135", "and 1 more..."));
         log("Tool tip text contained the expected values.");
 
         sleep(1000);
@@ -796,7 +796,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateToolTipText(toolTipText, "ZAP 133", "ZAP 128", "YOYO 55", "ZAP 135", "QED 2");
+        validateToolTipText(toolTipText, List.of("ZAP 133", "ZAP 128", "YOYO 55", "ZAP 135", "QED 2"));
         log("Tool tip text contained the expected values.");
 
         sleep(1000);
@@ -810,7 +810,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateToolTipText(toolTipText, "ZAP 134", "RED 4", "ZAP 110", "ZAP 111");
+        validateToolTipText(toolTipText, List.of("ZAP 134", "RED 4", "ZAP 110", "ZAP 111"));
         log("Tool tip text contained the expected values.");
 
         sleep(1000);
@@ -824,7 +824,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateToolTipText(toolTipText, "ZAP 102", "RED 4", "RED 5", "RED 6", "ZAP 105", "ZAP 106", "ZAP 134", "ZAP 136", "ZAP 124", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118");
+        validateToolTipText(toolTipText, List.of("RED 4", "RED 5", "RED 6", "ZAP 102", "ZAP 105", "ZAP 106", "ZAP 113", "ZAP 115", "ZAP 116", "ZAP 117", "and 4 more..."));
         log("Tool tip text contained the expected values.");
 
         sleep(1000);
@@ -838,7 +838,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
                 .getToolTipText();
         log("Tool tip: '" + toolTipText + "'");
-        validateToolTipText(toolTipText, "ZAP 117");
+        validateToolTipText(toolTipText, List.of("ZAP 117"));
         log("Tool tip text contained the expected values.");
 
     }
@@ -2113,7 +2113,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     }
 
-    private void validateToolTipText(String toolTipText, String... expectedText)
+    private void validateToolTipText(String toolTipText, List<String> expectedText)
     {
         for (String expected : expectedText)
         {
@@ -2138,7 +2138,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         {
             // If the tool-tip is present, checker().verifyTrue returned true, check the text of the tooltip.
             toolTipText = getToolTipText();
-            validateToolTipText(toolTipText, toolTipExpected);
+            validateToolTipText(toolTipText, List.of(toolTipExpected));
         }
 
         // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.

@@ -3892,6 +3892,24 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hidevisittagmsg', this);
     },
 
+    showStudyLabelHover : function(data, studyEl) {
+        if (!data.description)
+            return;
+
+        ChartUtils.showCallout({
+                arrowOffset: 30,
+                xOffset: -30,
+                target: studyEl,
+                placement: 'top',
+                content: data.description,
+                width: 350
+            }, 'hidestudylabelmsg', this);
+    },
+
+    removeStudyLabelHover : function(data, studyEl) {
+        this.fireEvent('hidestudylabelmsg', this);
+    },
+
     updateVisitTagIcon : function(el, currentSuffix, newSuffix) {
         var suffix = '_' + currentSuffix + '.svg', iconHref = el.getAttribute('href');
         if (iconHref.indexOf(suffix, iconHref.length - suffix.length) !== -1) {
@@ -3914,7 +3932,9 @@ Ext.define('Connector.view.Chart', {
                 .selectStudyAxis(this.selectStudyAxis, this)
                 .toggleStudyAxis(this.toggleStudyAxis, this)
                 .setCollapsed(!this.isStudyAxisExpanded)
-                .mainPlotLayer(layerScope);
+                .mainPlotLayer(layerScope)
+                .studyLabelMouseover(this.showStudyLabelHover, this)
+                .studyLabelMouseout(this.removeStudyLabelHover, this);
 
         this.studyAxis();
     },
