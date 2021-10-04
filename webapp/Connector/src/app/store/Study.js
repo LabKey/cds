@@ -556,6 +556,7 @@ Ext.define('Connector.app.store.Study', {
             this.studyCuratedGroupData = undefined;
 
             this.loadRawData(studies);
+            this.dataLoaded = true;
             this.fireEvent('dataloaded');
         }
     }

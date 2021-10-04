@@ -268,6 +268,7 @@ Ext.define('Connector.app.store.Publication', {
 
             this.loadRawData(publications);
             this.fireEvent('dataloaded');
+            this.dataLoaded = true;
             LABKEY.Utils.signalWebDriverTest("learnPublicationsLoaded");
         }
     }

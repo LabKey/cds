@@ -109,7 +109,7 @@ Ext.define('Connector.app.view.LearnSummary', {
         this.callParent(arguments);
 
         // display a loading mask initially, stores must fire the dataloaded event to hide the mask
-        if (this.showLoadingMask) {
+        if (this.showLoadingMask && !this.getStore().dataLoaded) {
             var me = this;
             var mask = setTimeout(function() {
                 me.addPlugin({
