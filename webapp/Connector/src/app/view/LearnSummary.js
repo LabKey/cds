@@ -107,6 +107,28 @@ Ext.define('Connector.app.view.LearnSummary', {
         };
 
         this.callParent(arguments);
+
+        // display a loading mask initially, stores must fire the dataloaded event to hide the mask
+        if (this.showLoadingMask && !this.getStore().dataLoaded) {
+            var me = this;
+            var mask = setTimeout(function() {
+                me.addPlugin({
+                    ptype: 'loadingmask',
+                    configs: [{
+                        element: me,
+                        loadingDelay: 0,
+                        beginEvent: 'showload',
+                        endEvent: 'hideload'
+                    }]
+                })
+                me.fireEvent('showload', me);
+            }, 250);
+
+            this.getStore().on('dataloaded', function(){
+                clearTimeout(mask);
+                this.fireEvent('hideload', this);
+            }, this);
+        }
     },
 
     setTitleColumnWidth : function () {

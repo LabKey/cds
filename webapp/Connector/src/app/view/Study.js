@@ -11,6 +11,8 @@ Ext.define('Connector.app.view.Study', {
 
     itemPluralName: "studies",
 
+    showLoadingMask : true,
+
     columns : [{
         text: 'Name & Description',
         xtype: 'templatecolumn',

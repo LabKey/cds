@@ -11,6 +11,8 @@ Ext.define('Connector.app.view.Assay', {
 
     itemPluralName: 'assays',
 
+    showLoadingMask : true,
+
     statics: {
        searchFields: ['assay_short_name', 'assay_label', 'assay_detection_platform', 'assay_method_description',
             'assay_body_system_type', 'assay_body_system_target', 'assay_general_specimen_type']

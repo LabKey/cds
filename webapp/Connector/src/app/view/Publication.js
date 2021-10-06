@@ -15,6 +15,8 @@ Ext.define('Connector.app.view.Publication', {
 
     itemPluralName: 'publications',
 
+    showLoadingMask : true,
+
     columns: [
         {
             text: 'publication',

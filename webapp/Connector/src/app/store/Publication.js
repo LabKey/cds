@@ -267,7 +267,8 @@ Ext.define('Connector.app.store.Publication', {
             this.publicationCuratedGroupData = undefined;
 
             this.loadRawData(publications);
-
+            this.fireEvent('dataloaded');
+            this.dataLoaded = true;
             LABKEY.Utils.signalWebDriverTest("learnPublicationsLoaded");
         }
     }
