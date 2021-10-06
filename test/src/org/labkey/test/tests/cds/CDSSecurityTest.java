@@ -291,7 +291,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         validateText("RED 4 tooltip", tooltip, "Integrated data access is restricted");
 
         tooltip = getStudyDetailDataAvailabilityTooltip("ZAP 102");
-        validateText("ZAP 102 tooltip", tooltip, hasAccessToR4 ? "Integrated data added to Dataspace" : "Integrated data access is restricted");
+        validateText("ZAP 102 tooltip", tooltip, hasAccessToR4 ? "Integrated data added" : "Integrated data access is restricted");
     }
 
     private void showAllExpandAndVerify(Locator showAllListToggle, int remaining)

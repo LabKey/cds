@@ -178,7 +178,8 @@ Ext.define('Connector.app.store.MAb', {
                         data_status: studymab.assay_status,
                         alt_label: studymab.mix_labels && studymab.mix_labels.length > 0 ? studymab.mix_labels : null,
                         data_group: studymab.study_type,
-                        data_group_instr: studymab.subheader_instr
+                        data_group_instr: studymab.subheader_instr,
+                        data_description: studymab.description
                     };
                     if (grpIdx >= 0) {
                         study.data_index = groupWithIndexes[grpIdx].groupIndex; //update data_index for the group

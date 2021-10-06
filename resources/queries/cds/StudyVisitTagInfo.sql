@@ -16,6 +16,7 @@
 SELECT
 s.container.entityid AS container_id,
 s.label AS study_label,
+s.description AS study_description,
 
 sp.TimepointType AS timepoint_type,
 

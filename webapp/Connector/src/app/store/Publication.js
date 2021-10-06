@@ -131,6 +131,7 @@ Ext.define('Connector.app.store.Publication', {
                 study.assays = studyAssays[study.prot];
 
                 study.data_label = study.study_label;
+                study.data_description = study.description;
 
                 if (!study.study_label)
                     study.study_label = study.prot;
@@ -266,7 +267,8 @@ Ext.define('Connector.app.store.Publication', {
             this.publicationCuratedGroupData = undefined;
 
             this.loadRawData(publications);
-
+            this.fireEvent('dataloaded');
+            this.dataLoaded = true;
             LABKEY.Utils.signalWebDriverTest("learnPublicationsLoaded");
         }
     }

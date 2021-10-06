@@ -7,7 +7,8 @@ Connector.view.StudyAxis = function() {
     var canvas = null, width, height, perStudyHeight = 20, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
             tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope, leftIndent = 25, collapsed = true, groupLabelOffset = 45,
             studyLabelOffset = 35, highlightPlot, highlightPlotScope,
-            selectStudyAxis, selectStudyAxisScope, mainPlotLayer, toggleStudyAxis, toggleStudyAxisScope;
+            selectStudyAxis, selectStudyAxisScope, mainPlotLayer, toggleStudyAxis, toggleStudyAxisScope,
+            labelMouseover, labelMouseout, labelMouseoverScope, labelMouseoutScope;
 
     // This function returns <study name> for studies and <study name>-<group name> for groups in an attempt to
     // provide a unique name for each value in yScale
@@ -332,6 +333,7 @@ Connector.view.StudyAxis = function() {
                 return;
             }
             highlightStudyLabel(d, true, selection, false);
+            labelMouseover.call(labelMouseoverScope, d, this);
         });
         labels.on('mouseout', function(d) {
             if (mainPlotLayer.isBrushed) {
@@ -340,6 +342,7 @@ Connector.view.StudyAxis = function() {
             if (!d.selected) {
                 highlightStudyLabel(d, false, selection, false);
             }
+            labelMouseout.call(labelMouseoutScope, d, this);
         });
         labels.on('mousedown', function(d) {
             if (mainPlotLayer.isBrushed) {
@@ -550,6 +553,8 @@ Connector.view.StudyAxis = function() {
         xScale.range(newRanges);
         return studyAxis;
     };
+    studyAxis.studyLabelMouseover = function(m, s) { labelMouseover = m; labelMouseoverScope = s; return studyAxis; };
+    studyAxis.studyLabelMouseout = function(m, s) { labelMouseout = m; labelMouseoutScope = s; return studyAxis; };
 
     return studyAxis;
 };

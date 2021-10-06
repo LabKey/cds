@@ -483,7 +483,8 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Integrated data',
                             dataField: 'studies',
                             dataLink: 'Study',
-                            instructions: 'Visualize subject-level data in Plot or export from Grid. Additional data may be available. See study page.'
+                            instructions: 'Visualize subject-level data in Plot or export from Grid. Additional data may be available. See study page.',
+                            hasDescription: true
                         }
                     },{
                         type: 'productotherproducts',
@@ -615,7 +616,8 @@ Ext4.define('Connector.cube.Configuration', {
                             dataField: 'studies',
                             dataLink: 'Study',
                             instructions: 'Visualize subject-level data in Plot or export from Grid',
-                            nabMabInstructions: 'Go to Monoclonal antibodies to visualize or export mAb data'
+                            nabMabInstructions: 'Go to Monoclonal antibodies to visualize or export mAb data',
+                            hasDescription: true
                         }
                     },{
                         type: 'interactivereports',
@@ -679,7 +681,8 @@ Ext4.define('Connector.cube.Configuration', {
                             dataField: 'studies',
                             dataLink: 'Study',
                             hasGrouping: true,
-                            groupDir: 'DESC'
+                            groupDir: 'DESC',
+                            hasDescription: true
                         }
                     }]]
                 }]
@@ -730,7 +733,8 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Integrated data for related studies',
                             dataField: 'studies',
                             dataLink: 'Study',
-                            instructions: 'Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.'
+                            instructions: 'Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.',
+                            hasDescription: true
                         }
                     },{
                         type: 'publicationnonintegrateddata',
