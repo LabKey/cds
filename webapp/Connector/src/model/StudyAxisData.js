@@ -124,7 +124,8 @@ Ext.define('Connector.model.StudyAxisData', {
                     timepointType: record.get('timepoint_type'),
                     alignShiftValue: 0,
                     visits: {},
-                    groups: {}
+                    groups: {},
+                    description: record.get('study_description')
                 };
             }
 
@@ -141,6 +142,7 @@ Ext.define('Connector.model.StudyAxisData', {
                         hasAlignment: !Ext.isDefined(alignmentVisitTag),
                         alignShiftValue: 0,
                         timepointType: study.timepointType,
+                        description: StudyUtils.getTreatmentArmDescription(groupLabel),
                         visits: {}
                     }
                 }

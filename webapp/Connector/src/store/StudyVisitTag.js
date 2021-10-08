@@ -28,12 +28,14 @@ Ext.define('Connector.store.StudyVisitTag', {
     load : function()
     {
         this.loading = true;
-        LABKEY.Query.selectRows({
-            schemaName: 'cds',
-            queryName: 'StudyVisitTagInfo',
-            sort: 'container_id,protocol_day,group_name,visit_tag_name',
-            success: this.loadStudyVisitTags,
-            scope : this
-        });
+        StudyUtils.initialize(function() {
+            LABKEY.Query.selectRows({
+                schemaName: 'cds',
+                queryName: 'StudyVisitTagInfo',
+                sort: 'container_id,protocol_day,group_name,visit_tag_name',
+                success: this.loadStudyVisitTags,
+                scope : this
+            });
+        }, this);
     }
 });

@@ -13,6 +13,8 @@ Ext.define('Connector.app.view.StudyProducts', {
 
     emptySearchSubtext: 'Also try searching for product in Studies section.',
 
+    showLoadingMask : true,
+
     statics: {
         searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer']
     },

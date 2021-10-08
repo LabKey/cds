@@ -170,8 +170,10 @@ Ext.define('Connector.app.store.StudyProducts', {
                         var assays = this.studyAssayMap[studyName];
                         if (assays) {
                             var dataStatus = '<p class="data-availability-tooltip-header">Assays ' + (hasAccess ? 'with' : 'without') + ' data accessible</p>';
+                            var delim = '';
                             Ext.each(assays, function(assay){
-                                dataStatus += assay.assay_short_name + '<br>';
+                                dataStatus += delim + assay.assay_short_name;
+                                delim = '</br>';
                             });
                         }
                         var study = {
@@ -180,7 +182,8 @@ Ext.define('Connector.app.store.StudyProducts', {
                             data_link_id: studyName,
                             has_data: this.studyData[s].has_data,
                             has_access:  hasAccess,
-                            data_status: dataStatus
+                            data_status: dataStatus,
+                            data_description: this.studyData[s].description
                         };
                         studies.push(study);
                     }
@@ -229,8 +232,9 @@ Ext.define('Connector.app.store.StudyProducts', {
             this.productProduct = undefined;
 
             this.loadRawData(products);
+            this.fireEvent('dataloaded');
+            this.dataLoaded = true;
             LABKEY.Utils.signalWebDriverTest("determinationLearnAboutStudyProductLoaded");
-
         }
     }
 });

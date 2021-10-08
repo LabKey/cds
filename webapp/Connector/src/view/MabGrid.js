@@ -244,7 +244,7 @@ Ext.define('Connector.view.MabGrid', {
             this._getVirusColumnConfig('Clades', 'cladeCount', ind++),
             this._getVirusColumnConfig('Tiers', 'neutralization_tierCount', ind++),
             this._getIC50MeanColumnConfig('Geometric mean Curve IC50', 'IC50geomean', ind++, MabQueryUtils.IC50_GROUP_COLUMN),
-            this._getCountColumnConfig('Studies', 'studyCount', ind, 'study.label')
+            this._getCountColumnConfig('Studies', 'studyCount', ind, 'study.label', true)
         ];
     },
 
@@ -269,12 +269,13 @@ Ext.define('Connector.view.MabGrid', {
         });
     },
 
-    _getCountColumnConfig : function(title, dataIndex, colInd, fieldName) {
+    _getCountColumnConfig : function(title, dataIndex, colInd, fieldName, showTooltip) {
         return Ext.apply(this._getBaseColumnConfig(title, dataIndex, colInd), {
             width: this.countColumnWidth,
             filterConfig: {
                 isMeta: false,
                 fieldName: fieldName,
+                showTooltip : showTooltip,
                 caption: title
             }
         });

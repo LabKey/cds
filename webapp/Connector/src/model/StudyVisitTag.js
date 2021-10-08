@@ -10,6 +10,7 @@ Ext.define('Connector.model.StudyVisitTag', {
     fields : [
         {name: 'container_id'},
         {name: 'study_label'},
+        {name: 'study_description'},
         {name: 'timepoint_type'},
         {name: 'group_name'},
         {name: 'visit_row_id'},

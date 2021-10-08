@@ -487,6 +487,7 @@ Ext.define('Connector.view.InfoPane', {
             if (this.mutated) {
                 this.fireEvent('filtercomplete', grid.getSelectionModel().getSelection(), grid.getStore().getCount());
             }
+            this.hideItemTooltip();
             this.hide();
         }
     },
