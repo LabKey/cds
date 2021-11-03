@@ -103,6 +103,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                                 && textRect.left <= cursorX && cursorX <= textRect.right) {
                             this.showDataStatusTooltip(evt, dataLink.dom, {
                                 status: record.data.has_data ? (record.data.has_access ? toolTipMsg_available : toolTipMsg_restricted) : toolTipMsg_notAdded,
+                                description: record.data.data_description,
                                 id: id
                             });
                         }
