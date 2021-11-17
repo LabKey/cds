@@ -625,10 +625,25 @@ Ext.define('Connector.view.InfoPane', {
                 var calloutMgr = hopscotch.getCalloutManager(),
                         _id = el.id,
                         displayTooltip = setTimeout(function() {
+                            // compute the callout height based on approximately 35 chars per line (plus margin)
+                            var lines = rec.data.description.length / 35;
+                            var calloutHeight = 30 + (17 * lines);
+
+                            // shift the y-offset of the callout if it is larger than the 50 pixel margin we
+                            // have at the bottom of the info pane
+                            if (calloutHeight > 50) {
+                                verticalOffset = calloutHeight - 35;
+                                arrowOffset = verticalOffset - 14;
+                            } else {
+                                verticalOffset = calloutHeight / 2;
+                                arrowOffset = 0;
+                            }
+
                             calloutMgr.createCallout(Ext.apply({
                                 id: _id,
                                 xOffset: -30,
-                                yOffset: -20,
+                                yOffset: -verticalOffset,
+                                arrowOffset: arrowOffset,
                                 showCloseButton: false,
                                 target: highlighted[0],
                                 placement: 'left',

@@ -203,7 +203,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             if (el) {
                 var calloutMgr = hopscotch.getCalloutManager();
                 var id = el.id;
-                var tooltip = this.getTooltip(rec.data.hierarchy, name);
+                var tooltip = this.getTooltip(rec.data.levelUniqueName, name);
 
                 if (tooltip) {
                     var displayTooltip = setTimeout(function() {
@@ -233,20 +233,28 @@ Ext.define('Connector.view.SingleAxisExplorer', {
     },
 
     parseExplorerBarName : function(hierarchy, uniqueName) {
-        // for now only support studies and treatment arms
-        if (hierarchy === '[Study.Treatment]' || hierarchy === '[Assay.Study]') {
+        if (hierarchy.startsWith('[Study.') || hierarchy.startsWith('[Assay.Study]')) {
             var parts = uniqueName.split('\.');
-            if (parts.length === 4) {
-                return parts[3].substr(1, parts[3].length-2);
-            }
+            var num = parts.length;
+
+            return parts[num-1].substr(1, parts[num-1].length-2);
         }
     },
 
-    getTooltip : function(hierarchy, label) {
-        if (hierarchy === '[Study.Treatment]')
-            return StudyUtils.getTreatmentArmDescription(label);
-        else if (hierarchy === '[Assay.Study]')
-            return StudyUtils.getStudyDescription(label);
+    getTooltip : function(level, label) {
+
+        switch (level) {
+            case '[Study.Treatment].[Arm]' :
+                return StudyUtils.getTreatmentArmDescription(label);
+            case '[Study.Treatment].[Treatment]' :
+            case '[Study.Treatment Arm Coded Label].[Name]' :
+            case '[Study.Type].[Name]' :
+            case '[Study.Network].[Name]' :
+            case '[Study.Strategy].[Name]' :
+            case '[Study.PI].[Name]' :
+            case '[Assay.Study].[Study]' :
+                return StudyUtils.getStudyDescription(label);
+        }
     },
 
     onFilterChange : function() {
@@ -511,7 +519,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
             '</div>',
             '</tpl>',
             '<div class="', this.barCls, ' large">',
-            '<span class="', this.barLabelCls, '">{label:htmlEncode}',
+            '<span class="', this.barLabelCls, '" uniquename="{uniqueName:htmlEncode}">{label:htmlEncode}',
             (this.ordinal ? '&nbsp;({ordinal:htmlEncode})' : ''),
             '</span>',
             '{[ this.renderCount(values) ]}',

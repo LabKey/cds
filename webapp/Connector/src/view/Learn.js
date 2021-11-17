@@ -498,6 +498,7 @@ Ext.define('Connector.view.Learn', {
                     store = StoreCache.getStore(dimension.detailCollection);
 
                     this.add(Ext.create(dimension.detailView, {
+                        padding : '2 0 0 0',
                         itemId: listId,
                         dimension: dimension,
                         store: store,
