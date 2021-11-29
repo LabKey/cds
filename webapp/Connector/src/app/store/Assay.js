@@ -187,6 +187,8 @@ Ext.define('Connector.app.store.Assay', {
                 if (interactiveReports && interactiveReports.length > 0) {
                     assay.interactive_reports = interactiveReports;
                 }
+                assay.data_types_available = this.getDataTypesAvailable(assay);
+
                 assays.push(assay);
             }, this);
 

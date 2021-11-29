@@ -46,9 +46,9 @@ Ext.define('Connector.app.view.Publication', {
             resizable: false,
             dataIndex: 'publication_data',
             filterConfigSet: [{
-                filterField: 'publication_data_count',
-                valueType: 'number',
-                title: 'publication data count'
+                filterField: 'data_types_available',
+                valueType: 'string',
+                title: 'Data Types Available'
             }],
             tpl: new Ext.XTemplate(
                 '<div class="detail-text">',

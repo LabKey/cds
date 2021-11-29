@@ -4,6 +4,7 @@
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Ext.define('Connector.app.store.Publication', {
+
     extend : 'Connector.app.store.SavedReports',
 
     mixins: {
@@ -254,9 +255,10 @@ Ext.define('Connector.app.store.Publication', {
                 if (curatedGrp && curatedGrp.length > 0) {
                     publication.curated_groups = curatedGrp;
                 }
+                publication.data_types_available = this.getDataTypesAvailable(publication);
 
                 publications.push(publication);
-            });
+            }, this);
 
 
             this.publicationData = undefined;

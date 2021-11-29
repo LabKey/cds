@@ -37,6 +37,7 @@ Ext.define('Connector.app.model.Publication', {
         {name: 'study_names', convert : Connector.model.Filter.asArray},
         {name: 'studies', convert : Connector.model.Filter.asArray},
         {name: 'interactive_reports', convert : Connector.model.Filter.asArray},
-        {name: 'curated_groups', convert : Connector.model.Filter.asArray}
+        {name: 'curated_groups', convert : Connector.model.Filter.asArray},
+        {name: 'data_types_available', convert : Connector.model.Filter.asArray}
     ]
 });
