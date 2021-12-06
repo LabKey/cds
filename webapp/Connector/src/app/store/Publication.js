@@ -273,5 +273,20 @@ Ext.define('Connector.app.store.Publication', {
             this.dataLoaded = true;
             LABKEY.Utils.signalWebDriverTest("learnPublicationsLoaded");
         }
+    },
+
+    /**
+     * Override since publications has a slightly different notion of available data types (than study)
+     */
+    getDataTypesAvailable: function (rec) {
+        var available_data_types = [];
+        if (rec.data_availability)
+            available_data_types.push('Publication data');
+        if (rec.ni_data_availability)
+            available_data_types.push('Non-integrated data');
+        if (available_data_types.length === 0)
+            available_data_types.push('Data not added');
+
+        return available_data_types;
     }
 });
