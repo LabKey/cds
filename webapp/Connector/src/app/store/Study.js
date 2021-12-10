@@ -534,6 +534,8 @@ Ext.define('Connector.app.store.Study', {
                     return pub.available_data_count > 0;
                 })
                 study.pub_available_data_count = pubDataAvailable.length;
+                study.data_types_available = this.getDataTypesAvailable(study);
+                study.data_available = (study.assays_added_count > 0 || study.ni_assays_added_count > 0 || study.pub_available_data_count > 0) ? 'Data added' : 'Data not added';
 
                 studies.push(study);
             }, this);
