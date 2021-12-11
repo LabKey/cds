@@ -183,14 +183,14 @@ public class CDSGroupTest extends CDSGroupBaseTest
         _asserts.assertFilterStatusCounts(89, 2, 1, 3, 7); // TODO Test data dependent.
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
+        clickGroupLabelOnHomePage(STUDY_GROUP);
 
         // Verify that the description has changed.
         waitForText(studyGroupDescModified);
 
         // Verify that No plot data message is shown
-        assertTextPresent("No plot saved for this group.");
+        waitFor(()->isElementPresent(Locator.tagContainingText("h3", "No plot saved for this group.")),
+                "'No plot saved for this group' message was not present.", 1_5000);
 
         // verify 'whoops' case
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
@@ -206,8 +206,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         _asserts.assertFilterStatusCounts(1604, 14, 2, 3, 91); // TODO Test data dependent.
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
+
+        clickGroupLabelOnHomePage(STUDY_GROUP);
 
         // Verify the group does overwrite already active filters
         sleep(500); // give it a chance to apply
@@ -216,8 +216,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         // Verify the filters get applied when directly acting
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
+        clickGroupLabelOnHomePage(STUDY_GROUP);
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
         _asserts.assertFilterStatusCounts(89, 2, 1, 3, 7); // TODO Test data dependent.
@@ -247,8 +246,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         String singleFilterGroup = "cds_single_group";
         String multiFilterGroup = "cds_multi_group";
-        Locator.XPathLocator singleLoc = CDSHelper.Locators.getPrivateGroupLoc(singleFilterGroup);
-        Locator.XPathLocator multiLoc = CDSHelper.Locators.getPrivateGroupLoc(multiFilterGroup);
 
         log("Compose a group that consist of a single filter");
         cds.goToSummary();
@@ -271,14 +268,14 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.saveGroup(multiFilterGroup, "", false);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        click(singleLoc);
+        clickGroupLabelOnHomePage(singleFilterGroup);
         sleep(2000); // wait for filter panel to stablize
         log("Verify the group consist of a single filter is applied correctly");
         List<WebElement> activeFilters = cds.getActiveFilters();
         assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        click(multiLoc);
+        clickGroupLabelOnHomePage(multiFilterGroup);
         sleep(2000); // wait for filter panel to stablize
         log("Verify the group consist of a 4 filters is applied correctly when current filter panel contains only one filter");
         activeFilters = cds.getActiveFilters();
@@ -286,7 +283,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        click(singleLoc);
+        clickGroupLabelOnHomePage(singleFilterGroup);
         sleep(2000); // wait for filter panel to stablize
         log("Verify the group consist of a single filter is applied correctly when current filter panel contains 4 filters");
         activeFilters = cds.getActiveFilters();
@@ -328,8 +325,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clearFilters(true);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForText(GROUP_PLOT_TEST);
-        click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_PLOT_TEST));
+        clickGroupLabelOnHomePage(GROUP_PLOT_TEST);
         waitForText("View in Plot");
         click(Locator.xpath("//span/following::span[contains(text(), 'View in Plot')]").parent().parent().parent());
         assertTrue(getDriver().getCurrentUrl().contains("#chart"));
@@ -364,8 +360,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.saveGroup(STUDY_GROUP_Q2, studyGroupDesc, true);
 
         cds.goToAppHome();
-        Locator.XPathLocator listGroup = Locator.tagWithClass("div", "grouplabel");
-        waitAndClick(listGroup.withText(STUDY_GROUP_Q2));
+        clickGroupLabelOnHomePage(STUDY_GROUP_Q2);
         String groupUrl = getCurrentRelativeURL();
         String[] vals = groupUrl.split("/");
         int rowId = Integer.valueOf(vals[vals.length - 1]); //study.SubjectGroup.RowId
@@ -389,7 +384,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.saveGroup(STUDY_GROUP_Z110, studyGroupDesc2, false);
 
         cds.goToAppHome();
-        waitAndClick(listGroup.withText(STUDY_GROUP_Z110));
+        clickGroupLabelOnHomePage(STUDY_GROUP_Z110);
         groupUrl = getCurrentRelativeURL();
         vals = groupUrl.split("/");
         rowId = Integer.valueOf(vals[vals.length - 1]); //study.SubjectGroup.RowId
@@ -483,9 +478,13 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         log("Verifying links of assay page");
         goToAssayPage(CDSHelper.TITLE_ICS);
-        waitForElementWithRefresh(Locator.id("interactive_report_title"), 5000);
+
+        WebElement reportTitleElement = Locator.id("interactive_report_title").refindWhenNeeded(getDriver());
+
+        waitFor(reportTitleElement::isDisplayed, "Report title was not displayed.", 5_000);
+
         log("verify interactive report link");
-        scrollIntoView(Locator.id("interactive_report_title"));
+        scrollIntoView(reportTitleElement);
 
         log("Verifying report is present");
         assertElementPresent(Locator.linkWithText(reportName));
@@ -495,7 +494,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         goToProjectHome();
         clickTab("Clinical and Assay Data");
-        clickAndWait(Locator.linkWithText(reportName));
+        waitAndClickAndWait(Locator.linkWithText(reportName));
         int reportNum = cds.getReportNumberFromUrl(getDriver().getCurrentUrl());
         goToSchemaBrowser();
         DataRegionTable table = ExecuteQueryPage.beginAt(this, "CDS", "assayReport").getDataRegion();
@@ -620,8 +619,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         log("Go back to the CDS portal, load the group, and validate the expected error message is shown.");
         cds.enterApplication();
 
-        waitForElement(Locator.tagWithClass("div", "grouplabel").withText(GROUP_NAME));
-        click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_NAME));
+        clickGroupLabelOnHomePage(GROUP_NAME);
 
         log("Validate that the error message box is shown.");
         waitForElementToBeVisible(Locator.tagWithClassContaining("div", "x-message-box"));
@@ -653,8 +651,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         log("Go back to the CDS portal, load the group, and validate no error is shown and the filter is applied.");
         cds.enterApplication();
 
-        waitForElement(Locator.tagWithClass("div", "grouplabel").withText(GROUP_NAME));
-        click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_NAME));
+        clickGroupLabelOnHomePage(GROUP_NAME);
+
         waitForText("No plot saved for this group.");
         _ext4Helper.waitForMaskToDisappear();
 

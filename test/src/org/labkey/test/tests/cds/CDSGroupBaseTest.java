@@ -15,12 +15,12 @@
  */
 package org.labkey.test.tests.cds;
 
-import org.junit.Test;
 import org.labkey.test.Locator;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.WebElement;
 
 import java.util.Arrays;
 import java.util.List;
@@ -143,9 +143,10 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         log("Verify that reader cannot delete");
-        click(CDSHelper.Locators.cdsButtonLocator("Delete"));
+
+        CDSHelper.Locators.cdsHeaderButtonLocator("Delete").findElement(getDriver()).click();
         waitForText("Are you sure you want to delete");
-        click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
+        CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(getDriver()).click();
         waitForText("ERROR");
         click(CDSHelper.Locators.cdsButtonLocator("OK", "x-toolbar-item").notHidden());
 
@@ -165,9 +166,9 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         //delete group
         click(sharedGroupLoc);
         waitForText("Edit details");
-        click(CDSHelper.Locators.cdsButtonLocator("Delete"));
+        CDSHelper.Locators.cdsHeaderButtonLocator("Delete").findElement(getDriver()).click();
         waitForText("Are you sure you want to delete");
-        click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
+        CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(getDriver()).click();
         waitForText("Getting Started");
         refresh();
         scrollIntoView(Locator.tagWithClass("h2", "section-title"));
@@ -218,6 +219,23 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         action.run();
         Ext4Helper.setCssPrefix("x-");
         cds.enterApplication();
+    }
+
+    protected void clickGroupLabelOnHomePage(String groupLabel)
+    {
+        String currentUrl = getCurrentRelativeURL();
+        assertTrue("Not on the CDS home page.", currentUrl.toLowerCase().contains("#home"));
+
+        WebElement groupListElement = Locator.tagWithClass("div", "grouplist-view").refindWhenNeeded(getDriver());
+        waitFor(groupListElement::isDisplayed, "GroupList was not visible.", 1_000);
+
+        WebElement groupLabelElement = Locator.tagWithClass("div", "grouplabel").withText(groupLabel).findWhenNeeded(groupListElement);
+        waitFor(groupLabelElement::isDisplayed, String.format("Group with label '%s' is not visible.", groupLabel), 1_000);
+
+        groupLabelElement.click();
+
+        waitFor(()->getCurrentRelativeURL().toLowerCase().contains("group/groupsummary"),
+                String.format("Click group label '%s' did not navigate.", groupLabel), 1_000);
     }
 
 }

@@ -34,8 +34,8 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.RReportHelper;
-import org.labkey.test.util.TestLogger;
 import org.labkey.test.util.UIPermissionsHelper;
+import org.labkey.test.util.URLBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -715,18 +715,22 @@ public class CDSHelper
     @LogMethod(quiet = true)
     public void enterApplication()
     {
-        _test.refresh();
-        BaseWebDriverTest.sleep(2000);
         _test.goToProjectHome();
-        _test.clickAndWait(Locator.linkWithText("Application"), 10000);
-        _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");
-
-        afterInApplication();
+        beginAtApplication(_test.getCurrentProject());
     }
 
     public void beginAtApplication(String projectName)
     {
-        _test.beginAt(WebTestHelper.buildURL("cds", projectName, "app", Map.of("logQuery", "1", "_showPlotData", "true", "_disableAutoMsg", "true")));
+
+        String currentUrl = _test.getCurrentRelativeURL().toLowerCase();
+
+        // If the url does not contain any one of these three items then navigate.
+        if(!currentUrl.contains(projectName) || !currentUrl.contains("cds-app.view") || !currentUrl.contains("#home"))
+        {
+            String url = String.format("%s#Home",
+                    WebTestHelper.buildURL("cds", projectName, "app", Map.of("logQuery", "1", "_showPlotData", "true", "_disableAutoMsg", "true")));
+            _test.beginAt(url);
+        }
         afterInApplication();
     }
 
@@ -1807,6 +1811,11 @@ public class CDSHelper
                     (isShared ? "Curated groups and plots" : "My saved groups and plots") + "')]" +
                     "/following::div[contains(@class, 'grouprow')]/div[contains(text(), '" +
                     groupName + "')]");
+        }
+
+        public static Locator.XPathLocator cdsHeaderButtonLocator(String text)
+        {
+            return Locator.xpath("//div[contains(@class,'pageheader')]//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
         }
 
         public static Locator.XPathLocator cdsButtonLocator(String text)

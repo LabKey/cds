@@ -19,13 +19,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.labkey.test.BaseWebDriverTest;
+import org.labkey.test.Locator;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.labkey.test.util.ReadOnlyTest;
-import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.cds.CDSInitializer;
-import org.openqa.selenium.NoSuchElementException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -65,15 +64,13 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
     @Override
     public boolean needsSetup()
     {
-        try
-        {
-            new CDSHelper(this).beginAtApplication(getProjectName());
+        goToHome();
+
+        // If a link to the project is present on the server home page, no set-up is needed.
+        if(isElementPresent(Locator.linkContainingText(getProjectName())))
             return false;
-        }
-        catch (NoSuchElementException | AssertionError e)
-        {
+        else
             return true;
-        }
     }
 
     @Before
