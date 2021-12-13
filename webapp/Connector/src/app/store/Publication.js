@@ -4,6 +4,7 @@
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Ext.define('Connector.app.store.Publication', {
+
     extend : 'Connector.app.store.SavedReports',
 
     mixins: {
@@ -254,9 +255,10 @@ Ext.define('Connector.app.store.Publication', {
                 if (curatedGrp && curatedGrp.length > 0) {
                     publication.curated_groups = curatedGrp;
                 }
+                publication.data_types_available = this.getDataTypesAvailable(publication);
 
                 publications.push(publication);
-            });
+            }, this);
 
 
             this.publicationData = undefined;
@@ -271,5 +273,20 @@ Ext.define('Connector.app.store.Publication', {
             this.dataLoaded = true;
             LABKEY.Utils.signalWebDriverTest("learnPublicationsLoaded");
         }
+    },
+
+    /**
+     * Override since publications has a slightly different notion of available data types (than study)
+     */
+    getDataTypesAvailable: function (rec) {
+        var available_data_types = [];
+        if (rec.data_availability)
+            available_data_types.push('Publication data');
+        if (rec.ni_data_availability)
+            available_data_types.push('Non-integrated data');
+        if (available_data_types.length === 0)
+            available_data_types.push('Data not added');
+
+        return available_data_types;
     }
 });

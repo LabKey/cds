@@ -46,6 +46,7 @@ Ext.define('Connector.app.model.MAb', {
         {name: 'data_accessible'},
         {name: 'studies_with_data_count'},
         {name: 'studies', convert : Connector.model.Filter.asArray},
-        {name: 'studies_with_data', convert : Connector.model.Filter.asArray}
+        {name: 'studies_with_data', convert : Connector.model.Filter.asArray},
+        {name: 'data_types_available', convert : Connector.model.Filter.asArray}
     ]
 });

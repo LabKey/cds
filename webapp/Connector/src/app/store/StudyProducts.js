@@ -5,7 +5,7 @@
  */
 Ext.define('Connector.app.store.StudyProducts', {
 
-    extend : 'Ext.data.Store',
+    extend : 'Connector.app.store.SavedReports',
 
     mixins: {
         studyAccessHelper: 'Connector.app.store.PermissionedStudy'
@@ -213,6 +213,7 @@ Ext.define('Connector.app.store.StudyProducts', {
                     });
                 }
                 product.other_products = otherProducts;
+                product.data_types_available = this.getDataTypesAvailable(product);
 
                 if (!this.hiddenProduct(product.product_name)) {
                     products.push(product);

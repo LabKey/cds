@@ -4,7 +4,8 @@
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Ext.define('Connector.app.store.MAb', {
-    extend : 'Ext.data.Store',
+
+    extend : 'Connector.app.store.SavedReports',
 
     statics: {
         LANL_URL_PREFIX: 'https://www.hiv.lanl.gov/content/immunology/ab_search?results=Search&id='
@@ -199,6 +200,7 @@ Ext.define('Connector.app.store.MAb', {
                 mixRec.studies = studies;
                 mixRec.studies_with_data = studiesWithData;
                 mixRec.studies_with_data_count = studiesWithData.length;
+                mixRec.data_types_available = this.getDataTypesAvailable(mixRec);
 
                 mixRecs.push(mixRec);
             }, this);
