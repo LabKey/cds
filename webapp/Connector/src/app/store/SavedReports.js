@@ -41,7 +41,27 @@ Ext.define('Connector.app.store.SavedReports', {
         this._onLoadComplete();
     },
 
-    _onLoadComplete : function() {
+    _onLoadComplete: function () {
         // override and implement
+    },
+
+    getDataTypesAvailable: function (rec) {
+        var available_data_types = [];
+        if (rec.data_availability)
+            available_data_types.push('Integrated data');
+        if (rec.ni_data_availability)
+            available_data_types.push('Non-integrated data');
+
+        if (rec.publications) {
+            var pubDataAvailable = rec.publications.filter(function (pub) {
+                return pub.available_data_count > 0;
+            })
+            if (pubDataAvailable.length > 0)
+                available_data_types.push('Publication data');
+        }
+        if (available_data_types.length === 0)
+            available_data_types.push('Data not added');
+
+        return available_data_types;
     }
 });

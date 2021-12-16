@@ -44,9 +44,9 @@ Ext.define('Connector.app.view.MAb', {
             resizable: false,
             dataIndex: 'studies_with_data_count',
             filterConfigSet: [{
-                filterField: 'studies_with_data_count',
-                valueType: 'number',
-                title: '# of Studies Added'
+                filterField: 'data_types_available',
+                valueType: 'string',
+                title: 'Data Types Available'
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',

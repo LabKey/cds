@@ -1578,14 +1578,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Evaluating applying two numeric filters");
         //finds the number of rows that have a date column and assay column that satisfy the following filter
         final String yearToFilter = "2004";
-        final String numAssaysToFilter = "1";
         int numRowsSatisfyFilter = Locator.xpath("//tr/td/div/div/div[contains(@class, 'detail-gray-text')]" +
-                "[contains(text(), '" + numAssaysToFilter + " Integrated Assay')]/../../../following-sibling::" +
+                "[contains(text(), ' Integrated Assay')]/../../../following-sibling::" +
                 "td/div/div/table/tbody/tr[contains(@class, 'detail-gray-text')]/td[contains(text(), '"+ yearToFilter + "')]")
                 .findElements(getDriver()).size();
 
         learnGrid.setWithOptionFacet("Status", "Start Year", yearToFilter);
-        learnGrid.setFacet("Data Added", numAssaysToFilter);
+        learnGrid.setFacet("Data Added", "Integrated data");
         numRowsPostFilter = learnGrid.getRowCount();
 
         assertTrue(numRowsSatisfyFilter == numRowsPostFilter);
@@ -1760,7 +1759,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue(2 == learnGrid.getRowCount());
 
         //Test combining filter with another column
-        learnGrid.setFacet("Data Added", "2");
+        learnGrid.setFacet("Data Added", "Data not added");
         _asserts.verifyEmptyLearnAboutStudyPage();
 
         //clear all filters and check results are correct in succession.

@@ -45,9 +45,13 @@ Ext.define('Connector.app.view.Study', {
         resizable: false,
         dataIndex: 'assays_added_count',
         filterConfigSet: [{
-            filterField: 'assays_added_count',
-            valueType: 'number',
-            title: '# of Assays Added'
+            filterField: 'data_types_available',
+            valueType: 'string',
+            title: 'Data Types Available'
+        },{
+            filterField: 'data_available',
+            valueType: 'string',
+            title: 'Data Available'
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
