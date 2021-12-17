@@ -24,61 +24,70 @@ Ext.define('Connector.model.MabPane', {
     },
 
     configure : function() {
-        var all,
-            active;
+        StudyUtils.initialize(function() {
+            var all, active;
 
-        var loader = function() {
-            if (Ext.isArray(all) && Ext.isArray(active)) {
-                var raw = [];
-                var filterConfig = this.getFilterConfig();
-                var dimension = this.get('dimension');
-                var prop = this.get('learnProp');
-                var hasDetails = dimension != null;
-                var fieldKey = filterConfig.fieldName;
-                var fieldKeyParts = fieldKey.split('.');
-                if (fieldKeyParts.length > 1) {
-                    fieldKey = fieldKeyParts[fieldKeyParts.length - 1];
+            var loader = function() {
+                if (Ext.isArray(all) && Ext.isArray(active)) {
+                    var raw = [];
+                    var filterConfig = this.getFilterConfig();
+                    var dimension = this.get('dimension');
+                    var prop = this.get('learnProp');
+                    var hasDetails = dimension != null;
+                    var fieldKey = filterConfig.fieldName;
+                    var fieldKeyParts = fieldKey.split('.');
+                    if (fieldKeyParts.length > 1) {
+                        fieldKey = fieldKeyParts[fieldKeyParts.length - 1];
+                    }
+
+                    Ext.Array.forEach(all, function(row) {
+                        var name = row[fieldKey];
+                        var otherName = "";
+
+                        if (fieldKey === 'virus') {
+                            if (row['virus_full_name']) {
+                                otherName = row['virus_full_name'];
+                            }
+                            else {
+                                otherName = name;
+                            }
+                        }
+
+                        if (name) {
+                            var rec = {
+                                count: this.isActive(name, fieldKey, active) ? 1 : 0,
+                                name: name,
+                                otherName: otherName,
+                                description: this.getTooltip(dimension, name)
+                            };
+                            if (hasDetails) {
+                                Ext.apply(rec, {
+                                    hasDetails: true,
+                                    detailLink: Connector.getService('Learn').getURL(dimension, name, prop)
+                                })
+                            }
+                            raw.push(rec);
+                        }
+                    }, this);
+
+                    var store = this.get('memberStore');
+                    store.loadRawData(raw);
+                    store.group(store.groupField, 'DESC');
+
+                    this.setReady();
                 }
+            };
 
-                Ext.Array.forEach(all, function(row) {
-                    var name = row[fieldKey];
-                    var otherName = "";
+            this.fetchAll(function(rows) { all = rows; loader.call(this); }, this);
+            this.fetchActive(function(rows) { active = rows; loader.call(this); }, this);
+        }, this);
+    },
 
-                    if (fieldKey === 'virus') {
-                        if (row['virus_full_name']) {
-                            otherName = row['virus_full_name'];
-                        }
-                        else {
-                            otherName = name;
-                        }
-                    }
+    getTooltip : function(dimension, name) {
+        if (dimension === 'Study')
+            return StudyUtils.getStudyDescription(name);
 
-                    if (name) {
-                        var rec = {
-                            count: this.isActive(name, fieldKey, active) ? 1 : 0,
-                            name: name,
-                            otherName: otherName
-                        };
-                        if (hasDetails) {
-                            Ext.apply(rec, {
-                                hasDetails: true,
-                                detailLink: Connector.getService('Learn').getURL(dimension, name, prop)
-                            })
-                        }
-                        raw.push(rec);
-                    }
-                }, this);
-
-                var store = this.get('memberStore');
-                store.loadRawData(raw);
-                store.group(store.groupField, 'DESC');
-
-                this.setReady();
-            }
-        };
-
-        this.fetchAll(function(rows) { all = rows; loader.call(this); }, this);
-        this.fetchActive(function(rows) { active = rows; loader.call(this); }, this);
+        return null;
     },
 
     fetchAll : function(cb, scope) {
