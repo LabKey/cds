@@ -1,10 +1,10 @@
 //@import '~bourbon/app/assets/stylesheets/bourbon';
-//@import '~bourbon-neat/app/assets/stylesheets/neat';
+//@import '~bourbon-neat/core/_neat';
 @import 'variables';
 @import 'mixins';
 
 $grid-columns: 12 !global;
 
 .section {
-  @include outer-container;
+  @include grid-container;
 }
