@@ -291,9 +291,11 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
 
         }).error(function(e) {
           var errorMsg = "Sign-in Failed. ";
-            if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
-                errorMsg = errorMsg + e.responseJSON.errors[0].message;
-            }
+          if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+            var error = e.responseJSON.errors[0];
+            errorMsg = errorMsg + LABKEY.Utils.encodeHtml(error.msg) +
+                    (error.adviceText && error.adviceHref ? (' <a href="' + LABKEY.Utils.encodeHtml(error.adviceHref) + '">' + LABKEY.Utils.encodeHtml(error.adviceText) + '</a>') : '');
+          }
           $('.signin-modal .notifications p').html(errorMsg);
         });
       });
