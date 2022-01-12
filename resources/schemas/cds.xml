@@ -1412,4 +1412,84 @@
             <column columnName="container"/>
         </columns>
     </table>
+    <table tableName="import_virus_metadata_all" tableDbType="TABLE">
+        <columns>
+            <column columnName="cds_virus_id"/>
+            <column columnName="virus"/>
+            <column columnName="virus_full_name"/>
+            <column columnName="virus_backbone"/>
+            <column columnName="virus_host_cell"/>
+            <column columnName="virus_plot_label"/>
+            <column columnName="virus_type"/>
+            <column columnName="virus_species"/>
+            <column columnName="clade"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="virus_metadata_all" tableDbType="TABLE">
+        <columns>
+            <column columnName="cds_virus_id"/>
+            <column columnName="virus"/>
+            <column columnName="virus_full_name"/>
+            <column columnName="virus_backbone"/>
+            <column columnName="virus_host_cell"/>
+            <column columnName="virus_plot_label"/>
+            <column columnName="virus_type"/>
+            <column columnName="virus_species"/>
+            <column columnName="clade"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_virus_lab_id" tableDbType="TABLE">
+        <columns>
+            <column columnName="rowId"/>
+            <column columnName="cds_virus_id"/>
+            <column columnName="lab_code"/>
+            <column columnName="lab_virus_id"/>
+            <column columnName="lab_virus_id_variable_name"/>
+            <column columnName="harvest_date"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="virus_lab_id" tableDbType="TABLE">
+        <columns>
+            <column columnName="rowId"/>
+            <column columnName="cds_virus_id">
+                <fk>
+                    <fkDbSchema>cds</fkDbSchema>
+                    <fkTable>virus_metadata_all</fkTable>
+                    <fkColumnName>cds_virus_id</fkColumnName>
+                </fk>
+            </column>
+            <column columnName="lab_code"/>
+            <column columnName="lab_virus_id"/>
+            <column columnName="lab_virus_id_variable_name"/>
+            <column columnName="harvest_date"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_virus_synonym" tableDbType="TABLE">
+        <columns>
+            <column columnName="rowId"/>
+            <column columnName="cds_virus_id"/>
+            <column columnName="virus_synonym"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="virus_synonym" tableDbType="TABLE">
+        <columns>
+            <column columnName="rowId"/>
+            <column columnName="cds_virus_id">
+                <fk>
+                    <fkDbSchema>cds</fkDbSchema>
+                    <fkTable>virus_metadata_all</fkTable>
+                    <fkColumnName>cds_virus_id</fkColumnName>
+                </fk>
+            </column>
+            <column columnName="virus_synonym"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
 </tables>

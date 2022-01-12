@@ -103,7 +103,12 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("NAB", "AssayNAB"),
         new TSVCopyConfig("BAMA", "AssayBAMA"),
         new TSVCopyConfig("NABMAb", "AssayNABMAb"),
-        new TSVCopyConfig("PKMAb", "AssayPKMAb")
+        new TSVCopyConfig("PKMAb", "AssayPKMAb"),
+
+        // Virus data
+        new TSVCopyConfig("Virus_Metadata_All"),
+        new TSVCopyConfig("Virus_Lab_Id"),
+        new TSVCopyConfig("Virus_Synonym"),
     };
 
     @Override
