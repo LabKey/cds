@@ -69,7 +69,7 @@ Ext.define('Connector.view.module.StudyPublications', {
                                     '<tr>',
                                         '<td class="item-value">',
                                         '<tpl if="label">',
-                                            '<a href="#learn/learn/Publication/{id}">{label:htmlEncode}: </a>',
+                                            '{[this.getPublicationLink(values)]}',
                                         '</tpl>',
                                         '{authors:htmlEncode}. {title:htmlEncode}. {journal:htmlEncode}. {date:htmlEncode}',
                                         '<tpl if="volume || issue">',
