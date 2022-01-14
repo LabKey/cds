@@ -17,7 +17,7 @@
 CREATE TABLE cds.import_virus_metadata_all
 (
     cds_virus_id INTEGER NOT NULL,
-    virus VARCHAR(250),
+    virus VARCHAR(250) NOT NULL,
     virus_full_name VARCHAR(250),
     virus_backbone VARCHAR(250),
     virus_host_cell VARCHAR(250),
@@ -28,13 +28,14 @@ CREATE TABLE cds.import_virus_metadata_all
     neutralization_tier VARCHAR(250),
     container ENTITYID NOT NULL,
 
-    CONSTRAINT PK_ImportVirusMetadataAll PRIMARY KEY (cds_virus_id)
+    CONSTRAINT PK_ImportVirusMetadataAll PRIMARY KEY (cds_virus_id),
+    CONSTRAINT UQ_ImportVirusMetadataAll UNIQUE (virus_full_name)
 );
 
 CREATE TABLE cds.virus_metadata_all
 (
     cds_virus_id INTEGER NOT NULL,
-    virus VARCHAR(250),
+    virus VARCHAR(250) NOT NULL,
     virus_full_name VARCHAR(250),
     virus_backbone VARCHAR(250),
     virus_host_cell VARCHAR(250),
@@ -45,7 +46,8 @@ CREATE TABLE cds.virus_metadata_all
     neutralization_tier VARCHAR(250),
     container ENTITYID NOT NULL,
 
-    CONSTRAINT PK_VirusMetadataAll PRIMARY KEY (cds_virus_id)
+    CONSTRAINT PK_VirusMetadataAll PRIMARY KEY (cds_virus_id),
+    CONSTRAINT UQ_VirusMetadataAll UNIQUE (virus_full_name)
 );
 
 CREATE TABLE cds.import_virus_lab_id
