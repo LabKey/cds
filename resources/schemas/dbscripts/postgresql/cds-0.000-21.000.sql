@@ -1806,3 +1806,286 @@ CREATE TABLE cds.import_PKMAb (
 
 ALTER TABLE cds.import_product ADD COLUMN mab_mix_id VARCHAR(250);
 ALTER TABLE cds.product ADD COLUMN mab_mix_id VARCHAR(250);
+
+/* cds-19.20-19.30.sql */
+
+ALTER TABLE cds.import_document ADD COLUMN assay_identifier VARCHAR(250);
+ALTER TABLE cds.document ADD COLUMN assay_identifier VARCHAR(250);
+
+ALTER TABLE cds.import_study ADD COLUMN study_specimen_repository VARCHAR(250);
+ALTER TABLE cds.study ADD COLUMN specimen_repository_label VARCHAR(250);
+
+CREATE TABLE cds.import_antigenPanel
+(
+    cds_panel_id VARCHAR(250),
+    panel_name VARCHAR(250),
+    panel_description TEXT,
+    antigen_type VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT pk_import_antigenPanel PRIMARY KEY(container, cds_panel_id)
+);
+
+CREATE TABLE cds.antigenPanel
+(
+    cds_panel_id VARCHAR(250),
+    panel_name VARCHAR(250),
+    panel_description TEXT,
+    antigen_type VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT pk_antigenPanel PRIMARY KEY(container, cds_panel_id)
+);
+
+ALTER TABLE cds.import_nabantigen ADD COLUMN virus_full_name VARCHAR(250);
+ALTER TABLE cds.import_nabantigen ADD COLUMN virus_name_other VARCHAR(250);
+ALTER TABLE cds.import_nabantigen ADD COLUMN virus_species VARCHAR(250);
+ALTER TABLE cds.import_nabantigen ADD COLUMN virus_host_cell VARCHAR(250);
+ALTER TABLE cds.import_nabantigen ADD COLUMN virus_backbone VARCHAR(250);
+ALTER TABLE cds.import_nabantigen ADD COLUMN cds_virus_id VARCHAR(250);
+
+TRUNCATE --necessary since cds_virus_id currently has null values and can't otherwise make it part of Primary Key below. Data will get repopulated as part of ETL run after server upgrade.
+    cds.import_nabantigen
+RESTART IDENTITY CASCADE;
+
+ALTER TABLE cds.import_nabantigen DROP CONSTRAINT import_nabantigen_pkey;
+ALTER TABLE cds.import_nabantigen ADD PRIMARY KEY (container, assay_identifier, antigen_name, target_cell, antigen_type, cds_virus_id);
+
+ALTER TABLE cds.nabantigen ADD COLUMN virus_full_name VARCHAR(250);
+ALTER TABLE cds.nabantigen ADD COLUMN virus_name_other VARCHAR(250);
+ALTER TABLE cds.nabantigen ADD COLUMN virus_species VARCHAR(250);
+ALTER TABLE cds.nabantigen ADD COLUMN virus_host_cell VARCHAR(250);
+ALTER TABLE cds.nabantigen ADD COLUMN virus_backbone VARCHAR(250);
+ALTER TABLE cds.nabantigen ADD COLUMN cds_virus_id VARCHAR(250);
+
+TRUNCATE --necessary since cds_virus_id currently has null values and can't otherwise make it part of Primary Key below. Data will get repopulated as part of ETL run after server upgrade.
+    cds.nabantigen
+RESTART IDENTITY CASCADE;
+
+ALTER TABLE cds.nabantigen DROP CONSTRAINT nabantigen_pkey;
+ALTER TABLE cds.nabantigen ADD PRIMARY KEY (container, assay_identifier, antigen_name, target_cell, antigen_type, cds_virus_id);
+
+CREATE TABLE cds.import_virusPanel
+(
+    cds_virus_id VARCHAR(250),
+    cds_panel_id VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT pk_import_virusPanel PRIMARY KEY (container, cds_virus_id, cds_panel_id)
+);
+
+CREATE TABLE cds.virusPanel
+(
+    cds_virus_id VARCHAR(250),
+    cds_panel_id VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT pk_virusPanel PRIMARY KEY (container, cds_virus_id, cds_panel_id)
+);
+
+-- maps publications to documents
+CREATE TABLE cds.import_publicationDocument
+(
+     Publication_Id VARCHAR(250) NOT NULL,
+     Document_Id VARCHAR(250) NOT NULL,
+     Container ENTITYID NOT NULL,
+
+     CONSTRAINT PK_ImportPublicationDocument PRIMARY KEY (Publication_Id, Document_Id, Container),
+     CONSTRAINT FK_ImportPublicationId_PublicationId FOREIGN KEY (Container, Publication_Id) REFERENCES cds.import_Publication (Container, Publication_Id),
+     CONSTRAINT FK_ImportDocumentId_DocumentId FOREIGN KEY (Container, Document_Id) REFERENCES cds.import_Document (Container, Document_Id)
+);
+
+CREATE TABLE cds.PublicationDocument
+(
+    Publication_Id VARCHAR(250) NOT NULL,
+    Document_Id VARCHAR(250) NOT NULL,
+    Container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_PublicationDocument PRIMARY KEY (Publication_Id, Document_Id, Container),
+    CONSTRAINT FK_PublicationId_PublicationId FOREIGN KEY (Container, Publication_Id) REFERENCES cds.Publication (Container, Id),
+    CONSTRAINT FK_DocumentId_DocumentId FOREIGN KEY (Container, Document_Id) REFERENCES cds.Document (Container, Document_Id)
+);
+
+ALTER TABLE cds.import_nabantigen DROP CONSTRAINT import_nabantigen_pkey;
+ALTER TABLE cds.import_nabantigen ADD PRIMARY KEY (container, assay_identifier, cds_virus_id);
+
+ALTER TABLE cds.nabantigen DROP CONSTRAINT nabantigen_pkey;
+ALTER TABLE cds.nabantigen ADD PRIMARY KEY (container, assay_identifier, cds_virus_id);
+
+ALTER TABLE cds.import_nab DROP COLUMN antigen;
+ALTER TABLE cds.import_nab DROP COLUMN antigen_type;
+ALTER TABLE cds.import_nab DROP COLUMN virus;
+ALTER TABLE cds.import_nab DROP COLUMN virus_insert_name;
+ALTER TABLE cds.import_nab DROP COLUMN virus_type;
+ALTER TABLE cds.import_nab DROP COLUMN neutralization_tier;
+ALTER TABLE cds.import_nab DROP COLUMN clade;
+ALTER TABLE cds.import_nab DROP COLUMN target_cell;
+ALTER TABLE cds.import_nab ADD COLUMN cds_virus_id VARCHAR(250);
+
+ALTER TABLE cds.import_nabmab DROP COLUMN target_cell;
+ALTER TABLE cds.import_nabmab DROP COLUMN clade;
+ALTER TABLE cds.import_nabmab DROP COLUMN neutralization_tier;
+ALTER TABLE cds.import_nabmab DROP COLUMN virus;
+ALTER TABLE cds.import_nabmab DROP COLUMN virus_type;
+ALTER TABLE cds.import_nabmab ADD COLUMN cds_virus_id VARCHAR(250);
+
+ALTER TABLE cds.mabgridbase ADD COLUMN virus_full_name VARCHAR(250);
+
+-- add target_cell columns back since data for target_cell should be coming from nab and nabmab assays, and not nabantigen metadata table
+ALTER TABLE cds.import_nab ADD COLUMN target_cell VARCHAR(250);
+ALTER TABLE cds.import_nabmab ADD COLUMN target_cell VARCHAR(250);
+
+ALTER TABLE cds.import_nabantigen DROP COLUMN target_cell;
+ALTER TABLE cds.nabantigen DROP COLUMN target_cell;
+
+ALTER TABLE cds.import_nabmab ADD COLUMN virus_control_mean NUMERIC(15,4);
+ALTER TABLE cds.import_nabmab ADD COLUMN cell_control_mean NUMERIC(15,4);
+
+-- Changes to cds.import_bamaantigen
+truncate table cds.import_bamaantigen;
+ALTER TABLE cds.import_bamaantigen DROP CONSTRAINT import_bamaantigen_pkey;
+
+-- Remove fields no longer useful from cds.import_bamaantigen
+ALTER TABLE cds.import_bamaantigen DROP COLUMN antigen_name;
+ALTER TABLE cds.import_bamaantigen DROP COLUMN antigen_type;
+ALTER TABLE cds.import_bamaantigen DROP COLUMN protein_panel;
+ALTER TABLE cds.import_bamaantigen DROP COLUMN protein;
+ALTER TABLE cds.import_bamaantigen DROP COLUMN clade;
+ALTER TABLE cds.import_bamaantigen DROP COLUMN antigen_description;
+
+-- Add new cols to cds.import_bamaantigen
+ALTER TABLE cds.import_bamaantigen ADD COLUMN cds_ag_id VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_full_name VARCHAR(250) NOT NULL;
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_short_name VARCHAR(250) NOT NULL;
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_plot_label VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_name_other VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN dna_construct_id INTEGER;
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_type_component VARCHAR(250) NOT NULL;
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_category VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_type_region VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_type_scaffold VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_type_modifiers VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_type_tags VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN antigen_type_differentiate VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_name_component VARCHAR(250) NOT NULL;
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_species VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_donor_id VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_differentiate VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_clade VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_clone VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_mutations VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_cloner_pi VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_country_origin VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_yr_isolated INTEGER;
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_fiebig_stage VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN isolate_accession_num INTEGER;
+ALTER TABLE cds.import_bamaantigen ADD COLUMN production_component VARCHAR(250) NOT NULL;
+ALTER TABLE cds.import_bamaantigen ADD COLUMN production_host_cell VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN production_purification_method VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN production_special_reagent VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN production_manufacturer VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN production_codon_optimization VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN transfection_method VARCHAR(250);
+ALTER TABLE cds.import_bamaantigen ADD COLUMN transmitter_founder_status VARCHAR(250);
+
+ALTER TABLE cds.import_bamaantigen ADD PRIMARY KEY (container, assay_identifier, cds_ag_id);
+
+-- Changes to cds.bamaantigen --
+
+truncate table cds.bamaantigen;
+ALTER TABLE cds.bamaantigen DROP CONSTRAINT bamaantigen_pkey;
+
+-- Remove fields no longer useful from cds.bamaantigen
+ALTER TABLE cds.bamaantigen DROP COLUMN antigen_name;
+ALTER TABLE cds.bamaantigen DROP COLUMN antigen_type;
+ALTER TABLE cds.bamaantigen DROP COLUMN protein_panel;
+ALTER TABLE cds.bamaantigen DROP COLUMN protein;
+ALTER TABLE cds.bamaantigen DROP COLUMN clade;
+ALTER TABLE cds.bamaantigen DROP COLUMN antigen_description;
+
+-- Add new cols to cds.bamaantigen
+ALTER TABLE cds.bamaantigen ADD COLUMN cds_ag_id VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_full_name VARCHAR(250) NOT NULL;
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_short_name VARCHAR(250) NOT NULL;
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_plot_label VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_name_other VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN dna_construct_id INTEGER;
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_type_component VARCHAR(250) NOT NULL;
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_category VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_type_region VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_type_scaffold VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_type_modifiers VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_type_tags VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN antigen_type_differentiate VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_name_component VARCHAR(250) NOT NULL;
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_species VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_donor_id VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_differentiate VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_clade VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_clone VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_mutations VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_cloner_pi VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_country_origin VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_yr_isolated INTEGER;
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_fiebig_stage VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN isolate_accession_num INTEGER;
+ALTER TABLE cds.bamaantigen ADD COLUMN production_component VARCHAR(250) NOT NULL;
+ALTER TABLE cds.bamaantigen ADD COLUMN production_host_cell VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN production_purification_method VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN production_special_reagent VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN production_manufacturer VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN production_codon_optimization VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN transfection_method VARCHAR(250);
+ALTER TABLE cds.bamaantigen ADD COLUMN transmitter_founder_status VARCHAR(250);
+
+ALTER TABLE cds.bamaantigen ADD PRIMARY KEY (container, assay_identifier, cds_ag_id);
+
+-- Rename existing Antigen Panel metadata tables
+truncate table cds.import_antigenPanel;
+ALTER TABLE cds.import_antigenPanel DROP CONSTRAINT pk_import_antigenPanel;
+ALTER TABLE cds.import_antigenPanel RENAME TO import_antigenPanelMeta;
+
+truncate table cds.antigenPanel;
+ALTER TABLE cds.antigenPanel DROP CONSTRAINT pk_antigenPanel;
+ALTER TABLE cds.antigenPanel RENAME TO antigenPanelMeta;
+
+-- new AntigenPanel tables
+CREATE TABLE cds.import_antigenPanel
+(
+    cds_ag_id VARCHAR(250),
+    cds_panel_id VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT pk_import_antigenPanel PRIMARY KEY (container, cds_ag_id, cds_panel_id)
+);
+
+CREATE TABLE cds.antigenPanel
+(
+    cds_ag_id VARCHAR(250),
+    cds_panel_id VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT pk_antigenPanel PRIMARY KEY (container, cds_ag_id, cds_panel_id)
+);
+
+ALTER TABLE cds.import_NABMAb ALTER COLUMN initial_concentration TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN mab_concentration TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN min_concentration TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN max_concentration TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN min_well_value TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN max_well_value TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN mean_well_value TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN well_std_dev TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN percent_neutralization TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN neutralization_plus_minus TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN titer_curve_ic50 TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN titer_curve_ic80 TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN slope TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_min TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_max TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_asymmetry TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_slope TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_inflection TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_error TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN virus_control_mean TYPE double precision;
+  ALTER TABLE cds.import_NABMAb ALTER COLUMN cell_control_mean TYPE double precision;
