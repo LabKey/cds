@@ -28,8 +28,8 @@ CREATE TABLE cds.import_virus_metadata_all
     neutralization_tier VARCHAR(250),
     container ENTITYID NOT NULL,
 
-    CONSTRAINT PK_ImportVirusMetadataAll PRIMARY KEY (cds_virus_id),
-    CONSTRAINT UQ_ImportVirusMetadataAll UNIQUE (virus_full_name)
+    CONSTRAINT PK_ImportVirusMetadataAll PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT UQ_ImportVirusMetadataAll UNIQUE (virus_full_name, container)
 );
 
 CREATE TABLE cds.virus_metadata_all
@@ -46,13 +46,12 @@ CREATE TABLE cds.virus_metadata_all
     neutralization_tier VARCHAR(250),
     container ENTITYID NOT NULL,
 
-    CONSTRAINT PK_VirusMetadataAll PRIMARY KEY (cds_virus_id),
-    CONSTRAINT UQ_VirusMetadataAll UNIQUE (virus_full_name)
+    CONSTRAINT PK_VirusMetadataAll PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT UQ_VirusMetadataAll UNIQUE (virus_full_name, container)
 );
 
 CREATE TABLE cds.import_virus_lab_id
 (
-    rowId SERIAL,
     cds_virus_id INTEGER NOT NULL,
     lab_code VARCHAR(250),
     lab_virus_id INTEGER,
@@ -60,13 +59,12 @@ CREATE TABLE cds.import_virus_lab_id
     harvest_date TIMESTAMP,
     container ENTITYID NOT NULL,
 
-    CONSTRAINT PK_ImportVirusLabId PRIMARY KEY (rowId),
-    CONSTRAINT FK_PK_ImportVirusLabId FOREIGN KEY (cds_virus_id) REFERENCES cds.import_virus_metadata_all(cds_virus_id)
+    CONSTRAINT PK_ImportVirusLabId PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT FK_PK_ImportVirusLabId FOREIGN KEY (cds_virus_id, container) REFERENCES cds.import_virus_metadata_all(cds_virus_id, container)
 );
 
 CREATE TABLE cds.virus_lab_id
 (
-    rowId SERIAL,
     cds_virus_id INTEGER NOT NULL,
     lab_code VARCHAR(250),
     lab_virus_id INTEGER,
@@ -74,28 +72,26 @@ CREATE TABLE cds.virus_lab_id
     harvest_date TIMESTAMP,
     container ENTITYID NOT NULL,
 
-    CONSTRAINT PK_VirusLabId PRIMARY KEY (rowId),
-    CONSTRAINT FK_PK_VirusLabId FOREIGN KEY (cds_virus_id) REFERENCES cds.virus_metadata_all(cds_virus_id)
+    CONSTRAINT PK_VirusLabId PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT FK_PK_VirusLabId FOREIGN KEY (cds_virus_id, container) REFERENCES cds.virus_metadata_all(cds_virus_id, container)
 );
 
 CREATE TABLE cds.import_virus_synonym
 (
-    rowId SERIAL,
     cds_virus_id INTEGER NOT NULL,
     virus_synonym VARCHAR(250),
     container ENTITYID NOT NULL,
 
-    CONSTRAINT PK_ImportVirusSynonym PRIMARY KEY (rowId),
-    CONSTRAINT FK_ImportVirusSynonym FOREIGN KEY (cds_virus_id) REFERENCES cds.import_virus_metadata_all(cds_virus_id)
+    CONSTRAINT PK_ImportVirusSynonym PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT FK_ImportVirusSynonym FOREIGN KEY (cds_virus_id, container) REFERENCES cds.import_virus_metadata_all(cds_virus_id, container)
 );
 
 CREATE TABLE cds.virus_synonym
 (
-    rowId SERIAL,
     cds_virus_id INTEGER NOT NULL,
     virus_synonym VARCHAR(250),
     container ENTITYID NOT NULL,
 
-    CONSTRAINT PK_VirusSynonym PRIMARY KEY (rowId),
-    CONSTRAINT FK_VirusSynonym FOREIGN KEY (cds_virus_id) REFERENCES cds.virus_metadata_all(cds_virus_id)
+    CONSTRAINT PK_VirusSynonym PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT FK_VirusSynonym FOREIGN KEY (cds_virus_id, container) REFERENCES cds.virus_metadata_all(cds_virus_id, container)
 );

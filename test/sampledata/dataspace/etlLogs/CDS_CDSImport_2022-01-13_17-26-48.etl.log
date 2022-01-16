@@ -1,0 +1,104 @@
+13 Jan 2022 17:26:50,016 INFO : Starting to run task 'CDS:task:{CDS}/CDSImport#CDSImport' at location 'webserver'
+13 Jan 2022 17:26:50,062 DEBUG: TaskRefTransformStep.doWork called
+13 Jan 2022 17:26:50,064 INFO : Running taskref task org.labkey.cds.data.steps.CDSImportTask
+13 Jan 2022 17:26:50,066 INFO : Initiating truncate for supplied copy configurations.
+13 Jan 2022 17:26:50,070 INFO : Truncating cds.import_Virus_Synonym, cds.import_Virus_Lab_Id, cds.import_Virus_Metadata_All, cds.import_PKMAb, cds.import_NABMAb, cds.import_BAMA, cds.import_NAB, cds.import_ELS_IFNg, cds.import_ICS, cds.import_virusPanel, cds.import_antigenPanel, cds.import_antigenPanelMeta, cds.import_BAMAAntigen, cds.import_NAbAntigen, cds.import_ELISpotAntigen, cds.import_ICSAntigen, cds.import_AssayReport, cds.import_PublicationCuratedGroup, cds.import_PublicationReport, cds.import_StudyCuratedGroup, cds.import_StudyReport, cds.import_PublicationDocument, cds.import_StudyPublication, cds.import_AssayDocument, cds.import_StudyDocument, cds.import_StudyPartGroupArmSubject, cds.import_StudyAssay, cds.import_StudyProduct, cds.import_MAbMix, cds.import_StudyRelationship, cds.import_StudyRelationshipOrder, cds.import_ProductInsert, cds.import_StudyPartGroupArmVisitTime, cds.import_StudyPartGroupArmVisitProduct, cds.import_StudyPartGroupArmVisit, cds.import_StudyPartGroupArmProduct, cds.import_StudyPartGroupArm, cds.import_MAbMixMetadata, cds.import_MAbMetadata, cds.import_Publication, cds.import_Document, cds.import_StudySubject, cds.import_Lab, cds.import_Assay, cds.import_Product, cds.import_StudyGroups, cds.import_Study
+13 Jan 2022 17:26:50,718 INFO : Truncated tables in 0.646s.
+13 Jan 2022 17:26:50,722 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_Study
+13 Jan 2022 17:26:50,976 INFO : Copied 55 rows in 0.256s.
+13 Jan 2022 17:26:50,978 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyGroups
+13 Jan 2022 17:26:51,015 INFO : Copied 56 rows in 0.038s.
+13 Jan 2022 17:26:51,017 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_Product
+13 Jan 2022 17:26:51,106 INFO : Copied 94 rows in 0.090s.
+13 Jan 2022 17:26:51,108 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_Assay
+13 Jan 2022 17:26:51,156 INFO : Copied 10 rows in 0.048s.
+13 Jan 2022 17:26:51,157 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_Lab
+13 Jan 2022 17:26:51,194 INFO : Copied 7 rows in 0.038s.
+13 Jan 2022 17:26:51,196 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudySubject
+13 Jan 2022 17:26:52,062 INFO : Copied 8277 rows in 0.867s.
+13 Jan 2022 17:26:52,064 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_Document
+13 Jan 2022 17:26:52,133 INFO : Copied 182 rows in 0.070s.
+13 Jan 2022 17:26:52,135 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_Publication
+13 Jan 2022 17:26:52,208 INFO : Copied 117 rows in 0.073s.
+13 Jan 2022 17:26:52,209 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_MAbMetadata
+13 Jan 2022 17:26:52,272 INFO : Copied 225 rows in 0.063s.
+13 Jan 2022 17:26:52,274 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_MAbMixMetadata
+13 Jan 2022 17:26:52,353 INFO : Copied 269 rows in 0.080s.
+13 Jan 2022 17:26:52,355 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArm
+13 Jan 2022 17:26:52,418 INFO : Copied 286 rows in 0.064s.
+13 Jan 2022 17:26:52,419 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArmProduct
+13 Jan 2022 17:26:52,476 INFO : Copied 45 rows in 0.057s.
+13 Jan 2022 17:26:52,478 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArmVisit
+13 Jan 2022 17:26:52,954 INFO : Copied 3722 rows in 0.477s.
+13 Jan 2022 17:26:52,956 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArmVisitProduct
+13 Jan 2022 17:26:53,008 INFO : Copied 75 rows in 0.052s.
+13 Jan 2022 17:26:53,009 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArmVisitTime
+13 Jan 2022 17:26:53,050 INFO : Copied 54 rows in 0.041s.
+13 Jan 2022 17:26:53,052 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_ProductInsert
+13 Jan 2022 17:26:53,097 INFO : Copied 38 rows in 0.045s.
+13 Jan 2022 17:26:53,100 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyRelationshipOrder
+13 Jan 2022 17:26:53,134 INFO : Copied 5 rows in 0.035s.
+13 Jan 2022 17:26:53,136 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyRelationship
+13 Jan 2022 17:26:53,173 INFO : Copied 24 rows in 0.038s.
+13 Jan 2022 17:26:53,175 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_MAbMix
+13 Jan 2022 17:26:53,235 INFO : Copied 312 rows in 0.061s.
+13 Jan 2022 17:26:53,236 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyProduct
+13 Jan 2022 17:26:53,274 INFO : Copied 122 rows in 0.038s.
+13 Jan 2022 17:26:53,275 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyAssay
+13 Jan 2022 17:26:53,310 INFO : Copied 60 rows in 0.035s.
+13 Jan 2022 17:26:53,312 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPartGroupArmSubject
+13 Jan 2022 17:26:53,898 INFO : Copied 6924 rows in 0.587s.
+13 Jan 2022 17:26:53,900 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyDocument
+13 Jan 2022 17:26:53,935 INFO : Copied 131 rows in 0.035s.
+13 Jan 2022 17:26:53,936 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_AssayDocument
+13 Jan 2022 17:26:53,966 INFO : Copied 5 rows in 0.030s.
+13 Jan 2022 17:26:53,967 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyPublication
+13 Jan 2022 17:26:53,997 INFO : Copied 39 rows in 0.029s.
+13 Jan 2022 17:26:53,998 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_PublicationDocument
+13 Jan 2022 17:26:54,033 INFO : Copied 3 rows in 0.035s.
+13 Jan 2022 17:26:54,035 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyReport
+13 Jan 2022 17:26:54,064 INFO : Copied 2 rows in 0.030s.
+13 Jan 2022 17:26:54,066 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_StudyCuratedGroup
+13 Jan 2022 17:26:54,097 INFO : Copied 2 rows in 0.031s.
+13 Jan 2022 17:26:54,098 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_PublicationReport
+13 Jan 2022 17:26:54,131 INFO : Copied 2 rows in 0.033s.
+13 Jan 2022 17:26:54,132 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_PublicationCuratedGroup
+13 Jan 2022 17:26:54,163 INFO : Copied 2 rows in 0.030s.
+13 Jan 2022 17:26:54,164 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_AssayReport
+13 Jan 2022 17:26:54,194 INFO : Copied 3 rows in 0.030s.
+13 Jan 2022 17:26:54,195 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_ICSAntigen
+13 Jan 2022 17:26:54,234 INFO : Copied 11 rows in 0.039s.
+13 Jan 2022 17:26:54,235 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_ELISpotAntigen
+13 Jan 2022 17:26:54,273 INFO : Copied 20 rows in 0.038s.
+13 Jan 2022 17:26:54,275 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_NAbAntigen
+13 Jan 2022 17:26:54,331 INFO : Copied 349 rows in 0.057s.
+13 Jan 2022 17:26:54,333 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_BAMAAntigen
+13 Jan 2022 17:26:54,370 INFO : Copied 9 rows in 0.038s.
+13 Jan 2022 17:26:54,372 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_antigenPanelMeta
+13 Jan 2022 17:26:54,405 INFO : Copied 6 rows in 0.033s.
+13 Jan 2022 17:26:54,407 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_antigenPanel
+13 Jan 2022 17:26:54,434 INFO : Copied 12 rows in 0.028s.
+13 Jan 2022 17:26:54,435 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_virusPanel
+13 Jan 2022 17:26:54,463 INFO : Copied 58 rows in 0.028s.
+13 Jan 2022 17:26:54,465 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_ICS
+13 Jan 2022 17:26:57,812 INFO : Copied 30855 rows in 3.347s.
+13 Jan 2022 17:26:57,814 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_ELS_IFNg
+13 Jan 2022 17:26:58,310 INFO : Copied 3956 rows in 0.496s.
+13 Jan 2022 17:26:58,311 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_NAB
+13 Jan 2022 17:26:59,318 INFO : Copied 10783 rows in 1.007s.
+13 Jan 2022 17:26:59,320 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_BAMA
+13 Jan 2022 17:26:59,482 INFO : Copied 1050 rows in 0.162s.
+13 Jan 2022 17:26:59,484 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_NABMAb
+13 Jan 2022 17:27:01,254 INFO : Copied 13528 rows in 1.771s.
+13 Jan 2022 17:27:01,256 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_PKMAb
+13 Jan 2022 17:27:01,364 INFO : Copied 637 rows in 0.107s.
+13 Jan 2022 17:27:01,366 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_Virus_Metadata_All
+13 Jan 2022 17:27:01,421 ERROR: ERROR: duplicate key value violates unique constraint "uq_importvirusmetadataall"
+  Detail: Key (virus_full_name)=(virus full name) already exists.
+13 Jan 2022 17:27:01,508 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_Virus_Lab_Id
+13 Jan 2022 17:27:01,541 ERROR: ERROR: insert or update on table "import_virus_lab_id" violates foreign key constraint "fk_pk_importviruslabid"
+  Detail: Key (cds_virus_id)=(1) is not present in table "import_virus_metadata_all".
+13 Jan 2022 17:27:01,547 INFO : Copying data from C:\labkey\release21.11-SNAPSHOT\server\modules\cds\test\sampledata\dataspace\cdsimport to cds.import_Virus_Synonym
+13 Jan 2022 17:27:01,579 ERROR: ERROR: insert or update on table "import_virus_synonym" violates foreign key constraint "fk_importvirussynonym"
+  Detail: Key (cds_virus_id)=(1) is not present in table "import_virus_metadata_all".
+13 Jan 2022 17:27:01,585 INFO : Successfully completed task 'CDS:task:{CDS}/CDSImport#CDSImport'
