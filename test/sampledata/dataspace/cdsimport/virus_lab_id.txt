@@ -1,0 +1,3 @@
+cds_virus_id	lab_code	lab_virus_id	lab_virus_id_variable_name	harvest_date
+1	lab code	3	lab virus id variable name	1/10/2022
+2	lab code	4	lab virus id variable name	1/10/2022
