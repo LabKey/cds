@@ -251,6 +251,18 @@
             <source schemaName="cds" queryName="import_assayReport"/>
             <destination schemaName="cds" queryName="assayReport" targetOption="truncate"/>
         </transform>
+        <transform id="PopulateVirusMetadataAll" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="import_virus_metadata_all"/>
+            <destination schemaName="cds" queryName="virus_metadata_all" targetOption="truncate"/>
+        </transform>
+        <transform id="PopulateVirusLabId" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="import_virus_lab_id"/>
+            <destination schemaName="cds" queryName="virus_lab_id" targetOption="truncate"/>
+        </transform>
+        <transform id="PopulateVirusSynonym" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="import_virus_synonym"/>
+            <destination schemaName="cds" queryName="virus_synonym" targetOption="truncate"/>
+        </transform>
         <!--Should occur last-->
         <transform id="ClearAndWarmCube" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">

@@ -161,6 +161,9 @@ public class CDSManager
                     "publicationReport",
                     "publicationCuratedGroup",
                     "assayReport",
+                    "virus_lab_id",
+                    "virus_synonym",
+                    "virus_metadata_all",
 
                     "import_nabmab",
                     "import_ics",
@@ -212,6 +215,9 @@ public class CDSManager
                     "import_publicationReport",
                     "import_publicationCuratedGroup",
                     "import_assayReport",
+                    "import_virus_lab_id",
+                    "import_virus_synonym",
+                    "import_virus_metadata_all"
             })
             {
                 TableInfo t = dbSchema.getTable(s);
