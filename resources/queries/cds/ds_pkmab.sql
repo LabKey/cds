@@ -37,7 +37,9 @@ SELECT
        mixmeta.mab_mix_label,
        dd.mab_name_source,
        dd.mab_concentration,
-       dd.mab_concentration_units
+       dd.mab_concentration_units,
+       dd.lloq,
+       dd.lloq_units
 
 FROM cds.import_PKMAb AS dd
 LEFT JOIN MAbMixMetadata mixmeta ON dd.mab_mix_id = mixmeta.mab_mix_id and dd.container = mixmeta.container

@@ -512,6 +512,8 @@
             <column columnName="mab_name_source"/>
             <column columnName="mab_concentration"/>
             <column columnName="mab_concentration_units"/>
+            <column columnName="lloq"/>
+            <column columnName="lloq_units"/>
         </columns>
     </table>
     <table tableName="import_ics" tableDbType="TABLE">

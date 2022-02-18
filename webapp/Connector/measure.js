@@ -660,6 +660,12 @@ Ext.define('Connector.measure.Configuration', {
                 'study_PKMAb_specimen_type': {
                     isLinePlotGroupingField: true
                 },
+/*
+                'study_PKMAb_lloq' : {
+                    isRecommendedVariable: true,
+                    allowTimeAlignment: false
+                },
+*/
                 'study_Demographics_species': {
                     isRecommendedVariable: true
                 },
