@@ -1764,6 +1764,20 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>false</dimension>
       </column>
+      <column columnName="lloq">
+        <datatype>double</datatype>
+        <columnTitle>LLOQ</columnTitle>
+        <description>The lower limit of quantitation.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <measure>true</measure>
+      </column>
+      <column columnName="lloq_units">
+        <datatype>varchar</datatype>
+        <columnTitle>LLOQ units</columnTitle>
+        <description>The lower limit of quantitation unit.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>false</dimension>
+      </column>
     </columns>
     <tableTitle>PK MAb</tableTitle>
   </table>
