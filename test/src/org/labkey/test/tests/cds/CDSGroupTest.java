@@ -495,9 +495,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         goToProjectHome();
         clickTab("Clinical and Assay Data");
-        clickAndWait(Locator.linkWithText(reportName));
-        int reportNum = cds.getReportNumberFromUrl(getDriver().getCurrentUrl());
-        goToSchemaBrowser();
+        String reportHref = waitForElement(Locator.linkWithText(reportName)).getAttribute("href");
+        int reportNum = cds.getReportNumberFromUrl(reportHref);
         DataRegionTable table = ExecuteQueryPage.beginAt(this, "CDS", "assayReport").getDataRegion();
         table.clickInsertNewRow();
         setFormElement(Locator.name("quf_assay_identifier"), assayName);

@@ -15,7 +15,6 @@
  */
 package org.labkey.test.tests.cds;
 
-import org.junit.Test;
 import org.labkey.test.Locator;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
@@ -164,6 +163,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
 
         //delete group
         click(sharedGroupLoc);
+        CDSHelper.Locators.studyname.withText(sharedGroupName).waitForElement(getDriver(), 5_000);
         waitForText("Edit details");
         click(CDSHelper.Locators.cdsButtonLocator("Delete"));
         waitForText("Are you sure you want to delete");

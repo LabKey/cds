@@ -34,7 +34,6 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.RReportHelper;
-import org.labkey.test.util.TestLogger;
 import org.labkey.test.util.UIPermissionsHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -1443,7 +1442,7 @@ public class CDSHelper
     {
         hoverOverInfoPaneItem(label);
         _test.click(Locator.xpath("//div[contains(@class, 'x-grid-cell-inner')]//div[contains(text(), '" + label + "')]//a[contains(@class, 'expando')]"));
-        _test.waitForElement(Locator.xpath("//div").withClass("studyname").withText(label));
+        _test.waitForElement(Locators.studyname.withText(label));
     }
 
     /**
@@ -1786,6 +1785,8 @@ public class CDSHelper
         public static Locator.XPathLocator INFO_PANE_NO_DATA = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in active filters");
         public static String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
 
+        public static Locator.XPathLocator studyname = Locator.tagWithClass("div", "studyname");
+
         public static Locator.XPathLocator getByLocator(String byNoun)
         {
             return Locator.xpath("//div[contains(@class, 'bycolumn')]//span[contains(@class, 'label') and contains(text(), '" + byNoun + "')]");
@@ -1811,17 +1812,17 @@ public class CDSHelper
 
         public static Locator.XPathLocator cdsButtonLocator(String text)
         {
-            return Locator.xpath("//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+            return Locator.xpath("//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']")).notHidden();
         }
 
         public static Locator.XPathLocator cdsButtonLocator(String text, String cssClass)
         {
-            return Locator.xpath("//a[contains(@class, '" + cssClass + "')]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+            return Locator.xpath("//a[contains(@class, '" + cssClass + "')]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']")).notHidden();
         }
 
         public static Locator.XPathLocator cdsSelectorButtonLocator(String selector, String text)
         {
-            return Locator.xpath("//div[contains(@class, '" + selector + "')]//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+            return Locator.xpath("//div[contains(@class, '" + selector + "')]//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']")).notHidden();
         }
 
         public static Locator.XPathLocator cdsButtonLocatorContainingText(String text)

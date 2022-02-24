@@ -1950,8 +1950,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Now validate that link to the documents works as expected.");
         click(Locator.linkWithText("QED 3"));
-        sleep(1000);
-        assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 3"));
+        CDSHelper.Locators.studyname.withText("QED 3").waitForElement(getDriver(), 5_000);
         log("Verify that the related study links for this study are as expected.");
         expectedStudiesText = "QED 1 (Ancillary study)";
         relatedStudiesText = getText(relatedStudiesTable);
@@ -1960,8 +1959,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Click the related study and make sure we navigate back to the original study.");
         click(Locator.linkWithText("QED 1"));
-        sleep(1000);
-        assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 1"));
+        CDSHelper.Locators.studyname.withText("QED 1").waitForElement(getDriver(), 5_000);
 
         cds.viewLearnAboutPage("Studies");
 
