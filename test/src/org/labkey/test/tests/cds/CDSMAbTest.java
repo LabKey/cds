@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.labkey.test.pages.cds.MAbDataGrid.ANTIGEN_BINDING_COL;
 import static org.labkey.test.pages.cds.MAbDataGrid.CLADES_COL;
@@ -933,7 +932,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         sleep(2000);
 
         Locator clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear");
-        Assert.assertFalse("Subject filters shouldn't have changed by applying mAb group", isElementPresent(clearAllFilterBtn) && isElementVisible(clearAllFilterBtn));
+        Assert.assertFalse("Subject filters shouldn't have changed by applying mAb group", isElementPresent(clearAllFilterBtn));
 
         log("Verify mAb group details page");
         Locator mabGridLink = Locator.tagWithText("span", "View in MAb grid");

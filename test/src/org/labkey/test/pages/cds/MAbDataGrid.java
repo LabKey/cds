@@ -25,6 +25,7 @@ import org.labkey.test.components.WebDriverComponent;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -160,7 +161,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public void clearAllFilters()
     {
         Locator clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear");
-        if (_webDriverWrapper.isElementPresent(clearAllFilterBtn) && _webDriverWrapper.isElementVisible(clearAllFilterBtn))
+        if (_webDriverWrapper.isElementPresent(clearAllFilterBtn))
             _webDriverWrapper.click(clearAllFilterBtn);
         _webDriverWrapper.waitForElementToDisappear(Locator.tagWithClass("div", "filtered-column"), WAIT_FOR_PAGE);
     }
@@ -225,29 +226,26 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void applyFilter()
     {
-        List<WebElement> buttons;
+        String buttonText;
 
         Locator virusFilter = Locator.xpath("//div[contains(@class, 'x-window-closable')]//div[@class='header']//div[text()='Viruses tested against mAbs']");
-        int index;
 
-        if ((_webDriverWrapper.isElementPresent(virusFilter)) &&(_webDriverWrapper.isElementVisible(virusFilter)))
+        if (virusFilter.findOptionalElement(getDriver()).map(WebElement::isDisplayed).orElse(false))
         {
             // The filter being applied is the virus filter.
-            buttons = CDSHelper.Locators.cdsButtonLocator("Done").findElements(_webDriverWrapper.getDriver());
-            index = 0;
+            buttonText = "Done";
         }
         else
         {
-            buttons = CDSHelper.Locators.cdsButtonLocator("Filter").findElements(_webDriverWrapper.getDriver());
-            index = 1;
+            buttonText = "Filter";
         }
 
-        final WebElement button = buttons.get(index);
+        final WebElement button = CDSHelper.Locators.cdsButtonLocator(buttonText).findElement(getDriver());
 
         _gridHelper.applyAndWaitForGrid(() -> {
             button.click();
-            _webDriverWrapper.sleep(500);
-            _webDriverWrapper._ext4Helper.waitForMaskToDisappear();
+            getWrapper().shortWait().until(ExpectedConditions.stalenessOf(button));
+            getWrapper()._ext4Helper.waitForMaskToDisappear();
         });
     }
 

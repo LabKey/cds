@@ -846,7 +846,7 @@ public class CDSHelper
     {
         _test.click(Locators.cdsButtonLocator("save", isMab ? "mabfiltersave" : "filtersave"));
 
-        if (_test.isElementVisible(Locators.cdsButtonLocator("create a new group")))
+        if (_test.isElementPresent(Locators.cdsButtonLocator("create a new group")))
         {
             _test.click(Locators.cdsButtonLocator("create a new group"));
         }
