@@ -81,7 +81,7 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
     }
 
     @Before
-    public void initHiddenVariables() throws Exception
+    public final void initHiddenVariables() throws Exception
     {
         new CDSInitializer(this).setHiddenVariablesProperty(shouldShowHiddenVariables());
     }

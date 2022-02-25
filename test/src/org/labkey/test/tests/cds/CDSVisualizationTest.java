@@ -75,7 +75,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.enterApplication();
         cds.ensureNoFilter();
         cds.ensureNoSelection();
-        getDriver().manage().window().setSize(CDSHelper.idealWindowSize);
     }
 
     @Override

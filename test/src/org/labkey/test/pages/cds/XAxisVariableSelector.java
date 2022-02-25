@@ -21,6 +21,7 @@ import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,21 +68,21 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
+        WebElement plot = Locator.css(".plot svg").findElement(_test.getDriver());
+
         _test.click(CDSHelper.Locators.cdsButtonLocator("Set x-axis"));
         if (_test.isElementPresent(Locator.tagWithClass("button", "yaxisbtn").notHidden()))
         {
-            _test.sleep(1500);
+            _test.shortWait().until(ExpectedConditions.stalenessOf(plot));
             _test._ext4Helper.waitForMaskToDisappear(120000); // Wait 2 mins. The test have much lower performance on TC. Until we have a real performance test (consistent environment etc...) I would rather not fail function test for it.
             // There is a bug where the mouse can end up over a time axis data point which will generate a hopscotch bubble.
             // However that is not the bubble indicating median values. So moving mouse out of the way.
-            _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-            _test.sleep(500);
             _test.mouseOut();
-            _test.waitForElementToDisappear(Locator.css("div.hopscotch-bubble.animated.hopscotch-callout.no-number"));
+            _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(Locator.css("div.hopscotch-bubble.animated.hopscotch-callout.no-number")));
         }
         else // Opens y-axis dialog automatically
         {
-            _test.waitForElement(Locator.divByInnerText("y-axis")).isDisplayed();
+            _test.waitForElement(CDSHelper.Locators.divByInnerText("y-axis")).isDisplayed();
         }
     }
 

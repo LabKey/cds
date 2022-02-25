@@ -18,9 +18,9 @@ package org.labkey.test.pages.cds;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
+import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -57,7 +57,7 @@ public abstract class DataspaceVariableSelector
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         openButton.click();
-        _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText(selectorTitle)));
+        _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(CDSHelper.Locators.divByInnerText(selectorTitle)));
 
         // Use the cancel button as a validation that the selector is ready.
         _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathToCancel)));

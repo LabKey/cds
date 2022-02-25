@@ -52,8 +52,6 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
 
     public void verifySharedGroups()
     {
-        getDriver().manage().window().maximize();
-
         //Ensure test users don't already exist
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[0]);
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[1]);

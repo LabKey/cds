@@ -1794,6 +1794,11 @@ public class CDSHelper
         {
             return Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a[contains(text(), '" + studyName + "')]");
         }
+
+        public static Locator.XPathLocator divByInnerText(String text)
+        {
+            return Locator.xpath("//div[.='" + text + "']");
+        }
     }
 
     // Used to identify data in the time axis.

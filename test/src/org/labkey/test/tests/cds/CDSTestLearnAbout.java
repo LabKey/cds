@@ -845,7 +845,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutNABMAbAssay()
     {
-        getDriver().manage().window().maximize();
         cds.viewLearnAboutPage("Assays");
         LearnGrid summaryGrid = new LearnGrid(this);
 
@@ -928,7 +927,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutNABAssayAntigenTab()
     {
-        getDriver().manage().window().maximize();
         cds.viewLearnAboutPage("Assays");
         LearnGrid summaryGrid = new LearnGrid(this);
 
@@ -1354,8 +1352,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateDetailsDataAvailability()
     {
-        getDriver().manage().window().maximize();
-
         //Valuse for Study Details inspection
         final String STUDY = "RED 4";
         final String[] ASSAY_TITLES = {"IFNg ELISpot", "ICS", "BAMA"};
