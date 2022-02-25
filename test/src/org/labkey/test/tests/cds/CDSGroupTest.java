@@ -185,11 +185,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         waitForText(STUDY_GROUP);
         click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
-        // Verify that the description has changed.
-        waitForText(studyGroupDescModified);
-
-        // Verify that No plot data message is shown
-        assertTextPresent("No plot saved for this group.");
+        // Verify that the description has changed and that No plot data message is shown.
+        waitForText(studyGroupDescModified, "No plot saved for this group.");
 
         // verify 'whoops' case
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));

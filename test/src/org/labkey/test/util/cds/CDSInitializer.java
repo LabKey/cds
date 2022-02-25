@@ -223,8 +223,8 @@ public class CDSInitializer
         List<ModuleProperty> properties = List.of(
                 new ModuleProperty("CDS", "/", "GettingStartedVideoURL", "https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0"),
                 new ModuleProperty("CDS", "/", "StaticPath", "/_webdav/CDSTest%20Project/@pipeline/cdsstatic/"),
-                new ModuleProperty("CDS", "/", "StudyDocumentPath", "/_webdav/CDSTest%20Project/@pipeline/cdsstatic/"),
-                new ModuleProperty("CDS", "/", "AssayDocumentPath", "/_webdav/CDSTest%20Project/@pipeline/cdsstatic/"),
+                new ModuleProperty("CDS", "/", "StudyDocumentPath", "/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/"),
+                new ModuleProperty("CDS", "/", "AssayDocumentPath", "/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/"),
                 new ModuleProperty("CDS", "/", "CDSImportPath", TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent())
         );
         SaveModulePropertiesCommand command = new SaveModulePropertiesCommand(properties);
