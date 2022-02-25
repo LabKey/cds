@@ -20,7 +20,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.util.Ext4Helper;
-import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.labkey.test.util.ReadOnlyTest;
 import org.labkey.test.util.cds.CDSHelper;
@@ -57,7 +56,7 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
         CDSReadOnlyTest initTest = (CDSReadOnlyTest)getCurrentTest();
         if (initTest.needsSetup())
         {
-            CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
+            CDSInitializer _initializer = new CDSInitializer(initTest);
             _initializer.setupDataspace();
         }
     }
@@ -82,11 +81,14 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
     }
 
     @Before
-    @LogMethod
-    public void preTest()
+    public void initHiddenVariables() throws Exception
     {
-        if (isImpersonating())
-            stopImpersonating();
+        new CDSInitializer(this).setHiddenVariablesProperty(shouldShowHiddenVariables());
+    }
+
+    protected boolean shouldShowHiddenVariables()
+    {
+        return true;
     }
 
     @AfterClass

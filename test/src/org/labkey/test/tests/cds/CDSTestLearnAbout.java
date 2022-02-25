@@ -85,7 +85,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private static final Locator TOOLTIP_TEXT_LOCATOR = Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content");
 
-    @Override
     @Before
     public void preTest()
     {

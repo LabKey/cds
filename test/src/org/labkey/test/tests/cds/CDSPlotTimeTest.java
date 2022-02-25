@@ -50,7 +50,6 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
     private final CDSPlot cdsPlot = new CDSPlot(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
 
-    @Override
     @Before
     public void preTest()
     {

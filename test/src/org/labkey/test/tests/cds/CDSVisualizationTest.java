@@ -15,7 +15,6 @@
  */
 package org.labkey.test.tests.cds;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -70,29 +69,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 //        cvt.createParticipantGroups();
     }
 
-    @AfterClass
-    public static void afterClassCleanUp()
-    {
-        //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
-//        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
-//        cvt.deleteParticipantGroups();
-    }
-
-    @BeforeClass
-    public static void setShowHiddenVariables()
-    {
-        CDSVisualizationTest currentTest = (CDSVisualizationTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(true); //set ShowHiddenVariables property to true
-    }
-
-    @AfterClass
-    public static void resetShowHiddenVariables()
-    {
-        CDSVisualizationTest currentTest = (CDSVisualizationTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(false); // reset ShowHiddenVariables property back to false
-    }
-
-    @Override
     @Before
     public void preTest()
     {

@@ -1,8 +1,6 @@
 package org.labkey.test.tests.cds;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
@@ -19,6 +17,7 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
+import org.labkey.test.util.cds.CDSInitializer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +38,6 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subject')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
 
-    @Override
     @Before
     public void preTest()
     {
@@ -47,20 +45,6 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         cds.ensureNoFilter();
         cds.ensureNoSelection();
         getDriver().manage().window().setSize(CDSHelper.idealWindowSize);
-    }
-
-    @BeforeClass
-    public static void setShowHiddenVariables()
-    {
-        CDSVisualizationPlotTest currentTest = (CDSVisualizationPlotTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(true); //set ShowHiddenVariables property to true
-    }
-
-    @AfterClass
-    public static void resetShowHiddenVariables()
-    {
-        CDSVisualizationPlotTest currentTest = (CDSVisualizationPlotTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(false); // reset ShowHiddenVariables property back to false
     }
 
     @Override
@@ -598,9 +582,9 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
     }
 
     @Test
-    public void verifyPKLinePlot()
+    public void verifyPKLinePlot() throws Exception
     {
-        cds.initModuleProperties(false); // temporarily hide hidden to confirm SubjectId can be used for color
+        new CDSInitializer(this).setHiddenVariablesProperty(false); // temporarily hide hidden to confirm SubjectId can be used for color
 
         goToProjectHome();
         cds.enterApplication();
@@ -699,7 +683,5 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
 
         final Locator boxLoc = Locator.css("svg g.layer g.dataspace-box-group");
         assertEquals("Number of boxes in plot is not as expected", 15, getElementCount(boxLoc));
-
-        cds.initModuleProperties(true); // toggle module property back, test dependency
     }
 }

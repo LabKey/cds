@@ -16,18 +16,20 @@
 package org.labkey.test.util.cds;
 
 import org.labkey.remoteapi.CommandException;
+import org.labkey.remoteapi.core.SaveModulePropertiesCommand;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.ModulePropertyValue;
 import org.labkey.test.TestFileUtils;
+import org.labkey.test.params.ModuleProperty;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PortalHelper;
 import org.labkey.test.util.RReportHelper;
+import org.labkey.test.util.TestLogger;
 import org.labkey.test.util.di.DataIntegrationHelper;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
@@ -35,6 +37,8 @@ import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_IC50_REPORT;
 
 public class CDSInitializer
 {
+    private static Boolean hiddenVariablesShown = null;
+
     private final int WAIT_ON_IMPORT = 1 * 60 * 1000;
     private final int WAIT_ON_LOADAPP = 15 * 60 * 1000;
 
@@ -88,11 +92,11 @@ public class CDSInitializer
             "   print(\"Error: filteredDatasetQuery param doesn't exist\")\n" +
             "}";
 
-    public CDSInitializer(BaseWebDriverTest test, String projectName)
+    public CDSInitializer(BaseWebDriverTest test)
     {
         _test = test;
         _cds = new CDSHelper(_test);
-        _project = projectName;
+        _project = test.getPrimaryTestProject();
         _etlHelper = new DataIntegrationHelper(_project);
         _apiPermissionsHelper = new ApiPermissionsHelper(_test);
         _rReportHelper  = new RReportHelper(test);
@@ -106,8 +110,10 @@ public class CDSInitializer
     }
 
     @LogMethod
-    private void setupProject()
+    private void setupProject() throws Exception
     {
+        initRootModuleProperties();
+
         _test._containerHelper.createProject(_project, "Dataspace");
         _test._containerHelper.enableModule(_project, "CDS");
         _test._containerHelper.enableModule(_project, "DataIntegration");
@@ -115,8 +121,6 @@ public class CDSInitializer
         _test.setPipelineRoot(TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent());
         _test.waitForText("The pipeline root was set to '");
         _test.importFolderFromPipeline("/MasterDataspace/folder.xml");
-
-        _cds.initModuleProperties();
 
         _test.goToProjectHome();
 
@@ -157,7 +161,7 @@ public class CDSInitializer
         }
         catch(CommandException ce)
         {
-            _test.log("Looks like there was an error with runTransformAndWait while loading the application: " + ce.getMessage());
+            TestLogger.warn("There was an error with runTransformAndWait while loading the application.", ce);
             _test.log("Going to ignore this error.");
             _test.resetErrors();
             _test.log("Now wait until the ETL Scheduler view shows the job as being complete.");
@@ -192,7 +196,7 @@ public class CDSInitializer
         _test.assertTextPresent(CDSHelper.TEST_FEED);
     }
 
-    public void initMAbReportConfig()
+    public void initMAbReportConfig() throws IOException, CommandException
     {
         _test.goToHome();
         _rReportHelper.ensureRConfig();
@@ -202,16 +206,40 @@ public class CDSInitializer
         int dilutionReportId = _cds.createReport(_rReportHelper, mAbUrl, DILUTION_REPORT_SOURCE, NAB_MAB_DILUTION_REPORT, true, true);
         int heatmapReportId = _cds.createReport(_rReportHelper, mAbUrl, CONCENTRATION_PLOT_REPORT_SOURCE, NAB_MAB_IC50_REPORT, true, true);
 
-        List<ModulePropertyValue> propList = new ArrayList<>();
-        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportID1", "db:" + dilutionReportId));
-        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportLabel1", NAB_MAB_DILUTION_REPORT));
-        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportID2", "db:" + heatmapReportId));
-        propList.add(new ModulePropertyValue("CDS", "/", "MAbReportLabel2", NAB_MAB_IC50_REPORT));
-        propList.add(new ModulePropertyValue("CDS", "/", "WhatYouNeedToKnowWiki", CDSHelper.WHAT_YOU_NEED_TO_KNOW_WIKI));
-        propList.add(new ModulePropertyValue("CDS", "/", "ToursWiki", CDSHelper.TOURS_WIKI));
+        List<ModuleProperty> mabProps = List.of(
+                new ModuleProperty("CDS", "/", "MAbReportID1", "db:" + dilutionReportId),
+                new ModuleProperty("CDS", "/", "MAbReportLabel1", NAB_MAB_DILUTION_REPORT),
+                new ModuleProperty("CDS", "/", "MAbReportID2", "db:" + heatmapReportId),
+                new ModuleProperty("CDS", "/", "MAbReportLabel2", NAB_MAB_IC50_REPORT),
+                new ModuleProperty("CDS", "/", "WhatYouNeedToKnowWiki", CDSHelper.WHAT_YOU_NEED_TO_KNOW_WIKI),
+                new ModuleProperty("CDS", "/", "ToursWiki", CDSHelper.TOURS_WIKI)
+        );
+        SaveModulePropertiesCommand command = new SaveModulePropertiesCommand(mabProps);
+        command.execute(_test.createDefaultConnection(), "/");
+    }
 
-        _test.setModuleProperties(propList);
-        _test.goToProjectHome();
+    public void initRootModuleProperties() throws IOException, CommandException
+    {
+        List<ModuleProperty> properties = List.of(
+                new ModuleProperty("CDS", "/", "GettingStartedVideoURL", "https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0"),
+                new ModuleProperty("CDS", "/", "StaticPath", "/_webdav/CDSTest%20Project/@pipeline/cdsstatic/"),
+                new ModuleProperty("CDS", "/", "StudyDocumentPath", "/_webdav/CDSTest%20Project/@pipeline/cdsstatic/"),
+                new ModuleProperty("CDS", "/", "AssayDocumentPath", "/_webdav/CDSTest%20Project/@pipeline/cdsstatic/"),
+                new ModuleProperty("CDS", "/", "CDSImportPath", TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent())
+        );
+        SaveModulePropertiesCommand command = new SaveModulePropertiesCommand(properties);
+        command.execute(_test.createDefaultConnection(), "/");
+
+    }
+
+    public void setHiddenVariablesProperty(boolean showHiddenVars) throws IOException, CommandException
+    {
+        List<ModuleProperty> properties = List.of(
+                new ModuleProperty("CDS", "CDSTest Project", "ShowHiddenVariables", String.valueOf(showHiddenVars))
+        );
+        SaveModulePropertiesCommand command = new SaveModulePropertiesCommand(properties);
+        command.execute(_test.createDefaultConnection(), "/");
+
     }
 
 }

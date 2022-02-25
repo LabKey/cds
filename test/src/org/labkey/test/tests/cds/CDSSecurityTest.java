@@ -56,11 +56,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     private final String[] _newUserAccounts = {"addusertest01@cdssecurity.test", "addusertest02@cdssecurity.test", "addusertest03@cdssecurity.test", "addusertest04@cdssecurity.test"};
 
-    @Override
     @Before
     public void preTest()
     {
-        super.preTest();
         Ext4Helper.setCssPrefix("x-");
 
         log("Deleting groups that may be left over from a previous run.");

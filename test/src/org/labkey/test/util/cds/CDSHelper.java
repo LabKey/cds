@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.TestFileUtils;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.html.BootstrapMenu;
@@ -1479,116 +1478,6 @@ public class CDSHelper
 
     }
 
-    public void initModuleProperties()
-    {
-        initModuleProperties(true);
-    }
-
-    public void initModuleProperties(boolean showHiddenVars)
-    {
-        boolean changed, returnVal;
-
-        Ext4Helper.resetCssPrefix();
-        _test.goToProjectHome();
-        _test.goToFolderManagement();
-        _test.waitForText(1000, "Module Properties");
-        _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
-        _test.waitForText(1000, "CDSTest Project");
-
-        changed = showHiddenVariables(showHiddenVars);
-        returnVal = setGettingStartedVideoURL("https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0");
-        changed |= returnVal;
-        returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
-        changed |= returnVal;
-        returnVal = setStudyDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
-        changed |= returnVal;
-        returnVal = setAssayDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
-        changed |= returnVal;
-        returnVal = setCDSImportFolderPath(TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent());
-        changed |= returnVal;
-
-        if (changed)
-        {
-            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
-            _test.waitForText(1000, "Success");
-            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
-        }
-
-    }
-
-    private boolean showHiddenVariables(boolean turnOn)
-    {
-        String xpathValueTxtBox = "//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input";
-        String curValue;
-        boolean changed = false;
-
-        _test.waitForElement(Locator.xpath(xpathValueTxtBox));
-        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
-
-        if (turnOn)
-        {
-            if (!curValue.trim().toLowerCase().equals("true"))
-            {
-                _test.setFormElement(Locator.xpath(xpathValueTxtBox), "true");
-                changed = true;
-            }
-        }
-        else
-        {
-            if ((curValue.trim().length() == 0) || (!curValue.trim().toLowerCase().equals("false")))
-            {
-                _test.setFormElement(Locator.xpath(xpathValueTxtBox), "false");
-                changed = true;
-            }
-        }
-
-        return changed;
-    }
-
-    private boolean setGettingStartedVideoURL(String videoUrl)
-    {
-        return setPropertyPath(videoUrl, 5);
-
-    }
-
-    private boolean setPropertyPath(String path, int inputIndex)
-    {
-        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[" + inputIndex + "]";
-        boolean changed = false;
-        String curValue;
-
-        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
-
-        if (!curValue.trim().toLowerCase().equals(path.trim().toLowerCase()))
-        {
-            _test.setFormElement(Locator.xpath(xpathValueTxtBox), path);
-            changed = true;
-        }
-
-        return changed;
-
-    }
-
-    private boolean setStaticPath(String path)
-    {
-        return setPropertyPath(path, 3);
-    }
-
-    private boolean setStudyDocumentPath(String path)
-    {
-        return setPropertyPath(path, 6);
-    }
-
-    private boolean setAssayDocumentPath(String path)
-    {
-        return setPropertyPath(path, 7);
-    }
-
-    private boolean setCDSImportFolderPath(String path)
-    {
-        return setPropertyPath(path, 8);
-    }
-
     public void assertPlotTickText(Pattern p)
     {
         assertPlotTickText(1, p);
@@ -1812,7 +1701,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator cdsButtonLocator(String text)
         {
-            return Locator.xpath("//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']")).notHidden();
+            return cdsButtonLocator(text, "x-btn");
         }
 
         public static Locator.XPathLocator cdsButtonLocator(String text, String cssClass)

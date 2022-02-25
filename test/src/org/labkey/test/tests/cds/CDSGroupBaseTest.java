@@ -165,9 +165,9 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         click(sharedGroupLoc);
         CDSHelper.Locators.studyname.withText(sharedGroupName).waitForElement(getDriver(), 5_000);
         waitForText("Edit details");
-        click(CDSHelper.Locators.cdsButtonLocator("Delete"));
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Delete"));
         waitForText("Are you sure you want to delete");
-        click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item"));
         waitForText("Getting Started");
         refresh();
         scrollIntoView(Locator.tagWithClass("h2", "section-title"));

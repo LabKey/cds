@@ -94,7 +94,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private boolean studyLabelUpdated = false;
     private RReportHelper _rReportHelper;
 
-    @Override
     @Before
     public void preTest()
     {
