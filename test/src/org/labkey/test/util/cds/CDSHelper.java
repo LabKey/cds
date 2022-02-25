@@ -1827,12 +1827,12 @@ public class CDSHelper
 
         public static Locator.XPathLocator cdsButtonLocatorContainingText(String text)
         {
-            return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and contains(text(),'" + text + "')]"));
+            return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and contains(text(),'" + text + "')]")).notHidden();
         }
 
         public static Locator.XPathLocator cdsDropDownButtonLocator(String cssClass)
         {
-            return Locator.xpath("//button[contains(@class, 'imgbutton') and contains(@class, '" + cssClass + "')]");
+            return Locator.xpath("//button[contains(@class, 'imgbutton') and contains(@class, '" + cssClass + "')]").notHidden();
         }
 
         public static Locator.XPathLocator filterMemberLocator()
