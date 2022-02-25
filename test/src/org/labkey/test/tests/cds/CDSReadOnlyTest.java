@@ -67,6 +67,11 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
     {
         try
         {
+            if (!_containerHelper.doesContainerExist(getProjectName()))
+            {
+                return true;
+            }
+
             new CDSHelper(this).beginAtApplication(getProjectName());
             return false;
         }

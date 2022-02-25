@@ -75,16 +75,16 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     private final List<String> _columnLabels = new ArrayList<>();
 
-    private final WebDriverWrapper _webDriverWrapper;
+    private final WebDriver _driver;
     private final DataGrid _gridHelper;
 
     private final WebElement _gridEl;
 
-    public MAbDataGrid(WebElement gridEl, BaseWebDriverTest test, WebDriverWrapper webDriverWrapper)
+    public MAbDataGrid(BaseWebDriverTest test)
     {
-        _webDriverWrapper = webDriverWrapper;
+        _driver = test.getDriver();
         _gridHelper = new DataGrid(test);
-        _gridEl = gridEl;
+        _gridEl = Locator.tagWithClass("div", "mab-connector-grid").findElement(_driver);
     }
 
     public void setFacet(String columnName, boolean check, String... values)
@@ -108,7 +108,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
                     withChild(Locator.tagWithClass("td", "x-grid-td").
                             withChild(Locator.tagWithText("div", value))));
             Locator.XPathLocator checkbox = row.append(Locator.tagWithClass("td", "x-grid-cell-row-checker"));
-            _webDriverWrapper.waitAndClick(1000, checkbox, 0);
+            getWrapper().waitAndClick(1000, checkbox, 0);
         }
 
         if (!skipDone)
@@ -119,7 +119,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
         Locator.XPathLocator optionsLoc = gridLoc.append(Locator.tagWithClass("td", "x-grid-cell-row-checker"));
-        return optionsLoc.findElements(_webDriverWrapper.getDriver()).size();
+        return optionsLoc.findElements(getWrapper().getDriver()).size();
     }
 
     public void setFilterSearch(String columnName, String searchValue)
@@ -132,38 +132,37 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         if (!skipOpenDialog)
             _gridHelper.openFilterPanel(columnName);
         Locator.XPathLocator searchBoxLoc = Locator.tagWithClass("table", "mab-facet-search").append(Locator.tag("input"));
-        _webDriverWrapper.waitForElement(searchBoxLoc);
-        WebElement searchBox = searchBoxLoc.findElement(_webDriverWrapper.getDriver());
-        _webDriverWrapper.setFormElement(searchBox, searchValue);
+        getWrapper().waitForElement(searchBoxLoc);
+        WebElement searchBox = searchBoxLoc.findElement(getWrapper().getDriver());
+        getWrapper().setFormElement(searchBox, searchValue);
         WebDriverWrapper.sleep(1000);
     }
 
     public AntigenFilterPanel openVirusPanel(String columnName)
     {
         _gridHelper.openFilterPanel(columnName == null ? VIRUSES_COL : columnName);
-        return new AntigenFilterPanel(_webDriverWrapper);
+        return new AntigenFilterPanel(getWrapper());
     }
 
     private void checkAll(boolean check)
     {
         Locator.XPathLocator checkbox = Locators.filterCheckAllLoc;
         Locator.XPathLocator checkedLoc = checkbox.append(Locator.tagWithClass("div", "x-grid-hd-checker-on"));
-        if ((check && !_webDriverWrapper.isElementPresent(checkedLoc))
-            || (!check && _webDriverWrapper.isElementPresent(checkedLoc)))
-            _webDriverWrapper.click(checkbox.append(Locator.tagWithClass("div", "x-column-header-checkbox")));
+        if (check != getWrapper().isElementPresent(checkedLoc))
+            getWrapper().click(checkbox.append(Locator.tagWithClass("div", "x-column-header-checkbox")));
     }
 
     public boolean isCheckAllPresent()
     {
-        return _webDriverWrapper.isElementVisible(Locators.filterCheckAllLoc);
+        return getWrapper().isElementVisible(Locators.filterCheckAllLoc);
     }
 
     public void clearAllFilters()
     {
         Locator clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear");
-        if (_webDriverWrapper.isElementPresent(clearAllFilterBtn))
-            _webDriverWrapper.click(clearAllFilterBtn);
-        _webDriverWrapper.waitForElementToDisappear(Locator.tagWithClass("div", "filtered-column"), WAIT_FOR_PAGE);
+        if (getWrapper().isElementPresent(clearAllFilterBtn))
+            getWrapper().click(clearAllFilterBtn);
+        getWrapper().waitForElementToDisappear(Locator.tagWithClass("div", "filtered-column"), WAIT_FOR_PAGE);
     }
 
     public boolean hasGridColumnFilters()
@@ -218,7 +217,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         if (!_gridHelper.isColumnFiltered(VIRUSES_COL))
             return;
         _gridHelper.openFilterPanel(VIRUSES_COL);
-        AntigenFilterPanel virusPanel = new AntigenFilterPanel(_webDriverWrapper);
+        AntigenFilterPanel virusPanel = new AntigenFilterPanel(getWrapper());
         virusPanel.checkAll(false);
         virusPanel.checkAll(true);
         applyFilter();
@@ -251,7 +250,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void cancelFilter()
     {
-        List<WebElement> buttons = CDSHelper.Locators.cdsButtonLocator("Cancel").findElements(_webDriverWrapper.getDriver());
+        List<WebElement> buttons = CDSHelper.Locators.cdsButtonLocator("Cancel").findElements(getWrapper().getDriver());
         final WebElement button = buttons.get(0);
         button.click();
     }
@@ -265,7 +264,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         if (_columnLabels.isEmpty())
         {
-            _columnLabels.addAll(_webDriverWrapper.getTexts(elementCache().getColumnHeaders()));
+            _columnLabels.addAll(getWrapper().getTexts(elementCache().getColumnHeaders()));
             _columnLabels.remove(0); // remove selector column
         }
 
@@ -284,10 +283,10 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         Locator.XPathLocator checkbox = Locators.headerCheckboxLoc;
         Locator.XPathLocator checkedLoc = checkbox.withClass("x-grid-hd-checker-on");
-        _webDriverWrapper.click(checkbox);
-        if (_webDriverWrapper.isElementPresent(checkedLoc))
-            _webDriverWrapper.click(checkbox);
-        _webDriverWrapper.sleep(2000);
+        getWrapper().click(checkbox);
+        if (getWrapper().isElementPresent(checkedLoc))
+            getWrapper().click(checkbox);
+        getWrapper().sleep(2000);
     }
 
     public void selectMAbs(String ...mabNames)
@@ -306,14 +305,14 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         {
             if (isMabChecked(mabName) != check)
             {
-                _webDriverWrapper.click(Locators.getMabCheckbox(mabName));
+                getWrapper().click(Locators.getMabCheckbox(mabName));
             }
         }
     }
 
     public boolean isMabChecked(String mabName)
     {
-        return _webDriverWrapper.isElementPresent(Locators.getSelectedRowLocByMabName(mabName));
+        return getWrapper().isElementPresent(Locators.getSelectedRowLocByMabName(mabName));
     }
 
     public void openDilutionReport()
@@ -328,15 +327,15 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void openMAbReport(String reportName)
     {
-        _webDriverWrapper.click(Locators.getMAbReportBtn(reportName));
-        _webDriverWrapper.sleep(500);
-        _webDriverWrapper.waitForElement(Locators.getMAbReportHeader(reportName));
-        _webDriverWrapper._ext4Helper.waitForMaskToDisappear(10000);
+        getWrapper().click(Locators.getMAbReportBtn(reportName));
+        getWrapper().sleep(500);
+        getWrapper().waitForElement(Locators.getMAbReportHeader(reportName));
+        getWrapper()._ext4Helper.waitForMaskToDisappear(10000);
     }
 
     public void leaveReportView()
     {
-        _webDriverWrapper.click(Locators.reportHeader);
+        getWrapper().click(Locators.reportHeader);
     }
 
     public Locator.XPathLocator getDilutionReportBtn()
@@ -351,7 +350,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public String getReportOutput()
     {
-        return Locators.reportOutput.findElement(_webDriverWrapper.getDriver()).getText();
+        return Locators.reportOutput.findElement(getWrapper().getDriver()).getText();
     }
 
     public Locator.XPathLocator getReportImageOut()
@@ -376,12 +375,6 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     }
 
     @Override
-    public MAbDataGrid.ElementCache elementCache()
-    {
-        return (MAbDataGrid.ElementCache) super.elementCache();
-    }
-
-    @Override
     protected MAbDataGrid.ElementCache newElementCache()
     {
         return new MAbDataGrid.ElementCache();
@@ -390,7 +383,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     @Override
     protected WebDriver getDriver()
     {
-        return null;
+        return _driver;
     }
 
     public static class Locators
@@ -440,7 +433,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         }
     }
 
-    public class ElementCache extends Component.ElementCache
+    public class ElementCache extends Component<?>.ElementCache
     {
         private final WebElement mabGrid = Locator.tagWithClass("div", "mab-connector-grid").findWhenNeeded(this);
         private List<WebElement> columnHeaders;

@@ -28,7 +28,6 @@ import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.MAbDataGrid;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.WebElement;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,7 +92,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
     public void testMAbPage()
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        MAbDataGrid grid = new MAbDataGrid(this);
 
         log("Verify subject based info pane presence for mAb and other tabs");
         Locator.XPathLocator subjectInfoPane = CDSHelper.Locators.subjectInfoPaneHeader().notHidden();
@@ -112,7 +111,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
     public void testMAbGridWithFiltering()
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        MAbDataGrid grid = new MAbDataGrid(this);
         grid.clearAllFilters();
 
         log("Verify mAb mix filter");
@@ -195,7 +194,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
     public void testMAbSearchFilter()
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        MAbDataGrid grid = new MAbDataGrid(this);
         grid.clearAllFilters();
 
         log("Verify mAb mix filter with search");
@@ -235,7 +234,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
     public void testMAbReports() throws IOException
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        MAbDataGrid grid = new MAbDataGrid(this);
         grid.clearAllFilters();
         grid.clearAllSelections();
 
@@ -339,7 +338,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
     public void testMabGridExport() throws IOException
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        MAbDataGrid grid = new MAbDataGrid(this);
         grid.clearAllFilters();
         grid.clearAllSelections();
 
@@ -444,16 +443,11 @@ public class CDSMAbTest extends CDSGroupBaseTest
         expectedExport.setMAb(true);
     }
 
-    private WebElement getGridEl()
-    {
-        return Locator.tagWithClass("div", "mab-connector-grid").findElement(getDriver());
-    }
-
     @Test
     public void testMabInfoPane()
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        MAbDataGrid grid = new MAbDataGrid(this);
         grid.clearAllFilters();
         grid.clearAllSelections();
 
@@ -751,7 +745,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         Assert.assertEquals("MAb-Virus Pairs count not as expected.", 748, ip.getMabVirusPairCount());
         Assert.assertEquals("Viruses count not as expected.", 155, ip.getMabVirusCount());
 
-        grid = new MAbDataGrid(getGridEl(), this, this);
+        grid = new MAbDataGrid(this);
         grid.clearAllFilters();
         grid.clearAllSelections();
     }
@@ -861,7 +855,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
     public void _composeGroup()
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        MAbDataGrid grid = new MAbDataGrid(this);
         grid.clearAllFilters();
         sleep(5000);
         grid.setFacet(STUDIES_COL,true,"QED 2");
@@ -907,7 +901,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         cds.saveGroup(mabPrivateGroup, null, false, true, true);
 
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        MAbDataGrid grid = new MAbDataGrid(getGridEl(), this, this);
+        MAbDataGrid grid = new MAbDataGrid(this);
         grid.clearAllFilters();
         sleep(5000);
         grid.setFacet(MAB_COL,false,"2F5", "A14");
@@ -923,7 +917,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
 
         log("Apply a saved mab group");
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        grid = new MAbDataGrid(getGridEl(), this, this);
+        grid = new MAbDataGrid(this);
         grid.clearAllFilters();
         cds.goToAppHome();
         cds.clearFilters();
@@ -941,7 +935,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
 
         log("Verify mab grid filters after applying mAb group");
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        grid = new MAbDataGrid(getGridEl(), this, this);
+        grid = new MAbDataGrid(this);
         Assert.assertTrue(MAB_COL + " should have been filtered", grid.isColumnFiltered(MAB_COL));
         Assert.assertFalse(STUDIES_COL + " should not have been filtered", grid.isColumnFiltered(STUDIES_COL));
 
@@ -969,7 +963,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         click(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup));
         sleep(2000);
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        grid = new MAbDataGrid(getGridEl(), this, this);
+        grid = new MAbDataGrid(this);
 
         Assert.assertTrue(SPECIES_COL + " should have been filtered", grid.isColumnFiltered(SPECIES_COL));
         Assert.assertFalse(MAB_COL + " should not have been filtered", grid.isColumnFiltered(MAB_COL));
