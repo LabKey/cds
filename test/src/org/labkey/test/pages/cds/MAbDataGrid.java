@@ -75,16 +75,16 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     private final List<String> _columnLabels = new ArrayList<>();
 
-    private final WebDriver _driver;
+    private final WebDriverWrapper _webDriverWrapper;
     private final DataGrid _gridHelper;
 
     private final WebElement _gridEl;
 
     public MAbDataGrid(BaseWebDriverTest test)
     {
-        _driver = test.getDriver();
+        _webDriverWrapper = test;
         _gridHelper = new DataGrid(test);
-        _gridEl = Locator.tagWithClass("div", "mab-connector-grid").findElement(_driver);
+        _gridEl = Locator.tagWithClass("div", "mab-connector-grid").findElement(_webDriverWrapper.getDriver());
     }
 
     public void setFacet(String columnName, boolean check, String... values)
@@ -383,7 +383,14 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     @Override
     protected WebDriver getDriver()
     {
-        return _driver;
+        return _webDriverWrapper.getDriver();
+    }
+
+    @Override
+    public WebDriverWrapper getWrapper()
+    {
+        // Avoid creating a new `Ext4Helper`, which resets the css prefix
+        return _webDriverWrapper;
     }
 
     public static class Locators
