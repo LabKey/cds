@@ -724,7 +724,18 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
-        originalScale = le + "0\n0.0005\n0.005\n0.05\n0.5\n5\n" + le + "0\n0.001\n0.01\n0.1\n1";
+        // Exact y-axis tick text is inconsistent
+        String smallLogYTicks;
+        if (isTextPresent("0.0009"))
+        {
+            smallLogYTicks = le + "0\n0.0009\n0.009\n0.09\n0.9";
+        }
+        else
+        {
+            smallLogYTicks = le + "0\n0.001\n0.01\n0.1\n1";
+        }
+
+        originalScale = le + "0\n0.0005\n0.005\n0.05\n0.5\n5\n" + smallLogYTicks;
         originalCount = 1453;
         verifyLogAndLinearHelper(originalScale, 2, originalCount, true);
         assertTrue("There was no x-axis log gutter there should be.", cdsPlot.hasXLogGutter());
@@ -737,7 +748,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
-        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n" + le + "0\n0.001\n0.01\n0.1\n1";
+        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n" + smallLogYTicks;
         expectedCount = 1453;  // Is this right?
         verifyLogAndLinearHelper(scaleValues, 2, expectedCount, true);
         assertTrue("There was no x-axis log gutter there should be.", cdsPlot.hasXLogGutter());
