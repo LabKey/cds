@@ -318,9 +318,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     private String getStudyDetailDataAvailabilityTooltip(String studyName)
     {
         mouseOver(Locator.tagWithText("a", studyName));
-        sleep(500); // If the mouse moves too quickly ext may not always see it, so pause for a moment.
-        Locator tooltipLoc = Locator.css("div.hopscotch-bubble-container");
-        return getText(tooltipLoc);
+        return Locator.css("div.hopscotch-bubble-container")
+                .waitForElement(getDriver(), 1_000).getText();
     }
 
     private void validatePublicationStudyList()

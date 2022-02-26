@@ -2134,8 +2134,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         }
 
         // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.
-        mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-        waitForElementToDisappear(TOOLTIP_TEXT_LOCATOR, 1000);
+        mouseOut();
+        shortWait().until(ExpectedConditions.invisibilityOfElementLocated(TOOLTIP_TEXT_LOCATOR));
 
     }
 
@@ -2143,7 +2143,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         // Move the mouse to the top left corner of the page and make sure there are no popups visible.
         mouseOut();
-        waitForElementToDisappear(TOOLTIP_TEXT_LOCATOR);
+        shortWait().until(ExpectedConditions.invisibilityOfElementLocated(TOOLTIP_TEXT_LOCATOR));
 
         // Move the mouse over the element.
         mouseOver(el);
