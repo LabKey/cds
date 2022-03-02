@@ -19,7 +19,6 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.Map;
 
@@ -70,13 +69,10 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     public void confirmSelection()
     {
         _test.click(CDSHelper.Locators.cdsButtonLocator("Set y-axis"));
+        new CDSHelper(_test).dismissTooltip();
         // This code should wait for the plot to draw and if there is a 'Median values' pop-up wait for it to go away as well.
         _test.sleep(1500);
         _test._ext4Helper.waitForMaskToDisappear(120000);  // Wait 2 mins. The test have much lower performance on TC. Until we have a real performance test (consistent environment etc...) I would rather not fail function test for it.
-        // There is a bug where the mouse can end up over a time axis data point which will generate a hopscotch bubble.
-        // However that is not the bubble indicating median values. So moving mouse out of the way.
-        _test.mouseOut();
-        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(Locator.css("div.hopscotch-bubble.animated.hopscotch-callout.no-number")));
     }
 
     public void pickSource(String source)

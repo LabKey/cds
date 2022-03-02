@@ -2134,16 +2134,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         }
 
         // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.
-        mouseOut();
-        shortWait().until(ExpectedConditions.invisibilityOfElementLocated(TOOLTIP_TEXT_LOCATOR));
+        cds.dismissTooltip();
 
     }
 
     private boolean triggerToolTip(WebElement el)
     {
         // Move the mouse to the top left corner of the page and make sure there are no popups visible.
-        mouseOut();
-        shortWait().until(ExpectedConditions.invisibilityOfElementLocated(TOOLTIP_TEXT_LOCATOR));
+        cds.dismissTooltip();
 
         // Move the mouse over the element.
         mouseOver(el);

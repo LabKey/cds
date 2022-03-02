@@ -217,11 +217,9 @@ public abstract class DataspaceVariableSelector
 
     public void cancelSelection()
     {
-        // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
-        _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-        _test.sleep(500);
-        _test.mouseOut();
         _test.click(window().append(" a.x-btn").withText("Cancel"));
+        // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+        new CDSHelper(_test).dismissTooltip();
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
@@ -401,9 +399,7 @@ public abstract class DataspaceVariableSelector
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[text()='" + val + "']"));
 
                 // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
-                _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-                _test.sleep(500);
-                _test.mouseOut();
+                new CDSHelper(_test).dismissTooltip();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
@@ -491,9 +487,7 @@ public abstract class DataspaceVariableSelector
                 }
 
                 // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
-                _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-                _test.sleep(500);
-                _test.mouseOut();
+                new CDSHelper(_test).dismissTooltip();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
@@ -534,9 +528,7 @@ public abstract class DataspaceVariableSelector
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
 
                 // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
-                _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-                _test.sleep(500);
-                _test.mouseOut();
+                new CDSHelper(_test).dismissTooltip();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;

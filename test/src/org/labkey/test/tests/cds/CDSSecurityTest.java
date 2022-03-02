@@ -966,7 +966,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         }
 
         click(CDSHelper.Locators.getByLocator("Studies"));
-        sleep(2000);
+        CDSHelper.Locators.barLabel.withText().waitForElement(getDriver(), 2_000);
 
         Locator.XPathLocator studyQED1 = CDSHelper.Locators.barLabel.withText("QED 1");
         Locator.XPathLocator studyQED3 = CDSHelper.Locators.barLabel.withText("QED 3");

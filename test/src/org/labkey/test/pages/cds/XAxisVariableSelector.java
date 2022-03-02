@@ -71,14 +71,15 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         WebElement plot = Locator.css(".plot svg").findElement(_test.getDriver());
 
         _test.click(CDSHelper.Locators.cdsButtonLocator("Set x-axis"));
+
+        // There is a bug where the mouse can end up over a time axis data point which will generate a hopscotch bubble.
+        // However that is not the bubble indicating median values. So moving mouse out of the way.
+        new CDSHelper(_test).dismissTooltip();
         if (_test.isElementPresent(Locator.tagWithClass("button", "yaxisbtn").notHidden()))
         {
             _test.shortWait().until(ExpectedConditions.stalenessOf(plot));
             _test._ext4Helper.waitForMaskToDisappear(120000); // Wait 2 mins. The test have much lower performance on TC. Until we have a real performance test (consistent environment etc...) I would rather not fail function test for it.
-            // There is a bug where the mouse can end up over a time axis data point which will generate a hopscotch bubble.
-            // However that is not the bubble indicating median values. So moving mouse out of the way.
-            _test.mouseOut();
-            _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(Locator.css("div.hopscotch-bubble.animated.hopscotch-callout.no-number")));
+
         }
         else // Opens y-axis dialog automatically
         {

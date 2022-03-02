@@ -713,13 +713,7 @@ public class CDSHelper
     @LogMethod(quiet = true)
     public void enterApplication()
     {
-        _test.refresh();
-        BaseWebDriverTest.sleep(2000);
-        _test.goToProjectHome();
-        _test.clickAndWait(Locator.linkWithText("Application"), 10000);
-        _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");
-
-        afterInApplication();
+        beginAtApplication(_test.getPrimaryTestProject());
     }
 
     public void beginAtApplication(String projectName)
@@ -735,6 +729,13 @@ public class CDSHelper
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
         _test.waitForElement(Locator.tagWithClass("body", "appready"));
         Ext4Helper.setCssPrefix("x-");
+    }
+
+    public void dismissTooltip()
+    {
+        //_test.mouseOut();
+        _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(Locator.css(".hopscotch-bubble")));
     }
 
     @LogMethod(quiet = true)
@@ -794,7 +795,8 @@ public class CDSHelper
         for (String study : studyPermissions.keySet())
         {
             String permission = studyPermissions.get(study);
-            setStudyPerm(perm_group, study, permission);
+            apiPermissionsHelper.addMemberToRole(perm_group, permission, PermissionsHelper.MemberType.group, _test.getPrimaryTestProject() + "/" + study);
+//            setStudyPerm(perm_group, study, permission);
         }
         _test.goToProjectHome();
     }
@@ -803,14 +805,13 @@ public class CDSHelper
     {
         _test._userHelper.deleteUser(userEmail);
         _test._userHelper.createUser(userEmail, false, true);
-        Ext4Helper.resetCssPrefix();
         ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
         apiPermissionsHelper.addMemberToRole(userEmail, projectPerm, PermissionsHelper.MemberType.user, _test.getPrimaryTestProject());
 
         for (String study : studyPermissions.keySet())
         {
             String permission = studyPermissions.get(study);
-            setStudyPerm(userEmail, study, permission);
+            apiPermissionsHelper.addMemberToRole(userEmail, permission, PermissionsHelper.MemberType.user, _test.getPrimaryTestProject() + "/" + study);
         }
         _test.goToProjectHome();
     }
