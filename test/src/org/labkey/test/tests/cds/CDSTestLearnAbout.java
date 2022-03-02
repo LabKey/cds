@@ -2117,14 +2117,17 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private void validateToolTip(WebElement el, String toolTipExpected)
     {
-        log("Hover over the link with text '" + el.getText() + "' to validate that the tooltip is shown.");
+        String linkText = el.getText().trim();
+        checker().verifyFalse("Provided element doesn't appear to be a link. Link text:\n" + linkText, linkText.contains("\n"));
+
+        log("Hover over the link with text '" + linkText + "' to validate that the tooltip is shown.");
         String toolTipText;
 
         // Not a fatal error if a tooltip is not shown.
-        String screenShotName = "ValidateToolTip_" + el.getText();
+        String screenShotName = "ValidateToolTip_" + linkText;
 
         checker().setErrorMark();
-        checker().withScreenshot(screenShotName).verifyTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el));
+        checker().withScreenshot(screenShotName).verifyTrue("Tooltip for '" + linkText + "' didn't show. Show yourself coward!", triggerToolTip(el));
 
         if(checker().errorsSinceMark() == 0)
         {
@@ -2148,7 +2151,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         // Wait for the tooltip to show up.
         return waitFor(()->
-                isElementPresent(TOOLTIP_TEXT_LOCATOR),
+                TOOLTIP_TEXT_LOCATOR.findWhenNeeded(getDriver()).isDisplayed(),
                 2_000);
     }
 

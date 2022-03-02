@@ -732,9 +732,11 @@ public class CDSHelper
 
     public void dismissTooltip()
     {
-        //_test.mouseOut();
-        _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(Locator.css(".hopscotch-bubble")));
+        _test.shortWait().until(wd -> {
+            _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+            WebElement bubble = Locator.css(".hopscotch-bubble").findWhenNeeded(_test.getDriver());
+            return !bubble.isDisplayed() || bubble.getLocation().getX() <= 0; // Hidden, non-existent, or in the corner will suffice
+        });
     }
 
     @LogMethod(quiet = true)
