@@ -33,7 +33,6 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.RReportHelper;
-import org.labkey.test.util.UIPermissionsHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -796,7 +795,6 @@ public class CDSHelper
         {
             String permission = studyPermissions.get(study);
             apiPermissionsHelper.addMemberToRole(perm_group, permission, PermissionsHelper.MemberType.group, _test.getPrimaryTestProject() + "/" + study);
-//            setStudyPerm(perm_group, study, permission);
         }
         _test.goToProjectHome();
     }
@@ -814,16 +812,6 @@ public class CDSHelper
             apiPermissionsHelper.addMemberToRole(userEmail, permission, PermissionsHelper.MemberType.user, _test.getPrimaryTestProject() + "/" + study);
         }
         _test.goToProjectHome();
-    }
-
-    private void setStudyPerm(String userOrGroup, String study, String perm)
-    {
-        _test.goToProjectHome();
-        _test.clickFolder(study);
-        UIPermissionsHelper uiPermissionsHelper = new UIPermissionsHelper(_test);
-        uiPermissionsHelper.uncheckInheritedPermissions();
-        uiPermissionsHelper.setPermissions(userOrGroup, perm);
-        _test.clickButton("Save and Finish");
     }
 
 
