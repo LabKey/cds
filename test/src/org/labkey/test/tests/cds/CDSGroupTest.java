@@ -16,11 +16,13 @@
 package org.labkey.test.tests.cds;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.remoteapi.CommandException;
 import org.labkey.remoteapi.Connection;
+import org.labkey.remoteapi.di.RunTransformResponse;
 import org.labkey.remoteapi.query.InsertRowsCommand;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
@@ -691,7 +693,12 @@ public class CDSGroupTest extends CDSGroupBaseTest
         goToProjectHome();
 
         log("Run the 'LoadApplication' ETL for CDS to load the updated study.");
-        new DataIntegrationHelper(getProjectName()).runTransformAndWait("{CDS}/LoadApplication", 15 * 60 * 1000);
+        RunTransformResponse runTransformResponse = new DataIntegrationHelper(getProjectName()).runTransformAndWait("{CDS}/LoadApplication", 15 * 60 * 1000);
+        if (!runTransformResponse.getStatus().equals("COMPLETE"))
+        {
+            beginAt(runTransformResponse.getPipelineURL());
+            Assert.fail("CDS reload ETL failed.");
+        }
 
         goToProjectHome();
         Ext4Helper.setCssPrefix("x-");
