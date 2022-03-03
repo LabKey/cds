@@ -167,9 +167,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     public void confirmSelection()
     {
         // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
-        _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-        _test.sleep(500);
-        _test.mouseOut();
+        new CDSHelper(_test).dismissTooltip();
         _dataGrid.applyAndWaitForGrid(() -> _test.click(CDSHelper.Locators.cdsButtonLocator("Done")));
     }
 }

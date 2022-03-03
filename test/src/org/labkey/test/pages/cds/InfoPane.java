@@ -376,14 +376,14 @@ public class InfoPane
         {
             Assert.assertTrue(msg,_test.isElementPresent(filteredTitleLoc)
                     && _test.isElementPresent(filteredSubtitleLoc)
-                    && _test.isElementVisible(saveGroupBtn));
+                    && _test.isElementPresent(saveGroupBtn));
             Assert.assertFalse(msg,_test.isElementPresent(allTitleLoc) || _test.isElementPresent(allSubtitleLoc));
         }
         else
         {
             Assert.assertFalse(msg,_test.isElementPresent(filteredTitleLoc)
                     || _test.isElementPresent(filteredSubtitleLoc)
-                    || _test.isElementVisible(saveGroupBtn));
+                    || _test.isElementPresent(saveGroupBtn));
             Assert.assertTrue(msg,_test.isElementPresent(allTitleLoc) && _test.isElementPresent(allSubtitleLoc));
 
         }

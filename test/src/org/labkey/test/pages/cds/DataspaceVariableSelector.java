@@ -18,9 +18,9 @@ package org.labkey.test.pages.cds;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
+import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -57,7 +57,7 @@ public abstract class DataspaceVariableSelector
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         openButton.click();
-        _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText(selectorTitle)));
+        _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(CDSHelper.Locators.divByInnerText(selectorTitle)));
 
         // Use the cancel button as a validation that the selector is ready.
         _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathToCancel)));
@@ -217,11 +217,9 @@ public abstract class DataspaceVariableSelector
 
     public void cancelSelection()
     {
-        // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
-        _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-        _test.sleep(500);
-        _test.mouseOut();
         _test.click(window().append(" a.x-btn").withText("Cancel"));
+        // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
+        new CDSHelper(_test).dismissTooltip();
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
@@ -401,9 +399,7 @@ public abstract class DataspaceVariableSelector
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[text()='" + val + "']"));
 
                 // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
-                _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-                _test.sleep(500);
-                _test.mouseOut();
+                new CDSHelper(_test).dismissTooltip();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
@@ -491,9 +487,7 @@ public abstract class DataspaceVariableSelector
                 }
 
                 // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
-                _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-                _test.sleep(500);
-                _test.mouseOut();
+                new CDSHelper(_test).dismissTooltip();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
@@ -534,9 +528,7 @@ public abstract class DataspaceVariableSelector
                     _test.click(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
 
                 // Hopscotch bubbles aren't always going away. So move off of the selector to help it disappear.
-                _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-                _test.sleep(500);
-                _test.mouseOut();
+                new CDSHelper(_test).dismissTooltip();
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;

@@ -15,9 +15,7 @@
  */
 package org.labkey.test.tests.cds;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.categories.Git;
@@ -34,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -56,36 +53,12 @@ public class CDSSubjectCountTest extends CDSReadOnlyTest
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
 
-    @Override
     @Before
     public void preTest()
     {
         cds.enterApplication();
         cds.ensureNoFilter();
         cds.ensureNoSelection();
-        getDriver().manage().window().setSize(CDSHelper.idealWindowSize);
-    }
-
-    @BeforeClass
-    public static void initTest() throws Exception
-    {
-        //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
-//        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
-//        cvt.createParticipantGroups();
-
-        CDSSubjectCountTest currentTest = (CDSSubjectCountTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(true);
-    }
-
-    @AfterClass
-    public static void afterClassCleanUp()
-    {
-        //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
-//        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
-//        cvt.deleteParticipantGroups();
-
-        CDSSubjectCountTest currentTest = (CDSSubjectCountTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(false);
     }
 
     @Override

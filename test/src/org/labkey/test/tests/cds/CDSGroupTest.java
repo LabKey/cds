@@ -16,11 +16,13 @@
 package org.labkey.test.tests.cds;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.remoteapi.CommandException;
 import org.labkey.remoteapi.Connection;
+import org.labkey.remoteapi.di.RunTransformResponse;
 import org.labkey.remoteapi.query.InsertRowsCommand;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
@@ -94,7 +96,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private boolean studyLabelUpdated = false;
     private RReportHelper _rReportHelper;
 
-    @Override
     @Before
     public void preTest()
     {
@@ -126,6 +127,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         if (studyLabelUpdated)
         {
+            // Get failure screenshot before navigating to clean up after failed test
+            getArtifactCollector().dumpScreen("CDSGroupTest_dataChange");
             changeStudyLabelAndLoadData(CDSHelper.ZAP_139, CDSHelper.PROT_Z139, CDSHelper.ZAP_139);
         }
 
@@ -186,11 +189,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         waitForText(STUDY_GROUP);
         click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
-        // Verify that the description has changed.
-        waitForText(studyGroupDescModified);
-
-        // Verify that No plot data message is shown
-        assertTextPresent("No plot saved for this group.");
+        // Verify that the description has changed and that No plot data message is shown.
+        waitForText(studyGroupDescModified, "No plot saved for this group.");
 
         // verify 'whoops' case
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
@@ -495,9 +495,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         goToProjectHome();
         clickTab("Clinical and Assay Data");
-        clickAndWait(Locator.linkWithText(reportName));
-        int reportNum = cds.getReportNumberFromUrl(getDriver().getCurrentUrl());
-        goToSchemaBrowser();
+        String reportHref = waitForElement(Locator.linkWithText(reportName)).getAttribute("href");
+        int reportNum = cds.getReportNumberFromUrl(reportHref);
         DataRegionTable table = ExecuteQueryPage.beginAt(this, "CDS", "assayReport").getDataRegion();
         table.clickInsertNewRow();
         setFormElement(Locator.name("quf_assay_identifier"), assayName);
@@ -694,7 +693,12 @@ public class CDSGroupTest extends CDSGroupBaseTest
         goToProjectHome();
 
         log("Run the 'LoadApplication' ETL for CDS to load the updated study.");
-        new DataIntegrationHelper(getProjectName()).runTransformAndWait("{CDS}/LoadApplication", 15 * 60 * 1000);
+        RunTransformResponse runTransformResponse = new DataIntegrationHelper(getProjectName()).runTransformAndWait("{CDS}/LoadApplication", 15 * 60 * 1000);
+        if (!runTransformResponse.getStatus().equals("COMPLETE"))
+        {
+            beginAt(runTransformResponse.getPipelineURL());
+            Assert.fail("CDS reload ETL failed.");
+        }
 
         goToProjectHome();
         Ext4Helper.setCssPrefix("x-");
