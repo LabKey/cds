@@ -732,10 +732,10 @@ public class CDSHelper
 
     public void dismissTooltip()
     {
-        _test.shortWait().until(wd -> {
+        _test.shortWait().withMessage("Failed to dismiss tooltip").until(wd -> {
             _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
             WebElement bubble = Locator.css(".hopscotch-bubble").findWhenNeeded(_test.getDriver());
-            return !bubble.isDisplayed() || bubble.getLocation().getX() <= 0; // Hidden, non-existent, or in the corner will suffice
+            return !bubble.isDisplayed() || bubble.getLocation().getY() <= 0; // Hidden, non-existent, or in the corner will suffice
         });
     }
 
