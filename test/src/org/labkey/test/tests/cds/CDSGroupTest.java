@@ -125,6 +125,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         if (studyLabelUpdated)
         {
+            // Get failure screenshot before navigating to clean up after failed test
+            getArtifactCollector().dumpScreen("CDSGroupTest_dataChange");
             changeStudyLabelAndLoadData(CDSHelper.ZAP_139, CDSHelper.PROT_Z139, CDSHelper.ZAP_139);
         }
 
