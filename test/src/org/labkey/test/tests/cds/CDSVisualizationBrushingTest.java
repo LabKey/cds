@@ -1,8 +1,6 @@
 package org.labkey.test.tests.cds;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
@@ -30,14 +28,12 @@ public class CDSVisualizationBrushingTest extends CDSReadOnlyTest
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subject')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
 
-    @Override
     @Before
     public void preTest()
     {
         cds.enterApplication();
         cds.ensureNoFilter();
         cds.ensureNoSelection();
-        getDriver().manage().window().setSize(CDSHelper.idealWindowSize);
     }
 
     @Override
@@ -56,20 +52,6 @@ public class CDSVisualizationBrushingTest extends CDSReadOnlyTest
     public Timeout testTimeout()
     {
         return new Timeout(15, TimeUnit.MINUTES);
-    }
-
-    @BeforeClass
-    public static void setShowHiddenVariables()
-    {
-        CDSVisualizationBrushingTest currentTest = (CDSVisualizationBrushingTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(true); //set ShowHiddenVariables property to true
-    }
-
-    @AfterClass
-    public static void resetShowHiddenVariables()
-    {
-        CDSVisualizationBrushingTest currentTest = (CDSVisualizationBrushingTest) getCurrentTest();
-        currentTest.cds.initModuleProperties(false); // reset ShowHiddenVariables property back to false
     }
 
     // hasXGutter: Does the plot have an x-gutter (i.e. gutter along the bottom).

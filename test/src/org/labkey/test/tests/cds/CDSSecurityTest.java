@@ -56,11 +56,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     private final String[] _newUserAccounts = {"addusertest01@cdssecurity.test", "addusertest02@cdssecurity.test", "addusertest03@cdssecurity.test", "addusertest04@cdssecurity.test"};
 
-    @Override
     @Before
     public void preTest()
     {
-        super.preTest();
         Ext4Helper.setCssPrefix("x-");
 
         log("Deleting groups that may be left over from a previous run.");
@@ -320,9 +318,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     private String getStudyDetailDataAvailabilityTooltip(String studyName)
     {
         mouseOver(Locator.tagWithText("a", studyName));
-        sleep(500); // If the mouse moves too quickly ext may not always see it, so pause for a moment.
-        Locator tooltipLoc = Locator.css("div.hopscotch-bubble-container");
-        return getText(tooltipLoc);
+        return Locator.css("div.hopscotch-bubble-container")
+                .waitForElement(getDriver(), 1_000).getText();
     }
 
     private void validatePublicationStudyList()
@@ -969,7 +966,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         }
 
         click(CDSHelper.Locators.getByLocator("Studies"));
-        sleep(2000);
+        CDSHelper.Locators.barLabel.withText().waitForElement(getDriver(), 2_000);
 
         Locator.XPathLocator studyQED1 = CDSHelper.Locators.barLabel.withText("QED 1");
         Locator.XPathLocator studyQED3 = CDSHelper.Locators.barLabel.withText("QED 3");

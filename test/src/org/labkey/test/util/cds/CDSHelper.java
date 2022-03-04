@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.TestFileUtils;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.html.BootstrapMenu;
@@ -34,8 +33,6 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.RReportHelper;
-import org.labkey.test.util.TestLogger;
-import org.labkey.test.util.UIPermissionsHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -715,13 +712,7 @@ public class CDSHelper
     @LogMethod(quiet = true)
     public void enterApplication()
     {
-        _test.refresh();
-        BaseWebDriverTest.sleep(2000);
-        _test.goToProjectHome();
-        _test.clickAndWait(Locator.linkWithText("Application"), 10000);
-        _test.addUrlParameter("logQuery=1&_showPlotData=true&_disableAutoMsg=true");
-
-        afterInApplication();
+        beginAtApplication(_test.getPrimaryTestProject());
     }
 
     public void beginAtApplication(String projectName)
@@ -737,6 +728,15 @@ public class CDSHelper
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
         _test.waitForElement(Locator.tagWithClass("body", "appready"));
         Ext4Helper.setCssPrefix("x-");
+    }
+
+    public void dismissTooltip()
+    {
+        _test.shortWait().withMessage("Failed to dismiss tooltip").until(wd -> {
+            _test.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+            WebElement bubble = Locator.css(".hopscotch-bubble").findWhenNeeded(_test.getDriver());
+            return !bubble.isDisplayed() || bubble.getLocation().getY() <= 0; // Hidden, non-existent, or in the corner will suffice
+        });
     }
 
     @LogMethod(quiet = true)
@@ -796,7 +796,7 @@ public class CDSHelper
         for (String study : studyPermissions.keySet())
         {
             String permission = studyPermissions.get(study);
-            setStudyPerm(perm_group, study, permission);
+            apiPermissionsHelper.addMemberToRole(perm_group, permission, PermissionsHelper.MemberType.group, _test.getPrimaryTestProject() + "/" + study);
         }
         _test.goToProjectHome();
     }
@@ -805,26 +805,15 @@ public class CDSHelper
     {
         _test._userHelper.deleteUser(userEmail);
         _test._userHelper.createUser(userEmail, false, true);
-        Ext4Helper.resetCssPrefix();
         ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(_test);
         apiPermissionsHelper.addMemberToRole(userEmail, projectPerm, PermissionsHelper.MemberType.user, _test.getPrimaryTestProject());
 
         for (String study : studyPermissions.keySet())
         {
             String permission = studyPermissions.get(study);
-            setStudyPerm(userEmail, study, permission);
+            apiPermissionsHelper.addMemberToRole(userEmail, permission, PermissionsHelper.MemberType.user, _test.getPrimaryTestProject() + "/" + study);
         }
         _test.goToProjectHome();
-    }
-
-    private void setStudyPerm(String userOrGroup, String study, String perm)
-    {
-        _test.goToProjectHome();
-        _test.clickFolder(study);
-        UIPermissionsHelper uiPermissionsHelper = new UIPermissionsHelper(_test);
-        uiPermissionsHelper.uncheckInheritedPermissions();
-        uiPermissionsHelper.setPermissions(userOrGroup, perm);
-        _test.clickButton("Save and Finish");
     }
 
 
@@ -847,7 +836,7 @@ public class CDSHelper
     {
         _test.click(Locators.cdsButtonLocator("save", isMab ? "mabfiltersave" : "filtersave"));
 
-        if (_test.isElementVisible(Locators.cdsButtonLocator("create a new group")))
+        if (_test.isElementPresent(Locators.cdsButtonLocator("create a new group")))
         {
             _test.click(Locators.cdsButtonLocator("create a new group"));
         }
@@ -1443,7 +1432,7 @@ public class CDSHelper
     {
         hoverOverInfoPaneItem(label);
         _test.click(Locator.xpath("//div[contains(@class, 'x-grid-cell-inner')]//div[contains(text(), '" + label + "')]//a[contains(@class, 'expando')]"));
-        _test.waitForElement(Locator.xpath("//div").withClass("studyname").withText(label));
+        _test.waitForElement(Locators.studyname.withText(label));
     }
 
     /**
@@ -1478,116 +1467,6 @@ public class CDSHelper
 
         return classAttribute.contains("x-form-cb-checked");
 
-    }
-
-    public void initModuleProperties()
-    {
-        initModuleProperties(true);
-    }
-
-    public void initModuleProperties(boolean showHiddenVars)
-    {
-        boolean changed, returnVal;
-
-        Ext4Helper.resetCssPrefix();
-        _test.goToProjectHome();
-        _test.goToFolderManagement();
-        _test.waitForText(1000, "Module Properties");
-        _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
-        _test.waitForText(1000, "CDSTest Project");
-
-        changed = showHiddenVariables(showHiddenVars);
-        returnVal = setGettingStartedVideoURL("https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0");
-        changed |= returnVal;
-        returnVal = setStaticPath("/_webdav/CDSTest%20Project/@pipeline/cdsstatic/");
-        changed |= returnVal;
-        returnVal = setStudyDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
-        changed |= returnVal;
-        returnVal = setAssayDocumentPath("/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/");
-        changed |= returnVal;
-        returnVal = setCDSImportFolderPath(TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent());
-        changed |= returnVal;
-
-        if (changed)
-        {
-            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
-            _test.waitForText(1000, "Success");
-            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
-        }
-
-    }
-
-    private boolean showHiddenVariables(boolean turnOn)
-    {
-        String xpathValueTxtBox = "//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input";
-        String curValue;
-        boolean changed = false;
-
-        _test.waitForElement(Locator.xpath(xpathValueTxtBox));
-        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
-
-        if (turnOn)
-        {
-            if (!curValue.trim().toLowerCase().equals("true"))
-            {
-                _test.setFormElement(Locator.xpath(xpathValueTxtBox), "true");
-                changed = true;
-            }
-        }
-        else
-        {
-            if ((curValue.trim().length() == 0) || (!curValue.trim().toLowerCase().equals("false")))
-            {
-                _test.setFormElement(Locator.xpath(xpathValueTxtBox), "false");
-                changed = true;
-            }
-        }
-
-        return changed;
-    }
-
-    private boolean setGettingStartedVideoURL(String videoUrl)
-    {
-        return setPropertyPath(videoUrl, 5);
-
-    }
-
-    private boolean setPropertyPath(String path, int inputIndex)
-    {
-        String xpathValueTxtBox = "(//label[contains(text(), 'Site Default')]/../following-sibling::td[1]//input)[" + inputIndex + "]";
-        boolean changed = false;
-        String curValue;
-
-        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
-
-        if (!curValue.trim().toLowerCase().equals(path.trim().toLowerCase()))
-        {
-            _test.setFormElement(Locator.xpath(xpathValueTxtBox), path);
-            changed = true;
-        }
-
-        return changed;
-
-    }
-
-    private boolean setStaticPath(String path)
-    {
-        return setPropertyPath(path, 3);
-    }
-
-    private boolean setStudyDocumentPath(String path)
-    {
-        return setPropertyPath(path, 6);
-    }
-
-    private boolean setAssayDocumentPath(String path)
-    {
-        return setPropertyPath(path, 7);
-    }
-
-    private boolean setCDSImportFolderPath(String path)
-    {
-        return setPropertyPath(path, 8);
     }
 
     public void assertPlotTickText(Pattern p)
@@ -1786,6 +1665,8 @@ public class CDSHelper
         public static Locator.XPathLocator INFO_PANE_NO_DATA = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in active filters");
         public static String REPORTS_LINKS_XPATH = "//h3[text()='Reports']/following-sibling::table[@class='learn-study-info']";
 
+        public static Locator.XPathLocator studyname = Locator.tagWithClass("div", "studyname");
+
         public static Locator.XPathLocator getByLocator(String byNoun)
         {
             return Locator.xpath("//div[contains(@class, 'bycolumn')]//span[contains(@class, 'label') and contains(text(), '" + byNoun + "')]");
@@ -1811,27 +1692,27 @@ public class CDSHelper
 
         public static Locator.XPathLocator cdsButtonLocator(String text)
         {
-            return Locator.xpath("//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+            return cdsButtonLocator(text, "x-btn");
         }
 
         public static Locator.XPathLocator cdsButtonLocator(String text, String cssClass)
         {
-            return Locator.xpath("//a[contains(@class, '" + cssClass + "')]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+            return Locator.xpath("//a[contains(@class, '" + cssClass + "')]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']")).notHidden();
         }
 
         public static Locator.XPathLocator cdsSelectorButtonLocator(String selector, String text)
         {
-            return Locator.xpath("//div[contains(@class, '" + selector + "')]//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+            return Locator.xpath("//div[contains(@class, '" + selector + "')]//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']")).notHidden();
         }
 
         public static Locator.XPathLocator cdsButtonLocatorContainingText(String text)
         {
-            return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and contains(text(),'" + text + "')]"));
+            return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and contains(text(),'" + text + "')]")).notHidden();
         }
 
         public static Locator.XPathLocator cdsDropDownButtonLocator(String cssClass)
         {
-            return Locator.xpath("//button[contains(@class, 'imgbutton') and contains(@class, '" + cssClass + "')]");
+            return Locator.xpath("//button[contains(@class, 'imgbutton') and contains(@class, '" + cssClass + "')]").notHidden();
         }
 
         public static Locator.XPathLocator filterMemberLocator()
@@ -1903,6 +1784,11 @@ public class CDSHelper
         public static Locator.XPathLocator studyReportLink(String studyName)
         {
             return Locator.xpath(CDSHelper.Locators.REPORTS_LINKS_XPATH + "//a[contains(text(), '" + studyName + "')]");
+        }
+
+        public static Locator.XPathLocator divByInnerText(String text)
+        {
+            return Locator.xpath("//div[.='" + text + "']");
         }
     }
 

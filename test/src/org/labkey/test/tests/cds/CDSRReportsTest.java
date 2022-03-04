@@ -27,8 +27,8 @@ import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
@@ -100,7 +100,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
         waitForElement(Locator.xpath("//div[@class='reportView']"));
 
-        assertElementPresent("Header did not change to report name.", Locator.xpath("//div[@class='studyname'][text()='" + reportName + "']"), 1);
+        assertElementPresent("Header did not change to report name.", CDSHelper.Locators.studyname.withText(reportName), 1);
         assertElementNotPresent("It looks like there is a description tag for this report but there should not be.", Locator.xpath("//td[@class='learn-report-header-column']/h3[text()='Description']/following-sibling::p"));
 
         log("Validate that one img tag is shown for this report.");
@@ -112,8 +112,6 @@ public class CDSRReportsTest extends CDSReadOnlyTest
 
         log("Looks like the report was loaded. Time to go home.");
         goToHome();
-        sleep(500);
-
     }
 
     @Test
@@ -283,7 +281,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
             _ext4Helper.waitForMaskToDisappear();
             waitForElements(Locator.xpath("//table[@class='labkey-output']"), 3);
 
-            assertElementPresent("Header did not change to report name.", Locator.xpath("//div[@class='studyname'][text()='" + reports[i] + "']"), 1);
+            assertElementPresent("Header did not change to report name.", CDSHelper.Locators.studyname.withText(reports[i]), 1);
             if (i != 2)
             {
                 assertElementPresent("Did not find the expected description tag for this report.", Locator.xpath("//td[@class='learn-report-header-column']/h3[text()='Description']/following-sibling::p[text()='" + descriptions[i] + "']"), 1);

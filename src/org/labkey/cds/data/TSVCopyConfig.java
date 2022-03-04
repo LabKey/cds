@@ -23,6 +23,7 @@ import org.labkey.api.dataiterator.DataIteratorContext;
 import org.labkey.api.query.ValidationException;
 import org.labkey.api.reader.TabLoader;
 import org.labkey.api.security.User;
+import org.labkey.api.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -76,8 +77,9 @@ public class TSVCopyConfig extends CDSImportCopyConfig
 
         for (String ext : extensions)
         {
-            file = new File(dir, tsvFileName + ext);
-            if (file.exists())
+            String fileName = tsvFileName + ext;
+            file = FileUtil.getAbsoluteCaseSensitiveFile(new File(dir, fileName));
+            if (file.exists() && file.getName().equals(fileName))
                 break;
         }
 
