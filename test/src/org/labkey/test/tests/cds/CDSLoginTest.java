@@ -22,15 +22,16 @@ import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.CDSLoginPage;
 import org.labkey.test.util.cds.CDSHelper;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 
 @Category({})
 public class CDSLoginTest extends CDSReadOnlyTest
 {
-    @Override
     @Before
     public void preTest()
     {

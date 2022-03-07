@@ -43,7 +43,6 @@ public class CDSFiltersTest extends CDSReadOnlyTest
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
 
-    @Override
     @Before
     public void preTest()
     {

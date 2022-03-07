@@ -85,7 +85,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private static final Locator TOOLTIP_TEXT_LOCATOR = Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content");
 
-    @Override
     @Before
     public void preTest()
     {
@@ -846,7 +845,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutNABMAbAssay()
     {
-        getDriver().manage().window().maximize();
         cds.viewLearnAboutPage("Assays");
         LearnGrid summaryGrid = new LearnGrid(this);
 
@@ -929,7 +927,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutNABAssayAntigenTab()
     {
-        getDriver().manage().window().maximize();
         cds.viewLearnAboutPage("Assays");
         LearnGrid summaryGrid = new LearnGrid(this);
 
@@ -1355,8 +1352,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateDetailsDataAvailability()
     {
-        getDriver().manage().window().maximize();
-
         //Valuse for Study Details inspection
         final String STUDY = "RED 4";
         final String[] ASSAY_TITLES = {"IFNg ELISpot", "ICS", "BAMA"};
@@ -1950,8 +1945,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Now validate that link to the documents works as expected.");
         click(Locator.linkWithText("QED 3"));
-        sleep(1000);
-        assertTrue("It doesn't look like we navigated to the QED 3 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 3"));
+        CDSHelper.Locators.studyname.withText("QED 3").waitForElement(getDriver(), 5_000);
         log("Verify that the related study links for this study are as expected.");
         expectedStudiesText = "QED 1 (Ancillary study)";
         relatedStudiesText = getText(relatedStudiesTable);
@@ -1960,8 +1954,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Click the related study and make sure we navigate back to the original study.");
         click(Locator.linkWithText("QED 1"));
-        sleep(1000);
-        assertTrue("It doesn't look like we navigated to the QED 1 study.", getText(Locator.xpath("//div[@class='studyname']")).equals("QED 1"));
+        CDSHelper.Locators.studyname.withText("QED 1").waitForElement(getDriver(), 5_000);
 
         cds.viewLearnAboutPage("Studies");
 
@@ -2124,14 +2117,17 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private void validateToolTip(WebElement el, String toolTipExpected)
     {
-        log("Hover over the link with text '" + el.getText() + "' to validate that the tooltip is shown.");
+        String linkText = el.getText().trim();
+        checker().verifyFalse("Provided element doesn't appear to be a link. Link text:\n" + linkText, linkText.contains("\n"));
+
+        log("Hover over the link with text '" + linkText + "' to validate that the tooltip is shown.");
         String toolTipText;
 
         // Not a fatal error if a tooltip is not shown.
-        String screenShotName = "ValidateToolTip_" + el.getText();
+        String screenShotName = "ValidateToolTip_" + linkText;
 
         checker().setErrorMark();
-        checker().withScreenshot(screenShotName).verifyTrue("Tooltip for '" + el.getText() + "' didn't show. Show yourself coward!", triggerToolTip(el));
+        checker().withScreenshot(screenShotName).verifyTrue("Tooltip for '" + linkText + "' didn't show. Show yourself coward!", triggerToolTip(el));
 
         if(checker().errorsSinceMark() == 0)
         {
@@ -2141,23 +2137,21 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         }
 
         // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.
-        mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-        waitForElementToDisappear(TOOLTIP_TEXT_LOCATOR, 1000);
+        cds.dismissTooltip();
 
     }
 
     private boolean triggerToolTip(WebElement el)
     {
         // Move the mouse to the top left corner of the page and make sure there are no popups visible.
-        mouseOut();
-        waitForElementToDisappear(TOOLTIP_TEXT_LOCATOR);
+        cds.dismissTooltip();
 
         // Move the mouse over the element.
         mouseOver(el);
 
         // Wait for the tooltip to show up.
         return waitFor(()->
-                isElementPresent(TOOLTIP_TEXT_LOCATOR),
+                TOOLTIP_TEXT_LOCATOR.findWhenNeeded(getDriver()).isDisplayed(),
                 2_000);
     }
 

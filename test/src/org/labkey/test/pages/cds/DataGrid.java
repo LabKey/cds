@@ -152,19 +152,18 @@ public class DataGrid
     }
 
     @LogMethod(quiet = true)
-    public void openFilterPanel(@LoggedParam String columnHeaderName)
+    public WebElement openFilterPanel(@LoggedParam String columnHeaderName)
     {
         Locator.XPathLocator columnHeader = Locators.columnHeaderLocator(columnHeaderName);
-        Locator.XPathLocator filterIcon = columnHeader.append(Locator.tagWithClass("div", "x-column-header-trigger"));
-        _test.waitForElement(filterIcon);
-        _test.scrollIntoView(filterIcon);
+        WebElement filterIcon = _test.waitForElement(columnHeader.append(Locator.tagWithClass("div", "x-column-header-trigger")));
         _test.mouseOver(filterIcon);
         Locator.XPathLocator hoveredColumn = columnHeader.append("[contains(concat(' ',normalize-space(@class),' '), ' x-column-header-over ')]");
         _test.waitForElement(hoveredColumn);
-        _test.click(filterIcon);
+        filterIcon.click();
         _test._ext4Helper.waitForMask();
         // Sometimes the tooltip sticks around, wait for it's style to change.
         _test.waitForElement(Locator.tagWithId("div", "ext-quicktips-tip").append("[contains(@style, 'display: none')]"), 10000);
+        return _test.shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.byClass("x-window-filterwindow")));
     }
 
     public void setCheckBoxFilter(String columnName, Boolean clearFirst, String... values)
