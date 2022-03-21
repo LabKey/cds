@@ -650,7 +650,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         coloraxis.confirmSelection();
 
         plotGreenLineCount = getElementCount(greenLineLoc);
-        assertEquals("Line should also use color for a non-Subject Characteristic field that won't change over time", 27, plotGreenLineCount);
+        assertEquals("Line should also use color for a non-Subject Characteristic field that won't change over time", 7, plotGreenLineCount);
 
         coloraxis.openSelectorWindow();
         coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
