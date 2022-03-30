@@ -693,8 +693,9 @@ public class CDSGroupTest extends CDSGroupBaseTest
         goToProjectHome();
 
         log("Run the 'LoadApplication' ETL for CDS to load the updated study.");
-        RunTransformResponse runTransformResponse = new DataIntegrationHelper(getProjectName()).runTransformAndWait("{CDS}/LoadApplication", 15 * 60 * 1000);
-        if (!runTransformResponse.getStatus().equals("COMPLETE"))
+        DataIntegrationHelper diHelper = new DataIntegrationHelper(getProjectName());
+        RunTransformResponse runTransformResponse = diHelper.runTransformAndWait("{CDS}/LoadApplication", 15 * 60 * 1000);
+        if (!diHelper.getTransformStatus(runTransformResponse.getJobId()).equalsIgnoreCase("COMPLETE"))
         {
             beginAt(runTransformResponse.getPipelineURL());
             Assert.fail("CDS reload ETL failed.");

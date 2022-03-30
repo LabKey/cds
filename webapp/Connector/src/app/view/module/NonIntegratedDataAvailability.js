@@ -108,6 +108,7 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
                         this.fireEvent('hideTooltip');
                     }
                 },
+                'itemmousedown' : this.hideDataStatusTooltip,
                 scope: this
             },
             scope: this
@@ -133,17 +134,21 @@ Ext.define('Connector.view.module.NonIntegratedDataAvailability', {
         var calloutMgr = hopscotch.getCalloutManager(),
                 _id = options.id,
                 displayTooltip = setTimeout(function() {
-                    calloutMgr.createCallout(Ext.apply({
-                        id: _id,
-                        xOffset: 10,
-                        yOffset: -20,
-                        showCloseButton: false,
-                        target: item,
-                        placement: 'right',
-                        content: options.status,
-                        width: 220
-                    }, {}));
-                }, 200);
+                    var el = Ext4.get(item.id);
+                    // race condition if we've navigated away
+                    if (el && el.isVisible()) {
+                        calloutMgr.createCallout(Ext.apply({
+                            id: _id,
+                            xOffset: 10,
+                            yOffset: -20,
+                            showCloseButton: false,
+                            target: item,
+                            placement: 'right',
+                            content: options.status,
+                            width: 220
+                        }, {}));
+                    }
+                }, 400);
 
         this.on('hideTooltip', function() {
             clearTimeout(displayTooltip);
