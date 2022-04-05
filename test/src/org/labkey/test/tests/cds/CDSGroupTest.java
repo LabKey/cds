@@ -39,6 +39,7 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.di.DataIntegrationHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -187,7 +188,9 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
+        WebElement groupLabel = Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP).findElement(getDriver());
+        shortWait().until(ExpectedConditions.elementToBeClickable(groupLabel));
+        groupLabel.click();
 
         // Verify that the description has changed and that No plot data message is shown.
         waitForText(studyGroupDescModified, "No plot saved for this group.");
@@ -271,6 +274,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.saveGroup(multiFilterGroup, "", false);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        shortWait().until(ExpectedConditions.elementToBeClickable(singleLoc));
         click(singleLoc);
         sleep(2000); // wait for filter panel to stablize
         log("Verify the group consist of a single filter is applied correctly");
@@ -278,6 +282,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        shortWait().until(ExpectedConditions.elementToBeClickable(multiLoc));
         click(multiLoc);
         sleep(2000); // wait for filter panel to stablize
         log("Verify the group consist of a 4 filters is applied correctly when current filter panel contains only one filter");
@@ -286,6 +291,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        shortWait().until(ExpectedConditions.elementToBeClickable(singleLoc));
         click(singleLoc);
         sleep(2000); // wait for filter panel to stablize
         log("Verify the group consist of a single filter is applied correctly when current filter panel contains 4 filters");
@@ -329,7 +335,10 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(GROUP_PLOT_TEST);
-        click(Locator.tagWithClass("div", "grouplabel").withText(GROUP_PLOT_TEST));
+        WebElement groupLabel = Locator.tagWithClass("div", "grouplabel").withText(GROUP_PLOT_TEST).findElement(getDriver());
+        shortWait().until(ExpectedConditions.elementToBeClickable(groupLabel));
+        groupLabel.click();
+
         waitForText("View in Plot");
         click(Locator.xpath("//span/following::span[contains(text(), 'View in Plot')]").parent().parent().parent());
         assertTrue(getDriver().getCurrentUrl().contains("#chart"));
