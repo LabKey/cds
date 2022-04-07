@@ -32,6 +32,7 @@ import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.IOException;
 import java.net.URL;
@@ -888,6 +889,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         Locator warningLoc = Locator.css("div.cds-group-limited-access");
         cds.clearFilters();
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        shortWait().until(ExpectedConditions.elementToBeClickable(groupLoc));
         click(groupLoc);
         waitForText("No plot saved for this group.");
         sleep(2000); // wait for access check to complete
