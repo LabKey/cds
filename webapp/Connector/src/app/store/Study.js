@@ -312,6 +312,7 @@ Ext.define('Connector.app.store.Study', {
                         title: pub.title,
                         label: pub.publication_label,
                         authors: pub.author_all,
+                        abstract: pub.publication_abstract,
                         journal: pub.journal_short,
                         date: pub.date,
                         volume: pub.volume,

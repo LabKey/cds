@@ -658,6 +658,7 @@
             <column columnName="publication_link"/>
             <column columnName="publication_author_first"/>
             <column columnName="publication_label"/>
+            <column columnName="publication_abstract"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -755,6 +756,7 @@
             <column columnName="link"/>
             <column columnName="author_first"/>
             <column columnName="publication_label"/>
+            <column columnName="publication_abstract"/>
         </columns>
     </table>
     <table tableName="studypublication" tableDbType="TABLE">
