@@ -63,7 +63,6 @@ Ext.define('Connector.view.module.ShowList', {
         data['showAll'] = this.showAll;
         this.update(data);
         this.refresh();
-        console.log("data['showAll'] = " + data['showAll']);
     },
 
     hasContent : function() {
