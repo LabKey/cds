@@ -45,11 +45,13 @@ Ext.define('Connector.view.module.PublicationAbstract', {
         data['showAll'] = this.showAll;
 
         let publication_abstract = data['publication_abstract'];
-        data['isAbstractLengthUnderLimit'] = publication_abstract.length <= this.numCharactersToShow;
-        data['initialDisplayCharacters'] = publication_abstract.substring(0, this.numCharactersToShow);
-        data['remainingDisplayCharacters'] = publication_abstract.substring(this.numCharactersToShow);
-        this.update(data);
+        if (null != publication_abstract) {
+            data['isAbstractLengthUnderLimit'] = publication_abstract.length <= this.numCharactersToShow;
+            data['initialDisplayCharacters'] = publication_abstract.substring(0, this.numCharactersToShow);
+            data['remainingDisplayCharacters'] = publication_abstract.substring(this.numCharactersToShow);
+        }
 
+        this.update(data);
         this.callParent();
     },
 
