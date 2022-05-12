@@ -20,6 +20,7 @@ Ext.define('Connector.app.model.Publication', {
         {name: 'container'},
         {name: 'publication_title'},
         {name: 'author_all'},
+        {name: 'publication_abstract'},
         {name: 'journal_short'},
         {name: 'date', sortType: Connector.model.Filter.sorters.getPublicationDateSortStr},
         {name: 'volume'},

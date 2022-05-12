@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 LabKey Corporation
+ * Copyright (c) 2022 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-SELECT
-  publication_id AS id,
-  publication_title AS title,
-  publication_author_all AS author_all,
-  publication_journal_short AS journal_short,
-  publication_date AS date,
-  publication_volume AS volume,
-  publication_issue AS issue,
-  publication_location AS location,
-  publication_pmid AS pmid,
-  publication_link AS link,
-  publication_author_first AS author_first,
-  publication_label AS publication_label,
-  publication_abstract AS publication_abstract
-FROM cds.import_Publication
+ALTER TABLE cds.import_publication ADD COLUMN publication_abstract TEXT;
+ALTER TABLE cds.publication ADD COLUMN publication_abstract TEXT;
