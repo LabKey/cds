@@ -201,6 +201,7 @@
         <script path="Connector/src/app/view/module/StudyResources.js"/>
         <script path="Connector/src/app/view/module/MabDetails.js"/>
         <script path="Connector/src/app/view/module/PublicationDetails.js"/>
+        <script path="Connector/src/app/view/module/PublicationAbstract.js"/>
         <script path="Connector/src/app/view/module/ProductHeader.js"/>
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
