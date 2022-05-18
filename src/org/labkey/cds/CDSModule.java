@@ -76,7 +76,6 @@ public class CDSModule extends DefaultModule
     final ModuleProperty _showHiddenVariables;
     final ModuleProperty _blogPath;
     final ModuleProperty _staticPath;
-    final ModuleProperty _cmsURL;
     final ModuleProperty _startedVideoURL;
     final ModuleProperty _studyDocumentPath;
     final ModuleProperty _assayDocumentPath;
@@ -107,11 +106,6 @@ public class CDSModule extends DefaultModule
         _staticPath.setDescription("Full webdav path to which the short-cut '/static/' will point");
         _staticPath.setCanSetPerContainer(false);
         addModuleProperty(_staticPath);
-
-        _cmsURL = new ModuleProperty(this, CMS);
-        _cmsURL.setDescription("Full URL to CMS web server");
-        _cmsURL.setCanSetPerContainer(true);
-        addModuleProperty(_cmsURL);
 
         // TODO would be nice to have a addPropertyChangeListener()
 

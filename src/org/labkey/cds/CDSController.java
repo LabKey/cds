@@ -18,7 +18,8 @@ package org.labkey.cds;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.io.IOUtils;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +29,6 @@ import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiSimpleResponse;
-import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
 import org.labkey.api.action.MutatingApiAction;
@@ -54,14 +54,12 @@ import org.labkey.api.data.StashingResultsFactory;
 import org.labkey.api.data.TSVMapWriter;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.data.TableSelector;
-import org.labkey.api.files.FileContentService;
 import org.labkey.api.module.Module;
 import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.FieldKey;
 import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
-import org.labkey.api.reader.Readers;
 import org.labkey.api.resource.Resource;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
@@ -79,30 +77,28 @@ import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
+import org.labkey.api.util.DateUtil;
 import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.HtmlString;
+import org.labkey.api.util.JsonUtil;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.util.Path;
-import org.labkey.api.util.URLHelper;
 import org.labkey.api.util.element.CsrfInput;
 import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.NotFoundException;
-import org.labkey.api.view.VBox;
 import org.labkey.api.view.ViewContext;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.api.view.template.WarningService;
 import org.labkey.api.view.template.Warnings;
 import org.labkey.api.webdav.WebdavResource;
 import org.labkey.api.webdav.WebdavService;
-import org.labkey.api.writer.PrintWriters;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.labkey.cds.view.template.FrontPageTemplate;
 import org.springframework.beans.PropertyValues;
 import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -112,12 +108,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,7 +119,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -192,22 +182,138 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresPermission(ReadPermission.class)
-    public class NewsAction extends SimpleViewAction
+    public class NewsAction extends ReadOnlyApiAction
     {
         @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
+        public Object execute(Object o, BindException errors) throws Exception
         {
+            ApiSimpleResponse response = new ApiSimpleResponse();
+            List<Item> items = new ArrayList<>();
+
             List<RSSFeed> feeds = RSSService.get().getFeeds(getContainer(), getUser());
+            ObjectMapper objectMapper = JsonUtil.DEFAULT_MAPPER;
 
-            getViewContext().getResponse().setContentType("text/xml");
-            RSSService.get().aggregateFeeds(feeds, getUser(), getViewContext().getResponse().getWriter());
+            for (RSSFeed feed : feeds)
+            {
+                try (InputStream is = getInputStream(feed, getUser()))
+                {
+                    NewsFeed newsFeed = objectMapper.readValue(is, NewsFeed.class);
+                    items.addAll(newsFeed.getItems());
+                }
+                catch (JsonParseException e)
+                {
+                    errors.reject(ERROR_MSG, e.getMessage());
+                    response.put("success", false);
+                    return response;
+                }
+            }
 
-            return null;
+            items.sort((o1, o2) -> {
+                if (o1 == null && o2 == null)
+                    return 0;
+                else if (o1 == null)
+                    return -1;
+                else if (o2 == null)
+                    return 1;
+
+                Date d1 = o1.getPubDate();
+                Date d2 = o2.getPubDate();
+
+                if (d1 == null || d2 == null)
+                    return -1;
+
+                return d2.compareTo(d1);
+            });
+
+            response.putBeanList("items", items);
+            response.put("success", true);
+            return response;
         }
 
-        @Override
-        public void addNavTrail(NavTree root)
+        private InputStream getInputStream(RSSFeed feed, User user) throws IOException
         {
+            if (feed.getFeedURL().startsWith("webdav:/"))
+            {
+                WebdavResource resource = WebdavService.get().lookup(feed.getFeedURL().replace("webdav:/", ""));
+
+                if (null != resource && resource.isFile())
+                {
+                    return resource.getInputStream(user);
+                }
+                else
+                {
+                    throw new IOException(feed.getFeedURL() + ". If attempting to use webdav ensure the URL begins with webdav:/" + WebdavService.getPath() + " and is not URL encoded.");
+                }
+            }
+            else
+            {
+
+                URL url = new URL(feed.getFeedURL());
+                return url.openStream();
+            }
+        }
+
+        public static class NewsFeed
+        {
+            private List<Item> _items = new ArrayList<>();
+
+            public List<Item> getItems()
+            {
+                return _items;
+            }
+
+            public void setItems(List<Item> items)
+            {
+                _items = items;
+            }
+        }
+
+        public static class Item
+        {
+            private String _link;
+            private String _title;
+            private Date _pubDate;
+            private String _description;
+
+            public String getLink()
+            {
+                return _link;
+            }
+
+            public void setLink(String link)
+            {
+                _link = link;
+            }
+
+            public String getTitle()
+            {
+                return _title;
+            }
+
+            public void setTitle(String title)
+            {
+                _title = title;
+            }
+
+            public Date getPubDate()
+            {
+                return _pubDate;
+            }
+
+            public void setPubDate(String pubDate)
+            {
+                _pubDate = new Date(DateUtil.parseDateTime(pubDate));
+            }
+
+            public String getDescription()
+            {
+                return _description;
+            }
+
+            public void setDescription(String description)
+            {
+                _description = description;
+            }
         }
     }
 
@@ -860,146 +966,6 @@ public class CDSController extends SpringActionController
         {
         }
     }
-
-    public static class CmsPage
-    {
-        public String url;
-        public String target;
-    }
-
-    @RequiresPermission(AdminPermission.class)
-    public static class CmsCopyAction extends FormViewAction<Object>
-    {
-        HttpView _success = null;
-
-        @Override
-        public void validateCommand(Object target, Errors errors)
-        {
-            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
-            String url = cds.getPropertyValue(cds._cmsURL, getContainer());
-
-            if (StringUtils.isEmpty(url))
-                errors.reject(ERROR_MSG, "cms url is not configured");
-
-            Container blogContainer = getTarget();
-            if (null == blogContainer)
-                errors.reject(ERROR_MSG, "Create subfolder named 'files'");
-        }
-
-        @Override
-        public URLHelper getSuccessURL(Object o)
-        {
-            return null;
-        }
-
-        Container getTarget()
-        {
-            return getContainer();
-        }
-
-        @Override
-        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
-        {
-            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
-            CmsPage cms = new CmsPage();
-            cms.url =  cds.getPropertyValue(cds._cmsURL, getContainer());
-            Container target = getTarget();
-            if (null != target)
-                cms.target = "/_webdav" + target.getPath() + "/@files/blog/";
-            return new JspView<>("/org/labkey/cds/view/cms.jsp", cms, errors);
-        }
-
-        @Override
-        public boolean handlePost(Object o, BindException errors) throws Exception
-        {
-            CDSModule cds = (CDSModule) ModuleLoader.getInstance().getModule("cds");
-            String url = cds.getPropertyValue(cds._cmsURL, getContainer());
-            if (!StringUtils.endsWith(url,"/"))
-                url = url + "/";
-
-            Container blogContainer = getTarget();
-            FileContentService svc = FileContentService.get();
-            File root = svc.getFileRoot(blogContainer);
-            File fullPath = new File(root,"@files/blog");
-            fullPath.mkdirs();
-
-            StringWriter swOuputLog = new StringWriter();
-
-            if (!StringUtils.equals("0",getViewContext().getRequest().getParameter("wget")))
-            {
-                // get pipeline root
-                String wget = "wget";
-                if (new File("/usr/bin/wget").exists())
-                    wget = "/usr/bin/wget";
-                else if (new File("/opt/local/bin/wget").exists())
-                    wget = "/opt/local/bin/wget";
-                ProcessBuilder pb = new ProcessBuilder(
-                        wget,
-                        "--directory-prefix=" + fullPath.getPath(),
-                        "--mirror",
-                        "--page-requisites",
-                        "--convert-links",
-                        "--adjust-extension",
-                        "--no-host-directories",
-                        url,
-                        url + "rss/feed.rss");
-                pb.redirectErrorStream(true);
-                Process p = pb.start();
-                IOUtils.copy(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8), swOuputLog);
-                p.waitFor();
-                swOuputLog.flush();
-            }
-
-            // fix up rss/feed.rss
-            File rssFile = new File(fullPath,"rss/feed.rss");
-            if (rssFile.isFile())
-            {
-                String rss = null;
-                try (Reader r = Readers.getReader(rssFile))
-                {
-                    StringWriter sw = new StringWriter();
-                    IOUtils.copy(r, sw);
-                    String path = Path.parse(getViewContext().getContextPath()).append("blog").toString("/","/");
-                    String href = url + "([^\\s\"<]*)";
-                    Matcher m = Pattern.compile(href).matcher(sw.toString());
-                    // fancy m.replaceAll()
-                    StringBuffer sb = new StringBuffer();
-                    String repl = path + "$1";
-                    while (m.find())
-                    {
-                        m.appendReplacement(sb, repl);
-                        String part = m.group(1);
-                        if (part.lastIndexOf(".") <= part.lastIndexOf("/"))
-                            sb.append(".html");
-                    }
-                    m.appendTail(sb);
-                    rss = sb.toString();
-                    r.close();
-                    try (Writer w = PrintWriters.getPrintWriter(rssFile))
-                    {
-                        IOUtils.copy(new StringReader(rss),w);
-                    }
-                }
-            }
-
-            ModelAndView form = getView(null, false, errors);
-            HtmlView output = new HtmlView("<pre>"+PageFlowUtil.filter(swOuputLog.toString())+"</pre>");
-            _success = new VBox(form,output);
-            return true;
-        }
-
-        @Override
-        public ModelAndView getSuccessView(Object o) throws Exception
-        {
-            return _success;
-        }
-
-        @Override
-        public void addNavTrail(NavTree root)
-        {
-        }
-    }
-
 
     @RequiresPermission(ReadPermission.class)
     @MethodsAllowed({Method.POST, Method.DELETE})
