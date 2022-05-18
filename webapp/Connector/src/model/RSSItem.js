@@ -22,9 +22,8 @@ Ext.define('Connector.model.RSSItem', {
         type: 'ajax',
         url: LABKEY.ActionURL.buildURL('cds', 'news.api'),
         reader: {
-            type: 'xml',
-            record: 'item',
-            root: 'channel'
+            type: 'json',
+            root: 'items'
         }
     }
 });
