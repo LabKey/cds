@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "title": "Event: LabKey sponsoring 2014 AIRI IT Meeting",
+      "link": "http://www.labkey.com/news/news-releases/07052014-362",
+      "description": "LabKey looks forward to sponsoring the Association of Independent Research Institutes (AIRI) 2014 Information Technology Meeting in Seattle, May 8-9, 2014. This meeting's theme is \"Seeking Balance – Innovation vs. Practical Solutions to IT Challenges\" and features presentations by IT innovators at leading research institutes (program). The Fred Hutchinson Cancer Research Center (FHCRC) will host the 2014 AIRI IT meeting",
+      "pubDate": "Fri, 02 May 2014 16:57:19 +0000"
+    },
+    {
+      "title": "Panel and Talk: AMIA Joint Summits - April 9 and 10, 2014",
+      "link": "http://www.labkey.com/news/news-releases/03042014-361",
+      "description": "Mark Igra will join a panel of experts to address sustainable strategies for open source projects in clinical and translational research. Separately, Elizabeth Nelson will explore how large research consortia are using LabKey Server to overcome data challenges in this domain.",
+      "pubDate": "Thu, 03 Apr 2014 21:05:51 +0000"
+    },
+    {
+      "title": "Release: LabKey Server v14.1",
+      "link": "http://www.labkey.com/news/news-releases/17032014-360",
+      "description": "The LabKey team is delighted to announce the release of LabKey Server v14.1.",
+      "pubDate": "Mon, 17 Mar 2014 19:49:13 +0000"
+    },
+    {
+      "title": "Article: MedCity covers the LabKey story: \"Open-sourced in Seattle\"",
+      "link": "http://www.labkey.com/news/news-releases/28012014-356",
+      "description": "Open-sourced in Seattle: A fated collision of software talent and life science researchers.",
+      "pubDate": "Tue, 28 Jan 2014 22:50:28 +0000"
+    },
+    {
+      "title": "Lecture: Josh Eckels presents at SLAS 2014, Jan 21 in San Diego",
+      "link": "http://www.labkey.com/news/news-releases/10012014-355",
+      "description": "On Tuesday, January 21, Josh Eckels will present at the Informatics Special Interest Group (SIG).",
+      "pubDate": "Fri, 10 Jan 2014 01:29:48 +0000"
+    },
+    {
+      "title": "Interview: Mark Igra talks with the U. Wisconsin Research Data Blog",
+      "link": "http://www.labkey.com/news/news-releases/06012014-354",
+      "description": "The University of Wisconsin Research Data Blog just published a nice interview.",
+      "pubDate": "Mon, 06 Jan 2014 23:24:49 +0000"
+    },
+    {
+      "title": "Release: LabKey Server v13.3",
+      "link": "http://www.labkey.com/news/news-releases/19112013-353",
+      "description": "The LabKey team is delighted to announce the release of LabKey Server v13.3.",
+      "pubDate": "Tue, 19 Nov 2013 21:30:52 +0000"
+    },
+    {
+      "title": "LabKey User Conference 2013: Videos now available",
+      "link": "http://www.labkey.com/news/news-releases/12112013-352",
+      "description": "In these videos, guest presenters share how  they utilize the LabKey Server platform to perform collaborative and  reproducible research with globally distributed teams.",
+      "pubDate": "Tue, 12 Nov 2013 01:04:32 +0000"
+    },
+    {
+      "title": "Panel: Open Science / Open Source - 10/24",
+      "link": "http://www.labkey.com/news/news-releases/17102013-351",
+      "description": "Join us for Health 2.0's first panel in Seattle and a discussion of open science and open source tools for the health research.",
+      "pubDate": "Thu, 17 Oct 2013 00:29:08 +0000"
+    }
+  ]
+}
