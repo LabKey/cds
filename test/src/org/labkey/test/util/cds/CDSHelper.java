@@ -240,7 +240,7 @@ public class CDSHelper
     public static final String[] LEARN_ABOUT_PKMAB_ASSAY_DIM_FIELDS = {"Lab ID", "MAb or mixture", "Source assay", "Specimen type"};
 
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
-    public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
+    public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.json";
     public final static int CDS_WAIT = 2000;
     public final static int CDS_WAIT_LEARN = 4000;
     public final static int CDS_WAIT_ANIMATION = 500;
