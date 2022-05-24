@@ -44,15 +44,8 @@ import static org.junit.Assert.assertTrue;
 @Category({Git.class})
 public class CDSTestLearnAbout extends CDSReadOnlyTest
 {
-    private final CDSHelper cds = new CDSHelper(this);
-    private final CDSAsserts _asserts = new CDSAsserts(this);
-    private final String MISSING_SEARCH_STRING = "If this string ever appears something very odd happened.";
-    private final Locator XPATH_RESULT_ROW_TITLE = LearnGrid.Locators.lockedRow;
-    private final Locator XPATH_RESULT_ROW_DATA = LearnGrid.Locators.unlockedRow;
-
     public static final String DATA_ADDED_TOOLTIP = "Integrated data added";
     public static final String DATA_NOT_ADDED_TOOLTIP = "Integrated data not added";
-
     public static final String[] MAB_MIXTURES = {"1361", "2158", "2297", "1H9", "1.00E+09", "1NC9", "2F5", "3.00E+03", "3BNC60", "3BNC117", "4.00E+10",
             "10E8.2", "10E8.2/iMab", "10E8.4", "10E8.4/iMab", "10E8.5", "10E8.5/iMab",
             "17b", "19B", "19e", "1393A", "A12", "A14",
@@ -76,14 +69,16 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             "mAb 126", "mAb 127", "mAb 128", "MVN", "MVN/A12", "P16i", "PG9", "PGDM1400", "PGT121", "PGT121 + PGDM1400", "PGT121 + PGT145", "PGT123", "PGT125",
             "PGT126", "PGT127", "PGT128", "PGT128 + 3BNC117 + PGDM1400", "PGT128/3BNC117 + PGDM1400", "PGT130", "PGT135", "PGT143", "PGT145", "PGT151", "PGT151/3BNC117",
             "Pi", "RhiMab", "sCD4", "VRC01", "VRC01/CCFV", "VRC01/SCFV", "VRC07-523-LS", "VRC13", "VRC26.25"};
-
     public static final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
     public static final org.labkey.test.Locator.XPathLocator LEARN_ROW_TITLE_LOC = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2");
     public static final org.labkey.test.Locator.XPathLocator LEARN_HAS_DATA_ROW_TITLE_LOC = Locator.tagWithClass("tr", "detail-row-has-data").append("/td//div/div/h2");
-
     public static final org.labkey.test.Locator.XPathLocator DETAIL_PAGE_BREADCRUMB_LOC = Locator.tagWithClass("div", "breadcrumb");
-
     private static final Locator TOOLTIP_TEXT_LOCATOR = Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content");
+    private final CDSHelper cds = new CDSHelper(this);
+    private final CDSAsserts _asserts = new CDSAsserts(this);
+    private final String MISSING_SEARCH_STRING = "If this string ever appears something very odd happened.";
+    private final Locator XPATH_RESULT_ROW_TITLE = LearnGrid.Locators.lockedRow;
+    private final Locator XPATH_RESULT_ROW_DATA = LearnGrid.Locators.unlockedRow;
 
     @Before
     public void preTest()
@@ -135,7 +130,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(getDriver());
 
-        int index = returnedItems.size()/2;
+        int index = returnedItems.size() / 2;
 
         scrollIntoView(returnedItems.get(index));
 
@@ -147,7 +142,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + lockedParts[0] + "']")));
 
         log("Validating Study Type is: " + unlockedParts[1]);
-        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + unlockedParts[1] + "']").findElement(getDriver()).isDisplayed());
+        assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + unlockedParts[1] + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
         click(DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /"));
@@ -578,11 +573,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + itemTitle + "']")));
 
         log("Validating Product Type is: " + itemClassAndType[1]);
-        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[1] + "']").findElement(getDriver()).isDisplayed());
+        assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[1] + "']").findElement(getDriver()).isDisplayed());
 
         String productClass = itemClassAndType[2].replace("Class: ", "");
         log("Validating Class is: " + productClass);
-        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + productClass + "']").findElement(getDriver()).isDisplayed());
+        assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + productClass + "']").findElement(getDriver()).isDisplayed());
 
         log("Validating return link works.");
         click(DETAIL_PAGE_BREADCRUMB_LOC.withText("Products /"));
@@ -632,7 +627,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Assert.assertEquals("Publication author not as expected", "Fong Y", secondPublicationUnlockedParts[1]);
         Assert.assertEquals("Publication journal not as expected", "2018 Mar 28", secondPublicationUnlockedParts[2]);
 
-        log ("Verify Publications detail page");
+        log("Verify Publications detail page");
         publicationLockedLists.get(1).click();
         sleep(CDSHelper.CDS_WAIT);
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + expectedPublictionLabel + "']")));
@@ -685,6 +680,38 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         verifyNonIntegratedDetailFieldValues(publication_data_3, "(TSV)");
         verifyNonIntegratedDownloadLink(publication_data_3, "t_cell_ir.tsv");
+    }
+
+    @Test
+    public void testLearnAboutPublicationAbstract()
+    {
+        final String Fong_Abstract = "Abstract 863 characters: hDJoxyG11NJqUgDFg2qA, gif7hK7hg0 f1qt9BvGzrvdMXxCiCrM. " +
+                "x1hCLq8AdopPkzsuWPTZ rhSBFSgRVe X9gf4WZWEs kG0rqeetP1. Sj5n6U9nQz RMtx EiJaG1 kWHPOCkoKd ysFBFRe696 3WLrfeRKS5" +
+                " yZLTIG0O8mzniwi8CI0d T6GhTW8Ed1 VrH2GJEau9 EAmrZd3Cmt FSzxwT3JcS F5D7X6K5Rb F3Rp0PUgWF QsyPgn bEci GSSIHmqWMz 2caxBEHKF7 " +
+                "YcjKXJFT8n hqh90Ulh3T G3pundG62H te1Crk zvKe NgfH36cjlP LMqqU9JIUY goaYn3MqZH 7a09KB9saR RfDFf1l5mv hDJ oxyG11NJqUgDFg2qA " +
+                "gif7hK7hg0 f1qt9BvGzrvdMXxCiCrM. x1hCLq8AdopPkzsuWPTZ rhSBFSgRVe X9g f4WZWEs kG0rqeetP1-Sj5n6U9nQz RMtx EiJaG1 kWHPOCkoKd " +
+                "ysFBFRe696 3WL rfeRKS5 yZLTIG0O8mzniwi8CI0d T6GhTW8Ed1 VrH2GJEau9 EAmrZd3C@mt FSz xwT3JcS F5D7X6K5Rb F3Rp0PUgWF ~QsyPgn bEci " +
+                "GSSIHmqWMz 2caxBEHKF7YcjKXJFT %55 8n hqh90Ulh3T G3pundG62H te1Crk zvKe NgfH36cjlP LMqqU9 JIUY *goaYn3 MqZH 7a09KB9saR R";
+
+        log("Verify Publication Abstract details < 800 chars");
+        cds.viewLearnAboutPage("Publications");
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch("Bekker").clickFirstItem();
+        assertTrue(Locator.id("pub-abstract-title").findElement(getDriver()).isDisplayed());
+
+        log("Verify Publication Abstract details > 800 chars");
+        cds.viewLearnAboutPage("Publications");
+        learnGrid = new LearnGrid(this);
+        learnGrid.setSearch("fong").clickFirstItem();
+        waitForElement(Locator.id("pub-abstract-title"));
+        assertTrue(Locator.id("pub-abstract-title").findElement(getDriver()).isDisplayed());
+        assertTrue(Locator.id("pub-abstract-title").followingSibling("div").findElement(getDriver()).getText().contains(Fong_Abstract));
+
+        log("Verify No Publication Abstract details");
+        cds.viewLearnAboutPage("Publications");
+        learnGrid = new LearnGrid(this);
+        learnGrid.setSearch("mayer").clickFirstItem();
+        assertFalse(isElementPresent(Locator.id("pub-abstract-title")));
     }
 
     @Test
@@ -774,7 +801,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(5, 0));
         expectedText = "11 Studies";
         cellText = learnGrid.getCellText(5, dataAddedColumn);
-        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.", cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(5, dataAddedColumn)
@@ -789,7 +816,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(4, 0));
         expectedText = "5 Studies";
         cellText = learnGrid.getCellText(4, dataAddedColumn);
-        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.", cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(4, dataAddedColumn)
@@ -803,7 +830,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(3, 0));
         expectedText = "4 Studies";
         cellText = learnGrid.getCellText(3, dataAddedColumn);
-        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.", cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(3, dataAddedColumn)
@@ -817,7 +844,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(2, 0));
         expectedText = "14 Studies";
         cellText = learnGrid.getCellText(2, dataAddedColumn);
-        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.", cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(2, dataAddedColumn)
@@ -831,7 +858,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Checking: " + learnGrid.getCellText(1, 0));
         expectedText = "1 Study";
         cellText = learnGrid.getCellText(1, dataAddedColumn);
-        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.",  cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
+        assertTrue("Data Added' column text not as expected. Expected: '" + expectedText + "'. Found: '" + cellText + "'.", cellText.trim().toLowerCase().contains(expectedText.trim().toLowerCase()));
         log("'Data Added' column text as expected.");
 
         toolTipText = learnGrid.showDataAddedToolTip(1, dataAddedColumn)
@@ -858,7 +885,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator.XPathLocator showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
         showAllExpandAndVerify(showAllListToggle, 2);
 
-        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
+        List<WebElement> smallHasDataIcons = cds.hasDataDetailIconXPath("").findElements(getDriver());
         checker().verifyEquals("Icon size not as expected.", 10, smallHasDataIcons.size());
 
         verifyShowAllCollapse(showAllListToggle, 2);
@@ -1039,7 +1066,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(XPATH_RESULT_ROW_TITLE);
 
         log("Go to the detail page of the item returned.");
-        returnedItems  = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -1065,7 +1092,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Go to the detail page of one of the items returned.");
         returnedItems.clear();
-        returnedItems  = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT);
 
@@ -1087,7 +1114,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Go to the detail page for " + searchTextAssays + ".");
         returnedItems.clear();
-        returnedItems  = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -1108,7 +1135,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Go to the detail page for " + searchTextProducts + ".");
         returnedItems.clear();
-        returnedItems  = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         returnedItems.get(0).click();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -1186,14 +1213,17 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
 
         //hasDataRows is larger than hasDataIcons by a factor of two because of locked columns cause rows to be counted twice.
-        assertTrue(hasDataRows.size()/2 == hasDataIcons.size()  && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
+        assertTrue(hasDataRows.size() / 2 == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
     }
 
     public void goToDetail(String itemName, boolean hasData)
     {
         Locator element = hasData ? LEARN_HAS_DATA_ROW_TITLE_LOC.withText(itemName).notHidden() : LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
         assertElementPresent(element);
-        new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction ->{waitForText("Overview"); return null;});
+        new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction -> {
+            waitForText("Overview");
+            return null;
+        });
     }
 
     @Test
@@ -1346,7 +1376,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         Locator element = LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
         assertElementPresent(element);
-        new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction ->{waitForText("Overview"); return null;});
+        new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction -> {
+            waitForText("Overview");
+            return null;
+        });
     }
 
     @Test
@@ -1392,7 +1425,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         Locator.XPathLocator showAllListToggle = Locator.tagWithClass("td", "show-hide-toggle-integrateddata");
         showAllExpandAndVerify(showAllListToggle, 6);
 
-        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
+        List<WebElement> smallHasDataIcons = cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertTrue(smallHasDataIcons.size() == NUM_STUDY_FROM_ASSAY_WITH_DATA);
 
         assertElementNotPresent(cds.hasDataDetailIconXPath(STUDY_FROM_ASSAY_WITH_NO_DATA));
@@ -1480,7 +1513,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         showAllExpandAndVerify(showAllListToggle, 3);
 
-        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
+        List<WebElement> smallHasDataIcons = cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies using the mAb product is not as expected", 1, smallHasDataIcons.size());
 
         verifyShowAllCollapse(showAllListToggle, 3);
@@ -1505,7 +1538,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify Integrated Data Availability");
         waitForText("Integrated data");
-        List<WebElement> smallHasDataIcons =cds.hasDataDetailIconXPath("").findElements(getDriver());
+        List<WebElement> smallHasDataIcons = cds.hasDataDetailIconXPath("").findElements(getDriver());
         assertEquals("Number of studies with PK MAb data is not as expected", 1, smallHasDataIcons.size());
 
         assertElementPresent(cds.hasDataDetailIconXPath(CDSHelper.ZAP_134));
@@ -1553,7 +1586,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         learnGrid.setFacet("Name & Description", studiesToFilter);
         List<WebElement> studyTitlesAfterFilter = LEARN_ROW_TITLE_LOC.findElements(getDriver());
 
-        List<String> studiesFiltered =  Arrays.asList(studiesToFilter);
+        List<String> studiesFiltered = Arrays.asList(studiesToFilter);
         for (WebElement studyTitlesOnPage : studyTitlesAfterFilter)
         {
             scrollIntoView(studyTitlesOnPage);
@@ -1574,8 +1607,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         //finds the number of rows that have a date column and assay column that satisfy the following filter
         final String yearToFilter = "2004";
         int numRowsSatisfyFilter = Locator.xpath("//tr/td/div/div/div[contains(@class, 'detail-gray-text')]" +
-                "[contains(text(), ' Integrated Assay')]/../../../following-sibling::" +
-                "td/div/div/table/tbody/tr[contains(@class, 'detail-gray-text')]/td[contains(text(), '"+ yearToFilter + "')]")
+                        "[contains(text(), ' Integrated Assay')]/../../../following-sibling::" +
+                        "td/div/div/table/tbody/tr[contains(@class, 'detail-gray-text')]/td[contains(text(), '" + yearToFilter + "')]")
                 .findElements(getDriver()).size();
 
         learnGrid.setWithOptionFacet("Status", "Start Year", yearToFilter);
@@ -1675,7 +1708,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> antigensAfterFilter = LEARN_ROW_TITLE_LOC.findElements(getDriver());
         assertTrue("Expected number of antigens after filtering: " + antigensToFilter.length + ", actual number: " + antigensAfterFilter.size(),
                 antigensAfterFilter.size() == antigensToFilter.length);
-        List<String> studiesFiltered =  Arrays.asList(antigensToFilter);
+        List<String> studiesFiltered = Arrays.asList(antigensToFilter);
         for (WebElement antigenTitlesOnPage : antigensAfterFilter)
         {
             scrollIntoView(antigenTitlesOnPage);
@@ -1790,7 +1823,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String DOCX_FILE_NAME = "Gallo OPP41351 Systemic, Mucosal and Passive Immunity.docx";
         final String STUDY_INFO_TEXT_TRIGGER = "Study information";
 
-        if(getBrowserType() == WebDriverWrapper.BrowserType.CHROME)
+        if (getBrowserType() == WebDriverWrapper.BrowserType.CHROME)
         {
             PDF01_FILE_NAME = "shattock%20opp37872%20novel%20antigens%20for%20mucosal%20protection.pdf";
             PDF02_FILE_NAME = "mcelrath%20opp38645%20innate%20to%20adaptive%20immunity.pdf";
@@ -1804,12 +1837,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Validate a link to a pdf file works as expected.");
         clickPDFGrantAffilication(CDSHelper.QED_2, PDF01_FILE_NAME);
 
-        if(getBrowserType() == BrowserType.CHROME)
+        if (getBrowserType() == BrowserType.CHROME)
         {
             log("Validate that a link to a doc file works as expected.");
             clickDocGrantAffiliation(CDSHelper.QED_1, DOCX_FILE_NAME);
         }
-        else {
+        else
+        {
             // TODO Bug in CDS.
             log("We have a bug in Firefox where we don't persist the doc file name when downloading.");
             log("Skipping this check for now.");
@@ -1819,7 +1853,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         clickPDFGrantAffilication(CDSHelper.ZAP_100, PDF02_FILE_NAME);
 
         // Chrome will open the file Firefox will download.
-        if(getBrowserType() == WebDriverWrapper.BrowserType.CHROME)
+        if (getBrowserType() == WebDriverWrapper.BrowserType.CHROME)
         {
             clickPDFGrantAffilication(CDSHelper.RED_5, PDF02_FILE_NAME);
             clickPDFGrantAffilication(CDSHelper.RED_8, PDF02_FILE_NAME);
@@ -2129,7 +2163,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         checker().setErrorMark();
         checker().withScreenshot(screenShotName).verifyTrue("Tooltip for '" + linkText + "' didn't show. Show yourself coward!", triggerToolTip(el));
 
-        if(checker().errorsSinceMark() == 0)
+        if (checker().errorsSinceMark() == 0)
         {
             // If the tool-tip is present, checker().verifyTrue returned true, check the text of the tooltip.
             toolTipText = getToolTipText();
@@ -2150,8 +2184,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         mouseOver(el);
 
         // Wait for the tooltip to show up.
-        return waitFor(()->
-                TOOLTIP_TEXT_LOCATOR.findWhenNeeded(getDriver()).isDisplayed(),
+        return waitFor(() ->
+                        TOOLTIP_TEXT_LOCATOR.findWhenNeeded(getDriver()).isDisplayed(),
                 2_000);
     }
 
