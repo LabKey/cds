@@ -942,13 +942,14 @@ img.detail-has-data-very-small {
   }
 }
 
-/* Export button styles (for learn and data grids) */
+/* Data export button, with light arrow icon */
 .x-btn-rounded-inverted-accent-small .x-btn-arrow-light {
   background-image: url(data:image/gif;base64,R0lGODlhCgAKAHAAACH5BAEAAAIALAAAAAAKAAoAgQAAAP///wAAAAAAAAIMlI+pyxr/XFyh2ZsKADs=);
   background-repeat: no-repeat;
   background-position-x: 100%;
 }
 
+/* Data export menu item, with download icon */
 .export-item {
   background-color: $white;
 
