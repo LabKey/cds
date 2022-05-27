@@ -1,5 +1,5 @@
 const path = require('path');
-const CopyPlugin = require("copy-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const styleConfig = require('./shared');
 
 module.exports = {
@@ -7,10 +7,10 @@ module.exports = {
     entry: path.resolve(__dirname, '../connector/theme.scss'),
     plugins: [
         ...styleConfig.plugins('Connector-all.css'),
-        new CopyPlugin({
+        new CopyWebpackPlugin({
             patterns: [
                 {
-                    from: "images/**/*",
+                    from: 'images/**/*',
                     context: path.resolve(__dirname, '../../webapp/production/Connector/resources/'),
                 }
             ]
