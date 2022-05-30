@@ -25,10 +25,10 @@ Ext.define('Connector.button.ExportButton', {
             },
             items : [{
                 text: 'Comma separated values (*.CSV)',
-                id : 'csv-menu-item'
+                itemId : 'csv-menu-item'
             },{
                 text: 'Excel (*.XLS)',
-                id : 'excel-menu-item'
+                itemId : 'excel-menu-item'
             }]
         };
 
@@ -37,8 +37,8 @@ Ext.define('Connector.button.ExportButton', {
     },
 
     handleClick : function(cmp, item) {
-        if (item.id) {
-            switch (item.id) {
+        if (item.itemId) {
+            switch (item.itemId) {
                 case 'csv-menu-item' :
                     this.fireEvent('exportcsv', item);
                     break;
