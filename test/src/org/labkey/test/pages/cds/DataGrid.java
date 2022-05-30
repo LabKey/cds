@@ -568,7 +568,8 @@ public class DataGrid
     public File exportGrid(boolean isExcel)
     {
         _test.waitForElement(Locator.css(("a.export-data"))).click();
-        WebElement menuItem = _test.waitForElement(Locator.css("div[id=" + (isExcel ? "excel-menu-item]" : "csv-menu-item]")));
+        Locator item = Locator.css("span.x-menu-item-text").withText(isExcel ? "Excel (*.XLS)" : "Comma separated values (*.CSV)");
+        WebElement menuItem = _test.waitForElement(item);
 
         return _test.clickAndWaitForDownload(menuItem);
     }
