@@ -22,7 +22,9 @@ module.exports = {
     module: {
         rules: [
             {
+                // CDS scss
                 test: /.s?css$/,
+                exclude: [/node_modules/],
                 use: [
                     MiniCssExtractPlugin.loader,
                     {
@@ -33,14 +35,37 @@ module.exports = {
                             url: false
                         }
                     },
+                    // Don't use resolve-url-loader as it alters relative URLs
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            implementation: require('sass'),
+                        }
+                    }
+                ],
+            },
+            {
+                // node_modules scss
+                test: /.s?css$/,
+                include: [/node_modules/],
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
                     'resolve-url-loader',
-                    'sass-loader'
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            implementation: require('sass'),
+                            // "sourceMap" must be set to true when resolve-url-loader is used downstream
+                            sourceMap: true,
+                        }
+                    }
                 ],
             },
             {
                 test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
                 // More information here https://webpack.js.org/guides/asset-modules/
-                type: "asset",
+                type: 'asset',
             },
         ],
     },
