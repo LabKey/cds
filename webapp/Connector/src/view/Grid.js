@@ -82,14 +82,10 @@ Ext.define('Connector.view.Grid', {
                     xtype: 'actiontitle',
                     flex: 1,
                     text: 'View data grid',
-                    buttons: [
-                        this.getExportCSVButton(),
-                        this.getExportExcelButton()
-                    ]
                 }]
             }, {
                 xtype: 'container',
-                items: [this.getSourceTabHeader(), this.getSelectColumnsButton()],
+                items: [this.getSourceTabHeader(), this.getSelectColumnsButton(), this.getExportButton()],
                 layout: {
                     type: 'hbox'
                 }
@@ -188,36 +184,6 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
-    getExportCSVButton : function() {
-        if (!this.exportCSVButton) {
-            this.exportCSVButton = Ext.create('Ext.button.Button', {
-                cls: 'gridexportcsvbtn',
-                ui: 'rounded-inverted-accent-text',
-                text: 'Export CSV',
-                margin: '0 15 0 0',
-                handler: this.requestExportCSV,
-                scope: this
-            });
-        }
-
-        return this.exportCSVButton;
-    },
-
-    getExportExcelButton : function() {
-        if (!this.exportExcelButton) {
-            this.exportExcelButton = Ext.create('Ext.button.Button', {
-                cls: 'gridexportexcelbtn',
-                ui: 'rounded-inverted-accent-text',
-                text: 'Export Excel',
-                margin: '0 15 0 0',
-                handler: this.requestExportExcel,
-                scope: this
-            });
-        }
-
-        return this.exportExcelButton;
-    },
-
     getSelectColumnsButton : function() {
         if (!this.selectColumnsButton) {
             this.selectColumnsButton = Ext.create('Ext.button.Button', {
@@ -230,6 +196,22 @@ Ext.define('Connector.view.Grid', {
         }
 
         return this.selectColumnsButton;
+    },
+
+    getExportButton : function() {
+        if (!this.exportButton) {
+            this.exportButton = {
+                xtype: 'exportbutton',
+                margin : '24 10 0 0',
+                width : 100,
+                listeners: {
+                    exportcsv : this.requestExportCSV,
+                    exportexcel : this.requestExportExcel,
+                    scope: this
+                }
+            }
+        }
+        return this.exportButton;
     },
 
     setVisibleWindow : function(win) {
