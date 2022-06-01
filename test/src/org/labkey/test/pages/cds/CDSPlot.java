@@ -34,6 +34,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -178,7 +179,7 @@ public class CDSPlot
         final Integer pointCount = count;
         long secTimeout = msTimeout / 1000;
         secTimeout = secTimeout > 0 ? secTimeout : 1;
-        WebDriverWait wait = new WebDriverWait(_test.getDriver(), secTimeout);
+        WebDriverWait wait = new WebDriverWait(_test.getDriver(), Duration.ofSeconds(secTimeout));
         try
         {
             wait.until(new ExpectedCondition<Boolean>()
