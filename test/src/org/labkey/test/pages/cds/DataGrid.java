@@ -567,7 +567,11 @@ public class DataGrid
 
     public File exportGrid(boolean isExcel)
     {
-        return _test.clickAndWaitForDownload(Locator.css("a." + (isExcel ? "gridexportexcelbtn" : "gridexportcsvbtn")));
+        _test.waitForElement(Locator.css(("a.export-data"))).click();
+        Locator item = Locator.css("span.x-menu-item-text").withText(isExcel ? "Excel (*.XLS)" : "Comma separated values (*.CSV)");
+        WebElement menuItem = _test.waitForElement(item);
+
+        return _test.clickAndWaitForDownload(menuItem);
     }
 
     private void verifyExportedCSVContent(File export, List<String> expectedContent)

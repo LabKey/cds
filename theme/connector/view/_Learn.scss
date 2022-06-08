@@ -941,3 +941,35 @@ img.detail-has-data-very-small {
     text-transform: uppercase;
   }
 }
+
+/* Data export button, with arrow icon */
+.x-btn-arrow-light {
+  background-image: url(images/learn/down-arrow-light.svg);
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-size: 11px;
+}
+
+.x-btn-rounded-inverted-accent-small-menu-active .x-btn-arrow-light {
+  background-image: url(images/learn/up-arrow-light.svg);
+}
+
+/* Data export menu item, with download icon */
+.export-item {
+  background-color: $white;
+
+  .x-menu-item-text {
+    margin-left: 10px;
+  }
+  .export-item-icon {
+    background-image: url(images/learn/download-icon-dark.svg);
+    background-repeat: no-repeat;
+    background-position-x: 0%;
+    background-size: 12px;
+  }
+}
+
+/* Inverted download background when the menu item is active */
+.export-item.x-menu-item-active .export-item-icon {
+  background-image: url(images/learn/download-icon-light.svg);
+}

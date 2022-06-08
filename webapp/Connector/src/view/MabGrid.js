@@ -96,6 +96,9 @@ Ext.define('Connector.view.MabGrid', {
 
     getGridHeader : function() {
         if (!this.gridHeader) {
+            var buttons = this.getReportButtons();
+            buttons.push(this.getExportButton());
+
             this.gridHeader = Ext.create('Ext.container.Container', {
                 height: this.headerHeight,
                 ui: 'custom',
@@ -107,10 +110,7 @@ Ext.define('Connector.view.MabGrid', {
                     xtype: 'actiontitle',
                     flex: 1,
                     text: 'Explore monoclonal antibody (mAb) characterization data',
-                    buttons: [
-                        this.getExportCSVButton(),
-                        this.getExportExcelButton()
-                    ].concat(this.getReportButtons())
+                    buttons: buttons
                 }]
             });
         }
@@ -127,34 +127,20 @@ Ext.define('Connector.view.MabGrid', {
         }
     },
 
-    getExportCSVButton : function() {
-        if (!this.exportCSVButton) {
-            this.exportCSVButton = Ext.create('Ext.button.Button', {
-                cls: 'gridexportcsvbtn',
-                ui: 'rounded-inverted-accent-text',
-                text: 'Export CSV',
-                margin: '0 15 0 0',
-                handler: this.requestExportCSV,
-                scope: this
-            });
+    getExportButton : function() {
+        if (!this.exportButton) {
+            this.exportButton = {
+                xtype: 'exportbutton',
+                margin : '0 0 0 25',
+                width : 100,
+                listeners: {
+                    exportcsv : this.requestExportCSV,
+                    exportexcel : this.requestExportExcel,
+                    scope: this
+                }
+            }
         }
-
-        return this.exportCSVButton;
-    },
-
-    getExportExcelButton : function() {
-        if (!this.exportExcelButton) {
-            this.exportExcelButton = Ext.create('Ext.button.Button', {
-                cls: 'gridexportexcelbtn',
-                ui: 'rounded-inverted-accent-text',
-                text: 'Export Excel',
-                margin: '0 15 0 0',
-                handler: this.requestExportExcel,
-                scope: this
-            });
-        }
-
-        return this.exportExcelButton;
+        return this.exportButton;
     },
 
     getReportButtons : function() {
