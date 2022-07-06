@@ -247,8 +247,8 @@ public class CDSTest extends CDSReadOnlyTest
         goToAdminConsole().clickSiteSettings();
         waitForElement(Locator.name("showRibbonMessage"));
         checkCheckbox(Locator.checkboxByName("showRibbonMessage"));
-        Locator.name("ribbonMessageHtml").findElement(getDriver()).clear();
-        Locator.name("ribbonMessageHtml").findElement(getDriver())
+        Locator.name("ribbonMessage").findElement(getDriver()).clear();
+        Locator.name("ribbonMessage").findElement(getDriver())
                 .sendKeys("Testing User notice on public page to announce outages");
         clickButton("Save");
 
@@ -279,15 +279,14 @@ public class CDSTest extends CDSReadOnlyTest
         goToAdminConsole().clickSiteSettings();
         waitForElement(Locator.name("showRibbonMessage"));
         uncheckCheckbox(Locator.checkboxByName("showRibbonMessage"));
-        Locator.name("ribbonMessageHtml").findElement(getDriver()).clear();
+        Locator.name("ribbonMessage").findElement(getDriver()).clear();
         clickButton("Save");
 
-        log("Verifing the message is not present");
+        log("Verifying the message is not present");
         cds.enterApplication();
         cds.goToAppHome();
         assertElementNotPresent(Locator.tagWithClass("div", "notification-messages").
-                withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
-
+            withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
     }
 
 
