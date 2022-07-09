@@ -481,12 +481,16 @@ Ext.define('Connector.app.store.Study', {
                 for (var i=0; i < this.studyReportsData.length; i++) {
                     if (study.study_name === this.studyReportsData[i].prot) {
                         var id = this.studyReportsData[i].cds_report_id ? this.studyReportsData[i].cds_report_id.toString() : undefined;
+                        var reportLink = this.studyReportsData[i].cds_report_link ? this.studyReportsData[i].cds_report_link: undefined;
+                        var reportLabel = this.studyReportsData[i].cds_report_label ? this.studyReportsData[i].cds_report_label: undefined;
+
                         var reportObj = this.savedReportsData.filter(function(val) { return val.reportId === id;}, this);
 
                         if (reportObj && reportObj.length > 0) {
                             var report  = {
                                 report_id: id,
-                                label: reportObj && reportObj[0] ? reportObj[0].reportName : undefined,
+                                report_link: reportLink,
+                                label: reportLabel ? reportLabel : (reportObj && reportObj[0] ? reportObj[0].reportName : undefined),
                             };
                             interactiveReports.push(report);
                         }
