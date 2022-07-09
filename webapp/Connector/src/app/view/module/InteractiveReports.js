@@ -21,6 +21,8 @@ Ext.define('Connector.view.module.InteractiveReports', {
                                 '<div class="item-value">',
                                     '<tpl if="report_id && label">',
                                         '<a href="#learn/learn/Report/db%3A{report_id}">{label:htmlEncode}</a>',
+                                    '<tpl elseif="report_link && label">',
+                                        '<a href="{report_link}">{label:htmlEncode}</a>',
                                     '</tpl>',
                                 '</div>',
                             '</td></tr>',

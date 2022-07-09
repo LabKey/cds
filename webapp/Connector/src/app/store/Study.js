@@ -486,16 +486,19 @@ Ext.define('Connector.app.store.Study', {
 
                         var reportObj = this.savedReportsData.filter(function(val) { return val.reportId === id;}, this);
 
-                        if (reportObj && reportObj.length > 0) {
+                        if ((reportObj && reportObj.length > 0) || (reportLink && reportLabel)){
                             var report  = {
                                 report_id: id,
                                 report_link: reportLink,
-                                label: reportLabel ? reportLabel : (reportObj && reportObj[0] ? reportObj[0].reportName : undefined),
+                                label: reportLabel ? reportLabel : (id && reportObj && reportObj[0] ? reportObj[0].reportName : undefined)
                             };
                             interactiveReports.push(report);
                         }
                     }
                 }
+                interactiveReports.sort(function (r1, r2) {
+                    return r1.label.toLowerCase().localeCompare(r2.label.toLowerCase())
+                });
                 study.interactive_reports = interactiveReports;
 
                 var curatedGroups = [];
