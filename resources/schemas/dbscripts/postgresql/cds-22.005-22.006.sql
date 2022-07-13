@@ -14,34 +14,26 @@
  * limitations under the License.
  */
 
-TRUNCATE TABLE cds.import_studyReport;
-DROP TABLE cds.import_studyReport;
+--  Update cds.import_studyReport table
+ALTER TABLE cds.import_studyReport ADD COLUMN cds_report_link TEXT;
+ALTER TABLE cds.import_studyReport ADD COLUMN cds_report_label TEXT;
 
-CREATE TABLE cds.import_studyReport
-(
-    rowId SERIAL,
-    prot VARCHAR(250) NOT NULL,
-    cds_report_id INTEGER,
-    cds_report_link TEXT,
-    cds_report_label TEXT,
-    container ENTITYID NOT NULL,
+ALTER TABLE cds.import_studyReport DROP CONSTRAINT PK_ImportStudyReport; -- Drop 'PRIMARY KEY(prot, cds_report_id, container)' since cds_report_id can now be null if cds_report_link is provided
+ALTER TABLE cds.import_studyReport ALTER COLUMN cds_report_id DROP NOT NULL;
 
-    CONSTRAINT PK_CDS_IMPORT_STUDY_REPORT PRIMARY KEY (rowId),
-    CONSTRAINT UQ_CDS_IMPORT_STUDY_REPORT UNIQUE (prot, cds_report_id, container, cds_report_link, cds_report_label)
-);
+ALTER TABLE cds.import_studyReport ADD COLUMN rowId SERIAL;
+ALTER TABLE cds.import_studyReport ADD CONSTRAINT PK_CDS_IMPORT_STUDY_REPORT PRIMARY KEY (rowId);
 
-TRUNCATE TABLE cds.studyReport;
-DROP TABLE cds.studyReport;
+ALTER TABLE cds.import_studyReport ADD CONSTRAINT UQ_CDS_IMPORT_STUDY_REPORT UNIQUE (prot, cds_report_id, container, cds_report_link, cds_report_label);
 
-CREATE TABLE cds.studyReport
-(
-    rowId SERIAL,
-    prot VARCHAR(250) NOT NULL,
-    cds_report_id INTEGER,
-    cds_report_link TEXT,
-    cds_report_label TEXT,
-    container ENTITYID NOT NULL,
+-- Update cds.studyReport table
+ALTER TABLE cds.studyReport ADD COLUMN cds_report_link TEXT;
+ALTER TABLE cds.studyReport ADD COLUMN cds_report_label TEXT;
 
-    CONSTRAINT PK_CDS_STUDY_REPORT PRIMARY KEY (rowId),
-    CONSTRAINT UQ_CDS_STUDY_REPORT UNIQUE (prot, cds_report_id, container, cds_report_link, cds_report_label)
-);
+ALTER TABLE cds.studyReport DROP CONSTRAINT PK_studyReport; -- Drop 'PRIMARY KEY (prot, cds_report_id, container)' since cds_report_id can now be null if cds_report_link is provided
+ALTER TABLE cds.studyReport ALTER COLUMN cds_report_id DROP NOT NULL;
+
+ALTER TABLE cds.studyReport ADD COLUMN rowId SERIAL;
+ALTER TABLE cds.studyReport ADD CONSTRAINT PK_CDS_STUDY_REPORT PRIMARY KEY (rowId);
+
+ALTER TABLE cds.studyReport ADD CONSTRAINT UQ_CDS_STUDY_REPORT UNIQUE (prot, cds_report_id, container, cds_report_link, cds_report_label);
