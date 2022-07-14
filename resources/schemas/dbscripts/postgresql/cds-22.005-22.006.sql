@@ -16,7 +16,7 @@
 
 --  Update cds.import_studyReport table
 ALTER TABLE cds.import_studyReport ADD COLUMN cds_report_link TEXT;
-ALTER TABLE cds.import_studyReport ADD COLUMN cds_report_label TEXT;
+ALTER TABLE cds.import_studyReport ADD COLUMN cds_report_label VARCHAR(250);
 
 ALTER TABLE cds.import_studyReport DROP CONSTRAINT PK_ImportStudyReport; -- Drop 'PRIMARY KEY(prot, cds_report_id, container)' since cds_report_id can now be null if cds_report_link is provided
 ALTER TABLE cds.import_studyReport ALTER COLUMN cds_report_id DROP NOT NULL;
@@ -28,7 +28,7 @@ ALTER TABLE cds.import_studyReport ADD CONSTRAINT UQ_CDS_IMPORT_STUDY_REPORT UNI
 
 -- Update cds.studyReport table
 ALTER TABLE cds.studyReport ADD COLUMN cds_report_link TEXT;
-ALTER TABLE cds.studyReport ADD COLUMN cds_report_label TEXT;
+ALTER TABLE cds.studyReport ADD COLUMN cds_report_label VARCHAR(250);
 
 ALTER TABLE cds.studyReport DROP CONSTRAINT PK_studyReport; -- Drop 'PRIMARY KEY (prot, cds_report_id, container)' since cds_report_id can now be null if cds_report_link is provided
 ALTER TABLE cds.studyReport ALTER COLUMN cds_report_id DROP NOT NULL;
