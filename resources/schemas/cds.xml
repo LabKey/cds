@@ -1348,15 +1348,21 @@
     </table>
     <table tableName="import_studyReport" tableDbType="TABLE">
         <columns>
+            <column columnName="rowId"/>
             <column columnName="prot"/>
             <column columnName="cds_report_id"/>
+            <column columnName="cds_report_link"/>
+            <column columnName="cds_report_label"/>
             <column columnName="container"/>
         </columns>
     </table>
     <table tableName="studyReport" tableDbType="TABLE">
         <columns>
+            <column columnName="rowId"/>
             <column columnName="prot"/>
             <column columnName="cds_report_id"/>
+            <column columnName="cds_report_link"/>
+            <column columnName="cds_report_label"/>
             <column columnName="container"/>
         </columns>
     </table>

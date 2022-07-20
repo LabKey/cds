@@ -231,9 +231,8 @@
             <source schemaName="cds" queryName="ds_studymab"/>
             <destination schemaName="cds" queryName="studymab" targetOption="truncate"/>
         </transform>
-        <transform id="PopulateStudyReport" type="org.labkey.di.pipeline.TransformTask">
-            <source schemaName="cds" queryName="import_studyReport"/>
-            <destination schemaName="cds" queryName="studyReport" targetOption="truncate"/>
+        <transform id="PopulateStudyReport" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateStudyReportTask"/>
         </transform>
         <transform id="PopulateStudyCuratedGroup" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="cds" queryName="import_studyCuratedGroup"/>

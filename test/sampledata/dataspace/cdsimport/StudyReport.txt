@@ -1,3 +1,4 @@
-prot	cds_report_id
+prot	cds_report_id	cds_report_link	cds_report_label
 q2	110000
 z110	110001
+q2		https://pubmed.ncbi.nlm.nih.gov/	Report A
