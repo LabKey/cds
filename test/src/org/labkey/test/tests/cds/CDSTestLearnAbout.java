@@ -693,13 +693,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 "ysFBFRe696 3WL rfeRKS5 yZLTIG0O8mzniwi8CI0d T6GhTW8Ed1 VrH2GJEau9 EAmrZd3C@mt FSz xwT3JcS F5D7X6K5Rb F3Rp0PUgWF ~QsyPgn bEci " +
                 "GSSIHmqWMz 2caxBEHKF7YcjKXJFT %55 8n hqh90Ulh3T G3pundG62H te1Crk zvKe NgfH36cjlP LMqqU9 JIUY *goaYn3 MqZH 7a09KB9saR R";
 
-        log("Verify Publication Abstract details < 800 chars");
+        log("Verify Publication Abstract details");
         cds.viewLearnAboutPage("Publications");
         LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch("Bekker").clickFirstItem();
         assertTrue(Locator.id("pub-abstract-title").findElement(getDriver()).isDisplayed());
 
-        log("Verify Publication Abstract details > 800 chars");
+        log("Verify Publication Abstract details - Fong");
         cds.viewLearnAboutPage("Publications");
         learnGrid = new LearnGrid(this);
         learnGrid.setSearch("fong").clickFirstItem();

@@ -732,8 +732,9 @@ Ext.define('Connector.view.LearnHeader', {
             text: 'Learn about...'
         },{
             xtype: 'container',
-            items: [this.getDataView(), this.getSearchField()],
+            items: [this.getDataView(), this.getSearchField(), this.getExportButton()],
             height: 56,
+            id: 'learn-header-bar-id',
             cls: 'learn-header-bar',
             layout: {
                 type: 'hbox',
@@ -797,6 +798,95 @@ Ext.define('Connector.view.LearnHeader', {
         return this.searchField;
     },
 
+    getExportButton : function () {
+        if (!this.exportButton) {
+            this.exportButton = {
+                xtype: 'exportbutton',
+                id: 'learn-grid-export-button-id',
+                margin : '17 25 0 25',
+                hidden : true,
+                dimension : undefined,
+                width : 100,
+                listeners: {
+                    exportcsv : this.requestExportCSV,
+                    exportexcel : this.requestExportExcel,
+                    scope: this
+                }
+            }
+        }
+        return this.exportButton;
+    },
+
+    requestExportCSV : function() {
+        let name = Ext.getCmp('learn-grid-export-button-id').dimension.uniqueName;
+        if (name === '[Study]') {
+            this.requestExport(false, 'import_study');
+        }
+    },
+
+    requestExportExcel : function() {
+        Ext.getCmp('learn-grid-export-button-id').dimension.uniqueName;
+    },
+
+    requestExport : function(isExcel, queryName) {
+
+        let  exportParams = {
+            "query.showRows": ['ALL'],
+            columnNames: [],
+            columnAliases: [],
+            variables: [],
+            'X-LABKEY-CSRF': LABKEY.CSRF
+        };
+
+        let dataTabNames = [], schemaNames = [], queryNames = [];
+
+        // let metadatas = this.getModel().get('metadatas');
+
+        dataTabNames.push(datasource);
+        schemaNames.push(metadata.schemaName);
+        queryNames.push(metadata.queryName);
+
+        // Ext.each(this.getModel().getSources(), function (datasource) { // ensure tab ordering
+        //     var metadata = metadatas[datasource];
+        //     if (metadata) {
+        //         dataTabNames.push(datasource);
+        //         schemaNames.push(metadata.schemaName);
+        //         queryNames.push(metadata.queryName);
+        //     }
+        // });
+
+        exportParams.dataTabNames = dataTabNames;
+        exportParams.schemaNames = schemaNames;
+        exportParams.queryNames = queryNames;
+
+
+        // get query results
+        LABKEY.Query.selectRows({
+            schemaName: 'cds.metadata',
+            queryName: queryName,
+            success: function(results) {
+                //export
+                Ext.Ajax.request({
+                    url: LABKEY.ActionURL.buildURL('cds', 'exportLearnGrid'),
+                    method: 'POST',
+                    form: newForm,
+                    isUpload: true,
+                    params: {
+                        isExcel: isExcel,
+                        'X-LABKEY-CSRF': LABKEY.CSRF
+                    },
+                    callback: function (options, success/*, response*/) {
+                        if (!success) {
+                            Ext.Msg.alert('Error', 'Unable to export.');
+                        }
+                    }
+                });
+
+            },
+            scope: this
+        });
+    },
+
     setDimensions : function(dimensions) {
         this.dimensions = dimensions;
         this.getDataView().setDimensions(dimensions);
@@ -807,6 +897,7 @@ Ext.define('Connector.view.LearnHeader', {
             this.getDataView().selectTab(dimUniqueName);
         }
         this.filterStoreFromUrlParams(id, dimension, params);
+        this.showExportButton(dimension);
     },
 
     filterStoreFromUrlParams: function(id, dimension, params)
@@ -814,6 +905,16 @@ Ext.define('Connector.view.LearnHeader', {
         this.updateSearchValue(dimension, params);
         this.updateSort(dimension, params, id != null);
         this.updateFilters(dimension, params, id != null);
+    },
+
+    showExportButton: function(dimension) {
+      if (dimension.hasExport) {
+          Ext.getCmp('learn-grid-export-button-id').show();
+      }
+      else {
+          Ext.getCmp('learn-grid-export-button-id').hide();
+      }
+      Ext.getCmp('learn-grid-export-button-id').dimension = dimension;
     },
 
     updateSearchValue: function(dimension, params) {
