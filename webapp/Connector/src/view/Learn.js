@@ -734,7 +734,6 @@ Ext.define('Connector.view.LearnHeader', {
             xtype: 'container',
             items: [this.getDataView(), this.getSearchField()],
             height: 56,
-            id: 'learn-header-bar-id',
             cls: 'learn-header-bar',
             layout: {
                 type: 'hbox',
