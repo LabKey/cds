@@ -1,0 +1,15 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="assay_identifier"/>
+        <cv:column name="assay_label"/>
+        <cv:column name="assay_short_name"/>
+        <cv:column name="assay_category"/>
+        <cv:column name="assay_detection_platform"/>
+        <cv:column name="assay_body_system_type"/>
+        <cv:column name="assay_body_system_target"/>
+        <cv:column name="assay_general_specimen_type"/>
+        <cv:column name="assay_description"/>
+        <cv:column name="assay_method_description"/>
+        <cv:column name="assay_endpoint_description"/>
+    </cv:columns>
+</cv:customView>

@@ -1,0 +1,15 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="publication_id"/>
+        <cv:column name="publication_title"/>
+        <cv:column name="publication_author_all"/>
+        <cv:column name="publication_journal_short"/>
+        <cv:column name="publication_date"/>
+        <cv:column name="publication_volume"/>
+        <cv:column name="publication_issue"/>
+        <cv:column name="publication_location"/>
+        <cv:column name="publication_pmid"/>
+        <cv:column name="publication_link"/>
+        <cv:column name="publication_abstract"/>
+    </cv:columns>
+</cv:customView>
