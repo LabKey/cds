@@ -174,7 +174,7 @@ public class CDSExportQueryView extends QueryView
         try (ExcelWriter ew = getExcelWriter())
         {
             ew.setCaptionType(getColumnHeaderType());
-            ew.write(response);
+            ew.renderSheetAndWrite(response);
             logAuditEvent("Exported to Excel", ew.getDataRowCount());
         }
     }
