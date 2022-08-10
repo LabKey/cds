@@ -209,9 +209,6 @@ public class CDSExportQueryView extends QueryView
         return "CDS Export";
     }
 
-    /**
-     * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
-     */
     protected String getFilterHeaderString()
     {
         return "Filters";
@@ -383,7 +380,7 @@ public class CDSExportQueryView extends QueryView
                 return currentRow + 1;
             }
 
-            protected Row getRow(Sheet sheet, int rowNumber)
+            private Row getRow(Sheet sheet, int rowNumber)
             {
                 Row row = sheet.getRow(rowNumber);
                 if (row == null)
