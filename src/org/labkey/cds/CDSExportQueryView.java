@@ -312,16 +312,16 @@ public class CDSExportQueryView extends QueryView
                     return;
                 }
 
-                XSSFFont importantFont= (XSSFFont) getWorkbook().createFont();
+                XSSFFont importantFont= (XSSFFont) sheet.getWorkbook().createFont();
                 importantFont.setFontHeightInPoints((short)14);
                 importantFont.setBold(true);
 
-                XSSFFont boldFont= (XSSFFont) getWorkbook().createFont();
+                XSSFFont boldFont= (XSSFFont) sheet.getWorkbook().createFont();
                 boldFont.setBold(true);
 
-                importantStyle = (XSSFCellStyle) getWorkbook().createCellStyle();
+                importantStyle = (XSSFCellStyle) sheet.getWorkbook().createCellStyle();
                 importantStyle.setFont(importantFont);
-                boldStyle = (XSSFCellStyle) getWorkbook().createCellStyle();
+                boldStyle = (XSSFCellStyle) sheet.getWorkbook().createCellStyle();
                 boldStyle.setFont(boldFont);
 
                 int currentRow = writeTOC(sheet, 0);
