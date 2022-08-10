@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
@@ -169,12 +170,11 @@ public class CDSExportQueryView extends QueryView
         return exportColumns;
     }
 
-    public void writeExcelToResponse(HttpServletResponse response) throws IOException
+    public void writeExcelToResponse(HttpServletResponse response)
     {
-        try (ExcelWriter ew = getExcelWriter())
+        try (ExcelWriter ew = getCDSExcelWriter(this))
         {
-            ew.setCaptionType(getColumnHeaderType());
-            ew.renderSheetAndWrite(response);
+            ew.renderWorkbook(response);
             logAuditEvent("Exported to Excel", ew.getDataRowCount());
         }
     }
@@ -212,68 +212,6 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getExcelWriter() throws IOException
-    {
-        ColumnHeaderType headerType = ColumnHeaderType.Caption;
-
-        ExcelWriter ew = getCDSExcelWriter();
-        ew.setFilenamePrefix(getFileNamePrefix());
-        ew.setCaptionType(headerType);
-        ew.setShowInsertableColumnsOnly(false, null);
-        ew.setSheetName(_dataTabNames.get(0)); // the 1st data source sheet
-
-        if (_dataTabNames.size() > 1) // if multiple data sources, write the other data sheets
-        {
-            for (int i = 1; i < _dataTabNames.size(); i++)
-            {
-                String tabName = _dataTabNames.get(i);
-                CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
-                ew.renderNewSheet();
-                QueryView queryView = new QueryView(queryform, null);
-                DataView view = queryView.createDataView();
-                DataRegion rgn = view.getDataRegion();
-                rgn.prepareDisplayColumns(view.getViewContext().getContainer());
-                rgn.setAllowAsync(false);
-                prepareQuerySettings(queryView.getSettings());
-
-                ew.setResultsFactory(()->rgn.getResults(view.getRenderContext()));
-                ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
-                ew.setSheetName(tabName);
-                ew.setAutoSize(true);
-                logAuditEvent("Exported to Excel", ew.getDataRowCount());
-            }
-        }
-
-        ew.renderNewSheet();
-        ColumnInfo filterColumnInfo = new BaseColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
-        ew.setColumns(Collections.singletonList(filterColumnInfo));
-        ew.setSheetName(METADATA_SHEET);
-
-        ew.renderNewSheet();
-        List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
-        ew.setColumns(studyColumns);
-        ew.setResultsFactory(()->getStudies(studyColumns));
-        ew.setSheetName(STUDY_SHEET);
-        ew.setCaptionRowFrozen(false);
-
-        ew.renderNewSheet();
-        List<ColumnInfo> assayColumns = getColumns(ASSAY_COLUMNS);
-        ew.setColumns(assayColumns);
-        ew.setResultsFactory(()->getAssays(assayColumns));
-        ew.setSheetName(ASSAY_SHEET);
-        ew.setCaptionRowFrozen(false);
-
-        ew.renderNewSheet();
-        List<ColumnInfo> variableColumns = getColumns(VARIABLE_COLUMNS);
-        ew.setColumns(variableColumns);
-        ew.setResultsFactory(()->getVariables(variableColumns));
-        ew.setSheetName(VARIABLES_SHEET);
-        ew.setCaptionRowFrozen(false);
-
-        ew.getWorkbook().setActiveSheet(0);
-        return ew;
-    }
-
     protected String getFilterHeaderString()
     {
         return "Filters";
@@ -287,7 +225,7 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getCDSExcelWriter() throws IOException
+    private ExcelWriter getCDSExcelWriter(CDSExportQueryView eqv)
     {
         QueryView queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
         DataView view = queryView.createDataView();
@@ -461,7 +399,72 @@ public class CDSExportQueryView extends QueryView
                 if (!sheet.getSheetName().equals(METADATA_SHEET))
                     super.renderColumnCaptions(sheet, visibleColumns);
             }
+
+            @Override
+            protected void renderSheets(Workbook workbook)
+            {
+                ColumnHeaderType headerType = ColumnHeaderType.Caption;
+
+                setFilenamePrefix(getFileNamePrefix());
+                setCaptionType(headerType);
+                setShowInsertableColumnsOnly(false, null);
+                setSheetName(_dataTabNames.get(0)); // the 1st data source sheet
+
+                if (_dataTabNames.size() > 1) // if multiple data sources, write the other data sheets
+                {
+                    for (int i = 1; i < _dataTabNames.size(); i++)
+                    {
+                        String tabName = _dataTabNames.get(i);
+                        CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
+                        renderNewSheet(workbook);
+                        QueryView qv = new QueryView(queryform, null);
+                        DataView dv = qv.createDataView();
+                        DataRegion dataRegion = dv.getDataRegion();
+                        dataRegion.prepareDisplayColumns(dv.getViewContext().getContainer());
+                        dataRegion.setAllowAsync(false);
+                        prepareQuerySettings(qv.getSettings());
+
+                        setResultsFactory(()->dataRegion.getResults(dv.getRenderContext()));
+                        setDisplayColumns(getExportColumns(dataRegion.getDisplayColumns()));
+                        setSheetName(tabName);
+                        setAutoSize(true);
+                        logAuditEvent("Exported to Excel", getDataRowCount());
+                    }
+                }
+
+                renderNewSheet(workbook);
+                ColumnInfo filterColumnInfo = new BaseColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
+                setColumns(Collections.singletonList(filterColumnInfo));
+                setSheetName(METADATA_SHEET);
+
+                renderNewSheet(workbook);
+                List<ColumnInfo> studyColumns = eqv.getColumns(STUDY_COLUMNS);
+                setColumns(studyColumns);
+                setResultsFactory(()->getStudies(studyColumns));
+                setSheetName(STUDY_SHEET);
+                setCaptionRowFrozen(false);
+
+                renderNewSheet(workbook);
+                List<ColumnInfo> assayColumns = eqv.getColumns(ASSAY_COLUMNS);
+                setColumns(assayColumns);
+                setResultsFactory(()->getAssays(assayColumns));
+                setSheetName(ASSAY_SHEET);
+                setCaptionRowFrozen(false);
+
+                renderNewSheet(workbook);
+                List<ColumnInfo> variableColumns = eqv.getColumns(VARIABLE_COLUMNS);
+                setColumns(variableColumns);
+                setResultsFactory(()->getVariables(variableColumns));
+                setSheetName(VARIABLES_SHEET);
+                setCaptionRowFrozen(false);
+
+                setCaptionType(getColumnHeaderType());
+                renderNewSheet(workbook);
+
+                workbook.setActiveSheet(0);
+            }
         };
+
         ew.setFilenamePrefix(settings.getQueryName());
         ew.setAutoSize(true);
         return ew;
