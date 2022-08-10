@@ -952,12 +952,10 @@ public class CDSController extends SpringActionController
                     List<DisplayColumn> list = new ArrayList<>();
                     for (String s : Arrays.asList("email", "displayname", "firstname", "lastname", "lastlogin", "verification"))
                         list.add(new DataColumn(new BaseColumnInfo(s, JdbcType.valueOf(results.getMetaData().getColumnType(results.findColumn(s))))));
-                    try (ExcelWriter xl = new ExcelWriter(factory, list))
-                    {
-                        xl.setFilenamePrefix("mailmerge");
-                        xl.setAutoSize(true);
-                        xl.renderWorkbook(getViewContext().getResponse());
-                    }
+                    ExcelWriter xl = new ExcelWriter(factory, list);
+                    xl.setFilenamePrefix("mailmerge");
+                    xl.setAutoSize(true);
+                    xl.renderWorkbook(getViewContext().getResponse());
                 }
             }
             return null;

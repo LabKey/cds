@@ -172,11 +172,9 @@ public class CDSExportQueryView extends QueryView
 
     public void writeExcelToResponse(HttpServletResponse response)
     {
-        try (ExcelWriter ew = getCDSExcelWriter(this))
-        {
-            ew.renderWorkbook(response);
-            logAuditEvent("Exported to Excel", ew.getDataRowCount());
-        }
+        ExcelWriter ew = getCDSExcelWriter(this);
+        ew.renderWorkbook(response);
+        logAuditEvent("Exported to Excel", ew.getDataRowCount());
     }
 
     private Results getStudies(List<ColumnInfo> studyColumns)
