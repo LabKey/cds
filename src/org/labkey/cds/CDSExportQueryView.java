@@ -217,9 +217,6 @@ public class CDSExportQueryView extends QueryView
         return false;
     }
 
-    /**
-     * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
-     */
     private ExcelWriter getCDSExcelWriter(CDSExportQueryView eqv)
     {
         QueryView queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
