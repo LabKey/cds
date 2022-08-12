@@ -408,6 +408,7 @@ Ext.define('Connector.view.Learn', {
                             }],
                             success: function(slice) {
                                 if (store) {
+                                    Ext.getCmp('learn-grid-export-button-id').store = store;
                                     store.loadSlice(slice);
                                 }
                             },
@@ -806,6 +807,7 @@ Ext.define('Connector.view.LearnHeader', {
                 margin : '17 25 0 25',
                 hidden : true,
                 dimension : undefined,
+                store : undefined,
                 width : 100,
                 listeners: {
                     exportcsv : this.requestExportCSV,
@@ -818,18 +820,18 @@ Ext.define('Connector.view.LearnHeader', {
     },
 
     requestExportCSV : function() {
-        let exportQuery = Ext.getCmp('learn-grid-export-button-id').dimension.learnExportQuery;
-        let learnGridName = Ext.getCmp('learn-grid-export-button-id').dimension.pluralName;
-        this.requestExport(false, exportQuery, learnGridName);
+        this.requestExport(false);
     },
 
     requestExportExcel : function() {
-        let exportQuery = Ext.getCmp('learn-grid-export-button-id').dimension.learnExportQuery;
-        let learnGridName = Ext.getCmp('learn-grid-export-button-id').dimension.pluralName;
-        this.requestExport(true, exportQuery, learnGridName);
+        this.requestExport(true);
     },
 
-    requestExport : function(isExcel, queryName, learnGridName) {
+    requestExport : function(isExcel) {
+
+        let queryName = Ext.getCmp('learn-grid-export-button-id').dimension.learnExportQuery;
+        let learnGridName = Ext.getCmp('learn-grid-export-button-id').dimension.pluralName;
+        let store = Ext.getCmp('learn-grid-export-button-id').store;
 
         let newForm = document.createElement('form');
         document.body.appendChild(newForm);
@@ -843,6 +845,8 @@ Ext.define('Connector.view.LearnHeader', {
             dataTabNames : [learnGridName],
             schemaNames : ["cds"] ,
             queryNames : [queryName],
+            fieldKeys : [],
+            learnGridFilterValues : store.data.keys
         };
 
         LABKEY.Query.getQueryDetails({
@@ -861,6 +865,7 @@ Ext.define('Connector.view.LearnHeader', {
                             let viewFields = viewInfo[0].fields;
                             exportParams.columnNames = viewFields.map(cols => cols.name);
                             exportParams.columnAliases = viewFields.map(cols => cols.caption);
+                            exportParams.fieldKeys = viewInfo[0].fields.filter(col => col.isKeyField === true)[0].fieldKeyArray;
                         }
                     }
                 }

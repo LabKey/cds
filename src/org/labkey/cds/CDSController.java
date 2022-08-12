@@ -608,7 +608,7 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse());
+                view.writeExcelToResponse(getViewContext().getResponse(), false);
             else
                 view.writeCSVToResponse(getViewContext().getResponse());
             return null;
@@ -661,7 +661,7 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse());
+                view.writeExcelToResponse(getViewContext().getResponse(), false);
             else
                 view.writeCSVToResponse(getViewContext().getResponse());
             return null;
@@ -697,7 +697,7 @@ public class CDSController extends SpringActionController
             };
 
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse());
+                view.writeExcelToResponse(getViewContext().getResponse(), true);
             else
                 view.writeCSVToResponse(getViewContext().getResponse());
             return null;
@@ -798,6 +798,8 @@ public class CDSController extends SpringActionController
         private String _exportInfoContent;
 
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
+        private String[] _fieldKeys;
+        private String[] _learnGridFilterValues;
 
         @Override
         protected @NotNull BindException doBindParameters(PropertyValues in)
@@ -965,6 +967,26 @@ public class CDSController extends SpringActionController
         public String getExportInfoContent()
         {
             return _exportInfoContent;
+        }
+
+        public String[] getFieldKeys()
+        {
+            return _fieldKeys;
+        }
+
+        public void setFieldKeys(String[] fieldKeys)
+        {
+            _fieldKeys = fieldKeys;
+        }
+
+        public String[] getLearnGridFilterValues()
+        {
+            return _learnGridFilterValues;
+        }
+
+        public void setLearnGridFilterValues(String[] learnGridFilterValues)
+        {
+            _learnGridFilterValues = learnGridFilterValues;
         }
     }
 

@@ -29,8 +29,10 @@ import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.*;
 import org.labkey.api.query.FieldKey;
+import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
+import org.labkey.api.query.UserSchema;
 import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.StringUtilsLabKey;
 import org.labkey.api.view.DataView;
@@ -111,6 +113,8 @@ public class CDSExportQueryView extends QueryView
     private final List<String> _dataTabNames;
     private final String _exportInfoTitle;
     private final String _exportInfoContent;
+    private final List<String> _fieldKeys;
+    private final List<String> _learnGridFilterValues;
 
     public CDSExportQueryView(CDSController.ExportForm form, org.springframework.validation.Errors errors)
     {
@@ -126,6 +130,8 @@ public class CDSExportQueryView extends QueryView
         _dataTabNames = getFormValues(form.getDataTabNames(), false);
         _exportInfoTitle = form.getExportInfoTitle();
         _exportInfoContent = form.getExportInfoContent();
+        _fieldKeys = Arrays.asList(form.getFieldKeys());
+        _learnGridFilterValues = form.getLearnGridFilterValues() != null ? Arrays.asList(form.getLearnGridFilterValues()) : null;
     }
 
     private List<String> getFormValues(String[] formValues, boolean sort)
@@ -169,9 +175,9 @@ public class CDSExportQueryView extends QueryView
         return exportColumns;
     }
 
-    public void writeExcelToResponse(HttpServletResponse response) throws IOException
+    public void writeExcelToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
     {
-        try (ExcelWriter ew = getExcelWriter())
+        try (ExcelWriter ew = getExcelWriter(isLearnGrid))
         {
             ew.setCaptionType(getColumnHeaderType());
             ew.write(response);
@@ -212,65 +218,68 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getExcelWriter() throws IOException
+    private ExcelWriter getExcelWriter(boolean isLearnGrid) throws IOException
     {
         ColumnHeaderType headerType = ColumnHeaderType.Caption;
 
-        ExcelWriter ew = getCDSExcelWriter();
+        ExcelWriter ew = getCDSExcelWriter(isLearnGrid);
         ew.setFilenamePrefix(getFileNamePrefix());
         ew.setCaptionType(headerType);
         ew.setShowInsertableColumnsOnly(false, null);
         ew.setSheetName(_dataTabNames.get(0)); // the 1st data source sheet
 
-        if (_dataTabNames.size() > 1) // if multiple data sources, write the other data sheets
+        if (!isLearnGrid)
         {
-            for (int i = 1; i < _dataTabNames.size(); i++)
+            if (_dataTabNames.size() > 1) // if multiple data sources, write the other data sheets
             {
-                String tabName = _dataTabNames.get(i);
-                CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
-                ew.renderNewSheet();
-                QueryView queryView = new QueryView(queryform, null);
-                DataView view = queryView.createDataView();
-                DataRegion rgn = view.getDataRegion();
-                rgn.prepareDisplayColumns(view.getViewContext().getContainer());
-                rgn.setAllowAsync(false);
-                prepareQuerySettings(queryView.getSettings());
+                for (int i = 1; i < _dataTabNames.size(); i++)
+                {
+                    String tabName = _dataTabNames.get(i);
+                    CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
+                    ew.renderNewSheet();
+                    QueryView queryView = new QueryView(queryform, null);
+                    DataView view = queryView.createDataView();
+                    DataRegion rgn = view.getDataRegion();
+                    rgn.prepareDisplayColumns(view.getViewContext().getContainer());
+                    rgn.setAllowAsync(false);
+                    prepareQuerySettings(queryView.getSettings());
 
-                ew.setResultsFactory(()->rgn.getResults(view.getRenderContext()));
-                ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
-                ew.setSheetName(tabName);
-                ew.setAutoSize(true);
-                logAuditEvent("Exported to Excel", ew.getDataRowCount());
+                    ew.setResultsFactory(() -> rgn.getResults(view.getRenderContext()));
+                    ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
+                    ew.setSheetName(tabName);
+                    ew.setAutoSize(true);
+                    logAuditEvent("Exported to Excel", ew.getDataRowCount());
+                }
             }
+
+            ew.renderNewSheet();
+            ColumnInfo filterColumnInfo = new BaseColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
+            ew.setColumns(Collections.singletonList(filterColumnInfo));
+            ew.setSheetName(METADATA_SHEET);
+
+            ew.renderNewSheet();
+            List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
+            ew.setColumns(studyColumns);
+            ew.setResultsFactory(() -> getStudies(studyColumns));
+            ew.setSheetName(STUDY_SHEET);
+            ew.setCaptionRowFrozen(false);
+
+            ew.renderNewSheet();
+            List<ColumnInfo> assayColumns = getColumns(ASSAY_COLUMNS);
+            ew.setColumns(assayColumns);
+            ew.setResultsFactory(() -> getAssays(assayColumns));
+            ew.setSheetName(ASSAY_SHEET);
+            ew.setCaptionRowFrozen(false);
+
+            ew.renderNewSheet();
+            List<ColumnInfo> variableColumns = getColumns(VARIABLE_COLUMNS);
+            ew.setColumns(variableColumns);
+            ew.setResultsFactory(() -> getVariables(variableColumns));
+            ew.setSheetName(VARIABLES_SHEET);
+            ew.setCaptionRowFrozen(false);
+
+            ew.getWorkbook().setActiveSheet(0);
         }
-
-        ew.renderNewSheet();
-        ColumnInfo filterColumnInfo = new BaseColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
-        ew.setColumns(Collections.singletonList(filterColumnInfo));
-        ew.setSheetName(METADATA_SHEET);
-
-        ew.renderNewSheet();
-        List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
-        ew.setColumns(studyColumns);
-        ew.setResultsFactory(()->getStudies(studyColumns));
-        ew.setSheetName(STUDY_SHEET);
-        ew.setCaptionRowFrozen(false);
-
-        ew.renderNewSheet();
-        List<ColumnInfo> assayColumns = getColumns(ASSAY_COLUMNS);
-        ew.setColumns(assayColumns);
-        ew.setResultsFactory(()->getAssays(assayColumns));
-        ew.setSheetName(ASSAY_SHEET);
-        ew.setCaptionRowFrozen(false);
-
-        ew.renderNewSheet();
-        List<ColumnInfo> variableColumns = getColumns(VARIABLE_COLUMNS);
-        ew.setColumns(variableColumns);
-        ew.setResultsFactory(()->getVariables(variableColumns));
-        ew.setSheetName(VARIABLES_SHEET);
-        ew.setCaptionRowFrozen(false);
-
-        ew.getWorkbook().setActiveSheet(0);
         return ew;
     }
 
@@ -287,14 +296,31 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getCDSExcelWriter() throws IOException
+    private ExcelWriter getCDSExcelWriter(boolean isLearnGrid) throws IOException
     {
-        QueryView queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
+        QueryView queryView;
+        QuerySettings settings;
+
+        if (isLearnGrid)
+        {
+            UserSchema schema = QueryService.get().getUserSchema(getViewContext().getUser(), getViewContext().getContainer(), "CDS");
+            settings = schema.getSettings(getViewContext(), "query", _tabQueryForms.get(_dataTabNames.get(0)).getQueryName());
+            if (_learnGridFilterValues != null  && _learnGridFilterValues.size() > 0)
+            {
+                settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), _learnGridFilterValues, CompareType.CONTAINS_ONE_OF));
+            }
+            queryView = schema.createView(getViewContext(), settings, null);
+        }
+        else
+        {
+            queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
+            settings = queryView.getSettings();
+        }
+
         DataView view = queryView.createDataView();
         DataRegion rgn = view.getDataRegion();
         rgn.prepareDisplayColumns(view.getViewContext().getContainer());
         rgn.setAllowAsync(false);
-        QuerySettings settings = queryView.getSettings();
         prepareQuerySettings(settings);
 
         RenderContext rc = view.getRenderContext();
