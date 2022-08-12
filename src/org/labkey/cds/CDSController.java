@@ -955,7 +955,7 @@ public class CDSController extends SpringActionController
                     ExcelWriter xl = new ExcelWriter(factory, list);
                     xl.setFilenamePrefix("mailmerge");
                     xl.setAutoSize(true);
-                    xl.write(getViewContext().getResponse());
+                    xl.renderWorkbook(getViewContext().getResponse());
                 }
             }
             return null;
