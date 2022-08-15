@@ -259,6 +259,7 @@ Ext.define('Connector.view.Learn', {
         store.clearFilter();
         this.filterStoreBySearchAndColumnFilter(store);
         this.sortStore(store);
+        Ext.getCmp('learn-grid-export-button-id').store = store;
     },
 
     sortAndFilterStoreDelayed: function(store) {
@@ -417,6 +418,7 @@ Ext.define('Connector.view.Learn', {
                     }, this);
                 }
                 else {
+                    Ext.getCmp('learn-grid-export-button-id').store = store;
                     store.loadSlice();
                 }
 
@@ -865,7 +867,13 @@ Ext.define('Connector.view.LearnHeader', {
                             let viewFields = viewInfo[0].fields;
                             exportParams.columnNames = viewFields.map(cols => cols.name);
                             exportParams.columnAliases = viewFields.map(cols => cols.caption);
-                            exportParams.fieldKeys = viewInfo[0].fields.filter(col => col.isKeyField === true)[0].fieldKeyArray;
+
+                            if (learnGridName === 'MAbs') {
+                                exportParams.fieldKeys = ['mab_mix_label'];
+                            }
+                            else {
+                                exportParams.fieldKeys = viewFields.filter(col => col.isKeyField === true)[0].fieldKeyArray;
+                            }
                         }
                     }
                 }

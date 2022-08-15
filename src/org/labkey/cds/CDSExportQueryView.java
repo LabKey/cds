@@ -177,7 +177,34 @@ public class CDSExportQueryView extends QueryView
 
     public void writeExcelToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
     {
-        try (ExcelWriter ew = getExcelWriter(isLearnGrid))
+        QueryView queryView;
+        QuerySettings settings;
+
+        if (isLearnGrid)
+        {
+            UserSchema schema = QueryService.get().getUserSchema(getViewContext().getUser(), getViewContext().getContainer(), "CDS");
+            settings = schema.getSettings(getViewContext(), "query", _tabQueryForms.get(_dataTabNames.get(0)).getQueryName());
+            if (_learnGridFilterValues != null  && _learnGridFilterValues.size() > 0)
+            {
+                List<Integer> productIds;
+                if (_dataTabNames.get(0).equalsIgnoreCase("products"))
+                {
+                    productIds = _learnGridFilterValues.stream().map(value -> Integer.parseInt(value)).collect(Collectors.toList());
+                    settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), productIds, CompareType.IN));
+                }
+                else
+                {
+                    settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), _learnGridFilterValues, CompareType.IN));
+                }
+            }
+            queryView = schema.createView(getViewContext(), settings, null);
+        }
+        else
+        {
+            queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
+        }
+
+        try (ExcelWriter ew = getExcelWriter(isLearnGrid, queryView))
         {
             ew.setCaptionType(getColumnHeaderType());
             ew.write(response);
@@ -218,11 +245,11 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getExcelWriter(boolean isLearnGrid) throws IOException
+    private ExcelWriter getExcelWriter(boolean isLearnGrid, QueryView qview) throws IOException
     {
         ColumnHeaderType headerType = ColumnHeaderType.Caption;
 
-        ExcelWriter ew = getCDSExcelWriter(isLearnGrid);
+        ExcelWriter ew = getCDSExcelWriter(qview);
         ew.setFilenamePrefix(getFileNamePrefix());
         ew.setCaptionType(headerType);
         ew.setShowInsertableColumnsOnly(false, null);
@@ -296,27 +323,9 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getCDSExcelWriter(boolean isLearnGrid) throws IOException
+    private ExcelWriter getCDSExcelWriter(QueryView queryView) throws IOException
     {
-        QueryView queryView;
-        QuerySettings settings;
-
-        if (isLearnGrid)
-        {
-            UserSchema schema = QueryService.get().getUserSchema(getViewContext().getUser(), getViewContext().getContainer(), "CDS");
-            settings = schema.getSettings(getViewContext(), "query", _tabQueryForms.get(_dataTabNames.get(0)).getQueryName());
-            if (_learnGridFilterValues != null  && _learnGridFilterValues.size() > 0)
-            {
-                settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), _learnGridFilterValues, CompareType.CONTAINS_ONE_OF));
-            }
-            queryView = schema.createView(getViewContext(), settings, null);
-        }
-        else
-        {
-            queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
-            settings = queryView.getSettings();
-        }
-
+        QuerySettings settings = queryView.getSettings();
         DataView view = queryView.createDataView();
         DataRegion rgn = view.getDataRegion();
         rgn.prepareDisplayColumns(view.getViewContext().getContainer());
