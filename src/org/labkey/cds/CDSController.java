@@ -608,9 +608,9 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse(), false);
+                view.writeExcelToResponse(getViewContext().getResponse(), false, view.getQueryView(false, null));
             else
-                view.writeCSVToResponse(getViewContext().getResponse());
+                view.writeCSVToResponse(getViewContext().getResponse(), false);
             return null;
         }
 
@@ -661,9 +661,9 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse(), false);
+                view.writeExcelToResponse(getViewContext().getResponse(), false, view.getQueryView(false, null));
             else
-                view.writeCSVToResponse(getViewContext().getResponse());
+                view.writeCSVToResponse(getViewContext().getResponse(), false);
             return null;
         }
 
@@ -697,9 +697,9 @@ public class CDSController extends SpringActionController
             };
 
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse(), true);
+                view.writeExcelToResponse(getViewContext().getResponse(), true, view.getQueryView(true, null));
             else
-                view.writeCSVToResponse(getViewContext().getResponse());
+                view.writeCSVToResponse(getViewContext().getResponse(), true);
             return null;
         }
 

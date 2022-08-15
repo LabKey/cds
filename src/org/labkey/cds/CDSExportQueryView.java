@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
+import org.jetbrains.annotations.Nullable;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.*;
 import org.labkey.api.query.FieldKey;
@@ -175,7 +176,7 @@ public class CDSExportQueryView extends QueryView
         return exportColumns;
     }
 
-    public void writeExcelToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
+    public QueryView getQueryView(boolean isLearnGrid, @Nullable CDSController.CDSExportQueryForm queryForm)
     {
         QueryView queryView;
         QuerySettings settings;
@@ -201,9 +202,13 @@ public class CDSExportQueryView extends QueryView
         }
         else
         {
-            queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
+            queryView = new QueryView((null == queryForm) ? _tabQueryForms.get(_dataTabNames.get(0)) : queryForm, null);
         }
+        return queryView;
+    }
 
+    public void writeExcelToResponse(HttpServletResponse response, boolean isLearnGrid, QueryView queryView) throws IOException
+    {
         try (ExcelWriter ew = getExcelWriter(isLearnGrid, queryView))
         {
             ew.setCaptionType(getColumnHeaderType());
@@ -710,14 +715,14 @@ public class CDSExportQueryView extends QueryView
         }
     }
 
-    private void writeCSVQueries(ZipOutputStream out) throws IOException
+    private void writeCSVQueries(ZipOutputStream out, boolean isLearnGrid) throws IOException
     {
         for (String tabName : _dataTabNames)
         {
-            CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
+            CDSController.CDSExportQueryForm queryForm = _tabQueryForms.get(tabName);
             ZipEntry entry = new ZipEntry(tabName + ".csv");
             out.putNextEntry(entry);
-            QueryView queryView = new QueryView(queryform, null);
+            QueryView queryView = getQueryView(isLearnGrid, queryForm);
             DataView view = queryView.createDataView();
             DataRegion rgn = view.getDataRegion();
             rgn.prepareDisplayColumns(view.getViewContext().getContainer());
@@ -763,16 +768,20 @@ public class CDSExportQueryView extends QueryView
         writeGridCSV(VARIABLES_SHEET, ()->getVariables(getColumns(VARIABLE_COLUMNS)), out);
     }
 
-    public void writeCSVToResponse(HttpServletResponse response) throws IOException
+    public void writeCSVToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
     {
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + getFileNamePrefix() + "_" + FileUtil.getTimestamp() + ".zip\"");
 
         try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
         {
-            writeCSVQueries(out);
-            writeMetadataTxt(out);
-            writeExtraCSVs(out);
+            writeCSVQueries(out, isLearnGrid);
+
+            if (!isLearnGrid)
+            {
+                writeMetadataTxt(out);
+                writeExtraCSVs(out);
+            }
         }
     }
 
