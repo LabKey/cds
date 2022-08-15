@@ -697,21 +697,20 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Publications");
         LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch("Bekker").clickFirstItem();
-        assertTrue(Locator.id("pub-abstract-title").findElement(getDriver()).isDisplayed());
+        assertTrue(Locator.tagWithText("h3", "Abstract").findElement(getDriver()).isDisplayed());
 
         log("Verify Publication Abstract details - Fong");
         cds.viewLearnAboutPage("Publications");
         learnGrid = new LearnGrid(this);
         learnGrid.setSearch("fong").clickFirstItem();
-        waitForElement(Locator.id("pub-abstract-title"));
-        assertTrue(Locator.id("pub-abstract-title").findElement(getDriver()).isDisplayed());
-        assertTrue(Locator.id("pub-abstract-title").followingSibling("div").findElement(getDriver()).getText().contains(Fong_Abstract));
+        waitForElement(Locator.tagWithText("h3", "Abstract"));
+        assertTrue(Locator.tagWithText("h3", "Abstract").followingSibling("p").findElement(getDriver()).getText().contains(Fong_Abstract));
 
         log("Verify No Publication Abstract details");
         cds.viewLearnAboutPage("Publications");
         learnGrid = new LearnGrid(this);
         learnGrid.setSearch("mayer").clickFirstItem();
-        assertFalse(isElementPresent(Locator.id("pub-abstract-title")));
+        assertFalse(isElementPresent(Locator.tagWithText("h3", "Abstract")));
     }
 
     @Test
