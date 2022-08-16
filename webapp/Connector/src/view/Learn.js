@@ -831,9 +831,10 @@ Ext.define('Connector.view.LearnHeader', {
 
     requestExport : function(isExcel) {
 
-        var queryName = Ext.getCmp('learn-grid-export-button-id').dimension.learnExportQuery;
-        var learnGridName = Ext.getCmp('learn-grid-export-button-id').dimension.pluralName;
-        var store = Ext.getCmp('learn-grid-export-button-id').store;
+        var exportButtonCmp = Ext.getCmp('learn-grid-export-button-id');
+        var queryName = exportButtonCmp.dimension.learnExportQuery;
+        var learnGridName = exportButtonCmp.dimension.pluralName;
+        var store = exportButtonCmp.store;
 
         var newForm = document.createElement('form');
         document.body.appendChild(newForm);
