@@ -831,14 +831,14 @@ Ext.define('Connector.view.LearnHeader', {
 
     requestExport : function(isExcel) {
 
-        let queryName = Ext.getCmp('learn-grid-export-button-id').dimension.learnExportQuery;
-        let learnGridName = Ext.getCmp('learn-grid-export-button-id').dimension.pluralName;
-        let store = Ext.getCmp('learn-grid-export-button-id').store;
+        var queryName = Ext.getCmp('learn-grid-export-button-id').dimension.learnExportQuery;
+        var learnGridName = Ext.getCmp('learn-grid-export-button-id').dimension.pluralName;
+        var store = Ext.getCmp('learn-grid-export-button-id').store;
 
-        let newForm = document.createElement('form');
+        var newForm = document.createElement('form');
         document.body.appendChild(newForm);
 
-        let exportParams = {
+        var exportParams = {
             "query.showRows": ['ALL'],
             'X-LABKEY-CSRF': LABKEY.CSRF,
             isExcel : isExcel,
@@ -861,10 +861,10 @@ Ext.define('Connector.view.LearnHeader', {
                 if (details) {
                     if (details.views) {
 
-                        let viewInfo = details.views.filter(view => view.name === 'LearnGridExportView');
+                        var viewInfo = details.views.filter(view => view.name === 'LearnGridExportView');
 
                         if (viewInfo && viewInfo.length === 1) {
-                            let viewFields = viewInfo[0].fields;
+                            var viewFields = viewInfo[0].fields;
                             exportParams.columnNames = viewFields.map(cols => cols.name);
                             exportParams.columnAliases = viewFields.map(cols => cols.caption);
 
