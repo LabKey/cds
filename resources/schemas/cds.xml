@@ -340,47 +340,23 @@
     <table tableName="import_MAbMetadata" tableDbType="TABLE">
         <columns>
             <column columnName="container"/>
-            <column columnName="mab_id">
-                <columnTitle>MAb ID</columnTitle>
-            </column>
-            <column columnName="mab_name_std">
-                <columnTitle>MAb Name</columnTitle>
-            </column>
-            <column columnName="mab_lanlid">
-                <columnTitle>LANL ID</columnTitle>
-            </column>
-            <column columnName="mab_hxb2_location">
-                <columnTitle>HXB2 Location</columnTitle>
-            </column>
-            <column columnName="mab_ab_binding_type">
-                <columnTitle>MAb Binding Type</columnTitle>
-            </column>
-            <column columnName="mab_isotype">
-                <columnTitle>MAb Isotype</columnTitle>
-            </column>
-            <column columnName="mab_donorid">
-                <columnTitle>MAb Donor ID</columnTitle>
-            </column>
-            <column columnName="mab_donor_species">
-                <columnTitle>MAb Donor Species</columnTitle>
-            </column>
-            <column columnName="mab_donor_clade">
-                <columnTitle>MAb Donor Clade</columnTitle>
-            </column>
+            <column columnName="mab_id"/>
+            <column columnName="mab_name_std"/>
+            <column columnName="mab_lanlid"/>
+            <column columnName="mab_hxb2_location"/>
+            <column columnName="mab_ab_binding_type"/>
+            <column columnName="mab_isotype"/>
+            <column columnName="mab_donorid"/>
+            <column columnName="mab_donor_species"/>
+            <column columnName="mab_donor_clade"/>
         </columns>
     </table>
     <table tableName="import_MAbMixMetadata" tableDbType="TABLE">
         <columns>
             <column columnName="container"/>
-            <column columnName="mab_mix_id">
-                <columnTitle>MAb Mixture ID</columnTitle>
-            </column>
-            <column columnName="mab_mix_name_std">
-                <columnTitle>MAb or Mixture Standardized Name</columnTitle>
-            </column>
-            <column columnName="mab_mix_label">
-                <columnTitle>MAb Label</columnTitle>
-            </column>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_mix_name_std"/>
+            <column columnName="mab_mix_label"/>
             <column columnName="mab_mix_type"/>
             <column columnName="mab_mix_name_other"/>
             <column columnName="mab_mix_lanlid"/>
@@ -389,12 +365,8 @@
     <table tableName="import_MAbMix" tableDbType="TABLE">
         <columns>
             <column columnName="container"/>
-            <column columnName="mab_mix_id">
-                <columnTitle>MAb Mixture ID</columnTitle>
-            </column>
-            <column columnName="mab_id">
-                <columnTitle>MAb ID</columnTitle>
-            </column>
+            <column columnName="mab_mix_id"/>
+            <column columnName="mab_id"/>
         </columns>
     </table>
     <table tableName="import_nabantigen" tableDbType="TABLE">
