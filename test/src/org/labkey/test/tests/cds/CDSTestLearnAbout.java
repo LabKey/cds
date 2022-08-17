@@ -693,25 +693,24 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 "ysFBFRe696 3WL rfeRKS5 yZLTIG0O8mzniwi8CI0d T6GhTW8Ed1 VrH2GJEau9 EAmrZd3C@mt FSz xwT3JcS F5D7X6K5Rb F3Rp0PUgWF ~QsyPgn bEci " +
                 "GSSIHmqWMz 2caxBEHKF7YcjKXJFT %55 8n hqh90Ulh3T G3pundG62H te1Crk zvKe NgfH36cjlP LMqqU9 JIUY *goaYn3 MqZH 7a09KB9saR R";
 
-        log("Verify Publication Abstract details < 800 chars");
+        log("Verify Publication Abstract details");
         cds.viewLearnAboutPage("Publications");
         LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch("Bekker").clickFirstItem();
-        assertTrue(Locator.id("pub-abstract-title").findElement(getDriver()).isDisplayed());
+        assertTrue(Locator.tagWithText("h3", "Abstract").findElement(getDriver()).isDisplayed());
 
-        log("Verify Publication Abstract details > 800 chars");
+        log("Verify Publication Abstract details - Fong");
         cds.viewLearnAboutPage("Publications");
         learnGrid = new LearnGrid(this);
         learnGrid.setSearch("fong").clickFirstItem();
-        waitForElement(Locator.id("pub-abstract-title"));
-        assertTrue(Locator.id("pub-abstract-title").findElement(getDriver()).isDisplayed());
-        assertTrue(Locator.id("pub-abstract-title").followingSibling("div").findElement(getDriver()).getText().contains(Fong_Abstract));
+        waitForElement(Locator.tagWithText("h3", "Abstract"));
+        assertTrue(Locator.tagWithText("h3", "Abstract").followingSibling("p").findElement(getDriver()).getText().contains(Fong_Abstract));
 
         log("Verify No Publication Abstract details");
         cds.viewLearnAboutPage("Publications");
         learnGrid = new LearnGrid(this);
         learnGrid.setSearch("mayer").clickFirstItem();
-        assertFalse(isElementPresent(Locator.id("pub-abstract-title")));
+        assertFalse(isElementPresent(Locator.tagWithText("h3", "Abstract")));
     }
 
     @Test

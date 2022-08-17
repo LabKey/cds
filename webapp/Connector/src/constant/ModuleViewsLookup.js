@@ -24,7 +24,6 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	studymabs: 'app.module.studymabs',
     mabdetails: 'app.module.mabdetails',
     publicationdetails: 'app.module.publicationdetails',
-    publicationabstract: 'app.module.publicationabstract',
 	assayheader: 'app.module.assayheader',
     assayanalytelist: 'app.module.assayanalytelist',
 	variablelist: 'app.module.variablelist',
