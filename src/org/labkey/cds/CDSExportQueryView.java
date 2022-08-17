@@ -131,7 +131,7 @@ public class CDSExportQueryView extends QueryView
         _dataTabNames = getFormValues(form.getDataTabNames(), false);
         _exportInfoTitle = form.getExportInfoTitle();
         _exportInfoContent = form.getExportInfoContent();
-        _fieldKeys = Arrays.asList(form.getFieldKeys());
+        _fieldKeys = form.getFieldKeys() != null ? Arrays.asList(form.getFieldKeys()) : null;
         _learnGridFilterValues = form.getLearnGridFilterValues() != null ? Arrays.asList(form.getLearnGridFilterValues()) : null;
     }
 
