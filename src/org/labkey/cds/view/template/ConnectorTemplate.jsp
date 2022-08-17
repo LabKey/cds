@@ -362,7 +362,6 @@
             srcPath + "/app/view/module/InteractiveReports.js",
             srcPath + "/app/view/module/CuratedGroups.js",
             srcPath + "/app/view/module/AssayTutorial.js",
-            srcPath + "/app/view/module/PublicationAbstract.js",
 
             srcPath + "/Application.js",
 
