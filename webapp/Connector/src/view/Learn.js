@@ -862,18 +862,18 @@ Ext.define('Connector.view.LearnHeader', {
                 if (details) {
                     if (details.views) {
 
-                        var viewInfo = details.views.filter(view => view.name === 'LearnGridExportView');
+                        var viewInfo = details.views.filter(function(view) { return view.name === 'LearnGridExportView' }, this);
 
                         if (viewInfo && viewInfo.length === 1) {
                             var viewFields = viewInfo[0].fields;
-                            exportParams.columnNames = viewFields.map(cols => cols.name);
-                            exportParams.columnAliases = viewFields.map(cols => cols.caption);
+                            exportParams.columnNames = viewFields.map(function(cols) { return cols.name });
+                            exportParams.columnAliases = viewFields.map(function(cols) { return cols.caption });
 
                             if (learnGridName === 'MAbs') {
                                 exportParams.fieldKeys = ['mab_mix_label'];
                             }
                             else {
-                                exportParams.fieldKeys = viewFields.filter(col => col.isKeyField === true)[0].fieldKeyArray;
+                                exportParams.fieldKeys = viewFields.filter(function(col) { return col.isKeyField === true }, this)[0].fieldKeyArray;
                             }
                         }
                     }
