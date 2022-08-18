@@ -715,23 +715,39 @@ public class CDSExportQueryView extends QueryView
         }
     }
 
-    private void writeCSVQueries(ZipOutputStream out, boolean isLearnGrid) throws IOException
+    private TSVGridWriter getTSVGridWriter(boolean isLearnGrid, @Nullable CDSController.CDSExportQueryForm queryForm)
+    {
+        QueryView queryView = getQueryView(isLearnGrid, queryForm);
+        DataView view = queryView.createDataView();
+        DataRegion rgn = view.getDataRegion();
+        rgn.prepareDisplayColumns(view.getViewContext().getContainer());
+        rgn.setAllowAsync(false);
+        prepareQuerySettings(queryView.getSettings());
+
+        return new TSVGridWriter(()->rgn.getResults(view.getRenderContext()), getExportColumns(rgn.getDisplayColumns()));
+    }
+
+    private void writeLearnGridToCSV(boolean isLearnGrid) throws IOException
+    {
+        try (TSVGridWriter tsv = getTSVGridWriter(isLearnGrid, null))
+        {
+            tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
+            tsv.setFilenamePrefix(getFileNamePrefix());
+            logAuditEvent("Exported Learn '" + _dataTabNames.get(0) + "' to CSV", tsv.getDataRowCount());
+            tsv.write(getViewContext().getResponse());
+        }
+    }
+
+    private void writeCSVQueries(ZipOutputStream out) throws IOException
     {
         for (String tabName : _dataTabNames)
         {
-            CDSController.CDSExportQueryForm queryForm = _tabQueryForms.get(tabName);
             ZipEntry entry = new ZipEntry(tabName + ".csv");
             out.putNextEntry(entry);
-            QueryView queryView = getQueryView(isLearnGrid, queryForm);
-            DataView view = queryView.createDataView();
-            DataRegion rgn = view.getDataRegion();
-            rgn.prepareDisplayColumns(view.getViewContext().getContainer());
-            rgn.setAllowAsync(false);
-            prepareQuerySettings(queryView.getSettings());
 
             final File tmpFile;
 
-            try (TSVGridWriter tsv = new TSVGridWriter(()->rgn.getResults(view.getRenderContext()), getExportColumns(rgn.getDisplayColumns())))
+            try (TSVGridWriter tsv = getTSVGridWriter(false, _tabQueryForms.get(tabName)))
             {
                 tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
                 tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
@@ -770,15 +786,18 @@ public class CDSExportQueryView extends QueryView
 
     public void writeCSVToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
     {
-        response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + getFileNamePrefix() + "_" + FileUtil.getTimestamp() + ".zip\"");
-
-        try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
+        if (isLearnGrid)
         {
-            writeCSVQueries(out, isLearnGrid);
+            writeLearnGridToCSV(true);
+        }
+        else
+        {
+            response.setContentType("application/zip");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + getFileNamePrefix() + "_" + FileUtil.getTimestamp() + ".zip\"");
 
-            if (!isLearnGrid)
+            try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
             {
+                writeCSVQueries(out);
                 writeMetadataTxt(out);
                 writeExtraCSVs(out);
             }

@@ -691,7 +691,7 @@ public class CDSController extends SpringActionController
                 @Override
                 protected String getFilterHeaderString()
                 {
-                    return "Subject filters applied to exported data:";
+                    return "Learn grid filters applied to exported data:";
                 }
 
             };
