@@ -849,7 +849,8 @@ Ext.define('Connector.view.LearnHeader', {
             schemaNames : ["cds"] ,
             queryNames : [queryName],
             fieldKeys : [],
-            learnGridFilterValues : store.data.keys
+            learnGridFilterValues : store.data.keys,
+            filterStrings: []
         };
 
         LABKEY.Query.getQueryDetails({
@@ -871,6 +872,17 @@ Ext.define('Connector.view.LearnHeader', {
 
                             if (learnGridName === 'MAbs') {
                                 exportParams.fieldKeys = ['mab_mix_label'];
+
+                                var variables = [];
+                                Ext.each(viewFields, function(field) {
+                                    variables.push(field.caption + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.description);
+                                });
+                                exportParams.variables = variables;
+
+                                var filterStrs = [];
+                                filterStrs.push("Selected MAb/Mixture(s)");
+                                filterStrs.push(Connector.view.MabGrid.ColumnMap['mab_mix_name_std'].filterLabel + ": " + store.data.keys.join(', '));
+                                exportParams.filterStrings = filterStrs.join(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
                             }
                             else {
                                 exportParams.fieldKeys = viewFields.filter(function(col) { return col.isKeyField === true }, this)[0].fieldKeyArray;
@@ -892,7 +904,10 @@ Ext.define('Connector.view.LearnHeader', {
                         }
                     }
                 });
-            }
+            },
+            failure: function() {
+                Ext.Msg.alert('Error', "Error exporting Learn page '" + learnGridName + "'");
+            },
         });
     },
 
