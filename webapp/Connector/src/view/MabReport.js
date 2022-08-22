@@ -62,8 +62,8 @@ Ext.define('Connector.view.MabReport', {
                             xtype: 'actiontitle',
                             text: '',
                             buttons: [
-                                this.getExportButton(),
-                                this.getViewGridButton()
+                                this.getViewGridButton(),
+                                this.getExportButton()
                             ]
                     }]
             });
@@ -76,7 +76,7 @@ Ext.define('Connector.view.MabReport', {
             this.exportButton = {
                 xtype: 'exportbutton',
                 id: 'mab-grid-export-btn-breadcrumb',
-                // margin : '17 25 0 25',
+                margin : '0 0 0 28',
                 hidden : false,
                 width : 100,
                 listeners: {
