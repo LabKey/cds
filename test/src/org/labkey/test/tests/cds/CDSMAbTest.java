@@ -310,17 +310,20 @@ public class CDSMAbTest extends CDSGroupBaseTest
 
     private void clickExportExcelBreadCrumb()
     {
-        log("Verify 'Export CSV' button downloads the zip from Reports view.");
-        Locator.XPathLocator exportExcelBtn = Locator.tagWithId("a", "gridexportexcelbtn-breadcrumb");
-        File exceldownload = clickAndWaitForDownload(exportExcelBtn);
+        log("Verify 'Excel Export' button downloads excel file from Reports view.");
+        Locator.XPathLocator exportBtn = Locator.tagWithId("a", "mab-grid-export-btn-breadcrumb");
+        click(exportBtn);
+        File exceldownload = clickAndWaitForDownload(Locator.linkWithText("Excel (*.XLS)"));
         String fileContents = TestFileUtils.getFileContents(exceldownload);
         assertTrue("Empty file", fileContents.length() > 0);
     }
 
     private void clickExportCSVBreadCrumb() throws IOException
     {
-        Locator.XPathLocator exportCSVBtn = Locator.tagWithId("a", "gridexportcsvbtn-breadcrumb");
-        File csvZipArchive = clickAndWaitForDownload(exportCSVBtn);
+        log("Verify 'CSV Export' button downloads the zip from Reports view.");
+        Locator.XPathLocator exportBtn = Locator.tagWithId("a", "mab-grid-export-btn-breadcrumb");
+        click(exportBtn);
+        File csvZipArchive = clickAndWaitForDownload(Locator.linkWithText("Comma separated values (*.CSV)"));
         assertEquals("Zip archive file count mismatch (expected these files in the zip archive: Assays.csv, MAbs.csv, Metadata.txt, NAB MAB.csv, Studies.csv, Study and MAbs.csv, Variable definitions.csv)", 7,
                 TestFileUtils.getFilesInZipArchive(csvZipArchive).size());
     }
