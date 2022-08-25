@@ -1,0 +1,16 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="mab_mix_id"/>
+        <cv:column name="mab_mix_name_std"/>
+        <cv:column name="mab_mix_label"/>
+        <cv:column name="mab_id"/>
+        <cv:column name="mab_name_std"/>
+        <cv:column name="mab_lanlid"/>
+        <cv:column name="mab_hxb2_location"/>
+        <cv:column name="mab_ab_binding_type"/>
+        <cv:column name="mab_isotype"/>
+        <cv:column name="mab_donorid"/>
+        <cv:column name="mab_donor_species"/>
+        <cv:column name="mab_donor_clade"/>
+    </cv:columns>
+</cv:customView>

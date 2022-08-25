@@ -62,9 +62,8 @@ Ext.define('Connector.view.MabReport', {
                             xtype: 'actiontitle',
                             text: '',
                             buttons: [
-                                this.getExportCSVButtonBreadCrumb(),
-                                this.getExportExcelButtonBreadCrumb(),
-                                this.getViewGridButton()
+                                this.getViewGridButton(),
+                                this.getExportButton()
                             ]
                     }]
             });
@@ -72,36 +71,22 @@ Ext.define('Connector.view.MabReport', {
         return this.gridHeader;
     },
 
-    getExportCSVButtonBreadCrumb : function() {
-        if (!this.exportCSVButton) {
-            this.exportCSVButton = Ext.create('Ext.button.Button', {
-                cls: 'gridexportcsvbtn',
-                id: 'gridexportcsvbtn-breadcrumb',
-                ui: 'rounded-inverted-accent-text',
-                text: 'Export CSV',
-                margin: '0 15 0 0',
-                handler: this._onExportCSVClick,
-                scope: this
-            });
+    getExportButton : function () {
+        if (!this.exportButton) {
+            this.exportButton = {
+                xtype: 'exportbutton',
+                id: 'mab-grid-export-btn-breadcrumb',
+                margin : '0 0 0 28',
+                hidden : false,
+                width : 100,
+                listeners: {
+                    exportcsv : this._onExportCSVClick,
+                    exportexcel : this._onExportExcel,
+                    scope: this
+                }
+            }
         }
-
-        return this.exportCSVButton;
-    },
-
-    getExportExcelButtonBreadCrumb : function() {
-        if (!this.exportExcelButton) {
-            this.exportExcelButton = Ext.create('Ext.button.Button', {
-                cls: 'gridexportexcelbtn',
-                id: 'gridexportexcelbtn-breadcrumb',
-                ui: 'rounded-inverted-accent-text',
-                text: 'Export Excel',
-                margin: '0 15 0 0',
-                handler: this._onExportExcel,
-                scope: this
-            });
-        }
-
-        return this.exportExcelButton;
+        return this.exportButton;
     },
 
     getViewGridButton : function() {

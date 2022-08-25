@@ -1,0 +1,32 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="prot"/>
+        <cv:column name="network"/>
+        <cv:column name="study_label"/>
+        <cv:column name="study_short_name"/>
+        <cv:column name="study_title"/>
+        <cv:column name="study_type"/>
+        <cv:column name="study_status"/>
+        <cv:column name="study_stage"/>
+        <cv:column name="study_species"/>
+        <cv:column name="study_population"/>
+        <cv:column name="study_executive_summary"/>
+        <cv:column name="study_rationale"/>
+        <cv:column name="study_objectives"/>
+        <cv:column name="study_groups"/>
+        <cv:column name="study_methods"/>
+        <cv:column name="study_findings"/>
+        <cv:column name="study_conclusions"/>
+        <cv:column name="study_start_date"/>
+        <cv:column name="study_first_enr_date"/>
+        <cv:column name="study_fu_complete_date"/>
+        <cv:column name="study_public_date"/>
+        <cv:column name="CAVD_affiliation"/>
+        <cv:column name="study_grant_pi_name"/>
+        <cv:column name="study_grant_pm_name"/>
+        <cv:column name="study_investigator_name"/>
+        <cv:column name="study_primary_poc_name"/>
+        <cv:column name="study_strategy"/>
+        <cv:column name="study_clintrials_id"/>
+    </cv:columns>
+</cv:customView>

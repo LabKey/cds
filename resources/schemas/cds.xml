@@ -19,48 +19,92 @@
 <tables xmlns="http://labkey.org/data/xml" xsi:schemaLocation="http://labkey.org/data/xml ../../../../../schemas/tableInfo.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <table tableName="import_study" tableDbType="TABLE">
         <columns>
-            <column columnName="prot"/>
+            <column columnName="prot">
+                <columnTitle>Study ID</columnTitle>
+            </column>
             <column columnName="network"/>
-            <column columnName="study_label"/>
+            <column columnName="study_label">
+                <columnTitle>Study Name</columnTitle>
+            </column>
             <column columnName="study_short_name"/>
-            <column columnName="study_title"/>
+            <column columnName="study_title">
+                <columnTitle>Title</columnTitle>
+            </column>
             <column columnName="study_type"/>
             <column columnName="study_status"/>
-            <column columnName="study_stage"/>
+            <column columnName="study_stage">
+                <columnTitle>Stage</columnTitle>
+            </column>
             <column columnName="study_species"/>
             <column columnName="study_population"/>
-            <column columnName="study_executive_summary"/>
+            <column columnName="study_executive_summary">
+                <columnTitle>Description</columnTitle>
+            </column>
             <column columnName="study_description"/>
-            <column columnName="study_groups"/>
+            <column columnName="study_groups">
+                <columnTitle>Groups</columnTitle>
+            </column>
             <column columnName="treatment_schema_link"/>
-            <column columnName="study_rationale"/>
+            <column columnName="study_rationale">
+                <columnTitle>Rationale</columnTitle>
+            </column>
             <column columnName="study_hypothesis"/>
-            <column columnName="study_objectives"/>
-            <column columnName="study_methods"/>
+            <column columnName="study_objectives">
+                <columnTitle>Objectives</columnTitle>
+            </column>
+            <column columnName="study_methods">
+                <columnTitle>Methods</columnTitle>
+            </column>
             <column columnName="assay_schema_link"/>
-            <column columnName="study_findings"/>
-            <column columnName="study_conclusions"/>
+            <column columnName="study_findings">
+                <columnTitle>Findings</columnTitle>
+            </column>
+            <column columnName="study_conclusions">
+                <columnTitle>Conclusions</columnTitle>
+            </column>
             <column columnName="study_publications"/>
-            <column columnName="study_start_date"/>
-            <column columnName="study_public_date"/>
+            <column columnName="study_start_date">
+                <columnTitle>Date of Study Start</columnTitle>
+            </column>
+            <column columnName="study_public_date">
+                <columnTitle>Date Study Made Public</columnTitle>
+            </column>
             <column columnName="study_data_availability"/>
-            <column columnName="cavd_affiliation"/>
-            <column columnName="study_first_enr_date"/>
-            <column columnName="study_fu_complete_date"/>
+            <column columnName="cavd_affiliation">
+                <columnTitle>CAVD Grantee</columnTitle>
+            </column>
+            <column columnName="study_first_enr_date">
+                <columnTitle>Date First Subject Enrolled</columnTitle>
+            </column>
+            <column columnName="study_fu_complete_date">
+                <columnTitle>Date Follow-Up Complete</columnTitle>
+            </column>
             <column columnName="study_discussion"/>
             <column columnName="study_context"/>
-            <column columnName="study_grant_pi_name"/>
+            <column columnName="study_grant_pi_name">
+                <columnTitle>Grant Principal Investigator</columnTitle>
+            </column>
             <column columnName="study_grant_pi_email"/>
-            <column columnName="study_grant_pm_name"/>
+            <column columnName="study_grant_pm_name">
+                <columnTitle>Grant Project Manager</columnTitle>
+            </column>
             <column columnName="study_grant_pm_email"/>
-            <column columnName="study_investigator_name"/>
+            <column columnName="study_investigator_name">
+                <columnTitle>Study Investigator</columnTitle>
+            </column>
             <column columnName="study_investigator_email"/>
-            <column columnName="study_primary_poc_name"/>
+            <column columnName="study_primary_poc_name">
+                <columnTitle>Primary Point of Contact</columnTitle>
+            </column>
             <column columnName="study_primary_poc_email"/>
-            <column columnName="study_strategy"/>
+            <column columnName="study_strategy">
+                <columnTitle>Vaccine Strategy</columnTitle>
+            </column>
             <column columnName="atlas_link"/>
             <column columnName="cavd_link"/>
-            <column columnName="study_clintrials_id"/>
+            <column columnName="study_clintrials_id">
+                <columnTitle>Clinical Trials.gov ID</columnTitle>
+            </column>
             <column columnName="study_specimen_repository"/>
             <column columnName="container"/>
         </columns>
@@ -186,7 +230,9 @@
             <column columnName="product_manufacturer"/>
             <column columnName="product_immunogen"/>
             <column columnName="product_description"/>
-            <column columnName="mab_mix_id"/>
+            <column columnName="mab_mix_id">
+                <columnTitle>MAb Mixture ID</columnTitle>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
@@ -272,8 +318,12 @@
     </table>
     <table tableName="import_assay" tableDbType="TABLE">
         <columns>
-            <column columnName="assay_identifier"/>
-            <column columnName="assay_label"/>
+            <column columnName="assay_identifier">
+                <columnTitle>Assay ID</columnTitle>
+            </column>
+            <column columnName="assay_label">
+                <columnTitle>Assay Long Name</columnTitle>
+            </column>
             <column columnName="assay_short_name"/>
             <column columnName="assay_category"/>
             <column columnName="assay_detection_platform"/>
@@ -647,18 +697,36 @@
     <table tableName="import_publication" tableDbType="TABLE">
         <columns>
             <column columnName="publication_id"/>
-            <column columnName="publication_title"/>
-            <column columnName="publication_author_all"/>
-            <column columnName="publication_journal_short"/>
+            <column columnName="publication_title">
+                <columnTitle>Title</columnTitle>
+            </column>
+            <column columnName="publication_author_all">
+                <columnTitle>Authors</columnTitle>
+            </column>
+            <column columnName="publication_journal_short">
+                <columnTitle>Journal</columnTitle>
+            </column>
             <column columnName="publication_date"/>
-            <column columnName="publication_volume"/>
-            <column columnName="publication_issue"/>
-            <column columnName="publication_location"/>
-            <column columnName="publication_pmid"/>
-            <column columnName="publication_link"/>
+            <column columnName="publication_volume">
+                <columnTitle>Volume</columnTitle>
+            </column>
+            <column columnName="publication_issue">
+                <columnTitle>Issue</columnTitle>
+            </column>
+            <column columnName="publication_location">
+                <columnTitle>Pages</columnTitle>
+            </column>
+            <column columnName="publication_pmid">
+                <columnTitle>PubMed ID</columnTitle>
+            </column>
+            <column columnName="publication_link">
+                <columnTitle>Link</columnTitle>
+            </column>
             <column columnName="publication_author_first"/>
             <column columnName="publication_label"/>
-            <column columnName="publication_abstract"/>
+            <column columnName="publication_abstract">
+                <columnTitle>Abstract</columnTitle>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>

@@ -165,6 +165,7 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Study]',
                 pluralName: 'Studies',
+                learnExportQuery: 'import_study',
                 priority: 40,
                 defaultOperator: 'OR',
                 summaryTargetLevel: '[Study.Treatment].[Arm]',
@@ -407,6 +408,7 @@ Ext4.define('Connector.cube.Configuration', {
                 friendlyName: 'Subjects given study products',
                 singularName: 'Study product',
                 pluralName: 'Products',
+                learnExportQuery: 'import_product',
                 summaryTargetLevel: '[Study Product.Product Name].[Product Name]',
                 findSubjectSummaryLevel: '[Study Product.Product Name].[Product Name]',
                 defaultOperator: 'OR',
@@ -498,6 +500,7 @@ Ext4.define('Connector.cube.Configuration', {
                 priority: 30,
                 singularName: 'Assay',
                 pluralName: 'Assays',
+                learnExportQuery: 'import_assay',
                 summaryTargetLevel: '[Assay.Study].[Study]',
                 findSubjectSummaryLevel: '[Assay.Name].[Assay]',
                 hierarchies: [{
@@ -632,6 +635,7 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             },{
                 uniqueName: '[Report]',
+                hasExport: false,
                 priority: 2,
                 singularName: 'Report',
                 pluralName: 'Reports',
@@ -654,6 +658,7 @@ Ext4.define('Connector.cube.Configuration', {
                 priority: 3,
                 singularName: 'MAb',
                 pluralName: 'MAbs',
+                learnExportQuery: 'MAbMixMAbMeta',
                 hidden: false,
                 supportsSummary: false,
                 supportsDetails: true,
@@ -691,6 +696,7 @@ Ext4.define('Connector.cube.Configuration', {
                 priority: 1,
                 singularName: 'Publication',
                 pluralName: 'Publications',
+                learnExportQuery: 'import_publication',
                 hidden: false,
                 supportsSummary: false,
                 supportsDetails: true,
@@ -770,6 +776,8 @@ Ext4.define('Connector.cube.Configuration', {
                 singularName: 'prop::name', // defaults to dim.name
                 pluralName: 'prop::name', // defaults to dim.name
                 friendlyName: 'prop::name', // defaults to dim.name
+                learnExportQuery: undefined,
+                hasExport: true,
                 hidden: false,
                 priority: 200,
                 querySchema: undefined,

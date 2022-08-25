@@ -26,11 +26,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
+import org.jetbrains.annotations.Nullable;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.*;
 import org.labkey.api.query.FieldKey;
+import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
+import org.labkey.api.query.UserSchema;
 import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.StringUtilsLabKey;
 import org.labkey.api.view.DataView;
@@ -99,6 +102,7 @@ public class CDSExportQueryView extends QueryView
     public static final List<String> ASSAY_DB_COLUMNS = Arrays.asList(ASSAY_IDENTIFIER, ASSAY_LABEL);
     private static final List<String> ASSAY_COLUMNS = Arrays.asList("Study", "Assay Name", "Data provenance - source", "Data provenance - Notes");
     private static final List<String> VARIABLE_COLUMNS = Arrays.asList("Assay Name", "Field label", "Field description");
+    private static final List<String> LEARN_MAB_VARIABLE_COLUMNS = Arrays.asList("Field label", "Field description");
 
     private final List<String> _filterStrings;
     private final String[] _studies;
@@ -111,6 +115,8 @@ public class CDSExportQueryView extends QueryView
     private final List<String> _dataTabNames;
     private final String _exportInfoTitle;
     private final String _exportInfoContent;
+    private final List<String> _fieldKeys;
+    private final List<String> _learnGridFilterValues;
 
     public CDSExportQueryView(CDSController.ExportForm form, org.springframework.validation.Errors errors)
     {
@@ -126,6 +132,8 @@ public class CDSExportQueryView extends QueryView
         _dataTabNames = getFormValues(form.getDataTabNames(), false);
         _exportInfoTitle = form.getExportInfoTitle();
         _exportInfoContent = form.getExportInfoContent();
+        _fieldKeys = form.getFieldKeys() != null ? Arrays.asList(form.getFieldKeys()) : null;
+        _learnGridFilterValues = form.getLearnGridFilterValues() != null ? Arrays.asList(form.getLearnGridFilterValues()) : null;
     }
 
     private List<String> getFormValues(String[] formValues, boolean sort)
@@ -169,9 +177,40 @@ public class CDSExportQueryView extends QueryView
         return exportColumns;
     }
 
-    public void writeExcelToResponse(HttpServletResponse response) throws IOException
+    public QueryView getQueryView(boolean isLearnGrid, @Nullable CDSController.CDSExportQueryForm queryForm)
     {
-        try (ExcelWriter ew = getExcelWriter())
+        QueryView queryView;
+        QuerySettings settings;
+
+        if (isLearnGrid)
+        {
+            UserSchema schema = QueryService.get().getUserSchema(getViewContext().getUser(), getViewContext().getContainer(), "CDS");
+            settings = schema.getSettings(getViewContext(), "query", _tabQueryForms.get(_dataTabNames.get(0)).getQueryName());
+            if (_learnGridFilterValues != null  && _learnGridFilterValues.size() > 0)
+            {
+                List<Integer> productIds;
+                if (_dataTabNames.get(0).equalsIgnoreCase("products"))
+                {
+                    productIds = _learnGridFilterValues.stream().map(value -> Integer.parseInt(value)).collect(Collectors.toList());
+                    settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), productIds, CompareType.IN));
+                }
+                else
+                {
+                    settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), _learnGridFilterValues, CompareType.IN));
+                }
+            }
+            queryView = schema.createView(getViewContext(), settings, null);
+        }
+        else
+        {
+            queryView = new QueryView((null == queryForm) ? _tabQueryForms.get(_dataTabNames.get(0)) : queryForm, null);
+        }
+        return queryView;
+    }
+
+    public void writeExcelToResponse(HttpServletResponse response, boolean isLearnGrid, QueryView queryView) throws IOException
+    {
+        try (ExcelWriter ew = getExcelWriter(isLearnGrid, queryView))
         {
             ew.setCaptionType(getColumnHeaderType());
             ew.write(response);
@@ -191,13 +230,13 @@ public class CDSExportQueryView extends QueryView
         return createResults(exportableAssays, assayColumns);
     }
 
-    private Results getVariables(List<ColumnInfo> variableColumns)
+    private Results getVariables(List<ColumnInfo> variableColumns, boolean isLearnGrid)
     {
         List<List<String>> exportableVariables = new ArrayList<>();
         for (String variableStr : _variableStrs)
         {
             String[] parts = variableStr.split(Pattern.quote(FILTER_DELIMITER));
-            if (parts.length != 3)
+            if (parts.length != 3 && !isLearnGrid)
                 continue;
             exportableVariables.add(Arrays.asList(parts));
         }
@@ -212,35 +251,38 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getExcelWriter() throws IOException
+    private ExcelWriter getExcelWriter(boolean isLearnGrid, QueryView qview) throws IOException
     {
         ColumnHeaderType headerType = ColumnHeaderType.Caption;
 
-        ExcelWriter ew = getCDSExcelWriter();
+        ExcelWriter ew = getCDSExcelWriter(qview, isLearnGrid);
         ew.setFilenamePrefix(getFileNamePrefix());
         ew.setCaptionType(headerType);
         ew.setShowInsertableColumnsOnly(false, null);
         ew.setSheetName(_dataTabNames.get(0)); // the 1st data source sheet
 
-        if (_dataTabNames.size() > 1) // if multiple data sources, write the other data sheets
+        if (!isLearnGrid)
         {
-            for (int i = 1; i < _dataTabNames.size(); i++)
+            if (_dataTabNames.size() > 1) // if multiple data sources, write the other data sheets
             {
-                String tabName = _dataTabNames.get(i);
-                CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
-                ew.renderNewSheet();
-                QueryView queryView = new QueryView(queryform, null);
-                DataView view = queryView.createDataView();
-                DataRegion rgn = view.getDataRegion();
-                rgn.prepareDisplayColumns(view.getViewContext().getContainer());
-                rgn.setAllowAsync(false);
-                prepareQuerySettings(queryView.getSettings());
+                for (int i = 1; i < _dataTabNames.size(); i++)
+                {
+                    String tabName = _dataTabNames.get(i);
+                    CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
+                    ew.renderNewSheet();
+                    QueryView queryView = new QueryView(queryform, null);
+                    DataView view = queryView.createDataView();
+                    DataRegion rgn = view.getDataRegion();
+                    rgn.prepareDisplayColumns(view.getViewContext().getContainer());
+                    rgn.setAllowAsync(false);
+                    prepareQuerySettings(queryView.getSettings());
 
-                ew.setResultsFactory(()->rgn.getResults(view.getRenderContext()));
-                ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
-                ew.setSheetName(tabName);
-                ew.setAutoSize(true);
-                logAuditEvent("Exported to Excel", ew.getDataRowCount());
+                    ew.setResultsFactory(() -> rgn.getResults(view.getRenderContext()));
+                    ew.setDisplayColumns(getExportColumns(rgn.getDisplayColumns()));
+                    ew.setSheetName(tabName);
+                    ew.setAutoSize(true);
+                    logAuditEvent("Exported to Excel", ew.getDataRowCount());
+                }
             }
         }
 
@@ -249,24 +291,35 @@ public class CDSExportQueryView extends QueryView
         ew.setColumns(Collections.singletonList(filterColumnInfo));
         ew.setSheetName(METADATA_SHEET);
 
-        ew.renderNewSheet();
-        List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
-        ew.setColumns(studyColumns);
-        ew.setResultsFactory(()->getStudies(studyColumns));
-        ew.setSheetName(STUDY_SHEET);
-        ew.setCaptionRowFrozen(false);
+        if (!isLearnGrid)
+        {
+            ew.renderNewSheet();
+            List<ColumnInfo> studyColumns = getColumns(STUDY_COLUMNS);
+            ew.setColumns(studyColumns);
+            ew.setResultsFactory(() -> getStudies(studyColumns));
+            ew.setSheetName(STUDY_SHEET);
+            ew.setCaptionRowFrozen(false);
+
+            ew.renderNewSheet();
+            List<ColumnInfo> assayColumns = getColumns(ASSAY_COLUMNS);
+            ew.setColumns(assayColumns);
+            ew.setResultsFactory(() -> getAssays(assayColumns));
+            ew.setSheetName(ASSAY_SHEET);
+            ew.setCaptionRowFrozen(false);
+        }
 
         ew.renderNewSheet();
-        List<ColumnInfo> assayColumns = getColumns(ASSAY_COLUMNS);
-        ew.setColumns(assayColumns);
-        ew.setResultsFactory(()->getAssays(assayColumns));
-        ew.setSheetName(ASSAY_SHEET);
-        ew.setCaptionRowFrozen(false);
-
-        ew.renderNewSheet();
-        List<ColumnInfo> variableColumns = getColumns(VARIABLE_COLUMNS);
+        List<ColumnInfo> variableColumns;
+        if (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs"))
+        {
+            variableColumns = getColumns(LEARN_MAB_VARIABLE_COLUMNS);
+        }
+        else
+        {
+            variableColumns = getColumns(VARIABLE_COLUMNS);
+        }
         ew.setColumns(variableColumns);
-        ew.setResultsFactory(()->getVariables(variableColumns));
+        ew.setResultsFactory(() -> getVariables(variableColumns, isLearnGrid));
         ew.setSheetName(VARIABLES_SHEET);
         ew.setCaptionRowFrozen(false);
 
@@ -287,14 +340,13 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getCDSExcelWriter() throws IOException
+    private ExcelWriter getCDSExcelWriter(QueryView queryView, boolean isLearnGrid) throws IOException
     {
-        QueryView queryView = new QueryView(_tabQueryForms.get(_dataTabNames.get(0)), null);
+        QuerySettings settings = queryView.getSettings();
         DataView view = queryView.createDataView();
         DataRegion rgn = view.getDataRegion();
         rgn.prepareDisplayColumns(view.getViewContext().getContainer());
         rgn.setAllowAsync(false);
-        QuerySettings settings = queryView.getSettings();
         prepareQuerySettings(settings);
 
         RenderContext rc = view.getRenderContext();
@@ -409,7 +461,10 @@ public class CDSExportQueryView extends QueryView
 
                 rowObject = getRow(sheet, currentRow);
                 Cell footerCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                footerCell.setCellValue(FILTERS_FOOTER);
+                if (!isLearnGrid)
+                {
+                    footerCell.setCellValue(FILTERS_FOOTER);
+                }
                 footerCell.setCellStyle(boldStyle);
 
                 return currentRow;
@@ -675,23 +730,28 @@ public class CDSExportQueryView extends QueryView
         }
     }
 
-    private void writeCSVQueries(ZipOutputStream out) throws IOException
+    private TSVGridWriter getTSVGridWriter(boolean isLearnGrid, @Nullable CDSController.CDSExportQueryForm queryForm)
+    {
+        QueryView queryView = getQueryView(isLearnGrid, queryForm);
+        DataView view = queryView.createDataView();
+        DataRegion rgn = view.getDataRegion();
+        rgn.prepareDisplayColumns(view.getViewContext().getContainer());
+        rgn.setAllowAsync(false);
+        prepareQuerySettings(queryView.getSettings());
+
+        return new TSVGridWriter(()->rgn.getResults(view.getRenderContext()), getExportColumns(rgn.getDisplayColumns()));
+    }
+
+    private void writeCSVQueries(ZipOutputStream out, boolean isLearnGrid) throws IOException
     {
         for (String tabName : _dataTabNames)
         {
-            CDSController.CDSExportQueryForm queryform = _tabQueryForms.get(tabName);
             ZipEntry entry = new ZipEntry(tabName + ".csv");
             out.putNextEntry(entry);
-            QueryView queryView = new QueryView(queryform, null);
-            DataView view = queryView.createDataView();
-            DataRegion rgn = view.getDataRegion();
-            rgn.prepareDisplayColumns(view.getViewContext().getContainer());
-            rgn.setAllowAsync(false);
-            prepareQuerySettings(queryView.getSettings());
 
             final File tmpFile;
 
-            try (TSVGridWriter tsv = new TSVGridWriter(()->rgn.getResults(view.getRenderContext()), getExportColumns(rgn.getDisplayColumns())))
+            try (TSVGridWriter tsv = getTSVGridWriter(isLearnGrid, _tabQueryForms.get(tabName)))
             {
                 tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
                 tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
@@ -721,27 +781,39 @@ public class CDSExportQueryView extends QueryView
         copyFileToZip(tmpFile, out);
     }
 
-    private void writeExtraCSVs(ZipOutputStream out) throws IOException
+    private void writeExtraCSVs(ZipOutputStream out, boolean isLearnGrid) throws IOException
     {
-        writeGridCSV(STUDY_SHEET, ()->getStudies(getColumns(STUDY_COLUMNS)), out);
-        writeGridCSV(ASSAY_SHEET, ()->getAssays(getColumns(ASSAY_COLUMNS)), out);
-        writeGridCSV(VARIABLES_SHEET, ()->getVariables(getColumns(VARIABLE_COLUMNS)), out);
+        if (!isLearnGrid)
+        {
+            writeGridCSV(STUDY_SHEET, ()->getStudies(getColumns(STUDY_COLUMNS)), out);
+            writeGridCSV(ASSAY_SHEET, ()->getAssays(getColumns(ASSAY_COLUMNS)), out);
+        }
+        List<ColumnInfo> variableColumns;
+        if (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs"))
+        {
+            variableColumns = getColumns(LEARN_MAB_VARIABLE_COLUMNS);
+        }
+        else
+        {
+            variableColumns = getColumns(VARIABLE_COLUMNS);
+        }
+        writeGridCSV(VARIABLES_SHEET, ()->getVariables(variableColumns, isLearnGrid), out);
     }
 
-    public void writeCSVToResponse(HttpServletResponse response) throws IOException
+    public void writeCSVToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
     {
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + getFileNamePrefix() + "_" + FileUtil.getTimestamp() + ".zip\"");
 
         try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
         {
-            writeCSVQueries(out);
-            writeMetadataTxt(out);
-            writeExtraCSVs(out);
+            writeCSVQueries(out, isLearnGrid);
+            writeMetadataTxt(out, isLearnGrid);
+            writeExtraCSVs(out, isLearnGrid);
         }
     }
 
-    private void writeMetadataTxt(ZipOutputStream out) throws IOException
+    private void writeMetadataTxt(ZipOutputStream out, boolean isLearnGrid) throws IOException
     {
         ZipEntry entry = new ZipEntry("Metadata.txt");
         out.putNextEntry(entry);
@@ -786,7 +858,10 @@ public class CDSExportQueryView extends QueryView
             }
             builder.append("\t\t").append(currentFilter).append("\n");
         }
-        builder.append("\n" + FILTERS_FOOTER_TXT + "\n");
+        if (!isLearnGrid)
+        {
+            builder.append("\n" + FILTERS_FOOTER_TXT + "\n");
+        }
 
         File tmpFile = File.createTempFile("tmpMetadata" + FileUtil.getTimestamp(), null);
         tmpFile.deleteOnExit();

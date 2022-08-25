@@ -608,9 +608,9 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse());
+                view.writeExcelToResponse(getViewContext().getResponse(), false, view.getQueryView(false, null));
             else
-                view.writeCSVToResponse(getViewContext().getResponse());
+                view.writeCSVToResponse(getViewContext().getResponse(), false);
             return null;
         }
 
@@ -661,9 +661,45 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse());
+                view.writeExcelToResponse(getViewContext().getResponse(), false, view.getQueryView(false, null));
             else
-                view.writeCSVToResponse(getViewContext().getResponse());
+                view.writeCSVToResponse(getViewContext().getResponse(), false);
+            return null;
+        }
+
+        @Override
+        public void addNavTrail(NavTree root)
+        {
+        }
+    }
+
+    @RequiresPermission(ReadPermission.class)
+    @Action(ActionType.Export.class)
+    public class ExportLearnGridAction extends SimpleViewAction<ExportForm>
+    {
+        @Override
+        public ModelAndView getView(ExportForm form, BindException errors) throws Exception
+        {
+            CDSExportQueryView view = new CDSExportQueryView(form, errors)
+            {
+                @Override
+                protected String getFileNamePrefix()
+                {
+                    return "Learn " + form.getDataTabNames()[0];
+                }
+
+                @Override
+                protected String getFilterHeaderString()
+                {
+                    return "Learn grid filters applied to exported data:";
+                }
+
+            };
+
+            if (form.isExcel())
+                view.writeExcelToResponse(getViewContext().getResponse(), true, view.getQueryView(true, null));
+            else
+                view.writeCSVToResponse(getViewContext().getResponse(), true);
             return null;
         }
 
@@ -762,6 +798,8 @@ public class CDSController extends SpringActionController
         private String _exportInfoContent;
 
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
+        private String[] _fieldKeys;
+        private String[] _learnGridFilterValues;
 
         @Override
         protected @NotNull BindException doBindParameters(PropertyValues in)
@@ -929,6 +967,26 @@ public class CDSController extends SpringActionController
         public String getExportInfoContent()
         {
             return _exportInfoContent;
+        }
+
+        public String[] getFieldKeys()
+        {
+            return _fieldKeys;
+        }
+
+        public void setFieldKeys(String[] fieldKeys)
+        {
+            _fieldKeys = fieldKeys;
+        }
+
+        public String[] getLearnGridFilterValues()
+        {
+            return _learnGridFilterValues;
+        }
+
+        public void setLearnGridFilterValues(String[] learnGridFilterValues)
+        {
+            _learnGridFilterValues = learnGridFilterValues;
         }
     }
 

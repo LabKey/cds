@@ -1,0 +1,58 @@
+<query xmlns="http://labkey.org/data/xml/query">
+    <metadata>
+        <tables xmlns="http://labkey.org/data/xml">
+            <table tableName="MAbMixMAbMeta" tableDbType="NOT_IN_DB">
+                <columns>
+                    <column columnName="mab_id">
+                        <columnTitle>MAb ID</columnTitle>
+                        <description>Unique ID assigned to an individual mAb</description>
+                    </column>
+                    <column columnName="mab_name_std">
+                        <columnTitle>MAb Name</columnTitle>
+                        <description>A standardized name given to an individual mAb</description>
+                    </column>
+                    <column columnName="mab_lanlid">
+                        <columnTitle>LANL ID</columnTitle>
+                        <description>Unique ID of the mAb assigned by LANL and used in the LANL database</description>
+                    </column>
+                    <column columnName="mab_hxb2_location">
+                        <columnTitle>HXB2 Location</columnTitle>
+                        <description>Epitope position numbers in the HXB2 reference strain</description>
+                    </column>
+                    <column columnName="mab_ab_binding_type">
+                        <columnTitle>MAb Binding Type</columnTitle>
+                        <description>MAb classification indicating the binding site e.g., a region (like V3) or near a common functional domain (like the CD4 binding site, CD4BS)</description>
+                    </column>
+                    <column columnName="mab_isotype">
+                        <columnTitle>MAb Isotype</columnTitle>
+                        <description>MAb classification indicating the type of the antibody</description>
+                    </column>
+                    <column columnName="mab_donorid">
+                        <columnTitle>MAb Donor ID</columnTitle>
+                        <description>Unique ID assigned to the donor of the mab</description>
+                    </column>
+                    <column columnName="mab_donor_species">
+                        <columnTitle>MAb Donor Species</columnTitle>
+                        <description>The species of the donor of the mab. The species in which the immune response was stimulated.</description>
+                    </column>
+                    <column columnName="mab_donor_clade">
+                        <columnTitle>MAb Donor Clade</columnTitle>
+                        <description>The clade of the virus strain (subtype) that infected the donor</description>
+                    </column>
+                    <column columnName="mab_mix_id">
+                        <columnTitle>MAb Mixture ID</columnTitle>
+                        <description>Unique ID assigned to an individual mAb or mixture of mAbs</description>
+                    </column>
+                    <column columnName="mab_mix_name_std">
+                        <columnTitle>MAb or Mixture Standardized Name</columnTitle>
+                        <description>A standardized name assigned to an individual mAb or a mixture of mAbs</description>
+                    </column>
+                    <column columnName="mab_mix_label">
+                        <columnTitle>MAb Label</columnTitle>
+                        <description>A label (MAb name) assigned to an individual mAb or a mixture of mAbs to distinguish them from MAbs/mixtures with the same standardized name, e.g., when mAbs with the same standardized name are compared within a study</description>
+                    </column>
+                </columns>
+            </table>
+        </tables>
+    </metadata>
+</query>

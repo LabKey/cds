@@ -259,6 +259,7 @@ Ext.define('Connector.view.Learn', {
         store.clearFilter();
         this.filterStoreBySearchAndColumnFilter(store);
         this.sortStore(store);
+        Ext.getCmp('learn-grid-export-button-id').store = store;
     },
 
     sortAndFilterStoreDelayed: function(store) {
@@ -408,6 +409,7 @@ Ext.define('Connector.view.Learn', {
                             }],
                             success: function(slice) {
                                 if (store) {
+                                    Ext.getCmp('learn-grid-export-button-id').store = store;
                                     store.loadSlice(slice);
                                 }
                             },
@@ -416,6 +418,7 @@ Ext.define('Connector.view.Learn', {
                     }, this);
                 }
                 else {
+                    Ext.getCmp('learn-grid-export-button-id').store = store;
                     store.loadSlice();
                 }
 
@@ -732,8 +735,9 @@ Ext.define('Connector.view.LearnHeader', {
             text: 'Learn about...'
         },{
             xtype: 'container',
-            items: [this.getDataView(), this.getSearchField()],
+            items: [this.getDataView(), this.getSearchField(), this.getExportButton()],
             height: 56,
+            id: 'learn-header-bar-id',
             cls: 'learn-header-bar',
             layout: {
                 type: 'hbox',
@@ -797,6 +801,120 @@ Ext.define('Connector.view.LearnHeader', {
         return this.searchField;
     },
 
+    getExportButton : function () {
+        if (!this.exportButton) {
+            this.exportButton = {
+                xtype: 'exportbutton',
+                id: 'learn-grid-export-button-id',
+                margin : '17 25 0 25',
+                hidden : true,
+                dimension : undefined,
+                store : undefined,
+                width : 100,
+                listeners: {
+                    exportcsv : this.requestExportCSV,
+                    exportexcel : this.requestExportExcel,
+                    scope: this
+                }
+            }
+        }
+        return this.exportButton;
+    },
+
+    requestExportCSV : function() {
+        this.requestExport(false);
+    },
+
+    requestExportExcel : function() {
+        this.requestExport(true);
+    },
+
+    requestExport : function(isExcel) {
+
+        var exportButtonCmp = Ext.getCmp('learn-grid-export-button-id');
+        var queryName = exportButtonCmp.dimension.learnExportQuery;
+        var learnGridName = exportButtonCmp.dimension.pluralName;
+        var store = exportButtonCmp.store;
+
+        var newForm = document.createElement('form');
+        document.body.appendChild(newForm);
+
+        var exportParams = {
+            "query.showRows": ['ALL'],
+            'X-LABKEY-CSRF': LABKEY.CSRF,
+            isExcel : isExcel,
+            columnNames: [],
+            columnAliases: [],
+            dataTabNames : [learnGridName],
+            schemaNames : ["cds"] ,
+            queryNames : [queryName],
+            fieldKeys : [],
+            learnGridFilterValues : store.data.keys,
+            filterStrings: []
+        };
+
+        LABKEY.Query.getQueryDetails({
+            scope: this,
+            schemaName: 'cds',
+            queryName: queryName,
+            viewName: 'LearnGridExportView',
+            success: function (details) {
+
+                if (details) {
+                    if (details.views) {
+
+                        var viewInfo = details.views.filter(function(view) { return view.name === 'LearnGridExportView' }, this);
+
+                        if (viewInfo && viewInfo.length === 1) {
+                            var viewFields = viewInfo[0].fields;
+                            exportParams.columnNames = viewFields.map(function(cols) { return cols.name });
+                            exportParams.columnAliases = viewFields.map(function(cols) { return cols.caption });
+
+                            if (learnGridName === 'MAbs') {
+                                exportParams.fieldKeys = ['mab_mix_label'];
+
+                                var variables = [];
+                                Ext.each(viewFields, function(field) {
+                                    variables.push(field.caption + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.description);
+                                });
+                                exportParams.variables = variables;
+
+                                //get filter values to write to metadata excel tab or csv file
+                                if (store.data.keys.length < store.totalCount)
+                                {
+                                    var filterStrs = [];
+                                    filterStrs.push("Selected MAb/Mixture(s)");
+                                    filterStrs.push(Connector.view.MabGrid.ColumnMap['mab_mix_name_std'].filterLabel + ": " + store.data.keys.join(', '));
+                                    exportParams.filterStrings = filterStrs.join(ChartUtils.ANTIGEN_LEVEL_DELIMITER);
+                                }
+                            }
+                            else {
+                                exportParams.fieldKeys = viewFields.filter(function(col) { return col.isKeyField === true }, this)[0].fieldKeyArray;
+                            }
+                        }
+                    }
+                }
+
+                //export
+                Ext.Ajax.request({
+                    url: LABKEY.ActionURL.buildURL('cds', 'exportLearnGrid'),
+                    method: 'POST',
+                    form: newForm,
+                    isUpload: true,
+                    params: exportParams,
+                    callback: function (options, success/*, response*/) {
+                        if (!success) {
+                            Ext.Msg.alert('Error', 'Unable to export.');
+                        }
+                    }
+                });
+            },
+            failure: function() {
+                Ext.Msg.alert('Error', "Error exporting Learn page '" + learnGridName + "'");
+            },
+        });
+    },
+
     setDimensions : function(dimensions) {
         this.dimensions = dimensions;
         this.getDataView().setDimensions(dimensions);
@@ -807,6 +925,7 @@ Ext.define('Connector.view.LearnHeader', {
             this.getDataView().selectTab(dimUniqueName);
         }
         this.filterStoreFromUrlParams(id, dimension, params);
+        this.showExportButton(dimension);
     },
 
     filterStoreFromUrlParams: function(id, dimension, params)
@@ -814,6 +933,16 @@ Ext.define('Connector.view.LearnHeader', {
         this.updateSearchValue(dimension, params);
         this.updateSort(dimension, params, id != null);
         this.updateFilters(dimension, params, id != null);
+    },
+
+    showExportButton: function(dimension) {
+        if (dimension.hasExport) {
+            Ext.getCmp('learn-grid-export-button-id').show();
+        }
+        else {
+            Ext.getCmp('learn-grid-export-button-id').hide();
+        }
+        Ext.getCmp('learn-grid-export-button-id').dimension = dimension;
     },
 
     updateSearchValue: function(dimension, params) {

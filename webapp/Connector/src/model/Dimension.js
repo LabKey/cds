@@ -10,6 +10,8 @@ Ext.define('Connector.model.Dimension', {
     fields : [
         {name: 'name'},
         {name: 'uniqueName'},
+        {name: 'hasExport'},
+        {name: 'learnExportQuery'},
         {name: 'singularName'},
         {name: 'pluralName'},
         {name: 'hidden', type: 'boolean'},
