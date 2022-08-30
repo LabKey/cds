@@ -209,9 +209,9 @@ public class CDSExportQueryView extends QueryView
         return queryView;
     }
 
-    public void writeExcelToResponse(HttpServletResponse response, boolean isLearnGrid, QueryView queryView) throws IOException
+    public void writeExcelToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
     {
-        ExcelWriter ew = getCDSExcelWriter(this, isLearnGrid, queryView);
+        ExcelWriter ew = getCDSExcelWriter(this, isLearnGrid);
         ew.renderWorkbook(response);
         logAuditEvent("Exported to Excel", ew.getDataRowCount());
     }
@@ -259,8 +259,9 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getCDSExcelWriter(CDSExportQueryView eqv, boolean isLearnGrid, QueryView queryView) throws IOException
+    private ExcelWriter getCDSExcelWriter(CDSExportQueryView eqv, boolean isLearnGrid) throws IOException
     {
+        QueryView queryView = eqv.getQueryView(isLearnGrid, null);
         QuerySettings settings = queryView.getSettings();
         DataView view = queryView.createDataView();
         DataRegion rgn = view.getDataRegion();
@@ -441,7 +442,7 @@ public class CDSExportQueryView extends QueryView
             {
                 ColumnHeaderType headerType = ColumnHeaderType.Caption;
 
-                setFilenamePrefix(getFileNamePrefix());
+                setFilenamePrefix(eqv.getFileNamePrefix());
                 setCaptionType(headerType);
                 setShowInsertableColumnsOnly(false, null);
                 setSheetName(_dataTabNames.get(0)); // the 1st data source sheet
@@ -471,10 +472,13 @@ public class CDSExportQueryView extends QueryView
                     }
                 }
 
-                renderNewSheet(workbook);
-                ColumnInfo filterColumnInfo = new BaseColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
-                setColumns(Collections.singletonList(filterColumnInfo));
-                setSheetName(METADATA_SHEET);
+                if (!isLearnGrid || (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs")))
+                {
+                    renderNewSheet(workbook);
+                    ColumnInfo filterColumnInfo = new BaseColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
+                    setColumns(Collections.singletonList(filterColumnInfo));
+                    setSheetName(METADATA_SHEET);
+                }
 
                 if (!isLearnGrid)
                 {
@@ -493,21 +497,23 @@ public class CDSExportQueryView extends QueryView
                     setCaptionRowFrozen(false);
                 }
 
-                renderNewSheet(workbook);
-                List<ColumnInfo> variableColumns;
-
-                if (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs"))
+                if (!isLearnGrid || (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs")))
                 {
-                    variableColumns = eqv.getColumns(LEARN_MAB_VARIABLE_COLUMNS);
+                    renderNewSheet(workbook);
+                    List<ColumnInfo> variableColumns;
+                    if (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs"))
+                    {
+                        variableColumns = eqv.getColumns(LEARN_MAB_VARIABLE_COLUMNS);
+                    }
+                    else
+                    {
+                        variableColumns = eqv.getColumns(VARIABLE_COLUMNS);
+                    }
+                    setColumns(variableColumns);
+                    setResultsFactory(() -> getVariables(variableColumns, isLearnGrid));
+                    setSheetName(VARIABLES_SHEET);
+                    setCaptionRowFrozen(false);
                 }
-                else
-                {
-                    variableColumns = eqv.getColumns(VARIABLE_COLUMNS);
-                }
-                setColumns(variableColumns);
-                setResultsFactory(() -> getVariables(variableColumns, isLearnGrid));
-                setSheetName(VARIABLES_SHEET);
-                setCaptionRowFrozen(false);
 
                 setCaptionType(getColumnHeaderType());
                 renderNewSheet(workbook);
@@ -516,7 +522,7 @@ public class CDSExportQueryView extends QueryView
             }
         };
 
-        ew.setFilenamePrefix(settings.getQueryName());
+        ew.setFilenamePrefix(eqv.getFileNamePrefix());
         ew.setAutoSize(true);
         return ew;
     }
