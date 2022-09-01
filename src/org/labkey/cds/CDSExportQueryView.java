@@ -286,10 +286,14 @@ public class CDSExportQueryView extends QueryView
             }
         }
 
-        ew.renderNewSheet();
-        ColumnInfo filterColumnInfo = new BaseColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
-        ew.setColumns(Collections.singletonList(filterColumnInfo));
-        ew.setSheetName(METADATA_SHEET);
+        //metadata for MAbs only
+        if (!isLearnGrid || (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs")))
+        {
+            ew.renderNewSheet();
+            ColumnInfo filterColumnInfo = new BaseColumnInfo(METADATA_SHEET, JdbcType.VARCHAR);
+            ew.setColumns(Collections.singletonList(filterColumnInfo));
+            ew.setSheetName(METADATA_SHEET);
+        }
 
         if (!isLearnGrid)
         {
@@ -308,22 +312,29 @@ public class CDSExportQueryView extends QueryView
             ew.setCaptionRowFrozen(false);
         }
 
-        ew.renderNewSheet();
-        List<ColumnInfo> variableColumns;
-        if (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs"))
+        //variable info for MAbs only
+        if (!isLearnGrid || (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs")))
         {
-            variableColumns = getColumns(LEARN_MAB_VARIABLE_COLUMNS);
+            ew.renderNewSheet();
+            List<ColumnInfo> variableColumns;
+            if (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs"))
+            {
+                variableColumns = getColumns(LEARN_MAB_VARIABLE_COLUMNS);
+            }
+            else
+            {
+                variableColumns = getColumns(VARIABLE_COLUMNS);
+            }
+            ew.setColumns(variableColumns);
+            ew.setResultsFactory(() -> getVariables(variableColumns, isLearnGrid));
+            ew.setSheetName(VARIABLES_SHEET);
+            ew.setCaptionRowFrozen(false);
         }
-        else
-        {
-            variableColumns = getColumns(VARIABLE_COLUMNS);
-        }
-        ew.setColumns(variableColumns);
-        ew.setResultsFactory(() -> getVariables(variableColumns, isLearnGrid));
-        ew.setSheetName(VARIABLES_SHEET);
-        ew.setCaptionRowFrozen(false);
 
-        ew.getWorkbook().setActiveSheet(0);
+        if (ew.getWorkbook().getNumberOfSheets() > 0)
+        {
+            ew.getWorkbook().setActiveSheet(0);
+        }
         return ew;
     }
 
@@ -789,15 +800,18 @@ public class CDSExportQueryView extends QueryView
             writeGridCSV(ASSAY_SHEET, ()->getAssays(getColumns(ASSAY_COLUMNS)), out);
         }
         List<ColumnInfo> variableColumns;
-        if (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs"))
+        if (!isLearnGrid || (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs")))
         {
-            variableColumns = getColumns(LEARN_MAB_VARIABLE_COLUMNS);
+            if (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs"))
+            {
+                variableColumns = getColumns(LEARN_MAB_VARIABLE_COLUMNS);
+            }
+            else
+            {
+                variableColumns = getColumns(VARIABLE_COLUMNS);
+            }
+            writeGridCSV(VARIABLES_SHEET, ()->getVariables(variableColumns, isLearnGrid), out);
         }
-        else
-        {
-            variableColumns = getColumns(VARIABLE_COLUMNS);
-        }
-        writeGridCSV(VARIABLES_SHEET, ()->getVariables(variableColumns, isLearnGrid), out);
     }
 
     public void writeCSVToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
@@ -815,59 +829,62 @@ public class CDSExportQueryView extends QueryView
 
     private void writeMetadataTxt(ZipOutputStream out, boolean isLearnGrid) throws IOException
     {
-        ZipEntry entry = new ZipEntry("Metadata.txt");
-        out.putNextEntry(entry);
-
-        StringBuilder builder = new StringBuilder();
-
-        // term of use
-        for (List<String> row : TOCS)
+        if (!isLearnGrid || (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs")))
         {
-            for (int col = 0; col < row.size(); col++)
+            ZipEntry entry = new ZipEntry("Metadata.txt");
+            out.putNextEntry(entry);
+
+            StringBuilder builder = new StringBuilder();
+
+            // term of use
+            for (List<String> row : TOCS)
             {
-                builder.append(row.get(col)).append(col == row.size() - 1 ? "\n" : "\t");
+                for (int col = 0; col < row.size(); col++)
+                {
+                    builder.append(row.get(col)).append(col == row.size() - 1 ? "\n" : "\t");
+                }
             }
-        }
 
-        // export date
-        builder.append("\nDate Exported: \n");
-        Date date = new Date();
-        builder.append("\t").append(date.toString()).append("\n");
+            // export date
+            builder.append("\nDate Exported: \n");
+            Date date = new Date();
+            builder.append("\t").append(date.toString()).append("\n");
 
-        if (hasExtraExportInfo())
-        {
-            builder.append("\n" + _exportInfoTitle + ": \n");
-            builder.append("\t").append(_exportInfoContent).append("\n");
-        }
-
-        // filters
-        builder.append("\n" + getFilterHeaderString() + "\n");
-        String previousCategory = "", currentCategory, currentFilter;
-        for (String filter : _filterStrings)
-        {
-            String[] parts = filter.split(Pattern.quote(FILTER_DELIMITER));
-            if (parts.length < 2)
-                continue;
-            currentCategory = parts[0];
-            currentFilter = parts[1];
-
-            if (!currentCategory.equals(previousCategory))
+            if (hasExtraExportInfo())
             {
-                builder.append("\t").append(currentCategory).append("\n");
-                previousCategory = currentCategory;
+                builder.append("\n" + _exportInfoTitle + ": \n");
+                builder.append("\t").append(_exportInfoContent).append("\n");
             }
-            builder.append("\t\t").append(currentFilter).append("\n");
-        }
-        if (!isLearnGrid)
-        {
-            builder.append("\n" + FILTERS_FOOTER_TXT + "\n");
-        }
 
-        File tmpFile = File.createTempFile("tmpMetadata" + FileUtil.getTimestamp(), null);
-        tmpFile.deleteOnExit();
+            // filters
+            builder.append("\n" + getFilterHeaderString() + "\n");
+            String previousCategory = "", currentCategory, currentFilter;
+            for (String filter : _filterStrings)
+            {
+                String[] parts = filter.split(Pattern.quote(FILTER_DELIMITER));
+                if (parts.length < 2)
+                    continue;
+                currentCategory = parts[0];
+                currentFilter = parts[1];
 
-        FileUtils.writeStringToFile(tmpFile, builder.toString(), StringUtilsLabKey.DEFAULT_CHARSET);
-        copyFileToZip(tmpFile, out);
+                if (!currentCategory.equals(previousCategory))
+                {
+                    builder.append("\t").append(currentCategory).append("\n");
+                    previousCategory = currentCategory;
+                }
+                builder.append("\t\t").append(currentFilter).append("\n");
+            }
+            if (!isLearnGrid)
+            {
+                builder.append("\n" + FILTERS_FOOTER_TXT + "\n");
+            }
+
+            File tmpFile = File.createTempFile("tmpMetadata" + FileUtil.getTimestamp(), null);
+            tmpFile.deleteOnExit();
+
+            FileUtils.writeStringToFile(tmpFile, builder.toString(), StringUtilsLabKey.DEFAULT_CHARSET);
+            copyFileToZip(tmpFile, out);
+        }
     }
 
 }
