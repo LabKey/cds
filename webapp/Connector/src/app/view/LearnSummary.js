@@ -140,6 +140,7 @@ Ext.define('Connector.app.view.LearnSummary', {
         // the maximum count of data items to show per grouping
         var maxItems = 10;
         this.itemCount = 0;
+        var titleLines = 0;
 
         var config = this.dataAvailabilityTooltipConfig();
         var labelField = config.labelField || 'data_label';
@@ -177,17 +178,20 @@ Ext.define('Connector.app.view.LearnSummary', {
 
         if (config.title === "Publications") {
             if (accessible.length > 0) {
+                titleLines++;
                 dataAvailableListHTML += '<p>' + "Publication Data Available" + '</p>';
             }
         }
         else {
             if (accessible.length > 0) {
+                titleLines++;
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " with Data Accessible" + '</p>';
                 dataAvailableListHTML += this.addDataAvailabilityItems(accessible, labelField, maxItems);
             }
             if (nonAccessible.length > 0) {
                 if (accessible.length > 0)
                     dataAvailableListHTML += '<br>';
+                titleLines++;
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + config.title + " without Data Accessible" + '</p>';
                 dataAvailableListHTML += this.addDataAvailabilityItems(nonAccessible, labelField, maxItems);
             }
@@ -197,12 +201,14 @@ Ext.define('Connector.app.view.LearnSummary', {
             }
 
             if (ni_accessible.length > 0) {
+                titleLines++;
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " with Data Accessible" + '</p>';
                 dataAvailableListHTML += this.addDataAvailabilityItems(ni_accessible, niLabelField, maxItems);
             }
             if (ni_nonAccessible.length > 0) {
                 if (accessible.length > 0)
                     dataAvailableListHTML += '<br>';
+                titleLines++;
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + niTitle + " without Data Accessible" + '</p>';
                 dataAvailableListHTML += this.addDataAvailabilityItems(ni_nonAccessible, niLabelField, maxItems);
             }
@@ -212,22 +218,18 @@ Ext.define('Connector.app.view.LearnSummary', {
             }
 
             if (availablePubData.length > 0) {
+                titleLines++;
                 dataAvailableListHTML += '<p class="data-availability-tooltip-header">' + pubTitle + " with Data Accessible" + '</p>';
                 dataAvailableListHTML += this.addDataAvailabilityItems(availablePubData, pubLabelField, maxItems);
             }
         }
 
         var itemWrapped = Ext.get(item);
-        var verticalPosition = itemWrapped.getAnchorXY()[1];
-        var viewHeight = itemWrapped.parent("#app-main").getHeight();
         var calloutHeight = 2 //borders
                             + 30 //content padding
-                            + 19 //title line height
-                            + 8 //title bottom padding
-                            + (17 //line height for content <li> elements
-                                * this.itemCount);
-
-        var verticalOffset = verticalPosition + calloutHeight > viewHeight ? calloutHeight - itemWrapped.getHeight() : 0;
+                            + (30 * titleLines) //title line height and padding
+                            + (17 * this.itemCount); //line height for content <li> elements
+        var offsets = PlotTooltipUtils.computeTooltipOffsets(item, calloutHeight);
 
         var calloutMgr = hopscotch.getCalloutManager(),
                 _id = options.id + (options.itemsWithPubDataAvailable ? ("-pub-" + options.itemsWithPubDataAvailable.length) : ''),
@@ -235,13 +237,13 @@ Ext.define('Connector.app.view.LearnSummary', {
                     calloutMgr.createCallout(Ext.apply({
                         id: _id,
                         xOffset: itemWrapped.el.dom.className === "detail-gray-text" ? -35 : 20,
-                        yOffset: itemWrapped.el.dom.className === "detail-gray-text" ? -verticalOffset-20 : -verticalOffset,
-                        arrowOffset: verticalOffset,
+                        yOffset: offsets.yOffset,
+                        arrowOffset: offsets.arrowOffset,
                         showCloseButton: false,
                         target: item,
                         placement: 'right',
                         content: dataAvailableListHTML,
-                        width: 220
+                        width: 300
                     }, {}));
                 }, 200);
 

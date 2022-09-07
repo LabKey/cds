@@ -486,6 +486,37 @@ Ext.define('Connector.utility.PlotTooltip', {
             }, this);
         }
         return content;
-    }
+    },
 
+    /**
+     * Utility to compute vertical offsets for a tooltip. Based on the height of the tooltip, viewport height, and
+     * location on the screen it will return properties which can be used directly in the hopscotch callout manager
+     * to create a tooltip that is adjusted vertically to avoid truncation.
+     *
+     * @param extItem the Ext object representing the tooltip owner
+     * @param calloutHeight the height (in pixels) of the expected tooltip
+     * @return an object which has properties : yOffset and arrowOffset that can be used directly in hopscotch.getCalloutManager().createCallout()
+     */
+    computeTooltipOffsets : function(extItem, calloutHeight) {
+        // defaults
+        var verticalOffset = 20;
+        var arrowOffset = 0;
+        var itemWrapped = Ext.get(extItem);
+        var verticalPosition = itemWrapped.getAnchorXY()[1];
+
+        if (itemWrapped.parent("#app-main")) {
+            var viewHeight = itemWrapped.parent("#app-main").getHeight();
+
+            if ((calloutHeight - 20) > (viewHeight - verticalPosition)) {
+                // callout is too tall, need to adjust the offsets
+                verticalOffset = (calloutHeight - 20) - (viewHeight - verticalPosition) + 25;
+                arrowOffset = verticalOffset - 10;
+            }
+        }
+
+        return {
+            yOffset : -verticalOffset,
+            arrowOffset : arrowOffset
+        };
+    }
 });
