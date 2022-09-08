@@ -619,7 +619,8 @@ Ext.define('Connector.view.InfoPane', {
     showItemTooltip : function(cmp, rec) {
         if (rec && rec.data.description) {
             var highlighted = Ext.dom.Query.select('div.single-axis-explorer:contains(' + rec.data.name + ')');
-            var el = Ext.get(highlighted[0]);
+            var item = highlighted[0];
+            var el = Ext.get(item);
 
             if (el) {
                 var calloutMgr = hopscotch.getCalloutManager(),
@@ -627,23 +628,14 @@ Ext.define('Connector.view.InfoPane', {
                         displayTooltip = setTimeout(function() {
                             // compute the callout height based on approximately 35 chars per line (plus margin)
                             var lines = rec.data.description.length / 35;
-                            var calloutHeight = 30 + (17 * lines);
-
-                            // shift the y-offset of the callout if it is larger than the 50 pixel margin we
-                            // have at the bottom of the info pane
-                            if (calloutHeight > 50) {
-                                verticalOffset = calloutHeight - 35;
-                                arrowOffset = verticalOffset - 14;
-                            } else {
-                                verticalOffset = calloutHeight / 2;
-                                arrowOffset = 0;
-                            }
+                            var calloutHeight = 50 + (17 * lines);
+                            var offsets = PlotTooltipUtils.computeTooltipOffsets(item, calloutHeight);
 
                             calloutMgr.createCallout(Ext.apply({
                                 id: _id,
                                 xOffset: -30,
-                                yOffset: -verticalOffset,
-                                arrowOffset: arrowOffset,
+                                yOffset: offsets.yOffset,
+                                arrowOffset: offsets.arrowOffset,
                                 showCloseButton: false,
                                 target: highlighted[0],
                                 placement: 'left',
