@@ -491,10 +491,17 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                     var el = Ext4.get(item.id);
                     // race condition if we've navigated away
                     if (el && el.isVisible()) {
+
+                        // compute the callout height based on approximately 35 chars per line (plus title and margin)
+                        var lines = (content.length / 35) + 2;
+                        var calloutHeight = 30 + (17 * lines);
+                        var offsets = PlotTooltipUtils.computeTooltipOffsets(item, calloutHeight);
+
                         calloutMgr.createCallout(Ext.apply({
                             id: _id,
                             xOffset: 10,
-                            yOffset: -20,
+                            yOffset: offsets.yOffset,
+                            arrowOffset: offsets.arrowOffset,
                             showCloseButton: false,
                             target: item,
                             placement: 'right',
