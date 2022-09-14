@@ -1,0 +1,9 @@
+<script type="text/javascript">
+    let returnUrl = LABKEY.ActionURL.getParameter("returnUrl");
+
+    // for now only use the returnUrl if it contains a reference to a webdav resource
+    if (returnUrl.indexOf('webdav') === -1)
+        window.location.replace(LABKEY.ActionURL.buildURL('cds', 'app', '/CAVD/'));
+    else
+        window.location.replace(LABKEY.ActionURL.buildURL('cds', 'app', '/CAVD/', {returnUrl: returnUrl}));
+</script>
