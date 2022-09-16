@@ -658,7 +658,7 @@ Ext4.define('Connector.cube.Configuration', {
                 priority: 3,
                 singularName: 'MAb',
                 pluralName: 'MAbs',
-                learnExportQuery: 'MAbMixMAbMeta',
+                learnExportQuery: 'MAbMixMAbMetaForLearnExport',
                 hidden: false,
                 supportsSummary: false,
                 supportsDetails: true,
