@@ -23,7 +23,7 @@ Ext.define('Connector.app.view.StudyProducts', {
         text: 'Product name',
         xtype: 'templatecolumn',
         minWidth: 500,
-        locked: true,
+        locked: false,
         resizable: false,
         dataIndex: 'product_name',
         filterConfigSet: [{

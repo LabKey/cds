@@ -21,7 +21,7 @@ Ext.define('Connector.app.view.Report', {
             xtype: 'templatecolumn',
             minWidth: 200,
             flex: 2 / 7,
-            locked: true,
+            locked: false,
             resizable: false,
             menuDisabled: true,
             tpl: new Ext.XTemplate(
