@@ -149,6 +149,7 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
         Sheet firstSheet = workbook.getSheetAt(0);
         return firstSheet.getLastRowNum();
     }
+
     private File clickExportExcel(String learnTab)
     {
         log("Verify 'Excel Export' button downloads excel file " + learnTab);
