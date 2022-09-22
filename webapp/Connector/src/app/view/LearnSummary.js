@@ -6,6 +6,8 @@
 Ext.define('Connector.app.view.LearnSummary', {
     extend : 'Connector.app.view.LearnGrid',
 
+    columnLocking : false,
+
     statics: {
         dateRenderer : Ext.util.Format.dateRenderer("M jS, Y"),
         monthDiff : function(d1, d2) {
@@ -68,13 +70,13 @@ Ext.define('Connector.app.view.LearnSummary', {
     initComponent : function() {
         this.addEvents("learnGridResizeHeight");
 
-        this.lockedViewConfig.emptyText = new Ext.XTemplate(
+        var emptyText = new Ext.XTemplate(
                 '<div class="detail-empty-text">No available {itemPluralName} meet your selection criteria.</div>' +
                 '<div class="detail-empty-subtext">Search returns exact match on text. Try adjusting your search.</div>' +
                 '<tpl if="emptySearchSubtext"><div class="detail-empty-subtext">{emptySearchSubtext}</div></tpl>'
         ).apply({itemPluralName: this.itemPluralName, emptySearchSubtext: this.emptySearchSubtext});
 
-        this.normalGridConfig.listeners = {
+        var listeners = {
             itemmouseenter : function(view, record, item, index, evt) {
                 if (record.data.data_availability || record.data.ni_data_availability || record.data.pub_available_data_count > 0) {
                     var checkmark = Ext.get(Ext.query(".detail-has-data", item)[0]);
@@ -105,6 +107,17 @@ Ext.define('Connector.app.view.LearnSummary', {
 
             scope: this
         };
+
+        if (this.columnLocking) {
+            this.lockedViewConfig.emptyText = emptyText;
+            this.normalGridConfig.listeners = listeners;
+        }
+        else {
+            this.emptyText = emptyText;
+            Ext.Object.each(listeners, function(key, value){
+                this.listeners[key] = value;
+            }, this);
+        }
 
         this.callParent(arguments);
 
