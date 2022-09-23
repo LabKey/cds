@@ -44,6 +44,9 @@ import static org.junit.Assert.assertTrue;
 @Category({Git.class})
 public class CDSTestLearnAbout extends CDSReadOnlyTest
 {
+    // whether column locking is enabled for the learn grids
+    public static final boolean COLUMN_LOCKING = false;
+
     public static final String DATA_ADDED_TOOLTIP = "Integrated data added";
     public static final String DATA_NOT_ADDED_TOOLTIP = "Integrated data not added";
     public static final String[] MAB_MIXTURES = {"1361", "2158", "2297", "1H9", "1.00E+09", "1NC9", "2F5", "3.00E+03", "3BNC60", "3BNC117", "4.00E+10",
@@ -77,8 +80,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String MISSING_SEARCH_STRING = "If this string ever appears something very odd happened.";
-    private final Locator XPATH_RESULT_ROW_TITLE = LearnGrid.Locators.lockedRow;
-    private final Locator XPATH_RESULT_ROW_DATA = LearnGrid.Locators.unlockedRow;
+    private final Locator XPATH_RESULT_ROW_TITLE = COLUMN_LOCKING ? LearnGrid.Locators.lockedRow : LearnGrid.Locators.gridRows;
+    private final Locator XPATH_RESULT_ROW_DATA = COLUMN_LOCKING ? LearnGrid.Locators.unlockedRow : LearnGrid.Locators.gridRows;
 
     @Before
     public void preTest()
@@ -138,11 +141,22 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         unlockedParts = freeColItems.get(index).getText().split("\n");
         returnedItems.get(index).click();
 
-        log("Validating title is " + lockedParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + lockedParts[0] + "']")));
+        if (COLUMN_LOCKING)
+        {
+            log("Validating title is " + lockedParts[0]);
+            shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + lockedParts[0] + "']")));
 
-        log("Validating Study Type is: " + unlockedParts[1]);
-        assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + unlockedParts[1] + "']").findElement(getDriver()).isDisplayed());
+            log("Validating Study Type is: " + unlockedParts[1]);
+            assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + unlockedParts[1] + "']").findElement(getDriver()).isDisplayed());
+        }
+        else
+        {
+            log("Validating title is " + lockedParts[0]);
+            shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + lockedParts[0] + "']")));
+
+            log("Validating Study Type is: " + lockedParts[3]);
+            assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + lockedParts[3] + "']").findElement(getDriver()).isDisplayed());
+        }
 
         log("Validating return link works.");
         click(DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /"));
@@ -572,12 +586,24 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Validating title is " + itemTitle);
         longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + itemTitle + "']")));
 
-        log("Validating Product Type is: " + itemClassAndType[1]);
-        assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[1] + "']").findElement(getDriver()).isDisplayed());
+        if (COLUMN_LOCKING)
+        {
+            log("Validating Product Type is: " + itemClassAndType[1]);
+            assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[1] + "']").findElement(getDriver()).isDisplayed());
 
-        String productClass = itemClassAndType[2].replace("Class: ", "");
-        log("Validating Class is: " + productClass);
-        assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + productClass + "']").findElement(getDriver()).isDisplayed());
+            String productClass = itemClassAndType[2].replace("Class: ", "");
+            log("Validating Class is: " + productClass);
+            assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + productClass + "']").findElement(getDriver()).isDisplayed());
+        }
+        else
+        {
+            log("Validating Product Type is: " + itemClassAndType[2]);
+            assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemClassAndType[2] + "']").findElement(getDriver()).isDisplayed());
+
+            String productClass = itemClassAndType[3].replace("Class: ", "");
+            log("Validating Class is: " + productClass);
+            assert (Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + productClass + "']").findElement(getDriver()).isDisplayed());
+        }
 
         log("Validating return link works.");
         click(DETAIL_PAGE_BREADCRUMB_LOC.withText("Products /"));
@@ -617,15 +643,31 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("size" + publicationLockedLists.size());
         scrollIntoView(publicationLockedLists.get(1));
-        String secondPublicationTitle = publicationLockedLists.get(1).getText();
-        String[] secondPublicationUnlockedParts = freeColItems.get(1).getText().split("\n");
 
-        log(secondPublicationTitle);
-        log("Validating the 2nd newest publication: publications should be ordered by date desc by default");
-        Assert.assertEquals("Publication title not as expected", expectedPublictionLabel + "\n" + expectedPublicationTitle, secondPublicationTitle);
-        Assert.assertEquals("Publication journal not as expected", "J Infect Dis", secondPublicationUnlockedParts[0]);
-        Assert.assertEquals("Publication author not as expected", "Fong Y", secondPublicationUnlockedParts[1]);
-        Assert.assertEquals("Publication journal not as expected", "2018 Mar 28", secondPublicationUnlockedParts[2]);
+        if (COLUMN_LOCKING)
+        {
+            String secondPublicationTitle = publicationLockedLists.get(1).getText();
+            String[] secondPublicationUnlockedParts = freeColItems.get(1).getText().split("\n");
+
+            log(secondPublicationTitle);
+            log("Validating the 2nd newest publication: publications should be ordered by date desc by default");
+            Assert.assertEquals("Publication title not as expected", expectedPublictionLabel + "\n" + expectedPublicationTitle, secondPublicationTitle);
+            Assert.assertEquals("Publication journal not as expected", "J Infect Dis", secondPublicationUnlockedParts[0]);
+            Assert.assertEquals("Publication author not as expected", "Fong Y", secondPublicationUnlockedParts[1]);
+            Assert.assertEquals("Publication journal not as expected", "2018 Mar 28", secondPublicationUnlockedParts[2]);
+        }
+        else
+        {
+            String[] publicationText = publicationLockedLists.get(1).getText().split("\n");
+
+            log(publicationText[0]);
+            log("Validating the 2nd newest publication: publications should be ordered by date desc by default");
+            Assert.assertEquals("Publication label not as expected", expectedPublictionLabel, publicationText[0]);
+            Assert.assertEquals("Publication title not as expected", expectedPublicationTitle, publicationText[1]);
+            Assert.assertEquals("Publication journal not as expected", "J Infect Dis", publicationText[2]);
+            Assert.assertEquals("Publication author not as expected", "Fong Y", publicationText[3]);
+            Assert.assertEquals("Publication journal not as expected", "2018 Mar 28", publicationText[4]);
+        }
 
         log("Verify Publications detail page");
         publicationLockedLists.get(1).click();
@@ -1211,8 +1253,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> hasDataRows = Locator.css(".detail-row-has-data").findElements(getDriver());
         List<WebElement> hasDataIcons = Locator.css(".detail-has-data").findElements(getDriver());
 
-        //hasDataRows is larger than hasDataIcons by a factor of two because of locked columns cause rows to be counted twice.
-        assertTrue(hasDataRows.size() / 2 == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
+        if (COLUMN_LOCKING)
+            //hasDataRows is larger than hasDataIcons by a factor of two because of locked columns cause rows to be counted twice.
+            assertTrue(hasDataRows.size() / 2 == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
+        else
+            assertTrue(hasDataRows.size() == hasDataIcons.size() && hasDataIcons.size() == STUDY_WITH_DATA_AVAILABLE);
     }
 
     public void goToDetail(String itemName, boolean hasData)
