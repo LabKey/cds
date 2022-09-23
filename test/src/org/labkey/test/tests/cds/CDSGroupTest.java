@@ -495,6 +495,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
     private void verifyExportButtonOnReports()
     {
+        cds.enterApplication();
         cds.viewLearnAboutPage("Reports");
         Locator.XPathLocator exportBtn = Locator.tagWithId("span", "learn-grid-export-button-id-btnIconEl");
         assertFalse("Export button should not be present", isElementPresent(exportBtn));
