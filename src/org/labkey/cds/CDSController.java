@@ -1047,8 +1047,7 @@ public class CDSController extends SpringActionController
                     Map<String, String> mapProps = new HashMap<>();
 
                     ((JSONObject) properties).entrySet()
-                            .stream()
-                            .forEach(jsonProperty -> mapProps.put(jsonProperty.getKey(), jsonProperty.getValue().toString()));
+                        .forEach(jsonProperty -> mapProps.put(jsonProperty.getKey(), jsonProperty.getValue().toString()));
 
                     if (!mapProps.isEmpty())
                     {
