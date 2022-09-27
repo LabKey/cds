@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.cds.CDSHelper.QED_2;
 import static org.labkey.test.util.cds.CDSHelper.ZAP_110;
@@ -430,6 +431,10 @@ public class CDSGroupTest extends CDSGroupBaseTest
         verifyLinksOnAssayPage(reportName);
         goToProjectHome();
         stopImpersonating();
+        /*
+            Verification step added as part of Update export button and add learn pages export feature
+         */
+        verifyExportButtonOnReports();
         _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
     }
 
@@ -486,6 +491,14 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         goToStudyPage(QED_2);
         verifyCuratedLink(descr);
+    }
+
+    private void verifyExportButtonOnReports()
+    {
+        cds.enterApplication();
+        cds.viewLearnAboutPage("Reports");
+        Locator.XPathLocator exportBtn = Locator.tagWithId("a", "learn-grid-export-button-id-btnIconEl").withAttributeContaining("style","display: none");
+        assertFalse("Export button should not be present", isElementPresent(exportBtn));
     }
 
     private void verifyLinksOnAssayPage(String reportName)

@@ -23,7 +23,7 @@ Ext.define('Connector.app.view.Publication', {
             xtype: 'templatecolumn',
             minWidth: 400,
             maxWidth: 500,
-            locked: true,
+            locked: false,
             resizable: false,
             dataIndex: 'publication_title',
             filterConfigSet: [{

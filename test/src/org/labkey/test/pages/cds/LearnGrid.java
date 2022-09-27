@@ -18,6 +18,7 @@ package org.labkey.test.pages.cds;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.tests.cds.CDSTestLearnAbout;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.cds.CDSHelper;
@@ -41,10 +42,15 @@ public class LearnGrid
     @LogMethod
     public int getRowCount()
     {
-        int numRowsWithLockedPortion = Locators.lockedRow.findElements(_test.getDriver()).size();
-        int numRowsWithUnlockedPortion = Locators.unlockedRow.findElements(_test.getDriver()).size();
-        Assert.assertTrue(numRowsWithLockedPortion == numRowsWithUnlockedPortion);
-        return numRowsWithUnlockedPortion;
+        if (CDSTestLearnAbout.COLUMN_LOCKING)
+        {
+            int numRowsWithLockedPortion = Locators.lockedRow.findElements(_test.getDriver()).size();
+            int numRowsWithUnlockedPortion = Locators.unlockedRow.findElements(_test.getDriver()).size();
+            Assert.assertTrue(numRowsWithLockedPortion == numRowsWithUnlockedPortion);
+            return numRowsWithUnlockedPortion;
+        }
+        else
+            return Locators.gridRows.findElements(_test.getDriver()).size();
     }
 
     @LogMethod
@@ -58,7 +64,7 @@ public class LearnGrid
 
     public LearnDetailsPage clickFirstItem()
     {
-        List<WebElement> returnedItems  = Locators.unlockedRow.findElements(_test.getDriver());
+        List<WebElement> returnedItems  = CDSTestLearnAbout.COLUMN_LOCKING ? Locators.unlockedRow.findElements(_test.getDriver()) : Locators.gridRows.findElements(_test.getDriver());
         returnedItems.get(0).click();
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
@@ -206,8 +212,14 @@ public class LearnGrid
     // Columns are separated by a \n.
     public String getRowText(int rowIndex)
     {
-        _test.scrollIntoView(Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex)); // Why do I have to scroll this into view to get the text?
-        return Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex).getText() + "\n" + Locators.unlockedRow.findElements(_test.getDriver()).get(rowIndex).getText();
+        if (CDSTestLearnAbout.COLUMN_LOCKING) {
+            _test.scrollIntoView(Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex)); // Why do I have to scroll this into view to get the text?
+            return Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex).getText() + "\n" + Locators.unlockedRow.findElements(_test.getDriver()).get(rowIndex).getText();
+        }
+        else {
+            _test.scrollIntoView(Locators.gridRows.findElements(_test.getDriver()).get(rowIndex)); // Why do I have to scroll this into view to get the text?
+            return Locators.gridRows.findElements(_test.getDriver()).get(rowIndex).getText();
+        }
     }
 
     // Assume 0 based for rows and columns.
@@ -219,7 +231,10 @@ public class LearnGrid
     public LearnGrid showDataAddedToolTip(int rowIndex, int cellIndex)
     {
         // Scroll the row into view.
-        _test.scrollIntoView(Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex));
+        if (CDSTestLearnAbout.COLUMN_LOCKING)
+            _test.scrollIntoView(Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex));
+        else
+            _test.scrollIntoView(Locators.gridRows.findElements(_test.getDriver()).get(rowIndex));
 
         // The tool-tip shows up on a mouse enter event. So first go to the grey text under the icon then move over it.
         _test.mouseOver(getCellWebElement(rowIndex, cellIndex).findElement(By.className("detail-gray-text")));
@@ -238,22 +253,31 @@ public class LearnGrid
         int cellCountLocked;
         WebElement cellWebElement;
 
-        cellWebElement = Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex);
-        _test.scrollIntoView(cellWebElement);
-
-        cellCountLocked = cellWebElement.findElements(By.tagName("td")).size();
-
-        if (cellIndex < cellCountLocked)
+        if (CDSTestLearnAbout.COLUMN_LOCKING)
         {
-            return cellWebElement.findElements(By.tagName("td")).get(cellIndex);
+            cellWebElement = Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex);
+            _test.scrollIntoView(cellWebElement);
+
+            cellCountLocked = cellWebElement.findElements(By.tagName("td")).size();
+
+            if (cellIndex < cellCountLocked)
+            {
+                return cellWebElement.findElements(By.tagName("td")).get(cellIndex);
+            }
+            else
+            {
+                // The index is not in the locked columns, so we have to do a little offset and need to look at the unlocked grid.
+                cellWebElement = Locators.unlockedRow.findElements(_test.getDriver()).get(rowIndex);
+                return cellWebElement.findElements(By.tagName("td")).get(cellIndex - cellCountLocked);
+            }
         }
         else
         {
-            // The index is not in the locked columns, so we have to do a little offset and need to look at the unlocked grid.
-            cellWebElement = Locators.unlockedRow.findElements(_test.getDriver()).get(rowIndex);
-            return cellWebElement.findElements(By.tagName("td")).get(cellIndex - cellCountLocked);
-        }
+            cellWebElement = Locators.gridRows.findElements(_test.getDriver()).get(rowIndex);
+            _test.scrollIntoView(cellWebElement);
 
+            return cellWebElement.findElements(By.tagName("td")).get(cellIndex);
+        }
     }
 
     // There should only be one tool-tip present at a time.
@@ -278,7 +302,10 @@ public class LearnGrid
     public String[] getColumnNames()
     {
         String colHeaderStr;
-        colHeaderStr = Locators.lockedRowHeader.findElement(_test.getDriver()).getText() + "\n" + Locators.unlockedRowHeader.findElement(_test.getDriver()).getText();
+        if (CDSTestLearnAbout.COLUMN_LOCKING)
+            colHeaderStr = Locators.lockedRowHeader.findElement(_test.getDriver()).getText() + "\n" + Locators.unlockedRowHeader.findElement(_test.getDriver()).getText();
+        else
+            colHeaderStr = Locators.gridRowHeader.findElement(_test.getDriver()).getText();
         return colHeaderStr.split("\n");
     }
 
@@ -308,6 +335,9 @@ public class LearnGrid
         public static final Locator.XPathLocator unlockedRowHeader = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div[contains(@class, 'x-grid-header-ct')]");
         public static final Locator.XPathLocator lockedRow = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div/div/table/tbody/tr");
         public static final Locator.XPathLocator lockedRowHeader = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div[contains(@class, 'x-grid-header-ct')]");
+
+        public static final Locator.XPathLocator gridRows = grid.append("//div[contains(@class, 'x-grid-view')]/table/tbody/tr");
+        public static final Locator.XPathLocator gridRowHeader = grid.append("//div[contains(@class, 'x-grid-header-ct')]");
 
         public static final Locator.XPathLocator unifiedRow = grid.append("//tr"); // use for locators on detail grids
 

@@ -454,7 +454,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         setFormElement(Locator.xpath(XPATH_TEXTBOX), study);
         sleep(CDSHelper.CDS_WAIT);
 
-        List<WebElement> returnedItems  = LearnGrid.Locators.lockedRow.findElements(getDriver());
+        List<WebElement> returnedItems  = CDSTestLearnAbout.COLUMN_LOCKING ? LearnGrid.Locators.lockedRow.findElements(getDriver()) : LearnGrid.Locators.gridRows.findElements(getDriver());
         returnedItems.get(0).click();
         waitForText("Study information");
         sleep(2000);

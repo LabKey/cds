@@ -18,7 +18,7 @@ Ext.define('Connector.app.view.Study', {
         xtype: 'templatecolumn',
         minWidth: 400,
         maxWidth: 500,
-        locked: true,
+        locked: false,
         resizable: false,
         dataIndex: 'label',
         filterConfigSet: [{
