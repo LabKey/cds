@@ -18,6 +18,7 @@ package org.labkey.test.tests.cds;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
@@ -30,6 +31,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 5)
 public class CDSFiltersTest extends CDSReadOnlyTest
 {
 

@@ -24,6 +24,7 @@ import org.labkey.remoteapi.CommandException;
 import org.labkey.remoteapi.Connection;
 import org.labkey.remoteapi.di.RunTransformResponse;
 import org.labkey.remoteapi.query.InsertRowsCommand;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.CDSPlot;
@@ -55,6 +56,7 @@ import static org.labkey.test.util.cds.CDSHelper.QED_2;
 import static org.labkey.test.util.cds.CDSHelper.ZAP_110;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 10)
 public class CDSGroupTest extends CDSGroupBaseTest
 {
 
