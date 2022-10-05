@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.RReportHelper;
@@ -34,6 +35,7 @@ import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 4)
 public class CDSRReportsTest extends CDSReadOnlyTest
 {
 

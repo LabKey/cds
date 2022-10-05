@@ -19,6 +19,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
@@ -39,6 +40,7 @@ import static org.labkey.test.util.cds.CDSHelpCenterUtil.DataSpaceR_LINK;
 import static org.labkey.test.util.cds.CDSHelpCenterUtil.TOOLS_TITLE;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 4)
 public class CDSHelpCenterTest extends CDSReadOnlyTest
 {
     private final CDSHelpCenterUtil helpCenter = new CDSHelpCenterUtil(this);
