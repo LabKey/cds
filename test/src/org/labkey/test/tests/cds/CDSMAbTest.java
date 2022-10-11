@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
 import org.labkey.test.pages.cds.AntigenFilterPanel;
@@ -55,6 +56,7 @@ import static org.labkey.test.pages.cds.MAbDataGrid.TIERS_COL;
 import static org.labkey.test.pages.cds.MAbDataGrid.VIRUSES_COL;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 10)
 public class CDSMAbTest extends CDSGroupBaseTest
 {
     private final CDSHelper cds = new CDSHelper(this);

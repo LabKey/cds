@@ -19,6 +19,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.CDSPlot;
@@ -46,6 +47,7 @@ import static org.labkey.test.util.cds.CDSHelper.GRID_COL_SUBJECT_ID;
 import static org.labkey.test.util.cds.CDSHelper.GRID_TITLE_NAB;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 10)
 public class CDSGridTest extends CDSReadOnlyTest
 {
 

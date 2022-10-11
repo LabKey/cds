@@ -18,6 +18,7 @@ package org.labkey.test.tests.cds;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.CDSLoginPage;
@@ -30,6 +31,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 2)
 public class CDSLoginTest extends CDSReadOnlyTest
 {
     @Before

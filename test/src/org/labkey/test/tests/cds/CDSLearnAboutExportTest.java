@@ -10,9 +10,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
-import org.labkey.test.categories.Git;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSHelper;
 
@@ -27,7 +27,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category({Git.class})
+@Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 3)
 public class CDSLearnAboutExportTest extends CDSReadOnlyTest
 {
     public static final String XPATH_SEARCH_BOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";

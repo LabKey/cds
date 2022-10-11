@@ -20,8 +20,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.categories.Git;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
@@ -43,7 +43,8 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category({Git.class})
+@Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 15)
 public class CDSPlotTimeTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);

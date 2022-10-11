@@ -18,7 +18,7 @@ package org.labkey.test.tests.cds;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.categories.Git;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
@@ -35,7 +35,8 @@ import java.util.Map;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-@Category({Git.class})
+@Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 10)
 public class CDSSubjectCountTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);

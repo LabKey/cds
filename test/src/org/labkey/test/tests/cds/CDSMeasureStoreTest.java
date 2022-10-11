@@ -18,6 +18,7 @@ package org.labkey.test.tests.cds;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.DemoMeasureStorePage;
 
@@ -29,6 +30,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 10)
 public class CDSMeasureStoreTest extends CDSReadOnlyTest
 {
     public static final String[] ICS_ELISPOT_DIMENSIONS = {"study_ICS_summary_level", "cds_GridBase_SequenceNum", "study_ICS_pctpos",

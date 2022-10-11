@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.remoteapi.CommandException;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.dumbster.EmailRecordTable;
@@ -48,6 +49,7 @@ import static org.junit.Assert.assertTrue;
 import static org.labkey.test.tests.cds.CDSTestLearnAbout.XPATH_TEXTBOX;
 
 @Category({})
+@BaseWebDriverTest.ClassTimeout(minutes = 9)
 public class CDSSecurityTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
