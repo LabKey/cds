@@ -37,7 +37,7 @@ Ext.define('Connector.app.view.Report', {
             xtype: 'templatecolumn',
             minWidth: 500,
             flex: 5 / 7,
-            locked: true,
+            locked: false,
             resizable: false,
             dataIndex: 'name',
             filterConfigSet: [{
