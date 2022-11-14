@@ -49,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 import static org.labkey.test.tests.cds.CDSTestLearnAbout.XPATH_TEXTBOX;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 9)
+@BaseWebDriverTest.ClassTimeout(minutes = 12)
 public class CDSSecurityTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
