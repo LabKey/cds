@@ -31,7 +31,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 5)
+@BaseWebDriverTest.ClassTimeout(minutes = 8)
 public class CDSFiltersTest extends CDSReadOnlyTest
 {
 
