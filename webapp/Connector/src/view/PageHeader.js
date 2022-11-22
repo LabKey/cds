@@ -34,12 +34,10 @@ Ext.define('Connector.view.PageHeader', {
 
     width: '100%',
 
-    assayTypesToExport: ["BAMA", "NAb", "NABMAb", "PKMAb"],
-
     constructor : function(config) {
         this.callParent([config]);
 
-        this.addEvents('upclick', 'searchchanged', 'tabselect');
+        this.addEvents('upclick', 'searchchanged', 'tabselect', 'exportassaycsv', 'exportassayexcel');
     },
 
     initComponent : function() {
@@ -146,32 +144,6 @@ Ext.define('Connector.view.PageHeader', {
                 return true;
             }, this)
         });
-
-        var id_suffix = this.model.data.assay_identifier.replaceAll(" ", "-");
-        var assayExportButton = Ext.create('Connector.button.ExportButton', {
-            id: 'learn-grid-assay-export-button-id-' + id_suffix,
-            margin : '17 25 0 25',
-            hidden : true,
-            dimension : undefined,
-            store : undefined,
-            width : 100,
-            hidden: false,
-            // listeners: {
-            //     exportcsv : this.requestExportCSV,
-            //     exportexcel : this.requestExportExcel,
-            //     scope: this
-            // }
-        });
-
-        var dim_items = [tabPanel];
-        if (this.hasSearch) {
-            dim_items = [tabPanel, detailSearchField];
-        }
-        else {
-            if (this.model && this.model.data && this.assayTypesToExport.includes(this.model.data.assay_type)) {
-                dim_items = [tabPanel, assayExportButton];
-            }
-        }
 
         this.items = [{
             xtype: 'container',

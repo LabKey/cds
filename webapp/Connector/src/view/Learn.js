@@ -132,6 +132,14 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
+    requestAssayExportCSV : function() {
+        console.log("export csv");
+    },
+
+    requestAssayExportExcel : function() {
+        console.log("export excel");
+    },
+
     onUpdateLearnSort : function(column, direction, isDetailPage) {
         var view = isDetailPage ? this.activeListingDetailGrid : this.activeListing;
         if (view) {
@@ -613,6 +621,12 @@ Ext.define('Connector.view.Learn', {
                 listeners: {
                     searchchanged: function(filter) {
                         this.onSearchFilterChange(filter, true);
+                    },
+                    exportassaycsv: function(item) {
+                        this.requestAssayExportCSV();
+                    },
+                    exportassayexcel: function(item) {
+                        this.requestAssayExportExcel();
                     },
                     scope: this
                 }
