@@ -709,6 +709,43 @@ public class CDSController extends SpringActionController
         }
     }
 
+    @RequiresPermission(ReadPermission.class)
+    @Action(ActionType.Export.class)
+    public class ExportLearnAssayAction extends SimpleViewAction<ExportForm>
+    {
+        @Override
+        public ModelAndView getView(ExportForm form, BindException errors) throws Exception
+        {
+            CDSExportQueryView view = new CDSExportQueryView(form, errors)
+            {
+                @Override
+                //TODO
+                protected String getFileNamePrefix()
+                {
+                    return "Learn " + form.getDataTabNames()[0];
+                }
+
+                @Override
+                protected String getFilterHeaderString()
+                {
+                    return "Filters applied to exported data:";
+                }
+
+            };
+
+//            if (form.isExcel())
+//                view.writeExcelToResponse(getViewContext().getResponse(), true);
+//            else
+//                view.writeCSVToResponse(getViewContext().getResponse(), true);
+            return null;
+        }
+
+        @Override
+        public void addNavTrail(NavTree root)
+        {
+        }
+    }
+
     @RequiresPermission(AdminPermission.class)
     @Action(ActionType.Export.class)
     public class PermissionsReportExportAction extends SimpleViewAction<QueryForm>

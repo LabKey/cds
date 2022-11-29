@@ -132,12 +132,122 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    requestAssayExportCSV : function() {
+    requestAssayExportCSV : function(cmp, item, data) {
         console.log("export csv");
+        this.requestAssayExport(false, cmp, item, data);
     },
 
-    requestAssayExportExcel : function() {
+    requestAssayExportExcel : function(cmp, item, data) {
         console.log("export excel");
+        this.requestAssayExport(true, cmp, item, data);
+    },
+
+    requestAssayExport : function(isExcel, cmp, item, data) {
+
+        //for metadata
+        var assayName = data.assay_short_name;
+
+        //for assay
+        var assaySchema = "cds";
+        var assayQuery = "assay";
+        var assayIdentifier = data.assay_identifier;
+
+        //for variables and descriptions
+        var variablesSchema = "study";
+        var variablesQuery = data.assay_type;
+        var qviewName = "AssayExportView";
+
+        //for antigen
+        var antigen_query = "nabantigen";
+        var antigen_columns = ""
+        if (data.assay_identifier.includes("BAMA")) {
+            antigen_query = "bamaantigen";
+        }
+
+        var newForm = document.createElement('form');
+        document.body.appendChild(newForm);
+
+        var exportParams = {
+            "query.showRows": ['ALL'],
+            'X-LABKEY-CSRF': LABKEY.CSRF,
+            isExcel : isExcel,
+            columnNames: [],
+            columnAliases: [],
+            dataTabNames : [data.assay_identifier],
+            schemaNames : ["cds"] ,
+            // queryNames : [queryName],
+            fieldKeys : [],
+            filterStrings: [assayName]
+        };
+
+        LABKEY.Query.getQueryDetails({
+            scope: this,
+            schemaName: variablesSchema,
+            queryName: variablesQuery,
+            viewName: qviewName,
+            success: function (details) {
+
+                if (details) {
+                    if (details.views) {
+                        var viewInfo = details.views.filter(function (view) {
+                            return view.name === qviewName
+                        }, this);
+                        if (viewInfo && viewInfo.length === 1) {
+                            var viewFields = viewInfo[0].fields;
+
+                            var variables = [];
+                            Ext.each(viewFields, function(field) {
+                                variables.push(assayName + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.caption + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.description);
+                            });
+                            exportParams.variables = variables;
+                        }
+                    }
+                }
+
+                LABKEY.Query.selectRows({
+                    schemaName: 'cds',
+                    queryName: 'import_assay',
+                    viewName: 'LearnGridExportView',
+                    filterArray: [
+                        LABKEY.Filter.create('assay_identifier', data.assay_identifier),
+                    ],
+                    success: function (results) {
+                        var assayRow = results.rows;
+
+                        LABKEY.Query.selectRows({
+                            schemaName: 'cds',
+                            queryName: antigen_query,
+                            viewName: 'AssayAntigenExportView',
+                            filterArray: [
+                                LABKEY.Filter.create('assay_identifier', data.assay_identifier)
+                            ],
+                            success: function (results) {
+                                var antigenRows = results.rows;
+
+                                // export
+                                Ext.Ajax.request({
+                                    url: LABKEY.ActionURL.buildURL('cds', 'exportLearnAssay'),
+                                    method: 'POST',
+                                    form: newForm,
+                                    isUpload: true,
+                                    params: exportParams,
+                                    callback: function (options, success/*, response*/) {
+                                        if (!success) {
+                                            Ext.Msg.alert('Error', 'Unable to export ' + data.assay_type);
+                                        }
+                                    }
+                                });
+                            },
+                            scope: this
+                        });
+                    },
+                    scope: this
+                });
+            },
+            failure: function() {
+                Ext.Msg.alert('Error', "Error exporting Learn page '" + data.assay_type + "'");
+            },
+        });
     },
 
     onUpdateLearnSort : function(column, direction, isDetailPage) {
@@ -622,11 +732,11 @@ Ext.define('Connector.view.Learn', {
                     searchchanged: function(filter) {
                         this.onSearchFilterChange(filter, true);
                     },
-                    exportassaycsv: function(item) {
-                        this.requestAssayExportCSV();
+                    exportassaycsv: function(cmp, item, data) {
+                        this.requestAssayExportCSV(cmp, item, data);
                     },
-                    exportassayexcel: function(item) {
-                        this.requestAssayExportExcel();
+                    exportassayexcel: function(cmp, item, data) {
+                        this.requestAssayExportExcel(cmp, item, data);
                     },
                     scope: this
                 }
@@ -918,7 +1028,7 @@ Ext.define('Connector.view.LearnHeader', {
                     params: exportParams,
                     callback: function (options, success/*, response*/) {
                         if (!success) {
-                            Ext.Msg.alert('Error', 'Unable to export.');
+                            Ext.Msg.alert('Error', 'Unable to export ' + learnGridName);
                         }
                     }
                 });
