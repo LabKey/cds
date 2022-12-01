@@ -759,7 +759,7 @@ public class CDSExportQueryView extends QueryView
             try (TSVGridWriter tsv = getTSVGridWriter(isLearnGrid, _tabQueryForms.get(tabName)))
             {
                 tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
-                tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
+                tmpFile = FileUtil.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
                 tmpFile.deleteOnExit();
                 tsv.write(tmpFile);
                 logAuditEvent("Exported to CSV", tsv.getDataRowCount());
@@ -776,7 +776,7 @@ public class CDSExportQueryView extends QueryView
         try (TSVGridWriter tsv = new TSVGridWriter(factory))
         {
             tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
-            tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
+            tmpFile = FileUtil.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
             tmpFile.deleteOnExit();
             tsv.write(tmpFile);
         }
@@ -873,12 +873,11 @@ public class CDSExportQueryView extends QueryView
                 builder.append("\n" + FILTERS_FOOTER_TXT + "\n");
             }
 
-            File tmpFile = File.createTempFile("tmpMetadata" + FileUtil.getTimestamp(), null);
+            File tmpFile = FileUtil.createTempFile("tmpMetadata" + FileUtil.getTimestamp(), null);
             tmpFile.deleteOnExit();
 
             FileUtils.writeStringToFile(tmpFile, builder.toString(), StringUtilsLabKey.DEFAULT_CHARSET);
             copyFileToZip(tmpFile, out);
         }
     }
-
 }
