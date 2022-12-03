@@ -176,7 +176,7 @@ Ext.define('Connector.view.Learn', {
             schemaNames : ['cds'] ,
             queryNames : ['import_assay'],
             fieldKeys : ['assay_identifier'],
-            filterStrings: [assayName],
+            filterStrings: ["Selected Assay:" + ChartUtils.ANTIGEN_LEVEL_DELIMITER + assayName],
             assayFilterString: data.assay_identifier,
             antigenQuery: antigen_query
         };

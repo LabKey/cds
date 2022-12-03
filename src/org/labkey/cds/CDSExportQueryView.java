@@ -397,7 +397,7 @@ public class CDSExportQueryView extends QueryView
 
                 rowObject = getRow(sheet, currentRow);
                 Cell footerCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                if (!isLearnGrid)
+                if (!isLearnGrid && !isLearnAssay)
                 {
                     footerCell.setCellValue(FILTERS_FOOTER);
                 }
@@ -888,12 +888,12 @@ public class CDSExportQueryView extends QueryView
         try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
         {
             writeCSVQueries(out, isLearnGrid, isLearnAssay);
-            writeMetadataTxt(out, isLearnGrid);
+            writeMetadataTxt(out, isLearnGrid, isLearnAssay);
             writeExtraCSVs(out, isLearnGrid, isLearnAssay);
         }
     }
 
-    private void writeMetadataTxt(ZipOutputStream out, boolean isLearnGrid) throws IOException
+    private void writeMetadataTxt(ZipOutputStream out, boolean isLearnGrid, boolean isLearnAssay) throws IOException
     {
         if (!isLearnGrid || (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs")))
         {
@@ -940,7 +940,7 @@ public class CDSExportQueryView extends QueryView
                 }
                 builder.append("\t\t").append(currentFilter).append("\n");
             }
-            if (!isLearnGrid)
+            if (!isLearnGrid && !isLearnAssay)
             {
                 builder.append("\n" + FILTERS_FOOTER_TXT + "\n");
             }
