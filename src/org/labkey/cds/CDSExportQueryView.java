@@ -29,7 +29,9 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
+import org.labkey.api.collections.ResultSetRowMapFactory;
 import org.labkey.api.data.*;
+import org.labkey.api.exp.ExperimentException;
 import org.labkey.api.exp.query.ExpDataTable;
 import org.labkey.api.query.FieldKey;
 import org.labkey.api.query.InvalidKeyException;
@@ -38,9 +40,11 @@ import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryUpdateServiceException;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.query.UserSchema;
+import org.labkey.api.study.publish.StudyPublishService;
 import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.StringUtilsLabKey;
 import org.labkey.api.view.DataView;
+import org.labkey.api.view.NotFoundException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -109,6 +113,14 @@ public class CDSExportQueryView extends QueryView
     private static final List<String> ASSAY_COLUMNS = Arrays.asList("Study", "Assay Name", "Data provenance - source", "Data provenance - Notes");
     private static final List<String> VARIABLE_COLUMNS = Arrays.asList("Assay Name", "Field label", "Field description");
     private static final List<String> LEARN_MAB_VARIABLE_COLUMNS = Arrays.asList("Field label", "Field description");
+    private static final List<String> BAMA_ASSAY_ANTIGEN_COLUMNS = Arrays.asList("antigen_short_name", "antigen_full_name", "antigen_plot_label",
+            "antigen_name_other", "antigen_category", "isolate_species", "isolate_clade", "isolate_clone", "isolate_donor_id", "isolate_mutations",
+            "isolate_differentiate", "antigen_type_region", "antigen_type_scaffold", "antigen_type_modifiers", "antigen_type_tags", "antigen_type_differentiate",
+            "production_host_cell", "production_purification_method", "production_special_reagent", "production_manufacturer", "production_codon_optimization",
+            "transfection_method", "transmitter_founder_status", "isolate_cloner_pi", "isolate_country_origin", "isolate_yr_isolated",
+            "isolate_fiebig_stage", "isolate_accession_num", "antigen_control", "cds_ag_id");
+    private static final List<String> NAB_ASSAY_ANTIGEN_COLUMNS = Arrays.asList("virus", "virus_full_name", "virus_type", "virus_species",
+            "clade", "neutralization_tier", "virus_host_cell", "virus_backbone", "virus_name_other", "antigen_control", "cds_virus_id");
 
     private final List<String> _filterStrings;
     private final String[] _studies;
@@ -534,7 +546,7 @@ public class CDSExportQueryView extends QueryView
                 if (isLearnAssay)
                 {
                     renderNewSheet(workbook);
-                    setColumns(CDSSchema.getInstance().getSchema().getTable(_antigenQuery).getColumns());
+                    setColumns(getAssayAntigenColumns());
                     setResultsFactory(() -> getAntigens());
                     setSheetName(ANTIGENS_SHEET);
                     setCaptionRowFrozen(false);
@@ -722,32 +734,40 @@ public class CDSExportQueryView extends QueryView
         return allStudyAssays;
     }
 
-    private Results getAntigens()
+    private QueryView getAssayAntigenQueryView()
     {
-        List<Map<String, Object>> antigens = new ArrayList<>();
-        List<List<String>> allAntigens = new ArrayList<>();
-        SimpleFilter filter = new SimpleFilter();
-        filter.addCondition(FieldKey.fromParts(_fieldKeys.get(0)), Arrays.asList(_assayFilterString), CompareType.IN);
-        SchemaTableInfo table = CDSSchema.getInstance().getSchema().getTable(_antigenQuery);
+        UserSchema schema = QueryService.get().getUserSchema(getViewContext().getUser(), getViewContext().getContainer(), "CDS");
+        QuerySettings settings = schema.getSettings(getViewContext(), "query", _antigenQuery);
+        settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), _assayFilterString, CompareType.IN));
+        QueryView queryView = schema.createView(getViewContext(), settings, null);
+        queryView.setCustomView("AssayAntigenExportView");
 
-        try (Results results = new TableSelector(table, filter, null).getResults())
-        {
-            while (results.next())
-            {
-                antigens.add(results.getRowMap());
-            }
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeSQLException(e);
-        }
+        return queryView;
+    }
 
-        for (Map<String, Object> antigenMap : antigens)
-        {
-            allAntigens.add(new ArrayList<>(antigenMap.values()).stream().map((Objects::toString)).collect(Collectors.toList()));
-        }
+    private List<ColumnInfo> getAssayAntigenColumns()
+    {
+        QueryView view = getAssayAntigenQueryView();
+        return getAssayAntigenColumns(view);
+    }
 
-        return createResults(allAntigens, table.getColumns());
+    private List<ColumnInfo> getAssayAntigenColumns(QueryView view)
+    {
+        List<ColumnInfo> columnInfos = new ArrayList<>();
+        for (DisplayColumn dc : view.getDisplayColumns())
+        {
+            if (null == dc.getColumnInfo())
+                continue;
+            ColumnInfo colInfo = dc.getColumnInfo();
+            columnInfos.add(colInfo);
+        }
+        return columnInfos;
+    }
+
+    private Results getAntigens() throws IOException, SQLException
+    {
+        QueryView queryView = getAssayAntigenQueryView();
+        return queryView.getResults();
     }
 
     protected boolean isValidStudyAssayPair(List<String> studyAssayStrs, String studyFolder, String studyLabel, String assayIdentifier)
@@ -864,21 +884,6 @@ public class CDSExportQueryView extends QueryView
             writeGridCSV(ANTIGENS_SHEET, ()-> getAntigens(), out);
         }
     }
-
-//    private Results getAntigens() throws QueryUpdateServiceException, InvalidKeyException, SQLException
-//    {
-//        UserSchema schema = QueryService.get().getUserSchema(getViewContext().getUser(), getViewContext().getContainer(), "CDS");
-//        QuerySettings settings = schema.getSettings(getViewContext(), "query", _antigenQuery);
-//        settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), _assayFilterString, CompareType.IN));
-//        Map<String, Object> keys = Collections.singletonMap(_fieldKeys.get(0), _assayFilterString);
-//        QueryView queryView = schema.createView(getViewContext(), settings, null);
-//
-////        List<Map<String, Object>> rows = qus.getRows(user, getContainer(), Collections.singletonList(keys));
-//
-//        List<Map<String, Object>> rows = queryView.getTable().getUpdateService().getRows(getUser(), getContainer(), Collections.singletonList(keys));
-//        List<List<String>> exportableAssays = getExportableStudyAssays(_studyassays, _studies, _assays);
-//        return createResults(exportableAssays, queryView.getTable().getColumns());
-//    }
 
     public void writeCSVToResponse(HttpServletResponse response, boolean isLearnGrid,boolean isLearnAssay) throws IOException
     {
