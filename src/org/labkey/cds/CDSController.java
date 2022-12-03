@@ -608,9 +608,9 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse(), false);
+                view.writeExcelToResponse(getViewContext().getResponse(), false, false);
             else
-                view.writeCSVToResponse(getViewContext().getResponse(), false);
+                view.writeCSVToResponse(getViewContext().getResponse(), false, false);
             return null;
         }
 
@@ -661,9 +661,9 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse(), false);
+                view.writeExcelToResponse(getViewContext().getResponse(), false, false);
             else
-                view.writeCSVToResponse(getViewContext().getResponse(), false);
+                view.writeCSVToResponse(getViewContext().getResponse(), false, false);
             return null;
         }
 
@@ -697,9 +697,9 @@ public class CDSController extends SpringActionController
             };
 
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse(), true);
+                view.writeExcelToResponse(getViewContext().getResponse(), true, false);
             else
-                view.writeCSVToResponse(getViewContext().getResponse(), true);
+                view.writeCSVToResponse(getViewContext().getResponse(), true, false);
             return null;
         }
 
@@ -722,7 +722,7 @@ public class CDSController extends SpringActionController
                 //TODO
                 protected String getFileNamePrefix()
                 {
-                    return "Learn " + form.getDataTabNames()[0];
+                    return "Learn Assay" + form.getDataTabNames()[0];
                 }
 
                 @Override
@@ -733,10 +733,10 @@ public class CDSController extends SpringActionController
 
             };
 
-//            if (form.isExcel())
-//                view.writeExcelToResponse(getViewContext().getResponse(), true);
-//            else
-//                view.writeCSVToResponse(getViewContext().getResponse(), true);
+            if (form.isExcel())
+                view.writeExcelToResponse(getViewContext().getResponse(), false, true);
+            else
+                view.writeCSVToResponse(getViewContext().getResponse(), false, true);
             return null;
         }
 
@@ -837,6 +837,9 @@ public class CDSController extends SpringActionController
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
         private String[] _fieldKeys;
         private String[] _learnGridFilterValues;
+
+        private String _assayFilterString;
+        private String _antigenQuery;
 
         @Override
         protected @NotNull BindException doBindParameters(PropertyValues in)
@@ -1024,6 +1027,26 @@ public class CDSController extends SpringActionController
         public void setLearnGridFilterValues(String[] learnGridFilterValues)
         {
             _learnGridFilterValues = learnGridFilterValues;
+        }
+
+        public String getAssayFilterString()
+        {
+            return _assayFilterString;
+        }
+
+        public void setAssayFilterString(String assayFilterString)
+        {
+            _assayFilterString = assayFilterString;
+        }
+
+        public String getAntigenQuery()
+        {
+            return _antigenQuery;
+        }
+
+        public void setAntigenQuery(String antigenQuery)
+        {
+            _antigenQuery = antigenQuery;
         }
     }
 

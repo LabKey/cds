@@ -159,7 +159,6 @@ Ext.define('Connector.view.Learn', {
 
         //for antigen
         var antigen_query = "nabantigen";
-        var antigen_columns = ""
         if (data.assay_identifier.includes("BAMA")) {
             antigen_query = "bamaantigen";
         }
@@ -174,10 +173,12 @@ Ext.define('Connector.view.Learn', {
             columnNames: [],
             columnAliases: [],
             dataTabNames : [data.assay_identifier],
-            schemaNames : ["cds"] ,
-            // queryNames : [queryName],
-            fieldKeys : [],
-            filterStrings: [assayName]
+            schemaNames : ['cds'] ,
+            queryNames : ['import_assay'],
+            fieldKeys : ['assay_identifier'],
+            filterStrings: [assayName],
+            assayFilterString: data.assay_identifier,
+            antigenQuery: antigen_query
         };
 
         LABKEY.Query.getQueryDetails({
@@ -196,7 +197,7 @@ Ext.define('Connector.view.Learn', {
                             var viewFields = viewInfo[0].fields;
 
                             var variables = [];
-                            Ext.each(viewFields, function(field) {
+                            Ext.each(viewFields, function (field) {
                                 variables.push(assayName + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.caption + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.description);
                             });
                             exportParams.variables = variables;
@@ -204,44 +205,45 @@ Ext.define('Connector.view.Learn', {
                     }
                 }
 
-                LABKEY.Query.selectRows({
+                LABKEY.Query.getQueryDetails({
+                    scope: this,
                     schemaName: 'cds',
                     queryName: 'import_assay',
                     viewName: 'LearnGridExportView',
-                    filterArray: [
-                        LABKEY.Filter.create('assay_identifier', data.assay_identifier),
-                    ],
-                    success: function (results) {
-                        var assayRow = results.rows;
+                    success: function (details) {
 
-                        LABKEY.Query.selectRows({
-                            schemaName: 'cds',
-                            queryName: antigen_query,
-                            viewName: 'AssayAntigenExportView',
-                            filterArray: [
-                                LABKEY.Filter.create('assay_identifier', data.assay_identifier)
-                            ],
-                            success: function (results) {
-                                var antigenRows = results.rows;
+                        if (details) {
+                            if (details.views) {
+                                var viewInfo = details.views.filter(function (view) {
+                                    return view.name === 'LearnGridExportView'
+                                }, this);
 
-                                // export
-                                Ext.Ajax.request({
-                                    url: LABKEY.ActionURL.buildURL('cds', 'exportLearnAssay'),
-                                    method: 'POST',
-                                    form: newForm,
-                                    isUpload: true,
-                                    params: exportParams,
-                                    callback: function (options, success/*, response*/) {
-                                        if (!success) {
-                                            Ext.Msg.alert('Error', 'Unable to export ' + data.assay_type);
-                                        }
+                                if (viewInfo && viewInfo.length === 1) {
+                                    var viewFields = viewInfo[0].fields;
+                                    exportParams.columnNames = viewFields.map(function (cols) {
+                                        return cols.name
+                                    });
+                                    exportParams.columnAliases = viewFields.map(function (cols) {
+                                        return cols.caption
+                                    });
+                                }
+                            }
+
+                            // export
+                            Ext.Ajax.request({
+                                url: LABKEY.ActionURL.buildURL('cds', 'exportLearnAssay'),
+                                method: 'POST',
+                                form: newForm,
+                                isUpload: true,
+                                params: exportParams,
+                                callback: function (options, success/*, response*/) {
+                                    if (!success) {
+                                        Ext.Msg.alert('Error', 'Unable to export ' + data.assay_type);
                                     }
-                                });
-                            },
-                            scope: this
-                        });
+                                }
+                            });
+                        }
                     },
-                    scope: this
                 });
             },
             failure: function() {
