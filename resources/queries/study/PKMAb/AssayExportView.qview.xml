@@ -2,6 +2,8 @@
     <cv:columns>
         <cv:column name="mab_concentration"/>
         <cv:column name="mab_mix_name_std"/>
+        <cv:column name="lloq"/>
+        <cv:column name="lloq_units"/>
         <cv:column name="lab_code"/>
         <cv:column name="mab_concentration_units"/>
         <cv:column name="mab_name_source"/>

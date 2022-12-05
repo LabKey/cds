@@ -147,20 +147,18 @@ Ext.define('Connector.view.Learn', {
         //for metadata
         var assayName = data.assay_short_name;
 
-        //for assay
-        var assaySchema = "cds";
-        var assayQuery = "assay";
-        var assayIdentifier = data.assay_identifier;
-
         //for variables and descriptions
         var variablesSchema = "study";
         var variablesQuery = data.assay_type;
         var qviewName = "AssayExportView";
 
         //for antigen
-        var antigen_query = "nabantigen";
+        var antigen_query = null;
         if (data.assay_identifier.includes("BAMA")) {
             antigen_query = "bamaantigen";
+        }
+        else if (data.assay_identifier.includes("NAB")) {
+            antigen_query = "nabantigen";
         }
 
         var newForm = document.createElement('form');

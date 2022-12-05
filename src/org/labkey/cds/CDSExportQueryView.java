@@ -543,7 +543,7 @@ public class CDSExportQueryView extends QueryView
                     setCaptionRowFrozen(false);
                 }
 
-                if (isLearnAssay)
+                if (isLearnAssay && null != _antigenQuery)
                 {
                     renderNewSheet(workbook);
                     setColumns(getAssayAntigenColumns());
@@ -879,7 +879,7 @@ public class CDSExportQueryView extends QueryView
             }
             writeGridCSV(VARIABLES_SHEET, ()->getVariables(variableColumns, isLearnGrid), out);
         }
-        if (isLearnAssay)
+        if (isLearnAssay && null != _antigenQuery)
         {
             writeGridCSV(ANTIGENS_SHEET, ()-> getAntigens(), out);
         }

@@ -719,10 +719,9 @@ public class CDSController extends SpringActionController
             CDSExportQueryView view = new CDSExportQueryView(form, errors)
             {
                 @Override
-                //TODO
                 protected String getFileNamePrefix()
                 {
-                    return "Learn Assay" + form.getDataTabNames()[0];
+                    return "Learn Assay " + form.getDataTabNames()[0];
                 }
 
                 @Override

@@ -44,7 +44,7 @@
         <cv:column name="virus"/>
         <cv:column name="virus_species"/>
         <cv:column name="virus_type"/>
-        <cv:column name="SequenceNum"/>
+        <cv:column name="VisitRowId"/>
         <cv:column name="well_std_dev"/>
     </cv:columns>
 </cv:customView>
