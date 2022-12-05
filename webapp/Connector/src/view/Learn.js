@@ -196,7 +196,7 @@ Ext.define('Connector.view.Learn', {
 
                             var variables = [];
                             Ext.each(viewFields, function (field) {
-                                variables.push(assayName + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.caption + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.description);
+                                variables.push(assayName + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.caption + ChartUtils.ANTIGEN_LEVEL_DELIMITER + (field.description ? field.description : " "));
                             });
                             exportParams.variables = variables;
                         }

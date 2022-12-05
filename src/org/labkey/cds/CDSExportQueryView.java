@@ -764,6 +764,19 @@ public class CDSExportQueryView extends QueryView
         return columnInfos;
     }
 
+    private List<DisplayColumn> getAssayAntigenDisplayColumns()
+    {
+        QueryView view = getAssayAntigenQueryView();
+        List<DisplayColumn> displayCols = new ArrayList<>();
+        for (DisplayColumn dc : view.getDisplayColumns())
+        {
+            if (null == dc.getColumnInfo())
+                continue;
+            displayCols.add(dc);
+        }
+        return displayCols;
+    }
+
     private Results getAntigens() throws IOException, SQLException
     {
         QueryView queryView = getAssayAntigenQueryView();
@@ -859,6 +872,23 @@ public class CDSExportQueryView extends QueryView
         copyFileToZip(tmpFile, out);
     }
 
+    private void writeGridCSV(String tabName, ResultsFactory factory, ZipOutputStream out, List<DisplayColumn> displayColumns) throws IOException
+    {
+        final File tmpFile;
+
+        try (TSVGridWriter tsv = new TSVGridWriter(factory, displayColumns))
+        {
+            tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
+            tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
+            tmpFile.deleteOnExit();
+            tsv.write(tmpFile);
+        }
+
+        ZipEntry entry = new ZipEntry(tabName + ".csv");
+        out.putNextEntry(entry);
+        copyFileToZip(tmpFile, out);
+    }
+
     private void writeExtraCSVs(ZipOutputStream out, boolean isLearnGrid, boolean isLearnAssay) throws IOException
     {
         if (!isLearnGrid & !isLearnAssay)
@@ -881,7 +911,7 @@ public class CDSExportQueryView extends QueryView
         }
         if (isLearnAssay && null != _antigenQuery)
         {
-            writeGridCSV(ANTIGENS_SHEET, ()-> getAntigens(), out);
+            writeGridCSV(ANTIGENS_SHEET, ()-> getAntigens(), out, getAssayAntigenDisplayColumns());
         }
     }
 
