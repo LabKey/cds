@@ -153,7 +153,7 @@ Ext.define('Connector.view.Learn', {
         //for antigen
         // Currently, only two assays have antigens that should be part of the Export. In the future, client might
         // want to include more assays with antigens, in which case make this data driven rather than hard coded
-        // query values here.
+        // query values by adding a property to the assay metadata
         var antigen_query = null;
         if (data.assay_identifier.includes("BAMA")) {
             antigen_query = "bamaantigen";
