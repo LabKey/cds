@@ -23,7 +23,7 @@ import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.cds.CDSHelper;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 1)
+@BaseWebDriverTest.ClassTimeout(minutes = 10)
 public class CDSHiddenVarsTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);

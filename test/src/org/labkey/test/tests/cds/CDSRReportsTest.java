@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 4)
+@BaseWebDriverTest.ClassTimeout(minutes = 24)
 public class CDSRReportsTest extends CDSReadOnlyTest
 {
 
