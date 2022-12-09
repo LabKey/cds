@@ -147,7 +147,7 @@ Ext.define('Connector.view.PageHeader', {
             }, this)
         });
 
-        if (this.model.data.assay_identifier) {
+        if (this.showExport) {
 
             var id_suffix = this.model.data.assay_identifier.replaceAll(" ", "-");
             var assayExportButton = Ext.create('Connector.button.ExportButton', {
@@ -178,7 +178,7 @@ Ext.define('Connector.view.PageHeader', {
             dim_items = [tabPanel, detailSearchField];
         }
         else {
-            if (this.model && this.model.data && this.assayTypesToExport.includes(this.model.data.assay_type)) {
+            if (this.showExport && this.model && this.model.data && this.assayTypesToExport.includes(this.model.data.assay_type)) {
                 dim_items = [tabPanel, assayExportButton];
             }
         }

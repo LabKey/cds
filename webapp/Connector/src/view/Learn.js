@@ -133,12 +133,10 @@ Ext.define('Connector.view.Learn', {
     },
 
     requestAssayExportCSV : function(cmp, item, data) {
-        console.log("export csv");
         this.requestAssayExport(false, cmp, item, data);
     },
 
     requestAssayExportExcel : function(cmp, item, data) {
-        console.log("export excel");
         this.requestAssayExport(true, cmp, item, data);
     },
 
@@ -153,6 +151,9 @@ Ext.define('Connector.view.Learn', {
         var qviewName = "AssayExportView";
 
         //for antigen
+        // Currently, only two assays have antigens that should be part of the Export. In the future, client might
+        // want to include more assays with antigens, in which case make this data driven rather than hard coded
+        // query values here.
         var antigen_query = null;
         if (data.assay_identifier.includes("BAMA")) {
             antigen_query = "bamaantigen";
@@ -727,6 +728,7 @@ Ext.define('Connector.view.Learn', {
                 dimension: dimension,
                 activeTab: activeTab,
                 hasSearch: dimension.itemDetailTabs[activeTab].hasSearch,
+                showExport: dimension.itemDetailTabs[activeTab].showExport,
                 searchValue: this.searchFilter,
                 listeners: {
                     searchchanged: function(filter) {
