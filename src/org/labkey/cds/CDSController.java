@@ -608,9 +608,9 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse(), false);
+                view.writeExcelToResponse(getViewContext().getResponse(), false, false);
             else
-                view.writeCSVToResponse(getViewContext().getResponse(), false);
+                view.writeCSVToResponse(getViewContext().getResponse(), false, false);
             return null;
         }
 
@@ -661,9 +661,9 @@ public class CDSController extends SpringActionController
 
             };
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse(), false);
+                view.writeExcelToResponse(getViewContext().getResponse(), false, false);
             else
-                view.writeCSVToResponse(getViewContext().getResponse(), false);
+                view.writeCSVToResponse(getViewContext().getResponse(), false, false);
             return null;
         }
 
@@ -697,9 +697,45 @@ public class CDSController extends SpringActionController
             };
 
             if (form.isExcel())
-                view.writeExcelToResponse(getViewContext().getResponse(), true);
+                view.writeExcelToResponse(getViewContext().getResponse(), true, false);
             else
-                view.writeCSVToResponse(getViewContext().getResponse(), true);
+                view.writeCSVToResponse(getViewContext().getResponse(), true, false);
+            return null;
+        }
+
+        @Override
+        public void addNavTrail(NavTree root)
+        {
+        }
+    }
+
+    @RequiresPermission(ReadPermission.class)
+    @Action(ActionType.Export.class)
+    public class ExportLearnAssayAction extends SimpleViewAction<ExportForm>
+    {
+        @Override
+        public ModelAndView getView(ExportForm form, BindException errors) throws Exception
+        {
+            CDSExportQueryView view = new CDSExportQueryView(form, errors)
+            {
+                @Override
+                protected String getFileNamePrefix()
+                {
+                    return "Learn Assay " + form.getDataTabNames()[0];
+                }
+
+                @Override
+                protected String getFilterHeaderString()
+                {
+                    return "Filters applied to exported data:";
+                }
+
+            };
+
+            if (form.isExcel())
+                view.writeExcelToResponse(getViewContext().getResponse(), false, true);
+            else
+                view.writeCSVToResponse(getViewContext().getResponse(), false, true);
             return null;
         }
 
@@ -800,6 +836,9 @@ public class CDSController extends SpringActionController
         private Map<String, CDSExportQueryForm> _tabQueryForms = new HashMap<>();
         private String[] _fieldKeys;
         private String[] _learnGridFilterValues;
+
+        private String _assayFilterString;
+        private String _antigenQuery;
 
         @Override
         protected @NotNull BindException doBindParameters(PropertyValues in)
@@ -987,6 +1026,26 @@ public class CDSController extends SpringActionController
         public void setLearnGridFilterValues(String[] learnGridFilterValues)
         {
             _learnGridFilterValues = learnGridFilterValues;
+        }
+
+        public String getAssayFilterString()
+        {
+            return _assayFilterString;
+        }
+
+        public void setAssayFilterString(String assayFilterString)
+        {
+            _assayFilterString = assayFilterString;
+        }
+
+        public String getAntigenQuery()
+        {
+            return _antigenQuery;
+        }
+
+        public void setAntigenQuery(String antigenQuery)
+        {
+            _antigenQuery = antigenQuery;
         }
     }
 
