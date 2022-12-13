@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 7)
+@BaseWebDriverTest.ClassTimeout(minutes = 17)
 public class CDSTest extends CDSReadOnlyTest
 {
 

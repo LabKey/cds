@@ -40,7 +40,7 @@ import static org.labkey.test.util.cds.CDSHelpCenterUtil.DataSpaceR_LINK;
 import static org.labkey.test.util.cds.CDSHelpCenterUtil.TOOLS_TITLE;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 4)
+@BaseWebDriverTest.ClassTimeout(minutes = 14)
 public class CDSHelpCenterTest extends CDSReadOnlyTest
 {
     private final CDSHelpCenterUtil helpCenter = new CDSHelpCenterUtil(this);

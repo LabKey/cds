@@ -132,6 +132,125 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
+    requestAssayExportCSV : function(cmp, item, data) {
+        this.requestAssayExport(false, cmp, item, data);
+    },
+
+    requestAssayExportExcel : function(cmp, item, data) {
+        this.requestAssayExport(true, cmp, item, data);
+    },
+
+    requestAssayExport : function(isExcel, cmp, item, data) {
+
+        //for metadata
+        var assayName = data.assay_short_name;
+
+        //for variables and descriptions
+        var variablesSchema = "study";
+        var variablesQuery = data.assay_type;
+        var qviewName = "AssayExportView";
+
+        //for antigen
+        // Currently, only two assays have antigens that should be part of the Export. In the future, client might
+        // want to include more assays with antigens, in which case make this data driven rather than hard coded
+        // query values by adding a property to the assay metadata
+        var antigen_query = null;
+        if (data.assay_identifier.includes("BAMA")) {
+            antigen_query = "bamaantigen";
+        }
+        else if (data.assay_identifier.includes("NAB")) {
+            antigen_query = "nabantigen";
+        }
+
+        var newForm = document.createElement('form');
+        document.body.appendChild(newForm);
+
+        var exportParams = {
+            "query.showRows": ['ALL'],
+            'X-LABKEY-CSRF': LABKEY.CSRF,
+            isExcel : isExcel,
+            columnNames: [],
+            columnAliases: [],
+            dataTabNames : [data.assay_identifier],
+            schemaNames : ['cds'] ,
+            queryNames : ['import_assay'],
+            fieldKeys : ['assay_identifier'],
+            filterStrings: ["Selected Assay:" + ChartUtils.ANTIGEN_LEVEL_DELIMITER + assayName],
+            assayFilterString: data.assay_identifier,
+            antigenQuery: antigen_query
+        };
+
+        LABKEY.Query.getQueryDetails({
+            scope: this,
+            schemaName: variablesSchema,
+            queryName: variablesQuery,
+            viewName: qviewName,
+            success: function (details) {
+
+                if (details) {
+                    if (details.views) {
+                        var viewInfo = details.views.filter(function (view) {
+                            return view.name === qviewName
+                        }, this);
+                        if (viewInfo && viewInfo.length === 1) {
+                            var viewFields = viewInfo[0].fields;
+
+                            var variables = [];
+                            Ext.each(viewFields, function (field) {
+                                variables.push(assayName + ChartUtils.ANTIGEN_LEVEL_DELIMITER + field.caption + ChartUtils.ANTIGEN_LEVEL_DELIMITER + (field.description ? field.description : " "));
+                            });
+                            exportParams.variables = variables;
+                        }
+                    }
+                }
+
+                LABKEY.Query.getQueryDetails({
+                    scope: this,
+                    schemaName: 'cds',
+                    queryName: 'import_assay',
+                    viewName: 'LearnGridExportView',
+                    success: function (details) {
+
+                        if (details) {
+                            if (details.views) {
+                                var viewInfo = details.views.filter(function (view) {
+                                    return view.name === 'LearnGridExportView'
+                                }, this);
+
+                                if (viewInfo && viewInfo.length === 1) {
+                                    var viewFields = viewInfo[0].fields;
+                                    exportParams.columnNames = viewFields.map(function (cols) {
+                                        return cols.name
+                                    });
+                                    exportParams.columnAliases = viewFields.map(function (cols) {
+                                        return cols.caption
+                                    });
+                                }
+                            }
+
+                            // export
+                            Ext.Ajax.request({
+                                url: LABKEY.ActionURL.buildURL('cds', 'exportLearnAssay'),
+                                method: 'POST',
+                                form: newForm,
+                                isUpload: true,
+                                params: exportParams,
+                                callback: function (options, success/*, response*/) {
+                                    if (!success) {
+                                        Ext.Msg.alert('Error', 'Unable to export ' + data.assay_type);
+                                    }
+                                }
+                            });
+                        }
+                    },
+                });
+            },
+            failure: function() {
+                Ext.Msg.alert('Error', "Error exporting Learn page '" + data.assay_type + "'");
+            },
+        });
+    },
+
     onUpdateLearnSort : function(column, direction, isDetailPage) {
         var view = isDetailPage ? this.activeListingDetailGrid : this.activeListing;
         if (view) {
@@ -609,10 +728,17 @@ Ext.define('Connector.view.Learn', {
                 dimension: dimension,
                 activeTab: activeTab,
                 hasSearch: dimension.itemDetailTabs[activeTab].hasSearch,
+                showExport: dimension.itemDetailTabs[activeTab].showExport,
                 searchValue: this.searchFilter,
                 listeners: {
                     searchchanged: function(filter) {
                         this.onSearchFilterChange(filter, true);
+                    },
+                    exportassaycsv: function(cmp, item, data) {
+                        this.requestAssayExportCSV(cmp, item, data);
+                    },
+                    exportassayexcel: function(cmp, item, data) {
+                        this.requestAssayExportExcel(cmp, item, data);
                     },
                     scope: this
                 }
@@ -904,7 +1030,7 @@ Ext.define('Connector.view.LearnHeader', {
                     params: exportParams,
                     callback: function (options, success/*, response*/) {
                         if (!success) {
-                            Ext.Msg.alert('Error', 'Unable to export.');
+                            Ext.Msg.alert('Error', 'Unable to export ' + learnGridName);
                         }
                     }
                 });

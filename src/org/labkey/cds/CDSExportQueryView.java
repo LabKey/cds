@@ -29,15 +29,22 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
+import org.labkey.api.collections.ResultSetRowMapFactory;
 import org.labkey.api.data.*;
+import org.labkey.api.exp.ExperimentException;
+import org.labkey.api.exp.query.ExpDataTable;
 import org.labkey.api.query.FieldKey;
+import org.labkey.api.query.InvalidKeyException;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QuerySettings;
+import org.labkey.api.query.QueryUpdateServiceException;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.query.UserSchema;
+import org.labkey.api.study.publish.StudyPublishService;
 import org.labkey.api.util.FileUtil;
 import org.labkey.api.util.StringUtilsLabKey;
 import org.labkey.api.view.DataView;
+import org.labkey.api.view.NotFoundException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -53,6 +60,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -66,6 +74,7 @@ public class CDSExportQueryView extends QueryView
     private static final String STUDY_SHEET = "Studies";
     private static final String ASSAY_SHEET = "Assays";
     private static final String VARIABLES_SHEET = "Variable definitions";
+    private static final String ANTIGENS_SHEET = "Antigens";
 
     public static final String FILTER_DELIMITER = "|||";
 
@@ -104,6 +113,14 @@ public class CDSExportQueryView extends QueryView
     private static final List<String> ASSAY_COLUMNS = Arrays.asList("Study", "Assay Name", "Data provenance - source", "Data provenance - Notes");
     private static final List<String> VARIABLE_COLUMNS = Arrays.asList("Assay Name", "Field label", "Field description");
     private static final List<String> LEARN_MAB_VARIABLE_COLUMNS = Arrays.asList("Field label", "Field description");
+    private static final List<String> BAMA_ASSAY_ANTIGEN_COLUMNS = Arrays.asList("antigen_short_name", "antigen_full_name", "antigen_plot_label",
+            "antigen_name_other", "antigen_category", "isolate_species", "isolate_clade", "isolate_clone", "isolate_donor_id", "isolate_mutations",
+            "isolate_differentiate", "antigen_type_region", "antigen_type_scaffold", "antigen_type_modifiers", "antigen_type_tags", "antigen_type_differentiate",
+            "production_host_cell", "production_purification_method", "production_special_reagent", "production_manufacturer", "production_codon_optimization",
+            "transfection_method", "transmitter_founder_status", "isolate_cloner_pi", "isolate_country_origin", "isolate_yr_isolated",
+            "isolate_fiebig_stage", "isolate_accession_num", "antigen_control", "cds_ag_id");
+    private static final List<String> NAB_ASSAY_ANTIGEN_COLUMNS = Arrays.asList("virus", "virus_full_name", "virus_type", "virus_species",
+            "clade", "neutralization_tier", "virus_host_cell", "virus_backbone", "virus_name_other", "antigen_control", "cds_virus_id");
 
     private final List<String> _filterStrings;
     private final String[] _studies;
@@ -118,6 +135,8 @@ public class CDSExportQueryView extends QueryView
     private final String _exportInfoContent;
     private final List<String> _fieldKeys;
     private final List<String> _learnGridFilterValues;
+    private String _assayFilterString;
+    private String _antigenQuery;
 
     public CDSExportQueryView(CDSController.ExportForm form, org.springframework.validation.Errors errors)
     {
@@ -135,6 +154,8 @@ public class CDSExportQueryView extends QueryView
         _exportInfoContent = form.getExportInfoContent();
         _fieldKeys = form.getFieldKeys() != null ? Arrays.asList(form.getFieldKeys()) : null;
         _learnGridFilterValues = form.getLearnGridFilterValues() != null ? Arrays.asList(form.getLearnGridFilterValues()) : null;
+        _assayFilterString = form.getAssayFilterString();
+        _antigenQuery = form.getAntigenQuery();
     }
 
     private List<String> getFormValues(String[] formValues, boolean sort)
@@ -178,7 +199,7 @@ public class CDSExportQueryView extends QueryView
         return exportColumns;
     }
 
-    public QueryView getQueryView(boolean isLearnGrid, @Nullable CDSController.CDSExportQueryForm queryForm)
+    public QueryView getQueryView(boolean isLearnGrid, boolean isLearnAssay, @Nullable CDSController.CDSExportQueryForm queryForm)
     {
         QueryView queryView;
         QuerySettings settings;
@@ -202,6 +223,13 @@ public class CDSExportQueryView extends QueryView
             }
             queryView = schema.createView(getViewContext(), settings, null);
         }
+        else if (isLearnAssay)
+        {
+            UserSchema schema = QueryService.get().getUserSchema(getViewContext().getUser(), getViewContext().getContainer(), "CDS");
+            settings = schema.getSettings(getViewContext(), "query", _tabQueryForms.get(_dataTabNames.get(0)).getQueryName());
+            settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), _assayFilterString, CompareType.IN));
+            queryView = schema.createView(getViewContext(), settings, null);
+        }
         else
         {
             queryView = new QueryView((null == queryForm) ? _tabQueryForms.get(_dataTabNames.get(0)) : queryForm, null);
@@ -209,9 +237,9 @@ public class CDSExportQueryView extends QueryView
         return queryView;
     }
 
-    public void writeExcelToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
+    public void writeExcelToResponse(HttpServletResponse response, boolean isLearnGrid, boolean isLearnAssay) throws IOException
     {
-        ExcelWriter ew = getCDSExcelWriter(this, isLearnGrid);
+        ExcelWriter ew = getCDSExcelWriter(this, isLearnGrid, isLearnAssay);
         ew.renderWorkbook(response);
         logAuditEvent("Exported to Excel", ew.getDataRowCount());
     }
@@ -259,9 +287,9 @@ public class CDSExportQueryView extends QueryView
     /**
      * Note: Caller must close() the returned ExcelWriter (via try-with-resources, e.g.)
      */
-    private ExcelWriter getCDSExcelWriter(CDSExportQueryView eqv, boolean isLearnGrid) throws IOException
+    private ExcelWriter getCDSExcelWriter(CDSExportQueryView eqv, boolean isLearnGrid, boolean isLearnAssay) throws IOException
     {
-        QueryView queryView = eqv.getQueryView(isLearnGrid, null);
+        QueryView queryView = eqv.getQueryView(isLearnGrid, isLearnAssay, null);
         QuerySettings settings = queryView.getSettings();
         DataView view = queryView.createDataView();
         DataRegion rgn = view.getDataRegion();
@@ -381,7 +409,7 @@ public class CDSExportQueryView extends QueryView
 
                 rowObject = getRow(sheet, currentRow);
                 Cell footerCell = rowObject.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                if (!isLearnGrid)
+                if (!isLearnGrid && !isLearnAssay)
                 {
                     footerCell.setCellValue(FILTERS_FOOTER);
                 }
@@ -480,7 +508,7 @@ public class CDSExportQueryView extends QueryView
                     setSheetName(METADATA_SHEET);
                 }
 
-                if (!isLearnGrid)
+                if (!isLearnGrid && !isLearnAssay)
                 {
                     renderNewSheet(workbook);
                     List<ColumnInfo> studyColumns = eqv.getColumns(STUDY_COLUMNS);
@@ -512,6 +540,15 @@ public class CDSExportQueryView extends QueryView
                     setColumns(variableColumns);
                     setResultsFactory(() -> getVariables(variableColumns, isLearnGrid));
                     setSheetName(VARIABLES_SHEET);
+                    setCaptionRowFrozen(false);
+                }
+
+                if (isLearnAssay && null != _antigenQuery)
+                {
+                    renderNewSheet(workbook);
+                    setColumns(getAssayAntigenColumns());
+                    setResultsFactory(() -> getAntigens());
+                    setSheetName(ANTIGENS_SHEET);
                     setCaptionRowFrozen(false);
                 }
 
@@ -697,6 +734,55 @@ public class CDSExportQueryView extends QueryView
         return allStudyAssays;
     }
 
+    private QueryView getAssayAntigenQueryView()
+    {
+        UserSchema schema = QueryService.get().getUserSchema(getViewContext().getUser(), getViewContext().getContainer(), "CDS");
+        QuerySettings settings = schema.getSettings(getViewContext(), "query", _antigenQuery);
+        settings.setBaseFilter(new SimpleFilter(FieldKey.fromParts(_fieldKeys.get(0)), _assayFilterString, CompareType.IN));
+        QueryView queryView = schema.createView(getViewContext(), settings, null);
+        queryView.setCustomView("AssayAntigenExportView");
+
+        return queryView;
+    }
+
+    private List<ColumnInfo> getAssayAntigenColumns()
+    {
+        QueryView view = getAssayAntigenQueryView();
+        return getAssayAntigenColumns(view);
+    }
+
+    private List<ColumnInfo> getAssayAntigenColumns(QueryView view)
+    {
+        List<ColumnInfo> columnInfos = new ArrayList<>();
+        for (DisplayColumn dc : view.getDisplayColumns())
+        {
+            if (null == dc.getColumnInfo())
+                continue;
+            ColumnInfo colInfo = dc.getColumnInfo();
+            columnInfos.add(colInfo);
+        }
+        return columnInfos;
+    }
+
+    private List<DisplayColumn> getAssayAntigenDisplayColumns()
+    {
+        QueryView view = getAssayAntigenQueryView();
+        List<DisplayColumn> displayCols = new ArrayList<>();
+        for (DisplayColumn dc : view.getDisplayColumns())
+        {
+            if (null == dc.getColumnInfo())
+                continue;
+            displayCols.add(dc);
+        }
+        return displayCols;
+    }
+
+    private Results getAntigens() throws IOException, SQLException
+    {
+        QueryView queryView = getAssayAntigenQueryView();
+        return queryView.getResults();
+    }
+
     protected boolean isValidStudyAssayPair(List<String> studyAssayStrs, String studyFolder, String studyLabel, String assayIdentifier)
     {
         return studyAssayStrs.contains(studyLabel + FILTER_DELIMITER + assayIdentifier);
@@ -735,9 +821,9 @@ public class CDSExportQueryView extends QueryView
         }
     }
 
-    private TSVGridWriter getTSVGridWriter(boolean isLearnGrid, @Nullable CDSController.CDSExportQueryForm queryForm)
+    private TSVGridWriter getTSVGridWriter(boolean isLearnGrid, boolean isLearnAssay, @Nullable CDSController.CDSExportQueryForm queryForm)
     {
-        QueryView queryView = getQueryView(isLearnGrid, queryForm);
+        QueryView queryView = getQueryView(isLearnGrid, isLearnAssay, queryForm);
         DataView view = queryView.createDataView();
         DataRegion rgn = view.getDataRegion();
         rgn.prepareDisplayColumns(view.getViewContext().getContainer());
@@ -747,7 +833,7 @@ public class CDSExportQueryView extends QueryView
         return new TSVGridWriter(() -> rgn.getResults(view.getRenderContext()), getExportColumns(rgn.getDisplayColumns()));
     }
 
-    private void writeCSVQueries(ZipOutputStream out, boolean isLearnGrid) throws IOException
+    private void writeCSVQueries(ZipOutputStream out, boolean isLearnGrid, boolean isLearnAssay) throws IOException
     {
         for (String tabName : _dataTabNames)
         {
@@ -756,7 +842,7 @@ public class CDSExportQueryView extends QueryView
 
             final File tmpFile;
 
-            try (TSVGridWriter tsv = getTSVGridWriter(isLearnGrid, _tabQueryForms.get(tabName)))
+            try (TSVGridWriter tsv = getTSVGridWriter(isLearnGrid, isLearnAssay, _tabQueryForms.get(tabName)))
             {
                 tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
                 tmpFile = FileUtil.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
@@ -786,9 +872,26 @@ public class CDSExportQueryView extends QueryView
         copyFileToZip(tmpFile, out);
     }
 
-    private void writeExtraCSVs(ZipOutputStream out, boolean isLearnGrid) throws IOException
+    private void writeGridCSV(String tabName, ResultsFactory factory, ZipOutputStream out, List<DisplayColumn> displayColumns) throws IOException
     {
-        if (!isLearnGrid)
+        final File tmpFile;
+
+        try (TSVGridWriter tsv = new TSVGridWriter(factory, displayColumns))
+        {
+            tsv.setDelimiterCharacter(TSVWriter.DELIM.COMMA);
+            tmpFile = File.createTempFile("tmp" + tabName + FileUtil.getTimestamp(), null);
+            tmpFile.deleteOnExit();
+            tsv.write(tmpFile);
+        }
+
+        ZipEntry entry = new ZipEntry(tabName + ".csv");
+        out.putNextEntry(entry);
+        copyFileToZip(tmpFile, out);
+    }
+
+    private void writeExtraCSVs(ZipOutputStream out, boolean isLearnGrid, boolean isLearnAssay) throws IOException
+    {
+        if (!isLearnGrid & !isLearnAssay)
         {
             writeGridCSV(STUDY_SHEET, () -> getStudies(getColumns(STUDY_COLUMNS)), out);
             writeGridCSV(ASSAY_SHEET, () -> getAssays(getColumns(ASSAY_COLUMNS)), out);
@@ -806,22 +909,26 @@ public class CDSExportQueryView extends QueryView
             }
             writeGridCSV(VARIABLES_SHEET, ()->getVariables(variableColumns, isLearnGrid), out);
         }
+        if (isLearnAssay && null != _antigenQuery)
+        {
+            writeGridCSV(ANTIGENS_SHEET, ()-> getAntigens(), out, getAssayAntigenDisplayColumns());
+        }
     }
 
-    public void writeCSVToResponse(HttpServletResponse response, boolean isLearnGrid) throws IOException
+    public void writeCSVToResponse(HttpServletResponse response, boolean isLearnGrid,boolean isLearnAssay) throws IOException
     {
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + getFileNamePrefix() + "_" + FileUtil.getTimestamp() + ".zip\"");
 
         try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream()))
         {
-            writeCSVQueries(out, isLearnGrid);
-            writeMetadataTxt(out, isLearnGrid);
-            writeExtraCSVs(out, isLearnGrid);
+            writeCSVQueries(out, isLearnGrid, isLearnAssay);
+            writeMetadataTxt(out, isLearnGrid, isLearnAssay);
+            writeExtraCSVs(out, isLearnGrid, isLearnAssay);
         }
     }
 
-    private void writeMetadataTxt(ZipOutputStream out, boolean isLearnGrid) throws IOException
+    private void writeMetadataTxt(ZipOutputStream out, boolean isLearnGrid, boolean isLearnAssay) throws IOException
     {
         if (!isLearnGrid || (isLearnGrid && _dataTabNames.get(0).equalsIgnoreCase("mabs")))
         {
@@ -868,7 +975,7 @@ public class CDSExportQueryView extends QueryView
                 }
                 builder.append("\t\t").append(currentFilter).append("\n");
             }
-            if (!isLearnGrid)
+            if (!isLearnGrid && !isLearnAssay)
             {
                 builder.append("\n" + FILTERS_FOOTER_TXT + "\n");
             }

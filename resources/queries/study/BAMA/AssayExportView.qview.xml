@@ -1,0 +1,20 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="mfi_delta"/>
+        <cv:column name="response_call"/>
+        <cv:column name="clade"/>
+        <cv:column name="antigen"/>
+        <cv:column name="antigen_type"/>
+        <cv:column name="vaccine_matched"/>
+        <cv:column name="auc"/>
+        <cv:column name="detection_ligand"/>
+        <cv:column name="instrument_code"/>
+        <cv:column name="antibody_isotype"/>
+        <cv:column name="lab_code"/>
+        <cv:column name="mfi_bkgd_blank"/>
+        <cv:column name="mfi_blank"/>
+        <cv:column name="mfi_raw"/>
+        <cv:column name="protein"/>
+        <cv:column name="specimen_type"/>
+    </cv:columns>
+</cv:customView>

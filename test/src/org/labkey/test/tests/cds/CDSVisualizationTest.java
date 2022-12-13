@@ -50,7 +50,7 @@ import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_LINE;
 import static org.labkey.test.util.cds.CDSHelper.PLOT_TYPE_SCATTER;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 15)
+@BaseWebDriverTest.ClassTimeout(minutes = 25)
 public class CDSVisualizationTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
