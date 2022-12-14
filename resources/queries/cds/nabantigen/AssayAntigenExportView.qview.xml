@@ -1,0 +1,15 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="virus"/>
+        <cv:column name="virus_full_name"/>
+        <cv:column name="virus_type"/>
+        <cv:column name="virus_species"/>
+        <cv:column name="clade"/>
+        <cv:column name="neutralization_tier"/>
+        <cv:column name="virus_host_cell"/>
+        <cv:column name="virus_backbone"/>
+        <cv:column name="virus_name_other"/>
+        <cv:column name="antigen_control"/>
+        <cv:column name="cds_virus_id"/>
+    </cv:columns>
+</cv:customView>

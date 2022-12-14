@@ -42,7 +42,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes =30)
+@BaseWebDriverTest.ClassTimeout(minutes = 40)
 public class CDSTestLearnAbout extends CDSReadOnlyTest
 {
     // whether column locking is enabled for the learn grids

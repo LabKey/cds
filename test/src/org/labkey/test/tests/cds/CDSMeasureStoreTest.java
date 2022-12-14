@@ -30,7 +30,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 10)
+@BaseWebDriverTest.ClassTimeout(minutes = 20)
 public class CDSMeasureStoreTest extends CDSReadOnlyTest
 {
     public static final String[] ICS_ELISPOT_DIMENSIONS = {"study_ICS_summary_level", "cds_GridBase_SequenceNum", "study_ICS_pctpos",

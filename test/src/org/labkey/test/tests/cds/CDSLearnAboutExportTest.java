@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 3)
+@BaseWebDriverTest.ClassTimeout(minutes = 13)
 public class CDSLearnAboutExportTest extends CDSReadOnlyTest
 {
     public static final String XPATH_SEARCH_BOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
