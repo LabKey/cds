@@ -44,7 +44,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 15)
+@BaseWebDriverTest.ClassTimeout(minutes = 25)
 public class CDSPlotTimeTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);

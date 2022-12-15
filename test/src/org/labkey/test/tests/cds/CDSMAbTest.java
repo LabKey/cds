@@ -56,7 +56,7 @@ import static org.labkey.test.pages.cds.MAbDataGrid.TIERS_COL;
 import static org.labkey.test.pages.cds.MAbDataGrid.VIRUSES_COL;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 10)
+@BaseWebDriverTest.ClassTimeout(minutes = 20)
 public class CDSMAbTest extends CDSGroupBaseTest
 {
     private final CDSHelper cds = new CDSHelper(this);

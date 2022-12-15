@@ -558,15 +558,18 @@ Ext4.define('Connector.cube.Configuration', {
                 itemDetailTabs: [{
                     url: 'overview',
                     isDefault: true,
-                    label: 'Overview'
+                    label: 'Overview',
+                    showExport: true
                 },{
                     url: 'vars',
                     label: 'Variables',
-                    hasSearch: true
+                    hasSearch: true,
+                    showExport: false
                 },{
                     url: 'antigens',
                     label: 'Antigens',
                     hasSearch: true,
+                    showExport: false,
                     matchField: 'hasAntigen' // assay.hasAntigen must be true for tab to show up
                 }],
                 itemDetail: [{

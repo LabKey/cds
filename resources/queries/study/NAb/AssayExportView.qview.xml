@@ -1,0 +1,23 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="titer_ID50"/>
+        <cv:column name="nab_response_ID80"/>
+        <cv:column name="antigen"/>
+        <cv:column name="antigen_type"/>
+        <cv:column name="vaccine_matched"/>
+        <cv:column name="initial_dilution"/>
+        <cv:column name="lab_code"/>
+        <cv:column name="neutralization_tier"/>
+        <cv:column name="nab_response_ID80"/>
+        <cv:column name="slope"/>
+        <cv:column name="specimen_type"/>
+        <cv:column name="titer_ID80"/>
+        <cv:column name="virus"/>
+        <cv:column name="virus_full_name"/>
+        <cv:column name="virus_type"/>
+        <cv:column name="virus_species"/>
+        <cv:column name="clade"/>
+        <cv:column name="virus_host_cell"/>
+        <cv:column name="virus_backbone"/>
+    </cv:columns>
+</cv:customView>

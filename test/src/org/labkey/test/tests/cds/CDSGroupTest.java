@@ -56,7 +56,7 @@ import static org.labkey.test.util.cds.CDSHelper.QED_2;
 import static org.labkey.test.util.cds.CDSHelper.ZAP_110;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 12)
+@BaseWebDriverTest.ClassTimeout(minutes = 22)
 public class CDSGroupTest extends CDSGroupBaseTest
 {
 

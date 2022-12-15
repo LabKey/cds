@@ -47,7 +47,7 @@ import static org.labkey.test.util.cds.CDSHelper.GRID_COL_SUBJECT_ID;
 import static org.labkey.test.util.cds.CDSHelper.GRID_TITLE_NAB;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 10)
+@BaseWebDriverTest.ClassTimeout(minutes = 20)
 public class CDSGridTest extends CDSReadOnlyTest
 {
 

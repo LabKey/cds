@@ -1,0 +1,34 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="antigen_short_name"/>
+        <cv:column name="antigen_full_name"/>
+        <cv:column name="antigen_plot_label"/>
+        <cv:column name="antigen_name_other"/>
+        <cv:column name="antigen_category"/>
+        <cv:column name="isolate_species"/>
+        <cv:column name="isolate_clade"/>
+        <cv:column name="isolate_clone"/>
+        <cv:column name="isolate_donor_id"/>
+        <cv:column name="isolate_mutations"/>
+        <cv:column name="isolate_differentiate"/>
+        <cv:column name="antigen_type_region"/>
+        <cv:column name="antigen_type_scaffold"/>
+        <cv:column name="antigen_type_modifiers"/>
+        <cv:column name="antigen_type_tags"/>
+        <cv:column name="antigen_type_differentiate"/>
+        <cv:column name="production_host_cell"/>
+        <cv:column name="production_purification_method"/>
+        <cv:column name="production_special_reagent"/>
+        <cv:column name="production_manufacturer"/>
+        <cv:column name="production_codon_optimization"/>
+        <cv:column name="transfection_method"/>
+        <cv:column name="transmitter_founder_status"/>
+        <cv:column name="isolate_cloner_pi"/>
+        <cv:column name="isolate_country_origin"/>
+        <cv:column name="isolate_yr_isolated"/>
+        <cv:column name="isolate_fiebig_stage"/>
+        <cv:column name="isolate_accession_num"/>
+        <cv:column name="antigen_control"/>
+        <cv:column name="cds_ag_id"/>
+    </cv:columns>
+</cv:customView>

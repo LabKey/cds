@@ -1,0 +1,19 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="mab_concentration"/>
+        <cv:column name="mab_mix_name_std"/>
+        <cv:column name="lloq"/>
+        <cv:column name="lloq_units"/>
+        <cv:column name="lab_code"/>
+        <cv:column name="mab_concentration_units"/>
+        <cv:column name="mab_name_source"/>
+        <cv:column name="mab_mix_id"/>
+        <cv:column name="mab_mix_label"/>
+        <cv:column name="source_assay"/>
+        <cv:column name="specimen_type"/>
+        <cv:column name="visit_code"/>
+        <cv:column name="visit_time_label"/>
+        <cv:column name="hours_post_initial_infusion"/>
+        <cv:column name="hours_post_recent_infusion"/>
+    </cv:columns>
+</cv:customView>

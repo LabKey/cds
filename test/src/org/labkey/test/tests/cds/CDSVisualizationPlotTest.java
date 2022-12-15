@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.cds.CDSHelper.CDS_WAIT;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 10)
+@BaseWebDriverTest.ClassTimeout(minutes = 20)
 public class CDSVisualizationPlotTest extends CDSReadOnlyTest
 {
     protected static final String MOUSEOVER_FILL = "#41C49F";

@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import static org.labkey.test.util.cds.CDSHelper.CDS_WAIT;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 10)
+@BaseWebDriverTest.ClassTimeout(minutes = 20)
 public class CDSVisualizationBrushingTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
