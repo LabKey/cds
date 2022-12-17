@@ -4,14 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
-import org.labkey.test.categories.Git;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-@Category({Git.class})
+@Category({})
 public class CDSTooltipVerificationTest extends CDSReadOnlyTest
 {
     private static final Locator TOOLTIP_TEXT_LOCATOR = Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content");
