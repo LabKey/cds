@@ -603,7 +603,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.TIME_POINTS);
         xaxis.confirmSelection();
 
-        final Locator lineLoc = Locator.css("svg g.layer path.line");
+        final Locator lineLoc = Locator.css("svg g.layer path.line"); //
 
         final int totalPKSubjectCount = 34;
         int plotLineCount = lineLoc.findElements(getDriver()).size();
