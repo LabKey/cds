@@ -100,14 +100,13 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
     {
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-
-        log("Plot PK MAb with Study Day and Line option");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.PKMAB);
         yaxis.pickVariable(CDSHelper.PKMAB_CONCENTRATION);
         yaxis.confirmSelection();
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.TIME_POINTS);
         xaxis.confirmSelection();
