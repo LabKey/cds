@@ -24,6 +24,7 @@ import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -343,10 +344,9 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         final String PRODUCT2 = "MENTHOL";
         cds.selectBars(PRODUCT1, PRODUCT2);
         _asserts.assertSelectionStatusCounts(6, 2, 1, 3, 3);  // or
-        assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
-        mouseOver(Locator.css("option").withText("Subjects related to any (OR)"));
 
-        WebElement selector = Locator.css("select").findElement(getDriver());
+        WebElement selector = CDSHelper.Locators.subjectInfoPaneHeader().append(Locator.tag("select")).waitForElement(getDriver(), Duration.ofSeconds(2));
+        Locator.css("option").index(1).waitForElement(selector, Duration.ofSeconds(2));
         assertEquals("Wrong initial combo selection", "UNION", selector.getAttribute("value"));
         selectOptionByValue(selector, "INTERSECT");
         _asserts.assertSelectionStatusCounts(0, 0, 0, 0, 0); // and
@@ -355,10 +355,8 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         waitForText("None of the selected");
         _asserts.assertFilterStatusCounts(0, 0, 0, 0, 0); // and
 
-        selector = Locator.css("select").findElement(getDriver());
-        waitForElement(Locator.css("option").withText("Subjects related to all (AND)"));
-        mouseOver(Locator.css("option").withText("Subjects related to all (AND)"));
-
+        selector = CDSHelper.Locators.subjectInfoPaneHeader().append(Locator.tag("select")).waitForElement(getDriver(), Duration.ofSeconds(2));
+        Locator.css("option").index(1).waitForElement(selector, Duration.ofSeconds(2));
         assertEquals("Combo box selection changed unexpectedly", "INTERSECT", selector.getAttribute("value"));
         selectOptionByValue(selector, "UNION");
         _asserts.assertFilterStatusCounts(6, 2, 1, 3, 3);  // or
