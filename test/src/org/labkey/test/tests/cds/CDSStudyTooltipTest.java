@@ -1,10 +1,10 @@
 package org.labkey.test.tests.cds;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
@@ -88,11 +88,13 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
         validateToolTip(waitForElementToBeVisible(CDSHelper.Locators.barLabel.withText(CDSHelper.QED_4)), QED4ToolTipText);
     }
 
-    @Test @Ignore
-    public void testMAbInfoTooltip()
+    @Test
+    public void testMAbGridTooltip()
     {
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
-        // TODO: Not sure where this tooltip appears
+        DataGrid dataGrid = new DataGrid(this);
+        WebElement filterPanel = dataGrid.openFilterPanel("Studies");
+        validateToolTip(Locator.byClass("x-grid-cell-inner").withText(CDSHelper.RED_4).findElement(filterPanel), RED4ToolTipText);
     }
 
     @Test
