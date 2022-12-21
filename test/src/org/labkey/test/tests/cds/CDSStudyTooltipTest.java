@@ -72,7 +72,8 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
         log("Verifying the tooltip for filter panel study list");
         CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
         WebElement studiesPanel = cds.openStatusInfoPane("Studies");
-        validateToolTip(Locator.linkWithText(CDSHelper.QED_4).findElement(studiesPanel), QED4ToolTipText);
+        validateToolTip(Locator.tagWithClass("div", "single-axis-explorer")
+                .withPredicate("text()='" + CDSHelper.QED_4 + "'").findElement(studiesPanel), QED4ToolTipText);
     }
 
     @Test
