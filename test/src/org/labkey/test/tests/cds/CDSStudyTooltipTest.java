@@ -131,6 +131,11 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
         }
         checker().screenShotIfNewError("ValidateToolTip_" + linkText);
 
+        // Filter panel tooltip is a little more sticky
+        CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel")
+                .findOptionalElement(getDriver())
+                .ifPresent(WebElement::click);
+
         // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.
         dismissTooltip();
     }
