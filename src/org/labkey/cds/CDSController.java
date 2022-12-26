@@ -24,8 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.json.old.JSONArray;
-import org.json.old.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiSimpleResponse;
@@ -1089,7 +1089,7 @@ public class CDSController extends SpringActionController
     public class UserPropertyAction extends MutatingApiAction<SimpleApiJsonForm>
     {
         @Override
-        public Object execute(SimpleApiJsonForm form, BindException errors) throws Exception
+        public Object execute(SimpleApiJsonForm form, BindException errors)
         {
             ApiSimpleResponse response = new ApiSimpleResponse();
 
@@ -1099,14 +1099,13 @@ public class CDSController extends SpringActionController
             }
             else if (isPost())
             {
-                Object properties = form.getJsonObject().get("properties");
+                Object properties = form.getNewJsonObject().get("properties");
 
-                if (properties instanceof JSONObject)
+                if (properties instanceof JSONObject json)
                 {
                     Map<String, String> mapProps = new HashMap<>();
 
-                    ((JSONObject) properties).entrySet()
-                        .forEach(jsonProperty -> mapProps.put(jsonProperty.getKey(), jsonProperty.getValue().toString()));
+                    json.toMap().forEach((key, value) -> mapProps.put(key, value.toString()));
 
                     if (!mapProps.isEmpty())
                     {
@@ -1126,10 +1125,10 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresPermission(ReadPermission.class)
-    public static class GetNonIntegratedDocumentAction extends ReadOnlyApiAction
+    public static class GetNonIntegratedDocumentAction extends ReadOnlyApiAction<Object>
     {
         @Override
-        public Object execute(Object o, BindException errors) throws Exception
+        public Object execute(Object o, BindException errors)
         {
             TableInfo tableInfo = QueryService.get().getUserSchema(getUser(), getContainer(), "cds").getTable("learn_documentsforstudies", null);
             Filter filter = new SimpleFilter(FieldKey.fromString("document_type"), "Non-Integrated Assay");
