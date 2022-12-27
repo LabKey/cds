@@ -1355,12 +1355,12 @@ public class CDSHelper
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
-    public void openStatusInfoPane(String label)
+    public WebElement openStatusInfoPane(String label)
     {
         _test.assertElementPresent(Locator.tagWithClass("ul", "detailstatus"));
         _test.waitAndClick(Locator.tagWithClass("span", "statme").withText(label));
 
-        _test.waitForElement(Locator.tagWithClass("div", "infopane"));
+        return _test.waitForElement(Locator.tagWithClass("div", "infopane"));
     }
 
     public void openFilterInfoPane(Locator.XPathLocator filterMember)
