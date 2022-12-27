@@ -24,8 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.old.JSONArray;
+import org.json.old.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiSimpleResponse;
@@ -1099,13 +1099,14 @@ public class CDSController extends SpringActionController
             }
             else if (isPost())
             {
-                Object properties = form.getNewJsonObject().get("properties");
+                Object properties = form.getJsonObject().get("properties");
 
-                if (properties instanceof JSONObject json)
+                if (properties instanceof JSONObject)
                 {
                     Map<String, String> mapProps = new HashMap<>();
 
-                    json.toMap().forEach((key, value) -> mapProps.put(key, value.toString()));
+                    ((JSONObject) properties).entrySet()
+                        .forEach(jsonProperty -> mapProps.put(jsonProperty.getKey(), jsonProperty.getValue().toString()));
 
                     if (!mapProps.isEmpty())
                     {
