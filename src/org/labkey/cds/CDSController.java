@@ -1089,7 +1089,7 @@ public class CDSController extends SpringActionController
     public class UserPropertyAction extends MutatingApiAction<SimpleApiJsonForm>
     {
         @Override
-        public Object execute(SimpleApiJsonForm form, BindException errors) throws Exception
+        public Object execute(SimpleApiJsonForm form, BindException errors)
         {
             ApiSimpleResponse response = new ApiSimpleResponse();
 
@@ -1126,10 +1126,10 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresPermission(ReadPermission.class)
-    public static class GetNonIntegratedDocumentAction extends ReadOnlyApiAction
+    public static class GetNonIntegratedDocumentAction extends ReadOnlyApiAction<Object>
     {
         @Override
-        public Object execute(Object o, BindException errors) throws Exception
+        public Object execute(Object o, BindException errors)
         {
             TableInfo tableInfo = QueryService.get().getUserSchema(getUser(), getContainer(), "cds").getTable("learn_documentsforstudies", null);
             Filter filter = new SimpleFilter(FieldKey.fromString("document_type"), "Non-Integrated Assay");
