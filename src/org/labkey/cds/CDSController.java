@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.json.old.JSONArray;
+import org.json.JSONArray;
 import org.json.old.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
@@ -348,7 +348,6 @@ public class CDSController extends SpringActionController
     @RequiresPermission(ReadPermission.class)
     public class UpdateNeedSurveyAction extends MutatingApiAction<Object>
     {
-
         @Override
         public Object execute(Object o, BindException errors) throws Exception
         {
@@ -1144,7 +1143,7 @@ public class CDSController extends SpringActionController
 
             for (StudyDocumentObj niDoc : niDocuments)
             {
-                JSONObject json = new JSONObject();
+                org.json.JSONObject json = new org.json.JSONObject();
                 json.put("prot", niDoc.getProt());
                 json.put("sortIndex", niDoc.getDocument_order());
                 json.put("hasPermission", niDoc.getAccessible());

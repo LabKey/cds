@@ -52,7 +52,6 @@ import org.labkey.api.security.ValidEmail;
 import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.view.NotFoundException;
-import org.labkey.cds.data.TSVCopyConfig;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -258,10 +257,7 @@ public class CDSManager
     public void setActiveUserProperties(User user, Container container, Map<String, String> properties)
     {
         PropertyManager.PropertyMap activeUserProperties = PropertyManager.getWritableProperties(user, container, CDS_ACTIVE_USER, true);
-        for (Map.Entry<String, String> property : properties.entrySet())
-        {
-            activeUserProperties.put(property.getKey(), property.getValue());
-        }
+        activeUserProperties.putAll(properties);
         activeUserProperties.save();
     }
 
@@ -434,6 +430,4 @@ public class CDSManager
             }
         }
     }
-
-
 }
