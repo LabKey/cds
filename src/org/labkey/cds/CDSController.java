@@ -25,7 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
-import org.json.old.JSONObject;
+import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiSimpleResponse;
@@ -120,6 +120,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -320,7 +321,7 @@ public class CDSController extends SpringActionController
     public static class AppModel
     {
         private boolean isAnalyticsUser = false;
-        private org.json.JSONObject userProperties;
+        private JSONObject userProperties;
 
         public boolean isAnalyticsUser()
         {
@@ -332,12 +333,12 @@ public class CDSController extends SpringActionController
             this.isAnalyticsUser = isAnalyticsUser;
         }
 
-        public org.json.JSONObject getUserProperties()
+        public JSONObject getUserProperties()
         {
             return userProperties;
         }
 
-        public void setUserProperties(org.json.JSONObject userProperties)
+        public void setUserProperties(JSONObject userProperties)
         {
             this.userProperties = userProperties;
         }
@@ -403,7 +404,7 @@ public class CDSController extends SpringActionController
                     model.setIsAnalyticsUser(isAnalytics);
                 }
 
-                model.setUserProperties(new org.json.JSONObject(CDSManager.get().getActiveUserProperties(getUser(), getContainer())));
+                model.setUserProperties(new JSONObject(CDSManager.get().getActiveUserProperties(getUser(), getContainer())));
 
                 template = new ConnectorTemplate(new JspView("/org/labkey/cds/view/app.jsp"), defaultPageConfig(), model);
             }
@@ -1098,13 +1099,11 @@ public class CDSController extends SpringActionController
             }
             else if (isPost())
             {
-                Object properties = form.getJsonObject().get("properties");
+                JSONObject json = form.getNewJsonObject().optJSONObject("properties");
 
-                if (properties instanceof JSONObject)
+                if (null != json)
                 {
-                    Map<String, String> mapProps = new HashMap<>();
-
-                    ((JSONObject) properties).forEach((key, value) -> mapProps.put(key, value.toString()));
+                    Map<String, String> mapProps = json.keySet().stream().collect(Collectors.toMap(k->k, k->json.get(k).toString()));
 
                     if (!mapProps.isEmpty())
                     {
@@ -1142,7 +1141,7 @@ public class CDSController extends SpringActionController
 
             for (StudyDocumentObj niDoc : niDocuments)
             {
-                org.json.JSONObject json = new org.json.JSONObject();
+                JSONObject json = new JSONObject();
                 json.put("prot", niDoc.getProt());
                 json.put("sortIndex", niDoc.getDocument_order());
                 json.put("hasPermission", niDoc.getAccessible());
