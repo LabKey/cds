@@ -320,7 +320,7 @@ public class CDSController extends SpringActionController
     public static class AppModel
     {
         private boolean isAnalyticsUser = false;
-        private JSONObject userProperties;
+        private org.json.JSONObject userProperties;
 
         public boolean isAnalyticsUser()
         {
@@ -332,12 +332,12 @@ public class CDSController extends SpringActionController
             this.isAnalyticsUser = isAnalyticsUser;
         }
 
-        public JSONObject getUserProperties()
+        public org.json.JSONObject getUserProperties()
         {
             return userProperties;
         }
 
-        public void setUserProperties(JSONObject userProperties)
+        public void setUserProperties(org.json.JSONObject userProperties)
         {
             this.userProperties = userProperties;
         }
@@ -403,7 +403,7 @@ public class CDSController extends SpringActionController
                     model.setIsAnalyticsUser(isAnalytics);
                 }
 
-                model.setUserProperties(new JSONObject(CDSManager.get().getActiveUserProperties(getUser(), getContainer())));
+                model.setUserProperties(new org.json.JSONObject(CDSManager.get().getActiveUserProperties(getUser(), getContainer())));
 
                 template = new ConnectorTemplate(new JspView("/org/labkey/cds/view/app.jsp"), defaultPageConfig(), model);
             }
@@ -1104,8 +1104,7 @@ public class CDSController extends SpringActionController
                 {
                     Map<String, String> mapProps = new HashMap<>();
 
-                    ((JSONObject) properties).entrySet()
-                        .forEach(jsonProperty -> mapProps.put(jsonProperty.getKey(), jsonProperty.getValue().toString()));
+                    ((JSONObject) properties).forEach((key, value) -> mapProps.put(key, value.toString()));
 
                     if (!mapProps.isEmpty())
                     {
