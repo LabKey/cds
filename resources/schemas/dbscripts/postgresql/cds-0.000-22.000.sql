@@ -2089,3 +2089,116 @@ ALTER TABLE cds.import_NABMAb ALTER COLUMN initial_concentration TYPE double pre
   ALTER TABLE cds.import_NABMAb ALTER COLUMN fit_error TYPE double precision;
   ALTER TABLE cds.import_NABMAb ALTER COLUMN virus_control_mean TYPE double precision;
   ALTER TABLE cds.import_NABMAb ALTER COLUMN cell_control_mean TYPE double precision;
+
+/* 21.xxx SQL scripts */
+
+CREATE TABLE cds.import_studyReport
+(
+    prot VARCHAR(250) NOT NULL,
+    cds_report_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_ImportStudyReport PRIMARY KEY (prot, cds_report_id, container)
+);
+
+CREATE TABLE cds.studyReport
+(
+    prot VARCHAR(250) NOT NULL,
+    cds_report_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_studyReport PRIMARY KEY (prot, cds_report_id, container)
+);
+
+CREATE TABLE cds.import_studyCuratedGroup
+(
+    prot VARCHAR(250) NOT NULL,
+    cds_saved_group_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_ImportStudyCuratedGroup PRIMARY KEY (prot, cds_saved_group_id, container)
+);
+
+CREATE TABLE cds.studyCuratedGroup
+(
+    prot VARCHAR(250) NOT NULL,
+    cds_saved_group_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_studyCuratedGroup PRIMARY KEY (prot, cds_saved_group_id, container)
+);
+
+CREATE TABLE cds.import_publicationReport
+(
+    publication_id INTEGER,
+    cds_report_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_ImportPublicationReport PRIMARY KEY (publication_id, cds_report_id, container)
+);
+
+CREATE TABLE cds.publicationReport
+(
+    publication_id INTEGER,
+    cds_report_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_publicationReport PRIMARY KEY (publication_id, cds_report_id, container)
+);
+
+CREATE TABLE cds.import_publicationCuratedGroup
+(
+    publication_id INTEGER,
+    cds_saved_group_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_ImportPublicationCuratedGroup PRIMARY KEY (publication_id, cds_saved_group_id, container)
+);
+
+CREATE TABLE cds.publicationCuratedGroup
+(
+    publication_id INTEGER,
+    cds_saved_group_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_publicationCuratedGroup PRIMARY KEY (publication_id, cds_saved_group_id, container)
+);
+
+CREATE TABLE cds.import_AssayDocument(
+     assay_identifier VARCHAR(250) NOT NULL,
+     document_id VARCHAR(250) NOT NULL,
+     container ENTITYID NOT NULL,
+
+     CONSTRAINT pk_import_AssayDocument PRIMARY KEY (container, assay_identifier, document_id)
+);
+
+CREATE TABLE cds.AssayDocument(
+     assay_identifier VARCHAR(250) NOT NULL,
+     document_id VARCHAR(250) NOT NULL,
+     container ENTITYID NOT NULL,
+
+     CONSTRAINT pk_AssayDocument PRIMARY KEY (container, assay_identifier, document_id)
+);
+
+ALTER TABLE cds.import_document ADD COLUMN video_link TEXT;
+ALTER TABLE cds.import_document ADD COLUMN video_thumbnail_label TEXT;
+ALTER TABLE cds.document ADD COLUMN video_link TEXT;
+ALTER TABLE cds.document ADD COLUMN video_thumbnail_label TEXT;
+
+CREATE TABLE cds.import_assayReport
+(
+    assay_identifier VARCHAR(250) NOT NULL,
+    cds_report_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_ImportAssayReport PRIMARY KEY (assay_identifier, cds_report_id, container)
+);
+
+CREATE TABLE cds.assayReport
+(
+    assay_identifier VARCHAR(250) NOT NULL,
+    cds_report_id INTEGER,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_AssayReport PRIMARY KEY (assay_identifier, cds_report_id, container)
+);
