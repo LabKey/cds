@@ -24,8 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.json.old.JSONArray;
-import org.json.old.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiSimpleResponse;
@@ -120,6 +120,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -348,7 +349,6 @@ public class CDSController extends SpringActionController
     @RequiresPermission(ReadPermission.class)
     public class UpdateNeedSurveyAction extends MutatingApiAction<Object>
     {
-
         @Override
         public Object execute(Object o, BindException errors) throws Exception
         {
@@ -1099,14 +1099,11 @@ public class CDSController extends SpringActionController
             }
             else if (isPost())
             {
-                Object properties = form.getJsonObject().get("properties");
+                JSONObject json = form.getNewJsonObject().optJSONObject("properties");
 
-                if (properties instanceof JSONObject)
+                if (null != json)
                 {
-                    Map<String, String> mapProps = new HashMap<>();
-
-                    ((JSONObject) properties).entrySet()
-                        .forEach(jsonProperty -> mapProps.put(jsonProperty.getKey(), jsonProperty.getValue().toString()));
+                    Map<String, String> mapProps = json.keySet().stream().collect(Collectors.toMap(k->k, k->json.get(k).toString()));
 
                     if (!mapProps.isEmpty())
                     {
