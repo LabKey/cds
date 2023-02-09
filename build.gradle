@@ -12,14 +12,12 @@ dependencies
     BuildUtils.addLabKeyDependency(project: project, config: "modules", depProjectPath: ":server:modules:dataintegration", depProjectConfig: "published", depExtension: "module")
 }
 
-project.evaluationDependsOn(BuildUtils.getInternalProjectPath(project.gradle))
 project.evaluationDependsOn(BuildUtils.getPlatformModuleProjectPath(project.gradle, "query"))
 project.evaluationDependsOn(BuildUtils.getPlatformModuleProjectPath(project.gradle, "core"))
 project.evaluationDependsOn(BuildUtils.getApiProjectPath(project.gradle))
 
 // FIXME this will not work if not also building the modules below. Probably will need a
 // different approach to source code for these dependencies.
-tasks.compressClientLibs.dependsOn(project(BuildUtils.getInternalProjectPath(project.gradle)).tasks.processResources)
 tasks.compressClientLibs.dependsOn(project(BuildUtils.getPlatformModuleProjectPath(project.gradle, "query")).tasks.processResources)
 tasks.compressClientLibs.dependsOn(project(BuildUtils.getPlatformModuleProjectPath(project.gradle, "core")).tasks.processResources)
 tasks.compressClientLibs.dependsOn(project(BuildUtils.getApiProjectPath(project.gradle)).tasks.processResources)
