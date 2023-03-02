@@ -85,7 +85,8 @@ Ext.define('Connector.app.store.Assay', {
                && Ext.isDefined(this.accessibleStudies)
                && Ext.isDefined(this.assayDocuments)
                && Ext.isDefined(this.assayReportsData)
-               && Ext.isDefined(this.savedReportsData)) {
+               && Ext.isDefined(this.savedReportsData)
+               && this.isLoadComplete()) {
 
             this.assayData.sort(function(assayA, assayB) {
                 return Connector.model.Filter.sorters.natural(assayA.assay_short_name, assayB.assay_short_name);

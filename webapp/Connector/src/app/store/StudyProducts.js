@@ -30,6 +30,7 @@ Ext.define('Connector.app.store.StudyProducts', {
     },
 
     loadSlice : function(slice) {
+        this.callParent(slice);
         this.productData = undefined;
         this.studyData = undefined;
         this.productProduct = undefined;
@@ -148,8 +149,12 @@ Ext.define('Connector.app.store.StudyProducts', {
     },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData) && Ext.isDefined(this.productProduct)
-                && Ext.isDefined(this.accessibleStudies) && Ext.isDefined(this.studyAssayMap)) {
+        if (Ext.isDefined(this.productData)
+                && Ext.isDefined(this.studyData)
+                && Ext.isDefined(this.productProduct)
+                && Ext.isDefined(this.accessibleStudies)
+                && Ext.isDefined(this.studyAssayMap)
+                && this.isLoadComplete()) {
             var products = [],
                 studies,
                 studiesWithData,

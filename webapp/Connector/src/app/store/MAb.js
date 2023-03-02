@@ -25,6 +25,7 @@ Ext.define('Connector.app.store.MAb', {
     },
 
     loadSlice: function() {
+        this.callParent();
         this.mabMixData = undefined;
         this.mabMixStudies = undefined;
 
@@ -56,7 +57,10 @@ Ext.define('Connector.app.store.MAb', {
     },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.mabMixData) && Ext.isDefined(this.mabMixStudies) && Ext.isDefined(this.accessibleStudies)) {
+        if (Ext.isDefined(this.mabMixData)
+                && Ext.isDefined(this.mabMixStudies)
+                && Ext.isDefined(this.accessibleStudies)
+                && this.isLoadComplete()) {
 
             this.mabMixData.sort(function(mab1, mab2) {
                 return Connector.model.Filter.sorters.natural(mab1.mab_mix_name_std, mab2.mab_mix_name_std);
