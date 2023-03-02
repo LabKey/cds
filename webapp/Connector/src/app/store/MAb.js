@@ -25,6 +25,7 @@ Ext.define('Connector.app.store.MAb', {
     },
 
     loadSlice: function() {
+        this.callParent(slice);
         this.mabMixData = undefined;
         this.mabMixStudies = undefined;
 
