@@ -30,6 +30,7 @@ Ext.define('Connector.app.store.StudyProducts', {
     },
 
     loadSlice : function(slice) {
+        this.callParent(slice);
         this.productData = undefined;
         this.studyData = undefined;
         this.productProduct = undefined;
