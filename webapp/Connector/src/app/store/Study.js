@@ -193,13 +193,21 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
-    _onLoadComplete : function() {
-        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)
-                && Ext.isDefined(this.documentData) && Ext.isDefined(this.niDocumentData)
-                && Ext.isDefined(this.publicationData) && Ext.isDefined(this.relationshipData)
-                && Ext.isDefined(this.relationshipOrderData) && Ext.isDefined(this.accessibleStudies)
-                && Ext.isDefined(this.mabMixData) && Ext.isDefined(this.assayIdentifiers)
-                && Ext.isDefined(this.studyReportsData) && Ext.isDefined(this.studyCuratedGroupData)) {
+    _onLoadComplete: function () {
+        if (Ext.isDefined(this.studyData)
+                && Ext.isDefined(this.productData)
+                && Ext.isDefined(this.assayData)
+                && Ext.isDefined(this.documentData)
+                && Ext.isDefined(this.niDocumentData)
+                && Ext.isDefined(this.publicationData)
+                && Ext.isDefined(this.relationshipData)
+                && Ext.isDefined(this.relationshipOrderData)
+                && Ext.isDefined(this.accessibleStudies)
+                && Ext.isDefined(this.mabMixData)
+                && Ext.isDefined(this.assayIdentifiers)
+                && Ext.isDefined(this.studyReportsData)
+                && Ext.isDefined(this.studyCuratedGroupData)
+                && this.isLoadComplete()) {
             var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
                 return relOrder.relationship;
