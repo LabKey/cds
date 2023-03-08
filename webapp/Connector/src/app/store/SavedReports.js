@@ -38,7 +38,12 @@ Ext.define('Connector.app.store.SavedReports', {
         for (var x =0; x < rreports.length; x++) {
             this.savedReportsData.push({reportId: rreports[x].reportId.split(":")[1], reportName:rreports[x].name});
         }
+        this.loadComplete = true;
         this._onLoadComplete();
+    },
+
+    isLoadComplete : function() {
+        return this.loadComplete;
     },
 
     _onLoadComplete: function () {

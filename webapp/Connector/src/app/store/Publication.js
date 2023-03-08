@@ -104,10 +104,14 @@ Ext.define('Connector.app.store.Publication', {
     },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.publicationData) && Ext.isDefined(this.studyData)
-                && Ext.isDefined(this.assayData) && Ext.isDefined(this.accessibleStudies)
+        if (Ext.isDefined(this.publicationData)
+                && Ext.isDefined(this.studyData)
+                && Ext.isDefined(this.assayData)
+                && Ext.isDefined(this.accessibleStudies)
                 && Ext.isDefined(this.publicationDocuments)
-                && Ext.isDefined(this.publicationReportsData) && Ext.isDefined(this.publicationCuratedGroupData)) {
+                && Ext.isDefined(this.publicationReportsData)
+                && Ext.isDefined(this.publicationCuratedGroupData)
+                && this.isLoadComplete()) {
 
             this.publicationData.sort(function(row1, row2) {
                 var date1Str = Connector.model.Filter.sorters.getPublicationDateSortStr(row1.date);
