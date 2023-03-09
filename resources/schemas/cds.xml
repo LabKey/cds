@@ -1566,4 +1566,219 @@
             <column columnName="container"/>
         </columns>
     </table>
+    <table tableName="import_assay_combined_antigen_metadata" tableDbType="TABLE">
+        <columns>
+            <column columnName="antigen_cds_id"/>
+            <column columnName="antigen_full_name"/>
+            <column columnName="antigen_short_name"/>
+            <column columnName="antigen_plot_label"/>
+            <column columnName="antigen_name_other"/>
+            <column columnName="antigen_dna_construct"/>
+            <column columnName="antigen_category"/>
+            <column columnName="antigen_type_component"/>
+            <column columnName="antigen_type_region"/>
+            <column columnName="antigen_type_scaffold"/>
+            <column columnName="antigen_type_modifiers"/>
+            <column columnName="antigen_type_tags"/>
+            <column columnName="antigen_type_virus_type"/>
+            <column columnName="antigen_type_backbone"/>
+            <column columnName="antigen_type_reporter_molecule"/>
+            <column columnName="antigen_type_differentiate"/>
+            <column columnName="antigen_type_control"/>
+            <column columnName="isolate_name_component"/>
+            <column columnName="isolate_species"/>
+            <column columnName="isolate_donor_id"/>
+            <column columnName="isolate_differentiate"/>
+            <column columnName="isolate_clade"/>
+            <column columnName="isolate_clone"/>
+            <column columnName="isolate_mutations"/>
+            <column columnName="isolate_neut_tier"/>
+            <column columnName="isolate_clone_pi"/>
+            <column columnName="isolate_country_origin"/>
+            <column columnName="isolate_year_isolated"/>
+            <column columnName="isolate_fiebig_stage"/>
+            <column columnName="antigen_accession_num"/>
+            <column columnName="antigen_amino_acid_sequence"/>
+            <column columnName="production_component"/>
+            <column columnName="isolate_host_cell"/>
+            <column columnName="antigen_purification"/>
+            <column columnName="antigen_reagents"/>
+            <column columnName="antigen_manufacturer"/>
+            <column columnName="antigen_codon_optimize"/>
+            <column columnName="antigen_source"/>
+            <column columnName="isolate_transfection_method"/>
+            <column columnName="isolate_TF_status"/>
+            <column columnName="isolate_PV_backbone_system"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="assay_combined_antigen_metadata" tableDbType="TABLE">
+        <columns>
+            <column columnName="antigen_cds_id">
+                <columnTitle>DataSpace antigen ID</columnTitle>
+                <description>Unique ID assigned to antigen by DataSpace team</description>
+            </column>
+            <column columnName="antigen_full_name">
+                <columnTitle>Full name</columnTitle>
+                <description>Standard, descriptive full name of antigen</description>
+            </column>
+            <column columnName="antigen_short_name">
+                <columnTitle>Short name</columnTitle>
+                <description>Standard, abbreviated name of antigen</description>
+            </column>
+            <column columnName="antigen_plot_label">
+                <columnTitle>Plot label</columnTitle>
+                <description>Recommended label/name of antigen for use in plots and publications</description>
+            </column>
+            <column columnName="antigen_name_other">
+                <columnTitle>Aliases</columnTitle>
+                <description>Alternate or common names (from submitted data, publications, etc.)</description>
+            </column>
+            <column columnName="antigen_dna_construct">
+                <columnTitle>DNA construct ID</columnTitle>
+                <description>DNA construct ID assigned for Montefiori Lab Plasmid Database</description>
+            </column>
+            <column columnName="antigen_category">
+                <columnTitle>Antigen category</columnTitle>
+                <description>Classification which indicates whether the antigen is a recombinant protein, synthetic peptide, or virus</description>
+            </column>
+            <column columnName="antigen_type_component">
+                <columnTitle>Antigen type component</columnTitle>
+                <description>Concatenation of the elements of the antigen type</description>
+            </column>
+            <column columnName="antigen_type_region">
+                <columnTitle>Region</columnTitle>
+                <description>Region of virus (or antibody) covered</description>
+            </column>
+            <column columnName="antigen_type_scaffold">
+                <columnTitle>Scaffold</columnTitle>
+                <description>Specific scaffolding applied to the protein</description>
+            </column>
+            <column columnName="antigen_type_modifiers">
+                <columnTitle>Modifiers</columnTitle>
+                <description>Deviation from natural protein</description>
+            </column>
+            <column columnName="antigen_type_tags">
+                <columnTitle>Tags</columnTitle>
+                <description>Specific peptide sequence attached to the protein</description>
+            </column>
+            <column columnName="antigen_type_virus_type">
+                <columnTitle>Virus type</columnTitle>
+                <description>Classification which indicates the type of virus</description>
+            </column>
+            <column columnName="antigen_type_backbone">
+                <columnTitle>Backbone</columnTitle>
+                <description>Virus backbone</description>
+            </column>
+            <column columnName="antigen_type_reporter_molecule">
+                <columnTitle>Reporter molecule</columnTitle>
+                <description>Specific reporter molecule applied to the protein</description>
+            </column>
+            <column columnName="antigen_type_differentiate">
+                <columnTitle>Antigen type differentiate</columnTitle>
+                <description>Indicates additional distinctions needed to identify unique antigen type e.g. different provider of protein</description>
+            </column>
+            <column columnName="antigen_type_control">
+                <columnTitle>Antigen control</columnTitle>
+                <description>Indicates if antigen is a control</description>
+            </column>
+            <column columnName="isolate_name_component">
+                <columnTitle>Isolate name component</columnTitle>
+                <description>Concatenation of the elements of the isolate name</description>
+            </column>
+            <column columnName="isolate_species">
+                <columnTitle>Isolate species</columnTitle>
+                <description>Classification for isolate species using informal taxonomy</description>
+            </column>
+            <column columnName="isolate_donor_id">
+                <columnTitle>Isolate donor ID</columnTitle>
+                <description>Unique ID assigned to the isolate donor</description>
+            </column>
+            <column columnName="isolate_differentiate">
+                <columnTitle>Isolate differentiate</columnTitle>
+                <description>Indicates additional distinctions needed to identify unique isolates from the same donor, e.g. visits or specimen types</description>
+            </column>
+            <column columnName="isolate_clade">
+                <columnTitle>Isolate clade</columnTitle>
+                <description>Clade (gene subtype) to which the isolate is most closely aligned</description>
+            </column>
+            <column columnName="isolate_clone">
+                <columnTitle>Isolate clone designation</columnTitle>
+                <description>Identifier assigned to indicate specific isolate clone</description>
+            </column>
+            <column columnName="isolate_mutations">
+                <columnTitle>Isolate mutations</columnTitle>
+                <description>Indicates specific mutations to the isolate</description>
+            </column>
+            <column columnName="isolate_neut_tier">
+                <columnTitle>Neutralization tier</columnTitle>
+                <description>Classification of neutralization of virus</description>
+            </column>
+            <column columnName="isolate_clone_pi">
+                <columnTitle>Isolate cloner/PI</columnTitle>
+                <description>Name of the investigator who cloned the isolate</description>
+            </column>
+            <column columnName="isolate_country_origin">
+                <columnTitle>Country of origin</columnTitle>
+                <description>Country of origin of the isolate donor</description>
+            </column>
+            <column columnName="isolate_year_isolated">
+                <columnTitle>Year isolated</columnTitle>
+                <description>Year the isolate was isolated</description>
+            </column>
+            <column columnName="isolate_fiebig_stage">
+                <columnTitle>Fiebig stage</columnTitle>
+                <description>Classification for staging early HIV infection based on test results for markers of the virus and the immune response</description>
+            </column>
+            <column columnName="antigen_accession_num">
+                <columnTitle>Accession #(s)</columnTitle>
+                <description>Unique identifier assigned to the amino acid sequence for the isolate</description>
+            </column>
+            <column columnName="antigen_amino_acid_sequence">
+                <columnTitle>Amino acid sequence</columnTitle>
+                <description>Specific string of amino acids for the isolate</description>
+            </column>
+            <column columnName="production_component">
+                <columnTitle>Production component</columnTitle>
+                <description>Concatenation of production-related elements</description>
+            </column>
+            <column columnName="isolate_host_cell">
+                <columnTitle>Host cell</columnTitle>
+                <description>Host cell used to incubate the isolate stock during production process</description>
+            </column>
+            <column columnName="antigen_purification">
+                <columnTitle>Purification methods</columnTitle>
+                <description>Production process performed to purify the protein</description>
+            </column>
+            <column columnName="antigen_reagents">
+                <columnTitle>Special reagents</columnTitle>
+                <description>Specific reagent used during production of protein</description>
+            </column>
+            <column columnName="antigen_manufacturer">
+                <columnTitle>Manufacturer</columnTitle>
+                <description>Lab or commercial facility where antigen produced</description>
+            </column>
+            <column columnName="antigen_codon_optimize">
+                <columnTitle>Codon Optimization</columnTitle>
+                <description>Indicates if codon optimization was performed during production</description>
+            </column>
+            <column columnName="antigen_source">
+                <columnTitle>Source</columnTitle>
+                <description>The lab/PI that originally made the reagent or published the sequence</description>
+            </column>
+            <column columnName="isolate_transfection_method">
+                <columnTitle>Transfection method</columnTitle>
+                <description>Indicates stable transfection vs transient</description>
+            </column>
+            <column columnName="isolate_TF_status">
+                <columnTitle>Transmitter/founder status</columnTitle>
+                <description>Classification of transmitter/founder status of the isolate</description>
+            </column>
+            <column columnName="isolate_PV_backbone_system">
+                <columnTitle>Pseudovirus backbone system</columnTitle>
+                <description>Classification of pseudovirus system of the isolate backbone</description>
+            </column>
+            <column columnName="container"/>
+        </columns>
+    </table>
 </tables>
