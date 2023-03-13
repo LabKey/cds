@@ -163,6 +163,7 @@ public class CDSManager
                     "virus_lab_id",
                     "virus_synonym",
                     "virus_metadata_all",
+                    "assay_combined_antigen_metadata",
 
                     "import_nabmab",
                     "import_ics",
@@ -216,7 +217,8 @@ public class CDSManager
                     "import_assayReport",
                     "import_virus_lab_id",
                     "import_virus_synonym",
-                    "import_virus_metadata_all"
+                    "import_virus_metadata_all",
+                    "import_assay_combined_antigen_metadata"
             })
             {
                 TableInfo t = dbSchema.getTable(s);
