@@ -705,19 +705,7 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.Antigen',
                 detailModel: 'Connector.app.model.Antigen',
-                detailView: 'Connector.app.view.Antigen',
-
-                //TODO: to be implemented
-
-                // itemDetailTabs: [{
-                //     url: 'overview',
-                //     isDefault: true,
-                //     label: 'Overview'
-                // }],
-
-                // itemDetail: [{
-                //     view: 'Connector.app.view.AntigenModuleContainer'
-                // }]
+                detailView: 'Connector.app.view.Antigen'
             }, {
                 uniqueName: '[Publication]',
                 priority: 1,
