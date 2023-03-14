@@ -697,6 +697,7 @@ Ext4.define('Connector.cube.Configuration', {
             }, {
                 uniqueName: '[Antigen]',
                 priority: 4,
+                hasExport: false,
                 singularName: 'Antigen',
                 pluralName: 'Antigens',
                 hidden: false,

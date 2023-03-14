@@ -15,14 +15,15 @@ Ext.define('Connector.app.view.Antigen', {
 
     statics: {
         searchFields: ['antigen_cds_id', 'antigen_short_name', 'antigen_full_name', 'antigen_name_other', 'antigen_category',
-            'isolate_species', 'isolate_clade', 'isolate_donor_id', 'isolate_mutations', 'antigen_type_modifiers', 'antigen_panel', 'antigen_type_control']
+            'isolate_species', 'isolate_clade', 'isolate_donor_id', 'isolate_mutations', 'antigen_type_modifiers', 'antigen_type_control',
+            {field: 'antigen_panel', value: 'panel_name'}]
     },
 
     columns : [{
         text: 'Antigen',
         xtype: 'templatecolumn',
         minWidth: 500,
-        maxWidth: 600,
+        maxWidth: 650,
         locked: false,
         resizable: false,
         dataIndex: 'antigen_short_name',
