@@ -22,6 +22,7 @@ Ext.define('Connector.app.view.Antigen', {
         text: 'Antigen',
         xtype: 'templatecolumn',
         minWidth: 500,
+        maxWidth: 600,
         locked: false,
         resizable: false,
         dataIndex: 'antigen_short_name',
