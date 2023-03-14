@@ -31,8 +31,12 @@ Ext.define('Connector.app.view.Antigen', {
             title: 'Antigen Name'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text">',
-                '<div class="detail-black-text">{antigen_short_name:htmlEncode}</div>',
+                '<div class="detail-description">',
+                    '<h3 class="detail-description">{antigen_short_name:htmlEncode}</h3>',
+                    '<br>',
+                    '<div class="detail-black-text">{antigen_full_name:htmlEncode}</div>',
+                    '<br>',
+                    '<div class="detail-black-text">Aliases: {antigen_name_other:htmlEncode}</div>',
                 '</div>'
         )
     },{
