@@ -155,7 +155,17 @@ Ext.define('Connector.app.view.Antigen', {
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
-                '<div class="detail-black-text">{antigen_panel:htmlEncode}</div>',
+                    '<ul>',
+                        '<tpl if="antigen_panel && antigen_panel.length &gt; 0">',
+                            '<tpl for="antigen_panel">',
+                                '<tpl if="xindex <= 5">',
+                                    '<li class="detail-gray-text">{panel_name:htmlEncode}</li>',
+                                '<tpl elseif="xindex == 6">',
+                                    '<li class="detail-gray-text">...</li>',
+                                '</tpl>',
+                            '</tpl>',
+                        '</tpl>',
+                    '</ul>',
                 '</div>'
         )
     },{

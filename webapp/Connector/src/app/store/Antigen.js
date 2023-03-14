@@ -18,6 +18,7 @@ Ext.define('Connector.app.store.Antigen', {
 
     loadSlice : function() {
         this.assayCombinedAntigenMetadata = undefined;
+        this.assayCombinedAntigenPanel = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -25,6 +26,18 @@ Ext.define('Connector.app.store.Antigen', {
             success: this.onLoadAssayCombinedAntigenMetadata,
             scope: this
         });
+
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'assayCombinedAntigenPanel',
+            success: this.  onLoadAssayCombinedAntigenPanel,
+            scope: this
+        });
+    },
+
+      onLoadAssayCombinedAntigenPanel : function(panel) {
+        this.assayCombinedAntigenPanel = panel.rows;
+        this._onLoadComplete();
     },
 
     onLoadAssayCombinedAntigenMetadata : function(combinedAgData) {
@@ -33,11 +46,13 @@ Ext.define('Connector.app.store.Antigen', {
     },
 
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.assayCombinedAntigenMetadata)) {
+        if (Ext.isDefined(this.assayCombinedAntigenMetadata) && Ext.isDefined(this.assayCombinedAntigenPanel)) {
 
             var antigens = [];
 
-            Ext.each(this.assayCombinedAntigenMetadata, function(antigen) {
+            this.assayCombinedAntigenMetadata.forEach(function(antigen) {
+                var panels = this.assayCombinedAntigenPanel.filter(function(panel) {return panel.antigen_cds_id === antigen.antigen_cds_id;});
+                antigen.antigen_panel = panels && panels.length > 0 ? panels : undefined;
                 antigens.push(antigen);
             }, this);
 
