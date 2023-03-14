@@ -695,6 +695,29 @@ Ext4.define('Connector.cube.Configuration', {
                     }]]
                 }]
             }, {
+                uniqueName: '[Antigen]',
+                priority: 4,
+                singularName: 'Antigen',
+                pluralName: 'Antigens',
+                hidden: false,
+                supportsSummary: false,
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.Antigen',
+                detailModel: 'Connector.app.model.Antigen',
+                detailView: 'Connector.app.view.Antigen',
+
+                //TODO: to be implemented
+
+                // itemDetailTabs: [{
+                //     url: 'overview',
+                //     isDefault: true,
+                //     label: 'Overview'
+                // }],
+
+                // itemDetail: [{
+                //     view: 'Connector.app.view.AntigenModuleContainer'
+                // }]
+            }, {
                 uniqueName: '[Publication]',
                 priority: 1,
                 singularName: 'Publication',
