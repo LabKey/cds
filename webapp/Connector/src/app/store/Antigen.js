@@ -30,7 +30,7 @@ Ext.define('Connector.app.store.Antigen', {
         LABKEY.Query.selectRows({
             schemaName: 'cds',
             queryName: 'assayCombinedAntigenPanel',
-            success: this.  onLoadAssayCombinedAntigenPanel,
+            success: this.onLoadAssayCombinedAntigenPanel,
             scope: this
         });
     },

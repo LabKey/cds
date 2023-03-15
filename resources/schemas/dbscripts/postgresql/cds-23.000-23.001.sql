@@ -1,6 +1,6 @@
 CREATE TABLE cds.import_assay_combined_antigen_metadata
 (
-    antigen_cds_id VARCHAR(250),
+    antigen_cds_id VARCHAR(250) NOT NULL,
     antigen_full_name VARCHAR(250),
     antigen_short_name VARCHAR(250),
     antigen_plot_label VARCHAR(250),
@@ -48,7 +48,7 @@ CREATE TABLE cds.import_assay_combined_antigen_metadata
 
 CREATE TABLE cds.assay_combined_antigen_metadata
 (
-    antigen_cds_id VARCHAR(250),
+    antigen_cds_id VARCHAR(250) NOT NULL,
     antigen_full_name VARCHAR(250),
     antigen_short_name VARCHAR(250),
     antigen_plot_label VARCHAR(250),
