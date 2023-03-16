@@ -1120,8 +1120,13 @@ Ext.define('Connector.view.LearnHeaderDataView', {
 
     tpl: new Ext.XTemplate(
         '<tpl for=".">',
-            '<h1 class="lhdv">{pluralName:htmlEncode}</h1>',
-        '</tpl>'
+            '<h1 id="{[this.getId(values)]}" class="lhdv">{pluralName:htmlEncode}</h1>',
+        '</tpl>',
+        {
+            getId : function(values) {
+                return "learn-header-" + values.pluralName + "-id";
+            }
+        }
     ),
 
     initComponent : function() {
