@@ -883,7 +883,7 @@ Ext.define('Connector.view.LearnHeader', {
         if (!this.headerDataView) {
             this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
                 flex: 2,
-                minWidth: 700,
+                minWidth: 725,
                 cls: 'learn-dim-selector',
                 dimensions: this.dimensions,
                 store: Ext.create('Ext.data.Store', {
