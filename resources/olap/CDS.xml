@@ -207,5 +207,9 @@
         <!--A fake dimension so that Publications can show up in Learn about-->
         <Dimension name="Publication" visible="true" highCardinality="false">
         </Dimension>
+
+        <!--A fake dimension so that Antigens can show up in Learn about-->
+        <Dimension name="Antigen" visible="true" highCardinality="false">
+        </Dimension>
     </Cube>
 </Schema>

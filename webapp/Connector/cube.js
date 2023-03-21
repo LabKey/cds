@@ -695,6 +695,18 @@ Ext4.define('Connector.cube.Configuration', {
                     }]]
                 }]
             }, {
+                uniqueName: '[Antigen]',
+                priority: 4,
+                hasExport: false,
+                singularName: 'Antigen',
+                pluralName: 'Antigens',
+                hidden: false,
+                supportsSummary: false,
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.Antigen',
+                detailModel: 'Connector.app.model.Antigen',
+                detailView: 'Connector.app.view.Antigen'
+            }, {
                 uniqueName: '[Publication]',
                 priority: 1,
                 singularName: 'Publication',

@@ -801,7 +801,8 @@ Ext.define('Connector.view.Learn', {
         'Study product' : 'StudyProducts',
         'Report' : 'Report',
         'Publication' : 'Publication',
-        'MAb': 'MAb'
+        'MAb': 'MAb',
+        'Antigen': 'Antigen'
     },
 
     searchFieldsByTab : function(name) {
@@ -882,7 +883,7 @@ Ext.define('Connector.view.LearnHeader', {
         if (!this.headerDataView) {
             this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
                 flex: 2,
-                minWidth: 620,
+                minWidth: 725,
                 cls: 'learn-dim-selector',
                 dimensions: this.dimensions,
                 store: Ext.create('Ext.data.Store', {
@@ -1119,8 +1120,13 @@ Ext.define('Connector.view.LearnHeaderDataView', {
 
     tpl: new Ext.XTemplate(
         '<tpl for=".">',
-            '<h1 class="lhdv">{pluralName:htmlEncode}</h1>',
-        '</tpl>'
+            '<h1 id="{[this.getId(values)]}" class="lhdv">{pluralName:htmlEncode}</h1>',
+        '</tpl>',
+        {
+            getId : function(values) {
+                return "learn-header-" + values.pluralName + "-id";
+            }
+        }
     ),
 
     initComponent : function() {

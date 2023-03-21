@@ -260,6 +260,10 @@
             <source schemaName="cds" queryName="import_virus_metadata_all"/>
             <destination schemaName="cds" queryName="virus_metadata_all" targetOption="truncate"/>
         </transform>
+        <transform id="PopulateAssayCombinedAntigenMetadata" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="import_assay_combined_antigen_metadata"/>
+            <destination schemaName="cds" queryName="assay_combined_antigen_metadata" targetOption="truncate"/>
+        </transform>
         <transform id="PopulateVirusLabId" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="cds" queryName="import_virus_lab_id"/>
             <destination schemaName="cds" queryName="virus_lab_id"/>

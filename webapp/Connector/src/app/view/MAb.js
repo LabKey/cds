@@ -83,7 +83,7 @@ Ext.define('Connector.app.view.MAb', {
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',
-                    '<div class="detail-black-text">{mab_mix_type}</div>',
+                    '<div class="detail-black-text">{mab_mix_type:htmlEncode}</div>',
                     '</div>'
             )
         },{
@@ -100,7 +100,7 @@ Ext.define('Connector.app.view.MAb', {
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',
-                    '<div class="detail-black-text">{donors_str}</div>',
+                    '<div class="detail-black-text">{donors_str:htmlEncode}</div>',
                     '</div>'
             )
         },{
@@ -117,7 +117,7 @@ Ext.define('Connector.app.view.MAb', {
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',
-                    '<div class="detail-black-text">{isotypes_str}</div>',
+                    '<div class="detail-black-text">{isotypes_str:htmlEncode}</div>',
                     '</div>'
             )
         },{
@@ -134,7 +134,7 @@ Ext.define('Connector.app.view.MAb', {
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',
-                    '<div class="detail-black-text">{hxb2Locs_str}</div>',
+                    '<div class="detail-black-text">{hxb2Locs_str:htmlEncode}</div>',
                     '</div>'
             )
         },{
@@ -151,7 +151,7 @@ Ext.define('Connector.app.view.MAb', {
             }],
             tpl: new Ext.XTemplate(
                     '<div class="detail-text">',
-                    '<div class="detail-black-text">{abBindings_str}</div>',
+                    '<div class="detail-black-text">{abBindings_str:htmlEncode}</div>',
                     '</div>'
             )
         }

@@ -943,8 +943,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("Fit asymmetry"));
 
         log("Verify Antigens page");
-        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
-        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        Locator assayAntigenTab = Locator.xpath("//div").withClass("learnabouttab").child("h1").withText("Antigens");
+        waitForElementToBeVisible(assayAntigenTab);
+        waitAndClick(assayAntigenTab);
         sleep(CDSHelper.CDS_WAIT);
         waitForElement(Locator.xpath("//div").withClass("detail-description").child("h2").withText("X2160_C25"));
 
@@ -1003,8 +1004,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         summaryGrid.setSearch(CDSHelper.GRID_TITLE_NAB).clickFirstItem();
 
         log("Verify NAb Antigens page");
-        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
-        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        Locator assayAntigenTab = Locator.xpath("//div").withClass("learnabouttab").child("h1").withText("Antigens");
+        waitForElementToBeVisible(assayAntigenTab);
+        waitAndClick(assayAntigenTab);
         sleep(CDSHelper.CDS_WAIT);
 
         log("Verify row for 'Ce2010_F5.LucR.T2A.ecto' virus");
@@ -1601,7 +1603,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForElement(Locator.xpath("//div").withClass("variable-list-title").child("h2").withText("MAb or mixture standardized name"));
 
         log("Verify Antigens tab is not present");
-        Locator antigenTabLoc = Locator.tagWithClass("h1", "lhdv").withText("Antigens");
+        Locator antigenTabLoc = Locator.xpath("//div").withClass("learnabouttab").child("h1").withText("Antigens");
         assertFalse("Antigen tab should not be present for PK MAb assay", isElementPresent(antigenTabLoc) && isElementVisible(antigenTabLoc));
     }
 
@@ -1724,8 +1726,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_METHODOLOGY);
 
         log("testing BAMA antigens page...");
-        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
-        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        Locator assayAntigenTab = Locator.xpath("//div").withClass("learnabouttab").child("h1").withText("Antigens");
+        waitForElementToBeVisible(assayAntigenTab);
+        waitAndClick(assayAntigenTab);
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
         waitForElement(Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Antigen"));
         verifyBAMAAntigenTabColumns();
@@ -1771,8 +1774,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitAndClick(LEARN_ROW_TITLE_LOC.containing(assays.get(1)));
         waitForElement(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
 
-        waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
-        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        waitForElementToBeVisible(assayAntigenTab);
+        waitAndClick(assayAntigenTab);
         Locator proteinPanelLoc = Locator.tagWithClass("div", "x-column-header-inner").append("/span").containing("Protein Panel");
         waitForElement(proteinPanelLoc);
         refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
