@@ -1781,4 +1781,308 @@
             <column columnName="container"/>
         </columns>
     </table>
+    <table tableName="import_sequence" tableDbType="TABLE">
+        <columns>
+            <column columnName="sequence_id"/>
+            <column columnName="sequence_nt"/>
+            <column columnName="source"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="sequence" tableDbType="TABLE">
+        <columns>
+            <column columnName="sequence_id"/>
+            <column columnName="sequence_nt"/>
+            <column columnName="source"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_run_log" tableDbType="TABLE">
+        <columns>
+            <column columnName="run_number"/>
+            <column columnName="run_application"/>
+            <column columnName="run_information"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="run_log" tableDbType="TABLE">
+        <columns>
+            <column columnName="run_number"/>
+            <column columnName="run_application"/>
+            <column columnName="run_information"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_allele_sequence" tableDbType="TABLE">
+        <columns>
+            <column columnName="allele"/>
+            <column columnName="allele_sequence_nt"/>
+            <column columnName="release_date"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="allele_sequence" tableDbType="TABLE">
+        <columns>
+            <column columnName="allele"/>
+            <column columnName="allele_sequence_nt"/>
+            <column columnName="release_date"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_sequence_headers" tableDbType="TABLE">
+        <columns>
+            <column columnName="sequence_header_id"/>
+            <column columnName="header"/>
+            <column columnName="sequence_id"/>
+            <column columnName="source"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="sequence_headers" tableDbType="TABLE">
+        <columns>
+            <column columnName="sequence_header_id"/>
+            <column columnName="header"/>
+            <column columnName="sequence_id"/>
+            <column columnName="source"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_sequence_germline" tableDbType="TABLE">
+        <columns>
+            <column columnName="allele"/>
+            <column columnName="sequence_id"/>
+            <column columnName="percent_identity"/>
+            <column columnName="matches"/>
+            <column columnName="alignment_length"/>
+            <column columnName="score"/>
+            <column columnName="run_number"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="sequence_germline" tableDbType="TABLE">
+        <columns>
+            <column columnName="allele"/>
+            <column columnName="sequence_id"/>
+            <column columnName="percent_identity"/>
+            <column columnName="matches"/>
+            <column columnName="alignment_length"/>
+            <column columnName="score"/>
+            <column columnName="run_number"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_antibody_sequence" tableDbType="TABLE">
+        <columns>
+            <column columnName="mab_id"/>
+            <column columnName="chain"/>
+            <column columnName="sequence_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="antibody_sequence" tableDbType="TABLE">
+        <columns>
+            <column columnName="mab_id"/>
+            <column columnName="chain"/>
+            <column columnName="sequence_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="import_alignment" tableDbType="TABLE">
+        <columns>
+            <column columnName="alignment_id"/>
+            <column columnName="sequence_id"/>
+            <column columnName="locus"/>
+            <column columnName="stop_codon"/>
+            <column columnName="vj_in_frame"/>
+            <column columnName="productive"/>
+            <column columnName="rev_comp"/>
+            <column columnName="complete_vdj"/>
+            <column columnName="v_call"/>
+            <column columnName="d_call"/>
+            <column columnName="j_call"/>
+            <column columnName="sequence_alignment"/>
+            <column columnName="germline_alignment"/>
+            <column columnName="sequence_alignment_aa"/>
+            <column columnName="germline_alignment_aa"/>
+            <column columnName="v_alignment_start"/>
+            <column columnName="v_alignment_end"/>
+            <column columnName="d_alignment_start"/>
+            <column columnName="d_alignment_end"/>
+            <column columnName="j_alignment_start"/>
+            <column columnName="j_alignment_end"/>
+            <column columnName="v_sequence_alignment"/>
+            <column columnName="v_sequence_alignment_aa"/>
+            <column columnName="v_germline_alignment"/>
+            <column columnName="v_germline_alignment_aa"/>
+            <column columnName="d_sequence_alignment"/>
+            <column columnName="d_sequence_alignment_aa"/>
+            <column columnName="d_germline_alignment"/>
+            <column columnName="d_germline_alignment_aa"/>
+            <column columnName="j_sequence_alignment"/>
+            <column columnName="j_sequence_alignment_aa"/>
+            <column columnName="j_germline_alignment"/>
+            <column columnName="j_germline_alignment_aa"/>
+            <column columnName="fwr1"/>
+            <column columnName="fwr1_aa"/>
+            <column columnName="cdr1"/>
+            <column columnName="cdr1_aa"/>
+            <column columnName="fwr2"/>
+            <column columnName="fwr2_aa"/>
+            <column columnName="cdr2"/>
+            <column columnName="cdr2_aa"/>
+            <column columnName="fwr3"/>
+            <column columnName="fwr3_aa"/>
+            <column columnName="fwr4"/>
+            <column columnName="fwr4_aa"/>
+            <column columnName="cdr3"/>
+            <column columnName="cdr3_aa"/>
+            <column columnName="junction"/>
+            <column columnName="junction_length"/>
+            <column columnName="junction_aa"/>
+            <column columnName="junction_aa_length"/>
+            <column columnName="v_score"/>
+            <column columnName="d_score"/>
+            <column columnName="j_score"/>
+            <column columnName="v_cigar"/>
+            <column columnName="d_cigar"/>
+            <column columnName="j_cigar"/>
+            <column columnName="v_support"/>
+            <column columnName="d_support"/>
+            <column columnName="j_support"/>
+            <column columnName="v_identity"/>
+            <column columnName="d_identity"/>
+            <column columnName="j_identity"/>
+            <column columnName="v_sequence_start"/>
+            <column columnName="v_sequence_end"/>
+            <column columnName="v_germline_start"/>
+            <column columnName="v_germline_end"/>
+            <column columnName="d_sequence_start"/>
+            <column columnName="d_sequence_end"/>
+            <column columnName="d_germline_start"/>
+            <column columnName="d_germline_end"/>
+            <column columnName="j_sequence_start"/>
+            <column columnName="j_sequence_end"/>
+            <column columnName="j_germline_start"/>
+            <column columnName="j_germline_end"/>
+            <column columnName="fwr1_start"/>
+            <column columnName="fwr1_end"/>
+            <column columnName="cdr1_start"/>
+            <column columnName="cdr1_end"/>
+            <column columnName="fwr2_start"/>
+            <column columnName="fwr2_end"/>
+            <column columnName="cdr2_start"/>
+            <column columnName="cdr2_end"/>
+            <column columnName="fwr3_start"/>
+            <column columnName="fwr3_end"/>
+            <column columnName="fwr4_start"/>
+            <column columnName="fwr4_end"/>
+            <column columnName="cdr3_start"/>
+            <column columnName="cdr3_end"/>
+            <column columnName="np1"/>
+            <column columnName="np1_length"/>
+            <column columnName="np2"/>
+            <column columnName="np2_length"/>
+            <column columnName="run_number"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="alignment" tableDbType="TABLE">
+        <columns>
+            <column columnName="alignment_id"/>
+            <column columnName="sequence_id"/>
+            <column columnName="locus"/>
+            <column columnName="stop_codon"/>
+            <column columnName="vj_in_frame"/>
+            <column columnName="productive"/>
+            <column columnName="rev_comp"/>
+            <column columnName="complete_vdj"/>
+            <column columnName="v_call"/>
+            <column columnName="d_call"/>
+            <column columnName="j_call"/>
+            <column columnName="sequence_alignment"/>
+            <column columnName="germline_alignment"/>
+            <column columnName="sequence_alignment_aa"/>
+            <column columnName="germline_alignment_aa"/>
+            <column columnName="v_alignment_start"/>
+            <column columnName="v_alignment_end"/>
+            <column columnName="d_alignment_start"/>
+            <column columnName="d_alignment_end"/>
+            <column columnName="j_alignment_start"/>
+            <column columnName="j_alignment_end"/>
+            <column columnName="v_sequence_alignment"/>
+            <column columnName="v_sequence_alignment_aa"/>
+            <column columnName="v_germline_alignment"/>
+            <column columnName="v_germline_alignment_aa"/>
+            <column columnName="d_sequence_alignment"/>
+            <column columnName="d_sequence_alignment_aa"/>
+            <column columnName="d_germline_alignment"/>
+            <column columnName="d_germline_alignment_aa"/>
+            <column columnName="j_sequence_alignment"/>
+            <column columnName="j_sequence_alignment_aa"/>
+            <column columnName="j_germline_alignment"/>
+            <column columnName="j_germline_alignment_aa"/>
+            <column columnName="fwr1"/>
+            <column columnName="fwr1_aa"/>
+            <column columnName="cdr1"/>
+            <column columnName="cdr1_aa"/>
+            <column columnName="fwr2"/>
+            <column columnName="fwr2_aa"/>
+            <column columnName="cdr2"/>
+            <column columnName="cdr2_aa"/>
+            <column columnName="fwr3"/>
+            <column columnName="fwr3_aa"/>
+            <column columnName="fwr4"/>
+            <column columnName="fwr4_aa"/>
+            <column columnName="cdr3"/>
+            <column columnName="cdr3_aa"/>
+            <column columnName="junction"/>
+            <column columnName="junction_length"/>
+            <column columnName="junction_aa"/>
+            <column columnName="junction_aa_length"/>
+            <column columnName="v_score"/>
+            <column columnName="d_score"/>
+            <column columnName="j_score"/>
+            <column columnName="v_cigar"/>
+            <column columnName="d_cigar"/>
+            <column columnName="j_cigar"/>
+            <column columnName="v_support"/>
+            <column columnName="d_support"/>
+            <column columnName="j_support"/>
+            <column columnName="v_identity"/>
+            <column columnName="d_identity"/>
+            <column columnName="j_identity"/>
+            <column columnName="v_sequence_start"/>
+            <column columnName="v_sequence_end"/>
+            <column columnName="v_germline_start"/>
+            <column columnName="v_germline_end"/>
+            <column columnName="d_sequence_start"/>
+            <column columnName="d_sequence_end"/>
+            <column columnName="d_germline_start"/>
+            <column columnName="d_germline_end"/>
+            <column columnName="j_sequence_start"/>
+            <column columnName="j_sequence_end"/>
+            <column columnName="j_germline_start"/>
+            <column columnName="j_germline_end"/>
+            <column columnName="fwr1_start"/>
+            <column columnName="fwr1_end"/>
+            <column columnName="cdr1_start"/>
+            <column columnName="cdr1_end"/>
+            <column columnName="fwr2_start"/>
+            <column columnName="fwr2_end"/>
+            <column columnName="cdr2_start"/>
+            <column columnName="cdr2_end"/>
+            <column columnName="fwr3_start"/>
+            <column columnName="fwr3_end"/>
+            <column columnName="fwr4_start"/>
+            <column columnName="fwr4_end"/>
+            <column columnName="cdr3_start"/>
+            <column columnName="cdr3_end"/>
+            <column columnName="np1"/>
+            <column columnName="np1_length"/>
+            <column columnName="np2"/>
+            <column columnName="np2_length"/>
+            <column columnName="run_number"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
 </tables>

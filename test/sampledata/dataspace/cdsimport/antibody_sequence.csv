@@ -1,0 +1,4 @@
+mab_id,chain,sequence_id
+cds_mab_1,heavy,cds_seq_1
+cds_mab_2,heavy,cds_seq_10
+cds_mab_3,light,cds_seq_100

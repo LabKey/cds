@@ -1,0 +1,9 @@
+sequence_id,allele,percent_identity,matches,alignment_length,score,run_number
+cds_seq_1,GGGG7-16*01,100,10,10,17.7,20230202_vquest
+cds_seq_1,VVVV7-51*07,32.6,245,273,313,20230202_vquest
+cds_seq_10,RRRR31-37*01,72.55,257,245,5545,20230202_igblast
+cds_seq_10,POPOK32*02,78.75,30,38,558,20230202_igblast
+cds_seq_100,RRRR31-37*01,78.57,275,245,1357,20230202_igblast
+cds_seq_100,RRRR31D-37*01,78.57,275,245,1357,20230202_igblast
+cds_seq_100,POPOK32*01,45.78,28,36,113,20230202_igblast
+cds_seq_100,POPOK32*02,45.78,28,36,113,20230202_igblast
