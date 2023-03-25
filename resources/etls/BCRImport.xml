@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etl xmlns="http://labkey.org/etl/xml">
+    <name>Import Dataspace BCR Data</name>
+    <description>Populate BCR tables</description>
+    <transforms>
+        <transform id="BCRImport" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.BCRImportTask">
+                <settings>
+                    <setting name="directory" value="{importfolder}/bcrimport"/>
+                </settings>
+            </taskref>
+        </transform>
+    </transforms>
+</etl>
