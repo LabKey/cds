@@ -55,11 +55,9 @@ CREATE TABLE cds.sequence_germline
     container ENTITYID NOT NULL,
 
     CONSTRAINT PK_cds_sequence_germline PRIMARY KEY (sequence_germline_id),
-    CONSTRAINT FK_cds_sequence_germline_allele FOREIGN KEY (allele) REFERENCES cds.allele_sequence(allele),
     CONSTRAINT FK_cds_sequence_germline_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id)
 );
 
-CREATE INDEX IX_cds_sequence_germline_allele ON cds.sequence_germline(allele);
 CREATE INDEX IX_cds_sequence_germline_sequence_id ON cds.sequence_germline(sequence_id);
 
 CREATE TABLE cds.antibody_sequence
