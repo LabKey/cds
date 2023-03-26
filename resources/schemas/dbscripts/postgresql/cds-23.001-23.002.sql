@@ -56,12 +56,10 @@ CREATE TABLE cds.sequence_germline
 
     CONSTRAINT PK_cds_sequence_germline PRIMARY KEY (sequence_germline_id),
     CONSTRAINT FK_cds_sequence_germline_allele FOREIGN KEY (allele) REFERENCES cds.allele_sequence(allele),
-    CONSTRAINT FK_cds_sequence_germline_run_number FOREIGN KEY (run_number) REFERENCES cds.run_log(run_number),
     CONSTRAINT FK_cds_sequence_germline_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id)
 );
 
 CREATE INDEX IX_cds_sequence_germline_allele ON cds.sequence_germline(allele);
-CREATE INDEX IX_cds_sequence_germline_run_number ON cds.sequence_germline(run_number);
 CREATE INDEX IX_cds_sequence_germline_sequence_id ON cds.sequence_germline(sequence_id);
 
 CREATE TABLE cds.antibody_sequence
@@ -176,9 +174,7 @@ CREATE TABLE cds.alignment
     container ENTITYID NOT NULL,
 
     CONSTRAINT PK_cds_alignment_alignment_id PRIMARY KEY (alignment_id),
-    CONSTRAINT FK_cds_alignment_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id),
-    CONSTRAINT FK_cds_alignment_run_number FOREIGN KEY (run_number) REFERENCES cds.run_log(run_number)
+    CONSTRAINT FK_cds_alignment_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id)
 );
 
 CREATE INDEX IX_cds_alignment_sequence_id ON cds.alignment(sequence_id);
-CREATE INDEX IX_cds_alignment_run_number ON cds.alignment(run_number);
