@@ -52,6 +52,7 @@ import org.labkey.api.security.ValidEmail;
 import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.view.NotFoundException;
+import org.labkey.cds.data.CSVCopyConfig;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -218,7 +219,15 @@ public class CDSManager
                     "import_virus_lab_id",
                     "import_virus_synonym",
                     "import_virus_metadata_all",
-                    "import_assay_combined_antigen_metadata"
+                    "import_assay_combined_antigen_metadata",
+
+                    "sequence",
+                    "run_log",
+                    "allele_sequence",
+                    "sequence_headers",
+                    "sequence_germline",
+                    "antibody_sequence",
+                    "alignment"
             })
             {
                 TableInfo t = dbSchema.getTable(s);

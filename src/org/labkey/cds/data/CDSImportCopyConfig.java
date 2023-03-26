@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019 LabKey Corporation
+ * Copyright (c) 2015-2023 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,40 +34,62 @@ import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
 import org.labkey.api.security.User;
+import org.labkey.api.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
-public class CDSImportCopyConfig extends CopyConfig
+public abstract class CDSImportCopyConfig extends CopyConfig
 {
-    QueryUpdateService.InsertOption option = QueryUpdateService.InsertOption.IMPORT;
+    public abstract String getFileExtension();
+    public abstract DataIteratorBuilder getTabLoader(File file) throws IOException;
 
-    CDSImportCopyConfig(String sourceSchema, String source, String targetSchema, String target)
+    private String _fileName;
+    QueryUpdateService.InsertOption _option = QueryUpdateService.InsertOption.IMPORT;
+
+    CDSImportCopyConfig(String sourceSchema, String source, String targetSchema, String target, String fileName)
     {
         super(sourceSchema, source, targetSchema, target);
+        _fileName = fileName;
     }
 
     public DataIteratorBuilder selectFromSource(Container container, User user, DataIteratorContext context,
-                                         @Nullable File dir, Logger log) throws SQLException, IOException
+                                         @Nullable File dir, Logger log) throws IOException
     {
-        QuerySchema sourceSchema = DefaultSchema.get(user, container, this.getSourceSchema());
-        if (null == sourceSchema)
+        if (null == dir)
         {
-            context.getErrors().addRowError(new ValidationException("Could not find source schema: " + this.getSourceSchema()));
-            return null;
+            QuerySchema sourceSchema = DefaultSchema.get(user, container, this.getSourceSchema());
+            if (null == sourceSchema)
+            {
+                context.getErrors().addRowError(new ValidationException("Could not find source schema: " + this.getSourceSchema()));
+                return null;
+            }
+            String sql = getSourceQuery().startsWith("SELECT") ? getSourceQuery() : "SELECT * FROM " + getSourceQuery();
+            ResultSet rs = QueryService.get().select(sourceSchema, sql);
+            return new DataIteratorBuilder.Wrapper(ResultSetDataIterator.wrap(rs, context));
         }
-        String sql = getSourceQuery().startsWith("SELECT") ? getSourceQuery() : "SELECT * FROM " + getSourceQuery();
-        ResultSet rs = QueryService.get().select(sourceSchema, sql);
-        return new DataIteratorBuilder.Wrapper(ResultSetDataIterator.wrap(rs, context));
+        else
+        {
+            File file = getByExtension(dir, getFileExtension(), ".txt");
+            if (null == file || !file.exists())
+            {
+                context.getErrors().addRowError(new ValidationException("Could not find data file: \'" + _fileName + "\' (" + getFileExtension() + ", .txt)."));
+                return null;
+            }
+
+            if (file.length() == 0)
+                return null;
+
+            return getTabLoader(file);
+        }
     }
 
     public int copyFrom(Container c, User u, DataIteratorContext context, DataIteratorBuilder from)
-            throws IOException, BatchValidationException
+            throws BatchValidationException
     {
         assert this.getTargetSchema().size()==1;
-        context.setInsertOption(option);
+        context.setInsertOption(_option);
         DbSchema targetSchema = DbSchema.get(this.getTargetSchema().getName());
         TableInfo targetTableInfo = targetSchema.getTable(getTargetQuery());
         return copy(context, from, targetTableInfo, c, u);
@@ -75,27 +97,25 @@ public class CDSImportCopyConfig extends CopyConfig
 
     // Like DataIteratorUtil.copy, but with cancel support
     static int copy(final DataIteratorContext context, DataIteratorBuilder from, TableInfo to, Container c, User user)
-            throws IOException, BatchValidationException
     {
         StandardDataIteratorBuilder etl = StandardDataIteratorBuilder.forInsert(to, from, c, user, context);
         DataIteratorBuilder insert = ((UpdateableTableInfo)to).persistRows(etl, context);
         Pump pump = new Pump(insert, context);
-//        pump.setProgress(new ListImportProgress()
-//        {
-//            @Override
-//            public void setTotalRows(int rows)
-//            {
-//
-//            }
-//
-//            @Override
-//            public void setCurrentRow(int currentRow)
-//            {
-//                if (dl.checkInterrupted())
-//                    throw new CancelledException();
-//            }
-//        });
         pump.run();
         return pump.getRowCount();
+    }
+
+    @Nullable
+    public File getByExtension(File dir, String... extensions)
+    {
+        File file = null;
+        for (String ext : extensions)
+        {
+            String fileName = _fileName + ext;
+            file = FileUtil.getAbsoluteCaseSensitiveFile(new File(dir, fileName));
+            if (file.exists() && file.getName().equals(fileName))
+                break;
+        }
+        return file;
     }
 }
