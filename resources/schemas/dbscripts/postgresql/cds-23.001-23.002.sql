@@ -22,7 +22,7 @@ CREATE TABLE cds.allele_sequence
 (
     allele VARCHAR(100) NOT NULL,
     allele_sequence_nt VARCHAR(1000),
-    release_date DATE,
+    release_date TIMESTAMP,
     container ENTITYID NOT NULL,
 
     CONSTRAINT PK_cds_allele_sequence PRIMARY KEY (allele)
@@ -62,8 +62,8 @@ CREATE INDEX IX_cds_sequence_germline_sequence_id ON cds.sequence_germline(seque
 
 CREATE TABLE cds.antibody_sequence
 (
-    mab_id VARCHAR(100),
-    chain VARCHAR(10),
+    mab_id VARCHAR(100) NOT NULL,
+    chain VARCHAR(10) NOT NULL,
     sequence_id VARCHAR(100),
     container ENTITYID NOT NULL,
 

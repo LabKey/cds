@@ -126,7 +126,7 @@ public abstract class ImportTask extends TaskRefTaskImpl
                 }
                 else
                 {
-                    logger.info("Copying data from " + dir.toString() + " to " +
+                    logger.info("Copying data from " + dir + " to " +
                             config.getTargetSchema() + "." + config.getTargetQuery());
                 }
 

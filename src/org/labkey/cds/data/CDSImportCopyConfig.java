@@ -45,7 +45,7 @@ public abstract class CDSImportCopyConfig extends CopyConfig
     public abstract String getFileExtension();
     public abstract DataIteratorBuilder getTabLoader(File file) throws IOException;
 
-    private String _fileName;
+    private final String _fileName;
     QueryUpdateService.InsertOption _option = QueryUpdateService.InsertOption.IMPORT;
 
     CDSImportCopyConfig(String sourceSchema, String source, String targetSchema, String target, String fileName)
