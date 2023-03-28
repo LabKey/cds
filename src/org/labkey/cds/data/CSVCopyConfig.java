@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 LabKey Corporation
+ * Copyright (c) 2015-2023 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,28 +22,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class TSVCopyConfig extends CDSImportCopyConfig
+public class CSVCopyConfig extends CDSImportCopyConfig
 {
-    public TSVCopyConfig(String table, String fileName)
+    public CSVCopyConfig(String table)
     {
-        super("#TSV#", table, "cds", "import_" + table, fileName);
-    }
-
-    public TSVCopyConfig(String table)
-    {
-        this(table, table);
+        super("#CSV#", table, "cds", table, table);
     }
 
     @Override
     public String getFileExtension()
     {
-        return ".tsv";
+        return ".csv";
     }
 
     @Override
     public DataIteratorBuilder getTabLoader(File file) throws IOException
     {
-        TabLoader tabLoader = (TabLoader) new TabLoader.TsvFactory().createLoader(new FileInputStream(file), true);
+        TabLoader tabLoader = (TabLoader) new TabLoader.CsvFactory().createLoader(new FileInputStream(file), true);
         tabLoader.setInferTypes(false);
         return tabLoader;
     }
