@@ -365,6 +365,10 @@
             srcPath + "/app/view/module/InteractiveReports.js",
             srcPath + "/app/view/module/CuratedGroups.js",
             srcPath + "/app/view/module/AssayTutorial.js",
+            srcPath + "/app/view/module/AntigenInformationSection.js",
+            srcPath + "/app/view/module/AntigenIsolateSection.js",
+            srcPath + "/app/view/module/AntigenProductionSection.js",
+            srcPath + "/app/view/module/AntigenTypeSection.js",
 
             srcPath + "/Application.js",
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2019 LabKey Corporation
+ * Copyright (c) 2014-2023 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -705,7 +705,38 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.Antigen',
                 detailModel: 'Connector.app.model.Antigen',
-                detailView: 'Connector.app.view.Antigen'
+                detailView: 'Connector.app.view.Antigen',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    upText: 'Antigen',
+                    label: 'Overview'
+                }],
+                itemDetail: [{
+                    view: 'Connector.app.view.ModuleContainer',
+                    isIdString: true,
+                    modules: [[{
+                        type: 'antigeninformationsection',
+                        staticData: {
+                            title: 'Antigen information'
+                        }
+                    },{
+                        type: 'antigenisolatesection',
+                        staticData: {
+                            title: 'Isolate'
+                        }
+                    },{
+                        type: 'antigentypesection',
+                        staticData: {
+                            title: 'Antigen type'
+                        }
+                    },{
+                        type: 'antigenproductionsection',
+                        staticData: {
+                            title: 'Production component'
+                        }
+                    }]]
+                }]
             }, {
                 uniqueName: '[Publication]',
                 priority: 1,
