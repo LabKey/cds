@@ -697,9 +697,9 @@ Ext4.define('Connector.cube.Configuration', {
             }, {
                 uniqueName: '[Antigen]',
                 priority: 4,
-                hasExport: false,
                 singularName: 'Antigen',
                 pluralName: 'Antigens',
+                learnExportQuery: 'assay_combined_antigen_metadata',
                 hidden: false,
                 supportsSummary: false,
                 supportsDetails: true,
