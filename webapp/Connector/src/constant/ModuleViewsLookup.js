@@ -33,5 +33,9 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	publicationnonintegrateddata : 'app.module.publicationnonintegrateddata',
 	interactivereports : 'app.module.interactivereports',
 	curatedgroups : 'app.module.curatedgroups',
-	assaytutorial : 'app.module.assaytutorial'
+	assaytutorial : 'app.module.assaytutorial',
+	antigeninformationsection : 'app.module.antigeninformationsection',
+	antigenisolatesection : 'app.module.antigenisolatesection',
+	antigenproductionsection : 'app.module.antigenproductionsection',
+	antigentypesection : 'app.module.antigentypesection'
 });

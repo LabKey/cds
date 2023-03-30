@@ -1,0 +1,45 @@
+<cv:customView xmlns:cv="http://labkey.org/data/xml/queryCustomView">
+    <cv:columns>
+        <cv:column name="antigen_cds_id"/>
+        <cv:column name="antigen_full_name"/>
+        <cv:column name="antigen_short_name"/>
+        <cv:column name="antigen_plot_label"/>
+        <cv:column name="antigen_name_other"/>
+        <cv:column name="antigen_dna_construct"/>
+        <cv:column name="antigen_category"/>
+        <cv:column name="antigen_type_component"/>
+        <cv:column name="antigen_type_region"/>
+        <cv:column name="antigen_type_scaffold"/>
+        <cv:column name="antigen_type_modifiers"/>
+        <cv:column name="antigen_type_tags"/>
+        <cv:column name="antigen_type_virus_type"/>
+        <cv:column name="antigen_type_backbone"/>
+        <cv:column name="antigen_type_reporter_molecule"/>
+        <cv:column name="antigen_type_differentiate"/>
+        <cv:column name="antigen_type_control"/>
+        <cv:column name="isolate_name_component"/>
+        <cv:column name="isolate_species"/>
+        <cv:column name="isolate_donor_id"/>
+        <cv:column name="isolate_differentiate"/>
+        <cv:column name="isolate_clade"/>
+        <cv:column name="isolate_clone"/>
+        <cv:column name="isolate_mutations"/>
+        <cv:column name="isolate_neut_tier"/>
+        <cv:column name="isolate_clone_pi"/>
+        <cv:column name="isolate_country_origin"/>
+        <cv:column name="isolate_year_isolated"/>
+        <cv:column name="isolate_fiebig_stage"/>
+        <cv:column name="antigen_accession_num"/>
+        <cv:column name="antigen_amino_acid_sequence"/>
+        <cv:column name="production_component"/>
+        <cv:column name="isolate_host_cell"/>
+        <cv:column name="antigen_purification"/>
+        <cv:column name="antigen_reagents"/>
+        <cv:column name="antigen_manufacturer"/>
+        <cv:column name="antigen_codon_optimize"/>
+        <cv:column name="antigen_source"/>
+        <cv:column name="isolate_transfection_method"/>
+        <cv:column name="isolate_TF_status"/>
+        <cv:column name="isolate_PV_backbone_system"/>
+    </cv:columns>
+</cv:customView>
