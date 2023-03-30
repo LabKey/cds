@@ -12,7 +12,7 @@ Ext.define('Connector.view.module.AntigenIsolateSection', {
     tpl : new Ext.XTemplate(
         '<tpl if="isolate_name_component || isolate_species || isolate_donor_id || isolate_differentiate || isolate_clade || isolate_TF_status || isolate_transfection_method || ' +
             'isolate_clone || isolate_mutations || isolate_neut_tier || isolate_clone_pi || isolate_country_origin || isolate_year_isolated || isolate_fiebig_stage">',
-            '<h3>{title_antigen_isolate}</h3>',
+            '<h3 id="antigen-isolate-section-id">{title_antigen_isolate}</h3>',
             '<table class="learn-study-info">',
                 '<tpl if="isolate_species">',
                     '<tr>',

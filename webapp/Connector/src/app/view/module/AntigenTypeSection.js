@@ -12,7 +12,7 @@ Ext.define('Connector.view.module.AntigenTypeSection', {
     tpl : new Ext.XTemplate(
         '<tpl if="antigen_type_region || antigen_type_scaffold || antigen_type_modifiers || antigen_type_tags || antigen_type_virus_type || ' +
             'antigen_type_backbone || isolate_PV_backbone_system || antigen_type_reporter_molecule || antigen_type_differentiate || antigen_type_control">',
-            '<h3>{title_antigen_type}</h3>',
+            '<h3 id="antigen-type-section-id">{title_antigen_type}</h3>',
             '<table class="learn-study-info">',
                 '<tpl if="antigen_type_region">',
                     '<tr>',

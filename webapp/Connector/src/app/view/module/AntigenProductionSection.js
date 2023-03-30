@@ -11,7 +11,7 @@ Ext.define('Connector.view.module.AntigenProductionSection', {
 
     tpl : new Ext.XTemplate(
         '<tpl if="isolate_host_cell || antigen_purification || antigen_reagents || antigen_manufacturer || antigen_codon_optimize">',
-            '<h3>{title_antigen_production}</h3>',
+            '<h3 id="antigen-prod-section-id">{title_antigen_production}</h3>',
             '<table class="learn-study-info">',
                 '<tpl if="isolate_host_cell">',
                     '<tr>',

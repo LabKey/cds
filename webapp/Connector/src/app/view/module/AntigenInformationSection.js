@@ -11,7 +11,7 @@ Ext.define('Connector.view.module.AntigenInformationSection', {
 
     tpl : new Ext.XTemplate(
         '<tpl if="antigen_category || antigen_full_name || antigen_plot_label || antigen_name_other || antigen_accession_num">',
-            '<h3>{title_antigen_info}</h3>',
+            '<h3 id="antigen-info-section-id">{title_antigen_info}</h3>',
             '<table class="learn-study-info">',
                 '<tpl if="antigen_category">',
                     '<tr>',
