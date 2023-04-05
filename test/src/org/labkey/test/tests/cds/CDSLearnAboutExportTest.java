@@ -35,6 +35,7 @@ import static org.junit.Assert.assertTrue;
 public class CDSLearnAboutExportTest extends CDSReadOnlyTest
 {
     public static final String XPATH_SEARCH_BOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
+
     private final CDSHelper cds = new CDSHelper(this);
 
     @Before
@@ -67,6 +68,30 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
                         "Product Subclass", "Product Class Label", "Product Description", "Product Developer", "Product Manufacturer", "MAb Mixture ID"),
                 getRowFromExcel(productsExcelFile, 0));
 
+        File mabsExcelFile = clickExportExcel("MAbs", null);
+        fileContents = TestFileUtils.getFileContents(mabsExcelFile);
+        assertTrue("Empty file", fileContents.length() > 0);
+        assertEquals("Incorrect downloaded columns for MAbs ", Arrays.asList("MAb Mixture ID", "MAb or Mixture Standardized Name", "MAb Label", "MAb ID", "MAb Name",
+                        "LANL ID", "HXB2 Location", "MAb Binding Type", "MAb Isotype", "MAb Donor ID", "MAb Donor Species", "MAb Donor Clade"),
+                getRowFromExcel(mabsExcelFile, 0));
+
+        File publicationExcelFile = clickExportExcel("Publications", null);
+        fileContents = TestFileUtils.getFileContents(publicationExcelFile);
+        assertTrue("Empty file", fileContents.length() > 0);
+        assertEquals("Incorrect downloaded columns for Publications ", Arrays.asList("Publication Id", "Title", "Authors", "Journal",
+                        "Publication Date", "Volume", "Issue", "Pages", "PubMed ID", "Link", "Abstract"),
+                getRowFromExcel(publicationExcelFile, 0));
+
+        File studiesExcelFile = clickExportExcel("Studies", null);
+        fileContents = TestFileUtils.getFileContents(studiesExcelFile);
+        assertTrue("Empty file", fileContents.length() > 0);
+        assertEquals("Incorrect downloaded columns for Studies ", Arrays.asList("Study ID", "Network",
+                        "Study Name", "Study Short Name", "Title", "Study Type", "Study Status", "Stage", "Study Species", "Study Population",
+                        "Description", "Rationale", "Objectives", "Groups", "Methods", "Findings", "Conclusions", "Date of Study Start",
+                        "Date First Subject Enrolled", "Date Follow-Up Complete", "Date Study Made Public", "CAVD Grantee", "Grant Principal Investigator",
+                        "Grant Project Manager", "Study Investigator", "Primary Point of Contact", "Vaccine Strategy", "Clinical Trials.gov ID"),
+                getRowFromExcel(studiesExcelFile, 0));
+
         log("Verify Antigen tab excel export");
         File antigenExcelFile = clickExportExcel("Antigens", null);
         fileContents = TestFileUtils.getFileContents(antigenExcelFile);
@@ -79,11 +104,11 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
                 "Year isolated", "Fiebig stage", "Accession #(s)", "Amino acid sequence", "Production component", "Host cell",
                 "Purification methods", "Special reagents", "Manufacturer", "Codon Optimization", "Source", "Transfection method",
                 "Transmitter/founder status", "Pseudovirus backbone system"), getRowFromExcel(antigenExcelFile, 0));
-        assertEquals("Antigen : Incorrect number of rows imported", 2, getRowCount(antigenExcelFile));
+        assertEquals("Antigen : Incorrect number of rows imported", 2 , getRowCount(antigenExcelFile));
 
         log("Verify filtered antigen tab excel export");
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath(XPATH_SEARCH_BOX)));
-        setFormElement(Locator.tagWithNameContaining("input", "learn-search"), "HIV-1 D");
+        setFormElement(Locator.tagWithNameContaining("input","learn-search"), "HIV-1 D");
         sleep(CDSHelper.CDS_WAIT);
         LearnGrid learnGrid = new LearnGrid(this);
         assertEquals("Incorrect number of rows after antigen filter", 1, learnGrid.getRowCount());
