@@ -178,6 +178,9 @@ public class CDSHelper
     public static final String PROT_Z139 = "z139";
     public static final String PROT_Z140 = "z140";
 
+    public static final String ANTIGEN_HIV_1C = "HIV-1 C.9999.B2 [gp120.D7.avi]";
+
+    public static final String ANTIGEN_HIV_1D = "HIV-1 D.99986.B12 [gx120.D7.avi]";
     public static final String[] PROTS = {PROT_Q1, PROT_Q2, PROT_Q3, PROT_Q4, PROT_R1, PROT_R2, PROT_R3, PROT_R4, PROT_R5,
             PROT_R6, PROT_R7, PROT_R8, PROT_R9, PROT_Y55, PROT_Z100, PROT_Z101, PROT_Z102, PROT_Z103, PROT_Z104,
             PROT_Z105, PROT_Z106, PROT_Z107, PROT_Z108, PROT_Z109, PROT_Z110, PROT_Z111, PROT_Z112, PROT_Z113,
