@@ -15,6 +15,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -34,6 +35,7 @@ import static org.junit.Assert.assertTrue;
 public class CDSLearnAboutExportTest extends CDSReadOnlyTest
 {
     public static final String XPATH_SEARCH_BOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
+
     private final CDSHelper cds = new CDSHelper(this);
 
     @Before
@@ -90,14 +92,39 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
                         "Grant Project Manager", "Study Investigator", "Primary Point of Contact", "Vaccine Strategy", "Clinical Trials.gov ID"),
                 getRowFromExcel(studiesExcelFile, 0));
 
-        log("Verifying only filtered rows are downloaded\n");
-        this.setFormElement(Locator.xpath(XPATH_SEARCH_BOX), "RED 1");
+        log("Verify Antigen tab excel export");
+        File antigenExcelFile = clickExportExcel("Antigens", null);
+        fileContents = TestFileUtils.getFileContents(antigenExcelFile);
+        assertTrue("Empty excel file downloaded for antigens", fileContents.length() > 0);
+        assertEquals("Incorrect downloaded columns for antigens", Arrays.asList("DataSpace antigen ID", "Full name", "Short name",
+                "Plot label", "Aliases", "DNA construct ID", "Antigen category", "Antigen type component", "Region", "Scaffold",
+                "Modifiers", "Tags", "Virus type", "Backbone", "Reporter molecule", "Antigen type differentiate", "Antigen control",
+                "Isolate name component", "Isolate species", "Isolate donor ID", "Isolate differentiate", "Isolate clade",
+                "Isolate clone designation", "Isolate mutations", "Neutralization tier", "Isolate cloner/PI", "Country of origin",
+                "Year isolated", "Fiebig stage", "Accession #(s)", "Amino acid sequence", "Production component", "Host cell",
+                "Purification methods", "Special reagents", "Manufacturer", "Codon Optimization", "Source", "Transfection method",
+                "Transmitter/founder status", "Pseudovirus backbone system"), getRowFromExcel(antigenExcelFile, 0));
+        assertEquals("Antigen : Incorrect number of rows imported", 2 , getRowCount(antigenExcelFile));
+
+        log("Verify filtered antigen tab excel export");
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath(XPATH_SEARCH_BOX)));
+        setFormElement(Locator.tagWithNameContaining("input","learn-search"), "HIV-1 D");
         sleep(CDSHelper.CDS_WAIT);
         LearnGrid learnGrid = new LearnGrid(this);
-        assertEquals("Incorrect number of rows after filter", 1, learnGrid.getRowCount());
-        File filteredStudies = clickExportExcel("Studies", null);
-        assertEquals("Incorrect number of rows imported", 1, getRowCount(filteredStudies));
-        assertEquals("Incorrect study name", "RED 1", getRowFromExcel(filteredStudies, 1).get(2));
+        assertEquals("Incorrect number of rows after antigen filter", 1, learnGrid.getRowCount());
+        File filteredData = clickExportExcel("Antigens", null);
+        assertEquals("Antigen : Incorrect number of rows imported", 1, getRowCount(filteredData));
+        assertEquals("Incorrect Antigen imported after filter", "HIV-1 D.99986.B12 [gx120.D7.avi]", getRowFromExcel(filteredData, 1).get(2)); //getting short name column data
+
+        log("Verifying only filtered rows are downloaded\n");
+        cds.viewLearnAboutPage("Studies");
+        setFormElement(Locator.xpath(XPATH_SEARCH_BOX), "RED 1");
+        sleep(CDSHelper.CDS_WAIT);
+        learnGrid = new LearnGrid(this);
+        assertEquals("Incorrect number of rows after study filter", 1, learnGrid.getRowCount());
+        filteredData = clickExportExcel("Studies", null);
+        assertEquals("Incorrect number of rows imported", 1, getRowCount(filteredData));
+        assertEquals("Incorrect study name", "RED 1", getRowFromExcel(filteredData, 1).get(2));
     }
 
     @Test
@@ -122,6 +149,9 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
         File publicationsCSVFile = clickExportCSV("Publications", null);
         assertEquals("Incorrect file downloaded by CSV for Publications", Arrays.asList("Publications.csv"),
                 TestFileUtils.getFilesInZipArchive(publicationsCSVFile));
+
+        File antigenCSVFile = clickExportCSV("Antigens", null);
+        assertEquals("Incorrect CSV files downloaded for Antigens", Arrays.asList("Antigens.csv"), TestFileUtils.getFilesInZipArchive(antigenCSVFile));
     }
 
     @Test

@@ -271,6 +271,29 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyLearnAboutAntigenDetails()
+    {
+        cds.viewLearnAboutPage("Antigens");
+        log("Searching for '" + CDSHelper.ANTIGEN_HIV_1C + "'.");
+        setFormElement(Locator.xpath(XPATH_TEXTBOX), CDSHelper.ANTIGEN_HIV_1C);
+        sleep(CDSHelper.CDS_WAIT);
+
+        LearnGrid learnGrid = new LearnGrid(this);
+        int rowCount = learnGrid.getRowCount();
+        assertTrue("Expected one row in antigen grid, found " + rowCount + " row(s).", rowCount == 1);
+        assertTrue("Row did not contain " + CDSHelper.ANTIGEN_HIV_1C, learnGrid.getRowText(0).contains(CDSHelper.ANTIGEN_HIV_1C));
+
+        learnGrid.getCellWebElement(0, 0).click();
+        sleep(CDSHelper.CDS_WAIT);
+
+        assertTrue("Missing antigen tab headers", isTextPresent("Antigen information", "Isolate", "Antigen type", "Production component"));
+        assertTrue("Antigen Information: Full Name is missing", isTextPresent("HIV-1 C.9999.B2 [gp120.D7.avi] 293F.LC.DU_PPF"));
+        assertTrue("Isolate: Species is missing", isTextPresent("HIV-1"));
+        assertTrue("Antigen Type: Virus type is missing", isTextPresent("antigen type virus type HIV-1"));
+        assertTrue("Production component: Manufacturer is missing", isTextPresent("University of Southern California"));
+    }
+
+    @Test
     public void verifyStudyDetailsMabListing()
     {
         cds.viewLearnAboutPage("Studies");
