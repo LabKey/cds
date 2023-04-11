@@ -763,29 +763,32 @@ Ext.define('Connector.view.Learn', {
     },
 
     setDimensions : function(dimensions) {
-        // hide Report tab if there is no publicly available reports
-        var filteredDimensions = [], reportDimension, me = this;
+        // hide learn about tabs if there is no data, ex. publicly available Reports and/or Antigens
+        var filteredDimensions = [], dimsToHideIfNoData = [], me = this;
         Ext.each(dimensions, function(dim){
-            if (dim && dim.name == 'Report')
-                reportDimension = dim;
+            if (dim && dim.displayOnlyIfHasData === true)
+                dimsToHideIfNoData.push(dim);
             else
                 filteredDimensions.push(dim);
         });
-        if (reportDimension) {
-            var reportStore = StoreCache.getStore(reportDimension.detailCollection);
-            var reportDimensionName = reportDimension.name;
-            reportStore.on('load', function() {
-                me.dimensionDataLoaded[reportDimensionName] = true;
-                if (this.getCount() > 0) {
-                    me.dimensions = dimensions;
-                    me.getHeader().setDimensions(dimensions);
-                }
-                else {
-                    me.dimensions = filteredDimensions;
-                    me.getHeader().setDimensions(filteredDimensions);
-                }
+        if (dimsToHideIfNoData.length > 0) {
+            dimsToHideIfNoData.forEach(function (dim) {
+                var dimStore = StoreCache.getStore(dim.detailCollection);
+                var dimensionName = dim.name;
+                dimStore.on('load', function () {
+                    me.dimensionDataLoaded[dimensionName] = true;
+                    if (this.getCount() > 0) {
+                        me.dimensions = dimensions;
+                        me.getHeader().setDimensions(dimensions);
+                        filteredDimensions.push(dim)
+                    }
+                    else {
+                        me.dimensions = filteredDimensions;
+                        me.getHeader().setDimensions(filteredDimensions);
+                    }
+                });
+                dimStore.loadSlice();
             });
-            reportStore.loadSlice();
         }
         else {
             this.dimensions = dimensions;

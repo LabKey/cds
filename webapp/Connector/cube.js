@@ -648,6 +648,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.Report',
                 detailModel: 'Connector.app.model.Report',
                 detailView: 'Connector.app.view.Report',
+                displayOnlyIfHasData: true,
                 itemDetailTabs: [{
                     url: 'overview',
                     isDefault: true,
@@ -706,6 +707,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.Antigen',
                 detailModel: 'Connector.app.model.Antigen',
                 detailView: 'Connector.app.view.Antigen',
+                displayOnlyIfHasData: true,
                 itemDetailTabs: [{
                     url: 'overview',
                     isDefault: true,
@@ -838,7 +840,8 @@ Ext4.define('Connector.cube.Configuration', {
                 defaultOperator: 'AND',
                 filterType: 'COUNT',
                 findSubjectSummaryLevel: 'path::0|1',
-                showOperator: true
+                showOperator: true,
+                displayOnlyIfHasData: false
             },
             hierarchy: {
                 hidden: false,
