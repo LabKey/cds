@@ -1099,7 +1099,7 @@ public class CDSController extends SpringActionController
             }
             else if (isPost())
             {
-                JSONObject json = form.getNewJsonObject().optJSONObject("properties");
+                JSONObject json = form.getJsonObject().optJSONObject("properties");
 
                 if (null != json)
                 {
