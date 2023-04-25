@@ -221,13 +221,14 @@ public class CDSManager
                     "import_virus_metadata_all",
                     "import_assay_combined_antigen_metadata",
 
-                    "sequence_headers",
+                    "sequence_header",
                     "sequence_germline",
                     "antibody_sequence",
                     "alignment",
                     "sequence",
                     "run_log",
-                    "allele_sequence"
+                    "allele_sequence",
+                    "antibody_class"
             })
             {
                 TableInfo t = dbSchema.getTable(s);
