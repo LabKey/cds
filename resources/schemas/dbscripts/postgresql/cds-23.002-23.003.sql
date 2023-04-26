@@ -1,17 +1,4 @@
-DROP TABLE cds.sequence_headers;
-
-CREATE TABLE cds.sequence_header
-(
-    sequence_header_id SERIAL,
-    header VARCHAR(1000),
-    sequence_id VARCHAR(100),
-    source VARCHAR(100),
-    container ENTITYID NOT NULL,
-
-    CONSTRAINT PK_cds_sequence_header PRIMARY KEY (sequence_header_id),
-    CONSTRAINT FK_cds_sequence_header_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id)
-);
-CREATE INDEX IX_cds_sequence_header_sequence_id ON cds.sequence_header(sequence_id);
+ALTER TABLE cds.sequence_headers RENAME TO sequence_header;
 
 DROP TABLE cds.run_log;
 
