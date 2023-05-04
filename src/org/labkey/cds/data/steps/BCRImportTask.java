@@ -28,10 +28,11 @@ public class BCRImportTask extends ImportTask
         new CSVCopyConfig("sequence"),
         new CSVCopyConfig("run_log"),
         new CSVCopyConfig("allele_sequence"),
-        new CSVCopyConfig("sequence_headers"),
+        new CSVCopyConfig("sequence_header"),
         new CSVCopyConfig("sequence_germline"),
         new CSVCopyConfig("antibody_sequence"),
-        new CSVCopyConfig("alignment")
+        new CSVCopyConfig("alignment"),
+        new CSVCopyConfig("antibody_class")
     };
 
     @Override
