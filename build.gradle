@@ -18,6 +18,8 @@ project.evaluationDependsOn(BuildUtils.getApiProjectPath(project.gradle))
 
 // FIXME this will not work if not also building the modules below. Probably will need a
 // different approach to source code for these dependencies.
-tasks.compressClientLibs.dependsOn(project(BuildUtils.getPlatformModuleProjectPath(project.gradle, "query")).tasks.processResources)
-tasks.compressClientLibs.dependsOn(project(BuildUtils.getPlatformModuleProjectPath(project.gradle, "core")).tasks.processResources)
-tasks.compressClientLibs.dependsOn(project(BuildUtils.getApiProjectPath(project.gradle)).tasks.processResources)
+tasks.named('compressClientLibs').configure {
+    dependsOn(project(BuildUtils.getPlatformModuleProjectPath(project.gradle, "query")).tasks.processResources)
+    dependsOn(project(BuildUtils.getPlatformModuleProjectPath(project.gradle, "core")).tasks.processResources)
+    dependsOn(project(BuildUtils.getApiProjectPath(project.gradle)).tasks.processResources)
+}
