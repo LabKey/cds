@@ -83,7 +83,7 @@ public class PopulateRelationshipTask extends AbstractPopulateTask
             sql.add(container.getName());
             rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
 
-            queryForRowsWithoutValidStudy.append("prot != '").append(container.getName()).append("' AND ");
+            queryForRowsWithoutValidStudy.append("prot != ").appendValue(container.getName()).append(" AND ");
 
             if (rows.length > 0)
             {

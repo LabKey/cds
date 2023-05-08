@@ -21,12 +21,14 @@ import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.data.dialect.SqlDialect;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.ValidationException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +73,7 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
             throw new PipelineJobException("Unable to find target schema: \"" + settings.get(TARGET_SCHEMA) + "\".");
         }
 
+        SqlDialect dialect = targetSchema.getDbSchema().getSqlDialect();
         TableInfo targetTable = targetSchema.getTable(settings.get(TARGET_QUERY), ContainerFilter.Type.CurrentAndSubfolders.create(targetSchema));
 
         if (null == targetTable)
@@ -92,19 +95,17 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
         targetTable = targetSchema.getTable(settings.get(TARGET_QUERY));
 
         SQLFragment sql;
-        SQLFragment queryForRowsWithoutValidStudy = new SQLFragment("SELECT * FROM ").append(sourceTable)
-                .append(" WHERE ");
         Map<String, Object>[] rows;
+        var studyNames = new ArrayList<String>();
         BatchValidationException errors = new BatchValidationException();
 
         // Insert all the rows
         for (Container container : project.getChildren())
         {
-            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
-            sql.add(container.getName());
-            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            studyNames.add(container.getName());
 
-            queryForRowsWithoutValidStudy.append("prot != ").appendValue(container.getName()).append(" AND ");
+            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ").appendValue(container.getName(),dialect);
+            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
 
             if (rows.length > 0)
             {
@@ -127,13 +128,19 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
             }
         }
 
-        String temp = queryForRowsWithoutValidStudy.getSQL();
-        temp = temp.strip();
-        if (temp.endsWith("WHERE"))
-            temp = temp.substring(0, temp.length() - "WHERE".length());
-        else if (temp.endsWith("AND"))
-            temp = temp.substring(0, temp.length() - "AND".length());
-        queryForRowsWithoutValidStudy = new SQLFragment(temp);
+        SQLFragment queryForRowsWithoutValidStudy = new SQLFragment("SELECT * FROM ").append(sourceTable);
+        if (!studyNames.isEmpty())
+        {
+            // using "NOT" + queryForRowsWithoutValidStudy.appendInClause() does not work
+            queryForRowsWithoutValidStudy.append(" WHERE prot NOT IN (");
+            String comma = "";
+            for (var name : studyNames)
+            {
+                queryForRowsWithoutValidStudy.append(comma).appendValue(name, dialect);
+                comma = ", ";
+            }
+            queryForRowsWithoutValidStudy.append(")");
+        }
         rows = new SqlSelector(sourceTable.getSchema(), queryForRowsWithoutValidStudy).getMapArray();
         if (rows.length > 0)
         {
@@ -153,7 +160,6 @@ public class ContainerSensitivePopulateTask extends AbstractPopulateTask
             {
                 logger.error(e.getMessage(), e);
             }
-
         }
     }
 }
