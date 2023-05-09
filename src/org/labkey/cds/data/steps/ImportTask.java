@@ -24,6 +24,7 @@ import org.labkey.api.data.DbSchemaType;
 import org.labkey.api.data.DbScope;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlExecutor;
+import org.labkey.api.data.TableInfo;
 import org.labkey.api.dataiterator.DataIteratorBuilder;
 import org.labkey.api.dataiterator.DataIteratorContext;
 import org.labkey.api.pipeline.PipelineJob;
@@ -175,22 +176,33 @@ public abstract class ImportTask extends TaskRefTaskImpl
         {
             SQLFragment sql = new SQLFragment("TRUNCATE ");
             String sep = "";
-            String info = "Truncating ";
+            StringBuilder info = new StringBuilder("Truncating ");
             String schemaName = configs[0].getTargetSchema().getName();
 
             // reverse order, without mutating
             for (int i = configs.length-1; i >= 0; i--)
             {
                 CDSImportCopyConfig config = configs[i];
-                String table = config.getTargetSchema() + "." + config.getTargetQuery();
-                sql.append(sep).append(table);
 
-                info += sep + table;
+                DbSchema dbSchema = DbSchema.get(config.getTargetSchema().getName(), DbSchemaType.Unknown);
+                if (null == dbSchema)
+                {
+                    logger.warn("Target schema was not found: " + config.getTargetSchema());
+                    continue;
+                }
+                TableInfo tableInfo = dbSchema.getTable(config.getTargetQuery());
+                if (null == tableInfo)
+                {
+                    logger.warn("Target table was not found: " + config.getTargetSchema() + "." + config.getTargetQuery());
+                    continue;
+                }
+                sql.append(sep).append(tableInfo);
+                info.append(sep).append(tableInfo.getSelectName());
                 sep = ", ";
             }
-            sql.append(" CASCADE;");
+            sql.append(" CASCADE");
 
-            logger.info(info);
+            logger.info(info.toString());
 
             DbSchema targetSchema = DbSchema.get(schemaName);
             try (DbScope.Transaction tx = targetSchema.getScope().ensureTransaction())
