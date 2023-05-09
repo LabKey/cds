@@ -177,7 +177,7 @@ public class CDSModule extends DefaultModule
     @Override
     public @Nullable Double getSchemaVersion()
     {
-        return 23.004;
+        return 23.005;
     }
 
     @Override

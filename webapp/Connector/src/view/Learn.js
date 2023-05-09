@@ -830,12 +830,13 @@ Ext.define('Connector.view.Learn', {
 
         if (dimension) {
             this.loadDataView(dimension, id, urlTab, params);
+            this.getHeader().showExportButton(dimension);
         }
         else {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
-        this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params);
+        // this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params);
     }
 
 });
