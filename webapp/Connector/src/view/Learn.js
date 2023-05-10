@@ -836,7 +836,7 @@ Ext.define('Connector.view.Learn', {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
-        // this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params);
+        this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params);
     }
 
 });
