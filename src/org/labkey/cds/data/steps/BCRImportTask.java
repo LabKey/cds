@@ -32,7 +32,8 @@ public class BCRImportTask extends ImportTask
         new CSVCopyConfig("sequence_germline"),
         new CSVCopyConfig("antibody_sequence"),
         new CSVCopyConfig("alignment"),
-        new CSVCopyConfig("antibody_class")
+        new CSVCopyConfig("antibody_class"),
+        new CSVCopyConfig("preferred_allele")
     };
 
     @Override

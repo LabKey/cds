@@ -228,7 +228,8 @@ public class CDSManager
                     "sequence",
                     "run_log",
                     "allele_sequence",
-                    "antibody_class"
+                    "antibody_class",
+                    "preferred_allele"
             })
             {
                 TableInfo t = dbSchema.getTable(s);
