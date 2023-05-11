@@ -839,6 +839,10 @@ Ext.define('Connector.view.Learn', {
         if (params && Object.keys(params).length > 0) {
             this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params);
         }
+
+        if (!Ext.isEmpty(this.getHeader().dimensions)) {
+            this.getHeader().getDataView().selectTab(dimension.uniqueName);
+        }
     }
 
 });
@@ -1054,9 +1058,9 @@ Ext.define('Connector.view.LearnHeader', {
     },
 
     selectTab : function(dimUniqueName, id, dimension, params) {
-        if (!Ext.isEmpty(this.dimensions)) {
-            this.getDataView().selectTab(dimUniqueName);
-        }
+        // if (!Ext.isEmpty(this.dimensions)) {
+        //     this.getDataView().selectTab(dimUniqueName);
+        // }
         this.filterStoreFromUrlParams(id, dimension, params);
         // this.showExportButton(dimension);
     },
