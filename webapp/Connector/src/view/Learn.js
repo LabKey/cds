@@ -613,8 +613,6 @@ Ext.define('Connector.view.Learn', {
                 // otherwise, show the listing
                 var listId = this.dataListPrefix + dimension.uniqueName;
 
-                console.log("*this.initialSelectedTab", this.initialSelectedTab);
-
                 // listView -- cache hit
                 // Secure Issue 47890: Dataspace - Blank Assay page after navigating to Assay subtabs such as Variables and Antigens
                 // Adding a check for this.initialSelectedTab will load from cache only when navigating from the Overview tab to Learn grid,
