@@ -835,7 +835,7 @@ Ext.define('Connector.view.Learn', {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
-        this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params);
+        this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params, (!params || Object.keys(params).length === 0));
     }
 
 });
@@ -1050,19 +1050,22 @@ Ext.define('Connector.view.LearnHeader', {
         this.getDataView().setDimensions(dimensions);
     },
 
-    selectTab : function(dimUniqueName, id, dimension, params) {
+    selectTab : function(dimUniqueName, id, dimension, params, skipUpdateFilters) {
+
         if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectTab(dimUniqueName);
         }
-        this.filterStoreFromUrlParams(id, dimension, params);
+        this.filterStoreFromUrlParams(id, dimension, params, skipUpdateFilters);
         this.showExportButton(dimension);
     },
 
-    filterStoreFromUrlParams: function(id, dimension, params)
+    filterStoreFromUrlParams: function(id, dimension, params, skipUpdateFilters)
     {
         this.updateSearchValue(dimension, params);
         this.updateSort(dimension, params, id != null);
-        this.updateFilters(dimension, params, id != null);
+
+        if (!skipUpdateFilters)
+            this.updateFilters(dimension, params, id != null);
     },
 
     showExportButton: function(dimension) {
