@@ -30,6 +30,8 @@ Ext.define('Connector.view.Learn', {
 
     dimensionDataLoaded: {},
 
+    initialSelectedTab: 0,
+
     statics: {
         detailGridTabs : ['vars', 'antigens']
     },
@@ -612,7 +614,10 @@ Ext.define('Connector.view.Learn', {
                 var listId = this.dataListPrefix + dimension.uniqueName;
 
                 // listView -- cache hit
-                if (this.listViews[listId]) {
+                // Secure Issue 47890: Dataspace - Blank Assay page when navigating from Variables/Antigens Assay tabs to Learn grid
+                // Adding a check for this.initialSelectedTab will load from cache when navigating from the Overview tab to Learn grid,
+                // otherwise create the view when navigating from other tabs such as Assay's Variables or Antigens tabs.
+                if (this.initialSelectedTab === 0 && this.listViews[listId]) {
                     this.getComponent(listId).show();
                 }
                 else {
@@ -754,6 +759,7 @@ Ext.define('Connector.view.Learn', {
         if (urlTab === 'antigens') {
             pageView.removeCls('auto-scroll-y');
         }
+        this.initialSelectedTab = pageView.initialSelectedTab;
         this.detailPageView = pageView;
         this.add(pageView);
     },
