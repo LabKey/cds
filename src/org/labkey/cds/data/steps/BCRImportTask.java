@@ -26,14 +26,15 @@ public class BCRImportTask extends ImportTask
         // .csv source file names which have the same target table names
         // order matters due to FKs
         new CSVCopyConfig("sequence"),
-        new CSVCopyConfig("run_log"),
+        new CSVCopyConfig("alignment_run"),
         new CSVCopyConfig("allele_sequence"),
         new CSVCopyConfig("sequence_header"),
         new CSVCopyConfig("sequence_germline"),
         new CSVCopyConfig("antibody_sequence"),
         new CSVCopyConfig("alignment"),
         new CSVCopyConfig("antibody_class"),
-        new CSVCopyConfig("preferred_allele")
+        new CSVCopyConfig("preferred_allele"),
+        new CSVCopyConfig("header_source")
     };
 
     @Override
