@@ -807,13 +807,27 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
-        waitForElementToBeVisible(LEARN_ROW_TITLE_LOC.containing(assays.get(0)));
-        waitAndClick(LEARN_ROW_TITLE_LOC.containing(assays.get(0)));
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch("BAMA");
+        learnGrid.clickFirstItem();
         sleep(CDSHelper.CDS_WAIT);
-        waitForElement(DETAIL_PAGE_BREADCRUMB_LOC.withText("Assays /"));
-        waitForElement(Locator.xpath("//h3[text()='Endpoint description']"));
+        waitForElementToBeVisible(Locator.tagWithText("h3", "Endpoint description"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_METHODOLOGY);
-        assertElementVisible(Locator.linkWithHref("#learn/learn/Assay/" + CDSHelper.ASSAYS[0].replace(" ", "%20") + "/antigens"));
+        assertElementPresent(Locator.linkWithText("View Antigen List"));
+        assertTrue("Incorrect link for antigen list",
+                Locator.linkWithText("View Antigen List").findElement(getDriver()).getAttribute("href").contains("#learn/learn/Assay/" + CDSHelper.ASSAYS[0].replace(" ", "%20") + "/antigens"));
+        /*
+            Test coverage for :
+            Secure Issue 47890: Dataspace - Blank Assay page when navigating from Variables/Antigens Assay tabs to Learn grid
+         */
+        click(Locator.linkWithText("View Antigen List")); // Navigates to antigen tab
+        waitForText("C.con.env03 140 CF");
+        click(Locator.tagWithClass("div", "iarrow"));
+        sleep(CDSHelper.CDS_WAIT);
+        _ext4Helper.waitForMaskToDisappear();
+        learnGrid = new LearnGrid(this);
+        learnGrid.clickFirstItem();
+        sleep(CDSHelper.CDS_WAIT);
 
         //testing variables page
         waitForElementToBeVisible(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
@@ -859,7 +873,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         // Go back to assays and validate the Data Added column.
         cds.viewLearnAboutPage("Assays");
-        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid = new LearnGrid(this);
         String toolTipText, cellText, expectedText;
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
 

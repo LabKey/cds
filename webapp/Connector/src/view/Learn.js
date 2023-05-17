@@ -30,6 +30,8 @@ Ext.define('Connector.view.Learn', {
 
     dimensionDataLoaded: {},
 
+    initialSelectedTab: 0,
+
     statics: {
         detailGridTabs : ['vars', 'antigens']
     },
@@ -612,7 +614,10 @@ Ext.define('Connector.view.Learn', {
                 var listId = this.dataListPrefix + dimension.uniqueName;
 
                 // listView -- cache hit
-                if (this.listViews[listId]) {
+                // Secure Issue 47890: Dataspace - Blank Assay page when navigating from Variables/Antigens Assay tabs to Learn grid
+                // Adding a check for this.initialSelectedTab will load from cache when navigating from the Overview tab to Learn grid,
+                // otherwise create the view when navigating from other tabs such as Assay's Variables or Antigens tabs.
+                if (this.initialSelectedTab === 0 && this.listViews[listId]) {
                     this.getComponent(listId).show();
                 }
                 else {
@@ -754,6 +759,7 @@ Ext.define('Connector.view.Learn', {
         if (urlTab === 'antigens') {
             pageView.removeCls('auto-scroll-y');
         }
+        this.initialSelectedTab = pageView.initialSelectedTab;
         this.detailPageView = pageView;
         this.add(pageView);
     },
@@ -835,7 +841,7 @@ Ext.define('Connector.view.Learn', {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
-        this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params);
+        this.getHeader().selectTab(dimension ? dimension.uniqueName : undefined, id, dimension, params, (!params || Object.keys(params).length === 0));
     }
 
 });
@@ -1050,19 +1056,22 @@ Ext.define('Connector.view.LearnHeader', {
         this.getDataView().setDimensions(dimensions);
     },
 
-    selectTab : function(dimUniqueName, id, dimension, params) {
+    selectTab : function(dimUniqueName, id, dimension, params, skipUpdateFilters) {
+
         if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectTab(dimUniqueName);
         }
-        this.filterStoreFromUrlParams(id, dimension, params);
+        this.filterStoreFromUrlParams(id, dimension, params, skipUpdateFilters);
         this.showExportButton(dimension);
     },
 
-    filterStoreFromUrlParams: function(id, dimension, params)
+    filterStoreFromUrlParams: function(id, dimension, params, skipUpdateFilters)
     {
         this.updateSearchValue(dimension, params);
         this.updateSort(dimension, params, id != null);
-        this.updateFilters(dimension, params, id != null);
+
+        if (!skipUpdateFilters)
+            this.updateFilters(dimension, params, id != null);
     },
 
     showExportButton: function(dimension) {

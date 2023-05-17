@@ -1954,4 +1954,22 @@
             <column columnName="container"/>
         </columns>
     </table>
+    <table tableName="preferred_allele" tableDbType="TABLE">
+        <columns>
+            <column columnName="rowid"/>
+            <column columnName="sequence_id">
+                <description>The CDS sequence ID associated with the lineage sequence</description>
+            </column>
+            <column columnName="allele">
+                <description>The IMGT allele name</description>
+            </column>
+            <column columnName="status">
+                <description>If the allele sequence is preferred or not</description>
+            </column>
+            <column columnName="note">
+                <description>A note field that identifies how the preferred status was determined</description>
+            </column>
+            <column columnName="container"/>
+        </columns>
+    </table>
 </tables>
