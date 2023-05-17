@@ -1796,7 +1796,7 @@
             <column columnName="container"/>
         </columns>
     </table>
-    <table tableName="run_log" tableDbType="TABLE">
+    <table tableName="alignment_run" tableDbType="TABLE">
         <columns>
             <column columnName="run_application"/>
             <column columnName="run_information"/>
@@ -1816,7 +1816,7 @@
             <column columnName="sequence_header_id"/>
             <column columnName="header"/>
             <column columnName="sequence_id"/>
-            <column columnName="source"/>
+            <column columnName="source_id"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -1844,6 +1844,7 @@
             </column>
             <column columnName="chain"/>
             <column columnName="sequence_id"/>
+            <column columnName="lineage"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -1968,6 +1969,20 @@
             </column>
             <column columnName="note">
                 <description>A note field that identifies how the preferred status was determined</description>
+            </column>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="header_source" tableDbType="TABLE">
+        <columns>
+            <column columnName="source_id">
+                <description>A unique ID value to reference the header source</description>
+            </column>
+            <column columnName="source">
+                <description>A short description of the source, e.g. PMID, DOI, short name</description>
+            </column>
+            <column columnName="notes">
+                <description>A note for the source</description>
             </column>
             <column columnName="container"/>
         </columns>

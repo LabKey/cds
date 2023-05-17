@@ -225,11 +225,12 @@ public class CDSManager
                     "sequence_germline",
                     "antibody_sequence",
                     "alignment",
+                    "preferred_allele",
                     "sequence",
-                    "run_log",
+                    "alignment_run",
                     "allele_sequence",
                     "antibody_class",
-                    "preferred_allele"
+                    "header_source"
             })
             {
                 TableInfo t = dbSchema.getTable(s);
