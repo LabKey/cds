@@ -398,7 +398,7 @@ public class CDSManager
     public void updateUserName(User user, String firstName, String lastName)
     {
         SQLFragment sql = new SQLFragment("UPDATE core.usersdata ");
-        sql.append(" SET firstname = ? , lastname = ? WHERE userid = ?;");
+        sql.append(" SET firstname = ? , lastname = ? WHERE userid = ?");
         sql.add(firstName);
         sql.add(lastName);
         sql.add(user.getUserId());
