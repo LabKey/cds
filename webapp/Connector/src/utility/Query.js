@@ -442,7 +442,7 @@ Ext.define('Connector.utility.Query', {
                         }
                         else
                         {
-                            throw 'Unable to resolve table "' + measure.queryName + '". It may not be white-listed for getData queries.';
+                            throw 'Unable to resolve table "' + measure.queryName + '". It may not be allow-listed for getData queries.';
                         }
                     }
                     else if (gridOptions)
