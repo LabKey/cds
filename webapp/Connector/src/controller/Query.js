@@ -631,7 +631,7 @@ Ext.define('Connector.controller.Query', {
                 if (!sources[key] && source) {
                     sources[key] = true;
 
-                    // check the 'white list' of sources for the variable selector in the metadata
+                    // check the 'allow list' of sources for the variable selector in the metadata
                     if (Ext.isDefined(sourceContextMap[key])) {
                         sourceArray.push(Ext.clone(source.data));
                     }
