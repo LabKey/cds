@@ -784,14 +784,10 @@ Ext.define('Connector.view.Learn', {
                 dimStore.on('load', function () {
                     me.dimensionDataLoaded[dimensionName] = true;
                     if (this.getCount() > 0) {
-                        me.dimensions = dimensions;
-                        me.getHeader().setDimensions(dimensions);
-                        filteredDimensions.push(dim)
+                        filteredDimensions.push(dim);
                     }
-                    else {
-                        me.dimensions = filteredDimensions;
-                        me.getHeader().setDimensions(filteredDimensions);
-                    }
+                    me.dimensions = filteredDimensions;
+                    me.getHeader().setDimensions(filteredDimensions);
                 });
                 dimStore.loadSlice();
             });
