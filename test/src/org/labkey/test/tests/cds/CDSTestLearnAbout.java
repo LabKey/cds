@@ -1264,11 +1264,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void goToDetail(String itemName, boolean hasData)
     {
         Locator element = hasData ? LEARN_HAS_DATA_ROW_TITLE_LOC.withText(itemName).notHidden() : LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
-        assertElementPresent(element);
-        new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction -> {
-            waitForText("Overview");
-            return null;
-        });
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(element)).click();
+        waitForElementToBeVisible(CDSHelper.Locators.studyname.withText(itemName));
     }
 
     @Test
@@ -1327,7 +1324,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String publicationName = "Fong Y 2018 J Infect Dis";
         log("Verify instruction text on Learn About page for Publications - " + publicationName);
         cds.viewLearnAboutPage("Publications");
-        gotToLearnAboutDetail(publicationName);
+        goToDetail(publicationName, false);
         assertTextPresent("Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.");
     }
 
@@ -1415,16 +1412,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         Locator.XPathLocator instructions = nonIntegratedDataElement.withDescendant(Locator.tag("p")).containing("Download individual files");
         assertElementPresent(instructions);
-    }
-
-    public void gotToLearnAboutDetail(String itemName)
-    {
-        Locator element = LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
-        assertElementPresent(element);
-        new CDSHelper(this).clickHelper(element.findElement(getWrappedDriver()), voidFunction -> {
-            waitForText("Overview");
-            return null;
-        });
     }
 
     @Test

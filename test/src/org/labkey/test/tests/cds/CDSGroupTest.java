@@ -531,7 +531,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private void goToPubPage(String pub)
     {
         cds.viewLearnAboutPage("Publications");
-        _cdsTestLearnAbout.gotToLearnAboutDetail(pub);
+        _cdsTestLearnAbout.goToDetail(pub, false);
     }
 
     private void goToStudyPage(String prot)

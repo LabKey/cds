@@ -1301,24 +1301,21 @@ public class CDSHelper
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
 
-        BaseWebDriverTest.sleep(1000);
-        // Because of the way CDS hides parts of the UI the total number of these elements may vary.
-        // So can't use the standard waitForElements, which expects an exact number of elements, so doing this slightly modified version.
-        _test.waitFor(() -> 3 <= Locator.xpath("//table[@role='presentation']//tr[@role='row']").findElements(_test.getDriver()).size(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+        WebElement axisTab = _test.shortWait().until(ExpectedConditions.visibilityOfElementLocated(
+                Locator.tag("div").withClass("learn-dim-selector")
+                        .append(Locator.tag("h1").withClass("lhdv").withText(learnAxis))));
 
-        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-dim-selector");
-        Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
-        Locator.XPathLocator activeHeader = header.withClass("active");
+        Locator.XPathLocator rowLoc = Locator.xpath("//table[@role='presentation']//tr[@role='row'][3]").notHidden();
+        WebElement initialRow = rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
 
-        if (!_test.isElementPresent(headerContainer.append(activeHeader.withText(learnAxis))))
+        if (!axisTab.getAttribute("class").contains("active"))
         {
-            _test.waitForElement(headerContainer.append(header.withText(learnAxis)));
-            _test.click(headerContainer.append(header.withText(learnAxis)));
-            WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
-            _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
+            axisTab.click();
+            WebDriverWrapper.waitFor(() -> axisTab.getAttribute("class").contains("active"), "Failed to select learn axis: " + learnAxis, 5_000);
+            _test.shortWait().until(ExpectedConditions.invisibilityOf(initialRow));
+            rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+            _test._ext4Helper.waitForMaskToDisappear();
         }
-        BaseWebDriverTest.sleep(1000);
-        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     @LogMethod (quiet = true)
@@ -1569,13 +1566,12 @@ public class CDSHelper
         _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(animatingBar));
     }
 
-    public void clickHelper(WebElement element, Function<Void, Void> function)
+    public void clickHelper(WebElement element, Runnable function)
     {
         final int RETRY_LIMIT = 5;
-        Actions builder = new Actions(_test.getDriver());
         boolean worked = false;
         int count = 0;
-
+        _test.shortWait().until(ExpectedConditions.visibilityOf(element));
         _test.log("Using the CDS click helper.");
 
         while(!worked)
@@ -1584,14 +1580,12 @@ public class CDSHelper
 
             _test.log("CDS clickHelper attempt " + count + " to click the element.");
 
-            BaseWebDriverTest.sleep(500);
-            _test.scrollIntoView(element, true);
-            builder.moveToElement(element).build().perform();
-            builder.click(element).build().perform();
+            _test.mouseOver(element);
+            element.click();
 
             try
             {
-                function.apply(null);
+                function.run();
                 worked = true;
             }
             catch(AssertionError | NoSuchElementException ex)
@@ -1599,6 +1593,7 @@ public class CDSHelper
                 if (count > RETRY_LIMIT)
                     throw ex;
 
+                BaseWebDriverTest.sleep(500);
                 worked = false;
             }
         }
