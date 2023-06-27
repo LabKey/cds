@@ -1305,7 +1305,7 @@ public class CDSHelper
                 Locator.tag("div").withClass("learn-dim-selector")
                         .append(Locator.tag("h1").withClass("lhdv").withText(learnAxis))));
 
-        Locator.XPathLocator rowLoc = Locator.xpath("//table[@role='presentation']//tr[@role='row'][3]").notHidden();
+        Locator.XPathLocator rowLoc = Locator.xpath("//table[@role='presentation']//tr[@role='row']").notHidden();
         WebElement initialRow = rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
 
         if (!axisTab.getAttribute("class").contains("active"))
