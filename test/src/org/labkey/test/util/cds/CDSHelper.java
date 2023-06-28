@@ -1307,8 +1307,10 @@ public class CDSHelper
 
         Locator.XPathLocator rowLoc = Locator.xpath("//table[@role='presentation']//tr[@role='row']").notHidden();
         WebElement initialRow = rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+        _test._ext4Helper.waitForMaskToDisappear();
 
-        if (!axisTab.getAttribute("class").contains("active"))
+        if (!axisTab.getAttribute("class").contains("active") &&
+                !Locator.tagWithAttribute("input", "placeholder", "Search " + learnAxis.toLowerCase()).existsIn(_test.getDriver()))
         {
             axisTab.click();
             WebDriverWrapper.waitFor(() -> axisTab.getAttribute("class").contains("active"), "Failed to select learn axis: " + learnAxis, 5_000);
