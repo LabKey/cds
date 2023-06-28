@@ -10,12 +10,14 @@ import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.TextSearcher;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 
 @Category({})
 public class CDSStudyTooltipTest extends CDSReadOnlyTest
 {
-    private static final Locator TOOLTIP_TEXT_LOCATOR = Locator.css("div.hopscotch-bubble-container div.hopscotch-bubble-content div.hopscotch-content");
+    private static final Locator.XPathLocator TOOLTIP_TEXT_LOCATOR = Locator.tagWithClass("div", "hopscotch-content");
     private static final String RED4ToolTipText = "Vestibulum quam sapien, varius ut, blandit non, interdum in, ante. " +
             "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis. " +
             "Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor.";
@@ -82,11 +84,11 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.clickBy("Assays");
         cds.toggleExplorerBar(CDSHelper.TITLE_ICS);
-        validateToolTip(waitForElementToBeVisible(CDSHelper.Locators.barLabel.withText(CDSHelper.RED_4)), RED4ToolTipText);
+        validateToolTip(CDSHelper.Locators.barLabel.withText(CDSHelper.RED_4).refindWhenNeeded(getDriver()), RED4ToolTipText);
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.clickBy("Studies");
-        validateToolTip(waitForElementToBeVisible(CDSHelper.Locators.barLabel.withText(CDSHelper.QED_4)), QED4ToolTipText);
+        validateToolTip(CDSHelper.Locators.barLabel.withText(CDSHelper.QED_4).refindWhenNeeded(getDriver()), QED4ToolTipText);
     }
 
     @Test
@@ -124,11 +126,8 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
         log("Hover over the link with text '" + linkText + "' to validate that the tooltip is shown.");
 
         // Not a fatal error if a tooltip is not shown.
-        if (checker().verifyTrue("Tooltip for '" + linkText + "' didn't show. Show yourself coward!", triggerToolTip(el)))
-        {
-            // If the tool-tip is present, checker().verifyTrue returned true, check the text of the tooltip.
-            checker().wrapAssertion(() -> assertTextPresent(new TextSearcher(this::getToolTipText), toolTipExpected));
-        }
+        String tooltipText = triggerToolTip(el);
+        checker().wrapAssertion(() -> assertTextPresent(new TextSearcher(tooltipText), toolTipExpected));
         checker().screenShotIfNewError("ValidateToolTip_" + linkText);
 
         // Filter panel tooltip is a little more sticky
@@ -140,25 +139,25 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
         dismissTooltip();
     }
 
-    private String getToolTipText()
-    {
-        // Shouldn't have to put this check here, but getText is not always return the text of the tooltip so
-        // validate that it is there first.
-        return waitForElementToBeVisible(TOOLTIP_TEXT_LOCATOR).getText();
-    }
-
-    private boolean triggerToolTip(WebElement el)
+    private String triggerToolTip(WebElement el)
     {
         // Move the mouse to the top left corner of the page and make sure there are no popups visible.
         dismissTooltip();
 
-        // Move the mouse over the element.
-        mouseOver(el);
+        return waitFor(() -> {
+            // Move the mouse over the element.
+            mouseOver(el);
 
-        // Wait for the tooltip to show up.
-        return waitFor(() ->
-                        TOOLTIP_TEXT_LOCATOR.findWhenNeeded(getDriver()).isDisplayed(),
-                2_000);
+            try
+            {
+                // Check for the tooltip.
+                return TOOLTIP_TEXT_LOCATOR.findElement(getDriver()).getText();
+            }
+            catch (NoSuchElementException | StaleElementReferenceException retry)
+            {
+                return null;
+            }
+        }, 2_000);
     }
 
     public void dismissTooltip()

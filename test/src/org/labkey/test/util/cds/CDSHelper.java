@@ -37,6 +37,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
@@ -1349,9 +1350,22 @@ public class CDSHelper
 
     public void toggleExplorerBar(String largeBarText)
     {
-        _test.click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p"));
-        BaseWebDriverTest.sleep(500);
-        _test._ext4Helper.waitForMaskToDisappear();
+        WebElement toggler = Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p").findElement(_test.getDriver());
+        final boolean initiallyCollapsed = toggler.getText().equals("+");
+        toggler.click();
+        _test.shortWait().until(ExpectedConditions.stalenessOf(toggler));
+        Locator.XPathLocator childLoc = Locator.tagWithClass("div", "bar small")
+                .withChild(Locator.tagWithAttributeContaining("span", "uniquename", "].[%s].[".formatted(largeBarText)));
+        if (initiallyCollapsed)
+        {
+            _test.shortWait().ignoring(StaleElementReferenceException.class).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(
+                    childLoc));
+        }
+        else
+        {
+            _test.shortWait().until(ExpectedConditions.invisibilityOfAllElements(
+                    childLoc.findElements(_test.getDriver())));
+        }
     }
 
     public WebElement openStatusInfoPane(String label)
