@@ -1263,9 +1263,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     public void goToDetail(String itemName, boolean hasData)
     {
-        Locator element = hasData ? LEARN_HAS_DATA_ROW_TITLE_LOC.withText(itemName).notHidden() : LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(element)).click();
-        waitForElementToBeVisible(CDSHelper.Locators.studyname);
+        Locator loc = hasData ? LEARN_HAS_DATA_ROW_TITLE_LOC.withText(itemName).notHidden() : LEARN_ROW_TITLE_LOC.withText(itemName).notHidden();
+        WebElement element = shortWait().until(ExpectedConditions.visibilityOfElementLocated(loc));
+        element.click();
+        shortWait().until(ExpectedConditions.invisibilityOf(element));
+        waitForElement(CDSHelper.Locators.studyname.notHidden());
     }
 
     @Test
