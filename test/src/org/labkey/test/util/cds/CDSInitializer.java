@@ -144,18 +144,12 @@ public class CDSInitializer
     @LogMethod
     private void importData() throws Exception
     {
-        // TODO: Catch any RemoteAPI Command Exceptions
-
-
-        // During automation runs set will fail sometimes because of a NPE in Container.hasWorkbookChildren(416).
-        // We think this happens because the tests run quicker than human interaction would.
-        // Putting in a try/catch to work around the issue if it happens during set up, this should prevent an all out failure of all the tests.
-
         // run initial ETL to populate CDS import tables
         _etlHelper.runTransform("{CDS}/CDSImport");
         // populate the app
         _etlHelper.runTransform("{CDS}/LoadApplication");
         _test.goToDataPipeline();
+        // Wait for folder import and two ETLs to complete
         _test.waitForPipelineJobsToComplete(3, null, false, WAIT_ON_LOADAPP);
 
         initMAbReportConfig();
