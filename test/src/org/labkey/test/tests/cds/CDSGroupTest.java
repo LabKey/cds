@@ -34,7 +34,6 @@ import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.pages.query.ExecuteQueryPage;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
-import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.di.DataIntegrationHelper;
@@ -362,7 +361,10 @@ public class CDSGroupTest extends CDSGroupBaseTest
     @Test
     public void verifyInteractiveAndCuratedLinks()
     {
-        createSharedReports();
+        _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
+        createUserWithPermissions(NEW_USER_ACCOUNTS[0], getProjectName(), "Reader");
+
+        createSharedReports(NEW_USER_ACCOUNTS[0]);
         cds.enterApplication();
         refresh();
         cds.ensureGroupsDeleted(new ArrayList(Arrays.asList(STUDY_GROUP_Q2, STUDY_GROUP_Z110)));
@@ -416,11 +418,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
             throw new RuntimeException(e);
         }
         goToProjectHome();
-        if (null == _apiPermissionsHelper.getUserId(NEW_USER_ACCOUNTS[0]))
-        {
-            createUserWithPermissions(NEW_USER_ACCOUNTS[0], getProjectName(), "Reader");
-        }
-        _apiPermissionsHelper.addMemberToRole(NEW_USER_ACCOUNTS[0], "Reader", PermissionsHelper.MemberType.user, getProjectName());
         String reportName = "NAb ic50 plot";
         log("inserting the value between report and assay");
         updateLinkBetweenAssayAndReport("ICS", reportName);
@@ -440,7 +437,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
     }
 
-    private void createSharedReports()
+    private void createSharedReports(String userShouldSeeReports)
     {
         goToProjectHome();
         String url = getProjectName() + "/study-dataset.view?datasetId=5003";
@@ -470,6 +467,11 @@ public class CDSGroupTest extends CDSGroupBaseTest
         {
             throw new RuntimeException(e);
         }
+
+        impersonate(userShouldSeeReports);
+        goToManageViews();
+        assertTextPresent("ELISPOT PROT Z110 Report", "NAB PROT QED 2 Report");
+        stopImpersonating();
     }
 
     private void verifyLinksOnPublicationPage(String descr)
