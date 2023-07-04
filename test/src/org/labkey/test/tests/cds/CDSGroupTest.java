@@ -439,7 +439,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
     private void createSharedReports(String userShouldSeeReports)
     {
-        goToProjectHome();
         String url = getProjectName() + "/study-dataset.view?datasetId=5003";
         _rReportHelper = new RReportHelper(this);
 
@@ -454,7 +453,10 @@ public class CDSGroupTest extends CDSGroupBaseTest
             throw new RuntimeException(e);
         }
 
-        goToProjectHome();
+        impersonate(userShouldSeeReports); // Verify report is shared
+        assertTextPresent("ELISPOT PROT Z110 Report");
+        stopImpersonating();
+
         url = getProjectName() + "/study-dataset.view?datasetId=5004";
         reportId = cds.createReport(_rReportHelper, url, NAB_Q2_REPORT_SOURCE, "NAB PROT QED 2 Report", true, true);
 
@@ -468,9 +470,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
             throw new RuntimeException(e);
         }
 
-        impersonate(userShouldSeeReports);
-        goToManageViews();
-        assertTextPresent("ELISPOT PROT Z110 Report", "NAB PROT QED 2 Report");
+        impersonate(userShouldSeeReports); // Verify report is shared
+        assertTextPresent("NAB PROT QED 2 Report");
         stopImpersonating();
     }
 
