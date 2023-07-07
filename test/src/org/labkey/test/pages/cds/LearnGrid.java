@@ -18,6 +18,7 @@ package org.labkey.test.pages.cds;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.tests.cds.CDSTestLearnAbout;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
@@ -64,9 +65,11 @@ public class LearnGrid
 
     public LearnDetailsPage clickFirstItem()
     {
-        List<WebElement> returnedItems  = CDSTestLearnAbout.COLUMN_LOCKING ? Locators.unlockedRow.findElements(_test.getDriver()) : Locators.gridRows.findElements(_test.getDriver());
-        returnedItems.get(0).click();
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        WebElement returnedItem  = CDSTestLearnAbout.COLUMN_LOCKING
+                ? Locators.unlockedRow.refindWhenNeeded(_test.getDriver())
+                : Locators.gridRows.refindWhenNeeded(_test.getDriver());
+        returnedItem.click();
+        WebDriverWrapper.sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         return new LearnDetailsPage(_test);
     }
