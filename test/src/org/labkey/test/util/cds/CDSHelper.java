@@ -37,6 +37,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
@@ -1304,24 +1305,28 @@ public class CDSHelper
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
 
-        BaseWebDriverTest.sleep(1000);
-        // Because of the way CDS hides parts of the UI the total number of these elements may vary.
-        // So can't use the standard waitForElements, which expects an exact number of elements, so doing this slightly modified version.
-        _test.waitFor(() -> 3 <= Locator.xpath("//table[@role='presentation']//tr[@role='row']").findElements(_test.getDriver()).size(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+        WebElement axisTab = _test.shortWait().until(ExpectedConditions.visibilityOfElementLocated(
+                Locator.tag("div").withClass("learn-dim-selector")
+                        .append(Locator.tag("h1").withClass("lhdv").withText(learnAxis))));
 
-        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-dim-selector");
-        Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
-        Locator.XPathLocator activeHeader = header.withClass("active");
-
-        if (!_test.isElementPresent(headerContainer.append(activeHeader.withText(learnAxis))))
-        {
-            _test.waitForElement(headerContainer.append(header.withText(learnAxis)));
-            _test.click(headerContainer.append(header.withText(learnAxis)));
-            WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
-            _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
-        }
-        BaseWebDriverTest.sleep(1000);
+        Locator.XPathLocator rowLoc = Locator.xpath("//table[@role='presentation']//tr[@role='row']").withDescendant(Locator.byClass("detail-description")).notHidden();
+        WebElement initialRow = rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
         _test._ext4Helper.waitForMaskToDisappear();
+
+        if (!axisTab.getAttribute("class").contains("active") &&
+                !Locator.tagWithAttribute("input", "placeholder", "Search " + learnAxis.toLowerCase()).existsIn(_test.getDriver()))
+        {
+            axisTab.click();
+            WebDriverWrapper.waitFor(() -> axisTab.getAttribute("class").contains("active"), "Failed to select learn axis: " + learnAxis, 5_000);
+            _test.shortWait().until(ExpectedConditions.invisibilityOf(initialRow));
+            rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+            _test._ext4Helper.waitForMaskToDisappear();
+        }
+        else
+        {
+            // Just wait a moment if we're already on the desired page
+            WebDriverWrapper.sleep(1000);
+        }
     }
 
     @LogMethod (quiet = true)
@@ -1353,9 +1358,22 @@ public class CDSHelper
 
     public void toggleExplorerBar(String largeBarText)
     {
-        _test.click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p"));
-        BaseWebDriverTest.sleep(500);
-        _test._ext4Helper.waitForMaskToDisappear();
+        WebElement toggler = Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p").findElement(_test.getDriver());
+        final boolean initiallyCollapsed = toggler.getText().equals("+");
+        toggler.click();
+        _test.shortWait().until(ExpectedConditions.stalenessOf(toggler));
+        Locator.XPathLocator childLoc = Locator.tagWithClass("div", "bar small")
+                .withChild(Locator.tagWithAttributeContaining("span", "uniquename", "].[%s].[".formatted(largeBarText)));
+        if (initiallyCollapsed)
+        {
+            _test.shortWait().ignoring(StaleElementReferenceException.class).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(
+                    childLoc));
+        }
+        else
+        {
+            _test.shortWait().until(ExpectedConditions.invisibilityOfAllElements(
+                    childLoc.findElements(_test.getDriver())));
+        }
     }
 
     public WebElement openStatusInfoPane(String label)
@@ -1572,13 +1590,12 @@ public class CDSHelper
         _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(animatingBar));
     }
 
-    public void clickHelper(WebElement element, Function<Void, Void> function)
+    public void clickHelper(WebElement element, Runnable function)
     {
         final int RETRY_LIMIT = 5;
-        Actions builder = new Actions(_test.getDriver());
         boolean worked = false;
         int count = 0;
-
+        _test.shortWait().until(ExpectedConditions.visibilityOf(element));
         _test.log("Using the CDS click helper.");
 
         while(!worked)
@@ -1587,14 +1604,12 @@ public class CDSHelper
 
             _test.log("CDS clickHelper attempt " + count + " to click the element.");
 
-            BaseWebDriverTest.sleep(500);
-            _test.scrollIntoView(element, true);
-            builder.moveToElement(element).build().perform();
-            builder.click(element).build().perform();
+            _test.mouseOver(element);
+            element.click();
 
             try
             {
-                function.apply(null);
+                function.run();
                 worked = true;
             }
             catch(AssertionError | NoSuchElementException ex)
@@ -1602,6 +1617,7 @@ public class CDSHelper
                 if (count > RETRY_LIMIT)
                     throw ex;
 
+                BaseWebDriverTest.sleep(500);
                 worked = false;
             }
         }

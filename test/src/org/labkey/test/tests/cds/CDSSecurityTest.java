@@ -345,21 +345,17 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log("Verify detailed Integrated Data Availability for QED 2");
         String study = "QED 2";
-        Locator element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
-        assertElementPresent(element);
-        scrollIntoView(element);
-        mouseOver(element);
-        sleep(1000);
-        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated data"); return null;});
+        WebElement element = shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]")));
+        element.click();
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.id("integrated-data-title")));
         Assert.assertTrue("Integrated Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
 
         cds.viewLearnAboutPage("Studies");
         log("Verify detailed Integrated Data Availability for RED 4");
         study = "RED 4";
-        element = Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]");
-        assertElementPresent(element);
-
-        cdsHelper.clickHelper(element.findElement(getDriver()), testFunction ->{waitForText("Integrated data"); return null;});
+        element = shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]")));
+        element.click();
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.id("integrated-data-title")));
         waitForElement(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]"));
 
         Assert.assertTrue("Integrated Data Availability status for ICS is not as expected", isElementPresent(cds.getDataRowXPath("ICS").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
@@ -542,7 +538,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
             if (isAdmin)
             {
-                cdsHelper.clickHelper(loc.findElement(getDriver()), voidFUnction -> {waitForElementToDisappear(Locator.xpath("//tbody[starts-with(@id, 'treeview')]/tr[not(starts-with(@id, 'treeview'))]")); return null;});
+                cdsHelper.clickHelper(loc.findElement(getDriver()), () -> waitForElementToDisappear(Locator.xpath("//tbody[starts-with(@id, 'treeview')]/tr[not(starts-with(@id, 'treeview'))]")));
                 waitForElement(Locator.xpath("//div[contains(./@class,'lk-qd-name')]/h2/a[contains(text(), '" + schemaName + "." + queryName + "')]"), 30000);
             }
             else
