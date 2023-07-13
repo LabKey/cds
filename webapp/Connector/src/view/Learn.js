@@ -502,7 +502,7 @@ Ext.define('Connector.view.Learn', {
         return match;
     },
 
-    loadData : function(dimension, store) {
+    loadData : function(dimension, store, id) {
         if (dimension) {
             var dimensionName, hasHierarchy =  true;
             if (dimension.getHierarchies().length > 0)
@@ -515,7 +515,7 @@ Ext.define('Connector.view.Learn', {
             }
 
 
-            if (!this.dimensionDataLoaded[dimensionName]) {
+            if (id || !this.dimensionDataLoaded[dimensionName]) {
                 store.on('load', function() {
                     this.dimensionDataLoaded[dimensionName] = true;
                     this.sortAndFilterStoreDelayed(store);
@@ -531,7 +531,7 @@ Ext.define('Connector.view.Learn', {
                             success: function(slice) {
                                 if (store) {
                                     Ext.getCmp('learn-grid-export-button-id').store = store;
-                                    store.loadSlice(slice);
+                                    store.loadSlice(slice, id);
                                 }
                             },
                             scope: this
@@ -592,10 +592,10 @@ Ext.define('Connector.view.Learn', {
                     this.loadModel(model, dimension, urlTab, id, params);
                 }
                 else {
-                    if (!store.isLoading() && store.getCount() > 0) {
-                        Connector.getApplication().getController('Connector').showNotFound();
-                    }
-                    else {
+                    // if (!store.isLoading() && store.getCount() > 0) {
+                    //     Connector.getApplication().getController('Connector').showNotFound();
+                    // }
+                    // else {
                         store.on('load', function(s) {
                             var _model = s.getById(_id) || this.resolveModel(s, _id);
                             if (_model) {
@@ -605,8 +605,8 @@ Ext.define('Connector.view.Learn', {
                                 Connector.getApplication().getController('Connector').showNotFound();
                             }
                         }, this, {single: true});
-                    }
-                    this.loadData(dimension, store);
+                    // }
+                    this.loadData(dimension, store, id);
                 }
             }
             else if (dimension.detailModel && dimension.detailView) {
@@ -1063,7 +1063,9 @@ Ext.define('Connector.view.LearnHeader', {
 
     filterStoreFromUrlParams: function(id, dimension, params, skipUpdateFilters)
     {
-        this.updateSearchValue(dimension, params);
+        if (Object.keys(params).length > 0)
+            this.updateSearchValue(dimension, params);
+
         this.updateSort(dimension, params, id != null);
 
         if (!skipUpdateFilters)
