@@ -29,11 +29,12 @@ Ext.define('Connector.app.store.StudyOverview', {
         this.documentData = undefined;
         this.niDocumentData = undefined;
         this.publicationData = undefined;
-        // this.relationshipData = undefined;
-        // this.mabMixData = undefined;
+        this.relationshipData = undefined;
+        this.relationshipOrderData = undefined;
+        this.mabMixData = undefined;
         this.assayIdentifiers = undefined;
-        // this.studyReportsData = undefined;
-        // this.studyCuratedGroupData = undefined;
+        this.studyReportsData = undefined;
+        this.studyCuratedGroupData = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
@@ -82,43 +83,55 @@ Ext.define('Connector.app.store.StudyOverview', {
             success: this.onLoadPublications,
             scope: this
         });
-        // LABKEY.Query.selectRows({
-        //     schemaName: 'cds',
-        //     queryName: 'learn_relationshipsforstudies',
-        //     success: this.onLoadRelationships,
-        //     scope: this
-        // });
-        // LABKEY.Query.selectRows({
-        //     schemaName: 'cds',
-        //     queryName: 'learn_studyrelationshiporder',
-        //     success: this.onLoadRelationshipOrder,
-        //     scope: this,
-        //     sort: 'rel_sort_order'
-        // });
-        // LABKEY.Query.selectRows({
-        //     schemaName: 'cds',
-        //     queryName: 'learn_mab_mix_forstudies',
-        //     success: this.onLoadMabs,
-        //     scope: this
-        // });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_relationshipsforstudies',
+            filterArray: [
+                LABKEY.Filter.create('prot', id, LABKEY.Filter.Types.EQUALS)
+            ],
+            success: this.onLoadRelationships,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_studyrelationshiporder',
+            success: this.onLoadRelationshipOrder,
+            scope: this,
+            sort: 'rel_sort_order'
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_mab_mix_forstudies',
+            filterArray: [
+                LABKEY.Filter.create('prot', id, LABKEY.Filter.Types.EQUALS)
+            ],
+            success: this.onLoadMabs,
+            scope: this
+        });
         LABKEY.Query.selectRows({
             schemaName: 'study',
             queryName: 'integratedAssays',
             success: this.onLoadAssayIdentifiers,
             scope: this
         });
-        // LABKEY.Query.selectRows({
-        //     schemaName: 'cds',
-        //     queryName: 'studyReport',
-        //     success: this.onLoadStudyReport,
-        //     scope: this
-        // });
-        // LABKEY.Query.selectRows({
-        //     schemaName: 'cds',
-        //     queryName: 'studyCuratedGrpWithLabel',
-        //     success: this.onLoadStudyCuratedGroup,
-        //     scope: this
-        // });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'studyReport',
+            filterArray: [
+                LABKEY.Filter.create('prot', id, LABKEY.Filter.Types.EQUALS)
+            ],
+            success: this.onLoadStudyReport,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'studyCuratedGrpWithLabel',
+            filterArray: [
+                LABKEY.Filter.create('prot', id, LABKEY.Filter.Types.EQUALS)
+            ],
+            success: this.onLoadStudyCuratedGroup,
+            scope: this
+        });
         LABKEY.Ajax.request({
             url : LABKEY.ActionURL.buildURL("cds", "getNonIntegratedDocument.api", null, {prot: id}),
             method : 'GET',
@@ -196,18 +209,18 @@ Ext.define('Connector.app.store.StudyOverview', {
                 && Ext.isDefined(this.documentData)
                 && Ext.isDefined(this.niDocumentData)
                 && Ext.isDefined(this.publicationData)
-                // && Ext.isDefined(this.relationshipData)
-                // && Ext.isDefined(this.relationshipOrderData)
+                && Ext.isDefined(this.relationshipData)
+                && Ext.isDefined(this.relationshipOrderData)
                 && Ext.isDefined(this.accessibleStudies)
-                // && Ext.isDefined(this.mabMixData)
+                && Ext.isDefined(this.mabMixData)
                 && Ext.isDefined(this.assayIdentifiers)
-                // && Ext.isDefined(this.studyReportsData)
-                // && Ext.isDefined(this.studyCuratedGroupData)
+                && Ext.isDefined(this.studyReportsData)
+                && Ext.isDefined(this.studyCuratedGroupData)
                 && this.isLoadComplete()) {
             var studies = [], products, productNames, productClasses;
-            // var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
-            //     return relOrder.relationship;
-            // });
+            var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
+                return relOrder.relationship;
+            });
             var studyNames = this.studyData.map(function(study) {
                 return study.study_name;
             });
@@ -358,38 +371,38 @@ Ext.define('Connector.app.store.StudyOverview', {
                     return (docA.sortIndex || 0) - (docB.sortIndex || 0);
                 }, this);
 
-                // var relationships = this.relationshipData.filter(function(rel){
-                //     // only return studies this user can see and that are related
-                //     return (studyNames.indexOf(rel.rel_prot) !== -1) && (rel.prot === study.study_name);
-                // }).map(function(rel) {
-                //     return {
-                //         prot: rel.prot,
-                //         rel_prot: rel.rel_prot,
-                //         relationship: rel.relationship,
-                //         // sort not-found relationships last
-                //         sortIndex: relationshipOrderList.indexOf(rel.relationship) === -1 ? relationshipOrderList.length : relationshipOrderList.indexOf(rel.relationship),
-                //         rel_prot_label: this.studyData.filter(function (study) {
-                //             return study.study_name === rel.rel_prot;
-                //         })[0].label
-                //     };
-                // }, this).sort(function(relA, relB){
-                //     if(relA.sortIndex !== relB.sortIndex)
-                //         return relA.sortIndex - relB.sortIndex;
-                //     return Connector.model.Filter.sorters.natural(relA.rel_prot, relB.rel_prot);
-                // });
+                var relationships = this.relationshipData.filter(function(rel){
+                    // only return studies this user can see and that are related
+                    return (studyNames.indexOf(rel.rel_prot) !== -1) && (rel.prot === study.study_name);
+                }).map(function(rel) {
+                    return {
+                        prot: rel.prot,
+                        rel_prot: rel.rel_prot,
+                        relationship: rel.relationship,
+                        // sort not-found relationships last
+                        sortIndex: relationshipOrderList.indexOf(rel.relationship) === -1 ? relationshipOrderList.length : relationshipOrderList.indexOf(rel.relationship),
+                        rel_prot_label: this.studyData.filter(function (study) {
+                            return study.study_name === rel.rel_prot;
+                        })[0].label
+                    };
+                }, this).sort(function(relA, relB){
+                    if(relA.sortIndex !== relB.sortIndex)
+                        return relA.sortIndex - relB.sortIndex;
+                    return Connector.model.Filter.sorters.natural(relA.rel_prot, relB.rel_prot);
+                });
 
 
-                // var mabs = this.mabMixData.filter(function(mab) {
-                //     return mab.prot === study.study_name;
-                // }).map(function(mab) {
-                //     return {
-                //         name: mab.mab_mix_name_std,
-                //         link: null,
-                //         label: mab.mab_label == null || mab.mab_label.length == 0 ? null : mab.mab_label
-                //     };
-                // }, this).sort(function(a, b) {
-                //     return Connector.model.Filter.sorters.natural(a.name, b.name);
-                // });
+                var mabs = this.mabMixData.filter(function(mab) {
+                    return mab.prot === study.study_name;
+                }).map(function(mab) {
+                    return {
+                        name: mab.mab_mix_name_std,
+                        link: null,
+                        label: mab.mab_label == null || mab.mab_label.length == 0 ? null : mab.mab_label
+                    };
+                }, this).sort(function(a, b) {
+                    return Connector.model.Filter.sorters.natural(a.name, b.name);
+                });
 
                 study.products = products;
                 study.product_names = productNames;
@@ -398,20 +411,20 @@ Ext.define('Connector.app.store.StudyOverview', {
                 study.assays_added = assaysAdded;
                 study.assays_added_count = assaysAdded.length;
                 study.publications = publications;
-                // study.relationships = relationships;
-                // study.monoclonal_antibodies = mabs;
+                study.relationships = relationships;
+                study.monoclonal_antibodies = mabs;
                 study.protocol_docs_and_study_plans = documents.filter(function (doc) {
                     return doc.label && doc.docType === 'Study plan or protocol';
                 });
                 study.protocol_docs_and_study_plans_has_permission = study.protocol_docs_and_study_plans.filter(function(doc) {
                     return doc.hasPermission === true
                 }).length > 0;
-                // study.data_listings_and_reports = documents.filter(function (doc) {
-                //     return doc.label && doc.docType === 'Report or summary';
-                // });
-                // study.data_listings_and_reports_has_permission = study.data_listings_and_reports.filter(function(doc) {
-                //             return doc.hasPermission === true
-                // }).length > 0;
+                study.data_listings_and_reports = documents.filter(function (doc) {
+                    return doc.label && doc.docType === 'Report or summary';
+                });
+                study.data_listings_and_reports_has_permission = study.data_listings_and_reports.filter(function(doc) {
+                            return doc.hasPermission === true
+                }).length > 0;
 
                 // non-integrated assay with potentially downloadable data, which may or may not also have a learn assay page
                 var non_integrated_assay = this.niDocumentData.filter(function (niData) {
@@ -481,55 +494,55 @@ Ext.define('Connector.app.store.StudyOverview', {
                     return doc.hasPermission === true
                 }).length > 0;
 
-                // var interactiveReports = [];
-                // for (var i=0; i < this.studyReportsData.length; i++) {
-                //     if (study.study_name === this.studyReportsData[i].prot) {
-                //         var id = this.studyReportsData[i].cds_report_id ? this.studyReportsData[i].cds_report_id.toString() : undefined;
-                //         var reportLink = this.studyReportsData[i].cds_report_link ? this.studyReportsData[i].cds_report_link: undefined;
-                //         var reportLabel = this.studyReportsData[i].cds_report_label ? this.studyReportsData[i].cds_report_label: undefined;
-                //
-                //         var reportObj = this.savedReportsData.filter(function(val) { return val.reportId === id;}, this);
-                //
-                //         if ((reportObj && reportObj.length > 0) || (reportLink && reportLabel)){
-                //             var report  = {
-                //                 report_id: id,
-                //                 report_link: reportLink,
-                //                 label: reportLabel ? reportLabel : (id && reportObj && reportObj[0] ? reportObj[0].reportName : undefined)
-                //             };
-                //             interactiveReports.push(report);
-                //         }
-                //     }
-                // }
-                // interactiveReports.sort(function (r1, r2) {
-                //     return r1.label.toLowerCase().localeCompare(r2.label.toLowerCase())
-                // });
-                // study.interactive_reports = interactiveReports;
+                var interactiveReports = [];
+                for (var i=0; i < this.studyReportsData.length; i++) {
+                    if (study.study_name === this.studyReportsData[i].prot) {
+                        var id = this.studyReportsData[i].cds_report_id ? this.studyReportsData[i].cds_report_id.toString() : undefined;
+                        var reportLink = this.studyReportsData[i].cds_report_link ? this.studyReportsData[i].cds_report_link: undefined;
+                        var reportLabel = this.studyReportsData[i].cds_report_label ? this.studyReportsData[i].cds_report_label: undefined;
 
-                // var curatedGroups = [];
-                // for (var j=0; j < this.studyCuratedGroupData.length; j++) {
-                //     if (study.study_name === this.studyCuratedGroupData[j].prot) {
-                //         curatedGroups.push(this.studyCuratedGroupData[j]);
-                //     }
-                // }
-                // study.curated_groups = curatedGroups;
+                        var reportObj = this.savedReportsData.filter(function(val) { return val.reportId === id;}, this);
 
-                //process 'groups' to display 10 or more with show all/show less
-                // var grpHeader= study.groups && study.groups.length > 0 ? study.groups.split('<ul>', 1) : undefined;
-                // study.groups_header = grpHeader ? grpHeader[0] : undefined;
-                // var groupDiv = document.createElement('div');
-                // groupDiv.innerHTML = study.groups;
-                // var groups = groupDiv.querySelectorAll('ul li');
-                // var groupsArray = [];
-                //
-                // if (groups && groups.length > 0) {
-                //     for (var k = 0; k < groups.length; k++) {
-                //         var str = groups[k].innerText;
-                //         if (groupsArray.indexOf(str) === -1) {
-                //             groupsArray.push({label: str});
-                //         }
-                //     }
-                // }
-                // study.groups_data = groupsArray;
+                        if ((reportObj && reportObj.length > 0) || (reportLink && reportLabel)){
+                            var report  = {
+                                report_id: id,
+                                report_link: reportLink,
+                                label: reportLabel ? reportLabel : (id && reportObj && reportObj[0] ? reportObj[0].reportName : undefined)
+                            };
+                            interactiveReports.push(report);
+                        }
+                    }
+                }
+                interactiveReports.sort(function (r1, r2) {
+                    return r1.label.toLowerCase().localeCompare(r2.label.toLowerCase())
+                });
+                study.interactive_reports = interactiveReports;
+
+                var curatedGroups = [];
+                for (var j=0; j < this.studyCuratedGroupData.length; j++) {
+                    if (study.study_name === this.studyCuratedGroupData[j].prot) {
+                        curatedGroups.push(this.studyCuratedGroupData[j]);
+                    }
+                }
+                study.curated_groups = curatedGroups;
+
+                // process 'groups' to display 10 or more with show all/show less
+                var grpHeader= study.groups && study.groups.length > 0 ? study.groups.split('<ul>', 1) : undefined;
+                study.groups_header = grpHeader ? grpHeader[0] : undefined;
+                var groupDiv = document.createElement('div');
+                groupDiv.innerHTML = study.groups;
+                var groups = groupDiv.querySelectorAll('ul li');
+                var groupsArray = [];
+
+                if (groups && groups.length > 0) {
+                    for (var k = 0; k < groups.length; k++) {
+                        var str = groups[k].innerText;
+                        if (groupsArray.indexOf(str) === -1) {
+                            groupsArray.push({label: str});
+                        }
+                    }
+                }
+                study.groups_data = groupsArray;
 
                 var niAssaysAdded = study.non_integrated_assay_data.filter(function (value) {
                     return value.isLinkValid;
@@ -566,7 +579,7 @@ Ext.define('Connector.app.store.StudyOverview', {
             this.relationshipOrderData = undefined;
             this.assayIdentifiers = undefined;
             this.studyReportsData = undefined;
-            // this.savedReportsData = [];
+            this.savedReportsData = [];
             this.studyCuratedGroupData = undefined;
 
             this.loadRawData(studies);
