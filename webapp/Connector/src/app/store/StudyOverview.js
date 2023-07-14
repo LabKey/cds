@@ -41,9 +41,6 @@ Ext.define('Connector.app.store.StudyOverview', {
         LABKEY.Query.selectRows({
             schemaName: 'cds.metadata',
             queryName: 'study',
-            filterArray: [
-                LABKEY.Filter.create('study_name', id, LABKEY.Filter.Types.EQUALS)
-            ],
             success: this.onLoadStudies,
             scope: this
         });
@@ -308,10 +305,10 @@ Ext.define('Connector.app.store.StudyOverview', {
                     {
                         if (this.documentData[d].document_type === 'grant_document') {
                             study.cavd_affiliation = this.documentData[d].label;
-                            // study.cavd_affiliation_filename = this.documentData[d].filename;
-                            // study.cavd_affiliation_file_accessible = undefined;  // not set until we check (when StudyHeader is actually loaded)
-                            // study.cavd_affiliation_file_has_permission = this.documentData[d].accessible;
-                            // study.cavd_affiliation_file_path = Connector.plugin.DocumentValidation.getStudyDocumentUrl(this.documentData[d].filename, study.study_name, this.documentData[d].document_id);
+                            study.cavd_affiliation_filename = this.documentData[d].filename;
+                            study.cavd_affiliation_file_accessible = undefined;  // not set until we check (when StudyHeader is actually loaded)
+                            study.cavd_affiliation_file_has_permission = this.documentData[d].accessible;
+                            study.cavd_affiliation_file_path = Connector.plugin.DocumentValidation.getStudyDocumentUrl(this.documentData[d].filename, study.study_name, this.documentData[d].document_id);
                         }
                     }
                 }
