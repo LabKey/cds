@@ -1877,7 +1877,6 @@
                     <fkColumnName>mab_id</fkColumnName>
                 </fk>
             </column>
-            <column columnName="chain"/>
             <column columnName="sequence_id">
                 <description>The sequence ID associated with a given mAB ID and chain.</description>
             </column>
@@ -2212,7 +2211,7 @@
             <column columnName="source">
                 <description>A short description of the source, e.g. PMID, DOI, short name</description>
             </column>
-            <column columnName="notes">
+            <column columnName="note">
                 <description>A note for the source</description>
             </column>
             <column columnName="container"/>
