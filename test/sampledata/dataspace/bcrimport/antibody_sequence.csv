@@ -1,4 +1,4 @@
-mab_id,chain,sequence_id,lineage
-cds_mab_1,heavy,cds_seq_1,true
-cds_mab_2,heavy,cds_seq_10,false
-cds_mab_3,light,cds_seq_100,true
+mab_id,sequence_id,lineage
+cds_mab_1,cds_seq_1,true
+cds_mab_2,cds_seq_10,false
+cds_mab_3,cds_seq_100,true
