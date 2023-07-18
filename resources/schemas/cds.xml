@@ -1817,10 +1817,10 @@
                 <description>The IMGT allele name.</description>
             </column>
             <column columnName="allele_sequence_nt">
-                <description>tThe IMGT allele sequence as nucleotides.</description>
+                <description>The IMGT allele sequence as nucleotides.</description>
             </column>
             <column columnName="release_date">
-                <description>T The release date for the IMGT reference database version the sequence is from.</description>
+                <description>The release date for the IMGT reference database version the sequence is from.</description>
             </column>
             <column columnName="container"/>
         </columns>
