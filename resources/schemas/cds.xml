@@ -1791,167 +1791,397 @@
     </table>
     <table tableName="sequence" tableDbType="TABLE">
         <columns>
-            <column columnName="sequence_id"/>
-            <column columnName="sequence_nt"/>
+            <column columnName="sequence_id">
+                <description>The unique CDS sequence ID.</description>
+            </column>
+            <column columnName="sequence_nt">
+                <description>The sequence as nucleotides.</description>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
     <table tableName="alignment_run" tableDbType="TABLE">
         <columns>
-            <column columnName="run_application"/>
-            <column columnName="run_information"/>
+            <column columnName="run_application">
+                <description>The name of the alignment application.</description>
+            </column>
+            <column columnName="run_information">
+                <description>A JSON formatted string containing details about the alignment application and its inputs.</description>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
     <table tableName="allele_sequence" tableDbType="TABLE">
         <columns>
-            <column columnName="allele"/>
-            <column columnName="allele_sequence_nt"/>
-            <column columnName="release_date"/>
+            <column columnName="allele">
+                <description>The IMGT allele name.</description>
+            </column>
+            <column columnName="allele_sequence_nt">
+                <description>The IMGT allele sequence as nucleotides.</description>
+            </column>
+            <column columnName="release_date">
+                <description>The release date for the IMGT reference database version the sequence is from.</description>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
     <table tableName="sequence_header" tableDbType="TABLE">
         <columns>
             <column columnName="sequence_header_id"/>
-            <column columnName="header"/>
-            <column columnName="sequence_id"/>
-            <column columnName="source_id"/>
+            <column columnName="header">
+                <description>The original fasta header list in the source.</description>
+            </column>
+            <column columnName="sequence_id">
+                <description>The CDS sequence ID associated with the header.</description>
+            </column>
+            <column columnName="source_id">
+                <description>Information about the sequence source.</description>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
     <table tableName="sequence_germline" tableDbType="TABLE">
         <columns>
             <column columnName="sequence_germline_id"/>
-            <column columnName="allele"/>
-            <column columnName="sequence_id"/>
-            <column columnName="percent_identity"/>
-            <column columnName="matches"/>
-            <column columnName="alignment_length"/>
-            <column columnName="score"/>
-            <column columnName="run_application"/>
+            <column columnName="allele">
+                <description>The IMGT allele name.</description>
+            </column>
+            <column columnName="sequence_id">
+                <description>The unique CDS sequence ID.</description>
+            </column>
+            <column columnName="percent_identity">
+                <description>The percent of matches in the alignment.</description>
+            </column>
+            <column columnName="matches">
+                <description>The number of matches.</description>
+            </column>
+            <column columnName="alignment_length">
+                <description>The number of neucleotides in the alignment.</description>
+            </column>
+            <column columnName="score">
+                <description>The score given by the alignment algorithm.</description>
+            </column>
+            <column columnName="run_application">
+                <description>Which run number generated the alignment.</description>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
     <table tableName="antibody_sequence" tableDbType="TABLE">
         <columns>
             <column columnName="mab_id">
+                <description>The CDS mAb ID.</description>
                 <fk>
                     <fkDbSchema>cds</fkDbSchema>
                     <fkTable>MAbMetadata</fkTable>
                     <fkColumnName>mab_id</fkColumnName>
                 </fk>
             </column>
-            <column columnName="chain"/>
-            <column columnName="sequence_id"/>
-            <column columnName="lineage"/>
+            <column columnName="sequence_id">
+                <description>The sequence ID associated with a given mAB ID and chain.</description>
+            </column>
+            <column columnName="lineage">
+                <description>True if the sequence is a lineage sequence.</description>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
     <table tableName="alignment" tableDbType="TABLE">
         <columns>
             <column columnName="alignment_id"/>
-            <column columnName="sequence_id"/>
-            <column columnName="locus"/>
-            <column columnName="stop_codon"/>
-            <column columnName="vj_in_frame"/>
-            <column columnName="productive"/>
-            <column columnName="rev_comp"/>
-            <column columnName="complete_vdj"/>
-            <column columnName="v_call"/>
-            <column columnName="d_call"/>
-            <column columnName="j_call"/>
-            <column columnName="sequence_alignment"/>
-            <column columnName="germline_alignment"/>
-            <column columnName="sequence_alignment_aa"/>
-            <column columnName="germline_alignment_aa"/>
-            <column columnName="v_alignment_start"/>
-            <column columnName="v_alignment_end"/>
-            <column columnName="d_alignment_start"/>
-            <column columnName="d_alignment_end"/>
-            <column columnName="j_alignment_start"/>
-            <column columnName="j_alignment_end"/>
-            <column columnName="v_sequence_alignment"/>
-            <column columnName="v_sequence_alignment_aa"/>
-            <column columnName="v_germline_alignment"/>
-            <column columnName="v_germline_alignment_aa"/>
-            <column columnName="d_sequence_alignment"/>
-            <column columnName="d_sequence_alignment_aa"/>
-            <column columnName="d_germline_alignment"/>
-            <column columnName="d_germline_alignment_aa"/>
-            <column columnName="j_sequence_alignment"/>
-            <column columnName="j_sequence_alignment_aa"/>
-            <column columnName="j_germline_alignment"/>
-            <column columnName="j_germline_alignment_aa"/>
-            <column columnName="fwr1"/>
-            <column columnName="fwr1_aa"/>
-            <column columnName="cdr1"/>
-            <column columnName="cdr1_aa"/>
-            <column columnName="fwr2"/>
-            <column columnName="fwr2_aa"/>
-            <column columnName="cdr2"/>
-            <column columnName="cdr2_aa"/>
-            <column columnName="fwr3"/>
-            <column columnName="fwr3_aa"/>
-            <column columnName="fwr4"/>
-            <column columnName="fwr4_aa"/>
-            <column columnName="cdr3"/>
-            <column columnName="cdr3_aa"/>
-            <column columnName="junction"/>
-            <column columnName="junction_length"/>
-            <column columnName="junction_aa"/>
-            <column columnName="junction_aa_length"/>
-            <column columnName="v_score"/>
-            <column columnName="d_score"/>
-            <column columnName="j_score"/>
-            <column columnName="v_cigar"/>
-            <column columnName="d_cigar"/>
-            <column columnName="j_cigar"/>
-            <column columnName="v_support"/>
-            <column columnName="d_support"/>
-            <column columnName="j_support"/>
-            <column columnName="v_identity"/>
-            <column columnName="d_identity"/>
-            <column columnName="j_identity"/>
-            <column columnName="v_sequence_start"/>
-            <column columnName="v_sequence_end"/>
-            <column columnName="v_germline_start"/>
-            <column columnName="v_germline_end"/>
-            <column columnName="d_sequence_start"/>
-            <column columnName="d_sequence_end"/>
-            <column columnName="d_germline_start"/>
-            <column columnName="d_germline_end"/>
-            <column columnName="j_sequence_start"/>
-            <column columnName="j_sequence_end"/>
-            <column columnName="j_germline_start"/>
-            <column columnName="j_germline_end"/>
-            <column columnName="fwr1_start"/>
-            <column columnName="fwr1_end"/>
-            <column columnName="cdr1_start"/>
-            <column columnName="cdr1_end"/>
-            <column columnName="fwr2_start"/>
-            <column columnName="fwr2_end"/>
-            <column columnName="cdr2_start"/>
-            <column columnName="cdr2_end"/>
-            <column columnName="fwr3_start"/>
-            <column columnName="fwr3_end"/>
-            <column columnName="fwr4_start"/>
-            <column columnName="fwr4_end"/>
-            <column columnName="cdr3_start"/>
-            <column columnName="cdr3_end"/>
-            <column columnName="np1"/>
-            <column columnName="np1_length"/>
-            <column columnName="np2"/>
-            <column columnName="np2_length"/>
-            <column columnName="run_application"/>
+            <column columnName="sequence_id">
+                <description>The CDS sequence ID.</description>
+            </column>
+            <column columnName="locus">
+                <description>Gene locus (chain type). Note that this field uses a controlled vocabulary that is meant to provide a generic classification of the locus, not necessarily the correct designation according to a specific nomenclature.</description>
+            </column>
+            <column columnName="stop_codon">
+                <description>True if the aligned sequence contains a stop codon.</description>
+            </column>
+            <column columnName="vj_in_frame">
+                <description>True if the V and J gene alignments are in-frame.</description>
+            </column>
+            <column columnName="productive">
+                <description>True if the V(D)J sequence is predicted to be productive.</description>
+            </column>
+            <column columnName="rev_comp">
+                <description>True if the alignment is on the opposite strand (reverse complemented) with respect to the query sequence. If True then all output data, such as alignment coordinates and sequences, are based on the reverse complement of 'sequence'.</description>
+            </column>
+            <column columnName="complete_vdj">
+                <description>True if the sequence alignment spans the entire V(D)J region. Meaning, sequence_alignment includes both the first V gene codon that encodes the mature polypeptide chain (i.e., after the leader sequence) and the last complete codon of the J gene (i.e., before the J-C splice site). This does not require an absence of deletions within the internal FWR and CDR regions of the alignment.</description>
+            </column>
+            <column columnName="v_call">
+                <description>V gene with allele. If referring to a known reference sequence in a database the relevant gene/allele nomenclature should be followed (e.g., IGHV4-59*01 if using IMGT/GENE-DB).</description>
+            </column>
+            <column columnName="d_call">
+                <description>First or only D gene with allele. If referring to a known reference sequence in a database the relevant gene/allele nomenclature should be followed (e.g., IGHD3-10*01 if using IMGT/GENE-DB).</description>
+            </column>
+            <column columnName="j_call">
+                <description>J gene with allele. If referring to a known reference sequence in a database the relevant gene/allele nomenclature should be followed (e.g., IGHJ4*02 if using IMGT/GENE-DB).</description>
+            </column>
+            <column columnName="sequence_alignment">
+                <description>Aligned portion of query sequence, including any indel corrections or numbering spacers, such as IMGT-gaps. Typically, this will include only the V(D)J region, but that is not a requirement.</description>
+            </column>
+            <column columnName="germline_alignment">
+                <description>Assembled, aligned, full-length inferred germline sequence spanning the same region as the sequence_alignment field (typically the V(D)J region) and including the same set of corrections and spacers (if any).</description>
+            </column>
+            <column columnName="sequence_alignment_aa">
+                <description>Amino acid translation of the aligned query sequence.</description>
+            </column>
+            <column columnName="germline_alignment_aa">
+                <description>Amino acid translation of the assembled germline sequence.</description>
+            </column>
+            <column columnName="v_alignment_start">
+                <description>Start position of the V gene alignment in both the sequence_alignment and germline_alignment fields (1-based closed interval).</description>
+            </column>
+            <column columnName="v_alignment_end">
+                <description>End position of the V gene alignment in both the sequence_alignment and germline_alignment fields (1-based closed interval).</description>
+            </column>
+            <column columnName="d_alignment_start">
+                <description>Start position of the first or only D gene in both the sequence_alignment and germline_alignment fields (1-based closed interval).</description>
+            </column>
+            <column columnName="d_alignment_end">
+                <description>End position of the first or only D gene in both the sequence_alignment and germline_alignment fields (1-based closed interval).</description>
+            </column>
+            <column columnName="j_alignment_start">
+                <description>Start position of the J gene alignment in both the sequence_alignment and germline_alignment fields (1-based closed interval).</description>
+            </column>
+            <column columnName="j_alignment_end">
+                <description>End position of the J gene alignment in both the sequence_alignment and germline_alignment fields (1-based closed interval).</description>
+            </column>
+            <column columnName="v_sequence_alignment">
+                <description>Aligned portion of query sequence assigned to the V gene, including any indel corrections or numbering spacers.</description>
+            </column>
+            <column columnName="v_sequence_alignment_aa">
+                <description>Amino acid translation of the v_sequence_alignment field.</description>
+            </column>
+            <column columnName="v_germline_alignment">
+                <description>Aligned V gene germline sequence spanning the same region as the v_sequence_alignment field and including the same set of corrections and spacers (if any).</description>
+            </column>
+            <column columnName="v_germline_alignment_aa">
+                <description>Amino acid translation of the v_germline_alignment field.</description>
+            </column>
+            <column columnName="d_sequence_alignment">
+                <description>Aligned portion of query sequence assigned to the first or only D gene, including any indel corrections or numbering spacers.</description>
+            </column>
+            <column columnName="d_sequence_alignment_aa">
+                <description>Amino acid translation of the d_sequence_alignment field.</description>
+            </column>
+            <column columnName="d_germline_alignment">
+                <description>Aligned D gene germline sequence spanning the same region as the d_sequence_alignment field and including the same set of corrections and spacers (if any).</description>
+            </column>
+            <column columnName="d_germline_alignment_aa">
+                <description>Amino acid translation of the d_germline_alignment field.</description>
+            </column>
+            <column columnName="j_sequence_alignment">
+                <description>Aligned portion of query sequence assigned to the J gene, including any indel corrections or numbering spacers.</description>
+            </column>
+            <column columnName="j_sequence_alignment_aa">
+                <description>Amino acid translation of the j_sequence_alignment field.</description>
+            </column>
+            <column columnName="j_germline_alignment">
+                <description>Aligned J gene germline sequence spanning the same region as the j_sequence_alignment field and including the same set of corrections and spacers (if any).</description>
+            </column>
+            <column columnName="j_germline_alignment_aa">
+                <description>Amino acid translation of the j_germline_alignment field.</description>
+            </column>
+            <column columnName="fwr1">
+                <description>Nucleotide sequence of the aligned FWR1 region.</description>
+            </column>
+            <column columnName="fwr1_aa">
+                <description>Amino acid translation of the fwr1 field.</description>
+            </column>
+            <column columnName="cdr1">
+                <description>Nucleotide sequence of the aligned CDR1 region.</description>
+            </column>
+            <column columnName="cdr1_aa">
+                <description>Amino acid translation of the cdr1 field.</description>
+            </column>
+            <column columnName="fwr2">
+                <description>Nucleotide sequence of the aligned FWR2 region.</description>
+            </column>
+            <column columnName="fwr2_aa">
+                <description>Amino acid translation of the fwr2 field.</description>
+            </column>
+            <column columnName="cdr2">
+                <description>Nucleotide sequence of the aligned CDR2 region.</description>
+            </column>
+            <column columnName="cdr2_aa">
+                <description>Amino acid translation of the cdr2 field.</description>
+            </column>
+            <column columnName="fwr3">
+                <description>Nucleotide sequence of the aligned FWR3 region.</description>
+            </column>
+            <column columnName="fwr3_aa">
+                <description>Amino acid translation of the fwr3 field.</description>
+            </column>
+            <column columnName="fwr4">
+                <description>Nucleotide sequence of the aligned FWR4 region.</description>
+            </column>
+            <column columnName="fwr4_aa">
+                <description>Amino acid translation of the fwr4 field.</description>
+            </column>
+            <column columnName="cdr3">
+                <description>Nucleotide sequence of the aligned CDR3 region.</description>
+            </column>
+            <column columnName="cdr3_aa">
+                <description>Amino acid translation of the cdr3 field.</description>
+            </column>
+            <column columnName="junction">
+                <description>Junction region nucleotide sequence, where the junction is defined as the CDR3 plus the two flanking conserved codons.</description>
+            </column>
+            <column columnName="junction_length">
+                <description>Number of nucleotides in the junction sequence.</description>
+            </column>
+            <column columnName="junction_aa">
+                <description>Amino acid translation of the junction.</description>
+            </column>
+            <column columnName="junction_aa_length">
+                <description>Number of amino acids in the junction sequence.</description>
+            </column>
+            <column columnName="v_score">
+                <description>Alignment score for the V gene.</description>
+            </column>
+            <column columnName="d_score">
+                <description>Alignment score for the first or only D gene alignment.</description>
+            </column>
+            <column columnName="j_score">
+                <description>Alignment score for the J gene alignment.</description>
+            </column>
+            <column columnName="v_cigar">
+                <description>CIGAR string for the V gene alignment.</description>
+            </column>
+            <column columnName="d_cigar">
+                <description>CIGAR string for the first or only D gene alignment.</description>
+            </column>
+            <column columnName="j_cigar">
+                <description>CIGAR string for the J gene alignment.</description>
+            </column>
+            <column columnName="v_support">
+                <description>V gene alignment E-value, p-value, likelihood, probability or other similar measure of support for the V gene assignment as defined by the alignment tool.</description>
+            </column>
+            <column columnName="d_support">
+                <description>D gene alignment E-value, p-value, likelihood, probability or other similar measure of support for the first or only D gene as defined by the alignment tool.</description>
+            </column>
+            <column columnName="j_support">
+                <description>J gene alignment E-value, p-value, likelihood, probability or other similar measure of support for the J gene assignment as defined by the alignment tool.</description>
+            </column>
+            <column columnName="v_identity">
+                <description>Fractional identity for the V gene alignment.</description>
+            </column>
+            <column columnName="d_identity">
+                <description>Fractional identity for the first or only D gene alignment.</description>
+            </column>
+            <column columnName="j_identity">
+                <description>Fractional identity for the J gene alignment.</description>
+            </column>
+            <column columnName="v_sequence_start">
+                <description>Start position of the V gene in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="v_sequence_end">
+                <description>End position of the V gene in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="v_germline_start">
+                <description>Alignment start position in the V gene reference sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="v_germline_end">
+                <description>Alignment end position in the V gene reference sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="d_sequence_start">
+                <description>Start position of the first or only D gene in the query sequence. (1-based closed interval).</description>
+            </column>
+            <column columnName="d_sequence_end">
+                <description>End position of the first or only D gene in the query sequence. (1-based closed interval).</description>
+            </column>
+            <column columnName="d_germline_start">
+                <description>Alignment start position in the D gene reference sequence for the first or only D gene (1-based closed interval).</description>
+            </column>
+            <column columnName="d_germline_end">
+                <description>Alignment end position in the D gene reference sequence for the first or only D gene (1-based closed interval).</description>
+            </column>
+            <column columnName="j_sequence_start">
+                <description>Start position of the J gene in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="j_sequence_end">
+                <description>End position of the J gene in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="j_germline_start">
+                <description>Alignment start position in the J gene reference sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="j_germline_end">
+                <description>Alignment end position in the J gene reference sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="fwr1_start">
+                <description>FWR1 start position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="fwr1_end">
+                <description>FWR1 end position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="cdr1_start">
+                <description>CDR1 start position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="cdr1_end">
+                <description>CDR1 end position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="fwr2_start">
+                <description>FWR2 start position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="fwr2_end">
+                <description>FWR2 end position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="cdr2_start">
+                <description>CDR2 start position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="cdr2_end">
+                <description>CDR2 end position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="fwr3_start">
+                <description>FWR3 start position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="fwr3_end">
+                <description>FWR3 end position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="fwr4_start">
+                <description>FWR4 start position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="fwr4_end">
+                <description>FWR4 end position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="cdr3_start">
+                <description>CDR3 start position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="cdr3_end">
+                <description>CDR3 end position in the query sequence (1-based closed interval).</description>
+            </column>
+            <column columnName="np1">
+                <description>Nucleotide sequence of the combined N/P region between the V gene and first D gene alignment or between the V gene and J gene alignments.</description>
+            </column>
+            <column columnName="np1_length">
+                <description>Number of nucleotides between the V gene and first D gene alignments or between the V gene and J gene alignments.</description>
+            </column>
+            <column columnName="np2">
+                <description>Nucleotide sequence of the combined N/P region between either the first D gene and J gene alignments or the first D gene and second D gene alignments.</description>
+            </column>
+            <column columnName="np2_length">
+                <description>Number of nucleotides between either the first D gene and J gene alignments or the first D gene and second D gene alignments.</description>
+            </column>
+            <column columnName="run_application">
+                <description>What application performed the alignment.</description>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
     <table tableName="antibody_class" tableDbType="TABLE">
         <columns>
-            <column columnName="mab_class_id"/>
-            <column columnName="mab_class_name"/>
-            <column columnName="description"/>
+            <column columnName="mab_class_id">
+                <description>A unique identifier of the mab class.</description>
+            </column>
+            <column columnName="mab_class_name">
+                <description>A name for the mab class.</description>
+            </column>
+            <column columnName="description">
+                <description>A text description of the mab class.</description>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
@@ -1981,7 +2211,7 @@
             <column columnName="source">
                 <description>A short description of the source, e.g. PMID, DOI, short name</description>
             </column>
-            <column columnName="notes">
+            <column columnName="note">
                 <description>A note for the source</description>
             </column>
             <column columnName="container"/>
