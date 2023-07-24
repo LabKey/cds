@@ -545,7 +545,10 @@ Ext.define('Connector.view.Learn', {
 
             }
             else {
-                this.sortAndFilterStoreDelayed(store);
+                if(store.getCount() === 0)
+                    store.loadSlice();
+                else
+                    this.sortAndFilterStoreDelayed(store);
             }
         }
         else {
