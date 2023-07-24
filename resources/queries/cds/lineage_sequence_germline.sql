@@ -11,4 +11,4 @@ SELECT
     aseq.lineage
 FROM sequence_germline AS sgrm
          JOIN antibody_sequence AS aseq ON sgrm.sequence_id = aseq.sequence_id
-         LEFT JOIN preferred_allele AS pref ON pref.sequence_id = sgrm.sequence_id AND pref.allele = sgrm.al
+         LEFT JOIN preferred_allele AS pref ON pref.sequence_id = sgrm.sequence_id AND pref.allele = sgrm.allele
