@@ -73,6 +73,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'ni_assays_added', convert : Connector.model.Filter.asArray},
         {name: 'publications', convert : Connector.model.Filter.asArray},
         {name: 'pub_available_data_count'},
+        {name: 'data_types_available', convert : Connector.model.Filter.asArray},
         {name: 'data_available'}
     ]
 });

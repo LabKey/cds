@@ -174,7 +174,8 @@ Ext.define('Connector.app.store.Study', {
                             data_id: this.assayData[a].study_assay_id, //same as assay_identifier as per learn_assaysforstudies.sql
                             data_link_id: this.assayData[a].assay_identifier,
                             has_data: this.assayData[a].has_data,
-                           };
+                            has_access: hasStudyAccess
+                        };
 
                         if (integratedAssays.includes(this.assayData[a].assay_identifier)) {
                             assays.push(assay);
@@ -267,7 +268,9 @@ Ext.define('Connector.app.store.Study', {
                         id: undefined,
                         label: niAssay.data_id,
                         isLinkValid: undefined,
+                        hasPermission: hasStudyAccess,
                         assayIdentifier: niAssay.data_id,
+                        // hasData: niAssay.has_data
                     };
                     non_integrated_assay.push(nonIntegratedAssay);
                 });
@@ -282,7 +285,10 @@ Ext.define('Connector.app.store.Study', {
                             id: existingAssay.id ? existingAssay.id : niAssay.id,
                             label: existingAssay.label ? existingAssay.label : niAssay.label,
                             isLinkValid: Ext.isDefined(existingAssay.isLinkValid) ? existingAssay.isLinkValid : niAssay.isLinkValid,
+                            // filePath: Connector.plugin.DocumentValidation.getStudyDocumentUrl(existingAssay.fileName || niAssay.fileName, study.study_name, existingAssay.id || niAssay.id),
+                            hasPermission: hasStudyAccess,
                             assayIdentifier: existingAssay.assayIdentifier ? existingAssay.assayIdentifier : niAssay.assayIdentifier,
+                            // hasData: !!existingAssay.filePath || !!niAssay.filePath
                         };
                         non_integrated_assay_data_map[niAssay.assayIdentifier] = combinedAssay;
                     }
@@ -321,6 +327,9 @@ Ext.define('Connector.app.store.Study', {
                     return pub.available_data_count > 0;
                 })
                 study.pub_available_data_count = pubDataAvailable.length;
+                study.data_types_available = this.getDataTypesAvailable(study);
+                study.data_available = (study.assays_added_count > 0 || study.ni_assays_added_count > 0 || study.pub_available_data_count > 0) ? 'Data added' : 'Data not added';
+
                 studies.push(study);
             }, this);
 
