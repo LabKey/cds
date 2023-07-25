@@ -581,7 +581,14 @@ Ext.define('Connector.view.Learn', {
 
             // If we have an id we are loading the details for that id
             if (Ext.isDefined(id) && dimension.itemDetail) {
-                store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
+
+                // TODO: when other Overview/details pages are decoupled from the Learn grid, then set "id: _id" in options.
+                // Currently, only Study Overview is decoupled from the Learn grid.
+                var options = {
+                    type: (dimension.detailItemCollection || dimension.detailCollection),
+                    id: (dimension.detailItemCollection ? id : undefined)
+                };
+                store = StoreCache.getStore(options);
 
                 var isIdString = dimension.itemDetail[0].isIdString;
                 // coerce the id's type, this 'id' is possibly coming from the URL context
@@ -595,20 +602,15 @@ Ext.define('Connector.view.Learn', {
                     this.loadModel(model, dimension, urlTab, id, params);
                 }
                 else {
-                    // if (!store.isLoading() && store.getCount() > 0) {
-                    //     Connector.getApplication().getController('Connector').showNotFound();
-                    // }
-                    // else {
-                        store.on('load', function(s) {
-                            var _model = s.getById(_id) || this.resolveModel(s, _id);
-                            if (_model) {
-                                this.loadModel(_model, dimension, urlTab, id, params);
-                            }
-                            else {
-                                Connector.getApplication().getController('Connector').showNotFound();
-                            }
-                        }, this, {single: true});
-                    // }
+                    store.on('load', function(s) {
+                        var _model = s.getById(_id) || this.resolveModel(s, _id);
+                        if (_model) {
+                            this.loadModel(_model, dimension, urlTab, id, params);
+                        }
+                        else {
+                            Connector.getApplication().getController('Connector').showNotFound();
+                        }
+                    }, this, {single: true});
                     this.loadData(dimension, store, id);
                 }
             }
