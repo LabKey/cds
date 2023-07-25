@@ -1064,8 +1064,7 @@ Ext.define('Connector.view.LearnHeader', {
 
     filterStoreFromUrlParams: function(id, dimension, params, skipUpdateFilters)
     {
-        if (Object.keys(params).length > 0)
-            this.updateSearchValue(dimension, params);
+        this.updateSearchValue(dimension, params);
 
         this.updateSort(dimension, params, id != null);
 
