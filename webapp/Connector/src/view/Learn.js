@@ -505,8 +505,7 @@ Ext.define('Connector.view.Learn', {
     loadData : function(dimension, store, id) {
         if (dimension) {
             var dimensionName, hasHierarchy =  true;
-            if (dimension.getHierarchies().length > 0)
-            {
+            if (dimension.getHierarchies().length > 0) {
                 dimensionName = dimension.getHierarchies()[0].getName();
             }
             else {
@@ -514,14 +513,12 @@ Ext.define('Connector.view.Learn', {
                 hasHierarchy = false;
             }
 
-
             if (id || !this.dimensionDataLoaded[dimensionName]) {
                 store.on('load', function() {
                     this.dimensionDataLoaded[dimensionName] = true;
                     this.sortAndFilterStoreDelayed(store);
                 }, this);
-                if (hasHierarchy)
-                {
+                if (hasHierarchy) {
                     Connector.getState().onMDXReady(function(mdx) {
                         mdx.query({
                             onRows: [{
@@ -542,7 +539,6 @@ Ext.define('Connector.view.Learn', {
                     Ext.getCmp('learn-grid-export-button-id').store = store;
                     store.loadSlice();
                 }
-
             }
             else {
                 if(store.getCount() === 0)
@@ -661,7 +657,7 @@ Ext.define('Connector.view.Learn', {
 
     resolveModel : function(store, id) {
         var delimiter = Connector.getService('Learn').URL_DELIMITER;
-        if (Ext.isString(id) && id.indexOf(delimiter) != -1) {
+        if (Ext.isString(id) && id.indexOf(delimiter) !== -1) {
             var _id = id.split(delimiter),
                     prop = _id[0],
                     val = Ext.isNumber(parseInt(_id[1])) ? parseInt(_id[1]) : _id[1],
