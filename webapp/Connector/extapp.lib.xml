@@ -163,6 +163,7 @@
         <script path="Connector/src/app/model/Assay.js"/>
         <script path="Connector/src/app/model/Labs.js"/>
         <script path="Connector/src/app/model/Study.js"/>
+        <script path="Connector/src/app/model/StudyOverview.js"/>
         <script path="Connector/src/app/model/StudyProducts.js"/>
         <script path="Connector/src/app/model/VariableList.js"/>
         <script path="Connector/src/app/model/Report.js"/>
@@ -176,6 +177,7 @@
         <script path="Connector/src/app/store/Assay.js"/>
         <script path="Connector/src/app/store/Labs.js"/>
         <script path="Connector/src/app/store/Study.js"/>
+        <script path="Connector/src/app/store/StudyOverview.js"/>
         <script path="Connector/src/app/store/StudyProducts.js"/>
         <script path="Connector/src/app/store/VariableList.js"/>
         <script path="Connector/src/app/store/Report.js"/>

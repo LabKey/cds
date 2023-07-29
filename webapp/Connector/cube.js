@@ -240,6 +240,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.Study',
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
+                detailItemCollection: 'Connector.app.store.StudyOverview',
                 itemDetailTabs: [{
                     url: 'overview',
                     isDefault: true,
@@ -833,6 +834,7 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsSummary: true,
                 summaryTargetLevel: 'path::0|1',
                 detailCollection: undefined,
+                detailItemCollection: undefined,
                 detailModel: undefined,
                 detailView: undefined,
                 itemDetail: undefined,

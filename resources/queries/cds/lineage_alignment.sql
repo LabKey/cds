@@ -1,3 +1,4 @@
+SELECT
 aseq.mab_id,
 algn.sequence_id,
 algn.locus,
@@ -66,7 +67,6 @@ algn.v_sequence_end,
 algn.v_germline_start,
 algn.v_germline_end,
 algn.d_sequence_start,
-2
 algn.d_sequence_end,
 algn.d_germline_start,
 algn.d_germline_end,

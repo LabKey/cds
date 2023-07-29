@@ -1122,14 +1122,36 @@ public class CDSController extends SpringActionController
         }
     }
 
+    public static class StudyProtocolForm
+    {
+        String _prot;
+
+        public String getProt()
+        {
+            return _prot;
+        }
+
+        public void setProt(String prot)
+        {
+            _prot = prot;
+        }
+
+    }
+
     @RequiresPermission(ReadPermission.class)
-    public static class GetNonIntegratedDocumentAction extends ReadOnlyApiAction<Object>
+    public static class GetNonIntegratedDocumentAction extends ReadOnlyApiAction<StudyProtocolForm>
     {
         @Override
-        public Object execute(Object o, BindException errors)
+        public Object execute(StudyProtocolForm protocol, BindException errors)
         {
             TableInfo tableInfo = QueryService.get().getUserSchema(getUser(), getContainer(), "cds").getTable("learn_documentsforstudies", null);
-            Filter filter = new SimpleFilter(FieldKey.fromString("document_type"), "Non-Integrated Assay");
+            SimpleFilter filter = new SimpleFilter(FieldKey.fromString("document_type"), "Non-Integrated Assay");
+
+            if (null != protocol && StringUtils.isNotBlank(protocol.getProt()))
+            {
+                filter.addCondition(FieldKey.fromString("prot"), protocol.getProt());
+            }
+
             TableSelector tableSelector = new TableSelector(tableInfo, filter, null);
             List<StudyDocumentObj> niDocuments = tableSelector.getArrayList(StudyDocumentObj.class);
 
