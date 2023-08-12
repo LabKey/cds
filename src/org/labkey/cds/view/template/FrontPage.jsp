@@ -73,6 +73,34 @@
                 $('#notification').remove();
             });
         });
+
+
+        LABKEY.Ajax.request({
+            url : LABKEY.ActionURL.buildURL('cds', 'news.api'),
+            success: LABKEY.Utils.getCallbackWrapper(function(response) {
+                if (response.success)
+                {
+                    if (response.items) {
+                        console.log("response.items = ", response.items);
+
+                        var $table = $('<table>').appendTo($('#recentBlogPosts'));
+                        $.each(response.items, function (index, item) {
+                                    if (index === 4) {
+                                        return;
+                                    }
+                                    var $tr = $('<tr>').appendTo($table);
+                                    $('<td>').text(item.title).appendTo($tr);
+                                    // $('<td>').text(item.link).appendTo($tr);
+                                    // $('<td>').text(item.description).appendTo($tr);
+                                    // $('<td>').text(item.imagePath).appendTo($tr);
+                                });
+                    }
+                }
+            }),
+            failure: LABKEY.Utils.getCallbackWrapper(function(response) {
+                LABKEY.Utils.alert('Error', 'Unable to get blog posts : ' + response.exception);
+            }, this, true)
+        });
     </script>
 </head>
 <body>
@@ -631,10 +659,13 @@
                     <p>as it becomes available.</p>
                 </div>
             </div>
+            <div id="recentBlogPosts"></div>
             <a href="#" class="circle move-section-down">
                 <div class="arrow"></div>
             </a>
         </div>
+
+
         <div data-index='3' data-name="Our Goal" class="section goal-section">
             <div class="goal-container">
                 <div class="title">

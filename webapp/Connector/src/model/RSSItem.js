@@ -15,7 +15,8 @@ Ext.define('Connector.model.RSSItem', {
 
         /* Optional */
         {name: 'pubDate', type: 'date'},
-        {name: 'guid'}
+        {name: 'guid'},
+        {name: 'imagePath'} //path to an image that is displayed in the blog post, this image will be used to generate a thumbnail on the home page
     ],
 
     proxy: {

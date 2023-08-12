@@ -1087,7 +1087,7 @@ Ext.define('Connector.view.LearnHeader', {
         search.emptyText = 'Search ' + dimension.pluralName.toLowerCase();
         var newSearchValue = params && params.q ? params.q : '';
         search.setValue(newSearchValue);
-        if (!newSearchValue) {
+        if (search.getValue() !== newSearchValue) {
             this.fireEvent('searchchanged', newSearchValue);
         }
     },
