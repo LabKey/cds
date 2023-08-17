@@ -20,7 +20,11 @@
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.cds.CDSModule" %>
 <%@ page import="org.labkey.api.util.HtmlString" %>
+<%@ page import="org.labkey.api.settings.AppProps" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
+<%
+    final String baseURL = AppProps.getInstance().getBaseServerUrl() + AppProps.getInstance().getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,19 +85,53 @@
                 if (response.success)
                 {
                     if (response.items) {
-                        console.log("response.items = ", response.items);
+                        var items = response.items;
 
-                        var $table = $('<table>').appendTo($('#recentBlogPosts'));
-                        $.each(response.items, function (index, item) {
-                                    if (index === 4) {
-                                        return;
-                                    }
-                                    var $tr = $('<tr>').appendTo($table);
-                                    $('<td>').text(item.title).appendTo($tr);
-                                    // $('<td>').text(item.link).appendTo($tr);
-                                    // $('<td>').text(item.description).appendTo($tr);
-                                    // $('<td>').text(item.imagePath).appendTo($tr);
-                                });
+                        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+                        var $table = $('<table style="margin-left: auto; margin-right: auto;">').appendTo($('#recentBlogPosts'));
+
+                        var $tr = $('<tr>').appendTo($table);
+
+                        var $displayThumbnail = function(imageIdx) {
+                            var canvas = document.createElement("canvas");
+                            canvas.width = 175;
+                            canvas.height = 85;
+                            canvas.style.border = "1px solid #DCDCDC";
+                            var c = canvas.getContext("2d");
+
+                            var img = new Image();
+                            img.onload = function () {
+                                c.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            }
+                            img.src = "<%=h(baseURL)%>" + items[imageIdx].imagePath;
+                            document.getElementById("thumbnail" + (imageIdx+1)).appendChild(canvas);
+                        };
+
+                        $('<td>').html('<a id="thumbnail1" href="' + items[0].link + '"></a>').appendTo($tr);
+                        $displayThumbnail(0);
+
+                        $('<td>').html('<a id="thumbnail2" href="' + items[1].link + '"></a>').appendTo($tr);
+                        $displayThumbnail(1);
+
+                        $('<td>').html('<a id="thumbnail3" href="' + items[2].link + '"></a>').appendTo($tr);
+                        $displayThumbnail(2);
+
+                        $('<td>').html('<a id="thumbnail4" href="' + items[3].link + '"></a>').appendTo($tr);
+                        $displayThumbnail(3);
+
+                        $tr = $('<tr>').appendTo($table);
+                        $('<td style="text-align: left;height:36px; word-wrap: break-word; line-height: 18px; color:#666363; font-family: Georgia; font-style: normal; font-size: 1em; font-weight: 100">').text(new Date(items[0].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        $('<td style="text-align: left;height:36px; word-wrap: break-word; line-height: 18px; color:#666363; font-family: Georgia; font-style: normal; font-size: 1em; font-weight: 100">').text(new Date(items[1].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        $('<td style="text-align: left;height:36px; word-wrap: break-word; line-height: 18px; color:#666363; font-family: Georgia; font-style: normal; font-size: 1em; font-weight: 100">').text(new Date(items[2].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        $('<td style="text-align: left;height:36px; word-wrap: break-word; line-height: 18px; color:#666363; font-family: Georgia; font-style: normal; font-size: 1em; font-weight: 100">').text(new Date(items[3].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+
+                        $tr = $('<tr>').appendTo($table);
+                        $('<td style="text-align: left;width: 170px;height:72px; padding-right: 10px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[0].title).appendTo($tr);
+                        $('<td style="text-align: left;width: 170px;height:72px; padding-right: 10px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[1].title).appendTo($tr);
+                        $('<td style="text-align: left;width: 170px;height:72px; padding-right: 10px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[2].title).appendTo($tr);
+                        $('<td style="text-align: left;width: 170px;height:72px; padding-right: 10px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[3].title).appendTo($tr);
+
                     }
                 }
             }),
@@ -659,7 +697,7 @@
                     <p>as it becomes available.</p>
                 </div>
             </div>
-            <div id="recentBlogPosts"></div>
+            <div style="margin-top: 5.33em" id="recentBlogPosts"></div>
             <a href="#" class="circle move-section-down">
                 <div class="arrow"></div>
             </a>
