@@ -89,9 +89,9 @@
 
                         var options = { year: 'numeric', month: 'long', day: 'numeric' };
 
-                        var $table = $('<table style="margin-left: 24%; margin-right: auto;">').appendTo($('#recentBlogPosts'));
+                        var $table = $('<table>').appendTo($('#recentBlogPosts'));
 
-                        var $tr = $('<tr>').appendTo($table);
+                        var $tr = $('<tr class="thumbnail">').appendTo($table);
 
                         var $displayThumbnail = function(imageIdx) {
                             var canvas = document.createElement("canvas");
@@ -109,29 +109,29 @@
                             document.getElementById("thumbnail" + (imageIdx+1)).appendChild(canvas);
                         };
 
-                        $('<td style="padding-right: 55px">').html('<a id="thumbnail1" href="' + items[0].link + '"></a>').appendTo($tr);
+                        $('<td>').html('<a id="thumbnail1" href="' + items[0].link + '"></a>').appendTo($tr);
                         $displayThumbnail(0);
 
-                        $('<td style="padding-right: 55px">').html('<a id="thumbnail2" href="' + items[1].link + '"></a>').appendTo($tr);
+                        $('<td>').html('<a id="thumbnail2" href="' + items[1].link + '"></a>').appendTo($tr);
                         $displayThumbnail(1);
 
-                        $('<td style="padding-right: 55px">').html('<a id="thumbnail3" href="' + items[2].link + '"></a>').appendTo($tr);
+                        $('<td>').html('<a id="thumbnail3" href="' + items[2].link + '"></a>').appendTo($tr);
                         $displayThumbnail(2);
 
-                        $('<td style="padding-right: 55px">').html('<a id="thumbnail4" href="' + items[3].link + '"></a>').appendTo($tr);
+                        $('<td>').html('<a id="thumbnail4" href="' + items[3].link + '"></a>').appendTo($tr);
                         $displayThumbnail(3);
 
-                        $tr = $('<tr>').appendTo($table);
-                        $('<td style="text-align: left;height:36px; word-wrap: break-word; line-height: 18px; color:#666363; font-family: Georgia; font-style: normal; font-size: 1em; font-weight: 100">').text(new Date(items[0].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
-                        $('<td style="text-align: left;height:36px; word-wrap: break-word; line-height: 18px; color:#666363; font-family: Georgia; font-style: normal; font-size: 1em; font-weight: 100">').text(new Date(items[1].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
-                        $('<td style="text-align: left;height:36px; word-wrap: break-word; line-height: 18px; color:#666363; font-family: Georgia; font-style: normal; font-size: 1em; font-weight: 100">').text(new Date(items[2].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
-                        $('<td style="text-align: left;height:36px; word-wrap: break-word; line-height: 18px; color:#666363; font-family: Georgia; font-style: normal; font-size: 1em; font-weight: 100">').text(new Date(items[3].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        $tr = $('<tr class="pub-date">').appendTo($table);
+                        $('<td>').text(new Date(items[0].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        $('<td>').text(new Date(items[1].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        $('<td>').text(new Date(items[2].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        $('<td>').text(new Date(items[3].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
 
-                        $tr = $('<tr>').appendTo($table);
-                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 25px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[0].title).appendTo($tr);
-                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 25px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[1].title).appendTo($tr);
-                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 25px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[2].title).appendTo($tr);
-                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 25px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[3].title).appendTo($tr);
+                        $tr = $('<tr class="blog-title">').appendTo($table);
+                        $('<td>').text(items[0].title).appendTo($tr);
+                        $('<td>').text(items[1].title).appendTo($tr);
+                        $('<td>').text(items[2].title).appendTo($tr);
+                        $('<td>').text(items[3].title).appendTo($tr);
 
                     }
                 }
@@ -652,7 +652,7 @@
 
             <div class="statistics">
 
-                <div style="background-color: #EBEBEB; width: 731px; height: 128px; border-radius: 100px; padding-top: 20px; padding-bottom: 5px; margin-left: 28.5%;">
+                <div class="pill">
                     <a class="public-page-link" href="<%=getPublicPageURL("study")%>">
                         <div class="products datapoint">
                             <div class="value">
@@ -707,26 +707,26 @@
                     <p>days ago.</p>
                 </div>
             </div>
-            <div style="height: 80px; margin-left:24%; margin-right:45%; width: 920px; flex-shrink: 0; border-bottom: 1px solid #E1E1E1;">
-                <table>
-                    <tr>
-                        <td>
-                            <div style="text-align: left; color:#FB2E5C; width: 514px; font-family: Georgia,serif; font-size: 18px;font-style: normal;font-weight: 400; line-height: 32px">
-                                Recent Blog Posts
-                            </div>
-                        </td>
-                        <td style="padding-left: 200px;">
-                            <div class="links">
-                                <span>
-                                    <a class="front-page-button" href="<%=h("https://dataspace.cavd.org/_webdav/static/@files/blogs/all.html")%>">Go to blog</a>
-                                </span>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+            <div class="blogs">
+                <div class="blog-section-begin">
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="recent-blog-posts">
+                                    Recent Blog Posts
+                                </div>
+                            </td>
+                            <td class="blog-button">
+                                <div>
+                                    <a href="<%=h("https://dataspace.cavd.org/_webdav/static/@files/blogs/all.html")%>">Go to blog</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="blog-list" id="recentBlogPosts"></div>
             </div>
-            <div style="margin-top: 4em;" id="recentBlogPosts"></div>
-            <div style="margin-top: 3em; margin-left:24%; margin-right:45%;width: 920px; flex-shrink: 0; border-bottom: 1px solid #E1E1E1;"></div>
+
             <a href="#" class="circle move-section-down">
                 <div class="arrow"></div>
             </a>

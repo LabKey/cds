@@ -183,17 +183,33 @@
   .statistics {
     overflow: hidden;
 
+    .pill {
+      background-color: #EBEBEB;
+      width: 731px;
+      height: 128px;
+      border-radius: 100px;
+      padding-top: 20px;
+      padding-bottom: 5px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+
     .timestamp {
-      margin-bottom: 5.33em;
+      margin-bottom: 4.5em;
       @include phone {
         margin-bottom: 2.66em;
       }
       p {
         display: inline-block;
         margin: 0;
-        font-size: 1.5em;
-        @include light-georgia;
-        color: $lighter-grey-text;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 32px;
+        font-family: "Arial", sans-serif;
+        text-align: center;
+        color: #969696;
       }
       .days {
         padding: 0em 0.25em;
@@ -267,6 +283,108 @@
         font-size: 1.5em;
         @include light-georgia;
       }
+    }
+
+  }
+
+  .blogs {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+
+    .blog-section-begin {
+      height: 80px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 920px;
+      border-bottom: 1px solid #E1E1E1;
+      position: relative;
+
+      .recent-blog-posts {
+        text-align: left;
+        color: #FB2E5C;
+        width: 514px;
+        font-family: Georgia,serif;
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 32px;
+      }
+
+      .blog-button {
+        div {
+          position: relative;
+          width: 100%;
+          white-space: nowrap;
+          outline: none;
+          border: none;
+          text-align: right;
+          text-overflow: ellipsis;
+          padding: 0em 2em;
+          margin: 2em 0em 2.67em 0em;
+
+          a {
+            width: 122px;
+            height: 31px;
+            border-radius: 5px;
+            background-color: $navigation-pink;
+            text-align: center;
+            text-decoration: none;
+            @include light-arial;
+            color: white;
+            display: block;
+            line-height: 2.5em;
+            margin-left: 250px;
+          }
+        }
+      }
+    }
+
+    .blog-list {
+      margin-top: 4em;
+      margin-left: auto;
+      margin-right: auto;
+      width: 920px;
+      border-bottom: 1px solid #E1E1E1;
+      position: relative;
+      padding-bottom: 30px;
+
+      .thumbnail {
+        td {
+          padding-right: 55px;
+        }
+      }
+
+      .pub-date {
+        td {
+          text-align: left;
+          height: 36px;
+          word-wrap: break-word;
+          line-height: 18px;
+          color: #666363;
+          font-family: Georgia, serif;
+          font-style: normal;
+          font-size: 1em;
+          font-weight: 100;
+        }
+      }
+      .blog-title {
+        td {
+          text-align: left;
+          width: 200px;
+          height: 72px;
+          padding-right: 25px;
+          word-wrap: break-word;
+          line-height: 1em;
+          color: #2D2D2D;
+          font-family: Georgia, serif;
+          font-style: normal;
+          font-size: 1.5em;
+          font-weight: 100;
+          vertical-align: text-top;
+        }
+      }
+
     }
 
   }
