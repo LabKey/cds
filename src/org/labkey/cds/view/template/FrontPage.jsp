@@ -89,36 +89,36 @@
 
                         var options = { year: 'numeric', month: 'long', day: 'numeric' };
 
-                        var $table = $('<table style="margin-left: auto; margin-right: auto;">').appendTo($('#recentBlogPosts'));
+                        var $table = $('<table style="margin-left: 24%; margin-right: auto;">').appendTo($('#recentBlogPosts'));
 
                         var $tr = $('<tr>').appendTo($table);
 
                         var $displayThumbnail = function(imageIdx) {
                             var canvas = document.createElement("canvas");
-                            canvas.width = 160;
-                            canvas.height = 85;
-                            // canvas.style.padding = "0px 5px 0px 0px";
+                            canvas.width = 176.761;
+                            canvas.height = 100;
                             canvas.style.border = "1px solid #DCDCDC";
                             var c = canvas.getContext("2d");
 
                             var img = new Image();
+                            img.src = "<%=h(baseURL)%>" + items[imageIdx].imagePath;
+                            console.log("img src = " + img.src);
                             img.onload = function () {
                                 c.drawImage(img, 0, 0, canvas.width, canvas.height);
                             }
-                            img.src = "<%=h(baseURL)%>" + items[imageIdx].imagePath;
                             document.getElementById("thumbnail" + (imageIdx+1)).appendChild(canvas);
                         };
 
-                        $('<td style="padding-right: 46px">').html('<a id="thumbnail1" href="' + items[0].link + '"></a>').appendTo($tr);
+                        $('<td style="padding-right: 55px">').html('<a id="thumbnail1" href="' + items[0].link + '"></a>').appendTo($tr);
                         $displayThumbnail(0);
 
-                        $('<td style="padding-right: 46px">').html('<a id="thumbnail2" href="' + items[1].link + '"></a>').appendTo($tr);
+                        $('<td style="padding-right: 55px">').html('<a id="thumbnail2" href="' + items[1].link + '"></a>').appendTo($tr);
                         $displayThumbnail(1);
 
-                        $('<td style="padding-right: 46px">').html('<a id="thumbnail3" href="' + items[2].link + '"></a>').appendTo($tr);
+                        $('<td style="padding-right: 55px">').html('<a id="thumbnail3" href="' + items[2].link + '"></a>').appendTo($tr);
                         $displayThumbnail(2);
 
-                        $('<td style="padding-right: 46px">').html('<a id="thumbnail4" href="' + items[3].link + '"></a>').appendTo($tr);
+                        $('<td style="padding-right: 55px">').html('<a id="thumbnail4" href="' + items[3].link + '"></a>').appendTo($tr);
                         $displayThumbnail(3);
 
                         $tr = $('<tr>').appendTo($table);
@@ -128,10 +128,10 @@
                         $('<td style="text-align: left;height:36px; word-wrap: break-word; line-height: 18px; color:#666363; font-family: Georgia; font-style: normal; font-size: 1em; font-weight: 100">').text(new Date(items[3].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
 
                         $tr = $('<tr>').appendTo($table);
-                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 10px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[0].title).appendTo($tr);
-                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 10px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[1].title).appendTo($tr);
-                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 10px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[2].title).appendTo($tr);
-                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 10px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[3].title).appendTo($tr);
+                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 25px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[0].title).appendTo($tr);
+                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 25px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[1].title).appendTo($tr);
+                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 25px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[2].title).appendTo($tr);
+                        $('<td style="text-align: left;width: 200px;height:72px; padding-right: 25px;word-wrap: break-word; line-height: 1em; color:#2D2D2D; font-family: Georgia; font-style: normal; font-size: 1.5em; font-weight: 100; vertical-align: text-top">').text(items[3].title).appendTo($tr);
 
                     }
                 }
@@ -640,18 +640,19 @@
             <a href="#" class="circle move-section-down">
                 <div class="arrow"></div>
             </a>
+            <div></div>
         </div>
         <div data-index='2' data-gif="/img/learn.gif" data-name="Always Growing" class="section learn-section">
-            <div class="container">
+            <div class="container" style="padding-bottom: 38px!important;">
                 <h1>Always Growing</h1>
-            </div>
-            <div class="statistics">
-                <div class="timestamp">
-                    <p>Updated </p>
-                    <p class="days">-</p>
-                    <p>days ago.</p>
+                <div style="padding-top: 11px; line-height: 32px;font-weight: 400;font-style: normal;font-size: 18px;font-family: Georgia,serif; text-align: center; color: #2D2D2D;">
+                    Our team regularly adds new data as it becomes available.
                 </div>
-                <div class="counts">
+            </div>
+
+            <div class="statistics">
+
+                <div style="background-color: #EBEBEB; width: 731px; height: 128px; border-radius: 100px; padding-top: 20px; padding-bottom: 5px; margin-left: 28.5%;">
                     <a class="public-page-link" href="<%=getPublicPageURL("study")%>">
                         <div class="products datapoint">
                             <div class="value">
@@ -693,12 +694,39 @@
                         </div>
                     </a>
                 </div>
-                <div class="reminder">
-                    <p>Our team regularly adds new data</p>
-                    <p>as it becomes available.</p>
+                <div class="timestamp" style="padding-top: 20px;
+                     color: #969696;
+                     text-align: center;
+                     font-family: Arial,serif!important;
+                     font-size: 12px!important;
+                     font-style: normal;
+                     font-weight: 400;
+                     line-height: 32px;">
+                    <p>Last updated </p>
+                    <p class="days">-</p>
+                    <p>days ago.</p>
                 </div>
             </div>
-            <div style="margin-top: 5.33em" id="recentBlogPosts"></div>
+            <div style="height: 80px; margin-left:24%; margin-right:45%; width: 920px; flex-shrink: 0; border-bottom: 1px solid #E1E1E1;">
+                <table>
+                    <tr>
+                        <td>
+                            <div style="text-align: left; color:#FB2E5C; width: 514px; font-family: Georgia,serif; font-size: 18px;font-style: normal;font-weight: 400; line-height: 32px">
+                                Recent Blog Posts
+                            </div>
+                        </td>
+                        <td style="padding-left: 200px;">
+                            <div class="links">
+                                <span>
+                                    <a class="front-page-button" href="<%=h("https://dataspace.cavd.org/_webdav/static/@files/blogs/all.html")%>">Go to blog</a>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div style="margin-top: 4em;" id="recentBlogPosts"></div>
+            <div style="margin-top: 3em; margin-left:24%; margin-right:45%;width: 920px; flex-shrink: 0; border-bottom: 1px solid #E1E1E1;"></div>
             <a href="#" class="circle move-section-down">
                 <div class="arrow"></div>
             </a>
