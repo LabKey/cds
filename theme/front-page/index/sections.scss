@@ -172,11 +172,21 @@
 
   .container {
     text-align: center;
-    padding: 1.83em 0 5.33em 0;
+    padding: 1.25em 0 5.33em 0;
     h1 {
       margin: 0;
       @include light-georgia;
       font-size: 3.011em;
+    }
+    .new-data-text {
+      padding-top: 11px;
+      line-height: 32px;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 18px;
+      font-family: Georgia,serif;
+      text-align: center;
+      color: #2D2D2D;
     }
   }
 
@@ -188,7 +198,7 @@
       width: 731px;
       height: 128px;
       border-radius: 100px;
-      padding-top: 20px;
+      padding-top: 15px;
       padding-bottom: 5px;
       margin-left: auto;
       margin-right: auto;
@@ -196,7 +206,9 @@
     }
 
     .timestamp {
-      margin-bottom: 4.5em;
+      margin-bottom: 1em;
+      padding-top: 20px;
+
       @include phone {
         margin-bottom: 2.66em;
       }
@@ -293,7 +305,7 @@
     margin-right: auto;
 
     .blog-section-begin {
-      height: 80px;
+      height: 50px;
       margin-left: auto;
       margin-right: auto;
       width: 920px;
@@ -321,7 +333,6 @@
           text-align: right;
           text-overflow: ellipsis;
           padding: 0em 2em;
-          margin: 2em 0em 2.67em 0em;
 
           a {
             width: 122px;
@@ -341,17 +352,16 @@
     }
 
     .blog-list {
-      margin-top: 4em;
+      margin-top: 2em;
       margin-left: auto;
       margin-right: auto;
       width: 920px;
       border-bottom: 1px solid #E1E1E1;
       position: relative;
-      padding-bottom: 30px;
 
       .thumbnail {
         td {
-          padding-right: 55px;
+          padding-right: 65px;
         }
       }
 
@@ -373,7 +383,7 @@
           text-align: left;
           width: 200px;
           height: 72px;
-          padding-right: 25px;
+          padding-right: 60px;
           word-wrap: break-word;
           line-height: 1em;
           color: #2D2D2D;

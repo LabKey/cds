@@ -645,7 +645,7 @@
         <div data-index='2' data-gif="/img/learn.gif" data-name="Always Growing" class="section learn-section">
             <div class="container" style="padding-bottom: 38px!important;">
                 <h1>Always Growing</h1>
-                <div style="padding-top: 11px; line-height: 32px;font-weight: 400;font-style: normal;font-size: 18px;font-family: Georgia,serif; text-align: center; color: #2D2D2D;">
+                <div class="new-data-text">
                     Our team regularly adds new data as it becomes available.
                 </div>
             </div>
@@ -694,14 +694,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="timestamp" style="padding-top: 20px;
-                     color: #969696;
-                     text-align: center;
-                     font-family: Arial,serif!important;
-                     font-size: 12px!important;
-                     font-style: normal;
-                     font-weight: 400;
-                     line-height: 32px;">
+                <div class="timestamp">
                     <p>Last updated </p>
                     <p class="days">-</p>
                     <p>days ago.</p>
@@ -726,7 +719,6 @@
                 </div>
                 <div class="blog-list" id="recentBlogPosts"></div>
             </div>
-
             <a href="#" class="circle move-section-down">
                 <div class="arrow"></div>
             </a>
