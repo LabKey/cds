@@ -250,7 +250,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                             logger.warn("Non-existent role: " + roleEntry.getKey() + ". Entry will be ignored");
                         }
                     }
-                    SecurityPolicyManager.savePolicy(policy);
+                    SecurityPolicyManager.savePolicy(policy, user);
                 }
             }
             else
