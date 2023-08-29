@@ -699,6 +699,16 @@
                     <p>days ago.</p>
                 </div>
             </div>
+
+            <a href="#" class="circle move-section-down">
+                <div class="arrow"></div>
+            </a>
+        </div>
+
+        <div data-index='3' data-gif="/img/learn.gif" data-name="Blog Posts" class="section learn-section">
+            <div class="container" style="padding-bottom: 38px!important;">
+                <h1>Blog Posts</h1>
+            </div>
             <div class="blogs">
                 <div class="blog-section-begin">
                     <table>
@@ -723,8 +733,7 @@
             </a>
         </div>
 
-
-        <div data-index='3' data-name="Our Goal" class="section goal-section">
+        <div data-index='4' data-name="Our Goal" class="section goal-section">
             <div class="goal-container">
                 <div class="title">
                     <h1>Our goal</h1>
@@ -754,7 +763,7 @@
                 </a>
             </div>
         </div>
-        <div data-index='4' data-gif="<%=getWebappURL("/frontpage/img/learn.gif")%>" data-name="Learn" class="section learn-section">
+        <div data-index='5' data-gif="<%=getWebappURL("/frontpage/img/learn.gif")%>" data-name="Learn" class="section learn-section">
             <div class="gif-title">
                 <h1>Learn</h1>
             </div>
@@ -772,7 +781,7 @@
                 <div class="arrow"></div>
             </a>
         </div>
-        <div data-index='5' data-gif="<%=getWebappURL("/frontpage/img/explore.gif")%>" data-name="Explore" class="section explore-section">
+        <div data-index='6' data-gif="<%=getWebappURL("/frontpage/img/explore.gif")%>" data-name="Explore" class="section explore-section">
             <div class="gif-title">
                 <h1>Explore</h1>
             </div>
@@ -789,7 +798,7 @@
                 <div class="arrow"></div>
             </a>
         </div>
-        <div data-index='6' data-gif="<%=getWebappURL("/frontpage/img/collab.gif")%>" data-name="Collaborate" class="section collab-section">
+        <div data-index='7' data-gif="<%=getWebappURL("/frontpage/img/collab.gif")%>" data-name="Collaborate" class="section collab-section">
             <div class="gif-title">
                 <h1>Collaborate</h1>
             </div>
@@ -805,7 +814,7 @@
                 <div class="arrow"></div>
             </a>
         </div>
-        <div data-index='7' data-name="About" class="section about-section">
+        <div data-index='8' data-name="About" class="section about-section">
             <div class="about-container">
                 <div class="title">
                     <h1>About</h1>
