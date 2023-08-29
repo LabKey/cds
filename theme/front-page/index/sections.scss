@@ -20,7 +20,7 @@
   max-height: 62em;
 
   .fp-scrollable {
-    padding-top: 6em !important;
+    //padding-top: 6em !important;
     @include phone {
       padding-top: 0em !important;
     }
@@ -69,11 +69,11 @@
     @include tablet {
       margin: 3em 0 2.67em 0;
     }
-    @include legacy-desktop {
-      margin: 10.67em 0 2.67em 0;
-    }
+    //@include legacy-desktop {
+    //  margin: 10.67em 0 2.67em 0;
+    //}
     .title {
-      margin-bottom: 2.67em;
+      margin: 10.5em 0 2.67em 0;
 
       h1 {
         font-size: 3.011em;
@@ -147,7 +147,7 @@
   .learn-more {
     text-align: center;
     max-width: 25.35em;
-    margin: 2.67em auto 1.33em auto;
+    margin: 2.2em auto 1.33em auto;
     overflow: hidden;
     p {
       margin: 0;
@@ -155,7 +155,7 @@
       @include light-arial;
     }
     .container {
-      margin: 5.33em 0em 0em 0em;
+      margin: 5.2em 0em 0em 0em;
       h3 {
         font-size: 1.5em;
         @include light-georgia;

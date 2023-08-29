@@ -603,7 +603,6 @@
             </div>
             <div class="welcome" style="margin-bottom: unset">
                 <div class="title" style="margin-bottom: unset">
-                    <h1></h1>
                     <h1>Welcome to the</h1>
                     <h1>CAVD DataSpace</h1>
                 </div>
