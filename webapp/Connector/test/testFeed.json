@@ -1,18 +1,18 @@
 {
   "items": [
     {
-      "title": "Event: LabKey sponsoring 2014 AIRI IT Meeting",
-      "link": "http://www.labkey.com/news/news-releases/07052014-362",
-      "description": "LabKey looks forward to sponsoring the Association of Independent Research Institutes (AIRI) 2014 Information Technology Meeting in Seattle, May 8-9, 2014. This meeting's theme is \"Seeking Balance – Innovation vs. Practical Solutions to IT Challenges\" and features presentations by IT innovators at leading research institutes (program). The Fred Hutchinson Cancer Research Center (FHCRC) will host the 2014 AIRI IT meeting",
-      "pubDate": "Fri, 02 May 2014 16:57:19 +0000",
-      "imagePath": "/_webdav/home/%40files/publicPage/imagesForThumbnail/2014.jpg"
+      "title": "Getting Started with Lab Inventory Tracking",
+      "link": "https://www.labkey.com/lab-inventory-tracking/",
+      "description": "Lab inventory tracking is an essential function for boosting efficiency and minimizing waste in scientific laboratories.",
+      "pubDate": "Fri, 11 Aug 2023 16:57:19 +0000",
+      "imagePath": "/_webdav/home/%40files/publicPage/imagesForThumbnail/BlogAug112023.jpg"
     },
     {
-      "title": "Panel and Talk: AMIA Joint Summits - April 9 and 10, 2014",
-      "link": "http://www.labkey.com/news/news-releases/03042014-361",
-      "description": "Mark Igra will join a panel of experts to address sustainable strategies for open source projects in clinical and translational research. Separately, Elizabeth Nelson will explore how large research consortia are using LabKey Server to overcome data challenges in this domain.",
-      "pubDate": "Thu, 03 Apr 2014 21:05:51 +0000",
-      "imagePath": "/_webdav/home/%40files/publicPage/imagesForThumbnail/PanelDisc.jpg"
+      "title": "What's New in LabKey 23.7",
+      "link": "https://www.labkey.com/whats-new-in-labkey-23-7/",
+      "description": "New features in LabKey Server, Sample Manager and Biologics LIMS",
+      "pubDate": "Tue, 25 Jul 2023 21:05:51 +0000",
+      "imagePath": "/_webdav/home/%40files/publicPage/imagesForThumbnail/WhatsNew23_7.jpg"
     },
     {
       "title": "Release: LabKey Server v14.1",
