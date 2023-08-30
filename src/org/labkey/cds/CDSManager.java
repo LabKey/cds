@@ -52,7 +52,6 @@ import org.labkey.api.security.ValidEmail;
 import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.view.NotFoundException;
-import org.labkey.cds.data.CSVCopyConfig;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
