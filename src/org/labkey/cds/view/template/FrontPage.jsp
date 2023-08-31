@@ -81,7 +81,6 @@
             });
         });
 
-
         LABKEY.Ajax.request({
             url : LABKEY.ActionURL.buildURL('cds', 'news.api'),
             success: LABKEY.Utils.getCallbackWrapper(function(response) {
