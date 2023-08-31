@@ -329,6 +329,18 @@ public class CDSManager
         return PageFlowUtil.decode(mp.getEffectiveValue(container));
     }
 
+    public String getBlogPath(Container container)
+    {
+        ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.BLOG_PATH);
+        return PageFlowUtil.decode(mp.getEffectiveValue(container));
+    }
+
+    public String getALlBlogsPath(Container container)
+    {
+        ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.ALL_BLOGS_PATH);
+        return PageFlowUtil.decode(mp.getEffectiveValue(container));
+    }
+
     public TableInfo getSiteUserTableInfo(User user)
     {
         UserSchema coreSchema = QueryService.get().getUserSchema(user, getUserTableContainer(), "core");

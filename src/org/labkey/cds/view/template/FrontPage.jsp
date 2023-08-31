@@ -21,9 +21,12 @@
 <%@ page import="org.labkey.cds.CDSModule" %>
 <%@ page import="org.labkey.api.util.HtmlString" %>
 <%@ page import="org.labkey.api.settings.AppProps" %>
+<%@ page import="org.labkey.cds.CDSManager" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     final String baseURL = AppProps.getInstance().getBaseServerUrl() + AppProps.getInstance().getContextPath();
+    final String blogPath = CDSManager.get().getBlogPath(getContainer());
+    final String allBlogsPath = CDSManager.get().getALlBlogsPath(getContainer());
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -101,7 +104,8 @@
                             var c = canvas.getContext("2d");
 
                             var img = new Image();
-                            img.src = "<%=h(baseURL)%>" + items[imageIdx].imagePath;
+                            img.src = "<%=h(baseURL + blogPath)%>" + items[imageIdx].imageFile;
+
                             console.log("img src = " + img.src);
                             img.onload = function () {
                                 c.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -720,7 +724,7 @@
                             </td>
                             <td class="blog-button">
                                 <div>
-                                    <a href="<%=h("https://dataspace.cavd.org/_webdav/static/@files/blogs/all.html")%>">Go to blog</a>
+                                    <a href="<%=h(allBlogsPath)%>">Go to blog</a>
                                 </div>
                             </td>
                         </tr>

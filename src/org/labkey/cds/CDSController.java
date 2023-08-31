@@ -287,7 +287,7 @@ public class CDSController extends SpringActionController
             private String _title;
             private Date _pubDate;
             private String _description;
-            private String _imagePath;
+            private String _imageFile;
 
             public String getLink()
             {
@@ -329,14 +329,14 @@ public class CDSController extends SpringActionController
                 _description = description;
             }
 
-            public String getImagePath()
+            public String getImageFile()
             {
-                return _imagePath;
+                return _imageFile;
             }
 
-            public void setImagePath(String imagePath)
+            public void setImageFile(String imageFile)
             {
-                _imagePath = imagePath;
+                _imageFile = imageFile;
             }
         }
     }
