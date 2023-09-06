@@ -95,8 +95,6 @@
 
                         var $table = $('<table>').appendTo($('#recentBlogPosts'));
 
-                        var $tr = $('<tr class="thumbnail">').appendTo($table);
-
                         var $displayThumbnail = function (imageIdx) {
                             var canvas = document.createElement("canvas");
                             canvas.width = 176.761;
@@ -113,29 +111,24 @@
                             document.getElementById("thumbnail" + (imageIdx + 1)).appendChild(canvas);
                         };
 
-                        $('<td>').html('<a id="thumbnail1" href="' + items[0].link + '"></a>').appendTo($tr);
-                        $displayThumbnail(0);
+                        //display thumbnail
+                        var $tr = $('<tr class="thumbnail">').appendTo($table);
+                        for (var i = 0; i < maxNewsItemsToDisplay; i++) {
+                            $('<td>').html('<a id="thumbnail' + (i + 1) + '" href="' + items[i].link + '"></a>').appendTo($tr);
+                            $displayThumbnail(i);
+                        }
 
-                        $('<td>').html('<a id="thumbnail2" href="' + items[1].link + '"></a>').appendTo($tr);
-                        $displayThumbnail(1);
-
-                        $('<td>').html('<a id="thumbnail3" href="' + items[2].link + '"></a>').appendTo($tr);
-                        $displayThumbnail(2);
-
-                        $('<td>').html('<a id="thumbnail4" href="' + items[3].link + '"></a>').appendTo($tr);
-                        $displayThumbnail(3);
-
+                        //display date
                         $tr = $('<tr class="pub-date">').appendTo($table);
-                        $('<td>').text(new Date(items[0].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
-                        $('<td>').text(new Date(items[1].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
-                        $('<td>').text(new Date(items[2].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
-                        $('<td>').text(new Date(items[3].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        for (var j = 0; j < maxNewsItemsToDisplay; j++) {
+                            $('<td>').text(new Date(items[j].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        }
 
+                        //display title
                         $tr = $('<tr class="blog-title">').appendTo($table);
-                        $('<td>').text(items[0].title).appendTo($tr);
-                        $('<td>').text(items[1].title).appendTo($tr);
-                        $('<td>').text(items[2].title).appendTo($tr);
-                        $('<td>').text(items[3].title).appendTo($tr);
+                        for (var k = 0; k < maxNewsItemsToDisplay; k++) {
+                            $('<td>').text(items[k].title).appendTo($tr);
+                        }
                     }
                 }
             }),
