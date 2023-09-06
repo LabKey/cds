@@ -200,7 +200,7 @@ public class CDSController extends SpringActionController
             // Limited user with Reader role otherwise no feeds will be returned by RSSService.get().getFeeds()
             if (getUser().isGuest())
             {
-                user = new LimitedUser(User.guest, new int[0], Collections.singleton(RoleManager.getRole(ReaderRole.class)), false);
+                user = new LimitedUser(user, new int[0], Collections.singleton(RoleManager.getRole(ReaderRole.class)), false);
             }
             List<RSSFeed> feeds = RSSService.get().getFeeds(getContainer(), user);
 

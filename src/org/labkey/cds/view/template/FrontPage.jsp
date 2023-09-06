@@ -20,13 +20,11 @@
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.cds.CDSModule" %>
 <%@ page import="org.labkey.api.util.HtmlString" %>
-<%@ page import="org.labkey.api.settings.AppProps" %>
 <%@ page import="org.labkey.cds.CDSManager" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
-    final String baseURL = AppProps.getInstance().getBaseServerUrl() + AppProps.getInstance().getContextPath();
     final String blogPath = CDSManager.get().getBlogPath(getContainer());
-    final String allBlogsPath = CDSManager.get().getALlBlogsPath(getContainer());
+    final String allBlogsPath = CDSManager.get().getAllBlogsPath(getContainer());
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,18 +82,22 @@
         LABKEY.Ajax.request({
             url : LABKEY.ActionURL.buildURL('cds', 'news.api'),
             success: LABKEY.Utils.getCallbackWrapper(function(response) {
+
+                var maxNewsItemsToDisplay = 4;
+
                 if (response.success)
                 {
-                    if (response.items) {
-                        var items = response.items;
+                    var items = response.items;
 
-                        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    if (items && items.length >= maxNewsItemsToDisplay) {
+
+                        var options = {year: 'numeric', month: 'long', day: 'numeric'};
 
                         var $table = $('<table>').appendTo($('#recentBlogPosts'));
 
                         var $tr = $('<tr class="thumbnail">').appendTo($table);
 
-                        var $displayThumbnail = function(imageIdx) {
+                        var $displayThumbnail = function (imageIdx) {
                             var canvas = document.createElement("canvas");
                             canvas.width = 176.761;
                             canvas.height = 100;
@@ -103,13 +105,12 @@
                             var c = canvas.getContext("2d");
 
                             var img = new Image();
-                            img.src = "<%=h(baseURL + blogPath)%>" + items[imageIdx].imageFile;
+                            img.src = "<%=h(blogPath)%>" + items[imageIdx].imageFile;
 
-                            console.log("img src = " + img.src);
                             img.onload = function () {
                                 c.drawImage(img, 0, 0, canvas.width, canvas.height);
                             }
-                            document.getElementById("thumbnail" + (imageIdx+1)).appendChild(canvas);
+                            document.getElementById("thumbnail" + (imageIdx + 1)).appendChild(canvas);
                         };
 
                         $('<td>').html('<a id="thumbnail1" href="' + items[0].link + '"></a>').appendTo($tr);
@@ -135,7 +136,6 @@
                         $('<td>').text(items[1].title).appendTo($tr);
                         $('<td>').text(items[2].title).appendTo($tr);
                         $('<td>').text(items[3].title).appendTo($tr);
-
                     }
                 }
             }),

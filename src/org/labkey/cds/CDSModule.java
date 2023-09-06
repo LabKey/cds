@@ -100,7 +100,7 @@ public class CDSModule extends DefaultModule
         addModuleProperty(_showHiddenVariables);
 
         _blogPath = new ModuleProperty(this, BLOG_PATH);
-        _blogPath.setDescription("Full webdav path to which the short-cut '/blog/' will point");
+        _blogPath.setDescription("Full or relative webdav path to the blog files");
         _blogPath.setCanSetPerContainer(false);
         addModuleProperty(_blogPath);
 
