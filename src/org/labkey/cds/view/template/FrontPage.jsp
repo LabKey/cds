@@ -701,9 +701,9 @@
             </a>
         </div>
 
-        <div data-index='3' data-gif="/img/learn.gif" data-name="Blog Posts" class="section learn-section">
+        <div data-index='3' data-gif="/img/learn.gif" data-name="News" class="section learn-section">
             <div class="container" style="padding-bottom: 38px!important;">
-                <h1>Blog Posts</h1>
+                <h1>News</h1>
             </div>
             <div class="blogs">
                 <div class="blog-section-begin">
