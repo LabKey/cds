@@ -5,28 +5,28 @@
       "link": "https://www.labkey.com/lab-inventory-tracking/",
       "description": "Lab inventory tracking is an essential function for boosting efficiency and minimizing waste in scientific laboratories.",
       "pubDate": "Fri, 11 Aug 2023 16:57:19 +0000",
-      "imageFile": "BlogAug112023.jpg"
+      "thumbnail": "BlogAug112023.jpg"
     },
     {
       "title": "What's New in LabKey 23.7",
       "link": "https://www.labkey.com/whats-new-in-labkey-23-7/",
       "description": "New features in LabKey Server, Sample Manager and Biologics LIMS",
       "pubDate": "Tue, 25 Jul 2023 21:05:51 +0000",
-      "imageFile": "WhatsNew23_7.jpg"
+      "thumbnail": "WhatsNew23_7.jpg"
     },
     {
       "title": "Release: LabKey Server v14.1",
       "link": "http://www.labkey.com/news/news-releases/17032014-360",
       "description": "The LabKey team is delighted to announce the release of LabKey Server v14.1.",
       "pubDate": "Mon, 17 Mar 2014 19:49:13 +0000",
-      "imageFile": "Stock.jpg"
+      "thumbnail": "Stock.jpg"
     },
     {
       "title": "Article: MedCity covers the LabKey story: \"Open-sourced in Seattle\"",
       "link": "http://www.labkey.com/news/news-releases/28012014-356",
       "description": "Open-sourced in Seattle: A fated collision of software talent and life science researchers.",
       "pubDate": "Tue, 28 Jan 2014 22:50:28 +0000",
-      "imageFile": "Stock.jpg"
+      "thumbnail": "Stock.jpg"
     },
     {
       "title": "Lecture: Josh Eckels presents at SLAS 2014, Jan 21 in San Diego",

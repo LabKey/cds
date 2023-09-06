@@ -103,7 +103,7 @@
                             var c = canvas.getContext("2d");
 
                             var img = new Image();
-                            img.src = "<%=h(blogPath)%>" + items[imageIdx].imageFile;
+                            img.src = "<%=h(blogPath)%>" + items[imageIdx].thumbnail;
 
                             img.onload = function () {
                                 c.drawImage(img, 0, 0, canvas.width, canvas.height);
