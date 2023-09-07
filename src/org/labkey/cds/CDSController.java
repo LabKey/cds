@@ -198,7 +198,7 @@ public class CDSController extends SpringActionController
 
             // In order to display blog posts on Dataspace's public page where the user is not required to log-in, we need to create a
             // Limited user with Reader role otherwise no feeds will be returned by RSSService.get().getFeeds()
-            if (getUser().isGuest())
+            if (!getContainer().hasPermission(user, ReadPermission.class))
             {
                 user = new LimitedUser(user, new int[0], Collections.singleton(RoleManager.getRole(ReaderRole.class)), false);
             }
