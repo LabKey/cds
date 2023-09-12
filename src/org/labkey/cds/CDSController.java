@@ -44,7 +44,6 @@ import org.labkey.api.data.CoreSchema;
 import org.labkey.api.data.DataColumn;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
-import org.labkey.api.data.Filter;
 import org.labkey.api.data.JdbcType;
 import org.labkey.api.data.Results;
 import org.labkey.api.data.ResultsImpl;
@@ -66,6 +65,7 @@ import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.AuthenticationManager;
 import org.labkey.api.security.Group;
 import org.labkey.api.security.IgnoresTermsOfUse;
+import org.labkey.api.security.LimitedUser;
 import org.labkey.api.security.MethodsAllowed;
 import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermission;
@@ -75,6 +75,8 @@ import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.User;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
+import org.labkey.api.security.roles.ReaderRole;
+import org.labkey.api.security.roles.RoleManager;
 import org.labkey.api.services.ServiceRegistry;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.util.DateUtil;
@@ -112,6 +114,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -182,7 +185,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresPermission(ReadPermission.class)
+    @RequiresNoPermission
     public class NewsAction extends ReadOnlyApiAction
     {
         @Override
@@ -191,12 +194,21 @@ public class CDSController extends SpringActionController
             ApiSimpleResponse response = new ApiSimpleResponse();
             List<Item> items = new ArrayList<>();
 
-            List<RSSFeed> feeds = RSSService.get().getFeeds(getContainer(), getUser());
+            User user = getUser();
+
+            // In order to display blog posts on Dataspace's public page where the user is not required to log-in, we need to create a
+            // Limited user with Reader role otherwise no feeds will be returned by RSSService.get().getFeeds()
+            if (!getContainer().hasPermission(user, ReadPermission.class))
+            {
+                user = new LimitedUser(user, new int[0], Collections.singleton(RoleManager.getRole(ReaderRole.class)), false);
+            }
+            List<RSSFeed> feeds = RSSService.get().getFeeds(getContainer(), user);
+
             ObjectMapper objectMapper = JsonUtil.DEFAULT_MAPPER;
 
             for (RSSFeed feed : feeds)
             {
-                try (InputStream is = getInputStream(feed, getUser()))
+                try (InputStream is = getInputStream(feed, user))
                 {
                     NewsFeed newsFeed = objectMapper.readValue(is, NewsFeed.class);
                     items.addAll(newsFeed.getItems());
@@ -275,6 +287,7 @@ public class CDSController extends SpringActionController
             private String _title;
             private Date _pubDate;
             private String _description;
+            private String _thumbnail;
 
             public String getLink()
             {
@@ -314,6 +327,16 @@ public class CDSController extends SpringActionController
             public void setDescription(String description)
             {
                 _description = description;
+            }
+
+            public String getThumbnail()
+            {
+                return _thumbnail;
+            }
+
+            public void setThumbnail(String thumbnail)
+            {
+                _thumbnail = thumbnail;
             }
         }
     }

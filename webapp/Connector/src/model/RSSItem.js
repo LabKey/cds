@@ -15,7 +15,8 @@ Ext.define('Connector.model.RSSItem', {
 
         /* Optional */
         {name: 'pubDate', type: 'date'},
-        {name: 'guid'}
+        {name: 'guid'},
+        {name: 'imageFile'} //Image file that is displayed as a thumbnail in the blog post. Location of these images should be set via module property 'BlogPost'.
     ],
 
     proxy: {

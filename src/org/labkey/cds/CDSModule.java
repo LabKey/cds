@@ -57,6 +57,7 @@ public class CDSModule extends DefaultModule
 
     public static final String SHOW_HIDDEN_VARIABLES = "ShowHiddenVariables";
     public static final String BLOG_PATH = "BlogPath";
+    public static final String ALL_BLOGS_PATH = "AllBlogsPath";
     public static final String STATIC_PATH = "StaticPath";
     public static final String CMS = "CMS";
     public static final String GETTING_STARTED_VIDEO_URL = "GettingStartedVideoURL";
@@ -75,6 +76,7 @@ public class CDSModule extends DefaultModule
 
     final ModuleProperty _showHiddenVariables;
     final ModuleProperty _blogPath;
+    final ModuleProperty _allBlogsPath;
     final ModuleProperty _staticPath;
     final ModuleProperty _startedVideoURL;
     final ModuleProperty _studyDocumentPath;
@@ -98,9 +100,14 @@ public class CDSModule extends DefaultModule
         addModuleProperty(_showHiddenVariables);
 
         _blogPath = new ModuleProperty(this, BLOG_PATH);
-        _blogPath.setDescription("Full webdav path to which the short-cut '/blog/' will point");
+        _blogPath.setDescription("Full or relative webdav path to the blog files");
         _blogPath.setCanSetPerContainer(false);
         addModuleProperty(_blogPath);
+
+        _allBlogsPath = new ModuleProperty(this, ALL_BLOGS_PATH);
+        _allBlogsPath.setDescription("Full path to all blog posts");
+        _allBlogsPath.setCanSetPerContainer(false);
+        addModuleProperty(_allBlogsPath);
 
         _staticPath = new ModuleProperty(this, STATIC_PATH);
         _staticPath.setDescription("Full webdav path to which the short-cut '/static/' will point");

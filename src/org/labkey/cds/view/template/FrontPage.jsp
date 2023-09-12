@@ -20,7 +20,12 @@
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.cds.CDSModule" %>
 <%@ page import="org.labkey.api.util.HtmlString" %>
+<%@ page import="org.labkey.cds.CDSManager" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
+<%
+    final String blogPath = CDSManager.get().getBlogPath(getContainer());
+    final String allBlogsPath = CDSManager.get().getAllBlogsPath(getContainer());
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,6 +77,64 @@
             $('div.dismiss').click(function(){
                 $('#notification').remove();
             });
+        });
+
+        LABKEY.Ajax.request({
+            url : LABKEY.ActionURL.buildURL('cds', 'news.api'),
+            success: LABKEY.Utils.getCallbackWrapper(function(response) {
+
+                var maxNewsItemsToDisplay = 4;
+
+                if (response.success)
+                {
+                    var items = response.items;
+
+                    if (items && items.length >= maxNewsItemsToDisplay) {
+
+                        var options = {year: 'numeric', month: 'long', day: 'numeric'};
+
+                        var $table = $('<table>').appendTo($('#recentBlogPosts'));
+
+                        var $displayThumbnail = function (imageIdx) {
+                            var canvas = document.createElement("canvas");
+                            canvas.width = 176.761;
+                            canvas.height = 100;
+                            canvas.style.border = "1px solid #DCDCDC";
+                            var c = canvas.getContext("2d");
+
+                            var img = new Image();
+                            img.src = "<%=h(blogPath)%>" + items[imageIdx].thumbnail;
+
+                            img.onload = function () {
+                                c.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            }
+                            document.getElementById("thumbnail" + (imageIdx + 1)).appendChild(canvas);
+                        };
+
+                        //display thumbnail
+                        var $tr = $('<tr class="thumbnail">').appendTo($table);
+                        for (var i = 0; i < maxNewsItemsToDisplay; i++) {
+                            $('<td>').html('<a id="thumbnail' + (i + 1) + '" href="' + items[i].link + '"></a>').appendTo($tr);
+                            $displayThumbnail(i);
+                        }
+
+                        //display date
+                        $tr = $('<tr class="pub-date">').appendTo($table);
+                        for (var j = 0; j < maxNewsItemsToDisplay; j++) {
+                            $('<td>').text(new Date(items[j].pubDate).toLocaleDateString("en-US", options)).appendTo($tr);
+                        }
+
+                        //display title
+                        $tr = $('<tr class="blog-title">').appendTo($table);
+                        for (var k = 0; k < maxNewsItemsToDisplay; k++) {
+                            $('<td>').text(items[k].title).appendTo($tr);
+                        }
+                    }
+                }
+            }),
+            failure: LABKEY.Utils.getCallbackWrapper(function(response) {
+                LABKEY.Utils.alert('Error', 'Unable to get blog posts : ' + response.exception);
+            }, this, true)
         });
     </script>
 </head>
@@ -536,7 +599,6 @@
             </div>
             <div class="welcome" style="margin-bottom: unset">
                 <div class="title" style="margin-bottom: unset">
-                    <h1></h1>
                     <h1>Welcome to the</h1>
                     <h1>CAVD DataSpace</h1>
                 </div>
@@ -573,18 +635,19 @@
             <a href="#" class="circle move-section-down">
                 <div class="arrow"></div>
             </a>
+            <div></div>
         </div>
         <div data-index='2' data-gif="/img/learn.gif" data-name="Always Growing" class="section learn-section">
-            <div class="container">
+            <div class="container" style="padding-bottom: 38px!important;">
                 <h1>Always Growing</h1>
-            </div>
-            <div class="statistics">
-                <div class="timestamp">
-                    <p>Updated </p>
-                    <p class="days">-</p>
-                    <p>days ago.</p>
+                <div class="new-data-text">
+                    Our team regularly adds new data as it becomes available.
                 </div>
-                <div class="counts">
+            </div>
+
+            <div class="statistics">
+
+                <div class="pill">
                     <a class="public-page-link" href="<%=getPublicPageURL("study")%>">
                         <div class="products datapoint">
                             <div class="value">
@@ -626,16 +689,47 @@
                         </div>
                     </a>
                 </div>
-                <div class="reminder">
-                    <p>Our team regularly adds new data</p>
-                    <p>as it becomes available.</p>
+                <div class="timestamp">
+                    <p>Last updated </p>
+                    <p class="days">-</p>
+                    <p>days ago.</p>
                 </div>
+            </div>
+
+            <a href="#" class="circle move-section-down">
+                <div class="arrow"></div>
+            </a>
+        </div>
+
+        <div data-index='3' data-gif="/img/learn.gif" data-name="News" class="section learn-section">
+            <div class="container" style="padding-bottom: 38px!important;">
+                <h1>News</h1>
+            </div>
+            <div class="blogs">
+                <div class="blog-section-begin">
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="recent-blog-posts">
+                                    Recent Blog Posts
+                                </div>
+                            </td>
+                            <td class="blog-button">
+                                <div>
+                                    <a href="<%=h(allBlogsPath)%>">Go to blog</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="blog-list" id="recentBlogPosts"></div>
             </div>
             <a href="#" class="circle move-section-down">
                 <div class="arrow"></div>
             </a>
         </div>
-        <div data-index='3' data-name="Our Goal" class="section goal-section">
+
+        <div data-index='4' data-name="Our Goal" class="section goal-section">
             <div class="goal-container">
                 <div class="title">
                     <h1>Our goal</h1>
@@ -665,7 +759,7 @@
                 </a>
             </div>
         </div>
-        <div data-index='4' data-gif="<%=getWebappURL("/frontpage/img/learn.gif")%>" data-name="Learn" class="section learn-section">
+        <div data-index='5' data-gif="<%=getWebappURL("/frontpage/img/learn.gif")%>" data-name="Learn" class="section learn-section">
             <div class="gif-title">
                 <h1>Learn</h1>
             </div>
@@ -683,7 +777,7 @@
                 <div class="arrow"></div>
             </a>
         </div>
-        <div data-index='5' data-gif="<%=getWebappURL("/frontpage/img/explore.gif")%>" data-name="Explore" class="section explore-section">
+        <div data-index='6' data-gif="<%=getWebappURL("/frontpage/img/explore.gif")%>" data-name="Explore" class="section explore-section">
             <div class="gif-title">
                 <h1>Explore</h1>
             </div>
@@ -700,7 +794,7 @@
                 <div class="arrow"></div>
             </a>
         </div>
-        <div data-index='6' data-gif="<%=getWebappURL("/frontpage/img/collab.gif")%>" data-name="Collaborate" class="section collab-section">
+        <div data-index='7' data-gif="<%=getWebappURL("/frontpage/img/collab.gif")%>" data-name="Collaborate" class="section collab-section">
             <div class="gif-title">
                 <h1>Collaborate</h1>
             </div>
@@ -716,7 +810,7 @@
                 <div class="arrow"></div>
             </a>
         </div>
-        <div data-index='7' data-name="About" class="section about-section">
+        <div data-index='8' data-name="About" class="section about-section">
             <div class="about-container">
                 <div class="title">
                     <h1>About</h1>

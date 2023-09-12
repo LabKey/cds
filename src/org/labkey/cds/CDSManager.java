@@ -49,10 +49,10 @@ import org.labkey.api.query.ValidationException;
 import org.labkey.api.security.User;
 import org.labkey.api.security.UserManager;
 import org.labkey.api.security.ValidEmail;
+import org.labkey.api.settings.AppProps;
 import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.view.NotFoundException;
-import org.labkey.cds.data.CSVCopyConfig;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -327,6 +327,25 @@ public class CDSManager
     public String getCDSImportFolderPath(Container container)
     {
         ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.CDS_IMPORT_PATH);
+        return PageFlowUtil.decode(mp.getEffectiveValue(container));
+    }
+
+    public String getBlogPath(Container container)
+    {
+        ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.BLOG_PATH);
+
+        AppProps props = AppProps.getInstance();
+        String baseUrl = props.getBaseServerUrl() + props.getContextPath();
+        String blogPath = PageFlowUtil.decode(mp.getEffectiveValue(container));
+        if (blogPath.startsWith(baseUrl))
+            return blogPath;
+
+        return baseUrl + blogPath;
+    }
+
+    public String getAllBlogsPath(Container container)
+    {
+        ModuleProperty mp = ModuleLoader.getInstance().getModule(CDSModule.class).getModuleProperties().get(CDSModule.ALL_BLOGS_PATH);
         return PageFlowUtil.decode(mp.getEffectiveValue(container));
     }
 

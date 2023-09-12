@@ -168,7 +168,7 @@ public class CDSTest extends CDSReadOnlyTest
         //
         // Validate News feed
         //
-        waitForText("LabKey looks forward to sponsoring the Association of Independent Research Institutes");
+        waitForText("Lab inventory tracking is an essential function for boosting efficiency and minimizing waste in scientific laboratories.");
 
         //
         // Validate Plot data
