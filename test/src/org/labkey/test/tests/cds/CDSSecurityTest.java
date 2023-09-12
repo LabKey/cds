@@ -29,6 +29,7 @@ import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
+import org.labkey.test.util.PasswordUtil;
 import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
@@ -744,12 +745,12 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log("Validate behavior with the deleted user.");
         getDriver().navigate().to(welcomeUrls[2]);
-        handleCreateAccount("P@$$w0rd", true);
+        handleCreateAccount(true);
         waitForText("Create account failed.");
 
         log("Validate behavior with the user who does not have permissions to CDS.");
         getDriver().navigate().to(welcomeUrls[1]);
-        handleCreateAccount("P@$$w0rd", true);
+        handleCreateAccount(true);
 
         waitForElement(Locator.css("td.x-form-display-field-body[role='presentation']"), 15000);
 
@@ -780,7 +781,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         assertElementVisible(Locator.xpath("//div[@class='mfp-content']//form//div[contains(@class, 'tos')]//div[contains(@class, 'terms-of-service')][contains(@class, 'open')]"));
 
         log("Try to create the account without agreeing to the Terms Of Service.");
-        handleCreateAccount("P@$$w0rd", false);
+        handleCreateAccount(false);
 
         // Don't have a good way to capture the dialog shown saying you need to accept the TOS.
         // So simply validating that the success message was not shown.
@@ -1032,11 +1033,11 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     }
 
-    private void handleCreateAccount(String password, boolean agreeToTOS)
+    private void handleCreateAccount(boolean agreeToTOS)
     {
         CDSCreateAccountPage createAccountPage = new CDSCreateAccountPage(this);
-        createAccountPage.setPasswordField(password);
-        createAccountPage.setReenterPasswordField(password);
+        createAccountPage.setPasswordField(PasswordUtil.getPassword());
+        createAccountPage.setReenterPasswordField(PasswordUtil.getPassword());
         if (agreeToTOS)
         {
             createAccountPage.checkTermsBox(true);
