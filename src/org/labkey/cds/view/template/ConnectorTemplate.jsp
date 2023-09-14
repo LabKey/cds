@@ -315,6 +315,7 @@
             srcPath + "/app/model/MAb.js",
             srcPath + "/app/model/Publication.js",
             srcPath + "/app/model/Antigen.js",
+            srcPath + "/app/model/Group.js",
 
             srcPath + "/app/store/SavedReports.js",
             srcPath + "/app/store/PermissionedStudy.js",
@@ -329,6 +330,7 @@
             srcPath + "/app/store/MAb.js",
             srcPath + "/app/store/Publication.js",
             srcPath + "/app/store/Antigen.js",
+            srcPath + "/app/store/Group.js",
 
             srcPath + "/app/view/LearnGrid.js",
             srcPath + "/app/view/LearnSummary.js",
@@ -343,6 +345,7 @@
             srcPath + "/app/view/Publication.js",
             srcPath + "/app/view/ReportModuleContainer.js",
             srcPath + "/app/view/Antigen.js",
+            srcPath + "/app/view/Group.js",
 
             srcPath + "/app/view/module/DataAvailabilityModule.js",
             srcPath + "/app/view/module/NonIntegratedDataAvailability.js",

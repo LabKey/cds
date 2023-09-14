@@ -808,7 +808,8 @@ Ext.define('Connector.view.Learn', {
         'Report' : 'Report',
         'Publication' : 'Publication',
         'MAb': 'MAb',
-        'Antigen': 'Antigen'
+        'Antigen': 'Antigen',
+        'Group': 'Group'
     },
 
     searchFieldsByTab : function(name) {
