@@ -9,6 +9,8 @@ Ext.define('Connector.app.store.Group', {
 
     model : 'Connector.app.model.Group',
 
+    groupField: 'group_type',
+
     constructor: function(config) {
         Ext.applyIf(config, {
             cache: []

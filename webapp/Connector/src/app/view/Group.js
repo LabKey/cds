@@ -11,24 +11,45 @@ Ext.define('Connector.app.view.Group', {
 
     itemPluralName: 'Groups',
 
-    showLoadingMask : true,
+    showLoadingMask: true,
 
+    features: [{
+        groupHeaderTpl: '{name:htmlEncode}',
+        ftype: 'grouping',
+        // collapsible: true,
+        // startcollapsed: true,
+    }],
+
+    //TODO: config for the group header, set the collapsible arrow to the right
+    // viewConfig: {
+    //     getRowClass: function(record, rowIndex, rowParams, store) {
+    //         // Apply custom CSS class to the group headers
+    //         if (record.isGroupHeader) {
+    //             return 'group-header-custom-style';
+    //         }
+    //     }
+    // },
     statics: {
         // searchFields: ['learn_group', 'learn_study', 'species', 'product_name', 'assay_identifier']
         searchFields: ['group_name']
     },
 
-    columns : [{
+    columns: [{
         text: 'Name & Description',
         xtype: 'templatecolumn',
         minWidth: 150,
         flex: 15/100,
         resizable: false,
         dataIndex: 'group_name',
+        filterConfigSet: [{
+            filterField: 'group_name',
+            valueType: 'string',
+            title: 'Group Name'
+        }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-text">',
                 '<div class="detail-black-text">{group_name:htmlEncode}</div>',
                 '</div>'
-        )
+        ),
     }]
 });
