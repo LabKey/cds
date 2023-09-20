@@ -16,6 +16,8 @@ Ext.define('Connector.app.model.Group', {
     fields: [
         {name: 'group_name', sortType: 'asUCString'},
         {name: 'group_type'},
+        {name: 'study_label'},
+        {name: 'studies', convert : Connector.model.Filter.asArray},
         // {name: 'group_description'},
         // {name: 'group_studies'},
         // {name: 'species'},

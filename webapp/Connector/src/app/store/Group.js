@@ -39,10 +39,36 @@ Ext.define('Connector.app.store.Group', {
         if (Ext.isDefined(this.groupsData)) {
 
             var learnGroups = [];
+            var savedGroupLabel = "My saved groups";
+            var curatedGroupLabel = "Curated groups";
 
-            Ext.each(this.groupsData, function(group) {
-                learnGroups.push(group);
+            var savedGroups = [];
+            var curatedGroups = [];
+
+            var uniqueGroupNames = this.groupsData.map(function(grp) {
+                return grp.group_name;
+            }).filter(function(value, index, self) {
+                return self.indexOf(value) === index;
+            });
+
+            Ext.each(uniqueGroupNames, function(grpName) {
+               var studiesPerGrp = this.groupsData.filter(function(grp) { return grp.group_type === savedGroupLabel && grp.group_name === grpName; }).map(function (grp) {
+                   return { study_label: grp.studyLabel };
+               });
+               if (studiesPerGrp.length > 0)
+                   savedGroups.push({ group_type: savedGroupLabel, group_name: grpName, studies: studiesPerGrp });
+
             }, this);
+
+            Ext.each(uniqueGroupNames, function(grpName) {
+                var studiesPerGrp = this.groupsData.filter(function(grp) { return grp.group_name === grpName && grp.group_type === curatedGroupLabel; }).map(function (grp) {
+                    return { study_label: grp.studyLabel };
+                });
+                if (studiesPerGrp.length > 0)
+                    curatedGroups.push({ group_type: curatedGroupLabel, group_name: grpName, studies: studiesPerGrp });
+            }, this);
+
+            learnGroups = savedGroups.concat(curatedGroups);
 
             this.groupsData = undefined;
 

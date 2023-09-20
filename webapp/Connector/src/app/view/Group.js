@@ -47,9 +47,41 @@ Ext.define('Connector.app.view.Group', {
             title: 'Group Name'
         }],
         tpl: new Ext.XTemplate(
-                '<div class="detail-text">',
-                '<div class="detail-black-text">{group_name:htmlEncode}</div>',
-                '</div>'
+                '<div class="detail-description">',
+                '<h2>{group_name:htmlEncode}</h2>',
+                //TODO: add description to the group
+                // '<div class="detail-description-text">',
+                // '<p class="block-with-text">{description}</p>',
+                '</div>',
         ),
+    }, {
+        text: 'Studies',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 15/100,
+        resizable: false,
+        dataIndex: 'study_label',
+        filterConfigSet: [{
+            filterField: 'study_label',
+            valueType: 'string',
+            title: 'Studies'
+        }],
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text study-summary-product">',
+                    '<ul>',
+                        '<tpl if="studies.length &gt; 0">',
+                            '<tpl for="studies">',
+                                '<tpl if="xindex <= 5">',
+                                    '<li class="detail-gray-text">{study_label:htmlEncode}</li>',
+                                        '<tpl elseif="xindex == 6">',
+                                    '<li class="detail-gray-text">...</li>',
+                                '</tpl>',
+                            '</tpl>',
+                        '<tpl else>',
+                            '<li class="detail-gray-text">No related studies</li>',
+                        '</tpl>',
+                    '</ul>',
+                '</div>'
+        )
     }]
 });
