@@ -48,10 +48,9 @@ Ext.define('Connector.app.view.Group', {
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
-                '<h2>{group_name:htmlEncode}</h2>',
-                //TODO: add description to the group
-                // '<div class="detail-description-text">',
-                // '<p class="block-with-text">{description}</p>',
+                    '<h2>{group_name:htmlEncode}</h2>',
+                    '<div class="detail-description-text">',
+                    '<p class="block-with-text">{description:htmlEncode}</p>',
                 '</div>',
         ),
     }, {
