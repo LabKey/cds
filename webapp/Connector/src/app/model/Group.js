@@ -20,10 +20,10 @@ Ext.define('Connector.app.model.Group', {
         {name: 'studies', convert : Connector.model.Filter.asArray},
         {name: 'studySpecies', convert : Connector.model.Filter.asArray},
         {name: 'species'},
-        // {name: 'group_description'},
-        // {name: 'group_studies'},
-        // {name: 'species'},
-        // {name: 'products'},
-        // {name: 'assays'}
+        {name: 'product_name'},
+        {name: 'species'},
+        {name: 'products', convert : Connector.model.Filter.asArray},
+        {name: 'assay_identifier'},
+        {name: 'assays', convert : Connector.model.Filter.asArray},
     ]
 });

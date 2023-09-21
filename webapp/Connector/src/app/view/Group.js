@@ -111,5 +111,59 @@ Ext.define('Connector.app.view.Group', {
                         '</tpl>',
                     '</ul>',
                 '</div>')
+    }, {
+        text: 'Products',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 15/100,
+        resizable: false,
+        dataIndex: 'product_name',
+        filterConfigSet: [{
+            filterField: 'product_name',
+            valueType: 'string',
+            title: 'Products'
+        }],
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text">',
+                    '<ul>',
+                        '<tpl if="products.length &gt; 0">',
+                            '<tpl for="products">',
+                                '<tpl if="xindex <= 5">',
+                                    '<li class="detail-gray-text">{product_name:htmlEncode}</li>',
+                                        '<tpl elseif="xindex == 6">',
+                                    '<li class="detail-gray-text">...</li>',
+                                '</tpl>',
+                            '</tpl>',
+                        '<tpl else>',
+                        '<li class="detail-gray-text">No related products</li>',
+                        '</tpl>',
+                    '</ul>',
+                '</div>')
+    }, {
+        text: 'Assays',
+        xtype: 'templatecolumn',
+        minWidth: 150,
+        flex: 15/100,
+        resizable: false,
+        dataIndex: 'assay_identifier',
+        filterConfigSet: [{
+            filterField: 'assay_identifier',
+            valueType: 'string',
+            title: 'Assays'
+        }],
+        tpl: new Ext.XTemplate(
+                '<div class="detail-text">',
+                    '<ul>',
+                        '<tpl if="assays.length &gt; 0">',
+                            '<tpl for="assays">',
+                                '<tpl if="xindex <= 5">',
+                                    '<li class="detail-gray-text">{assay_identifier:htmlEncode}</li>',
+                                        '<tpl elseif="xindex == 6">',
+                                    '<li class="detail-gray-text">...</li>',
+                                '</tpl>',
+                            '</tpl>',
+                        '</tpl>',
+                    '</ul>',
+                '</div>')
     }]
 });
