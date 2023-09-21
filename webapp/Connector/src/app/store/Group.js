@@ -53,19 +53,32 @@ Ext.define('Connector.app.store.Group', {
 
             Ext.each(uniqueGroupNames, function(grpName) {
                var studiesPerGrp = this.groupsData.filter(function(grp) { return grp.group_type === savedGroupLabel && grp.group_name === grpName; }).map(function (grp) {
-                   return { study_label: grp.studyLabel };
+                   return { study_label: grp.studyLabel, species: grp.species };
                });
+                var species = studiesPerGrp.map(function(study) {
+                    return null !== study.species ? study.species : 'Unknown';
+                }).filter(function(value, index, self) {
+                    return self.indexOf(value) === index;
+                });
+
                if (studiesPerGrp.length > 0)
-                   savedGroups.push({ group_type: savedGroupLabel, group_name: grpName, studies: studiesPerGrp });
+                   savedGroups.push({ group_type: savedGroupLabel, group_name: grpName, studies: studiesPerGrp, studySpecies: species.map(function(s) {return {species:s}}) });
 
             }, this);
 
             Ext.each(uniqueGroupNames, function(grpName) {
                 var studiesPerGrp = this.groupsData.filter(function(grp) { return grp.group_name === grpName && grp.group_type === curatedGroupLabel; }).map(function (grp) {
-                    return { study_label: grp.studyLabel };
+                    return { study_label: grp.studyLabel, species: grp.species };
                 });
+
+                var species = studiesPerGrp.map(function(study) {
+                    return null !== study.species ? study.species : 'Unknown';
+                }).filter(function(value, index, self) {
+                    return self.indexOf(value) === index;
+                });
+
                 if (studiesPerGrp.length > 0)
-                    curatedGroups.push({ group_type: curatedGroupLabel, group_name: grpName, studies: studiesPerGrp });
+                    curatedGroups.push({ group_type: curatedGroupLabel, group_name: grpName, studies: studiesPerGrp, studySpecies: species.map(function(s) {return {species:s}}) });
             }, this);
 
             learnGroups = savedGroups.concat(curatedGroups);

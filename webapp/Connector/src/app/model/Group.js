@@ -18,6 +18,8 @@ Ext.define('Connector.app.model.Group', {
         {name: 'group_type'},
         {name: 'study_label'},
         {name: 'studies', convert : Connector.model.Filter.asArray},
+        {name: 'studySpecies', convert : Connector.model.Filter.asArray},
+        {name: 'species'},
         // {name: 'group_description'},
         // {name: 'group_studies'},
         // {name: 'species'},

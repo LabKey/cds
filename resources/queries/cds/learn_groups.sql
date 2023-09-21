@@ -2,7 +2,7 @@ SELECT
 s.label AS studyLabel,
 sgm.groupId.label AS group_name,
 (CASE WHEN sc.ownerid < 0 THEN 'Curated groups' ELSE 'My saved groups' END) AS group_type,
--- s.species,
+s.species,
 -- pfs.product_name,
 -- afs.assay_identifier,
 -- afs.has_data
@@ -17,8 +17,8 @@ LEFT JOIN cds.study s ON sgm.container.name = s.study_name -- each study protoco
 GROUP BY
     s.label,
     sgm.groupId.label,
-    sc.ownerid
---     s.species,
+    sc.ownerid,
+    s.species
 --     pfs.product_name,
 --     afs.assay_identifier,
 --     afs.has_data
