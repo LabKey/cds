@@ -14,21 +14,48 @@ Ext.define('Connector.app.view.Group', {
     showLoadingMask: true,
 
     features: [{
-        groupHeaderTpl: '{name:htmlEncode}',
+        groupHeaderTpl: [
+            '<div>{name:this.formatName}</div>',
+            {
+                formatName: function(name) {
+                    if (name.indexOf('1_my_saved_groups') > -1) {
+                        return 'My saved groups';
+                    }
+                    else if (name.indexOf('2_curated_groups') > -1) {
+                        return 'Curated groups';
+                    }
+                }
+            }
+        ],
         ftype: 'grouping',
-        // collapsible: true,
-        // startcollapsed: true,
+        groupCls: 'learn-grid-group-hd',
+        eventSelector: '.learn-grid-group-hd',
+
+        collapsedCls: 'learn-grid-group-collapsed',
+        hdCollapsedCls: 'learn-grid-group-hd-collapsed',
+        collapsibleCls: 'learn-grid-group-hd-collapsible',
+        collapsible: true,
+        startcollapsed: true
     }],
 
-    //TODO: config for the group header, set the collapsible arrow to the right
-    // viewConfig: {
-    //     getRowClass: function(record, rowIndex, rowParams, store) {
-    //         // Apply custom CSS class to the group headers
-    //         if (record.isGroupHeader) {
-    //             return 'group-header-custom-style';
-    //         }
-    //     }
-    // },
+    viewConfig: {
+        listeners : {
+            render : function(view) {
+                var x = view;
+                var src = view.getSelectionModel().view.features[0].dataSource;
+
+                // replace the ext css classes with customized css classes using replace() since 'groupTpl' have these
+                // hardcoded instead of using the property values. See ext-all-debug.js, line 111454
+                var newHtml = src.groupTpl.html.replace(/x-grid-group-title/g, 'learn-grid-group-title'); //replace all occurrences
+                newHtml = newHtml.replace(/x-grid-group-hd/g, 'learn-grid-group-hd'); //replace all occurrences
+                newHtml = newHtml.replace(/{collapsibleCls}/g, 'learn-grid-group-hd-collapsible'); //replace all occurrences
+                src.groupTpl.html = newHtml;
+            }
+        },
+        getRowClass: function(record, rowIndex, rowParams, store) {
+            return 'detail-row';
+        }
+    },
     statics: {
         // searchFields: ['learn_group', 'learn_study', 'species', 'product_name', 'assay_identifier']
         searchFields: ['group_name']

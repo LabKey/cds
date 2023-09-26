@@ -973,3 +973,34 @@ img.detail-has-data-very-small {
 .export-item.x-menu-item-active .export-item-icon {
   background-image: url(images/learn/download-icon-light.svg);
 }
+
+.learn-grid-group-hd {
+  border-width: 0 0 2px 0;
+  border-style: solid;
+  border-color: #ebe7e7;
+  padding: 10px 4px 4px 4px;
+  background: #EBEBEB;
+  cursor: pointer;
+  zoom: 1;
+  white-space: nowrap;
+}
+
+.learn-grid-group-hd-collapsible .learn-grid-group-title {
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-image: url(images/groups_collapse.svg);
+  padding: 0 0 0 14px;
+  margin-right: 89.5%;
+}
+
+.learn-grid-group-title {
+  color: #777;
+  font-family: Arial, serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.learn-grid-group-hd-collapsed .learn-grid-group-title {
+  background-image: url(images/groups_expand.svg);
+}

@@ -1,7 +1,7 @@
 SELECT
 s.label AS studyLabel,
 sgm.groupId.label AS group_name,
-(CASE WHEN sc.ownerid < 0 THEN 'Curated groups' ELSE 'My saved groups' END) AS group_type,
+(CASE WHEN sc.ownerid < 0 THEN '2_curated_groups' ELSE '1_my_saved_groups' END) AS group_type,
 s.species,
 pfs.product_name,
 afs.assay_identifier,
