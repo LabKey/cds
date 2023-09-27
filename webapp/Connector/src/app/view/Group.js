@@ -13,7 +13,10 @@ Ext.define('Connector.app.view.Group', {
 
     showLoadingMask: true,
 
+    id: 'learn-group-grid-id',
+
     features: [{
+        ftype: 'grouping',
         groupHeaderTpl: [
             '<div>{name:this.formatName}</div>',
             {
@@ -27,15 +30,14 @@ Ext.define('Connector.app.view.Group', {
                 }
             }
         ],
-        ftype: 'grouping',
+
         groupCls: 'learn-grid-group-hd',
         eventSelector: '.learn-grid-group-hd',
 
         collapsedCls: 'learn-grid-group-collapsed',
         hdCollapsedCls: 'learn-grid-group-hd-collapsed',
         collapsibleCls: 'learn-grid-group-hd-collapsible',
-        collapsible: true,
-        startcollapsed: true
+        collapsible: true
     }],
 
     viewConfig: {
@@ -45,7 +47,7 @@ Ext.define('Connector.app.view.Group', {
                 var src = view.getSelectionModel().view.features[0].dataSource;
 
                 // replace the ext css classes with customized css classes using replace() since 'groupTpl' have these
-                // hardcoded instead of using the property values. See ext-all-debug.js, line 111454
+                // hardcoded instead of using the property values. See ext-all-dev.js, line 158286 or (ext-all-debug.js, line 111454 when debugging)
                 var newHtml = src.groupTpl.html.replace(/x-grid-group-title/g, 'learn-grid-group-title'); //replace all occurrences
                 newHtml = newHtml.replace(/x-grid-group-hd/g, 'learn-grid-group-hd'); //replace all occurrences
                 newHtml = newHtml.replace(/{collapsibleCls}/g, 'learn-grid-group-hd-collapsible'); //replace all occurrences
@@ -57,8 +59,12 @@ Ext.define('Connector.app.view.Group', {
         }
     },
     statics: {
-        // searchFields: ['learn_group', 'learn_study', 'species', 'product_name', 'assay_identifier']
-        searchFields: ['group_name']
+        searchFields: ['group_name', 'description',
+            {field: 'studies', value: 'study_label', emptyText: 'No related products'},
+            {field: 'species', value: 'species', emptyText: 'No related species'},
+            {field: 'products', value: 'product_name', emptyText: 'No related products'},
+            {field: 'assays', value: 'assay_identifier', emptyText: 'No related assays'}
+        ]
     },
 
     columns: [{
@@ -86,9 +92,9 @@ Ext.define('Connector.app.view.Group', {
         minWidth: 150,
         flex: 15/100,
         resizable: false,
-        dataIndex: 'study_label',
+        dataIndex: 'study_names_to_sort_on',
         filterConfigSet: [{
-            filterField: 'study_label',
+            filterField: 'study_names',
             valueType: 'string',
             title: 'Studies'
         }],
@@ -115,9 +121,9 @@ Ext.define('Connector.app.view.Group', {
         minWidth: 150,
         flex: 15/100,
         resizable: false,
-        dataIndex: 'species',
+        dataIndex: 'species_to_sort_on',
         filterConfigSet: [{
-            filterField: 'species',
+            filterField: 'species_names',
             valueType: 'string',
             title: 'Species'
         }],
@@ -143,9 +149,9 @@ Ext.define('Connector.app.view.Group', {
         minWidth: 150,
         flex: 15/100,
         resizable: false,
-        dataIndex: 'product_name',
+        dataIndex: 'product_to_sort_on',
         filterConfigSet: [{
-            filterField: 'product_name',
+            filterField: 'product_names',
             valueType: 'string',
             title: 'Products'
         }],
@@ -171,9 +177,9 @@ Ext.define('Connector.app.view.Group', {
         minWidth: 150,
         flex: 15/100,
         resizable: false,
-        dataIndex: 'assay_identifier',
+        dataIndex: 'assay_to_sort_on',
         filterConfigSet: [{
-            filterField: 'assay_identifier',
+            filterField: 'assay_names',
             valueType: 'string',
             title: 'Assays'
         }],

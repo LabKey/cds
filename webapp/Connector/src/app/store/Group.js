@@ -55,11 +55,6 @@ Ext.define('Connector.app.store.Group', {
         if (Ext.isDefined(this.groupsData) && Ext.isDefined(this.groupDetails)) {
 
             var learnGroups = [];
-            var savedGroupLabel = "My saved groups";
-            var curatedGroupLabel = "Curated groups";
-
-            var savedGroups = [];
-            var curatedGroups = [];
 
             var uniqueGroupNames = this.groupsData.map(function (grp) {
                 return grp.group_name;
@@ -96,12 +91,20 @@ Ext.define('Connector.app.store.Group', {
                 }).filter(function (value, index, self) {
                     return self.indexOf(value) === index;
                 });
+                studies.sort(function (p1, p2) {
+                    return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                });
+                var study_to_sort_on = studies[0] ? studies[0].toLowerCase() : '';
 
                 var species = studiesPerGrp.map(function (study) {
                     return study.species;
                 }).filter(function (value, index, self) {
                     return null !== value && self.indexOf(value) === index;
                 });
+                species.sort(function (p1, p2) {
+                    return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                });
+                var species_to_sort_on = species[0] ? species[0].toLowerCase() : '';
 
                 var products = studiesPerGrp.map(function (study) {
                     return study.product_name;
@@ -109,11 +112,22 @@ Ext.define('Connector.app.store.Group', {
                     return null !== value && self.indexOf(value) === index;
                 });
 
+                products.sort(function (p1, p2) {
+                    return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                });
+                var product_to_sort_on = products[0] ? products[0].toLowerCase() : '';
+
                 var assays = studiesPerGrp.map(function (study) {
                     return study.assay;
                 }).filter(function (value, index, self) {
                     return null !== value && self.indexOf(value) === index;
                 });
+
+                assays.sort(function (p1, p2) {
+                    return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                });
+                var assay_to_sort_on = assays[0] ? assays[0].toLowerCase() : '';
+
 
                 if (studiesPerGrp.length > 0)
                     learnGroups.push({
@@ -122,15 +136,23 @@ Ext.define('Connector.app.store.Group', {
                         studies: studies.map(function (study) {
                             return {study_label: study}
                         }, this),
+                        study_names: studies,
+                        study_names_to_sort_on: study_to_sort_on,
                         studySpecies: species.map(function (s) {
                             return {species: s}
                         }, this),
+                        species_names: species,
+                        species_to_sort_on: species_to_sort_on,
                         products: products.map(function (p) {
                             return {product_name: p}
                         }, this),
-                        assays: assays.map(function (p) {
-                            return {assay_identifier: p}
+                        product_names: products,
+                        product_to_sort_on: product_to_sort_on,
+                        assays: assays.map(function (a) {
+                            return {assay_identifier: a}
                         }, this),
+                        assay_to_sort_on: assay_to_sort_on,
+                        assay_names: assays,
                         description: groupDetail.length > 0 && groupDetail[0].description  ? groupDetail[0].description : "No description given.",
                     });
 
