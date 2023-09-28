@@ -37,27 +37,121 @@ Ext.define('Connector.app.view.Group', {
         collapsedCls: 'learn-grid-group-collapsed',
         hdCollapsedCls: 'learn-grid-group-hd-collapsed',
         collapsibleCls: 'learn-grid-group-hd-collapsible',
-        collapsible: true
+        collapsible: true,
+
+        // groupTpl below is almost the same as groupTpl in ext-all-dev.js, line 158286 (or ext-all-debug.js, line 111454),
+        // except the use of a few custom css classes for the collapsible header (replacing ext css classes with customized
+        // css classes using replace() in viewConfig causes issues in other places where grouping feature is used, ex. in the Filter dialog box.
+        // Hence, resorted to this way.)
+        groupTpl: [
+            '{%',
+                'var me = this.groupingFeature;',
+
+                'if (me.disabled) {',
+                    'values.needsWrap = false;',
+                '} else {',
+                    'me.setupRowData(values.record, values.recordIndex, values);',
+                    'values.needsWrap = !me.disabled && (values.isFirstRow || values.summaryRecord);',
+                '}',
+            '%}',
+            '<tpl if="needsWrap">',
+                '<tr data-boundView="{view.id}" data-recordId="{record.internalId}" data-recordIndex="{[values.isCollapsedGroup ? -1 : values.recordIndex]}"',
+                    'class="{[values.itemClasses.join(" ")]} ' + Ext.baseCSSPrefix + 'grid-wrap-row<tpl if="!summaryRecord"> ' + Ext.baseCSSPrefix + 'grid-group-row</tpl>">',
+                    '<td class="' + Ext.baseCSSPrefix + 'group-hd-container" colspan="{columns.length}">',
+                        '<tpl if="isFirstRow">',
+                            '{%',
+
+
+                                'var groupTitleStyle = (!values.view.lockingPartner || (values.view.ownerCt === values.view.ownerCt.ownerLockable.lockedGrid) || (values.view.lockingPartner.headerCt.getVisibleGridColumns().length === 0)) ? "" : "visibility:hidden";',
+                            '%}',
+                            '<div id="{groupId}" class="learn-grid-group-hd {collapsibleCls}" tabIndex="0">',
+                                '<div class="learn-grid-group-title" style="{[groupTitleStyle]}">',
+                                    '{[values.groupHeaderTpl.apply(values.groupInfo, parent) || "&#160;"]}',
+                                '</div>',
+                            '</div>',
+                        '</tpl>',
+
+
+                        '<tpl if="summaryRecord || !isCollapsedGroup">',
+                            '<table class="', Ext.baseCSSPrefix, '{view.id}-table ', Ext.baseCSSPrefix, 'grid-table',
+                                '<tpl if="summaryRecord"> ', Ext.baseCSSPrefix, 'grid-table-summary</tpl>"',
+                                'border="0" cellspacing="0" cellpadding="0" style="width:100%">',
+                                '{[values.view.renderColumnSizer(out)]}',
+
+                                '<tpl if="!isCollapsedGroup">',
+                                    '{%',
+                                        'values.itemClasses.length = 0;',
+                                        'this.nextTpl.applyOut(values, out, parent);',
+                                    '%}',
+                                '</tpl>',
+                                '<tpl if="summaryRecord">',
+                                    '{%me.outputSummaryRecord(values.summaryRecord, values, out);%}',
+                                '</tpl>',
+                            '</table>',
+                        '</tpl>',
+                    '</td>',
+                '</tr>',
+            '<tpl else>',
+                '{%this.nextTpl.applyOut(values, out, parent);%}',
+            '</tpl>', {
+                priority: 200,
+
+                syncRowHeights: function(firstRow, secondRow) {
+                    firstRow = Ext.fly(firstRow, 'syncDest');
+                    secondRow = Ext.fly(secondRow, 'sycSrc');
+                    var owner = this.owner,
+                        firstHd = firstRow.down(owner.eventSelector, true),
+                        secondHd,
+                        firstSummaryRow = firstRow.down(owner.summaryRowSelector, true),
+                        secondSummaryRow,
+                        firstHeight, secondHeight;
+
+
+                    if (firstHd && (secondHd = secondRow.down(owner.eventSelector, true))) {
+                        firstHd.style.height = secondHd.style.height = '';
+                        if ((firstHeight = firstHd.offsetHeight) > (secondHeight = secondHd.offsetHeight)) {
+                            Ext.fly(secondHd).setHeight(firstHeight);
+                        }
+                        else if (secondHeight > firstHeight) {
+                            Ext.fly(firstHd).setHeight(secondHeight);
+                        }
+                    }
+
+
+                    if (firstSummaryRow && (secondSummaryRow = secondRow.down(owner.summaryRowSelector, true))) {
+                        firstSummaryRow.style.height = secondSummaryRow.style.height = '';
+                        if ((firstHeight = firstSummaryRow.offsetHeight) > (secondHeight = secondSummaryRow.offsetHeight)) {
+                            Ext.fly(secondSummaryRow).setHeight(firstHeight);
+                        }
+                        else if (secondHeight > firstHeight) {
+                            Ext.fly(firstSummaryRow).setHeight(secondHeight);
+                        }
+                    }
+                },
+
+                syncContent: function(destRow, sourceRow) {
+                    destRow = Ext.fly(destRow, 'syncDest');
+                    sourceRow = Ext.fly(sourceRow, 'sycSrc');
+                    var owner = this.owner,
+                        destHd = destRow.down(owner.eventSelector, true),
+                        sourceHd = sourceRow.down(owner.eventSelector, true),
+                        destSummaryRow = destRow.down(owner.summaryRowSelector, true),
+                        sourceSummaryRow = sourceRow.down(owner.summaryRowSelector, true);
+
+
+                    if (destHd && sourceHd) {
+                        Ext.fly(destHd).syncContent(sourceHd);
+                    }
+
+
+                    if (destSummaryRow && sourceSummaryRow) {
+                        Ext.fly(destSummaryRow).syncContent(sourceSummaryRow);
+                    }
+                }
+            }
+        ],
     }],
 
-    viewConfig: {
-        listeners : {
-            render : function(view) {
-                var x = view;
-                var src = view.getSelectionModel().view.features[0].dataSource;
-
-                // replace the ext css classes with customized css classes using replace() since 'groupTpl' have these
-                // hardcoded instead of using the property values. See ext-all-dev.js, line 158286 or (ext-all-debug.js, line 111454 when debugging)
-                var newHtml = src.groupTpl.html.replace(/x-grid-group-title/g, 'learn-grid-group-title'); //replace all occurrences
-                newHtml = newHtml.replace(/x-grid-group-hd/g, 'learn-grid-group-hd'); //replace all occurrences
-                newHtml = newHtml.replace(/{collapsibleCls}/g, 'learn-grid-group-hd-collapsible'); //replace all occurrences
-                src.groupTpl.html = newHtml;
-            }
-        },
-        getRowClass: function(record, rowIndex, rowParams, store) {
-            return 'detail-row';
-        }
-    },
     statics: {
         searchFields: ['group_name', 'description',
             {field: 'studies', value: 'study_label', emptyText: 'No related products'},
