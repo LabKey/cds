@@ -18,7 +18,7 @@ Ext.define('Connector.app.view.Group', {
     features: [{
         ftype: 'grouping',
         groupHeaderTpl: [
-            '<div>{name:this.formatName}</div>',
+            '<div id={name}>{name:this.formatName}</div>',
             {
                 formatName: function(name) {
                     if (name.indexOf('1_my_saved_groups') > -1) {
@@ -39,10 +39,8 @@ Ext.define('Connector.app.view.Group', {
         collapsibleCls: 'learn-grid-group-hd-collapsible',
         collapsible: true,
 
-        // groupTpl below is almost the same as groupTpl in ext-all-dev.js, line 158286 (or ext-all-debug.js, line 111454),
-        // except the use of a few custom css classes for the collapsible header (replacing ext css classes with customized
-        // css classes using replace() in viewConfig causes issues in other places where grouping feature is used, ex. in the Filter dialog box.
-        // Hence, resorted to this way.)
+        // groupTpl below is similar to groupTpl in ext-all-dev.js, line 158286 (or ext-all-debug.js, line 111454),
+        // below we've added customizations around the group header title and collapsible buttons
         groupTpl: [
             '{%',
                 'var me = this.groupingFeature;',
@@ -60,17 +58,22 @@ Ext.define('Connector.app.view.Group', {
                     '<td class="' + Ext.baseCSSPrefix + 'group-hd-container" colspan="{columns.length}">',
                         '<tpl if="isFirstRow">',
                             '{%',
-
-
                                 'var groupTitleStyle = (!values.view.lockingPartner || (values.view.ownerCt === values.view.ownerCt.ownerLockable.lockedGrid) || (values.view.lockingPartner.headerCt.getVisibleGridColumns().length === 0)) ? "" : "visibility:hidden";',
                             '%}',
-                            '<div id="{groupId}" class="learn-grid-group-hd {collapsibleCls}" tabIndex="0">',
-                                '<div class="learn-grid-group-title" style="{[groupTitleStyle]}">',
-                                    '{[values.groupHeaderTpl.apply(values.groupInfo, parent) || "&#160;"]}',
+                            '<tpl if="groupId.indexOf(\'saved_groups\') !== -1">',
+                                '<div id="{groupId}" class="learn-grid-group-hd learn-grid-group-hd-collapsible" tabIndex="0">',
+                                    '<div class="learn-grid-group-title" style="{[groupTitleStyle]} margin-right: 89.5%">',
+                                        '{[values.groupHeaderTpl.apply(values.groupInfo, parent) || "&#160;"]}',
+                                    '</div>',
                                 '</div>',
-                            '</div>',
+                            '<tpl elseif="groupId.indexOf(\'curated_groups\') !== -1">',
+                                '<div id="{groupId}" class="learn-grid-group-hd learn-grid-group-hd-collapsible" tabIndex="0">',
+                                    '<div class="learn-grid-group-title" style="{[groupTitleStyle]}; margin-right: 90.25%">',
+                                        '{[values.groupHeaderTpl.apply(values.groupInfo, parent) || "&#160;"]}',
+                                    '</div>',
+                                '</div>',
+                            '</tpl>',
                         '</tpl>',
-
 
                         '<tpl if="summaryRecord || !isCollapsedGroup">',
                             '<table class="', Ext.baseCSSPrefix, '{view.id}-table ', Ext.baseCSSPrefix, 'grid-table',
