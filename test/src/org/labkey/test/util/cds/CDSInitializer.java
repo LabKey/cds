@@ -20,6 +20,7 @@ import org.labkey.remoteapi.core.SaveModulePropertiesCommand;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
+import org.labkey.test.WebTestHelper;
 import org.labkey.test.params.ModuleProperty;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
@@ -206,13 +207,14 @@ public class CDSInitializer
         List<ModuleProperty> properties = List.of(
                 new ModuleProperty("CDS", "/", "GettingStartedVideoURL", "https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0"),
                 new ModuleProperty("CDS", "/", "StaticPath", "/_webdav/CDSTest%20Project/@pipeline/cdsstatic/"),
+                new ModuleProperty("CDS", "/", "BlogPath", "/_webdav/home/%40files/publicPage/blogs/"),
+                new ModuleProperty("CDS", "/", "AllBlogsPath", WebTestHelper.getBaseURL() + "/_webdav/home/%40files/publicPage/blogs/all.html"),
                 new ModuleProperty("CDS", "/", "StudyDocumentPath", "/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/"),
                 new ModuleProperty("CDS", "/", "AssayDocumentPath", "/_webdav/DataSpaceStudyDocuments/@pipeline/cdsstatic/"),
                 new ModuleProperty("CDS", "/", "CDSImportPath", TestFileUtils.getSampleData("/dataspace/MasterDataspace/folder.xml").getParentFile().getParent())
         );
         SaveModulePropertiesCommand command = new SaveModulePropertiesCommand(properties);
         command.execute(_test.createDefaultConnection(), "/");
-
     }
 
     public void setHiddenVariablesProperty(boolean showHiddenVars) throws IOException, CommandException
