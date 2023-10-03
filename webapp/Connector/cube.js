@@ -650,14 +650,22 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Group',
                 detailView: 'Connector.app.view.Group',
 
-                // itemDetailTabs: [{
-                //     url: 'overview',
-                //     isDefault: true,
-                //     label: 'Overview'
-                // }],
-                // itemDetail: [{
-                //     view: 'Connector.app.view.ReportModuleContainer'
-                // }]
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    label: 'Overview'
+                }],
+                itemDetail: [{
+                    view: 'Connector.app.view.ModuleContainer',
+                    isIdString: true,
+                    modules: [[{
+                        type: 'groupdetailssection',
+                        staticData: {
+                            title: 'Details'
+                        }
+                    //TODO: More to come, this is just a placeholder
+                    }]]
+                }]
             }, {
                 uniqueName: '[Report]',
                 hasExport: false,
