@@ -374,7 +374,6 @@
             srcPath + "/app/view/module/AntigenIsolateSection.js",
             srcPath + "/app/view/module/AntigenProductionSection.js",
             srcPath + "/app/view/module/AntigenTypeSection.js",
-            srcPath + "/app/view/module/GroupDetailsSection.js",
 
             srcPath + "/Application.js",
 

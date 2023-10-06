@@ -73,7 +73,7 @@ Ext.define('Connector.app.store.Group', {
                 }).map(function (grp) {
                     return {
                         group_type: grp.group_type,
-                        study_label: grp.studyLabel,
+                        study_label: grp.study_label,
                         species: grp.species,
                         product_name: grp.product_name,
                         assay: grp.assay_identifier
@@ -154,6 +154,7 @@ Ext.define('Connector.app.store.Group', {
                         assay_to_sort_on: assay_to_sort_on,
                         assay_names: assays,
                         description: groupDetail.length > 0 && groupDetail[0].description  ? groupDetail[0].description : "No description given.",
+                        group_id: groupDetail[0].categoryId
                     });
 
             }, this);

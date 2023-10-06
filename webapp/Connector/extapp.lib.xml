@@ -229,7 +229,6 @@
         <script path="Connector/src/app/view/module/AntigenIsolateSection.js"/>
         <script path="Connector/src/app/view/module/AntigenProductionSection.js"/>
         <script path="Connector/src/app/view/module/AntigenTypeSection.js"/>
-        <script path="Connector/src/app/view/module/GroupDetailsSection.js"/>
 
         <script path="Connector/src/Application.js"/>
 

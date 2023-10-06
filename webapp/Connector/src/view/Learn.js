@@ -687,7 +687,7 @@ Ext.define('Connector.view.Learn', {
                     modules: item.modules
                 };
 
-                if (Connector.view.Learn.detailGridTabs.indexOf(dimension.itemDetailTabs[i].url) > -1) {
+                if (dimension.itemDetailTabs && Connector.view.Learn.detailGridTabs.indexOf(dimension.itemDetailTabs[i].url) > -1) {
                     if (dimension.itemDetailTabs[i].matchField) {
                         if (!model.get(dimension.itemDetailTabs[i].matchField))
                             return;
@@ -733,8 +733,8 @@ Ext.define('Connector.view.Learn', {
                 model: model,
                 dimension: dimension,
                 activeTab: activeTab,
-                hasSearch: dimension.itemDetailTabs[activeTab].hasSearch,
-                showExport: dimension.itemDetailTabs[activeTab].showExport,
+                hasSearch: dimension.itemDetailTabs && dimension.itemDetailTabs[activeTab].hasSearch,
+                showExport: dimension.itemDetailTabs && dimension.itemDetailTabs[activeTab].showExport,
                 searchValue: this.searchFilter,
                 listeners: {
                     searchchanged: function(filter) {

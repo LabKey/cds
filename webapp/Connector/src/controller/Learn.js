@@ -358,6 +358,10 @@ Ext.define('Connector.controller.Learn', {
     onSelectItem : function(view, item) {
         var id = item.getId();
 
+        if (this.dimension.name === "Group") {
+            this.getViewManager().changeView('group', 'groupsummary', [item.data.group_id]);
+            return;
+        }
         if (id && this.dimension) {
             this.getViewManager().changeView('learn', 'learn', [this.dimension.name, id]);
         }

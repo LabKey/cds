@@ -73,9 +73,9 @@ Ext.define('Connector.view.GroupSummary', {
     {
         return Ext.create('Connector.view.PageHeader', {
             title: group.get('label'),
-            upText: 'Group',
+            upText: 'Groups',
             upLink: {
-                controller: 'home'
+                controller: 'learn'
             },
             tabs: [{
                 label: 'Details'
