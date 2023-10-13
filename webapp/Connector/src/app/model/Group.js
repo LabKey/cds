@@ -33,5 +33,9 @@ Ext.define('Connector.app.model.Group', {
         {name: 'assay_names', convert : Connector.model.Filter.asArray},
         {name: 'species_names', convert : Connector.model.Filter.asArray},
 
+        {name: 'study_names_to_sort_on'},
+        {name: 'product_to_sort_on'},
+        {name: 'species_to_sort_on'},
+        {name: 'assay_to_sort_on'},
     ]
 });
