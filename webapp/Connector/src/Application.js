@@ -15,18 +15,21 @@ Ext.define('Connector.Application', {
         'Connector.app.model.StudyProducts',
         'Connector.app.model.VariableList',
         'Connector.app.model.Antigen',
+        'Connector.app.model.Group',
 
         'Connector.app.store.Assay',
         'Connector.app.store.Labs',
         'Connector.app.store.StudyProducts',
         'Connector.app.store.VariableList',
         'Connector.app.store.Antigen',
+        'Connector.app.store.Group',
 
         'Connector.app.view.Assay',
         'Connector.app.view.Labs',
         'Connector.app.view.Study',
         'Connector.app.view.StudyProducts',
-        'Connector.app.view.Antigen'
+        'Connector.app.view.Antigen',
+        'Connector.app.view.Group'
     ],
 
     controllers: [

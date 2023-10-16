@@ -637,7 +637,19 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     view: 'Connector.view.AssayAntigen'
                 }]
-            },{
+            }, {
+                uniqueName: '[Group]',
+                hasExport: false,
+                priority: 5,
+                singularName: 'Group',
+                pluralName: 'Groups',
+                hidden: false,
+                supportsSummary: false, // doesn't show up in Find subjects
+                supportsDetails: true, // should show up in Learn about
+                detailCollection: 'Connector.app.store.Group',
+                detailModel: 'Connector.app.model.Group',
+                detailView: 'Connector.app.view.Group'
+            }, {
                 uniqueName: '[Report]',
                 hasExport: false,
                 priority: 2,

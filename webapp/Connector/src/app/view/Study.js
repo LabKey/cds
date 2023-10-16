@@ -13,6 +13,8 @@ Ext.define('Connector.app.view.Study', {
 
     showLoadingMask : true,
 
+    id: 'learn-studies-id',
+
     columns : [{
         text: 'Name & Description',
         xtype: 'templatecolumn',
