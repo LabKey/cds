@@ -118,6 +118,7 @@ Ext.define('Connector.plugin.Messaging', {
                 x: this.calculateX(this, box, msg),
                 y: this.calculateY(this, box, msg),
                 listeners: listeners,
+                width: 150,
                 keep: keep,
                 modal: modal === true,
                 scope: this
