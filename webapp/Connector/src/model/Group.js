@@ -116,7 +116,20 @@ Ext.define('Connector.model.Group', {
                                         }
 
                                         var subjGrps = subjectGroups.filter(function(grp) {return grp.id !== -1});
-                                        var groups = mabGroups.concat(subjGrps);
+
+                                        //add index for display
+                                        var savedGroups = subjGrps.filter(function(grp) {return !grp.shared});
+                                        for (var i = 0; i < savedGroups.length; i++) {
+                                            savedGroups[i].index = i+1;
+                                        }
+
+                                        //add index for display
+                                        var sharedGroups = subjGrps.filter(function(grp) {return grp.shared});
+                                        for (var j = 0; j < sharedGroups.length; j++) {
+                                            sharedGroups[j].index = j+1;
+                                        }
+                                        var groups = mabGroups.concat(savedGroups).concat(sharedGroups);
+
                                         this.loadRawData(groups);
                                         if (cb)
                                             cb.call(cbScope);
