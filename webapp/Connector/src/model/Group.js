@@ -38,7 +38,8 @@ Ext.define('Connector.model.Group', {
         }},
         {name: 'type'},
         {name: 'participantIds', convert : Connector.model.Filter.asArray},
-        {name: 'modified', type: 'DATE'}
+        {name: 'modified', type: 'DATE'},
+        {name: 'studies', defaultValue: []}
     ],
 
     statics: {
@@ -84,6 +85,7 @@ Ext.define('Connector.model.Group', {
                         LABKEY.Query.selectRows({
                             schemaName: 'cds',
                             queryName: 'mabgroup',
+                            scope: this,
                             success: function(mabGroupData) {
                                 var mabGroups = [];
                                 Ext.each(mabGroupData.rows, function(row) {
@@ -104,40 +106,71 @@ Ext.define('Connector.model.Group', {
                                         includeParticipantIds: true,
                                         type : 'participantGroup'
                                     }),
+                                    scope: this,
                                     success: function(response)
                                     {
-                                        var subjectGroups = Ext.JSON.decode(response.responseText).groups;
+                                        LABKEY.Query.selectRows({
+                                            schemaName: 'cds',
+                                            queryName: 'learn_studiesforgroups',
+                                            scope: this,
+                                            success: function (groupData) {
 
-                                        // id needs to be unique in order to avoid collision
-                                        // ex. in the case where id=19, i.e its the same rowid for both for participant and mab group
-                                        // it only shows one group in the list, so below is the way to make id unique.
-                                        for (var y = 0; y < mabGroups.length; y++) {
-                                            mabGroups[y].id = mabGroups[y].id + "-" + mabGroups[y].type;
-                                        }
+                                                var subjectGroups = Ext.JSON.decode(response.responseText).groups;
 
-                                        var subjGrps = subjectGroups.filter(function(grp) {return grp.id !== -1});
+                                                // id needs to be unique in order to avoid collision
+                                                // ex. in the case where id=19, i.e its the same rowid for both for participant and mab group
+                                                // it only shows one group in the list, so below is the way to make id unique.
+                                                for (var y = 0; y < mabGroups.length; y++) {
+                                                    mabGroups[y].id = mabGroups[y].id + "-" + mabGroups[y].type;
+                                                }
 
-                                        //add index for display
-                                        var savedGroups = subjGrps.filter(function(grp) {return !grp.shared});
-                                        for (var i = 0; i < savedGroups.length; i++) {
-                                            savedGroups[i].index = i+1;
-                                        }
+                                                var subjGrps = subjectGroups.filter(function(grp) {return grp.id !== -1});
 
-                                        //add index for display
-                                        var sharedGroups = subjGrps.filter(function(grp) {return grp.shared});
-                                        for (var j = 0; j < sharedGroups.length; j++) {
-                                            sharedGroups[j].index = j+1;
-                                        }
-                                        var groups = mabGroups.concat(savedGroups).concat(sharedGroups);
+                                                //add index for display
+                                                var savedGroups = subjGrps.filter(function(grp) {return !grp.shared});
+                                                for (var i = 0; i < savedGroups.length; i++) {
+                                                    savedGroups[i].index = i+1;
+                                                }
 
-                                        this.loadRawData(groups);
-                                        if (cb)
-                                            cb.call(cbScope);
-                                    },
-                                    scope: this
+                                                //add index for display
+                                                var sharedGroups = subjGrps.filter(function(grp) {return grp.shared});
+                                                for (var j = 0; j < sharedGroups.length; j++) {
+                                                    sharedGroups[j].index = j+1;
+                                                }
+                                                var groups = mabGroups.concat(savedGroups).concat(sharedGroups);
+                                                var groupsWithStudies = [];
+
+                                                var studiesPerGroup = groupData.rows.map(function(grp) {
+                                                    return {
+                                                        group_label: grp.group_name,
+                                                        group_id: grp.group_id,
+                                                        has_data: grp.has_data,
+                                                        data_label: grp.study_label,
+                                                        data_id: grp.study_name,
+                                                        data_link_id: grp.study_name,
+                                                        data_show: true,
+                                                        has_access: true,
+                                                        data_description: grp.description
+                                                    }
+                                                });
+
+                                                Ext.each(groups, function(group) {
+                                                    var groupId = group.id;
+                                                    var groupLabel = group.label;
+
+                                                    group.studies = studiesPerGroup.filter(function(grp, index, self) {
+                                                        return index === self.indexOf(grp) && grp.group_id === groupId && grp.group_label === groupLabel;
+                                                    });
+                                                    groupsWithStudies.push(group);
+                                                });
+                                                this.loadRawData(groupsWithStudies);
+                                                if (cb)
+                                                    cb.call(cbScope);
+                                            }
+                                        });
+                                    }
                                 });
-                            },
-                            scope: this
+                            }
                         });
                     },
                     listeners : {

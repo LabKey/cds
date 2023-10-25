@@ -987,7 +987,7 @@ img.detail-has-data-very-small {
 
 .learn-grid-group-hd-collapsible .learn-grid-group-title {
   background-repeat: no-repeat;
-  background-image: url(images/groups_collapse.svg);
+  background-image: url(images/groups_collapse_expand.svg);
   padding: 0 0 0 14px;
 }
 
@@ -1000,5 +1000,5 @@ img.detail-has-data-very-small {
 }
 
 .learn-grid-group-hd-collapsed .learn-grid-group-title {
-  background-image: url(images/groups_expand.svg);
+  background-image: url(images/groups_collapse_expand.svg);
 }

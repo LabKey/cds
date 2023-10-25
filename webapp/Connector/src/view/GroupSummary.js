@@ -186,6 +186,20 @@ Ext.define('Connector.view.GroupSummaryBody', {
             }]
         }];
 
+        var modules = [];
+        modules.push([{
+            type: 'dataavailability',
+            staticData: {
+                title: 'Studies',
+                dataField: 'studies',
+                dataLink: 'Study',
+                hasGrouping: true,
+                groupDir: 'DESC',
+                hasDescription: true
+            }}]);
+        this.items[0].items.push(Ext.create('Connector.app.view.ModuleContainer', {model: this.group, modules}));
+
+
         var rightColumn = Ext.create('Ext.container.Container', {
             flex: 1,
             items: []

@@ -640,7 +640,7 @@ Ext4.define('Connector.cube.Configuration', {
             }, {
                 uniqueName: '[Group]',
                 hasExport: false,
-                priority: 5,
+                priority: 1,
                 singularName: 'Group',
                 pluralName: 'Groups',
                 hidden: false,
@@ -672,7 +672,7 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             }, {
                 uniqueName: '[MAb]',
-                priority: 3,
+                priority: 4,
                 singularName: 'MAb',
                 pluralName: 'MAbs',
                 learnExportQuery: 'MAbMixMAbMetaForLearnExport',
@@ -710,7 +710,7 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             }, {
                 uniqueName: '[Antigen]',
-                priority: 4,
+                priority: 5,
                 singularName: 'Antigen',
                 pluralName: 'Antigens',
                 learnExportQuery: 'assay_combined_antigen_metadata',
@@ -754,7 +754,7 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             }, {
                 uniqueName: '[Publication]',
-                priority: 1,
+                priority: 3,
                 singularName: 'Publication',
                 pluralName: 'Publications',
                 learnExportQuery: 'import_publication',
