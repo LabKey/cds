@@ -141,10 +141,18 @@ Ext.define('Connector.model.Group', {
                                                 var groupsWithStudies = [];
 
                                                 var studiesPerGroup = groupData.rows.map(function(grp) {
+                                                    var hasData = false;
+                                                    if (grp.has_data.length > 0) {
+                                                        Ext.each(grp.has_data, function(dataAvail) {
+                                                            if (dataAvail === 't') {
+                                                                hasData = true;
+                                                            }
+                                                        });
+                                                    }
                                                     return {
                                                         group_label: grp.group_name,
                                                         group_id: grp.group_id,
-                                                        has_data: grp.has_data,
+                                                        has_data: hasData,
                                                         data_label: grp.study_label,
                                                         data_id: grp.study_name,
                                                         data_link_id: grp.study_name,
@@ -161,6 +169,12 @@ Ext.define('Connector.model.Group', {
                                                     group.studies = studiesPerGroup.filter(function(grp, index, self) {
                                                         return index === self.indexOf(grp) && grp.group_id === groupId && grp.group_label === groupLabel;
                                                     });
+
+                                                    Ext.each(group.studies, function(study, index) {
+                                                        study.data_index = index; //for show all/show less on display
+                                                        study.data_show = index < 10; //for show all/show less on display
+                                                    });
+
                                                     groupsWithStudies.push(group);
                                                 });
                                                 this.loadRawData(groupsWithStudies);

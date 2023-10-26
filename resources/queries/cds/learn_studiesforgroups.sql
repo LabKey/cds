@@ -1,8 +1,18 @@
 SELECT DISTINCT
+
+    g.group_id,
+    g.study_label,
+    g.group_name,
+    group_concat(g.has_data) AS has_data,
+    g.study_name,
+    g.description
+
+    FROM
+        (SELECT DISTINCT
 sgm.groupId.rowid AS group_id,
 s.label AS study_label,
 sgm.groupId.label AS group_name,
-afs.has_data OR pfs.has_data AS has_data,
+(CASE WHEN afs.has_data IS NULL OR pfs.has_data IS NULL THEN false ELSE (afs.has_data OR pfs.has_data) END) AS has_data,
 s.study_name AS study_name,
 s.description
 
@@ -22,4 +32,11 @@ GROUP BY
     afs.has_data,
     pfs.has_data,
     s.study_name,
-    s.description
+    s.description) g
+
+    GROUP BY
+    g.group_id,
+    g.study_label,
+    g.group_name,
+    g.study_name,
+    g.description
