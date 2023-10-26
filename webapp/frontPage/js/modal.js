@@ -274,7 +274,13 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             remember: rememberMe,
             approvedTermsOfUse: termsOfUse
           }
-        }).success(function() {
+        }).success(function(data) {
+          if (!data.success && data.returnUrl){
+            //window.location = data.returnUrl;
+            var newLocation = window.location.href.concat('?change_password=true');
+            window.location = newLocation;
+            return;
+          }
           if (LABKEY.ActionURL.getReturnUrl()) {
             window.location = LABKEY.ActionURL.getReturnUrl();
             return;
@@ -355,7 +361,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         self.submitPasswordHelp('emailhelpregister', 'register-account-modal', 'submit_hidden_registerhelp');
       });
 
-      self.action('confirmchangepassword', function($click) {
+      self.action('confirmsetpassword', function($click) {
         var pw1 = document.getElementById('password1');
         var pw2 = document.getElementById('password2');
 
