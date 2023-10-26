@@ -14,6 +14,8 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
     showAllGroupFlags: [], //to set showAll flag for each grouping/sub-sections
 
+    learnmodulegridcls: 'learnmodulegrid',
+
     statics: {
         dataAddedSortFn: function(a, b) {
             var val1 = a.data_label ? a.data_label : a.data_id;
@@ -52,7 +54,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
             )).apply(this.getTitleData(this.data))
         },Ext.apply({
             xtype: 'grid',
-            cls: 'learnmodulegrid',
+            cls: (this.cssCls && this.cssCls.learnmodulegridcls) ? this.cssCls.learnmodulegridcls : this.learnmodulegridcls,
             viewConfig: {
                 stripeRows: false,
                 trackOver: false

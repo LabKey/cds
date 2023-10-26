@@ -21,6 +21,8 @@ Ext.define('Connector.app.view.ModuleContainer', {
 
     cls: 'modulecontainer',
 
+    moduleContainerColumnCls: 'modulecontainercolumn',
+
     initComponent : function() {
         this.items = [];
 
@@ -34,7 +36,7 @@ Ext.define('Connector.app.view.ModuleContainer', {
                 xtype: 'container',
                 flex: 1,
                 itemId: 'column' + i,
-                cls: 'modulecontainercolumn',
+                cls: this.moduleContainerColumnCls,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'

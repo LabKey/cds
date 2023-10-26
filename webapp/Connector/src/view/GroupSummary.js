@@ -196,9 +196,14 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 hasGrouping: true,
                 groupDir: 'DESC',
                 hasDescription: true
-            }}]);
-        this.items[0].items.push(Ext.create('Connector.app.view.ModuleContainer', {model: this.group, modules}));
-
+            },
+            cssCls: {
+                learnmodulegridcls: 'groupslearnmodulegrid'
+            }
+        }]);
+        this.items[0].items.push(Ext.create('Connector.app.view.ModuleContainer', { moduleContainerColumnCls:'studiesForGroupColContainerCls',
+                                                                                    model: this.group,
+                                                                                    modules }));
 
         var rightColumn = Ext.create('Ext.container.Container', {
             flex: 1,
