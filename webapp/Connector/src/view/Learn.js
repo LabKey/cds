@@ -541,7 +541,7 @@ Ext.define('Connector.view.Learn', {
                 }
             }
             else {
-                if(store.getCount() === 0)
+                if(store.getCount() === 0 && !store.isFiltered())
                     store.loadSlice();
                 else
                     this.sortAndFilterStoreDelayed(store);

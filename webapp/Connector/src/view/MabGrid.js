@@ -78,16 +78,20 @@ Ext.define('Connector.view.MabGrid', {
         // bind view to view
         this.on('resize', this.onViewResize, this);
 
-        // plugin to handle loading mask for the grid
-        this.addPlugin({
-            ptype: 'loadingmask',
-            configs: [{
-                element: this,
-                loadingDelay: 250, // show this loading mask quickly since the grid render itself takes most of the time
-                beginEvent: 'showload',
-                endEvent: 'hideload'
-            }]
-        });
+        var me = this;
+        this.mask = setTimeout(function() {
+            // plugin to handle loading mask for the grid
+            me.addPlugin({
+                ptype: 'loadingmask',
+                configs: [{
+                    element: me,
+                    loadingDelay: 0,
+                    beginEvent: 'showload',
+                    endEvent: 'hideload'
+                }]
+            })
+            me.fireEvent('showload', me);
+        }, 250);
 
         this.on('beforehide', this.hideVisibleWindow);
 
@@ -334,6 +338,7 @@ Ext.define('Connector.view.MabGrid', {
                     viewready: function(grid) {
                         // reapply filters to the column UI
                         this.applyFilterColumnState(grid);
+                        clearTimeout(this.mask);
                         this.fireEvent('hideload', this);
                     },
                     itemmouseenter : function(view, record, item, index, evt) {

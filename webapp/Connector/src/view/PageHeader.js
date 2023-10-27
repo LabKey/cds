@@ -134,7 +134,7 @@ Ext.define('Connector.view.PageHeader', {
             flex: 2
         };
 
-        var detailSearchField = Ext.create('Ext.form.field.Text', {
+        var detailSearchField = Ext.create('Connector.view.Learn.SearchField', {
             emptyText: 'Search',
             cls: 'learn-search-input',
             minWidth: 150,
