@@ -3,7 +3,7 @@ SELECT DISTINCT
     g.group_id,
     g.study_label,
     g.group_name,
-    group_concat(g.has_data) AS has_data,
+    group_concat(g.has_data) AS has_data, -- since LK SQL doesn't support boolean aggregate, going this route
     g.study_name,
     g.description
 

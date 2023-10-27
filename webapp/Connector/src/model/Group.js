@@ -142,8 +142,9 @@ Ext.define('Connector.model.Group', {
 
                                                 var studiesPerGroup = groupData.rows.map(function(grp) {
                                                     var hasData = false;
-                                                    if (grp.has_data.length > 0) {
-                                                        Ext.each(grp.has_data, function(dataAvail) {
+                                                    if (grp.has_data.length === 1) {
+                                                        var has_data_arr = grp.has_data[0].split(',');
+                                                        Ext.each(has_data_arr, function(dataAvail) {
                                                             if (dataAvail === 't') {
                                                                 hasData = true;
                                                             }
