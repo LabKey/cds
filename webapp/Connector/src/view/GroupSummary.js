@@ -193,7 +193,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 title: 'Studies',
                 dataField: 'studies',
                 dataLink: 'Study',
-                hasGrouping: true,
+                hasGrouping: false,
                 groupDir: 'DESC',
                 hasDescription: true
             },

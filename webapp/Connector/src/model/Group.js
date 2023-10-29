@@ -137,10 +137,12 @@ Ext.define('Connector.model.Group', {
                                                 for (var j = 0; j < sharedGroups.length; j++) {
                                                     sharedGroups[j].index = j+1;
                                                 }
+
+                                                //to display studies on Group Details page
                                                 var groups = mabGroups.concat(savedGroups).concat(sharedGroups);
                                                 var groupsWithStudies = [];
 
-                                                var studiesPerGroup = groupData.rows.map(function(grp) {
+                                                var studyPerGroup = groupData.rows.map(function(grp) {
                                                     var hasData = false;
                                                     if (grp.has_data.length === 1) {
                                                         var has_data_arr = grp.has_data[0].split(',');
@@ -161,23 +163,24 @@ Ext.define('Connector.model.Group', {
                                                         has_access: true,
                                                         data_description: grp.description
                                                     }
-                                                });
+                                                }, this);
 
                                                 Ext.each(groups, function(group) {
                                                     var groupId = group.id;
                                                     var groupLabel = group.label;
 
-                                                    group.studies = studiesPerGroup.filter(function(grp, index, self) {
+                                                    group.studies = studyPerGroup.filter(function(grp, index, self) {
                                                         return index === self.indexOf(grp) && grp.group_id === groupId && grp.group_label === groupLabel;
                                                     });
 
                                                     Ext.each(group.studies, function(study, index) {
-                                                        study.data_index = index; //for show all/show less on display
-                                                        study.data_show = index < 10; //for show all/show less on display
-                                                    });
+                                                        study.data_index = index; //for show all/show less
+                                                        study.data_show = index < 10; //for show all/show less
+                                                    }, this);
 
                                                     groupsWithStudies.push(group);
-                                                });
+                                                }, this);
+
                                                 this.loadRawData(groupsWithStudies);
                                                 if (cb)
                                                     cb.call(cbScope);
