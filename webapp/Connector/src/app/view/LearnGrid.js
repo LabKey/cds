@@ -92,17 +92,18 @@ Ext.define('Connector.app.view.LearnGrid', {
         };
 
         this.listeners.learnGridResizeHeight = function (viewHeight) {
-            this.setHeight(viewHeight - this.learnView.headerViews.main.height);
+            //console.log('learn grid resize height', this.learnView.headerViews.main.getHeight());
+            this.setHeight(viewHeight - this.learnView.headerViews.main.getHeight());
             this.setTitleColumnWidth();
         };
 
         this.listeners.learnDetailsGridResizeHeight = function (viewHeight) {
-            this.setHeight(viewHeight - this.learnView.headerViews.main.height);
+            this.setHeight(viewHeight - this.learnView.headerViews.main.getHeight());
         };
 
         this.listeners.boxready = function (grid) {
             if (!this.isDetailLearnGrid) {
-                this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
+                this.height = grid.container.getHeight() - this.learnView.headerViews.main.getHeight();
                 this.setTitleColumnWidth();
             }
         };
