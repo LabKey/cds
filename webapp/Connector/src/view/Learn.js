@@ -519,7 +519,8 @@ Ext.define('Connector.view.Learn', {
                     this.sortAndFilterStoreDelayed(store);
 
                     // after the grid store has loaded, fire the resize event to adjust final layout between the
-                    // header and grid
+                    // header and grid, this is necessary because the learn header is no longer a fixed height because
+                    // the styling has been adjusted to allow the learn tabs to wrap if there isn't enough horizontal space
                     var size = this.getSize();
                     this.fireEvent('resize', this, size.width, size.height);
                 }, this);
@@ -856,9 +857,6 @@ Ext.define('Connector.view.LearnHeader', {
 
     alias: 'widget.learnheader',
 
-    //height: 110,
-    //flex : 1,
-
     cls: 'header-container learnaboutheader',
 
     defaults: {
@@ -876,7 +874,6 @@ Ext.define('Connector.view.LearnHeader', {
         },{
             xtype: 'container',
             items: [this.getDataView(), this.getSearchField(), this.getExportButton()],
-            //height: 56,
             id: 'learn-header-bar-id',
             cls: 'learn-header-bar',
             layout: {
@@ -896,7 +893,6 @@ Ext.define('Connector.view.LearnHeader', {
         if (!this.headerDataView) {
             this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
                 flex: 2,
-                //minWidth: 725,
                 cls: 'learn-dim-selector',
                 dimensions: this.dimensions,
                 store: Ext.create('Ext.data.Store', {

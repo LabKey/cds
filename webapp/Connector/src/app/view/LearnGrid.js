@@ -92,7 +92,6 @@ Ext.define('Connector.app.view.LearnGrid', {
         };
 
         this.listeners.learnGridResizeHeight = function (viewHeight) {
-            //console.log('learn grid resize height', this.learnView.headerViews.main.getHeight());
             this.setHeight(viewHeight - this.learnView.headerViews.main.getHeight());
             this.setTitleColumnWidth();
         };
