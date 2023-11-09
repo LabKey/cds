@@ -527,8 +527,18 @@ Ext.define('Connector.app.store.StudyOverview', {
                 study.groups_header = grpHeader ? grpHeader[0] : undefined;
                 var groupDiv = document.createElement('div');
                 groupDiv.innerHTML = study.groups;
-                var groups = groupDiv.querySelectorAll('ul li');
+                var groups = groupDiv.querySelectorAll('div > ul > li');
                 var groupsArray = [];
+
+                console.log('found ' + groups.length + ' groups');
+                Ext.each(groups, function(group){
+                    var children = group.getElementsByTagName('li');
+                    if (children && children.length > 0){
+
+                        var item = group.firstChild.data;
+                        console.log(item + ' has ' + children.length + ' children');
+                    }
+                });
 
                 if (groups && groups.length > 0) {
                     for (var k = 0; k < groups.length; k++) {
