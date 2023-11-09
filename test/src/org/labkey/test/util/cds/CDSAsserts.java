@@ -17,7 +17,6 @@ package org.labkey.test.util.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.cds.AssayDetailsPage;
 import org.labkey.test.pages.cds.StudyDetailsPage;
 import org.labkey.test.util.Ext4Helper;
@@ -31,6 +30,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.WebTestHelper.getContextPath;
 
 public class CDSAsserts
 {
@@ -135,7 +135,7 @@ public class CDSAsserts
         _test.waitForElement(btnLocator);
         _test.mouseOver(btnLocator);
 
-        Locator.XPathLocator portraitLoc = Locator.xpath("//img[@src='%s/cds/images/pictures/%s']".formatted(WebTestHelper.getContextPath(), portraitFilename)).notHidden();
+        Locator.XPathLocator portraitLoc = Locator.xpath("//img[@src='%s/cds/images/pictures/%s']".formatted(getContextPath(), portraitFilename)).notHidden();
         _test.waitForElement(portraitLoc);
         Locator.XPathLocator roleLoc = Locator.tag("div").withClass("tip-role").notHidden().withText(role);
         _test.assertElementPresent(roleLoc);

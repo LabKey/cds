@@ -17,10 +17,10 @@ package org.labkey.test.pages.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.WebTestHelper;
 import org.labkey.test.util.LogMethod;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.labkey.test.WebTestHelper.getContextPath;
 
 public class AssayDetailsPage
 {
@@ -65,14 +65,14 @@ public class AssayDetailsPage
         _test.waitForElement(Locator.css("div.assaytitle").withText(_name));
         if (_contributorImg.equals(_pocImg))
         {
-            Locator.XPathLocator imgLoc = Locator.xpath("//img[@src='%s/cds/images/pictures/%s']".formatted(WebTestHelper.getContextPath(), _pocImg));
+            Locator.XPathLocator imgLoc = Locator.xpath("//img[@src='%s/cds/images/pictures/%s']".formatted(getContextPath(), _pocImg));
             _test.waitForElement(imgLoc);
             _test.assertElementPresent(imgLoc, 2);
         }
         else
         {
-            Locator.XPathLocator imgLead = Locator.xpath("//img[@src='%s/cds/images/pictures/%s']".formatted(WebTestHelper.getContextPath(), _pocImg));
-            Locator.XPathLocator imgContact= Locator.xpath("//img[@src='%s/cds/images/pictures/%s']".formatted(WebTestHelper.getContextPath(), _contributorImg));
+            Locator.XPathLocator imgLead = Locator.xpath("//img[@src='%s/cds/images/pictures/%s']".formatted(getContextPath(), _pocImg));
+            Locator.XPathLocator imgContact= Locator.xpath("//img[@src='%s/cds/images/pictures/%s']".formatted(getContextPath(), _contributorImg));
 
             _test.waitForElement(imgLead);
             _test.waitForElement(imgContact);
