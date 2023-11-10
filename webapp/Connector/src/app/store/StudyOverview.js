@@ -530,15 +530,7 @@ Ext.define('Connector.app.store.StudyOverview', {
                 var groups = groupDiv.querySelectorAll('div > ul > li');
                 var groupsArray = [];
 
-                console.log('found ' + groups.length + ' groups');
-                Ext.each(groups, function(group){
-                    var children = group.getElementsByTagName('li');
-                    if (children && children.length > 0){
-
-                        var item = group.firstChild.data;
-                        console.log(item + ' has ' + children.length + ' children');
-                    }
-                });
+                this.parseGroupList(study.groups);
 
                 if (groups && groups.length > 0) {
                     for (var k = 0; k < groups.length; k++) {
@@ -592,5 +584,44 @@ Ext.define('Connector.app.store.StudyOverview', {
             this.dataLoaded = true;
             this.fireEvent('dataloaded');
         }
+    },
+
+    parseGroupList : function(groupHtml){
+        // inject the raw HTML into a div, so we can query it
+        var groupDiv = document.createElement('div');
+        groupDiv.innerHTML = groupHtml;
+
+        // get all the top level items
+        var groups = groupDiv.querySelectorAll(':scope > ul > li');
+
+        var getChildren = function(group, indent){
+            // ignore empty list items <li></li>
+            if (group.firstChild){
+                var text = group.firstChild.data;
+                console.log(indent + text);
+                var children = group.querySelectorAll(':scope > ul > li');
+                if (children && children.length > 0){
+                    return children;
+                }
+                else {
+                    return [];
+                }
+            }
+        };
+
+        console.log('found ' + groups.length + ' top level items');
+
+        // handle at most 2 levels of nesting, anything deeper will be ignored
+        Ext.each(groups, function(group){
+            var children = getChildren(group, '');
+
+            Ext.each(children, function(child){
+                var children2 = getChildren(child, '\t');
+
+                Ext.each(children2, function(child){
+                    getChildren(child, '\t\t');
+                });
+            });
+        });
     }
 });
