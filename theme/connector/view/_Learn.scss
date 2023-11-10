@@ -101,6 +101,12 @@ div.learnview {
   }
 }
 
+.learnheader {
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+}
+
 .learn-data-available-module {
   .x-panel-body-default {
     border-width: 0;
