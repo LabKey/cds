@@ -173,8 +173,10 @@ Ext.define('Connector.view.GroupSummaryBody', {
     {
         //scroll bar for Group Details page when 'show all' is clicked and there are many studies
         var el = document.getElementById('groupsummary-id-body');
-        el.style.overflowX = 'hidden';
-        el.style.overflowY = 'auto';
+        if (el) {
+            el.style.overflowX = 'hidden';
+            el.style.overflowY = 'auto';
+        }
 
         this.items = [{
             xtype: 'container',
