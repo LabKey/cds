@@ -587,26 +587,32 @@ Ext.define('Connector.app.store.StudyOverview', {
     },
 
     parseGroupList : function(groupHtml){
+        /**
+         * Recursively search for child list items and attach them to
+         * the parent object
+         * @param parentNode the parent DOM node
+         * @param parent the parent object to record the hierarchy
+         */
+        const getChildren = function(parentNode, parent){
+            let nodeList = parentNode.querySelectorAll(':scope > ul > li');
+            if (nodeList) {
+                Ext.each(nodeList, function(node){
+                    // ignore empty list items <li></li>
+                    if (node.firstChild){
+                        var item = createItemObject(node);
+                        parent.children.push(item);
 
-        var getChildren = function(node, parent, indent){
-            // ignore empty list items <li></li>
-            if (node.firstChild){
-                var text = node.firstChild.data;
-
-                //console.log(indent + text);
-                var children = node.querySelectorAll(':scope > ul > li');
-                if (children && children.length > 0){
-                    return children;
-                }
-                else {
-                    return [];
-                }
+                        getChildren(node, item);
+                    }
+                });
             }
         };
 
-        // helper to create the representation of the items in the list, including child elements
-        var createItemObject = function(node){
-            // ignore empty list items
+        /**
+         * Helper to create the representation of the items in the list, including child elements
+         * @param node the DOM node
+         */
+        const createItemObject = function(node){
             if (node.firstChild){
                 return {name : node.firstChild.data, children : []};
             }
@@ -614,37 +620,12 @@ Ext.define('Connector.app.store.StudyOverview', {
         }
 
         // inject the raw HTML into a div, so we can query it
-        var groupDiv = document.createElement('div');
+        let groupDiv = document.createElement('div');
         groupDiv.innerHTML = groupHtml;
 
-        // get all the top level items
-        var groups = groupDiv.querySelectorAll(':scope > ul > li');
-        console.log('found ' + groups.length + ' top level items');
+        var parent = {name: 'top', children : []};
+        getChildren(groupDiv, parent);
 
-        // handle at most 2 levels of nesting, anything deeper will be ignored
-        var items = [];
-
-        Ext.each(groups, function(group){
-            var children = getChildren(group, null, '');
-
-            var item = createItemObject(group);
-            items.push(item);
-
-            Ext.each(children, function(child){
-                var child_1 = createItemObject(child);
-                item.children.push(child_1);
-
-                var children2 = getChildren(child, null, '\t');
-
-                Ext.each(children2, function(child){
-                    var child_2 = createItemObject(child);
-                    child_1.children.push(child_2);
-
-                    getChildren(child, null, '\t\t');
-                });
-            });
-        });
-
-        console.log(items);
+        console.log(parent);
     }
 });
