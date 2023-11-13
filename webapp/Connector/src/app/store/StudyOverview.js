@@ -525,23 +525,7 @@ Ext.define('Connector.app.store.StudyOverview', {
                 // process 'groups' to display 10 or more with show all/show less
                 var grpHeader= study.groups && study.groups.length > 0 ? study.groups.split('<ul>', 1) : undefined;
                 study.groups_header = grpHeader ? grpHeader[0] : undefined;
-                var groupDiv = document.createElement('div');
-                groupDiv.innerHTML = study.groups;
-                var groups = groupDiv.querySelectorAll('div > ul > li');
-                var groupsArray = [];
-
-                this.parseGroupList(study.groups);
-
-                if (groups && groups.length > 0) {
-                    for (var k = 0; k < groups.length; k++) {
-                        var str = groups[k].innerText;
-                        if (groupsArray.indexOf(str) === -1) {
-                            groupsArray.push({label: str});
-                        }
-                    }
-                }
-                study.groups_data = groupsArray;
-
+                study.groups_data = this.parseGroupList(study.groups);
                 var niAssaysAdded = study.non_integrated_assay_data.filter(function (value) {
                     return value.isLinkValid;
                 });
@@ -623,9 +607,8 @@ Ext.define('Connector.app.store.StudyOverview', {
         let groupDiv = document.createElement('div');
         groupDiv.innerHTML = groupHtml;
 
-        var parent = {name: 'top', children : []};
-        getChildren(groupDiv, parent);
-
-        console.log(parent);
+        var rootNode = {name: 'root', children : []};
+        getChildren(groupDiv, rootNode);
+        return rootNode.children;
     }
 });
