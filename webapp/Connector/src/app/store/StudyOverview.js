@@ -525,21 +525,7 @@ Ext.define('Connector.app.store.StudyOverview', {
                 // process 'groups' to display 10 or more with show all/show less
                 var grpHeader= study.groups && study.groups.length > 0 ? study.groups.split('<ul>', 1) : undefined;
                 study.groups_header = grpHeader ? grpHeader[0] : undefined;
-                var groupDiv = document.createElement('div');
-                groupDiv.innerHTML = study.groups;
-                var groups = groupDiv.querySelectorAll('ul li');
-                var groupsArray = [];
-
-                if (groups && groups.length > 0) {
-                    for (var k = 0; k < groups.length; k++) {
-                        var str = groups[k].innerText;
-                        if (groupsArray.indexOf(str) === -1) {
-                            groupsArray.push({label: str});
-                        }
-                    }
-                }
-                study.groups_data = groupsArray;
-
+                study.groups_data = this.parseGroupList(study.groups);
                 var niAssaysAdded = study.non_integrated_assay_data.filter(function (value) {
                     return value.isLinkValid;
                 });
@@ -582,5 +568,47 @@ Ext.define('Connector.app.store.StudyOverview', {
             this.dataLoaded = true;
             this.fireEvent('dataloaded');
         }
+    },
+
+    parseGroupList : function(groupHtml){
+        /**
+         * Recursively search for child list items and attach them to
+         * the parent object
+         * @param parentNode the parent DOM node
+         * @param parent the parent object to record the hierarchy
+         */
+        const getChildren = function(parentNode, parent){
+            let nodeList = parentNode.querySelectorAll(':scope > ul > li');
+            if (nodeList) {
+                Ext.each(nodeList, function(node){
+                    // ignore empty list items <li></li>
+                    if (node.firstChild){
+                        var item = createItemObject(node);
+                        parent.children.push(item);
+
+                        getChildren(node, item);
+                    }
+                });
+            }
+        };
+
+        /**
+         * Helper to create the representation of the items in the list, including child elements
+         * @param node the DOM node
+         */
+        const createItemObject = function(node){
+            if (node.firstChild){
+                return {name : node.firstChild.data, children : []};
+            }
+            return null;
+        }
+
+        // inject the raw HTML into a div, so we can query it
+        let groupDiv = document.createElement('div');
+        groupDiv.innerHTML = groupHtml;
+
+        var rootNode = {name: 'root', children : []};
+        getChildren(groupDiv, rootNode);
+        return rootNode.children;
     }
 });
