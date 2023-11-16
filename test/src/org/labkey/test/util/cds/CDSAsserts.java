@@ -30,6 +30,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.WebTestHelper.getContextPath;
 
 public class CDSAsserts
 {
@@ -134,7 +135,7 @@ public class CDSAsserts
         _test.waitForElement(btnLocator);
         _test.mouseOver(btnLocator);
 
-        Locator.XPathLocator portraitLoc = Locator.xpath("//img[@src='/labkey/cds/images/pictures/" + portraitFilename + "']").notHidden();
+        Locator.XPathLocator portraitLoc = Locator.xpath("//img[@src='%s/cds/images/pictures/%s']".formatted(getContextPath(), portraitFilename)).notHidden();
         _test.waitForElement(portraitLoc);
         Locator.XPathLocator roleLoc = Locator.tag("div").withClass("tip-role").notHidden().withText(role);
         _test.assertElementPresent(roleLoc);
