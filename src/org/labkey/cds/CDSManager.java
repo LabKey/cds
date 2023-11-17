@@ -204,7 +204,6 @@ public class CDSManager
                     "import_publication",
                     "import_personnel",
                     "import_document",
-                    "import_mabmetadata",
                     "import_mabmixmetadata",
                     "import_lab",
                     "import_study",

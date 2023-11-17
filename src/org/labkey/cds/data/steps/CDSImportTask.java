@@ -16,13 +16,25 @@
 package org.labkey.cds.data.steps;
 
 import org.labkey.cds.data.CDSImportCopyConfig;
+import org.labkey.cds.data.CSVCopyConfig;
 import org.labkey.cds.data.TSVCopyConfig;
 
 public class CDSImportTask extends ImportTask
 {
     private static CDSImportCopyConfig[] dataspaceTables = new CDSImportCopyConfig[]
     {
-        // Core Tables
+        // bcr data, order matters due to FKs
+        new CSVCopyConfig("sequence"),
+        new CSVCopyConfig("alignment_run"),
+        new CSVCopyConfig("allele_sequence"),
+        new CSVCopyConfig("alignment"),
+        new CSVCopyConfig("header_source"),
+        new CSVCopyConfig("sequence_header"),
+        new CSVCopyConfig("sequence_germline"),
+        new CSVCopyConfig("preferred_allele"),
+        new CSVCopyConfig("antibody_class"),
+
+            // Core Tables
         new TSVCopyConfig("Study"),
         new TSVCopyConfig("StudyGroups"),
         new TSVCopyConfig("Product"),
@@ -33,6 +45,8 @@ public class CDSImportTask extends ImportTask
         new TSVCopyConfig("Publication"),
         new TSVCopyConfig("MAbMetadata"),
         new TSVCopyConfig("MAbMixMetadata"),
+
+        new CSVCopyConfig("antibody_sequence"),
 
         // Dependent Tables
         new TSVCopyConfig("StudyPartGroupArm"),
