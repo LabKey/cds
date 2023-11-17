@@ -46,7 +46,7 @@ public class CDSImportTask extends ImportTask
         new TSVCopyConfig("MAbMetadata"),
         new TSVCopyConfig("MAbMixMetadata"),
 
-        new CSVCopyConfig("antibody_sequence"),
+        new CSVCopyConfig("antibody_sequence"), // bcr data, order matters due to FKs
 
         // Dependent Tables
         new TSVCopyConfig("StudyPartGroupArm"),
