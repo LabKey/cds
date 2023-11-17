@@ -194,7 +194,7 @@ Ext.define('Connector.view.Chart', {
                     },{
                         tag: 'h1',
                         cls: 'line4',
-                        html: '<br>Or view ' + '<a href="cds-app.view#learn/learn/Group">Curated and saved groups</a>'
+                        html: '<br>Or view <a href="cds-app.view#learn/learn/Group">Curated and saved groups</a>'
                     }]
                 }
             });
