@@ -32,7 +32,7 @@ public class TSVCopyConfig extends CDSImportCopyConfig
         // This causes an issue when importing BCR data (via Step 1) since a BCR table (cds.antibody_sequence) has a FK
         // to the mabmetadata table, but the mabmetadata table is not populated during Step 1 and it errors in FK not found.
         // To get around this, we are going to ETL data from mabmetadata.txt directly into the mabmetadata table during Step 1
-        // (and drop import_mabmetadata table altogether since it is not reference in any queries or reports).
+        // (and drop import_mabmetadata table altogether since it is not referenced in any queries or reports).
         super("#TSV#", table, "cds", (table.equalsIgnoreCase("mabmetadata") ? table : ("import_" + table)), fileName);
     }
 
