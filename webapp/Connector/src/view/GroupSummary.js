@@ -15,6 +15,8 @@ Ext.define('Connector.view.GroupSummary', {
 
     groupId: undefined,
 
+    id: 'groupsummary-id',
+
     constructor : function(config)
     {
         this.callParent([config]);
@@ -72,6 +74,7 @@ Ext.define('Connector.view.GroupSummary', {
     generateHeader : function(group)
     {
         return Ext.create('Connector.view.PageHeader', {
+            id: 'groupsummaryheader-id',
             title: group.get('label'),
             upText: 'Groups',
             upLink: {
@@ -149,6 +152,8 @@ Ext.define('Connector.view.GroupSummary', {
 Ext.define('Connector.view.GroupSummaryBody', {
     extend : 'Ext.container.Container',
 
+    id: 'groupsummarybody-id',
+
     margin: '25 25 0 25',
 
     layout: {
@@ -166,6 +171,13 @@ Ext.define('Connector.view.GroupSummaryBody', {
 
     initComponent: function()
     {
+        //scroll bar for Group Details page when 'show all' is clicked and there are many studies
+        var el = document.getElementById('groupsummary-id-body');
+        if (el) {
+            el.style.overflowX = 'hidden';
+            el.style.overflowY = 'auto';
+        }
+
         this.items = [{
             xtype: 'container',
             flex: 1,
@@ -185,6 +197,25 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 value: this._getDescription(this.group)
             }]
         }];
+
+        var modules = [];
+        modules.push([{
+            type: 'dataavailability',
+            staticData: {
+                title: 'Studies',
+                dataField: 'studies',
+                dataLink: 'Study',
+                hasGrouping: false,
+                groupDir: 'DESC',
+                hasDescription: true
+            },
+            cssCls: {
+                learnmodulegridcls: 'groupslearnmodulegrid'
+            }
+        }]);
+        this.items[0].items.push(Ext.create('Connector.app.view.ModuleContainer', { moduleContainerColumnCls:'studiesForGroupColContainerCls',
+                                                                                    model: this.group,
+                                                                                    modules }));
 
         var rightColumn = Ext.create('Ext.container.Container', {
             flex: 1,

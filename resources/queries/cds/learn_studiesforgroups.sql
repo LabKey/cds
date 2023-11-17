@@ -1,11 +1,20 @@
-SELECT
+SELECT DISTINCT
+
+    g.group_id,
+    g.study_label,
+    g.group_name,
+    group_concat(g.has_data) AS has_data, -- since LK SQL doesn't support boolean aggregate, going this route
+    g.study_name,
+    g.description
+
+    FROM
+        (SELECT DISTINCT
 sgm.groupId.rowid AS group_id,
 s.label AS study_label,
 sgm.groupId.label AS group_name,
-(CASE WHEN sc.ownerid < 0 THEN '2_curated_groups' ELSE '1_my_saved_groups' END) AS group_type,
-s.species,
-pfs.product_name,
-afs.assay_identifier,
+(CASE WHEN afs.has_data IS NULL OR pfs.has_data IS NULL THEN false ELSE (afs.has_data OR pfs.has_data) END) AS has_data,
+s.study_name AS study_name,
+s.description
 
 FROM
     study.subjectgroupmap sgm
@@ -20,7 +29,14 @@ GROUP BY
     sgm.groupId.rowid,
     s.label,
     sgm.groupId.label,
-    sc.ownerid,
-    s.species,
-    pfs.product_name,
-    afs.assay_identifier
+    afs.has_data,
+    pfs.has_data,
+    s.study_name,
+    s.description) g
+
+    GROUP BY
+    g.group_id,
+    g.study_label,
+    g.group_name,
+    g.study_name,
+    g.description

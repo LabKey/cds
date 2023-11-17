@@ -8,7 +8,8 @@ Ext.define('Connector.factory.Module', {
 
 	defineView: function(moduleSpec, model) {
 		var data = {},
-			xtype = Connector.constant.ModuleViewsLookup[moduleSpec.type];
+			xtype = Connector.constant.ModuleViewsLookup[moduleSpec.type],
+			cssClasses = {};
 
 		if (xtype) {
 			if (model) {
@@ -42,9 +43,14 @@ Ext.define('Connector.factory.Module', {
 				}
 			});
 
+			Ext.iterate(moduleSpec.cssCls, function(key, value) {
+				cssClasses[key] = value;
+			});
+
 			return {
 				xtype: xtype,
-				data: data
+				data: data,
+				cssCls: cssClasses
 			};
 		}
 
