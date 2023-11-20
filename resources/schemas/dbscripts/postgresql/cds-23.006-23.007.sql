@@ -1,3 +1,4 @@
+TRUNCATE TABLE cds.MAbMix CASCADE;
 TRUNCATE TABLE cds.mabmetadata CASCADE;
 TRUNCATE TABLE cds.sequence_germline CASCADE;
 TRUNCATE TABLE cds.allele_sequence CASCADE;
