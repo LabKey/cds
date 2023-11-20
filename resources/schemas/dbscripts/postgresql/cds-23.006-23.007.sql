@@ -32,9 +32,6 @@ CREATE INDEX IX_cds_sequence_header_source_id ON cds.sequence_header(source_id);
 ALTER TABLE cds.antibody_sequence ADD CONSTRAINT FK_cds_antibody_sequence_mab_id FOREIGN KEY (container, mab_id) REFERENCES cds.mabmetadata (container, mab_id);
 CREATE INDEX IX_cds_antibody_sequence_mab_id ON cds.antibody_sequence (container, mab_id);
 
-ALTER TABLE cds.antibody_sequence ADD CONSTRAINT FK_cds_antibody_sequence_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence (sequence_id);
-CREATE INDEX IX_cds_antibody_sequence_sequence_id ON cds.antibody_sequence (sequence_id);
-
 ALTER TABLE cds.mabmetadata ADD CONSTRAINT FK_cds_mabmetadata_mab_class_id FOREIGN KEY (mab_class_id) REFERENCES cds.antibody_class (mab_class_id);
 CREATE INDEX IX_cds_mabmetadata_mab_class_id ON cds.mabmetadata (mab_class_id);
 
