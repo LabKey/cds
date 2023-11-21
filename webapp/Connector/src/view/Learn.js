@@ -1058,6 +1058,14 @@ Ext.define('Connector.view.LearnHeader', {
 
     selectTab : function(dimUniqueName, id, dimension, params, skipUpdateFilters) {
 
+        // Issue 49121 : the store may not have been loaded yet (so the selection will fail), wait until
+        // dimensions have been loaded to set an initial selection
+        //
+        if (this.getDataView().getStore() && this.getDataView().getStore().getCount() == 0){
+            this.getDataView().getStore().on('load', function(){
+                this.getDataView().selectTab(dimUniqueName);
+            }, this);
+        }
         if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectTab(dimUniqueName);
         }
