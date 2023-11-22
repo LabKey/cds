@@ -236,14 +236,18 @@ public class CDSGroupTest extends CDSGroupBaseTest
         _ext4Helper.waitForMaskToDisappear();
         assertTextPresent(studyGroupDescModified);
 
-        // Verify back button works
+        // Verify back button works, should take user to Learn > Groups page
         click(CDSHelper.Locators.pageHeaderBack());
         waitForText(CDSHelper.HOME_PAGE_HEADER);
         waitForText(STUDY_GROUP);
 
         // Verify delete works.
-        cds.deleteGroupFromSummaryPage(STUDY_GROUP);
-
+        Locator.XPathLocator groupListing = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2");
+        waitAndClick(groupListing.containing(STUDY_GROUP));
+        CDSHelper.Locators.cdsButtonLocator("Delete").findElement(this.getWrappedDriver()).click();
+        this.waitForText("Are you sure you want to delete");
+        CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(this.getWrappedDriver()).click();
+        this.waitForText(CDSHelper.HOME_PAGE_HEADER);
         cds.clearFilters();
     }
 
