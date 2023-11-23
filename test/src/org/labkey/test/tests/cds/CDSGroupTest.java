@@ -190,6 +190,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
+        scrollIntoView(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
         WebElement groupLabel = Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP).findElement(getDriver());
         shortWait().until(ExpectedConditions.elementToBeClickable(groupLabel));
         groupLabel.click();

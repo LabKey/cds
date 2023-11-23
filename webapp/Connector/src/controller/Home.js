@@ -29,8 +29,8 @@ Ext.define('Connector.controller.Home', {
     createView : function(xtype, config, context) {
         var v;
 
-        if (xtype == 'home') {
-            v = Ext.create('Connector.view.Home', {});
+        if (xtype === 'home') {
+            v = Ext.create('Connector.view.Home', {id: 'homecontrollerview'});
         }
 
         return v;

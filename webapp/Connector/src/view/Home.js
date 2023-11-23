@@ -12,6 +12,8 @@ Ext.define('Connector.view.Home', {
 
     ui: 'custom',
 
+    id : 'homeviewid',
+
     listeners: {
         resize: function(c)
         {
@@ -39,6 +41,7 @@ Ext.define('Connector.view.Home', {
                 this.getBody().setHeight(this.getHeight() - this.homeHeaderHeight);
             }, this);
             this.body = Ext.create('Ext.container.Container', {
+                id : 'homebody-id',
                 plugins: ['messaging'],
                 layout: {
                     type: 'vbox',
@@ -48,7 +51,7 @@ Ext.define('Connector.view.Home', {
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 items: [this.getMiddle(), this.getBottom()],
-                height: '300px',
+                height: '600px',
                 listeners: {
                     resize: function(c)
                     {
@@ -87,9 +90,11 @@ Ext.define('Connector.view.Home', {
         if (!this.content)
         {
             var items = [{
-                xtype: 'cds-news'
+                xtype: 'cds-news',
+                id: 'cds-news-id',
             }];
             this.content = Ext.create('Ext.container.Container', {
+                id: 'home-content-bottom',
                 plugins: ['messaging'],
                 cls: 'left-spacer',
                 layout: {
@@ -98,7 +103,8 @@ Ext.define('Connector.view.Home', {
                     pack: 'start'
                 },
                 items: [{
-                    xtype: 'grouplist'
+                    xtype: 'grouplist',
+                    id: 'grouplist-id',
                 },{
                     xtype: 'container',
                     cls: 'left-spacer-lg',
