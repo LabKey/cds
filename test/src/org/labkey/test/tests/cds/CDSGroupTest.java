@@ -243,7 +243,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         // Verify delete works.
         Locator.XPathLocator groupListing = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2");
-        waitAndClick(groupListing.containing(STUDY_GROUP));
+        waitAndClickAndWait(groupListing.containing(STUDY_GROUP));
         CDSHelper.Locators.cdsButtonLocator("Delete").findElement(this.getWrappedDriver()).click();
         this.waitForText("Are you sure you want to delete");
         CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(this.getWrappedDriver()).click();
