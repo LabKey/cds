@@ -8,7 +8,7 @@ Ext.define('Connector.view.Home', {
 
     alias: 'widget.home',
 
-    homeHeaderHeight: 180,
+    homeHeaderHeight: 200,
 
     ui: 'custom',
 
@@ -38,7 +38,10 @@ Ext.define('Connector.view.Home', {
         {
             this.resizeTask = new Ext.util.DelayedTask(function(c)
             {
-                this.getBody().setHeight(this.getHeight() - this.homeHeaderHeight);
+                this.body.setHeight(this.getHeight() - this.homeHeaderHeight);
+                var container = Ext.get('homebody-id');
+                container.setHeight(this.body.getBox().height);
+
             }, this);
             this.body = Ext.create('Ext.container.Container', {
                 id : 'homebody-id',
@@ -51,7 +54,7 @@ Ext.define('Connector.view.Home', {
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 items: [this.getMiddle(), this.getBottom()],
-                height: '600px',
+                height: '200px',
                 listeners: {
                     resize: function(c)
                     {

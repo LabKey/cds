@@ -283,6 +283,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.saveGroup(multiFilterGroup, "", false);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        refresh(); //TODO: Newly saved groups should be available without refresh, this is a bug that needs to be fixed.
         shortWait().until(ExpectedConditions.elementToBeClickable(singleLoc));
         click(singleLoc);
         sleep(2000); // wait for filter panel to stablize
