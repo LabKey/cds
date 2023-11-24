@@ -243,8 +243,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         waitForText(STUDY_GROUP);
 
         // Verify delete works.
-        Locator.XPathLocator groupListing = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2");
-        click(groupListing.containing(STUDY_GROUP));
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(STUDY_GROUP).clickFirstItem();
         Locator delete = CDSHelper.Locators.cdsButtonLocator("Delete");
         waitForElement(delete);
         delete.findElement(this.getWrappedDriver()).click();
