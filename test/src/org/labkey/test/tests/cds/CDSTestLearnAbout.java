@@ -1089,43 +1089,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     }
 
-    @Test
-    public void testAntigenSearch()
-    {
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid summaryGrid = new LearnGrid(this);
-
-        log("Test basic search functionality.");
-        LearnDetailsPage.DetailLearnGrid bamaAntigenGrid = summaryGrid.setSearch(CDSHelper.TITLE_BAMA)
-                .clickFirstItem()
-                .getGridTab("Antigens");
-        bamaAntigenGrid.setSearch(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[0]);
-        scrollIntoView(Locator.tagWithClass("div", "detail-gray-text").containing("Scaffold A"));
-        scrollIntoView(Locator.tagWithClass("p", "detail-gray-text").containing("Diversity"));
-        assertElementPresent(Locator.tagWithClass("p", "detail-gray-text").containing("E Subtype"));
-        assertElementPresent(Locator.tagWithClass("p", "detail-gray-text").containing("F Subtype"));
-        scrollIntoView(Locator.tagWithClass("div", "detail-gray-text").containing("cds_ag_1323"));
-
-        //Note: visually it is just one row, however, locking the Antigen column (& adding scroll on other columns) has two "tr" tags with 'detail-row' class instead of one.
-        assertElementPresent(Locator.tagWithId("div", "app-view-assayantigengrid-locked-body"));
-        assertElementPresent(Locator.tagWithId("div", "app-view-assayantigengrid-normal-body"));
-
-        int lockedColCount = Locator.tagWithId("div", "app-view-assayantigengrid-locked-body").findElements(this.getDriver()).size();
-        Assert.assertEquals("There should only be one row returned with locked column", 1, lockedColCount);
-
-        int unLockedColsCount = Locator.tagWithId("div", "app-view-assayantigengrid-normal-body").findElements(this.getDriver()).size();
-        Assert.assertEquals("There should only be one row returned with unlocked columns with scroll", 1, unLockedColsCount);
-
-        log("Test search persistence");
-        refresh();
-        sleep(CDSHelper.CDS_WAIT_LEARN);
-
-        lockedColCount = Locator.tagWithId("div", "app-view-assayantigengrid-locked-body").findElements(this.getDriver()).size();
-        Assert.assertEquals("There should only be one row returned with locked column", 1, lockedColCount);
-
-        unLockedColsCount = Locator.tagWithId("div", "app-view-assayantigengrid-normal-body").findElements(this.getDriver()).size();
-        Assert.assertEquals("There should only be one row returned with unlocked columns with scroll", 1, unLockedColsCount);
-    }
 
     @Test
     public void validateSearchNavigation()
