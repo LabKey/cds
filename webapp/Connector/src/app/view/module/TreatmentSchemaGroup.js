@@ -27,8 +27,8 @@ Ext.define('Connector.view.module.TreatmentSchemaGroup', {
                         '<ul class="learn-study-info"><tbody>',
                             '<tpl for="groups_data">',
                                 '<tpl if="xindex &lt; 11">',
-                                    '<tpl if="label">',
-                                        '<li class="item-value" style="padding-right: 1em;">{label:htmlEncode}</li>',
+                                    '<tpl if="name">',
+                                        '{[this.renderNode(values)]}',
                                     '</tpl>',
                                 '</tpl>',
                             '</tpl>',
@@ -45,15 +45,41 @@ Ext.define('Connector.view.module.TreatmentSchemaGroup', {
                         '<ul class="learn-study-info">',
                             '<tpl for="groups_data">',
                                 '<tpl if="parent.showAll && (xindex &gt; 10)">',
-                                    '<tpl if="label">',
-                                        '<li class="item-value" style="padding-right: 1em;">{label:htmlEncode}</li>',
+                                    '<tpl if="name">',
+                                        '{[this.renderNode(values)]}',
                                     '</tpl>',
                                 '</tpl>',
                             '</tpl>',
                         '</ul>',
                 '</div>',
             '</tpl>',
-        '</tpl>'
+        '</tpl>',
+        {
+            nodeHtml : '',
+
+            // renders the top level group and child items recursively
+            renderNode : function(values){
+                this.nodeHtml = '';
+                this._renderItem(values);
+                return this.nodeHtml;
+            },
+
+            _renderItem(item){
+                this.nodeHtml = this.nodeHtml.concat(Ext.String.format('<li class="item-value" style="padding-right: 1em;">{0}', Ext.String.htmlEncode(item.name.trim())));
+                this._renderChildren(item.children);
+                this.nodeHtml = this.nodeHtml.concat('</li>');
+            },
+
+            _renderChildren(children){
+                if (children.length > 0){
+                    this.nodeHtml = this.nodeHtml.concat('<ul>');
+                    Ext.each(children, function(child){
+                        this._renderItem(child);
+                    }, this);
+                    this.nodeHtml = this.nodeHtml.concat('</ul>');
+                }
+            }
+        },
     ),
 
     initComponent : function() {

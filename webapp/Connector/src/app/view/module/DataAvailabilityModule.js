@@ -14,6 +14,8 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
 
     showAllGroupFlags: [], //to set showAll flag for each grouping/sub-sections
 
+    learnmodulegridcls: 'learnmodulegrid',
+
     statics: {
         dataAddedSortFn: function(a, b) {
             var val1 = a.data_label ? a.data_label : a.data_id;
@@ -52,7 +54,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
             )).apply(this.getTitleData(this.data))
         },Ext.apply({
             xtype: 'grid',
-            cls: 'learnmodulegrid',
+            cls: (this.cssCls && this.cssCls.learnmodulegridcls) ? this.cssCls.learnmodulegridcls : this.learnmodulegridcls,
             viewConfig: {
                 stripeRows: false,
                 trackOver: false
@@ -353,14 +355,14 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                                 '<tpl if="parent.data_group === values">',
                                     '<table id="{[this.getGroupId(xindex)]}"><tr>',
                                         '<td>and {[this.getGroupedListSize(values)]} more </td>',
-                                        '<td class="show-hide-toggle-integrateddata"style="padding-bottom:0px">(show less)</td>',
+                                        '<td class="show-hide-toggle-integrateddata" style="padding-bottom:0px">(show less)</td>',
                                     '</tr></table>',
                                 '</tpl>',
                             '</tpl>',
                         '<tpl else>',
                             '<table id="integrated-data-showAll"><tr>',
                                 '<td>and {[this.getRemainingListSize()]} more </td>',
-                                '<td class="show-hide-toggle-integrateddata"style="padding-bottom:0px">(show less)</td>',
+                                '<td class="show-hide-toggle-integrateddata" style="padding-bottom:0px">(show less)</td>',
                             '</tr></table>',
                         '</tpl>',
                         '</br>',

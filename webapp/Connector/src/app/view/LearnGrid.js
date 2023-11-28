@@ -26,17 +26,20 @@ Ext.define('Connector.app.view.LearnGrid', {
         overflowY: 'scroll'
     },
 
-    listeners: {
-        afterrender: function (cmp)
-        {
+    listeners : {},
+
+    initComponent: function () {
+        // add additional listeners
+        this.listeners.scope = this;
+        this.listeners.afterrender = function (cmp) {
             if (!this.isDetailLearnGrid)
                 return;
 
             var detailGridPanel = cmp;
 
-            if (detailGridPanel && cmp.isVisible())
-            {
-                var dimension = detailGridPanel.tabDimension, id = detailGridPanel.tabId, params = detailGridPanel.tabParams;
+            if (detailGridPanel && cmp.isVisible()) {
+                var dimension = detailGridPanel.tabDimension, id = detailGridPanel.tabId,
+                        params = detailGridPanel.tabParams;
                 this.learnView.activeListingDetailGrid = detailGridPanel;
                 this.learnView.activeListingDetailGrid.dimension = dimension;
                 this.learnView.activeListingDetailGrid.store.sorters.clear();
@@ -44,18 +47,20 @@ Ext.define('Connector.app.view.LearnGrid', {
                 this.learnView.sortAndFilterStoreDelayed(this.learnView.activeListingDetailGrid.store);
                 this.learnView.getHeader().filterStoreFromUrlParams(id, dimension, params);
             }
-        },
-        beforerender: function (grid)
-        {
+        };
+
+        this.listeners.beforerender = function (grid) {
             var learnView = this.learnView, tabId = this.tabId;
             var headers = grid.query('headercontainer'),
                     dim = grid.dimension ? grid.dimension.name : undefined;
-            Ext.each(headers, function(header) {
-                header.on('headertriggerclick', function onTriggerClick(headerCt, column)
-                {
+            Ext.each(headers, function (header) {
+                header.on('headertriggerclick', function onTriggerClick(headerCt, column) {
                     var filterConfigSet = column.filterConfigSet
-                            .map(function(config) {
-                                config.columnFilter = learnView.columnFilters[config.filterField] || {filterValues: [], negated: false};
+                            .map(function (config) {
+                                config.columnFilter = learnView.columnFilters[config.filterField] || {
+                                    filterValues: [],
+                                    negated: false
+                                };
                                 return config;
                             });
                     Ext.create('Connector.window.LearnFacet', {
@@ -64,16 +69,14 @@ Ext.define('Connector.app.view.LearnGrid', {
                         filterConfigSet: filterConfigSet,
                         col: column, //used to position facet window
                         columnMetadata: column.filterConfigSet.length > 1 ?
-                        {caption : 'Search By'} : {caption : column.filterConfigSet[0].title},
+                                {caption: 'Search By'} : {caption: column.filterConfigSet[0].title},
                         learnStore: this.store,
                         dataView: this,
                         listeners: {
-                            filter: function (columnName, filterValues, negated)
-                            {
+                            filter: function (columnName, filterValues, negated) {
                                 this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, filterValues, negated, this.isDetailLearnGrid);
                             },
-                            clearfilter: function (columnName)
-                            {
+                            clearfilter: function (columnName) {
                                 this.learnView.getHeader().fireEvent('updateLearnFilter', columnName, [], false, this.isDetailLearnGrid);
                             },
                             scope: this
@@ -82,44 +85,38 @@ Ext.define('Connector.app.view.LearnGrid', {
                     });
                     return false;
                 }, this);
-                header.on('sortchange', function (headerCt, column, direction)
-                {
+                header.on('sortchange', function (headerCt, column, direction) {
                     this.learnView.getHeader().fireEvent('updateLearnSort', column.dataIndex, direction, this.isDetailLearnGrid);
                 }, this);
             }, this);
-        },
+        };
 
-        learnGridResizeHeight : function (viewHeight)
-        {
-            this.setHeight(viewHeight - this.learnView.headerViews.main.height);
+        this.listeners.learnGridResizeHeight = function (viewHeight) {
+            this.setHeight(viewHeight - this.learnView.headerViews.main.getHeight());
             this.setTitleColumnWidth();
-        },
+        };
 
-        learnDetailsGridResizeHeight : function (viewHeight)
-        {
-            this.setHeight(viewHeight - this.learnView.headerViews.main.height);
-        },
+        this.listeners.learnDetailsGridResizeHeight = function (viewHeight) {
+            this.setHeight(viewHeight - this.learnView.headerViews.main.getHeight());
+        };
 
-        boxready: function(grid)
-        {
-            if (!this.isDetailLearnGrid)
-            {
-                this.height = grid.container.getHeight() - this.learnView.headerViews.main.height;
+        this.listeners.boxready = function (grid) {
+            if (!this.isDetailLearnGrid) {
+                this.height = grid.container.getHeight() - this.learnView.headerViews.main.getHeight();
                 this.setTitleColumnWidth();
             }
-        },
+        };
 
-        render: function(grid)
-        {
-            if (this.isDetailLearnGrid)
-            {
-                if (grid.learnView && grid.learnView.detailPageView)
-                {
+        this.listeners.render = function (grid) {
+            if (this.isDetailLearnGrid) {
+                if (grid.learnView && grid.learnView.detailPageView) {
                     var headerPadding = 28; //.modulecontainercolumn padding top 28
                     this.height = grid.learnView.container.getHeight() - grid.learnView.detailPageView.header.getEl().dom.clientHeight - headerPadding;
                     grid.doLayout();
                 }
             }
-        }
+        };
+
+        this.callParent();
     }
 });

@@ -61,18 +61,77 @@ Ext.define('Connector.view.GroupListView', {
             '<h2 class="section-title bottom-spacer">Groups and plots</h2>',
             '<div class="grouplist-empty">Saved work will appear here</div>',
         '</tpl>',
+            '{[this.setSavedGroupsLength(values)]}',
+            '{[this.setSharedGroupsLength(values)]}',
         '<tpl for=".">',
-            '{[this.renderGroupHeading(values, parent, xindex)]}',
-            '<div class="grouprow">',
-                '<div title="{description:htmlEncode}" class="grouplabel">{label:this.groupLabel}</div>',
-                '<tpl if="this.plotter(containsPlot)">',
-                    '<div class="groupicon"><img src="' + Connector.resourceContext.imgPath + '/plot.png"></div>',
+            '<tpl if="this.isShared(values) === false">',
+            '{[this.incrementSavedGroupCounter(this)]}',
+                '<tpl if="this.savedGroupCounter &lt; 6">',
+                    '{[this.renderGroupHeading(values, parent, xindex)]}',
+                        '<div class="grouprow">',
+                            '<div title="{description:htmlEncode}" class="grouplabel">{label:this.groupLabel}</div>',
+                            '<tpl if="this.plotter(containsPlot)">',
+                                '<div class="groupicon"><img src="' + Connector.resourceContext.imgPath + '/plot.png"></div>',
+                            '</tpl>',
+                        '</div>',
+                '<tpl elseif="this.savedGroupCounter === 6">',
+                    '<div class="grouprow">',
+                        'and {[this.getRemainderSavedGroups()]} more ',
+                        '<a href="cds-app.view#learn/learn/Group">(View all)</a>',
+                    '</div>',
                 '</tpl>',
-            '</div>',
+
+            '</tpl>',
+        '</tpl>',
+        '<tpl for=".">',
+            '<tpl if="this.isShared(values) === true">',
+            '{[this.incrementSharedGroupCounter(this)]}',
+                '<tpl if="this.sharedGroupCounter &lt; 6">',
+                    '{[this.renderGroupHeading(values, parent, xindex)]}',
+                    '<div class="grouprow">',
+                        '<div title="{description:htmlEncode}" class="grouplabel">{label:this.groupLabel}</div>',
+                        '<tpl if="this.plotter(containsPlot)">',
+                            '<div class="groupicon"><img src="' + Connector.resourceContext.imgPath + '/plot.png"></div>',
+                        '</tpl>',
+                    '</div>',
+                '<tpl elseif="this.sharedGroupCounter === 6">',
+                    '<div class="grouprow">',
+                        'and {[this.getRemainderSharedGroups()]} more ',
+                        '<a href="cds-app.view#learn/learn/Group">(View all)</a>',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
         '</tpl>',
         {
             isEmpty : function(v) {
                 return (!Ext.isArray(v) || v.length === 0);
+            },
+            isShared : function(value) {
+                return value.shared;
+            },
+            setSavedGroupsLength : function(v) {
+                var mySavedGrps = v.filter(function(item) {
+                    return !item.shared;
+                });
+                this.savedGroupsLength = mySavedGrps.length;
+            },
+            setSharedGroupsLength : function(v) {
+                var sharedGrps = v.filter(function(item) {
+                    return item.shared;
+                });
+                this.sharedGroupsLength = sharedGrps.length;
+            },
+            getRemainderSavedGroups : function() {
+                return this.savedGroupsLength - 5;
+            },
+            getRemainderSharedGroups : function() {
+                return this.sharedGroupsLength - 5;
+            },
+            getSavedGroupIndex : function(v) {
+                return v.index;
+            },
+            getSharedGroupIndex : function(v) {
+                return v.index;
             },
             groupLabel : function(label) {
                 return Ext.String.ellipsis(Ext.htmlEncode(label), 35, true);
@@ -83,7 +142,7 @@ Ext.define('Connector.view.GroupListView', {
             renderGroupHeading : function(values, parent, xindex) {
                 // Note: the xindex is 1-based so the previous tile is xindex - 2 in the parent array
                 var prev = parent[xindex - 2];
-                if (prev == undefined || prev.shared != values.shared) {
+                if (prev === undefined || prev.shared !== values.shared) {
 
                     var shared = values.shared, topSpacer = '';
                     if (shared === false) {
@@ -98,7 +157,18 @@ Ext.define('Connector.view.GroupListView', {
                 }
 
                 return '';
-            }
+            },
+            incrementSavedGroupCounter() {
+                this.savedGroupCounter++;
+            },
+            incrementSharedGroupCounter() {
+                this.sharedGroupCounter++;
+            },
+            me: this,
+            savedGroupCounter: 0,
+            savedGroupsLength: 0,
+            sharedGroupCounter: 0,
+            sharedGroupsLength: 0
         }
     ),
 

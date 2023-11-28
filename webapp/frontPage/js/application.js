@@ -51,7 +51,7 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
             const msgDiv = $('div.notification-messages');
 
             $.each(o.messages, function (idx, msg) {
-              msgDiv.append($('<span>').text(msg).append($('<br>')));
+              msgDiv.append($('<span>').append(msg).append($('<br>')));
             });
             $('#notification').show();
           }

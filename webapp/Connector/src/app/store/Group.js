@@ -154,7 +154,7 @@ Ext.define('Connector.app.store.Group', {
                         assay_to_sort_on: assay_to_sort_on,
                         assay_names: assays,
                         description: groupDetail.length > 0 && groupDetail[0].description  ? groupDetail[0].description : "No description given.",
-                        group_id: groupDetail[0].categoryId
+                        group_id: groupDetail[0].id
                     });
 
             }, this);

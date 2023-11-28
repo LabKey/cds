@@ -337,21 +337,6 @@
             <column columnName="container"/>
         </columns>
     </table>
-    <table tableName="import_MAbMetadata" tableDbType="TABLE">
-        <columns>
-            <column columnName="container"/>
-            <column columnName="mab_id"/>
-            <column columnName="mab_name_std"/>
-            <column columnName="mab_lanlid"/>
-            <column columnName="mab_hxb2_location"/>
-            <column columnName="mab_ab_binding_type"/>
-            <column columnName="mab_isotype"/>
-            <column columnName="mab_donorid"/>
-            <column columnName="mab_donor_species"/>
-            <column columnName="mab_donor_clade"/>
-            <column columnName="mab_class_id"/>
-        </columns>
-    </table>
     <table tableName="import_MAbMixMetadata" tableDbType="TABLE">
         <columns>
             <column columnName="container"/>
@@ -761,16 +746,35 @@
     <table tableName="MAbMetadata" tableDbType="TABLE">
         <columns>
             <column columnName="container"/>
-            <column columnName="mab_id"/>
-            <column columnName="mab_name_std"/>
-            <column columnName="mab_lanlid"/>
-            <column columnName="mab_hxb2_location"/>
-            <column columnName="mab_ab_binding_type"/>
-            <column columnName="mab_isotype"/>
-            <column columnName="mab_donorid"/>
-            <column columnName="mab_donor_species"/>
-            <column columnName="mab_donor_clade"/>
+            <column columnName="mab_id">
+                <description>Unique ID assigned to an individual mAb.</description>
+            </column>
+            <column columnName="mab_name_std">
+                <description>A standardized name assigned to an individual mAb.</description>
+            </column>
+            <column columnName="mab_lanlid">
+                <description>Unique ID of the mAb assigned by LANL and used in the LANL database.</description>
+            </column>
+            <column columnName="mab_hxb2_location">
+                    <description>Epitope position numbers in the HXB2 reference strain.</description>
+            </column>
+            <column columnName="mab_ab_binding_type">
+                <description>A classification indicating the binding site e.g., a region (like V3) or near a common functional domain (like the CD4 binding site, CD4BS).</description>
+            </column>
+            <column columnName="mab_isotype">
+                <description>A classification indicating the type of the antibody.</description>
+            </column>
+            <column columnName="mab_donorid">
+                <description>Unique ID assigned to the donor of the mab.</description>
+            </column>
+            <column columnName="mab_donor_species">
+                    <description>The species of the donor of the mab. The species in which the immune response was stimulated.</description>
+            </column>
+            <column columnName="mab_donor_clade">
+                <description>The clade of the virus strain (subtype) that infected the donor.</description>
+            </column>
             <column columnName="mab_class_id">
+                <description>A reference ID to the `antibody_class` table, which indicates the class of the antibody.</description>
                 <fk>
                     <fkDbSchema>cds</fkDbSchema>
                     <fkTable>antibody_class</fkTable>

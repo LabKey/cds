@@ -517,6 +517,12 @@ Ext.define('Connector.view.Learn', {
                 store.on('load', function() {
                     this.dimensionDataLoaded[dimensionName] = true;
                     this.sortAndFilterStoreDelayed(store);
+
+                    // after the grid store has loaded, fire the resize event to adjust final layout between the
+                    // header and grid, this is necessary because the learn header is no longer a fixed height because
+                    // the styling has been adjusted to allow the learn tabs to wrap if there isn't enough horizontal space
+                    var size = this.getSize();
+                    this.fireEvent('resize', this, size.width, size.height);
                 }, this);
                 if (hasHierarchy) {
                     Connector.getState().onMDXReady(function(mdx) {
@@ -541,7 +547,7 @@ Ext.define('Connector.view.Learn', {
                 }
             }
             else {
-                if(store.getCount() === 0)
+                if(store.getCount() === 0 && !store.isFiltered())
                     store.loadSlice();
                 else
                     this.sortAndFilterStoreDelayed(store);
@@ -851,8 +857,6 @@ Ext.define('Connector.view.LearnHeader', {
 
     alias: 'widget.learnheader',
 
-    height: 110,
-
     cls: 'header-container learnaboutheader',
 
     defaults: {
@@ -870,7 +874,6 @@ Ext.define('Connector.view.LearnHeader', {
         },{
             xtype: 'container',
             items: [this.getDataView(), this.getSearchField(), this.getExportButton()],
-            height: 56,
             id: 'learn-header-bar-id',
             cls: 'learn-header-bar',
             layout: {
@@ -890,7 +893,6 @@ Ext.define('Connector.view.LearnHeader', {
         if (!this.headerDataView) {
             this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
                 flex: 2,
-                minWidth: 725,
                 cls: 'learn-dim-selector',
                 dimensions: this.dimensions,
                 store: Ext.create('Ext.data.Store', {
@@ -1056,6 +1058,14 @@ Ext.define('Connector.view.LearnHeader', {
 
     selectTab : function(dimUniqueName, id, dimension, params, skipUpdateFilters) {
 
+        // Issue 49121 : the store may not have been loaded yet (so the selection will fail), wait until
+        // dimensions have been loaded to set an initial selection
+        //
+        if (this.getDataView().getStore() && this.getDataView().getStore().getCount() == 0){
+            this.getDataView().getStore().on('load', function(){
+                this.getDataView().selectTab(dimUniqueName);
+            }, this);
+        }
         if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectTab(dimUniqueName);
         }

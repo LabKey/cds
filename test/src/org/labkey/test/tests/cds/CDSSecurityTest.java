@@ -685,7 +685,11 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         for (WebElement we : containerElements)
         {
             if (!we.getText().toLowerCase().equals(getProjectName().toLowerCase()))
-                containerAccess.put(we.getText(), Locator.xpath(PERMISSION_CELL_XPATH.replace("$", we.getText())).findElement(getDriver()).getText());
+            {
+                Locator role = Locator.xpath(PERMISSION_CELL_XPATH.replace("$", we.getText()));
+                if (isElementPresent(role))
+                    containerAccess.put(we.getText(), role.findElement(getDriver()).getText());
+            }
         }
 
         return containerAccess;
