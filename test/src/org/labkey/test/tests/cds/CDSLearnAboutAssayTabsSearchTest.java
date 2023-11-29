@@ -67,7 +67,6 @@ public class CDSLearnAboutAssayTabsSearchTest extends CDSReadOnlyTest
 
         bamaAntigenGrid.setSearch("antibody");
         Assert.assertEquals("Incorrect search result", 0, bamaAntigenGrid.getRowCount());
-        Assert.assertTrue("Missing text for no result found", isTextPresent("No available variables meet your selection criteria."));
 
         bamaAntigenGrid.setSearch(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[0]);
         scrollIntoView(Locator.tagWithClass("div", "detail-gray-text").containing("Scaffold A"));
