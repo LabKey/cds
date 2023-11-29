@@ -208,7 +208,12 @@ Ext.define('Connector.model.Group', {
                 };
 
                 Connector.model.Group._groupStore = Ext.create('Ext.data.Store', storeConfig);
-                Connector.model.Group._groupStore.refreshData();
+                if (!this.loadDataTask) {
+                    this.loadDataTask = new Ext.util.DelayedTask(function(store) {
+                        store.refreshData();
+                    });
+                }
+                this.loadDataTask.delay(500, undefined, this, [Connector.model.Group._groupStore]);
             }
 
             return Connector.model.Group._groupStore;
