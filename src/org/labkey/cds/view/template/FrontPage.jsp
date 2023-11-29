@@ -17,15 +17,20 @@
 %>
 <%@ page import="org.labkey.api.module.ModuleLoader" %>
 <%@ page import="org.labkey.api.module.ModuleProperty" %>
-<%@ page import="org.labkey.api.util.PageFlowUtil" %>
-<%@ page import="org.labkey.cds.CDSModule" %>
 <%@ page import="org.labkey.api.util.HtmlString" %>
+<%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.cds.CDSManager" %>
+<%@ page import="org.labkey.cds.CDSModule" %>
+<%@ page import="org.labkey.api.security.PasswordRule" %>
+<%@ page import="org.labkey.api.security.DbLoginService" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     final String blogPath = CDSManager.get().getBlogPath(getContainer());
     final String allBlogsPath = CDSManager.get().getAllBlogsPath(getContainer());
+    final PasswordRule rule = DbLoginService.get().getPasswordRule();
+    HtmlString summaryRuleHtml = rule.getSummaryRuleHtml();
 %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,6 +72,7 @@
     <%--<!-- Client API Dependencies -->--%>
     <%=getScriptTag("/clientapi/labkey-api-js-core.min.js")%>
     <%=getScriptTag("/frontpage/components/jquery/dist/jquery.min.js")%>
+    <%=getScriptTag("/passwordGauge.js")%>
     <script type="text/javascript">
         reloadRegisterPage = function() {
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
@@ -339,7 +345,7 @@
     </div>
     <div class="create-new-password-modal-popup hidden">
         <div class="create-new-password-modal front-page-popup-container">
-            <div class="modal">
+            <div class="modal" data-form="account-new-password">
                 <div class="border"></div>
                 <div class="title">
                     <h1>Choose a new password</h1>
@@ -349,11 +355,20 @@
                 </div>
                 <form action="" method="post" class="form" id="createnewpasswordform">
                     <div class="credentials">
-                        <span class="password-requirements help-info">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
-                        Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
-                        </span>
+                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
-                        <input placeholder="Re-enter Password" id="password2" name="password2" type="password" value="" required>
+                        <%
+                            if (rule.shouldShowPasswordGuidance())
+                            {
+                        %>
+                        <canvas id="password-gauge" height="30">
+                            Your browser does not support the HTML5 canvas element.
+                        </canvas>
+                        <%
+                            }
+                        %>
+                        <input placeholder="Re-enter Password" id="password2" name="password2" type="password" value=""
+                               required>
                         <div class="checkbox"></div>
                     </div>
                     <div class="links">
@@ -377,11 +392,19 @@
                 </div>
                 <form action="" method="post" class="form" id="createaccountform">
                     <div class="credentials">
-                        <span class="password-requirements help-info">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
-                        Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
-                        </span>
-                        <input placeholder="Password" id="password3" name="password" type="password" value="" required>
-                        <input placeholder="Re-enter Password" id="password4" name="reenter-password" type="password" value="" required>
+                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
+                        <input placeholder="Password" id="password1" name="password" type="password" value="" required>
+                        <%
+                            if (rule.shouldShowPasswordGuidance())
+                            {
+                        %>
+                        <canvas id="password-gauge" height="30">
+                            Your browser does not support the HTML5 canvas element.
+                        </canvas>
+                        <%
+                            }
+                        %>
+                        <input placeholder="Re-enter Password" id="password2" name="reenter-password" type="password" value="" required>
                         <div class="checkbox"></div>
                     </div>
                     <div class="tos">
@@ -586,7 +609,7 @@
     </div>
     <div class="change-password-modal-popup hidden">
         <div class="change-password-modal front-page-popup-container">
-            <div class="modal">
+            <div class="modal" data-form="account-change-password">
                 <div class="border"></div>
                 <div class="title">
                     <h1>Change password</h1>
@@ -596,11 +619,19 @@
                 </div>
                 <form action="" method="post" class="form" id="changepasswordform">
                     <div class="credentials">
-                        <span class="password-requirements help-info">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
-                        Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
-                        </span>
+                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
                         <input placeholder="Previous Password" id="prevPassword" name="prevPassword" type="password" value="" required>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
+                        <%
+                            if (rule.shouldShowPasswordGuidance())
+                            {
+                        %>
+                        <canvas id="password-gauge" height="30">
+                            Your browser does not support the HTML5 canvas element.
+                        </canvas>
+                        <%
+                            }
+                        %>
                         <input placeholder="Re-enter Password" id="password2" name="password2" type="password" value="" required>
                         <div class="checkbox"></div>
                     </div>

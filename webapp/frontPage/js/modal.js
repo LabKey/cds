@@ -89,6 +89,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       self.initLoginInfo();
       self.bindEnterKey();
       self.initAccountSurvey();
+      self.initPasswordGauge();
     };
 
     self.initLoginInfo = function() {
@@ -123,7 +124,14 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         if (window.location.href.indexOf("sessiontimedout=true") > -1) {
           $('.signin-modal .notifications p').html('Your session has timed out. Please login to continue.');
         }
+      }
 
+      let change_password_container = self.$modal.find('[data-form=account-change-password]')
+      if (change_password_container.length > 0) {
+        // if a message is available on the URL, add it to the notification area of the modal
+        let params = LABKEY.ActionURL.getParameters();
+        if (params.message)
+          $('div[data-form=account-change-password] div.notifications p').html(params.message);
       }
     };
 
@@ -275,9 +283,10 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             approvedTermsOfUse: termsOfUse
           }
         }).success(function(data) {
-          if (!data.success && data.returnUrl){
-            //window.location = data.returnUrl;
-            var newLocation = window.location.href.concat('?change_password=true');
+          if (!data.success && data.returnUrl && data.returnUrl.includes('changePassword.view')){
+            // password does not meet complexity rules, show the change password modal
+            var params = LABKEY.ActionURL.getParameters(data.returnUrl);
+            var newLocation = LABKEY.ActionURL.buildURL('cds', 'app.view', null, {'change_password' : true, 'message' : params.message, 'email' : $sign_in_email.val()});
             window.location = newLocation;
             return;
           }
@@ -384,22 +393,55 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           }
         }).success(function() {
             window.location = LABKEY.ActionURL.buildURL("cds", "app.view?"); // set password should log user in automatically
-        }).error(function() {
-          $('.create-new-password-modal .notifications p').html('Change password failed.');
+        }).error(function(e) {
+          createNotificationError('account-new-password', e);
         });
 
       });
 
-      function createAccountError(e, errorMsg) {
-        if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
-          errorMsg = errorMsg + e.responseJSON.errors[0].message;
+      self.action('confirmchangepassword', function($click) {
+        var pw1 = document.getElementById('password1');
+        var pw2 = document.getElementById('password2');
+
+        if (!pw1.checkValidity() || !pw2.checkValidity()) {
+          $('#submit_hidden_pw').click(); //click a hidden submit to do form validation
+          return false;
         }
-        $('.create-account-modal .notifications p').html(errorMsg);
+
+        var emailVal = LABKEY.ActionURL.getParameter('email');
+        var prevPassword = document.getElementById('prevPassword');
+        $.ajax({
+          url: LABKEY.ActionURL.buildURL("login", "changePasswordAPI.api"),
+          method: 'POST',
+          data: {
+            oldPassword: prevPassword.value,
+            password: pw1.value,
+            password2: pw2.value,
+            email: emailVal,
+            'X-LABKEY-CSRF': LABKEY.CSRF
+          }
+        }).success(function() {
+          window.location = LABKEY.ActionURL.buildURL("cds", "app.view?");
+        }).error(function(e) {
+          createNotificationError('account-change-password', e);
+        });
+      });
+
+      /**
+       * Render the returned error message in the modal notification area
+       * @param dataForm the value of the data-form attribute
+       * @param e
+       */
+      function createNotificationError(dataForm, e) {
+        if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+          var msg = e.responseJSON.errors[0].message;
+          $('div[data-form=' + dataForm + '] div.notifications p').html(msg);
+        }
       }
 
       self.action('confirmcreateaccount', function($click) {
-        var pw1 = document.getElementById('password3');
-        var pw2 = document.getElementById('password4');
+        var pw1 = document.getElementById('password1');
+        var pw2 = document.getElementById('password2');
         var tos = document.getElementById('tos-create-account');
 
         if (!pw1.checkValidity() || !pw2.checkValidity() || !tos.checkValidity()) {
@@ -436,10 +478,8 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             });
 
           }).error(function(e) {
-            var errorMsg = 'Create account failed. ';
-            createAccountError(e, errorMsg);
+            createNotificationError('account-new-password', e);
           });
-
       });
 
       self.action('confirmsurvey', function($click) {
@@ -524,6 +564,15 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
                 $('#accountsurveysubmit').prop("disabled", true);
             }
         }
+    };
+
+    self.initPasswordGauge = function() {
+      var $pw_gauge = self.$modal.find('#password-gauge');
+      if ($pw_gauge.length > 0) {
+
+        console.log($pw_gauge);
+        LABKEY.login.PasswordGauge.createComponent('password-gauge', 'password1', null, null);
+      }
     };
 
     self.toggleRegistrationHelp = function() {
