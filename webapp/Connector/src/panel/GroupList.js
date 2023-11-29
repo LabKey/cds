@@ -185,6 +185,14 @@ Ext.define('Connector.view.GroupListView', {
 
         this.store = Connector.model.Group.getGroupStore();
 
+        this.on('beforerefresh', function(){
+            // reset template state variables before the template refreshes
+            this.tpl.savedGroupCounter = 0;
+            this.tpl.savedGroupsLength = 0;
+            this.tpl.sharedGroupCounter = 0;
+            this.tpl.sharedGroupsLength = 0;
+        }, this);
+
         this.callParent();
     },
 
