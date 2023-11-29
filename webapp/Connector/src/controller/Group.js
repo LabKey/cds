@@ -598,7 +598,7 @@ Ext.define('Connector.controller.Group', {
                 store.refreshData();
             });
         }
-        this.loadDataTask.delay(500, undefined, this, [Connector.model.Group.getGroupStore()]);
+        this.loadDataTask.delay(300, undefined, this, [Connector.model.Group.getGroupStore()]);
 
         var editGroupView = this.getViewManager().getViewInstance('groupsave');
         if (editGroupView)

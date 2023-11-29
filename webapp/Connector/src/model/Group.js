@@ -213,7 +213,7 @@ Ext.define('Connector.model.Group', {
                         store.refreshData();
                     });
                 }
-                this.loadDataTask.delay(500, undefined, this, [Connector.model.Group._groupStore]);
+                this.loadDataTask.delay(300, undefined, this, [Connector.model.Group._groupStore]);
             }
 
             return Connector.model.Group._groupStore;
