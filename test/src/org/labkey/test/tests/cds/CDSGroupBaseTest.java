@@ -120,6 +120,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         _impersonateUser(NEW_USER_ACCOUNTS[1]);
         cds.enterApplication();
 
+        waitForText("Curated groups and plots");
         Locator sharedGroupLoc = getSharedGroupLoc(sharedGroupName);
         //Verify that private group is not shared and that public group is
         Locator mineHeader = Locator.xpath("//h2[contains(text(), 'My saved groups and plots')][contains(@class, 'section-title')]");
