@@ -593,7 +593,13 @@ Ext.define('Connector.controller.Group', {
     },
 
     onDeleteSuccess: function() {
-        Connector.model.Group.getGroupStore().refreshData();
+        if (!this.loadDataTask) {
+            this.loadDataTask = new Ext.util.DelayedTask(function(store) {
+                store.refreshData();
+            });
+        }
+        this.loadDataTask.delay(300, undefined, this, [Connector.model.Group.getGroupStore()]);
+
         var editGroupView = this.getViewManager().getViewInstance('groupsave');
         if (editGroupView)
             editGroupView.refresh();

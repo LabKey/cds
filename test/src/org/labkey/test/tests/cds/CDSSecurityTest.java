@@ -758,9 +758,10 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         waitForElement(Locator.css("td.x-form-display-field-body[role='presentation']"), 15000);
 
+        sleep(1500);
         log("Click the ok button on the 'Forbidden' dialog to dismiss and continue.");
         click(Locator.xpath("//div[contains(@class, 'x-message-box')]//a[contains(@class, 'x-btn-noicon')][not(contains(@style, 'display: none'))]"));
-        sleep(5000);
+        sleep(1500);
 
         // Even though this account doesn't have permissions it is still logged into labkey so
         // we need to log it out before we test the next user. You have strange sessions states if you don't do this.

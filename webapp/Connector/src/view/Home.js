@@ -8,9 +8,11 @@ Ext.define('Connector.view.Home', {
 
     alias: 'widget.home',
 
-    homeHeaderHeight: 180,
+    homeHeaderHeight: 200,
 
     ui: 'custom',
+
+    id : 'homeviewid',
 
     listeners: {
         resize: function(c)
@@ -36,9 +38,13 @@ Ext.define('Connector.view.Home', {
         {
             this.resizeTask = new Ext.util.DelayedTask(function(c)
             {
-                this.getBody().setHeight(this.getHeight() - this.homeHeaderHeight);
+                this.body.setHeight(this.getHeight() - this.homeHeaderHeight);
+                var container = Ext.get('homebody-id');
+                container.setHeight(this.body.getBox().height);
+
             }, this);
             this.body = Ext.create('Ext.container.Container', {
+                id : 'homebody-id',
                 plugins: ['messaging'],
                 layout: {
                     type: 'vbox',
@@ -48,7 +54,7 @@ Ext.define('Connector.view.Home', {
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 items: [this.getMiddle(), this.getBottom()],
-                height: '300px',
+                height: '200px',
                 listeners: {
                     resize: function(c)
                     {
@@ -87,9 +93,11 @@ Ext.define('Connector.view.Home', {
         if (!this.content)
         {
             var items = [{
-                xtype: 'cds-news'
+                xtype: 'cds-news',
+                id: 'cds-news-id',
             }];
             this.content = Ext.create('Ext.container.Container', {
+                id: 'home-content-bottom',
                 plugins: ['messaging'],
                 cls: 'left-spacer',
                 layout: {
@@ -98,7 +106,8 @@ Ext.define('Connector.view.Home', {
                     pack: 'start'
                 },
                 items: [{
-                    xtype: 'grouplist'
+                    xtype: 'grouplist',
+                    id: 'grouplist-id',
                 },{
                     xtype: 'container',
                     cls: 'left-spacer-lg',

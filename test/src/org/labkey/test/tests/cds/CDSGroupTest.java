@@ -190,6 +190,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
+        scrollIntoView(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
         WebElement groupLabel = Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP).findElement(getDriver());
         shortWait().until(ExpectedConditions.elementToBeClickable(groupLabel));
         groupLabel.click();
@@ -236,14 +237,20 @@ public class CDSGroupTest extends CDSGroupBaseTest
         _ext4Helper.waitForMaskToDisappear();
         assertTextPresent(studyGroupDescModified);
 
-        // Verify back button works
+        // Verify back button works, should take user to Learn > Groups page
         click(CDSHelper.Locators.pageHeaderBack());
         waitForText(CDSHelper.HOME_PAGE_HEADER);
         waitForText(STUDY_GROUP);
 
         // Verify delete works.
-        cds.deleteGroupFromSummaryPage(STUDY_GROUP);
-
+        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid.setSearch(STUDY_GROUP).clickFirstItem();
+        Locator delete = CDSHelper.Locators.cdsButtonLocator("Delete");
+        waitForElement(delete);
+        delete.findElement(this.getWrappedDriver()).click();
+        this.waitForText("Are you sure you want to delete");
+        CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(this.getWrappedDriver()).click();
+        this.waitForText(CDSHelper.HOME_PAGE_HEADER);
         cds.clearFilters();
     }
 
@@ -276,6 +283,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.saveGroup(multiFilterGroup, "", false);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        refresh(); //TODO: Newly saved groups should be available without refresh, this is a bug that needs to be fixed.
         shortWait().until(ExpectedConditions.elementToBeClickable(singleLoc));
         click(singleLoc);
         sleep(2000); // wait for filter panel to stablize

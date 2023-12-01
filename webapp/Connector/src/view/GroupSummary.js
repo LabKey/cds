@@ -78,7 +78,9 @@ Ext.define('Connector.view.GroupSummary', {
             title: group.get('label'),
             upText: 'Groups',
             upLink: {
-                controller: 'learn'
+                controller: 'learn',
+                view: 'learn',
+                context: ["Group"]
             },
             tabs: [{
                 label: 'Details'

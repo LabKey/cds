@@ -1063,7 +1063,7 @@ Ext.define('Connector.view.LearnHeader', {
         //
         if (this.getDataView().getStore() && this.getDataView().getStore().getCount() == 0){
             this.getDataView().getStore().on('load', function(){
-                this.getDataView().selectTab(dimUniqueName);
+                this.getDataView().selectTab(dimUniqueName, true);
             }, this);
         }
         if (!Ext.isEmpty(this.dimensions)) {

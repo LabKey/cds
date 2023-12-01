@@ -1352,7 +1352,7 @@ public class CDSHelper
         Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(_test.getWrappedDriver()).click();
         _test.waitForText(HOME_PAGE_HEADER);
         _test.waitForElementToDisappear(groupListing);
-        BaseWebDriverTest.sleep(500);
+        BaseWebDriverTest.sleep(1000);
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
