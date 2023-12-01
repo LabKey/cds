@@ -1,7 +1,8 @@
 .filterstatus  {
-  padding: 34px 6px 24px 6px;
+  padding: 34px 6px 10px 6px;
   background: $white;
   margin: 0 auto;
+  height: 200px;
 
   h2.section-title {
     padding: 0 42px 0 28px;
@@ -217,4 +218,9 @@ ul.indent li {
 
 .filterclear {
   margin-right: 4px;
+}
+
+.filtersaveasgroup {
+  margin-left: 114px;
+  margin-top: 20px;
 }

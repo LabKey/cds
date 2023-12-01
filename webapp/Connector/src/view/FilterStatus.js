@@ -19,7 +19,8 @@ Ext.define('Connector.view.FilterStatus', {
         this.items = [
             this.getFilterHeader(),
             this.getEmptyText(),
-            this.getFilterContent()
+            this.getFilterContent(),
+            this.getFilterSaveAsGroupBtn()
         ];
 
         this.callParent();
@@ -71,12 +72,31 @@ Ext.define('Connector.view.FilterStatus', {
                 cls: 'filter-hdr-btn filterclear' /* for tests */,
                 itemId: 'clear',
                 hidden: hidden
-            },{
-                xtype: 'button', 
-                text: 'save', 
-                ui: 'rounded-inverted-accent-small', 
-                cls: 'filter-hdr-btn filtersave' /* for tests */, 
-                itemId: 'savegroup', hidden: hidden
+            }]
+        };
+    },
+
+    getFilterSaveAsGroupBtn : function() {
+
+        //
+        // If filters or selections are present then we show the buttons (== !hidden)
+        //
+        var hidden = !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0);
+
+        return {
+            xtype: 'container',
+            itemId: 'filterSaveAsGroupBtn',
+            ui: 'custom',
+            layout: {
+                type: 'hbox'
+            },
+            items: [{
+                xtype: 'button',
+                text: '<div>Save as a group</div>', // need to wrap in div to get the 'g' in 'group' to fully show up otherwise it is cut off in the bottom
+                ui: 'rounded-inverted-accent-small',
+                cls: 'filtersaveasgroup filter-hdr-btn' /* for tests */,
+                itemId: 'savegroup',
+                hidden: hidden
             }]
         };
     },
@@ -168,8 +188,9 @@ Ext.define('Connector.view.FilterStatus', {
 
         var filterHeader = this.getComponent('filterheader');
         var headerText = Ext.get(Ext.DomQuery.select('.filterheader-text')[0]);
+        var saveAsGroupBtn = this.getComponent('filterSaveAsGroupBtn');
 
-        var saveBtn = filterHeader.query('#savegroup')[0];
+        var saveBtn = saveAsGroupBtn.query('#savegroup')[0];
         var clrBtn = filterHeader.query('#clear')[0];
 
         var filterContent = this.getFilterContent();
