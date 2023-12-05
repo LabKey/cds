@@ -33,8 +33,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
     self.options = options || {};
 
     /**
-     * initialize
-     * Initialize magnificPopup with given options and check to see
+     * initialize magnificPopup with given options and check to see
      * if query params dictate loading with modal activated.
      */
     self.initialize = function() {
@@ -569,9 +568,25 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
     self.initPasswordGauge = function() {
       var $pw_gauge = self.$modal.find('#password-gauge');
       if ($pw_gauge.length > 0) {
-
-        console.log($pw_gauge);
         LABKEY.login.PasswordGauge.createComponent('password-gauge', 'password1', null, null);
+
+        // the elements in the magnific modals are sized relatively, and the password gauge expects absolute sizing,
+        // work around this by setting the gauge size after we know what the password elements have been computed.
+        let width = $('#password1').outerWidth();
+        $pw_gauge.width(width);
+
+        // control the hide show state of the tips link, we need to take care of this here because of the
+        // way the magnific library initializes its modals prevents the normal JSP event handler registration.
+        $('#tipsLink').click(function(){
+          if ($('#passwordTips:hidden').length > 0) {
+            $('#passwordTips').show();
+            $('#tipsLink').text('Click to hide tips for creating a secure password');
+          }
+          else {
+            $('#passwordTips').hide();
+            $('#tipsLink').text('Click to show tips for creating a secure password');
+          }
+        });
       }
     };
 

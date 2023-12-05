@@ -355,8 +355,8 @@
                 </div>
                 <form action="" method="post" class="form" id="createnewpasswordform">
                     <div class="credentials">
-                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
+                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
                         <%
                             if (rule.shouldShowPasswordGuidance())
                             {
@@ -619,14 +619,14 @@
                 </div>
                 <form action="" method="post" class="form" id="changepasswordform">
                     <div class="credentials">
-                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
                         <input placeholder="Previous Password" id="prevPassword" name="prevPassword" type="password" value="" required>
+                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
                         <%
                             if (rule.shouldShowPasswordGuidance())
                             {
                         %>
-                        <canvas id="password-gauge" height="30">
+                        <canvas id="password-gauge" height="30" class="strength-gauge">
                             Your browser does not support the HTML5 canvas element.
                         </canvas>
                         <%

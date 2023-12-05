@@ -108,7 +108,7 @@
       width: 49%;
       padding: 0.5em;
       font-size: 1em;
-      margin-right: 4px;
+      margin: 0 4px 4px 0;
       @include light-arial;
       @include phone {
         width: 100%;
@@ -117,6 +117,11 @@
         }
       }
     }
+
+    canvas.strength-gauge {
+      margin: 0 4px 4px 0;
+    }
+
     input[type=checkbox] {
       width: auto;
       position: absolute;
