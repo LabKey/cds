@@ -74,7 +74,7 @@ Ext.define('Connector.view.GroupListView', {
                                 '<div class="groupicon"><img src="' + Connector.resourceContext.imgPath + '/plot.png"></div>',
                             '</tpl>',
                         '</div>',
-                '<tpl elseif="this.savedGroupCounter === 6">',
+                '<tpl elseif="this.savedGroupLength &gt; 5 && this.savedGroupCounter === 6">',
                     '<div class="grouprow">',
                         'and {[this.getRemainderSavedGroups()]} more ',
                         '<a href="cds-app.view#learn/learn/Group">(View all)</a>',
@@ -94,7 +94,7 @@ Ext.define('Connector.view.GroupListView', {
                             '<div class="groupicon"><img src="' + Connector.resourceContext.imgPath + '/plot.png"></div>',
                         '</tpl>',
                     '</div>',
-                '<tpl elseif="this.sharedGroupCounter === 6">',
+                '<tpl elseif="this.sharedGroupLength &gt; 5 && this.sharedGroupCounter === 6">',
                     '<div class="grouprow">',
                         'and {[this.getRemainderSharedGroups()]} more ',
                         '<a href="cds-app.view#learn/learn/Group">(View all)</a>',
@@ -184,6 +184,14 @@ Ext.define('Connector.view.GroupListView', {
         this.selectedItemCls = 'grouplist-label-selected '+ this.arrow;
 
         this.store = Connector.model.Group.getGroupStore();
+
+        this.on('beforerefresh', function(){
+            // reset template state variables before the template refreshes
+            this.tpl.savedGroupCounter = 0;
+            this.tpl.savedGroupsLength = 0;
+            this.tpl.sharedGroupCounter = 0;
+            this.tpl.sharedGroupsLength = 0;
+        }, this);
 
         this.callParent();
     },

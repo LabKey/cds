@@ -913,6 +913,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
 
         log("Verify mAb and subject groups listing");
         cds.goToAppHome();
+        refresh(); //TODO: Newly saved groups should be available without refresh, this is a bug that needs to be fixed.
         waitForElement(CDSHelper.Locators.getPrivateGroupLoc(subjectPrivateGroup));
         waitForElement(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup));
         Assert.assertTrue(mabPrivateGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getPrivateGroupLoc(mabPrivateGroup)));
