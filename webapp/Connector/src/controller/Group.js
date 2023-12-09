@@ -36,9 +36,9 @@ Ext.define('Connector.controller.Group', {
             }
         });
 
-        this.control('filterstatus > container > #savegroup, #editgroupdetails', {
-            click : this.onGroupSave
-        });
+        // this.control('filterstatus > container > #savegroup, #editgroupdetails', {
+        //     click : this.onGroupSave
+        // });
 
         this.control('mabstatus > container > #savegmabroup', {
             click : this.onMabGroupSave

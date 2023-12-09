@@ -23,8 +23,6 @@ Ext.define('Connector.view.GroupSave', {
         type: 'anchor'
     },
 
-    defaultTitle: 'Save',
-
     hideSelectionWarning: true,
 
     minRecordsHeight: 4,
@@ -32,6 +30,10 @@ Ext.define('Connector.view.GroupSave', {
     maxRecordsHeight: 13,
 
     isMabGroup: false,
+
+    height: 175,
+
+    stores: ['FilterStatus', 'MabStatus'],
 
     constructor : function(config) {
 
@@ -52,29 +54,10 @@ Ext.define('Connector.view.GroupSave', {
         this.items = [{
             xtype: 'container',
             itemId: 'content',
-            style: 'margin: 10px; background-color: #fff; border: 1px solid lightgrey; padding: 10px',
+            style: 'background-color: #fff',
+            // style: 'margin: 10px; background-color: #fff; border: 1px solid lightgrey; padding: 10px',
             anchor: '100%',
             items: [
-                this.getTitle(),
-                {
-                    xtype: 'box',
-                    hidden: this.hideSelectionWarning,
-                    itemId: 'selectionwarning',
-                    autoEl: {
-                        tag: 'div',
-                        style: 'padding-top: 10px;',
-                        children: [{
-                            tag: 'img',
-                            src: LABKEY.contextPath + '/Connector/images/warn.png',
-                            height: '13px',
-                            width: '13px',
-                            style: 'vertical-align: middle; margin-right: 8px;'
-                        },{
-                            tag: 'span',
-                            html: 'Current Selection will be applied'
-                        }]
-                    }
-                },
                 {
                     xtype: 'box',
                     itemId: 'error',
@@ -85,6 +68,7 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },
                 this.getCreateGroup(),
+                // this.getCancelAndSaveBtns(),
                 this.getEditGroup(),
                 this.getReplaceGroup()
             ]
@@ -110,16 +94,6 @@ Ext.define('Connector.view.GroupSave', {
 
     getTitle : function()
     {
-        if (!this.title)
-        {
-            this.title = Ext.create('Ext.Component', {
-                tpl: '<h2>{title:htmlEncode} group</h2>',
-                data: {
-                    title: this.defaultTitle
-                }
-            });
-        }
-
         return this.title;
     },
 
@@ -142,6 +116,7 @@ Ext.define('Connector.view.GroupSave', {
                         itemId: 'groupname',
                         name: 'groupname',
                         emptyText: 'Enter a group name',
+                        id: 'groupname-id',
                         height: 30,
                         allowBlank: false,
                         validateOnBlur: false,
@@ -160,36 +135,7 @@ Ext.define('Connector.view.GroupSave', {
                         fieldLabel: 'Shared group',
                         checked: false,
                         hidden: true
-                    }]
-                },{
-                    xtype: 'box',
-                    autoEl: {
-                        tag: 'div',
-                        style: 'margin-top: 15px;',
-                        html: 'Or...'
-                    }
-                },{
-                    xtype: 'button',
-                    itemId: 'replace-grp-button',
-                    style: 'margin-top: 15px;',
-                    ui: 'linked-ul',
-                    text: 'replace an existing group',
-                    handler: function() { this.changeMode(Connector.view.GroupSave.modes.REPLACE); },
-                    scope: this
-                },{
-                    xtype: 'toolbar',
-                    dock: 'bottom',
-                    ui: 'lightfooter',
-                    style: 'padding-top: 60px',
-                    items: ['->',{
-                        text: 'Cancel',
-                        itemId: 'groupcancel',
-                        cls: 'groupcancelcreate' // tests
-                    },{
-                        text: 'Save',
-                        itemId: 'groupcreatesave',
-                        cls: 'groupcreatesave' // tests
-                    }]
+                    }],
                 }],
                 listeners : {
                     afterrender : {
@@ -210,6 +156,41 @@ Ext.define('Connector.view.GroupSave', {
             });
         }
         return this.createGroup;
+    },
+
+    getCancelAndSaveBtns : function() {
+        var menu = Ext.create('Ext.menu.Menu', {
+            items: [
+                { text: 'Menu Item 1', handler: function() {
+                        console.log('Menu Item 1 Clicked', 'You clicked Menu Item 1.');
+                    }},
+                { text: 'Menu Item 2', handler: function() {
+                        console.log('Menu Item 2 Clicked', 'You clicked Menu Item 2.');
+                    }}
+            ]
+        });
+
+        // Create the main panel
+        var mainPanel = Ext.create('Ext.panel.Panel', {
+            title: 'Button Panel',
+            width: 300,
+            height: 200,
+            renderTo: Ext.getBody(),
+            items: [],
+            buttons: [
+                {
+                    text: 'Button 1',
+                    handler: function() {
+                        console.log('Button 1 Clicked', 'You clicked Button 1.');
+                    }
+                },
+                {
+                    text: 'Menu Button',
+                    menu: menu // Assign the menu to the menu button
+                }
+            ]
+        });
+        return mainPanel;
     },
 
     getEditGroup : function()
@@ -339,7 +320,7 @@ Ext.define('Connector.view.GroupSave', {
                     overflowX: 'hidden',
                     minHeight: this.listMinHeight,
                     maxHeight: this.listMaxHeight,
-                    style: 'border: 1px solid lightgrey;',
+                    // style: 'border: 1px solid lightgrey;',
                     items: [{
                         xtype: 'groupsavelistview',
                         listeners: {
@@ -467,11 +448,6 @@ Ext.define('Connector.view.GroupSave', {
                 {
                     if (cc[i].activeMode === mode)
                     {
-                        // update the title
-                        this.getTitle().update({
-                            title: cc[i].title || this.defaultTitle
-                        });
-
                         // show/hide selection message
                         this.getComponent('content').getComponent('selectionwarning').hide();
 

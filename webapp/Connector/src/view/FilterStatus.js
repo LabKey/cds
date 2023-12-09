@@ -15,9 +15,13 @@ Ext.define('Connector.view.FilterStatus', {
 
     cls: 'filterstatus',
 
+    id: 'filterstatus-id',
+
     initComponent : function() {
+
         this.items = [
             this.getFilterHeader(),
+            this.getGroupSavePanel(),
             this.getEmptyText(),
             this.getFilterContent(),
             this.getFilterSaveAsGroupBtn()
@@ -76,6 +80,13 @@ Ext.define('Connector.view.FilterStatus', {
         };
     },
 
+    getGroupSavePanel : function() {
+        return Ext.create('Connector.view.GroupSave', {
+            hidden: true,
+            id: 'groupsave-id'
+        });
+    },
+
     getFilterSaveAsGroupBtn : function() {
 
         //
@@ -92,11 +103,17 @@ Ext.define('Connector.view.FilterStatus', {
             },
             items: [{
                 xtype: 'button',
+                id: 'saveasagroupbtn-id',
                 text: '<div>Save as a group</div>', // need to wrap in div to get the 'g' in 'group' to fully show up otherwise it is cut off in the bottom
                 ui: 'rounded-inverted-accent-small',
                 cls: 'filtersaveasgroup filter-hdr-btn' /* for tests */,
                 itemId: 'savegroup',
-                hidden: hidden
+                hidden: hidden,
+                handler: function() {
+                    this.hide();
+                    document.getElementById('filterstatus-id').style.height = '300px';
+                    Ext.getCmp('groupsave-id').show();
+                }
             }]
         };
     },
