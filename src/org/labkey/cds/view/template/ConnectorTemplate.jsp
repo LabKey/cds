@@ -189,6 +189,7 @@
             srcPath + "/button/Image.js",
             srcPath + "/button/RoundedButton.js",
             srcPath + "/button/Export.js",
+            srcPath + "/button/GroupSave.js",
             srcPath + "/component/ActionTitle.js",
             srcPath + "/component/AdvancedOption.js",
             srcPath + "/component/AbstractAntigenSelection.js",

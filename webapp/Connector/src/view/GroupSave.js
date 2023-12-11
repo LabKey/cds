@@ -68,9 +68,9 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },
                 this.getCreateGroup(),
-                // this.getCancelAndSaveBtns(),
-                this.getEditGroup(),
-                this.getReplaceGroup()
+                this.getCancelAndSaveBtns(),
+                // this.getEditGroup(),
+                // this.getReplaceGroup()
             ]
         }];
 
@@ -80,8 +80,9 @@ Ext.define('Connector.view.GroupSave', {
                 if(this.getIsEditorOrHigher(userPerms))
                 {
                     Ext.getCmp('creategroupshared').show();
-                    Ext.getCmp('editgroupshared').show();
-                    Ext.getCmp('updategroupshared').show();
+                    Ext.getCmp('groupsave-cancel-save-btns').show();
+                    // Ext.getCmp('editgroupshared').show();
+                    // Ext.getCmp('updategroupshared').show();
                 }
             },
             scope: this
@@ -159,38 +160,39 @@ Ext.define('Connector.view.GroupSave', {
     },
 
     getCancelAndSaveBtns : function() {
-        var menu = Ext.create('Ext.menu.Menu', {
-            items: [
-                { text: 'Menu Item 1', handler: function() {
-                        console.log('Menu Item 1 Clicked', 'You clicked Menu Item 1.');
-                    }},
-                { text: 'Menu Item 2', handler: function() {
-                        console.log('Menu Item 2 Clicked', 'You clicked Menu Item 2.');
-                    }}
-            ]
-        });
 
-        // Create the main panel
-        var mainPanel = Ext.create('Ext.panel.Panel', {
-            title: 'Button Panel',
-            width: 300,
-            height: 200,
-            renderTo: Ext.getBody(),
-            items: [],
-            buttons: [
-                {
-                    text: 'Button 1',
-                    handler: function() {
-                        console.log('Button 1 Clicked', 'You clicked Button 1.');
-                    }
-                },
-                {
-                    text: 'Menu Button',
-                    menu: menu // Assign the menu to the menu button
+        var buttons = {
+            xtype: 'toolbar',
+            dock: 'bottom',
+            ui: 'lightfooter',
+            // style: 'padding-top: 60px',
+            id: 'groupsave-cancel-save-btns',
+            items: ['->', {
+                text: 'Cancel',
+                itemId: 'groupcancelbtn-itemid',
+                cls: 'groupcancelbtn' // tests
+            }, {
+                xtype: 'groupsavebutton',
+                // margin : '24 10 0 0',
+                width : 100,
+                itemId: 'groupsavebtn-itemid',
+                cls: 'groupsavebtn', // tests
+                listeners: {
+                    updateGroup : this.updateGroup,
+                    saveNewGroup : this.saveNewGroup,
+                    scope: this
                 }
-            ]
-        });
-        return mainPanel;
+            }]
+        };
+        return buttons;
+    },
+
+    updateGroup: function() {
+    // TODO
+    },
+
+    saveNewGroup: function() {
+    // TODO
     },
 
     getEditGroup : function()
@@ -620,7 +622,7 @@ Ext.define('Connector.view.GroupSave', {
 
     reset : function() {
         // only reset in 'create' mode
-        if (this.getMode() == Connector.view.GroupSave.modes.CREATE) {
+        if (this.getMode() === Connector.view.GroupSave.modes.CREATE) {
             this.clear();
         }
     },
@@ -654,7 +656,7 @@ Ext.define('Connector.view.GroupSave', {
 
     onWindowResize : function(width, height)
     {
-        if (this.getMode() == Connector.view.GroupSave.modes.REPLACE)
+        if (this.getMode() === Connector.view.GroupSave.modes.REPLACE)
         {
             var hdrHeight = 53,
                 paddingOffset = 20, // [10, 0, 10, 0]

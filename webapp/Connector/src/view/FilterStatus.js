@@ -111,7 +111,7 @@ Ext.define('Connector.view.FilterStatus', {
                 hidden: hidden,
                 handler: function() {
                     this.hide();
-                    document.getElementById('filterstatus-id').style.height = '300px';
+                    document.getElementById('filterstatus-id').style.height = '325px';
                     Ext.getCmp('groupsave-id').show();
                 }
             }]
