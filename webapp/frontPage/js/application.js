@@ -93,6 +93,11 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
       });
 
       modal.initialize({
+        name: 'change-password-modal',
+        query_param_regex: /change_password=true/i
+      });
+
+      modal.initialize({
         name: 'create-account-modal',
         query_param_regex: /create_account=true/i
       });
