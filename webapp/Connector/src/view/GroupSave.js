@@ -51,6 +51,25 @@ Ext.define('Connector.view.GroupSave', {
 
     initComponent : function()
     {
+        Ext.define('GroupValues', {
+            extend: 'Ext.data.Model',
+            fields: [
+                {name: 'groupname', type: 'string'},
+                {name: 'groupdescription', type: 'string'},
+                {name: 'groupshared', type: 'boolean'}
+            ]
+        });
+
+        this.groupFormValues = Ext.create('Ext.data.Store', {
+            model: 'GroupValues',
+            storeId: 'groupValuesStore',
+            data: [
+                {name: 'groupname', value: ''},
+                {name: 'groupdescription', value: ''},
+                {name: 'groupshared', value: false},
+            ]
+        });
+
         this.items = [{
             xtype: 'container',
             itemId: 'content',
@@ -68,7 +87,7 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },
                 this.getCreateGroup(),
-                this.getCancelAndSaveBtns(),
+                this.getCancelSaveMenuBtns(),
                 // this.getEditGroup(),
                 // this.getReplaceGroup()
             ]
@@ -80,7 +99,7 @@ Ext.define('Connector.view.GroupSave', {
                 if(this.getIsEditorOrHigher(userPerms))
                 {
                     Ext.getCmp('creategroupshared').show();
-                    Ext.getCmp('groupsave-cancel-save-btns').show();
+                    // Ext.getCmp('groupsave-cancel-save-btns').show();
                     // Ext.getCmp('editgroupshared').show();
                     // Ext.getCmp('updategroupshared').show();
                 }
@@ -100,10 +119,11 @@ Ext.define('Connector.view.GroupSave', {
 
     getCreateGroup : function() {
         if (!this.createGroup) {
+
             this.createGroup = Ext.create('Ext.Container', {
                 hidden: this.mode !== Connector.view.GroupSave.modes.CREATE,
                 activeMode: Connector.view.GroupSave.modes.CREATE,
-                style: 'padding-top: 10px;',
+                // style: 'padding-top: 10px;',
                 items: [{
                     itemId: 'creategroupform',
                     xtype: 'form',
@@ -121,10 +141,26 @@ Ext.define('Connector.view.GroupSave', {
                         height: 30,
                         allowBlank: false,
                         validateOnBlur: false,
-                        maxLength: 100
+                        maxLength: 100,
+                        listeners: {
+                            //dynamic enable/disable of save button based on the presence of text in the group name field
+                            change: function(field, newValue, oldValue) {
+
+                                var saveBtn = Ext.getCmp('groupcreatesave-id');
+
+                                //disable if undefined, null, or an empty string
+                                if (Ext.isEmpty(newValue) || newValue.trim() === '') {
+                                    saveBtn.disable();
+                                }
+                                else {
+                                    saveBtn.enable();
+                                }
+                            }
+                        }
                     },{
                         xtype: 'textareafield',
                         id: 'creategroupdescription', // tests
+                        itemId: 'groupdescription',
                         name: 'groupdescription',
                         emptyText: 'Group description',
                         maxLength: 200
@@ -137,6 +173,29 @@ Ext.define('Connector.view.GroupSave', {
                         checked: false,
                         hidden: true
                     }],
+                    viewModel: {
+                        stores: {
+                            groupValues: this.groupFormValues
+                        }
+                    }
+                },{
+                    xtype: 'toolbar',
+                    id: 'groupsave-cancel-save-btns-id',
+                    dock: 'bottom',
+                    ui: 'lightfooter',
+                    style: 'padding-top: 5px',
+                    items: ['->',{
+                        text: 'Cancel',
+                        itemId: 'groupcancel',
+                        id: 'groupcancel-id',
+                        cls: 'groupcancelcreate' // tests
+                    },{
+                        text: 'Save group',
+                        itemId: 'groupcreatesave',
+                        disabled: true,
+                        id: 'groupcreatesave-id',
+                        cls: 'groupcreatesave' // tests
+                    }]
                 }],
                 listeners : {
                     afterrender : {
@@ -159,40 +218,51 @@ Ext.define('Connector.view.GroupSave', {
         return this.createGroup;
     },
 
-    getCancelAndSaveBtns : function() {
+    // setSavedGroupValues : function(group) {
+    //     var form = this.getCreateGroup().getComponent('creategroupform');
+    //     if (form) {
+    //         form.getForm().setValues({
+    //             groupname: group.label,
+    //             groupdescription: group.description,
+    //             groupshared: group.shared
+    //         });
+    //     }
+    // },
+    //
+    // getSavedGroupValues : function() {
+    //     var form = this.getCreateGroup().getComponent('creategroupform');
+    //     if (form) {
+    //         return form.getForm().getValues();
+    //     }
+    // },
+
+    getCancelSaveMenuBtns : function() {
 
         var buttons = {
             xtype: 'toolbar',
             dock: 'bottom',
             ui: 'lightfooter',
             // style: 'padding-top: 60px',
-            id: 'groupsave-cancel-save-btns',
+            id: 'groupsave-cancel-save-menu-btns-id',
+            hidden: true,
             items: ['->', {
                 text: 'Cancel',
                 itemId: 'groupcancelbtn-itemid',
-                cls: 'groupcancelbtn' // tests
+                cls: 'groupcancelbtn', // tests
+                handler: function() {
+                    Ext.getCmp('savedgroupname-id').show();
+                    Ext.getCmp('groupsave-id').hide();
+                    Ext.getCmp('editgroupbtn-id').show();
+                }
             }, {
                 xtype: 'groupsavebutton',
                 // margin : '24 10 0 0',
                 width : 100,
                 itemId: 'groupsavebtn-itemid',
                 cls: 'groupsavebtn', // tests
-                listeners: {
-                    updateGroup : this.updateGroup,
-                    saveNewGroup : this.saveNewGroup,
-                    scope: this
-                }
             }]
         };
         return buttons;
-    },
-
-    updateGroup: function() {
-    // TODO
-    },
-
-    saveNewGroup: function() {
-    // TODO
     },
 
     getEditGroup : function()

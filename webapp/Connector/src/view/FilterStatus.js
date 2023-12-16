@@ -21,10 +21,12 @@ Ext.define('Connector.view.FilterStatus', {
 
         this.items = [
             this.getFilterHeader(),
+            this.getSavedGroupName(),
             this.getGroupSavePanel(),
             this.getEmptyText(),
             this.getFilterContent(),
-            this.getFilterSaveAsGroupBtn()
+            this.getFilterSaveAsGroupBtn(),
+            this.getEditGroupBtn()
         ];
 
         this.callParent();
@@ -75,9 +77,36 @@ Ext.define('Connector.view.FilterStatus', {
                 ui: 'rounded-small',
                 cls: 'filter-hdr-btn filterclear' /* for tests */,
                 itemId: 'clear',
-                hidden: hidden
+                hidden: hidden,
+                handler: function() {
+                    Ext.getCmp('editgroupbtn-id').hide();
+                }
             }]
         };
+    },
+
+    getSavedGroupName : function() {
+        return {
+           xtype: 'container',
+           itemId: 'savedgroupname-itemid',
+           id: 'savedgroupname-id',
+           ui: 'custom',
+           hidden: true,
+           layout: {
+               type: 'hbox'
+           },
+            items: [{
+                xtype: 'box',
+                cls: 'savedgroup-label',
+                id: 'savedgroup-label-id',
+                tpl: new Ext.XTemplate(
+                        '<h4>{savedGroupName:htmlEncode}</h4>'
+                ),
+                data: {
+                    savedGroupName: ''
+                }
+            }],
+        }
     },
 
     getGroupSavePanel : function() {
@@ -111,8 +140,41 @@ Ext.define('Connector.view.FilterStatus', {
                 hidden: hidden,
                 handler: function() {
                     this.hide();
-                    document.getElementById('filterstatus-id').style.height = '325px';
+                    document.getElementById('filterstatus-id').style.height = '330px';
+                    document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     Ext.getCmp('groupsave-id').show();
+                }
+            }]
+        };
+    },
+
+    getEditGroupBtn : function() {
+
+        return {
+            xtype: 'container',
+            itemId: 'editGroupBtn',
+            ui: 'custom',
+            layout: {
+                type: 'hbox'
+            },
+            items: [{
+                xtype: 'button',
+                id: 'editgroupbtn-id',
+                text: '<div>Edit group</div>', // need to wrap in div to get the 'g' in 'group' to fully show up otherwise it is cut off in the bottom
+                ui: 'rounded-inverted-accent-small',
+                cls: 'editgroup filter-hdr-btn' /* for tests */,
+                itemId: 'editgroupbtn-itemid',
+                hidden: true,
+                handler: function() {
+
+                    this.hide();
+                    document.getElementById('filterstatus-id').style.height = '330px';
+                    document.getElementById('filterstatus-content-id').style.marginTop = '10px';
+                    var groupSavePanel = Ext.getCmp('groupsave-id');
+                    Ext.getCmp('groupsave-cancel-save-btns-id').hide();
+                    Ext.getCmp('savedgroup-label-id').hide();
+                    groupSavePanel.show();
+                    Ext.getCmp('groupsave-cancel-save-menu-btns-id').show();
                 }
             }]
         };
@@ -132,6 +194,7 @@ Ext.define('Connector.view.FilterStatus', {
         if (!this.filterContent) {
             this.filterContent = Ext.create('Ext.Container', {
                 cls: 'filterstatus-content',
+                id: 'filterstatus-content-id',
                 hidden: !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0),
                 items: [
                     this.getFilterPanel(),

@@ -48,6 +48,10 @@ Ext.define('Connector.controller.Group', {
             click : this.doGroupSave
         });
 
+        this.control('#save-as-new-grp-menu-item', {
+            click : this.doGroupSave
+        });
+
         this.control('#groupeditsave', {
             click : this.doGroupEdit
         });
@@ -96,7 +100,7 @@ Ext.define('Connector.controller.Group', {
     createView : function(xtype, context) {
         var v; // the view instance to be created
 
-        if (xtype == 'groupsave') {
+        if (xtype === 'groupsave') {
 
             var state = Connector.getState();
 
@@ -111,14 +115,14 @@ Ext.define('Connector.controller.Group', {
             this.application.on('mabgroupsaved', this.onMabGroupSaved, this);
             this.application.on('mabgroupedited', this.onMabGroupEdited, this);
         }
-        else if (xtype == 'groupsummary') {
+        else if (xtype === 'groupsummary') {
 
             v = Ext.create('Connector.view.GroupSummary', {
                 store: Connector.model.Group.getGroupStore(),
                 groupId: context.groupId
             });
         }
-        else if (xtype == 'mabgroupsummary') {
+        else if (xtype === 'mabgroupsummary') {
 
             v = Ext.create('Connector.view.MabGroupSummary', {
                 store: Connector.model.Group.getGroupStore(),
@@ -172,7 +176,7 @@ Ext.define('Connector.controller.Group', {
 
     onSelectGroup : function(selModel) {
         Ext.iterate(this.selected, function(id, select) {
-            if (id != selModel.view.id) {
+            if (id !== selModel.view.id) {
                 var model = select.getSelectionModel();
                 model.suspendEvents();
                 model.deselectAll();
@@ -183,7 +187,7 @@ Ext.define('Connector.controller.Group', {
 
     doGroupSave : function()
     {
-        var view = this.getViewManager().getViewInstance('groupsave');
+        var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('groupsave-id');
 
         if (view.isMabGroup)
             this.doMabGroupEdit(view, false);
@@ -282,18 +286,18 @@ Ext.define('Connector.controller.Group', {
         var json = response.responseText ? Ext.decode(response.responseText) : response;
 
         if (json.exception) {
-            var view = this.getViewManager().getViewInstance('groupsave');
+            var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('groupsave-id');
             if (json.exception.indexOf('There is already a group named') > -1 ||
                     json.exception.indexOf('duplicate key value violates') > -1) {
                 // custom error response for invalid name
-                if (isAlert)
+                if (isAlert === true)
                     Ext.Msg.alert('ERROR', json.exception);
                 else
                     view.showError('The name you have chosen is already in use; please choose a different name.');
             }
             else
             {
-                if (isAlert)
+                if (isAlert === true)
                     Ext.Msg.alert('ERROR', json.exception);
                 else
                     view.showError(json.exception);
@@ -310,19 +314,44 @@ Ext.define('Connector.controller.Group', {
 
     doSubjectGroupSave: function(view)
     {
-        if (view.isValid())
+        if (view)
         {
             var values = view.getValues(),
                     state = Connector.getState();
+
+            var groupname = values['groupname'];
+
+            if (groupname.length === 0) {
+                Ext.getCmp('groupcreatesave-id').disable();
+            }
+            else {
+                Ext.getCmp('groupcreatesave-id').enable();
+            }
 
             state.moveSelectionToFilter();
 
             state.onMDXReady(function(mdx) {
 
                 var saveSuccess = function(response) {
+
                     var group = Ext.decode(response.responseText);
+
+                    //reset
+                    document.getElementById('filterstatus-id').style.height = '191px';
+                    var grpSaveForm = Ext.getCmp('groupsave-id');
+                    grpSaveForm.hide();
+                    Ext.getCmp('saveasagroupbtn-id').hide();
+
+                    //display Edit button
+                    Ext.getCmp('editgroupbtn-id').show();
+
+                    //display group label of a newly saved group
+                    var groupLabel = Ext.getCmp('savedgroupname-id');
+                    groupLabel.items.get(0).update({savedGroupName: group.category.label});
+                    groupLabel.show();
+
                     Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
-                    view.reset();
+                    // view.reset();
                     Connector.model.Group.getGroupStore().refreshData();
                 };
 
@@ -502,7 +531,8 @@ Ext.define('Connector.controller.Group', {
     },
 
     onGroupCancel : function() {
-        this.getViewManager().hideView('groupsave');
+        Ext.getCmp('groupsave-id').hide();
+        Ext.getCmp('saveasagroupbtn-id').show();
     },
 
     onGroupPlotView : function() {

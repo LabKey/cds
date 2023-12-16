@@ -124,7 +124,8 @@ Ext.define('Connector.controller.FilterStatus', {
         store.load();
 
         var view = Ext.create('Connector.view.DetailStatus', {
-            store: store
+            store: store,
+            id: 'detailstatus-id'
         });
 
         this.getViewManager().on('afterchangeview', function(controller, view)

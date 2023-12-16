@@ -32,20 +32,6 @@ Ext.define('Connector.button.GroupSaveButton', {
             }]
         };
 
-        this.on('click', this.handleClick, this);
         this.callParent();
     },
-
-    handleClick : function(cmp, item) {
-        if (item.itemId) {
-            switch (item.itemId) {
-                case 'update-grp-menu-item' :
-                    this.fireEvent('updateGroup', item);
-                    break;
-                case 'save-as-new-grp-menu-item' :
-                    this.fireEvent('saveNewGroup', item);
-                    break;
-            }
-        }
-    }
 });

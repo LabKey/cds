@@ -68,8 +68,8 @@ div.filterpanel {
 
   .x-container {
     background-color: $gray-7;
-    @include prefixer(border-radius, 2px);
-    padding: 6px 0 0 0;
+    @include prefixer(border-radius, 1px);
+    //padding: 6px 0 0 0;
   }
 
   .x-container:first-child {
