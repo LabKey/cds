@@ -88,8 +88,7 @@ Ext.define('Connector.view.GroupSave', {
                 },
                 this.getCreateGroup(),
                 this.getCancelSaveMenuBtns(),
-                // this.getEditGroup(),
-                // this.getReplaceGroup()
+                // this.getEditGroup()
             ]
         }];
 
@@ -99,9 +98,6 @@ Ext.define('Connector.view.GroupSave', {
                 if(this.getIsEditorOrHigher(userPerms))
                 {
                     Ext.getCmp('creategroupshared').show();
-                    // Ext.getCmp('groupsave-cancel-save-btns').show();
-                    // Ext.getCmp('editgroupshared').show();
-                    // Ext.getCmp('updategroupshared').show();
                 }
             },
             scope: this
@@ -172,12 +168,7 @@ Ext.define('Connector.view.GroupSave', {
                         fieldLabel: 'Shared group',
                         checked: false,
                         hidden: true
-                    }],
-                    viewModel: {
-                        stores: {
-                            groupValues: this.groupFormValues
-                        }
-                    }
+                    }]
                 },{
                     xtype: 'toolbar',
                     id: 'groupsave-cancel-save-btns-id',
@@ -213,32 +204,14 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },
                 scope: this
-            });
+            }, this);
         }
         return this.createGroup;
     },
 
-    // setSavedGroupValues : function(group) {
-    //     var form = this.getCreateGroup().getComponent('creategroupform');
-    //     if (form) {
-    //         form.getForm().setValues({
-    //             groupname: group.label,
-    //             groupdescription: group.description,
-    //             groupshared: group.shared
-    //         });
-    //     }
-    // },
-    //
-    // getSavedGroupValues : function() {
-    //     var form = this.getCreateGroup().getComponent('creategroupform');
-    //     if (form) {
-    //         return form.getForm().getValues();
-    //     }
-    // },
-
     getCancelSaveMenuBtns : function() {
 
-        var buttons = {
+        return {
             xtype: 'toolbar',
             dock: 'bottom',
             ui: 'lightfooter',
@@ -262,7 +235,6 @@ Ext.define('Connector.view.GroupSave', {
                 cls: 'groupsavebtn', // tests
             }]
         };
-        return buttons;
     },
 
     getEditGroup : function()
@@ -521,7 +493,8 @@ Ext.define('Connector.view.GroupSave', {
                     if (cc[i].activeMode === mode)
                     {
                         // show/hide selection message
-                        this.getComponent('content').getComponent('selectionwarning').hide();
+                        if (this.getComponent('content').getComponent('selectionwarning'))
+                            this.getComponent('content').getComponent('selectionwarning').hide();
 
                         cc[i].show();
                     }
@@ -562,7 +535,7 @@ Ext.define('Connector.view.GroupSave', {
         // update warning
         var sw = this.getComponent('content').getComponent('selectionwarning');
         if (sw) {
-            sw.setVisible(selections.length != 0);
+            sw.setVisible(selections.length !== 0);
         }
     },
 
@@ -711,6 +684,8 @@ Ext.define('Connector.view.GroupSave', {
 
     showError : function(error) {
         var errorEl = this.getError();
+        this.height = '225px';
+        Ext.getCmp('filterstatus-content-id').setMargin('25px 0 0 0')
         if (errorEl) {
             errorEl.update(error);
             errorEl.show();

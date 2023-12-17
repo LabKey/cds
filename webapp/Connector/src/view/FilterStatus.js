@@ -152,11 +152,13 @@ Ext.define('Connector.view.FilterStatus', {
 
         return {
             xtype: 'container',
+            id: 'editgroupbtn-container-id',
             itemId: 'editGroupBtn',
             ui: 'custom',
             layout: {
                 type: 'hbox'
             },
+            style: 'height: 50px; margin-left: 135px; margin-top: 10px;',
             items: [{
                 xtype: 'button',
                 id: 'editgroupbtn-id',
@@ -287,7 +289,12 @@ Ext.define('Connector.view.FilterStatus', {
             headerText.replaceCls('section-title', 'section-title-filtered');
             emptyText.hide();
             filterContent.show();
-            saveBtn.show();
+            if (Ext.getCmp('editgroupbtn-id').hidden && Ext.getCmp('groupsave-id').hidden) {
+                saveBtn.show();
+            }
+            else {
+                saveBtn.hide();
+            }
             clrBtn.show();
         }
     },

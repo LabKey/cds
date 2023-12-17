@@ -52,7 +52,7 @@ Ext.define('Connector.controller.Group', {
             click : this.doGroupSave
         });
 
-        this.control('#groupeditsave', {
+        this.control('#update-grp-menu-item', {
             click : this.doGroupEdit
         });
 
@@ -153,11 +153,11 @@ Ext.define('Connector.controller.Group', {
     },
 
     updateView : function(xtype, context) {
-        if (xtype == 'groupsummary') {
+        if (xtype === 'groupsummary') {
             var v = this.getViewManager().getViewInstance('groupsummary');
             v.updateView(context.groupId);
         }
-        else if (xtype == 'mabgroupsummary') {
+        else if (xtype === 'mabgroupsummary') {
             var m = this.getViewManager().getViewInstance('mabgroupsummary');
             m.updateView(context.groupId);
         }
@@ -336,10 +336,15 @@ Ext.define('Connector.controller.Group', {
 
                     var group = Ext.decode(response.responseText);
 
+                    var groupid = group.category.rowId;
+
                     //reset
                     document.getElementById('filterstatus-id').style.height = '191px';
                     var grpSaveForm = Ext.getCmp('groupsave-id');
+                    grpSaveForm.hideError();
+                    // grpSaveForm.changeMode(Connector.view.GroupSave.modes.EDIT);
                     grpSaveForm.hide();
+
                     Ext.getCmp('saveasagroupbtn-id').hide();
 
                     //display Edit button
