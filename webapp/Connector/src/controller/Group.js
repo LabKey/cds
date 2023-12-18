@@ -283,6 +283,8 @@ Ext.define('Connector.controller.Group', {
     },
 
     saveFailure : function(response, isAlert) {
+
+        Ext.getCmp('savedgroupname-id').hide();
         var json = response.responseText ? Ext.decode(response.responseText) : response;
 
         if (json.exception) {
@@ -379,7 +381,7 @@ Ext.define('Connector.controller.Group', {
 
     doGroupEdit: function()
     {
-        var view = this.getViewManager().getViewInstance('groupsave');
+        var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('groupsave-id');
 
         if (view.isMabGroup)
             this.doMabGroupEdit(view, true);

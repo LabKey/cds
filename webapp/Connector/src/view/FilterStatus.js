@@ -174,7 +174,8 @@ Ext.define('Connector.view.FilterStatus', {
                     document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     var groupSavePanel = Ext.getCmp('groupsave-id');
                     Ext.getCmp('groupsave-cancel-save-btns-id').hide();
-                    Ext.getCmp('savedgroup-label-id').hide();
+                    Ext.getCmp('savedgroupname-id').hide();
+                    groupSavePanel.hideError();
                     groupSavePanel.show();
                     Ext.getCmp('groupsave-cancel-save-menu-btns-id').show();
                 }
@@ -272,7 +273,7 @@ Ext.define('Connector.view.FilterStatus', {
         var headerText = Ext.get(Ext.DomQuery.select('.filterheader-text')[0]);
         var saveAsGroupBtn = this.getComponent('filterSaveAsGroupBtn');
 
-        var saveBtn = saveAsGroupBtn.query('#savegroup')[0];
+        var saveBtn = saveAsGroupBtn.query('#savegroup')[0]; //'Save as a group' button
         var clrBtn = filterHeader.query('#clear')[0];
 
         var filterContent = this.getFilterContent();
@@ -289,14 +290,59 @@ Ext.define('Connector.view.FilterStatus', {
             headerText.replaceCls('section-title', 'section-title-filtered');
             emptyText.hide();
             filterContent.show();
+
+            var grpId = this.getGroupId();
+
+            // when the group is displayed with filtered values (i.e. when user clicks on a Group from Home page of Learn > Groups page)
+            // then it should be ready for Editing
+            if (grpId > -1) {
+
+                var grpStore = Connector.model.Group.getGroupStore();
+
+                if (grpStore && grpStore.getCount() > 0) {
+
+                    //display group label of a saved group
+                    var groupLabel = grpStore.query('id', grpId).items[0].data.label;
+                    var groupLabelCmp = Ext.getCmp('savedgroupname-id');
+                    groupLabelCmp.items.get(0).update({ savedGroupName : groupLabel });
+                    groupLabelCmp.show();
+
+                    //set group save form values
+                    Ext.getCmp('groupname-id').setValue(groupLabel);
+
+                    var description = grpStore.query('id', grpId).items[0].data.description;
+                    Ext.getCmp('creategroupdescription').setValue(description);
+
+                    var shared = grpStore.query('id', grpId).items[0].data.shared;
+                    Ext.getCmp('creategroupshared').setValue(shared);
+                }
+
+                // display 'Edit group' button
+                Ext.getCmp('editgroupbtn-id').show();
+            }
+
+            // show 'Save as a group' button when the filters are applied and Group Save form and Edit button are not displayed
             if (Ext.getCmp('editgroupbtn-id').hidden && Ext.getCmp('groupsave-id').hidden) {
                 saveBtn.show();
             }
             else {
                 saveBtn.hide();
             }
+
+            // always display the Clear button when filters are applied
             clrBtn.show();
         }
+    },
+
+    getGroupId: function() {
+        var currentPage = window.location.href.split("#");
+        if (currentPage.length > 1 && currentPage[1].indexOf("groupsummary") > -1) {
+            var groupSummary = currentPage[1].split("/");
+            if (groupSummary.length === 3) {
+                return groupSummary[groupSummary.length - 1];
+            }
+        }
+        return -1;
     },
 
     onBeforeViewChange : function() {
