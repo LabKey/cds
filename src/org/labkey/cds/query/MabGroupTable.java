@@ -85,7 +85,7 @@ public class MabGroupTable extends FilteredTable<CDSUserSchema>
         SQLFragment sql = new SQLFragment("(Shared = true OR CreatedBy = ");
         sql.append(getUserSchema().getUser().getUserId());
         sql.append(") AND ");
-        sql.append(filter.getSQLFragment(getSchema(), new SQLFragment("Container"), getContainer()));
+        sql.append(filter.getSQLFragment(getSchema(), new SQLFragment("Container")));
         addCondition(sql, containerFieldKey);
     }
 
