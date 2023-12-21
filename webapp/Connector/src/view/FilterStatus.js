@@ -173,12 +173,12 @@ Ext.define('Connector.view.FilterStatus', {
                     document.getElementById('filterstatus-id').style.height = '330px';
                     document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     var groupSavePanel = Ext.getCmp('groupsave-id');
+                    groupSavePanel.setMode(Connector.view.GroupSave.modes.EDIT);
                     Ext.getCmp('groupsave-cancel-save-btns-id').hide();
                     Ext.getCmp('savedgroupname-id').hide();
                     groupSavePanel.hideError();
                     groupSavePanel.show();
                     Ext.getCmp('groupsave-cancel-save-menu-btns-id').show();
-                    groupSavePanel.setActive(Connector.view.GroupSave.modes.EDIT);
                 }
             }]
         };
@@ -321,8 +321,12 @@ Ext.define('Connector.view.FilterStatus', {
                     Ext.getCmp('creategroupshared').setValue(shared);
                 }
 
-                // display 'Edit group' button
-                Ext.getCmp('editgroupbtn-id').show();
+                var grpSaveCmp = Ext.getCmp('groupsave-id');
+
+                if (grpSaveCmp.mode === Connector.view.GroupSave.modes.EDIT)
+                    Ext.getCmp('editgroupbtn-id').hide();
+                else
+                    Ext.getCmp('editgroupbtn-id').show();
             }
 
             // show 'Save as a group' button when the filters are applied and Group Save form and Edit button are not displayed

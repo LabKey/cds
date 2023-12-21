@@ -87,7 +87,7 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },
                 this.getCreateGroup(),
-                this.getEditGroup(),
+                // this.getEditGroup(),
                 this.getCancelSaveMenuBtns(),
 
             ]
@@ -491,6 +491,11 @@ Ext.define('Connector.view.GroupSave', {
 
     getMode : function() {
         return this.mode;
+    },
+
+    setMode : function(mode) {
+      this.mode = mode;
+      this.activeMode = mode;
     },
 
     getIsEditorOrHigher : function (userPerms)
