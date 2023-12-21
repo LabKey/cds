@@ -87,8 +87,9 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },
                 this.getCreateGroup(),
+                this.getEditGroup(),
                 this.getCancelSaveMenuBtns(),
-                // this.getEditGroup()
+
             ]
         }];
 
@@ -266,13 +267,6 @@ Ext.define('Connector.view.GroupSave', {
                         validateOnBlur: false,
                         maxLength: 100
                     },{
-                        xtype: 'box',
-                        autoEl: {
-                            tag: 'div',
-                            style: 'padding: 5px 0; font-family: Verdana, sans-serif; font-size: 10pt;',
-                            html: 'Description:'
-                        }
-                    },{
                         xtype: 'textareafield',
                         id: 'editgroupdescription',
                         itemId: 'groupdescription',
@@ -303,19 +297,6 @@ Ext.define('Connector.view.GroupSave', {
                         xtype: 'hiddenfield',
                         itemId: 'groupparticipantids',
                         name: 'groupparticipantids'
-                    }]},{
-                    xtype: 'toolbar',
-                    dock: 'bottom',
-                    ui: 'lightfooter',
-                    style: 'padding-top: 60px',
-                    items: ['->',{
-                        text: 'Cancel',
-                        itemId: 'groupcancel',
-                        cls: 'groupcanceledit' // tests
-                    },{
-                        text: 'Save',
-                        itemId: 'groupeditsave',
-                        cls: 'groupeditsave' // tests
                     }]
                 }],
                 getForm : function()
@@ -522,12 +503,15 @@ Ext.define('Connector.view.GroupSave', {
             return false;
     },
 
-    editGroup : function(group)
+    editGroup : function(group, isMabGroup)
     {
         if (group)
         {
             this.changeMode(Connector.view.GroupSave.modes.EDIT);
-            this.setActive(group, this.getEditGroup().getForm());
+            if (isMabGroup)
+                this.setActive(group, this.getEditGroup().getForm());
+            else
+                this.setEditGroup(group, this.getEditGroup().getForm());
         }
     },
 
@@ -539,12 +523,67 @@ Ext.define('Connector.view.GroupSave', {
         }
     },
 
-    setActive : function(groupModel, form)
+    setEditGroup : function(group, form){
+
+        if (form)
+
+            var _id = form.getComponent('groupid'),
+                    name = form.getComponent('groupname'),
+                    description = form.getComponent('groupdescription'),
+                    categoryId = form.getComponent('groupcategoryid'),
+                    shared = form.getComponent('groupshared'),
+                    filters = form.getComponent('groupfilters'),
+                    participantIds = form.getComponent('groupparticipantids');
+
+            if (_id)
+            {
+                _id.setValue(group.id);
+            }
+
+            if (name)
+            {
+                name.setValue(group.label);
+            }
+
+            if (description)
+            {
+                description.setValue(group.description);
+            }
+
+            if (categoryId)
+            {
+                categoryId.setValue(group.categoryId);
+            }
+
+            if (shared)
+            {
+                shared.setValue(group.shared);
+            }
+
+            if (filters)
+            {
+                filters.setValue(Ext.encode({
+                    isLive : true,
+                    filters : group.filters
+                }));
+            }
+
+            if (participantIds)
+            {
+                participantIds.setValue(group.participantIds);
+            }
+    },
+
+    setActive : function(groupModel, form, isMabGroup)
     {
         if (form)
         {
-            var group = Connector.model.FilterGroup.fromCohortGroup(groupModel),
-                _id = form.getComponent('groupid'),
+            var group = groupModel;
+
+            if (isMabGroup)
+                group = Connector.model.FilterGroup.fromCohortGroup(groupModel);
+
+            var _id = form.getComponent('groupid'),
                 name = form.getComponent('groupname'),
                 description = form.getComponent('groupdescription'),
                 categoryId = form.getComponent('groupcategoryid'),

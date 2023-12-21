@@ -186,6 +186,7 @@ Ext.define('Connector.model.Group', {
                                                     cb.call(cbScope);
                                             }
                                         });
+                                        // location.reload();
                                     }
                                 });
                             }

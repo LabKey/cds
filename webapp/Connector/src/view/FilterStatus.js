@@ -178,6 +178,7 @@ Ext.define('Connector.view.FilterStatus', {
                     groupSavePanel.hideError();
                     groupSavePanel.show();
                     Ext.getCmp('groupsave-cancel-save-menu-btns-id').show();
+                    groupSavePanel.setActive(Connector.view.GroupSave.modes.EDIT);
                 }
             }]
         };
@@ -279,12 +280,15 @@ Ext.define('Connector.view.FilterStatus', {
         var filterContent = this.getFilterContent();
         var emptyText = this.getEmptyText();
 
+        var groupLabelCmp = Ext.getCmp('savedgroupname-id');
+
         if (filters.length === 0 && selections.length === 0) {
             headerText.replaceCls('section-title-filtered', 'section-title');
             emptyText.show();
             filterContent.hide();
             saveBtn.hide();
             clrBtn.hide();
+            groupLabelCmp.hide()
         }
         else {
             headerText.replaceCls('section-title', 'section-title-filtered');
@@ -303,7 +307,7 @@ Ext.define('Connector.view.FilterStatus', {
 
                     //display group label of a saved group
                     var groupLabel = grpStore.query('id', grpId).items[0].data.label;
-                    var groupLabelCmp = Ext.getCmp('savedgroupname-id');
+
                     groupLabelCmp.items.get(0).update({ savedGroupName : groupLabel });
                     groupLabelCmp.show();
 

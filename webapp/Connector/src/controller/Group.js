@@ -336,16 +336,23 @@ Ext.define('Connector.controller.Group', {
 
                 var saveSuccess = function(response) {
 
+                    // Connector.model.Group.getGroupStore().refreshData();
+
                     var group = Ext.decode(response.responseText);
 
-                    var groupid = group.category.rowId;
+                    // var groupid = group.category.rowId;
+                    // window.location.hash = '#group/groupsummary/' + groupid;
+
+                    // window.addEventListener('hashchange', function() {
+                    //     // Reload the page
+                    //     location.reload();
+                    // });
 
                     //reset
                     document.getElementById('filterstatus-id').style.height = '191px';
-                    var grpSaveForm = Ext.getCmp('groupsave-id');
-                    grpSaveForm.hideError();
-                    // grpSaveForm.changeMode(Connector.view.GroupSave.modes.EDIT);
-                    grpSaveForm.hide();
+                    var grpSaveCmp = Ext.getCmp('groupsave-id');
+                    grpSaveCmp.hideError();
+                    grpSaveCmp.hide();
 
                     Ext.getCmp('saveasagroupbtn-id').hide();
 
@@ -381,7 +388,7 @@ Ext.define('Connector.controller.Group', {
 
     doGroupEdit: function()
     {
-        var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('groupsave-id');
+        var view = Ext.getCmp('groupsave-id');
 
         if (view.isMabGroup)
             this.doMabGroupEdit(view, true);
@@ -392,12 +399,24 @@ Ext.define('Connector.controller.Group', {
     doSubjectGroupEdit : function(view)
     {
         if (view.isValid()) {
-            var values = view.getValues();
 
-            if (!Ext.isDefined(values['groupid'])) {
-                Ext.Msg.alert('A group id must be provided!');
+            var newValues = view.getActiveForm().getValues();
+
+            var grpStore = Connector.model.Group.getGroupStore();
+
+            //get the original group that is being edited
+            var originalGroupName = Ext.getCmp('savedgroupname-id').items.items[0].data.savedGroupName;
+            var groupItems = grpStore.query('label', originalGroupName).items;
+            var group = undefined;
+
+            if (groupItems.length === 0) {
+                Ext.Msg.alert(values['groupname'] + ' not found to edit.');
             }
             else {
+                group = groupItems[0].data;
+            }
+
+            if (group) {
                 var me = this;
                 var editSuccess = function (response)
                 {
@@ -419,14 +438,15 @@ Ext.define('Connector.controller.Group', {
                 };
 
                 var groupData = {};
-                groupData.rowId = parseInt(values['groupid']);
-                groupData.label = values['groupname'];
-                groupData.description = values['groupdescription'];
-                groupData.categoryLabel = values['groupname'];
-                groupData.categoryId = values['groupcategoryid'];
-                groupData.participantIds = Ext.decode(values['groupparticipantids']);
+                var state = Connector.getState();
+                groupData.rowId = group.id;
+                groupData.label = newValues['groupname'];
+                groupData.description = newValues['groupdescription'];
+                groupData.categoryLabel = newValues['groupname'];
+                groupData.categoryId = group.categoryId;
+                groupData.participantIds = Connector.getFilterService().getParticipantIds();
                 groupData.categoryType = 'list';
-                if (typeof values['groupshared'] != "undefined")
+                if (typeof newValues['groupshared'] != "undefined")
                 {
                     groupData.categoryOwnerId = -1;  // shared owner ID, see ParticipantCategory.java -> OWNER_SHARED
                 }
@@ -434,7 +454,7 @@ Ext.define('Connector.controller.Group', {
                 {
                     groupData.categoryOwnerId = LABKEY.user.id;
                 }
-                groupData.filters = values['groupfilters'];
+                groupData.filters =  Connector.model.Filter.toJSON(state.getFilters(), true);
 
                 LABKEY.Ajax.request({
                     url: LABKEY.ActionURL.buildURL("participant-group", "saveParticipantGroup.api", null),
@@ -570,7 +590,7 @@ Ext.define('Connector.controller.Group', {
 
         if (cmp && cmp.group)
         {
-            groupSaveView.editGroup(cmp.group);
+            groupSaveView.editGroup(cmp.group, true);
         }
         else if (groupSaveView.getMode() === Connector.view.GroupSave.modes.EDIT)
         {
