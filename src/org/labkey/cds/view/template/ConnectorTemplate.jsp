@@ -55,7 +55,7 @@
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), pageConfigBean, new LinkedHashSet<>(), false)%>
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="<%=getScriptNonce()%>">
         var Connector = {
             studyContext: {
                 schemaName: 'study',
