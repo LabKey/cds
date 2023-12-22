@@ -285,6 +285,7 @@ Ext.define('Connector.controller.Group', {
     saveFailure : function(response, isAlert) {
 
         Ext.getCmp('savedgroupname-id').hide();
+        Ext.getCmp('editgroupbtn-id').hide();
         var json = response.responseText ? Ext.decode(response.responseText) : response;
 
         if (json.exception) {
