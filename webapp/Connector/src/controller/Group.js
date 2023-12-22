@@ -321,6 +321,8 @@ Ext.define('Connector.controller.Group', {
             var values = view.getValues(),
                     state = Connector.getState();
 
+            var me = this;
+
             state.moveSelectionToFilter();
 
             state.onMDXReady(function(mdx) {
@@ -342,6 +344,7 @@ Ext.define('Connector.controller.Group', {
                     //reset
                     document.getElementById('filterstatus-id').style.height = '191px';
                     var grpSaveCmp = Ext.getCmp('groupsave-id');
+                    // grpSaveCmp.setMode(Connector.view.GroupSave.modes.CREATE);
                     grpSaveCmp.hideError();
                     grpSaveCmp.hide();
 
@@ -357,7 +360,7 @@ Ext.define('Connector.controller.Group', {
 
                     Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
                     // view.reset();
-                    Connector.model.Group.getGroupStore().refreshData();
+                    Connector.model.Group.getGroupStore().refreshData(group.category.label, me);
                 };
 
                 Connector.model.Filter.doGroupSave({
@@ -417,6 +420,7 @@ Ext.define('Connector.controller.Group', {
                     //reset
                     document.getElementById('filterstatus-id').style.height = '191px';
                     var grpSaveCmp = Ext.getCmp('groupsave-id');
+                    // grpSaveCmp.setMode(Connector.view.GroupSave.modes.CREATE);
                     grpSaveCmp.hideError();
                     grpSaveCmp.hide();
 
@@ -432,10 +436,7 @@ Ext.define('Connector.controller.Group', {
 
                     Connector.getApplication().fireEvent('groupsaved', grp, state.getFilters(true));
 
-                    // me.application.fireEvent('groupedit', grp);
-
-                    Connector.model.Group.getGroupStore().refreshData();
-                    me.getViewManager().changeView('home');
+                    Connector.model.Group.getGroupStore().refreshData(grp.label, me);
                 };
 
                 var editFailure = function (response)

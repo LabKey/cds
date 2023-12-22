@@ -173,7 +173,7 @@ Ext.define('Connector.view.FilterStatus', {
                     document.getElementById('filterstatus-id').style.height = '330px';
                     document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     var groupSavePanel = Ext.getCmp('groupsave-id');
-                    groupSavePanel.setMode(Connector.view.GroupSave.modes.EDIT);
+                    // groupSavePanel.setMode(Connector.view.GroupSave.modes.EDIT);
                     Ext.getCmp('groupsave-cancel-save-btns-id').hide();
                     Ext.getCmp('savedgroupname-id').hide();
                     groupSavePanel.hideError();
@@ -288,7 +288,7 @@ Ext.define('Connector.view.FilterStatus', {
             filterContent.hide();
             saveBtn.hide();
             clrBtn.hide();
-            groupLabelCmp.hide()
+            groupLabelCmp.hide();
         }
         else {
             headerText.replaceCls('section-title', 'section-title-filtered');
@@ -321,11 +321,11 @@ Ext.define('Connector.view.FilterStatus', {
                     Ext.getCmp('creategroupshared').setValue(shared);
                 }
 
-                var grpSaveCmp = Ext.getCmp('groupsave-id');
+                // var grpSaveCmp = Ext.getCmp('groupsave-id');
 
-                if (grpSaveCmp.mode === Connector.view.GroupSave.modes.EDIT)
-                    Ext.getCmp('editgroupbtn-id').hide();
-                else
+                // if (grpSaveCmp.mode === Connector.view.GroupSave.modes.EDIT)
+                //     Ext.getCmp('editgroupbtn-id').hide();
+                // else
                     Ext.getCmp('editgroupbtn-id').show();
             }
 
