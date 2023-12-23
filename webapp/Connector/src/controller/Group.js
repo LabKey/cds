@@ -286,6 +286,7 @@ Ext.define('Connector.controller.Group', {
 
         Ext.getCmp('savedgroupname-id').hide();
         Ext.getCmp('editgroupbtn-id').hide();
+
         var json = response.responseText ? Ext.decode(response.responseText) : response;
 
         if (json.exception) {
@@ -470,7 +471,7 @@ Ext.define('Connector.controller.Group', {
                 groupData.filters =  Connector.model.Filter.toJSON(state.getFilters(), true);
 
                 LABKEY.Ajax.request({
-                    url: LABKEY.ActionURL.buildURL("participant-group", "updateParticipantGroup.api", null),
+                    url: LABKEY.ActionURL.buildURL("participant-group", "saveParticipantGroup.api", null),
                     method: 'POST',
                     success: editSuccess,
                     failure: editFailure,

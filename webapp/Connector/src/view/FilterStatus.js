@@ -85,16 +85,16 @@ Ext.define('Connector.view.FilterStatus', {
         };
     },
 
-    getSavedGroupName : function() {
+    getSavedGroupName: function () {
         return {
-           xtype: 'container',
-           itemId: 'savedgroupname-itemid',
-           id: 'savedgroupname-id',
-           ui: 'custom',
-           hidden: true,
-           layout: {
-               type: 'hbox'
-           },
+            xtype: 'container',
+            itemId: 'savedgroupname-itemid',
+            id: 'savedgroupname-id',
+            ui: 'custom',
+            hidden: true,
+            layout: {
+                type: 'hbox'
+            },
             items: [{
                 xtype: 'box',
                 cls: 'savedgroup-label',
