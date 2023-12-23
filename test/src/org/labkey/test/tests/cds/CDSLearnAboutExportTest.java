@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -17,7 +18,6 @@ import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -244,7 +244,7 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
         return clickAndWaitForDownload(Locator.linkWithText("Excel (*.XLS)"));
     }
 
-    private File clickExportCSV(String learnTab, @Nullable String assayName) throws IOException
+    private File clickExportCSV(String learnTab, @Nullable String assayName)
     {
         log("Verify 'CSV Export' button downloads the zip " + learnTab);
         Locator.XPathLocator exportBtn;
