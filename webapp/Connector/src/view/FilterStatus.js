@@ -75,7 +75,7 @@ Ext.define('Connector.view.FilterStatus', {
                 xtype: 'button', 
                 text: 'clear',
                 ui: 'rounded-small',
-                cls: 'filter-hdr-btn filterclear' /* for tests */,
+                cls: 'filter-hdr-btn filter-clear-btn' /* for tests */,
                 itemId: 'clear',
                 hidden: hidden,
                 handler: function() {
@@ -158,13 +158,14 @@ Ext.define('Connector.view.FilterStatus', {
             layout: {
                 type: 'hbox'
             },
-            style: 'height: 50px; margin-left: 135px; margin-top: 10px;',
+            cls: 'edit-group-btn-container',
+            style: 'margin-left: 145px; margin-top: 10px;',
             items: [{
                 xtype: 'button',
                 id: 'editgroupbtn-id',
-                text: '<div>Edit group</div>', // need to wrap in div to get the 'g' in 'group' to fully show up otherwise it is cut off in the bottom
+                text: 'Edit group',
                 ui: 'rounded-inverted-accent-small',
-                cls: 'editgroup filter-hdr-btn' /* for tests */,
+                cls: 'edit-group-btn',
                 itemId: 'editgroupbtn-itemid',
                 hidden: true,
                 handler: function() {
@@ -173,7 +174,6 @@ Ext.define('Connector.view.FilterStatus', {
                     document.getElementById('filterstatus-id').style.height = '330px';
                     document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     var groupSavePanel = Ext.getCmp('groupsave-id');
-                    // groupSavePanel.setMode(Connector.view.GroupSave.modes.EDIT);
                     Ext.getCmp('groupsave-cancel-save-btns-id').hide();
                     Ext.getCmp('savedgroupname-id').hide();
                     groupSavePanel.hideError();

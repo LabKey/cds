@@ -173,6 +173,7 @@ Ext.define('Connector.view.GroupSave', {
                 },{
                     xtype: 'toolbar',
                     id: 'groupsave-cancel-save-btns-id',
+                    cls: 'groupsave-cancel-save-btns cancel-save-group-btns',
                     dock: 'bottom',
                     ui: 'lightfooter',
                     style: 'padding-top: 5px',
@@ -180,7 +181,7 @@ Ext.define('Connector.view.GroupSave', {
                         text: 'Cancel',
                         itemId: 'groupcancel',
                         id: 'groupcancel-id',
-                        cls: 'groupcancelcreate' // tests
+                        cls: 'group-cancel-btn groupcancelcreate'
                     },{
                         text: 'Save group',
                         itemId: 'groupcreatesave',
@@ -216,13 +217,13 @@ Ext.define('Connector.view.GroupSave', {
             xtype: 'toolbar',
             dock: 'bottom',
             ui: 'lightfooter',
-            // style: 'padding-top: 60px',
+            cls: 'groupsave-cancel-save-btns menu-btns',
             id: 'groupsave-cancel-save-menu-btns-id',
             hidden: true,
             items: ['->', {
                 text: 'Cancel',
                 itemId: 'groupcancelbtn-itemid',
-                cls: 'groupcancelbtn', // tests
+                cls: 'group-cancel-btn',
                 handler: function() {
                     Ext.getCmp('savedgroupname-id').show();
                     Ext.getCmp('groupsave-id').hide();
@@ -230,7 +231,6 @@ Ext.define('Connector.view.GroupSave', {
                 }
             }, {
                 xtype: 'groupsavebutton',
-                // margin : '24 10 0 0',
                 width : 100,
                 itemId: 'groupsavebtn-itemid',
                 cls: 'groupsavebtn', // tests

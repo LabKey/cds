@@ -221,6 +221,80 @@ ul.indent li {
 }
 
 .filtersaveasgroup {
-  margin-left: 114px;
+  margin-left: 100px;
   margin-top: 20px;
+}
+
+.filter-clear-btn {
+  display: flex;
+  width: 51px;
+  height: 24px;
+  justify-content: center;
+  align-items: center;
+  background-color: #fb2e5c !important;
+}
+
+//Save group button
+.x-btn-rounded-inverted-accent-toolbar-small-disabled {
+  background-color: #d1d1d1 !important;
+  border-color: #ffff !important;
+
+  .x-btn-inner {
+    color: #FFFFFF !important;
+  }
+}
+
+.edit-group-btn-container {
+
+  display: flex;
+  width: 231px;
+  height: 24px;
+  padding: 0px 6px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+
+  .edit-group-btn {
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 2px;
+
+    .x-btn-inner {
+      color: #FFFFFF !important;
+    }
+  }
+}
+
+.groupsave-cancel-save-btns {
+
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+  .cancel-save-group-btns {
+    width: 71px;
+  }
+}
+
+  .group-cancel-btn {
+    border-radius: 2px;
+    border: 0.5px solid;
+    background: #FFF !important;
+    color: #FB2E5C !important;
+
+    .x-btn-inner {
+      color: #FB2E5C !important;
+    }
+}
+
+.group-save-menu-items {
+
+  background-color: $white;
+
+  .x-menu-item-text {
+    margin-left: 10px;
+  }
 }

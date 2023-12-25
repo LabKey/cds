@@ -20,8 +20,7 @@ Ext.define('Connector.button.GroupSaveButton', {
         this.menu = {
             bubbleEvents : ['click'],
             defaults : {
-                cls : 'export-item', //todo: create a similar cls
-                // iconCls: 'export-item-icon',
+                cls : 'group-save-menu-items'
             },
             items : [{
                 text: 'Update this group',

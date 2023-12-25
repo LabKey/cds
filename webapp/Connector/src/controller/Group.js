@@ -335,18 +335,9 @@ Ext.define('Connector.controller.Group', {
 
                     var group = Ext.decode(response.responseText);
 
-                    // var groupid = group.category.rowId;
-                    // window.location.hash = '#group/groupsummary/' + groupid;
-
-                    // window.addEventListener('hashchange', function() {
-                    //     // Reload the page
-                    //     location.reload();
-                    // });
-
                     //reset
                     document.getElementById('filterstatus-id').style.height = '191px';
                     var grpSaveCmp = Ext.getCmp('groupsave-id');
-                    // grpSaveCmp.setMode(Connector.view.GroupSave.modes.CREATE);
                     grpSaveCmp.hideError();
                     grpSaveCmp.hide();
 
@@ -361,7 +352,6 @@ Ext.define('Connector.controller.Group', {
                     groupLabel.show();
 
                     Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
-                    // view.reset();
                     Connector.model.Group.getGroupStore().refreshData(group.category.label, me);
                 };
 
@@ -422,7 +412,6 @@ Ext.define('Connector.controller.Group', {
                     //reset
                     document.getElementById('filterstatus-id').style.height = '191px';
                     var grpSaveCmp = Ext.getCmp('groupsave-id');
-                    // grpSaveCmp.setMode(Connector.view.GroupSave.modes.CREATE);
                     grpSaveCmp.hideError();
                     grpSaveCmp.hide();
 
