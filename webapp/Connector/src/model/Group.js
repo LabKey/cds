@@ -129,12 +129,18 @@ Ext.define('Connector.model.Group', {
                                                 //add index for display
                                                 var savedGroups = subjGrps.filter(function(grp) {return !grp.category.shared});
                                                 for (var i = 0; i < savedGroups.length; i++) {
+                                                    if (!savedGroups[i].description) {
+                                                        savedGroups[i].description = "No description given.";
+                                                    }
                                                     savedGroups[i].index = i+1;
                                                 }
 
                                                 //add index for display
                                                 var sharedGroups = subjGrps.filter(function(grp) {return grp.category.shared});
                                                 for (var j = 0; j < sharedGroups.length; j++) {
+                                                    if (!sharedGroups[j].description) {
+                                                        sharedGroups[j].description = "No description given.";
+                                                    }
                                                     sharedGroups[j].index = j+1;
                                                 }
 
@@ -161,7 +167,7 @@ Ext.define('Connector.model.Group', {
                                                         data_link_id: grp.study_name,
                                                         data_show: true,
                                                         has_access: true,
-                                                        data_description: grp.description
+                                                        data_description: grp.description ? grp.description : "No description given."
                                                     }
                                                 }, this);
 

@@ -310,18 +310,19 @@ ul.indent li {
   gap: 10px;
   background-color: $gray-7;
   padding: 0 6px 6px 6px;
+}
 
-  .savedgroup-label-container {
-    width: 202px;
+.savedgroup-label-container {
+  width: 202px;
+  margin-top: 6px;
 
-    .savedgroup-label {
-      color: #777;
-      font-family: $info-font;
-      font-size: 11px;
-      font-style: normal;
-      font-weight: 700;
-      line-height: 17px; /* 154.545% */
-    }
+  .savedgroup-label {
+    color: #777;
+    font-family: $info-font;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 17px; /* 154.545% */
   }
 }
 

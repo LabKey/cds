@@ -359,6 +359,11 @@ Ext.define('Connector.view.FilterStatus', {
             if (editGrpBtn.hidden && Ext.getCmp('groupsave-id').hidden) {
                 saveBtn.show();
             }
+            else if (!Ext.getCmp('groupsave-id').hidden) {
+                editGrpBtn.hide();
+                Ext.getCmp('editgroupbtn-container-id').hide();
+                Ext.getCmp('savedgroupname-id').hide();
+            }
             else {
                 saveBtn.hide();
             }
