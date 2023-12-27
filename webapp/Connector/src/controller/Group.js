@@ -187,7 +187,7 @@ Ext.define('Connector.controller.Group', {
 
     doGroupSave : function()
     {
-        var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('groupsave-id');
+        var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('filterstatus-items-id').items.getByKey('groupsave-id');
 
         if (view.isMabGroup)
             this.doMabGroupEdit(view, false);
@@ -291,7 +291,7 @@ Ext.define('Connector.controller.Group', {
         var json = response.responseText ? Ext.decode(response.responseText) : response;
 
         if (json.exception) {
-            var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('groupsave-id');
+            var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('filterstatus-items-id').items.getByKey('groupsave-id');
             if (json.exception.indexOf('There is already a group named') > -1 ||
                     json.exception.indexOf('duplicate key value violates') > -1) {
                 // custom error response for invalid name

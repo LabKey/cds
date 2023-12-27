@@ -33,6 +33,8 @@ Ext.define('Connector.view.GroupSave', {
 
     height: 175,
 
+    panelWithFiltersNoSaveForm: 120,
+
     stores: ['FilterStatus', 'MabStatus'],
 
     constructor : function(config) {
@@ -73,7 +75,7 @@ Ext.define('Connector.view.GroupSave', {
         this.items = [{
             xtype: 'container',
             itemId: 'content',
-            style: 'background-color: #fff',
+            style: 'padding-top: 6px;background-color: $gray-7',
             anchor: '100%',
             items: [
                 {
@@ -730,7 +732,7 @@ Ext.define('Connector.view.GroupSave', {
 
     showError : function(error) {
         var errorEl = this.getError();
-        this.height = '225px';
+        this.height = '250px';
         Ext.getCmp('filterstatus-content-id').setMargin('25px 0 0 0')
         if (errorEl) {
             errorEl.update(error);

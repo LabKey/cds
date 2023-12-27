@@ -100,6 +100,8 @@ Ext.define('Connector.view.FilterStatus', {
                 itemId: 'clear',
                 hidden: hidden,
                 handler: function() {
+                    Ext.getCmp('groupsave-id').hide();
+                    document.getElementById('filterstatus-items-id').style.backgroundColor = '#fff';
                     Ext.getCmp('editgroupbtn-id').hide();
                     Ext.getCmp('editgroupbtn-container-id').hide();
                 }
@@ -311,6 +313,8 @@ Ext.define('Connector.view.FilterStatus', {
         var emptyText = this.getEmptyText();
 
         var groupLabelCmp = Ext.getCmp('savedgroupname-id');
+
+        document.getElementById('filterstatus-items-id').style.backgroundColor = '#ebebeb';
 
         if (filters.length === 0 && selections.length === 0) {
             headerText.replaceCls('section-title-filtered', 'section-title');
