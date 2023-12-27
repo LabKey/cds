@@ -86,7 +86,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       self.dismiss();
       self.toggle();
       self.initLoginInfo();
-      self.bindEnterKey();
+      self.bindListeners();
       self.initAccountSurvey();
       self.initPasswordGauge();
     };
@@ -134,7 +134,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       }
     };
 
-    self.bindEnterKey = function()
+    self.bindListeners = function()
     {
       var $sign_in_container = self.$modal.find('[data-form=sign-in]');
       if ($sign_in_container.length > 0) {
@@ -153,6 +153,11 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             e.preventDefault();
             $('#signinhelpsubmit').click();
           }
+        });
+
+        // click handler for registration page
+        $('#register-user-modal').click(function(){
+          reloadRegisterPage();
         });
       }
 
@@ -183,6 +188,11 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             e.preventDefault();
             $('#registeraccountsubmit').click();
           }
+        });
+
+        // click handler for kaptcha
+        $('div.kaptcha').click(function(){
+          reloadRegisterPage();
         });
       }
     };
@@ -349,7 +359,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
                 // replace link that would take user to LabKey reset url
                 if (additionalMsg.indexOf('already associated with an account') > 0)
                     additionalMsg = 'The email address you have entered is already associated with an account.  If you have forgotten your password, you can ' +
-                        '<a class="register-links-error" onclick="return toggleRegistrationHelp();">reset your password</a>' +
+                        '<a class="register-links-error" href="#">reset your password</a>' +
                         '.  Otherwise, please contact your administrator.';
                 errorMsg = errorMsg + additionalMsg;
             }
@@ -358,6 +368,12 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             }
           }
           $('.register-account-modal .modal .notifications p').html(errorMsg);
+
+          // register the click handler for password reset
+          $('a.register-links-error').click(function(){
+            toggleRegistrationHelp();
+          });
+
         });
       });
 

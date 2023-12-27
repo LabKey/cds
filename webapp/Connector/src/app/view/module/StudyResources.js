@@ -14,7 +14,7 @@ Ext.define('Connector.view.module.StudyResources', {
             '<h3>{title_study_resources:htmlEncode}</h3>',
 
             '<div class="item-row">',
-                'Contact the <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" onclick="Connector.controller.Analytics.onMailRequest();" target="_blank">DataSpace team</a> for more information<br/>',
+                'Contact the <a class="contact-dataspace-team" href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" target="_blank">DataSpace team</a> for more information<br/>',
             '</div>',
             '<tpl if="network == \'CAVD\'">',
             '<div class="item-row">',
@@ -52,5 +52,11 @@ Ext.define('Connector.view.module.StudyResources', {
         var data = this.initialConfig.data.model.data;
         data['title_study_resources'] = this.initialConfig.data.title;
         this.update(data);
+
+        this.on('render', function(){
+            LABKEY.Utils.attachEventHandlerForQuerySelector("a.contact-dataspace-team", "click", function (event) {
+                Connector.controller.Analytics.onMailRequest();
+            });
+        });
     }
 });

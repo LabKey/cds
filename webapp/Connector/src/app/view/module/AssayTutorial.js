@@ -41,7 +41,7 @@ Ext.define('Connector.view.module.AssayTutorial', {
                             '<tr><td>',
                                 '<div class="assay-tutorial-img-container">',
                                     '<div>',
-                                        '<a id="assay-tutorial-video" onclick="Connector.view.module.AssayTutorial.openPopupModal(\'{assay_tutorial_link:htmlEncode}\');">',
+                                        '<a class="assay-tutorial-video" url="{assay_tutorial_link:htmlEncode}">',
                                             '<img style="max-width:99%;max-height:99%;height:auto" src={[this.getThumbnailImgSrc()]}/>',
                                         '</a>',
                                         '<div class="assay-tutorial-label">{video_thumbnail_label:htmlEncode}</div>',
@@ -91,11 +91,21 @@ Ext.define('Connector.view.module.AssayTutorial', {
                    data['valid_doc_link_count']++;
                 }
                 this.update(data);
+                // need to force a refresh so event listeners below can be re-attached
+                this.refresh();
             };
             this.on("afterrender", function() {
                 this.validateDocLinks(data.assayTutorialDocuments, docIsValidAction);
             }, this);
         }
+
+        this.on('refresh', function(){
+            LABKEY.Utils.attachEventHandlerForQuerySelector("a.assay-tutorial-video", "click", function (event) {
+                const target = event.currentTarget;
+                const url = target.getAttribute('url');
+                Connector.view.module.AssayTutorial.openPopupModal(url);
+            });
+        });
     },
 
     getListData : function () {

@@ -67,13 +67,13 @@
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), null, null, false)%>
-    <script data-main="<%=getContextPath()%>/frontpage/js/config" src="<%=getWebappURL("/frontpage/components/requirejs/require.js")%>"></script>
+    <script data-main="<%=getContextPath()%>/frontpage/js/config" src="<%=getWebappURL("/frontpage/components/requirejs/require.js")%>" nonce="<%=getScriptNonce()%>"></script>
 
     <%--<!-- Client API Dependencies -->--%>
     <%=getScriptTag("/clientapi/labkey-api-js-core.min.js")%>
     <%=getScriptTag("/frontpage/components/jquery/dist/jquery.min.js")%>
     <%=getScriptTag("/passwordGauge.js")%>
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="<%=getScriptNonce()%>">
         reloadRegisterPage = function() {
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
         };
@@ -251,7 +251,7 @@
                 <div class="title">
                     <h1>Sign-in Help</h1>
                     <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
-                    <br><span class="help-info">Don't have an account? Click <a class="register-links" onclick="return reloadRegisterPage();">here</a> to register</span>
+                    <br><span class="help-info">Don't have an account? Click <a class="register-links" id="register-user-modal" href="#">here</a> to register</span>
                 </div>
                 <div class="notifications">
                     <p></p>
@@ -299,7 +299,7 @@
                         <span class="help-info" style="display: block;">
                             To help protect against abuse by bots, please enter the six characters shown below (case insensitive).
                         </span>
-                        <div class="kaptcha" onclick="return reloadRegisterPage();">
+                        <div class="kaptcha">
                             <img src="<%=getWebappURL("/kaptcha.jpg")%>" alt="Verification text" title="Click to get a new image." height="50" width="200"/>
                             <br><a class="register-links">Click to get a different image</a>
                         </div>
@@ -318,7 +318,7 @@
                 <div class="title">
                     <h1>Sign-in Help</h1>
                     <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
-                    <br><span class="help-info">Don't have an account? Click <a class="register-links" data-click="help-register">here</a> to register</span>
+                    <br><span class="help-info">Don't have an account? Click <a class="register-links" href="#" data-click="help-register">here</a> to register</span>
                 </div>
                 <div class="notifications">
                     <p></p>
