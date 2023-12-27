@@ -232,6 +232,7 @@ Ext.define('Connector.view.GroupSave', {
                     Ext.getCmp('groupsave-id').hide();
                     Ext.getCmp('editgroupbtn-id').show();
                     Ext.getCmp('editgroupbtn-container-id').show();
+                    Ext.getCmp('filterstatus-content-id').setMargin('0 0 0 0');
                 }
             }, {
                 xtype: 'groupsavebutton',
@@ -733,7 +734,7 @@ Ext.define('Connector.view.GroupSave', {
     showError : function(error) {
         var errorEl = this.getError();
         this.height = '250px';
-        Ext.getCmp('filterstatus-content-id').setMargin('25px 0 0 0')
+        Ext.getCmp('filterstatus-content-id').setMargin('25px 0 0 0');
         if (errorEl) {
             errorEl.update(error);
             errorEl.show();

@@ -343,7 +343,7 @@ Ext.define('Connector.controller.Group', {
                     grpSaveCmp.hide();
 
                     Ext.getCmp('filter-save-as-group-btn-id').hide();
-                    Ext.getCmp('filter-save-as-group-btn-container').hide();
+                    // Ext.getCmp('filter-save-as-group-btn-container').hide();
 
                     //display Edit button
                     Ext.getCmp('editgroupbtn-id').show();
@@ -419,7 +419,7 @@ Ext.define('Connector.controller.Group', {
                     grpSaveCmp.hide();
 
                     Ext.getCmp('filter-save-as-group-btn-id').hide();
-                    Ext.getCmp('filter-save-as-group-btn-container').hide();
+                    // Ext.getCmp('filter-save-as-group-btn-container').hide();
 
                     //display Edit button
                     Ext.getCmp('editgroupbtn-id').show();
@@ -568,7 +568,7 @@ Ext.define('Connector.controller.Group', {
     onGroupCancel : function() {
         Ext.getCmp('groupsave-id').hide();
 
-        Ext.getCmp('filter-save-as-group-btn-container').show();
+        // Ext.getCmp('filter-save-as-group-btn-container').show();
         Ext.getCmp('filter-save-as-group-btn-id').show();
     },
 

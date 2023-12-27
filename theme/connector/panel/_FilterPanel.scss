@@ -241,7 +241,7 @@ ul.indent li {
 .edit-group-btn-container {
 
   display: flex;
-  width: 225px;
+  width: 231px;
   height: 24px;
   padding: 0px 6px;
   justify-content: flex-end;
@@ -249,6 +249,9 @@ ul.indent li {
   gap: 6px;
 
   .edit-group-btn {
+    display: flex;
+    width: 71px;
+    height: 24px;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;

@@ -18,15 +18,18 @@ Ext.define('Connector.view.FilterStatus', {
     id: 'filterstatus-id',
 
     listeners: {
-        // afterrender: function (panel) {
-        //     // Check if the panel has a vertical scrollbar
-        //     var hasScrollbar = panel.body.dom.scrollHeight > panel.body.dom.clientHeight;
-        //
-        //     // Adjust the width if a scrollbar is present
-        //     if (hasScrollbar) {
-        //         panel.setWidth(panel.getWidth() + Ext.getScrollbarSize().width);
-        //     }
-        // }
+        afterrender: function (panel) {
+
+            var hidden = !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0);
+
+            if (hidden) {
+                Ext.getCmp('savedgroupname-id').hide();
+                Ext.getCmp('groupsave-id').hide();
+                document.getElementById('filterstatus-items-id').style.backgroundColor = '#fff';
+                Ext.getCmp('editgroupbtn-id').hide();
+                Ext.getCmp('editgroupbtn-container-id').hide();
+            }
+        }
     },
 
     initComponent : function() {
@@ -46,9 +49,7 @@ Ext.define('Connector.view.FilterStatus', {
                     this.getEditGroupBtn()
                 ]
             }
-
         ];
-
 
         this.callParent();
 
@@ -100,6 +101,8 @@ Ext.define('Connector.view.FilterStatus', {
                 itemId: 'clear',
                 hidden: hidden,
                 handler: function() {
+                    Ext.getCmp('savedgroupname-id').hide();
+                    Ext.getCmp('filter-save-as-group-btn-container').hide();
                     Ext.getCmp('groupsave-id').hide();
                     document.getElementById('filterstatus-items-id').style.backgroundColor = '#fff';
                     Ext.getCmp('editgroupbtn-id').hide();
@@ -185,7 +188,8 @@ Ext.define('Connector.view.FilterStatus', {
                 type: 'hbox'
             },
             cls: 'edit-group-btn-container',
-            style: 'margin-left: 120px; margin-top: 10px;',
+            style: 'margin-left: 125px; margin-right: auto;',
+            // style: 'left: 130px; right: auto; margin: 0px; top: 0px;',
             items: [{
                 xtype: 'button',
                 id: 'editgroupbtn-id',
@@ -199,7 +203,7 @@ Ext.define('Connector.view.FilterStatus', {
                     this.hide();
                     Ext.getCmp('editgroupbtn-container-id').hide();
                     // document.getElementById('filterstatus-id').style.height = '330px';
-                    document.getElementById('filterstatus-content-id').style.marginTop = '10px';
+                    // document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     var groupSavePanel = Ext.getCmp('groupsave-id');
                     Ext.getCmp('groupsave-cancel-save-btns-id').hide();
                     Ext.getCmp('savedgroupname-id').hide();
@@ -314,8 +318,6 @@ Ext.define('Connector.view.FilterStatus', {
 
         var groupLabelCmp = Ext.getCmp('savedgroupname-id');
 
-        document.getElementById('filterstatus-items-id').style.backgroundColor = '#ebebeb';
-
         if (filters.length === 0 && selections.length === 0) {
             headerText.replaceCls('section-title-filtered', 'section-title');
             emptyText.show();
@@ -325,6 +327,7 @@ Ext.define('Connector.view.FilterStatus', {
             groupLabelCmp.hide();
         }
         else {
+            document.getElementById('filterstatus-items-id').style.backgroundColor = '#ebebeb';
             headerText.replaceCls('section-title', 'section-title-filtered');
             emptyText.hide();
             filterContent.show();
