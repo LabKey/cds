@@ -27,7 +27,7 @@
   }
 }
 
-.filterstatus-content {
+.filterstatus-content, .emptytext-cmp, .filter-save-as-group-btn-container {
   background-color: $gray-7;
   padding: 0 6px 6px 6px;
 }
@@ -83,7 +83,7 @@ div.activefilter {
   background-color: $white;
   @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
   @include prefixer(border-radius, 2px);
-  padding: 4px 8px;
+  padding: 4px 6px;
   margin: 6px 0 0 0;
 
   div.selitem {
@@ -277,6 +277,11 @@ ul.indent li {
   .cancel-save-group-btns {
     width: 71px;
   }
+
+  .x-box-inner {
+    background: #ebebeb;
+    padding: 6px
+  }
 }
 
   .group-cancel-btn {
@@ -296,5 +301,86 @@ ul.indent li {
 
   .x-menu-item-text {
     margin-left: 10px;
+  }
+}
+
+.filterstatus-items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: $gray-7;
+  padding: 0 6px 6px 6px;
+
+  .savedgroup-label-container {
+    width: 202px;
+
+    .savedgroup-label {
+      color: #777;
+      font-family: $info-font;
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 17px; /* 154.545% */
+    }
+  }
+}
+
+.groupsave-panel-container, .groupsave-panel-form {
+  padding-top: 6px;
+  background-color: $gray-7;
+
+  //.group-name-input {
+  //  display: flex;
+  //  width: 219px;
+  //  height: 25px;
+  //  padding: 0px 4px;
+  //  flex-direction: column;
+  //  justify-content: center;
+  //  align-items: flex-start;
+  //  flex-shrink: 0;
+  //  border: 0.75px solid #D1D1D1;
+  //}
+  //
+  //.group-description-input {
+  //  display: flex;
+  //  width: 219px;
+  //  height: 57px;
+  //  padding: 4px;
+  //  flex-direction: column;
+  //  align-items: flex-start;
+  //  gap: 4px;
+  //  border: 0.75px solid #D1D1D1;
+  //}
+}
+//.group-save-panel {
+//  .x-container, .x-container-default {
+//    background: #ebebeb;
+//    padding: 6px;
+//  }
+//}
+
+.shared-group-checkbox {
+  display: flex;
+  width: 12px;
+  height: 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+
+  .x-form-field, .x-form-checkbox {
+    border-radius: 2px;
+    border: 1px solid #FB2E5C;
+    background: #FFF;
+  }
+
+  .x-form-cb-label {
+    color: #000;
+    font-family: $info-font;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; /* 154.545% */
   }
 }

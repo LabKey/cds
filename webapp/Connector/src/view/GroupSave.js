@@ -74,7 +74,6 @@ Ext.define('Connector.view.GroupSave', {
             xtype: 'container',
             itemId: 'content',
             style: 'background-color: #fff',
-            // style: 'margin: 10px; background-color: #fff; border: 1px solid lightgrey; padding: 10px',
             anchor: '100%',
             items: [
                 {
@@ -87,9 +86,7 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },
                 this.getCreateGroup(),
-                // this.getEditGroup(),
-                this.getCancelSaveMenuBtns(),
-
+                this.getCancelSaveMenuBtns()
             ]
         }];
 
@@ -120,10 +117,11 @@ Ext.define('Connector.view.GroupSave', {
             this.createGroup = Ext.create('Ext.Container', {
                 hidden: this.mode !== Connector.view.GroupSave.modes.CREATE,
                 activeMode: Connector.view.GroupSave.modes.CREATE,
-                // style: 'padding-top: 10px;',
+                cls: 'groupsave-panel-container',
                 items: [{
                     itemId: 'creategroupform',
                     xtype: 'form',
+                    cls: 'groupsave-panel-form',
                     ui: 'custom',
                     width: '100%',
                     defaults: {
@@ -131,6 +129,7 @@ Ext.define('Connector.view.GroupSave', {
                     },
                     items: [{
                         xtype: 'textfield',
+                        cls: 'group-name-input',
                         itemId: 'groupname',
                         name: 'groupname',
                         emptyText: 'Enter a group name',
@@ -156,17 +155,19 @@ Ext.define('Connector.view.GroupSave', {
                         }
                     },{
                         xtype: 'textareafield',
+                        cls: 'group-description-input',
                         id: 'creategroupdescription', // tests
                         itemId: 'groupdescription',
                         name: 'groupdescription',
                         emptyText: 'Group description',
-                        maxLength: 200
+                        maxLength: 200,
+                        label: 'Description'
                     },{
                         xtype: 'checkbox',
                         id: 'creategroupshared',
                         itemId: 'groupshared',
                         name: 'groupshared',
-                        fieldLabel: 'Shared group',
+                        boxLabel: 'Shared group',
                         checked: false,
                         hidden: true
                     }]
@@ -228,6 +229,7 @@ Ext.define('Connector.view.GroupSave', {
                     Ext.getCmp('savedgroupname-id').show();
                     Ext.getCmp('groupsave-id').hide();
                     Ext.getCmp('editgroupbtn-id').show();
+                    Ext.getCmp('editgroupbtn-container-id').show();
                 }
             }, {
                 xtype: 'groupsavebutton',

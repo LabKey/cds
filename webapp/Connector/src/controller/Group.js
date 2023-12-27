@@ -286,6 +286,7 @@ Ext.define('Connector.controller.Group', {
 
         Ext.getCmp('savedgroupname-id').hide();
         Ext.getCmp('editgroupbtn-id').hide();
+        Ext.getCmp('editgroupbtn-container-id').hide();
 
         var json = response.responseText ? Ext.decode(response.responseText) : response;
 
@@ -345,6 +346,7 @@ Ext.define('Connector.controller.Group', {
 
                     //display Edit button
                     Ext.getCmp('editgroupbtn-id').show();
+                    Ext.getCmp('editgroupbtn-container-id').show();
 
                     //display group label of a newly saved group
                     var groupLabel = Ext.getCmp('savedgroupname-id');
@@ -419,6 +421,7 @@ Ext.define('Connector.controller.Group', {
 
                     //display Edit button
                     Ext.getCmp('editgroupbtn-id').show();
+                    Ext.getCmp('editgroupbtn-container-id').show();
 
                     //display group label of a newly saved group
                     var groupLabel = Ext.getCmp('savedgroupname-id');

@@ -17,17 +17,38 @@ Ext.define('Connector.view.FilterStatus', {
 
     id: 'filterstatus-id',
 
+    listeners: {
+        afterrender: function (panel) {
+            // Check if the panel has a vertical scrollbar
+            var hasScrollbar = panel.body.dom.scrollHeight > panel.body.dom.clientHeight;
+
+            // Adjust the width if a scrollbar is present
+            if (hasScrollbar) {
+                panel.setWidth(panel.getWidth() + Ext.getScrollbarSize().width);
+            }
+        }
+    },
+
     initComponent : function() {
 
         this.items = [
             this.getFilterHeader(),
-            this.getSavedGroupName(),
-            this.getGroupSavePanel(),
-            this.getEmptyText(),
-            this.getFilterContent(),
-            this.getFilterSaveAsGroupBtn(),
-            this.getEditGroupBtn()
+            {
+                xtype: 'container',
+                cls: 'filterstatus-items',
+                id: 'filterstatus-items-id',
+                items: [
+                    this.getSavedGroupName(),
+                    this.getGroupSavePanel(),
+                    this.getEmptyText(),
+                    this.getFilterContent(),
+                    this.getFilterSaveAsGroupBtn(),
+                    this.getEditGroupBtn()
+                ]
+            }
+
         ];
+
 
         this.callParent();
 
@@ -80,6 +101,7 @@ Ext.define('Connector.view.FilterStatus', {
                 hidden: hidden,
                 handler: function() {
                     Ext.getCmp('editgroupbtn-id').hide();
+                    Ext.getCmp('editgroupbtn-container-id').hide();
                 }
             }]
         };
@@ -91,6 +113,7 @@ Ext.define('Connector.view.FilterStatus', {
             itemId: 'savedgroupname-itemid',
             id: 'savedgroupname-id',
             ui: 'custom',
+            cls: 'savedgroup-label-container',
             hidden: true,
             layout: {
                 type: 'hbox'
@@ -126,6 +149,7 @@ Ext.define('Connector.view.FilterStatus', {
         return {
             xtype: 'container',
             itemId: 'filterSaveAsGroupBtn',
+            cls: 'filter-save-as-group-btn-container',
             ui: 'custom',
             layout: {
                 type: 'hbox'
@@ -159,7 +183,7 @@ Ext.define('Connector.view.FilterStatus', {
                 type: 'hbox'
             },
             cls: 'edit-group-btn-container',
-            style: 'margin-left: 145px; margin-top: 10px;',
+            style: 'margin-left: 140px; margin-top: 10px;',
             items: [{
                 xtype: 'button',
                 id: 'editgroupbtn-id',
@@ -171,6 +195,7 @@ Ext.define('Connector.view.FilterStatus', {
                 handler: function() {
 
                     this.hide();
+                    Ext.getCmp('editgroupbtn-container-id').hide();
                     document.getElementById('filterstatus-id').style.height = '330px';
                     document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     var groupSavePanel = Ext.getCmp('groupsave-id');
@@ -187,6 +212,7 @@ Ext.define('Connector.view.FilterStatus', {
     getEmptyText : function() {
         if (!this.emptyText) {
             this.emptyText = Ext.create('Ext.Component', {
+                cls: 'emptytext-cmp',
                 tpl: new Ext.XTemplate('<div class="emptytext">All subjects</div>'),
                 data: {}
             });
@@ -272,10 +298,13 @@ Ext.define('Connector.view.FilterStatus', {
 
         var filterHeader = this.getComponent('filterheader');
         var headerText = Ext.get(Ext.DomQuery.select('.filterheader-text')[0]);
-        var saveAsGroupBtn = this.getComponent('filterSaveAsGroupBtn');
 
-        var saveBtn = saveAsGroupBtn.query('#savegroup')[0]; //'Save as a group' button
+        var filterStatusItems = Ext.getCmp('filterstatus-items-id').items;
+        var saveBtn = filterStatusItems.find(function(item) {return item.itemId === 'filterSaveAsGroupBtn'; }).items.items[0]; //'Save as a group' button
+
         var clrBtn = filterHeader.query('#clear')[0];
+
+        var editGrpBtn = Ext.getCmp('editgroupbtn-id');
 
         var filterContent = this.getFilterContent();
         var emptyText = this.getEmptyText();
@@ -321,16 +350,11 @@ Ext.define('Connector.view.FilterStatus', {
                     Ext.getCmp('creategroupshared').setValue(shared);
                 }
 
-                // var grpSaveCmp = Ext.getCmp('groupsave-id');
-
-                // if (grpSaveCmp.mode === Connector.view.GroupSave.modes.EDIT)
-                //     Ext.getCmp('editgroupbtn-id').hide();
-                // else
-                    Ext.getCmp('editgroupbtn-id').show();
+                editGrpBtn.show();
             }
 
             // show 'Save as a group' button when the filters are applied and Group Save form and Edit button are not displayed
-            if (Ext.getCmp('editgroupbtn-id').hidden && Ext.getCmp('groupsave-id').hidden) {
+            if (editGrpBtn.hidden && Ext.getCmp('groupsave-id').hidden) {
                 saveBtn.show();
             }
             else {
