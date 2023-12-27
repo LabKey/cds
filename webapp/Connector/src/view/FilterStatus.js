@@ -352,6 +352,7 @@ Ext.define('Connector.view.FilterStatus', {
                 }
 
                 editGrpBtn.show();
+                Ext.getCmp('editgroupbtn-container-id').show();
             }
 
             // show 'Save as a group' button when the filters are applied and Group Save form and Edit button are not displayed
