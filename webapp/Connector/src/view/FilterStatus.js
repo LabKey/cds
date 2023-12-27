@@ -18,15 +18,15 @@ Ext.define('Connector.view.FilterStatus', {
     id: 'filterstatus-id',
 
     listeners: {
-        afterrender: function (panel) {
-            // Check if the panel has a vertical scrollbar
-            var hasScrollbar = panel.body.dom.scrollHeight > panel.body.dom.clientHeight;
-
-            // Adjust the width if a scrollbar is present
-            if (hasScrollbar) {
-                panel.setWidth(panel.getWidth() + Ext.getScrollbarSize().width);
-            }
-        }
+        // afterrender: function (panel) {
+        //     // Check if the panel has a vertical scrollbar
+        //     var hasScrollbar = panel.body.dom.scrollHeight > panel.body.dom.clientHeight;
+        //
+        //     // Adjust the width if a scrollbar is present
+        //     if (hasScrollbar) {
+        //         panel.setWidth(panel.getWidth() + Ext.getScrollbarSize().width);
+        //     }
+        // }
     },
 
     initComponent : function() {
@@ -212,7 +212,8 @@ Ext.define('Connector.view.FilterStatus', {
     getEmptyText : function() {
         if (!this.emptyText) {
             this.emptyText = Ext.create('Ext.Component', {
-                cls: 'emptytext-cmp',
+                id: 'filterstatus-emptytext-id',
+                style: 'background-color: #fff;',
                 tpl: new Ext.XTemplate('<div class="emptytext">All subjects</div>'),
                 data: {}
             });
