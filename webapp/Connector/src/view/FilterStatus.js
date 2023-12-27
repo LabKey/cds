@@ -158,16 +158,16 @@ Ext.define('Connector.view.FilterStatus', {
             },
             items: [{
                 xtype: 'button',
-                id: 'saveasagroupbtn-id',
+                id: 'filter-save-as-group-btn-id',
                 text: '<div>Save as a group</div>', // need to wrap in div to get the 'g' in 'group' to fully show up otherwise it is cut off in the bottom
                 ui: 'rounded-inverted-accent-small',
-                cls: 'filtersaveasgroup filter-hdr-btn' /* for tests */,
+                cls: 'filter-save-as-group-btn filter-hdr-btn',
                 itemId: 'savegroup',
                 hidden: hidden,
                 handler: function() {
                     this.hide();
-                    document.getElementById('filterstatus-id').style.height = '330px';
-                    document.getElementById('filterstatus-content-id').style.marginTop = '10px';
+                    // document.getElementById('filterstatus-id').style.height = '330px';
+                    // document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     Ext.getCmp('groupsave-id').show();
                 }
             }]
@@ -185,7 +185,7 @@ Ext.define('Connector.view.FilterStatus', {
                 type: 'hbox'
             },
             cls: 'edit-group-btn-container',
-            style: 'margin-left: 140px; margin-top: 10px;',
+            style: 'margin-left: 120px; margin-top: 10px;',
             items: [{
                 xtype: 'button',
                 id: 'editgroupbtn-id',
@@ -198,7 +198,7 @@ Ext.define('Connector.view.FilterStatus', {
 
                     this.hide();
                     Ext.getCmp('editgroupbtn-container-id').hide();
-                    document.getElementById('filterstatus-id').style.height = '330px';
+                    // document.getElementById('filterstatus-id').style.height = '330px';
                     document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     var groupSavePanel = Ext.getCmp('groupsave-id');
                     Ext.getCmp('groupsave-cancel-save-btns-id').hide();

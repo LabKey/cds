@@ -337,12 +337,13 @@ Ext.define('Connector.controller.Group', {
                     var group = Ext.decode(response.responseText);
 
                     //reset
-                    document.getElementById('filterstatus-id').style.height = '191px';
+                    // document.getElementById('filterstatus-id').style.height = '191px';
                     var grpSaveCmp = Ext.getCmp('groupsave-id');
                     grpSaveCmp.hideError();
                     grpSaveCmp.hide();
 
-                    Ext.getCmp('saveasagroupbtn-id').hide();
+                    Ext.getCmp('filter-save-as-group-btn-id').hide();
+                    Ext.getCmp('filter-save-as-group-btn-container').hide();
 
                     //display Edit button
                     Ext.getCmp('editgroupbtn-id').show();
@@ -412,12 +413,13 @@ Ext.define('Connector.controller.Group', {
                     var grp = grpResp.group;
 
                     //reset
-                    document.getElementById('filterstatus-id').style.height = '191px';
+                    // document.getElementById('filterstatus-id').style.height = '191px';
                     var grpSaveCmp = Ext.getCmp('groupsave-id');
                     grpSaveCmp.hideError();
                     grpSaveCmp.hide();
 
-                    Ext.getCmp('saveasagroupbtn-id').hide();
+                    Ext.getCmp('filter-save-as-group-btn-id').hide();
+                    Ext.getCmp('filter-save-as-group-btn-container').hide();
 
                     //display Edit button
                     Ext.getCmp('editgroupbtn-id').show();
@@ -565,7 +567,9 @@ Ext.define('Connector.controller.Group', {
 
     onGroupCancel : function() {
         Ext.getCmp('groupsave-id').hide();
-        Ext.getCmp('saveasagroupbtn-id').show();
+
+        Ext.getCmp('filter-save-as-group-btn-container').show();
+        Ext.getCmp('filter-save-as-group-btn-id').show();
     },
 
     onGroupPlotView : function() {

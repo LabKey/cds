@@ -219,11 +219,6 @@ ul.indent li {
   margin-right: 4px;
 }
 
-.filtersaveasgroup {
-  margin-left: 100px;
-  margin-top: 20px;
-}
-
 .filter-clear-btn {
   display: flex;
   width: 51px;
@@ -246,7 +241,7 @@ ul.indent li {
 .edit-group-btn-container {
 
   display: flex;
-  width: 231px;
+  width: 225px;
   height: 24px;
   padding: 0px 6px;
   justify-content: flex-end;
@@ -382,5 +377,22 @@ ul.indent li {
     font-style: normal;
     font-weight: 400;
     line-height: 17px; /* 154.545% */
+  }
+}
+
+.filter-save-as-group-btn-container {
+  display: flex;
+  width: 231px;
+  height: 24px;
+  padding: 0px 6px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+
+  .filter-save-as-group-btn {
+    //margin-left: 115px;
+    margin-top: 20px;
+    border-radius: 2px;
+    background: #FB2E5C;
   }
 }
