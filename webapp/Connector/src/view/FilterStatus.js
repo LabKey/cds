@@ -29,6 +29,7 @@ Ext.define('Connector.view.FilterStatus', {
                 document.getElementById('filterstatus-items-id').style.backgroundColor = '#fff';
                 Ext.getCmp('editgroupbtn-id').hide();
                 Ext.getCmp('editgroupbtn-container-id').hide();
+                Ext.getCmp('filter-save-as-group-btn-id').hide();
             }
         }
     },
@@ -103,7 +104,8 @@ Ext.define('Connector.view.FilterStatus', {
                 hidden: hidden,
                 handler: function() {
                     Ext.getCmp('savedgroupname-id').hide();
-                    // Ext.getCmp('filter-save-as-group-btn-container').hide();
+                    Ext.getCmp('filter-save-as-group-btn-id').hide();
+                    // Ext.getCmp('filter-save-as-group-btn-container-id').hide();
                     Ext.getCmp('groupsave-id').hide();
                     document.getElementById('filterstatus-items-id').style.backgroundColor = '#fff';
                     Ext.getCmp('editgroupbtn-id').hide();
@@ -156,6 +158,7 @@ Ext.define('Connector.view.FilterStatus', {
             xtype: 'container',
             itemId: 'filterSaveAsGroupBtn',
             cls: 'filter-save-as-group-btn-container',
+            id: 'filter-save-as-group-btn-container-id',
             ui: 'custom',
             layout: {
                 type: 'hbox'
@@ -167,11 +170,12 @@ Ext.define('Connector.view.FilterStatus', {
                 ui: 'rounded-inverted-accent-small',
                 cls: 'filter-save-as-group-btn filter-hdr-btn',
                 itemId: 'savegroup',
-                // hidden: hidden,
+                style: 'margin-left: 110px; margin-right: auto; margin-top: 10px;',
+                hidden: hidden,
                 handler: function() {
                     this.hide();
                     // document.getElementById('filterstatus-id').style.height = '330px';
-                    // document.getElementById('filterstatus-content-id').style.marginTop = '10px';
+                    // document.getElementById('filterstatus-content-id').style.marginTop = '30px';
                     Ext.getCmp('groupsave-id').show();
                 }
             }]
@@ -189,7 +193,7 @@ Ext.define('Connector.view.FilterStatus', {
                 type: 'hbox'
             },
             cls: 'edit-group-btn-container',
-            style: 'margin-left: 125px; margin-right: auto;',
+            style: 'margin-left: 140px; margin-right: auto; margin-top: 10px;',
             // style: 'left: 130px; right: auto; margin: 0px; top: 0px;',
             items: [{
                 xtype: 'button',

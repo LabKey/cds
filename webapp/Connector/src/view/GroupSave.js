@@ -31,10 +31,6 @@ Ext.define('Connector.view.GroupSave', {
 
     isMabGroup: false,
 
-    height: 175,
-
-    panelWithFiltersNoSaveForm: 120,
-
     stores: ['FilterStatus', 'MabStatus'],
 
     constructor : function(config) {
@@ -191,7 +187,7 @@ Ext.define('Connector.view.GroupSave', {
                         itemId: 'groupcreatesave',
                         disabled: true,
                         id: 'groupcreatesave-id',
-                        cls: 'groupcreatesave' // tests
+                        cls: 'save-group-btn groupcreatesave' // tests
                     }]
                 }],
                 listeners : {
@@ -239,7 +235,7 @@ Ext.define('Connector.view.GroupSave', {
                 xtype: 'groupsavebutton',
                 width : 100,
                 itemId: 'groupsavebtn-itemid',
-                cls: 'groupsavebtn', // tests
+                cls: 'save-menu-btn groupsavebtn', // tests
             }]
         };
     },
@@ -747,6 +743,7 @@ Ext.define('Connector.view.GroupSave', {
         if (errorEl) {
             errorEl.hide();
         }
+        Ext.getCmp('filterstatus-content-id').setMargin('0 0 0 0');
     },
 
     onWindowResize : function(width, height)

@@ -337,7 +337,7 @@ Ext.define('Connector.controller.Group', {
                     var group = Ext.decode(response.responseText);
 
                     //reset
-                    // document.getElementById('filterstatus-id').style.height = '191px';
+                    document.getElementById('filterstatus-id').style.height = '191px';
                     var grpSaveCmp = Ext.getCmp('groupsave-id');
                     grpSaveCmp.hideError();
                     grpSaveCmp.hide();

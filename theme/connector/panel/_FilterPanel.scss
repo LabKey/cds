@@ -228,13 +228,19 @@ ul.indent li {
   background-color: #fb2e5c !important;
 }
 
-//Save group button
+//Save group button when disabled
 .x-btn-rounded-inverted-accent-toolbar-small-disabled {
   background-color: #d1d1d1 !important;
   border-color: #ffff !important;
 
   .x-btn-inner {
     color: #FFFFFF !important;
+    text-align: center;
+    font-family: Arial, serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 12px; /* 109.091% */
   }
 }
 
@@ -259,6 +265,12 @@ ul.indent li {
 
     .x-btn-inner {
       color: #FFFFFF !important;
+      text-align: center;
+      font-family: Arial, serif;
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 12px; /* 109.091% */
     }
   }
 }
@@ -266,30 +278,61 @@ ul.indent li {
 .groupsave-cancel-save-btns {
 
   display: flex;
-  height: 24px;
+  height: 25px;
   justify-content: center;
   align-items: center;
   gap: 5px;
 
-  .cancel-save-group-btns {
+  .cancel-save-btns {
     width: 71px;
   }
 
   .x-box-inner {
     background: #ebebeb;
-    padding: 6px
+    padding: 6px;
+    height: 25px;
   }
 }
 
-  .group-cancel-btn {
-    border-radius: 2px;
-    border: 0.5px solid;
-    background: #FFF !important;
-    color: #FB2E5C !important;
+.save-group-btn {
+  border-radius: 2px;
+  border: 0.5px solid;
+  color: #FFF !important;
+  display: flex;
+  width: 72px;
+  height: 25px;
+  justify-content: center;
+  align-items: center;
 
-    .x-btn-inner {
-      color: #FB2E5C !important;
-    }
+  .x-btn-inner {
+    color: #FFF !important;
+    text-align: center;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 12px; /* 109.091% */
+  }
+}
+
+.group-cancel-btn {
+  border-radius: 2px;
+  border: 0.5px solid;
+  background: #FFF !important;
+  color: #FB2E5C !important;
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+  .x-btn-inner {
+    color: #FB2E5C !important;
+    text-align: center;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 12px; /* 109.091% */
+  }
 }
 
 .group-save-menu-items {
@@ -298,6 +341,7 @@ ul.indent li {
 
   .x-menu-item-text {
     margin-left: 10px;
+    font-size: 11px !important;
   }
 }
 
@@ -327,36 +371,7 @@ ul.indent li {
 .groupsave-panel-container, .groupsave-panel-form {
   padding-top: 6px;
   background-color: $gray-7;
-
-  //.group-name-input {
-  //  display: flex;
-  //  width: 219px;
-  //  height: 25px;
-  //  padding: 0px 4px;
-  //  flex-direction: column;
-  //  justify-content: center;
-  //  align-items: flex-start;
-  //  flex-shrink: 0;
-  //  border: 0.75px solid #D1D1D1;
-  //}
-  //
-  //.group-description-input {
-  //  display: flex;
-  //  width: 219px;
-  //  height: 57px;
-  //  padding: 4px;
-  //  flex-direction: column;
-  //  align-items: flex-start;
-  //  gap: 4px;
-  //  border: 0.75px solid #D1D1D1;
-  //}
 }
-//.group-save-panel {
-//  .x-container, .x-container-default {
-//    background: #ebebeb;
-//    padding: 6px;
-//  }
-//}
 
 .shared-group-checkbox {
   display: flex;
@@ -386,16 +401,43 @@ ul.indent li {
 .filter-save-as-group-btn-container {
   display: flex;
   width: 231px;
-  height: 24px;
   padding: 0px 6px;
   justify-content: flex-end;
   align-items: center;
   gap: 6px;
 
   .filter-save-as-group-btn {
-    //margin-left: 115px;
-    margin-top: 20px;
+
+    display: flex;
+    width: 101px;
+    height: 24px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
     border-radius: 2px;
-    background: #FB2E5C;
+    color: #FFF !important;
+    background: #FB2E5C !important;
+
+    .x-btn-inner {
+      color: #FFF;
+      text-align: center;
+      font-family: Arial, serif;
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 12px; /* 109.091% */
+    }
+  }
+}
+
+.save-menu-btn {
+  .x-btn-inner {
+    color: #FFF;
+    text-align: center;
+    font-family: Arial, serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 12px; /* 109.091% */
   }
 }
