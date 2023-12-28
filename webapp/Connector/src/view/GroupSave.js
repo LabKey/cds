@@ -163,7 +163,8 @@ Ext.define('Connector.view.GroupSave', {
                         name: 'groupdescription',
                         emptyText: 'Group description',
                         maxLength: 200,
-                        label: 'Description'
+                        fieldLabel: 'Description',
+                        labelAlign: 'top'
                     },{
                         xtype: 'checkbox',
                         id: 'creategroupshared',
@@ -733,7 +734,7 @@ Ext.define('Connector.view.GroupSave', {
 
     showError : function(error) {
         var errorEl = this.getError();
-        this.height = '250px';
+        this.height = 255;
         Ext.getCmp('filterstatus-content-id').setMargin('25px 0 0 0');
         if (errorEl) {
             errorEl.update(error);

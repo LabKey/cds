@@ -18,6 +18,7 @@ Ext.define('Connector.view.FilterStatus', {
     id: 'filterstatus-id',
 
     listeners: {
+
         afterrender: function (panel) {
 
             var hidden = !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0);
@@ -102,7 +103,7 @@ Ext.define('Connector.view.FilterStatus', {
                 hidden: hidden,
                 handler: function() {
                     Ext.getCmp('savedgroupname-id').hide();
-                    Ext.getCmp('filter-save-as-group-btn-container').hide();
+                    // Ext.getCmp('filter-save-as-group-btn-container').hide();
                     Ext.getCmp('groupsave-id').hide();
                     document.getElementById('filterstatus-items-id').style.backgroundColor = '#fff';
                     Ext.getCmp('editgroupbtn-id').hide();
@@ -166,7 +167,7 @@ Ext.define('Connector.view.FilterStatus', {
                 ui: 'rounded-inverted-accent-small',
                 cls: 'filter-save-as-group-btn filter-hdr-btn',
                 itemId: 'savegroup',
-                hidden: hidden,
+                // hidden: hidden,
                 handler: function() {
                     this.hide();
                     // document.getElementById('filterstatus-id').style.height = '330px';
@@ -202,11 +203,10 @@ Ext.define('Connector.view.FilterStatus', {
 
                     this.hide();
                     Ext.getCmp('editgroupbtn-container-id').hide();
-                    // document.getElementById('filterstatus-id').style.height = '330px';
-                    // document.getElementById('filterstatus-content-id').style.marginTop = '10px';
                     var groupSavePanel = Ext.getCmp('groupsave-id');
                     Ext.getCmp('groupsave-cancel-save-btns-id').hide();
                     Ext.getCmp('savedgroupname-id').hide();
+                    groupSavePanel.height = 200;
                     groupSavePanel.hideError();
                     groupSavePanel.show();
                     Ext.getCmp('groupsave-cancel-save-menu-btns-id').show();
