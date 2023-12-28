@@ -36,10 +36,6 @@ Ext.define('Connector.controller.Group', {
             }
         });
 
-        // this.control('filterstatus > container > #savegroup, #editgroupdetails', {
-        //     click : this.onGroupSave
-        // });
-
         this.control('mabstatus > container > #savegmabroup', {
             click : this.onMabGroupSave
         });
@@ -317,6 +313,21 @@ Ext.define('Connector.controller.Group', {
         this.saveFailure(response, true);
     },
 
+    hideGroupSavePanel : function() {
+        var grpSaveCmp = Ext.getCmp('groupsave-id');
+        grpSaveCmp.hideError();
+        grpSaveCmp.hide();
+    },
+
+    hideSaveAsGroupBtn : function() {
+        Ext.getCmp('filter-save-as-group-btn-id').hide();
+    },
+
+    displayEditBtn : function() {
+        Ext.getCmp('editgroupbtn-id').show();
+        Ext.getCmp('editgroupbtn-container-id').show();
+    },
+
     doSubjectGroupSave: function(view)
     {
         if (view)
@@ -332,22 +343,12 @@ Ext.define('Connector.controller.Group', {
 
                 var saveSuccess = function(response) {
 
-                    // Connector.model.Group.getGroupStore().refreshData();
-
                     var group = Ext.decode(response.responseText);
 
-                    //reset
-                    document.getElementById('filterstatus-id').style.height = '191px';
-                    var grpSaveCmp = Ext.getCmp('groupsave-id');
-                    grpSaveCmp.hideError();
-                    grpSaveCmp.hide();
-
-                    Ext.getCmp('filter-save-as-group-btn-id').hide();
-                    // Ext.getCmp('filter-save-as-group-btn-container').hide();
-
-                    //display Edit button
-                    Ext.getCmp('editgroupbtn-id').show();
-                    Ext.getCmp('editgroupbtn-container-id').show();
+                    // document.getElementById('filterstatus-id').style.height = '191px';
+                    me.hideGroupSavePanel();
+                    me.hideSaveAsGroupBtn();
+                    me.displayEditBtn();
 
                     //display group label of a newly saved group
                     var groupLabel = Ext.getCmp('savedgroupname-id');
@@ -412,26 +413,16 @@ Ext.define('Connector.controller.Group', {
                     var grpResp = Ext.decode(response.responseText);
                     var grp = grpResp.group;
 
-                    //reset
-                    // document.getElementById('filterstatus-id').style.height = '191px';
-                    var grpSaveCmp = Ext.getCmp('groupsave-id');
-                    grpSaveCmp.hideError();
-                    grpSaveCmp.hide();
+                    me.hideGroupSavePanel();
+                    me.hideSaveAsGroupBtn();
+                    me.displayEditBtn();
 
-                    Ext.getCmp('filter-save-as-group-btn-id').hide();
-                    // Ext.getCmp('filter-save-as-group-btn-container').hide();
-
-                    //display Edit button
-                    Ext.getCmp('editgroupbtn-id').show();
-                    Ext.getCmp('editgroupbtn-container-id').show();
-
-                    //display group label of a newly saved group
+                    //display group label
                     var groupLabel = Ext.getCmp('savedgroupname-id');
                     groupLabel.items.get(0).update({savedGroupName: grp.label});
                     groupLabel.show();
 
                     Connector.getApplication().fireEvent('groupsaved', grp, state.getFilters(true));
-
                     Connector.model.Group.getGroupStore().refreshData(grp.label, me);
                 };
 
@@ -567,8 +558,6 @@ Ext.define('Connector.controller.Group', {
 
     onGroupCancel : function() {
         Ext.getCmp('groupsave-id').hide();
-
-        // Ext.getCmp('filter-save-as-group-btn-container').show();
         Ext.getCmp('filter-save-as-group-btn-id').show();
     },
 
