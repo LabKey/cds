@@ -12,10 +12,22 @@
 <!-- ${#labkey.dependency(path='_webdav/CDS/@files/tours/tour_view_data_grid.js')} -->
 
 <h3 class="tile-title tour-section-title">Take a Tour</h3>
-<!-- <div><a href="#" onclick="return hopscotch.startTour(tour_get_oriented);">Get oriented</a></div> -->
-<!-- <div><a href="#" onclick="return hopscotch.startTour(tour_active_filters);">Active filters</a></div> -->
-<!-- <div><a href="#" onclick="return hopscotch.startTour(tour_learn_about);">Learn about</a></div> -->
-<!-- <div><a href="#" onclick="return hopscotch.startTour(tour_find_subjects);">Find subjects</a></div> -->
-<!-- <div><a href="#" onclick="return hopscotch.startTour(tour_plot_data);">Plot data</a></div> -->
-<!-- <div><a href="#" onclick="return hopscotch.startTour(tour_view_data_grid);">View data grid</a></div> -->
-<!-- <div><a href="#" onclick="return hopscotch.startTour(tour_monoclonal_antibodies);">Monoclonal antibodies</a></div> -->
+<!-- <div><a href="#" class="tour_get_oriented">Get oriented</a></div> -->
+<!-- <div><a href="#" class="tour_active_filters">Active filters</a></div> -->
+<!-- <div><a href="#" class="tour_learn_about">Learn about</a></div> -->
+<!-- <div><a href="#" class="tour_find_subjects">Find subjects</a></div> -->
+<!-- <div><a href="#" class="tour_plot_data">Plot data</a></div> -->
+<!-- <div><a href="#" class="tour_view_data_grid">View data grid</a></div> -->
+<!-- <div><a href="#" class="tour_monoclonal_antibodies">Monoclonal antibodies</a></div> -->
+
+<script type="text/javascript">
+    LABKEY.Utils.onReady(function(){
+        $('a.tour_get_oriented').click(function(){hopscotch.startTour(tour_get_oriented);});
+        $('a.tour_active_filters').click(function(){hopscotch.startTour(tour_active_filters);});
+        $('a.tour_learn_about').click(function(){hopscotch.startTour(tour_learn_about);});
+        $('a.tour_find_subjects').click(function(){hopscotch.startTour(tour_find_subjects);});
+        $('a.tour_plot_data').click(function(){hopscotch.startTour(tour_plot_data);});
+        $('a.tour_view_data_grid').click(function(){hopscotch.startTour(tour_view_data_grid);});
+        $('a.tour_monoclonal_antibodies').click(function(){hopscotch.startTour(tour_monoclonal_antibodies);});
+    });
+</script>

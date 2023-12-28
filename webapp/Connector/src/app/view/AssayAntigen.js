@@ -136,7 +136,7 @@ Ext.define('Connector.view.AssayAntigen', {
         return [{
             text: antigenNameLabel,
             xtype: 'templatecolumn',
-            locked: true,
+            locked: false,
             minWidth: 500,
             flex: flex,
             dataIndex: 'antigen_short_name',

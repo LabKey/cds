@@ -17,15 +17,20 @@
 %>
 <%@ page import="org.labkey.api.module.ModuleLoader" %>
 <%@ page import="org.labkey.api.module.ModuleProperty" %>
-<%@ page import="org.labkey.api.util.PageFlowUtil" %>
-<%@ page import="org.labkey.cds.CDSModule" %>
 <%@ page import="org.labkey.api.util.HtmlString" %>
+<%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.cds.CDSManager" %>
+<%@ page import="org.labkey.cds.CDSModule" %>
+<%@ page import="org.labkey.api.security.PasswordRule" %>
+<%@ page import="org.labkey.api.security.DbLoginService" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     final String blogPath = CDSManager.get().getBlogPath(getContainer());
     final String allBlogsPath = CDSManager.get().getAllBlogsPath(getContainer());
+    final PasswordRule rule = DbLoginService.get().getPasswordRule();
+    HtmlString summaryRuleHtml = rule.getSummaryRuleHtml();
 %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,12 +67,13 @@
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), null, null, false)%>
-    <script data-main="<%=getContextPath()%>/frontpage/js/config" src="<%=getWebappURL("/frontpage/components/requirejs/require.js")%>"></script>
+    <script data-main="<%=getContextPath()%>/frontpage/js/config" src="<%=getWebappURL("/frontpage/components/requirejs/require.js")%>" nonce="<%=getScriptNonce()%>"></script>
 
     <%--<!-- Client API Dependencies -->--%>
     <%=getScriptTag("/clientapi/labkey-api-js-core.min.js")%>
     <%=getScriptTag("/frontpage/components/jquery/dist/jquery.min.js")%>
-    <script type="text/javascript">
+    <%=getScriptTag("/passwordGauge.js")%>
+    <script type="text/javascript" nonce="<%=getScriptNonce()%>">
         reloadRegisterPage = function() {
             window.location = LABKEY.ActionURL.buildURL('cds', 'app', LABKEY.container.path, {register: "TRUE"});
         };
@@ -245,7 +251,7 @@
                 <div class="title">
                     <h1>Sign-in Help</h1>
                     <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
-                    <br><span class="help-info">Don't have an account? Click <a class="register-links" onclick="return reloadRegisterPage();">here</a> to register</span>
+                    <br><span class="help-info">Don't have an account? Click <a class="register-links" id="register-user-modal" href="#">here</a> to register</span>
                 </div>
                 <div class="notifications">
                     <p></p>
@@ -293,7 +299,7 @@
                         <span class="help-info" style="display: block;">
                             To help protect against abuse by bots, please enter the six characters shown below (case insensitive).
                         </span>
-                        <div class="kaptcha" onclick="return reloadRegisterPage();">
+                        <div class="kaptcha">
                             <img src="<%=getWebappURL("/kaptcha.jpg")%>" alt="Verification text" title="Click to get a new image." height="50" width="200"/>
                             <br><a class="register-links">Click to get a different image</a>
                         </div>
@@ -312,7 +318,7 @@
                 <div class="title">
                     <h1>Sign-in Help</h1>
                     <span class="help-info">The DataSpace is open to members with a registered account.<br>To set or reset your password, type in your email address and click the submit button.</span>
-                    <br><span class="help-info">Don't have an account? Click <a class="register-links" data-click="help-register">here</a> to register</span>
+                    <br><span class="help-info">Don't have an account? Click <a class="register-links" href="#" data-click="help-register">here</a> to register</span>
                 </div>
                 <div class="notifications">
                     <p></p>
@@ -339,7 +345,7 @@
     </div>
     <div class="create-new-password-modal-popup hidden">
         <div class="create-new-password-modal front-page-popup-container">
-            <div class="modal">
+            <div class="modal" data-form="account-new-password">
                 <div class="border"></div>
                 <div class="title">
                     <h1>Choose a new password</h1>
@@ -349,16 +355,25 @@
                 </div>
                 <form action="" method="post" class="form" id="createnewpasswordform">
                     <div class="credentials">
-                        <span class="password-requirements help-info">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
-                        Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
-                        </span>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
-                        <input placeholder="Re-enter Password" id="password2" name="password2" type="password" value="" required>
+                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
+                        <%
+                            if (rule.shouldShowPasswordGuidance())
+                            {
+                        %>
+                        <canvas id="password-gauge" height="30">
+                            Your browser does not support the HTML5 canvas element.
+                        </canvas>
+                        <%
+                            }
+                        %>
+                        <input placeholder="Re-enter Password" id="password2" name="password2" type="password" value=""
+                               required>
                         <div class="checkbox"></div>
                     </div>
                     <div class="links">
                         <a href="#" data-click="dismiss" class="dismiss">Cancel</a>
-                        <input type="button" data-click="confirmchangepassword" class="confirm" value="Submit" id="createnewpasswordsubmit">
+                        <input type="button" data-click="confirmsetpassword" class="confirm" value="Submit" id="createnewpasswordsubmit">
                         <input id="submit_hidden_pw" type="submit" style="display: none">
                     </div>
                 </form>
@@ -377,11 +392,19 @@
                 </div>
                 <form action="" method="post" class="form" id="createaccountform">
                     <div class="credentials">
-                        <span class="password-requirements help-info">Your password must be at least 8 characters and must contain three of the following: lowercase letter (a-z), uppercase letter (A-Z), digit (0-9), or symbol (e.g., ! # $ % & / < = > ? @).
-                        Additionally, it must not contain a sequence of three or more characters from your email address, display name, first name, or last name and must not match any of your 10 previously used passwords.
-                        </span>
-                        <input placeholder="Password" id="password3" name="password" type="password" value="" required>
-                        <input placeholder="Re-enter Password" id="password4" name="reenter-password" type="password" value="" required>
+                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
+                        <input placeholder="Password" id="password1" name="password" type="password" value="" required>
+                        <%
+                            if (rule.shouldShowPasswordGuidance())
+                            {
+                        %>
+                        <canvas id="password-gauge" height="30">
+                            Your browser does not support the HTML5 canvas element.
+                        </canvas>
+                        <%
+                            }
+                        %>
+                        <input placeholder="Re-enter Password" id="password2" name="reenter-password" type="password" value="" required>
                         <div class="checkbox"></div>
                     </div>
                     <div class="tos">
@@ -436,7 +459,6 @@
             </div>
         </div>
     </div>
-
     <div class="survey-modal-popup hidden">
         <div class="account-survey-modal front-page-popup-container">
 
@@ -580,6 +602,43 @@
                         <input id="submit_hidden_account_survey" type="submit" style="display: none">
                         <input type="button" data-click="confirmsurvey" class="confirm" value="Submit"
                                id="accountsurveysubmit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="change-password-modal-popup hidden">
+        <div class="change-password-modal front-page-popup-container">
+            <div class="modal" data-form="account-change-password">
+                <div class="border"></div>
+                <div class="title">
+                    <h1>Change password</h1>
+                </div>
+                <div class="notifications">
+                    <p></p>
+                </div>
+                <form action="" method="post" class="form" id="changepasswordform">
+                    <div class="credentials">
+                        <input placeholder="Previous Password" id="prevPassword" name="prevPassword" type="password" value="" required>
+                        <span class="password-requirements help-info"><%=summaryRuleHtml%></span>
+                        <input placeholder="Password" id="password1" name="password" type="password" value="" required>
+                        <%
+                            if (rule.shouldShowPasswordGuidance())
+                            {
+                        %>
+                        <canvas id="password-gauge" height="30" class="strength-gauge">
+                            Your browser does not support the HTML5 canvas element.
+                        </canvas>
+                        <%
+                            }
+                        %>
+                        <input placeholder="Re-enter Password" id="password2" name="password2" type="password" value="" required>
+                        <div class="checkbox"></div>
+                    </div>
+                    <div class="links">
+                        <a href="#" data-click="dismiss" class="dismiss">Cancel</a>
+                        <input type="button" data-click="confirmchangepassword" class="confirm" value="Submit" id="changepasswordsubmit">
+                        <input id="submit_hidden_pw" type="submit" style="display: none">
                     </div>
                 </form>
             </div>

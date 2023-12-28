@@ -20,7 +20,7 @@ Ext.define('Connector.component.Started', {
             '</tpl>',
             '>',
             '<h1 class="started-section-title bottom-spacer">Getting Started</h1>',
-            '<a id="hidelink" href="#" onclick="return false;" class="started-dismiss">Hide &nbsp; <span style="font-size: 9px">&#x2715;</span></a>',
+            '<a id="hidelink" href="#" class="started-dismiss">Hide &nbsp; <span style="font-size: 9px">&#x2715;</span></a>',
             '<tpl if="videoURL">',
                 '<div style="height:auto" class="get-started ',
             '<tpl if="multiRow">',
@@ -69,7 +69,7 @@ Ext.define('Connector.component.Started', {
                     '<table class="tile">',
                         '<tr><td class="tile-image"><div class="home_integrated_data backgroundimage"></div></td></tr>',
                         '<tr><td style="padding-left:10%;white-space: normal"><div id="whatyouneedtoknow-wiki">{[this.getWhatYouNeedToKnowWiki()]}</div></td></tr>',
-                        '<tr><td style="padding-top: 5%;padding-left:10%;"><div id="helpCenter">See the <a id="helpCenterDialog" class="helpcenter-panel" href="#" onclick="return false">Help</a> section for more info</div></td></tr>',
+                        '<tr><td style="padding-top: 5%;padding-left:10%;"><div id="helpCenter">See the <a id="helpCenterDialog" class="helpcenter-panel" href="#">Help</a> section for more info</div></td></tr>',
                     '</table>',
                 '</div></td>',
 
@@ -103,7 +103,7 @@ Ext.define('Connector.component.Started', {
                 }
             },
             '</div></div>',
-            '<a id="showlink" href="#" onclick="return false;" class="started-show"',
+            '<a id="showlink" href="#" class="started-show"',
             '<tpl if="showIntro==true">',
             ' style="display: none;"',
             '</tpl>',

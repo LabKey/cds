@@ -33,8 +33,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
     self.options = options || {};
 
     /**
-     * initialize
-     * Initialize magnificPopup with given options and check to see
+     * initialize magnificPopup with given options and check to see
      * if query params dictate loading with modal activated.
      */
     self.initialize = function() {
@@ -87,8 +86,9 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       self.dismiss();
       self.toggle();
       self.initLoginInfo();
-      self.bindEnterKey();
+      self.bindListeners();
       self.initAccountSurvey();
+      self.initPasswordGauge();
     };
 
     self.initLoginInfo = function() {
@@ -123,11 +123,18 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         if (window.location.href.indexOf("sessiontimedout=true") > -1) {
           $('.signin-modal .notifications p').html('Your session has timed out. Please login to continue.');
         }
+      }
 
+      let change_password_container = self.$modal.find('[data-form=account-change-password]')
+      if (change_password_container.length > 0) {
+        // if a message is available on the URL, add it to the notification area of the modal
+        let params = LABKEY.ActionURL.getParameters();
+        if (params.message)
+          $('div[data-form=account-change-password] div.notifications p').html(params.message);
       }
     };
 
-    self.bindEnterKey = function()
+    self.bindListeners = function()
     {
       var $sign_in_container = self.$modal.find('[data-form=sign-in]');
       if ($sign_in_container.length > 0) {
@@ -146,6 +153,11 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             e.preventDefault();
             $('#signinhelpsubmit').click();
           }
+        });
+
+        // click handler for registration page
+        $('#register-user-modal').click(function(){
+          reloadRegisterPage();
         });
       }
 
@@ -176,6 +188,11 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             e.preventDefault();
             $('#registeraccountsubmit').click();
           }
+        });
+
+        // click handler for kaptcha
+        $('div.kaptcha').click(function(){
+          reloadRegisterPage();
         });
       }
     };
@@ -274,7 +291,14 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             remember: rememberMe,
             approvedTermsOfUse: termsOfUse
           }
-        }).success(function() {
+        }).success(function(data) {
+          if (!data.success && data.returnUrl && data.returnUrl.includes('changePassword.view')){
+            // password does not meet complexity rules, show the change password modal
+            var params = LABKEY.ActionURL.getParameters(data.returnUrl);
+            var newLocation = LABKEY.ActionURL.buildURL('cds', 'app.view', null, {'change_password' : true, 'message' : params.message, 'email' : $sign_in_email.val()});
+            window.location = newLocation;
+            return;
+          }
           if (LABKEY.ActionURL.getReturnUrl()) {
             window.location = LABKEY.ActionURL.getReturnUrl();
             return;
@@ -335,7 +359,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
                 // replace link that would take user to LabKey reset url
                 if (additionalMsg.indexOf('already associated with an account') > 0)
                     additionalMsg = 'The email address you have entered is already associated with an account.  If you have forgotten your password, you can ' +
-                        '<a class="register-links-error" onclick="return toggleRegistrationHelp();">reset your password</a>' +
+                        '<a class="register-links-error" href="#">reset your password</a>' +
                         '.  Otherwise, please contact your administrator.';
                 errorMsg = errorMsg + additionalMsg;
             }
@@ -344,6 +368,12 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             }
           }
           $('.register-account-modal .modal .notifications p').html(errorMsg);
+
+          // register the click handler for password reset
+          $('a.register-links-error').click(function(){
+            toggleRegistrationHelp();
+          });
+
         });
       });
 
@@ -355,7 +385,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         self.submitPasswordHelp('emailhelpregister', 'register-account-modal', 'submit_hidden_registerhelp');
       });
 
-      self.action('confirmchangepassword', function($click) {
+      self.action('confirmsetpassword', function($click) {
         var pw1 = document.getElementById('password1');
         var pw2 = document.getElementById('password2');
 
@@ -378,22 +408,55 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           }
         }).success(function() {
             window.location = LABKEY.ActionURL.buildURL("cds", "app.view?"); // set password should log user in automatically
-        }).error(function() {
-          $('.create-new-password-modal .notifications p').html('Change password failed.');
+        }).error(function(e) {
+          createNotificationError('account-new-password', e);
         });
 
       });
 
-      function createAccountError(e, errorMsg) {
-        if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
-          errorMsg = errorMsg + e.responseJSON.errors[0].message;
+      self.action('confirmchangepassword', function($click) {
+        var pw1 = document.getElementById('password1');
+        var pw2 = document.getElementById('password2');
+
+        if (!pw1.checkValidity() || !pw2.checkValidity()) {
+          $('#submit_hidden_pw').click(); //click a hidden submit to do form validation
+          return false;
         }
-        $('.create-account-modal .notifications p').html(errorMsg);
+
+        var emailVal = LABKEY.ActionURL.getParameter('email');
+        var prevPassword = document.getElementById('prevPassword');
+        $.ajax({
+          url: LABKEY.ActionURL.buildURL("login", "changePasswordAPI.api"),
+          method: 'POST',
+          data: {
+            oldPassword: prevPassword.value,
+            password: pw1.value,
+            password2: pw2.value,
+            email: emailVal,
+            'X-LABKEY-CSRF': LABKEY.CSRF
+          }
+        }).success(function() {
+          window.location = LABKEY.ActionURL.buildURL("cds", "app.view?");
+        }).error(function(e) {
+          createNotificationError('account-change-password', e);
+        });
+      });
+
+      /**
+       * Render the returned error message in the modal notification area
+       * @param dataForm the value of the data-form attribute
+       * @param e
+       */
+      function createNotificationError(dataForm, e) {
+        if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+          var msg = e.responseJSON.errors[0].message;
+          $('div[data-form=' + dataForm + '] div.notifications p').html(msg);
+        }
       }
 
       self.action('confirmcreateaccount', function($click) {
-        var pw1 = document.getElementById('password3');
-        var pw2 = document.getElementById('password4');
+        var pw1 = document.getElementById('password1');
+        var pw2 = document.getElementById('password2');
         var tos = document.getElementById('tos-create-account');
 
         if (!pw1.checkValidity() || !pw2.checkValidity() || !tos.checkValidity()) {
@@ -430,10 +493,8 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             });
 
           }).error(function(e) {
-            var errorMsg = 'Create account failed. ';
-            createAccountError(e, errorMsg);
+            createNotificationError('account-new-password', e);
           });
-
       });
 
       self.action('confirmsurvey', function($click) {
@@ -518,6 +579,31 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
                 $('#accountsurveysubmit').prop("disabled", true);
             }
         }
+    };
+
+    self.initPasswordGauge = function() {
+      var $pw_gauge = self.$modal.find('#password-gauge');
+      if ($pw_gauge.length > 0) {
+        LABKEY.login.PasswordGauge.createComponent('password-gauge', 'password1', null, null);
+
+        // the elements in the magnific modals are sized relatively, and the password gauge expects absolute sizing,
+        // work around this by setting the gauge size after we know what the password elements have been computed.
+        let width = $('#password1').outerWidth();
+        $pw_gauge.width(width);
+
+        // control the hide show state of the tips link, we need to take care of this here because of the
+        // way the magnific library initializes its modals prevents the normal JSP event handler registration.
+        $('#tipsLink').click(function(){
+          if ($('#passwordTips:hidden').length > 0) {
+            $('#passwordTips').show();
+            $('#tipsLink').text('Click to hide tips for creating a secure password');
+          }
+          else {
+            $('#passwordTips').hide();
+            $('#tipsLink').text('Click to show tips for creating a secure password');
+          }
+        });
+      }
     };
 
     self.toggleRegistrationHelp = function() {
