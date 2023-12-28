@@ -731,7 +731,7 @@ Ext.define('Connector.view.GroupSave', {
     showError : function(error) {
         var errorEl = this.getError();
         this.height = 255;
-        Ext.getCmp('filterstatus-content-id').setMargin('25px 0 0 0');
+        // Ext.getCmp('filterstatus-content-id').setMargin('25px 0 0 0');
         if (errorEl) {
             errorEl.update(error);
             errorEl.show();
