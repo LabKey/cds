@@ -230,7 +230,6 @@ Ext.define('Connector.view.FilterStatus', {
             },
             cls: 'edit-group-btn-container',
             style: 'margin-left: 140px; margin-right: auto; margin-top: 10px;',
-            // style: 'left: 130px; right: auto; margin: 0px; top: 0px;',
             items: [{
                 xtype: 'button',
                 id: 'editgroupbtn-id',
@@ -248,7 +247,7 @@ Ext.define('Connector.view.FilterStatus', {
                     me.hideCancelAndSaveGroupBtns();
 
                     var groupSavePanel = Ext.getCmp('groupsave-id');
-                    groupSavePanel.height = 200;
+                    // groupSavePanel.height = 200;
                     groupSavePanel.hideError();
                     groupSavePanel.show();
 
