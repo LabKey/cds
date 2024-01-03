@@ -659,7 +659,54 @@ Ext.define('Connector.controller.Group', {
         if (editGroupView)
             editGroupView.refresh();
 
+        this.clearFilter();
+        this.hideGroupSaveBtns();
+
         this.getViewManager().changeView('home');
+    },
+
+    hideGroupSaveBtns : function() {
+        this.hideGroupLabel();
+        this.hideSaveAsGroupBtn();
+        this.hideGroupSavePanel();
+        this.resetFilterStatusBackGroundColor();
+        this.hideEditGroupBtn();
+    },
+
+    hideGroupLabel() {
+        Ext.getCmp('savedgroupname-id').hide();
+    },
+
+    resetFilterStatusBackGroundColor() {
+        document.getElementById('filterstatus-items-id').style.backgroundColor = '#fff';
+    },
+
+    hideEditGroupBtn() {
+        Ext.getCmp('editgroupbtn-id').hide();
+        Ext.getCmp('editgroupbtn-container-id').hide(); // hide the container too, otherwise the height is not adjusted and it displays blank space
+    },
+
+    hideCancelAndSaveGroupBtns() {
+        Ext.getCmp('groupsave-cancel-save-btns-id').hide();
+    },
+
+    clearFilter : function() {
+        var state = Connector.getState(),
+                hasFilters = state.hasFilters();
+
+        if (state.hasSelections()) {
+            // if we have both selections and filters, roll-up into one state update
+            state.clearSelections(hasFilters /* skipState */);
+        }
+        if (hasFilters) {
+            state.clearFilters();
+
+            // only show undo if clear filters
+            var view = this.getViewManager().getViewInstance('filterstatus');
+            if (view) {
+                view.showUndoMessage();
+            }
+        }
     },
 
     doMabGroupDeleteFromSummary : function(id) {

@@ -838,14 +838,24 @@ public class CDSHelper
 
     public boolean saveGroup(String name, @Nullable String description, boolean shared, boolean skipWaitForBar, boolean isMab)
     {
-        _test.click(Locators.cdsButtonLocator("save", isMab ? "mabfiltersave" : "filtersave"));
+        if (isMab) {
+            _test.click(Locators.cdsButtonLocator("save", "mabfiltersave"));
+        }
+        else {
+            _test.click(Locator.tagWithId("a", "filter-save-as-group-btn-id"));
+        }
 
         if (_test.isElementPresent(Locators.cdsButtonLocator("create a new group")))
         {
             _test.click(Locators.cdsButtonLocator("create a new group"));
         }
 
-        Locator.linkWithText("replace an existing group").waitForElement(_test.getDriver(), CDS_WAIT);
+        if (isMab) {
+            Locator.linkWithText("replace an existing group").waitForElement(_test.getDriver(), CDS_WAIT);
+        }
+        else {
+            _test.waitForElement(Locator.name("groupname"));
+        }
 
         Locator.XPathLocator shareGroupCheckbox = Locator.xpath("//input[contains(@id,'creategroupshared')]");
         if (shared)
@@ -866,21 +876,30 @@ public class CDSHelper
         if (null != description)
             _test.setFormElement(Locator.name("groupdescription"), description);
 
+        String saveBtnLocatorName;
+        if (isMab)
+            saveBtnLocatorName = "Save";
+        else
+            saveBtnLocatorName = "Save group";
+
         if (skipWaitForBar)
         {
-            _test.click(Locators.cdsButtonLocator("Save", "groupcreatesave"));
+            _test.click(Locators.cdsButtonLocator(saveBtnLocatorName, "groupcreatesave"));
         }
         else
         {
             applyAndMaybeWaitForBars(aVoid -> {
-                _test.click(Locators.cdsButtonLocator("Save", "groupcreatesave"));
+                _test.click(Locators.cdsButtonLocator(saveBtnLocatorName, "groupcreatesave"));
                 return null;
             });
         }
 
         // verify group save messaging
         //ISSUE 19997
-        _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
+        if (isMab)
+            _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
+        else
+            _test.waitForElement(Locator.tagWithId("div", "savedgroupname-id"));
 
         _test.log("Saving '" + name + "' group was success!");
 
@@ -1182,7 +1201,7 @@ public class CDSHelper
 
     public void clearFilters(boolean skipWaitForBar)
     {
-        final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
+        final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filter-clear-btn"));
 
         if (skipWaitForBar)
         {
@@ -1204,7 +1223,7 @@ public class CDSHelper
     public void ensureNoFilter()
     {
         // clear filters
-        if (_test.isElementPresent(CDSHelper.Locators.cdsButtonLocator("clear", "filterclear").notHidden()))
+        if (_test.isElementPresent(CDSHelper.Locators.cdsButtonLocator("clear", "filter-clear-btn").notHidden()))
         {
             clearFilters();
         }
