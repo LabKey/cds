@@ -20,7 +20,6 @@ Ext.define('Connector.view.MabGroupSummary', {
 
         var grpId = this.groupId + "-mab";
 
-        //notice getting 'rowid' instead of id here unlike when getting participant group
         var idx = this.store.find('id', grpId , 0 /*start position*/, false /*any match, set to false for exact match*/, true, true);
         if (idx > -1)
         {

@@ -15,8 +15,6 @@ Ext.define('Connector.view.GroupSummary', {
 
     groupId: undefined,
 
-    id: 'groupsummary-id',
-
     constructor : function(config)
     {
         this.callParent([config]);
@@ -74,7 +72,6 @@ Ext.define('Connector.view.GroupSummary', {
     generateHeader : function(group)
     {
         return Ext.create('Connector.view.PageHeader', {
-            id: 'groupsummaryheader-id',
             title: group.get('label'),
             upText: 'Groups',
             upLink: {
@@ -153,8 +150,6 @@ Ext.define('Connector.view.GroupSummary', {
 
 Ext.define('Connector.view.GroupSummaryBody', {
     extend : 'Ext.container.Container',
-
-    id: 'groupsummarybody-id',
 
     margin: '25 25 0 25',
 

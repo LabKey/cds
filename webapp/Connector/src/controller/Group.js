@@ -172,7 +172,7 @@ Ext.define('Connector.controller.Group', {
 
     onSelectGroup : function(selModel) {
         Ext.iterate(this.selected, function(id, select) {
-            if (id !== selModel.view.id) {
+            if (id != selModel.view.id) {
                 var model = select.getSelectionModel();
                 model.suspendEvents();
                 model.deselectAll();
@@ -345,7 +345,6 @@ Ext.define('Connector.controller.Group', {
 
                     var group = Ext.decode(response.responseText);
 
-                    // document.getElementById('filterstatus-id').style.height = '191px';
                     me.hideGroupSavePanel();
                     me.hideSaveAsGroupBtn();
                     me.displayEditBtn();
