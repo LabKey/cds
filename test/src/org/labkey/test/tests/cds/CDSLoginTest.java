@@ -15,14 +15,20 @@
  */
 package org.labkey.test.tests.cds;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
+import org.labkey.test.components.cds.ChangePasswordDialog;
 import org.labkey.test.pages.cds.CDSLoginPage;
+import org.labkey.test.util.ApiPermissionsHelper;
+import org.labkey.test.util.PasswordUtil;
+import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.cds.CDSHelper;
+import org.labkey.test.util.core.login.DbLoginUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,13 +40,16 @@ import static org.junit.Assert.assertEquals;
 @BaseWebDriverTest.ClassTimeout(minutes = 12)
 public class CDSLoginTest extends CDSReadOnlyTest
 {
+    private static final String CDS_LOGIN_TESTUSER = "user_passwordtest@cds.test";
+
     @Before
     public void preTest()
     {
+        _userHelper.deleteUsers(false, CDS_LOGIN_TESTUSER);
         signOut();
         Map<String, String> loginParams = new HashMap<>();
         loginParams.put("login", "true");
-        getDriver().navigate().to(WebTestHelper.buildURL("cds", getProjectName(), "app", loginParams));
+        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "app", loginParams));
     }
 
     @Test
@@ -78,6 +87,55 @@ public class CDSLoginTest extends CDSReadOnlyTest
         }
 
         waitForElement(Locator.css("p").withText("Your session has timed out. Please login to continue."));
+    }
+
+    @Test
+    public void testPasswordStrength()
+    {
+        String goodPwd = "cdsDummy1!";
+        String strongPwd = PasswordUtil.getPassword();
+
+        log("Set password strength to Good");
+        DbLoginUtils.setDbLoginConfig(createDefaultConnection(),
+                DbLoginUtils.PasswordStrength.Good,
+                DbLoginUtils.PasswordExpiration.Never);
+
+        log("Creating a user with password strength as Good");
+        _userHelper.createUser(CDS_LOGIN_TESTUSER);
+        setInitialPassword(CDS_LOGIN_TESTUSER); //set goodPwd
+
+        log("Make the user as folder admin for CDS");
+        ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(this);
+        apiPermissionsHelper.addMemberToRole(CDS_LOGIN_TESTUSER, "Folder Administrator", PermissionsHelper.MemberType.user);
+
+        log("Set password strength to Strong");
+        DbLoginUtils.setDbLoginConfig(createDefaultConnection(),
+                DbLoginUtils.PasswordStrength.Strong,
+                DbLoginUtils.PasswordExpiration.Never);
+
+        log("Log in with good password to get prompted for change password");
+        CDSLoginPage loginPage = new CDSLoginPage(this);
+        checkCheckbox(loginPage.termsCheckbox());
+        ChangePasswordDialog changePasswordDialog = loginPage.logInToChangePwd(CDS_LOGIN_TESTUSER, goodPwd);
+        Assert.assertEquals("Incorrect error message",
+                "Your password does not meet the complexity requirements; please choose a new password.",
+                changePasswordDialog.getErrorMessage());
+        changePasswordDialog.setPreviousPassword(goodPwd);
+
+        log("Verifying password is not complex enough");
+        changePasswordDialog.setPassword("weakPwd");
+        changePasswordDialog.setReEnterPassword("weakPwd");
+        changePasswordDialog.submit();
+        Assert.assertEquals("Incorrect error message", "Your password is not complex enough.", changePasswordDialog.getErrorMessage());
+
+        log("Verifying re-entered password matches");
+        changePasswordDialog.setPassword(strongPwd);
+        changePasswordDialog.setReEnterPassword("WrongRe-enter");
+        changePasswordDialog.submit();
+        Assert.assertEquals("Incorrect error message", "Your password entries didn't match.", changePasswordDialog.getErrorMessage());
+
+        changePasswordDialog.setReEnterPassword(strongPwd);
+        changePasswordDialog.submit();
     }
 
     @Override
