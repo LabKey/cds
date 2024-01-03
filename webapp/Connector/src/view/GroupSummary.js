@@ -92,7 +92,6 @@ Ext.define('Connector.view.GroupSummary', {
                 xtype: 'button',
                 text: 'Delete',
                 ui: 'linked',
-                id: 'deletegroup',
                 handler: this.onDelete,
                 scope: this
             }]
