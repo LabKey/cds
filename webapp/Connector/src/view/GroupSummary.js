@@ -332,7 +332,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
             this._undo = Ext.create('Ext.Component', {
                 margin: '0 0 20 0',
                 renderTpl: new Ext.XTemplate(
-                    'Group loaded. Your ' + mabMsg + 'filters have been replaced. <a href="#" onclick="return false;" class="undogroup nav">Undo</a>'
+                    'Group loaded. Your ' + mabMsg + 'filters have been replaced. <a href="#" class="undogroup nav">Undo</a>'
                 ),
                 renderData: {},
                 renderSelectors: {
@@ -370,7 +370,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 hidden: true,
                 margin: '0 0 20 0',
                 renderTpl: new Ext.XTemplate(
-                    'This group has filters which can be applied as active ' + mabMsg + 'filters. <a href="#" onclick="return false;" class="applygroup nav">Apply</a>'
+                    'This group has filters which can be applied as active ' + mabMsg + 'filters. <a href="#" class="applygroup nav">Apply</a>'
                 ),
                 renderData: {},
                 renderSelectors: {

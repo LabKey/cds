@@ -86,7 +86,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       self.dismiss();
       self.toggle();
       self.initLoginInfo();
-      self.bindEnterKey();
+      self.bindListeners();
       self.initAccountSurvey();
       self.initPasswordGauge();
     };
@@ -134,7 +134,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       }
     };
 
-    self.bindEnterKey = function()
+    self.bindListeners = function()
     {
       var $sign_in_container = self.$modal.find('[data-form=sign-in]');
       if ($sign_in_container.length > 0) {
@@ -153,6 +153,11 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             e.preventDefault();
             $('#signinhelpsubmit').click();
           }
+        });
+
+        // click handler for registration page
+        $('#register-user-modal').click(function(){
+          reloadRegisterPage();
         });
       }
 
@@ -183,6 +188,11 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             e.preventDefault();
             $('#registeraccountsubmit').click();
           }
+        });
+
+        // click handler for kaptcha
+        $('div.kaptcha').click(function(){
+          reloadRegisterPage();
         });
       }
     };
@@ -280,37 +290,41 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             password: $sign_in_pw.val(),
             remember: rememberMe,
             approvedTermsOfUse: termsOfUse
+          },
+          success: function (data) {
+            if (!data.success && data.returnUrl && data.returnUrl.includes('changePassword.view')) {
+              // password does not meet complexity rules, show the change password modal
+              var params = LABKEY.ActionURL.getParameters(data.returnUrl);
+              var newLocation = LABKEY.ActionURL.buildURL('cds', 'app.view', null, {
+                'change_password': true,
+                'message': params.message,
+                'email': $sign_in_email.val()
+              });
+              window.location = newLocation;
+              return;
+            }
+            if (LABKEY.ActionURL.getReturnUrl()) {
+              window.location = LABKEY.ActionURL.getReturnUrl();
+              return;
+            }
+            var newLocation = window.location.href.replace('?login=true', '').replace('&login=true', '').replace('login=true', '');
+            newLocation = newLocation.replace('&sessiontimedout=true', '').replace('sessiontimedout=true', '');
+            var oldLocation = window.location.href;
+            if (newLocation === oldLocation) {
+              window.location.reload();
+            } else {
+              window.location = newLocation;
+            }
+          },
+          error: function (e) {
+            var errorMsg = "Sign-in Failed. ";
+            if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+              var error = e.responseJSON.errors[0];
+              errorMsg = errorMsg + LABKEY.Utils.encodeHtml(error.msg) +
+                      (error.adviceText && error.adviceHref ? (' <a href="' + LABKEY.Utils.encodeHtml(error.adviceHref) + '">' + LABKEY.Utils.encodeHtml(error.adviceText) + '</a>') : '');
+            }
+            $('.signin-modal .notifications p').html(errorMsg);
           }
-        }).success(function(data) {
-          if (!data.success && data.returnUrl && data.returnUrl.includes('changePassword.view')){
-            // password does not meet complexity rules, show the change password modal
-            var params = LABKEY.ActionURL.getParameters(data.returnUrl);
-            var newLocation = LABKEY.ActionURL.buildURL('cds', 'app.view', null, {'change_password' : true, 'message' : params.message, 'email' : $sign_in_email.val()});
-            window.location = newLocation;
-            return;
-          }
-          if (LABKEY.ActionURL.getReturnUrl()) {
-            window.location = LABKEY.ActionURL.getReturnUrl();
-            return;
-          }
-          var newLocation = window.location.href.replace('?login=true', '').replace('&login=true', '').replace('login=true', '');
-          newLocation = newLocation.replace('&sessiontimedout=true', '').replace('sessiontimedout=true', '');
-          var oldLocation = window.location.href;
-          if (newLocation === oldLocation) {
-            window.location.reload();
-          }
-          else {
-            window.location = newLocation;
-          }
-
-        }).error(function(e) {
-          var errorMsg = "Sign-in Failed. ";
-          if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
-            var error = e.responseJSON.errors[0];
-            errorMsg = errorMsg + LABKEY.Utils.encodeHtml(error.msg) +
-                    (error.adviceText && error.adviceHref ? (' <a href="' + LABKEY.Utils.encodeHtml(error.adviceHref) + '">' + LABKEY.Utils.encodeHtml(error.adviceText) + '</a>') : '');
-          }
-          $('.signin-modal .notifications p').html(errorMsg);
         });
       });
 
@@ -335,29 +349,36 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             provider: 'cds',
             'X-LABKEY-CSRF': LABKEY.CSRF,
             kaptchaText: document.getElementById('kaptchaText').value
-          }
-        }).success(function() {
-          $('.register-account-modal .modal .notifications p').html('');
-          $('.register-account-modal #registeraccountform').html('Thank you for signing up! A verification email has been sent to ' + email.value +
-          '.  Please check your inbox to confirm your email address and complete your account setup. <br><br><br>');
-        }).error(function(e) {
-          var errorMsg = 'Unable to register account. ';
-          window.toggleRegistrationHelp = self.toggleRegistrationHelp;
-          if (e && e.responseJSON) {
-            if (e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+          },
+          success: function() {
+            $('.register-account-modal .modal .notifications p').html('');
+            $('.register-account-modal #registeraccountform').html('Thank you for signing up! A verification email has been sent to ' + email.value +
+                    '.  Please check your inbox to confirm your email address and complete your account setup. <br><br><br>');
+          },
+          error: function(e) {
+            var errorMsg = 'Unable to register account. ';
+            window.toggleRegistrationHelp = self.toggleRegistrationHelp;
+            if (e && e.responseJSON) {
+              if (e.responseJSON.errors && e.responseJSON.errors.length > 0) {
                 var additionalMsg = e.responseJSON.errors[0].message;
                 // replace link that would take user to LabKey reset url
                 if (additionalMsg.indexOf('already associated with an account') > 0)
-                    additionalMsg = 'The email address you have entered is already associated with an account.  If you have forgotten your password, you can ' +
-                        '<a class="register-links-error" onclick="return toggleRegistrationHelp();">reset your password</a>' +
-                        '.  Otherwise, please contact your administrator.';
+                  additionalMsg = 'The email address you have entered is already associated with an account.  If you have forgotten your password, you can ' +
+                          '<a class="register-links-error" href="#">reset your password</a>' +
+                          '.  Otherwise, please contact your administrator.';
                 errorMsg = errorMsg + additionalMsg;
-            }
-            else if (e.responseJSON.exception) {
+              }
+              else if (e.responseJSON.exception) {
                 errorMsg = errorMsg + e.responseJSON.exception;
+              }
             }
+            $('.register-account-modal .modal .notifications p').html(errorMsg);
+
+            // register the click handler for password reset
+            $('a.register-links-error').click(function(){
+              toggleRegistrationHelp();
+            });
           }
-          $('.register-account-modal .modal .notifications p').html(errorMsg);
         });
       });
 
@@ -389,13 +410,14 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             email: emailVal,
             verification: verificationVal,
             'X-LABKEY-CSRF': LABKEY.CSRF
-          }
-        }).success(function() {
+          },
+          success: function() {
             window.location = LABKEY.ActionURL.buildURL("cds", "app.view?"); // set password should log user in automatically
-        }).error(function(e) {
-          createNotificationError('account-new-password', e);
+          },
+          error: function(e) {
+            createNotificationError('account-new-password', e);
+          }
         });
-
       });
 
       self.action('confirmchangepassword', function($click) {
@@ -418,11 +440,13 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             password2: pw2.value,
             email: emailVal,
             'X-LABKEY-CSRF': LABKEY.CSRF
+          },
+          success: function() {
+            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?");
+          },
+          error: function(e) {
+            createNotificationError('account-change-password', e);
           }
-        }).success(function() {
-          window.location = LABKEY.ActionURL.buildURL("cds", "app.view?");
-        }).error(function(e) {
-          createNotificationError('account-change-password', e);
         });
       });
 
@@ -459,26 +483,28 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             email: emailVal,
             verification: verificationVal,
             'X-LABKEY-CSRF': LABKEY.CSRF
-          }
-        }).success(function() {
-
+          },
+          success: function() {
             //sets NeedSurvey to true
             $.ajax({
               url: LABKEY.ActionURL.buildURL("cds", "updateNeedSurvey.api"),
               method: 'POST',
               data: {
                 'X-LABKEY-CSRF': LABKEY.CSRF
+              },
+              success: function() {
+                window.location = LABKEY.ActionURL.buildURL("cds", "app.view", null, {survey:true}); // set password should log user in automatically
+              },
+              error: function(e) {
+                console.error('Unable to set NeedSurvey property to true');
+                window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
               }
-            }).success(function() {
-              window.location = LABKEY.ActionURL.buildURL("cds", "app.view", null, {survey:true}); // set password should log user in automatically
-            }).error(function(e) {
-              console.error('Unable to set NeedSurvey property to true');
-              window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
             });
-
-          }).error(function(e) {
+          },
+          error: function(e) {
             createNotificationError('account-new-password', e);
-          });
+          }
+        });
       });
 
       self.action('confirmsurvey', function($click) {
@@ -518,7 +544,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
 
         var researchArea = document.getElementById('accountarea');
 
-          $.ajax({
+        $.ajax({
           url: LABKEY.ActionURL.buildURL("cds", "updateCDSUserInfo.api"),
           method: 'POST',
           data: {
@@ -530,22 +556,22 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             referrer: referrers.join(", "),
             researchArea: researchArea.value,
             'X-LABKEY-CSRF': LABKEY.CSRF
-          }
-        }).success(function() {
-          $('.account-survey-modal .links input').prop("disabled",true);
-          $('.account-survey-modal .notifications p').html('Thanks for the additional information. You will be redirected to the DataSpace application now.');
-          setTimeout(function(){
+          },
+          success: function() {
+            $('.account-survey-modal .links input').prop("disabled",true);
+            $('.account-survey-modal .notifications p').html('Thanks for the additional information. You will be redirected to the DataSpace application now.');
+            setTimeout(function(){
               window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
-          },3000);
-
-        }).error(function(e) {
-          var errorMsg = 'Unable to update member details. ';
-          if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
-            errorMsg = errorMsg + e.responseJSON.errors[0].message;
+            },3000);
+          },
+          error: function(e) {
+            var errorMsg = 'Unable to update member details. ';
+            if (e && e.responseJSON && e.responseJSON.errors && e.responseJSON.errors.length > 0) {
+              errorMsg = errorMsg + e.responseJSON.errors[0].message;
+            }
+            $('.account-survey-modal .notifications p').html(errorMsg);
           }
-          $('.account-survey-modal .notifications p').html(errorMsg);
         });
-
       });
     };
 
@@ -621,11 +647,13 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             email: email.value,
             provider: 'cds',
             'X-LABKEY-CSRF': LABKEY.CSRF
+          },
+          success: function() {
+            $('.' + modalCss  +' .notifications p').html('Password reset was attempted. If an active account with this email address exists on the server then you will receive an email message with password reset instructions.');
+          },
+          error: function() {
+            $('.' + modalCss + ' .notifications p').html('Reset password failed.');
           }
-        }).success(function() {
-          $('.' + modalCss  +' .notifications p').html('Password reset was attempted. If an active account with this email address exists on the server then you will receive an email message with password reset instructions.');
-        }).error(function() {
-          $('.' + modalCss + ' .notifications p').html('Reset password failed.');
         });
       };
     /**

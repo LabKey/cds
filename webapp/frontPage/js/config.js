@@ -9,7 +9,7 @@ require.config({
   'waitSeconds': 0,
   'paths': {
     // Third party libraries
-    'jquery'      : '../components/jquery/dist/jquery.min',
+    'jquery'      : '../components/jquery/dist/jquery-3.5.1.min',
     'slimScroll'  : '../components/jquery-slimscroll/jquery.slimscroll.min',
     'fullPage'    : '../components/fullpage.js/jquery.fullPage.min',
     'magnific'    : '../components/magnific-popup/dist/jquery.magnific-popup.min',
