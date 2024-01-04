@@ -332,8 +332,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         yaxis.confirmSelection();
 
         cds.saveGroup(GROUP_PLOT_TEST, "a plot", false, true);
-        waitForText("Group \"Group Plot Test\" saved.");
-        sleep(1000);
+        waitForElement(Locator.tagWithId("div", "savedgroup-label-id"));
         cds.clearFilters(true);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
@@ -350,7 +349,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         assertTrue("Group filter with plot is not applied correctly", cdsPlot.getPointCount() > 0);
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         cds.deleteGroupFromSummaryPage(GROUP_PLOT_TEST);
-        cds.clearFilters();
+//        cds.clearFilters(); //TODO : delete group should clear the filter, need to verify with client if this is the expected behavior.
     }
 
     @Test
@@ -396,6 +395,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
             throw new RuntimeException(e);
         }
 
+        cds.clearFilters();
         String studyGroupDesc2 = "Curated group for " + ZAP_110;
         cds.goToSummary();
         cds.clickBy("Studies");
@@ -698,7 +698,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         log("Ok, looks good. Clear the filter, delete the group, and test is done.");
         cds.goToAppHome();
         cds.deleteGroupFromSummaryPage(GROUP_NAME);
-        cds.clearFilters();
+//        cds.clearFilters(); //TODO : delete group should clear the filter, need to verify with client if this is the expected behavior.
 
     }
 
