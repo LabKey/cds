@@ -17,7 +17,7 @@ public class ChangePasswordDialog extends WebDriverComponent<Component.ElementCa
     public ChangePasswordDialog(BaseWebDriverTest test)
     {
         _webDriverWrapper = test;
-        _dialogEl = Locator.tagWithAttribute("div", "data-form", "account-change-password").findElement(_webDriverWrapper.getDriver());
+        _dialogEl = Locator.tagWithAttribute("div", "data-form", "account-change-password").refindWhenNeeded(_webDriverWrapper.getDriver());
     }
 
     @Override
@@ -68,12 +68,12 @@ public class ChangePasswordDialog extends WebDriverComponent<Component.ElementCa
 
     public class ElementCache extends Component<?>.ElementCache
     {
-        Input previousPwd = new Input(Locator.id("prevPassword").findWhenNeeded(_dialogEl), getDriver());
-        Input password = new Input(Locator.id("password1").findWhenNeeded(_dialogEl), getDriver());
-        Input reEnterPassword = new Input(Locator.id("password2").findWhenNeeded(_dialogEl), getDriver());
+        Input previousPwd = new Input(Locator.id("prevPassword").refindWhenNeeded(_dialogEl), getDriver());
+        Input password = new Input(Locator.id("password1").refindWhenNeeded(_dialogEl), getDriver());
+        Input reEnterPassword = new Input(Locator.id("password2").refindWhenNeeded(_dialogEl), getDriver());
 
-        final WebElement notification = Locator.tagWithClass("div", "notifications").findWhenNeeded(_dialogEl);
-        final WebElement strengthGuidance = Locator.id("password-gauge").findWhenNeeded(_dialogEl);
-        final WebElement submitButton = Locator.id("changepasswordsubmit").findWhenNeeded(_dialogEl);
+        final WebElement notification = Locator.tagWithClass("div", "notifications").refindWhenNeeded(_dialogEl);
+        final WebElement strengthGuidance = Locator.id("password-gauge").refindWhenNeeded(_dialogEl);
+        final WebElement submitButton = Locator.id("changepasswordsubmit").refindWhenNeeded(_dialogEl);
     }
 }

@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests.cds;
 
+import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.cds.ChangePasswordDialog;
+import org.labkey.test.components.core.login.SetPasswordForm;
 import org.labkey.test.pages.cds.CDSLoginPage;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.PasswordUtil;
@@ -30,6 +32,7 @@ import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.core.login.DbLoginUtils;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +44,7 @@ import static org.junit.Assert.assertEquals;
 public class CDSLoginTest extends CDSReadOnlyTest
 {
     private static final String CDS_LOGIN_TESTUSER = "user_passwordtest@cds.test";
+    private final CDSHelper cds = new CDSHelper(this);
 
     @Before
     public void preTest()
@@ -92,18 +96,20 @@ public class CDSLoginTest extends CDSReadOnlyTest
     @Test
     public void testPasswordStrength()
     {
-        String goodPwd = "cdsDummy1!";
+        String goodPwd = "Yekbal1!!";
         String strongPwd = PasswordUtil.getPassword();
 
         log("Set password strength to Good");
+        signIn();
         DbLoginUtils.setDbLoginConfig(createDefaultConnection(),
                 DbLoginUtils.PasswordStrength.Good,
                 DbLoginUtils.PasswordExpiration.Never);
 
         log("Creating a user with password strength as Good");
         _userHelper.createUser(CDS_LOGIN_TESTUSER);
-        setInitialPassword(CDS_LOGIN_TESTUSER); //set goodPwd
-
+        SetPasswordForm.goToInitialPasswordForUser(this, CDS_LOGIN_TESTUSER)
+                .setNewPassword(goodPwd)
+                .clickSubmit();
         log("Make the user as folder admin for CDS");
         ApiPermissionsHelper apiPermissionsHelper = new ApiPermissionsHelper(this);
         apiPermissionsHelper.addMemberToRole(CDS_LOGIN_TESTUSER, "Folder Administrator", PermissionsHelper.MemberType.user);
@@ -112,8 +118,12 @@ public class CDSLoginTest extends CDSReadOnlyTest
         DbLoginUtils.setDbLoginConfig(createDefaultConnection(),
                 DbLoginUtils.PasswordStrength.Strong,
                 DbLoginUtils.PasswordExpiration.Never);
+        signOut();
 
         log("Log in with good password to get prompted for change password");
+        Map<String, String> loginParams = new HashMap<>();
+        loginParams.put("login", "true");
+        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "app", loginParams));
         CDSLoginPage loginPage = new CDSLoginPage(this);
         checkCheckbox(loginPage.termsCheckbox());
         ChangePasswordDialog changePasswordDialog = loginPage.logInToChangePwd(CDS_LOGIN_TESTUSER, goodPwd);
@@ -126,13 +136,19 @@ public class CDSLoginTest extends CDSReadOnlyTest
         changePasswordDialog.setPassword("weakPwd");
         changePasswordDialog.setReEnterPassword("weakPwd");
         changePasswordDialog.submit();
-        Assert.assertEquals("Incorrect error message", "Your password is not complex enough.", changePasswordDialog.getErrorMessage());
+        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+            refresh();
+            Assert.assertEquals("Incorrect error message", "Your password is not complex enough.", changePasswordDialog.getErrorMessage());
+        });
 
         log("Verifying re-entered password matches");
         changePasswordDialog.setPassword(strongPwd);
         changePasswordDialog.setReEnterPassword("WrongRe-enter");
         changePasswordDialog.submit();
-        Assert.assertEquals("Incorrect error message", "Your password entries didn't match.", changePasswordDialog.getErrorMessage());
+        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+            refresh();
+            Assert.assertEquals("Incorrect error message", "Your password entries didn't match.", changePasswordDialog.getErrorMessage());
+        });
 
         changePasswordDialog.setReEnterPassword(strongPwd);
         changePasswordDialog.submit();
