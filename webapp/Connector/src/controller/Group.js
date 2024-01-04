@@ -44,6 +44,10 @@ Ext.define('Connector.controller.Group', {
             click : this.doGroupSave
         });
 
+        this.control('#mabgroupcreatesave', {
+            click : this.doMabGroupSave
+        });
+
         this.control('#save-as-new-grp-menu-item', {
             click : this.doGroupSave
         });
@@ -58,6 +62,10 @@ Ext.define('Connector.controller.Group', {
 
         this.control('#groupcancel', {
             click : this.onGroupCancel
+        });
+
+        this.control('#mabgroupcancel', {
+            click : this.onMabGroupCancel
         });
 
         this.control('#groupplotview', {
@@ -101,7 +109,8 @@ Ext.define('Connector.controller.Group', {
             var state = Connector.getState();
 
             v = Ext.create('Connector.view.GroupSave', {
-                hideSelectionWarning: state.hasSelections()
+                hideSelectionWarning: state.hasSelections(),
+                isMabGroup: context ? context.isMabGroup : false
             });
 
             state.on('selectionchange', v.onSelectionChange, v);
@@ -181,14 +190,15 @@ Ext.define('Connector.controller.Group', {
         });
     },
 
+    doMabGroupSave: function () {
+        var view = this.getViewManager().getViewInstance('groupsave');
+        this.doMabGroupEdit(view, false);
+    },
+
     doGroupSave : function()
     {
         var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('filterstatus-items-id').items.getByKey('groupsave-id');
-
-        if (view.isMabGroup)
-            this.doMabGroupEdit(view, false);
-        else
-            this.doSubjectGroupSave(view);
+        this.doSubjectGroupSave(view);
     },
 
     toJsonMabFilters : function(filters)
@@ -217,8 +227,8 @@ Ext.define('Connector.controller.Group', {
                 var group, groupname, me = this;
                 if (isReplace)
                 {
-                    replaceFromGroup.set('description', values['groupdescription']);
-                    replaceFromGroup.set('shared', typeof values['groupshared'] != "undefined");  // convert to boolean
+                    replaceFromGroup.set('description', values['mabgroupdescription']);
+                    replaceFromGroup.set('shared', typeof values['mabgroupshared'] != "undefined");  // convert to boolean
 
                     groupname = replaceFromGroup.get('label');
                     group = {
@@ -233,13 +243,13 @@ Ext.define('Connector.controller.Group', {
                 }
                 else
                 {
-                    groupname = values['groupname'];
+                    groupname = values['mabgroupname'];
                     group = {
                         Label: groupname,
-                        Description: values['groupdescription'],
+                        Description: values['mabgroupdescription'],
                         Filters: this.toJsonMabFilters(state.getMabFilters()),
                         Type: 'mab',
-                        Shared: typeof values['groupshared'] != "undefined"
+                        Shared: typeof values['mabgroupshared'] != "undefined"
                     };
 
                     if (isEditMode) {
@@ -555,6 +565,10 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
+    onMabGroupCancel : function() {
+        this.getViewManager().hideView('groupsave');
+    },
+
     onGroupCancel : function() {
         Ext.getCmp('groupsave-id').hide();
         Ext.getCmp('filter-save-as-group-btn-id').show();
@@ -575,16 +589,9 @@ Ext.define('Connector.controller.Group', {
 
     onGroupSave : function(cmp, event, isMab)
     {
-        this.getViewManager().showView('groupsave');
-        var groupSaveView = this.getViewManager().getViewInstance('groupsave');
         var isMabGroup = isMab || (cmp && cmp.group && cmp.group.get('type') === 'mab');
-        var hasMabModeChanged = isMabGroup !== groupSaveView.isMabGroup;
-        if (hasMabModeChanged)
-        {
-            groupSaveView.isMabGroup = isMabGroup;
-            groupSaveView.refresh();
-        }
-
+        this.getViewManager().showView('groupsave', { isMabGroup: isMabGroup });
+        var groupSaveView = this.getViewManager().getViewInstance('groupsave');
 
         if (cmp && cmp.group)
         {

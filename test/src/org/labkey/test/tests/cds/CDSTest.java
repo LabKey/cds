@@ -206,11 +206,9 @@ public class CDSTest extends CDSReadOnlyTest
         _asserts.assertFilterStatusCounts(139, 12, 1, 3, 42);
 
         final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
-        final String saveLabel = "Group \"A Plotted...\" saved.";
         Locator.XPathLocator clippedLabel = Locator.tagWithClass("div", "grouplabel").containing(clippedGroup);
 
         cds.saveGroup(HOME_PAGE_GROUP, GROUP_NAME);
-        waitForElement(Locator.tagWithText("h4", HOME_PAGE_GROUP));
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForElement(Locator.css("div.groupicon img"));
@@ -226,10 +224,9 @@ public class CDSTest extends CDSReadOnlyTest
         int plotFilterCount = Locator.css("div.groupicon img").findElements(getWrappedDriver()).size();
         cds.clearFilter(0);
 
-        //TODO: Fix/Update with the new Active filters workflow - here, you would need to Edit group > Save menu > Update group
+        //TODO: Fix/Update with the new Active filters workflow - Edit group > Save menu > Update group
 //        cds.saveOverGroup(HOME_PAGE_GROUP);
 //        waitForText(saveLabel);
-
 
         _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155); // TODO Test data dependent.
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);

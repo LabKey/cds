@@ -858,6 +858,10 @@ public class CDSHelper
         }
 
         Locator.XPathLocator shareGroupCheckbox = Locator.xpath("//input[contains(@id,'creategroupshared')]");
+
+        if (isMab) {
+            shareGroupCheckbox = Locator.xpath("//input[contains(@id,'mabcreategroupshared')]");
+        }
         if (shared)
         {
             if (_test.isElementVisible(shareGroupCheckbox))
@@ -872,9 +876,16 @@ public class CDSHelper
             }
         }
 
-        _test.setFormElement(Locator.name("groupname"), name);
-        if (null != description)
-            _test.setFormElement(Locator.name("groupdescription"), description);
+        if (isMab) {
+            _test.setFormElement(Locator.name("mabgroupname"), name);
+            if (null != description)
+                _test.setFormElement(Locator.name("mabgroupdescription"), description);
+        }
+        else {
+            _test.setFormElement(Locator.name("groupname"), name);
+            if (null != description)
+                _test.setFormElement(Locator.name("groupdescription"), description);
+        }
 
         String saveBtnLocatorName;
         if (isMab)
@@ -899,7 +910,7 @@ public class CDSHelper
         if (isMab)
             _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
         else
-            _test.waitForElement(Locator.tagWithId("div", "savedgroupname-id"));
+            _test.waitForElement(Locator.tagWithId("div", "savedgroupname-id").notHidden());
 
         _test.log("Saving '" + name + "' group was success!");
 
