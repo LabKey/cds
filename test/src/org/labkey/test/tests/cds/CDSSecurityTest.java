@@ -872,7 +872,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         _userHelper.deleteUser(LIMITED_USER_ACCOUNT);
         cds.enterApplication();
         cds.deleteGroupFromSummaryPage(SHARED_GROUP_NAME); //clean up
-        cds.clearFilters();
+//        cds.clearFilters(); //TODO : delete group should clear the filter, need to verify with client if this is the expected behavior.
     }
 
     private void composeGroup(String groupName, String groupDesc, boolean shared)
