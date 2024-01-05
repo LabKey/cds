@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-/* cds-0.00-15.30.sql */
-
 CREATE SCHEMA cds;
 
 CREATE TABLE cds.Feedback
@@ -39,14 +37,15 @@ CREATE TABLE cds.Sites
 	Description TEXT,
 	Location TEXT,
 	Container ENTITYID NOT NULL,
-  Status VARCHAR(50),
-  AltName VARCHAR(250),
-  Network VARCHAR(250),
+    Status VARCHAR(50),
+    AltName VARCHAR(250),
+    Network VARCHAR(250),
 
 	CONSTRAINT pk_sites PRIMARY KEY (Container, Id)
 );
 
-CREATE TABLE cds.import_Study (
+CREATE TABLE cds.import_Study
+(
   prot VARCHAR(250) NOT NULL,
   network VARCHAR(250),
   study_label VARCHAR(250),
@@ -2202,3 +2201,174 @@ CREATE TABLE cds.assayReport
 
     CONSTRAINT PK_AssayReport PRIMARY KEY (assay_identifier, cds_report_id, container)
 );
+
+/* 22.xxx SQL scripts */
+
+CREATE TABLE cds.import_virus_metadata_all
+(
+    cds_virus_id INTEGER NOT NULL,
+    virus VARCHAR(250) NOT NULL,
+    virus_full_name VARCHAR(250),
+    virus_backbone VARCHAR(250),
+    virus_host_cell VARCHAR(250),
+    virus_plot_label VARCHAR(250),
+    virus_type VARCHAR(250),
+    virus_species VARCHAR(250),
+    clade VARCHAR(250),
+    neutralization_tier VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_ImportVirusMetadataAll PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT UQ_ImportVirusMetadataAll UNIQUE (virus_full_name, container)
+);
+
+CREATE TABLE cds.virus_metadata_all
+(
+    cds_virus_id INTEGER NOT NULL,
+    virus VARCHAR(250) NOT NULL,
+    virus_full_name VARCHAR(250),
+    virus_backbone VARCHAR(250),
+    virus_host_cell VARCHAR(250),
+    virus_plot_label VARCHAR(250),
+    virus_type VARCHAR(250),
+    virus_species VARCHAR(250),
+    clade VARCHAR(250),
+    neutralization_tier VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_VirusMetadataAll PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT UQ_VirusMetadataAll UNIQUE (virus_full_name, container)
+);
+
+CREATE TABLE cds.import_virus_lab_id
+(
+    cds_virus_id INTEGER NOT NULL,
+    lab_code VARCHAR(250),
+    lab_virus_id INTEGER,
+    lab_virus_id_variable_name VARCHAR(250),
+    harvest_date TIMESTAMP,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_ImportVirusLabId PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT FK_PK_ImportVirusLabId FOREIGN KEY (cds_virus_id, container) REFERENCES cds.import_virus_metadata_all(cds_virus_id, container)
+);
+
+CREATE TABLE cds.virus_lab_id
+(
+    cds_virus_id INTEGER NOT NULL,
+    lab_code VARCHAR(250),
+    lab_virus_id INTEGER,
+    lab_virus_id_variable_name VARCHAR(250),
+    harvest_date TIMESTAMP,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_VirusLabId PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT FK_PK_VirusLabId FOREIGN KEY (cds_virus_id, container) REFERENCES cds.virus_metadata_all(cds_virus_id, container)
+);
+
+CREATE TABLE cds.import_virus_synonym
+(
+    cds_virus_id INTEGER NOT NULL,
+    virus_synonym VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_ImportVirusSynonym PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT FK_ImportVirusSynonym FOREIGN KEY (cds_virus_id, container) REFERENCES cds.import_virus_metadata_all(cds_virus_id, container)
+);
+
+CREATE TABLE cds.virus_synonym
+(
+    cds_virus_id INTEGER NOT NULL,
+    virus_synonym VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_VirusSynonym PRIMARY KEY (cds_virus_id, container),
+    CONSTRAINT FK_VirusSynonym FOREIGN KEY (cds_virus_id, container) REFERENCES cds.virus_metadata_all(cds_virus_id, container)
+);
+
+-- drop FK constraints
+ALTER TABLE cds.import_virus_lab_id DROP CONSTRAINT FK_PK_ImportVirusLabId;
+ALTER TABLE cds.virus_lab_id DROP CONSTRAINT FK_PK_VirusLabId;
+
+ALTER TABLE cds.import_virus_synonym DROP CONSTRAINT FK_ImportVirusSynonym;
+ALTER TABLE cds.virus_synonym DROP CONSTRAINT FK_VirusSynonym;
+
+-- change field types
+ALTER TABLE cds.import_virus_metadata_all ALTER COLUMN cds_virus_id TYPE VARCHAR(250);
+ALTER TABLE cds.virus_metadata_all ALTER COLUMN cds_virus_id TYPE VARCHAR(250);
+ALTER TABLE cds.import_virus_lab_id ALTER COLUMN cds_virus_id TYPE VARCHAR(250);
+ALTER TABLE cds.import_virus_lab_id ALTER COLUMN lab_virus_id TYPE VARCHAR(250);
+ALTER TABLE cds.virus_lab_id ALTER COLUMN cds_virus_id TYPE VARCHAR(250);
+ALTER TABLE cds.virus_lab_id ALTER COLUMN lab_virus_id TYPE VARCHAR(250);
+ALTER TABLE cds.import_virus_synonym ALTER COLUMN cds_virus_id TYPE VARCHAR(250);
+ALTER TABLE cds.virus_synonym ALTER COLUMN cds_virus_id TYPE VARCHAR(250);
+
+-- re-add FK constraints
+ALTER TABLE cds.import_virus_lab_id ADD CONSTRAINT FK_PK_ImportVirusLabId
+    FOREIGN KEY (cds_virus_id, container) REFERENCES cds.import_virus_metadata_all(cds_virus_id, container);
+
+ALTER TABLE cds.virus_lab_id ADD CONSTRAINT FK_PK_VirusLabId
+    FOREIGN KEY (cds_virus_id, container) REFERENCES cds.virus_metadata_all(cds_virus_id, container);
+
+ALTER TABLE cds.import_virus_synonym ADD CONSTRAINT FK_ImportVirusSynonym
+    FOREIGN KEY (cds_virus_id, container) REFERENCES cds.import_virus_metadata_all(cds_virus_id, container);
+
+ALTER TABLE cds.virus_synonym ADD CONSTRAINT FK_VirusSynonym
+    FOREIGN KEY (cds_virus_id, container) REFERENCES cds.virus_metadata_all(cds_virus_id, container);
+
+ALTER TABLE cds.import_pkmab ADD COLUMN lloq NUMERIC(15,4);
+ALTER TABLE cds.import_pkmab ADD COLUMN lloq_units VARCHAR(250);
+
+-- drop virus metadata unique constraints
+ALTER TABLE cds.import_virus_metadata_all DROP CONSTRAINT UQ_ImportVirusMetadataAll;
+ALTER TABLE cds.virus_metadata_all DROP CONSTRAINT UQ_VirusMetadataAll;
+
+-- drop PK constraints
+ALTER TABLE cds.import_virus_lab_id DROP CONSTRAINT PK_ImportVirusLabId;
+ALTER TABLE cds.virus_lab_id DROP CONSTRAINT PK_VirusLabId;
+
+ALTER TABLE cds.import_virus_synonym DROP CONSTRAINT PK_ImportVirusSynonym;
+ALTER TABLE cds.virus_synonym DROP CONSTRAINT PK_VirusSynonym;
+
+-- set columns in the compound PK to not nullable
+ALTER TABLE cds.import_virus_lab_id ALTER COLUMN lab_code SET NOT NULL;
+ALTER TABLE cds.import_virus_lab_id ALTER COLUMN lab_virus_id SET NOT NULL;
+ALTER TABLE cds.virus_lab_id ALTER COLUMN lab_code SET NOT NULL;
+ALTER TABLE cds.virus_lab_id ALTER COLUMN lab_virus_id SET NOT NULL;
+
+ALTER TABLE cds.import_virus_synonym ALTER COLUMN virus_synonym SET NOT NULL;
+ALTER TABLE cds.virus_synonym ALTER COLUMN virus_synonym SET NOT NULL;
+
+-- add new PK constraints
+ALTER TABLE cds.import_virus_lab_id ADD CONSTRAINT PK_ImportVirusLabId PRIMARY KEY (cds_virus_id, lab_code, lab_virus_id, container);
+ALTER TABLE cds.virus_lab_id ADD CONSTRAINT PK_VirusLabId PRIMARY KEY (cds_virus_id, lab_code, lab_virus_id, container);
+
+ALTER TABLE cds.import_virus_synonym ADD CONSTRAINT PK_ImportVirusSynonym PRIMARY KEY (cds_virus_id, virus_synonym, container);
+ALTER TABLE cds.virus_synonym ADD CONSTRAINT PK_VirusSynonym PRIMARY KEY (cds_virus_id, virus_synonym, container);
+
+ALTER TABLE cds.import_publication ADD COLUMN publication_abstract TEXT;
+ALTER TABLE cds.publication ADD COLUMN publication_abstract TEXT;
+
+--  Update cds.import_studyReport table
+ALTER TABLE cds.import_studyReport ADD COLUMN cds_report_link TEXT;
+ALTER TABLE cds.import_studyReport ADD COLUMN cds_report_label VARCHAR(250);
+
+ALTER TABLE cds.import_studyReport DROP CONSTRAINT PK_ImportStudyReport; -- Drop 'PRIMARY KEY(prot, cds_report_id, container)' since cds_report_id can now be null if cds_report_link is provided
+ALTER TABLE cds.import_studyReport ALTER COLUMN cds_report_id DROP NOT NULL;
+
+ALTER TABLE cds.import_studyReport ADD COLUMN rowId SERIAL;
+ALTER TABLE cds.import_studyReport ADD CONSTRAINT PK_CDS_IMPORT_STUDY_REPORT PRIMARY KEY (rowId);
+
+ALTER TABLE cds.import_studyReport ADD CONSTRAINT UQ_CDS_IMPORT_STUDY_REPORT UNIQUE (prot, cds_report_id, container, cds_report_link, cds_report_label);
+
+-- Update cds.studyReport table
+ALTER TABLE cds.studyReport ADD COLUMN cds_report_link TEXT;
+ALTER TABLE cds.studyReport ADD COLUMN cds_report_label VARCHAR(250);
+
+ALTER TABLE cds.studyReport DROP CONSTRAINT PK_studyReport; -- Drop 'PRIMARY KEY (prot, cds_report_id, container)' since cds_report_id can now be null if cds_report_link is provided
+ALTER TABLE cds.studyReport ALTER COLUMN cds_report_id DROP NOT NULL;
+
+ALTER TABLE cds.studyReport ADD COLUMN rowId SERIAL;
+ALTER TABLE cds.studyReport ADD CONSTRAINT PK_CDS_STUDY_REPORT PRIMARY KEY (rowId);
+
+ALTER TABLE cds.studyReport ADD CONSTRAINT UQ_CDS_STUDY_REPORT UNIQUE (prot, cds_report_id, container, cds_report_link, cds_report_label);
