@@ -60,8 +60,13 @@ Ext.define('Connector.view.FilterStatus', {
         Ext.getCmp('filter-save-as-group-btn-id').hide();
     },
 
-    showGroupSavePanel() {
-        Ext.getCmp('groupsave-id').show();
+    showGroupSavePanel(resetForm) {
+        var grpSaveForm = Ext.getCmp('groupsave-id');
+
+        if(resetForm) {
+            grpSaveForm.reset();
+        }
+        grpSaveForm.show();
     },
 
     hideCancelAndSaveGroupBtns() {
@@ -213,7 +218,7 @@ Ext.define('Connector.view.FilterStatus', {
                 hidden: hidden,
                 handler: function() {
                     this.hide();
-                    me.showGroupSavePanel();
+                    me.showGroupSavePanel(true);
                 }
             }]
         };
