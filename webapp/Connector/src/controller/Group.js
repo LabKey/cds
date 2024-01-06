@@ -298,13 +298,13 @@ Ext.define('Connector.controller.Group', {
 
         if (json.exception) {
             var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('filterstatus-items-id').items.getByKey('groupsave-id');
-            if (json.exception.indexOf('There is already a group named') > -1 ||
+            if (json.exception.indexOf('There is already a category named') > -1 || json.exception.indexOf('There is already a group named') > -1 ||
                     json.exception.indexOf('duplicate key value violates') > -1) {
                 // custom error response for invalid name
                 if (isAlert === true)
                     Ext.Msg.alert('ERROR', json.exception);
                 else
-                    view.showError('The name you have chosen is already in use; please choose a different name.');
+                    view.showError('A group with this name already exists. Please choose a different name.');
             }
             else
             {

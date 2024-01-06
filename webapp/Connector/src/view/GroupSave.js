@@ -191,6 +191,7 @@ Ext.define('Connector.view.GroupSave', {
                             maxLength: 100
                         },{
                             xtype: 'textareafield',
+                            id: 'mabcreategroupdescription',
                             name: 'mabgroupdescription',
                             emptyText: 'Group description',
                             maxLength: 200
@@ -258,6 +259,7 @@ Ext.define('Connector.view.GroupSave', {
                     hidden: this.mode !== Connector.view.GroupSave.modes.CREATE,
                     activeMode: Connector.view.GroupSave.modes.CREATE,
                     cls: 'groupsave-panel-container',
+                    itemId: 'create-group-container',
                     items: [{
                         itemId: 'creategroupform',
                         xtype: 'form',
@@ -404,7 +406,7 @@ Ext.define('Connector.view.GroupSave', {
                     items: [{
                         xtype: 'textfield',
                         itemId: 'groupname',
-                        name: 'groupname',
+                        name: 'mabgroupname',
                         emptyText: 'Enter a group name',
                         height: 30,
                         allowBlank: false,
@@ -421,14 +423,14 @@ Ext.define('Connector.view.GroupSave', {
                         xtype: 'textareafield',
                         id: 'editgroupdescription',
                         itemId: 'groupdescription',
-                        name: 'groupdescription',
+                        name: 'mabgroupdescription',
                         emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
                         id: 'editgroupshared',
                         itemId: 'groupshared',
-                        name: 'groupshared',
+                        name: 'mabgroupshared',
                         fieldLabel: 'Shared group',
                         checked: false,
                         hidden: true
@@ -557,14 +559,14 @@ Ext.define('Connector.view.GroupSave', {
                         xtype: 'textareafield',
                         id: 'updategroupdescription',
                         itemId: 'groupdescription',
-                        name: 'groupdescription',
+                        name: 'mabgroupdescription',
                         emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
                         id: 'updategroupshared',
                         itemId: 'groupshared',
-                        name: 'groupshared',
+                        name: 'mabgroupshared',
                         fieldLabel: 'Shared group',
                         checked: false,
                         hidden: true
@@ -591,7 +593,7 @@ Ext.define('Connector.view.GroupSave', {
                     style: 'padding-top: 60px',
                     items: ['->',{
                         text: 'Cancel',
-                        itemId: 'groupcancel',
+                        itemId: 'mabgroupcancel',
                         cls: 'groupcancelreplace' // tests
                     },this.getGroupUpdateSaveBtn()]
                 }],
@@ -833,9 +835,11 @@ Ext.define('Connector.view.GroupSave', {
 
     showError : function(error) {
         var errorEl = this.getError();
-        if (!this.isMabGroup)
-            this.height = 255;
         if (errorEl) {
+            var grpName = Ext.getCmp('groupname-id');
+            if (grpName && !grpName.hidden) {
+                grpName.addCls('invalid-group-name');
+            }
             errorEl.update(error);
             errorEl.show();
         }
@@ -844,9 +848,14 @@ Ext.define('Connector.view.GroupSave', {
     hideError : function() {
         var errorEl = this.getError();
         if (errorEl) {
+            var grpName = Ext.getCmp('groupname-id');
+            if (grpName && !grpName.hidden) {
+                grpName.removeCls('invalid-group-name');
+            }
             errorEl.hide();
         }
-        Ext.getCmp('filterstatus-content-id').setMargin('0 0 0 0');
+        if (!this.isMabGroup)
+            Ext.getCmp('filterstatus-content-id').setMargin('0 0 0 0');
     },
 
     onWindowResize : function(width, height)
@@ -854,11 +863,11 @@ Ext.define('Connector.view.GroupSave', {
         if (this.getMode() == Connector.view.GroupSave.modes.REPLACE)
         {
             var hdrHeight = 53,
-                paddingOffset = 20, // [10, 0, 10, 0]
-                trueHeight = height - hdrHeight - paddingOffset,
-                contentHeight = this.getComponent('content').getBox().height,
-                listHeight = this.grouplist.getBox().height,
-                h = listHeight;
+                    paddingOffset = 20, // [10, 0, 10, 0]
+                    trueHeight = height - hdrHeight - paddingOffset,
+                    contentHeight = this.getComponent('content').getBox().height,
+                    listHeight = this.grouplist.getBox().height,
+                    h = listHeight;
 
             if (trueHeight < contentHeight)
             {
@@ -868,8 +877,8 @@ Ext.define('Connector.view.GroupSave', {
             {
                 // window height allow for more space, see if group list can expand
                 var lh = this.grouplist.getStore().getCount() * this.listRecordHeight,
-                    maxHeight = Math.min(this.listMaxHeight, lh),
-                    diff = trueHeight - contentHeight;
+                        maxHeight = Math.min(this.listMaxHeight, lh),
+                        diff = trueHeight - contentHeight;
 
                 h = Math.min(maxHeight, listHeight + diff);
             }
@@ -897,7 +906,7 @@ Ext.define('Connector.view.GroupSaveList', {
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<div class="save-label" title="{label:htmlEncode}">{label:htmlEncode}</div>',
+            '<div class="save-label" title="{label:htmlEncode}">{label:htmlEncode}</div>',
             '</tpl>'
     ),
 

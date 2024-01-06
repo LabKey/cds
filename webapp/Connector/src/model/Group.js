@@ -188,15 +188,6 @@ Ext.define('Connector.model.Group', {
                                                 }, this);
 
                                                 this.loadRawData(groupsWithStudies);
-
-                                                if (cb && typeof cb === 'string' && cbScope) {
-                                                    var saveOrUpdatedGrp = groupsWithStudies.filter(function (grp) { return grp.label === cb });
-                                                    var grpId = -1;
-                                                    if (saveOrUpdatedGrp.length === 1) {
-                                                        grpId = saveOrUpdatedGrp[0].id;
-                                                        cbScope.getViewManager().changeView('group', 'groupsummary', [grpId]);
-                                                    }
-                                                }
                                             }
                                         });
                                     }
