@@ -188,6 +188,18 @@ Ext.define('Connector.model.Group', {
                                                 }, this);
 
                                                 this.loadRawData(groupsWithStudies);
+
+                                                //display group label of a newly saved group, and update group label store with label and groupId for the hyperlink
+                                                if (cb && typeof cb === 'string' && cbScope) {
+                                                    var saveOrUpdatedGrp = groupsWithStudies.filter(function (grp) { return grp.label === cb });
+                                                    var grpId = -1;
+                                                    if (saveOrUpdatedGrp.length === 1) {
+                                                        grpId = saveOrUpdatedGrp[0].id;
+                                                        var groupLabel = Ext.getCmp('savedgroupname-id');
+                                                        groupLabel.items.get(0).update({savedGroupName: saveOrUpdatedGrp[0].label, groupId: grpId});
+                                                        groupLabel.show();
+                                                    }
+                                                }
                                             }
                                         });
                                     }

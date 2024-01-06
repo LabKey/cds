@@ -167,10 +167,13 @@ Ext.define('Connector.view.FilterStatus', {
                 cls: 'savedgroup-label',
                 id: 'savedgroup-label-id',
                 tpl: new Ext.XTemplate(
-                        '<h4>{savedGroupName:htmlEncode}</h4>'
+                        '<h4>',
+                        '<a href="#group/groupsummary/{groupId}">{savedGroupName:htmlEncode}</a>',
+                        '</h4>',
                 ),
                 data: {
-                    savedGroupName: ''
+                    savedGroupName: '',
+                    groupId: undefined
                 }
             }],
         }
@@ -388,7 +391,7 @@ Ext.define('Connector.view.FilterStatus', {
                     //display group label of a saved group
                     var groupLabel = grpStore.query('id', grpId).items[0].data.label;
 
-                    groupLabelCmp.items.get(0).update({ savedGroupName : groupLabel });
+                    groupLabelCmp.items.get(0).update({ savedGroupName : groupLabel, groupId: grpId });
                     groupLabelCmp.show();
 
                     //set the group-save form values

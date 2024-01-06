@@ -359,11 +359,6 @@ Ext.define('Connector.controller.Group', {
                     me.hideSaveAsGroupBtn();
                     me.displayEditBtn();
 
-                    //display group label of a newly saved group
-                    var groupLabel = Ext.getCmp('savedgroupname-id');
-                    groupLabel.items.get(0).update({savedGroupName: group.category.label});
-                    groupLabel.show();
-
                     Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
                     Connector.model.Group.getGroupStore().refreshData(group.category.label, me);
                 };
