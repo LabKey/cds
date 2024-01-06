@@ -36,7 +36,7 @@ Ext.define('Connector.controller.Group', {
             }
         });
 
-        this.control('mabstatus > container > #savegmabroup', {
+        this.control('mabstatus > container > #savemabgroup, #editgroupdetails', {
             click : this.onMabGroupSave
         });
 
@@ -54,6 +54,10 @@ Ext.define('Connector.controller.Group', {
 
         this.control('#update-grp-menu-item', {
             click : this.doGroupEdit
+        });
+
+        this.control('#groupeditsave', {
+            click : this.doEdit
         });
 
         this.control('#groupupdatesave', {
@@ -212,6 +216,11 @@ Ext.define('Connector.controller.Group', {
             isLive : true,
             filters : jsonFilters
         });
+    },
+
+    doEdit: function() {
+        var view = this.getViewManager().getViewInstance('groupsave');
+        this.doMabGroupEdit(view, true);
     },
 
     doMabGroupEdit: function(view, isEditMode, isReplace)
@@ -383,11 +392,7 @@ Ext.define('Connector.controller.Group', {
     doGroupEdit: function()
     {
         var view = Ext.getCmp('groupsave-id');
-
-        if (view.isMabGroup)
-            this.doMabGroupEdit(view, true);
-        else
-            this.doSubjectGroupEdit(view);
+        this.doSubjectGroupEdit(view);
     },
 
     doSubjectGroupEdit : function(view)

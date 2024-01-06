@@ -51,9 +51,9 @@ Ext.define('Connector.view.GroupSave', {
 
     initComponent : function()
     {
-        //TODO: New active filters workflow doesn't apply to Mab groups just yet, once we decide we want the same workflow as
-        // subject groups, we can remove this check and combine the two.
-        // Notice such this.isMabGroup check throughout this file.
+        //TODO: New active filters workflow doesn't apply to Mab groups just yet, when we are ready to make Mab groups workflow similar to subject groups
+        // we can remove this check and combine the two.
+        // Notice this.isMabGroup check throughout this file.
         if (this.isMabGroup) {
             this.items = [{
                 xtype: 'container',
@@ -173,7 +173,7 @@ Ext.define('Connector.view.GroupSave', {
                     activeMode: Connector.view.GroupSave.modes.CREATE,
                     style: 'padding-top: 10px;',
                     items: [{
-                        itemId: 'creategroupform',
+                        itemId: 'mabcreategroupform',
                         xtype: 'form',
                         ui: 'custom',
                         width: '100%',
@@ -182,7 +182,7 @@ Ext.define('Connector.view.GroupSave', {
                         },
                         items: [{
                             xtype: 'textfield',
-                            itemId: 'groupname',
+                            itemId: 'mabgroupname',
                             name: 'mabgroupname',
                             emptyText: 'Enter a group name',
                             height: 30,
@@ -198,7 +198,7 @@ Ext.define('Connector.view.GroupSave', {
                         },{
                             xtype: 'checkbox',
                             id: 'mabcreategroupshared',
-                            itemId: 'groupshared',
+                            itemId: 'mabgroupshared',
                             name: 'mabgroupshared',
                             fieldLabel: 'Shared group',
                             checked: false,
@@ -237,14 +237,14 @@ Ext.define('Connector.view.GroupSave', {
                     listeners : {
                         afterrender : {
                             fn: function(c) {
-                                c.getComponent('creategroupform').getComponent('groupname').focus(false, true);
+                                c.getComponent('mabcreategroupform').getComponent('mabgroupname').focus(false, true);
                             },
                             single: true,
                             scope: this
                         },
                         show : {
                             fn: function(c) {
-                                c.getComponent('creategroupform').getComponent('groupname').focus(false, true);
+                                c.getComponent('mabcreategroupform').getComponent('mabgroupname').focus(false, true);
                             },
                             scope: this
                         }
@@ -394,7 +394,7 @@ Ext.define('Connector.view.GroupSave', {
                 title: 'Edit',
                 style: 'padding-top: 10px;',
                 items: [{
-                    itemId: 'creategroupform',
+                    itemId: 'mabcreategroupform',
                     xtype: 'form',
                     ui: 'custom',
                     width: '100%',
@@ -405,7 +405,7 @@ Ext.define('Connector.view.GroupSave', {
                     flex: 1,
                     items: [{
                         xtype: 'textfield',
-                        itemId: 'groupname',
+                        itemId: 'mabgroupname',
                         name: 'mabgroupname',
                         emptyText: 'Enter a group name',
                         height: 30,
@@ -422,14 +422,14 @@ Ext.define('Connector.view.GroupSave', {
                     },{
                         xtype: 'textareafield',
                         id: 'editgroupdescription',
-                        itemId: 'groupdescription',
+                        itemId: 'mabgroupdescription',
                         name: 'mabgroupdescription',
                         emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
                         id: 'editgroupshared',
-                        itemId: 'groupshared',
+                        itemId: 'mabgroupshared',
                         name: 'mabgroupshared',
                         fieldLabel: 'Shared group',
                         checked: false,
@@ -457,7 +457,7 @@ Ext.define('Connector.view.GroupSave', {
                     style: 'padding-top: 60px',
                     items: ['->',{
                         text: 'Cancel',
-                        itemId: 'groupcancel',
+                        itemId: 'mabgroupcancel',
                         cls: 'groupcanceledit' // tests
                     },{
                         text: 'Save',
@@ -467,18 +467,18 @@ Ext.define('Connector.view.GroupSave', {
                 }],
                 getForm : function()
                 {
-                    return editForm.getComponent('creategroupform');
+                    return editForm.getComponent('mabcreategroupform');
                 },
                 listeners : {
                     afterrender : {
                         fn: function(c) {
-                            c.getComponent('creategroupform').getComponent('groupdescription').focus(false, true);
+                            c.getComponent('mabcreategroupform').getComponent('mabgroupdescription').focus(false, true);
                         },
                         scope: this
                     },
                     show : {
                         fn: function(c) {
-                            c.getComponent('creategroupform').getComponent('groupdescription').focus(false, true);
+                            c.getComponent('mabcreategroupform').getComponent('mabgroupdescription').focus(false, true);
                         },
                         scope: this
                     }
@@ -539,7 +539,7 @@ Ext.define('Connector.view.GroupSave', {
                         scope: this
                     }]
                 },{
-                    itemId: 'creategroupform',
+                    itemId: 'mabcreategroupform',
                     xtype: 'form',
                     ui: 'custom',
                     width: '100%',
@@ -558,14 +558,14 @@ Ext.define('Connector.view.GroupSave', {
                     },{
                         xtype: 'textareafield',
                         id: 'updategroupdescription',
-                        itemId: 'groupdescription',
+                        itemId: 'mabgroupdescription',
                         name: 'mabgroupdescription',
                         emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
                         id: 'updategroupshared',
-                        itemId: 'groupshared',
+                        itemId: 'mabgroupshared',
                         name: 'mabgroupshared',
                         fieldLabel: 'Shared group',
                         checked: false,
@@ -762,6 +762,9 @@ Ext.define('Connector.view.GroupSave', {
             active = this.getReplaceGroup();
         }
 
+        if(this.isMabGroup)
+            return active.getComponent('mabcreategroupform');
+
         return active.getComponent('creategroupform');
     },
 
@@ -805,10 +808,18 @@ Ext.define('Connector.view.GroupSave', {
 
     clear : function() {
         var form = this.getCreateGroup().getComponent('creategroupform');
+
+        if(this.isMabGroup)
+            form = this.getCreateGroup().getComponent('mabcreategroupform');
+
         if (form) {
             form.getForm().reset();
         }
+
         form = this.getReplaceGroup().getComponent('creategroupform');
+        if (this.isMabGroup) {
+            form = this.getReplaceGroup().getComponent('mabcreategroupform');
+        }
         if (form) {
             form.getForm().reset();
         }
