@@ -71,7 +71,7 @@
 
     <%--<!-- Client API Dependencies -->--%>
     <%=getScriptTag("/clientapi/labkey-api-js-core.min.js")%>
-    <%=getScriptTag("/frontpage/components/jquery/dist/jquery.min.js")%>
+    <%=getScriptTag("/frontpage/components/jquery/dist/jquery-3.5.1.min.js")%>
     <%=getScriptTag("/passwordGauge.js")%>
     <script type="text/javascript" nonce="<%=getScriptNonce()%>">
         reloadRegisterPage = function() {
