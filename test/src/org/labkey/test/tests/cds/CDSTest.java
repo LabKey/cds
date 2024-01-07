@@ -227,10 +227,11 @@ public class CDSTest extends CDSReadOnlyTest
         //TODO: Fix/Update with the new Active filters workflow - Edit group > Save menu > Update group
 //        cds.saveOverGroup(HOME_PAGE_GROUP);
 //        waitForText(saveLabel);
+        //TODO After updating the group, should see plot icon disappear since the filter was cleared on line 225
+//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+//        waitForElements(Locator.css("div.groupicon img"), plotFilterCount - 1);
 
         _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155); // TODO Test data dependent.
-        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForElements(Locator.css("div.groupicon img"), plotFilterCount - 1);
     }
 
     @Test
