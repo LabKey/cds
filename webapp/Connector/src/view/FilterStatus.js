@@ -64,7 +64,16 @@ Ext.define('Connector.view.FilterStatus', {
         var grpSaveForm = Ext.getCmp('groupsave-id');
 
         if(resetForm) {
+            grpSaveForm.hideError();
             grpSaveForm.reset();
+
+            var cancelSaveBtn = Ext.getCmp('groupsave-cancel-save-btns-id');
+            var cancelSaveMenuBtn = Ext.getCmp('groupsave-cancel-save-menu-btns-id');
+
+            if (!cancelSaveMenuBtn.hidden && cancelSaveBtn.hidden) {
+                cancelSaveMenuBtn.hide();
+                cancelSaveBtn.show();
+            }
         }
         grpSaveForm.show();
     },
