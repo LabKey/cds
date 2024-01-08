@@ -25,6 +25,7 @@ import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.html.BootstrapMenu;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
@@ -54,6 +55,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.TestLogger.log;
 
 public class CDSHelper
@@ -893,6 +895,7 @@ public class CDSHelper
         else
             saveBtnLocatorName = "Save group";
 
+        _test.sleep(1000);
         if (skipWaitForBar)
         {
             _test.click(Locators.cdsButtonLocator(saveBtnLocatorName, "groupcreatesave"));
@@ -1370,20 +1373,34 @@ public class CDSHelper
     public void deleteGroupFromSummaryPage(@LoggedParam String name)
     {
         BaseWebDriverTest.sleep(500);
-        Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
-        _test.scrollIntoView(groupListing);
-
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing));
-        groupListing.findElement(_test.getWrappedDriver()).click();
-        BaseWebDriverTest.sleep(1000);
+        goToLearnGroupsPage();
+        goToGroupFromLearnGrid(name);
         _test.waitForElement(Locators.cdsButtonLocator("Delete"));
         Locators.cdsButtonLocator("Delete").findElement(_test.getWrappedDriver()).click();
         _test.waitForText("Are you sure you want to delete");
         Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(_test.getWrappedDriver()).click();
         _test.waitForText(HOME_PAGE_HEADER);
-        _test.waitForElementToDisappear(groupListing);
+        goToLearnGroupsPage();
+        _test.refresh();
+        BaseWebDriverTest.sleep(1000);
+        LearnGrid learnGrid = new LearnGrid(_test);
+        int rowCount = learnGrid.setSearch(name).getRowCount();
+        assertTrue("Group '" + name + "' was not deleted.", rowCount == 0);
+
         BaseWebDriverTest.sleep(1000);
         _test._ext4Helper.waitForMaskToDisappear();
+    }
+
+    private void goToLearnGroupsPage()
+    {
+        CDSHelper.NavigationLink.LEARN.makeNavigationSelection(_test);
+        viewLearnAboutPage("Groups");
+    }
+
+    private void goToGroupFromLearnGrid(String groupName)
+    {
+        LearnGrid learnGrid = new LearnGrid(_test);
+        learnGrid.setSearch(groupName).clickFirstItem();
     }
 
     public void toggleExplorerBar(String largeBarText)
