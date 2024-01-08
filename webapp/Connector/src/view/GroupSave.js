@@ -599,7 +599,7 @@ Ext.define('Connector.view.GroupSave', {
                 }],
                 getForm : function()
                 {
-                    return replaceForm.getComponent('creategroupform');
+                    return replaceForm.getComponent('mabcreategroupform');
                 },
                 listeners : {
                     show: this.refresh,

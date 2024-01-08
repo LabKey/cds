@@ -200,6 +200,11 @@ Ext.define('Connector.model.Group', {
                                                         groupLabel.show();
                                                     }
                                                 }
+                                                else {
+                                                    if (cb) {
+                                                        cb.call(cbScope);
+                                                    }
+                                                }
                                             }
                                         });
                                     }
