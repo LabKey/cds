@@ -38,6 +38,7 @@ Ext.define('Connector.view.Main', {
     },{
         xtype: 'tabpanel',
         itemId: 'eastview',
+        id: 'eastview-id',
         region: 'east',
         ui: 'east-view',
         width : 244,
