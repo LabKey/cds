@@ -137,8 +137,9 @@ public class CDSLoginTest extends CDSReadOnlyTest
         changePasswordDialog.setReEnterPassword("weakPwd");
         changePasswordDialog.submit();
         Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
-            refresh();
-            Assert.assertEquals("Incorrect error message", "Your password is not complex enough.", changePasswordDialog.getErrorMessage());
+            Assert.assertEquals("Incorrect error message",
+                    "Your password does not meet the complexity requirements; please choose a new password.",
+                    changePasswordDialog.getErrorMessage());
         });
 
         log("Verifying re-entered password matches");
@@ -146,7 +147,6 @@ public class CDSLoginTest extends CDSReadOnlyTest
         changePasswordDialog.setReEnterPassword("WrongRe-enter");
         changePasswordDialog.submit();
         Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
-            refresh();
             Assert.assertEquals("Incorrect error message", "Your password entries didn't match.", changePasswordDialog.getErrorMessage());
         });
 
