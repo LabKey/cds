@@ -390,8 +390,8 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         cds.selectBars("United States");
 
         // save the group and request cancel
-        click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
-        waitForText("replace an existing group");
+        click(Locator.tagWithId("a", "filter-save-as-group-btn-id"));
+        waitForElement(Locator.name("groupname"));
         setFormElement(Locator.name("groupname"), GROUP_NULL);
         click(CDSHelper.Locators.cdsButtonLocator("Cancel", "groupcancelcreate"));
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
@@ -400,7 +400,8 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         cds.saveGroup(GROUP_NAME2, null);
 
         // save a group with an interior group
-        cds.saveGroup(GROUP_NAME3, null);
+        // TODO: Fix/Update with the new Active filters workflow, here you'd go to Edit group > Save menu > Save as new group
+//        cds.saveGroup(GROUP_NAME3, null);
 
         cds.clearFilters();
     }

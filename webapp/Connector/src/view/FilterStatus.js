@@ -15,11 +15,94 @@ Ext.define('Connector.view.FilterStatus', {
 
     cls: 'filterstatus',
 
+    id: 'filterstatus-id',
+
+    listeners: {
+
+        afterrender: function (panel) {
+
+            var hidden = !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0);
+
+            if (hidden) {
+
+                this.hideGroupLabel();
+                this.hideGroupSavePanel();
+                this.resetFilterStatusBackGroundColor();
+                this.hideEditGroupBtn();
+                this.hideSaveAsGroupBtn();
+            }
+        }
+    },
+
+    hideGroupLabel() {
+        Ext.getCmp('savedgroupname-id').hide();
+    },
+
+    hideGroupSavePanel() {
+        Ext.getCmp('groupsave-id').hide();
+    },
+
+    resetFilterStatusBackGroundColor() {
+        document.getElementById('filterstatus-items-id').style.backgroundColor = '#fff';
+    },
+
+    showEditGroupBtn() {
+        Ext.getCmp('editgroupbtn-id').show();
+        Ext.getCmp('editgroupbtn-container-id').show();
+    },
+
+    hideEditGroupBtn() {
+        Ext.getCmp('editgroupbtn-id').hide();
+        Ext.getCmp('editgroupbtn-container-id').hide(); // hide the container too, otherwise the height is not adjusted and it displays blank space
+    },
+
+    hideSaveAsGroupBtn() {
+        Ext.getCmp('filter-save-as-group-btn-id').hide();
+    },
+
+    showGroupSavePanel(resetForm) {
+        var grpSaveForm = Ext.getCmp('groupsave-id');
+
+        if(resetForm) {
+            grpSaveForm.hideError();
+            grpSaveForm.reset();
+
+            var cancelSaveBtn = Ext.getCmp('groupsave-cancel-save-btns-id');
+            var cancelSaveMenuBtn = Ext.getCmp('groupsave-cancel-save-menu-btns-id');
+
+            if (!cancelSaveMenuBtn.hidden && cancelSaveBtn.hidden) {
+                cancelSaveMenuBtn.hide();
+                cancelSaveBtn.show();
+            }
+        }
+        grpSaveForm.show();
+    },
+
+    hideCancelAndSaveGroupBtns() {
+        Ext.getCmp('groupsave-cancel-save-btns-id').hide();
+    },
+
+    showCancelAndSaveMenuBtns() {
+        Ext.getCmp('groupsave-cancel-save-menu-btns-id').show();
+    },
+
     initComponent : function() {
+
         this.items = [
             this.getFilterHeader(),
-            this.getEmptyText(),
-            this.getFilterContent()
+            {
+                xtype: 'container',
+                cls: 'filterstatus-items',
+                id: 'filterstatus-items-id',
+                items: [
+                    this.getSavedGroupName(),
+                    this.getGroupSavePanel(),
+                    this.getEmptyText(),
+                    this.getFilterContent(),
+                    this.getFilterSaveAsGroupBtn(),
+                    this.getEditGroupBtn()
+                ]
+            }
         ];
 
         this.callParent();
@@ -44,7 +127,7 @@ Ext.define('Connector.view.FilterStatus', {
         // If filters or selections are present then we show the buttons (== !hidden)
         //
         var hidden = !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0);
-
+        var me = this;
         return {
             xtype: 'container',
             itemId: 'filterheader',
@@ -68,15 +151,125 @@ Ext.define('Connector.view.FilterStatus', {
                 xtype: 'button', 
                 text: 'clear',
                 ui: 'rounded-small',
-                cls: 'filter-hdr-btn filterclear' /* for tests */,
+                cls: 'filter-hdr-btn filter-clear-btn' /* for tests */,
                 itemId: 'clear',
-                hidden: hidden
-            },{
-                xtype: 'button', 
-                text: 'save', 
-                ui: 'rounded-inverted-accent-small', 
-                cls: 'filter-hdr-btn filtersave' /* for tests */, 
-                itemId: 'savegroup', hidden: hidden
+                hidden: hidden,
+                handler: function() {
+                    me.hideGroupLabel();
+                    me.hideSaveAsGroupBtn();
+                    me.hideGroupSavePanel();
+                    me.resetFilterStatusBackGroundColor();
+                    me.hideEditGroupBtn();
+                }
+            }]
+        };
+    },
+
+    getSavedGroupName: function () {
+        return {
+            xtype: 'container',
+            itemId: 'savedgroupname-itemid',
+            id: 'savedgroupname-id',
+            ui: 'custom',
+            cls: 'savedgroup-label-container',
+            hidden: true,
+            layout: {
+                type: 'hbox'
+            },
+            items: [{
+                xtype: 'box',
+                cls: 'savedgroup-label',
+                id: 'savedgroup-label-id',
+                tpl: new Ext.XTemplate(
+                        '<h4>',
+                        '<a href="#group/groupsummary/{groupId}">{savedGroupName:htmlEncode}</a>',
+                        '</h4>',
+                ),
+                data: {
+                    savedGroupName: '',
+                    groupId: undefined
+                }
+            }],
+        }
+    },
+
+    getGroupSavePanel : function() {
+        return Ext.create('Connector.view.GroupSave', {
+            hidden: true,
+            id: 'groupsave-id'
+        });
+    },
+
+    getFilterSaveAsGroupBtn : function() {
+
+        //
+        // If filters or selections are present then we show the buttons (== !hidden)
+        //
+        var hidden = !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0);
+        var me = this;
+        return {
+            xtype: 'container',
+            itemId: 'filterSaveAsGroupBtn',
+            cls: 'filter-save-as-group-btn-container',
+            id: 'filter-save-as-group-btn-container-id',
+            ui: 'custom',
+            layout: {
+                type: 'hbox'
+            },
+            items: [{
+                xtype: 'button',
+                id: 'filter-save-as-group-btn-id',
+                text: '<div>Save as a group</div>', // need to wrap in div to get the 'g' in 'group' to fully show up otherwise it is cut off in the bottom
+                ui: 'rounded-inverted-accent-small',
+                cls: 'filter-save-as-group-btn filter-hdr-btn',
+                itemId: 'savegroup',
+                style: 'margin-left: 110px; margin-right: auto; margin-top: 10px;',
+                hidden: hidden,
+                handler: function() {
+                    this.hide();
+                    me.showGroupSavePanel(true);
+                }
+            }]
+        };
+    },
+
+    getEditGroupBtn : function() {
+
+        var me = this;
+
+        return {
+            xtype: 'container',
+            id: 'editgroupbtn-container-id',
+            itemId: 'editGroupBtn',
+            ui: 'custom',
+            layout: {
+                type: 'hbox'
+            },
+            cls: 'edit-group-btn-container',
+            style: 'margin-left: 140px; margin-right: auto; margin-top: 10px;',
+            items: [{
+                xtype: 'button',
+                id: 'editgroupbtn-id',
+                text: 'Edit group',
+                ui: 'rounded-inverted-accent-small',
+                cls: 'edit-group-btn',
+                itemId: 'editgroupbtn-itemid',
+                hidden: true,
+                handler: function() {
+
+                    this.hide();
+                    Ext.getCmp('editgroupbtn-container-id').hide();
+
+                    me.hideGroupLabel();
+                    me.hideCancelAndSaveGroupBtns();
+
+                    var groupSavePanel = Ext.getCmp('groupsave-id');
+                    // groupSavePanel.height = 200;
+                    groupSavePanel.hideError();
+                    groupSavePanel.show();
+
+                    me.showCancelAndSaveMenuBtns();
+                }
             }]
         };
     },
@@ -84,6 +277,8 @@ Ext.define('Connector.view.FilterStatus', {
     getEmptyText : function() {
         if (!this.emptyText) {
             this.emptyText = Ext.create('Ext.Component', {
+                id: 'filterstatus-emptytext-id',
+                style: 'background-color: #fff;',
                 tpl: new Ext.XTemplate('<div class="emptytext">All subjects</div>'),
                 data: {}
             });
@@ -95,6 +290,7 @@ Ext.define('Connector.view.FilterStatus', {
         if (!this.filterContent) {
             this.filterContent = Ext.create('Ext.Container', {
                 cls: 'filterstatus-content',
+                id: 'filterstatus-content-id',
                 hidden: !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0),
                 items: [
                     this.getFilterPanel(),
@@ -169,11 +365,18 @@ Ext.define('Connector.view.FilterStatus', {
         var filterHeader = this.getComponent('filterheader');
         var headerText = Ext.get(Ext.DomQuery.select('.filterheader-text')[0]);
 
-        var saveBtn = filterHeader.query('#savegroup')[0];
+        var filterStatusItems = Ext.getCmp('filterstatus-items-id').items;
+        var saveBtn = filterStatusItems.find(function(item) {return item.itemId === 'filterSaveAsGroupBtn'; }).items.items[0]; //'Save as a group' button
+
         var clrBtn = filterHeader.query('#clear')[0];
+
+        var editGrpBtn = Ext.getCmp('editgroupbtn-id');
+        var groupSavePanel = Ext.getCmp('groupsave-id');
 
         var filterContent = this.getFilterContent();
         var emptyText = this.getEmptyText();
+
+        var groupLabelCmp = Ext.getCmp('savedgroupname-id');
 
         if (filters.length === 0 && selections.length === 0) {
             headerText.replaceCls('section-title-filtered', 'section-title');
@@ -181,14 +384,69 @@ Ext.define('Connector.view.FilterStatus', {
             filterContent.hide();
             saveBtn.hide();
             clrBtn.hide();
+            groupLabelCmp.hide();
         }
         else {
+            document.getElementById('filterstatus-items-id').style.backgroundColor = '#ebebeb';
             headerText.replaceCls('section-title', 'section-title-filtered');
             emptyText.hide();
             filterContent.show();
-            saveBtn.show();
+
+            var grpId = this.getGroupId();
+
+            // when the group is displayed with filtered values (i.e. when user clicks on a Group from Home page of Learn > Groups page)
+            // then it should be ready for Editing
+            if (grpId > -1) {
+
+                var grpStore = Connector.model.Group.getGroupStore();
+
+                if (grpStore && grpStore.getCount() > 0) {
+
+                    //display group label of a saved group
+                    var groupLabel = grpStore.query('id', grpId).items[0].data.label;
+
+                    groupLabelCmp.items.get(0).update({ savedGroupName : groupLabel, groupId: grpId });
+                    groupLabelCmp.show();
+
+                    //set the group-save form values
+                    Ext.getCmp('groupname-id').setValue(groupLabel);
+
+                    var description = grpStore.query('id', grpId).items[0].data.description;
+                    Ext.getCmp('creategroupdescription').setValue(description);
+
+                    var shared = grpStore.query('id', grpId).items[0].data.shared;
+                    Ext.getCmp('creategroupshared').setValue(shared);
+                }
+
+                this.showEditGroupBtn();
+            }
+
+            // show 'Save as a group' button when the filters are applied and Group Save form and Edit button are not displayed
+            if (editGrpBtn.hidden && groupSavePanel.hidden) {
+                saveBtn.show();
+            }
+            else if (!groupSavePanel.hidden) {
+                this.hideEditGroupBtn();
+                this.hideGroupLabel();
+            }
+            else {
+                saveBtn.hide();
+            }
+
+            // always display the Clear button when filters are applied
             clrBtn.show();
         }
+    },
+
+    getGroupId: function() {
+        var currentPage = window.location.href.split("#");
+        if (currentPage.length > 1 && currentPage[1].indexOf("groupsummary") > -1) {
+            var groupSummary = currentPage[1].split("/");
+            if (groupSummary.length === 3) {
+                return groupSummary[groupSummary.length - 1];
+            }
+        }
+        return -1;
     },
 
     onBeforeViewChange : function() {

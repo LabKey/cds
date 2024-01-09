@@ -16,6 +16,7 @@ Ext.define('Connector.app.model.Group', {
     fields: [
         {name: 'group_name', sortType: 'asUCString'},
         {name: 'group_type'},
+        {name: 'isMab', type: 'Boolean'},
         {name: 'group_id'},
         {name: 'description'},
         {name: 'study_label'},

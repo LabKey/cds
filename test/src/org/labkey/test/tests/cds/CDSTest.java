@@ -206,11 +206,9 @@ public class CDSTest extends CDSReadOnlyTest
         _asserts.assertFilterStatusCounts(139, 12, 1, 3, 42);
 
         final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
-        final String saveLabel = "Group \"A Plotted...\" saved.";
         Locator.XPathLocator clippedLabel = Locator.tagWithClass("div", "grouplabel").containing(clippedGroup);
 
         cds.saveGroup(HOME_PAGE_GROUP, GROUP_NAME);
-        waitForText(saveLabel);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForElement(Locator.css("div.groupicon img"));
@@ -225,11 +223,15 @@ public class CDSTest extends CDSReadOnlyTest
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         int plotFilterCount = Locator.css("div.groupicon img").findElements(getWrappedDriver()).size();
         cds.clearFilter(0);
-        cds.saveOverGroup(HOME_PAGE_GROUP);
-        waitForText(saveLabel);
+
+        //TODO: Fix/Update with the new Active filters workflow - Edit group > Save menu > Update group
+//        cds.saveOverGroup(HOME_PAGE_GROUP);
+//        waitForText(saveLabel);
+        //TODO After updating the group, should see plot icon disappear since the filter was cleared on line 225
+//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+//        waitForElements(Locator.css("div.groupicon img"), plotFilterCount - 1);
+
         _asserts.assertFilterStatusCounts(829, 48, 1, 3, 155); // TODO Test data dependent.
-        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForElements(Locator.css("div.groupicon img"), plotFilterCount - 1);
     }
 
     @Test

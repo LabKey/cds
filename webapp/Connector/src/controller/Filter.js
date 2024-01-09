@@ -105,6 +105,10 @@ Ext.define('Connector.controller.Filter', {
         this.subjectFilterCache.subjects = subjects;
     },
 
+    getParticipantIds : function() {
+        return this.subjectFilterCache.subjects;
+    },
+
     _resetCache : function(valid) {
         var currentResults = this.subjectFilterCache ? this.subjectFilterCache.results : undefined;
 
