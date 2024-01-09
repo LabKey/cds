@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests.cds;
 
+import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -789,9 +791,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         grid.setSearch(CDSHelper.TITLE_NAB).clickFirstItem();
 
         assertTextPresent("Assay information", "Tutorials");
-        assertElementPresent("Assay tutorial section should be present.", Locator.tagWithClass("div", "assay-tutorial-img-container"), 1);
-        assertElementPresent("One tutorial video link should be present.", Locator.tagWithId("a", "assay-tutorial-video"), 1);
-        assertElementPresent("Two downloadable tutorials should be present.", Locator.tagWithId("div", "tutorial-doc-id"), 2);
+        WebElement tutorialSec = Locator.tagWithClass("table", "assay-tutorial").findElement(getDriver());
+        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+            Assert.assertEquals("Assay tutorial section should be present.", 1,
+                    Locator.tagWithClass("div", "assay-tutorial-img-container").findElements(tutorialSec).size());
+            Assert.assertEquals("One tutorial video link should be present.", 1,
+                    Locator.tagWithClass("a", "assay-tutorial-video").findElements(tutorialSec).size());
+            Assert.assertEquals("Two downloadable tutorials should be present.", 2,
+                    Locator.tagWithId("div", "tutorial-doc-id").findElements(getDriver() ).size());
+        });
 
         log("Go to BAMA assay page - verify absence of tutorial section");
         cds.viewLearnAboutPage("Assays");
