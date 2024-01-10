@@ -45,6 +45,7 @@
         <script path="Connector/src/button/Image.js"/>
         <script path="Connector/src/button/RoundedButton.js"/>
         <script path="Connector/src/button/Export.js"/>
+        <script path="Connector/src/button/GroupSave.js"/>
         <script path="Connector/src/component/ActionTitle.js"/>
         <script path="Connector/src/component/AdvancedOption.js"/>
         <script path="Connector/src/component/AbstractAntigenSelection.js"/>

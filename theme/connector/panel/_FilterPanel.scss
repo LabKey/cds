@@ -1,7 +1,8 @@
 .filterstatus  {
-  padding: 34px 6px 24px 6px;
+  padding: 34px 6px 10px 6px;
   background: $white;
   margin: 0 auto;
+  height: 200px;
 
   h2.section-title {
     padding: 0 42px 0 28px;
@@ -28,7 +29,6 @@
 
 .filterstatus-content {
   background-color: $gray-7;
-  padding: 0 6px 6px 6px;
 }
 
 div.selitem {
@@ -67,8 +67,8 @@ div.filterpanel {
 
   .x-container {
     background-color: $gray-7;
-    @include prefixer(border-radius, 2px);
-    padding: 6px 0 0 0;
+    @include prefixer(border-radius, 1px);
+    //padding: 6px 0 0 0;
   }
 
   .x-container:first-child {
@@ -82,7 +82,7 @@ div.activefilter {
   background-color: $white;
   @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
   @include prefixer(border-radius, 2px);
-  padding: 4px 8px;
+  padding: 4px 6px;
   margin: 6px 0 0 0;
 
   div.selitem {
@@ -217,4 +217,232 @@ ul.indent li {
 
 .filterclear {
   margin-right: 4px;
+}
+
+.filter-clear-btn {
+  display: flex;
+  width: 51px;
+  height: 24px;
+  justify-content: center;
+  align-items: center;
+  background-color: #fb2e5c !important;
+}
+
+//Save group button when disabled
+.x-btn-rounded-inverted-accent-toolbar-small-disabled {
+  background-color: #d1d1d1 !important;
+  border-color: #ffff !important;
+
+  .x-btn-inner {
+    color: #FFFFFF !important;
+    text-align: center;
+    font-family: Arial, serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 12px; /* 109.091% */
+  }
+}
+
+.edit-group-btn-container {
+
+  display: flex;
+  width: 231px;
+  height: 24px;
+  padding: 0px 6px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+
+  .edit-group-btn {
+    display: flex;
+    width: 71px;
+    height: 24px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 2px;
+
+    .x-btn-inner {
+      color: #FFFFFF !important;
+      text-align: center;
+      font-family: Arial, serif;
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 12px; /* 109.091% */
+    }
+  }
+}
+
+.groupsave-cancel-save-btns {
+
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+  .cancel-save-btns {
+    width: 71px;
+  }
+
+  .x-box-inner {
+    background: #ebebeb;
+    padding: 6px;
+    height: 24px;
+  }
+}
+
+.save-group-btn {
+  border-radius: 2px;
+  border: 0.5px solid;
+  color: #FFF !important;
+  display: flex;
+  width: 72px;
+  height: 25px;
+  justify-content: center;
+  align-items: center;
+
+  .x-btn-inner {
+    color: #FFF !important;
+    text-align: center;
+    height: 25px;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 12px; /* 109.091% */
+  }
+}
+
+.group-cancel-btn {
+  border-radius: 2px;
+  border: 0.5px solid;
+  background: #FFF !important;
+  color: #FB2E5C !important;
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+  .x-btn-inner {
+    color: #FB2E5C !important;
+    text-align: center;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 12px; /* 109.091% */
+  }
+}
+
+.group-save-menu-items {
+
+  background-color: $white;
+
+  .x-menu-item-text {
+    margin-left: 10px;
+    font-size: 11px !important;
+  }
+}
+
+.filterstatus-items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: $gray-7;
+  padding: 0 6px 6px 6px;
+}
+
+.savedgroup-label-container {
+  width: 202px;
+  margin-top: 6px;
+
+  .savedgroup-label {
+    color: #777;
+    font-family: $info-font;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 17px; /* 154.545% */
+  }
+}
+
+.groupsave-panel-container, .groupsave-panel-form {
+  padding-top: 6px;
+  background-color: $gray-7;
+}
+
+.shared-group-checkbox {
+  display: flex;
+  width: 12px;
+  height: 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+
+  .x-form-field, .x-form-checkbox {
+    border-radius: 2px;
+    border: 1px solid #FB2E5C;
+    background: #FFF;
+  }
+
+  .x-form-cb-label {
+    color: #000;
+    font-family: $info-font;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; /* 154.545% */
+  }
+}
+
+.filter-save-as-group-btn-container {
+  display: flex;
+  width: 231px;
+  padding: 0px 6px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+
+  .filter-save-as-group-btn {
+
+    display: flex;
+    width: 101px;
+    height: 24px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 2px;
+    color: #FFF !important;
+    background: #FB2E5C !important;
+
+    .x-btn-inner {
+      color: #FFF;
+      text-align: center;
+      font-family: Arial, serif;
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 12px; /* 109.091% */
+    }
+  }
+}
+
+.save-menu-btn {
+  .x-btn-inner {
+    color: #FFF;
+    text-align: center;
+    font-family: Arial, serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 12px; /* 109.091% */
+  }
+}
+
+.invalid-group-name {
+  border: 0.75px solid #FB2E5C;
 }
