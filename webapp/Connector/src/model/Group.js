@@ -115,7 +115,13 @@ Ext.define('Connector.model.Group', {
                                             scope: this,
                                             success: function (groupData) {
 
+                                                console.log("mabGroups:\n"); //TODO: remove
+                                                console.log(mabGroups); //TODO: remove
+
                                                 var subjectGroups = Ext.JSON.decode(response.responseText).groups;
+
+                                                console.log("subjectGroups:\n"); //TODO: remove
+                                                console.log(subjectGroups); //TODO: remove
 
                                                 // id needs to be unique in order to avoid collision
                                                 // ex. in the case where id=19, i.e its the same rowid for both for participant and mab group
@@ -125,6 +131,9 @@ Ext.define('Connector.model.Group', {
                                                 }
 
                                                 var subjGrps = subjectGroups.filter(function(grp) {return grp.id !== -1});
+
+                                                console.log("subjGrps:\n"); //TODO: remove
+                                                console.log(subjGrps); //TODO: remove
 
                                                 //add index for display
                                                 var savedGroups = subjGrps.filter(function(grp) {return !grp.category.shared});
@@ -186,6 +195,9 @@ Ext.define('Connector.model.Group', {
 
                                                     groupsWithStudies.push(group);
                                                 }, this);
+
+                                                console.log("groupsWithStudies:\n"); //TODO: remove
+                                                console.log(groupsWithStudies); //TODO: remove
 
                                                 this.loadRawData(groupsWithStudies);
 

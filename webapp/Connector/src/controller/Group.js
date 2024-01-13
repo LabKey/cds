@@ -24,6 +24,10 @@ Ext.define('Connector.controller.Group', {
                         ['.selectionpanel', '.filterpanel', '.filterstatus .emptytext'],
                         'div', 'grouprow');
 
+                console.log("group type = " + grp.get('type')); //TODO: added for troubleshooting, remove
+                console.log("rowid = " + grp.get('rowid')); //TODO: added for troubleshooting, remove
+                console.log("id = " + grp.get('id')); //TODO: added for troubleshooting, remove
+
                 if (grp.get('type') === 'mab') {
                     this.getViewManager().changeView('group', 'mabgroupsummary', [grp.get('rowid')]);
                 }
