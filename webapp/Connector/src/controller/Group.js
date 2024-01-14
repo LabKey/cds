@@ -24,15 +24,23 @@ Ext.define('Connector.controller.Group', {
                         ['.selectionpanel', '.filterpanel', '.filterstatus .emptytext'],
                         'div', 'grouprow');
 
-                console.log("group type = " + grp.get('type')); //TODO: added for troubleshooting, remove
-                console.log("rowid = " + grp.get('rowid')); //TODO: added for troubleshooting, remove
-                console.log("id = " + grp.get('id')); //TODO: added for troubleshooting, remove
+                // itemclick event automatically uses the store's index to get the 'grp' value,
+                // however, on the Home page we are only displaying 5 groups at a time, first under 'My Saved Groups' and then under 'Curated groups' section,
+                // and if more than 5 groups are present under 'My Saved Groups', then this index will be incorrect for the Groups listed under 'Curated groups'
+                // since both the sections share one store. For this reason, we will get the label from the clicked item and find the corresponding
+                // record based on the label as done below.
 
-                if (grp.get('type') === 'mab') {
-                    this.getViewManager().changeView('group', 'mabgroupsummary', [grp.get('rowid')]);
+                // Access the label from the clicked item with selector 'grouprow'
+                var label = item.firstChild.getAttribute('data-label');
+
+                // Find the corresponding record based on the label
+                var clickedRecord = v.getStore().findRecord('label', label);
+
+                if (clickedRecord.get('type') === 'mab') {
+                    this.getViewManager().changeView('group', 'mabgroupsummary', [clickedRecord.get('rowid')]);
                 }
                 else {
-                    this.getViewManager().changeView('group', 'groupsummary', [grp.get('id')]);
+                    this.getViewManager().changeView('group', 'groupsummary', [clickedRecord.get('id')]);
                 }
             },
             render: function(view) {
