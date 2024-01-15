@@ -191,10 +191,10 @@ Ext.define('Connector.controller.Connector', {
      * The default method for showing a view in the center region.
      * @param xtype
      */
-    showView : function(xtype) {
+    showView : function(xtype, context) {
 
         if (!this.viewMap[xtype]) {
-            this.viewMap[xtype] = this.createView(xtype);
+            this.viewMap[xtype] = this.createView(xtype, context);
         }
 
         var actions = this.resolveViewTransitions(null, xtype);

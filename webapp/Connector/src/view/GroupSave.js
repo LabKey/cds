@@ -33,6 +33,8 @@ Ext.define('Connector.view.GroupSave', {
 
     isMabGroup: false,
 
+    stores: ['FilterStatus', 'MabStatus'],
+
     constructor : function(config) {
 
         Ext.applyIf(config, {
@@ -49,59 +51,97 @@ Ext.define('Connector.view.GroupSave', {
 
     initComponent : function()
     {
-        this.items = [{
-            xtype: 'container',
-            itemId: 'content',
-            style: 'margin: 10px; background-color: #fff; border: 1px solid lightgrey; padding: 10px',
-            anchor: '100%',
-            items: [
-                this.getTitle(),
+        //TODO: New active filters workflow doesn't apply to Mab groups just yet, when we are ready to make Mab groups workflow similar to subject groups
+        // we can remove this check and combine the two.
+        // Notice this.isMabGroup check throughout this file.
+        if (this.isMabGroup) {
+            this.items = [{
+                xtype: 'container',
+                itemId: 'content',
+                style: 'margin: 10px; background-color: #fff; border: 1px solid lightgrey; padding: 10px',
+                anchor: '100%',
+                items: [
+                    this.getTitle(),
+                    {
+                        xtype: 'box',
+                        hidden: this.hideSelectionWarning,
+                        itemId: 'selectionwarning',
+                        autoEl: {
+                            tag: 'div',
+                            style: 'padding-top: 10px;',
+                            children: [{
+                                tag: 'img',
+                                src: LABKEY.contextPath + '/Connector/images/warn.png',
+                                height: '13px',
+                                width: '13px',
+                                style: 'vertical-align: middle; margin-right: 8px;'
+                            },{
+                                tag: 'span',
+                                html: 'Current Selection will be applied'
+                            }]
+                        }
+                    },
+                    {
+                        xtype: 'box',
+                        itemId: 'error',
+                        hidden: true,
+                        autoEl: {
+                            tag: 'div',
+                            cls: 'errormsg'
+                        }
+                    },
+                    this.getCreateGroup(),
+                    this.getEditGroup(),
+                    this.getReplaceGroup()
+                ]
+            }];
+            LABKEY.Security.getUserPermissions({
+                success: function (userPerms, resp)
                 {
-                    xtype: 'box',
-                    hidden: this.hideSelectionWarning,
-                    itemId: 'selectionwarning',
-                    autoEl: {
-                        tag: 'div',
-                        style: 'padding-top: 10px;',
-                        children: [{
-                            tag: 'img',
-                            src: LABKEY.contextPath + '/Connector/images/warn.png',
-                            height: '13px',
-                            width: '13px',
-                            style: 'vertical-align: middle; margin-right: 8px;'
-                        },{
-                            tag: 'span',
-                            html: 'Current Selection will be applied'
-                        }]
+                    if(this.getIsEditorOrHigher(userPerms))
+                    {
+                        Ext.getCmp('mabcreategroupshared').show();
+                        Ext.getCmp('editgroupshared').show();
+                        Ext.getCmp('updategroupshared').show();
                     }
                 },
-                {
-                    xtype: 'box',
-                    itemId: 'error',
-                    hidden: true,
-                    autoEl: {
-                        tag: 'div',
-                        cls: 'errormsg'
-                    }
-                },
-                this.getCreateGroup(),
-                this.getEditGroup(),
-                this.getReplaceGroup()
-            ]
-        }];
+                scope: this
+            });
+        }
+        else {
+            this.items = [{
+                xtype: 'container',
+                itemId: 'content',
+                style: 'padding-top: 6px;background-color: $gray-7',
+                anchor: '100%',
+                items: [
+                    {
+                        xtype: 'box',
+                        itemId: 'error',
+                        hidden: true,
+                        autoEl: {
+                            tag: 'div',
+                            cls: 'errormsg'
+                        }
+                    },
+                    this.getCreateGroup(),
+                    this.getCancelSaveMenuBtns()
+                ]
+            }];
 
-        LABKEY.Security.getUserPermissions({
-            success: function (userPerms, resp)
-            {
-                if(this.getIsEditorOrHigher(userPerms))
+            LABKEY.Security.getUserPermissions({
+                success: function (userPerms, resp)
                 {
-                    Ext.getCmp('creategroupshared').show();
-                    Ext.getCmp('editgroupshared').show();
-                    Ext.getCmp('updategroupshared').show();
-                }
-            },
-            scope: this
-        });
+                    if(this.getIsEditorOrHigher(userPerms))
+                    {
+                        Ext.getCmp('creategroupshared').show();
+                    }
+                },
+                scope: this
+            });
+        }
+
+
 
         this.callParent();
 
@@ -110,106 +150,238 @@ Ext.define('Connector.view.GroupSave', {
 
     getTitle : function()
     {
-        if (!this.title)
-        {
-            this.title = Ext.create('Ext.Component', {
-                tpl: '<h2>{title:htmlEncode} group</h2>',
-                data: {
-                    title: this.defaultTitle
-                }
-            });
+        if (this.isMabGroup) {
+            if (!this.title)
+            {
+                this.title = Ext.create('Ext.Component', {
+                    tpl: '<h2>{title:htmlEncode} group</h2>',
+                    data: {
+                        title: this.defaultTitle
+                    }
+                });
+            }
         }
-
         return this.title;
     },
 
     getCreateGroup : function() {
-        if (!this.createGroup) {
-            this.createGroup = Ext.create('Ext.Container', {
-                hidden: this.mode !== Connector.view.GroupSave.modes.CREATE,
-                activeMode: Connector.view.GroupSave.modes.CREATE,
-                style: 'padding-top: 10px;',
-                items: [{
-                    itemId: 'creategroupform',
-                    xtype: 'form',
-                    ui: 'custom',
-                    width: '100%',
-                    defaults: {
-                        width: '100%'
-                    },
+
+        if (this.isMabGroup) {
+            if (!this.createGroup) {
+                this.createGroup = Ext.create('Ext.Container', {
+                    hidden: this.mode !== Connector.view.GroupSave.modes.CREATE,
+                    activeMode: Connector.view.GroupSave.modes.CREATE,
+                    style: 'padding-top: 10px;',
                     items: [{
-                        xtype: 'textfield',
-                        itemId: 'groupname',
-                        name: 'groupname',
-                        emptyText: 'Enter a group name',
-                        height: 30,
-                        allowBlank: false,
-                        validateOnBlur: false,
-                        maxLength: 100
+                        itemId: 'mabcreategroupform',
+                        xtype: 'form',
+                        ui: 'custom',
+                        width: '100%',
+                        defaults: {
+                            width: '100%'
+                        },
+                        items: [{
+                            xtype: 'textfield',
+                            itemId: 'mabgroupname',
+                            name: 'mabgroupname',
+                            emptyText: 'Enter a group name',
+                            height: 30,
+                            allowBlank: false,
+                            validateOnBlur: false,
+                            maxLength: 100
+                        },{
+                            xtype: 'textareafield',
+                            id: 'mabcreategroupdescription',
+                            name: 'mabgroupdescription',
+                            emptyText: 'Group description',
+                            maxLength: 200
+                        },{
+                            xtype: 'checkbox',
+                            id: 'mabcreategroupshared',
+                            itemId: 'mabgroupshared',
+                            name: 'mabgroupshared',
+                            fieldLabel: 'Shared group',
+                            checked: false,
+                            hidden: true
+                        }]
                     },{
-                        xtype: 'textareafield',
-                        id: 'creategroupdescription', // tests
-                        name: 'groupdescription',
-                        emptyText: 'Group description',
-                        maxLength: 200
+                        xtype: 'box',
+                        autoEl: {
+                            tag: 'div',
+                            style: 'margin-top: 15px;',
+                            html: 'Or...'
+                        }
                     },{
-                        xtype: 'checkbox',
-                        id: 'creategroupshared',
-                        itemId: 'groupshared',
-                        name: 'groupshared',
-                        fieldLabel: 'Shared group',
-                        checked: false,
-                        hidden: true
-                    }]
-                },{
-                    xtype: 'box',
-                    autoEl: {
-                        tag: 'div',
+                        xtype: 'button',
+                        itemId: 'replace-grp-button',
                         style: 'margin-top: 15px;',
-                        html: 'Or...'
-                    }
-                },{
-                    xtype: 'button',
-                    itemId: 'replace-grp-button',
-                    style: 'margin-top: 15px;',
-                    ui: 'linked-ul',
-                    text: 'replace an existing group',
-                    handler: function() { this.changeMode(Connector.view.GroupSave.modes.REPLACE); },
-                    scope: this
-                },{
-                    xtype: 'toolbar',
-                    dock: 'bottom',
-                    ui: 'lightfooter',
-                    style: 'padding-top: 60px',
-                    items: ['->',{
-                        text: 'Cancel',
-                        itemId: 'groupcancel',
-                        cls: 'groupcancelcreate' // tests
+                        ui: 'linked-ul',
+                        text: 'replace an existing group',
+                        handler: function() { this.changeMode(Connector.view.GroupSave.modes.REPLACE); },
+                        scope: this
                     },{
-                        text: 'Save',
-                        itemId: 'groupcreatesave',
-                        cls: 'groupcreatesave' // tests
-                    }]
-                }],
-                listeners : {
-                    afterrender : {
-                        fn: function(c) {
-                            c.getComponent('creategroupform').getComponent('groupname').focus(false, true);
+                        xtype: 'toolbar',
+                        dock: 'bottom',
+                        ui: 'lightfooter',
+                        style: 'padding-top: 60px',
+                        items: ['->',{
+                            text: 'Cancel',
+                            itemId: 'mabgroupcancel',
+                            cls: 'groupcancelcreate mabgroupcancel' // tests
+                        },{
+                            text: 'Save',
+                            itemId: 'mabgroupcreatesave',
+                            cls: 'groupcreatesave mabgroupcreatesave' // tests
+                        }]
+                    }],
+                    listeners : {
+                        afterrender : {
+                            fn: function(c) {
+                                c.getComponent('mabcreategroupform').getComponent('mabgroupname').focus(false, true);
+                            },
+                            single: true,
+                            scope: this
                         },
-                        single: true,
-                        scope: this
+                        show : {
+                            fn: function(c) {
+                                c.getComponent('mabcreategroupform').getComponent('mabgroupname').focus(false, true);
+                            },
+                            scope: this
+                        }
                     },
-                    show : {
-                        fn: function(c) {
-                            c.getComponent('creategroupform').getComponent('groupname').focus(false, true);
+                    scope: this
+                });
+            }
+        }
+        else {
+            if (!this.createGroup) {
+                this.createGroup = Ext.create('Ext.Container', {
+                    hidden: this.mode !== Connector.view.GroupSave.modes.CREATE,
+                    activeMode: Connector.view.GroupSave.modes.CREATE,
+                    cls: 'groupsave-panel-container',
+                    itemId: 'create-group-container',
+                    items: [{
+                        itemId: 'creategroupform',
+                        xtype: 'form',
+                        cls: 'groupsave-panel-form',
+                        ui: 'custom',
+                        width: '100%',
+                        defaults: {
+                            width: '100%'
                         },
-                        scope: this
-                    }
-                },
-                scope: this
-            });
+                        items: [{
+                            xtype: 'textfield',
+                            cls: 'group-name-input',
+                            itemId: 'groupname',
+                            name: 'groupname',
+                            emptyText: 'Enter a group name',
+                            id: 'groupname-id',
+                            height: 30,
+                            allowBlank: false,
+                            validateOnBlur: false,
+                            maxLength: 100,
+                            listeners: {
+                                //dynamic enable/disable of save button based on the presence of text in the group name field
+                                change: function (field, newValue, oldValue) {
+
+                                    var saveBtn = Ext.getCmp('groupcreatesave-id');
+
+                                    //disable if undefined, null, or an empty string
+                                    if (Ext.isEmpty(newValue) || newValue.trim() === '') {
+                                        saveBtn.disable();
+                                    } else {
+                                        saveBtn.enable();
+                                    }
+                                }
+                            }
+                        }, {
+                            xtype: 'textareafield',
+                            cls: 'group-description-input',
+                            id: 'creategroupdescription', // tests
+                            itemId: 'groupdescription',
+                            name: 'groupdescription',
+                            emptyText: 'Group description',
+                            maxLength: 200,
+                            fieldLabel: 'Description',
+                            labelAlign: 'top'
+                        }, {
+                            xtype: 'checkbox',
+                            id: 'creategroupshared',
+                            itemId: 'groupshared',
+                            name: 'groupshared',
+                            boxLabel: 'Shared group',
+                            checked: false,
+                            hidden: true
+                        }]
+                    }, {
+                        xtype: 'toolbar',
+                        id: 'groupsave-cancel-save-btns-id',
+                        cls: 'groupsave-cancel-save-btns cancel-save-group-btns',
+                        dock: 'bottom',
+                        ui: 'lightfooter',
+                        style: 'padding-top: 5px',
+                        items: ['->', {
+                            text: 'Cancel',
+                            itemId: 'groupcancel',
+                            id: 'groupcancel-id',
+                            cls: 'group-cancel-btn groupcancelcreate'
+                        }, {
+                            text: 'Save group',
+                            itemId: 'groupcreatesave',
+                            disabled: true,
+                            id: 'groupcreatesave-id',
+                            cls: 'save-group-btn groupcreatesave' // tests
+                        }]
+                    }],
+                    listeners: {
+                        afterrender: {
+                            fn: function (c) {
+                                c.getComponent('creategroupform').getComponent('groupname').focus(false, true);
+                            },
+                            single: true,
+                            scope: this
+                        },
+                        show: {
+                            fn: function (c) {
+                                c.getComponent('creategroupform').getComponent('groupname').focus(false, true);
+                            },
+                            scope: this
+                        }
+                    },
+                    scope: this
+                }, this);
+            }
         }
         return this.createGroup;
+    },
+
+    getCancelSaveMenuBtns : function() {
+
+        return {
+            xtype: 'toolbar',
+            dock: 'bottom',
+            ui: 'lightfooter',
+            cls: 'groupsave-cancel-save-btns menu-btns',
+            id: 'groupsave-cancel-save-menu-btns-id',
+            hidden: true,
+            items: ['->', {
+                text: 'Cancel',
+                itemId: 'groupcancelbtn-itemid',
+                cls: 'group-cancel-btn',
+                handler: function() {
+                    Ext.getCmp('savedgroupname-id').show();
+                    Ext.getCmp('groupsave-id').hide();
+                    Ext.getCmp('editgroupbtn-id').show();
+                    Ext.getCmp('editgroupbtn-container-id').show();
+                    Ext.getCmp('filterstatus-content-id').setMargin('0 0 0 0');
+                }
+            }, {
+                xtype: 'groupsavebutton',
+                width : 100,
+                itemId: 'groupsavebtn-itemid',
+                cls: 'save-menu-btn groupsavebtn', // tests
+            }]
+        };
     },
 
     getEditGroup : function()
@@ -222,7 +394,7 @@ Ext.define('Connector.view.GroupSave', {
                 title: 'Edit',
                 style: 'padding-top: 10px;',
                 items: [{
-                    itemId: 'creategroupform',
+                    itemId: 'mabcreategroupform',
                     xtype: 'form',
                     ui: 'custom',
                     width: '100%',
@@ -233,8 +405,8 @@ Ext.define('Connector.view.GroupSave', {
                     flex: 1,
                     items: [{
                         xtype: 'textfield',
-                        itemId: 'groupname',
-                        name: 'groupname',
+                        itemId: 'mabgroupname',
+                        name: 'mabgroupname',
                         emptyText: 'Enter a group name',
                         height: 30,
                         allowBlank: false,
@@ -250,15 +422,15 @@ Ext.define('Connector.view.GroupSave', {
                     },{
                         xtype: 'textareafield',
                         id: 'editgroupdescription',
-                        itemId: 'groupdescription',
-                        name: 'groupdescription',
+                        itemId: 'mabgroupdescription',
+                        name: 'mabgroupdescription',
                         emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
                         id: 'editgroupshared',
-                        itemId: 'groupshared',
-                        name: 'groupshared',
+                        itemId: 'mabgroupshared',
+                        name: 'mabgroupshared',
                         fieldLabel: 'Shared group',
                         checked: false,
                         hidden: true
@@ -285,7 +457,7 @@ Ext.define('Connector.view.GroupSave', {
                     style: 'padding-top: 60px',
                     items: ['->',{
                         text: 'Cancel',
-                        itemId: 'groupcancel',
+                        itemId: 'mabgroupcancel',
                         cls: 'groupcanceledit' // tests
                     },{
                         text: 'Save',
@@ -295,18 +467,18 @@ Ext.define('Connector.view.GroupSave', {
                 }],
                 getForm : function()
                 {
-                    return editForm.getComponent('creategroupform');
+                    return editForm.getComponent('mabcreategroupform');
                 },
                 listeners : {
                     afterrender : {
                         fn: function(c) {
-                            c.getComponent('creategroupform').getComponent('groupdescription').focus(false, true);
+                            c.getComponent('mabcreategroupform').getComponent('mabgroupdescription').focus(false, true);
                         },
                         scope: this
                     },
                     show : {
                         fn: function(c) {
-                            c.getComponent('creategroupform').getComponent('groupdescription').focus(false, true);
+                            c.getComponent('mabcreategroupform').getComponent('mabgroupdescription').focus(false, true);
                         },
                         scope: this
                     }
@@ -367,7 +539,7 @@ Ext.define('Connector.view.GroupSave', {
                         scope: this
                     }]
                 },{
-                    itemId: 'creategroupform',
+                    itemId: 'mabcreategroupform',
                     xtype: 'form',
                     ui: 'custom',
                     width: '100%',
@@ -386,15 +558,15 @@ Ext.define('Connector.view.GroupSave', {
                     },{
                         xtype: 'textareafield',
                         id: 'updategroupdescription',
-                        itemId: 'groupdescription',
-                        name: 'groupdescription',
+                        itemId: 'mabgroupdescription',
+                        name: 'mabgroupdescription',
                         emptyText: 'No description provided',
                         maxLength: 200
                     },{
                         xtype: 'checkbox',
                         id: 'updategroupshared',
-                        itemId: 'groupshared',
-                        name: 'groupshared',
+                        itemId: 'mabgroupshared',
+                        name: 'mabgroupshared',
                         fieldLabel: 'Shared group',
                         checked: false,
                         hidden: true
@@ -421,13 +593,13 @@ Ext.define('Connector.view.GroupSave', {
                     style: 'padding-top: 60px',
                     items: ['->',{
                         text: 'Cancel',
-                        itemId: 'groupcancel',
+                        itemId: 'mabgroupcancel',
                         cls: 'groupcancelreplace' // tests
                     },this.getGroupUpdateSaveBtn()]
                 }],
                 getForm : function()
                 {
-                    return replaceForm.getComponent('creategroupform');
+                    return replaceForm.getComponent('mabcreategroupform');
                 },
                 listeners : {
                     show: this.refresh,
@@ -514,7 +686,7 @@ Ext.define('Connector.view.GroupSave', {
         // update warning
         var sw = this.getComponent('content').getComponent('selectionwarning');
         if (sw) {
-            sw.setVisible(selections.length != 0);
+            sw.setVisible(selections.length !== 0);
         }
     },
 
@@ -523,13 +695,13 @@ Ext.define('Connector.view.GroupSave', {
         if (form)
         {
             var group = Connector.model.FilterGroup.fromCohortGroup(groupModel),
-                _id = form.getComponent('groupid'),
-                name = form.getComponent('groupname'),
-                description = form.getComponent('groupdescription'),
-                categoryId = form.getComponent('groupcategoryid'),
-                shared = form.getComponent('groupshared'),
-                filters = form.getComponent('groupfilters'),
-                participantIds = form.getComponent('groupparticipantids');
+                    _id = form.getComponent('groupid'),
+                    name = form.getComponent('mabgroupname'),
+                    description = form.getComponent('mabgroupdescription'),
+                    categoryId = form.getComponent('groupcategoryid'),
+                    shared = form.getComponent('mabgroupshared'),
+                    filters = form.getComponent('groupfilters'),
+                    participantIds = form.getComponent('groupparticipantids');
 
             if (_id)
             {
@@ -563,7 +735,7 @@ Ext.define('Connector.view.GroupSave', {
                     filters : group.get('filters')
                 }));
             }
-            
+
             if (participantIds)
             {
                 participantIds.setValue(Ext.encode(group.get('participantIds')));
@@ -589,6 +761,9 @@ Ext.define('Connector.view.GroupSave', {
         {
             active = this.getReplaceGroup();
         }
+
+        if(this.isMabGroup)
+            return active.getComponent('mabcreategroupform');
 
         return active.getComponent('creategroupform');
     },
@@ -633,10 +808,18 @@ Ext.define('Connector.view.GroupSave', {
 
     clear : function() {
         var form = this.getCreateGroup().getComponent('creategroupform');
+
+        if(this.isMabGroup)
+            form = this.getCreateGroup().getComponent('mabcreategroupform');
+
         if (form) {
             form.getForm().reset();
         }
+
         form = this.getReplaceGroup().getComponent('creategroupform');
+        if (this.isMabGroup) {
+            form = this.getReplaceGroup().getComponent('mabcreategroupform');
+        }
         if (form) {
             form.getForm().reset();
         }
@@ -644,7 +827,7 @@ Ext.define('Connector.view.GroupSave', {
 
     reset : function() {
         // only reset in 'create' mode
-        if (this.getMode() == Connector.view.GroupSave.modes.CREATE) {
+        if (this.getMode() === Connector.view.GroupSave.modes.CREATE) {
             this.clear();
         }
     },
@@ -664,6 +847,10 @@ Ext.define('Connector.view.GroupSave', {
     showError : function(error) {
         var errorEl = this.getError();
         if (errorEl) {
+            var grpName = Ext.getCmp('groupname-id');
+            if (grpName && !grpName.hidden) {
+                grpName.addCls('invalid-group-name');
+            }
             errorEl.update(error);
             errorEl.show();
         }
@@ -672,8 +859,14 @@ Ext.define('Connector.view.GroupSave', {
     hideError : function() {
         var errorEl = this.getError();
         if (errorEl) {
+            var grpName = Ext.getCmp('groupname-id');
+            if (grpName && !grpName.hidden) {
+                grpName.removeCls('invalid-group-name');
+            }
             errorEl.hide();
         }
+        if (!this.isMabGroup)
+            Ext.getCmp('filterstatus-content-id').setMargin('0 0 0 0');
     },
 
     onWindowResize : function(width, height)
@@ -681,11 +874,11 @@ Ext.define('Connector.view.GroupSave', {
         if (this.getMode() == Connector.view.GroupSave.modes.REPLACE)
         {
             var hdrHeight = 53,
-                paddingOffset = 20, // [10, 0, 10, 0]
-                trueHeight = height - hdrHeight - paddingOffset,
-                contentHeight = this.getComponent('content').getBox().height,
-                listHeight = this.grouplist.getBox().height,
-                h = listHeight;
+                    paddingOffset = 20, // [10, 0, 10, 0]
+                    trueHeight = height - hdrHeight - paddingOffset,
+                    contentHeight = this.getComponent('content').getBox().height,
+                    listHeight = this.grouplist.getBox().height,
+                    h = listHeight;
 
             if (trueHeight < contentHeight)
             {
@@ -695,8 +888,8 @@ Ext.define('Connector.view.GroupSave', {
             {
                 // window height allow for more space, see if group list can expand
                 var lh = this.grouplist.getStore().getCount() * this.listRecordHeight,
-                    maxHeight = Math.min(this.listMaxHeight, lh),
-                    diff = trueHeight - contentHeight;
+                        maxHeight = Math.min(this.listMaxHeight, lh),
+                        diff = trueHeight - contentHeight;
 
                 h = Math.min(maxHeight, listHeight + diff);
             }
@@ -724,7 +917,7 @@ Ext.define('Connector.view.GroupSaveList', {
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<div class="save-label" title="{label:htmlEncode}">{label:htmlEncode}</div>',
+            '<div class="save-label" title="{label:htmlEncode}">{label:htmlEncode}</div>',
             '</tpl>'
     ),
 

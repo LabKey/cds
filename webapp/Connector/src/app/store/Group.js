@@ -22,6 +22,8 @@ Ext.define('Connector.app.store.Group', {
 
         this.groupsData = undefined;
         this.groupDetails = undefined;
+        this.mabGroups = undefined;
+
         var me = this;
 
         LABKEY.Query.selectRows({
@@ -29,6 +31,23 @@ Ext.define('Connector.app.store.Group', {
             queryName: 'learn_groups',
             success: this.onLoadLearnGroups,
             scope: this
+        });
+
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'mabgroup',
+            scope: this,
+            success: function (mabGroupData) {
+                this.mabGroups = [];
+                Ext.each(mabGroupData.rows, function (row) {
+                    this.mabGroups.push({
+                        group_id: row.RowId,
+                        group_name: row.Label,
+                        description: row.Description,
+                        shared: row.Shared
+                    })
+                }, this);
+            }
         });
 
         Ext4.Ajax.request({
@@ -52,7 +71,8 @@ Ext.define('Connector.app.store.Group', {
     },
 
     _onLoadComplete: function () {
-        if (Ext.isDefined(this.groupsData) && Ext.isDefined(this.groupDetails)) {
+
+        if (Ext.isDefined(this.groupsData) && Ext.isDefined(this.groupDetails) && Ext.isDefined(this.mabGroups)) {
 
             var learnGroups = [];
 
@@ -80,6 +100,7 @@ Ext.define('Connector.app.store.Group', {
                     };
                 });
 
+                //groupTypes are "My Saved Groups" and "Curated Groups"
                 var groupTypes = studiesPerGrp.map(function (study) {
                     return study.group_type;
                 }).filter(function (value, index, self) {
@@ -128,38 +149,52 @@ Ext.define('Connector.app.store.Group', {
                 });
                 var assay_to_sort_on = assays[0] ? assays[0].toLowerCase() : '';
 
-
-                if (studiesPerGrp.length > 0)
+                if (studiesPerGrp.length > 0) {
                     learnGroups.push({
                         group_type: groupTypes[0],
                         group_name: grpName,
                         studies: studies.map(function (study) {
-                            return {study_label: study}
+                            return { study_label: study }
                         }, this),
                         study_names: studies,
                         study_names_to_sort_on: study_to_sort_on,
                         studySpecies: species.map(function (s) {
-                            return {species: s}
+                            return { species: s }
                         }, this),
                         species_names: species,
                         species_to_sort_on: species_to_sort_on,
                         products: products.map(function (p) {
-                            return {product_name: p}
+                            return { product_name: p }
                         }, this),
                         product_names: products,
                         product_to_sort_on: product_to_sort_on,
                         assays: assays.map(function (a) {
-                            return {assay_identifier: a}
+                            return { assay_identifier: a }
                         }, this),
                         assay_to_sort_on: assay_to_sort_on,
                         assay_names: assays,
-                        description: groupDetail.length > 0 && groupDetail[0].description  ? groupDetail[0].description : "No description given.",
-                        group_id: groupDetail[0].id
+                        description: groupDetail.length > 0 && groupDetail[0].description ? groupDetail[0].description : "No description given.",
+                        group_id: groupDetail[0].id,
+                        isMab: false
                     });
+                }
 
             }, this);
 
+            Ext.each(this.mabGroups, function (mabGrp) {
+                // note 1_my_saved_groups & 2_curated_groups below, so that it displays in the
+                // "Ext template grouping" order we want. It's the same for subject groups (in learn_groups.sql)
+                learnGroups.push({
+                    group_id: mabGrp.group_id,
+                    group_type: mabGrp.shared ? '2_curated_groups' : '1_my_saved_groups',
+                    group_name: mabGrp.group_name,
+                    description: !mabGrp.description ? "No description given." : mabGrp.description,
+                    isMab: true
+                });
+            });
+
             this.groupsData = undefined;
+            this.mabGroups = undefined;
 
             this.loadRawData(learnGroups);
             this.dataLoaded = true;

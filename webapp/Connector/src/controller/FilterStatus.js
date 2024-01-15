@@ -30,6 +30,7 @@ Ext.define('Connector.controller.FilterStatus', {
                 navfilter.add({
                     xtype: 'container',
                     itemId: 'filterstatuscontainer',
+                    id: 'filterstatuscontainer-id',
                     style: 'overflow-y: auto; overflow-x: hidden;',
                     flex: 1,
                     items: [
@@ -39,6 +40,7 @@ Ext.define('Connector.controller.FilterStatus', {
                 },{
                     xtype: 'container',
                     itemId: 'mabstatuscontainer',
+                    id: 'mabstatuscontainer-id',
                     hidden: true, // will display on view activation
                     style: 'overflow-y: auto; overflow-x: hidden;',
                     flex: 1,
@@ -124,7 +126,8 @@ Ext.define('Connector.controller.FilterStatus', {
         store.load();
 
         var view = Ext.create('Connector.view.DetailStatus', {
-            store: store
+            store: store,
+            id: 'detailstatus-id'
         });
 
         this.getViewManager().on('afterchangeview', function(controller, view)

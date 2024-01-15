@@ -25,6 +25,7 @@ import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.html.BootstrapMenu;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
@@ -54,6 +55,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.TestLogger.log;
 
 public class CDSHelper
@@ -838,16 +840,30 @@ public class CDSHelper
 
     public boolean saveGroup(String name, @Nullable String description, boolean shared, boolean skipWaitForBar, boolean isMab)
     {
-        _test.click(Locators.cdsButtonLocator("save", isMab ? "mabfiltersave" : "filtersave"));
+        if (isMab) {
+            _test.click(Locators.cdsButtonLocator("save", "mabfiltersave"));
+        }
+        else {
+            _test.click(Locator.tagWithId("a", "filter-save-as-group-btn-id"));
+        }
 
         if (_test.isElementPresent(Locators.cdsButtonLocator("create a new group")))
         {
             _test.click(Locators.cdsButtonLocator("create a new group"));
         }
 
-        Locator.linkWithText("replace an existing group").waitForElement(_test.getDriver(), CDS_WAIT);
+        if (isMab) {
+            Locator.linkWithText("replace an existing group").waitForElement(_test.getDriver(), CDS_WAIT);
+        }
+        else {
+            _test.waitForElement(Locator.name("groupname"));
+        }
 
         Locator.XPathLocator shareGroupCheckbox = Locator.xpath("//input[contains(@id,'creategroupshared')]");
+
+        if (isMab) {
+            shareGroupCheckbox = Locator.xpath("//input[contains(@id,'mabcreategroupshared')]");
+        }
         if (shared)
         {
             if (_test.isElementVisible(shareGroupCheckbox))
@@ -862,25 +878,42 @@ public class CDSHelper
             }
         }
 
-        _test.setFormElement(Locator.name("groupname"), name);
-        if (null != description)
-            _test.setFormElement(Locator.name("groupdescription"), description);
+        if (isMab) {
+            _test.setFormElement(Locator.name("mabgroupname"), name);
+            if (null != description)
+                _test.setFormElement(Locator.name("mabgroupdescription"), description);
+        }
+        else {
+            _test.setFormElement(Locator.name("groupname"), name);
+            if (null != description)
+                _test.setFormElement(Locator.name("groupdescription"), description);
+        }
 
+        String saveBtnLocatorName;
+        if (isMab)
+            saveBtnLocatorName = "Save";
+        else
+            saveBtnLocatorName = "Save group";
+
+        _test.sleep(1000);
         if (skipWaitForBar)
         {
-            _test.click(Locators.cdsButtonLocator("Save", "groupcreatesave"));
+            _test.click(Locators.cdsButtonLocator(saveBtnLocatorName, "groupcreatesave"));
         }
         else
         {
             applyAndMaybeWaitForBars(aVoid -> {
-                _test.click(Locators.cdsButtonLocator("Save", "groupcreatesave"));
+                _test.click(Locators.cdsButtonLocator(saveBtnLocatorName, "groupcreatesave"));
                 return null;
             });
         }
 
         // verify group save messaging
         //ISSUE 19997
-        _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
+        if (isMab)
+            _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
+        else
+            _test.waitForElement(Locator.tagWithId("div", "savedgroupname-id").notHidden());
 
         _test.log("Saving '" + name + "' group was success!");
 
@@ -1182,7 +1215,7 @@ public class CDSHelper
 
     public void clearFilters(boolean skipWaitForBar)
     {
-        final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
+        final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filter-clear-btn"));
 
         if (skipWaitForBar)
         {
@@ -1204,7 +1237,7 @@ public class CDSHelper
     public void ensureNoFilter()
     {
         // clear filters
-        if (_test.isElementPresent(CDSHelper.Locators.cdsButtonLocator("clear", "filterclear").notHidden()))
+        if (_test.isElementPresent(CDSHelper.Locators.cdsButtonLocator("clear", "filter-clear-btn").notHidden()))
         {
             clearFilters();
         }
@@ -1340,20 +1373,34 @@ public class CDSHelper
     public void deleteGroupFromSummaryPage(@LoggedParam String name)
     {
         BaseWebDriverTest.sleep(500);
-        Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
-        _test.scrollIntoView(groupListing);
-
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing));
-        groupListing.findElement(_test.getWrappedDriver()).click();
-        BaseWebDriverTest.sleep(1000);
+        goToLearnGroupsPage();
+        goToGroupFromLearnGrid(name);
         _test.waitForElement(Locators.cdsButtonLocator("Delete"));
         Locators.cdsButtonLocator("Delete").findElement(_test.getWrappedDriver()).click();
         _test.waitForText("Are you sure you want to delete");
         Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(_test.getWrappedDriver()).click();
         _test.waitForText(HOME_PAGE_HEADER);
-        _test.waitForElementToDisappear(groupListing);
+        goToLearnGroupsPage();
+        _test.refresh();
+        BaseWebDriverTest.sleep(1000);
+        LearnGrid learnGrid = new LearnGrid(_test);
+        int rowCount = learnGrid.setSearch(name).getRowCount();
+        assertTrue("Group '" + name + "' was not deleted.", rowCount == 0);
+
         BaseWebDriverTest.sleep(1000);
         _test._ext4Helper.waitForMaskToDisappear();
+    }
+
+    private void goToLearnGroupsPage()
+    {
+        CDSHelper.NavigationLink.LEARN.makeNavigationSelection(_test);
+        viewLearnAboutPage("Groups");
+    }
+
+    private void goToGroupFromLearnGrid(String groupName)
+    {
+        LearnGrid learnGrid = new LearnGrid(_test);
+        learnGrid.setSearch(groupName).clickFirstItem();
     }
 
     public void toggleExplorerBar(String largeBarText)

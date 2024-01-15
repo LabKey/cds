@@ -104,7 +104,7 @@ Ext.define('Connector.view.MabStatus', {
                 text: 'save',
                 ui: 'rounded-inverted-accent-small',
                 cls: 'filter-hdr-btn mabfiltersave',
-                itemId: 'savegmabroup',
+                itemId: 'savemabgroup',
                 hidden: !this.hasMabFilters()
             }]
         }
@@ -125,7 +125,7 @@ Ext.define('Connector.view.MabStatus', {
         titleText.update(this.getHeaderData());
         subHeader.update(this.getSubHeaderData());
 
-        var saveBtn = filterHeader.query('#savegmabroup')[0];
+        var saveBtn = filterHeader.query('#savemabgroup')[0];
         var clrBtn = filterHeader.query('#clearmab')[0];
 
         if (!this.hasMabFilters()) {
