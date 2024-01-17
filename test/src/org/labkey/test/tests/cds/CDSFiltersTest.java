@@ -391,7 +391,7 @@ public class CDSFiltersTest extends CDSReadOnlyTest
 
         // save the group and request cancel
         click(Locator.tagWithId("a", "filter-save-as-group-btn-id"));
-        waitForElement(Locator.name("groupname"));
+        waitFor(()-> Locator.name("groupname").findElement(getDriver()).isDisplayed(), 5000);
         setFormElement(Locator.name("groupname"), GROUP_NULL);
         click(CDSHelper.Locators.cdsButtonLocator("Cancel", "groupcancelcreate"));
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());

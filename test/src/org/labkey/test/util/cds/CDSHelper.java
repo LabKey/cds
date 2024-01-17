@@ -25,6 +25,7 @@ import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.html.BootstrapMenu;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
+import org.labkey.test.pages.cds.GroupDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
@@ -920,15 +921,14 @@ public class CDSHelper
         return true;
     }
 
-    public void goToGroup(String groupName)
+    public GroupDetailsPage goToGroup(String groupName)
     {
         Locator groupLabelLocator = Locator.xpath("//div[contains(@class, 'grouprow')]/div[contains(@class,'grouplabel')]").withText(groupName);
 
         goToAppHome();
         _test.waitForElementToBeVisible(groupLabelLocator);
         _test.click(groupLabelLocator);
-        _test.waitForText("Edit details");
-
+        return new GroupDetailsPage(_test.getDriver());
     }
 
     public void logOutFromApplication()
