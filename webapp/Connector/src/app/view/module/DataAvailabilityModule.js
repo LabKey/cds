@@ -315,7 +315,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                                 '</td>',
                                 '<td>',
                                     '<tpl if="data_label">', //determines if we have a learn about page to back the assay
-                                        '<a href="#learn/learn/',
+                                        '<a id="study-{data_link_id}-id" href="#learn/learn/',
                                         '{[this.getDataLink()]}',
                                         '/{[encodeURIComponent(values.data_link_id)]}">{data_label:htmlEncode}</a>',
                                     '<tpl else>',
@@ -383,7 +383,7 @@ Ext.define('Connector.view.module.DataAvailabilityModule', {
                                 '</td>',
                                 '<td>',
                                     '<tpl if="data_label">', //determines if we have a learn about page to back the assay
-                                        '<a href="#learn/learn/',
+                                        '<a id="study-{data_link_id}-id" href="#learn/learn/',
                                         '{[this.getDataLink()]}',
                                         '/{[encodeURIComponent(values.data_link_id)]}">{data_label:htmlEncode}</a>',
                                     '<tpl else>',
