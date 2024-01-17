@@ -27,7 +27,9 @@ import org.labkey.remoteapi.query.InsertRowsCommand;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
+import org.labkey.test.components.cds.ActiveFilterDialog;
 import org.labkey.test.pages.cds.CDSPlot;
+import org.labkey.test.pages.cds.GroupDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
@@ -150,46 +152,96 @@ public class CDSGroupTest extends CDSGroupBaseTest
     }
 
     @Test
-    public void verifyGroups()
+    public void testStudyGroups()
     {
-        log("Verify Groups");
-
-        //
-        // Define Group Names
-        //
+        log("Verifying Study Group workflow");
         String studyGroupDesc = "A set of defined studies.";
         String studyGroupDescModified = "A set of defined studies. More info added.";
 
-        //
-        // Compose Groups
-        //
+        log("Create the group");
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         cds.useSelectionAsSubjectFilter();
-        cds.saveGroup(STUDY_GROUP, studyGroupDesc);
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog.saveAsAGroup()
+                .setGroupName(STUDY_GROUP)
+                .setGroupDescription(studyGroupDesc)
+                .saveGroup();
 
-        // verify filter is still applied
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
 
-        // TODO: Fix/Update with the new Active filters workflow
-//        click(Locator.tagWithId("a", "editgroupbtn-id"));
+        log("Verify group details from learn about --> group page");
+        refresh();
+        cds.viewLearnAboutPage("Groups");
+        clickAndWait(Locator.tagWithText("h2", STUDY_GROUP));
+        GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
+        Assert.assertEquals("Group Name is incorrect", STUDY_GROUP, detailsPage.getGroupName());
+        Assert.assertEquals("Group description is incorrect", studyGroupDesc, detailsPage.getGroupDescription());
+
+        log("Update the group workflow");
+        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog.updateThisGroup(null, studyGroupDescModified, false);
+
+        log("Verify group description is updated");
+        detailsPage = cds.goToGroup(STUDY_GROUP);
+        Assert.assertEquals("Group Name is incorrect", STUDY_GROUP, detailsPage.getGroupName());
+        Assert.assertEquals("Group description is incorrect", studyGroupDescModified, detailsPage.getGroupDescription());
+    }
+
+    @Test
+    public void testAssayGroup()
+    {
+        String ASSAY_GROUP_NAME = "Single assay group";
+        String ASSAY_GROUP_NAME_UPDATED = "Updated " + ASSAY_GROUP_NAME;
+        String desc = ASSAY_GROUP_NAME + " description";
+
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.selectBars(CDSHelper.ASSAYS[1]);
+        cds.useSelectionAsSubjectFilter();
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog.saveAsAGroup()
+                .setGroupName(ASSAY_GROUP_NAME)
+                .setGroupDescription(desc)
+                .saveGroup();
+
+        log("Verify navigation from learn about page");
+        refresh();
+        cds.viewLearnAboutPage("Groups");
+        clickAndWait(Locator.tagWithText("h2", ASSAY_GROUP_NAME));
+        GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
+        Assert.assertEquals("Group Name is incorrect", ASSAY_GROUP_NAME, detailsPage.getGroupName());
+        Assert.assertEquals("Group description is incorrect", desc, detailsPage.getGroupDescription());
+
+        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog.saveAsNewGroup(ASSAY_GROUP_NAME_UPDATED, null, false);
+
+        log("Verify updated group details");
+        detailsPage = cds.goToGroup(ASSAY_GROUP_NAME_UPDATED);
+        Assert.assertEquals("Group Name is incorrect", ASSAY_GROUP_NAME_UPDATED, detailsPage.getGroupName());
+        Assert.assertEquals("Group description is incorrect", desc, detailsPage.getGroupDescription());
+
+        log("Verify old group exists too");
+        detailsPage = cds.goToGroup(ASSAY_GROUP_NAME);
+        Assert.assertEquals("Group Name is incorrect", ASSAY_GROUP_NAME, detailsPage.getGroupName());
+        Assert.assertEquals("Group description is incorrect", desc, detailsPage.getGroupDescription());
+
+        log("Verifying deleting the group");
+        detailsPage = detailsPage.deleteGroup("Cancel");
+        Assert.assertEquals("Group delete cancel does not work", ASSAY_GROUP_NAME, detailsPage.getGroupName());
+
+        detailsPage.deleteGroup("Delete");
+        cds.viewLearnAboutPage("Groups");
+        refresh();
+        Assert.assertFalse(isTextPresent(ASSAY_GROUP_NAME));
+    }
+
+    @Test
+    public void testActiveFilterValidation()
+    {
+
+    }
 //
-//        setFormElement(Locator.name("groupdescription"), studyGroupDescModified);
-//        click(Locator.tag("a").child("span").withAttributeContaining("class", "menu-item-text").withText("Update this group"));
-//
-//        _asserts.assertFilterStatusCounts(89, 2, 1, 3, 7); // TODO Test data dependent.
-//
-//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-//        waitForText(STUDY_GROUP);
-//        scrollIntoView(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
-//        WebElement groupLabel = Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP).findElement(getDriver());
-//        shortWait().until(ExpectedConditions.elementToBeClickable(groupLabel));
-//        groupLabel.click();
-//
-//        // Verify that the description has changed and that No plot data message is shown.
-//        waitForText(studyGroupDescModified, "No plot saved for this group.");
 //
 //        // verify 'whoops' case
 //        click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
@@ -245,7 +297,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 //        CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(this.getWrappedDriver()).click();
 //        this.waitForText(CDSHelper.HOME_PAGE_HEADER);
 //        cds.clearFilters();
-    }
+//    }
 
     @Test
     public void verifyApplyingGroups()
