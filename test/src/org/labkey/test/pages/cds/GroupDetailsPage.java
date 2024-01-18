@@ -6,6 +6,8 @@ import org.labkey.test.util.Ext4Helper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 public class GroupDetailsPage extends LabKeyPage<LabKeyPage.ElementCache>
 {
     public GroupDetailsPage(WebDriver driver)
@@ -17,7 +19,7 @@ public class GroupDetailsPage extends LabKeyPage<LabKeyPage.ElementCache>
     @Override
     public void waitForPage()
     {
-        _test.waitForText("Edit details");
+        waitForText("Edit details");
     }
 
     public String getGroupName()
@@ -28,6 +30,11 @@ public class GroupDetailsPage extends LabKeyPage<LabKeyPage.ElementCache>
     public String getGroupDescription()
     {
         return newElementCache().groupDesc.getText();
+    }
+
+    public List<String> getGroupList()
+    {
+        return getTexts(newElementCache().groupModuleGrid.findElements(getDriver()));
     }
 
     public GroupDetailsPage deleteGroup(String option)
@@ -45,7 +52,8 @@ public class GroupDetailsPage extends LabKeyPage<LabKeyPage.ElementCache>
     protected class ElementCache extends LabKeyPage.ElementCache
     {
         private final WebElement groupName = Locator.tagWithClass("div","studyname").findWhenNeeded(this);
-        private final WebElement groupDesc = Locator.tag("div").findWhenNeeded(this); //Update after product change
+        private final WebElement groupDesc = Locator.tagWithId("table","group-description-id").findWhenNeeded(this);
+        private final Locator.XPathLocator groupModuleGrid = Locator.tagWithClassContaining("div","groupslearnmodulegrid");
 
         private final WebElement editDetails = Locator.linkWithText("Edit details").findWhenNeeded(this);
         private final WebElement delete = Locator.linkWithText("Delete").findWhenNeeded(this);

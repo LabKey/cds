@@ -173,10 +173,12 @@ public class CDSGroupTest extends CDSGroupBaseTest
         log("Verify group details from learn about --> group page");
         refresh();
         cds.viewLearnAboutPage("Groups");
-        clickAndWait(Locator.tagWithText("h2", STUDY_GROUP));
+        click(Locator.tagWithText("h2", STUDY_GROUP));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", STUDY_GROUP, detailsPage.getGroupName());
         Assert.assertEquals("Group description is incorrect", studyGroupDesc, detailsPage.getGroupDescription());
+        Assert.assertEquals("Incorrect items in the group", Arrays.asList(CDSHelper.STUDIES[0] + "\n" + CDSHelper.STUDIES[1]),
+                detailsPage.getGroupList());
 
         log("Update the group workflow");
         activeFilterDialog = new ActiveFilterDialog(this);
@@ -558,7 +560,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     {
         cds.enterApplication();
         cds.viewLearnAboutPage("Reports");
-        Locator.XPathLocator exportBtn = Locator.tagWithId("a", "learn-grid-export-button-id-btnIconEl").withAttributeContaining("style","display: none");
+        Locator.XPathLocator exportBtn = Locator.tagWithId("a", "learn-grid-export-button-id-btnIconEl").withAttributeContaining("style", "display: none");
         assertFalse("Export button should not be present", isElementPresent(exportBtn));
     }
 

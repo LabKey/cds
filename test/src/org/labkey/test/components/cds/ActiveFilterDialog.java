@@ -60,7 +60,7 @@ public class ActiveFilterDialog extends WebDriverComponent<Component.ElementCach
 
     public ActiveFilterDialog saveAsAGroup()
     {
-        doAndWaitForElementToRefresh(() -> newElementCache().saveAsAGroup.click(), newElementCache().saveGroupEl, 10);
+        newElementCache().saveAsAGroup.click();
         return this;
     }
 
@@ -89,13 +89,11 @@ public class ActiveFilterDialog extends WebDriverComponent<Component.ElementCach
             setGroupName(groupName);
         if (groupDesc != null)
             setGroupDescription(groupDesc);
-        if (shared)
-            setSharedGroup(shared);
+        setSharedGroup(shared);
 
         _webDriverWrapper._ext4Helper.clickExt4MenuButton(true, newElementCache().save, true, "Update this group");
         return new ActiveFilterDialog((BaseWebDriverTest) getDriver());
     }
-
 
     public ActiveFilterDialog saveAsNewGroup(@Nullable String groupName, @Nullable String groupDesc, boolean shared)
     {
@@ -104,8 +102,7 @@ public class ActiveFilterDialog extends WebDriverComponent<Component.ElementCach
             setGroupName(groupName);
         if (groupDesc != null)
             setGroupDescription(groupDesc);
-        if (shared)
-            setSharedGroup(shared);
+        setSharedGroup(shared);
 
         _webDriverWrapper._ext4Helper.clickExt4MenuButton(true, newElementCache().save, true, "Save as new group");
         return new ActiveFilterDialog((BaseWebDriverTest) getDriver());
