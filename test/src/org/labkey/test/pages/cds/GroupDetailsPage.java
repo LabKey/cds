@@ -8,12 +8,11 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public class GroupDetailsPage extends LabKeyPage<LabKeyPage.ElementCache>
+public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
 {
     public GroupDetailsPage(WebDriver driver)
     {
         super(driver);
-        waitForPage();
     }
 
     @Override
@@ -40,7 +39,7 @@ public class GroupDetailsPage extends LabKeyPage<LabKeyPage.ElementCache>
     public GroupDetailsPage deleteGroup(String option)
     {
         newElementCache().delete.click();
-        Ext4Helper.Locators.windowButton("Delete Group", option);
+        click(Ext4Helper.Locators.windowButton("Delete Group", option));
         return this;
     }
     @Override
