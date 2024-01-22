@@ -169,7 +169,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
                 .setGroupDescription(studyGroupDesc)
                 .saveGroup();
 
-
         log("Verify group details from learn about --> group page");
         refresh();
         cds.viewLearnAboutPage("Groups");
@@ -182,7 +181,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         log("Update the group workflow");
         activeFilterDialog = new ActiveFilterDialog(this);
-        activeFilterDialog.updateThisGroup(null, studyGroupDescModified, false);
+        activeFilterDialog.editGroup("Update this group", null, studyGroupDescModified, false);
 
         log("Verify group description is updated");
         detailsPage = cds.goToGroup(STUDY_GROUP);
@@ -210,13 +209,13 @@ public class CDSGroupTest extends CDSGroupBaseTest
         log("Verify navigation from learn about page");
         refresh();
         cds.viewLearnAboutPage("Groups");
-        clickAndWait(Locator.tagWithText("h2", ASSAY_GROUP_NAME));
+        click(Locator.tagWithText("h2", ASSAY_GROUP_NAME));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", ASSAY_GROUP_NAME, detailsPage.getGroupName());
         Assert.assertEquals("Group description is incorrect", desc, detailsPage.getGroupDescription());
 
         activeFilterDialog = new ActiveFilterDialog(this);
-        activeFilterDialog.saveAsNewGroup(ASSAY_GROUP_NAME_UPDATED, null, false);
+        activeFilterDialog.editGroup("Save as new group", ASSAY_GROUP_NAME_UPDATED, null, false);
 
         log("Verify updated group details");
         detailsPage = cds.goToGroup(ASSAY_GROUP_NAME_UPDATED);

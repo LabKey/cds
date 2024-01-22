@@ -23,23 +23,23 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
 
     public String getGroupName()
     {
-        return newElementCache().groupName.getText();
+        return elementCache().groupName.getText();
     }
 
     public String getGroupDescription()
     {
-        return newElementCache().groupDesc.getText();
+        return elementCache().groupDesc.getText();
     }
 
     public List<String> getGroupList()
     {
-        return getTexts(newElementCache().groupModuleGrid.findElements(getDriver()));
+        return getTexts(elementCache().groupModuleGrid.findElements(getDriver()));
     }
 
     public GroupDetailsPage deleteGroup(String option)
     {
         newElementCache().delete.click();
-        click(Ext4Helper.Locators.windowButton("Delete Group", option));
+        waitAndClick(Locator.linkWithText(option));
         return this;
     }
     @Override
