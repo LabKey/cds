@@ -250,7 +250,7 @@ Ext.define('Connector.view.FilterStatus', {
             items: [{
                 xtype: 'button',
                 id: 'editgroupbtn-id',
-                text: 'Edit group',
+                text: 'Save as', //previously 'Edit group'
                 ui: 'rounded-inverted-accent-small',
                 cls: 'edit-group-btn',
                 itemId: 'editgroupbtn-itemid',

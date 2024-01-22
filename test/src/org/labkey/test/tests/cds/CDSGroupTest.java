@@ -426,6 +426,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         log("inserting the value between report and assay");
         updateLinkBetweenAssayAndReport("ICS", reportName);
 
+        goToProjectHome(QED_2);
+        _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Reader");
         goToProjectHome();
         impersonate(NEW_USER_ACCOUNTS[0]);
         cds.enterApplication();
