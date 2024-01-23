@@ -9,7 +9,7 @@ import org.labkey.test.components.html.Input;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class ChangePasswordDialog extends WebDriverComponent<Component.ElementCache>
+public class ChangePasswordDialog extends WebDriverComponent<ChangePasswordDialog.ElementCache>
 {
     private final WebElement _dialogEl;
     private final WebDriverWrapper _webDriverWrapper;
@@ -34,30 +34,38 @@ public class ChangePasswordDialog extends WebDriverComponent<Component.ElementCa
 
     public ChangePasswordDialog setPreviousPassword(String value)
     {
-        newElementCache().previousPwd.set(value);
+        elementCache().previousPwd.set(value);
         return this;
     }
 
     public ChangePasswordDialog setPassword(String value)
     {
-        newElementCache().password.set(value);
+        elementCache().password.set(value);
         return this;
     }
 
     public ChangePasswordDialog setReEnterPassword(String value)
     {
-        newElementCache().reEnterPassword.set(value);
+        elementCache().reEnterPassword.set(value);
         return this;
     }
 
     public String getErrorMessage()
     {
-        return newElementCache().notification.getText();
+        return elementCache().notification.getText();
     }
 
     public void submit()
     {
-        newElementCache().submitButton.click();
+
+        elementCache().submitButton.click();
+        waitForReady();
+
+    }
+
+    public void submitExpectingError()
+    {
+        elementCache().submitButton.click();
     }
 
     @Override
@@ -68,12 +76,12 @@ public class ChangePasswordDialog extends WebDriverComponent<Component.ElementCa
 
     public class ElementCache extends Component<?>.ElementCache
     {
-        Input previousPwd = new Input(Locator.id("prevPassword").refindWhenNeeded(_dialogEl), getDriver());
-        Input password = new Input(Locator.id("password1").refindWhenNeeded(_dialogEl), getDriver());
-        Input reEnterPassword = new Input(Locator.id("password2").refindWhenNeeded(_dialogEl), getDriver());
+        Input previousPwd = new Input(Locator.id("prevPassword").findWhenNeeded(_dialogEl), getDriver());
+        Input password = new Input(Locator.id("password1").findWhenNeeded(_dialogEl), getDriver());
+        Input reEnterPassword = new Input(Locator.id("password2").findWhenNeeded(_dialogEl), getDriver());
 
-        final WebElement notification = Locator.tagWithClass("div", "notifications").refindWhenNeeded(_dialogEl);
-        final WebElement strengthGuidance = Locator.id("password-gauge").refindWhenNeeded(_dialogEl);
-        final WebElement submitButton = Locator.id("changepasswordsubmit").refindWhenNeeded(_dialogEl);
+        final WebElement notification = Locator.tagWithClass("div", "notifications").findWhenNeeded(_dialogEl);
+        final WebElement strengthGuidance = Locator.id("password-gauge").findWhenNeeded(_dialogEl);
+        final WebElement submitButton = Locator.id("changepasswordsubmit").findWhenNeeded(_dialogEl);
     }
 }

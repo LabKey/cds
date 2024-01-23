@@ -97,7 +97,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
     public void testPasswordStrength()
     {
         String goodPwd = "Yekbal1!!";
-        String strongPwd = PasswordUtil.getPassword();
+        String strongPwd = PasswordUtil.getPassword() + "%";
 
         log("Set password strength to Good");
         signIn();
@@ -135,7 +135,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
         log("Verifying password is not complex enough");
         changePasswordDialog.setPassword("weakPwd");
         changePasswordDialog.setReEnterPassword("weakPwd");
-        changePasswordDialog.submit();
+        changePasswordDialog.submitExpectingError();
         Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
             Assert.assertEquals("Incorrect error message",
                     "Your password does not meet the complexity requirements; please choose a new password.",
@@ -145,13 +145,15 @@ public class CDSLoginTest extends CDSReadOnlyTest
         log("Verifying re-entered password matches");
         changePasswordDialog.setPassword(strongPwd);
         changePasswordDialog.setReEnterPassword("WrongRe-enter");
-        changePasswordDialog.submit();
+        changePasswordDialog.submitExpectingError();
         Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
             Assert.assertEquals("Incorrect error message", "Your password entries didn't match.", changePasswordDialog.getErrorMessage());
         });
 
+        changePasswordDialog.setPassword(strongPwd);
         changePasswordDialog.setReEnterPassword(strongPwd);
         changePasswordDialog.submit();
+        waitFor(() -> getCurrentUser().equals(CDS_LOGIN_TESTUSER), "login failed for " + CDS_LOGIN_TESTUSER, defaultWaitForPage);
     }
 
     @Override
