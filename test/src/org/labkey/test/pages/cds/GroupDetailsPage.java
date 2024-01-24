@@ -2,7 +2,7 @@ package org.labkey.test.pages.cds;
 
 import org.labkey.test.Locator;
 import org.labkey.test.pages.LabKeyPage;
-import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -39,9 +39,10 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
     public GroupDetailsPage deleteGroup(String option)
     {
         newElementCache().delete.click();
-        waitAndClick(Locator.linkWithText(option));
+        CDSHelper.Locators.cdsButtonLocator(option, "x-toolbar-item").notHidden().findElement(getDriver()).click();
         return this;
     }
+
     @Override
     protected GroupDetailsPage.ElementCache newElementCache()
     {
@@ -50,9 +51,9 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
 
     protected class ElementCache extends LabKeyPage.ElementCache
     {
-        private final WebElement groupName = Locator.tagWithClass("div","studyname").findWhenNeeded(this);
-        private final WebElement groupDesc = Locator.tagWithId("table","group-description-id").findWhenNeeded(this);
-        private final Locator.XPathLocator groupModuleGrid = Locator.tagWithClassContaining("div","groupslearnmodulegrid");
+        private final WebElement groupName = Locator.tagWithClass("div", "studyname").findWhenNeeded(this);
+        private final WebElement groupDesc = Locator.tagWithId("table", "group-description-id").findWhenNeeded(this);
+        private final Locator.XPathLocator groupModuleGrid = Locator.tagWithClassContaining("div", "groupslearnmodulegrid");
 
         private final WebElement editDetails = Locator.linkWithText("Edit details").findWhenNeeded(this);
         private final WebElement delete = Locator.linkWithText("Delete").findWhenNeeded(this);

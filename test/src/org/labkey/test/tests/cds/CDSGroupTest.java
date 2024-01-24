@@ -65,38 +65,16 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private static final String GROUP_LIVE_FILTER = "CDSTest_DGroup";
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String STUDY_GROUP = "Study Group Verify";
+    private static final String ASSAY_GROUP_NAME = "Single assay group";
+    private static final String ASSAY_GROUP_NAME_UPDATED = "Updated " + ASSAY_GROUP_NAME;
     private static final String GROUP_PLOT_TEST = "Group Plot Test";
 
     private static final String STUDY_GROUP_Z110 = "Study Z110 Group";
     private static final String STUDY_GROUP_Q2 = "Study Q2 Group";
 
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
-    private static final String NAB_Q2_REPORT_SOURCE = "library(Rlabkey)\n" +
-            "\n" +
-            "# Select rows into a data frame called 'labkey.data'\n" +
-            "\n" +
-            "labkey.data <- labkey.selectRows(\n" +
-            "    baseUrl=labkey.url.base, \n" +
-            "    folderPath=labkey.url.path, \n" +
-            "    schemaName=\"study\", \n" +
-            "    queryName=\"NAb\", \n" +
-            "    viewName=\"\", \n" +
-            "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,specimen_type,antigen,antigen_type,virus,virus_type,virus_full_name,virus_species,virus_host_cell,virus_backbone,virus_insert_name,clade,neutralization_tier,tier_clade_virus,target_cell,initial_dilution,titer_ic50,titer_ic80,titer_ID50,titer_ID80,nab_response_ID50,nab_response_ID80,response_call,nab_lab_source_key,lab_code,exp_assayid,slope,vaccine_matched\", \n" +
-            "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"q2\")), \n" +
-            "    containerFilter=NULL, \n" +
-            "    colNameOpt=\"rname\"\n" +
-            ")\n";
-    private static final String ELISPOT_Z110_REPORT_SOURCE = "library(Rlabkey)\n" +
-            "labkey.data <- labkey.selectRows(\n" +
-            "    baseUrl=labkey.url.base, \n" +
-            "    folderPath=labkey.url.path, \n" +
-            "    schemaName=\"study\", \n" +
-            "    queryName=\"ELISPOT\", \n" +
-            "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,antigen,antigen_type,peptide_pool,protein,protein_panel,protein_panel_protein,protein_panel_protein_peptide_pool,clade,cell_type,cell_name,vaccine_matched,specimen_type,functional_marker_name,functional_marker_type,response_call,mean_sfc,mean_sfc_neg,mean_sfc_raw,els_ifng_lab_source_key,lab_code,exp_assayid\", \n" +
-            "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"z110\")), \n" +
-            "    containerFilter=NULL, \n" +
-            "    colNameOpt=\"rname\"\n" +
-            ")\n";
+    private static final String NAB_Q2_REPORT_SOURCE = "library(Rlabkey)\n" + "\n" + "# Select rows into a data frame called 'labkey.data'\n" + "\n" + "labkey.data <- labkey.selectRows(\n" + "    baseUrl=labkey.url.base, \n" + "    folderPath=labkey.url.path, \n" + "    schemaName=\"study\", \n" + "    queryName=\"NAb\", \n" + "    viewName=\"\", \n" + "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,specimen_type,antigen,antigen_type,virus,virus_type,virus_full_name,virus_species,virus_host_cell,virus_backbone,virus_insert_name,clade,neutralization_tier,tier_clade_virus,target_cell,initial_dilution,titer_ic50,titer_ic80,titer_ID50,titer_ID80,nab_response_ID50,nab_response_ID80,response_call,nab_lab_source_key,lab_code,exp_assayid,slope,vaccine_matched\", \n" + "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"q2\")), \n" + "    containerFilter=NULL, \n" + "    colNameOpt=\"rname\"\n" + ")\n";
+    private static final String ELISPOT_Z110_REPORT_SOURCE = "library(Rlabkey)\n" + "labkey.data <- labkey.selectRows(\n" + "    baseUrl=labkey.url.base, \n" + "    folderPath=labkey.url.path, \n" + "    schemaName=\"study\", \n" + "    queryName=\"ELISPOT\", \n" + "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,antigen,antigen_type,peptide_pool,protein,protein_panel,protein_panel_protein,protein_panel_protein_peptide_pool,clade,cell_type,cell_name,vaccine_matched,specimen_type,functional_marker_name,functional_marker_type,response_call,mean_sfc,mean_sfc_neg,mean_sfc_raw,els_ifng_lab_source_key,lab_code,exp_assayid\", \n" + "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"z110\")), \n" + "    containerFilter=NULL, \n" + "    colNameOpt=\"rname\"\n" + ")\n";
     private final CDSTestLearnAbout _cdsTestLearnAbout = new CDSTestLearnAbout();
     private boolean studyLabelUpdated = false;
     private RReportHelper _rReportHelper;
@@ -118,6 +96,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         groups.add(HOME_PAGE_GROUP);
         groups.add(SHARED_GROUP_NAME);
         groups.add(SHARED_MAB_GROUP_NAME);
+        groups.add(ASSAY_GROUP_NAME_UPDATED);
         cds.ensureGroupsDeleted(groups);
 
         cds.ensureNoFilter();
@@ -164,10 +143,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         cds.useSelectionAsSubjectFilter();
         ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
-        activeFilterDialog.saveAsAGroup()
-                .setGroupName(STUDY_GROUP)
-                .setGroupDescription(studyGroupDesc)
-                .saveGroup();
+        activeFilterDialog.saveAsAGroup().setGroupName(STUDY_GROUP).setGroupDescription(studyGroupDesc).saveGroup();
 
         log("Verify group details from learn about --> group page");
         refresh();
@@ -176,8 +152,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", STUDY_GROUP, detailsPage.getGroupName());
         Assert.assertEquals("Group description is incorrect", studyGroupDesc, detailsPage.getGroupDescription());
-        Assert.assertEquals("Incorrect items in the group", Arrays.asList(CDSHelper.STUDIES[0] + "\n" + CDSHelper.STUDIES[1]),
-                detailsPage.getGroupList());
+        Assert.assertEquals("Incorrect items in the group", Arrays.asList(CDSHelper.STUDIES[0] + "\n" + CDSHelper.STUDIES[1]), detailsPage.getGroupList());
 
         log("Update the group workflow");
         activeFilterDialog = new ActiveFilterDialog(this);
@@ -192,8 +167,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
     @Test
     public void testAssayGroup()
     {
-        String ASSAY_GROUP_NAME = "Single assay group";
-        String ASSAY_GROUP_NAME_UPDATED = "Updated " + ASSAY_GROUP_NAME;
         String desc = ASSAY_GROUP_NAME + " description";
 
         cds.goToSummary();
@@ -201,10 +174,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
         ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
-        activeFilterDialog.saveAsAGroup()
-                .setGroupName(ASSAY_GROUP_NAME)
-                .setGroupDescription(desc)
-                .saveGroup();
+        activeFilterDialog.saveAsAGroup().setGroupName(ASSAY_GROUP_NAME).setGroupDescription(desc).saveGroup();
 
         log("Verify navigation from learn about page");
         refresh();
@@ -651,20 +621,15 @@ public class CDSGroupTest extends CDSGroupBaseTest
         insertData("cds_saved_group_id", cds_saved_group_id, null, null, "publication_id", pubId, "cds", "publicationCuratedGroup");
     }
 
-    private void insertData(String savedGrpColName, int savedGrpId,
-                            String protColName, String protVal,
-                            String pubColName, Integer pubId,
-                            String schemaName, String table) throws IOException, CommandException
+    private void insertData(String savedGrpColName, int savedGrpId, String protColName, String protVal, String pubColName, Integer pubId, String schemaName, String table) throws IOException, CommandException
     {
         Connection cn = WebTestHelper.getRemoteApiConnection();
 
         InsertRowsCommand insertCmd = new InsertRowsCommand(schemaName, table);
         Map<String, Object> rowMap = new HashMap<>();
         rowMap.put(savedGrpColName, savedGrpId);
-        if (null != protColName && null != protVal)
-            rowMap.put(protColName, protVal);
-        else if (null != pubColName && null != pubId)
-            rowMap.put(pubColName, pubId);
+        if (null != protColName && null != protVal) rowMap.put(protColName, protVal);
+        else if (null != pubColName && null != pubId) rowMap.put(pubColName, pubId);
 
         insertCmd.addRow(rowMap);
 
