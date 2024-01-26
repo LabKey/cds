@@ -60,13 +60,15 @@ import static org.labkey.test.util.cds.CDSHelper.ZAP_110;
 @BaseWebDriverTest.ClassTimeout(minutes = 22)
 public class CDSGroupTest extends CDSGroupBaseTest
 {
-
     // Known Test Groups
     private static final String GROUP_LIVE_FILTER = "CDSTest_DGroup";
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String STUDY_GROUP = "Study Group Verify";
     private static final String ASSAY_GROUP_NAME = "Single assay group";
     private static final String ASSAY_GROUP_NAME_UPDATED = "Updated " + ASSAY_GROUP_NAME;
+
+    private static final String CDS_SINGLE_GROUP = "cds_single_group";
+    private static final String MULTI_FILTER_GROUP = "cds_multi_group";
     private static final String GROUP_PLOT_TEST = "Group Plot Test";
 
     private static final String STUDY_GROUP_Z110 = "Study Z110 Group";
@@ -97,6 +99,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
         groups.add(SHARED_GROUP_NAME);
         groups.add(SHARED_MAB_GROUP_NAME);
         groups.add(ASSAY_GROUP_NAME_UPDATED);
+        groups.add(CDS_SINGLE_GROUP);
+        groups.add(MULTI_FILTER_GROUP);
         cds.ensureGroupsDeleted(groups);
 
         cds.ensureNoFilter();
@@ -131,7 +135,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     }
 
     @Test
-    public void testStudyGroups()
+    public void testUpdateThisGroup()
     {
         log("Verifying Study Group workflow");
         String studyGroupDesc = "A set of defined studies.";
@@ -162,10 +166,21 @@ public class CDSGroupTest extends CDSGroupBaseTest
         detailsPage = cds.goToGroup(STUDY_GROUP);
         Assert.assertEquals("Group Name is incorrect", STUDY_GROUP, detailsPage.getGroupName());
         Assert.assertEquals("Group description is incorrect", studyGroupDescModified, detailsPage.getGroupDescription());
+
+        activeFilterDialog.clear();
+        cds.goToSummary();
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.STUDIES[3]);
+        cds.useSelectionAsSubjectFilter();
+        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog.saveAsAGroup()
+                .setGroupName(STUDY_GROUP)
+                .setGroupDescription(studyGroupDesc)
+                .saveExpectingError("A group with this name already exists. Please choose a different name.");
     }
 
     @Test
-    public void testAssayGroup()
+    public void testSaveAsNewGroup()
     {
         String desc = ASSAY_GROUP_NAME + " description";
 
@@ -208,82 +223,35 @@ public class CDSGroupTest extends CDSGroupBaseTest
     }
 
     @Test
-    public void testActiveFilterValidation()
-    {
-
-    }
-//
-//
-//        // verify 'whoops' case
-//        click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
-//        waitForText("create a new group");
-//        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "groupcancelreplace"));
-//        cds.clearFilters();
-//
-//        // add a filter, which should be blown away when a group filter is selected
-//        cds.goToSummary();
-//        cds.clickBy("Assays");
-//        cds.selectBars(CDSHelper.ASSAYS[1]);
-//        cds.useSelectionAsSubjectFilter();
-//        _asserts.assertFilterStatusCounts(1604, 14, 2, 3, 91); // TODO Test data dependent.
-//
-//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-//        waitForText(STUDY_GROUP);
-//        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
-//
-//        // Verify the group does overwrite already active filters
-//        sleep(500); // give it a chance to apply
-//        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
-//        cds.clearFilters();
-//
-//        // Verify the filters get applied when directly acting
-//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-//        waitForText(STUDY_GROUP);
-//        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
-//        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
-//        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
-//        _asserts.assertFilterStatusCounts(89, 2, 1, 3, 7); // TODO Test data dependent.
-//        assertTextPresent("Study Group Verify", "Description", studyGroupDescModified);
-//        cds.clearFilters();
-//
-//        // Verify that you can cancel delete
-//        click(CDSHelper.Locators.cdsButtonLocator("Delete"));
-//        waitForText("Are you sure you want to delete");
-//        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "x-toolbar-item").notHidden());
-//        _ext4Helper.waitForMaskToDisappear();
-//        assertTextPresent(studyGroupDescModified);
-//
-//        // Verify back button works, should take user to Learn > Groups page
-//        click(CDSHelper.Locators.pageHeaderBack());
-//        waitForText(CDSHelper.HOME_PAGE_HEADER);
-//        waitForText(STUDY_GROUP);
-//
-//        // Verify delete works.
-//        LearnGrid learnGrid = new LearnGrid(this);
-//        learnGrid.setSearch(STUDY_GROUP).clickFirstItem();
-//        Locator delete = CDSHelper.Locators.cdsButtonLocator("Delete");
-//        waitForElement(delete);
-//        delete.findElement(this.getWrappedDriver()).click();
-//        this.waitForText("Are you sure you want to delete");
-//        CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(this.getWrappedDriver()).click();
-//        this.waitForText(CDSHelper.HOME_PAGE_HEADER);
-//        cds.clearFilters();
-//    }
-
-    @Test
     public void verifyApplyingGroups()
     {
         String singleFilterGroup = "cds_single_group";
         String multiFilterGroup = "cds_multi_group";
-        Locator.XPathLocator singleLoc = CDSHelper.Locators.getPrivateGroupLoc(singleFilterGroup);
-        Locator.XPathLocator multiLoc = CDSHelper.Locators.getPrivateGroupLoc(multiFilterGroup);
 
         log("Compose a group that consist of a single filter");
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.selectBars("ICS");
         cds.useSelectionAsSubjectFilter();
-        cds.saveGroup(singleFilterGroup, "", false);
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog.saveAsAGroup()
+                .setGroupName(singleFilterGroup)
+                .setGroupDescription(singleFilterGroup)
+                .saveGroup();
+
+        log("Verifying Single filter group");
+        refresh();
+        cds.viewLearnAboutPage("Groups");
+        click(Locator.tagWithText("h2", singleFilterGroup));
+        GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
+        Assert.assertEquals("Group Name is incorrect", singleFilterGroup, detailsPage.getGroupName());
+        log("Verify the group consist of a single filter is applied correctly");
+        List<WebElement> activeFilters = cds.getActiveFilters();
+        assertEquals("Number of active filters not as. expected.", 1, activeFilters.size());
+
+        log("Clear the previous filter");
+        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog.clear();
 
         log("Compose a group that consist of 4 filter");
         cds.goToSummary();
@@ -297,42 +265,21 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.selectBars("RED 4", "RED 5");
         cds.useSelectionAsSubjectFilter();
 
-        //TODO: Fix/Update with the new Active filters workflow - Use Edit group > Save menu > Save as new group.
-        // also, need to delete the group before we can save it again if it already exists.
-//        cds.saveGroup(multiFilterGroup, "", false);
-//
-//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-//        refresh(); //TODO: Newly saved groups should be available without refresh, this is a bug that needs to be fixed.
-//        shortWait().until(ExpectedConditions.elementToBeClickable(singleLoc));
-//        click(singleLoc);
-//        sleep(2000); // wait for filter panel to stablize
-//        log("Verify the group consist of a single filter is applied correctly");
-//        List<WebElement> activeFilters = cds.getActiveFilters();
-//        assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
-//
-//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-//        shortWait().until(ExpectedConditions.elementToBeClickable(multiLoc));
-//        click(multiLoc);
-//        sleep(2000); // wait for filter panel to stablize
-//        log("Verify the group consist of a 4 filters is applied correctly when current filter panel contains only one filter");
-//        activeFilters = cds.getActiveFilters();
-//        assertEquals("Number of active filters not as expected.", 4, activeFilters.size());
-//
-//
-//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-//        shortWait().until(ExpectedConditions.elementToBeClickable(singleLoc));
-//        click(singleLoc);
-//        sleep(2000); // wait for filter panel to stablize
-//        log("Verify the group consist of a single filter is applied correctly when current filter panel contains 4 filters");
-//        activeFilters = cds.getActiveFilters();
-//        assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
-//
-//        //clean up
-//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-//        cds.deleteGroupFromSummaryPage(singleFilterGroup);
-//        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-//        cds.deleteGroupFromSummaryPage(multiFilterGroup);
-//        cds.clearFilters();
+        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog.saveAsAGroup()
+                .setGroupName(multiFilterGroup)
+                .setGroupDescription(multiFilterGroup)
+                .saveGroup();
+
+        log("Verifying Multi filter group");
+        refresh();
+        cds.viewLearnAboutPage("Groups");
+        click(Locator.tagWithText("h2", multiFilterGroup));
+        detailsPage = new GroupDetailsPage(getDriver());
+        Assert.assertEquals("Group Name is incorrect", multiFilterGroup, detailsPage.getGroupName());
+        log("Verify the group consist of a 4 filters is applied correctly when current filter panel contains only one filter");
+        activeFilters = cds.getActiveFilters();
+        assertEquals("Number of active filters not as expected.", 3, activeFilters.size());
     }
 
     @Test

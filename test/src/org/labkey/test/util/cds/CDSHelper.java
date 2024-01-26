@@ -1372,35 +1372,22 @@ public class CDSHelper
     @LogMethod (quiet = true)
     public void deleteGroupFromSummaryPage(@LoggedParam String name)
     {
-        BaseWebDriverTest.sleep(500);
-        goToLearnGroupsPage();
-        goToGroupFromLearnGrid(name);
-        _test.waitForElement(Locators.cdsButtonLocator("Delete"));
-        Locators.cdsButtonLocator("Delete").findElement(_test.getWrappedDriver()).click();
-        _test.waitForText("Are you sure you want to delete");
-        Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(_test.getWrappedDriver()).click();
-        _test.waitForText(HOME_PAGE_HEADER);
-        goToLearnGroupsPage();
+        viewLearnAboutPage("Groups");
+        GroupDetailsPage groupDetailsPage = goToGroupFromLearnGrid(name);
+        groupDetailsPage.deleteGroup("Delete");
+
         _test.refresh();
-        BaseWebDriverTest.sleep(1000);
+        viewLearnAboutPage("Groups");
         LearnGrid learnGrid = new LearnGrid(_test);
         int rowCount = learnGrid.setSearch(name).getRowCount();
         assertTrue("Group '" + name + "' was not deleted.", rowCount == 0);
-
-        BaseWebDriverTest.sleep(1000);
         _test._ext4Helper.waitForMaskToDisappear();
     }
-
-    private void goToLearnGroupsPage()
-    {
-        CDSHelper.NavigationLink.LEARN.makeNavigationSelection(_test);
-        viewLearnAboutPage("Groups");
-    }
-
-    private void goToGroupFromLearnGrid(String groupName)
+    private GroupDetailsPage goToGroupFromLearnGrid(String groupName)
     {
         LearnGrid learnGrid = new LearnGrid(_test);
         learnGrid.setSearch(groupName).clickFirstItem();
+        return new GroupDetailsPage(_test.getDriver());
     }
 
     public void toggleExplorerBar(String largeBarText)
