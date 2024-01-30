@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.components.cds.ActiveFilterDialog;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
@@ -388,21 +389,21 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         cds.clickBy("Subject characteristics");
         cds.pickSort("Country at enrollment");
         cds.selectBars("United States");
+        cds.useSelectionAsSubjectFilter();
 
         // save the group and request cancel
-        click(Locator.tagWithId("a", "filter-save-as-group-btn-id"));
-        waitFor(()-> Locator.name("groupname").findElement(getDriver()).isDisplayed(), 5000);
-        setFormElement(Locator.name("groupname"), GROUP_NULL);
-        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "groupcancelcreate"));
-        waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
+        ActiveFilterDialog filterDialog = new ActiveFilterDialog(this);
+        filterDialog.saveAsAGroup()
+                .setGroupName(GROUP_NULL).setGroupDescription(GROUP_NULL).cancel();
 
         // save the group and request save
-        cds.saveGroup(GROUP_NAME2, null);
+        filterDialog = new ActiveFilterDialog(this);
+        filterDialog.saveAsAGroup()
+                .setGroupName(GROUP_NAME2).setGroupDescription(GROUP_NAME2).saveGroup();
 
         // save a group with an interior group
-        // TODO: Fix/Update with the new Active filters workflow, here you'd go to Edit group > Save menu > Save as new group
-//        cds.saveGroup(GROUP_NAME3, null);
-
+        filterDialog = new ActiveFilterDialog(this);
+        filterDialog.editGroup("Save as new group", GROUP_NAME3, GROUP_DESC, false);
         cds.clearFilters();
     }
 

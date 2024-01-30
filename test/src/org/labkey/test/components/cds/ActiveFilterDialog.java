@@ -8,6 +8,7 @@ import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.components.Component;
 import org.labkey.test.components.WebDriverComponent;
 import org.labkey.test.components.html.Input;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -93,7 +94,14 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
 
     public ActiveFilterDialog editGroup(String action, @Nullable String groupName, @Nullable String groupDesc, boolean shared)
     {
-        elementCache().editGroup.click();
+        try
+        {
+            elementCache().editGroup.click();
+        }
+        catch (NoSuchElementException e)
+        {
+            elementCache().saveAs.click();
+        }
         if (groupName != null)
             setGroupName(groupName);
         if (groupDesc != null)
@@ -120,6 +128,7 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
         final WebElement save = Locator.linkWithText("Save").refindWhenNeeded(_activeFilterDialogEl);
         final WebElement saveGroup = Locator.linkWithText("Save group").findWhenNeeded(_activeFilterDialogEl);
         final WebElement editGroup = Locator.linkWithText("Edit group").findWhenNeeded(_activeFilterDialogEl);
+        final WebElement saveAs = Locator.linkWithText("Save as").findWhenNeeded(_activeFilterDialogEl);
         final Locator errorMsg = Locator.tagWithClass("div", "errormsg");
         Locator saveGroupEl = Locator.tagWithId("div", "filterstatus-id");
         Input groupName = new Input(Locator.name("groupname").findWhenNeeded(_activeFilterDialogEl), getDriver());
