@@ -18,7 +18,7 @@ s.description
 
 FROM
     study.subjectgroupmap sgm
-LEFT JOIN study.subjectcategory sc ON sgm.groupId.label = sc.label
+LEFT JOIN study.subjectcategory sc ON sgm.groupId.CategoryId.RowId = sc.RowId
 LEFT JOIN cds.study s ON sgm.container.name = s.study_name -- each study protocol has a container of the same name as the study protocol
 LEFT JOIN cds.learn_productsforstudies pfs ON sgm.container.name = pfs.study_name
 LEFT JOIN cds.learn_assaysforstudies afs ON sgm.container.name = afs.prot
