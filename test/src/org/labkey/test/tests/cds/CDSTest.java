@@ -21,6 +21,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.Timeout;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.components.cds.ActiveFilterDialog;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
 import org.labkey.test.pages.cds.InfoPane;
@@ -224,9 +225,9 @@ public class CDSTest extends CDSReadOnlyTest
         int plotFilterCount = Locator.css("div.groupicon img").findElements(getWrappedDriver()).size();
         cds.clearFilter(0);
 
-        //TODO: Fix/Update with the new Active filters workflow - Edit group > Save menu > Update group
-        cds.saveOverGroup(HOME_PAGE_GROUP);
-//        waitForText(saveLabel);
+        ActiveFilterDialog filterDialog = new ActiveFilterDialog(this);
+        filterDialog.editGroup("Update this group", HOME_PAGE_GROUP, null, false);
+
         //TODO After updating the group, should see plot icon disappear since the filter was cleared on line 225
 //        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
 //        waitForElements(Locator.css("div.groupicon img"), plotFilterCount - 1);
