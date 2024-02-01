@@ -19,8 +19,10 @@ import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebDriverWrapper;
+import org.labkey.test.components.cds.ChangePasswordDialog;
 import org.labkey.test.util.PasswordUtil;
 import org.openqa.selenium.WebElement;
+
 import java.util.List;
 
 // Like the other CDS pages it would be nice to convert this page to a LabKeyPage object.
@@ -37,7 +39,7 @@ public class CDSLoginPage
     {
         _test = test;
         // Wait until the signInButton is visible (not null) before returning.
-        WebDriverWrapper.waitFor(()->signInButton() != null, "Sign-In page did not load.", 5_000);
+        WebDriverWrapper.waitFor(() -> signInButton() != null, "Sign-In page did not load.", 5_000);
     }
 
     public void logIn()
@@ -55,15 +57,25 @@ public class CDSLoginPage
         _test.waitForElement(Locator.linkWithText("Logout"));
     }
 
+    public ChangePasswordDialog logInToChangePwd(String user, String password)
+    {
+        Assert.assertTrue("Must agree to terms of use before logging in", termsCheckbox().isSelected());
+        _test.setFormElement(emailField(), user);
+        _test.setFormElement(passwordField(), password);
+        _test.clickAndWait(signInButton());
+
+        return new ChangePasswordDialog(_test);
+    }
+
     private WebElement findVisible(Locator locator)
     {
         // Yes this is ugly. The findElements will return only two or three controls, it is the check to see if it is
         // visible that will take a while.
         WebElement element = null;
         List<WebElement> elements = locator.findElements(_test.getDriver());
-        for(WebElement el : elements)
+        for (WebElement el : elements)
         {
-            if(el.isDisplayed())
+            if (el.isDisplayed())
             {
                 element = el;
                 break;
