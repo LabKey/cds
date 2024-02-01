@@ -47,6 +47,11 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
         return this;
     }
 
+    public String getGroupName()
+    {
+        return elementCache().groupName.get();
+    }
+
     public ActiveFilterDialog setGroupDescription(String value)
     {
         elementCache().groupDescription.set(value);
@@ -74,8 +79,7 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
     public void saveGroup()
     {
         elementCache().saveGroup.click();
-        _webDriverWrapper.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(Locator.tagWithId("div", "savedgroupname-id")
-                .withAttributeContaining("style", "display: none")));
+        _webDriverWrapper.shortWait().until(ExpectedConditions.visibilityOf(Locator.linkWithText(getGroupName()).findElement(_activeFilterDialogEl)));
     }
 
     public ActiveFilterDialog saveExpectingError(String errorMsg)

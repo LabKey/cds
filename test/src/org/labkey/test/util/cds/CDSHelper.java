@@ -991,14 +991,6 @@ public class CDSHelper
         _test.createUserWithPermissions(userName, projectName, permissions);
     }
 
-    public void saveOverGroup(String name)
-    {
-        _test.click(Locators.cdsButtonLocator("save", "filtersave"));
-        _test.click(Locators.cdsButtonLocator("replace an existing group"));
-        _test.waitAndClick(Locator.tagWithClass("div", "save-label").withText(name));
-        _test.click(Locators.cdsButtonLocator("Save", "groupupdatesave"));
-    }
-
     public void ensureGroupsDeleted(List<String> groups)
     {
         boolean isVisible;
