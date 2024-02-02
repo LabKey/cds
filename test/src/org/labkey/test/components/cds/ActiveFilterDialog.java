@@ -78,9 +78,9 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
 
     public void saveGroup()
     {
-        while(_webDriverWrapper.waitForElement(Locator.linkWithText(getGroupName())) == null)
-            elementCache().saveGroup.click();
-
+        _webDriverWrapper.shortWait().until(ExpectedConditions.elementToBeClickable(elementCache().saveGroup));
+        elementCache().saveGroup.click();
+        _webDriverWrapper.waitForElement(Locator.linkWithText(getGroupName()));
     }
 
     public ActiveFilterDialog saveExpectingError(String errorMsg)
