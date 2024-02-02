@@ -80,11 +80,20 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
     {
         _webDriverWrapper.shortWait().until(ExpectedConditions.elementToBeClickable(elementCache().saveGroup));
         elementCache().saveGroup.click();
+        try
+        {
+            _webDriverWrapper.waitForElement(Locator.linkWithText(getGroupName()));
+        }
+        catch (NoSuchElementException e)
+        {
+            elementCache().saveGroup.click();
+        }
         _webDriverWrapper.waitForElement(Locator.linkWithText(getGroupName()));
     }
 
     public ActiveFilterDialog saveExpectingError(String errorMsg)
     {
+        _webDriverWrapper.shortWait().until(ExpectedConditions.elementToBeClickable(elementCache().saveGroup));
         elementCache().saveGroup.click();
         _webDriverWrapper.shortWait().until(ExpectedConditions.visibilityOfElementLocated(elementCache().errorMsg));
         Assert.assertEquals("Error message is not as expected", errorMsg, elementCache().errorMsg.findElement(_activeFilterDialogEl).getText());

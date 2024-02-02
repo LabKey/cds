@@ -219,7 +219,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         detailsPage.deleteGroup("Delete");
         cds.viewLearnAboutPage("Groups");
         refresh();
-        Assert.assertFalse(isTextPresent(ASSAY_GROUP_NAME));
+        Assert.assertFalse("Deleted group is still present " + ASSAY_GROUP_NAME, isElementPresent(Locator.tagContainingText("h2", ASSAY_GROUP_NAME)));
     }
 
     @Test
