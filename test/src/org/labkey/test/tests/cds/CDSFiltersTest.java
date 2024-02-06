@@ -40,9 +40,9 @@ public class CDSFiltersTest extends CDSReadOnlyTest
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " + CDSHelper.STUDIES[1] + " and " + CDSHelper.STUDIES[4];
 
-    private static final String GROUP_NAME = "CDSTest_AGroup";
-    private static final String GROUP_NAME2 = "CDSTest_BGroup";
-    private static final String GROUP_NAME3 = "CDSTest_CGroup";
+    private static final String GROUP_NAME = "A_CDSTest_AGroup";
+    private static final String GROUP_NAME2 = "B_CDSTest_BGroup";
+    private static final String GROUP_NAME3 = "C_CDSTest_CGroup";
 
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
