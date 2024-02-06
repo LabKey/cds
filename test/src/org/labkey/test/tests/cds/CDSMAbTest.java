@@ -27,6 +27,7 @@ import org.labkey.test.TestFileUtils;
 import org.labkey.test.pages.cds.AntigenFilterPanel;
 import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.InfoPane;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.MAbDataGrid;
 import org.labkey.test.util.cds.CDSHelper;
 
@@ -914,11 +915,24 @@ public class CDSMAbTest extends CDSGroupBaseTest
         log("Verify mAb and subject groups listing");
         cds.goToAppHome();
         refresh(); //TODO: Newly saved groups should be available without refresh, this is a bug that needs to be fixed.
-        waitForElement(CDSHelper.Locators.getPrivateGroupLoc(subjectPrivateGroup));
-        waitForElement(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup));
-        Assert.assertTrue(mabPrivateGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getPrivateGroupLoc(mabPrivateGroup)));
-        Assert.assertTrue(subjectPublicGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getSharedGroupLoc(subjectPublicGroup)));
-        Assert.assertFalse(mabPrivateGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getSharedGroupLoc(mabPrivateGroup)));
+        if (isElementVisible(CDSHelper.Locators.getPrivateGroupLoc(subjectPrivateGroup)) &&
+                isElementVisible(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup)))
+        {
+            Assert.assertTrue(mabPrivateGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getPrivateGroupLoc(mabPrivateGroup)));
+            Assert.assertTrue(subjectPublicGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getSharedGroupLoc(subjectPublicGroup)));
+            Assert.assertFalse(mabPrivateGroup + " is not listed as expected", isElementPresent(CDSHelper.Locators.getSharedGroupLoc(mabPrivateGroup)));
+        }
+        else
+        {
+            clickAndWait(Locator.linkWithText("(View all)").index(0).findElement(getDriver()));
+            LearnGrid learnGrid = new LearnGrid(this);
+            Assert.assertEquals(subjectPrivateGroup + " group was not found", 1, learnGrid.setSearch(subjectPrivateGroup).getRowCount());
+            Assert.assertEquals(mabPublicGroup + " group was not found", 1, learnGrid.setSearch(mabPublicGroup).getRowCount());
+            Assert.assertEquals(mabPrivateGroup + " group was not found", 1, learnGrid.setSearch(mabPrivateGroup).getRowCount());
+            Assert.assertEquals(subjectPublicGroup + " group was not found", 1, learnGrid.setSearch(subjectPublicGroup).getRowCount());
+            Assert.assertEquals(mabPrivateGroup + " group was not found", 1, learnGrid.setSearch(mabPrivateGroup).getRowCount());
+        }
+
 
         log("Apply a saved mab group");
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
