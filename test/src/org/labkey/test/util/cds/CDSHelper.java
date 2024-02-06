@@ -994,7 +994,7 @@ public class CDSHelper
     public void ensureGroupsDeleted(List<String> groups)
     {
         boolean isVisible;
-
+        _test.getArtifactCollector().dumpPageSnapshot("BeginingDelete");
         List<String> deletable = new ArrayList<>();
         for (String group : groups)
         {
@@ -1013,7 +1013,7 @@ public class CDSHelper
             if (_test.isTextPresent(subName) && isVisible)
                 deletable.add(subName);
         }
-
+        log("Deletable " + deletable);
         if (deletable.size() > 0)
         {
             deletable.forEach(this::deleteGroupFromSummaryPage);

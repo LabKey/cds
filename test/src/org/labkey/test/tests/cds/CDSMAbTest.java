@@ -915,6 +915,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         log("Verify mAb and subject groups listing");
         cds.goToAppHome();
         refresh(); //TODO: Newly saved groups should be available without refresh, this is a bug that needs to be fixed.
+        waitForText("My saved groups and plots", "Curated groups and plots");
         if (isElementPresent(CDSHelper.Locators.getPrivateGroupLoc(subjectPrivateGroup)) &&
                 isElementPresent(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup)))
         {
@@ -924,7 +925,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         }
         else
         {
-            clickAndWait(Locator.linkWithText("(View all)").index(0).findElement(getDriver()));
+            waitAndClickAndWait(Locator.linkWithText("(View all)").index(0));
             LearnGrid learnGrid = new LearnGrid(this);
             Assert.assertEquals(subjectPrivateGroup + " group was not found", 1, learnGrid.setSearch(subjectPrivateGroup).getRowCount());
             Assert.assertEquals(mabPublicGroup + " group was not found", 1, learnGrid.setSearch(mabPublicGroup).getRowCount());
