@@ -993,31 +993,21 @@ public class CDSHelper
 
     public void ensureGroupsDeleted(List<String> groups)
     {
-        boolean isVisible;
         _test.getArtifactCollector().dumpPageSnapshot("BeginingDelete");
         List<String> deletable = new ArrayList<>();
+        viewLearnAboutPage("Groups");
+        LearnGrid learnGrid = new LearnGrid(_test);
         for (String group : groups)
         {
             String subName = group.substring(0, 10);
-
-            // Adding this test for the scenario of a test failure and this is called after the page has been removed.
-            try
+            if(learnGrid.setSearch(subName).getRowCount() > 0 )
             {
-                isVisible = _test.isElementVisible(Locator.tagWithClass("div", "grouplabel").containing(subName));
-            }
-            catch (org.openqa.selenium.NoSuchElementException nse)
-            {
-                isVisible = false;
-            }
-
-            if (_test.isTextPresent(subName) && isVisible)
                 deletable.add(subName);
+            }
         }
-        log("Deletable " + deletable);
+        learnGrid.clearSearch();
         if (deletable.size() > 0)
-        {
             deletable.forEach(this::deleteGroupFromSummaryPage);
-        }
     }
 
     @LogMethod
@@ -1365,6 +1355,7 @@ public class CDSHelper
     public void deleteGroupFromSummaryPage(@LoggedParam String name)
     {
         viewLearnAboutPage("Groups");
+        _test.getArtifactCollector().dumpPageSnapshot("BeforeDelete");
         GroupDetailsPage groupDetailsPage = goToGroupFromLearnGrid(name);
         groupDetailsPage.deleteGroup("Delete");
 
@@ -1373,6 +1364,7 @@ public class CDSHelper
         LearnGrid learnGrid = new LearnGrid(_test);
         int rowCount = learnGrid.setSearch(name).getRowCount();
         assertTrue("Group '" + name + "' was not deleted.", rowCount == 0);
+        learnGrid.clearSearch();
         _test._ext4Helper.waitForMaskToDisappear();
     }
     private GroupDetailsPage goToGroupFromLearnGrid(String groupName)

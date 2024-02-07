@@ -88,6 +88,14 @@ public class LearnGrid
         return this;
     }
 
+    @LogMethod
+    public LearnGrid clearSearch()
+    {
+       Locators.clearSearch.findElement(_test.getDriver()).click();
+        _test.sleep(CDSHelper.CDS_WAIT_LEARN);
+       return this;
+    }
+
     @LogMethod(quiet = true)
     public LearnGrid openFilterPanel(@LoggedParam String columnHeaderName)
     {
@@ -332,6 +340,8 @@ public class LearnGrid
     public static class Locators
     {
         public static final Locator.XPathLocator searchBox = Locator.xpath("//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input");
+
+        public static final Locator.XPathLocator clearSearch = Locator.xpath("//table[contains(@class, 'learn-search-input')]//tbody//tr//td//div");
 
         public static final Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
         public static final Locator.XPathLocator unlockedRow = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div/div/table/tbody/tr");
