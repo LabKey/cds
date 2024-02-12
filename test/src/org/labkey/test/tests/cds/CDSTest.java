@@ -225,7 +225,7 @@ public class CDSTest extends CDSReadOnlyTest
         int plotFilterCount = Locator.css("div.groupicon img").findElements(getWrappedDriver()).size();
         cds.clearFilter(0);
 
-        ActiveFilterDialog filterDialog = new ActiveFilterDialog(this);
+        ActiveFilterDialog filterDialog = new ActiveFilterDialog(getDriver());
         filterDialog.editGroup("Update this group", HOME_PAGE_GROUP, null, false);
 
         //TODO After updating the group, should see plot icon disappear since the filter was cleared on line 225

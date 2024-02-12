@@ -1353,12 +1353,12 @@ public class CDSHelper
     @LogMethod (quiet = true)
     public void deleteGroupFromSummaryPage(@LoggedParam String name)
     {
-        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
+        _test.beginAt(_test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
         GroupDetailsPage groupDetailsPage = goToGroupFromLearnGrid(name);
         groupDetailsPage.deleteGroup("Delete");
 
         _test.refresh();
-        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
+        _test.beginAt(_test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
         LearnGrid learnGrid = new LearnGrid(_test);
         int rowCount = learnGrid.setSearch(name).getRowCount();
         assertTrue("Group '" + name + "' was not deleted.", rowCount == 0);

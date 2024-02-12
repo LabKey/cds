@@ -2,11 +2,10 @@ package org.labkey.test.components.cds;
 
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.components.Component;
 import org.labkey.test.components.WebDriverComponent;
+import org.labkey.test.components.ext4.Checkbox;
 import org.labkey.test.components.html.Input;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -16,17 +15,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.ElementCache>
 {
     private final WebElement _activeFilterDialogEl;
-    private final WebDriverWrapper _webDriverWrapper;
+    private final WebDriver _driver;
 
-    public ActiveFilterDialog(BaseWebDriverTest test)
+    public ActiveFilterDialog(WebDriver driver)
     {
-        _webDriverWrapper = test;
-        _activeFilterDialogEl = newElementCache().saveGroupEl.refindWhenNeeded(_webDriverWrapper.getDriver());
-    }
-
-    public void waitForSaveGroupDialog()
-    {
-        _webDriverWrapper.waitForElement(elementCache().saveGroupEl);
+        _driver = driver;
+        _activeFilterDialogEl = Locator.tagWithId("div", "filterstatus-id").waitForElement(this, 1_000);
     }
 
     @Override
@@ -38,18 +32,18 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
     @Override
     protected WebDriver getDriver()
     {
-        return _webDriverWrapper.getDriver();
+        return _driver;
+    }
+
+    public String getGroupName()
+    {
+        return elementCache().groupName.get();
     }
 
     public ActiveFilterDialog setGroupName(String value)
     {
         elementCache().groupName.set(value);
         return this;
-    }
-
-    public String getGroupName()
-    {
-        return elementCache().groupName.get();
     }
 
     public ActiveFilterDialog setGroupDescription(String value)
@@ -61,7 +55,9 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
     public ActiveFilterDialog setSharedGroup(boolean value)
     {
         if (value)
-            _webDriverWrapper._ext4Helper.checkCheckbox(elementCache().sharedGroup);
+            elementCache().sharedGroup.check();
+        else
+            elementCache().sharedGroup.uncheck();
         return this;
     }
 
@@ -78,24 +74,32 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
 
     public void saveGroup()
     {
-        _webDriverWrapper.shortWait().until(ExpectedConditions.elementToBeClickable(elementCache().saveGroup));
+        getWrapper().shortWait().until(ExpectedConditions.elementToBeClickable(elementCache().saveGroup));
         elementCache().saveGroup.click();
         try
         {
-            _webDriverWrapper.waitForElement(Locator.linkWithText(getGroupName()));
+            getWrapper().waitForElement(Locator.linkWithText(getGroupName()));
         }
         catch (NoSuchElementException e)
         {
             elementCache().saveGroup.click();
         }
-        _webDriverWrapper.waitForElement(Locator.linkWithText(getGroupName()));
+        getWrapper().waitForElement(Locator.linkWithText(getGroupName()));
     }
 
     public ActiveFilterDialog saveExpectingError(String errorMsg)
     {
-        _webDriverWrapper.shortWait().until(ExpectedConditions.elementToBeClickable(elementCache().saveGroup));
+        getWrapper().shortWait().until(ExpectedConditions.elementToBeClickable(elementCache().saveGroup));
         elementCache().saveGroup.click();
-        _webDriverWrapper.shortWait().until(ExpectedConditions.visibilityOfElementLocated(elementCache().errorMsg));
+        try
+        {
+            getWrapper().waitForElement(elementCache().errorMsg);
+        }
+        catch (NoSuchElementException e)
+        {
+            elementCache().saveGroup.click();
+        }
+        getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(elementCache().errorMsg));
         Assert.assertEquals("Error message is not as expected", errorMsg, elementCache().errorMsg.findElement(_activeFilterDialogEl).getText());
         return this;
     }
@@ -103,7 +107,7 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
     public void clear()
     {
         elementCache().clear.click();
-        _webDriverWrapper.waitForElement(elementCache().undo);
+        getWrapper().waitForElement(elementCache().undo);
     }
 
     public ActiveFilterDialog editGroup(String action, @Nullable String groupName, @Nullable String groupDesc, boolean shared)
@@ -123,7 +127,7 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
         setSharedGroup(shared);
 
         elementCache().save.click();
-        _webDriverWrapper.waitAndClick(Locator.linkWithText(action));
+        getWrapper().waitAndClick(Locator.linkWithText(action));
         return this;
     }
 
@@ -144,10 +148,8 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
         final WebElement editGroup = Locator.linkWithText("Edit group").findWhenNeeded(_activeFilterDialogEl);
         final WebElement saveAs = Locator.linkWithText("Save as").findWhenNeeded(_activeFilterDialogEl);
         final Locator errorMsg = Locator.tagWithClass("div", "errormsg");
-        Locator saveGroupEl = Locator.tagWithId("div", "filterstatus-id");
         Input groupName = new Input(Locator.name("groupname").findWhenNeeded(_activeFilterDialogEl), getDriver());
         Input groupDescription = new Input(Locator.textarea("groupdescription").findWhenNeeded(_activeFilterDialogEl), getDriver());
-        Locator.XPathLocator sharedGroup = Locator.xpath("//input[contains(@id,'creategroupshared')]");
-
+        Checkbox sharedGroup = new Checkbox(Locator.xpath("//input[contains(@id,'creategroupshared')]").findWhenNeeded(getDriver()));
     }
 }

@@ -75,8 +75,32 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private static final String STUDY_GROUP_Q2 = "Study Q2 Group";
 
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
-    private static final String NAB_Q2_REPORT_SOURCE = "library(Rlabkey)\n" + "\n" + "# Select rows into a data frame called 'labkey.data'\n" + "\n" + "labkey.data <- labkey.selectRows(\n" + "    baseUrl=labkey.url.base, \n" + "    folderPath=labkey.url.path, \n" + "    schemaName=\"study\", \n" + "    queryName=\"NAb\", \n" + "    viewName=\"\", \n" + "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,specimen_type,antigen,antigen_type,virus,virus_type,virus_full_name,virus_species,virus_host_cell,virus_backbone,virus_insert_name,clade,neutralization_tier,tier_clade_virus,target_cell,initial_dilution,titer_ic50,titer_ic80,titer_ID50,titer_ID80,nab_response_ID50,nab_response_ID80,response_call,nab_lab_source_key,lab_code,exp_assayid,slope,vaccine_matched\", \n" + "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"q2\")), \n" + "    containerFilter=NULL, \n" + "    colNameOpt=\"rname\"\n" + ")\n";
-    private static final String ELISPOT_Z110_REPORT_SOURCE = "library(Rlabkey)\n" + "labkey.data <- labkey.selectRows(\n" + "    baseUrl=labkey.url.base, \n" + "    folderPath=labkey.url.path, \n" + "    schemaName=\"study\", \n" + "    queryName=\"ELISPOT\", \n" + "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,antigen,antigen_type,peptide_pool,protein,protein_panel,protein_panel_protein,protein_panel_protein_peptide_pool,clade,cell_type,cell_name,vaccine_matched,specimen_type,functional_marker_name,functional_marker_type,response_call,mean_sfc,mean_sfc_neg,mean_sfc_raw,els_ifng_lab_source_key,lab_code,exp_assayid\", \n" + "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"z110\")), \n" + "    containerFilter=NULL, \n" + "    colNameOpt=\"rname\"\n" + ")\n";
+    private static final String NAB_Q2_REPORT_SOURCE = "library(Rlabkey)\n" +
+            "\n" +
+            "# Select rows into a data frame called 'labkey.data'\n" +
+            "\n" +
+            "labkey.data <- labkey.selectRows(\n" +
+            "    baseUrl=labkey.url.base, \n" +
+            "    folderPath=labkey.url.path, \n" +
+            "    schemaName=\"study\", \n" +
+            "    queryName=\"NAb\", \n" +
+            "    viewName=\"\", \n" +
+            "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,specimen_type,antigen,antigen_type,virus,virus_type,virus_full_name,virus_species,virus_host_cell,virus_backbone,virus_insert_name,clade,neutralization_tier,tier_clade_virus,target_cell,initial_dilution,titer_ic50,titer_ic80,titer_ID50,titer_ID80,nab_response_ID50,nab_response_ID80,response_call,nab_lab_source_key,lab_code,exp_assayid,slope,vaccine_matched\", \n" +
+            "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"q2\")), \n" +
+            "    containerFilter=NULL, \n" +
+            "    colNameOpt=\"rname\"\n" +
+            ")\n";
+    private static final String ELISPOT_Z110_REPORT_SOURCE = "library(Rlabkey)\n" +
+            "labkey.data <- labkey.selectRows(\n" +
+            "    baseUrl=labkey.url.base, \n" +
+            "    folderPath=labkey.url.path, \n" +
+            "    schemaName=\"study\", \n" +
+            "    queryName=\"ELISPOT\", \n" +
+            "    colSelect=\"SubjectId,SubjectVisit/Visit,visit_day,study_prot,assay_identifier,summary_level,antigen,antigen_type,peptide_pool,protein,protein_panel,protein_panel_protein,protein_panel_protein_peptide_pool,clade,cell_type,cell_name,vaccine_matched,specimen_type,functional_marker_name,functional_marker_type,response_call,mean_sfc,mean_sfc_neg,mean_sfc_raw,els_ifng_lab_source_key,lab_code,exp_assayid\", \n" +
+            "    colFilter=makeFilter(c(\"study_prot\", \"EQUAL\", \"z110\")), \n" +
+            "    containerFilter=NULL, \n" +
+            "    colNameOpt=\"rname\"\n" +
+            ")\n";
     private final CDSTestLearnAbout _cdsTestLearnAbout = new CDSTestLearnAbout();
     private boolean studyLabelUpdated = false;
     private RReportHelper _rReportHelper;
@@ -146,7 +170,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         cds.useSelectionAsSubjectFilter();
-        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(getDriver());
         activeFilterDialog.saveAsAGroup().setGroupName(STUDY_GROUP).setGroupDescription(studyGroupDesc).saveGroup();
 
         log("Verify group details from learn about --> group page");
@@ -159,7 +183,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         Assert.assertEquals("Incorrect items in the group", Arrays.asList(CDSHelper.STUDIES[0] + "\n" + CDSHelper.STUDIES[1]), detailsPage.getGroupList());
 
         log("Update the group workflow");
-        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog = new ActiveFilterDialog(getDriver());
         activeFilterDialog.editGroup("Update this group", null, studyGroupDescModified, false);
 
         log("Verify group description is updated");
@@ -172,7 +196,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[3]);
         cds.useSelectionAsSubjectFilter();
-        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog = new ActiveFilterDialog(getDriver());
         activeFilterDialog.saveAsAGroup()
                 .setGroupName(STUDY_GROUP)
                 .setGroupDescription(studyGroupDesc)
@@ -188,7 +212,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
-        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(getDriver());
         activeFilterDialog.saveAsAGroup().setGroupName(ASSAY_GROUP_NAME).setGroupDescription(desc).saveGroup();
 
         log("Verify navigation from learn about page");
@@ -199,7 +223,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         Assert.assertEquals("Group Name is incorrect", ASSAY_GROUP_NAME, detailsPage.getGroupName());
         Assert.assertEquals("Group description is incorrect", desc, detailsPage.getGroupDescription());
 
-        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog = new ActiveFilterDialog(getDriver());
         activeFilterDialog.editGroup("Save as new group", ASSAY_GROUP_NAME_UPDATED, null, false);
 
         log("Verify updated group details");
@@ -234,7 +258,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Assays");
         cds.selectBars("ICS");
         cds.useSelectionAsSubjectFilter();
-        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(getDriver());
         activeFilterDialog.saveAsAGroup()
                 .setGroupName(singleFilterGroup)
                 .setGroupDescription(singleFilterGroup)
@@ -251,7 +275,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         assertEquals("Number of active filters not as. expected.", 1, activeFilters.size());
 
         log("Clear the previous filter");
-        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog = new ActiveFilterDialog(getDriver());
         activeFilterDialog.clear();
 
         log("Compose a group that consist of 4 filter");
@@ -266,7 +290,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.selectBars("RED 4", "RED 5");
         cds.useSelectionAsSubjectFilter();
 
-        activeFilterDialog = new ActiveFilterDialog(this);
+        activeFilterDialog = new ActiveFilterDialog(getDriver());
         activeFilterDialog.saveAsAGroup()
                 .setGroupName(multiFilterGroup)
                 .setGroupDescription(multiFilterGroup)
