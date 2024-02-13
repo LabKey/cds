@@ -20,15 +20,8 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
     public ActiveFilterDialog(WebDriver driver)
     {
         _driver = driver;
-        _activeFilterDialogEl = Locator.tagWithId("div", "filterstatus-id").waitForElement(this, 1_000);
+        _activeFilterDialogEl = Locator.tagWithId("div", "filterstatus-id").findElement(this.getDriver());
     }
-
-    @Override
-    public WebElement getComponentElement()
-    {
-        return _activeFilterDialogEl;
-    }
-
     @Override
     protected WebDriver getDriver()
     {
@@ -129,6 +122,12 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
         elementCache().save.click();
         getWrapper().waitAndClick(Locator.linkWithText(action));
         return this;
+    }
+
+    @Override
+    public WebElement getComponentElement()
+    {
+        return _activeFilterDialogEl;
     }
 
     @Override
