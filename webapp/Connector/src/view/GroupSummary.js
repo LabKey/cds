@@ -185,12 +185,13 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 this.getInvalidGroupMsg(),
             {
                 xtype: 'box',
-                html: '<div class="module"><h3>Description</h3></div>'
+                html: '<div class="module"><h3 id="group-description-header-id">Description</h3></div>'
             },{
                 xtype: 'displayfield',
                 itemId: 'descDisplay',
                 margin: '0 0 20 0',
                 htmlEncode: true,
+                id: 'group-description-id',
                 value: this._getDescription(this.group)
             }]
         }];
