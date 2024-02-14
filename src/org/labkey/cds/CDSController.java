@@ -1319,7 +1319,9 @@ public class CDSController extends SpringActionController
         {
             HttpServletResponse response = getViewContext().getResponse();
             String filename = form.getFilename();
+            LOG.info("GetStudyDocumentAction: filename=" + filename);
             String basePath = CDSManager.get().getStudyDocumentPath(getContainer());
+            LOG.info("GetStudyDocumentAction: basePath=" + basePath);
 
             if (StringUtils.isBlank(basePath))
             {

@@ -227,8 +227,15 @@ Ext.define('Connector.app.store.StudyOverview', {
                 return value === undefined || value === null ? false : self.indexOf(value) === index;
             });
 
+            var currentStudyName = window.location.href.split("#")[1].split("/")[3];
+            var currentStudyObj = this.studyData.filter(function(s) {
+                return s.study_name === currentStudyName;
+            });
+
             // join products to study
-            Ext.each(this.studyData, function(study) {
+            // Ext.each(this.studyData, function(study) {
+            if (currentStudyObj && currentStudyObj.length === 1) {
+                var study = currentStudyObj[0];
                 var hasStudyAccess = this.accessibleStudies[study.study_name] === true;
                 study.study_title = study.title;
 
@@ -423,9 +430,12 @@ Ext.define('Connector.app.store.StudyOverview', {
                 }).length > 0;
 
                 // non-integrated assay with potentially downloadable data, which may or may not also have a learn assay page
-                var non_integrated_assay = this.niDocumentData.filter(function (niData) {
+                var niassay_from_documents = this.niDocumentData.filter(function (niData) {
                     return niData.prot === study.study_name;
                 });
+                console.log("niassay_from_documents = " + (niassay_from_documents && niassay_from_documents.length > 0 ? JSON.stringify(niassay_from_documents, null, 2) : "none"));
+
+                console.log("nonIntegratedAssays = " + (nonIntegratedAssays && nonIntegratedAssays.length > 0 ? JSON.stringify(nonIntegratedAssays, null, 2) : "none"))
 
                 //non-integrated assay that has metadata in cds.studyassay, which may or may not also have a learn assay page
                 Ext.each(nonIntegratedAssays, function(niAssay) {
@@ -444,12 +454,14 @@ Ext.define('Connector.app.store.StudyOverview', {
                         dataStatus: niAssay.data_status,
                         hasData: niAssay.has_data
                     };
-                    non_integrated_assay.push(nonIntegratedAssay);
+                    niassay_from_documents.push(nonIntegratedAssay);
                 });
+
+                console.log("niassay_from_documents = " + (niassay_from_documents && niassay_from_documents.length > 0 ? JSON.stringify(niassay_from_documents, null, 2) : "none"));
 
                 //combine duplicates
                 var non_integrated_assay_data_map = [];
-                Ext.each(non_integrated_assay, function (niAssay) {
+                Ext.each(niassay_from_documents, function (niAssay) {
                     var existingAssay = non_integrated_assay_data_map[niAssay.assayIdentifier];
                     if (existingAssay) {
 
@@ -473,6 +485,7 @@ Ext.define('Connector.app.store.StudyOverview', {
                     else {
                         non_integrated_assay_data_map[niAssay.assayIdentifier] = niAssay;
                     }
+                    console.log("non_integrated_assay_data_map[" + niAssay.assayIdentifier + "] = " +  JSON.stringify(non_integrated_assay_data_map[niAssay.assayIdentifier], null, 2));
                 }, this);
 
                 study.non_integrated_assay_data =[];
@@ -485,6 +498,8 @@ Ext.define('Connector.app.store.StudyOverview', {
                 study.non_integrated_assay_data.sort(function(a, b) {
                     return Connector.model.Filter.sorters.natural(a.label, b.label);
                 });
+
+                console.log("study.non_integrated_assay_data = " + (study.non_integrated_assay_data && study.non_integrated_assay_data.length > 0 ? JSON.stringify(study.non_integrated_assay_data, null, 2) : "none"));
 
                 study.non_integrated_assay_data_has_permission = study.non_integrated_assay_data.filter(function(doc) {
                     return doc.hasPermission === true
@@ -545,7 +560,8 @@ Ext.define('Connector.app.store.StudyOverview', {
                 study.data_available = (study.assays_added_count > 0 || study.ni_assays_added_count > 0 || study.pub_available_data_count > 0) ? 'Data added' : 'Data not added';
 
                 studies.push(study);
-            }, this);
+            // }, this);
+            }
 
             studies.sort(function(studyA, studyB) {
                 return Connector.model.Filter.sorters.natural(studyA.label, studyB.label);
