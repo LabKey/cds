@@ -17,7 +17,7 @@ public class ChangePasswordDialog extends WebDriverComponent<ChangePasswordDialo
     public ChangePasswordDialog(BaseWebDriverTest test)
     {
         _webDriverWrapper = test;
-        _dialogEl = Locator.tagWithAttribute("div", "data-form", "account-change-password").refindWhenNeeded(_webDriverWrapper.getDriver());
+        _dialogEl = Locator.tagWithClass("div", "mfp-content").refindWhenNeeded(_webDriverWrapper.getDriver());
     }
 
     @Override

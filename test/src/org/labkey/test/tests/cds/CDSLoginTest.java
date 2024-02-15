@@ -138,7 +138,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
         changePasswordDialog.submitExpectingError();
         Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
             Assert.assertEquals("Incorrect error message",
-                    "Your password does not meet the complexity requirements; please choose a new password.",
+                    "Your password is not complex enough.",
                     changePasswordDialog.getErrorMessage());
         });
 
