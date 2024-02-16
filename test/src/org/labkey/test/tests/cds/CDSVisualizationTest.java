@@ -1113,7 +1113,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     private void createParticipantGroups()
     {
         Ext4Helper.resetCssPrefix();
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP1, "Subject", "039-016", "039-014");
         _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP2, "Subject", "039-044", "039-042");
         _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3, "Subject", "039-059", "039-060");
@@ -1123,7 +1123,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     @LogMethod
     private void deleteParticipantGroups()
     {
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         _studyHelper.deleteCustomParticipantGroup(PGROUP1, "Subject");
         _studyHelper.deleteCustomParticipantGroup(PGROUP2, "Subject");
         _studyHelper.deleteCustomParticipantGroup(PGROUP3, "Subject");
