@@ -39,14 +39,16 @@ Ext.define('Connector.view.GroupSummary', {
         }
         else
         {
-            this.store.on('load', this.loadGroup, this);
+            this.store.loadSlice();
+            //this.store.on('load', this.loadGroup, this);
+            this.store.on('dataloaded', this.loadGroup, this);
         }
     },
 
     _getActiveGroup : function()
     {
         var group;
-        var idx = this.store.find('id', this.groupId, 0 /*start position*/, false /*any match, set to false for exact match*/, true, true);
+        var idx = this.store.find('group_id', this.groupId, 0 /*start position*/, false /*any match, set to false for exact match*/, true, true);
         if (idx > -1)
         {
             group = this.store.getAt(idx);

@@ -28,15 +28,46 @@ Ext.define('Connector.app.model.Group', {
         {name: 'products', convert : Connector.model.Filter.asArray},
         {name: 'assay_identifier'},
         {name: 'assays', convert : Connector.model.Filter.asArray},
-
         {name: 'study_names', convert : Connector.model.Filter.asArray},
         {name: 'product_names', convert : Connector.model.Filter.asArray},
         {name: 'assay_names', convert : Connector.model.Filter.asArray},
         {name: 'species_names', convert : Connector.model.Filter.asArray},
-
         {name: 'study_names_to_sort_on'},
         {name: 'product_to_sort_on'},
         {name: 'species_to_sort_on'},
         {name: 'assay_to_sort_on'},
+
+        // fields from Connector.model.Group (the home page group store)
+        {name: 'id'},
+        {name: 'rowid'},
+        {name: 'label'},
+        {name: 'filters'},
+        {name: 'containsPlot', type: 'boolean', defaultValue: false, convert : function(value, partial) {
+                if (partial.raw.type === 'mab')
+                    return value;
+                var raw = partial.raw.filters;
+                var containsPlot = false;
+                if (Ext.isString(raw)) {
+                    var filterArray = Connector.model.Filter.fromJSON(raw);
+                    if (Ext.isArray(filterArray)) {
+                        Ext.each(filterArray, function(filter) {
+                            if (filter.isPlot === true) {
+                                containsPlot = true;
+                            }
+                        });
+                    }
+                }
+                return containsPlot;
+            }},
+        {name: 'categoryId'},
+        {name: 'shared', type: 'boolean', defaultValue: false, convert : function(value, partial) {
+                if (partial.raw.type === 'mab')
+                    return value;
+                return partial.raw.category.shared;
+            }},
+        {name: 'type'},
+        {name: 'participantIds', convert : Connector.model.Filter.asArray},
+        {name: 'modified', type: 'DATE'},
+        {name: 'studies', defaultValue: []}
     ]
 });

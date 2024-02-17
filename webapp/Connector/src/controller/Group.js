@@ -138,8 +138,14 @@ Ext.define('Connector.controller.Group', {
         }
         else if (xtype === 'groupsummary') {
 
+            console.log('create group summary');
+            // get the store from the StoreCache to match the learn pages
+
             v = Ext.create('Connector.view.GroupSummary', {
-                store: Connector.model.Group.getGroupStore(),
+                store : StoreCache.getStore('Connector.app.store.Group'),
+
+                //store : Ext.create('Connector.app.store.Group'),
+                //store: Connector.model.Group.getGroupStore(),
                 groupId: context.groupId
             });
         }
@@ -282,13 +288,15 @@ Ext.define('Connector.controller.Group', {
                 var saveSuccess = function() {
                     Connector.getApplication().fireEvent('mabgroupsaved', groupname);
                     view.reset();
-                    Connector.model.Group.getGroupStore().refreshData();
+                    this.getGroupStore().refreshData();
+                    //Connector.model.Group.getGroupStore().refreshData();
                 };
 
                 var editSuccess = function() {
                     Connector.getApplication().fireEvent('mabgroupedited', groupname);
                     view.reset();
-                    Connector.model.Group.getGroupStore().refreshData();
+                    this.getGroupStore().refreshData();
+                    //Connector.model.Group.getGroupStore().refreshData();
                     me.getViewManager().changeView('home');
                 };
 
@@ -307,6 +315,10 @@ Ext.define('Connector.controller.Group', {
                     LABKEY.Query.insertRows(queryConfig);
             }
         }
+    },
+
+    getGroupStore : function() {
+        return StoreCache.getStore('Connector.app.store.Group')
     },
 
     saveFailure : function(response, isAlert) {
@@ -381,7 +393,8 @@ Ext.define('Connector.controller.Group', {
                     me.displayEditBtn();
 
                     Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
-                    Connector.model.Group.getGroupStore().refreshData(group.category.label, me);
+                    me.getGroupStore().refreshData();
+                    //Connector.model.Group.getGroupStore().refreshData(group.category.label, me);
                 };
 
                 Connector.model.Filter.doGroupSave({
@@ -444,7 +457,8 @@ Ext.define('Connector.controller.Group', {
                     groupLabel.show();
 
                     Connector.getApplication().fireEvent('groupsaved', grp, state.getFilters(true));
-                    Connector.model.Group.getGroupStore().refreshData(grp.label, me);
+                    //Connector.model.Group.getGroupStore().refreshData(grp.label, me);
+                    me.getGroupStore().refreshData();
                 };
 
                 var editFailure = function (response)
@@ -530,7 +544,8 @@ Ext.define('Connector.controller.Group', {
                                 var group = Ext.decode(response.responseText);
                                 me.application.fireEvent('groupsaved', group, state.getFilters(true));
                                 view.reset();
-                                Connector.model.Group.getGroupStore().refreshData();
+                                me.getGroupStore().refreshData();
+                                //Connector.model.Group.getGroupStore().refreshData();
                             };
 
                             var updateFailure = function(response) {
@@ -672,7 +687,8 @@ Ext.define('Connector.controller.Group', {
                 store.refreshData();
             });
         }
-        this.loadDataTask.delay(300, undefined, this, [Connector.model.Group.getGroupStore()]);
+        this.loadDataTask.delay(300, undefined, this, [this.getGroupStore()]);
+//        this.loadDataTask.delay(300, undefined, this, [Connector.model.Group.getGroupStore()]);
 
         var editGroupView = this.getViewManager().getViewInstance('groupsave');
         if (editGroupView)

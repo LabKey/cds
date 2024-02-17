@@ -23,6 +23,7 @@ Ext.define('Connector.app.store.Group', {
         this.groupsData = undefined;
         this.groupDetails = undefined;
         this.mabGroups = undefined;
+        this.subjectGroups = undefined;
 
         var me = this;
 
@@ -57,12 +58,23 @@ Ext.define('Connector.app.store.Group', {
             }),
             method: 'GET',
             success: LABKEY.Utils.getCallbackWrapper(function (response) {
-                me.groupDetails = response.groups.filter(function (grp) {
-                    return grp.id !== -1
-                });
-                me._onLoadComplete();
+                me.onLoadParticipantGroups(response);
             }, me)
         });
+    },
+
+    onLoadParticipantGroups : function(response) {
+        this.groupDetails = [];
+        this.subjectGroups = [];
+        Ext.each(response.groups, function(group) {
+            if (group.id !== -1) {
+                // todo, delete group details
+                this.groupDetails.push(group);
+                this.subjectGroups.push(group);
+            }
+        }, this);
+
+        this._onLoadComplete();
     },
 
     onLoadLearnGroups: function (groupsInfo) {
@@ -72,7 +84,7 @@ Ext.define('Connector.app.store.Group', {
 
     _onLoadComplete: function () {
 
-        if (Ext.isDefined(this.groupsData) && Ext.isDefined(this.groupDetails) && Ext.isDefined(this.mabGroups)) {
+        if (Ext.isDefined(this.groupsData) && Ext.isDefined(this.groupDetails) && Ext.isDefined(this.mabGroups) && Ext.isDefined(this.subjectGroups)) {
 
             var learnGroups = [];
 
@@ -150,6 +162,7 @@ Ext.define('Connector.app.store.Group', {
                 var assay_to_sort_on = assays[0] ? assays[0].toLowerCase() : '';
 
                 if (studiesPerGrp.length > 0) {
+/*
                     learnGroups.push({
                         group_type: groupTypes[0],
                         group_name: grpName,
@@ -177,6 +190,7 @@ Ext.define('Connector.app.store.Group', {
                         group_id: groupDetail[0].id,
                         isMab: false
                     });
+*/
                 }
 
             }, this);
@@ -184,6 +198,7 @@ Ext.define('Connector.app.store.Group', {
             Ext.each(this.mabGroups, function (mabGrp) {
                 // note 1_my_saved_groups & 2_curated_groups below, so that it displays in the
                 // "Ext template grouping" order we want. It's the same for subject groups (in learn_groups.sql)
+/*
                 learnGroups.push({
                     group_id: mabGrp.group_id,
                     group_type: mabGrp.shared ? '2_curated_groups' : '1_my_saved_groups',
@@ -191,14 +206,111 @@ Ext.define('Connector.app.store.Group', {
                     description: !mabGrp.description ? "No description given." : mabGrp.description,
                     isMab: true
                 });
+*/
             });
+
+            Ext.each(this.subjectGroups, function(group) {
+                console.log(group);
+
+                // clean up redundancies between the merged stores
+                group.group_id = group.id;
+                group.group_type = group.shared ? '2_curated_groups' : '1_my_saved_groups';
+                group.group_name = group.label;
+                group.description = group.description ? group.description : "No description given."
+
+                // parse the filters
+                if (Ext.isString(group.filters))
+                {
+                    let studies = [];
+                    let assays = [];
+                    let species = [];
+                    let products = [];
+
+                    Ext.each(Connector.model.Filter.fromJSON(group.filters), function(filter)
+                    {
+                        //console.log(filter);
+                        let members = undefined;
+
+                        switch (filter.hierarchy)
+                        {
+                            // species
+                            case '[Subject.Species]':
+                                members = species;
+                                break;
+
+                            // products
+                            case '[Study Product.Product Name]':
+                            case '[Study Product.Product Type]':
+                            case '[Study Product.Developer]':
+                            case '[Study Product.Product Class]':
+                                members = products;
+                                break;
+
+                            // treatment groups and studies via assay
+                            case '[Study.Treatment]':
+                            case '[Assay.Study]':
+                                members = studies;
+                                break;
+
+                            // assay types
+                            case '[Assay.Name]':
+                                members = assays;
+                                break;
+                        }
+                        if (members)
+                            this.parseLevelMembers(filter.hierarchy, filter.members, members);
+
+                    }, this);
+
+                    // need to get sorts figured out for each column
+                    group.study_names = studies;
+                    group.studies = studies.map(function(study) {
+                        return {study_label: study}
+                    });
+
+                    group.species_names = species;
+                    group.studySpecies = species.map(function(s) {
+                        return {species: s}
+                    });
+                    group.product_names = products;
+                    group.products = products.map(function(p) {
+                        return {product_name : p}
+                    });
+
+                    group.assay_names = assays;
+                    group.assays = assays.map(function (a) {
+                        return {assay_identifier: a}
+                    });
+                }
+                learnGroups.push(group);
+            }, this);
 
             this.groupsData = undefined;
             this.mabGroups = undefined;
+            this.subjectGroups = undefined;
 
             this.loadRawData(learnGroups);
             this.dataLoaded = true;
             this.fireEvent('dataloaded');
         }
+    },
+
+    parseLevelMembers : function(hierarchy, members, collection) {
+        Ext.each(members, function(member){
+            var memberName = member.uniqueName;
+            var parts = memberName.split('.');
+
+            if (memberName.startsWith(hierarchy) && parts.length > 1) {
+                let val = parts[parts.length - 1];
+                val = val.replace('[', '').replace(']', '');
+                collection.push(val);
+            }
+        }, this);
+    },
+
+    refreshData: function(cb, cbScope) {
+        console.log('hooray, refreshing store', cb, cbScope);
+        this.removeAll();
+        this.loadSlice();
     }
 });
