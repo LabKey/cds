@@ -412,7 +412,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             'X-LABKEY-CSRF': LABKEY.CSRF
           },
           success: function() {
-            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?"); // set password should log user in automatically
+            window.location = LABKEY.ActionURL.buildURL("cds", "app.view"); // set password should log user in automatically
           },
           error: function(e) {
             createNotificationError('account-new-password', e);
@@ -442,7 +442,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             'X-LABKEY-CSRF': LABKEY.CSRF
           },
           success: function() {
-            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?");
+            window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
           },
           error: function(e) {
             createNotificationError('account-change-password', e);
