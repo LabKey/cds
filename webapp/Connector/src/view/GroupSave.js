@@ -948,9 +948,8 @@ Ext.define('Connector.view.GroupSaveList', {
     },
 
     cloneGroupStore: function(source) {
-
         var clone = Ext.create('Ext.data.Store', {
-            model : 'Connector.model.Group'
+            model : 'Connector.app.model.Group'
         });
         Ext.each(source.getRange(), function(record) {
             clone.add(Ext.clone(record.copy()));

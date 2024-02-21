@@ -15,7 +15,6 @@ Ext.define('Connector.app.model.Group', {
 
     fields: [
         {name: 'group_name', sortType: 'asUCString'},
-        {name: 'group_type'},
         {name: 'isMab', type: 'Boolean'},
         {name: 'group_id'},
         {name: 'description'},
@@ -43,27 +42,31 @@ Ext.define('Connector.app.model.Group', {
         {name: 'label'},
         {name: 'filters'},
         {name: 'containsPlot', type: 'boolean', defaultValue: false, convert : function(value, partial) {
-                if (partial.raw.type === 'mab')
-                    return value;
-                var raw = partial.raw.filters;
-                var containsPlot = false;
-                if (Ext.isString(raw)) {
-                    var filterArray = Connector.model.Filter.fromJSON(raw);
-                    if (Ext.isArray(filterArray)) {
-                        Ext.each(filterArray, function(filter) {
-                            if (filter.isPlot === true) {
-                                containsPlot = true;
-                            }
-                        });
+                if (partial.raw){
+                    if (partial.raw.type === 'mab')
+                        return value;
+                    var raw = partial.raw.filters;
+                    var containsPlot = false;
+                    if (Ext.isString(raw)) {
+                        var filterArray = Connector.model.Filter.fromJSON(raw);
+                        if (Ext.isArray(filterArray)) {
+                            Ext.each(filterArray, function(filter) {
+                                if (filter.isPlot === true) {
+                                    containsPlot = true;
+                                }
+                            });
+                        }
                     }
+                    return containsPlot;
                 }
-                return containsPlot;
             }},
         {name: 'categoryId'},
         {name: 'shared', type: 'boolean', defaultValue: false, convert : function(value, partial) {
-                if (partial.raw.type === 'mab')
-                    return value;
-                return partial.raw.category.shared;
+                if (partial.raw){
+                    if (partial.raw.type === 'mab')
+                        return value;
+                    return partial.raw.category.shared;
+                }
             }},
         {name: 'type'},
         {name: 'participantIds', convert : Connector.model.Filter.asArray},

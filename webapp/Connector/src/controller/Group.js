@@ -138,9 +138,6 @@ Ext.define('Connector.controller.Group', {
         }
         else if (xtype === 'groupsummary') {
 
-            console.log('create group summary');
-            // get the store from the StoreCache to match the learn pages
-
             v = Ext.create('Connector.view.GroupSummary', {
                 store : StoreCache.getStore('Connector.app.store.Group'),
 
@@ -152,7 +149,8 @@ Ext.define('Connector.controller.Group', {
         else if (xtype === 'mabgroupsummary') {
 
             v = Ext.create('Connector.view.MabGroupSummary', {
-                store: Connector.model.Group.getGroupStore(),
+                //store: Connector.model.Group.getGroupStore(),
+                store: StoreCache.getStore('Connector.app.store.Group'),
                 groupId: context.groupId
             });
         }
@@ -426,7 +424,8 @@ Ext.define('Connector.controller.Group', {
 
             var newValues = view.getActiveForm().getValues();
 
-            var grpStore = Connector.model.Group.getGroupStore();
+            //var grpStore = Connector.model.Group.getGroupStore();
+            var grpStore = StoreCache.getStore('Connector.app.store.Group');
 
             //get the original group that is being edited
             var originalGroupName = Ext.getCmp('savedgroupname-id').items.items[0].data.savedGroupName;

@@ -9,7 +9,39 @@ Ext.define('Connector.app.store.Group', {
 
     model: 'Connector.app.model.Group',
 
-    groupField: 'group_type',
+    groupField: 'shared',
+
+    sorters : [{
+        sorterFn: function (group1, group2) {
+            var g1shared = group1.get('shared');
+            var g2shared = group2.get('shared');
+            if(g1shared !== g2shared) {  // all non-shared items come before all shared items
+                if (g1shared === true) {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
+            }
+            if(g1shared === false) {  // both unshared, sort alphabetically
+                return group1.get('label').localeCompare(group2.get('label'));
+            }
+            else {  // both shared, sort by modified date descending
+                var g1modified = group1.get('modified');
+                var g2modified = group2.get('modified');
+
+                if(g1modified < g2modified) {
+                    return 1;
+                }
+                if(g1modified === g2modified) {
+                    return 0;
+                }
+                else {
+                    return -1;
+                }
+            }
+        }
+    }],
 
     constructor: function (config) {
         Ext.applyIf(config, {
@@ -18,8 +50,14 @@ Ext.define('Connector.app.store.Group', {
         this.callParent([config]);
     },
 
+    load: function() {
+        if (this.getCount() === 0)
+            this.loadSlice();
+    },
+
     loadSlice: function () {
 
+        console.log('group loadslice');
         this.groupsData = undefined;
         this.groupDetails = undefined;
         this.mabGroups = undefined;
@@ -45,7 +83,16 @@ Ext.define('Connector.app.store.Group', {
                         group_id: row.RowId,
                         group_name: row.Label,
                         description: row.Description,
-                        shared: row.Shared
+                        shared: row.Shared,
+
+                        // home page model
+                        id : row.RowId,
+                        rowid : row.RowId,
+                        label: row.Label,
+                        filters: row.Filters,
+                        modified: row.Modified,
+                        type: row.Type,
+                        containsPlot: false
                     })
                 }, this);
             }
@@ -210,11 +257,10 @@ Ext.define('Connector.app.store.Group', {
             });
 
             Ext.each(this.subjectGroups, function(group) {
-                console.log(group);
+                //console.log(group);
 
                 // clean up redundancies between the merged stores
                 group.group_id = group.id;
-                group.group_type = group.shared ? '2_curated_groups' : '1_my_saved_groups';
                 group.group_name = group.label;
                 group.description = group.description ? group.description : "No description given."
 
@@ -228,7 +274,6 @@ Ext.define('Connector.app.store.Group', {
 
                     Ext.each(Connector.model.Filter.fromJSON(group.filters), function(filter)
                     {
-                        //console.log(filter);
                         let members = undefined;
 
                         switch (filter.hierarchy)
