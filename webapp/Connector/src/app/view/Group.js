@@ -151,7 +151,7 @@ Ext.define('Connector.app.view.Group', {
     }],
 
     statics: {
-        searchFields: ['group_name', 'description',
+        searchFields: ['label', 'description',
             {field: 'studies', value: 'study_label', emptyText: 'No related products'},
             {field: 'species', value: 'species', emptyText: 'No related species'},
             {field: 'products', value: 'product_name', emptyText: 'No related products'},
@@ -165,15 +165,15 @@ Ext.define('Connector.app.view.Group', {
         minWidth: 150,
         flex: 15/100,
         resizable: false,
-        dataIndex: 'group_name',
+        dataIndex: 'label',
         filterConfigSet: [{
-            filterField: 'group_name',
+            filterField: 'label',
             valueType: 'string',
             title: 'Group Name'
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
-                    '<h2>{group_name:htmlEncode}</h2>',
+                    '<h2>{label:htmlEncode}</h2>',
                     '<div class="detail-description-text">',
                     '<p class="block-with-text">{description:htmlEncode}</p>',
                 '</div>',
@@ -297,14 +297,14 @@ Ext.define('Connector.app.view.Group', {
         // the grid in sync.
         this.getStore().on('load', function(){
             if (!this.ownerCt.isVisible()) {
-                console.log('group not visible');
+                //console.log('group not visible');
                 this.reloadStoreOnShow = true;
             }
         }, this);
 
         this.on('show', function(){
             if (this.reloadStoreOnShow){
-                console.log('reloading group slice');
+                //console.log('reloading group slice');
                 this.getStore().loadSlice();
                 this.reloadStoreOnShow = false;
             }

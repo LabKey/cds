@@ -359,10 +359,10 @@ Ext.define('Connector.controller.Learn', {
         var id = item.getId();
 
         if (this.dimension.name === "Group") {
-            if (item.data.isMab)
-                this.getViewManager().changeView('group', 'mabgroupsummary', [item.data.group_id]);
+            if (item.data.type === 'mab')
+                this.getViewManager().changeView('group', 'mabgroupsummary', [item.data.rowid]);
             else
-                this.getViewManager().changeView('group', 'groupsummary', [item.data.group_id]);
+                this.getViewManager().changeView('group', 'groupsummary', [item.data.id]);
             return;
         }
         if (id && this.dimension) {

@@ -62,6 +62,7 @@ Ext.define('Connector.app.store.Group', {
         this.groupDetails = undefined;
         this.mabGroups = undefined;
         this.subjectGroups = undefined;
+        this.studiesForGroups = undefined;
 
         var me = this;
 
@@ -74,25 +75,28 @@ Ext.define('Connector.app.store.Group', {
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
+            queryName: 'learn_studiesforgroups',
+            success: this.onLoadStudiesForGroups,
+            scope: this
+        });
+
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
             queryName: 'mabgroup',
             scope: this,
             success: function (mabGroupData) {
                 this.mabGroups = [];
                 Ext.each(mabGroupData.rows, function (row) {
                     this.mabGroups.push({
-                        group_id: row.RowId,
-                        group_name: row.Label,
-                        description: row.Description,
-                        shared: row.Shared,
-
-                        // home page model
                         id : row.RowId,
                         rowid : row.RowId,
                         label: row.Label,
                         filters: row.Filters,
                         modified: row.Modified,
                         type: row.Type,
-                        containsPlot: false
+                        containsPlot: false,
+                        description: row.Description,
+                        shared: row.Shared
                     })
                 }, this);
             }
@@ -129,9 +133,19 @@ Ext.define('Connector.app.store.Group', {
         this._onLoadComplete();
     },
 
+    onLoadStudiesForGroups: function(studies){
+        // create a map of study name to information that the data availability module needs
+        this.studiesForGroups = {};
+        Ext.each(studies.rows, function(study) {
+            this.studiesForGroups[study.study_label] = study;
+        }, this);
+
+        this._onLoadComplete();
+    },
+
     _onLoadComplete: function () {
 
-        if (Ext.isDefined(this.groupsData) && Ext.isDefined(this.groupDetails) && Ext.isDefined(this.mabGroups) && Ext.isDefined(this.subjectGroups)) {
+        if (Ext.isDefined(this.groupsData) && Ext.isDefined(this.groupDetails) && Ext.isDefined(this.mabGroups) && Ext.isDefined(this.subjectGroups) && Ext.isDefined(this.studiesForGroups)) {
 
             var learnGroups = [];
 
@@ -242,7 +256,13 @@ Ext.define('Connector.app.store.Group', {
 
             }, this);
 
-            Ext.each(this.mabGroups, function (mabGrp) {
+            Ext.each(this.mabGroups, function (mab) {
+                // id needs to be unique in order to avoid collision
+                // ex. in the case where id=19, i.e it's the same rowid for both for participant and mab group
+                // it only shows one group in the list, so below is the way to make id unique.
+                mab.id = mab.id + "-" + mab.type;
+
+                learnGroups.push(mab);
                 // note 1_my_saved_groups & 2_curated_groups below, so that it displays in the
                 // "Ext template grouping" order we want. It's the same for subject groups (in learn_groups.sql)
 /*
@@ -257,14 +277,7 @@ Ext.define('Connector.app.store.Group', {
             });
 
             Ext.each(this.subjectGroups, function(group) {
-                //console.log(group);
-
-                // clean up redundancies between the merged stores
-                group.group_id = group.id;
-                group.group_name = group.label;
-                group.description = group.description ? group.description : "No description given."
-
-                // parse the filters
+                // parse the filters to add category information to the learn grid
                 if (Ext.isString(group.filters))
                 {
                     let studies = [];
@@ -283,11 +296,11 @@ Ext.define('Connector.app.store.Group', {
                                 members = species;
                                 break;
 
-                            // products
+                            // products uncomment to collect additional categories
                             case '[Study Product.Product Name]':
-                            case '[Study Product.Product Type]':
-                            case '[Study Product.Developer]':
-                            case '[Study Product.Product Class]':
+                            //case '[Study Product.Product Type]':
+                            //case '[Study Product.Developer]':
+                            //case '[Study Product.Product Class]':
                                 members = products;
                                 break;
 
@@ -307,21 +320,57 @@ Ext.define('Connector.app.store.Group', {
 
                     }, this);
 
-                    // need to get sorts figured out for each column
-                    group.study_names = studies;
-                    group.studies = studies.map(function(study) {
-                        return {study_label: study}
+                    studies.sort(function (p1, p2) {
+                        return p1.toLowerCase().localeCompare(p2.toLowerCase())
                     });
+                    group.study_names_to_sort_on = studies[0] ? studies[0].toLowerCase() : '';
+                    group.study_names = studies;
+                    group.studies = studies.map(function(name, index, arr) {
 
+                        let study = this.studiesForGroups[name];
+                        if (study){
+                            return {
+                                study_label: name,
+                                data_label: study.study_label,
+                                data_id: study.study_name,
+                                data_link_id: study.study_name,
+                                has_data: study.has_data,
+                                data_index: index,
+                                data_show: index < 10,
+                                has_access: true,
+                                data_description: study.description ? study.description : "No description given."
+                            };
+                        } else {
+                            // shouldn't really happen
+                            return {
+                                study_label: name,
+                                data_label: name
+                            };
+                        }
+                    }, this);
+
+                    species.sort(function (p1, p2) {
+                        return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                    });
+                    group.species_to_sort_on = species[0] ? species[0].toLowerCase() : '';
                     group.species_names = species;
                     group.studySpecies = species.map(function(s) {
                         return {species: s}
                     });
+
+                    products.sort(function (p1, p2) {
+                        return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                    });
+                    group.product_to_sort_on = products[0] ? products[0].toLowerCase() : '';
                     group.product_names = products;
                     group.products = products.map(function(p) {
                         return {product_name : p}
                     });
 
+                    assays.sort(function (p1, p2) {
+                        return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                    });
+                    group.assay_to_sort_on = assays[0] ? assays[0].toLowerCase() : '';
                     group.assay_names = assays;
                     group.assays = assays.map(function (a) {
                         return {assay_identifier: a}
@@ -333,6 +382,7 @@ Ext.define('Connector.app.store.Group', {
             this.groupsData = undefined;
             this.mabGroups = undefined;
             this.subjectGroups = undefined;
+            this.studiesForGroups = undefined;
 
             this.loadRawData(learnGroups);
             this.dataLoaded = true;
@@ -355,7 +405,6 @@ Ext.define('Connector.app.store.Group', {
 
     refreshData: function(cb, cbScope) {
         console.log('hooray, refreshing store', cb, cbScope);
-        this.removeAll();
         this.loadSlice();
     }
 });

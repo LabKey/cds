@@ -7,39 +7,18 @@ Ext.define('Connector.app.model.Group', {
 
     extend : 'Ext.data.Model',
 
-    idProperty: 'group_name',
+    idProperty: 'label',
 
-    labelProperty: 'group_name',
+    labelProperty: 'label',
 
-    resolvableField: 'group_name',
+    resolvableField: 'label',
 
     fields: [
-        {name: 'group_name', sortType: 'asUCString'},
-        {name: 'isMab', type: 'Boolean'},
-        {name: 'group_id'},
-        {name: 'description'},
-        {name: 'study_label'},
-        {name: 'studies', convert : Connector.model.Filter.asArray},
-        {name: 'studySpecies', convert : Connector.model.Filter.asArray},
-        {name: 'species'},
-        {name: 'product_name'},
-        {name: 'species'},
-        {name: 'products', convert : Connector.model.Filter.asArray},
-        {name: 'assay_identifier'},
-        {name: 'assays', convert : Connector.model.Filter.asArray},
-        {name: 'study_names', convert : Connector.model.Filter.asArray},
-        {name: 'product_names', convert : Connector.model.Filter.asArray},
-        {name: 'assay_names', convert : Connector.model.Filter.asArray},
-        {name: 'species_names', convert : Connector.model.Filter.asArray},
-        {name: 'study_names_to_sort_on'},
-        {name: 'product_to_sort_on'},
-        {name: 'species_to_sort_on'},
-        {name: 'assay_to_sort_on'},
-
-        // fields from Connector.model.Group (the home page group store)
+        {name: 'label', sortType: 'asUCString'},
         {name: 'id'},
         {name: 'rowid'},
-        {name: 'label'},
+
+        // fields for the home page listing and group summary
         {name: 'filters'},
         {name: 'containsPlot', type: 'boolean', defaultValue: false, convert : function(value, partial) {
                 if (partial.raw){
@@ -71,6 +50,30 @@ Ext.define('Connector.app.model.Group', {
         {name: 'type'},
         {name: 'participantIds', convert : Connector.model.Filter.asArray},
         {name: 'modified', type: 'DATE'},
-        {name: 'studies', defaultValue: []}
+        {name: 'isMab', type: 'Boolean'},
+        {name: 'description', convert : function(value, partial) {
+                if (partial.raw){
+                    return partial.raw.description ? partial.raw.description : 'No description given.'
+                }
+            }},
+
+        // fields for the learn grid
+        {name: 'study_label'},
+        {name: 'studies', convert : Connector.model.Filter.asArray},
+        {name: 'studySpecies', convert : Connector.model.Filter.asArray},
+        {name: 'species'},
+        {name: 'product_name'},
+        {name: 'species'},
+        {name: 'products', convert : Connector.model.Filter.asArray},
+        {name: 'assay_identifier'},
+        {name: 'assays', convert : Connector.model.Filter.asArray},
+        {name: 'study_names', convert : Connector.model.Filter.asArray},
+        {name: 'product_names', convert : Connector.model.Filter.asArray},
+        {name: 'assay_names', convert : Connector.model.Filter.asArray},
+        {name: 'species_names', convert : Connector.model.Filter.asArray},
+        {name: 'study_names_to_sort_on'},
+        {name: 'product_to_sort_on'},
+        {name: 'species_to_sort_on'},
+        {name: 'assay_to_sort_on'}
     ]
 });

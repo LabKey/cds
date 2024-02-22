@@ -1,42 +1,23 @@
-SELECT DISTINCT
+-- Query for studies with either product or assay data associated with it, used by the learn group store
+-- to get the list of studies for the group summary pages
 
-    g.group_id,
-    g.study_label,
-    g.group_name,
-    group_concat(g.has_data) AS has_data, -- since LK SQL doesn't support boolean aggregate, going this route
-    g.study_name,
-    g.description
+SELECT DISTINCT g.study_name,
+                g.study_label,
+                g.description,
+                g.has_data
+FROM (SELECT s.study_name,
+             s.label AS study_label,
+             s.description,
+             CASE
+                 WHEN (afs.has_data IS NULL AND pfs.has_data IS NULL) THEN false
+                 WHEN (afs.has_data IS NULL) THEN pfs.has_data
+                 WHEN (pfs.has_data IS NULL) THEN afs.has_data
+                 ELSE (afs.has_data OR pfs.has_data)
+                 END AS has_data
 
-    FROM
-        (SELECT DISTINCT
-sgm.groupId.rowid AS group_id,
-s.label AS study_label,
-sgm.groupId.label AS group_name,
-(CASE WHEN afs.has_data IS NULL OR pfs.has_data IS NULL THEN false ELSE (afs.has_data OR pfs.has_data) END) AS has_data,
-s.study_name AS study_name,
-s.description
+      FROM cds.study s
+               LEFT JOIN cds.learn_productsforstudies pfs
+                         ON s.study_name = pfs.study_name
+               LEFT JOIN cds.learn_assaysforstudies afs ON s.study_name = afs.prot) g
 
-FROM
-    study.subjectgroupmap sgm
-LEFT JOIN study.subjectcategory sc ON sgm.groupId.CategoryId.RowId = sc.RowId
-LEFT JOIN cds.study s ON sgm.container.name = s.study_name -- each study protocol has a container of the same name as the study protocol
-LEFT JOIN cds.learn_productsforstudies pfs ON sgm.container.name = pfs.study_name
-LEFT JOIN cds.learn_assaysforstudies afs ON sgm.container.name = afs.prot
-
-WHERE sc.OwnerId IN (-1, userid()) -- Get Shared/Curated groups and Saved Groups created by the current user
-
-GROUP BY
-    sgm.groupId.rowid,
-    s.label,
-    sgm.groupId.label,
-    afs.has_data,
-    pfs.has_data,
-    s.study_name,
-    s.description) g
-
-    GROUP BY
-    g.group_id,
-    g.study_label,
-    g.group_name,
-    g.study_name,
-    g.description
+GROUP BY g.study_name, g.study_label, g.description, g.has_data
