@@ -38,7 +38,6 @@ Ext.define('Connector.view.GroupSummary', {
         else
         {
             this.store.load();
-            //this.store.on('load', this.loadGroup, this);
             this.store.on('dataloaded', this.loadGroup, this);
         }
     },
