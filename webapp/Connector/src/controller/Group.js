@@ -140,16 +140,12 @@ Ext.define('Connector.controller.Group', {
 
             v = Ext.create('Connector.view.GroupSummary', {
                 store : StoreCache.getStore('Connector.app.store.Group'),
-
-                //store : Ext.create('Connector.app.store.Group'),
-                //store: Connector.model.Group.getGroupStore(),
                 groupId: context.groupId
             });
         }
         else if (xtype === 'mabgroupsummary') {
 
             v = Ext.create('Connector.view.MabGroupSummary', {
-                //store: Connector.model.Group.getGroupStore(),
                 store: StoreCache.getStore('Connector.app.store.Group'),
                 groupId: context.groupId
             });
@@ -287,14 +283,12 @@ Ext.define('Connector.controller.Group', {
                     Connector.getApplication().fireEvent('mabgroupsaved', groupname);
                     view.reset();
                     this.getGroupStore().refreshData();
-                    //Connector.model.Group.getGroupStore().refreshData();
                 };
 
                 var editSuccess = function() {
                     Connector.getApplication().fireEvent('mabgroupedited', groupname);
                     view.reset();
                     this.getGroupStore().refreshData();
-                    //Connector.model.Group.getGroupStore().refreshData();
                     me.getViewManager().changeView('home');
                 };
 
@@ -392,7 +386,6 @@ Ext.define('Connector.controller.Group', {
 
                     Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
                     me.getGroupStore().refreshData();
-                    //Connector.model.Group.getGroupStore().refreshData(group.category.label, me);
                 };
 
                 Connector.model.Filter.doGroupSave({
@@ -423,8 +416,6 @@ Ext.define('Connector.controller.Group', {
         if (view.isValid()) {
 
             var newValues = view.getActiveForm().getValues();
-
-            //var grpStore = Connector.model.Group.getGroupStore();
             var grpStore = StoreCache.getStore('Connector.app.store.Group');
 
             //get the original group that is being edited
@@ -456,7 +447,6 @@ Ext.define('Connector.controller.Group', {
                     groupLabel.show();
 
                     Connector.getApplication().fireEvent('groupsaved', grp, state.getFilters(true));
-                    //Connector.model.Group.getGroupStore().refreshData(grp.label, me);
                     me.getGroupStore().refreshData();
                 };
 
@@ -544,7 +534,6 @@ Ext.define('Connector.controller.Group', {
                                 me.application.fireEvent('groupsaved', group, state.getFilters(true));
                                 view.reset();
                                 me.getGroupStore().refreshData();
-                                //Connector.model.Group.getGroupStore().refreshData();
                             };
 
                             var updateFailure = function(response) {
@@ -687,7 +676,6 @@ Ext.define('Connector.controller.Group', {
             });
         }
         this.loadDataTask.delay(300, undefined, this, [this.getGroupStore()]);
-//        this.loadDataTask.delay(300, undefined, this, [Connector.model.Group.getGroupStore()]);
 
         var editGroupView = this.getViewManager().getViewInstance('groupsave');
         if (editGroupView)

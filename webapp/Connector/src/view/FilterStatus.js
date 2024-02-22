@@ -398,7 +398,6 @@ Ext.define('Connector.view.FilterStatus', {
             // then it should be ready for Editing
             if (grpId > -1) {
 
-                //var grpStore = Connector.model.Group.getGroupStore();
                 var grpStore = StoreCache.getStore('Connector.app.store.Group');
 
                 if (grpStore && grpStore.getCount() > 0) {

@@ -56,8 +56,6 @@ Ext.define('Connector.app.store.Group', {
     },
 
     loadSlice: function () {
-
-        console.log('group loadslice');
         this.groupsData = undefined;
         this.groupDetails = undefined;
         this.mabGroups = undefined;
@@ -404,7 +402,6 @@ Ext.define('Connector.app.store.Group', {
     },
 
     refreshData: function(cb, cbScope) {
-        console.log('hooray, refreshing store', cb, cbScope);
         this.loadSlice();
     }
 });

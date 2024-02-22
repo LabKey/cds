@@ -171,7 +171,6 @@
             srcPath + "/model/InfoPaneMember.js",
             srcPath + "/model/TimepointPane.js",
             srcPath + "/model/Summary.js",
-            srcPath + "/model/Group.js",
             srcPath + "/model/Grid.js",
             srcPath + "/model/MabDetail.js",
             srcPath + "/model/MabGrid.js",

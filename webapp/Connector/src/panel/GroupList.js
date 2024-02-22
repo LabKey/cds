@@ -185,7 +185,6 @@ Ext.define('Connector.view.GroupListView', {
 
         this.store = StoreCache.getStore('Connector.app.store.Group');
         this.store.load();
-        //Connector.model.Group.getGroupStore();
 
         this.on('beforerefresh', function(){
             // reset template state variables before the template refreshes
